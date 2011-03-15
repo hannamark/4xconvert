@@ -166,6 +166,25 @@ public class StudySiteContactBeanLocal extends
      */
     @Override
     public void validate(StudySiteContactDTO dto) throws PAException {
+        validateCrsContacts(dto);
+        validateOrgContContacts(dto);
+    }
+    
+    private void validateOrgContContacts(StudySiteContactDTO dto) throws PAException {
+        PAServiceUtils paServiceUtil = new PAServiceUtils();
+        if (!PAUtil.isIiNull(dto.getOrganizationalContactIi()) && !PAUtil.isDSetTelNull(dto.getTelecomAddresses())) {
+            StructuralRole sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoOrganizationalContactIi(dto
+                .getOrganizationalContactIi().getExtension()));
+            if (sr != null) {
+                OrganizationalContactDTO poSrDto = (OrganizationalContactDTO) paServiceUtil
+                    .getCorrelationByIi(IiConverter.convertToPoOrganizationalContactIi(sr.getIdentifier()));
+                validatedPhoneByUsOrCanCountry(paServiceUtil, 
+                        poSrDto.getScoperIdentifier(), dto.getTelecomAddresses());
+            }
+        }
+    }
+    
+    private void validateCrsContacts(StudySiteContactDTO dto) throws PAException {
         PAServiceUtils paServiceUtil = new PAServiceUtils();
         if (!PAUtil.isIiNull(dto.getClinicalResearchStaffIi()) && !PAUtil.isDSetTelNull(dto.getTelecomAddresses())) {
             StructuralRole sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoClinicalResearchStaffIi(dto
@@ -177,16 +196,6 @@ public class StudySiteContactBeanLocal extends
                         poSrDto.getScoperIdentifier(), dto.getTelecomAddresses());
             }
 
-        }
-        if (!PAUtil.isIiNull(dto.getOrganizationalContactIi()) && !PAUtil.isDSetTelNull(dto.getTelecomAddresses())) {
-            StructuralRole sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoOrganizationalContactIi(dto
-                .getOrganizationalContactIi().getExtension()));
-            if (sr != null) {
-                OrganizationalContactDTO poSrDto = (OrganizationalContactDTO) paServiceUtil
-                    .getCorrelationByIi(IiConverter.convertToPoOrganizationalContactIi(sr.getIdentifier()));
-                validatedPhoneByUsOrCanCountry(paServiceUtil, 
-                        poSrDto.getScoperIdentifier(), dto.getTelecomAddresses());
-            }
         }
     }
     

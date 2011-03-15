@@ -911,47 +911,63 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     }
 
     private void validatePrimaryContact(String persId, String email, String telephone) {
+        validatePersonIdAndAtLeastOneTelecom(persId, email, telephone); 
+        validateEmail(email);
+        validatePhone(telephone);
+    }
+    
+    private void validatePersonIdAndAtLeastOneTelecom(String persId, String email, String telephone) {
         if (StringUtils.isEmpty(persId)) {
             addFieldError("personContactWebDTO.firstName", getText("Please lookup and select person"));
         }
         if (StringUtils.isEmpty(email) && StringUtils.isEmpty(telephone)) {
-            addFieldError("personContactWebDTO.email", getText("error.enterEmailAddressOrPhone"));
-        }
-        if (!PAUtil.isValidEmail(email)) {
-            addFieldError("personContactWebDTO.email", getText("error.enterValidEmail"));
-        }
-        if (!PAUtil.isPhoneValidForUSA(telephone)) {
+            addFieldError("personContactWebDTO.telephone", getText("error.enterEmailAddressOrPhone"));
+        } 
+    }
+    
+    private void validatePhone(String telephone) {
+        if (StringUtils.isNotBlank(telephone) && !PAUtil.isPhoneValidForUSA(telephone)) {
             addFieldError("personContactWebDTO.telephone", getText("error.usOrCanPhone"));
         }
     }
-
+    
+    private void validateEmail(String email) {
+        if (StringUtils.isNotBlank(email) && !PAUtil.isValidEmail(email)) {
+            addFieldError("personContactWebDTO.email", getText("error.enterValidEmail"));
+        }
+    }
+ 
     private void reloadPrimaryContact(String persId, String email, String telephone) throws PAException,
         NullifiedRoleException {
         personContactWebDTO = new PaPersonDTO();
         personContactWebDTO.setEmail(email);
         personContactWebDTO.setTelephone(telephone);
         if (StringUtils.isNotEmpty(persId)) {
-
             Long valueOfPerId = Long.valueOf(persId);
             personContactWebDTO.setSelectedPersId(valueOfPerId);
-            if (selectedPersTO != null && selectedPersTO.getName() != null) {
-                gov.nih.nci.pa.dto.PaPersonDTO personDTO = PADomainUtils.convertToPaPersonDTO(selectedPersTO);
-                personContactWebDTO.setFirstName(personDTO.getFirstName());
-                personContactWebDTO.setLastName(personDTO.getLastName());
-                personContactWebDTO.setMiddleName(personDTO.getMiddleName());
+            reloadPersonContactWebDto(persId, valueOfPerId);
+        }
+    }
+    
+    private void reloadPersonContactWebDto(String persId, Long valueOfPerId) 
+        throws PAException, NullifiedRoleException {
+        if (selectedPersTO != null && selectedPersTO.getName() != null) {
+            gov.nih.nci.pa.dto.PaPersonDTO personDTO = PADomainUtils.convertToPaPersonDTO(selectedPersTO);
+            personContactWebDTO.setFirstName(personDTO.getFirstName());
+            personContactWebDTO.setLastName(personDTO.getLastName());
+            personContactWebDTO.setMiddleName(personDTO.getMiddleName());
+        } else {
+            Person paPerson =  correlationUtils.getPAPersonByIi(IiConverter.convertToPoPersonIi(persId));
+            if (paPerson != null) {
+                personContactWebDTO.setFirstName(paPerson.getFirstName());
+                personContactWebDTO.setLastName(paPerson.getLastName());
+                personContactWebDTO.setMiddleName(paPerson.getMiddleName());
             } else {
-                Person paPerson =  correlationUtils.getPAPersonByIi(IiConverter.convertToPoPersonIi(persId));
-                if (paPerson != null) {
-                    personContactWebDTO.setFirstName(paPerson.getFirstName());
-                    personContactWebDTO.setLastName(paPerson.getLastName());
-                    personContactWebDTO.setMiddleName(paPerson.getMiddleName());
-                } else {
-                    OrganizationalContactDTO paDTO =
-                        PoRegistry.getOrganizationalContactCorrelationService()
-                            .getCorrelation(IiConverter.convertToPoOrganizationalContactIi(valueOfPerId.toString()));
-                    if (paDTO != null && paDTO.getTitle() != null) {
-                        personContactWebDTO.setTitle(StConverter.convertToString(paDTO.getTitle()));
-                    }
+                OrganizationalContactDTO paDTO =
+                    PoRegistry.getOrganizationalContactCorrelationService()
+                        .getCorrelation(IiConverter.convertToPoOrganizationalContactIi(valueOfPerId.toString()));
+                if (paDTO != null && paDTO.getTitle() != null) {
+                    personContactWebDTO.setTitle(StConverter.convertToString(paDTO.getTitle()));
                 }
             }
         }

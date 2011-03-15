@@ -208,8 +208,8 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         assertEquals("display_primContacts",act.saveStudyParticipationPrimContact());
         getRequest().setupAddParameter("tel", "111-222-3333extn12345");
         assertEquals("display_primContacts",act.saveStudyParticipationPrimContact());
-        getRequest().setupAddParameter("email", "example@example.com");
-        getRequest().setupAddParameter("tel", "");
+        getRequest().setupAddParameter("email", "example.com");
+        getRequest().setupAddParameter("tel", "111-222-3333extn12345");
         assertEquals("error_prim_contacts",act.saveStudyParticipationPrimContact());
 
     }

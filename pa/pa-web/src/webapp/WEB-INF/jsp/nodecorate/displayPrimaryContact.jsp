@@ -6,7 +6,7 @@
 </div>	
 <table class="form">
 	<tr>
-	    <td scope="row" class="label"><s:label for="editOrg.postalCode">Phone Number:</s:label><span class="required">*</span></td>
+	    <td scope="row" class="label"><s:label for="editOrg.postalCode">Phone Number:</s:label><span class="required">**</span></td>
 	  
 	    <td class="value" colspan="2">
 	    	
@@ -20,7 +20,7 @@
 	    </td>				    
 	</tr>
 		<tr>
-	    <td scope="row" class="label"><s:label for="editOrg.postalCode">Email Address:</s:label><span class="required">*</span></td>
+	    <td scope="row" class="label"><s:label for="editOrg.postalCode">Email Address:</s:label><span class="required">**</span></td>
 	 
 	    <td class="value" colspan="2">
 	        <s:textfield name="personContactWebDTO.email"  id="personContactWebDTO.email" maxlength="200" size="200" 
@@ -33,6 +33,11 @@
 	    </td>
 	     
 	</tr>
+    <tr>
+        <td scope="row" colspan="3">
+            <span class="required">**</span>At least one of Email or Phone is required.
+        </td>
+    </tr>
 	 <tr>
                     <td class="label"><s:label for="statusCode">Status:</s:label></td>
                     <td class="value" colspan="2">

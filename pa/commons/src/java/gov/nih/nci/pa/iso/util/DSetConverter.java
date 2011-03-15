@@ -165,12 +165,11 @@ public class DSetConverter {
         Set<Tel> returnVal = new HashSet<Tel>();
         TelEmail t = null;
         for (String email : list) {
-            t = new TelEmail();
-            if (email != null) {
-                email = email.trim();
+            if (StringUtils.isNotBlank(email)) {
+                t = new TelEmail();
+                t.setValue(URI.create("mailto:" + email.trim()));
+                returnVal.add(t);
             }
-            t.setValue(URI.create("mailto:" + email));
-            returnVal.add(t);
         }
         return returnVal;
     }
@@ -179,16 +178,15 @@ public class DSetConverter {
         Set<Tel> telSet = new HashSet<Tel>();
         TelPhone t = null;
         for (String phone : list) {
-            if (phone == null) {
-                continue;
+            if (StringUtils.isNotBlank(phone)) {
+                t = new TelPhone();
+                try {
+                    t.setValue(URI.create("tel:" + URLEncoder.encode(phone, "UTF-8")));
+                } catch (UnsupportedEncodingException e) {
+                    continue;
+                }
+                telSet.add(t);
             }
-            t = new TelPhone();
-            try {
-                t.setValue(URI.create("tel:" + URLEncoder.encode(phone, "UTF-8")));
-            } catch (UnsupportedEncodingException e) {
-                continue;
-            }
-            telSet.add(t);
         }
         return telSet;
     }
