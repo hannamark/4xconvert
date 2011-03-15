@@ -88,26 +88,20 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.convert.DocumentConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -118,6 +112,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 
 /**
@@ -166,14 +163,13 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     public DocumentDTO create(DocumentDTO docDTO) throws PAException {
         validate(docDTO);
         enforceDuplicateDocument(docDTO);
-        Session session = null;
         Document doc = new DocumentConverter().convertFromDtoToDomain(docDTO);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         doc.setDateLastCreated(now);
         doc.setUserLastCreated(CSMUserService.getInstance().lookupUser(ejbContext));
 
         doc.setActiveIndicator(true);
-        session = HibernateUtil.getCurrentSession();
+        Session session = HibernateUtil.getCurrentSession();
         session.save(doc);
         session.flush();
         docDTO.setIdentifier(IiConverter.convertToDocumentIi(doc.getId()));
@@ -190,20 +186,17 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         DocumentDTO docDTO = super.get(id);
         if (docDTO != null) {
             try {
-                StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
                 StudyProtocolBeanLocal spBean = new StudyProtocolBeanLocal();
-                StudyProtocolDTO spDTO = spBean.getStudyProtocol(docDTO.getStudyProtocolIdentifier());
-                sb.append(File.separator).append(PAUtil.getAssignedIdentifierExtension(spDTO)).append(File.separator)
-                  .append(docDTO.getIdentifier().getExtension()).append('-')
-                  .append(StConverter.convertToString(docDTO.getFileName()));
-                File downloadFile = new File(sb.toString());
-                docDTO.setText(EdConverter.convertToEd(PAUtil.readInputStream(new FileInputStream(downloadFile))));
+                String nciIdentifier =
+                    PAUtil.getAssignedIdentifierExtension(spBean.getStudyProtocol(docDTO.getStudyProtocolIdentifier()));
+                String docPath = PAUtil.getDocumentFilePath(docDTO, nciIdentifier);
+                File downloadFile = new File(docPath);
+                docDTO.setText(EdConverter.convertToEd(IOUtils.toByteArray(FileUtils.openInputStream(downloadFile))));
             } catch (FileNotFoundException fe) {
                 throw new PAException("File Not found " + fe.getLocalizedMessage(), fe);
             } catch (IOException io) {
                 throw new PAException("IO Exception" + io.getLocalizedMessage(), io);
             }
-
         }
         return docDTO;
     }
@@ -214,7 +207,6 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     @Override
     public DocumentDTO update(DocumentDTO docDTO) throws PAException {
         validate(docDTO);
-        docDTO.setInactiveCommentText(StConverter.convertToSt("A new record will be created"));
         docDTO.setInactiveCommentText(null);
         updateObjectToInActive(docDTO);
         return create(docDTO);
@@ -226,7 +218,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     @Override
     public void delete(Ii documentIi) throws PAException {
         if (PAUtil.isIiNull(documentIi)) {
-            throw new PAException("docDTO should not be null");
+            throw new PAException("Document Ii should not be null.");
         }
         DocumentDTO docDTO = get(documentIi);
         checkTypeCodesForDelete(docDTO);
@@ -251,15 +243,10 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
             Ii toIi = PAUtil.containsIi(map, dto.getIdentifier());
             if (toIi != null) {
                 // rename the file
-                fromName = PAUtil.getDocumentFilePath(doc.getId(), doc.getFileName(), nciIdentifier);
-                toName =
-                        PAUtil.getDocumentFilePath(Long.valueOf(toIi.getExtension()), doc.getFileName(), nciIdentifier);
-                InputStream in;
+                fromName = PAUtil.getDocumentFilePath(dto, nciIdentifier);
+                toName = PAUtil.getDocumentFilePath(dto, nciIdentifier);
                 try {
-                    in = new FileInputStream(fromName);
-                    OutputStream out = new FileOutputStream(toName);
-                    byte[] bytes = PAUtil.readInputStream(in);
-                    out.write(bytes);
+                    FileUtils.copyFile(new File(fromName), new File(toName));
                 } catch (IOException e) {
                     throw new PAException("Error while copy file from " + fromName + " to " + toName, e);
                 }
@@ -267,6 +254,17 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
             session.delete(doc);
         }
         return map;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validate(DocumentDTO docDTO) throws PAException {
+        super.validate(docDTO);
+        if (PAUtil.isEdNull(docDTO.getText())) {
+            throw new PAValidationException("Document data cannot be null ");
+        }
     }
 
     private void updateObjectToInActive(DocumentDTO docDTO) throws PAException {
@@ -283,25 +281,14 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         session.flush();
     }
 
-    private Boolean enforceDuplicateDocument(DocumentDTO docDTO) throws PAException {
-        Boolean result = false;
-        List<DocumentDTO> resultList = new ArrayList<DocumentDTO>();
-        resultList = getDocumentsByStudyProtocol(docDTO.getStudyProtocolIdentifier());
-        if (!(resultList.isEmpty())) {
-            for (DocumentDTO check : resultList) {
-                if (!check.getTypeCode().getCode().equals(DocumentTypeCode.OTHER.getCode())) {
-                    if (check.getTypeCode().getCode().equals(docDTO.getTypeCode().getCode())) {
-                        result = false;
-                        throw new PADuplicateException("Document with selected type already exists on the trial.");
-                        // break;
-                    }
-                    result = true;
-                }
+    private void enforceDuplicateDocument(DocumentDTO docDTO) throws PAException {
+        List<DocumentDTO> resultList = getDocumentsByStudyProtocol(docDTO.getStudyProtocolIdentifier());
+        for (DocumentDTO check : resultList) {
+            if (!StringUtils.equalsIgnoreCase(check.getTypeCode().getCode(), DocumentTypeCode.OTHER.getCode())
+                    && StringUtils.equals(check.getTypeCode().getCode(), docDTO.getTypeCode().getCode())) {
+                throw new PADuplicateException("Document with selected type already exists on the trial.");
             }
-        } else {
-            result = true;
         }
-        return result;
     }
 
     private void checkTypeCodesForDelete(DocumentDTO docDTO) throws PAException {
@@ -312,45 +299,29 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         }
     }
 
+    /**
+     * This saves the document its final storage place if the studies nci identifier has been set. Otherwise,
+     * it is stored  in a temporary location and needs to be later moved into its final location once the assigned id
+     * of the related study protocol has been set.
+     * @param docDTO
+     * @throws PAException on error
+     */
     private void saveFile(DocumentDTO docDTO) throws PAException {
-        if (docDTO.getText() == null || docDTO.getText().getData() == null) {
-            throw new PAException("Document data cannot be null ");
-        }
-        String folderPath = PaEarPropertyReader.getDocUploadPath();
         StudyProtocolBeanLocal spBean = new StudyProtocolBeanLocal();
-        StudyProtocolDTO sp = spBean.getStudyProtocol(docDTO.getStudyProtocolIdentifier());
-        StringBuffer sb = new StringBuffer(folderPath);
-        sb.append(File.separator).append(PAUtil.getAssignedIdentifier(sp).getExtension());
-        File f = new File(sb.toString());
-        if (!f.exists()) {
-            // create a new directory
-            createDirectory(f);
+        String nciIdentifier =
+            PAUtil.getAssignedIdentifierExtension(spBean.getStudyProtocol(docDTO.getStudyProtocolIdentifier()));
+        String docPath;
+        if (StringUtils.isEmpty(nciIdentifier)) {
+            docPath = PAUtil.getTemporaryDocumentFilePath(docDTO);
+        } else {
+            docPath = PAUtil.getDocumentFilePath(docDTO, nciIdentifier);
         }
 
-        // create the file
-        sb.append(File.separator).append(docDTO.getIdentifier().getExtension()).append('-').append(
-                docDTO.getFileName().getValue());
         try {
-            File outFile = new File(sb.toString());
-            FileOutputStream fos = new FileOutputStream(outFile);
-            fos.write(docDTO.getText().getData());
-            fos.flush();
-            fos.close();
+            File outFile = new File(docPath);
+            FileUtils.writeByteArrayToFile(outFile, docDTO.getText().getData());
         } catch (IOException e) {
-            throw new PAException("Error while creating directory  " + sb.toString(), e);
+            throw new PAException("Error while attempting to save the file to " + docPath, e);
         }
     }
-
-    private void createDirectory(File f) throws PAException {
-        try {
-            boolean md = f.mkdir();
-            if (!md) {
-                throw new PAException("unable to create folder: " + f.getAbsolutePath());
-            }
-        } catch (SecurityException e) {
-            throw new PAException("Security Exception while creating folder " + f.getAbsolutePath() + ": "
-                    + e.getMessage(), e);
-        }
-    }
-
 }

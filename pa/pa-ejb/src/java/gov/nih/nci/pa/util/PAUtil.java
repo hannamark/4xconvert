@@ -99,6 +99,7 @@ import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.UnitsCode;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
@@ -115,10 +116,7 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
@@ -131,7 +129,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -156,14 +153,14 @@ import org.apache.log4j.Logger;
  * copyright holder, NCI.
  */
 public class PAUtil {
-    private static final int MAXF = 1024;
     private static final String EXTN = "extn";
     private static final int EXTN_COUNT = 4;
     private static final Logger LOG  = Logger.getLogger(PAUtil.class);
     private static final String ID_OPEN_PAREN = " (id = ";
     private static final Map<String, String> ROOT_TO_NULLIFIED_ERROR_MAP = new HashMap<String, String>();
-    private static final String UTF_8 = "UTF-8"; 
-    
+    private static final String UTF_8 = "UTF-8";
+    private static final String TEMP_DOC_LOCATION = "temp_docs";
+
     static {
         ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.HEALTH_CARE_FACILITY_ROOT, PAExceptionConstants.NULLIFIED_HCF);
         ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.HEALTH_CARE_PROVIDER_ROOT, PAExceptionConstants.NULLIFIED_HCP);
@@ -174,8 +171,8 @@ public class PAUtil {
         ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.IDENTIFIED_PERSON_ROOT, PAExceptionConstants.NULLIFIED_IP);
         ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.ORGANIZATIONAL_CONTACT_ROOT, PAExceptionConstants.NULLIFIED_OCT);
     }
-    
-    
+
+
     /**
      * checks if Ii is null.
      * @param ii ii
@@ -665,64 +662,36 @@ public class PAUtil {
     }
 
     /**
-     * Read an input stream in its entirety into a byte array.
-     * @param inputStream is
-     * @return byte[]
-     * @throws IOException on error
-     */
-    public static byte[] readInputStream(InputStream inputStream) throws IOException {
-
-        int bufSize = MAXF * MAXF;
-        byte[] content;
-
-        List<byte[]> parts = new LinkedList<byte[]>();
-        InputStream in = new BufferedInputStream(inputStream);
-
-        byte[] readBuffer = new byte[bufSize];
-        byte[] part = null;
-        int bytesRead = 0;
-
-        // read everyting into a list of byte arrays
-        while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) {
-            part = new byte[bytesRead];
-            System.arraycopy(readBuffer, 0, part, 0, bytesRead);
-            parts.add(part);
-        }
-
-        // calculate the total size
-        int totalSize = 0;
-        for (byte[] partBuffer : parts) {
-            totalSize += partBuffer.length;
-        }
-
-        // allocate the array
-        content = new byte[totalSize];
-        int offset = 0;
-        for (byte[] partBuffer : parts) {
-            System.arraycopy(partBuffer, 0, content, offset, partBuffer.length);
-            offset += partBuffer.length;
-        }
-
-        return content;
-    }
-
-    /**
-     *
-     * @param documentIdentifier document identifier
-     * @param fileName name of the file
+     * Gets the document path where the document data should be stored.
+     * @param dto the document dto
      * @param nciIdentifier nci identifier
      * @return the file path
      * @throws PAException on error
      */
-    public static String getDocumentFilePath(Long documentIdentifier , String fileName , String nciIdentifier)
-    throws PAException {
+    public static String getDocumentFilePath(DocumentDTO dto, String nciIdentifier) throws PAException {
         String folderPath = PaEarPropertyReader.getDocUploadPath();
         StringBuffer sb  = new StringBuffer(folderPath);
-        sb.append(File.separator).append(nciIdentifier).
-                append(File.separator).append(documentIdentifier).append('-').append(fileName);
+        sb.append(File.separator).append(nciIdentifier)
+            .append(File.separator).append(IiConverter.convertToLong(dto.getIdentifier())).append('-')
+            .append(StConverter.convertToString(dto.getFileName()));
         return sb.toString();
-
     }
+
+    /**
+     * Gets the temporary document path for the given document.
+     * @param dto the document dto
+     * @return the temporary file path
+     * @throws PAException on error
+     */
+    public static String getTemporaryDocumentFilePath(DocumentDTO dto) throws PAException {
+        String folderPath = PaEarPropertyReader.getDocUploadPath();
+        StringBuffer sb  = new StringBuffer(folderPath);
+        sb.append(File.separator).append(TEMP_DOC_LOCATION).append(File.separator)
+            .append(IiConverter.convertToLong(dto.getIdentifier())).append('-')
+            .append(StConverter.convertToString(dto.getFileName()));
+        return sb.toString();
+    }
+
     /**
      * @param date date
      * @return boolean
@@ -872,23 +841,23 @@ public class PAUtil {
         }
         return isValidPhoneNumber;
     }
-    
+
     /**
      * isDSetTelAndEmailNull.
      * @param telecomAddresses tel
      * @return boolean
      */
-    public static boolean isDSetTelAndEmailNull(DSet<Tel> telecomAddresses) {       
-        return telecomAddresses == null || telecomAddresses.getItem() == null 
+    public static boolean isDSetTelAndEmailNull(DSet<Tel> telecomAddresses) {
+        return telecomAddresses == null || telecomAddresses.getItem() == null
             || isDsetItemsEmpty(telecomAddresses, true, true);
     }
-    
+
     private static boolean isDsetItemsEmpty(DSet<Tel> telecomAddresses, boolean checkPhone, boolean checkEmail) {
         for (Tel t : telecomAddresses.getItem()) {
             if (t.getNullFlavor() != null) {
                     continue;
             }
-            
+
             try {
                 if (StringUtils.isNotEmpty(getSchemeSpecificPart(t, checkPhone, checkEmail))) {
                     return false;
@@ -899,18 +868,18 @@ public class PAUtil {
         }
         return true;
     }
-    
+
     /**
     *
     * @param telecomAddresses tel
     * @return boolean
     */
    public static boolean isDSetTelNull(DSet<Tel> telecomAddresses) {
-       return telecomAddresses == null || telecomAddresses.getItem() == null 
+       return telecomAddresses == null || telecomAddresses.getItem() == null
            || isDsetItemsEmpty(telecomAddresses, true, false);
    }
-    
-    private static String getSchemeSpecificPart(Tel t, boolean checkPhone, boolean checkEmail) 
+
+    private static String getSchemeSpecificPart(Tel t, boolean checkPhone, boolean checkEmail)
         throws UnsupportedEncodingException {
         String data = "";
         if (checkPhone && t instanceof TelPhone) {
@@ -922,8 +891,8 @@ public class PAUtil {
         }
         return data;
     }
-    
-    private static String getSchemeSpecificPartByUrl(Tel t, boolean checkPhone, boolean checkEmail) 
+
+    private static String getSchemeSpecificPartByUrl(Tel t, boolean checkPhone, boolean checkEmail)
     throws UnsupportedEncodingException {
         String url = t.getValue().toString();
         if (url != null && ((checkPhone
@@ -932,7 +901,7 @@ public class PAUtil {
         }
         return "";
     }
-    
+
     /**
      * @param dset telecom address
      * @return email the email
@@ -1183,7 +1152,7 @@ public class PAUtil {
         }
         return message.toString();
     }
-    
+
     /**
      * Handle error message when nullified org exception happens.
      * @param oldIi nullified org ii.
@@ -1195,12 +1164,12 @@ public class PAUtil {
         message.append(PAExceptionConstants.NULLIFIED_ORG);
         message.append(ID_OPEN_PAREN + oldIi.getExtension() + ")");
         OrganizationDTO poOrg = null;
-    
+
           if (isIiNotNull(newIi)) {
                 try {
                     poOrg = PoRegistry.getOrganizationEntityService().
                     getOrganization(newIi);
-                    
+
                 } catch (NullifiedEntityException e) {
                     LOG.info("handleNullifiedOrganization: " + e.getMessage());
                 } catch (PAException e) {
@@ -1214,10 +1183,10 @@ public class PAUtil {
                     message.append(ID_OPEN_PAREN + newIi.getExtension() + ")");
                 }
             }
-      
+
         return message.toString();
     }
-    
+
     /**
      * Given a NullifiedRoleException pull out a useful error message.
      * @param e NRE.
@@ -1233,7 +1202,7 @@ public class PAUtil {
         }
         return message.toString();
     }
-    
+
     private static String handleNullifiedSR(Ii key, NullifiedRoleException e) {
         StringBuffer message = new StringBuffer("");
         String errorMsg = ROOT_TO_NULLIFIED_ERROR_MAP.get(key.getRoot());
@@ -1245,20 +1214,20 @@ public class PAUtil {
         }
         return message.toString();
     }
-    
+
     private static String handleNullifiedSR(String errorMsg, Ii oldIi, Ii newIi) {
         StringBuilder message = new StringBuilder();
         message.append(errorMsg);
         message.append(ID_OPEN_PAREN + oldIi.getExtension() + ")");
-       
+
         if (isIiNotNull(newIi)) {
             message.append(" , instead use id = ");
             message.append(newIi.getExtension());
         }
-        
+
         return message.toString();
     }
-    
+
     /**
      * Handle error message when nullified org exception happens.
      * @param oldIi nullified org ii.
@@ -1272,13 +1241,13 @@ public class PAUtil {
         PersonDTO poPer = null;
         if (isIiNotNull(newIi)) {
             try {
-               poPer = PoRegistry.getPersonEntityService().getPerson(newIi);             
+               poPer = PoRegistry.getPersonEntityService().getPerson(newIi);
             } catch (NullifiedEntityException e) {
                 LOG.info("handleNullifiedPerson: " + e.getMessage());
             } catch (PAException e) {
                 LOG.info("handleNullifiedPerson: " + e.getMessage());
             }
-    
+
             if (poPer == null) {
                 LOG.info("handleNullifiedPerson failed to find a PO org");
             } else {
@@ -1300,10 +1269,10 @@ public class PAUtil {
         String simpleDate = sdf.format(new Date());
         return new Timestamp(sdf.parse(simpleDate).getTime());
     }
-    
+
     /**
      * Returns the proper Primary Purpose Additional Qualifier Code based on the passed Primary Purpose Code.
-     * @param primaryPurposeCode the Primary Purpose Code 
+     * @param primaryPurposeCode the Primary Purpose Code
      * @return 'Other' if Primary Purpose Code is 'Other', and null otherwise.
      */
     public static String lookupPrimaryPurposeAdditionalQualifierCode(String primaryPurposeCode) {
@@ -1313,7 +1282,7 @@ public class PAUtil {
         }
         return retVal;
     }
-    
+
     /**
      * primaryPurposeOtherCode is req or not.
      * @param primaryPurposeCode primaryPurposeCode

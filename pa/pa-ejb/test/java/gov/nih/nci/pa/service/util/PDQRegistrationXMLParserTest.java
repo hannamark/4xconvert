@@ -135,7 +135,7 @@ public class PDQRegistrationXMLParserTest {
     public void setup() throws PAException, NullifiedEntityException, TooManyResultsException {
         rXMLParser = new PDQRegistrationXMLParser();
         setupPoSvc();
-        PAServiceUtils paServiceUtil = mock (PAServiceUtils.class);
+        PAServiceUtils paServiceUtil = mock(PAServiceUtils.class);
         rXMLParser.setPaServiceUtils(paServiceUtil);
         when(paServiceUtil.getOrganizationByCtepId(anyString())).thenReturn(new OrganizationDTO());
         when(paServiceUtil.getPersonByCtepId(anyString())).thenReturn(new PersonDTO());
@@ -214,7 +214,7 @@ public class PDQRegistrationXMLParserTest {
         rXMLParser.setUrl(this.getClass().getResource("/sample-pdq-input-observational.xml"));
         rXMLParser.parse();
     }
-    
+
     @Test
     public void testStudyInd() throws PAException {
         when(identifierPersonSvc.search(any(IdentifiedPersonDTO.class))).thenReturn(new ArrayList<IdentifiedPersonDTO>());

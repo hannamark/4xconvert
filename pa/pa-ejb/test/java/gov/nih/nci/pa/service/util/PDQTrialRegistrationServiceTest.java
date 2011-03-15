@@ -249,13 +249,13 @@ public class PDQTrialRegistrationServiceTest {
         trialRegistrationSvc.setStudyInboxServiceLocal(new StudyInboxServiceBean());
         trialRegistrationSvc.setStudyRegulatoryAuthorityService(new StudyRegulatoryAuthorityBeanLocal());
         trialRegistrationSvc.setMailManagerSerivceLocal(mailManagerSerivceLocal);
-        trialRegistrationSvc.setDocumentService(mock (DocumentServiceBean.class));
+        trialRegistrationSvc.setDocumentService(new DocumentServiceBean());
         trialRegistrationSvc.setStudyRelationshipService(new StudyRelationshipServiceBean());
-        
+
         // cannot use Mockito because multiple other methods in PAServiceUtils are used
         // in the process of registering a trial.
         trialRegistrationSvc.setPaServiceUtils(new MockPAServiceUtils());
-       
+
         TSRReportGeneratorServiceRemote mockTsrGeneratorSvc = mock(TSRReportGeneratorServiceRemote.class);
         ByteArrayOutputStream tsrReport = new ByteArrayOutputStream();
         tsrReport.write("Mock TSR Report".getBytes());
@@ -294,8 +294,7 @@ public class PDQTrialRegistrationServiceTest {
         when(paSvcLoc.getStudySiteContactService()).thenReturn(new StudySiteContactServiceBean());
         when(paSvcLoc.getOutcomeMeasureService()).thenReturn(new StudyOutcomeMeasureBeanLocal());
         when(paSvcLoc.getTSRReportGeneratorService()).thenReturn(new TSRReportGeneratorServiceBean());
-        DocumentServiceBean docService = mock(DocumentServiceBean.class);
-        when(paSvcLoc.getDocumentService()).thenReturn(docService);
+        when(paSvcLoc.getDocumentService()).thenReturn(new DocumentServiceBean());
 
         List<StudyProtocolQueryDTO> queryResults = new ArrayList<StudyProtocolQueryDTO>();
         StudyProtocolQueryDTO result = new StudyProtocolQueryDTO();

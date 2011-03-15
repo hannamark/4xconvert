@@ -135,6 +135,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -398,8 +399,7 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
                 protocolData.getBytes()));
         docList.add(getDocument(DocumentTypeCode.IRB_APPROVAL_DOCUMENT, "Protocol_IRB_Document_Place_Holder.doc",
                 irbdata.getBytes()));
-        docList.add(getDocument(DocumentTypeCode.OTHER, "pdq.xml",
-                paServiceUtils.readInputStream(urlXML.openStream())));
+        docList.add(getDocument(DocumentTypeCode.OTHER, "pdq.xml", IOUtils.toByteArray(urlXML.openStream())));
         return docList;
     }
 

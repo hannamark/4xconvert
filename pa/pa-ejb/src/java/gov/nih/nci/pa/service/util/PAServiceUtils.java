@@ -165,9 +165,8 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
-import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -175,12 +174,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -225,7 +224,6 @@ public class PAServiceUtils {
      */
     protected static final int NCI_ID_SIZE = 5;
     private static final Logger LOG  = Logger.getLogger(PAServiceUtils.class);
-    private static final int MAXF = 1024;
 
     /**
      * Executes an sql.
@@ -335,24 +333,28 @@ public class PAServiceUtils {
 
     /**
      * an utility method to create or update.
+     * @param <T> the dto
      * @param dtos list of dtos
      * @param id identifier
      * @param studyProtocolIi study protocol ii
+     * @return the updated or created dtos
      * @throws PAException on error
      */
-    public void createOrUpdate(List<? extends StudyDTO> dtos, Ii id, Ii studyProtocolIi) throws PAException {
+    public <T extends StudyDTO> List<T> createOrUpdate(List<T> dtos, Ii id, Ii studyProtocolIi) throws PAException {
+        List<T> results = new ArrayList<T>();
         if (CollectionUtils.isEmpty(dtos)) {
-            return;
+            return results;
         }
         for (StudyDTO dto : dtos) {
             dto.setStudyProtocolIdentifier(studyProtocolIi);
             StudyPaService<StudyDTO> paService = getRemoteService(id);
             if (PAUtil.isIiNull(dto.getIdentifier())) {
-                paService.create(dto);
+                results.add((T) paService.create(dto));
             } else {
-                paService.update(dto);
+                results.add((T) paService.update(dto));
             }
         }
+        return results;
     }
 
 
@@ -1805,41 +1807,6 @@ public class PAServiceUtils {
           return null;
       }
 
-      /**
-       *Read an input stream in its entirety into a byte array.
-       *@param inputStream input stream
-       *@return byte[]
-       *@throws IOException on error
-       */
-      public byte[] readInputStream(InputStream inputStream) throws IOException {
-          int bufSize = MAXF * MAXF;
-          byte[] content;
-          List<byte[]> parts = new LinkedList<byte[]>();
-          InputStream in = new BufferedInputStream(inputStream);
-
-          byte[] readBuffer = new byte[bufSize];
-          byte[] part = null;
-          int bytesRead = 0;
-          // read everyting into a list of byte arrays
-          while ((bytesRead = in.read(readBuffer, 0, bufSize)) != -1) {
-              part = new byte[bytesRead];
-              System.arraycopy(readBuffer, 0, part, 0, bytesRead);
-              parts.add(part);
-          }
-          // calculate the total size
-          int totalSize = 0;
-          for (byte[] partBuffer : parts) {
-              totalSize += partBuffer.length;
-          }
-          // allocate the array
-          content = new byte[totalSize];
-          int offset = 0;
-          for (byte[] partBuffer : parts) {
-              System.arraycopy(partBuffer, 0, content, offset, partBuffer.length);
-              offset += partBuffer.length;
-          }
-          return content;
-      }
       /**Gets the Person by giving ctepId.
        * @param ctepId id
        * @return person
@@ -1933,8 +1900,7 @@ public class PAServiceUtils {
                   crsDTO = new ClinicalResearchStaffDTO();
                   crsDTO.setPlayerIdentifier(investigatorIi);
                   crsDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(poOrgId));
-                  Ii newCrsIi = PoRegistry.getClinicalResearchStaffCorrelationService()
-                      .createCorrelation(crsDTO);
+                  Ii newCrsIi = PoRegistry.getClinicalResearchStaffCorrelationService().createCorrelation(crsDTO);
                   crsDTO = PoRegistry.getClinicalResearchStaffCorrelationService()
                   .getCorrelation(newCrsIi);
               } else {
@@ -1968,10 +1934,8 @@ public class PAServiceUtils {
                       hcpDTO = new HealthCareProviderDTO();
                       hcpDTO.setPlayerIdentifier(investigatorIi);
                       hcpDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(poOrgId));
-                      Ii newHcpIi = PoRegistry.getHealthCareProviderCorrelationService()
-                          .createCorrelation(hcpDTO);
-                      hcpDTO = PoRegistry.getHealthCareProviderCorrelationService()
-                          .getCorrelation(newHcpIi);
+                      Ii newHcpIi = PoRegistry.getHealthCareProviderCorrelationService().createCorrelation(hcpDTO);
+                      hcpDTO = PoRegistry.getHealthCareProviderCorrelationService().getCorrelation(newHcpIi);
                   } else {
                       hcpDTO = poHcpList.get(0);
                   }
@@ -1984,5 +1948,28 @@ public class PAServiceUtils {
               }
           }
           return hcpDTO;
+      }
+
+      /**
+       * Moves the documents into their proper directories if they have been previously saved in a temporary directory.
+       * @param docs the documents to move if necessary
+       * @param spIi the ii of the study protocol these documents belong to
+       * @throws PAException on error
+       */
+      public void moveDocumentContents(List<DocumentDTO> docs, Ii spIi) throws PAException {
+          StudyProtocolDTO sp = PaRegistry.getStudyProtocolService().getStudyProtocol(spIi);
+          for (DocumentDTO doc : docs) {
+              File tempLocation = new File(PAUtil.getTemporaryDocumentFilePath(doc));
+              File finalLocation = new File(PAUtil.getDocumentFilePath(doc, PAUtil.getAssignedIdentifierExtension(sp)));
+              if (tempLocation.exists()) {
+                  try {
+                      FileUtils.copyFile(tempLocation, finalLocation);
+                      FileUtils.deleteQuietly(tempLocation);
+                  } catch (IOException e) {
+                      throw new PAException("Error moving document from " + tempLocation.getAbsolutePath() + " to "
+                              + finalLocation.getAbsolutePath(), e);
+                  }
+              }
+          }
       }
 }

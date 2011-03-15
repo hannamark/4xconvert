@@ -100,6 +100,7 @@ import java.util.List;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -187,7 +188,7 @@ public class TrialDocumentAction extends ActionSupport implements ServletRespons
              docDTO.setTypeCode(
                      CdConverter.convertStringToCd(trialDocumentWebDTO.getTypeCode()));
              docDTO.setFileName(StConverter.convertToSt(uploadFileName));
-             docDTO.setText(EdConverter.convertToEd(paServiceUtil.readInputStream(new FileInputStream(upload))));
+             docDTO.setText(EdConverter.convertToEd(IOUtils.toByteArray(new FileInputStream(upload))));
              PaRegistry.getDocumentService().create(docDTO);
              query();
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
@@ -279,7 +280,7 @@ public class TrialDocumentAction extends ActionSupport implements ServletRespons
              docDTO.setTypeCode(
                      CdConverter.convertStringToCd(trialDocumentWebDTO.getTypeCode()));
              docDTO.setFileName(StConverter.convertToSt(uploadFileName));
-             docDTO.setText(EdConverter.convertToEd(paServiceUtil.readInputStream(new FileInputStream(upload))));
+             docDTO.setText(EdConverter.convertToEd(IOUtils.toByteArray(new FileInputStream(upload))));
              PaRegistry.getDocumentService().update(docDTO);
              ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
              query();

@@ -42,7 +42,6 @@ import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -58,6 +57,7 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -450,7 +450,8 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
                       .append(docDTO.getIdentifier().getExtension()).append('-')
                       .append(StConverter.convertToString(docDTO.getFileName()));
                     File downloadFile = new File(sb.toString());
-                    docDTO.setText(EdConverter.convertToEd(PAUtil.readInputStream(new FileInputStream(downloadFile))));
+                    docDTO.setText(EdConverter.convertToEd(
+                            IOUtils.toByteArray(FileUtils.openInputStream(downloadFile))));
                 } catch (FileNotFoundException fe) {
                     throw new PAException("File Not found " + fe.getLocalizedMessage(), fe);
                 } catch (IOException io) {

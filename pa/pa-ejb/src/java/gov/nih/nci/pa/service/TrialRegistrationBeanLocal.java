@@ -790,7 +790,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
                 studyTypeCode = StudyTypeCode.OBSERVATIONAL;
             }
             getPAServiceUtils().createMilestone(studyProtocolIi, MilestoneCode.SUBMISSION_RECEIVED, null);
-            getPAServiceUtils().createOrUpdate(documentDTOs, IiConverter.convertToDocumentIi(null), studyProtocolIi);
+            List<DocumentDTO> savedDocs = getPAServiceUtils().createOrUpdate(documentDTOs,
+                    IiConverter.convertToDocumentIi(null), studyProtocolIi);
             getPAServiceUtils().manageSummaryFour(studyProtocolIi, summary4OrganizationDTO, summary4StudyResourcingDTO);
 
             if (leadOrganizationStudySiteDTO != null) {
@@ -817,6 +818,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
                     studyTypeCode);
             assignOwnership(studyProtocolDTO, studyProtocolIi);
             getPAServiceUtils().addNciIdentifierToTrial(studyProtocolIi);
+            getPAServiceUtils().moveDocumentContents(savedDocs, studyProtocolIi);
             sendMail(CREATE, isBatchMode, studyProtocolIi);
         } catch (Exception e) {
             throw new PAException(e);
@@ -921,7 +923,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
         getPAServiceUtils().createOrUpdate(studyIndldeDTOs, IiConverter.convertToStudyIndIdeIi(null), studyProtocolIi);
         getPAServiceUtils().createOrUpdate(studyResourcingDTOs, IiConverter.convertToStudyResourcingIi(null),
                 studyProtocolIi);
-        getPAServiceUtils().createOrUpdate(documentDTOs, IiConverter.convertToDocumentIi(null), studyProtocolIi);
+        List<DocumentDTO> savedDocs =
+            getPAServiceUtils().createOrUpdate(documentDTOs, IiConverter.convertToDocumentIi(null), studyProtocolIi);
         getPAServiceUtils().manageSummaryFour(studyProtocolIi, newSummary4OrganizationDTO, summary4studyResourcingDTO);
         if (leadOrganizationSiteIdentifierDTO != null) {
             leadOrganizationSiteIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
@@ -957,8 +960,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
         }
         assignOwnership(studyProtocolDTO, studyProtocolIi);
         getPAServiceUtils().addNciIdentifierToTrial(studyProtocolIi);
+        getPAServiceUtils().moveDocumentContents(savedDocs, studyProtocolIi);
         sendMail(CREATE, isBatchMode, studyProtocolIi);
-        
         return studyProtocolIi;
     }
     /**
@@ -1796,11 +1799,12 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
             getPAServiceUtils().createMilestone(studyProtocolIi, MilestoneCode.SUBMISSION_RECEIVED, null);
         }
         studyOverallStatusService.create(overallStatusDTO);
-        getPAServiceUtils().createOrUpdate(documentDTOs, IiConverter.convertToDocumentIi(null), studyProtocolDTO
-                .getIdentifier());
+        List<DocumentDTO> savedDocs = getPAServiceUtils().createOrUpdate(documentDTOs,
+                IiConverter.convertToDocumentIi(null), studyProtocolDTO.getIdentifier());
         if (UPDATE.equalsIgnoreCase(operation)) {
             createInboxProcessingComments(studyProtocolDTO);
         }
+        getPAServiceUtils().moveDocumentContents(savedDocs, studyProtocolDTO.getIdentifier());
         // do not send the mail when its batch mode
         sendMail(operation, isBatchMode, studyProtocolIi);
     }

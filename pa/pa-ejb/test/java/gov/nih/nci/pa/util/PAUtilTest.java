@@ -41,12 +41,6 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -417,25 +411,6 @@ public class PAUtilTest {
         assertEquals(PAUtil.containsIi(iiMap, iiKey).getExtension(),"1");
 
     }
-    /**
-     * Test method for {@link gov.nih.nci.pa.util.PAUtil#readInputStream(InputStream )}.
-     * @throws FileNotFoundException
-     */
-    @Test
-    public void testReadInputStream() throws Exception {
-        File file= new File("test.txt");
-        FileOutputStream fos = new FileOutputStream(file);
-        DataOutputStream dos=new DataOutputStream(fos);
-        dos.writeInt(2333);
-        fos.close();
-        file= new File("test.txt");
-        FileInputStream fis = new FileInputStream(file);
-        byte[] b = PAUtil.readInputStream(fis);
-        fis.close();
-        file.delete();
-        assertEquals(b.length,4);
-    }
-
 
     /**
      * Test method for {@link gov.nih.nci.pa.util.PAUtil#getFirstObj(java.util.List)}.

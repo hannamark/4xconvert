@@ -79,6 +79,8 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.Ii;
@@ -90,6 +92,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -100,42 +103,58 @@ import org.junit.Test;
 
 public class DocumentServiceBeanTest {
     private DocumentServiceLocal remoteEjb = new DocumentBeanLocal();
-    Ii pid;
+    private Ii pid;
 
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
         TestSchema.primeData();
-        pid = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
+        pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
+        CSMUserService.setRegistryUserService(new MockCSMUserService());
     }
 
     @Test
     public void create() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
         DocumentDTO docDTO = new DocumentDTO();
-        docDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(Long.parseLong(pid.getExtension())));
-        docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
-        docDTO.setFileName(StConverter.convertToSt("Protocol_Document.doc"));
-        docDTO.setText(EdConverter.convertToEd("test".getBytes()));
+        docDTO.setStudyProtocolIdentifier(pid);
+        docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
+        docDTO.setFileName(StConverter.convertToSt("Informed_Consent.doc"));
+        docDTO.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
+        remoteEjb.create(docDTO);
 
-        try {
-            remoteEjb.create(docDTO);
-            fail();
-        } catch(PAException e) {
-            // expected behavior
-        }
         docDTO = new DocumentDTO();
-        docDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(Long.parseLong(pid.getExtension())));
+        docDTO.setStudyProtocolIdentifier(pid);
+        docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.OTHER));
+        docDTO.setFileName(StConverter.convertToSt("Other.doc"));
+        docDTO.setText(EdConverter.convertToEd("Other".getBytes()));
+        remoteEjb.create(docDTO);
+
+        docDTO = new DocumentDTO();
+        docDTO.setStudyProtocolIdentifier(pid);
         docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
         docDTO.setFileName(StConverter.convertToSt("Protocol_Document.doc"));
-        docDTO.setText(EdConverter.convertToEd("test".getBytes()));
+        docDTO.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
 
         try {
             remoteEjb.create(docDTO);
             fail();
-        } catch(PAException e) {
-            // expected behavior
+        } catch (PAException e) {
+            //Expected exception
         }
+    }
+
+    @Test
+    public void testGet() throws Exception {
+        DocumentDTO docDTO = new DocumentDTO();
+        docDTO.setStudyProtocolIdentifier(pid);
+        docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.OTHER));
+        docDTO.setFileName(StConverter.convertToSt("Other.doc"));
+        docDTO.setText(EdConverter.convertToEd("Other".getBytes()));
+        docDTO = remoteEjb.create(docDTO);
+
+        docDTO = remoteEjb.get(docDTO.getIdentifier());
+        assertNotNull(docDTO);
+        assertFalse(PAUtil.isEdNull(docDTO.getText()));
     }
 
     @Test
@@ -147,42 +166,36 @@ public class DocumentServiceBeanTest {
         assertTrue(StringUtils.isNotEmpty(dto.getIdentifier().getIdentifierName()));
         assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
     }
+
     @Test
     public void testUpdate() throws Exception {
         DocumentDTO docDTO = new DocumentDTO();
         docDTO.setStudyProtocolIdentifier(pid);
         docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.OTHER));
-        docDTO.setFileName(StConverter.convertToSt("Protocol_Document.doc"));
-        docDTO.setText(EdConverter.convertToEd("test".getBytes()));
+        docDTO.setFileName(StConverter.convertToSt("Other Document.doc"));
+        docDTO.setText(EdConverter.convertToEd("Other Document".getBytes()));
 
-        try {
-            remoteEjb.update(docDTO);
-            fail();
-        } catch(PAException e) {
-            assertTrue(StringUtils.contains(e.getMessage(), "Identifier Name does not"));
-        }
-        docDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(Long.parseLong(pid.getExtension())));
-        docDTO.setIdentifier(IiConverter.convertToDocumentIi(1L));
-        try {
-            remoteEjb.update(docDTO);
-            fail();
-        } catch(Exception e) {
-            // expected behavior
-        }
+        docDTO = remoteEjb.create(docDTO);
+        remoteEjb.update(docDTO);
     }
+
     @Test
     public void testDelete() throws Exception {
         try {
             remoteEjb.delete(null);
-            fail("Ii shld not be null");
+            fail("Ii should not be null");
         } catch(PAException e) {
-            assertEquals("docDTO should not be null", e.getMessage());
+            assertEquals("Document Ii should not be null.", e.getMessage());
         }
-        try {
-            remoteEjb.delete(IiConverter.convertToDocumentIi(1L));
-            fail("Document with selected type cannot be deleted.");
-        } catch(Exception e) {
-         // expected behavior
-        }
+
+        DocumentDTO docDTO = new DocumentDTO();
+        docDTO.setStudyProtocolIdentifier(pid);
+        docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.OTHER));
+        docDTO.setFileName(StConverter.convertToSt("Other Document.doc"));
+        docDTO.setText(EdConverter.convertToEd("Other Document".getBytes()));
+
+        docDTO = remoteEjb.create(docDTO);
+        docDTO = remoteEjb.get(docDTO.getIdentifier());
+        remoteEjb.delete(docDTO.getIdentifier());
     }
 }
