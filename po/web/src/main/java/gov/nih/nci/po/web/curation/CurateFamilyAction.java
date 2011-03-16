@@ -1,14 +1,11 @@
 package gov.nih.nci.po.web.curation;
 
 import gov.nih.nci.po.data.bo.Family;
-import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.FamilyStatus;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.collections.set.ListOrderedSet;
@@ -26,8 +23,6 @@ public class CurateFamilyAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1285712121733778829L;
 
     private Family family = new Family();
-    private List<FamilyOrganizationRelationship> familyOrganizationRelationships =
-        new ArrayList<FamilyOrganizationRelationship>();
     private String rootKey;
 
     /**
@@ -46,8 +41,7 @@ public class CurateFamilyAction extends ActionSupport implements Preparable {
     public String start() {
         setFamily(PoRegistry.getFamilyService().getById(getFamily().getId()));
         setRootKey(PoHttpSessionUtil.addAttribute(getFamily()));
-        initializeCollections();
-        return SUCCESS;
+        return INPUT;
     }
 
     /**
@@ -74,11 +68,6 @@ public class CurateFamilyAction extends ActionSupport implements Preparable {
         }
     }
 
-    private void initializeCollections() {
-       familyOrganizationRelationships =
-           PoRegistry.getFamilyOrganizationRelationshipService().getActiveRelationships(getFamily().getId());
-    }
-
     /**
      * @return the family
      */
@@ -103,21 +92,6 @@ public class CurateFamilyAction extends ActionSupport implements Preparable {
         set.add(FamilyStatus.INACTIVE);
         set.add(FamilyStatus.NULLIFIED);
         return set;
-    }
-
-    /**
-     * @return the familyOrganizationRelationships
-     */
-    public List<FamilyOrganizationRelationship> getFamilyOrganizationRelationships() {
-        return familyOrganizationRelationships;
-    }
-
-    /**
-     * @param familyOrganizationRelationships the familyOrganizationRelationships to set
-     */
-    public void setFamilyOrganizationRelationships(
-            List<FamilyOrganizationRelationship> familyOrganizationRelationships) {
-        this.familyOrganizationRelationships = familyOrganizationRelationships;
     }
 
     /**

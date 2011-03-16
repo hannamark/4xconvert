@@ -111,7 +111,7 @@ public class CreateFamilyActionTest extends AbstractPoTest {
 
     @Test
     public void testStart() throws EntityValidationException {
-        assertEquals(Action.SUCCESS, action.start());
+        assertEquals(Action.INPUT, action.start());
     }
 
     @Test

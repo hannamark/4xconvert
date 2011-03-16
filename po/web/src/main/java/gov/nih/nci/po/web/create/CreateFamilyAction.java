@@ -26,7 +26,7 @@ public class CreateFamilyAction extends CurateFamilyAction {
     public String start() {
         getFamily().setStatusCode(FamilyStatus.ACTIVE);
         getFamily().setStartDate(new Date());
-        return SUCCESS;
+        return INPUT;
     }
 
     /**

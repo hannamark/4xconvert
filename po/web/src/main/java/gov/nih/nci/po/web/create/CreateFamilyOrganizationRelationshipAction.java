@@ -144,7 +144,8 @@ public class CreateFamilyOrganizationRelationshipAction extends CurateFamilyOrga
      */
     @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "familyOrgRelationship") })
     public String create() throws EntityValidationException {
-        PoRegistry.getFamilyOrganizationRelationshipService().create(getFamilyOrgRelationship());
+        getFamilyOrgRelationship().setId(
+                PoRegistry.getFamilyOrganizationRelationshipService().create(getFamilyOrgRelationship()));
         ActionHelper.saveMessage(getText("familyOrgRelationship.create.success"));
         return SUCCESS;
     }

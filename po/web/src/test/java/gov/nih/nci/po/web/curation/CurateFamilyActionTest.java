@@ -141,7 +141,7 @@ public class CurateFamilyActionTest extends AbstractPoTest {
     public void testStart() {
         action.setFamily(new Family());
         action.getFamily().setId(1L);
-        assertEquals(Action.SUCCESS, action.start());
+        assertEquals(Action.INPUT, action.start());
     }
 
     @Test

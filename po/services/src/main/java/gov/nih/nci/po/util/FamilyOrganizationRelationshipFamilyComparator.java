@@ -86,8 +86,10 @@ import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 
 import java.util.Comparator;
 
+import org.apache.commons.lang.builder.CompareToBuilder;
+
 /**
- * Compares Family Organization Relationships based on family names.
+ * Compares Family Organization Relationships based on family names (and id if names are equal).
  * @author moweis
  *
  */
@@ -96,6 +98,7 @@ public class FamilyOrganizationRelationshipFamilyComparator implements Comparato
      * {@inheritDoc}
      */
     public int compare(FamilyOrganizationRelationship o1, FamilyOrganizationRelationship o2) {
-        return o1.getFamily().getName().compareTo(o2.getFamily().getName());
+        return new CompareToBuilder().append(o1.getFamily().getName(), o2.getFamily().getName()).append(
+                o1.getFamily().getId(), o2.getFamily().getId()).toComparison();
     }
 }

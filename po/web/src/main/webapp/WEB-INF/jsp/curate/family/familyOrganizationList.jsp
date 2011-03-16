@@ -15,7 +15,7 @@
     <div class="box"><c:url value="/protected/ajax/search/family/results/list.action" var="sortUrl" /> 
     <ajax:displayTag id="familySearchResults" tableClass="data">
         <display:table class="data" sort="list" pagesize="${initParam['defaultPageSize']}" uid="row"
-            name="familyOrganizationRelationships" requestURI="${sortUrl}">
+            name="family.familyOrganizationRelationships" requestURI="${sortUrl}">
             <po:displayTagProperties />
             <display:setProperty name="pagination.sort.param" value="results.sortCriterion" />
             <display:setProperty name="pagination.sortdirection.param" value="results.sortDirection" />
