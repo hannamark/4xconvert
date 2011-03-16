@@ -103,39 +103,46 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
 
         String famId = selenium.getValue("id=familyEntityForm_family_id");
 
+        // Add organizations to this family
         addFamilyMember(famId, "ClinicalTrials.gov");
         addFamilyMember(famId, "Cancer Therapy Evaluation Program");
         addFamilyMember(famId, "Division of Cancer Control and Population Sciences");
         addFamilyMember(famId, "National Cancer Institute");
 
-        navigateToFamilyOrgRelationship(1, "ClinicalTrials.gov");
+        // Verify that you can browse through all the orgs for the family
+        navigateToFamilyOrgRelationship(1, "Cancer Therapy Evaluation Program");
         clickAndWait("return_to_button");
-        navigateToFamilyOrgRelationship(2, "Cancer Therapy Evaluation Program");
+        navigateToFamilyOrgRelationship(2, "ClinicalTrials.gov");
         clickAndWait("return_to_button");
         navigateToFamilyOrgRelationship(3, "Division of Cancer Control and Population Sciences");
         clickAndWait("return_to_button");
         navigateToFamilyOrgRelationship(4, "National Cancer Institute");
         clickAndWait("return_to_button");
 
-        navigateToFamilyOrgRelationship(1, "ClinicalTrials.gov");
+        // Set ClinicalTrials.gov as a parent of Cancer Therapy Evaluation Program, and verify that CTEP is now a child
+        // of ct.gov
+        navigateToFamilyOrgRelationship(2, "ClinicalTrials.gov");
         addRelationship(1, "PARENT");
         clickAndWait("return_to_button");
-        clickAndWait("xpath=//table[@id='row']//tr[2]//td[5]//ul//li[1]/a");
+        clickAndWait("xpath=//table[@id='row']//tr[1]//td[5]//ul//li[1]/a");
         validateRelatedOrg(1, "CHILD");
 
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[5]//ul//li[1]/a");
+        // Change ct.gov to be a division of CTEP and verify that CTEP is a subdivision of ct.gov
+        clickAndWait("xpath=//table[@id='row']//tr[2]//td[5]//ul//li[1]/a");
         updateRelationship(1, "DIVISION");
         clickAndWait("return_to_button");
-        clickAndWait("xpath=//table[@id='row']//tr[2]//td[5]//ul//li[1]/a");
+        clickAndWait("xpath=//table[@id='row']//tr[1]//td[5]//ul//li[1]/a");
         validateRelatedOrg(1, "SUBDIVISION");
 
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[5]//ul//li[1]/a");
+        // Remove the relationship from ct.gov
+        clickAndWait("xpath=//table[@id='row']//tr[2]//td[5]//ul//li[1]/a");
         removeRelationship(1, false);
         removeRelationship(1, true);
 
-        navigateToFamilyOrgRelationship(1, "ClinicalTrials.gov");
+        // browse through all the organizations again
+        navigateToFamilyOrgRelationship(1, "Cancer Therapy Evaluation Program");
         clickAndWait("return_to_button");
-        navigateToFamilyOrgRelationship(2, "Cancer Therapy Evaluation Program");
+        navigateToFamilyOrgRelationship(2, "ClinicalTrials.gov");
         clickAndWait("return_to_button");
         navigateToFamilyOrgRelationship(3, "Division of Cancer Control and Population Sciences");
         clickAndWait("return_to_button");
