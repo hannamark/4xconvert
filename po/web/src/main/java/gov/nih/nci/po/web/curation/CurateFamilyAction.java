@@ -43,7 +43,7 @@ public class CurateFamilyAction extends ActionSupport implements Preparable {
         setRootKey(PoHttpSessionUtil.addAttribute(getFamily()));
         return INPUT;
     }
-
+    
     /**
      * @return submit form
      */

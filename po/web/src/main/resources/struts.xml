@@ -315,6 +315,10 @@
             <result name="success" type="redirectAction">family/curate/start?family.id=${family.id}</result>
             <result name="input">/WEB-INF/jsp/curate/family/family.jsp</result>
         </action>
+        <action name="ajax/search/family/organization/results/list" class="gov.nih.nci.po.web.curation.CurateFamilyAction" method="start">
+            <interceptor-ref name="poPerMethodValidationStack" />
+            <result name="input">/WEB-INF/jsp/curate/family/familyOrganizationList.jsp</result>
+        </action>
         
         <!-- Family Organization Relationship (Family Perspective) -> Create/Edit -->
         <action name="family/organization/relationship/curate/*" class="gov.nih.nci.po.web.curation.CurateFamilyOrganizationRelationshipAction" method="{1}">

@@ -12,7 +12,7 @@
             </li>
         </ul>
     </div>
-    <div class="box"><c:url value="/protected/ajax/search/family/results/list.action" var="sortUrl" /> 
+    <div class="box"><c:url value="/protected/ajax/search/family/organization/results/list.action" var="sortUrl" /> 
     <ajax:displayTag id="familySearchResults" tableClass="data">
         <display:table class="data" sort="list" pagesize="${initParam['defaultPageSize']}" uid="row"
             name="family.familyOrganizationRelationships" requestURI="${sortUrl}">
