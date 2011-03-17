@@ -134,7 +134,7 @@ public class ManageFileAction extends ActionSupport {
     private static final String PROTOCOLHIGHDOC = DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getShortName();
     private static final String OTHERDOC = DocumentTypeCode.OTHER.getShortName();
     private String typeCode;
-    
+
     /**
      * @return the typeCode
      */
@@ -184,7 +184,7 @@ public class ManageFileAction extends ActionSupport {
         HttpSession session = ServletActionContext.getRequest().getSession();
         Map<String, String> documentValidationErrors = new HashMap<String, String>();
 
-        validateProtocolDoc(validator, session, documentValidationErrors);
+        validateProtocolDoc(session, documentValidationErrors);
         validateIrbApprovalDoc(validator, session, documentValidationErrors);
         validateParticipatingSiteDoc(validator, session, documentValidationErrors);
         validateInformedConsentDoc(validator, session, documentValidationErrors);
@@ -194,12 +194,18 @@ public class ManageFileAction extends ActionSupport {
         addErrors(documentValidationErrors);
     }
 
-    private void validateProtocolDoc(TrialValidator validator, HttpSession session, Map<String, String> err)
+    /**
+     * Validates the protocol document format, and store in session.
+     * @param session http session
+     * @param err map to add errors to
+     * @throws IOException if the file can't be accessed.
+     */
+    protected void validateProtocolDoc(HttpSession session, Map<String, String> err)
         throws IOException {
         Map<String, String> errors = new HashMap<String, String>();
         List<String> fromPages = Arrays.asList("amendTrial", "submitTrial");
         if (session.getAttribute(PROTOCOLDOC) == null && fromPages.contains(pageFrom)) {
-            errors = validator.validateDocument(protocolDocFileName, protocolDoc,
+            errors = TrialValidator.validateDocument(protocolDocFileName, protocolDoc,
                     "trialDTO.protocolDocFileName", "error.submit.protocolDocument");
             err.putAll(errors);
         }
@@ -208,7 +214,7 @@ public class ManageFileAction extends ActionSupport {
                 && session.getAttribute(PROTOCOLDOC) == null) {
             TrialDocumentWebDTO document = trialUtils.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode(),
                     protocolDocFileName, protocolDoc);
-            session.setAttribute(PROTOCOLHIGHDOC, document);
+            session.setAttribute(PROTOCOLDOC, document);
         }
     }
 

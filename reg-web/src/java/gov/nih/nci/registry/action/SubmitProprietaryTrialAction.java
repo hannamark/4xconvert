@@ -31,6 +31,7 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -166,11 +167,10 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
         }
         TrialValidator validator = new TrialValidator();
         Map<String, String> errMap = new HashMap<String, String>();
-        if (StringUtils.isNotEmpty(getProtocolDocFileName())
-                && session.getAttribute(DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName()) == null) {
-            errMap = validator.validateDocument(getProtocolDocFileName(), getProtocolDoc(),
-                                                "trialDTO.protocolDocFileName", "");
-            addErrors(errMap);
+        try {
+            validateProtocolDoc(session, errMap);
+        } catch (IOException e) {
+            addActionError("There was an unexpected problem uploading your documents.");
         }
         if (StringUtils.isNotEmpty(getOtherDocumentFileName())
                 && session.getAttribute(DocumentTypeCode.OTHER.getShortName()) == null) {

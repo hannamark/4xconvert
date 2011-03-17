@@ -140,9 +140,9 @@ public class TrialValidator {
      * @param errorMsg errmsg
      * @return map
      */
-    public Map<String, String> validateDocument(String fileName, File file,
-            String errorField, String errorMsg) {
-            Map<String, String> addFieldError = new HashMap<String, String>();
+    public static Map<String, String> validateDocument(String fileName,
+            File file, String errorField, String errorMsg) {
+        Map<String, String> addFieldError = new HashMap<String, String>();
         if (StringUtils.isNotEmpty(errorMsg) && StringUtils.isEmpty(fileName)) {
             addFieldError.put(errorField, getText(errorMsg));
         }
@@ -156,8 +156,8 @@ public class TrialValidator {
         }
         return addFieldError;
     }
-    private String getText(String errorMsg) {
-        // TODO Auto-generated method stub
+
+    private static String getText(String errorMsg) {
         return ResourceBundle.getBundle("ApplicationResources").getString(errorMsg);
     }
     /**
