@@ -1,6 +1,7 @@
 package gov.nih.nci.accrual.util;
 
 import gov.nih.nci.pa.util.PoJNDIUtil;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -29,10 +30,8 @@ public class PoJndiServiceLocator implements PoServiceLocator {
      * @return PatientCorrelationServiceRemote
      * @throws RemoteException on error
      */
-    public PatientCorrelationServiceRemote getPatientCorrelationService()
-            throws RemoteException {
-        String serverInfo = JNP + PoPropertyReader.getLookUpServerInfo()
-        + "/po/PatientCorrelationServiceBean/remote";
+    public PatientCorrelationServiceRemote getPatientCorrelationService() throws RemoteException {
+        String serverInfo = JNP + PoPropertyReader.getLookUpServerInfo() + "/po/PatientCorrelationServiceBean/remote";
         return (PatientCorrelationServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
     }
     
@@ -44,4 +43,17 @@ public class PoJndiServiceLocator implements PoServiceLocator {
         String serverInfo = JNP + PoPropertyReader.getLookUpServerInfo() + "/po/OrganizationEntityServiceBean/remote";
         return (OrganizationEntityServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationCorrelationService() 
+    throws RemoteException {
+        String serverInfo = JNP + PoPropertyReader.getLookUpServerInfo() 
+            + "/po/IdentifiedOrganizationCorrelationServiceBean/remote";
+        return (IdentifiedOrganizationCorrelationServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
+    }
+    
+    
+    
 }

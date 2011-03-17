@@ -169,11 +169,11 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
     @Test
     public void testGetStudySiteByOrg() throws Exception {
         Ii spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId());
-        assertNotNull(bean.getStudySiteByOrg(spIi, IiConverter.convertToIi(TestSchema.organizations.get(0).getIdentifier())));
-        assertNotNull(bean.getStudySiteByOrg(spIi, IiConverter.convertToIi(TestSchema.organizations.get(0).getIdentifier())));
+        assertNotNull(bean.getStudySiteByOrg(spIi, IiConverter.convertToIi(TestSchema.organizations.get(0).getId())));
+        assertNotNull(bean.getStudySiteByOrg(spIi, IiConverter.convertToIi(TestSchema.organizations.get(0).getId())));
         
         Ii otherSpIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(2).getId());
-        assertNull(bean.getStudySiteByOrg(otherSpIi, IiConverter.convertToIi(TestSchema.organizations.get(1).getIdentifier())));
-        assertNull(bean.getStudySiteByOrg(otherSpIi, IiConverter.convertToIi(TestSchema.organizations.get(1).getIdentifier())));
+        assertNull(bean.getStudySiteByOrg(otherSpIi, IiConverter.convertToIi(TestSchema.organizations.get(1).getId())));
+        assertNull(bean.getStudySiteByOrg(otherSpIi, IiConverter.convertToIi(TestSchema.organizations.get(1).getId())));
     }
 }

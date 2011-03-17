@@ -86,7 +86,19 @@ import gov.nih.nci.accrual.service.PatientServiceLocal;
 import gov.nih.nci.accrual.service.PerformedActivityServiceLocal;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.service.SubmissionServiceLocal;
+import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.accrual.util.PoRegistry;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
+import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.organization.OrganizationDTO;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -96,8 +108,10 @@ import java.util.Map;
 
 import javax.ejb.EJB;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.DateValidator;
+import org.apache.log4j.Logger;
 
 /**
  * Base Batch reader.
@@ -105,6 +119,7 @@ import org.apache.commons.validator.routines.DateValidator;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public class BaseBatchUploadReader {
+    private static final Logger LOG = Logger.getLogger(BaseBatchUploadReader.class);
     private static final int COLLECTION_ELEMENT_SIZE = 10;
     private static final int PATIENTS_ELEMENT_SIZE = 23;
     private static final int PATIENT_RACES_ELEMENT_SIZE = 3;
@@ -123,7 +138,7 @@ public class BaseBatchUploadReader {
     private static final int PATIENT_GENDER_CODE_INDEX = 5;
     private static final int PATIENT_ETHNICITY_INDEX = 6;
     private static final int PATIENT_DATE_OF_ENTRY_INDEX = 8;
-    private static final int PATIENT_REG_INST_ID_INDEX = 10;
+    private static final int PATIENT_REG_INST_ID_INDEX = 9;
     
     private static final List<String> PATIENT_GENDER = new ArrayList<String>();
     static {
@@ -144,6 +159,7 @@ public class BaseBatchUploadReader {
     static {
         KEY_WITH_PATIENTS_IDS.addAll(Arrays.asList("PATIENTS", "PATIENT_RACES"));
     }
+    private static final int PATIENT_DISEASE_INDEX = 20;
     
     private List<String> patientsIdList = new ArrayList<String>();
     @EJB 
@@ -205,6 +221,7 @@ public class BaseBatchUploadReader {
             validateEthnicity(values, errMsg, lineNumber);
             validateDateOfEntry(values, errMsg, lineNumber);
             validateRegInstCode(values, errMsg, lineNumber);
+            validateDiseaseCode(values, errMsg, lineNumber);
         }
     }
     /**
@@ -265,7 +282,7 @@ public class BaseBatchUploadReader {
      * @param errMsg if any
      * @param lineNumber line Number 
      */
-    protected void validateGender(List<String> values, StringBuffer errMsg, long lineNumber) {
+    private void validateGender(List<String> values, StringBuffer errMsg, long lineNumber) {
         String genderCode = StringUtils.trim(values.get(PATIENT_GENDER_CODE_INDEX));
         if (StringUtils.isEmpty(genderCode)) {
             errMsg.append("Patient gender is missing for patient ID ").append(getPatientId(values))
@@ -281,12 +298,32 @@ public class BaseBatchUploadReader {
      * @param errMsg if any
      * @param lineNumber line Number
      */
-    protected void validateRegInstCode(List<String> values, StringBuffer errMsg, long lineNumber) {
+    private void validateRegInstCode(List<String> values, StringBuffer errMsg, long lineNumber) {
        String regInstID = StringUtils.trim(values.get(PATIENT_REG_INST_ID_INDEX));
        if (StringUtils.isEmpty(regInstID)) {
            errMsg.append("Patient Reg Inst Code is missing for patient ID ").append(getPatientId(values))
            .append(appendLineNumber(lineNumber)).append('\n');
-       } 
+       } else if (StringUtils.isNotEmpty(regInstID) && getOrganizationIi(regInstID, errMsg) == null) {
+           errMsg.append("Patient Reg Inst Code is invalid for patient ID ").append(getPatientId(values))
+           .append(appendLineNumber(lineNumber)).append('\n');
+       }
+    }
+    
+    /**
+     * Validates that the patient disease is provided and valid.
+     * @param values 
+     * @param errMsg
+     * @param lineNumber
+     */
+    private void validateDiseaseCode(List<String> values, StringBuffer errMsg, long lineNumber) {
+        String meddraCode = StringUtils.trim(values.get(PATIENT_DISEASE_INDEX));
+        if (StringUtils.isEmpty(meddraCode)) {
+            errMsg.append("Patient Disease Meddra Code is missing for patient ID ").append(getPatientId(values))
+            .append(appendLineNumber(lineNumber)).append('\n');
+        } else if (StringUtils.isNotEmpty(meddraCode) && getDisease(meddraCode, errMsg) == null) {
+            errMsg.append("Patient Disease Meddra Code is invalid for patient ID ").append(getPatientId(values))
+            .append(appendLineNumber(lineNumber)).append('\n');
+        }
     }
 
     /**
@@ -310,6 +347,93 @@ public class BaseBatchUploadReader {
         } else {
             patientsIdList.add(patId);
         }
+    }
+    
+    /**
+     * Gets the study protocol with the given id, be it NCI, CTEP or DCP identifier.
+     * @param protocolId the protocol id
+     * @return the study protocol with the given id or null if no such study exists
+     */
+    protected StudyProtocolDTO getStudyProtocol(String protocolId) {
+        StudyProtocolServiceRemote spSvc = PaServiceLocator.getInstance().getStudyProtocolService();
+        StudyProtocolDTO foundStudy = null;
+        Ii protocolIi = IiConverter.convertToAssignedIdentifierIi(protocolId);
+        if (StringUtils.startsWith(protocolId, "NCI")) {
+            foundStudy = spSvc.loadStudyProtocol(protocolIi);
+        } else {
+            //No good way to distinguish if the id is CTEP or DCP so we'll just have to perform a lookup and see
+            //if we get a match.
+            protocolIi.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
+            foundStudy = spSvc.loadStudyProtocol(protocolIi);
+            protocolIi.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
+            foundStudy = foundStudy != null ? foundStudy : spSvc.loadStudyProtocol(protocolIi);
+        }
+        return foundStudy;
+    }
+    
+    /**
+     * Loads the disease with the given meddra code, returning null if no such disease can be found.
+     * @param meddraCode the meddra code of the disease to retrieve
+     * @param errMsg the error messages
+     * @return the disease with the give meddra code or null if no such disease can be found
+     */
+    protected SDCDiseaseDTO getDisease(String meddraCode, StringBuffer errMsg) {
+        SDCDiseaseDTO disease = null;
+        try {
+            disease = PaServiceLocator.getInstance().getDiseaseService().getByCode(meddraCode);
+        } catch (PAException e) {
+            LOG.error("Error retrieving disease." , e);
+            errMsg.append("Unable to load the meddra diease with code ")
+                .append(meddraCode).append(" from the database.");
+        }
+        return disease;
+    }
+    
+    /**
+     * Retrieves the PO identifier of the organization related with the given identifier.
+     * @param orgIdentifier the CTEP/DCP identifier or the po id of the org
+     * @param errMsg the error messages
+     * @return the po identifier of the org
+     */
+    private Ii getOrganizationIi(String orgIdentifier, StringBuffer errMsg) {
+        Ii resultingIi = null;
+        try {
+            resultingIi = getOrganizationIi(orgIdentifier);
+        } catch (Exception e) {
+            LOG.error("Error retrieving study site organization." , e);
+            errMsg.append("Unable to load an organization with the id ").append(orgIdentifier)
+            .append(" from the database.\n");
+        }
+        return resultingIi;
+    }
+
+    /**
+     * Retrieves the PO identifier of the organization related with the given identifier.
+     * @param orgIdentifier the CTEP/DCP identifier or the po id of the org
+     * @return the po identifier of the org
+     * @throws RemoteException on error
+     */
+    protected Ii getOrganizationIi(String orgIdentifier) throws RemoteException {
+        Ii resultingIi = null;
+        //Look up via other identifiers first in case a CTEP/DCP id is being passed
+        IdentifiedOrganizationDTO identifiedOrg = new IdentifiedOrganizationDTO();
+        identifiedOrg.setAssignedId(IiConverter.convertToIdentifiedOrgEntityIi(orgIdentifier));
+        List<IdentifiedOrganizationDTO> results = 
+            PoRegistry.getIdentifiedOrganizationCorrelationService().search(identifiedOrg);
+        //If any results are found, select the first one and get the org id from there.
+        //Otherwise assume that the identifier given is the po id and just return that.
+        if (CollectionUtils.isNotEmpty(results)) {
+            resultingIi = results.get(0).getPlayerIdentifier();
+        } else {
+            try {
+                OrganizationDTO org = PoRegistry.getOrganizationEntityService().getOrganization(
+                        IiConverter.convertToPoOrganizationIi(orgIdentifier));
+                resultingIi = org != null ? org.getIdentifier() : null;
+            } catch (NullifiedEntityException e) {
+                LOG.error("The organization that is attempting to be loaded is nullified.");
+            }
+        }
+        return resultingIi;
     }
     
     /**

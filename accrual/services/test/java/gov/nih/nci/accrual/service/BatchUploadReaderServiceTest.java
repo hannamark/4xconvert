@@ -116,13 +116,19 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PatientDTO;
+import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -177,10 +183,21 @@ public class BatchUploadReaderServiceTest {
             }
         });
         
-        SDCDiseaseDTO disease = new SDCDiseaseDTO();
+        final SDCDiseaseDTO disease = new SDCDiseaseDTO();
         disease.setIdentifier(IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
         SDCDiseaseServiceRemote diseaseSvc = mock(SDCDiseaseServiceRemote.class);
-        when(diseaseSvc.getByCode(any(String.class))).thenReturn(disease);
+        when(diseaseSvc.getByCode(any(String.class))).thenAnswer(new Answer<SDCDiseaseDTO>() {
+            public SDCDiseaseDTO answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                String medraCode = (String) args[0];
+                List<String> validCodes = Arrays.asList("10053571", "10010029");
+                if (validCodes.contains(medraCode)) {
+                    return disease;
+                } else {
+                    return null;
+                }
+            }
+        });
         
         paSvcLocator = mock(ServiceLocatorPaInterface.class);
         when(paSvcLocator.getStudyProtocolService()).thenReturn(spSvc);
@@ -191,6 +208,39 @@ public class BatchUploadReaderServiceTest {
         
         PoServiceLocator poServiceLoc = mock(PoServiceLocator.class);
         PoRegistry.getInstance().setPoServiceLocator(poServiceLoc);
+        
+        IdentifiedOrganizationCorrelationServiceRemote identifiedOrgCorrelationSvc 
+            = mock(IdentifiedOrganizationCorrelationServiceRemote.class);
+        when(identifiedOrgCorrelationSvc.search(any(IdentifiedOrganizationDTO.class))).thenAnswer(new Answer<List<IdentifiedOrganizationDTO>>() {
+            public List<IdentifiedOrganizationDTO> answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                IdentifiedOrganizationDTO org = (IdentifiedOrganizationDTO) args[0];
+                if (StringUtils.equals(IiConverter.convertToString(org.getAssignedId()), "CTEP")) {
+                    IdentifiedOrganizationDTO result = new IdentifiedOrganizationDTO();
+                    result.setPlayerIdentifier(IiConverter.convertToIi(TestSchema.organizations.get(0).getId()));
+                    return Arrays.asList(result); 
+                } else {
+                    return new ArrayList<IdentifiedOrganizationDTO>();
+                }
+            }
+        });
+        
+        OrganizationEntityServiceRemote orgSvc = mock(OrganizationEntityServiceRemote.class);
+        when(orgSvc.getOrganization(any(Ii.class))).thenAnswer(new Answer<OrganizationDTO>() {
+            public OrganizationDTO answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                Ii ii = (Ii) args[0];
+                OrganizationDTO org = new OrganizationDTO();
+                if (StringUtils.equalsIgnoreCase(IiConverter.convertToString(ii), "1")) {
+                    org.setIdentifier(IiConverter.convertToIi(TestSchema.organizations.get(0).getId()));
+                } else if (StringUtils.equalsIgnoreCase(IiConverter.convertToString(ii), "2")) {
+                    org.setIdentifier(IiConverter.convertToIi(TestSchema.organizations.get(1).getId()));
+                } else {
+                    org = null;
+                }
+                return org;
+            }
+        });
         
         PatientCorrelationServiceRemote poPatientSvc = mock(PatientCorrelationServiceRemote.class);
         
@@ -212,6 +262,8 @@ public class BatchUploadReaderServiceTest {
         
         when(poServiceLoc.getPatientCorrelationService()).thenReturn(poPatientSvc);
         when(poServiceLoc.getPersonEntityService()).thenReturn(poPersonSvc);
+        when(poServiceLoc.getIdentifiedOrganizationCorrelationService()).thenReturn(identifiedOrgCorrelationSvc);
+        when(poServiceLoc.getOrganizationEntityService()).thenReturn(orgSvc);
     }
     
     @Test
@@ -268,7 +320,6 @@ public class BatchUploadReaderServiceTest {
     @Test
     public void testIsVaildProtocolId() throws PAException, TooManyResultsException, URISyntaxException {
         StudyProtocolServiceRemote mockSpService = mock(StudyProtocolServiceRemote.class);
-        ServiceLocatorPaInterface paSvcLocator = mock(ServiceLocatorPaInterface.class);
         when(paSvcLocator.getStudyProtocolService()).thenReturn(mockSpService);
         when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
         PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);

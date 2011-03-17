@@ -1,5 +1,6 @@
 package gov.nih.nci.accrual.util;
 
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -30,13 +31,13 @@ public final class PoRegistry {
      * Constructor for the singleton instance.
      */
     private PoRegistry() {
-        this.poServiceLocator = new PoJndiServiceLocator();
+        poServiceLocator = new PoJndiServiceLocator();
     }
     /**
      * @return the serviceLocator
      */
     public PoServiceLocator getPoServiceLocator() {
-        return this.poServiceLocator;
+        return poServiceLocator;
     }
     
     /**
@@ -72,5 +73,14 @@ public final class PoRegistry {
      */
     public static OrganizationEntityServiceRemote getOrganizationEntityService() throws RemoteException {
         return getInstance().getPoServiceLocator().getOrganizationEntityService();
+    }
+    
+    /**
+     * @return the identifier organization correlation service
+     * @throws RemoteException on error
+     */
+    public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationCorrelationService() 
+        throws RemoteException {
+        return getInstance().getPoServiceLocator().getIdentifiedOrganizationCorrelationService();
     }
 }
