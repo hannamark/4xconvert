@@ -85,6 +85,7 @@ package gov.nih.nci.po.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Family;
@@ -101,6 +102,7 @@ import java.util.Date;
 
 import javax.jms.JMSException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -111,6 +113,7 @@ import org.junit.Test;
  */
 public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
     private FamilyServiceBean familyServiceBean;
+    private OrganizationRelationshipServiceLocal orgRelServiceLocal;
     OrganizationServiceBean orgLocal;
     public FamilyServiceBean getFamilyServiceBean() {
         return familyServiceBean;
@@ -118,12 +121,14 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
     @Before
     public void setUpData() {
         familyServiceBean = EjbTestHelper.getFamilyServiceBean();
+        orgRelServiceLocal = EjbTestHelper.getOrganizationRelationshipService();
         orgLocal = EjbTestHelper.getOrganizationServiceBean();
     }
 
     @After
     public void teardown() {
         familyServiceBean = null;
+        orgRelServiceLocal = null;
     }
     @Test
     public void testFamily() throws EntityValidationException {
@@ -172,10 +177,7 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
         assertEquals(FamilyStatus.INACTIVE, updatedEntity.getStatusCode());
         for (FamilyOrganizationRelationship updateFamOrgEntity : updatedEntity.getFamilyOrganizationRelationships()) {
             assertNotNull(updateFamOrgEntity.getEndDate());
-            for (OrganizationRelationship updateOrgRelEntity : updateFamOrgEntity.getOrganization()
-                    .getOrganizationRelationships()) {
-                assertNotNull(updateOrgRelEntity.getEndDate());
-            }
+            assertTrue(CollectionUtils.isEmpty(orgRelServiceLocal.getActiveOrganizationRelationships(id, updateFamOrgEntity.getOrganization().getId())));
         }
 
     }
@@ -185,6 +187,7 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
         Family toUpdate = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
         for (FamilyOrganizationRelationship updateFamOrgEntity : toUpdate.getFamilyOrganizationRelationships()) {
             assertNull(updateFamOrgEntity.getEndDate());
+            assertTrue(CollectionUtils.isNotEmpty(orgRelServiceLocal.getActiveOrganizationRelationships(id, updateFamOrgEntity.getOrganization().getId())));
         }
         for (OrganizationRelationship updateOrgRelEntity : toUpdate.getOrganizationRelationships()) {
             assertNull(updateOrgRelEntity.getEndDate());
@@ -195,10 +198,7 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
         assertEquals(FamilyStatus.NULLIFIED, updatedEntity.getStatusCode());
         for (FamilyOrganizationRelationship updateFamOrgEntity : updatedEntity.getFamilyOrganizationRelationships()) {
             assertNotNull(updateFamOrgEntity.getEndDate());
-            for (OrganizationRelationship updateOrgRelEntity : updateFamOrgEntity.getOrganization()
-                    .getOrganizationRelationships()) {
-                assertNotNull(updateOrgRelEntity.getEndDate());
-            }
+            assertTrue(CollectionUtils.isEmpty(orgRelServiceLocal.getActiveOrganizationRelationships(id, updateFamOrgEntity.getOrganization().getId())));
         }
 
     }

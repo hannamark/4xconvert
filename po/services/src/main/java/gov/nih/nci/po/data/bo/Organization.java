@@ -93,7 +93,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.persistence.Column;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
@@ -148,7 +147,6 @@ public class Organization extends AbstractOrganization
     private Set<HealthCareProvider> healthCareProviders = new HashSet<HealthCareProvider>();
     private SortedSet<FamilyOrganizationRelationship> familyOrganizationRelationships =
         new TreeSet<FamilyOrganizationRelationship>(new FamilyOrganizationRelationshipFamilyComparator());
-    private Set<OrganizationRelationship> organizationRelationships = new HashSet<OrganizationRelationship>();
 
     private String comments;
 
@@ -479,23 +477,6 @@ public class Organization extends AbstractOrganization
     private void setFamilyOrganizationRelationships(
             SortedSet<FamilyOrganizationRelationship> familyOrganizationRelationships) {
         this.familyOrganizationRelationships = familyOrganizationRelationships;
-    }
-
-    /**
-     * @return the organizationRelationships
-     */
-    @OneToMany(mappedBy = "organization", fetch = FetchType.EAGER)
-    @Where(clause = "endDate is null")
-    public Set<OrganizationRelationship> getOrganizationRelationships() {
-        return organizationRelationships;
-    }
-
-    /**
-     * @param organizationRelationships the organizationRelationships to set
-     */
-    @SuppressWarnings("unused")
-    private void setOrganizationRelationships(Set<OrganizationRelationship> organizationRelationships) {
-        this.organizationRelationships = organizationRelationships;
     }
 
     /**

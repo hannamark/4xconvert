@@ -83,11 +83,9 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
-import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -136,13 +134,14 @@ public class FamilyOrganizationRelationshipServiceBean extends AbstractBaseServi
      */
     public void updateEntity(FamilyOrganizationRelationship updateEntity) throws EntityValidationException {
         if (updateEntity.getEndDate() != null) {
-            // cascade the end date to all children
-            Set<OrganizationRelationship> orgRelationSet = updateEntity.getOrganization()
-                .getOrganizationRelationships();
-            for (OrganizationRelationship updateOrgRelationEntity : orgRelationSet) {
-                updateOrgRelationEntity.setEndDate(updateEntity.getEndDate());
-                getOrgRelService().updateEntity(updateOrgRelationEntity);
-            }
+            String hql = "update OrganizationRelationship set endDate = :endDate " 
+                + "where family.id = :familyId and (organization.id = :orgId or relatedOrganization.id = :orgId)" 
+                + "and endDate is null";
+            Query query = PoHibernateUtil.getCurrentSession().createQuery(hql);
+            query.setDate("endDate", updateEntity.getEndDate());
+            query.setLong("familyId", updateEntity.getFamily().getId());
+            query.setLong("orgId", updateEntity.getOrganization().getId());
+            query.executeUpdate();
         }
         super.update(updateEntity);
     }

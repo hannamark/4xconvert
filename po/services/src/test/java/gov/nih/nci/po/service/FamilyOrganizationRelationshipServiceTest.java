@@ -108,6 +108,7 @@ import java.util.Locale;
 
 import javax.jms.JMSException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -118,16 +119,20 @@ import org.junit.Test;
  *
  */
 public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBeanTest {
-    private FamilyOrganizationRelationshipServiceLocal familyOrgRelServiceLocal;
+    private FamilyOrganizationRelationshipServiceBean familyOrgRelServiceLocal;
+    private OrganizationRelationshipServiceLocal orgRelServiceLocal;
 
     @Before
     public void setUpData() {
-        familyOrgRelServiceLocal = EjbTestHelper.getFamilyOrganizationRelationshipService();
+        familyOrgRelServiceLocal = (FamilyOrganizationRelationshipServiceBean) EjbTestHelper.getFamilyOrganizationRelationshipService();
+        orgRelServiceLocal = EjbTestHelper.getOrganizationRelationshipService();
+        familyOrgRelServiceLocal.setOrgRelService(orgRelServiceLocal);
     }
 
     @After
     public void teardown() {
         familyOrgRelServiceLocal = null;
+        orgRelServiceLocal = null;
     }
 
     @Test
@@ -349,14 +354,12 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         FamilyOrganizationRelationship savedFamOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil
             .getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId1);
         savedFamOrgRel.setEndDate(new Date());
+        assertEquals(2, orgRelServiceLocal.getActiveOrganizationRelationships(savedFamOrgRel.getFamily().getId(), savedOrg.getId()).size());
         familyOrgRelServiceLocal.updateEntity(savedFamOrgRel);
         FamilyOrganizationRelationship updatedFamOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil
             .getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId1);
         assertNotNull(updatedFamOrgRel.getEndDate());
-        for (OrganizationRelationship updateOrgRelEntity : updatedFamOrgRel.getOrganization()
-            .getOrganizationRelationships()) {
-            assertNotNull(updateOrgRelEntity.getEndDate());
-        }
+        assertTrue(CollectionUtils.isEmpty(orgRelServiceLocal.getActiveOrganizationRelationships(updatedFamOrgRel.getFamily().getId(), updatedFamOrgRel.getOrganization().getId())));
         assertEquals(2, familyOrgRelServiceLocal.getActiveRelationships(id).size());
 
         savedFamOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil.getCurrentSession()
