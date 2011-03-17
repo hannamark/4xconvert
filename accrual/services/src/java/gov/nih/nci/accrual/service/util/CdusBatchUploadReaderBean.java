@@ -113,7 +113,6 @@ import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -134,11 +133,12 @@ import javax.ejb.TransactionAttributeType;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVParser;
 
 /**
  * This class read CSV file and validates the input.
@@ -193,11 +193,17 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         BatchValidationResults results = new BatchValidationResults();
         results.setFileName(file.getName());
         try {
-            CSVReader parser = new CSVReader(new FileReader(file), ',');
-            List<String[]> lines = parser.readAll();
+            //We are parsing in this indirect manner instead of using the build in CSVReader because the reader does
+            //not properly handle lines with trailing whitespace characters. A defect has been filed and can be viewed
+            //at http://sourceforge.net/tracker/?func=detail&atid=773541&aid=3217444&group_id=148905
+            List<String[]> lines = new ArrayList<String[]>();
+            LineIterator lineIterator = FileUtils.lineIterator(file);
+            CSVParser parser = new CSVParser();
             setPatientsIdList(new ArrayList<String>());
             long lineNumber = 0;
-            for (String[] line : lines) {
+            while (lineIterator.hasNext()) {
+                String[] line = parser.parseLine(StringUtils.strip(lineIterator.nextLine()));
+                lines.add(line);
                 ++lineNumber;
                 if (StringUtils.equalsIgnoreCase("COLLECTIONS", line[LINE_IDENTIFIER_INDEX]) 
                         && line.length > COLLECTION_EMAIL_INDEX) {
@@ -212,6 +218,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             }
         } catch (IOException e) {
             errMsg.append("Unable to open the batch file: ").append(file.getName());
+            results.setErrors(new StringBuilder(errMsg.toString().trim()));
             LOG.error("error reading the file " + file.getName(), e);
         }
         return results;
