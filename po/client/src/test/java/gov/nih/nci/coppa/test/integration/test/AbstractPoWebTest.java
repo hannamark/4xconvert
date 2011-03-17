@@ -279,6 +279,23 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
             }
         }
     }
+    
+    protected void clickLinkInTable(String locator) {
+        if (selenium.isElementPresent(locator)) {
+            clickAndWait(locator);
+            return;
+        } else {
+            while (selenium.isElementPresent("link=Next")) {
+                selenium.click("link=Next");
+                pause(2000);
+                if (selenium.isElementPresent(locator)) {
+                    clickAndWait(locator);
+                    return;
+                }                
+            }
+        }
+        fail("Locator not found in table: " + locator);
+    }
 
     /**
      * Verify the Telecom fields behave properly

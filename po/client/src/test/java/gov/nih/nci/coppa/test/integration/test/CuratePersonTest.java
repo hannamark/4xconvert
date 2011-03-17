@@ -134,7 +134,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         openEntityInboxPerson();
 
         // click on item to curate
-        clickAndWait("person_id_" + id.getExtension());
+        clickLinkInTable("person_id_" + id.getExtension());
         waitForTelecomFormsToLoad();
 
         String tempName = firstName.concat(firstName);
@@ -192,7 +192,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         openEntityInboxPerson();
 
         // click on item to curate
-        clickAndWait("person_id_" + id.getExtension());
+        clickLinkInTable("person_id_" + id.getExtension());
         assertEquals(firstName, selenium.getValue("curateEntityForm_person_firstName"));
         assertEquals(lastName, selenium.getValue("curateEntityForm_person_lastName"));
 
@@ -240,10 +240,11 @@ public class CuratePersonTest extends AbstractPoWebTest {
 
         /* search for dups */
         selenium.click("//a[@id='submitDuplicatePersonForm']/span/span");
-        /* wait for results to load */
-        waitForElementById("mark_as_dup_" + dupId.getExtension(), 30);
         /* select record to use as duplicate */
-        clickAndWait("mark_as_dup_" + dupId.getExtension());
+        pause(2000);
+        waitForElementById("selector_person_back_to_search_form_bottom", 30);
+        waitForElementById("duplicatePersonSearchResults", 30);
+        clickLinkInTable("mark_as_dup_" + dupId.getExtension());
 
         selenium.selectFrame("relative=parent");
 
@@ -280,7 +281,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         openEntityInboxPerson();
 
         // click on item to curate
-        clickAndWait("person_id_" + id.getExtension());
+        clickLinkInTable("person_id_" + id.getExtension());
         waitForTelecomFormsToLoad();
         assertEquals(firstName, selenium.getValue("curateEntityForm_person_firstName"));
         assertEquals(lastName, selenium.getValue("curateEntityForm_person_lastName"));
@@ -306,7 +307,7 @@ public class CuratePersonTest extends AbstractPoWebTest {
         openEntityInboxPerson();
 
         // click on item to curate
-        clickAndWait("person_id_" + id.getExtension());
+        clickLinkInTable("person_id_" + id.getExtension());
         waitForTelecomFormsToLoad();
 
         // method exits on certain page

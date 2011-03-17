@@ -86,6 +86,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+
+import java.util.Date;
+
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
@@ -154,6 +157,22 @@ public class CurateFamilyOrganizationRelationshipActionTest extends AbstractPoTe
 
         action.setFamilyOrgRelationship(famOrgRel);
         assertEquals(Action.SUCCESS, action.submit());
+    }
+
+    @Test
+    public void testSubmitWithEndDate() {
+        FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
+        famOrgRel.setId(1L);
+        Family fam = new Family();
+        fam.setId(2L);
+        famOrgRel.setFamily(fam);
+        Organization org = new Organization();
+        org.setId(3L);
+        famOrgRel.setOrganization(org);
+        famOrgRel.setEndDate(new Date());
+
+        action.setFamilyOrgRelationship(famOrgRel);
+        assertEquals("parent", action.submit());
     }
 
     @Test

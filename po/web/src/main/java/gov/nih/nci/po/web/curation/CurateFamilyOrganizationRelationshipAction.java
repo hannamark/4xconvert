@@ -164,7 +164,12 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
         try {
             PoRegistry.getFamilyOrganizationRelationshipService().updateEntity(getFamilyOrgRelationship());
             initializeCollection();
-            ActionHelper.saveMessage(getText("familyOrgRelationship.update.success"));
+            if (getFamilyOrgRelationship().getEndDate() == null) {
+                ActionHelper.saveMessage(getText("familyOrgRelationship.update.success"));
+            } else {
+                ActionHelper.saveMessage(getText("familyOrgRelationship.remove.success"));
+                return "parent";
+            }
         } catch (EntityValidationException  e) {
             //after implementing PO-3199 no need to swallow EntityValidationException
             addActionError(e.getErrorMessages());
