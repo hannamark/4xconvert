@@ -97,6 +97,7 @@ import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
@@ -477,9 +478,26 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         } else if (!StringUtils.equalsIgnoreCase(protocolId, expectedProtocolId)) {
             errMsg.append(key).append(appendLineNumber(lineNumber))
             .append(" does not contain the same protocol identifier as the one specified in the COLLECTIONS line.\n");
-        } else if (StringUtils.equals(key, "COLLECTIONS") && getStudyProtocol(protocolId) == null) {
+        } else if (StringUtils.equals(key, "COLLECTIONS")) {
+            validateProtocolStatus(key, errMsg, lineNumber, protocolId);    
+        }
+    }
+    
+    /**
+     * Validates that the study protocol id is valid and active.
+     * @param key  the key
+     * @param errMsg error messages
+     * @param lineNumber line number
+     * @param protocolId the study protocol id
+     */
+    private void validateProtocolStatus(String key, StringBuffer errMsg, long lineNumber, String protocolId) {
+        StudyProtocolDTO sp = getStudyProtocol(protocolId);
+        if (sp == null) {
             errMsg.append(key).append(appendLineNumber(lineNumber))
                 .append(" is not a valid NCI or CTEP/DCP identifier.\n");
+        } else if (!StringUtils.equalsIgnoreCase(sp.getStatusCode().getCode(), ActStatusCode.ACTIVE.getCode())) {
+            errMsg.append(key).append(appendLineNumber(lineNumber)).append(" with the identifier ")
+                .append(protocolId).append("is not an Active study.\n");   
         }
     }
 

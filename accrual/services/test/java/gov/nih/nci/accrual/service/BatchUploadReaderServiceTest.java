@@ -106,9 +106,11 @@ import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -143,6 +145,7 @@ import org.mockito.stubbing.Answer;
 public class BatchUploadReaderServiceTest {
     private Ii abbreviatedIi;
     private Ii completeIi;
+    private Ii inactiveIi;
     private ServiceLocatorPaInterface paSvcLocator;
     private CountryService countryService = new CountryBean();
     private CdusBatchUploadReaderBean readerService;
@@ -154,6 +157,7 @@ public class BatchUploadReaderServiceTest {
     public void setUp() throws Exception {
         TestSchema.reset();
         abbreviatedIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId());
+        inactiveIi = IiConverter.convertToStudyContactIi(TestSchema.studyProtocols.get(1).getId());
         completeIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(2).getId());
         
         mailService = mock(MailManagerServiceRemote.class);
@@ -176,8 +180,15 @@ public class BatchUploadReaderServiceTest {
                 StudyProtocolDTO dto = new StudyProtocolDTO();
                 if (StringUtils.equals(ii.getExtension(), "NCI-2009-00001")) {
                     dto.setIdentifier(abbreviatedIi);
+                    dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
+                } else if (StringUtils.equals(ii.getExtension(), "NCI-2009-00002")) { 
+                    dto.setIdentifier(inactiveIi);
+                    dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
                 } else if (StringUtils.equals(ii.getExtension(), "NCI-2010-00003")) {
                     dto.setIdentifier(completeIi);
+                    dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
+                } else {
+                    dto = null;
                 }
                 return dto;
             }
@@ -270,6 +281,18 @@ public class BatchUploadReaderServiceTest {
     public void testReading() throws URISyntaxException {
         File file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
         List<BatchValidationResults> results = readerService.validateBatchData(file);
+        readerService.sendValidationErrorEmail(results);
+        assertEquals(1, results.size());
+        assertFalse(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString()));
+        assertTrue(StringUtils.isNotEmpty(results.get(0).getMailTo()));
+        assertTrue(results.get(0).getValidatedLines().isEmpty());
+        verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+        mailService = mock(MailManagerServiceRemote.class);
+        when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
+        
+        file = new File(this.getClass().getResource("/CDUS_Abbreviated-modified.txt").toURI());
+        results = readerService.validateBatchData(file);
         readerService.sendValidationErrorEmail(results);
         assertEquals(1, results.size());
         assertFalse(results.get(0).isPassedValidation());
