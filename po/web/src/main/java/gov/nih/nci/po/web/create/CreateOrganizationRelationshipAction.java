@@ -147,7 +147,6 @@ public class CreateOrganizationRelationshipAction extends CurateOrganizationRela
      */
     @Validations(customValidators = {@CustomValidator(type = "hibernate", fieldName = "newOrgRelationship") })
     public String create() throws EntityValidationException {
-        getNewOrgRelationship().setStartDate(new Date());
         getNewOrgRelationship().setFamily(getOrgRelationship().getFamily());
         getNewOrgRelationship().setOrganization(getOrgRelationship().getOrganization());
         getNewOrgRelationship().setRelatedOrganization(getOrgRelationship().getRelatedOrganization());

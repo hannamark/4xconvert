@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-
+<s:text name="familyOrgRelationship.remove.confirmationMessage" var="famOrgRelRemoveMessage"/>
 <div class="addbtn">
     <ul class="btnrow">
         <c:url value="/protected/organization/family/relationship/create/start.action" var="createFamilyOrgRelationshipUrl">
@@ -34,7 +34,7 @@
             </c:url>
             <po:buttonRow>
                 <po:button href="${curateUrl}" style="edit" text="Edit" id="fam_org_relationship_edit_id_${row.id}" />
-                <po:button href="${removeUrl}" style="delete" text="Remove" id="fam_org_relationship_remove_id_${row.id}" />
+                <po:button href="${removeUrl}" style="delete" text="Remove" id="fam_org_relationship_remove_id_${row.id}" onclick="return confirm('${famOrgRelRemoveMessage}');"/>
             </po:buttonRow>
         </display:column>
     </display:table>

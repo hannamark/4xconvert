@@ -103,21 +103,21 @@
                     <h2><fmt:message key="familyOrgRelationship.effectiveDates"/></h2>
                     <po:inputRow>
                         <po:inputRowElement>
+                            <s:fielderror>
+                                <s:param>familyOrgRelationship.startDate</s:param>
+                            </s:fielderror>
                             <po:field labelKey="familyOrgRelationship.startDate" fieldRequired="true">
                                 <sj:datepicker required="true" name="familyOrgRelationship.startDate" 
                                     displayFormat="mm/dd/yy"  labelposition="left" />
-                                <s:fielderror>
-                                    <s:param>familyOrgRelationship.startDate</s:param>
-                                </s:fielderror>
                             </po:field>
                         </po:inputRowElement>
                         <po:inputRowElement>
+                            <s:fielderror>
+                                <s:param>familyOrgRelationship.endDate</s:param>
+                            </s:fielderror>
                             <po:field labelKey="familyOrgRelationship.endDate">
                                 <sj:datepicker name="familyOrgRelationship.endDate" 
                                      displayFormat="mm/dd/yy"  labelposition="left"/>
-                                <s:fielderror>
-                                    <s:param>familyOrgRelationship.endDate</s:param>
-                                </s:fielderror>
                             </po:field>
                         </po:inputRowElement>
                     </po:inputRow>

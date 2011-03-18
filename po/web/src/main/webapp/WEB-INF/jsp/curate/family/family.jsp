@@ -63,7 +63,7 @@
                 <sj:datepicker required="true" name="family.startDate" displayFormat="mm/dd/yy" />
             </po:field>
             
-            <div id="endDateDiv" <s:if test="family.statusCode != @gov.nih.nci.po.data.bo.FamilyStatus@NULLIFIED">style="display:none;"</s:if>>
+            <div id="endDateDiv" <s:if test="family.statusCode == @gov.nih.nci.po.data.bo.FamilyStatus@ACTIVE">style="display:none;"</s:if>>
                     <script type="text/javascript">
                         function handleEndDateDiv() {
                             var currentStatusCode = $('familyEntityForm.family.statusCode').value;
@@ -81,15 +81,9 @@
                     </script>
                     <po:inputRow>
                         <po:inputRowElement>
-                            <div class="wwgrp" id="wwgrp_familyEntityForm_endDate">
-                              <po:field labelKey="family.endDate"/>
-                                <label class="label" for="family.endDate">
-                                     <s:fielderror>
-                                     <s:param>family.endDate</s:param>
-                                     </s:fielderror>
-                                     <sj:datepicker required="true" name="family.endDate" displayFormat="mm/dd/yy" id="familyEntityForm.family.endDate" />
-                                </label>
-                            </div>
+                          <po:field labelKey="family.endDate">
+                             <sj:datepicker required="true" name="family.endDate" displayFormat="mm/dd/yy" id="familyEntityForm.family.endDate" />
+                          </po:field>
                         </po:inputRowElement>
                     </po:inputRow>
                 </div>

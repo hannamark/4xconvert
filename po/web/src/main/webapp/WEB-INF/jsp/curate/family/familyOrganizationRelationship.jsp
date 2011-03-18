@@ -50,7 +50,7 @@
             function confirmThenSubmit() {
                 var confirmation = ${isCreate} ||
                     $('familyOrgRelationshipForm.familyOrgRelationship.endDate').value.match(/^\s*$/) ||
-                    confirm('<s:text name="organizationRelationship.save.confirmationMessage" />');
+                    confirm('<s:text name="familyOrgRelationship.remove.confirmationMessage" />');
                 if (confirmation) {
                     $('familyOrgRelationshipForm').submit();
                 }
@@ -112,23 +112,23 @@
                     <h2><fmt:message key="familyOrgRelationship.effectiveDates"/></h2>
                     <po:inputRow>
                         <po:inputRowElement>
+                            <s:fielderror>
+                                <s:param>familyOrgRelationship.startDate</s:param>
+                            </s:fielderror>
                             <po:field labelKey="familyOrgRelationship.startDate" fieldRequired="true">
                                 <sj:datepicker required="true" name="familyOrgRelationship.startDate"
                                     displayFormat="mm/dd/yy"  labelposition="left" />
-                                <s:fielderror>
-                                    <s:param>familyOrgRelationship.startDate</s:param>
-                                </s:fielderror>
                             </po:field>
                         </po:inputRowElement>
                         <s:if test="%{isEdit}" >
                             <po:inputRowElement>
+                                <s:fielderror>
+                                    <s:param>familyOrgRelationship.endDate</s:param>
+                                </s:fielderror>
                                 <po:field labelKey="familyOrgRelationship.endDate">
                                     <sj:datepicker name="familyOrgRelationship.endDate"
                                          displayFormat="mm/dd/yy"  labelposition="left"
                                          id="familyOrgRelationshipForm.familyOrgRelationship.endDate"/>
-                                    <s:fielderror>
-                                        <s:param>familyOrgRelationship.endDate</s:param>
-                                    </s:fielderror>
                                 </po:field>
                             </po:inputRowElement>
                         </s:if>
