@@ -83,8 +83,8 @@
 package gov.nih.nci.po.util;
 
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.po.data.bo.Family;
-import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+
+import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
 
 import org.junit.Test;
@@ -94,65 +94,35 @@ import org.junit.Test;
  * @author moweis
  *
  */
-public class FamilyOrganizationRelationshipComparatorTest {
-
-    @Test
-    public void testFamilyComparator() {
-        FamilyOrganizationRelationshipFamilyComparator comparator = new FamilyOrganizationRelationshipFamilyComparator();
-        FamilyOrganizationRelationship for1 = new FamilyOrganizationRelationship();
-        Family f1 = new Family();
-        f1.setName("name");
-        for1.setFamily(f1);
-        FamilyOrganizationRelationship for2 = new FamilyOrganizationRelationship();
-        Family f2 = new Family();
-        f2.setName("same");
-        for2.setFamily(f2);
-        assertTrue(comparator.compare(for1, for2) < 0);
-    }
-
-    @Test
-    public void testFamilyEqualNamesComparator() {
-        FamilyOrganizationRelationshipFamilyComparator comparator = new FamilyOrganizationRelationshipFamilyComparator();
-        FamilyOrganizationRelationship for1 = new FamilyOrganizationRelationship();
-        Family f1 = new Family();
-        f1.setName("same");
-        f1.setId(1L);
-        for1.setFamily(f1);
-        FamilyOrganizationRelationship for2 = new FamilyOrganizationRelationship();
-        Family f2 = new Family();
-        f2.setName("same");
-        f2.setId(2L);
-        for2.setFamily(f2);
-        assertTrue(comparator.compare(for1, for2) < 0);
-    }
+public class OrganizationRelationshipComparatorTest {
 
     @Test
     public void testOrganizationComparator() {
-        FamilyOrganizationRelationshipOrgComparator comparator = new FamilyOrganizationRelationshipOrgComparator();
-        FamilyOrganizationRelationship for1 = new FamilyOrganizationRelationship();
+        OrganizationRelationshipComparator comparator = new OrganizationRelationshipComparator();
+        OrganizationRelationship for1 = new OrganizationRelationship();
         Organization o1 = new Organization();
         o1.setName("name");
-        for1.setOrganization(o1);
-        FamilyOrganizationRelationship for2 = new FamilyOrganizationRelationship();
+        for1.setRelatedOrganization(o1);
+        OrganizationRelationship for2 = new OrganizationRelationship();
         Organization o2 = new Organization();
         o2.setName("same");
-        for2.setOrganization(o2);
+        for2.setRelatedOrganization(o2);
         assertTrue(comparator.compare(for1, for2) < 0);
     }
 
     @Test
     public void testOrganizationEqualNamesComparator() {
-        FamilyOrganizationRelationshipOrgComparator comparator = new FamilyOrganizationRelationshipOrgComparator();
-        FamilyOrganizationRelationship for1 = new FamilyOrganizationRelationship();
+        OrganizationRelationshipComparator comparator = new OrganizationRelationshipComparator();
+        OrganizationRelationship for1 = new OrganizationRelationship();
         Organization o1 = new Organization();
         o1.setName("same");
         o1.setId(1L);
-        for1.setOrganization(o1);
-        FamilyOrganizationRelationship for2 = new FamilyOrganizationRelationship();
+        for1.setRelatedOrganization(o1);
+        OrganizationRelationship for2 = new OrganizationRelationship();
         Organization o2 = new Organization();
         o2.setName("same");
         o2.setId(2L);
-        for2.setOrganization(o2);
+        for2.setRelatedOrganization(o2);
         assertTrue(comparator.compare(for1, for2) < 0);
     }
 }

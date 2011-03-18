@@ -88,10 +88,10 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationRelationshipServiceLocal;
+import gov.nih.nci.po.util.OrganizationRelationshipComparator;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
@@ -120,13 +120,8 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
     private static final long serialVersionUID = 1L;
 
     private FamilyOrganizationRelationship familyOrgRelationship = new FamilyOrganizationRelationship();
-    private final Comparator<OrganizationRelationship> orgNameComparator =  new Comparator<OrganizationRelationship>() {
-        public int compare(OrganizationRelationship or1, OrganizationRelationship or2) {
-            return or1.getRelatedOrganization().getName().compareTo(or2.getRelatedOrganization().getName());
-        }
-     };
     private SortedSet<OrganizationRelationship> organizationRelationships =
-        new TreeSet<OrganizationRelationship>(orgNameComparator);
+        new TreeSet<OrganizationRelationship>(new OrganizationRelationshipComparator());
 
     private String rootKey;
     private Long selectedOrgId;
@@ -232,7 +227,8 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
         OrganizationRelationshipServiceLocal orgRelService = PoRegistry.getOrganizationRelationshipService();
         if (getFamilyOrgRelationship().getFamily().getId() != null
                 && getFamilyOrgRelationship().getOrganization().getId() != null) {
-            setOrganizationRelationships(new TreeSet<OrganizationRelationship>(orgNameComparator));
+            setOrganizationRelationships(
+                    new TreeSet<OrganizationRelationship>(new OrganizationRelationshipComparator()));
             getOrganizationRelationships().addAll(
                     orgRelService.getActiveOrganizationRelationships(getFamilyOrgRelationship().getFamily().getId(),
                             getFamilyOrgRelationship().getOrganization().getId()));
