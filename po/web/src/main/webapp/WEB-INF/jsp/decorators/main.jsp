@@ -11,10 +11,6 @@
         <link rel="shortcut icon" href="<c:url value="/images/favicon.ico"/>" type="image/x-icon" />
         <!-- Version: ${initParam["appTagVersion"]}, revision: ${initParam["appTagRevision"]} -->
         <decorator:head/>
-        <sj:head />
-        <script type="text/javascript">
-            var $j = jQuery.noConflict();
-        </script>
     </head>
     <body onload="setFocusToFirstControl();">
         <a href="#content" id="navskip">Skip to Page Content</a>

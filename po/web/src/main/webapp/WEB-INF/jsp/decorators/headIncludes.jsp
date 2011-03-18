@@ -3,6 +3,10 @@
 <link href="<c:url value='/styles/curate.css'/>" rel="stylesheet" type="text/css" media="all"/>
 <link href="<c:url value='/styles/submodal.css'/>" rel="stylesheet" type="text/css" media="all"/>
 <link href="<c:url value='/styles/overwrites.css'/>" rel="stylesheet" type="text/css" media="all"/>
+<sj:head />
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+</script>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/prototype.js"/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/helpPrint.js"/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/scriptaculous/scriptaculous.js"/>"></script>
@@ -17,6 +21,6 @@
 <script type="text/javascript" language="javascript">
     var contextPath = "<%=request.getContextPath()%>";
 </script>
-<script type="text/javascript" src="<c:url value="/scripts/submodal/common.js"/>"></script>
-<script type="text/javascript" src="<c:url value="/scripts/submodal/submodal.js"/>"></script>        
+<script type="text/javascript" language="javascript" src="<c:url value="/scripts/submodal/common.js"/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value="/scripts/submodal/submodal.js"/>"></script>        
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/po.js'/>"></script>

@@ -14,22 +14,32 @@
         </s:elseif>
         
         <script type="text/javascript">
-        function handleSubmission() {
-        	var div = $('wrapper');
-        	var form = $('organizationRelationshipForm');
-            div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="<c:url value='/images/loading.gif'/>"&nbsp;Loading...</div>';
-        	var aj = new Ajax.Updater(div, '${submitUrl}', {
-        		asynchronous: true,
-        		methed: 'get',
-        		evalScripts: true,
-        		parameters: form.serialize(true),
-        		onComplete: function(transport) {
-        			if ($('passedValidation').value != 'false') {
-        				window.top.reloadOrgRelationships(new IdValue('${newOrgRelationship.family.id}', '${newOrgRelationship.family.name}'));
-        			} 
-        		}
-        	});
-        }
+            function handleSubmission(event) {
+                var options = {
+                    asynchronous: true,
+                    method: 'post',
+                    evalScripts: false,
+                    parameters: $('organizationRelationshipForm').serialize(true),
+                    onComplete: function(transport) {
+                        if ($('passedValidation').value != 'false') {
+                            window.top.reloadOrgRelationships(new IdValue('${newOrgRelationship.family.id}', '${newOrgRelationship.family.name}'));
+                        } else {
+                            bindListeners();
+                        }    
+                    }    
+                };
+                var div = $('wrapper');
+                div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="<c:url value='/images/loading.gif'/>"&nbsp;Loading...</div>';
+                var aj = new Ajax.Updater(div, '${submitUrl}', options);
+            }
+            function handleCancel(event) {
+                window.top.hidePopWin(false);
+            }
+            function bindListeners() {
+            	jQuery('#add_relationship_button').bind('click', handleSubmission);
+                jQuery('#cancel_button').bind('click', handleCancel);
+            }    
+            jQuery(bindListeners);    
         </script>
     </head>
     <body> 
@@ -101,9 +111,8 @@
                         
                         <div class="btnwrapper" style="margin-bottom:20px;">
                             <po:buttonRow>
-                                <po:button href="javascript://nop/"  onclick="handleSubmission();"  style="search" 
-                                    text="Add New Relationship"  id="add_relationship_button"/>
-                                <po:button id="cancel_button" href="javascript://nop/" onclick="window.top.hidePopWin(false);" style="cancel" text="Cancel"/>
+                                <po:button href="javascript://nop/" id="add_relationship_button" style="search" textKey="organizationRelationship.popup.button.addRelationship"  />
+                                <po:button href="javascript://nop/" id="cancel_button" style="cancel" textKey="button.cancel"/>
                             </po:buttonRow>
                         </div>
                     </div>
