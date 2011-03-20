@@ -181,7 +181,6 @@ public class PopUpIntAction extends ActionSupport {
 
     private void error(String errMsg, Throwable t) {
         LOG.error(errMsg, t);
-        addActionError(errMsg);
         ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, errMsg);
     }
 

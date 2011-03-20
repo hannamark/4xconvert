@@ -231,7 +231,6 @@ public class RegulatoryInformationAction extends ActionSupport {
              }
 
         } catch (PAException e) {
-            addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return SUCCESS;
         }

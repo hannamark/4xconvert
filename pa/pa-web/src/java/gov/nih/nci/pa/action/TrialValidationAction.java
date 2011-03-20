@@ -507,14 +507,12 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
                             organizationalContactDTO.getPlayerIdentifier());
                     persons.add(PADomainUtils.convertToPaPersonDTO(resultDTO));
                 } catch (NullifiedEntityException e) {
-                    addActionError(e.getMessage());
                     ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
                     LOG.error("Exception occured while getting organization contact : " + e);
                     return "display_org_contacts";
                 }
             }
         } catch (Exception e) {
-            addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             LOG.error("Exception occured while getting organization contact : " + e);
             return "display_org_contacts";

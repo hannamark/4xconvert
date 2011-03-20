@@ -359,9 +359,7 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
             LOG.error("TrialHistoryAction failed with FileNotFoundException: " + err);
             addActionError(err.getMessage());
             return super.execute();
-
         } catch (Exception e) {
-            addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
             return super.execute();
         }

@@ -46,7 +46,7 @@ public class ProprietaryTrialInterceptor {
             StudyProtocol studyProtocol = (StudyProtocol) session.get(StudyProtocol.class,
                                                                       Long.valueOf(ii.getExtension()));
             if (studyProtocol != null && BooleanUtils.isTrue(studyProtocol.getProprietaryTrialIndicator())) {
-                throw new PAException(ctx.getMethod().getName() + " for Proprietary trial is not allowed");
+                throw new PAException(ctx.getMethod().getName() + " for an abbreviated trial is not allowed");
             }
         }
         return ctx.proceed();

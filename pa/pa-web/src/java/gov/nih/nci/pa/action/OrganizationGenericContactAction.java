@@ -172,7 +172,6 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
             convertFromISO(isoDtoList);
         } catch (Exception e) {
             LOG.error("Exception occured while getting organization contact : " + e);
-            addActionError("Exception occured while getting organization contact : " + e.getMessage());
             ServletActionContext.getRequest().setAttribute(failureMessage,
                     "Exception occured while getting organization contact : " + e.getMessage());
             return SUCCESS;
@@ -244,12 +243,10 @@ public class OrganizationGenericContactAction extends ActionSupport implements P
             String errMsg = "";
             Map<String, String[]> errMap = e.getErrors();
             errMsg = PAUtil.getErrorMsg(errMap);
-            addActionError(strException + errMsg);
             ServletActionContext.getRequest().setAttribute("failureMessage",
                     strException + errMsg);
         } catch (Exception e) {
             LOG.error(strException + e);
-            addActionError(strException + e.getMessage());
             ServletActionContext.getRequest().setAttribute("failureMessage",
                     strException + e.getMessage());
             return "create_org_contact_response";

@@ -247,7 +247,6 @@ public class NCISpecificInformationAction extends ActionSupport {
             updateSummary4DTO(studyProtocolIi, orgId);
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Update succeeded.");
         } catch (Exception e) {
-            addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return ERROR;
         }
@@ -346,11 +345,9 @@ public class NCISpecificInformationAction extends ActionSupport {
         try {
             selectedOrgDTO = PoRegistry.getOrganizationEntityService().search(criteria, limit).get(0);
         } catch (PAException e) {
-            addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return ERROR;
         } catch (TooManyResultsException e) {
-            addActionError(e.getMessage());
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return ERROR;
         }

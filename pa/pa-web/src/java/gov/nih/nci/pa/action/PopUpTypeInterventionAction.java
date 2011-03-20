@@ -236,7 +236,6 @@ public class PopUpTypeInterventionAction extends ActionSupport {
      if ("".equals(code) && "".equals(publicId)
          && "".equals(description) && "".equals(displayName)) {
          String message = "Please enter at least one search criteria";
-         addActionError(message);
          ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
          criteriaEmpty = true;
      }

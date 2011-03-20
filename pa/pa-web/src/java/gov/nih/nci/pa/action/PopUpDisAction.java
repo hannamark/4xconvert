@@ -121,7 +121,6 @@ public class PopUpDisAction extends ActionSupport {
 
         if (StringUtils.isEmpty(tName)) {
             String message = "Please enter at least one search criteria";
-            addActionError(message);
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
             return;
         }
@@ -190,7 +189,6 @@ public class PopUpDisAction extends ActionSupport {
 
     private void error(String errMsg, Throwable t) {
         LOG.error(errMsg, t);
-        addActionError(errMsg);
         ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, errMsg);
     }
 

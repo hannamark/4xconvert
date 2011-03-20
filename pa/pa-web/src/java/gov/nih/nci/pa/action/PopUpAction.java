@@ -289,7 +289,6 @@ public class PopUpAction extends ActionSupport {
             if (checkOrgSearchCriteria(orgName, countryName, cityName, zipCode)) {
                 String message = "Please enter at least one search criteria";
                 orgs = null;
-                addActionError(message);
                 request.setAttribute(Constants.FAILURE_MESSAGE, message);
                 return retvalue;
             }
@@ -325,7 +324,6 @@ public class PopUpAction extends ActionSupport {
         if (checkPersonSearchCriteria(request)) {
             String message = "Please enter at least one search criteria";
             persons = null;
-            addActionError(message);
             request.setAttribute(Constants.FAILURE_MESSAGE, message);
             return retvalue;
         }
@@ -354,11 +352,9 @@ public class PopUpAction extends ActionSupport {
                 persons.add(PADomainUtils.convertToPaPersonDTO(dto));
             }
         } catch (PAException e) {
-            addActionError(e.getMessage());
             request.setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return retvalue;
         } catch (TooManyResultsException e) {
-            addActionError(e.getMessage());
             request.setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return retvalue;
         }
