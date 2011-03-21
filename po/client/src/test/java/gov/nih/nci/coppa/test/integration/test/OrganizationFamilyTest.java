@@ -144,8 +144,23 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
         clickAndWait("return_to_button");
         clickAndWait("return_to_button");
         assertTrue(selenium.isTextPresent("Organization Details"));
+        removeMemberOrgPerspective();
         removeMember();
-        removeMember();
+    }
+
+    private void removeMemberOrgPerspective() {
+        searchForCreatedFamily("National");
+        int row = getRowThatContainsText(FAMILY_NAME, 2);
+        String orgId = selenium.getTable("row." + row + ".0");
+        clickAndWait("org_id_" + orgId);
+        accessFamilyScreen();
+        row = getRowThatContainsText(FAMILY_NAME, 1);
+        clickAndWait(getLinkStartingWith("fam_org_relationship_remove_id_"));
+        assertTrue(selenium.isConfirmationPresent());
+        selenium.getConfirmation();
+        assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully removed."));
+        assertTrue(selenium.isTextPresent("Organization Information"));
+        assertTrue(getRowThatContainsText(FAMILY_NAME, 1) < 0);
     }
 
     private void checkManageFamilyScreenOrgPerspective() {
@@ -282,6 +297,9 @@ public class OrganizationFamilyTest extends AbstractPoWebTest {
         clickAndWait("edit_family_id_" + famId);
         clickAndWait(getLinkStartingWith("fam_org_relationship_remove_id_"));
         assertTrue(selenium.isTextPresent("Organization Family Relationship was successfully removed."));
+        assertTrue(selenium.isTextPresent("Family Details"));
+        assertTrue(selenium.isConfirmationPresent());
+        selenium.getConfirmation();
     }
 
     private String getFamilyId() {

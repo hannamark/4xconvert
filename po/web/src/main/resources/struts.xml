@@ -343,7 +343,7 @@
             <interceptor-ref name="poSearchPerMethodValidationStack" />
             <result name="success">/WEB-INF/jsp/curate/family/familyOrganizationRelationshipOrgPerspective.jsp</result>
             <result name="input">/WEB-INF/jsp/curate/family/familyOrganizationRelationshipOrgPerspective.jsp</result>
-            <result name="parent" type="redirectAction">family/curate/start?family.id=${familyOrgRelationship.family.id}</result>
+            <result name="parent" type="redirectAction">roles/organizational/familyRelationships/start?organization=${familyOrgRelationship.organization.id}</result>
         </action>
         <action name="organization/family/relationship/create/*" class="gov.nih.nci.po.web.create.CreateFamilyOrganizationRelationshipAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
