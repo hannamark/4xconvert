@@ -714,7 +714,8 @@ public class EligibilityCriteriaAction extends ActionSupport {
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
             query();
         } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            addActionError("There was an unexpected error saving the record.");
+            LOG.error(e.getMessage(), e);
             return ELIGIBILITYADD;
         }
         return ELIGIBILITY;
@@ -1034,10 +1035,11 @@ public class EligibilityCriteriaAction extends ActionSupport {
             .getAttribute(Constants.STUDY_PROTOCOL_II);
         List<PlannedEligibilityCriterionDTO> pecList = PaRegistry.getPlannedActivityService()
             .getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
-        if (pecList != null && !pecList.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(pecList)) {
             for (PlannedEligibilityCriterionDTO dto : pecList) {
                 if (dto.getCategoryCode() != null
-                        && dto.getCategoryCode().getCode().equals(ActivityCategoryCode.OTHER.getCode())) {
+                        && ActivityCategoryCode.OTHER.getCode().equals(dto.getCategoryCode().getCode())
+                        && dto.getDisplayOrder().getValue() != null) {
                     orderListDB.put(dto.getIdentifier().getExtension(),
                                     Integer.toString(dto.getDisplayOrder().getValue().intValue()));
                 }
