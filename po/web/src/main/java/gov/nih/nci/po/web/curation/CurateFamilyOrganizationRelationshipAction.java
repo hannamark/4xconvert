@@ -264,6 +264,17 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
     }
 
     /**
+     * Method for pulling this value in struts xml.
+     * @return the family organization relationship id as a string.
+     */
+    public String getFamilyOrgRelationshipId() {
+        if (getFamilyOrgRelationship() != null && getFamilyOrgRelationship().getId() != null) {
+            return this.getFamilyOrgRelationship().getId().toString();
+        }
+        return "";
+    }
+    
+    /**
      * @return the rootKey
      */
     public String getRootKey() {

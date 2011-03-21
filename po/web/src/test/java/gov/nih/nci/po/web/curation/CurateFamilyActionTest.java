@@ -168,4 +168,17 @@ public class CurateFamilyActionTest extends AbstractPoTest {
         assertEquals(FamilyStatus.INACTIVE, iterator.next());
         assertEquals(FamilyStatus.NULLIFIED, iterator.next());
     }
+    
+    @Test
+    public void getFamilyIdProperty() {
+        action.setFamily(new Family());
+        action.getFamily().setId(3L);
+        assertEquals("3", action.getFamilyId());
+    }
+    
+    @Test
+    public void getFamilyIdPropertyNull() {
+        action.setFamily(null);
+        assertEquals("", action.getFamilyId());
+    }
 }

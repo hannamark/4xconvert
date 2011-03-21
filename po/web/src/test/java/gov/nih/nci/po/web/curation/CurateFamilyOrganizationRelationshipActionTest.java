@@ -206,4 +206,17 @@ public class CurateFamilyOrganizationRelationshipActionTest extends AbstractPoTe
         assertEquals("relationships", action.loadOrgRelationships());
         assertNotNull(action.getOrganizationRelationships());
     }
+    
+    @Test
+    public void getFamilyOrgRelIdProperty() {
+        action.setFamilyOrgRelationship(new FamilyOrganizationRelationship());
+        action.getFamilyOrgRelationship().setId(3L);
+        assertEquals("3", action.getFamilyOrgRelationshipId());
+    }
+    
+    @Test
+    public void getFamilyOrgRelIdPropertyNull() {
+        action.setFamilyOrgRelationship(null);
+        assertEquals("", action.getFamilyOrgRelationshipId());
+    }
 }

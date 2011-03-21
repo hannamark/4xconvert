@@ -312,7 +312,7 @@
         </action>
         <action name="family/create/*" class="gov.nih.nci.po.web.create.CreateFamilyAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
-            <result name="success" type="redirectAction">family/curate/start?family.id=${family.id}</result>
+            <result name="success" type="redirectAction">family/curate/start?family.id=${familyId}</result>
             <result name="input">/WEB-INF/jsp/curate/family/family.jsp</result>
         </action>
         <action name="ajax/search/family/organization/results/list" class="gov.nih.nci.po.web.curation.CurateFamilyAction" method="start">
@@ -329,7 +329,7 @@
         </action>
         <action name="family/organization/relationship/create/*" class="gov.nih.nci.po.web.create.CreateFamilyOrganizationRelationshipAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
-            <result name="success" type="redirectAction">family/organization/relationship/curate/start?familyOrgRelationship.id=${familyOrgRelationship.id}</result>
+            <result name="success" type="redirectAction">family/organization/relationship/curate/start?familyOrgRelationship.id=${familyOrgRelationshipId}</result>
             <result name="input">/WEB-INF/jsp/curate/family/familyOrganizationRelationship.jsp</result>
         </action>
         <action name="ajax/family/organization/relationship/*" class="gov.nih.nci.po.web.curation.CurateFamilyOrganizationRelationshipAction" method="{1}">
@@ -347,7 +347,7 @@
         </action>
         <action name="organization/family/relationship/create/*" class="gov.nih.nci.po.web.create.CreateFamilyOrganizationRelationshipAction" method="{1}">
             <interceptor-ref name="poSearchPerMethodValidationStack" />
-            <result name="success" type="redirectAction">organization/family/relationship/curate/start?familyOrgRelationship.id=${familyOrgRelationship.id}</result>
+            <result name="success" type="redirectAction">organization/family/relationship/curate/start?familyOrgRelationship.id=${familyOrgRelationshipId}</result>
             <result name="input">/WEB-INF/jsp/curate/family/familyOrganizationRelationshipOrgPerspective.jsp</result>
         </action>
         <action name="ajax/organization/family/relationship/*" class="gov.nih.nci.po.web.curation.CurateFamilyOrganizationRelationshipAction" method="{1}">

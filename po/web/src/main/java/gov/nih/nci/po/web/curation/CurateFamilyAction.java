@@ -95,6 +95,17 @@ public class CurateFamilyAction extends ActionSupport implements Preparable {
     }
 
     /**
+     * Method for pulling this value in struts xml.
+     * @return the family id as a string.
+     */
+    public String getFamilyId() {
+        if (getFamily() != null && getFamily().getId() != null) {
+            return this.getFamily().getId().toString();
+        }
+        return "";
+    }
+    
+    /**
      * @return the rootKey
      */
     public String getRootKey() {
