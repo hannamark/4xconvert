@@ -283,7 +283,6 @@
             <batchtest todir="${pa-ejb.test.reports}" fork="yes" unless="test">
                 <fileset dir="${pa-ejb.build.testDir.0}">
                     <include name="**/*Test.java"/>
-                    <exclude name="**/*Abstract*Test.java"/>
                 </fileset>
             </batchtest>
         </junit>
@@ -316,7 +315,6 @@
             <batchtest todir="${pa-ejb.test.reports}" unless="test">
                 <fileset dir="${pa-ejb.build.testDir.0}">
                     <include name="**/*Test.java"/>
-                    <exclude name="**/*Abstract*Test.java"/>
                 </fileset>
             </batchtest>
         </junit>

@@ -120,7 +120,8 @@ import org.apache.commons.lang.StringUtils;
  *
  */
 public abstract class AbstractPDQTrialServiceHelper {
-    private final PAServiceUtils paServiceUtils = new PAServiceUtils();
+    private PAServiceUtils paServiceUtils = new PAServiceUtils();
+
     /**
      * @return orgDTO.
      *
@@ -266,6 +267,20 @@ public abstract class AbstractPDQTrialServiceHelper {
                addGenericContact(poOrgId, studySiteIi, poDto);
            }
        }
+   }
+
+   /**
+    * @param paServiceUtils the paServiceUtils to set
+    */
+   public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
+       this.paServiceUtils = paServiceUtils;
+   }
+
+   /**
+    * @return the paServiceUtils
+    */
+   public PAServiceUtils getPaServiceUtils() {
+       return paServiceUtils;
    }
 
 

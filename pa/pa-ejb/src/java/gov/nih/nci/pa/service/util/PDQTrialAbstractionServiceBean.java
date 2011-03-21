@@ -93,9 +93,9 @@ import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
-import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.PlannedProcedureDTO;
@@ -157,7 +157,6 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
     private OrganizationCorrelationServiceRemote orgCorrelationService;
 
     private static final Logger LOG = Logger.getLogger(PDQTrialAbstractionServiceBeanRemote.class);
-    private PAServiceUtils paServiceUtils = new PAServiceUtils();
     private static final Map<String, String> ALLOCATION_CODE_MAP = new HashMap<String, String>();
     static {
         ALLOCATION_CODE_MAP.put("NA", AllocationCode.NA.getCode());
@@ -234,7 +233,7 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
                     recrutingStatus = statusDTO;
                     String poOrgId = IiConverter.convertToString(poOrgDTO.getIdentifier());
                     Ii studySiteIi = PaRegistry.getParticipatingSiteService().createStudySiteParticipant(
-                            studySiteDTO, recrutingStatus, paServiceUtils.getPoHcfIi(poOrgId)).getIdentifier();
+                            studySiteDTO, recrutingStatus, getPaServiceUtils().getPoHcfIi(poOrgId)).getIdentifier();
                     Map<PoDto, String> contactMap = valueMap.get(statusDTO);
                     addContact(studyProtocolIi, poOrgId, studySiteIi, contactMap);
                 }
@@ -511,7 +510,11 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
             ispDTO.setAllocationCode(CdConverter.convertToCd(AllocationCode.getByCode(allocationCode)));
             String blindingSchemaCode =  BLINDING_SCHEMA_MAP.get(StringUtils.upperCase(
                     CdConverter.convertCdToString(interventionalStudyProtocolDTO.getBlindingSchemaCode())));
-            ispDTO.setBlindingSchemaCode(CdConverter.convertToCd(BlindingSchemaCode.getByCode(blindingSchemaCode)));
+            BlindingSchemaCode blindingCode = BlindingSchemaCode.getByCode(blindingSchemaCode);
+            //PO-3322: Ignore blinding schema if double blind.
+            if (blindingCode != BlindingSchemaCode.DOUBLE_BLIND) {
+                ispDTO.setBlindingSchemaCode(CdConverter.convertToCd(blindingCode));
+            }
             ispDTO.setDesignConfigurationCode(interventionalStudyProtocolDTO.getDesignConfigurationCode());
             ispDTO.setStudyClassificationCode(interventionalStudyProtocolDTO.getStudyClassificationCode());
             ispDTO.setNumberOfInterventionGroups(interventionalStudyProtocolDTO.getNumberOfInterventionGroups());
@@ -537,17 +540,4 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
     public OrganizationCorrelationServiceRemote getOrgCorrelationService() {
         return orgCorrelationService;
     }
-   /**
-    * @param paServiceUtils the paServiceUtils to set
-    */
-   public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
-       this.paServiceUtils = paServiceUtils;
-   }
-
-   /**
-    * @return the paServiceUtils
-    */
-   public PAServiceUtils getPaServiceUtils() {
-       return paServiceUtils;
-   }
 }
