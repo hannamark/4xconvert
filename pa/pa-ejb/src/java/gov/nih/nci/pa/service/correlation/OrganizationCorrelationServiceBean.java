@@ -146,10 +146,8 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         throws PAException {
         HealthCareFacilityDTO hcfDTO = null;
         try {
-            if (IiConverter.HEALTH_CARE_FACILITY_ROOT
-                    .equals(poHcfIdentifier.getRoot())) {
-                hcfDTO = PoRegistry.getHealthCareFacilityCorrelationService()
-                    .getCorrelation(poHcfIdentifier);
+            if (IiConverter.HEALTH_CARE_FACILITY_ROOT.equals(poHcfIdentifier.getRoot())) {
+                hcfDTO = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(poHcfIdentifier);
             } else {
                 hcfDTO = getHcfByOtherId(poHcfIdentifier);
             }
@@ -157,7 +155,8 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
             throw new PAException(PAUtil.handleNullifiedRoleException(e));
         }
         if (hcfDTO == null) {
-            throw new PAException("Unable to find HealthCareFacility for identifier: " + poHcfIdentifier);
+            throw new PAException("Unable to find HealthCareFacility for identifier: "
+                    + IiConverter.convertToString(poHcfIdentifier));
         }
         HealthCareFacility hcf = getCorrUtils()
                 .getStructuralRoleByIi(DSetConverter.convertToIi(hcfDTO.getIdentifier()));
@@ -192,9 +191,11 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         hcfDTO.getIdentifier().getItem().add(poHcfIdentifier);
         List<HealthCareFacilityDTO> list = PoRegistry.getHealthCareFacilityCorrelationService().search(hcfDTO);
         if (CollectionUtils.isEmpty(list)) {
-            throw new PAException("HealthCareFacility not found for identifier: " + poHcfIdentifier);
+            throw new PAException("HealthCareFacility not found for identifier: "
+                    + IiConverter.convertToString(poHcfIdentifier));
         } else if (list.size() > 1) {
-            throw new PAException("Multiple HealthCareFacilities found for identifier: " + poHcfIdentifier);
+            throw new PAException("Multiple HealthCareFacilities found for identifier: "
+                    + IiConverter.convertToString(poHcfIdentifier));
         }
         hcfDTO = list.get(0);
         return hcfDTO;
@@ -566,10 +567,8 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
         String identifier = null;
         if (poOrgs == null || poOrgs.isEmpty()) {
             throw new PAException("No org found");
-
         } else if (poOrgs.size() > 1) {
-            throw new PAException(" there cannot be more than 1 record for"
-                    + identifierType);
+            throw new PAException(" there cannot be more than 1 record for " + identifierType);
         } else {
             identifier = poOrgs.get(0).getIdentifier().getExtension();
         }

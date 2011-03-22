@@ -105,7 +105,7 @@ public class OrganizationCorrelationServiceBeanTest {
         when(poHcfSvc.search(any(HealthCareFacilityDTO.class))).thenReturn(hcfDTOList);
         bean.createHealthCareFacilityCorrelations("1");
         when(poHcfSvc.search(any(HealthCareFacilityDTO.class))).thenReturn(null);
-        NullifiedRoleException nRE = new NullifiedRoleException(IiConverter.convertToPoClinicalResearchStaffIi("1"));  
+        NullifiedRoleException nRE = new NullifiedRoleException(IiConverter.convertToPoClinicalResearchStaffIi("1"));
         when(poHcfSvc.getCorrelation(any(Ii.class))).thenThrow(nRE);
         try {
             bean.createHealthCareFacilityCorrelations("1");
@@ -261,7 +261,7 @@ public class OrganizationCorrelationServiceBeanTest {
             bean.getPOOrgIdentifierByIdentifierType(PAConstants.DCP_IDENTIFIER_TYPE);
             fail("more than 1 record");
         } catch (PAException e) {
-            assertEquals(" there cannot be more than 1 record forDCPIdentifier", e.getMessage());
+            assertEquals(" there cannot be more than 1 record for DCPIdentifier", e.getMessage());
         }
         TooManyResultsException tmException = new TooManyResultsException (0);
         when(poOrgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenThrow(tmException);
