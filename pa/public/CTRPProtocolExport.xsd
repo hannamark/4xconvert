@@ -208,7 +208,7 @@
                 <xs:element ref="current_trial_status" />
                 <xs:element ref="current_trial_status_date" />
                 <xs:element minOccurs="0" ref="why_stopped" />
-                <xs:element minOccurs="0" ref="current_trial_start_date" />
+                <xs:element minOccurs="1" maxOccurs="1" ref="current_trial_start_date" />
                 <xs:element ref="current_trial_start_date_type" />
                 <xs:element ref="current_trial_completion_date" />
                 <xs:element ref="current_trial_completion_date_type" />
