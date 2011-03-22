@@ -83,11 +83,13 @@
 
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.enums.AllocationCode;
+import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -108,6 +110,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
@@ -176,6 +179,12 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
         MILESTONE.add(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE);
         MILESTONE.add(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE);
     }
+    private static final List<Cd> DOUBLE_BLIND_DEFAULT_ROLES = new ArrayList<Cd>();
+    static {
+        DOUBLE_BLIND_DEFAULT_ROLES.add(CdConverter.convertToCd(BlindingRoleCode.SUBJECT));
+        DOUBLE_BLIND_DEFAULT_ROLES.add(CdConverter.convertToCd(BlindingRoleCode.INVESTIGATOR));
+    }
+
     /**
      * Loads the PDQ xml's abstraction elements.
      * @param xmlUrl url
@@ -515,9 +524,10 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
             String blindingSchemaCode =  BLINDING_SCHEMA_MAP.get(StringUtils.upperCase(
                     CdConverter.convertCdToString(interventionalStudyProtocolDTO.getBlindingSchemaCode())));
             BlindingSchemaCode blindingCode = BlindingSchemaCode.getByCode(blindingSchemaCode);
-            //PO-3322: Ignore blinding schema if double blind.
-            if (blindingCode != BlindingSchemaCode.DOUBLE_BLIND) {
+            //PO-3322: If double-blind use default masking roles of "Subject" and "Investigator".
+            if (blindingCode == BlindingSchemaCode.DOUBLE_BLIND) {
                 ispDTO.setBlindingSchemaCode(CdConverter.convertToCd(blindingCode));
+                ispDTO.setBlindedRoleCode(DSetConverter.convertCdListToDSet(DOUBLE_BLIND_DEFAULT_ROLES));
             }
             ispDTO.setDesignConfigurationCode(interventionalStudyProtocolDTO.getDesignConfigurationCode());
             ispDTO.setStudyClassificationCode(interventionalStudyProtocolDTO.getStudyClassificationCode());
