@@ -220,7 +220,6 @@ public class BaseBatchUploadReader {
             validateGender(values, errMsg, lineNumber);
             validateEthnicity(values, errMsg, lineNumber);
             validateDateOfEntry(values, errMsg, lineNumber);
-            validateRegInstCode(values, errMsg, lineNumber);
             validateDiseaseCode(values, errMsg, lineNumber);
         }
     }
@@ -291,22 +290,6 @@ public class BaseBatchUploadReader {
             errMsg.append("Must be a valid patient gender for patient ID ").append(getPatientId(values))
                 .append(appendLineNumber(lineNumber)).append('\n');
         }
-    }
-    /**
-     * 
-     * @param values values
-     * @param errMsg if any
-     * @param lineNumber line Number
-     */
-    private void validateRegInstCode(List<String> values, StringBuffer errMsg, long lineNumber) {
-       String regInstID = StringUtils.trim(values.get(PATIENT_REG_INST_ID_INDEX));
-       if (StringUtils.isEmpty(regInstID)) {
-           errMsg.append("Patient Reg Inst Code is missing for patient ID ").append(getPatientId(values))
-           .append(appendLineNumber(lineNumber)).append('\n');
-       } else if (StringUtils.isNotEmpty(regInstID) && getOrganizationIi(regInstID, errMsg) == null) {
-           errMsg.append("Patient Reg Inst Code is invalid for patient ID ").append(getPatientId(values))
-           .append(appendLineNumber(lineNumber)).append('\n');
-       }
     }
     
     /**
@@ -395,7 +378,7 @@ public class BaseBatchUploadReader {
      * @param errMsg the error messages
      * @return the po identifier of the org
      */
-    private Ii getOrganizationIi(String orgIdentifier, StringBuffer errMsg) {
+    protected Ii getOrganizationIi(String orgIdentifier, StringBuffer errMsg) {
         Ii resultingIi = null;
         try {
             resultingIi = getOrganizationIi(orgIdentifier);
@@ -441,7 +424,7 @@ public class BaseBatchUploadReader {
      * @param values values
      * @return err if any
      */
-    private String getPatientId(List<String> values) {
+    protected String getPatientId(List<String> values) {
         return values.get(PATIENT_ID_INDEX).trim();
     }
     

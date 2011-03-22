@@ -163,7 +163,7 @@ public class SearchStudySiteBean implements SearchStudySiteService {
         criteria.add(Restrictions.eq("studyProtocol.id", IiConverter.convertToLong(studyProtocolIi)));
         criteria.add(Restrictions.eq("functionalCode", StudySiteFunctionalCode.TREATING_SITE));
         criteria.createCriteria("healthCareFacility").createCriteria("organization")
-            .add(Restrictions.eq("id", IiConverter.convertToLong(orgIi)));
+            .add(Restrictions.eq("identifier", orgIi.getExtension()));
         SearchStudySiteResultDto returnDto = null;
         try {
             StudySite ss = (StudySite) criteria.uniqueResult();

@@ -214,10 +214,12 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                 
                 errMsg.append(validateBatchData(line, lineNumber, protocolId));
             }
-            results.setErrors(new StringBuilder(errMsg.toString().trim()));
+            results.setErrors(new StringBuilder(errMsg.toString().trim()));          
             if (StringUtils.isEmpty(errMsg.toString().trim())) {
                 results.setValidatedLines(lines);
                 results.setPassedValidation(true);
+            } else {
+                LOG.info(errMsg.toString());
             }
         } catch (IOException e) {
             errMsg.append("Unable to open the batch file: ").append(file.getName());
@@ -453,9 +455,46 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         validateProtocolNumber(key, values, errMsg, lineNumber, expectedProtocolId);
         validatePatientID(key, values, errMsg, lineNumber);
         validatePatientsMandatoryData(key, values, errMsg, lineNumber);
+        validateRegInstCode(key, values, errMsg, lineNumber);
         validatePatientRaceData(key, values, errMsg, lineNumber);
         validateAccuralCount(key, values, errMsg, lineNumber);
         return errMsg.toString();
+    }
+    
+    /**
+     * 
+     * @param values values
+     * @param errMsg if any
+     * @param lineNumber line Number
+     */
+    private void validateRegInstCode(String key, List<String> values, StringBuffer errMsg, long lineNumber) {
+       if (StringUtils.equals("PATIENTS", key)) {
+          
+           String regInstID = StringUtils.trim(values.get(PATIENT_REG_INST_ID_INDEX - 1));
+           if (StringUtils.isEmpty(regInstID)) {
+               errMsg.append("Patient Reg Inst Code is missing for patient ID ").append(getPatientId(values))
+               .append(appendLineNumber(lineNumber)).append('\n');
+           } else {
+               try {
+                   Ii studySiteOrgIi = getOrganizationIi(regInstID, errMsg);
+                   String protocolId = values.get(COLLECTION_PROTOCOL_INDEX).trim();
+                   if (PAUtil.isIiNull(studySiteOrgIi)
+                      || getSearchStudySiteService().getStudySiteByOrg(getStudyProtocol(protocolId)
+                                 .getIdentifier(), studySiteOrgIi) == null) {
+                        addUpPatientRegInstCode(values, errMsg, lineNumber);
+                   }
+               } catch (PAException e) {
+                   addUpPatientRegInstCode(values, errMsg, lineNumber);
+                   LOG.error(e.getMessage());
+               }        
+            }
+       }
+    }
+    
+    private void addUpPatientRegInstCode(List<String> values, StringBuffer errMsg, 
+            long lineNumber) {
+        errMsg.append("Patient Reg Inst Code is invalid for patient ID ").append(getPatientId(values))
+        .append(appendLineNumber(lineNumber)).append('\n');
     }
 
     /**

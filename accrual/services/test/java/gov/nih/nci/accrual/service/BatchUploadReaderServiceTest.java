@@ -91,13 +91,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.service.util.BatchImportResults;
 import gov.nih.nci.accrual.service.util.BatchValidationResults;
 import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderBean;
 import gov.nih.nci.accrual.service.util.CountryBean;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.POPatientBean;
-import gov.nih.nci.accrual.service.util.SearchStudySiteBean;
+import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.accrual.util.PoServiceLocator;
@@ -166,7 +167,7 @@ public class BatchUploadReaderServiceTest {
         readerService.setStudySubjectService(studySubjectService);
         readerService.setSubmissionService(submissionService);
         readerService.setPerformedActivityService(new PerformedActivityBean());
-        readerService.setSearchStudySiteService(new SearchStudySiteBean());
+     
         PatientBeanLocal patientBean = new PatientBeanLocal();
         patientBean.setCountryService(countryService);
         patientBean.setPatientCorrelationSvc(new POPatientBean());        
@@ -193,6 +194,11 @@ public class BatchUploadReaderServiceTest {
                 return dto;
             }
         });
+        
+        SearchStudySiteService sssSvc = mock(SearchStudySiteService.class);
+        when(sssSvc.getStudySiteByOrg(any(Ii.class), any(Ii.class))).thenReturn(new SearchStudySiteResultDto());
+        
+        readerService.setSearchStudySiteService(sssSvc);
         
         final SDCDiseaseDTO disease = new SDCDiseaseDTO();
         disease.setIdentifier(IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
