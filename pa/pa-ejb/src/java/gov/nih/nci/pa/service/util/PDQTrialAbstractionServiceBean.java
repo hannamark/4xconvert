@@ -110,6 +110,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -292,6 +293,7 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
             //create other criterion
             String[] splitOutput = eligibilityCriteria.readEligibilityEntryCriteria(
                     parser.getDocument().getRootElement().getChild("eligibility"));
+            int displayOrder = 0;
             for (String otherCriterionDesc : splitOutput) {
                 PlannedEligibilityCriterionDTO pecDTO = new PlannedEligibilityCriterionDTO();
                 pecDTO.setStudyProtocolIdentifier(studyProtocolIi);
@@ -299,7 +301,9 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
                 pecDTO.setStructuredIndicator(BlConverter.convertToBl(Boolean.FALSE));
                 pecDTO.setTextDescription(StConverter.convertToSt(otherCriterionDesc));
                 pecDTO.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.OTHER));
+                pecDTO.setDisplayOrder(IntConverter.convertToInt(displayOrder));
                 PaRegistry.getPlannedActivityService().createPlannedEligibilityCriterion(pecDTO);
+                displayOrder++;
             }
         } catch (PAException e) {
             LOG.error("error loading EligibilityCriteria for study Protocol id" + studyProtocolIi.getExtension(), e);
