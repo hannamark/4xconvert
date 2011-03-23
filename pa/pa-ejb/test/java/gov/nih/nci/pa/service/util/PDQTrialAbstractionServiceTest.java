@@ -295,8 +295,7 @@ public class PDQTrialAbstractionServiceTest {
             assertEquals("URL is not set, call setUrl first.", e.getMessage());
         }
         bean.loadAbstractionElementFromPDQXml(testXMLUrl, studyProtocolIi);
-        verify(studyMilestoneSvc, org.mockito.Mockito.atLeastOnce()).create(any(
-                StudyMilestoneDTO.class));
+        verify(studyMilestoneSvc, org.mockito.Mockito.times(5)).create(any(StudyMilestoneDTO.class));
         assertNotNull(bean.getOrgCorrelationService());
         assertNotNull(bean.getPaServiceUtils());
     }
@@ -321,7 +320,7 @@ public class PDQTrialAbstractionServiceTest {
         bean.setPaServiceUtils(paServiceUtil);
         Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(1L);
         bean.loadAbstractionElementFromPDQXml(testDoubleBlindXMLUrl, studyProtocolIi);
-        verify(studyMilestoneSvc, org.mockito.Mockito.atLeastOnce()).create(any(StudyMilestoneDTO.class));
+        verify(studyMilestoneSvc, org.mockito.Mockito.times(5)).create(any(StudyMilestoneDTO.class));
         assertNotNull(bean.getOrgCorrelationService());
         assertNotNull(bean.getPaServiceUtils());
     }

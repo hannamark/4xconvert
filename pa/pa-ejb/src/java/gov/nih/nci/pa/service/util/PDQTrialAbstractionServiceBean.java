@@ -160,7 +160,7 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
     @EJB
     private OrganizationCorrelationServiceRemote orgCorrelationService;
 
-    private static final Logger LOG = Logger.getLogger(PDQTrialAbstractionServiceBeanRemote.class);
+    private static final Logger LOG = Logger.getLogger(PDQTrialAbstractionServiceBean.class);
     private static final Map<String, String> ALLOCATION_CODE_MAP = new HashMap<String, String>();
     static {
         ALLOCATION_CODE_MAP.put("NA", AllocationCode.NA.getCode());
@@ -176,6 +176,8 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
     private static final List<MilestoneCode> MILESTONE = new ArrayList<MilestoneCode>();
     static {
         MILESTONE.add(MilestoneCode.SUBMISSION_ACCEPTED);
+        MILESTONE.add(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE);
+        MILESTONE.add(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE);
         MILESTONE.add(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE);
         MILESTONE.add(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE);
     }
