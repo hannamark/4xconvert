@@ -189,7 +189,8 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
                 StudyProtocolBeanLocal spBean = new StudyProtocolBeanLocal();
                 String nciIdentifier =
                     PAUtil.getAssignedIdentifierExtension(spBean.getStudyProtocol(docDTO.getStudyProtocolIdentifier()));
-                String docPath = PAUtil.getDocumentFilePath(docDTO, nciIdentifier);
+                String docPath = PAUtil.getDocumentFilePath(IiConverter.convertToLong(docDTO.getIdentifier()),
+                        StConverter.convertToString(docDTO.getFileName()), nciIdentifier);
                 File downloadFile = new File(docPath);
                 docDTO.setText(EdConverter.convertToEd(IOUtils.toByteArray(FileUtils.openInputStream(downloadFile))));
             } catch (FileNotFoundException fe) {
@@ -243,8 +244,9 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
             Ii toIi = PAUtil.containsIi(map, dto.getIdentifier());
             if (toIi != null) {
                 // rename the file
-                fromName = PAUtil.getDocumentFilePath(dto, nciIdentifier);
-                toName = PAUtil.getDocumentFilePath(dto, nciIdentifier);
+                fromName = PAUtil.getDocumentFilePath(doc.getId(), doc.getFileName(), nciIdentifier);
+                toName = PAUtil.getDocumentFilePath(Long.valueOf(toIi.getExtension()),
+                        doc.getFileName(), nciIdentifier);
                 try {
                     FileUtils.copyFile(new File(fromName), new File(toName));
                 } catch (IOException e) {
@@ -314,7 +316,8 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         if (StringUtils.isEmpty(nciIdentifier)) {
             docPath = PAUtil.getTemporaryDocumentFilePath(docDTO);
         } else {
-            docPath = PAUtil.getDocumentFilePath(docDTO, nciIdentifier);
+            docPath = PAUtil.getDocumentFilePath(IiConverter.convertToLong(docDTO.getIdentifier()),
+                    StConverter.convertToString(docDTO.getFileName()), nciIdentifier);
         }
 
         try {

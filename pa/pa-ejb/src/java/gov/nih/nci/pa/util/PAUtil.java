@@ -663,17 +663,18 @@ public class PAUtil {
 
     /**
      * Gets the document path where the document data should be stored.
-     * @param dto the document dto
+     * @param id document ID.
+     * @param filename document filename.
      * @param nciIdentifier nci identifier
      * @return the file path
      * @throws PAException on error
      */
-    public static String getDocumentFilePath(DocumentDTO dto, String nciIdentifier) throws PAException {
+    public static String getDocumentFilePath(Long id, String filename, String nciIdentifier) throws PAException {
         String folderPath = PaEarPropertyReader.getDocUploadPath();
         StringBuffer sb  = new StringBuffer(folderPath);
         sb.append(File.separator).append(nciIdentifier)
-            .append(File.separator).append(IiConverter.convertToLong(dto.getIdentifier())).append('-')
-            .append(StConverter.convertToString(dto.getFileName()));
+            .append(File.separator).append(id).append('-')
+            .append(filename);
         return sb.toString();
     }
 

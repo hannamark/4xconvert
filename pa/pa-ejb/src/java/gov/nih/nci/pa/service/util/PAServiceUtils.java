@@ -1276,7 +1276,7 @@ public class PAServiceUtils {
             return search(entity);
         }
     }
-    private <Entity extends PoDto> Entity search(Entity entity) throws PAException {        
+    private <Entity extends PoDto> Entity search(Entity entity) throws PAException {
         LimitOffset limit = new LimitOffset(PAAttributeMaxLen.LEN_2, 0);
         List<? extends Entity> entities = null;
         Entity retEntity = null;
@@ -1974,7 +1974,9 @@ public class PAServiceUtils {
           StudyProtocolDTO sp = PaRegistry.getStudyProtocolService().getStudyProtocol(spIi);
           for (DocumentDTO doc : docs) {
               File tempLocation = new File(PAUtil.getTemporaryDocumentFilePath(doc));
-              File finalLocation = new File(PAUtil.getDocumentFilePath(doc, PAUtil.getAssignedIdentifierExtension(sp)));
+              File finalLocation = new File(PAUtil.getDocumentFilePath(
+                      IiConverter.convertToLong(doc.getIdentifier()),
+                      StConverter.convertToString(doc.getFileName()), PAUtil.getAssignedIdentifierExtension(sp)));
               if (tempLocation.exists()) {
                   try {
                       FileUtils.copyFile(tempLocation, finalLocation);
