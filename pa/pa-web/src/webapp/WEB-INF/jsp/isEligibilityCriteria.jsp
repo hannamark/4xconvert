@@ -240,13 +240,22 @@ BubbleTips.activateTipOn("dfn");
                           <s:hidden  name="eligibilityList[%{#stat.index}].structuredType" value="%{structuredType}" />
                           <s:textfield  name="eligibilityList[%{#stat.index}].displayOrder" value="%{displayOrder}" cssStyle="width:50px" />
                          </td>
-                         <td>  
-                         <s:url id="url" action="eligibilityCriteriaedit"><s:param name="id" value="%{id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
-                <s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
+                         <td>
+                            <pa:displayWhenCheckedOut>
+                                <s:url id="url" action="eligibilityCriteriaedit">
+                                    <s:param name="id" value="%{id}" />
+                                    <s:param name="page" value="%{'Edit'}"/>
+                                </s:url>
+                                <s:a href="%{url}"><img src="<c:url value="/images/ico_edit.gif"/>" alt="Edit" width="16" height="16"/></s:a>
+                            </pa:displayWhenCheckedOut>  
                          </td>
-                         <td>   
-                         <s:url id="url" action="eligibilityCriteriadelete"><s:param name="id" value="%{id}" /></s:url>
-                <s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16"/></s:a>
+                         <td>
+                            <pa:displayWhenCheckedOut>
+                                <s:url id="url" action="eligibilityCriteriadelete">
+                                    <s:param name="id" value="%{id}" />
+                                </s:url>
+                                <s:a href="%{url}"><img src="<c:url value="/images/ico_delete.gif"/>" alt="Delete" width="16" height="16"/></s:a>
+                            </pa:displayWhenCheckedOut>   
                          </td>
                      </tr>
                     </s:iterator>
@@ -265,16 +274,15 @@ BubbleTips.activateTipOn("dfn");
     <div class="actionsrow">
         <del class="btnwrapper">
             <ul class="btnrow">
-                <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                                    || (sessionScope.role == 'SuAbstractor')}">
-                <li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
-                <s:if test="eligibilityList != null" >
-                <li><s:a href="#" onclick="handleReOrderAction()" cssClass="btn"><span class="btn_img"><span class="save">Re-Order</span></span></s:a></li>
-                </s:if>
-                <s:if test="list != null">
-                <li><s:a href="eligibilityCriteriainput.action" cssClass="btn"><span class="btn_img"><span class="add">Add Other Criterion</span></span></s:a></li>
-               </s:if>
-                </c:if>              
+                <pa:displayWhenCheckedOut>
+                    <li><s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a></li>
+                    <s:if test="eligibilityList != null" >
+                        <li><s:a href="#" onclick="handleReOrderAction()" cssClass="btn"><span class="btn_img"><span class="save">Re-Order</span></span></s:a></li>
+                    </s:if>
+                    <s:if test="list != null">
+                        <li><s:a href="eligibilityCriteriainput.action" cssClass="btn"><span class="btn_img"><span class="add">Add Other Criterion</span></span></s:a></li>
+                    </s:if>
+                </pa:displayWhenCheckedOut> 
             </ul>   
         </del>
     </div> 
