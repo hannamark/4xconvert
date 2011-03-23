@@ -854,17 +854,18 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         String email = ServletActionContext.getRequest().getParameter("email");
         String telephone = ServletActionContext.getRequest().getParameter("tel");
         try {
-            validatePrimaryContact(persId, email, telephone);
+            ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
+            .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
+            String poOrgId = tab.getFacilityOrganization().getIdentifier();
+            
+            validatePrimaryContact(poOrgId, persId, email, telephone);
             if (hasFieldErrors()) {
                 reloadPrimaryContact(persId, email, telephone);
                 return ERROR_PRIMARY_CONTACTS;
             }
-            ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
-            .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
 
             Ii selectedPersTOIi = getSelectedPersonIi(persId);
             Ii ssIi = IiConverter.convertToStudySiteIi(tab.getStudyParticipationId());
-            String poOrgId = tab.getFacilityOrganization().getIdentifier();
             StringUtils.replace(telephone, " ", "");
             List<String> emailList = addToList(email);
             List<String> telList = addToList(telephone);
@@ -910,10 +911,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         return selectedPersTOIi;
     }
 
-    private void validatePrimaryContact(String persId, String email, String telephone) {
+    private void validatePrimaryContact(String poOrgId, String persId, String email, String telephone) {
         validatePersonIdAndAtLeastOneTelecom(persId, email, telephone); 
         validateEmail(email);
-        validatePhone(telephone);
+        validatePhone(poOrgId, telephone);
     }
     
     private void validatePersonIdAndAtLeastOneTelecom(String persId, String email, String telephone) {
@@ -925,8 +926,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         } 
     }
     
-    private void validatePhone(String telephone) {
-        if (StringUtils.isNotBlank(telephone) && !PAUtil.isPhoneValidForUSA(telephone)) {
+    private void validatePhone(String poOrgId, String telephone) {
+        Ii orgIi = IiConverter.convertToPoOrganizationIi(poOrgId);
+        if (paServiceUtil.isEntityCountryUSAOrCanada(orgIi) && StringUtils.isNotBlank(telephone)
+                && !PAUtil.isPhoneValidForUSA(telephone)) {
             addFieldError("personContactWebDTO.telephone", getText("error.usOrCanPhone"));
         }
     }
