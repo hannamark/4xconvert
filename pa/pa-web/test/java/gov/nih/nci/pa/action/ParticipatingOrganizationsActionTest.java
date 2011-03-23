@@ -190,6 +190,7 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         tab.setStudyParticipationId(3L);
         Organization org = new Organization();
         org.setId(1L);
+        org.setIdentifier("1");
         tab.setFacilityOrganization(org);
         getRequest().getSession().setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
         assertEquals("error_prim_contacts", act.saveStudyParticipationPrimContact());
@@ -211,7 +212,11 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         getRequest().setupAddParameter("email", "example.com");
         getRequest().setupAddParameter("tel", "111-222-3333extn12345");
         assertEquals("error_prim_contacts",act.saveStudyParticipationPrimContact());
-
+        org.setIdentifier(null);
+        tab.setFacilityOrganization(org);
+        getRequest().setupAddParameter("email", "example@example.com");
+        getRequest().setupAddParameter("tel", "111-222-3333 ext 1");
+        assertEquals("display_primContacts",act.saveStudyParticipationPrimContact());
     }
 
 }
