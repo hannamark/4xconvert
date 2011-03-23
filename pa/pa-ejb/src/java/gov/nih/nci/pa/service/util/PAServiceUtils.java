@@ -153,6 +153,7 @@ import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.EntityDto;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.correlation.AbstractEnhancedOrganizationRoleDTO;
+import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
@@ -1894,18 +1895,18 @@ public class PAServiceUtils {
           ClinicalResearchStaffDTO crsDTO = null;
           List<ClinicalResearchStaffDTO> poCrsList;
           try {
-              poCrsList = PoRegistry.getClinicalResearchStaffCorrelationService()
-              .getCorrelationsByPlayerIds(new Ii[]{investigatorIi});
-              if (poCrsList.isEmpty()) {
-                  crsDTO = new ClinicalResearchStaffDTO();
-                  crsDTO.setPlayerIdentifier(investigatorIi);
-                  crsDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(poOrgId));
-                  Ii newCrsIi = PoRegistry.getClinicalResearchStaffCorrelationService().createCorrelation(crsDTO);
-                  crsDTO = PoRegistry.getClinicalResearchStaffCorrelationService()
-                  .getCorrelation(newCrsIi);
-              } else {
-                  crsDTO = poCrsList.get(0);
-              }
+            poCrsList = (List<ClinicalResearchStaffDTO>) filterByScoper(PoRegistry
+                    .getClinicalResearchStaffCorrelationService()
+                    .getCorrelationsByPlayerIds(new Ii[] {investigatorIi}), poOrgId);
+            if (poCrsList.isEmpty()) {
+                crsDTO = new ClinicalResearchStaffDTO();
+                crsDTO.setPlayerIdentifier(investigatorIi);
+                crsDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi(poOrgId));
+                Ii newCrsIi = PoRegistry.getClinicalResearchStaffCorrelationService().createCorrelation(crsDTO);
+                crsDTO = PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelation(newCrsIi);
+            } else {
+                crsDTO = poCrsList.get(0);
+            }
           } catch (NullifiedRoleException e) {
               throw new PAException("The CRS for Person with id: " + investigatorIi + " no longer exists.", e);
           } catch (EntityValidationException e) {
@@ -1915,6 +1916,7 @@ public class PAServiceUtils {
           }
           return crsDTO;
       }
+
       /**
        * This method give the HealthCareProviderDTO for given Po OrgID.
        * @param trialType trialType
@@ -1928,8 +1930,9 @@ public class PAServiceUtils {
           if (trialType.startsWith("Interventional")) {
               List<HealthCareProviderDTO> poHcpList;
               try {
-                  poHcpList = PoRegistry.getHealthCareProviderCorrelationService()
-                  .getCorrelationsByPlayerIds(new Ii[]{investigatorIi});
+                  poHcpList = (List<HealthCareProviderDTO>) filterByScoper(PoRegistry
+                          .getHealthCareProviderCorrelationService()
+                          .getCorrelationsByPlayerIds(new Ii[]{investigatorIi}), poOrgId);
                   if (poHcpList.isEmpty()) {
                       hcpDTO = new HealthCareProviderDTO();
                       hcpDTO.setPlayerIdentifier(investigatorIi);
@@ -1948,6 +1951,17 @@ public class PAServiceUtils {
               }
           }
           return hcpDTO;
+      }
+
+      private <T extends AbstractPersonRoleDTO> List<T> filterByScoper(List<T> correlationsByPlayerIds,
+              String scoperId) {
+          List<T> filteredList = new ArrayList<T>();
+          for (T dto : correlationsByPlayerIds) {
+              if (dto.getScoperIdentifier().getExtension().equals(scoperId)) {
+                  filteredList.add(dto);
+              }
+          }
+          return filteredList;
       }
 
       /**
