@@ -129,6 +129,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -530,6 +531,11 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
             if (blindingCode == BlindingSchemaCode.DOUBLE_BLIND) {
                 ispDTO.setBlindingSchemaCode(CdConverter.convertToCd(blindingCode));
                 ispDTO.setBlindedRoleCode(DSetConverter.convertCdListToDSet(DOUBLE_BLIND_DEFAULT_ROLES));
+            } else if (blindingCode == BlindingSchemaCode.SINGLE_BLIND) {
+                //PO-3428: Defaulting single-blind to have the default role of "Subject".
+                ispDTO.setBlindingSchemaCode(CdConverter.convertToCd(blindingCode));
+                ispDTO.setBlindedRoleCode(DSetConverter.convertCdListToDSet(
+                        Arrays.asList(CdConverter.convertToCd(BlindingRoleCode.SUBJECT))));
             }
             ispDTO.setDesignConfigurationCode(interventionalStudyProtocolDTO.getDesignConfigurationCode());
             ispDTO.setStudyClassificationCode(interventionalStudyProtocolDTO.getStudyClassificationCode());
