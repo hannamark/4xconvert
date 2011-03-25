@@ -179,7 +179,7 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
      * @return remote
      * @throws PAException on err
      */
-    public HealthCareFacilityCorrelationServiceRemote getHealthCareProverService()
+    public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService()
             throws PAException {
         HealthCareFacilityCorrelationServiceRemote hcfSvc = mock(HealthCareFacilityCorrelationServiceRemote.class);
         try {

@@ -403,7 +403,7 @@ public class OrganizationCorrelationServiceBeanTest {
         poRoSvc = mock(ResearchOrganizationCorrelationServiceRemote.class);
         poOcSvc = mock (OversightCommitteeCorrelationServiceRemote.class);
         when(poSvcLoc.getOrganizationEntityService()).thenReturn(poOrgSvc);
-        when(poSvcLoc.getHealthCareProverService()).thenReturn(poHcfSvc);
+        when(poSvcLoc.getHealthCareFacilityCorrelationService()).thenReturn(poHcfSvc);
         when(poSvcLoc.getResearchOrganizationCorrelationService()).thenReturn(poRoSvc);
         when (poSvcLoc.getOversightCommitteeCorrelationService()).thenReturn(poOcSvc);
         OrganizationDTO orgDto = new OrganizationDTO();

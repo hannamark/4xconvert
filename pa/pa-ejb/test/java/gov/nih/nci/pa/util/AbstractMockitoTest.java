@@ -849,7 +849,7 @@ public class AbstractMockitoTest {
         when(poSvcLoc.getClinicalResearchStaffCorrelationService()).thenReturn(poCrsSvc);
         when(poSvcLoc.getIdentifiedPersonEntityService()).thenReturn(poIpSvc);
         when(poSvcLoc.getPersonEntityService()).thenReturn(poPerSvc);
-        when(poSvcLoc.getHealthCareProverService()).thenReturn(poHcfSvc);
+        when(poSvcLoc.getHealthCareFacilityCorrelationService()).thenReturn(poHcfSvc);
     }
 
     private void setupStudyResSvc() throws PAException {

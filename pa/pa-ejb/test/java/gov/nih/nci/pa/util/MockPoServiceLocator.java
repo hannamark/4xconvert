@@ -37,7 +37,7 @@ public class MockPoServiceLocator implements PoServiceLocator {
        return organizationEntityServiceRemote;
     }
 
-    public HealthCareFacilityCorrelationServiceRemote getHealthCareProverService()
+    public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService()
     throws PAException {
         return hcfService;
     }

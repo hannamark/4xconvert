@@ -92,6 +92,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
@@ -129,6 +130,8 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
@@ -144,6 +147,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Before;
@@ -162,6 +166,7 @@ public class PDQTrialAbstractionServiceTest {
     private PersonEntityServiceRemote poPersonSvc;
     private ClinicalResearchStaffCorrelationServiceRemote poCrscSvc;
     private HealthCareProviderCorrelationServiceRemote poHcpcSvc;
+    private HealthCareFacilityCorrelationServiceRemote poHcfSvc;
     private IdentifiedPersonCorrelationServiceRemote identifierPersonSvc;
     private IdentifiedOrganizationCorrelationServiceRemote identifierOrgSvc;
     private ServiceLocator paSvcLoc;
@@ -240,11 +245,21 @@ public class PDQTrialAbstractionServiceTest {
         poPersonSvc = mock(PersonEntityServiceRemote.class);
         poCrscSvc = mock(ClinicalResearchStaffCorrelationServiceRemote.class);
         poHcpcSvc = mock(HealthCareProviderCorrelationServiceRemote.class);
-
+        poHcfSvc = mock(HealthCareFacilityCorrelationServiceRemote.class);
+        
         when(poSvcLoc.getOrganizationEntityService()).thenReturn(poOrgSvc);
         when(poSvcLoc.getPersonEntityService()).thenReturn(poPersonSvc);
         when(poSvcLoc.getClinicalResearchStaffCorrelationService()).thenReturn(poCrscSvc);
         when(poSvcLoc.getHealthCareProviderCorrelationService()).thenReturn(poHcpcSvc);
+        when(poSvcLoc.getHealthCareFacilityCorrelationService()).thenReturn(poHcfSvc);
+        List<HealthCareFacilityDTO> hcfDtos = new ArrayList<HealthCareFacilityDTO>();
+        HealthCareFacilityDTO hcfDto = new HealthCareFacilityDTO();
+        DSet<Ii> dset = new DSet<Ii>();
+        dset.setItem(new HashSet<Ii>());
+        dset.getItem().add(IiConverter.convertToPoHealthCareFacilityIi("2"));
+        hcfDto.setIdentifier(dset);
+        hcfDtos.add(hcfDto);
+        when(poHcfSvc.search(any(HealthCareFacilityDTO.class))).thenReturn(hcfDtos);
 
         List<OrganizationDTO> orgDtos = new ArrayList<OrganizationDTO>();
         orgDtos.add(new OrganizationDTO());

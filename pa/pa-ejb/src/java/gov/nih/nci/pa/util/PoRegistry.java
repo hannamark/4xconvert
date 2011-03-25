@@ -60,7 +60,7 @@ public final class PoRegistry {
      */
     public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService()
         throws PAException {
-        return getInstance().getPoServiceLocator().getHealthCareProverService();
+        return getInstance().getPoServiceLocator().getHealthCareFacilityCorrelationService();
     }
 
     /**

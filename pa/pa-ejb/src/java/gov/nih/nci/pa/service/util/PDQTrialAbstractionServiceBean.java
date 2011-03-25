@@ -118,6 +118,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
@@ -162,6 +163,7 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
     private OrganizationCorrelationServiceRemote orgCorrelationService;
 
     private static final Logger LOG = Logger.getLogger(PDQTrialAbstractionServiceBean.class);
+    private final CorrelationUtils corrUtils = new CorrelationUtils();
     private static final Map<String, String> ALLOCATION_CODE_MAP = new HashMap<String, String>();
     static {
         ALLOCATION_CODE_MAP.put("NA", AllocationCode.NA.getCode());
@@ -231,7 +233,6 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
         locationsMap, Ii studyProtocolIi) {
         for (OrganizationDTO locOrg : locationsMap.keySet()) {
             try {
-                OrganizationDTO poOrgDTO = findOrCreateEntity(locOrg);
                 StudySiteDTO studySiteDTO = new StudySiteDTO();
                 studySiteDTO.setStudyProtocolIdentifier(studyProtocolIi);
                 studySiteDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
@@ -244,14 +245,16 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
                 StudySiteAccrualStatusDTO recrutingStatus = null;
                 for (StudySiteAccrualStatusDTO statusDTO : valueMap.keySet()) {
                     recrutingStatus = statusDTO;
-                    String poOrgId = IiConverter.convertToString(poOrgDTO.getIdentifier());
                     Ii studySiteIi = PaRegistry.getParticipatingSiteService().createStudySiteParticipant(
-                            studySiteDTO, recrutingStatus, getPaServiceUtils().getPoHcfIi(poOrgId)).getIdentifier();
+                            studySiteDTO, recrutingStatus, locOrg.getIdentifier()).getIdentifier();
+
                     Map<PoDto, String> contactMap = valueMap.get(statusDTO);
-                    addContact(studyProtocolIi, poOrgId, studySiteIi, contactMap);
+                    addContact(studyProtocolIi, corrUtils.getPoOrgIiFromPaHcfIi(locOrg.getIdentifier()).getExtension(), 
+                            studySiteIi, contactMap);
                 }
             } catch (Exception e) {
-                LOG.error("error while loading participating site", e);
+                LOG.error("error while loading participating site with PO hcf db id " 
+                        + locOrg.getIdentifier().getExtension(), e);
             }
         }
     }

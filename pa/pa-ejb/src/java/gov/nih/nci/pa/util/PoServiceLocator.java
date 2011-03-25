@@ -31,7 +31,7 @@ public interface PoServiceLocator {
      * @return HealthCareFacilityCorrelationServiceRemote
      * @throws PAException on error
      */
-    HealthCareFacilityCorrelationServiceRemote getHealthCareProverService() throws PAException;
+    HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() throws PAException;
     
     /**
      * @return HealthCareFacilityCorrelationServiceRemote

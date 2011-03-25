@@ -90,6 +90,8 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -97,6 +99,8 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.ServiceLocator;
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
@@ -105,6 +109,7 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Before;
@@ -119,6 +124,7 @@ public class PDQEligibilityCriteriaParserTest {
     private PoServiceLocator poSvcLoc;
     private IdentifiedPersonCorrelationServiceRemote identifierPersonSvc;
     private IdentifiedOrganizationCorrelationServiceRemote identifierOrgSvc;
+    private HealthCareFacilityCorrelationServiceRemote hcfSvc;
     private ServiceLocator paSvcLoc;
     private LookUpTableServiceRemote lookupSvc;
 
@@ -153,6 +159,16 @@ public class PDQEligibilityCriteriaParserTest {
         IdentifiedOrganizationDTO idOrgDTO = new IdentifiedOrganizationDTO();
         idOrgDTO.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("2"));
         when(identifierOrgSvc.search(any(IdentifiedOrganizationDTO.class))).thenReturn(orgList);
+        hcfSvc = mock(HealthCareFacilityCorrelationServiceRemote.class);
+        when(poSvcLoc.getHealthCareFacilityCorrelationService()).thenReturn(hcfSvc);
+        List<HealthCareFacilityDTO> hcfDtos = new ArrayList<HealthCareFacilityDTO>();
+        HealthCareFacilityDTO hcfDto = new HealthCareFacilityDTO();
+        DSet<Ii> dset = new DSet<Ii>();
+        dset.setItem(new HashSet<Ii>());
+        dset.getItem().add(IiConverter.convertToPoHealthCareFacilityIi("2"));
+        hcfDto.setIdentifier(dset);
+        hcfDtos.add(hcfDto);
+        when(hcfSvc.search(any(HealthCareFacilityDTO.class))).thenReturn(hcfDtos);
     }
 
     @Test

@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -11,9 +12,9 @@ import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
-import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
@@ -23,10 +24,12 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -60,7 +63,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     private Map<OrganizationDTO, Map<StudySiteAccrualStatusDTO, Map<PoDto, String>>> locationsMap;
     private String healthyVolunteers;
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
-
+    private final CorrelationUtils corrUtils = new CorrelationUtils();
     private static final Logger LOG  = Logger.getLogger(PDQAbstractionXMLParser.class);
 
 
@@ -105,13 +108,21 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
         for (Element locationElmt : locationElmtList) {
             OrganizationDTO orgDTO = new OrganizationDTO();
             //read Facility/Org
-            Element facitlityElmt = locationElmt.getChild("facility");
-            String ctepId = facitlityElmt.getAttributeValue("ctep-id");
+            Element facilityElmt = locationElmt.getChild("facility");
+            String ctepId = facilityElmt.getAttributeValue("ctep-id");
             if (StringUtils.isNotEmpty(ctepId)) {
-                orgDTO.setIdentifier((paServiceUtils.getOrganizationByCtepId(ctepId)).getIdentifier());
+                Ii ctepHcfIi = new Ii();
+                ctepHcfIi.setRoot(IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
+                ctepHcfIi.setExtension(ctepId);
+                try {
+                    orgDTO.setIdentifier(corrUtils.getPoHcfByCtepId(ctepHcfIi));
+                } catch (PAException e) {
+                    logPartSiteLoadError(ctepId, facilityElmt, e);
+                    continue;
+                }
             }
-            orgDTO.setName(EnOnConverter.convertToEnOn(getText(facitlityElmt, "name")));
-            Element addressElmt = facitlityElmt.getChild("address");
+            orgDTO.setName(EnOnConverter.convertToEnOn(getText(facilityElmt, "name")));
+            Element addressElmt = facilityElmt.getChild("address");
             orgDTO.setPostalAddress(AddressConverterUtil.create(null, null, getText(addressElmt, "city"),
                     getText(addressElmt, "state"), getText(addressElmt, "zip"),
                     getAlpha3CountryName(getText(addressElmt, "country"))));
@@ -126,6 +137,18 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
             contactMap.put(siteStatus, readContact(locationElmt));
             getLocationsMap().put(orgDTO, contactMap);
         }
+    }
+    
+    private void logPartSiteLoadError(String ctepId, Element facilityElmt, PAException e) {
+        StringBuffer errMsg = 
+            new StringBuffer("Unable to load file. Error loading location with facility ctep-id: "); 
+        errMsg.append(ctepId);
+        String facName = getText(facilityElmt, "name");
+        if (StringUtils.isNotEmpty(facName)) {
+            errMsg.append(" and name: ");
+            errMsg.append(facName);
+        }
+        LOG.error(errMsg.toString(), e);
     }
     /**
      * @param locationElmt

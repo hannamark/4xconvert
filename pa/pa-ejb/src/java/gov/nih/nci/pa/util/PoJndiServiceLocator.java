@@ -35,7 +35,7 @@ public class PoJndiServiceLocator implements PoServiceLocator {
      * @return HealthCareFacilityCorrelationServiceRemote
      * @throws PAException on error
      */
-    public HealthCareFacilityCorrelationServiceRemote getHealthCareProverService() throws PAException {
+    public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() throws PAException {
         String serverInfo = JNP + PaEarPropertyReader.getLookUpServerInfo()
             + "/po/HealthCareFacilityCorrelationServiceBean/remote";
         return (HealthCareFacilityCorrelationServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
