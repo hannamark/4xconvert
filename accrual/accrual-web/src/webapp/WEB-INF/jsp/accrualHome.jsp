@@ -24,7 +24,7 @@
         </h1>
         <br>
         <p class="padme2">
-        This site allows you to upload non-CTEP/DCP supported trial accrual data for a specific NCI-supported trial. If you are part of a CTEP/DCP supported trial, please go to the CDUS/CDS web interface to upload your data (these data will be transferred internally to CTRP.
+        This site allows you to upload non-CTEP/DCP supported trial accrual data for a specific NCI-supported trial. If you are part of a CTEP/DCP supported trial, please go to the CDUS/CDS web interface to upload your data (these data will be transferred internally to CTRP).
         </p>
         <p class="padme2">
         Want to learn more about the Reporting Program? Visit the <a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/main"  target="new1">NCI Clinical Trials Reporting Program</a> website
