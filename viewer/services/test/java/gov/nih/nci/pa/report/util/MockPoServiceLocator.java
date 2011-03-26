@@ -110,7 +110,7 @@ public class MockPoServiceLocator implements PoServiceLocator {
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.util.PoServiceLocator#getHealthCareProverService()
      */
-    public HealthCareFacilityCorrelationServiceRemote getHealthCareProverService() throws PAException {
+    public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
