@@ -161,12 +161,11 @@ public class PAUtil {
     private static final String UTF_8 = "UTF-8";
     private static final String TEMP_DOC_LOCATION = "temp_docs";
     private static final Pattern USA_CANADA_PHONENUMBER_PATTERN = Pattern
-        .compile("^\\s*(\\d{3})[-](\\d{3})[-](\\d{4})\\s*(x|ext|extn|ext\\.)\\s*(\\d{1,10})?\\s*$",
-                 Pattern.CASE_INSENSITIVE);
+        .compile("^\\D*(\\d{3})\\D*(\\d{3})\\D*(\\d{4})\\D*(\\d{1,10})?\\D*$");
     private static final int AREA_CODE_GROUP = 1;
     private static final int FIRST_NUMBER_GROUP = 2;
     private static final int LAST_NUMBER_GROUP = 3;
-    private static final int EXTENSION_GROUP = 5;
+    private static final int EXTENSION_GROUP = 4;
 
     static {
         ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.HEALTH_CARE_FACILITY_ROOT, PAExceptionConstants.NULLIFIED_HCF);
