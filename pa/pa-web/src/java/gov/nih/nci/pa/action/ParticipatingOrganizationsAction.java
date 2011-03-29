@@ -928,10 +928,10 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     
     private void validatePhone(String poOrgId, String telephone) {
         Ii orgIi = IiConverter.convertToPoOrganizationIi(poOrgId);
-        if (paServiceUtil.isEntityCountryUSAOrCanada(orgIi) && StringUtils.isNotBlank(telephone)
-                && !PAUtil.isPhoneValidForUSA(telephone)) {
+        String countryName = paServiceUtil.getEntityCountryName(orgIi);
+        if (!PAUtil.isPhoneValid(countryName, telephone)) {
             addFieldError("personContactWebDTO.telephone", getText("error.usOrCanPhone"));
-        }
+       }
     }
     
     private void validateEmail(String email) {

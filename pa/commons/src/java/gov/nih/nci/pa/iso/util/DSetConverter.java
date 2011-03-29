@@ -257,6 +257,37 @@ public class DSetConverter {
         }
         return null;
     }
+    
+    /**
+     * Replace the phone numbers in the given DSet with those specified in the given list.
+     * @param dSet The DSet to process
+     * @param phones The list of new phone numbers to store in the DSet
+     * @return The DSet.
+     */
+    public static DSet<Tel> replacePhones(DSet<Tel> dSet, List<String> phones) {
+        Set<Tel> telSet = new HashSet<Tel>();
+        for (Tel tel : dSet.getItem()) {
+            if (!isPhone(tel)) {
+                telSet.add(tel);
+            }
+        }
+        dSet.setItem(telSet);
+        telSet.addAll(addPhone(phones));
+        return dSet;
+    }
+
+    /**
+     * Test if the given Tel represent a phone number.
+     * @param tel The tel to test
+     * @return true if it represents a phone number
+     */
+    static boolean isPhone(Tel tel) {
+        if (tel instanceof TelPhone) {
+            return true;
+        }
+        String url = tel.getValue().toString();
+        return url != null && url.startsWith(TelPhone.SCHEME_TEL);
+    }
 
     /**
      *

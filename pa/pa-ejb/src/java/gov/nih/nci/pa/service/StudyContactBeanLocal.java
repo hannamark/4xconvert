@@ -13,7 +13,6 @@ import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyContactConverter;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyContactSortCriterion;
@@ -91,16 +90,13 @@ public class StudyContactBeanLocal extends AbstractRoleIsoService<StudyContactDT
     public void validate(StudyContactDTO dto) throws PAException {
         PAServiceUtils paServiceUtil = new PAServiceUtils();
         if (!PAUtil.isIiNull(dto.getClinicalResearchStaffIi()) && !PAUtil.isDSetTelNull(dto.getTelecomAddresses())) {
-            StructuralRole sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoClinicalResearchStaffIi(
-                    dto.getClinicalResearchStaffIi().getExtension()));
+            StructuralRole sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoClinicalResearchStaffIi(dto
+                .getClinicalResearchStaffIi().getExtension()));
             if (sr != null) {
-                ClinicalResearchStaffDTO  poSrDto = (ClinicalResearchStaffDTO) paServiceUtil.getCorrelationByIi(
-                        IiConverter.convertToPoClinicalResearchStaffIi(sr.getIdentifier()));
-                if (paServiceUtil.isEntityCountryUSAOrCanada(poSrDto.getPlayerIdentifier())
-                        && !PAUtil.isPhoneValidForUSA(DSetConverter.convertDSetToList(
-                                dto.getTelecomAddresses(), PAConstants.PHONE).get(0))) {
-                    throw new PAException("Please enter phone in xxx-xxx-xxxx format for USA or CANADA");
-                }
+                ClinicalResearchStaffDTO poSrDto = (ClinicalResearchStaffDTO) paServiceUtil
+                    .getCorrelationByIi(IiConverter.convertToPoClinicalResearchStaffIi(sr.getIdentifier()));
+
+                paServiceUtil.validateAndFormatPhoneNumber(poSrDto.getPlayerIdentifier(), dto.getTelecomAddresses());
             }
         }
     }

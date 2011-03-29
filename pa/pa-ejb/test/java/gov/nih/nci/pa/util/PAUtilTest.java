@@ -8,6 +8,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
@@ -34,9 +36,9 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -551,13 +553,112 @@ public class PAUtilTest {
     }
 
     /**
-     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPhoneValidForUSA(String)}.
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isCountryUSAOrCanada(String)} for USA case.
      */
     @Test
-    public void testIsPhoneValidForUSA() {
-        assertTrue(PAUtil.isPhoneValidForUSA("111-111-1111"));
-        assertFalse(PAUtil.isPhoneValidForUSA("test"));
-        assertFalse(PAUtil.isPhoneValidForUSA(null));
+    public void testIsCountryUSAOrCanadaCaseUSA() {
+
+        assertTrue(PAUtil.isCountryUSAOrCanada("USA"));
+    }
+
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isCountryUSAOrCanada(String)} for Canada case.
+     */
+    @Test
+    public void testIsCountryUSAOrCanadaCaseCanada() {
+        assertTrue(PAUtil.isCountryUSAOrCanada("CAN"));
+    }
+
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isCountryUSAOrCanada(String)} for other case.
+     */
+    @Test
+    public void testIsCountryUSAOrCanadaCaseOther() {
+        assertFalse(PAUtil.isCountryUSAOrCanada("FRA"));
+    }
+
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPhoneValidForUSA(String, String)} for USA number without
+     * extension.
+     */
+    @Test
+    public void testIsPhoneValidCaseNoExtension() {
+        assertTrue(PAUtil.isPhoneValid("USA", "111-111-1111"));
+    }
+
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPhoneValidForUSA(String, String)} for USA number with
+     * extension.
+     */
+    @Test
+    public void testIsPhoneValidCaseExtension() {
+        assertTrue(PAUtil.isPhoneValid("USA", "111-111-1111e1234"));
+    }
+
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPhoneValidForUSA(String, String)} for USA invalid number.
+     */
+    @Test
+    public void testIsPhoneValidCaseInvalid() {
+        assertFalse(PAUtil.isPhoneValid("USA", "test"));
+    }
+
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPhoneValidForUSA(String, String)} for non USA number.
+     */
+    @Test
+    public void testIsPhoneValidCaseNonUSA() {
+        assertTrue(PAUtil.isPhoneValid("BEL", "064/11/11/11"));
+    }
+
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPhoneValidForUSA(String, String)} for null number.
+     */
+    @Test
+    public void testIsPhoneValidCaseNull() {
+        assertFalse(PAUtil.isPhoneValid("USA", null));
+    }
+
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#formatPhoneNumber(String, String)} for USA number without
+     * extension.
+     */
+    @Test
+    public void testFormatPhoneNumberCaseUSANoExtension() {
+        String formatted = PAUtil.formatPhoneNumber("USA", "111-111-1111");
+        assertEquals("Wrong formatted number", "111-111-1111", formatted);
+    }
+
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#formatPhoneNumber(String, String)} for USA number with
+     * extension.
+     */
+    @Test
+    public void testFormatPhoneNumberCaseUSAWithExtension() {
+        String formatted = PAUtil.formatPhoneNumber("USA", "111-111-1111x1234");
+        assertEquals("Wrong formatted number", "111-111-1111ext1234", formatted);
+    }
+
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#formatPhoneNumber(String, String)} for USA invalid number.
+     */
+    @Test
+    public void testFormatPhoneNumberCaseUSAInvalid() {
+        try {
+            PAUtil.formatPhoneNumber("USA", "test");
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(true);
+        }
+    }
+
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#formatPhoneNumber(String, String)} for non USA number.
+     */
+    @Test
+    public void testFormatPhoneNumberCaseNonUSA() {
+        String formatted = PAUtil.formatPhoneNumber("BEL", "064/11/11/11");
+        assertEquals("Wrong formatted number", "064/11/11/11", formatted);
     }
 
     /**

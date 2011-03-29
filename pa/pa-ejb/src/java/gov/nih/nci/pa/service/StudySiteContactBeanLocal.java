@@ -76,15 +76,12 @@
  */
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.iso.convert.StudySiteContactConverter;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
-import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudySiteContactSortCriterion;
@@ -106,7 +103,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
 /**
  * @author asharma
- *
+ * 
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -169,7 +166,7 @@ public class StudySiteContactBeanLocal extends
         validateCrsContacts(dto);
         validateOrgContContacts(dto);
     }
-    
+
     private void validateOrgContContacts(StudySiteContactDTO dto) throws PAException {
         PAServiceUtils paServiceUtil = new PAServiceUtils();
         if (!PAUtil.isIiNull(dto.getOrganizationalContactIi()) && !PAUtil.isDSetTelNull(dto.getTelecomAddresses())) {
@@ -178,12 +175,11 @@ public class StudySiteContactBeanLocal extends
             if (sr != null) {
                 OrganizationalContactDTO poSrDto = (OrganizationalContactDTO) paServiceUtil
                     .getCorrelationByIi(IiConverter.convertToPoOrganizationalContactIi(sr.getIdentifier()));
-                validatedPhoneByUsOrCanCountry(paServiceUtil, 
-                        poSrDto.getScoperIdentifier(), dto.getTelecomAddresses());
+                paServiceUtil.validateAndFormatPhoneNumber(poSrDto.getScoperIdentifier(), dto.getTelecomAddresses());
             }
         }
     }
-    
+
     private void validateCrsContacts(StudySiteContactDTO dto) throws PAException {
         PAServiceUtils paServiceUtil = new PAServiceUtils();
         if (!PAUtil.isIiNull(dto.getClinicalResearchStaffIi()) && !PAUtil.isDSetTelNull(dto.getTelecomAddresses())) {
@@ -192,20 +188,9 @@ public class StudySiteContactBeanLocal extends
             if (sr != null) {
                 ClinicalResearchStaffDTO poSrDto = (ClinicalResearchStaffDTO) paServiceUtil
                     .getCorrelationByIi(IiConverter.convertToPoClinicalResearchStaffIi(sr.getIdentifier()));
-                validatedPhoneByUsOrCanCountry(paServiceUtil, 
-                        poSrDto.getScoperIdentifier(), dto.getTelecomAddresses());
+                paServiceUtil.validateAndFormatPhoneNumber(poSrDto.getScoperIdentifier(), dto.getTelecomAddresses());
             }
 
-        }
-    }
-    
-    private void validatedPhoneByUsOrCanCountry(PAServiceUtils paServiceUtil, Ii scoperIi, DSet<Tel> addresses) 
-        throws PAException {
-        if (paServiceUtil.isEntityCountryUSAOrCanada(scoperIi)
-                && !PAUtil.isPhoneValidForUSA(DSetConverter.convertDSetToList(addresses,
-                                                                              PAConstants.PHONE).get(0))) {
-            throw new PAException("US and Canadian telephone numbers must match "
-                    + "301-555-5555extn12345 or 301-555-5555x12345");
         }
     }
 

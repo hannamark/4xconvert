@@ -1584,7 +1584,6 @@ public class PAServiceUtils {
     }
 
     /**
-     *
      * @param studyProtocolIi ii
      * @param identifierType type
      * @return str
@@ -1674,27 +1673,23 @@ public class PAServiceUtils {
       }
 
     /**
-     * @param entityIi ii
-     * @return s
+     * Gets the country name of the entity (organization of person).
+     * @param entityIi The entityIi
+     * @return The country name.
      */
-    public boolean isEntityCountryUSAOrCanada(Ii entityIi) {
-        boolean countryUsaOrCan = false;
-        if (PAUtil.isIiNull(entityIi)) {
-            return countryUsaOrCan;
+    public String getEntityCountryName(Ii entityIi) {
+        String countryName = null;
+        if (!PAUtil.isIiNull(entityIi)) {
+            if (IiConverter.ORG_IDENTIFIER_NAME.equals(entityIi.getIdentifierName())) {
+                OrganizationDTO orgDTO = getPOOrganizationEntity(entityIi);
+                countryName = getCountryName(orgDTO.getPostalAddress());
+            }
+            if (IiConverter.PERSON_IDENTIFIER_NAME.equals(entityIi.getIdentifierName())) {
+                PersonDTO perDTO = getPoPersonEntity(entityIi);
+                countryName = getCountryName(perDTO.getPostalAddress());
+            }
         }
-        String countryName = "";
-        if (IiConverter.ORG_IDENTIFIER_NAME.equals(entityIi.getIdentifierName())) {
-            OrganizationDTO orgDTO = getPOOrganizationEntity(entityIi);
-            countryName = getCountryName(orgDTO.getPostalAddress());
-        }
-        if (IiConverter.PERSON_IDENTIFIER_NAME.equals(entityIi.getIdentifierName())) {
-            PersonDTO perDTO = getPoPersonEntity(entityIi);
-            countryName = getCountryName(perDTO.getPostalAddress());
-        }
-        if (PAConstants.USA.equalsIgnoreCase(countryName) || PAConstants.CANADA.equalsIgnoreCase(countryName)) {
-            countryUsaOrCan = true;
-        }
-        return countryUsaOrCan;
+        return countryName;
     }
 
     /**
@@ -1712,9 +1707,26 @@ public class PAServiceUtils {
         }
         return countryName;
     }
+    
+    /**
+     * Validates and format the phonenumber for the given scoper and adresses.
+     * @param scoperIi The scoper Ii
+     * @param addresses The DSet<Tel> containing the phone number
+     * @throws PAException If the phone number is not valid
+     */
+    public void validateAndFormatPhoneNumber(Ii scoperIi, DSet<Tel> addresses) throws PAException {
+        String countryName = getEntityCountryName(scoperIi);
+        String phoneNumber = DSetConverter.convertDSetToList(addresses, PAConstants.PHONE).get(0);
+        List<String> formattedNumbers = new ArrayList<String>();
+        try {
+            formattedNumbers.add(PAUtil.formatPhoneNumber(countryName, phoneNumber));
+        } catch (IllegalArgumentException e) {
+            throw new PAException(e.getMessage(), e);
+        }
+        DSetConverter.replacePhones(addresses, formattedNumbers);
+    }
 
     /**
-     *
      * @param entityIi Ii
      * @return poEntity
      */
@@ -1733,7 +1745,6 @@ public class PAServiceUtils {
     }
 
     /**
-     *
      * @param entityIi Ii
      * @return personDto
      */
@@ -1752,7 +1763,6 @@ public class PAServiceUtils {
     }
 
     /**
-     *
      * @param entityIi ii
      * @return name
      */
@@ -1765,7 +1775,6 @@ public class PAServiceUtils {
     }
 
       /**
-       *
        * @param poOrgId orgId
        * @return ii
        * @throws PAException on error

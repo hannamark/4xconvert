@@ -81,15 +81,25 @@ package gov.nih.nci.pa.iso.util;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.TelPerson;
 import gov.nih.nci.iso21090.TelPhone;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -148,4 +158,64 @@ public class DSetConverterTest {
         assertEquals(1, DSetConverter.getTelByType(dset, "mailto:").size());
         
     }    
+    
+    /**
+     * test the isPhone method for the case of a TelPhone
+     */
+    @Test
+    public void testIsPhoneCaseTelPhone() {
+        assertTrue(DSetConverter.isPhone(new TelPhone()));
+    }
+
+    /**
+     * test the isPhone method for the case of a TelUrl phone url
+     * @throws UnsupportedEncodingException Should not happen. UTF-8 is supported
+     */
+    @Test
+    public void testIsPhoneCaseTelUrlPhone() throws UnsupportedEncodingException {
+        TelPerson telPerson = new TelPerson();
+        telPerson.setValue(URI.create("tel:" + URLEncoder.encode("111-111-1111", "UTF-8")));
+        assertTrue(DSetConverter.isPhone(telPerson));
+    }
+
+    /**
+     * test the isPhone method for the case of a TelUrl email url
+     * @throws UnsupportedEncodingException Should not happen. UTF-8 is supported
+     */
+    @Test
+    public void testIsPhoneCaseTelUrlMail() throws UnsupportedEncodingException {
+        TelPerson telPerson = new TelPerson();
+        telPerson.setValue(URI.create("mailto:" + URLEncoder.encode("abc@gmail.com", "UTF-8")));
+        assertFalse(DSetConverter.isPhone(telPerson));
+    }
+    
+    /**
+     * test the isPhone method for the case of a TelUrl email url
+     * @throws UnsupportedEncodingException Should not happen. UTF-8 is supported
+     */
+    @Test
+    public void testReplacePhones() throws UnsupportedEncodingException {
+        DSet<Tel> dSet = new DSet<Tel>();
+        Set<Tel> items = new HashSet<Tel>();
+        dSet.setItem(items);
+        TelPhone telPhone = new TelPhone();
+        telPhone.setValue(URI.create("tel:" + URLEncoder.encode("111-111-1111", "UTF-8")));
+        items.add(telPhone);
+        TelPerson telPerson1 = new TelPerson();
+        telPerson1.setValue(URI.create("tel:" + URLEncoder.encode("222-222-2222", "UTF-8")));
+        items.add(telPerson1);
+        TelPerson telPerson2 = new TelPerson();
+        telPerson2.setValue(URI.create("mailto:" + URLEncoder.encode("abc@gmail.com", "UTF-8")));
+        items.add(telPerson2);
+        List<String> phones = Arrays.asList(new String[]{"333-333-3333"});
+        DSet<Tel> result = DSetConverter.replacePhones(dSet, phones);
+        assertEquals("Wrong DSet returned", result, dSet);
+        assertEquals("Wrong DSet size", 2, result.getItem().size());
+        Set<String> urls = new HashSet<String>();
+        for (Tel tel : result.getItem()) {
+            urls.add(URLDecoder.decode(tel.getValue().toString(), "UTF-8"));
+        }
+        assertTrue(urls.contains("mailto:abc@gmail.com"));
+        assertTrue(urls.contains("tel:333-333-3333"));
+    }
 }
