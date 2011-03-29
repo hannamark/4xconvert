@@ -468,27 +468,40 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
      * @param lineNumber line Number
      */
     private void validateRegInstCode(String key, List<String> values, StringBuffer errMsg, long lineNumber) {
-       if (StringUtils.equals("PATIENTS", key)) {
-          
+       if (StringUtils.equals("PATIENTS", key)) {      
            String regInstID = StringUtils.trim(values.get(PATIENT_REG_INST_ID_INDEX - 1));
            if (StringUtils.isEmpty(regInstID)) {
                errMsg.append("Patient Reg Inst Code is missing for patient ID ").append(getPatientId(values))
                .append(appendLineNumber(lineNumber)).append('\n');
            } else {
-               try {
-                   Ii studySiteOrgIi = getOrganizationIi(regInstID, errMsg);
-                   String protocolId = values.get(COLLECTION_PROTOCOL_INDEX).trim();
-                   if (PAUtil.isIiNull(studySiteOrgIi)
-                      || getSearchStudySiteService().getStudySiteByOrg(getStudyProtocol(protocolId)
-                                 .getIdentifier(), studySiteOrgIi) == null) {
-                        addUpPatientRegInstCode(values, errMsg, lineNumber);
-                   }
-               } catch (PAException e) {
-                   addUpPatientRegInstCode(values, errMsg, lineNumber);
-                   LOG.error(e.getMessage());
-               }        
-            }
+               validatePatientTreatingSite(regInstID, errMsg, values, lineNumber);
+           }
        }
+    }
+    
+    /**
+     * Test that the treating site ctep id exists for the particular trial being used.
+     * Do not validate if trial cannot be found as that validation is already being done 
+     * on the COLLECTION line.
+     */
+    private void validatePatientTreatingSite(String regInstID, StringBuffer errMsg, List<String> values, 
+            long lineNumber) {
+        Ii studySiteOrgIi = getOrganizationIi(regInstID, errMsg);
+        StudyProtocolDTO spDto = getStudyProtocol(values.get(COLLECTION_PROTOCOL_INDEX).trim());
+        if (spDto == null) {
+            return;
+        }
+        
+        try {
+            if (PAUtil.isIiNull(studySiteOrgIi)            
+                || getSearchStudySiteService().getStudySiteByOrg(
+                        spDto.getIdentifier(), studySiteOrgIi) == null) {
+                addUpPatientRegInstCode(values, errMsg, lineNumber);
+            }
+        } catch (PAException e) {
+            addUpPatientRegInstCode(values, errMsg, lineNumber);
+            LOG.error(e.getMessage());
+        }        
     }
     
     private void addUpPatientRegInstCode(List<String> values, StringBuffer errMsg, 
