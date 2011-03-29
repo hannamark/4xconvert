@@ -155,17 +155,18 @@ import org.apache.log4j.Logger;
 public class PAUtil {
     private static final String EXTN = "extn";
     private static final int EXTN_COUNT = 4;
-    private static final Logger LOG  = Logger.getLogger(PAUtil.class);
+    private static final Logger LOG = Logger.getLogger(PAUtil.class);
     private static final String ID_OPEN_PAREN = " (id = ";
     private static final Map<String, String> ROOT_TO_NULLIFIED_ERROR_MAP = new HashMap<String, String>();
     private static final String UTF_8 = "UTF-8";
     private static final String TEMP_DOC_LOCATION = "temp_docs";
-    private static final Pattern USA_CANADA_PHONENUMBER_PATTERN = 
-        Pattern.compile("^\\s*(\\d{3})[-](\\d{3})[-](\\d{4})[^\\d]*(\\d{1,10})?\\s*$");
+    private static final Pattern USA_CANADA_PHONENUMBER_PATTERN = Pattern
+        .compile("^\\s*(\\d{3})[-](\\d{3})[-](\\d{4})\\s*(x|ext|extn|ext\\.)\\s*(\\d{1,10})?\\s*$",
+                 Pattern.CASE_INSENSITIVE);
     private static final int AREA_CODE_GROUP = 1;
     private static final int FIRST_NUMBER_GROUP = 2;
     private static final int LAST_NUMBER_GROUP = 3;
-    private static final int EXTENSION_GROUP = 4;
+    private static final int EXTENSION_GROUP = 5;
 
     static {
         ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.HEALTH_CARE_FACILITY_ROOT, PAExceptionConstants.NULLIFIED_HCF);
@@ -883,7 +884,7 @@ public class PAUtil {
                 return sb.toString();
             } else {
                 throw new IllegalArgumentException("Invalid phone number : " + phoneNumber
-                        + "format for USA or CANADA is xxx-xxx-xxxxextxxxx");
+                        + " format for USA or CANADA is xxx-xxx-xxxxextxxxx");
             }
         }
         return phoneNumber;
