@@ -102,6 +102,7 @@ import gov.nih.nci.po.data.dao.FamilyUtilDao;
 import gov.nih.nci.po.util.FamilyDateValidator;
 import gov.nih.nci.po.util.OrgRelStartDateValidator;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.PoRegistry;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -140,6 +141,8 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
 
     @After
     public void teardown() {
+        FamilyDateValidator.setFamilyService(PoRegistry.getFamilyService());
+        OrgRelStartDateValidator.setFamilyDao(new FamilyUtilDao());
         orgRelServiceBean = null;
     }
 

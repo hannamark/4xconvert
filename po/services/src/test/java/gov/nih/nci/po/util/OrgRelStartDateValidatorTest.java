@@ -100,6 +100,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Session;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -124,6 +125,11 @@ public class OrgRelStartDateValidatorTest extends AbstractServiceBeanTest {
         oldDate = DateUtils.truncate(cal.getTime(), Calendar.DATE);
     }
     
+    @After
+    public void teardown() {
+        OrgRelStartDateValidator.setFamilyDao(new FamilyUtilDao());
+    }
+
     /**
      * Test method for {@link gov.nih.nci.po.util.OrgRelStartDateValidator#isValid(java.lang.Object)}.
      */

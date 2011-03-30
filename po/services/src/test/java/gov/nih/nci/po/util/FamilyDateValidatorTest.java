@@ -98,6 +98,7 @@ import java.util.Date;
 import javax.jms.JMSException;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -120,6 +121,11 @@ public class FamilyDateValidatorTest extends AbstractServiceBeanTest {
         Calendar cal = Calendar.getInstance();
         cal.set(2008, 01, 02);
         oldDate = DateUtils.truncate(cal.getTime(), Calendar.DATE);
+    }
+    
+    @After
+    public void teardown() {
+        FamilyDateValidator.setFamilyService(PoRegistry.getFamilyService());
     }
     
     /**

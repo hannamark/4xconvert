@@ -99,6 +99,7 @@ import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Session;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -121,6 +122,11 @@ public class FamilyOrgRelDateValidatorTest extends AbstractServiceBeanTest {
         Calendar cal = Calendar.getInstance();
         cal.set(2008, 01, 02);
         oldDate = DateUtils.truncate(cal.getTime(), Calendar.DATE);
+    }
+    
+    @After
+    public void teardown() {
+        FamilyOrgRelDateValidator.setFamilyUtilDao(new FamilyUtilDao());    
     }
     
     /**
