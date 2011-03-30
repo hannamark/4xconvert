@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.FamilyOrgRelDateValidator.FamilyOrgRelValidDate;
 import gov.nih.nci.po.util.OrderedDateValidator.OrderedDate;
 import gov.nih.nci.po.util.PastOrCurrentDateValidator;
 import gov.nih.nci.po.util.UniqueFamilyOrganizationRelationship;
@@ -106,13 +107,13 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 /**
  * A specific relationship of an organization to a family.
  *
- *
  * @author moweis
  *
  */
 @javax.persistence.Entity
 @UniqueFamilyOrganizationRelationship
 @OrderedDate
+@FamilyOrgRelValidDate
 public class FamilyOrganizationRelationship implements Auditable {
     private static final long serialVersionUID = -6216515702533977571L;
     private Long id;

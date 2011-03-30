@@ -88,6 +88,7 @@ import static org.junit.Assert.assertSame;
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyStatus;
 import gov.nih.nci.po.web.AbstractPoTest;
+import gov.nih.nci.po.web.util.validator.ValidStartDateHelper;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -149,10 +150,12 @@ public class CurateFamilyActionTest extends AbstractPoTest {
         Family family = new Family();
         family.setStatusCode(FamilyStatus.ACTIVE);
         family.setId(1L);
+        family.setStartDate(ValidStartDateHelper.getEarliestAllowableEndDate(family));
         action.setFamily(family);
         assertEquals(Action.SUCCESS, action.submit());
 
         family.setStatusCode(FamilyStatus.INACTIVE);
+        family.setEndDate(ValidStartDateHelper.getLatestAllowableStartDate(family));
         assertEquals("list", action.submit());
 
         family.setStatusCode(FamilyStatus.NULLIFIED);

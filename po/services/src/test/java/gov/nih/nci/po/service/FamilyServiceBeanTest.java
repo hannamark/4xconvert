@@ -86,6 +86,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Family;
@@ -95,6 +99,9 @@ import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.FamilyStatus;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
+import gov.nih.nci.po.data.dao.FamilyUtilDao;
+import gov.nih.nci.po.util.FamilyDateValidator;
+import gov.nih.nci.po.util.OrgRelStartDateValidator;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.Calendar;
@@ -103,6 +110,8 @@ import java.util.Date;
 import javax.jms.JMSException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -114,15 +123,21 @@ import org.junit.Test;
 public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
     private FamilyServiceBean familyServiceBean;
     private OrganizationRelationshipServiceLocal orgRelServiceLocal;
-    OrganizationServiceBean orgLocal;
-    public FamilyServiceBean getFamilyServiceBean() {
-        return familyServiceBean;
-    }
+    private OrganizationServiceBean orgLocal;
+    private FamilyOrganizationRelationshipServiceBean famOrgRelService = mock(FamilyOrganizationRelationshipServiceBean.class);
+    private FamilyUtilDao familyUtilDao = mock(FamilyUtilDao.class);
+
     @Before
     public void setUpData() {
-        familyServiceBean = EjbTestHelper.getFamilyServiceBean();
         orgRelServiceLocal = EjbTestHelper.getOrganizationRelationshipService();
+        famOrgRelService.setOrgRelService(orgRelServiceLocal);
+        familyServiceBean = EjbTestHelper.getFamilyServiceBean();
+        familyServiceBean.setFamilyOrgRelService(famOrgRelService);
         orgLocal = EjbTestHelper.getOrganizationServiceBean();
+        FamilyDateValidator.setFamilyService(familyServiceBean);
+        OrgRelStartDateValidator.setFamilyDao(familyUtilDao);
+        when(familyUtilDao.getActiveStartDate(any(Session.class), anyLong(), anyLong())).thenReturn(DateUtils.truncate(new Date(), Calendar.DATE));
+
     }
 
     @After
@@ -134,7 +149,7 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
     public void testFamily() throws EntityValidationException {
         Family family = getFamily();
         family.setStartDate(null);
-        long id = getFamilyServiceBean().create(family);
+        long id = familyServiceBean.create(family);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
         Family saved = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
@@ -142,7 +157,7 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
         Family toUpdate = familyServiceBean.getById(saved.getId());
         assertNotNull(toUpdate.getId());
         toUpdate.setName("UpdatedFamilyName");
-        getFamilyServiceBean().updateEntity(toUpdate);
+        familyServiceBean.updateEntity(toUpdate);
         Family get = familyServiceBean.getById(toUpdate.getId());
         assertEquals(get.getName(),toUpdate.getName());
         Family tosearch = new Family();
@@ -150,18 +165,9 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
         AnnotatedBeanSearchCriteria<Family> scriteria = new AnnotatedBeanSearchCriteria<Family>(tosearch);
         assertEquals(familyServiceBean.search(scriteria).size(),1);
     }
-    private Family getFamily() {
-        Family family = new Family();
-        family.setName("FamilyName");
-        Calendar cal = Calendar.getInstance();
-        cal.set(2011, 01, 02);
-        family.setStartDate(cal.getTime());
-        family.setStatusCode(FamilyStatus.NULLIFIED);
-        return family;
-    }
     @Test
     public void testFamilyStatusChangesToINACTVE() throws EntityValidationException, JMSException {
-        long id =getBasicFamily();
+        long id = getBasicFamily();
         Family toUpdate = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
         assertNull(toUpdate.getEndDate());
         for (FamilyOrganizationRelationship updateFamOrgEntity : toUpdate.getFamilyOrganizationRelationships()) {
@@ -171,7 +177,7 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
             assertNull(updateOrgRelEntity.getEndDate());
         }
         toUpdate.setStatusCode(FamilyStatus.INACTIVE);
-        toUpdate.setEndDate(new Date());
+        toUpdate.setEndDate(DateUtils.truncate(new Date(), Calendar.DATE));
         familyServiceBean.updateEntity(toUpdate);
         Family updatedEntity = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
         assertEquals(FamilyStatus.INACTIVE, updatedEntity.getStatusCode());
@@ -203,23 +209,21 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
 
     }
     private long getBasicFamily() throws EntityValidationException, JMSException {
-        FamilyOrganizationRelationshipServiceBean famOrgRelationBean = new FamilyOrganizationRelationshipServiceBean();
-        famOrgRelationBean.setOrgRelService(new OrganizationRelationshipServiceBean());
-        familyServiceBean.setFamilyOrgRelService(famOrgRelationBean);
+        famOrgRelService.setOrgRelService(new OrganizationRelationshipServiceBean());
+        familyServiceBean.setFamilyOrgRelService(famOrgRelService);
         long orgId = createOrg();
         Family family = getFamily();
         family.setStatusCode(FamilyStatus.ACTIVE);
-        long id = getFamilyServiceBean().create(family);
+        long id = familyServiceBean.create(family);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
 
-        FamilyOrganizationRelationship famOrgRelBo = new FamilyOrganizationRelationship();
-        famOrgRelBo.setFunctionalType(FamilyFunctionalType.AFFILIATION);
-        famOrgRelBo.setStartDate(new Date());
-        famOrgRelBo.setOrganization(orgLocal.getById(orgId));
-        famOrgRelBo.setFamily(getFamilyServiceBean().getById(id));
-        FamilyOrganizationRelationshipServiceBean famOrgService = new FamilyOrganizationRelationshipServiceBean();
-        famOrgService.create(famOrgRelBo);
+        FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
+        famOrgRel.setFunctionalType(FamilyFunctionalType.AFFILIATION);
+        famOrgRel.setStartDate(DateUtils.truncate(new Date(), Calendar.DATE));
+        famOrgRel.setOrganization(orgLocal.getById(orgId));
+        famOrgRel.setFamily(familyServiceBean.getById(id));
+        famOrgRelService.create(famOrgRel);
 
         long newOrgId = createOrg();
         PoHibernateUtil.getCurrentSession().flush();
@@ -230,6 +234,7 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
         orgRel.setRelatedOrganization(orgLocal.getById(newOrgId));
         orgRel.setFamily(familyServiceBean.getById(id));
         orgRel.setHierarchicalType(FamilyHierarchicalType.PARENT);
+        orgRel.setStartDate(famOrgRel.getStartDate());
         orgRelService.create(orgRel);
 
         PoHibernateUtil.getCurrentSession().flush();
@@ -243,5 +248,14 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
         org.setName("Some Org Name " + new Date());
         org.getEmail().add(new Email("abc@example.com"));
         return orgLocal.create(org);
-      }
+    }
+    private Family getFamily() {
+        Family family = new Family();
+        family.setName("FamilyName");
+        Calendar cal = Calendar.getInstance();
+        cal.set(2011, 01, 02);
+        family.setStartDate(DateUtils.truncate(cal.getTime(), Calendar.DATE));
+        family.setStatusCode(FamilyStatus.NULLIFIED);
+        return family;
+    }
 }

@@ -86,13 +86,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-
-import java.util.Date;
-
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.dao.FamilyUtilDao;
 import gov.nih.nci.po.web.AbstractPoTest;
+import gov.nih.nci.po.web.util.validator.ValidStartDateHelper;
+
+import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -105,10 +109,13 @@ import com.opensymphony.xwork2.Action;
  */
 public class CurateFamilyOrganizationRelationshipActionTest extends AbstractPoTest {
     private CurateFamilyOrganizationRelationshipAction action;
+    private FamilyUtilDao familyUtilDao = mock(FamilyUtilDao.class);
 
     @Before
     public void setUp() {
         action = new CurateFamilyOrganizationRelationshipAction();
+        action.setFamilyUtilDao(familyUtilDao);
+        when(familyUtilDao.getActiveRelationships(anyLong())).thenReturn(new ArrayList<FamilyOrganizationRelationship>());
     }
 
     @Test
@@ -129,6 +136,9 @@ public class CurateFamilyOrganizationRelationshipActionTest extends AbstractPoTe
     @Test
     public void testPrepareWithRootKeyButWithObjectInSession() throws Exception {
         FamilyOrganizationRelationship familyOrgRel = new FamilyOrganizationRelationship();
+        familyOrgRel.setFamily(new Family());
+        familyOrgRel.setOrganization(new Organization());
+        familyOrgRel.setId(1L);
         String rootKey = "foo";
         getSession().setAttribute(rootKey, familyOrgRel);
         action.setRootKey(rootKey);
@@ -154,6 +164,7 @@ public class CurateFamilyOrganizationRelationshipActionTest extends AbstractPoTe
         Organization org = new Organization();
         org.setId(3L);
         famOrgRel.setOrganization(org);
+        famOrgRel.setStartDate(ValidStartDateHelper.getLatestAllowableStartDate(famOrgRel));
 
         action.setFamilyOrgRelationship(famOrgRel);
         assertEquals(Action.SUCCESS, action.submit());
@@ -169,7 +180,8 @@ public class CurateFamilyOrganizationRelationshipActionTest extends AbstractPoTe
         Organization org = new Organization();
         org.setId(3L);
         famOrgRel.setOrganization(org);
-        famOrgRel.setEndDate(new Date());
+        famOrgRel.setStartDate(ValidStartDateHelper.getLatestAllowableStartDate(famOrgRel));
+        famOrgRel.setEndDate(ValidStartDateHelper.getEarliestAllowableEndDate(famOrgRel));
 
         action.setFamilyOrgRelationship(famOrgRel);
         assertEquals("parent", action.submit());

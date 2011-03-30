@@ -84,6 +84,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -100,7 +101,7 @@ import com.fiveamsolutions.nci.commons.service.GenericSearchService;
 public interface OrganizationRelationshipServiceLocal
       extends GenericSearchService<OrganizationRelationship, SearchCriteria<OrganizationRelationship>> {
     /**
-     * Creates a bi-directional Relationship.
+     * Creates a bidirectional Relationship.
      * @param orgRel new OrganizationRelationship
      * @return id
      * @throws EntityValidationException if validation fails
@@ -137,11 +138,41 @@ public interface OrganizationRelationshipServiceLocal
     List<OrganizationRelationship> getActiveOrganizationRelationships(Long familyId, Long orgId);
 
     /**
-     * Gets active organization relationship (if any)  between two organizations within a family.
+     * Gets active organization relationship (if any) between two organizations within a family.
      * @param familyId the id of the family
      * @param orgId the org id
      * @param relatedOrgId the related org id
      * @return the organization relationship or null if no active relationship is found
      */
     OrganizationRelationship getActiveOrganizationRelationship(Long familyId, Long orgId, Long relatedOrgId);
+
+    /**
+     * Gets the earliest start date of all organization relationship within a family.
+     * @param familyId the id of the family
+     * @return the earliest start date, or null if no relationships
+     */
+    Date getEarliestStartDate(Long familyId);
+
+    /**
+     * Gets the earliest start date of all organization relationships within a family for an org.
+     * @param familyId the id of the family
+     * @param orgId the id of the org
+     * @return the earliest start date, or null if no relationships
+     */
+    Date getEarliestStartDate(Long familyId, Long orgId);
+
+    /**
+     * Gets the latest start date of all organization relationship within a family for an org.
+     * @param familyId the id of the family
+     * @return the latest start date, or null if no relationships
+     */
+    Date getLatestEndDate(Long familyId);
+
+    /**
+     * Gets the latest start date of all organization relationship within a family.
+     * @param familyId the id of the family
+     * @param orgId the id of the org
+     * @return the latest start date, or null if no relationships
+     */
+    Date getLatestEndDate(Long familyId, Long orgId);
 }

@@ -80,180 +80,75 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.web.util.validator;
 
-import gov.nih.nci.po.util.FamilyOrganizationRelationshipOrgComparator;
-
-import gov.nih.nci.po.util.NotEmpty;
-import gov.nih.nci.po.util.PastOrCurrentDateValidator.PastOrCurrentDate;
+import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.util.FamilyDateValidator.FamilyValidDate;
-import gov.nih.nci.po.util.OrderedDateValidator.OrderedDate;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
-import org.hibernate.annotations.Where;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotNull;
-
-import com.fiveamsolutions.nci.commons.audit.Auditable;
-import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
- * Family represents a set of related organizations.
- * 
+ * Utility for computing valid start and end date ranges for Family-related entities.
  * @author moweis
+ * 
  */
-@javax.persistence.Entity
-@OrderedDate
-@FamilyValidDate
-public class Family implements Auditable {
-    private static final long serialVersionUID = 9142333411678327002L;
-    private static final int DEFAULT_TEXT_COL_LENGTH = 160;
-
-    private Long id;
-    private String name;
-    private FamilyStatus statusCode;
-    private Date startDate;
-    private Date endDate;
-    private SortedSet<FamilyOrganizationRelationship> familyOrganizationRelationships = 
-        new TreeSet<FamilyOrganizationRelationship>(new FamilyOrganizationRelationshipOrgComparator());
-    private Set<OrganizationRelationship> organizationRelationships = 
-        new HashSet<OrganizationRelationship>();
+public class ValidStartDateHelper {
 
     /**
-     * @return database id
+     * Return the latest allowable start date for a Family.
+     * 
+     * @param family Family to check
+     * @return latest allowable start date
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Searchable
-    public Long getId() {
-        return id;
+    public static Date getLatestAllowableStartDate(Family family) {
+        return PoRegistry.getFamilyService().getLatestAllowableStartDate(family.getId());
     }
 
     /**
-     * @param id database id
+     * Return the earliest allowable end date for a Family.
+     * 
+     * @param family Family to check
+     * @return earliest allowable end date
      */
-    public void setId(Long id) {
-        this.id = id;
+    public static Date getEarliestAllowableEndDate(Family family) {
+        return PoRegistry.getFamilyService().getEarliestAllowableEndDate(family.getId());
     }
 
     /**
-     * @return the name
+     * Return the latest allowable start date for a Family Organization Relationship.
+     * 
+     * @param relationship FamilyOrganizationRelationship to check
+     * @return latest allowable start date
      */
-    @NotEmpty
-    @Length(max = DEFAULT_TEXT_COL_LENGTH)
-    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
-    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "name")
-    public String getName() {
-        return name;
+    public static Date getLatestAllowableStartDate(FamilyOrganizationRelationship relationship) {
+        return PoRegistry.getOrganizationRelationshipService().getEarliestStartDate(relationship.getFamily().getId(),
+                relationship.getOrganization().getId());
     }
 
     /**
-     * @param name the name to set
+     * Return the earliest allowable end date for a Family Organization Relationship.
+     * 
+     * @param relationship FamilyOrganizationRelationship to check
+     * @return earliest allowable end date
      */
-    public void setName(String name) {
-        this.name = name;
+    public static Date getEarliestAllowableEndDate(FamilyOrganizationRelationship relationship) {
+        return PoRegistry.getOrganizationRelationshipService().getLatestEndDate(relationship.getFamily().getId(),
+                relationship.getOrganization().getId());
     }
 
     /**
-     * @return the statusCode
+     * Return the earliest allowable start date for an Organization Relationship.
+     * 
+     * @param relationship {@link OrganizationRelationship} to check
+     * @return earliest allowable start date
      */
-    @Enumerated(EnumType.STRING)
-    @Searchable(matchMode = Searchable.MATCH_MODE_EXACT)
-    @NotNull
-    public FamilyStatus getStatusCode() {
-        return statusCode;
+    public static Date getEarliestAllowableStartDate(OrganizationRelationship relationship) {
+        Date famOrgRelDate = PoRegistry.getFamilyOrganizationRelationshipService().getActiveStartDate(
+                relationship.getFamily().getId(), relationship.getOrganization().getId());
+        Date revFamOrgRelDate = PoRegistry.getFamilyOrganizationRelationshipService().getActiveStartDate(
+                relationship.getFamily().getId(), relationship.getRelatedOrganization().getId());
+        return famOrgRelDate.before(revFamOrgRelDate) ? revFamOrgRelDate : famOrgRelDate;
     }
-
-    /**
-     * @param statusCode the statusCode to set
-     */
-    public void setStatusCode(FamilyStatus statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    /**
-     * @return the startDate
-     */
-    @Temporal(TemporalType.DATE)
-    @NotNull
-    @PastOrCurrentDate
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    /**
-     * @param startDate the startDate to set
-     */
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    /**
-     * @return the endDate
-     */
-    @Temporal(TemporalType.DATE)
-    @PastOrCurrentDate
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    /**
-     * @param endDate the endDate to set
-     */
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
-    /**
-     * @return the family organization relationships within this family.
-     */
-    @OneToMany(mappedBy = "family")
-    @Where(clause = "endDate is null")
-    @Sort(type = SortType.COMPARATOR, 
-            comparator = FamilyOrganizationRelationshipOrgComparator.class)
-    public SortedSet<FamilyOrganizationRelationship> getFamilyOrganizationRelationships() {
-        return familyOrganizationRelationships;
-    }
-
-    @SuppressWarnings("unused")
-    private void setFamilyOrganizationRelationships(
-            SortedSet<FamilyOrganizationRelationship> familyOrganizationRelationships) {
-        this.familyOrganizationRelationships = familyOrganizationRelationships;
-    }
-
-    /**
-     * @return the organizationRelationships
-     */
-    @OneToMany(mappedBy = "family")
-    @Where(clause = "endDate is null")
-    public Set<OrganizationRelationship> getOrganizationRelationships() {
-        return organizationRelationships;
-    }
-
-    /**
-     * @param organizationRelationships the organizationRelationships to set
-     */
-    @SuppressWarnings("unused")
-    private void setOrganizationRelationships(Set<OrganizationRelationship> organizationRelationships) {
-        this.organizationRelationships = organizationRelationships;
-    }
-
 }

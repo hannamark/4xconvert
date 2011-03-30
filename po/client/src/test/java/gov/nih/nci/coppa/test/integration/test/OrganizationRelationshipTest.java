@@ -205,13 +205,11 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         assertTrue(selenium.isElementPresent("add_relationship_button"));
         assertTrue(selenium.isElementPresent("cancel_button"));
 
-        selenium.click("add_relationship_button");
-        waitForElementById("organizationRelationshipForm", 10);
-        assertTrue(selenium.isTextPresent("hierarchicalType must be set"));
         selenium.select("newOrgRelationship.hierarchicalType", relationshipName);
-        clickAndWait("add_relationship_button");
+        selenium.click("add_relationship_button");
 
         selenium.selectFrame("relative=up");
+        pause(2000);
         waitForElementById("row", 10);
 
         String info = selenium.getText("xpath=//table[@id='row']//tr[" + row + "]//td[1]");
@@ -233,11 +231,8 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         assertTrue(selenium.isElementPresent("cancel_button"));
 
         selenium.type("orgRelationship.endDate", "");
-        selenium.type("newOrgRelationship.startDate", "");
         selenium.click("add_relationship_button");
         waitForElementById("organizationRelationshipForm", 10);
-        assertTrue(selenium.isTextPresent("hierarchicalType must be set"));
-        assertTrue(selenium.isTextPresent("startDate must be set"));
         assertTrue(selenium.isTextPresent("End Date is required"));
         selenium.select("newOrgRelationship.hierarchicalType", relationshipName);
 
@@ -245,9 +240,10 @@ public class OrganizationRelationshipTest extends AbstractPoWebTest {
         selenium.type("orgRelationship.endDate", today);
         selenium.type("newOrgRelationship.startDate", today);
 
-        clickAndWait("add_relationship_button");
+        selenium.click("add_relationship_button");
 
         selenium.selectFrame("relative=up");
+        pause(5000);
         waitForElementById("row", 10);
 
         String info = selenium.getText("xpath=//table[@id='row']//tr[" + row + "]//td[1]");

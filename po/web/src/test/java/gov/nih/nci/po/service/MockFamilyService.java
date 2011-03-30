@@ -84,6 +84,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.Family;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -150,6 +151,27 @@ public class MockFamilyService implements FamilyServiceLocal {
      */
     public Map<String, String[]> validate(Family entity) {
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getLatestAllowableStartDate(long id) {
+        return new Date();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getEarliestAllowableEndDate(Long id) {
+        return new Date();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getLatestAllowableStartDate(Long id) {
+        return new Date();
     }
 
 }

@@ -80,131 +80,82 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.util;
 
-import gov.nih.nci.po.data.bo.EntityStatus;
 import gov.nih.nci.po.data.bo.Family;
-import gov.nih.nci.po.data.bo.FamilyFunctionalType;
-import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
-import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.service.FamilyServiceLocal;
 
-import java.util.ArrayList;
+import java.io.Serializable;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+import org.hibernate.validator.Validator;
+import org.hibernate.validator.ValidatorClass;
 
 /**
- * Mock implementation of the family organization relationship service
- *
- * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ * Validates that Family startDate and endDate is valid per existing relationships.
+ * 
+ * @author moweis
+ * 
  */
-public class MockFamilyOrganizationRelationshipService implements FamilyOrganizationRelationshipServiceLocal {
-    private long currentId = 0;
+public class FamilyDateValidator implements Validator<FamilyDateValidator.FamilyValidDate>, Serializable {
+
+    private static FamilyServiceLocal familyService = PoRegistry.getFamilyService();
+    
+    /**
+     * Validates that Family start date is valid.
+     */
+    @Documented
+    @ValidatorClass(FamilyDateValidator.class)
+    @Target(ElementType.TYPE)
+    @Retention(RetentionPolicy.RUNTIME)
+    public static @interface FamilyValidDate {
+
+        /**
+         * get the message.
+         */
+        String message() default "{validator.invalidStartDate}";
+    }
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * {@inheritDoc}
      */
-    public long create(FamilyOrganizationRelationship famOrgRel) throws EntityValidationException {
-        if (famOrgRel.getId() == null) {
-            currentId++;
-            famOrgRel.setId(currentId);
+    public void initialize(FamilyValidDate parameters) {
+        //do nothing
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isValid(Object value) {
+        if (!(value instanceof Family)) {
+            return false;
         }
-        return currentId;
+        return isStartDateValid((Family) value) && isEndDateValid((Family) value);
+    }
+
+    private boolean isStartDateValid(Family family) {
+        Date startDate = family.getStartDate();
+        return family.getId() == null || (startDate != null && !startDate.after(
+                familyService.getLatestAllowableStartDate(family.getId())));
+    }
+
+    private boolean isEndDateValid(Family family) {
+        Date endDate = family.getEndDate();
+        Date earliestAllowableEndDate = familyService.getEarliestAllowableEndDate(family.getId());
+        return endDate == null || earliestAllowableEndDate == null || !endDate.before(earliestAllowableEndDate);
     }
 
     /**
-     * {@inheritDoc}
+     * @param familyService the familyService to set
      */
-    public FamilyOrganizationRelationship getById(long id) {
-       FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
-       famOrgRel.setId(id);
-       famOrgRel.setStartDate(new Date());
-       famOrgRel.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
-
-       famOrgRel.setOrganization(new Organization());
-       famOrgRel.getOrganization().setName("Organization");
-       famOrgRel.getOrganization().setStatusCode(EntityStatus.ACTIVE);
-       famOrgRel.getOrganization().setId(id);
-
-       famOrgRel.setFamily(new Family());
-       famOrgRel.getFamily().setId(id);
-       famOrgRel.getFamily().setName("Family");
-       return famOrgRel;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void updateEntity(FamilyOrganizationRelationship updatedEntity) {
-    }
-
-    public Set<FamilyOrganizationRelationship> getFamilyOrganizationRelationshipsByOrgId(Long orgId) {
-        return new HashSet<FamilyOrganizationRelationship>();
-    }
-
-    public Set<FamilyOrganizationRelationship> getFamilyOrganizationRelationshipsByFamId(Long famId) {
-        return new HashSet<FamilyOrganizationRelationship>();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<FamilyOrganizationRelationship> search(SearchCriteria<FamilyOrganizationRelationship> criteria) {
-        return new ArrayList<FamilyOrganizationRelationship>();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<FamilyOrganizationRelationship> search(SearchCriteria<FamilyOrganizationRelationship> criteria,
-            PageSortParams<FamilyOrganizationRelationship> pageSortParams) {
-        return new ArrayList<FamilyOrganizationRelationship>();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int count(SearchCriteria<FamilyOrganizationRelationship> criteria) {
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Map<String, String[]> validate(FamilyOrganizationRelationship entity) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<FamilyOrganizationRelationship> getActiveRelationships(Long familyId) {
-       return new ArrayList<FamilyOrganizationRelationship>();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Date getEarliestStartDate(Long familyId) {
-        return new Date();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Date getActiveStartDate(Long familyId, Long orgId) {
-        return new Date();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Date getLatestEndDate(Long familyId) {
-        return new Date();
+    public static void setFamilyService(FamilyServiceLocal familyService) {
+        FamilyDateValidator.familyService = familyService;
     }
 }

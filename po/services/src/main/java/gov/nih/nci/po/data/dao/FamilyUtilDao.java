@@ -80,180 +80,117 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.data.dao;
 
-import gov.nih.nci.po.util.FamilyOrganizationRelationshipOrgComparator;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.data.bo.OrganizationRelationship;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
-import gov.nih.nci.po.util.NotEmpty;
-import gov.nih.nci.po.util.PastOrCurrentDateValidator.PastOrCurrentDate;
-import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.util.FamilyDateValidator.FamilyValidDate;
-import gov.nih.nci.po.util.OrderedDateValidator.OrderedDate;
-
+import java.sql.Connection;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.List;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
-import org.hibernate.annotations.Where;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotNull;
-
-import com.fiveamsolutions.nci.commons.audit.Auditable;
-import com.fiveamsolutions.nci.commons.search.Searchable;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
- * Family represents a set of related organizations.
+ * Dao for Family and related classes.
  * 
  * @author moweis
+ * 
  */
-@javax.persistence.Entity
-@OrderedDate
-@FamilyValidDate
-public class Family implements Auditable {
-    private static final long serialVersionUID = 9142333411678327002L;
-    private static final int DEFAULT_TEXT_COL_LENGTH = 160;
 
-    private Long id;
-    private String name;
-    private FamilyStatus statusCode;
-    private Date startDate;
-    private Date endDate;
-    private SortedSet<FamilyOrganizationRelationship> familyOrganizationRelationships = 
-        new TreeSet<FamilyOrganizationRelationship>(new FamilyOrganizationRelationshipOrgComparator());
-    private Set<OrganizationRelationship> organizationRelationships = 
-        new HashSet<OrganizationRelationship>();
-
+// TODO If further methods are added to this class, it should be split into separate classes (FamilyOrgRelatioshipDao,
+// OrgRelationshipDao).
+public class FamilyUtilDao {
+    private static final String FAMILY_ID_PARAM = "familyId";
+    
     /**
-     * @return database id
+     * Gets the start date of the active family organization relationships for a family and org.
+     * 
+     * @param s {@link org.hibernate.Session} to use for the query.
+     * @param familyId the id of the family
+     * @param orgId the id of the organization
+     * @return start date of the active family organization relationships for a family and org.
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Searchable
-    public Long getId() {
-        return id;
+    public Date getActiveStartDate(Session s, Long familyId, Long orgId) {
+        String hql = "select famOrgRel.startDate from " + FamilyOrganizationRelationship.class.getName()
+                + " famOrgRel where famOrgRel.family.id = :familyId and famOrgRel.organization.id = :orgId "
+                + "and famOrgRel.endDate is null";
+        Query query = s.createQuery(hql);
+        query.setLong(FAMILY_ID_PARAM, familyId);
+        query.setLong("orgId", orgId);
+        return (Date) query.uniqueResult();
     }
 
     /**
-     * @param id database id
+     * Gets the earliest start date of all organization relationships within a family for an org.
+     * 
+     * @param s {@link org.hibernate.Session} to use for the query.
+     * @param familyId the id of the family
+     * @param orgId the id of the org
+     * @return the earliest start date, or null if no relationships
      */
-    public void setId(Long id) {
-        this.id = id;
+    public Date getEarliestStartDate(Session s, Long familyId, Long orgId) {
+        String hql = "select min(orgRel.startDate) from " + OrganizationRelationship.class.getName()
+                + " orgRel where orgRel.family.id = :familyId and "
+                + "(organization.id = :orgId or relatedOrganization.id = :orgId)";
+        Query query = s.createQuery(hql);
+        query.setLong(FAMILY_ID_PARAM, familyId);
+        query.setLong("orgId", orgId);
+        return (Date) query.uniqueResult();
     }
 
     /**
-     * @return the name
+     * Gets the latest start date of all organization relationship within a family.
+     * 
+     * @param s {@link org.hibernate.Session} to use for the query.
+     * @param familyId the id of the family
+     * @param orgId the id of the org
+     * @return the latest start date, or null if no relationships
      */
-    @NotEmpty
-    @Length(max = DEFAULT_TEXT_COL_LENGTH)
-    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
-    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "name")
-    public String getName() {
-        return name;
+    public Date getLatestEndDate(Session s, Long familyId, Long orgId) {
+        String hql = "select max(orgRel.endDate) from " + OrganizationRelationship.class.getName()
+                + " orgRel where orgRel.family.id = :familyId and "
+                + "(organization.id = :orgId or relatedOrganization.id = :orgId)";
+        Query query = s.createQuery(hql);
+        query.setLong(FAMILY_ID_PARAM, familyId);
+        query.setLong("orgId", orgId);
+        return (Date) query.uniqueResult();
     }
 
     /**
-     * @param name the name to set
+     * Gets the list of active (i.e. no end date) family organization relationships by family id.
+     * 
+     * @param s {@link org.hibernate.Session} to use for the query.
+     * @param familyId the id of the family
+     * @return the active relationships
      */
-    public void setName(String name) {
-        this.name = name;
+    @SuppressWarnings("unchecked")
+    public List<FamilyOrganizationRelationship> getActiveRelationships(Session s, Long familyId) {
+        String hql = "from " + FamilyOrganizationRelationship.class.getName()
+                + " famOrgRel where famOrgRel.family.id = :familyId" + " and famOrgRel.endDate is null";
+        Query query = s.createQuery(hql);
+        query.setLong(FAMILY_ID_PARAM, familyId);
+        return (List<FamilyOrganizationRelationship>) query.list();
     }
-
+    
     /**
-     * @return the statusCode
+     * Gets the list of active (i.e. no end date) family organization relationships by family id.
+     * 
+     * @param familyId the id of the family
+     * @return the active relationships
      */
-    @Enumerated(EnumType.STRING)
-    @Searchable(matchMode = Searchable.MATCH_MODE_EXACT)
-    @NotNull
-    public FamilyStatus getStatusCode() {
-        return statusCode;
+    public List<FamilyOrganizationRelationship> getActiveRelationships(Long familyId) {
+        Session s = null;
+        try {
+            Connection conn = PoHibernateUtil.getCurrentSession().connection();
+            s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
+            return this.getActiveRelationships(s, familyId);
+        } finally {
+            if (s != null) {
+                s.close();
+            }
+        }
     }
-
-    /**
-     * @param statusCode the statusCode to set
-     */
-    public void setStatusCode(FamilyStatus statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    /**
-     * @return the startDate
-     */
-    @Temporal(TemporalType.DATE)
-    @NotNull
-    @PastOrCurrentDate
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    /**
-     * @param startDate the startDate to set
-     */
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    /**
-     * @return the endDate
-     */
-    @Temporal(TemporalType.DATE)
-    @PastOrCurrentDate
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    /**
-     * @param endDate the endDate to set
-     */
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
-    /**
-     * @return the family organization relationships within this family.
-     */
-    @OneToMany(mappedBy = "family")
-    @Where(clause = "endDate is null")
-    @Sort(type = SortType.COMPARATOR, 
-            comparator = FamilyOrganizationRelationshipOrgComparator.class)
-    public SortedSet<FamilyOrganizationRelationship> getFamilyOrganizationRelationships() {
-        return familyOrganizationRelationships;
-    }
-
-    @SuppressWarnings("unused")
-    private void setFamilyOrganizationRelationships(
-            SortedSet<FamilyOrganizationRelationship> familyOrganizationRelationships) {
-        this.familyOrganizationRelationships = familyOrganizationRelationships;
-    }
-
-    /**
-     * @return the organizationRelationships
-     */
-    @OneToMany(mappedBy = "family")
-    @Where(clause = "endDate is null")
-    public Set<OrganizationRelationship> getOrganizationRelationships() {
-        return organizationRelationships;
-    }
-
-    /**
-     * @param organizationRelationships the organizationRelationships to set
-     */
-    @SuppressWarnings("unused")
-    private void setOrganizationRelationships(Set<OrganizationRelationship> organizationRelationships) {
-        this.organizationRelationships = organizationRelationships;
-    }
-
 }

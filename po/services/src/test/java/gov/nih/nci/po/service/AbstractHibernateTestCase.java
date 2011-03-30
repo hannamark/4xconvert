@@ -93,7 +93,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
@@ -111,7 +110,6 @@ import org.springframework.mock.jndi.SimpleNamingContextBuilder;
  */
 public abstract class AbstractHibernateTestCase {
 
-    private static final Logger LOG = Logger.getLogger(AbstractHibernateTestCase.class);
     private static Configuration cfg;
     private static SchemaExport se;
     protected static SimpleNamingContextBuilder contextBuilder = new SimpleNamingContextBuilder();

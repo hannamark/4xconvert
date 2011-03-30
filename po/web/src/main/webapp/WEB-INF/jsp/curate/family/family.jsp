@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+
 <html>
 <head>
     <s:set name="isCreate" value="family.id == null"/>
@@ -60,7 +61,7 @@
         </s:else>
             <s:textfield key="family.name" required="true" cssClass="required" size="70"/>
             <po:field labelKey="family.startDate" fieldRequired="true">
-                <sj:datepicker required="true" name="family.startDate" displayFormat="mm/dd/yy" />
+                <sj:datepicker required="true" readonly="true" name="family.startDate" displayFormat="mm/dd/yy" maxDate="@gov.nih.nci.po.web.util.validator.ValidStartDateHelper@getLatestAllowableStartDate(family)"/>
             </po:field>
             
             <div id="endDateDiv" <s:if test="family.statusCode == @gov.nih.nci.po.data.bo.FamilyStatus@ACTIVE">style="display:none;"</s:if>>
@@ -82,7 +83,12 @@
                     <po:inputRow>
                         <po:inputRowElement>
                           <po:field labelKey="family.endDate">
-                             <sj:datepicker required="true" name="family.endDate" displayFormat="mm/dd/yy" id="familyEntityForm.family.endDate" />
+                            <s:if test="@gov.nih.nci.po.web.util.validator.ValidStartDateHelper@getEarliestAllowableEndDate(family) != null">
+                             <sj:datepicker required="true" readonly="true" name="family.endDate" displayFormat="mm/dd/yy" id="familyEntityForm.family.endDate" minDate="@gov.nih.nci.po.web.util.validator.ValidStartDateHelper@getEarliestAllowableEndDate(family)" maxDate="new Date()"/>
+                            </s:if>
+                            <s:else>
+                             <sj:datepicker required="true" readonly="true" name="family.endDate" displayFormat="mm/dd/yy" id="familyEntityForm.family.endDate" maxDate="new Date()"/>
+                            </s:else>
                           </po:field>
                         </po:inputRowElement>
                     </po:inputRow>

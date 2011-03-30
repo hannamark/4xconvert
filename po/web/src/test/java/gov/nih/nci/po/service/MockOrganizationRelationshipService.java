@@ -208,4 +208,32 @@ public class MockOrganizationRelationshipService implements OrganizationRelation
         orgRelationship.setHierarchicalType(FamilyHierarchicalType.PEER);
         return orgRelationship;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getEarliestStartDate(Long familyId) {
+        return new Date();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getEarliestStartDate(Long familyId, Long orgId) {
+        return new Date();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getLatestEndDate(Long familyId) {
+        return new Date();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getLatestEndDate(Long familyId, Long orgId) {
+        return new Date();
+    }
 }

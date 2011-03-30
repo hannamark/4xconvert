@@ -83,8 +83,10 @@
 package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.data.dao.FamilyUtilDao;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -96,12 +98,14 @@ import org.hibernate.Query;
 
 /**
  * @author mshestopalov
- *
+ * 
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class FamilyOrganizationRelationshipServiceBean extends AbstractBaseServiceBean<FamilyOrganizationRelationship>
         implements FamilyOrganizationRelationshipServiceLocal {
+    private static final String FAMILY_ID_PARAM = "familyId";
+    private static final String FAMORGREL_FAMILY_ID_EXP = " famOrgRel where famOrgRel.family.id = :" + FAMILY_ID_PARAM;
     @EJB
     private OrganizationRelationshipServiceLocal orgRelService;
 
@@ -119,14 +123,8 @@ public class FamilyOrganizationRelationshipServiceBean extends AbstractBaseServi
     /**
      * {@inheritDoc}
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    @SuppressWarnings("unchecked")
     public List<FamilyOrganizationRelationship> getActiveRelationships(Long familyId) {
-        String hql = "from " + FamilyOrganizationRelationship.class.getName()
-                + " famOrgRel where famOrgRel.family.id = :familyId and famOrgRel.endDate is null";
-        Query query = PoHibernateUtil.getCurrentSession().createQuery(hql);
-        query.setLong("familyId", familyId);
-        return query.list();
+        return new FamilyUtilDao().getActiveRelationships(PoHibernateUtil.getCurrentSession(), familyId);
     }
 
     /**
@@ -134,16 +132,45 @@ public class FamilyOrganizationRelationshipServiceBean extends AbstractBaseServi
      */
     public void updateEntity(FamilyOrganizationRelationship updateEntity) throws EntityValidationException {
         if (updateEntity.getEndDate() != null) {
-            String hql = "update OrganizationRelationship set endDate = :endDate " 
-                + "where family.id = :familyId and (organization.id = :orgId or relatedOrganization.id = :orgId)" 
-                + "and endDate is null";
+            String hql = "update OrganizationRelationship set endDate = :endDate "
+                    + "where family.id = :familyId and (organization.id = :orgId or relatedOrganization.id = :orgId)"
+                    + "and endDate is null";
             Query query = PoHibernateUtil.getCurrentSession().createQuery(hql);
             query.setDate("endDate", updateEntity.getEndDate());
-            query.setLong("familyId", updateEntity.getFamily().getId());
+            query.setLong(FAMILY_ID_PARAM, updateEntity.getFamily().getId());
             query.setLong("orgId", updateEntity.getOrganization().getId());
             query.executeUpdate();
         }
         super.update(updateEntity);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getEarliestStartDate(Long familyId) {
+        String hql = "select min(famOrgRel.startDate) from " + FamilyOrganizationRelationship.class.getName()
+                + FAMORGREL_FAMILY_ID_EXP;
+        Query query = PoHibernateUtil.getCurrentSession().createQuery(hql);
+        query.setLong(FAMILY_ID_PARAM, familyId);
+        return (Date) query.uniqueResult();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getLatestEndDate(Long familyId) {
+        String hql = "select max(famOrgRel.endDate) from " + FamilyOrganizationRelationship.class.getName()
+                + FAMORGREL_FAMILY_ID_EXP;
+        Query query = PoHibernateUtil.getCurrentSession().createQuery(hql);
+        query.setLong(FAMILY_ID_PARAM, familyId);
+        return (Date) query.uniqueResult();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getActiveStartDate(Long familyId, Long orgId) {
+        return new FamilyUtilDao().getActiveStartDate(PoHibernateUtil.getCurrentSession(), familyId, orgId);
     }
 
     /**

@@ -78,8 +78,6 @@ public class PersonEntityServiceBeanTest extends PersonServiceBeanTest {
 
     private PersonEntityServiceRemote remote;
 
-    // protected Ii orgId;
-
     /**
      * setup the service.
      */

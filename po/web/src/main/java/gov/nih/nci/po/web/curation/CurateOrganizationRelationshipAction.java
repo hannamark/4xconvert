@@ -153,8 +153,7 @@ public class CurateOrganizationRelationshipAction extends ActionSupport implemen
      * @throws EntityValidationException on hibernate validation error
      * @return success
      */
-    @Validations(customValidators = {@CustomValidator(type = "hibernate", fieldName = "newOrgRelationship"),
-            @CustomValidator(type = "hibernate", fieldName = "orgRelationship") })
+    @Validations(customValidators = @CustomValidator(type = "hibernate", fieldName = "orgRelationship"))
     public String update() throws EntityValidationException {
         PoRegistry.getOrganizationRelationshipService().updateEntity(getOrgRelationship());
         OrganizationRelationship related =

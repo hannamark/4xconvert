@@ -93,6 +93,7 @@ import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.web.AbstractPoTest;
+import gov.nih.nci.po.web.util.validator.ValidStartDateHelper;
 
 import java.util.Date;
 
@@ -171,7 +172,7 @@ public class CurateOrganizationRelationshipActionTest extends AbstractPoTest {
         orgRelationship.setOrganization(new Organization());
         orgRelationship.setRelatedOrganization(new Organization());
 
-        newOrgRelationship.setStartDate(new Date());
+        newOrgRelationship.setStartDate(ValidStartDateHelper.getEarliestAllowableStartDate(orgRelationship));
         newOrgRelationship.setHierarchicalType(FamilyHierarchicalType.CHILD);
 
         action.setOrgRelationship(orgRelationship);

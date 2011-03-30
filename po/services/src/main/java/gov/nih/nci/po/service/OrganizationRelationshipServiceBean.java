@@ -86,6 +86,8 @@ import gov.nih.nci.po.data.bo.FamilyHierarchicalType;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
+import java.sql.Connection;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -94,25 +96,34 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
+import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
  * Implements the CRUD.
+ * 
  * @author vrushali
- *
+ * 
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class OrganizationRelationshipServiceBean extends AbstractBaseServiceBean<OrganizationRelationship>
-implements OrganizationRelationshipServiceLocal {
+public class OrganizationRelationshipServiceBean extends AbstractBaseServiceBean<OrganizationRelationship> implements
+        OrganizationRelationshipServiceLocal {
+
+    /**
+     * 
+     */
+    private static final String ORG_ID_PARAM = "orgId";
+    private static final String FAMILY_ID_PARAM = "familyId";
+    private static final String ORGREL_FAMILY_ID_EXP = " orgRel where orgRel.family.id = :" + FAMILY_ID_PARAM;
 
     /**
      * {@inheritDoc}
      */
     public long create(OrganizationRelationship orgRel) throws EntityValidationException {
         if (orgRel.getStartDate() == null) {
-            orgRel.setStartDate(new Date());
+            orgRel.setStartDate(DateUtils.truncate(new Date(), Calendar.DATE));
         }
         OrganizationRelationship orgRelLink = new OrganizationRelationship();
         orgRelLink.setFamily(orgRel.getFamily());
@@ -141,19 +152,82 @@ implements OrganizationRelationshipServiceLocal {
      */
     @SuppressWarnings("unchecked")
     public List<OrganizationRelationship> getActiveOrganizationRelationships(Long familyId, Long orgId) {
-        Criteria criteria = PoHibernateUtil.getCurrentSession().createCriteria(OrganizationRelationship.class);
-        criteria.add(Restrictions.eq("family.id", familyId)).add(Restrictions.eq("organization.id", orgId))
-            .add(Restrictions.isNull("endDate"));
-        return criteria.list();
+        String hql = "from " + OrganizationRelationship.class.getName() + ORGREL_FAMILY_ID_EXP
+                + " and organization.id = :" + ORG_ID_PARAM + " and endDate is null";
+        Query query = PoHibernateUtil.getCurrentSession().createQuery(hql);
+        query.setLong(FAMILY_ID_PARAM, familyId);
+        query.setLong(ORG_ID_PARAM, orgId);
+        return query.list();
     }
 
     /**
      * {@inheritDoc}
      */
     public OrganizationRelationship getActiveOrganizationRelationship(Long familyId, Long orgId, Long relatedOrgId) {
-        Criteria criteria = PoHibernateUtil.getCurrentSession().createCriteria(OrganizationRelationship.class);
-        criteria.add(Restrictions.eq("family.id", familyId)).add(Restrictions.eq("organization.id", orgId))
-            .add(Restrictions.eq("relatedOrganization.id", relatedOrgId)).add(Restrictions.isNull("endDate"));
-        return (OrganizationRelationship) criteria.uniqueResult();
+        String hql = "from " + OrganizationRelationship.class.getName() + ORGREL_FAMILY_ID_EXP
+                + " and organization.id = :" + ORG_ID_PARAM
+                + " and relatedOrganization.id = :relOrgId and endDate is null";
+        Query query = PoHibernateUtil.getCurrentSession().createQuery(hql);
+        query.setLong(FAMILY_ID_PARAM, familyId);
+        query.setLong(ORG_ID_PARAM, orgId);
+        query.setLong("relOrgId", relatedOrgId);
+        return (OrganizationRelationship) query.uniqueResult();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getEarliestStartDate(Long familyId, Long orgId) {
+        String hql = "select min(orgRel.startDate) from " + OrganizationRelationship.class.getName()
+                + ORGREL_FAMILY_ID_EXP + " and " + "(organization.id = :" + ORG_ID_PARAM
+                + " or relatedOrganization.id = :" + ORG_ID_PARAM + ")";
+        Query query = PoHibernateUtil.getCurrentSession().createQuery(hql);
+        query.setLong(FAMILY_ID_PARAM, familyId);
+        query.setLong(ORG_ID_PARAM, orgId);
+        return (Date) query.uniqueResult();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getEarliestStartDate(Long familyId) {
+        String hql = "select min(orgRel.startDate) from " + OrganizationRelationship.class.getName()
+                + ORGREL_FAMILY_ID_EXP;
+        Query query = PoHibernateUtil.getCurrentSession().createQuery(hql);
+        query.setLong(FAMILY_ID_PARAM, familyId);
+        return (Date) query.uniqueResult();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getLatestEndDate(Long familyId) {
+        String hql = "select max(orgRel.endDate) from " + OrganizationRelationship.class.getName()
+                + ORGREL_FAMILY_ID_EXP;
+        Query query = PoHibernateUtil.getCurrentSession().createQuery(hql);
+        query.setLong(FAMILY_ID_PARAM, familyId);
+        return (Date) query.uniqueResult();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getLatestEndDate(Long familyId, Long orgId) {
+        Session s = null;
+        try {
+            Connection conn = PoHibernateUtil.getCurrentSession().connection();
+            s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
+            String hql = "select max(orgRel.endDate) from " + OrganizationRelationship.class.getName()
+                    + ORGREL_FAMILY_ID_EXP + " and " + "(organization.id = :" + ORG_ID_PARAM
+                    + " or relatedOrganization.id = :" + ORG_ID_PARAM + ")";
+            Query query = s.createQuery(hql);
+            query.setLong(FAMILY_ID_PARAM, familyId);
+            query.setLong(ORG_ID_PARAM, orgId);
+            return (Date) query.uniqueResult();
+        } finally {
+            if (s != null) {
+                s.close();
+            }
+        }
     }
 }

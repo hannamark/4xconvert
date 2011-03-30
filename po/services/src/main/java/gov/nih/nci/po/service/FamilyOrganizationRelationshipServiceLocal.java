@@ -84,6 +84,7 @@ package gov.nih.nci.po.service;
 
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -125,10 +126,32 @@ public interface FamilyOrganizationRelationshipServiceLocal
      */
     void updateEntity(FamilyOrganizationRelationship updatedEntity) throws EntityValidationException;
 
-    /**
-     * Gets the list of active (i.e. no end date) family organization relationships by family id
+   /**
+     * Gets the list of active (i.e. no end date) family organization relationships by family id.
      * @param familyId the id of the family
      * @return the active relationships
      */
     List<FamilyOrganizationRelationship> getActiveRelationships(Long familyId);
+    
+    /**
+     * Gets the start date of the active family organization relationships for a family and org.
+     * @param familyId the id of the family
+     * @param orgId the id of the organization
+     * @return start date of the active family organization relationships for a family and org.
+     */
+    Date getActiveStartDate(Long familyId, Long orgId);
+
+    /**
+     * Gets the earliest start date of all family organization relationships by family id.
+     * @param familyId the id of the family
+     * @return earliest start date, or null if no relationships
+     */
+    Date getEarliestStartDate(Long familyId);
+    
+    /**
+     * Gets the latest end date of all family organization relationships by family id.
+     * @param familyId the id of the family
+     * @return latest start date, or null if no relationships
+     */
+    Date getLatestEndDate(Long familyId);
 }

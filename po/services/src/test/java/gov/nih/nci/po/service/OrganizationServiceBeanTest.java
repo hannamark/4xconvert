@@ -115,6 +115,7 @@ import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -123,6 +124,7 @@ import java.util.Map;
 import javax.jms.JMSException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.validator.InvalidStateException;
 import org.hibernate.validator.InvalidValue;
 import org.junit.After;
@@ -278,7 +280,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         org.getUrl().add(new URL("http://example.com"));
 
         try {
-            long orgId = orgServiceBean.create(org);
+            orgServiceBean.create(org);
             fail("expected to receive an EntityValidationException on .name property");
         } catch (EntityValidationException e) {
             // ensure an error exists on the name field
@@ -1000,12 +1002,12 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         famOrgRelOne.setOrganization(o);
         famOrgRelOne.setFamily(familyOne);
         famOrgRelOne.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
-        famOrgRelOne.setStartDate(new Date());
+        famOrgRelOne.setStartDate(familyOne.getStartDate());
         FamilyOrganizationRelationship famOrgRelTwo = new FamilyOrganizationRelationship();
         famOrgRelTwo.setOrganization(o);
         famOrgRelTwo.setFamily(familyTwo);
         famOrgRelTwo.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
-        famOrgRelTwo.setStartDate(new Date());
+        famOrgRelTwo.setStartDate(familyTwo.getStartDate());
 
         familyOrgRelServiceLocal.create(famOrgRelOne);
         familyOrgRelServiceLocal.create(famOrgRelTwo);
@@ -1019,7 +1021,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
     public static Family getFamily(String name) {
         Family family = new Family();
         family.setName(name);
-        family.setStartDate(new Date());
+        family.setStartDate(DateUtils.truncate(new Date(), Calendar.DATE));
         family.setStatusCode(FamilyStatus.ACTIVE);
         return family;
     }

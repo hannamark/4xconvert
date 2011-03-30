@@ -52,8 +52,11 @@
                         <s:form action="%{formAction}" id="organizationRelationshipForm" theme="simple">
                             <s:hidden name="rootKey" id="rootKey"/>
                             <s:hidden name="passedValidation" id="passedValidation"/>
+                            <s:hidden name="newOrgRelationship.family.id"/>
                             <s:hidden name="newOrgRelationship.family.name"/>
+                            <s:hidden name="newOrgRelationship.organization.id"/>
                             <s:hidden name="newOrgRelationship.organization.name"/>
+                            <s:hidden name="newOrgRelationship.relatedOrganization.id"/>
                             <s:hidden name="newOrgRelationship.relatedOrganization.name"/>
                             <s:if test="%{isEdit}">
                                 <h2><fmt:message key="organizationRelationship.popup.oldRelationship"/></h2>
@@ -66,8 +69,8 @@
                                     <po:inputRowElement>&nbsp;&nbsp;&nbsp;</po:inputRowElement>
                                     <po:inputRowElement>
                                         <po:field labelKey="organizationRelationship.popup.endDate" fieldRequired="true">
-                                            <sj:datepicker required="true" name="orgRelationship.endDate" id="orgRelationship.endDate" 
-                                                displayFormat="mm/dd/yy" labelposition="left" />
+                                            <sj:datepicker readonly="true" required="true" name="orgRelationship.endDate" id="orgRelationship.endDate" 
+                                                displayFormat="mm/dd/yy" labelposition="left" minDate="orgRelationship.startDate" maxDate="new Date()"/>
                                         </po:field>
                                         <s:fielderror>
                                             <s:param>orgRelationship.endDate</s:param>
@@ -89,7 +92,7 @@
                                         listKey="name()"
                                         listValue="name()" 
                                         value="newOrgRelationship.hierarchicalType" 
-                                        required="true" headerKey="" headerValue="--Select a Relationship--"/>
+                                        required="true" />
                                         of <b>${orgRelationship.organization.name}</b>
                                     <s:fielderror>
                                         <s:param>newOrgRelationship.hierarchicalType</s:param>
@@ -99,8 +102,8 @@
                             <po:inputRow>
                                 <po:inputRowElement>
                                     <po:field labelKey="organizationRelationship.popup.startDate" fieldRequired="true">
-                                        <sj:datepicker required="true" name="newOrgRelationship.startDate" id="newOrgRelationship.startDate" 
-                                         displayFormat="mm/dd/yy" labelposition="left"/>
+                                        <sj:datepicker readonly="true" required="true" name="newOrgRelationship.startDate" id="newOrgRelationship.startDate" 
+                                         displayFormat="mm/dd/yy" labelposition="left" minDate="@gov.nih.nci.po.web.util.validator.ValidStartDateHelper@getEarliestAllowableStartDate(orgRelationship)" maxDate="new Date()"/>
                                         <s:fielderror>
                                             <s:param>newOrgRelationship.startDate</s:param>
                                         </s:fielderror>

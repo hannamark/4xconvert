@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.po.service;
 
+import java.util.Date;
 import java.util.Map;
 import javax.ejb.Local;
 import gov.nih.nci.po.data.bo.Family;
@@ -122,4 +123,20 @@ public interface FamilyServiceLocal extends GenericSearchService<Family, SearchC
      * @throws EntityValidationException on error
      */
     void updateEntity(Family updatedEntity) throws EntityValidationException;
+
+    /**
+     * Get latest allowable start date for a Family based on existing relationships.
+     * If no relationships, will return today's date.
+     * @param id family id
+     * @return latest allowable start date
+     */
+    Date getLatestAllowableStartDate(Long id);
+
+    /**
+     * Get earliest allowable end date for a Family based on existing relationships.
+     * If no relationships, will return today's date.
+     * @param id family id
+     * @return earliest allowable end date
+     */
+    Date getEarliestAllowableEndDate(Long id);
 }

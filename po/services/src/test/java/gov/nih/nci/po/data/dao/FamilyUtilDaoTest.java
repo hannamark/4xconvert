@@ -80,180 +80,124 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.data.bo;
+package gov.nih.nci.po.data.dao;
 
-import gov.nih.nci.po.util.FamilyOrganizationRelationshipOrgComparator;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyFunctionalType;
+import gov.nih.nci.po.data.bo.FamilyHierarchicalType;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.data.bo.FamilyStatus;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.bo.OrganizationRelationship;
+import gov.nih.nci.po.service.AbstractServiceBeanTest;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.po.service.OrganizationServiceBeanTest;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
-import gov.nih.nci.po.util.NotEmpty;
-import gov.nih.nci.po.util.PastOrCurrentDateValidator.PastOrCurrentDate;
-import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.util.FamilyDateValidator.FamilyValidDate;
-import gov.nih.nci.po.util.OrderedDateValidator.OrderedDate;
-
+import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.jms.JMSException;
 
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Sort;
-import org.hibernate.annotations.SortType;
-import org.hibernate.annotations.Where;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.NotNull;
-
-import com.fiveamsolutions.nci.commons.audit.Auditable;
-import com.fiveamsolutions.nci.commons.search.Searchable;
+import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Session;
+import org.hibernate.validator.InvalidValue;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * Family represents a set of related organizations.
- * 
  * @author moweis
+ * 
  */
-@javax.persistence.Entity
-@OrderedDate
-@FamilyValidDate
-public class Family implements Auditable {
-    private static final long serialVersionUID = 9142333411678327002L;
-    private static final int DEFAULT_TEXT_COL_LENGTH = 160;
+public class FamilyUtilDaoTest extends AbstractServiceBeanTest {
 
-    private Long id;
-    private String name;
-    private FamilyStatus statusCode;
-    private Date startDate;
-    private Date endDate;
-    private SortedSet<FamilyOrganizationRelationship> familyOrganizationRelationships = 
-        new TreeSet<FamilyOrganizationRelationship>(new FamilyOrganizationRelationshipOrgComparator());
-    private Set<OrganizationRelationship> organizationRelationships = 
-        new HashSet<OrganizationRelationship>();
+    Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+    Date oldDate = DateUtils.addYears(today, -1);
+    Family f;
+    Organization o1;
+    Organization o2;
+    Session s;
 
-    /**
-     * @return database id
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Searchable
-    public Long getId() {
-        return id;
+    @Before
+    public void setUpData() throws EntityValidationException, JMSException {
+        s = PoHibernateUtil.getCurrentSession();
+        f = new Family();
+        f.setName("TestFamily");
+        f.setStartDate(oldDate);
+        f.setStatusCode(FamilyStatus.ACTIVE);
+        f = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, (Long) PoHibernateUtil.getCurrentSession().save(f));
+        o1 = createAndGetOrganization();        
+        o2 = createAndGetOrganization();        
     }
 
-    /**
-     * @param id database id
-     */
-    public void setId(Long id) {
-        this.id = id;
+    @Test
+    public void testGetActiveStartDate() {
+        FamilyUtilDao dao = new FamilyUtilDao();
+        createFamOrgRel(f, o1, today, today);
+        createFamOrgRel(f, o1, oldDate, null);
+        assertEquals(oldDate, dao.getActiveStartDate(s, f.getId(), o1.getId()));
     }
 
-    /**
-     * @return the name
-     */
-    @NotEmpty
-    @Length(max = DEFAULT_TEXT_COL_LENGTH)
-    @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
-    @Index(name = PoRegistry.GENERATE_INDEX_NAME_PREFIX + "name")
-    public String getName() {
-        return name;
+    @Test
+    public void testGetEarliestStartDate() {
+        FamilyUtilDao dao = new FamilyUtilDao();
+        createFamOrgRel(f, o1, oldDate, null);
+        createFamOrgRel(f, o2, oldDate, null);
+        assertEquals(null, dao.getEarliestStartDate(s, f.getId(), o1.getId()));
+        OrganizationRelationship or = createOrgRel(f, o1, o2, oldDate, null);
+        assertEquals(oldDate, dao.getEarliestStartDate(s, f.getId(), o1.getId()));
+        or.setEndDate(today);
+        s.update(or);
+        s.flush();
+        or = createOrgRel(f, o1, o2, today, null);
+        s.save(or);
+        assertEquals(oldDate, dao.getEarliestStartDate(s, f.getId(), o1.getId()));
     }
 
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
+    @Test
+    public void testGetLatestEndDate() {
+        FamilyUtilDao dao = new FamilyUtilDao();
+        Session s = PoHibernateUtil.getCurrentSession();
+        createFamOrgRel(f, o1, oldDate, null);
+        createFamOrgRel(f, o2, oldDate, null);
+        assertEquals(null, dao.getLatestEndDate(s, f.getId(), o1.getId()));
+        createOrgRel(f, o1, o2, oldDate, oldDate);
+        assertEquals(oldDate, dao.getLatestEndDate(s, f.getId(), o1.getId()));
+        createOrgRel(f, o1, o2, oldDate, today);
+        assertEquals(today, dao.getLatestEndDate(s, f.getId(), o1.getId()));
     }
 
-    /**
-     * @return the statusCode
-     */
-    @Enumerated(EnumType.STRING)
-    @Searchable(matchMode = Searchable.MATCH_MODE_EXACT)
-    @NotNull
-    public FamilyStatus getStatusCode() {
-        return statusCode;
+    private OrganizationRelationship createOrgRel(Family f, Organization o1, Organization o2, Date startDate, Date endDate) {
+        OrganizationRelationship or = new OrganizationRelationship();
+        or.setFamily(f);
+        or.setOrganization(o1);
+        or.setRelatedOrganization(o2);
+        or.setStartDate(startDate);
+        or.setEndDate(endDate);
+        or.setHierarchicalType(FamilyHierarchicalType.PARENT);
+        long orId = (Long) s.save(or);
+        return (OrganizationRelationship) s.load(OrganizationRelationship.class, orId);
     }
 
-    /**
-     * @param statusCode the statusCode to set
-     */
-    public void setStatusCode(FamilyStatus statusCode) {
-        this.statusCode = statusCode;
+    protected Organization createAndGetOrganization() throws EntityValidationException, JMSException {
+        OrganizationServiceBeanTest orgTest = new OrganizationServiceBeanTest();
+        orgTest.setDefaultCountry(getDefaultCountry());
+        orgTest.setUser(getUser());
+        orgTest.setUpData();
+        long orgId;
+        orgId = orgTest.createOrganizationNoSessionFlushAndClear();
+        PoHibernateUtil.getCurrentSession().flush();
+        return (Organization) PoHibernateUtil.getCurrentSession().get(Organization.class, orgId);
     }
 
-    /**
-     * @return the startDate
-     */
-    @Temporal(TemporalType.DATE)
-    @NotNull
-    @PastOrCurrentDate
-    public Date getStartDate() {
-        return startDate;
+    protected void createFamOrgRel(Family f, Organization o1, Date startDate, Date endDate) {
+        FamilyOrganizationRelationship relationship = new FamilyOrganizationRelationship();
+        relationship.setFamily(f);
+        relationship.setStartDate(startDate);
+        relationship.setEndDate(endDate);
+        relationship.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
+        relationship.setOrganization(o1);
+        s.save(relationship);
     }
-
-    /**
-     * @param startDate the startDate to set
-     */
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    /**
-     * @return the endDate
-     */
-    @Temporal(TemporalType.DATE)
-    @PastOrCurrentDate
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    /**
-     * @param endDate the endDate to set
-     */
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
-    /**
-     * @return the family organization relationships within this family.
-     */
-    @OneToMany(mappedBy = "family")
-    @Where(clause = "endDate is null")
-    @Sort(type = SortType.COMPARATOR, 
-            comparator = FamilyOrganizationRelationshipOrgComparator.class)
-    public SortedSet<FamilyOrganizationRelationship> getFamilyOrganizationRelationships() {
-        return familyOrganizationRelationships;
-    }
-
-    @SuppressWarnings("unused")
-    private void setFamilyOrganizationRelationships(
-            SortedSet<FamilyOrganizationRelationship> familyOrganizationRelationships) {
-        this.familyOrganizationRelationships = familyOrganizationRelationships;
-    }
-
-    /**
-     * @return the organizationRelationships
-     */
-    @OneToMany(mappedBy = "family")
-    @Where(clause = "endDate is null")
-    public Set<OrganizationRelationship> getOrganizationRelationships() {
-        return organizationRelationships;
-    }
-
-    /**
-     * @param organizationRelationships the organizationRelationships to set
-     */
-    @SuppressWarnings("unused")
-    private void setOrganizationRelationships(Set<OrganizationRelationship> organizationRelationships) {
-        this.organizationRelationships = organizationRelationships;
-    }
-
 }

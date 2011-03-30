@@ -85,6 +85,7 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.FamilyStatus;
+import gov.nih.nci.po.util.PoRegistry;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -106,14 +107,16 @@ import org.apache.commons.lang.time.DateUtils;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class FamilyServiceBean extends AbstractBaseServiceBean<Family> implements FamilyServiceLocal {
+
     @EJB
     private FamilyOrganizationRelationshipServiceLocal familyOrgRelService;
+
     /**
      * {@inheritDoc}
      */
     public long create(Family family) throws EntityValidationException {
         if (family.getStartDate() == null) {
-            family.setStartDate(new Date());
+            family.setStartDate(DateUtils.truncate(new Date(), Calendar.DATE));
         }
         family.setEndDate(null);
         family.setStatusCode(FamilyStatus.ACTIVE);
@@ -122,7 +125,6 @@ public class FamilyServiceBean extends AbstractBaseServiceBean<Family> implement
 
     /**
      * {@inheritDoc}
-     *
      */
     public void updateEntity(Family updateFamilyEntity) throws EntityValidationException {
         if (isNotActiveStatus(updateFamilyEntity)) {
@@ -141,6 +143,7 @@ public class FamilyServiceBean extends AbstractBaseServiceBean<Family> implement
         return FamilyStatus.INACTIVE.equals(updateFamilyEntity.getStatusCode())
                || FamilyStatus.NULLIFIED.equals(updateFamilyEntity.getStatusCode());
     }
+    
     private void cascadeEndDate(Family updateFamilyEntity) throws EntityValidationException {
         if (isNotActiveStatus(updateFamilyEntity)) {
             List<FamilyOrganizationRelationship> famOrgSet = familyOrgRelService.getActiveRelationships(
@@ -151,6 +154,45 @@ public class FamilyServiceBean extends AbstractBaseServiceBean<Family> implement
             }
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getLatestAllowableStartDate(Long id) {
+        Date earliestFamOrgRelStartDate = familyOrgRelService.getEarliestStartDate(id);
+        if (earliestFamOrgRelStartDate == null) {
+            earliestFamOrgRelStartDate = DateUtils.truncate(new Date(), Calendar.DATE);
+        }
+        return earliestFamOrgRelStartDate;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getEarliestAllowableEndDate(Long id) {
+        if (id == null) {
+            return null;
+        }
+        Date earliestDate = familyOrgRelService.getEarliestStartDate(id);
+        if (earliestDate == null) {
+            return null;
+        }
+        return getEarliestDate(id, earliestDate);
+    }
+
+    private Date getEarliestDate(Long id, Date input) {
+        Date earliestDate = input;
+        Date latestFamOrgRelEndDate = familyOrgRelService.getLatestEndDate(id);
+        if (latestFamOrgRelEndDate != null && latestFamOrgRelEndDate.after(earliestDate)) {
+            earliestDate = latestFamOrgRelEndDate;
+        }
+        Date latestOrgRelEndDate = PoRegistry.getOrganizationRelationshipService().getLatestEndDate(id);
+        if (latestOrgRelEndDate != null && latestOrgRelEndDate.after(earliestDate)) {
+            earliestDate = latestOrgRelEndDate;
+        }
+        return earliestDate;
+    }
+
     /**
      *
      * @param familyOrgRelService service to set

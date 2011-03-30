@@ -86,12 +86,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyFunctionalType;
 import gov.nih.nci.po.data.bo.FamilyHierarchicalType;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
+import gov.nih.nci.po.data.dao.FamilyUtilDao;
+import gov.nih.nci.po.util.FamilyDateValidator;
+import gov.nih.nci.po.util.OrgRelStartDateValidator;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.Calendar;
@@ -101,20 +110,32 @@ import java.util.List;
 import javax.jms.JMSException;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBeanTest {
-    private OrganizationRelationshipServiceBean orgRelServiceBean;
-    private FamilyServiceBean familyServiceBean;
-    private OrganizationServiceBean orgServiceBean;
+    private OrganizationRelationshipServiceLocal orgRelServiceBean;
+    private FamilyOrganizationRelationshipServiceBean famOrganizationRelationshipService = mock(FamilyOrganizationRelationshipServiceBean.class);
+    private FamilyServiceLocal familyServiceBean;
+    private OrganizationServiceLocal orgServiceBean;
+    private Calendar cal = Calendar.getInstance();
+    private Date oldDate;
+    private FamilyUtilDao familyUtilDao = mock(FamilyUtilDao.class);
 
     @Before
     public void setUpData() {
-        orgRelServiceBean = new OrganizationRelationshipServiceBean();
-        familyServiceBean = new FamilyServiceBean();
+        orgRelServiceBean = EjbTestHelper.getOrganizationRelationshipService();
+        familyServiceBean = EjbTestHelper.getFamilyServiceBean();
+        ((FamilyOrganizationRelationshipServiceBean)famOrganizationRelationshipService).setOrgRelService(orgRelServiceBean);
+        ((FamilyServiceBean)familyServiceBean).setFamilyOrgRelService(famOrganizationRelationshipService);
         orgServiceBean = EjbTestHelper.getOrganizationServiceBean();
+        FamilyDateValidator.setFamilyService(familyServiceBean);
+        cal.set(2011, 01, 02);
+        oldDate = DateUtils.truncate(cal.getTime(), Calendar.DATE);
+        OrgRelStartDateValidator.setFamilyDao(familyUtilDao);
+        when(familyUtilDao.getActiveStartDate(any(Session.class), anyLong(), anyLong())).thenReturn(oldDate);
     }
 
     @After
@@ -158,7 +179,7 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
         long id = createOrgRelationship().getId();
         OrganizationRelationship toUpdate = orgRelServiceBean.getById(id);
         toUpdate.getFamily().setName("UpdatedFamilyName");
-        orgRelServiceBean.update(toUpdate);
+        orgRelServiceBean.updateEntity(toUpdate);
 
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
@@ -175,9 +196,7 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
 
     public OrganizationRelationship createOrgRelationship() throws EntityValidationException, JMSException {
         OrganizationRelationship orgRel = getBasicOrgRelation();
-        Calendar cal = Calendar.getInstance();
-        cal.set(2011, 01, 02);
-        orgRel.setStartDate(cal.getTime());
+        orgRel.setStartDate(oldDate);
         orgRel.setHierarchicalType(FamilyHierarchicalType.PEER);
         orgRelServiceBean.create(orgRel);
         return orgRel;
@@ -186,9 +205,7 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
     @Test
     public void createOrgRelWithStartDate() throws EntityValidationException, JMSException {
         OrganizationRelationship orgRel = getBasicOrgRelation();
-        Calendar cal = Calendar.getInstance();
-        cal.set(2011, 01, 02);
-        orgRel.setStartDate(cal.getTime());
+        orgRel.setStartDate(oldDate);
         Date startDate = orgRel.getStartDate();
         orgRelServiceBean.create(orgRel);
         assertNotNull(orgRel.getStartDate());
@@ -198,16 +215,14 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
     @Test
     public void createOrgRelWithEndDate() throws EntityValidationException, JMSException {
         OrganizationRelationship orgRel = getBasicOrgRelation();
-        Calendar cal = Calendar.getInstance();
-        cal.set(2011, 01, 02);
-        orgRel.setStartDate(cal.getTime());
+        orgRel.setStartDate(oldDate);
         orgRel.setEndDate(DateUtils.addDays(new Date(), +2));
         try {
             orgRelServiceBean.create(orgRel);
         } catch(EntityValidationException e) {
             assertEquals("endDate=[must not be in the future.]",e.getErrorMessages());
         }
-        orgRel.setStartDate(cal.getTime());
+        orgRel.setStartDate(oldDate);
         orgRel.setEndDate(DateUtils.addDays(new Date(), -2));
         try {
             orgRelServiceBean.create(orgRel);
@@ -241,9 +256,7 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
         //ensures that the bi-directional link is created
         //e.g. save A is Parent of B. Then confirm that a the link B is a child of A exists in the db.
         OrganizationRelationship orgRel = getBasicOrgRelation();
-        Calendar cal = Calendar.getInstance();
-        cal.set(2011, 01, 02);
-        orgRel.setStartDate(cal.getTime());
+        orgRel.setStartDate(oldDate);
         orgRel.setHierarchicalType(FamilyHierarchicalType.PARENT);
         long id = orgRelServiceBean.create(orgRel);
 
@@ -290,15 +303,23 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
         orgRel.setOrganization(orgServiceBean.getById(createOrg()));
         orgRel.setRelatedOrganization(orgServiceBean.getById(createOrg()));
         orgRel.setHierarchicalType(FamilyHierarchicalType.PEER);
+        createFamOrgRel(orgRel.getFamily(), orgRel.getOrganization());
         return orgRel;
+    }
+    
+    private void createFamOrgRel(Family family, Organization organization) throws EntityValidationException {
+        FamilyOrganizationRelationship relationship = new FamilyOrganizationRelationship();
+        relationship.setFamily(family);
+        relationship.setOrganization(organization);
+        relationship.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
+        relationship.setStartDate(family.getStartDate());
+        famOrganizationRelationshipService.create(relationship);
     }
 
     private long createFamily() throws EntityValidationException {
         Family family = new Family();
         family.setName("FamilyName");
-        Calendar cal = Calendar.getInstance();
-        cal.set(2011, 01, 02);
-        family.setStartDate(cal.getTime());
+        family.setStartDate(oldDate);
         return familyServiceBean.create(family);
     }
 

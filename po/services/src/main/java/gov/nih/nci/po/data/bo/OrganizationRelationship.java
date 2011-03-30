@@ -84,6 +84,7 @@ package gov.nih.nci.po.data.bo;
 
 
 import gov.nih.nci.po.util.OrderedDateValidator.OrderedDate;
+import gov.nih.nci.po.util.OrgRelStartDateValidator.OrgRelStartDate;
 import gov.nih.nci.po.util.PastOrCurrentDateValidator;
 import gov.nih.nci.po.util.UniqueOrganizationRelationship;
 
@@ -105,12 +106,15 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
+ * A relationship between two organizations within a family.
+ * 
  * @author moweis
  *
  */
 @javax.persistence.Entity
 @UniqueOrganizationRelationship
 @OrderedDate
+@OrgRelStartDate
 public class OrganizationRelationship implements Auditable {
     private static final long serialVersionUID = -4061054861656983233L;
     private Long id;

@@ -86,6 +86,7 @@ import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
+import gov.nih.nci.po.data.dao.FamilyUtilDao;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationRelationshipServiceLocal;
 import gov.nih.nci.po.util.OrganizationRelationshipComparator;
@@ -127,6 +128,7 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
     private Long selectedOrgId;
     private Long selectedFamilyId;
     private String perspective = FAMILY_PERSPECTIVE;
+    private FamilyUtilDao familyUtilDao = new FamilyUtilDao(); 
 
     /**
      * {@inheritDoc}
@@ -136,6 +138,9 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
         if (getRootKey() != null) {
             setFamilyOrgRelationship(
                     (FamilyOrganizationRelationship) PoHttpSessionUtil.getSession().getAttribute(getRootKey()));
+            if (getFamilyOrgRelationship() != null && getFamilyOrgRelationship().getId() != null) {
+                initializeCollection();
+            }
         }
     }
 
@@ -236,7 +241,7 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
         Long familyId = getFamilyOrgRelationship().getFamily().getId();
         Long orgId = getFamilyOrgRelationship().getOrganization().getId();
         List<FamilyOrganizationRelationship> relationships =
-            PoRegistry.getFamilyOrganizationRelationshipService().getActiveRelationships(familyId);
+            getFamilyUtilDao().getActiveRelationships(familyId);
         for (FamilyOrganizationRelationship famOrgRel : relationships) {
             if (!famOrgRel.getId().equals(getFamilyOrgRelationship().getId())
                     && orgRelService.getActiveOrganizationRelationship(familyId, orgId,
@@ -343,5 +348,19 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
      */
     public String getPerspective() {
         return perspective;
+    }
+
+    /**
+     * @return the familyUtilDao
+     */
+    public FamilyUtilDao getFamilyUtilDao() {
+        return familyUtilDao;
+    }
+
+    /**
+     * @param familyUtilDao the familyUtilDao to set
+     */
+    public void setFamilyUtilDao(FamilyUtilDao familyUtilDao) {
+        this.familyUtilDao = familyUtilDao;
     }
 }

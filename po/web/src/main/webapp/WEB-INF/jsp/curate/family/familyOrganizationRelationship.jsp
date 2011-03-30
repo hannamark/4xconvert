@@ -116,8 +116,8 @@
                                 <s:param>familyOrgRelationship.startDate</s:param>
                             </s:fielderror>
                             <po:field labelKey="familyOrgRelationship.startDate" fieldRequired="true">
-                                <sj:datepicker required="true" name="familyOrgRelationship.startDate"
-                                    displayFormat="mm/dd/yy"  labelposition="left" />
+                                <sj:datepicker readonly="true" required="true" name="familyOrgRelationship.startDate"
+                                    displayFormat="mm/dd/yy"  labelposition="left" minDate="familyOrgRelationship.family.startDate" maxDate="@gov.nih.nci.po.web.util.validator.ValidStartDateHelper@getLatestAllowableStartDate(familyOrgRelationship)"/>
                             </po:field>
                         </po:inputRowElement>
                         <s:if test="%{isEdit}" >
@@ -126,9 +126,16 @@
                                     <s:param>familyOrgRelationship.endDate</s:param>
                                 </s:fielderror>
                                 <po:field labelKey="familyOrgRelationship.endDate">
-                                    <sj:datepicker name="familyOrgRelationship.endDate"
-                                         displayFormat="mm/dd/yy"  labelposition="left"
-                                         id="familyOrgRelationshipForm.familyOrgRelationship.endDate"/>
+                                    <s:if test="@gov.nih.nci.po.web.util.validator.ValidStartDateHelper@getEarliestAllowableEndDate(family) != null">
+                                        <sj:datepicker name="familyOrgRelationship.endDate" readonly="true" 
+                                             displayFormat="mm/dd/yy"  labelposition="left"
+                                             id="familyOrgRelationshipForm.familyOrgRelationship.endDate" minDate="@gov.nih.nci.po.web.util.validator.ValidStartDateHelper@getEarliestAllowableEndDate(family)" maxDate="new Date()"/>
+                                    </s:if>
+                                    <s:else>
+                                        <sj:datepicker name="familyOrgRelationship.endDate" readonly="true" 
+                                             displayFormat="mm/dd/yy"  labelposition="left"
+                                             id="familyOrgRelationshipForm.familyOrgRelationship.endDate" minDate="familyOrgRelationship.family.startDate" maxDate="new Date()"/>
+                                    </s:else>
                                 </po:field>
                             </po:inputRowElement>
                         </s:if>

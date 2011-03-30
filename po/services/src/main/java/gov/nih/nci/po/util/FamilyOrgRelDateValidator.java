@@ -80,131 +80,116 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.po.util;
 
-import gov.nih.nci.po.data.bo.EntityStatus;
-import gov.nih.nci.po.data.bo.Family;
-import gov.nih.nci.po.data.bo.FamilyFunctionalType;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
-import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.data.dao.FamilyUtilDao;
 
-import java.util.ArrayList;
+import java.io.Serializable;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.sql.Connection;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
-import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Session;
+import org.hibernate.validator.Validator;
+import org.hibernate.validator.ValidatorClass;
 
 /**
- * Mock implementation of the family organization relationship service
- *
- * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ * Validates that FamilyOrganizationRelationship startDate/endDate is valid per existing relationships.
+ * 
+ * @author moweis
+ * 
  */
-public class MockFamilyOrganizationRelationshipService implements FamilyOrganizationRelationshipServiceLocal {
-    private long currentId = 0;
+public class FamilyOrgRelDateValidator implements Validator<FamilyOrgRelDateValidator.FamilyOrgRelValidDate>,
+        Serializable {
+
+    private static FamilyUtilDao familyUtilDao = new FamilyUtilDao();
+    
+    /**
+     * Validates that FamilyOrganizationRelationship start date is valid.
+     */
+    @Documented
+    @ValidatorClass(FamilyOrgRelDateValidator.class)
+    @Target(ElementType.TYPE)
+    @Retention(RetentionPolicy.RUNTIME)
+    public static @interface FamilyOrgRelValidDate {
+
+        /**
+         * get the message.
+         */
+        String message() default "{validator.invalidStartDate}";
+    }
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * {@inheritDoc}
      */
-    public long create(FamilyOrganizationRelationship famOrgRel) throws EntityValidationException {
-        if (famOrgRel.getId() == null) {
-            currentId++;
-            famOrgRel.setId(currentId);
+    public void initialize(FamilyOrgRelValidDate parameters) {
+        // do nothing
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isValid(Object value) {
+        Session s = null;
+        try {
+            Connection conn = PoHibernateUtil.getCurrentSession().connection();
+            s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
+            if (!(value instanceof FamilyOrganizationRelationship)) {
+                return false;
+            }
+            return isStartDateValid(s, (FamilyOrganizationRelationship) value)
+                    && isEndDateValid(s, (FamilyOrganizationRelationship) value);
+        } finally {
+            if (s != null) {
+                s.close();
+            }
         }
-        return currentId;
+    }
+
+    private boolean isEndDateValid(Session s, FamilyOrganizationRelationship relationship) {
+        Date endDate = relationship.getEndDate();
+        Date latestOrgRelEndDate = getFamilyUtilDao().getLatestEndDate(s, relationship.getFamily().getId(),
+                relationship.getOrganization().getId());
+        return endDate == null || latestOrgRelEndDate == null || !endDate.before(latestOrgRelEndDate);
+    }
+
+    private boolean isStartDateValid(Session s, FamilyOrganizationRelationship relationship) {
+        Date startDate = relationship.getStartDate();
+        return !(startDate == null || startDate.before(relationship.getFamily().getStartDate()) || startDate
+                .after(earliestRelationshipStartDate(s, relationship)));
+
+    }
+
+    private Date earliestRelationshipStartDate(Session s, FamilyOrganizationRelationship relationship) {
+        final Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+        if (relationship.getId() == null) {
+            return today;
+        }
+        Date earliestStartDate = getFamilyUtilDao().getEarliestStartDate(s, relationship.getFamily().getId(),
+                relationship.getOrganization().getId());
+        return earliestStartDate == null ? today : earliestStartDate;
     }
 
     /**
-     * {@inheritDoc}
+     * @param familyUtilDao the familyUtilDao to set
      */
-    public FamilyOrganizationRelationship getById(long id) {
-       FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
-       famOrgRel.setId(id);
-       famOrgRel.setStartDate(new Date());
-       famOrgRel.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
-
-       famOrgRel.setOrganization(new Organization());
-       famOrgRel.getOrganization().setName("Organization");
-       famOrgRel.getOrganization().setStatusCode(EntityStatus.ACTIVE);
-       famOrgRel.getOrganization().setId(id);
-
-       famOrgRel.setFamily(new Family());
-       famOrgRel.getFamily().setId(id);
-       famOrgRel.getFamily().setName("Family");
-       return famOrgRel;
+    public static void setFamilyUtilDao(FamilyUtilDao familyUtilDao) {
+        FamilyOrgRelDateValidator.familyUtilDao = familyUtilDao;
     }
 
     /**
-     * {@inheritDoc}
+     * @return the familyUtilDao
      */
-    public void updateEntity(FamilyOrganizationRelationship updatedEntity) {
-    }
-
-    public Set<FamilyOrganizationRelationship> getFamilyOrganizationRelationshipsByOrgId(Long orgId) {
-        return new HashSet<FamilyOrganizationRelationship>();
-    }
-
-    public Set<FamilyOrganizationRelationship> getFamilyOrganizationRelationshipsByFamId(Long famId) {
-        return new HashSet<FamilyOrganizationRelationship>();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<FamilyOrganizationRelationship> search(SearchCriteria<FamilyOrganizationRelationship> criteria) {
-        return new ArrayList<FamilyOrganizationRelationship>();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<FamilyOrganizationRelationship> search(SearchCriteria<FamilyOrganizationRelationship> criteria,
-            PageSortParams<FamilyOrganizationRelationship> pageSortParams) {
-        return new ArrayList<FamilyOrganizationRelationship>();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int count(SearchCriteria<FamilyOrganizationRelationship> criteria) {
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Map<String, String[]> validate(FamilyOrganizationRelationship entity) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<FamilyOrganizationRelationship> getActiveRelationships(Long familyId) {
-       return new ArrayList<FamilyOrganizationRelationship>();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Date getEarliestStartDate(Long familyId) {
-        return new Date();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Date getActiveStartDate(Long familyId, Long orgId) {
-        return new Date();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Date getLatestEndDate(Long familyId) {
-        return new Date();
+    public static FamilyUtilDao getFamilyUtilDao() {
+        return familyUtilDao;
     }
 }
