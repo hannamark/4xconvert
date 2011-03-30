@@ -882,7 +882,7 @@ public class PAUtil {
                 }
                 return sb.toString();
             } else {
-                throw new IllegalArgumentException("Invalid phone number : " + phoneNumber
+                throw new IllegalArgumentException("Invalid phone number: " + phoneNumber
                         + " format for USA or CANADA is xxx-xxx-xxxxextxxxx");
             }
         }
