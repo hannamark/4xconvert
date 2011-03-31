@@ -5,6 +5,7 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -21,16 +22,21 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.jdom.Element;
 
 /**
@@ -53,6 +59,7 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
     private PersonDTO responsiblePartyContact;
     private Map<String, String> regAuthMap;
     private static final Map<String, String> PHASE_MAP = new HashMap<String, String>();
+    private static final Logger LOG  = Logger.getLogger(PDQRegistrationXMLParser.class);
     static {
         PHASE_MAP.put("0", "0");
         PHASE_MAP.put("1", "I");
@@ -112,7 +119,6 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
         if (parent == null) {
             return;
         }
-        validateStudyDesign(parent);
         Element studyDesignElt = parent.getChild("study_design");
         String studyType = getText(studyDesignElt, "study_type");
         if (StringUtils.equalsIgnoreCase("interventional", studyType)) {
@@ -128,30 +134,50 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
             studyProtocolDTO.setStartDateTypeCode(CdConverter.convertStringToCd(parent.getChild("start_date")
                 .getAttributeValue("date_type")));
         }
-        studyProtocolDTO.setPrimaryCompletionDate(tsFromString(YYYY_MM_DD, getText(parent, "primary_compl_date")));
-        studyProtocolDTO.setPrimaryCompletionDateTypeCode(
-                CdConverter.convertStringToCd(getText(parent, "primary_compl_date_type")));
+        setPrimaryCompletion(parent);
         studyProtocolDTO.setPhaseCode(CdConverter.convertStringToCd(PHASE_MAP.get(parent.getChildText("phase"))));
         studyProtocolDTO.setOfficialTitle(StConverter.convertToSt(getText(parent, "official_title")));
         doIds(parent.getChild("id_info"));
         doFda(parent);
     }
 
-    /**
-     * @param parent
-     */
-    private void validateStudyDesign(Element parent) throws PAException {
-        StringBuilder sb = new StringBuilder();
-        if (StringUtils.isEmpty(getText(parent, "primary_compl_date"))) {
-            sb.append("Primary Completion Date cannot be empty\n");
+    private void setPrimaryCompletion(Element parent) {
+        String primaryCompletionDate = getText(parent, "primary_compl_date");
+        String primaryCompletionDateType = getText(parent, "primary_compl_date_type");
+        if (StringUtils.isEmpty(primaryCompletionDate)) {
+            primaryCompletionDate = "2100-01-01";
+            LOG.warn("Empty Primary Completion Date found - defaulting to: " + primaryCompletionDate);
         }
-        if (StringUtils.isEmpty(getText(parent, "primary_compl_date_type"))) {
-            sb.append("Primary Completion Date Type cannot be empty\n");
+        if (StringUtils.isEmpty(primaryCompletionDateType)) {
+            primaryCompletionDateType = ActualAnticipatedTypeCode.ANTICIPATED.getCode();
+            LOG.warn("Empty Primary Completion Date Type found - defaulting to: " + primaryCompletionDateType);
         }
-        if (sb.length() > 0) {
-            throw new PAException(sb.toString());
+        if (!isPrimaryCompletedDateValid(primaryCompletionDate, primaryCompletionDateType)) {
+            primaryCompletionDate = "2100-01-01";
+            primaryCompletionDateType = ActualAnticipatedTypeCode.ANTICIPATED.getCode();
+            LOG.warn("Invalid Primary Completion Date and Type found - defaulting to: " + primaryCompletionDate
+                    + " and " + primaryCompletionDateType);
         }
+        studyProtocolDTO.setPrimaryCompletionDate(tsFromString(YYYY_MM_DD, primaryCompletionDate));
+        studyProtocolDTO.setPrimaryCompletionDateTypeCode(
+          CdConverter.convertStringToCd(primaryCompletionDateType));
+    }
 
+    private boolean isPrimaryCompletedDateValid(String primaryCompletionDate, String primaryCompletionDateType) {
+        try {
+            Date prCmpDate = new SimpleDateFormat(YYYY_MM_DD, Locale.getDefault()).parse(primaryCompletionDate);
+            Date today = new Date();
+
+            if ((primaryCompletionDateType.equals(ActualAnticipatedTypeCode.ACTUAL.getCode()) && today
+                    .after(prCmpDate))
+                    || (primaryCompletionDateType.equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode()) && !(today
+                            .after(prCmpDate)))) {
+                return true;
+            }
+            return false;
+        } catch (ParseException e) {
+            return false;
+        }
     }
 
     @SuppressWarnings("unchecked")

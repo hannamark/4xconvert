@@ -92,6 +92,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -167,7 +168,7 @@ public class PDQRegistrationXMLParserTest {
 
         assertEquals("12/01/2001", TsConverter.convertToString(spDto.getStartDate()));
         assertEquals("09/27/2002", TsConverter.convertToString(spDto.getPrimaryCompletionDate()));
-        assertEquals("Anticipated", spDto.getPrimaryCompletionDateTypeCode().getCode());
+        assertEquals(ActualAnticipatedTypeCode.ACTUAL.getCode(), spDto.getPrimaryCompletionDateTypeCode().getCode());
         assertEquals("II", spDto.getPhaseCode().getCode());
 
 
@@ -203,10 +204,49 @@ public class PDQRegistrationXMLParserTest {
         assertEquals("12/15/2007", TsConverter.convertToString(rXMLParser.getStudyOverallStatusDTO().getStatusDate()));
     }
 
-    @Test(expected=PAException.class)
+    @Test
+    public void testMissingPrimCompletion() throws PAException {
+        rXMLParser.setUrl(this.getClass().getResource("/sample-missing-prim-completion-all.xml"));
+        rXMLParser.parse();
+        StudyProtocolDTO spDto = rXMLParser.getStudyProtocolDTO();
+        assertEquals("01/01/2100", TsConverter.convertToString(spDto.getPrimaryCompletionDate()));
+        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), spDto.getPrimaryCompletionDateTypeCode().getCode());
+    }
+
+    @Test
     public void testMissingPrimCompletionDate() throws PAException {
         rXMLParser.setUrl(this.getClass().getResource("/sample-missing-prim-completion-date.xml"));
         rXMLParser.parse();
+        StudyProtocolDTO spDto = rXMLParser.getStudyProtocolDTO();
+        assertEquals("01/01/2100", TsConverter.convertToString(spDto.getPrimaryCompletionDate()));
+        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), spDto.getPrimaryCompletionDateTypeCode().getCode());
+    }
+
+    @Test
+    public void testMissingPrimCompletionDateType() throws PAException {
+        rXMLParser.setUrl(this.getClass().getResource("/sample-missing-prim-completion-date-type.xml"));
+        rXMLParser.parse();
+        StudyProtocolDTO spDto = rXMLParser.getStudyProtocolDTO();
+        assertEquals("09/27/2011", TsConverter.convertToString(spDto.getPrimaryCompletionDate()));
+        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), spDto.getPrimaryCompletionDateTypeCode().getCode());
+    }
+
+    @Test
+    public void testMissingPrimCompletionInvalid() throws PAException {
+        rXMLParser.setUrl(this.getClass().getResource("/sample-invalid-prim-completion.xml"));
+        rXMLParser.parse();
+        StudyProtocolDTO spDto = rXMLParser.getStudyProtocolDTO();
+        assertEquals("01/01/2100", TsConverter.convertToString(spDto.getPrimaryCompletionDate()));
+        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), spDto.getPrimaryCompletionDateTypeCode().getCode());
+    }
+
+    @Test
+    public void testMissingPrimCompletionInvalidReverse() throws PAException {
+        rXMLParser.setUrl(this.getClass().getResource("/sample-invalid-prim-completion-reverse.xml"));
+        rXMLParser.parse();
+        StudyProtocolDTO spDto = rXMLParser.getStudyProtocolDTO();
+        assertEquals("01/01/2100", TsConverter.convertToString(spDto.getPrimaryCompletionDate()));
+        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), spDto.getPrimaryCompletionDateTypeCode().getCode());
     }
 
     @Test(expected=PAException.class)
