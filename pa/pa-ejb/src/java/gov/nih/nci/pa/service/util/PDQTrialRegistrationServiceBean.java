@@ -114,15 +114,18 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -135,7 +138,9 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -267,12 +272,42 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
                 getStudyRegulatoryAuthDTO(parser.getRegAuthMap(), parser.getStudyIndldeDTOs()),
                 BlConverter.convertToBl(Boolean.TRUE));
 
-        //Finally update the NCI ID to be the old one.
+        //Update the NCI ID to be the old one.
         spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(newSpId);
-        spDTO.getSecondaryIdentifiers().getItem().remove(PAUtil.getAssignedIdentifier(spDTO));
+        Ii newAssignedId = PAUtil.getAssignedIdentifier(spDTO);
+        spDTO.getSecondaryIdentifiers().getItem().remove(newAssignedId);
         spDTO.getSecondaryIdentifiers().getItem().add(nciId);
         PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
+
+        //Finally move the trial documents to the correct directory and remove the unused document directory.
+        handleUpdatedTrialDocuments(nciId, newAssignedId);
         return newSpId;
+    }
+
+    /**
+     * Handles the deletion and moving of trial documents to the correct directories.
+     * @param oldAssignedId the assigned id for the previous and final location for the trial documents
+     * @param newAssignedId the assigned id for the newly created documents that need to be moved
+     * @throws PAException on error
+     * @throws IOException on file manipulation error
+     */
+    private void handleUpdatedTrialDocuments(Ii oldAssignedId, Ii newAssignedId) throws PAException, IOException {
+        String docPath = PaEarPropertyReader.getDocUploadPath();
+        File sourceDir  = new File(docPath + File.separator + newAssignedId.getExtension());
+        File destination  = new File(docPath + File.separator + oldAssignedId.getExtension());
+
+        //First clean out the old directory.
+        FileUtils.cleanDirectory(destination);
+
+        //Then move the files.
+        @SuppressWarnings("unchecked")
+        Collection<File> filesToMove = FileUtils.listFiles(sourceDir, FileFilterUtils.trueFileFilter(), null);
+        for (File file : filesToMove) {
+            FileUtils.moveFileToDirectory(file, destination, false);
+        }
+
+        //Finally delete the now empty directory.
+        FileUtils.deleteQuietly(sourceDir);
     }
 
     /**
@@ -475,6 +510,7 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
     /**
      * @param paServiceUtils the paServiceUtils to set
      */
+    @Override
     public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
         this.paServiceUtils = paServiceUtils;
     }
@@ -482,6 +518,7 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
     /**
      * @return the paServiceUtils
      */
+    @Override
     public PAServiceUtils getPaServiceUtils() {
         return paServiceUtils;
     }
