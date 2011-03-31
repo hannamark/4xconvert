@@ -95,6 +95,8 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
@@ -107,10 +109,13 @@ import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.ArmServiceLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
@@ -121,6 +126,7 @@ import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
 import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
 import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolBeanLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudySiteBeanLocal;
@@ -129,6 +135,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.ServiceLocator;
+import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -145,8 +152,10 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -184,9 +193,12 @@ public class PDQTrialAbstractionServiceTest {
     private ParticipatingSiteServiceLocal participatingSiteSvc;
     private final URL testXMLUrl = this.getClass().getResource("/CDR64184.xml");
     private final URL testDoubleBlindXMLUrl = this.getClass().getResource("/CDR360805.xml");
+    private final URL testNoLocationsXMLUrl = this.getClass().getResource("/CDR360805-no-locations.xml");
 
     @Before
     public void setUp() throws Exception {
+        TestSchema.reset();
+        TestSchema.primeData();
         setupPoSvc();
         setUpPaSvc();
         setupOrgCorrelationSvcMock();
@@ -212,6 +224,13 @@ public class PDQTrialAbstractionServiceTest {
         when(studyProtocolSvc.getInterventionalStudyProtocol(any(Ii.class))).thenReturn(
                 new InterventionalStudyProtocolDTO());
         studySiteSvc = mock(StudySiteBeanLocal.class);
+
+        StudySiteDTO leadOrg = new StudySiteDTO();
+        leadOrg.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
+        leadOrg.setStatusCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        leadOrg.setResearchOrganizationIi(IiConverter.convertToPoResearchOrganizationIi("abc"));
+
+        when(studySiteSvc.getByStudyProtocol(any(Ii.class), any(StudySiteDTO.class))).thenReturn(Arrays.asList(leadOrg));
         when(paSvcLoc.getStudySiteService()).thenReturn(studySiteSvc);
         diseaseSvc = mock(PDQDiseaseServiceLocal.class);
         when(paSvcLoc.getDiseaseService()).thenReturn(diseaseSvc);
@@ -236,6 +255,13 @@ public class PDQTrialAbstractionServiceTest {
         when(participatingSiteSvc.createStudySiteParticipant(any(StudySiteDTO.class), any(StudySiteAccrualStatusDTO.class),
                 any(Ii.class))).thenReturn(siteDTO);
         when(paSvcLoc.getParticipatingSiteService()).thenReturn(participatingSiteSvc);
+
+        StudyOverallStatusDTO overallStatus = new StudyOverallStatusDTO();
+        overallStatus.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
+        StudyOverallStatusServiceLocal studyOverallStatusSvc = mock(StudyOverallStatusServiceLocal.class);
+        when(studyOverallStatusSvc.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(overallStatus);
+
+        when(paSvcLoc.getStudyOverallStatusService()).thenReturn(studyOverallStatusSvc);
     }
 
     private void setupPoSvc() throws NullifiedEntityException, PAException, TooManyResultsException {
@@ -246,7 +272,7 @@ public class PDQTrialAbstractionServiceTest {
         poCrscSvc = mock(ClinicalResearchStaffCorrelationServiceRemote.class);
         poHcpcSvc = mock(HealthCareProviderCorrelationServiceRemote.class);
         poHcfSvc = mock(HealthCareFacilityCorrelationServiceRemote.class);
-        
+
         when(poSvcLoc.getOrganizationEntityService()).thenReturn(poOrgSvc);
         when(poSvcLoc.getPersonEntityService()).thenReturn(poPersonSvc);
         when(poSvcLoc.getClinicalResearchStaffCorrelationService()).thenReturn(poCrscSvc);
@@ -336,6 +362,33 @@ public class PDQTrialAbstractionServiceTest {
         Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(1L);
         bean.loadAbstractionElementFromPDQXml(testDoubleBlindXMLUrl, studyProtocolIi);
         verify(studyMilestoneSvc, org.mockito.Mockito.times(5)).create(any(StudyMilestoneDTO.class));
+        assertNotNull(bean.getOrgCorrelationService());
+        assertNotNull(bean.getPaServiceUtils());
+    }
+
+    @Test
+    public void testLoadNoLocationsPDQXml() throws PAException, IOException {
+        PAServiceUtils paServiceUtil = mock(PAServiceUtils.class);
+        when(paServiceUtil.createEntity(any(OrganizationDTO.class))).thenAnswer(new Answer<Object>() {
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                if (args[0] instanceof OrganizationDTO) {
+                    OrganizationDTO org = (OrganizationDTO) args[0];
+                    org.setIdentifier(IiConverter.convertToIi(1L));
+                    return org;
+                } else {
+                    PersonDTO person = (PersonDTO) args[0];
+                    person.setIdentifier(IiConverter.convertToIi(1L));
+                    return person;
+                }
+            }
+        });
+        bean.setPaServiceUtils(paServiceUtil);
+        Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(1L);
+        bean.loadAbstractionElementFromPDQXml(testNoLocationsXMLUrl, studyProtocolIi);
+        verify(studyMilestoneSvc, org.mockito.Mockito.times(5)).create(any(StudyMilestoneDTO.class));
+        verify(participatingSiteSvc, org.mockito.Mockito.times(1)).createStudySiteParticipant(any(StudySiteDTO.class),
+                any(StudySiteAccrualStatusDTO.class), any(OrganizationDTO.class), any(HealthCareFacilityDTO.class));
         assertNotNull(bean.getOrgCorrelationService());
         assertNotNull(bean.getPaServiceUtils());
     }

@@ -90,6 +90,7 @@ import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.EntityStatusCode;
@@ -682,6 +683,17 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
     public Ii getPoOrgIiFromPaHcfIi(Ii hcfIi) throws PAException {
         HealthCareFacility hcf = getStructuralRoleByIi(hcfIi);
         return IiConverter.convertToPoOrganizationIi(hcf.getOrganization().getIdentifier());
+    }
+
+    /**
+     * Given a pa research organization structural role get PO Org ID.
+     * @param roIi pa ii.
+     * @return po org ii.
+     * @throws PAException when error.
+     */
+    public Ii getPoOrgIiFromPaRoIi(Ii roIi) throws PAException {
+        ResearchOrganization ro = getStructuralRoleByIi(roIi);
+        return IiConverter.convertToPoOrganizationIi(ro.getOrganization().getIdentifier());
     }
 
     /**

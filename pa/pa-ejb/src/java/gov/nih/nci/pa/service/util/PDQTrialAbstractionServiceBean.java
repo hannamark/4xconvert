@@ -93,7 +93,9 @@ import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
@@ -105,6 +107,7 @@ import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -145,6 +148,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -190,6 +194,30 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
         DOUBLE_BLIND_DEFAULT_ROLES.add(CdConverter.convertToCd(BlindingRoleCode.INVESTIGATOR));
     }
 
+    private static final Map<String, String> DEFAULT_LOCATION_STATUS_MAP = new HashMap<String, String>();
+    static {
+        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.IN_REVIEW.getCode(),
+                RecruitmentStatusCode.NOT_YET_RECRUITING.getCode());
+        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.DISAPPROVED.getCode(),
+                RecruitmentStatusCode.WITHDRAWN.getCode());
+        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.APPROVED.getCode(),
+                RecruitmentStatusCode.ACTIVE_NOT_RECRUITING.getCode());
+        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.ACTIVE.getCode(), RecruitmentStatusCode.RECRUITING.getCode());
+        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.CLOSED_TO_ACCRUAL.getCode(),
+                RecruitmentStatusCode.TERMINATED_RECRUITING.getCode());
+        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode(),
+                RecruitmentStatusCode.TERMINATED_RECRUITING.getCode());
+        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode(),
+                RecruitmentStatusCode.SUSPENDED_RECRUITING.getCode());
+        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode(),
+                RecruitmentStatusCode.SUSPENDED_RECRUITING.getCode());
+        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.WITHDRAWN.getCode(), RecruitmentStatusCode.WITHDRAWN.getCode());
+        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode(),
+                RecruitmentStatusCode.COMPLETED.getCode());
+        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.COMPLETE.getCode(),
+                RecruitmentStatusCode.TERMINATED_RECRUITING.getCode());
+    }
+
     /**
      * Loads the PDQ xml's abstraction elements.
      * @param xmlUrl url
@@ -214,7 +242,12 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
         loadOutcomeMeasures(parser.getOutcomeMeasureDTOs(), studyProtocolIi);
         loadEligibilityCriteria(parser, studyProtocolIi);
         //participating site info
-        loadParticipatingSites(parser.getLocationsMap(), studyProtocolIi);
+        if (MapUtils.isNotEmpty(parser.getLocationsMap())) {
+            loadParticipatingSites(parser.getLocationsMap(), studyProtocolIi);
+        } else {
+            loadDefaultParticipatingSite(studyProtocolIi);
+        }
+
         //create new milestones
         StudyMilestoneDTO mileDTO = null;
         for (MilestoneCode code : MILESTONE) {
@@ -249,15 +282,55 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
                             studySiteDTO, recrutingStatus, locOrg.getIdentifier()).getIdentifier();
 
                     Map<PoDto, String> contactMap = valueMap.get(statusDTO);
-                    addContact(studyProtocolIi, corrUtils.getPoOrgIiFromPaHcfIi(locOrg.getIdentifier()).getExtension(), 
+                    addContact(studyProtocolIi, corrUtils.getPoOrgIiFromPaHcfIi(locOrg.getIdentifier()).getExtension(),
                             studySiteIi, contactMap);
                 }
             } catch (Exception e) {
-                LOG.error("error while loading participating site with PO hcf db id " 
+                LOG.error("error while loading participating site with PO hcf db id "
                         + locOrg.getIdentifier().getExtension(), e);
             }
         }
     }
+
+    /**
+     * Loads a default participating site with the organization set to be the lead org and
+     * the recruitment status date equal to the lead_org_status status_date.
+     * @param studyProtocolIi the ii of the study protocol create the default location for
+     */
+    private void loadDefaultParticipatingSite(Ii studyProtocolIi) {
+        try {
+            StudySiteDTO criteria = new StudySiteDTO();
+            criteria.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+            //There should only be one lead org associated with a study.
+            List<StudySiteDTO> leadOrgs =
+                PaRegistry.getStudySiteService().getByStudyProtocol(studyProtocolIi, criteria);
+            StudySiteDTO leadOrg = leadOrgs.get(0);
+            StudyOverallStatusDTO overallStatus =
+                PaRegistry.getStudyOverallStatusService().getCurrentByStudyProtocol(studyProtocolIi);
+
+            String recruitingStatus = DEFAULT_LOCATION_STATUS_MAP.get(overallStatus.getStatusCode().getCode());
+
+            StudySiteAccrualStatusDTO accrualStatus = new StudySiteAccrualStatusDTO();
+            accrualStatus.setStatusDate(overallStatus.getStatusDate());
+            accrualStatus.setStatusCode(CdConverter.convertStringToCd(recruitingStatus));
+
+            StudySiteDTO studySiteDTO = new StudySiteDTO();
+            studySiteDTO.setStudyProtocolIdentifier(studyProtocolIi);
+            studySiteDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+            studySiteDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
+            studySiteDTO.setStatusDateRange(
+                    IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
+
+            OrganizationDTO org = new OrganizationDTO();
+            org.setIdentifier(corrUtils.getPoOrgIiFromPaRoIi(leadOrg.getResearchOrganizationIi()));
+            PaRegistry.getParticipatingSiteService().createStudySiteParticipant(studySiteDTO, accrualStatus, org, null);
+            LOG.warn("Successfully added default participating site for organization "
+                    + IiConverter.convertToString(leadOrg.getIdentifier()));
+        } catch (PAException e) {
+            LOG.error("Error creating study protocol's default location " + studyProtocolIi.getExtension(), e);
+        }
+    }
+
     /**
      * @param collaboratorOrgDTOs
      * @param studyProtocolIi
@@ -549,7 +622,6 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
         } catch (PAException e) {
             LOG.error("error loading study protocol's related information" + studyProtocolIi.getExtension(), e);
         }
-
     }
 
     /**
