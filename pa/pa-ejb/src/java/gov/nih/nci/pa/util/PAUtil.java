@@ -161,7 +161,7 @@ public class PAUtil {
     private static final String UTF_8 = "UTF-8";
     private static final String TEMP_DOC_LOCATION = "temp_docs";
     private static final Pattern USA_CANADA_PHONENUMBER_PATTERN = Pattern
-        .compile("^\\D*(\\d{3})\\D*(\\d{3})\\D*(\\d{4})\\D*(\\d{1,10})?\\D*$");
+        .compile("^[+-]?\\d?\\D?(\\d{3})\\D*(\\d{3})\\D*(\\d{4})\\D*(\\d{1,10})?\\D*$");
     private static final int AREA_CODE_GROUP = 1;
     private static final int FIRST_NUMBER_GROUP = 2;
     private static final int LAST_NUMBER_GROUP = 3;
@@ -840,7 +840,7 @@ public class PAUtil {
     public static boolean isCountryUSAOrCanada(String countryName) {
         return PAConstants.USA.equalsIgnoreCase(countryName) || PAConstants.CANADA.equalsIgnoreCase(countryName);
     }
-    
+
     /**
      * Validates a phone number.
      * @param countryName The country name.

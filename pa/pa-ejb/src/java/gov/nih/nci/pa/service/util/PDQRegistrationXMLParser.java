@@ -252,7 +252,15 @@ public class PDQRegistrationXMLParser extends AbstractPDQXmlParser {
         //resp party
         Element respParty = parent.getChild("resp_party");
         String email = getText(respParty, "email");
+        if (StringUtils.isEmpty(email)) {
+            email = "PIO@ctep.nci.nih.gov";
+            LOG.warn("Responsible party email was defaulted.");
+        }
         String phone = getText(respParty, "phone");
+        if (StringUtils.isEmpty(phone)) {
+            phone = "000-000-0000";
+            LOG.warn("Responsible party phone was defaulted.");
+        }
         responsiblePartyContact = new PersonDTO();
         responsiblePartyContact.setName(EnPnConverter.convertToEnPn(getText(respParty, "name_title"), null, null, null,
                 null));

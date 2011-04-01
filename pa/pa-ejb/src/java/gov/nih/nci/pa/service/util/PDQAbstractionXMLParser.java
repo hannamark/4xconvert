@@ -143,10 +143,10 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
             getLocationsMap().put(orgDTO, contactMap);
         }
     }
-    
+
     private void logPartSiteLoadError(String ctepId, Element facilityElmt) {
-        StringBuffer errMsg = 
-            new StringBuffer("Skipping location element. Error loading location with facility ctep-id: "); 
+        StringBuffer errMsg =
+            new StringBuffer("Skipping location element. Error loading location with facility ctep-id: ");
         errMsg.append(ctepId);
         String facName = getText(facilityElmt, NAME_FIELD);
         if (StringUtils.isNotEmpty(facName)) {
@@ -165,7 +165,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
         Map<PoDto, String> contactMap = new HashMap<PoDto, String>();
         if (contactElmt.getChild("first_name") != null) {
             PersonDTO contactDTO = new PersonDTO();
-            contactDTO.setName(EnPnConverter.convertToEnPn(getText(contactElmt, "first_name"), 
+            contactDTO.setName(EnPnConverter.convertToEnPn(getText(contactElmt, "first_name"),
                     getText(contactElmt, "middle_name"), getText(contactElmt, "last_name"), null, null));
             List<String> phoneList = new ArrayList<String>();
             phoneList.add(getText(contactElmt, "phone"));
@@ -175,7 +175,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
         }
 
       if (contactElmt.getChild("last_name") != null) {
-          LOG.info("No Generic Contact created for last_name: " + contactElmt.getChild("last_name"));
+          LOG.info("No Generic Contact created for last_name: " + getText(contactElmt, "last_name"));
       }
         return contactMap;
     }

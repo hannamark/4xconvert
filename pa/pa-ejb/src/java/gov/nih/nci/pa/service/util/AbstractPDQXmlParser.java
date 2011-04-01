@@ -170,19 +170,20 @@ public abstract class AbstractPDQXmlParser {
      * @return dset
      */
     protected DSet<Tel> getDset(String email, String phone) {
-        DSet<Tel> telecomeAddress = null;
+        DSet<Tel> telecomAddress = null;
         if (StringUtils.isNotEmpty(phone)) {
             List<String> phoneList = new ArrayList<String>();
             phoneList.add(convertPhoneToUSAFormat(phone));
-            telecomeAddress = DSetConverter.convertListToDSet(phoneList, "PHONE", telecomeAddress);
+            telecomAddress = DSetConverter.convertListToDSet(phoneList, "PHONE", telecomAddress);
         }
         if (StringUtils.isNotEmpty(email)) {
             List<String> emailList = new ArrayList<String>();
             emailList.add(email);
-            telecomeAddress = DSetConverter.convertListToDSet(emailList, "EMAIL", telecomeAddress);
+            telecomAddress = DSetConverter.convertListToDSet(emailList, "EMAIL", telecomAddress);
         }
-        return telecomeAddress;
+        return telecomAddress;
     }
+
     private String convertPhoneToUSAFormat(String inputPhone) {
         String iPhone = StringUtils.deleteWhitespace(inputPhone);
         iPhone = StringUtils.remove(iPhone, '(');

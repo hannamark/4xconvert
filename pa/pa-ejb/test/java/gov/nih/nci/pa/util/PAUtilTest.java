@@ -584,6 +584,9 @@ public class PAUtilTest {
     @Test
     public void testIsPhoneValidCaseNoExtension() {
         assertTrue(PAUtil.isPhoneValid("USA", "111-111-1111"));
+        assertTrue(PAUtil.isPhoneValid("USA", "1112223333"));
+        assertTrue(PAUtil.isPhoneValid("USA", "1-800 888 0000"));
+        assertTrue(PAUtil.isPhoneValid("USA", "1800-444-5555"));
     }
 
     /**
@@ -601,6 +604,8 @@ public class PAUtilTest {
     @Test
     public void testIsPhoneValidCaseInvalid() {
         assertFalse(PAUtil.isPhoneValid("USA", "test"));
+        assertFalse(PAUtil.isPhoneValid("USA", "1-800-USA-NOW1"));
+        assertFalse(PAUtil.isPhoneValid("USA", "badprefex-800-USA-NOW1"));
     }
 
     /**

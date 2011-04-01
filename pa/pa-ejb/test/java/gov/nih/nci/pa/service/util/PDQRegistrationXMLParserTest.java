@@ -98,6 +98,7 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -157,6 +158,24 @@ public class PDQRegistrationXMLParserTest {
     public void testIForgotToCallSetURL() throws PAException {
         rXMLParser.parse();
         rXMLParser.getStudyProtocolDTO();
+    }
+
+    @Test
+    public void testMissingRespParty() throws PAException {
+        URL url = this.getClass().getResource("/pdq-no-resp-party.xml");
+        rXMLParser.setUrl(url);
+        rXMLParser.parse();
+
+        List<String> phones = DSetConverter.convertDSetToList(rXMLParser.getResponsiblePartyContact()
+                .getTelecomAddress(), DSetConverter.TYPE_PHONE);
+        assertTrue(phones.contains("000-000-0000"));
+        assertEquals(1, phones.size());
+
+        List<String> emails = DSetConverter.convertDSetToList(rXMLParser.getResponsiblePartyContact()
+                .getTelecomAddress(), DSetConverter.TYPE_EMAIL);
+        assertTrue(emails.contains("PIO@ctep.nci.nih.gov"));
+        assertEquals(1, emails.size());
+
     }
 
     @Test
