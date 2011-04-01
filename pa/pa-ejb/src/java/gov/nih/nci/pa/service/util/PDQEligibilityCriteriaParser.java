@@ -85,6 +85,7 @@ package gov.nih.nci.pa.service.util;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 
@@ -152,15 +153,20 @@ public class PDQEligibilityCriteriaParser {
         Element listTitle = itemized.getChild("ListTitle");
         if (listTitle != null) {
             List<Element>  listItems = itemized.getChildren("ListItem"); //getting the List item
-            //read the listItems for each itemized list
             StringBuffer listItemTextForTitle = new StringBuffer("");
             for (Element listItem : listItems) {
-                StringBuffer star = new StringBuffer("***");
-                listItemTextForTitle = new StringBuffer();
-                appendParentName(itemized, listItemTextForTitle, listItem.getText(), star.toString(),
-                        listTitle.getText());
-                readListItem(listItem , star, star.toString(), listItemTextForTitle);
-                listItemText.append(listItemTextForTitle);
+                listItemTextForTitle = new StringBuffer();           
+                if (!StringUtils.startsWithIgnoreCase(listTitle.getText(), "Age") 
+                        && !StringUtils.equals("Not specified", listItem.getText())) {
+                    StringBuffer itemTxt = new StringBuffer();
+                    if (StringUtils.startsWithIgnoreCase(listTitle.getText(), "Performance status")) {
+                        itemTxt.append("Performance status - ");
+                    }
+                    itemTxt.append(listItem.getText());
+                    appendParentName(listItemTextForTitle, itemTxt.toString(), "", "");
+                    readListItem(listItem , new StringBuffer(), "", listItemTextForTitle);
+                    listItemText.append(listItemTextForTitle);
+                }
             }
         }
     }
@@ -176,9 +182,8 @@ public class PDQEligibilityCriteriaParser {
         List<Element>  listItems = itemized.getChildren(); //getting the List item
         for (Element listItem : listItems) {
             if (isListItem(listItem)) {
-                StringBuffer star = new StringBuffer("***");
-                appendParentName(itemized, listItemText, listItem.getText(), star.toString(), "");
-                readListItem(listItem, star, star.toString(), listItemText);
+                appendParentName(listItemText, listItem.getText(), "", "");
+                readListItem(listItem, new StringBuffer(), "", listItemText);
             }
       }
   }
@@ -190,18 +195,19 @@ public class PDQEligibilityCriteriaParser {
      * @param string2
      * @param string
      */
-    private void appendParentName(Element itemized, StringBuffer listItemText, String itemText, String starAppend,
+    private void appendParentName(StringBuffer listItemText, String itemText, String starAppend,
             String titleText) {
-        listItemText.append("*#*:* ");
-        String parentName = StringUtils.replace(itemized.getParentElement().getName(),
-                "Characteristics", " Characteristics");
-        listItemText.append(StringUtils.upperCase(parentName)).append('\n');
+        listItemText.append("*#*:");
         if (StringUtils.isNotBlank(titleText)) {
-            listItemText.append("** ").append(titleText).append('\n');
+            listItemText.append("* ").append(titleText).append('\n');
         }
         String listText = StringUtils.replace(itemText, "\n", "");
         String strEmpty = " ";
-        listItemText.append(starAppend).append(strEmpty).append(listText).append('\n');
+        if (StringUtils.isBlank(starAppend)) {
+            listItemText.append(listText).append('\n');
+        } else {
+            listItemText.append(starAppend).append(strEmpty).append(listText).append('\n');
+        }
     }
     /**
      *
@@ -211,17 +217,18 @@ public class PDQEligibilityCriteriaParser {
      * @param listItemText
      */
     private void readListItem(Element itemized, StringBuffer star, String starAppend, StringBuffer listItemText) {
-        if (isListItem(itemized)) {
+        if (isListItem(itemized) && !CollectionUtils.isEmpty(itemized.getChildren())) {
             star.append('*');
-        }
-        List<Element>  listItems = itemized.getChildren(); //getting the List item
+        } 
+        List<Element>  listItems = itemized.getChildren(); 
         for (Element listItem : listItems) {
            if (isListItem(listItem)) {
                String listText = StringUtils.replace(listItem.getText(), "\n", "");
                String strEmpty = " ";
                listItemText.append(starAppend).append(strEmpty).append(listText).append('\n');
            }
-           readListItem(listItem, star, star.toString(), listItemText);
+           readListItem(listItem, new StringBuffer(starAppend), star.toString(), listItemText);
         }
+       
     }
 }

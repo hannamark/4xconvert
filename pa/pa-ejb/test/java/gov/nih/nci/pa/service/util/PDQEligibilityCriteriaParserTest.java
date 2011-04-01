@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -185,7 +186,14 @@ public class PDQEligibilityCriteriaParserTest {
         otherCriterionTextBlock = eligibilityCriteria.readEligibilityEntryCriteria(
                 abstractionElementParser.getDocument().getRootElement().getChild("eligibility"));
         assertNotNull(otherCriterionTextBlock);
-        assertTrue(otherCriterionTextBlock[0].startsWith("* DISEASE"));
+        assertTrue(otherCriterionTextBlock[0].startsWith("Histologically"));
+        assertTrue(otherCriterionTextBlock[0].contains("**   Any number of bone metastases by bone scan allowed"));
+        assertTrue(otherCriterionTextBlock[1].contains("*  No more than 1 month from the beginning of antiandrogen therapy to the beginning of luteinizing hormone-releasing hormone (LHRH) agonist therapy"));
+        assertTrue(otherCriterionTextBlock[4].startsWith("Performance status - SWOG 0-2"));
+        assertFalse(otherCriterionTextBlock[5].contains("Should not show up"));
+        assertFalse(otherCriterionTextBlock[5].contains("Hematopoietic"));
+        assertTrue(otherCriterionTextBlock[5].startsWith("Recovered from any major infection"));
+        assertTrue(otherCriterionTextBlock[11].contains("* Single or combination therapy allowed"));
         for (String str : otherCriterionTextBlock) {
             System.out.println(str);
         }

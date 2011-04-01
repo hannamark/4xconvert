@@ -252,6 +252,10 @@ months after initiation of combined androgen therapy
               <ListTitle>Renal:</ListTitle>
               <ListItem>Not specified</ListItem>
             </ItemizedList>
+            <ItemizedList Style="bullet" id="_24">
+              <ListTitle>Age</ListTitle>
+              <ListItem>Should not show up</ListItem>
+            </ItemizedList>
           <ItemizedList Style="bullet" id="_25">
               <ListTitle>Other:</ListTitle>
               <ListItem>Recovered from any major infection</ListItem>
