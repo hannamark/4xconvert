@@ -30,6 +30,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -48,10 +49,13 @@ import org.jdom.Element;
 
 /**
  * @author vrushali
- *
+ * 
  */
 public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
+
+    private static final Logger LOG = Logger.getLogger(PDQAbstractionXMLParser.class);
     private static final String NAME_FIELD = "name";
+
     private List<OrganizationDTO> collaboratorOrgDTOs;
     private InterventionalStudyProtocolDTO ispDTO;
     private OrganizationDTO irbOrgDTO;
@@ -59,14 +63,12 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     private List<StudyOutcomeMeasureDTO> outcomeMeasureDTOs;
     private List<PDQDiseaseDTO> listOfDiseaseDTOs;
     private List<InterventionDTO> listOfInterventionsDTOS;
-    private Map <InterventionDTO, List<ArmDTO>> armInterventionMap;
+    private Map<InterventionDTO, List<ArmDTO>> armInterventionMap;
     private List<ArmDTO> listOfArmDTOS;
     private Map<OrganizationDTO, Map<StudySiteAccrualStatusDTO, Map<PoDto, String>>> locationsMap;
     private String healthyVolunteers;
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
     private final CorrelationUtils corrUtils = new CorrelationUtils();
-    private static final Logger LOG  = Logger.getLogger(PDQAbstractionXMLParser.class);
-
 
     /**
      * {@inheritDoc}
@@ -92,23 +94,23 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
             collaboratorDTO.setName(EnOnConverter.convertToEnOn(getText(collaboratorElmt, "agency")));
             getCollaboratorOrgDTOs().add(collaboratorDTO);
         }
-
     }
+
     /**
-     * @param parent
+     * @param clinicalStudy The clinical_study element
      */
     @SuppressWarnings("unchecked")
-    private void readLocations(Element parent) {
+    private void readLocations(Element clinicalStudy) throws PAException {
         Ts recrutingStatusDate = null;
-        Element leadOrgStatusElmt = parent.getChild("lead_org_status");
+        Element leadOrgStatusElmt = clinicalStudy.getChild("lead_org_status");
         if (leadOrgStatusElmt != null && CollectionUtils.isNotEmpty(leadOrgStatusElmt.getContent())) {
             recrutingStatusDate = tsFromString("yyyy-MM-dd", leadOrgStatusElmt.getAttributeValue("status_date"));
         }
-        List<Element> locationElmtList = parent.getChildren("location");
+        List<Element> locationElmtList = clinicalStudy.getChildren("location");
         setLocationsMap(new HashMap<OrganizationDTO, Map<StudySiteAccrualStatusDTO, Map<PoDto, String>>>());
         for (Element locationElmt : locationElmtList) {
             OrganizationDTO orgDTO = new OrganizationDTO();
-            //read Facility/Org
+            // read Facility/Org
             Element facilityElmt = locationElmt.getChild("facility");
             String ctepId = facilityElmt.getAttributeValue("ctep-id");
             if (StringUtils.isNotEmpty(ctepId)) {
@@ -128,25 +130,27 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
             }
             orgDTO.setName(EnOnConverter.convertToEnOn(getText(facilityElmt, NAME_FIELD)));
             Element addressElmt = facilityElmt.getChild("address");
-            orgDTO.setPostalAddress(AddressConverterUtil.create(null, null, getText(addressElmt, "city"),
-                    getText(addressElmt, "state"), getText(addressElmt, "zip"),
-                    getAlpha3CountryName(getText(addressElmt, "country"))));
-            //read Status
+            String city = getText(addressElmt, "city");
+            String countryName = getAlpha3CountryName(getText(addressElmt, "country"));
+            String state = getText(addressElmt, "state");
+            String zip = getText(addressElmt, "zip");
+            orgDTO.setPostalAddress(AddressConverterUtil.create(null, null, city, state, zip, countryName));
+            // read Status
             StudySiteAccrualStatusDTO siteStatus = new StudySiteAccrualStatusDTO();
             siteStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.getByCode(getText(locationElmt,
-                    "status"))));
+                                                                                                     "status"))));
             siteStatus.setStatusDate(recrutingStatusDate);
-            //read contact
-            Map<StudySiteAccrualStatusDTO, Map<PoDto, String>> contactMap = new HashMap<StudySiteAccrualStatusDTO,
-                Map<PoDto, String>>();
-            contactMap.put(siteStatus, readContact(locationElmt));
+            // read contact
+            Map<StudySiteAccrualStatusDTO, Map<PoDto, String>> contactMap = 
+                new HashMap<StudySiteAccrualStatusDTO, Map<PoDto, String>>();
+            contactMap.put(siteStatus, readContact(locationElmt, countryName));
             getLocationsMap().put(orgDTO, contactMap);
         }
     }
 
     private void logPartSiteLoadError(String ctepId, Element facilityElmt) {
-        StringBuffer errMsg =
-            new StringBuffer("Skipping location element. Error loading location with facility ctep-id: ");
+        StringBuffer errMsg = new StringBuffer(
+                "Skipping location element. Error loading location with facility ctep-id: ");
         errMsg.append(ctepId);
         String facName = getText(facilityElmt, NAME_FIELD);
         if (StringUtils.isNotEmpty(facName)) {
@@ -155,28 +159,36 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
         }
         LOG.warn(errMsg.toString());
     }
+
     /**
-     * @param locationElmt
-     * @param siteStatus
-     * @return
+     * Reads the contact of a location.
+     * @param locationElmt the location element
+     * @param countryName The country of the location
+     * @return The Map containing the contact as key and its role as value.
      */
-    private Map<PoDto, String> readContact(Element locationElmt) {
+    private Map<PoDto, String> readContact(Element locationElmt, String countryName) throws PAException {
         Element contactElmt = locationElmt.getChild("contact");
         Map<PoDto, String> contactMap = new HashMap<PoDto, String>();
         if (contactElmt.getChild("first_name") != null) {
             PersonDTO contactDTO = new PersonDTO();
-            contactDTO.setName(EnPnConverter.convertToEnPn(getText(contactElmt, "first_name"),
-                    getText(contactElmt, "middle_name"), getText(contactElmt, "last_name"), null, null));
+            contactDTO.setName(EnPnConverter.convertToEnPn(getText(contactElmt, "first_name"), getText(contactElmt,
+                                                                                                       "middle_name"),
+                                                           getText(contactElmt, "last_name"), null, null));
             List<String> phoneList = new ArrayList<String>();
-            phoneList.add(getText(contactElmt, "phone"));
+            try {
+                String fomattedPhone = PAUtil.formatPhoneNumber(countryName, getText(contactElmt, "phone"));
+                phoneList.add(fomattedPhone);
+            } catch (IllegalArgumentException e) {
+                throw new PAException(e.getMessage(), e);
+            }
             contactDTO.setTelecomAddress(DSetConverter.convertListToDSet(phoneList, "PHONE", null));
             contactMap.put(contactDTO, StringUtils.equalsIgnoreCase(contactElmt.getAttributeValue("role"),
-                    "Principal investigator")? "PI" : "");
+                                                                    "Principal investigator") ? "PI" : "");
         }
 
-      if (contactElmt.getChild("last_name") != null) {
-          LOG.info("No Generic Contact created for last_name: " + getText(contactElmt, "last_name"));
-      }
+        if (contactElmt.getChild("last_name") != null) {
+            LOG.info("No Generic Contact created for last_name: " + getText(contactElmt, "last_name"));
+        }
         return contactMap;
     }
 
@@ -190,13 +202,14 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
         for (Element armElmt : armElmtList) {
             ArmDTO armDTO = new ArmDTO();
             armDTO.setName(StConverter.convertToSt(getText(armElmt, "arm_group_label")));
-            armDTO.setTypeCode(CdConverter.convertToCd(ArmTypeCode.getByCode(WordUtils.capitalizeFully(
-                    getText(armElmt, "arm_type")))));
-            armDTO.setDescriptionText(StConverter.convertToSt(getFullText(
-                  armElmt.getChild("arm_group_description"), "", "")));
+            armDTO.setTypeCode(CdConverter.convertToCd(ArmTypeCode.getByCode(WordUtils
+                .capitalizeFully(getText(armElmt, "arm_type")))));
+            armDTO.setDescriptionText(StConverter.convertToSt(getFullText(armElmt.getChild("arm_group_description"),
+                                                                          "", "")));
             getListOfArmDTOS().add(armDTO);
         }
     }
+
     /**
      * @param parent
      */
@@ -209,10 +222,10 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
             InterventionDTO interventionDto = new InterventionDTO();
             interventionDto.setPdqTermIdentifier(StConverter.convertToSt(interventionElmt.getAttributeValue("cdr-id")));
             interventionDto.setName(StConverter.convertToSt(getText(interventionElmt, "intervention_name")));
-            interventionDto.setTypeCode(CdConverter.convertToCd(InterventionTypeCode.getByCode(getText(interventionElmt,
-                    "intervention_type"))));
-            interventionDto.setDescriptionText(StConverter.convertToSt(getFullText(interventionElmt.getChild(
-                    "intervention_description"), "" , "")));
+            interventionDto.setTypeCode(CdConverter.convertToCd(InterventionTypeCode
+                .getByCode(getText(interventionElmt, "intervention_type"))));
+            interventionDto.setDescriptionText(StConverter.convertToSt(getFullText(interventionElmt
+                .getChild("intervention_description"), "", "")));
             listOfInterventionsDTOS.add(interventionDto);
             List<Element> armGrpLableElmtList = interventionElmt.getChildren("arm_group_label");
             List<ArmDTO> armList = new ArrayList<ArmDTO>();
@@ -304,8 +317,8 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
             pEligibiltyCriterionDTO.setCriterionName(StConverter.convertToSt("GENDER"));
             pEligibiltyCriterionDTO.setEligibleGenderCode(CdConverter.convertToCd(EligibleGenderCode
                 .getByCode(eligibleGenderCode)));
-            pEligibiltyCriterionDTO.setCategoryCode(CdConverter.convertToCd(
-                    ActivityCategoryCode.ELIGIBILITY_CRITERION));
+            pEligibiltyCriterionDTO
+                .setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
             pEligibiltyCriterionDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
             eligibilityList.add(pEligibiltyCriterionDTO);
         }
@@ -315,19 +328,20 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
             pEligibiltyCriterionDTO = new PlannedEligibilityCriterionDTO();
             pEligibiltyCriterionDTO.setCriterionName(StConverter.convertToSt("AGE"));
             pEligibiltyCriterionDTO.setValue(convertToIvlPq("Years", minimumValue, "Years", maximumValue));
-            pEligibiltyCriterionDTO.setCategoryCode(CdConverter.convertToCd(
-                    ActivityCategoryCode.ELIGIBILITY_CRITERION));
+            pEligibiltyCriterionDTO
+                .setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.ELIGIBILITY_CRITERION));
             pEligibiltyCriterionDTO.setInclusionIndicator(BlConverter.convertToBl(Boolean.TRUE));
             eligibilityList.add(pEligibiltyCriterionDTO);
         }
 
     }
+
     private void readStudyDesign(Element parent) {
         setIspDTO(new InterventionalStudyProtocolDTO());
         ispDTO.setPublicTitle(StConverter.convertToSt(getText(parent, "brief_title")));
-        ispDTO.setPublicDescription(StConverter.convertToSt(getFullText(parent.getChild("brief_summary"), "" , "")));
-        ispDTO.setScientificDescription(StConverter.convertToSt(
-                getFullText(parent.getChild("detailed_description"), "", "")));
+        ispDTO.setPublicDescription(StConverter.convertToSt(getFullText(parent.getChild("brief_summary"), "", "")));
+        ispDTO.setScientificDescription(StConverter.convertToSt(getFullText(parent.getChild("detailed_description"),
+                                                                            "", "")));
         ispDTO.setRecordVerificationDate(tsFromString("yyyy-MM-dd", parent.getChildText("verification_date")));
         ispDTO.setTargetAccrualNumber(IvlConverter.convertInt().convertToIvl(getText(parent, "enrollment"), null));
 
@@ -343,15 +357,16 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
             return;
         }
         ispDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(getText(interventionalElement,
-                "interventional_subtype")));
+                                                                           "interventional_subtype")));
         ispDTO.setAllocationCode(CdConverter.convertStringToCd(getText(interventionalElement, "allocation")));
         ispDTO.setBlindingSchemaCode(CdConverter.convertStringToCd(getText(interventionalElement, "masking")));
         ispDTO.setDesignConfigurationCode(CdConverter.convertStringToCd(getText(interventionalElement, "assignment")));
         ispDTO.setStudyClassificationCode(CdConverter.convertStringToCd(getText(interventionalElement, "endpoint")));
-        ispDTO.setNumberOfInterventionGroups(IntConverter.convertToInt(getText(interventionalElement,
-                "number_of_arms")));
+        ispDTO.setNumberOfInterventionGroups(IntConverter
+            .convertToInt(getText(interventionalElement, "number_of_arms")));
         ispDTO.setAccrualReportingMethodCode(CdConverter.convertToCd(AccrualReportingMethodCode.ABBREVIATED));
     }
+
     /**
      * @param ispDTO the ispDTO to set
      */
@@ -400,85 +415,98 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     public List<InterventionDTO> getListOfInterventionsDTOS() {
         return listOfInterventionsDTOS;
     }
+
     /**
      * @param listOfInterventionsDTOS the listOfInterventionsDTOS to set
      */
-    public void setListOfInterventionsDTOS(
-            List<InterventionDTO> listOfInterventionsDTOS) {
+    public void setListOfInterventionsDTOS(List<InterventionDTO> listOfInterventionsDTOS) {
         this.listOfInterventionsDTOS = listOfInterventionsDTOS;
     }
+
     /**
      * @return the armInterventionMap
      */
-    public Map <InterventionDTO, List<ArmDTO>> getArmInterventionMap() {
+    public Map<InterventionDTO, List<ArmDTO>> getArmInterventionMap() {
         return armInterventionMap;
     }
+
     /**
      * @return the listOfArmDTOS
      */
     public List<ArmDTO> getListOfArmDTOS() {
         return listOfArmDTOS;
     }
+
     /**
      * @param eligibilityList the eligibilityList to set
      */
     public void setEligibilityList(List<PlannedEligibilityCriterionDTO> eligibilityList) {
         this.eligibilityList = eligibilityList;
     }
+
     /**
      * @return the eligibilityList
      */
     public List<PlannedEligibilityCriterionDTO> getEligibilityList() {
         return eligibilityList;
     }
+
     /**
      * @param collaboratorOrgDTOs the collaboratorOrgDTOs to set
      */
     public void setCollaboratorOrgDTOs(List<OrganizationDTO> collaboratorOrgDTOs) {
         this.collaboratorOrgDTOs = collaboratorOrgDTOs;
     }
+
     /**
      * @param irbOrgDTO the irbOrgDTO to set
      */
     public void setIrbOrgDTO(OrganizationDTO irbOrgDTO) {
         this.irbOrgDTO = irbOrgDTO;
     }
+
     /**
      * @param outcomeMeasureDTOs the outcomeMeasureDTOs to set
      */
     public void setOutcomeMeasureDTOs(List<StudyOutcomeMeasureDTO> outcomeMeasureDTOs) {
         this.outcomeMeasureDTOs = outcomeMeasureDTOs;
     }
+
     /**
      * @param listOfDiseaseDTOs the listOfDiseaseDTOs to set
      */
     public void setListOfDiseaseDTOs(List<PDQDiseaseDTO> listOfDiseaseDTOs) {
         this.listOfDiseaseDTOs = listOfDiseaseDTOs;
     }
+
     /**
      * @param armInterventionMap the armInterventionMap to set
      */
-    public void setArmInterventionMap(Map <InterventionDTO, List<ArmDTO>> armInterventionMap) {
+    public void setArmInterventionMap(Map<InterventionDTO, List<ArmDTO>> armInterventionMap) {
         this.armInterventionMap = armInterventionMap;
     }
+
     /**
      * @param listOfArmDTOS the listOfArmDTOS to set
      */
     public void setListOfArmDTOS(List<ArmDTO> listOfArmDTOS) {
         this.listOfArmDTOS = listOfArmDTOS;
     }
+
     /**
      * @param healthyVolunteers the healthyVolunteers to set
      */
     public void setHealthyVolunteers(String healthyVolunteers) {
         this.healthyVolunteers = healthyVolunteers;
     }
+
     /**
      * @return the healthyVolunteers
      */
     public String getHealthyVolunteers() {
         return healthyVolunteers;
     }
+
     /**
      * @param paServiceUtils the paServiceUtils to set
      */
@@ -486,6 +514,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
         this.paServiceUtils = paServiceUtils;
     }
+
     /**
      * @return the paServiceUtils
      */
@@ -493,12 +522,14 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     public PAServiceUtils getPaServiceUtils() {
         return paServiceUtils;
     }
+
     /**
      * @param locationsMap the locationsMap to set
      */
     public void setLocationsMap(Map<OrganizationDTO, Map<StudySiteAccrualStatusDTO, Map<PoDto, String>>> locationsMap) {
         this.locationsMap = locationsMap;
     }
+
     /**
      * @return the locationsMap
      */

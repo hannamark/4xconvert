@@ -252,10 +252,6 @@ months after initiation of combined androgen therapy
               <ListTitle>Renal:</ListTitle>
               <ListItem>Not specified</ListItem>
             </ItemizedList>
-            <ItemizedList Style="bullet" id="_24">
-              <ListTitle>Age</ListTitle>
-              <ListItem>Should not show up</ListItem>
-            </ItemizedList>
           <ItemizedList Style="bullet" id="_25">
               <ListTitle>Other:</ListTitle>
               <ListItem>Recovered from any major infection</ListItem>
@@ -352,40 +348,6 @@ bone metastases</ListItem>
     <affiliation>Marmara University Hospital</affiliation>
   </overall_official>
   <location>
-    <facility ctep-id="11021">
-      <name>Cancer Centre of Southeastern Ontario at Kingston General Hospital</name>
-      <address>
-        <city>Kingston</city>
-        <state>Ontario</state>
-        <zip>K7L 5P9</zip>
-        <country>Canada</country>
-      </address>
-    </facility>
-    <status>Recruiting</status>
-    <contact>
-      <first_name>Aamer</first_name>
-      <last_name>Mahmud</last_name>
-      <phone>613-544-2631</phone>
-    </contact>
-  </location>
-  <location>
-    <facility ctep-id="11074">
-      <name>Centre Hospitalier Universitaire de Quebec</name>
-      <address>
-        <city>Quebec City</city>
-        <state>Quebec</state>
-        <zip>G1R 2J6</zip>
-        <country>Canada</country>
-      </address>
-    </facility>
-    <status>Recruiting</status>
-    <contact>
-      <first_name>Louis</first_name>
-      <last_name>Lacombe</last_name>
-      <phone>418-691-5050</phone>
-    </contact>
-  </location>
-  <location>
     <facility ctep-id="11065">
       <name>CHUS-Hopital Fleurimont</name>
       <address>
@@ -399,7 +361,7 @@ bone metastases</ListItem>
     <contact>
       <first_name>Abdenour</first_name>
       <last_name>Nabid</last_name>
-      <phone>819-346-1110</phone>
+      <phone>8sss19-346-1110</phone>
     </contact>
   </location>
   <location>

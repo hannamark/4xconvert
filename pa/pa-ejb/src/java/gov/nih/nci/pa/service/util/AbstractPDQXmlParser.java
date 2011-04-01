@@ -101,9 +101,9 @@ import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -115,17 +115,17 @@ import org.jdom.input.SAXBuilder;
 
 /**
  * @author ludetc
- *
+ * 
  */
 public abstract class AbstractPDQXmlParser {
-    /**
-     *
-     */
+    
+    private static final Logger LOG = Logger.getLogger(AbstractPDQXmlParser.class);
     private static final int INSERT_LOC = 3;
     private static final int INSERT_LOC_SEVEN = 7;
+    private static final Pattern USA_PATTERN = Pattern.compile("^\\s*U\\.?S\\.?A\\.?\\s*$", Pattern.CASE_INSENSITIVE);
+    
     private URL url;
     private Document document;
-    private static final Logger LOG = Logger.getLogger(AbstractPDQXmlParser.class);
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
 
     /**
@@ -161,9 +161,6 @@ public abstract class AbstractPDQXmlParser {
 
     }
 
-
-
-
     /**
      * @param email email
      * @param phone phone
@@ -190,12 +187,13 @@ public abstract class AbstractPDQXmlParser {
         iPhone = StringUtils.remove(iPhone, ')');
         iPhone = StringUtils.remove(iPhone, '-');
         StringBuffer formattedPhone = new StringBuffer(iPhone);
-        formattedPhone.insert(INSERT_LOC , "-");
-        formattedPhone.insert(INSERT_LOC_SEVEN , "-");
+        formattedPhone.insert(INSERT_LOC, "-");
+        formattedPhone.insert(INSERT_LOC_SEVEN, "-");
         return formattedPhone.toString();
     }
+
     /**
-     *
+     * 
      * @param parent parent
      * @param name name
      * @return string
@@ -204,11 +202,11 @@ public abstract class AbstractPDQXmlParser {
         if (parent == null) {
             return null;
         }
-        return StringUtils.isEmpty(parent.getChildText(name))? null : parent.getChildText(name);
+        return StringUtils.isEmpty(parent.getChildText(name)) ? null : parent.getChildText(name);
     }
 
     /**
-     *
+     * 
      * @param format format
      * @param date date
      * @return TS
@@ -224,7 +222,7 @@ public abstract class AbstractPDQXmlParser {
     }
 
     /**
-     *
+     * 
      * @param element element
      * @param appendNewLine string to append.
      * @param appendSpace String to append.
@@ -235,22 +233,17 @@ public abstract class AbstractPDQXmlParser {
             return null;
         }
         StringBuffer result = new StringBuffer();
-        List content = element.getContent();
-        Iterator iterator = content.iterator();
-        while (iterator.hasNext()) {
-          Object o = iterator.next();
-          if (o instanceof Text) {
-            Text t = (Text) o;
-            result.append(t.getTextTrim()).append(appendNewLine);
-          } else if (o instanceof Element) {
-            Element child = (Element) o;
-            result.append(appendSpace).append(getFullText(child, appendNewLine, appendSpace));
-          }
+        for (Object o : element.getContent()) {
+            if (o instanceof Text) {
+                Text t = (Text) o;
+                result.append(t.getTextTrim()).append(appendNewLine);
+            } else if (o instanceof Element) {
+                Element child = (Element) o;
+                result.append(appendSpace).append(getFullText(child, appendNewLine, appendSpace));
+            }
         }
-
         return result.toString();
-
-      }
+    }
 
     /**
      * @param document the document to set
@@ -269,22 +262,23 @@ public abstract class AbstractPDQXmlParser {
     /**
      * @param countryName name of country
      * @return alpha3 code
+     * @throws PAException If any error occurs or the country is not found
      */
-    protected String getAlpha3CountryName(String countryName) {
-        String alpha3CountryName = null;
-        if (StringUtils.equalsIgnoreCase("U.S.A", countryName)) {
+    protected String getAlpha3CountryName(String countryName) throws PAException {
+        if (USA_PATTERN.matcher(countryName).matches()) {
             return "USA";
         }
         try {
             Country country = PaRegistry.getLookUpTableService().getCountryByName(countryName);
             if (country != null) {
-                alpha3CountryName = country.getAlpha3();
+                return country.getAlpha3();
             }
-        } catch (PAException e) {
-            LOG.error("Error getting country.", e);
+        } catch (Exception e) {
+            throw new PAException("Error getting country: " + countryName, e);
         }
-        return alpha3CountryName;
+        throw new PAException("Error getting country: " + countryName);
     }
+
     /**
      * Converts to Ivl<Pq>.
      * @param minUom min UOM
@@ -301,13 +295,14 @@ public abstract class AbstractPDQXmlParser {
         IvlConverter.JavaPq high = new IvlConverter.JavaPq(maxUom, PAUtil.convertStringToDecimal(maxValue), null);
         return IvlConverter.convertPq().convertToIvl(low, high);
     }
+
     /**
      * this method parse the PI information.
      * @param overallOfficialElement element
      * @return personDTO
      */
     protected PersonDTO readPrincipalInvestigatorInfo(Element overallOfficialElement) {
-        String ctepId =  overallOfficialElement.getAttributeValue("ctep-id");
+        String ctepId = overallOfficialElement.getAttributeValue("ctep-id");
         PersonDTO per = null;
         if (StringUtils.isNotEmpty(ctepId)) {
             per = getPaServiceUtils().getPersonByCtepId(ctepId);
@@ -316,7 +311,8 @@ public abstract class AbstractPDQXmlParser {
             per = new PersonDTO();
         }
         per.setName(EnPnConverter.convertToEnPn(getText(overallOfficialElement, "first_name"),
-            getText(overallOfficialElement, "middle_name"), getText(overallOfficialElement, "last_name"), null, null));
+                                                getText(overallOfficialElement, "middle_name"),
+                                                getText(overallOfficialElement, "last_name"), null, null));
         return per;
     }
 
@@ -333,6 +329,5 @@ public abstract class AbstractPDQXmlParser {
     public PAServiceUtils getPaServiceUtils() {
         return paServiceUtils;
     }
-
 
 }

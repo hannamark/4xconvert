@@ -126,7 +126,6 @@ import org.junit.Test;
  */
 public class PDQRegistrationXMLParserTest {
 
-
     private final URL testXMLUrl = this.getClass().getResource("/sample-pdq-input.xml");
 
     private PDQRegistrationXMLParser rXMLParser;
@@ -142,6 +141,7 @@ public class PDQRegistrationXMLParserTest {
         when(paServiceUtil.getOrganizationByCtepId(anyString())).thenReturn(new OrganizationDTO());
         when(paServiceUtil.getPersonByCtepId(anyString())).thenReturn(new PersonDTO());
     }
+
     private void setupPoSvc() throws NullifiedEntityException, PAException, TooManyResultsException {
         poSvcLoc = mock(PoServiceLocator.class);
         PoRegistry.getInstance().setPoServiceLocator(poSvcLoc);
@@ -154,7 +154,7 @@ public class PDQRegistrationXMLParserTest {
         when(identifierPersonSvc.search(any(IdentifiedPersonDTO.class))).thenReturn(idPerDtos);
     }
 
-    @Test(expected=IllegalStateException.class)
+    @Test(expected = IllegalStateException.class)
     public void testIForgotToCallSetURL() throws PAException {
         rXMLParser.parse();
         rXMLParser.getStudyProtocolDTO();
@@ -190,10 +190,8 @@ public class PDQRegistrationXMLParserTest {
         assertEquals(ActualAnticipatedTypeCode.ACTUAL.getCode(), spDto.getPrimaryCompletionDateTypeCode().getCode());
         assertEquals("II", spDto.getPhaseCode().getCode());
 
-
-        StudyOverallStatusDTO  statusDTO = rXMLParser.getStudyOverallStatusDTO();
+        StudyOverallStatusDTO statusDTO = rXMLParser.getStudyOverallStatusDTO();
         assertEquals("No longer recruiting", CdConverter.convertCdToString(statusDTO.getStatusCode()));
-
 
         assertEquals(2, rXMLParser.getStudyProtocolDTO().getSecondaryIdentifiers().getItem().size());
 
@@ -205,21 +203,22 @@ public class PDQRegistrationXMLParserTest {
         StudySiteDTO leadTrialId = rXMLParser.getLeadOrganizationSiteIdentifierDTO();
         assertEquals("CDR0000069010", leadTrialId.getLocalStudyProtocolIdentifier().getValue());
         assertTrue(rXMLParser.getStudyIdentifierMap().containsValue("NCT00026221"));
-        //test resp party
+        // test resp party
         assertNotNull(rXMLParser.getResponsiblePartyContact());
         assertNotNull(rXMLParser.getPrincipalInvestigatorDTO());
         assertNotNull(rXMLParser.getLeadOrganizationDTO());
-        assertTrue(StringUtils.contains(EnOnConverter.convertEnOnToString(rXMLParser.getLeadOrganizationDTO().getName())
-                , "Tom Baker Cancer Centre "));
+        assertTrue(StringUtils.contains(EnOnConverter
+            .convertEnOnToString(rXMLParser.getLeadOrganizationDTO().getName()), "Tom Baker Cancer Centre "));
 
     }
+
     @Test
     public void testNewXml() throws PAException {
         rXMLParser.setUrl(this.getClass().getResource("/CDR65658.xml"));
         rXMLParser.parse();
         assertEquals("Actual", CdConverter.convertCdToString(rXMLParser.getStudyProtocolDTO().getStartDateTypeCode()));
-        assertTrue(StringUtils.contains(EnOnConverter.convertEnOnToString(rXMLParser.getLeadOrganizationDTO().getName())
-                , "Southwest Oncology Group"));
+        assertTrue(StringUtils.contains(EnOnConverter
+            .convertEnOnToString(rXMLParser.getLeadOrganizationDTO().getName()), "Southwest Oncology Group"));
         assertEquals("12/15/2007", TsConverter.convertToString(rXMLParser.getStudyOverallStatusDTO().getStatusDate()));
     }
 
@@ -229,7 +228,8 @@ public class PDQRegistrationXMLParserTest {
         rXMLParser.parse();
         StudyProtocolDTO spDto = rXMLParser.getStudyProtocolDTO();
         assertEquals("01/01/2100", TsConverter.convertToString(spDto.getPrimaryCompletionDate()));
-        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), spDto.getPrimaryCompletionDateTypeCode().getCode());
+        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), spDto.getPrimaryCompletionDateTypeCode()
+            .getCode());
     }
 
     @Test
@@ -238,7 +238,8 @@ public class PDQRegistrationXMLParserTest {
         rXMLParser.parse();
         StudyProtocolDTO spDto = rXMLParser.getStudyProtocolDTO();
         assertEquals("01/01/2100", TsConverter.convertToString(spDto.getPrimaryCompletionDate()));
-        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), spDto.getPrimaryCompletionDateTypeCode().getCode());
+        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), spDto.getPrimaryCompletionDateTypeCode()
+            .getCode());
     }
 
     @Test
@@ -247,7 +248,8 @@ public class PDQRegistrationXMLParserTest {
         rXMLParser.parse();
         StudyProtocolDTO spDto = rXMLParser.getStudyProtocolDTO();
         assertEquals("09/27/2011", TsConverter.convertToString(spDto.getPrimaryCompletionDate()));
-        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), spDto.getPrimaryCompletionDateTypeCode().getCode());
+        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), spDto.getPrimaryCompletionDateTypeCode()
+            .getCode());
     }
 
     @Test
@@ -256,7 +258,8 @@ public class PDQRegistrationXMLParserTest {
         rXMLParser.parse();
         StudyProtocolDTO spDto = rXMLParser.getStudyProtocolDTO();
         assertEquals("01/01/2100", TsConverter.convertToString(spDto.getPrimaryCompletionDate()));
-        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), spDto.getPrimaryCompletionDateTypeCode().getCode());
+        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), spDto.getPrimaryCompletionDateTypeCode()
+            .getCode());
     }
 
     @Test
@@ -265,10 +268,11 @@ public class PDQRegistrationXMLParserTest {
         rXMLParser.parse();
         StudyProtocolDTO spDto = rXMLParser.getStudyProtocolDTO();
         assertEquals("01/01/2100", TsConverter.convertToString(spDto.getPrimaryCompletionDate()));
-        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), spDto.getPrimaryCompletionDateTypeCode().getCode());
+        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), spDto.getPrimaryCompletionDateTypeCode()
+            .getCode());
     }
 
-    @Test(expected=PAException.class)
+    @Test(expected = PAException.class)
     public void testObservationalStudyType() throws PAException {
         rXMLParser.setUrl(this.getClass().getResource("/sample-pdq-input-observational.xml"));
         rXMLParser.parse();
@@ -276,7 +280,8 @@ public class PDQRegistrationXMLParserTest {
 
     @Test
     public void testStudyInd() throws PAException {
-        when(identifierPersonSvc.search(any(IdentifiedPersonDTO.class))).thenReturn(new ArrayList<IdentifiedPersonDTO>());
+        when(identifierPersonSvc.search(any(IdentifiedPersonDTO.class)))
+            .thenReturn(new ArrayList<IdentifiedPersonDTO>());
         rXMLParser.setUrl(this.getClass().getResource("/sample-with-ind.xml"));
         rXMLParser.parse();
         List<StudyIndldeDTO> indList = rXMLParser.getStudyIndldeDTOs();
@@ -284,6 +289,7 @@ public class PDQRegistrationXMLParserTest {
         StudyIndldeDTO indDTO = indList.get(0);
         assertEquals("CDER", indDTO.getGrantorCode().getCode());
     }
+
     @Test
     public void testProperties() {
         rXMLParser.setStudyIndldeDTOs(new ArrayList<StudyIndldeDTO>());
@@ -313,14 +319,22 @@ public class PDQRegistrationXMLParserTest {
         rXMLParser.setLeadOrganizationSiteIdentifierDTO(new StudySiteDTO());
         assertNotNull(rXMLParser.getLeadOrganizationSiteIdentifierDTO());
     }
-	    @Test
-    public void testGetAlpha3CountryName() {
-        assertEquals("USA",rXMLParser.getAlpha3CountryName("U.S.A"));
-    }
+
     @Test
-    public void  testConvertToIvlPq() {
+    public void testGetAlpha3CountryName() throws PAException {
+        assertEquals("USA", rXMLParser.getAlpha3CountryName("U.S.A"));
+    }
+    
+    @Test(expected = PAException.class)
+    public void testGetAlpha3CountryNameNotFound() throws PAException {
+        rXMLParser.getAlpha3CountryName("XXXX");
+    }
+
+    @Test
+    public void testConvertToIvlPq() {
         assertNull(rXMLParser.convertToIvlPq(null, null, null, null));
     }
+
     @Test
     public void testTsFromString() {
         try {

@@ -261,9 +261,10 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
     /**
      * @param locationsMap
      * @param studyProtocolIi
+     * @throws PAException If an error occurs.
      */
     private void loadParticipatingSites(Map<OrganizationDTO, Map<StudySiteAccrualStatusDTO, Map<PoDto, String>>>
-        locationsMap, Ii studyProtocolIi) {
+        locationsMap, Ii studyProtocolIi) throws PAException {
         for (OrganizationDTO locOrg : locationsMap.keySet()) {
             try {
                 StudySiteDTO studySiteDTO = new StudySiteDTO();

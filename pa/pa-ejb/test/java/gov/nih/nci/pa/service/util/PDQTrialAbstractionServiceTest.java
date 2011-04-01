@@ -195,6 +195,7 @@ public class PDQTrialAbstractionServiceTest {
     private ParticipatingSiteServiceLocal participatingSiteSvc;
     private final URL testXMLUrl = this.getClass().getResource("/CDR64184.xml");
     private final URL testInvalidLocationsXMLUrl = this.getClass().getResource("/CDR64184-invalid-location.xml");
+    private final URL testInvalidLocationContactPhoneXMLUrl = this.getClass().getResource("/CDR64184-invalid-location-contact-phone.xml");
     private final URL testDoubleBlindXMLUrl = this.getClass().getResource("/CDR360805.xml");
     private final URL testNoLocationsXMLUrl = this.getClass().getResource("/CDR360805-no-locations.xml");
 
@@ -363,6 +364,14 @@ public class PDQTrialAbstractionServiceTest {
                 any(StudySiteAccrualStatusDTO.class), any(Ii.class));
         assertNotNull(bean.getOrgCorrelationService());
         assertNotNull(bean.getPaServiceUtils());
+    }
+    
+    @Test(expected = PAException.class)
+    public void testLoadAbstractionElementPDQXmlInvalidLocationContactPhone() throws PAException, IOException {
+        PAServiceUtils paServiceUtil = mock (PAServiceUtils.class);
+        when(paServiceUtil.findEntity(any(OrganizationDTO.class))).thenReturn(new OrganizationDTO());
+        bean.setPaServiceUtils(paServiceUtil);
+        bean.loadAbstractionElementFromPDQXml(testInvalidLocationContactPhoneXMLUrl, IiConverter.convertToStudyProtocolIi(1l));
     }
 
     @Test
