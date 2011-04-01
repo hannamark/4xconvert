@@ -51,6 +51,7 @@ import org.jdom.Element;
  *
  */
 public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
+    private static final String NAME_FIELD = "name";
     private List<OrganizationDTO> collaboratorOrgDTOs;
     private InterventionalStudyProtocolDTO ispDTO;
     private OrganizationDTO irbOrgDTO;
@@ -117,11 +118,15 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
                 try {
                     orgDTO.setIdentifier(corrUtils.getPoHcfByCtepId(ctepHcfIi));
                 } catch (PAException e) {
-                    logPartSiteLoadError(ctepId, facilityElmt, e);
+                    logPartSiteLoadError(ctepId, facilityElmt);
                     continue;
                 }
+            } else {
+                LOG.warn("Skipping location element. No ctep-id specified for name: "
+                        + getText(facilityElmt, NAME_FIELD));
+                continue;
             }
-            orgDTO.setName(EnOnConverter.convertToEnOn(getText(facilityElmt, "name")));
+            orgDTO.setName(EnOnConverter.convertToEnOn(getText(facilityElmt, NAME_FIELD)));
             Element addressElmt = facilityElmt.getChild("address");
             orgDTO.setPostalAddress(AddressConverterUtil.create(null, null, getText(addressElmt, "city"),
                     getText(addressElmt, "state"), getText(addressElmt, "zip"),
@@ -139,16 +144,16 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
         }
     }
     
-    private void logPartSiteLoadError(String ctepId, Element facilityElmt, PAException e) {
+    private void logPartSiteLoadError(String ctepId, Element facilityElmt) {
         StringBuffer errMsg = 
-            new StringBuffer("Unable to load file. Error loading location with facility ctep-id: "); 
+            new StringBuffer("Skipping location element. Error loading location with facility ctep-id: "); 
         errMsg.append(ctepId);
-        String facName = getText(facilityElmt, "name");
+        String facName = getText(facilityElmt, NAME_FIELD);
         if (StringUtils.isNotEmpty(facName)) {
             errMsg.append(" and name: ");
             errMsg.append(facName);
         }
-        LOG.error(errMsg.toString(), e);
+        LOG.warn(errMsg.toString());
     }
     /**
      * @param locationElmt
@@ -274,7 +279,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     private void readIrbInfo(Element parent) {
         if (parent != null) {
             Element irbInfoElement = parent.getChild("irb_info");
-            String orgName = getText(irbInfoElement, "name");
+            String orgName = getText(irbInfoElement, NAME_FIELD);
             String phone = getText(irbInfoElement, "phone");
             String email = getText(irbInfoElement, "email");
             getText(irbInfoElement, "full_address");

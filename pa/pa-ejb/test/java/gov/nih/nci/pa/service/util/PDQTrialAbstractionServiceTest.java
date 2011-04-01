@@ -86,6 +86,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.refEq;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -114,6 +115,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -192,6 +194,7 @@ public class PDQTrialAbstractionServiceTest {
     private StudyMilestoneServicelocal studyMilestoneSvc;
     private ParticipatingSiteServiceLocal participatingSiteSvc;
     private final URL testXMLUrl = this.getClass().getResource("/CDR64184.xml");
+    private final URL testInvalidLocationsXMLUrl = this.getClass().getResource("/CDR64184-invalid-location.xml");
     private final URL testDoubleBlindXMLUrl = this.getClass().getResource("/CDR360805.xml");
     private final URL testNoLocationsXMLUrl = this.getClass().getResource("/CDR360805-no-locations.xml");
 
@@ -337,6 +340,27 @@ public class PDQTrialAbstractionServiceTest {
         }
         bean.loadAbstractionElementFromPDQXml(testXMLUrl, studyProtocolIi);
         verify(studyMilestoneSvc, org.mockito.Mockito.times(5)).create(any(StudyMilestoneDTO.class));
+        assertNotNull(bean.getOrgCorrelationService());
+        assertNotNull(bean.getPaServiceUtils());
+    }
+
+    @Test
+    public void testLoadAbstractionElementPDQXmlInvalidLocations() throws PAException, IOException {
+        PAServiceUtils paServiceUtil = mock (PAServiceUtils.class);
+        when(paServiceUtil.findEntity(any(OrganizationDTO.class))).thenReturn(new OrganizationDTO());
+        Ii ctepHcfIi = new Ii();
+        ctepHcfIi.setRoot(IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
+        ctepHcfIi.setExtension("11074");
+        HealthCareFacilityDTO criteria = new HealthCareFacilityDTO();
+        criteria.setIdentifier(DSetConverter.convertIiToDset(ctepHcfIi));
+        List<HealthCareFacilityDTO> hcfDtos = new ArrayList<HealthCareFacilityDTO>();
+        when(poHcfSvc.search(refEq(criteria))).thenReturn(hcfDtos);
+        bean.setPaServiceUtils(paServiceUtil);
+        bean.loadAbstractionElementFromPDQXml(testInvalidLocationsXMLUrl, IiConverter.convertToStudyProtocolIi(1l));
+        // testInvalidLocationsXMLUrl has 12 valid locations and 2 invalid locations: one with an empty CTEP-ID, and one
+        // with CTEP-ID=11074 (mocked above).
+        verify(participatingSiteSvc, org.mockito.Mockito.times(12)).createStudySiteParticipant(any(StudySiteDTO.class),
+                any(StudySiteAccrualStatusDTO.class), any(Ii.class));
         assertNotNull(bean.getOrgCorrelationService());
         assertNotNull(bean.getPaServiceUtils());
     }
