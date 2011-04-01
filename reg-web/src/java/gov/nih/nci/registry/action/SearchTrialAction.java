@@ -99,7 +99,6 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
@@ -113,7 +112,7 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -124,6 +123,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
@@ -460,30 +460,30 @@ public class SearchTrialAction extends ActionSupport {
      */
     public String viewDoc() {
         try {
-            Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                    "spidfromviewresults");
+            Ii studyProtocolIi =
+                (Ii) ServletActionContext.getRequest().getSession().getAttribute("spidfromviewresults");
             StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            String nciId = PAUtil.getAssignedIdentifierExtension(spDTO);
             DocumentDTO docDTO = PaRegistry.getDocumentService().get(IiConverter.convertToIi(identifier));
-            StringBuffer sb = new StringBuffer(PaEarPropertyReader.getDocUploadPath());
-            sb.append(File.separator).append(PAUtil.getAssignedIdentifier(spDTO)).append(File.separator)
-            .append(docDTO.getIdentifier().getExtension()).append('-').append(docDTO.getFileName().getValue());
-            File downloadFile = new File(sb.toString());
+            String documentPath = PAUtil.getDocumentFilePath(identifier,
+                    StConverter.convertToString(docDTO.getFileName()), nciId);
+
+            File downloadFile = new File(documentPath);
+            FileInputStream inputStream = new FileInputStream(downloadFile);
+
             HttpServletResponse servletResponse = ServletActionContext.getResponse();
             servletResponse.setContentType("application/x-unknown");
-            FileInputStream fileToDownload = new FileInputStream(downloadFile);
             servletResponse.setHeader("Cache-Control", "cache");
             servletResponse.setHeader("Pragma", "cache");
             servletResponse.setHeader("Content-Disposition", "attachment; filename=" + downloadFile.getName());
-            servletResponse.setContentLength(fileToDownload.available());
-            int data;
+            servletResponse.setContentLength(inputStream.available());
+
             ServletOutputStream out = servletResponse.getOutputStream();
-            while ((data = fileToDownload.read()) != -1) {
-                out.write(data);
-            }
+            IOUtils.copy(inputStream, out);
             out.flush();
             out.close();
-        } catch (FileNotFoundException err) {
-            LOG.error("TrialDocumentAction failed with FileNotFoundException: " + err);
+        } catch (IOException err) {
+            LOG.error("TrialDocumentAction failed with IOException: " + err);
             this.addActionError("File not found: " + err.getLocalizedMessage());
             query();
             return ERROR;
