@@ -1973,7 +1973,6 @@ public class PAServiceUtils {
           }
           return filteredList;
       }
-
       /**
        * Moves the documents into their proper directories if they have been previously saved in a temporary directory.
        * @param docs the documents to move if necessary
