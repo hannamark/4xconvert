@@ -1853,11 +1853,12 @@ public class PAServiceUtils {
                   List<IdentifiedOrganizationDTO> identifiedOrgs;
                   identifiedOrgs = PoRegistry.getIdentifiedOrganizationEntityService().search(identifiedOrgDto);
                   if (CollectionUtils.isNotEmpty(identifiedOrgs)) {
-                      orgDto.setIdentifier(identifiedOrgs.get(0).getScoperIdentifier());
+                      orgDto.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
                   }
               }
           } catch (PAException e) {
               LOG.error(e);
+              return null;
           }
           return orgDto;
       }
@@ -1904,7 +1905,7 @@ public class PAServiceUtils {
           ClinicalResearchStaffDTO crsDTO = null;
           List<ClinicalResearchStaffDTO> poCrsList;
           try {
-            poCrsList = (List<ClinicalResearchStaffDTO>) filterByScoper(PoRegistry
+            poCrsList = filterByScoper(PoRegistry
                     .getClinicalResearchStaffCorrelationService()
                     .getCorrelationsByPlayerIds(new Ii[] {investigatorIi}), poOrgId);
             if (poCrsList.isEmpty()) {
@@ -1939,7 +1940,7 @@ public class PAServiceUtils {
           if (trialType.startsWith("Interventional")) {
               List<HealthCareProviderDTO> poHcpList;
               try {
-                  poHcpList = (List<HealthCareProviderDTO>) filterByScoper(PoRegistry
+                  poHcpList = filterByScoper(PoRegistry
                           .getHealthCareProviderCorrelationService()
                           .getCorrelationsByPlayerIds(new Ii[]{investigatorIi}), poOrgId);
                   if (poHcpList.isEmpty()) {
