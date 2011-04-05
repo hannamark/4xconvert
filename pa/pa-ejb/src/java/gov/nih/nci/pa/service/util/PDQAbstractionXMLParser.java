@@ -21,7 +21,6 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -49,7 +48,7 @@ import org.jdom.Element;
 
 /**
  * @author vrushali
- * 
+ *
  */
 public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
 
@@ -141,7 +140,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
                                                                                                      "status"))));
             siteStatus.setStatusDate(recrutingStatusDate);
             // read contact
-            Map<StudySiteAccrualStatusDTO, Map<PoDto, String>> contactMap = 
+            Map<StudySiteAccrualStatusDTO, Map<PoDto, String>> contactMap =
                 new HashMap<StudySiteAccrualStatusDTO, Map<PoDto, String>>();
             contactMap.put(siteStatus, readContact(locationElmt, countryName));
             getLocationsMap().put(orgDTO, contactMap);
@@ -171,17 +170,19 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
         Map<PoDto, String> contactMap = new HashMap<PoDto, String>();
         if (contactElmt.getChild("first_name") != null) {
             PersonDTO contactDTO = new PersonDTO();
-            contactDTO.setName(EnPnConverter.convertToEnPn(getText(contactElmt, "first_name"), getText(contactElmt,
-                                                                                                       "middle_name"),
-                                                           getText(contactElmt, "last_name"), null, null));
-            List<String> phoneList = new ArrayList<String>();
+            contactDTO.setName(EnPnConverter.convertToEnPn(
+                    getText(contactElmt, "first_name"), getText(contactElmt, "middle_name"),
+                    getText(contactElmt, "last_name"), null, null));
+            String phone = getText(contactElmt, "phone");
             try {
-                String fomattedPhone = PAUtil.formatPhoneNumber(countryName, getText(contactElmt, "phone"));
-                phoneList.add(fomattedPhone);
+                if (StringUtils.isNotBlank(phone)) {
+                    phone = PAUtil.formatPhoneNumber(countryName, phone);
+                }
             } catch (IllegalArgumentException e) {
                 throw new PAException(e.getMessage(), e);
             }
-            contactDTO.setTelecomAddress(DSetConverter.convertListToDSet(phoneList, "PHONE", null));
+            String email = getText(contactElmt, "email");
+            contactDTO.setTelecomAddress(getDset(email, phone));
             contactMap.put(contactDTO, StringUtils.equalsIgnoreCase(contactElmt.getAttributeValue("role"),
                                                                     "Principal investigator") ? "PI" : "");
         }
