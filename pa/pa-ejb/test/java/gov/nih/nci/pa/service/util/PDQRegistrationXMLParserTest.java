@@ -221,6 +221,16 @@ public class PDQRegistrationXMLParserTest {
             .convertEnOnToString(rXMLParser.getLeadOrganizationDTO().getName()), "Southwest Oncology Group"));
         assertEquals("12/15/2007", TsConverter.convertToString(rXMLParser.getStudyOverallStatusDTO().getStatusDate()));
     }
+    
+    @Test
+    public void testResponsiblePartyPhone() throws PAException {
+        rXMLParser.setUrl(this.getClass().getResource("/CDR65658.xml"));
+        rXMLParser.parse();
+        List<String> phones = DSetConverter.convertDSetToList(rXMLParser.getResponsiblePartyContact()
+            .getTelecomAddress(), DSetConverter.TYPE_PHONE);
+        assertTrue(phones.contains("734-998-7130"));
+        assertEquals(1, phones.size());
+    }
 
     @Test
     public void testMissingPrimCompletion() throws PAException {
