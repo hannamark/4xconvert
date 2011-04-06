@@ -123,22 +123,22 @@ import org.junit.Test;
  */
 public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
     private FamilyServiceBean familyServiceBean;
-    private OrganizationRelationshipServiceLocal orgRelServiceLocal;
+    private OrganizationRelationshipServiceLocal orgRelServiceLocal = mock(OrganizationRelationshipServiceBean.class);
     private OrganizationServiceBean orgLocal;
     private FamilyOrganizationRelationshipServiceBean famOrgRelService = mock(FamilyOrganizationRelationshipServiceBean.class);
     private FamilyUtilDao familyUtilDao = mock(FamilyUtilDao.class);
+    private Date today = DateUtils.truncate(new Date(), Calendar.DATE);
 
     @Before
     public void setUpData() {
-        orgRelServiceLocal = EjbTestHelper.getOrganizationRelationshipService();
         famOrgRelService.setOrgRelService(orgRelServiceLocal);
         familyServiceBean = EjbTestHelper.getFamilyServiceBean();
         familyServiceBean.setFamilyOrgRelService(famOrgRelService);
+        familyServiceBean.setOrgRelService(orgRelServiceLocal);
         orgLocal = EjbTestHelper.getOrganizationServiceBean();
         FamilyDateValidator.setFamilyService(familyServiceBean);
         OrgRelStartDateValidator.setFamilyDao(familyUtilDao);
-        when(familyUtilDao.getActiveStartDate(any(Session.class), anyLong(), anyLong())).thenReturn(DateUtils.truncate(new Date(), Calendar.DATE));
-
+        when(familyUtilDao.getActiveStartDate(any(Session.class), anyLong(), anyLong())).thenReturn(today);
     }
 
     @After
@@ -180,7 +180,7 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
             assertNull(updateOrgRelEntity.getEndDate());
         }
         toUpdate.setStatusCode(FamilyStatus.INACTIVE);
-        toUpdate.setEndDate(DateUtils.truncate(new Date(), Calendar.DATE));
+        toUpdate.setEndDate(today);
         familyServiceBean.updateEntity(toUpdate);
         Family updatedEntity = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
         assertEquals(FamilyStatus.INACTIVE, updatedEntity.getStatusCode());
@@ -188,8 +188,8 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
             assertNotNull(updateFamOrgEntity.getEndDate());
             assertTrue(CollectionUtils.isEmpty(orgRelServiceLocal.getActiveOrganizationRelationships(id, updateFamOrgEntity.getOrganization().getId())));
         }
-
     }
+
     @Test
     public void testFamilyStatusChangesToNULLIFIED() throws EntityValidationException, JMSException {
         long id = getBasicFamily();
@@ -209,8 +209,49 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
             assertNotNull(updateFamOrgEntity.getEndDate());
             assertTrue(CollectionUtils.isEmpty(orgRelServiceLocal.getActiveOrganizationRelationships(id, updateFamOrgEntity.getOrganization().getId())));
         }
-
     }
+
+    @Test
+    public void testGetLatestAllowableStartDate() throws EntityValidationException, JMSException {
+        long id = getBasicFamily();
+        Family family = familyServiceBean.getById(id);
+
+        when(famOrgRelService.getEarliestStartDate(anyLong())).thenReturn(null);
+        assertEquals(today, familyServiceBean.getLatestAllowableStartDate(id));
+        
+        when(famOrgRelService.getEarliestStartDate(anyLong())).thenReturn(today);
+        assertEquals(today, familyServiceBean.getLatestAllowableStartDate(id));
+        
+        when(famOrgRelService.getEarliestStartDate(anyLong())).thenReturn(DateUtils.addDays(family.getStartDate(), 3));
+        assertEquals(DateUtils.addDays(family.getStartDate(), 3), familyServiceBean.getLatestAllowableStartDate(id));
+    }
+
+    @Test
+    public void testGetEarliestAllowableEndDate() throws EntityValidationException, JMSException {
+        long id = getBasicFamily();
+        Family family = familyServiceBean.getById(id);
+        
+        assertEquals(today, familyServiceBean.getEarliestAllowableEndDate(null));
+        
+        when(famOrgRelService.getLatestStartDate(anyLong())).thenReturn(today);
+        assertEquals(today, familyServiceBean.getEarliestAllowableEndDate(id));
+        
+        when(famOrgRelService.getLatestEndDate(anyLong())).thenReturn(null);
+        assertEquals(today, familyServiceBean.getEarliestAllowableEndDate(id));
+        
+        when(famOrgRelService.getLatestStartDate(anyLong())).thenReturn(DateUtils.addDays(family.getStartDate(), 3));
+        assertEquals(DateUtils.addDays(family.getStartDate(), 3), familyServiceBean.getEarliestAllowableEndDate(id));
+        
+        when(orgRelServiceLocal.getLatestStartDate(anyLong())).thenReturn(DateUtils.addDays(family.getStartDate(), 4));
+        assertEquals(DateUtils.addDays(family.getStartDate(), 4), familyServiceBean.getEarliestAllowableEndDate(id));
+        
+        when(orgRelServiceLocal.getLatestEndDate(anyLong())).thenReturn(DateUtils.addDays(family.getStartDate(), 5));
+        assertEquals(DateUtils.addDays(family.getStartDate(), 5), familyServiceBean.getEarliestAllowableEndDate(id));
+
+        when(famOrgRelService.getLatestEndDate(anyLong())).thenReturn(DateUtils.addDays(family.getStartDate(), 6));
+        assertEquals(DateUtils.addDays(family.getStartDate(), 6), familyServiceBean.getEarliestAllowableEndDate(id));
+    }
+
     private long getBasicFamily() throws EntityValidationException, JMSException {
         famOrgRelService.setOrgRelService(new OrganizationRelationshipServiceBean());
         familyServiceBean.setFamilyOrgRelService(famOrgRelService);
@@ -223,7 +264,7 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
 
         FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
         famOrgRel.setFunctionalType(FamilyFunctionalType.AFFILIATION);
-        famOrgRel.setStartDate(DateUtils.truncate(new Date(), Calendar.DATE));
+        famOrgRel.setStartDate(today);
         famOrgRel.setOrganization(orgLocal.getById(orgId));
         famOrgRel.setFamily(familyServiceBean.getById(id));
         famOrgRelService.create(famOrgRel);
@@ -243,6 +284,7 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
         PoHibernateUtil.getCurrentSession().flush();
         return id;
     }
+    
     private long createOrg() throws EntityValidationException, JMSException {
         Organization org = new Organization();
         Address a = new Address("streetAddressLine", "cityOrMunicipality", "MD", "postalCode",
@@ -252,9 +294,10 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
         org.getEmail().add(new Email("abc@example.com"));
         return orgLocal.create(org);
     }
+    
     private Family getFamily() {
         Family family = new Family();
-        family.setName("FamilyName");
+        family.setName("FamilyName" + new Date());
         Calendar cal = Calendar.getInstance();
         cal.set(2011, 01, 02);
         family.setStartDate(DateUtils.truncate(cal.getTime(), Calendar.DATE));

@@ -207,4 +207,25 @@ public class MockFamilyOrganizationRelationshipService implements FamilyOrganiza
     public Date getLatestEndDate(Long familyId) {
         return new Date();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getLatestStartDate(Long familyId) {
+        return new Date();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getEarliestAllowableEndDate(Long familyOrgRelId) {
+        return new Date();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getLatestAllowableStartDate(Long familyOrgRelId) {
+        return new Date();
+    }
 }

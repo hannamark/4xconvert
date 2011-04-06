@@ -102,7 +102,6 @@ import javax.jms.JMSException;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Session;
-import org.hibernate.validator.InvalidValue;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -117,6 +116,7 @@ public class FamilyUtilDaoTest extends AbstractServiceBeanTest {
     Family f;
     Organization o1;
     Organization o2;
+    Organization o3;
     Session s;
 
     @Before
@@ -128,7 +128,8 @@ public class FamilyUtilDaoTest extends AbstractServiceBeanTest {
         f.setStatusCode(FamilyStatus.ACTIVE);
         f = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, (Long) PoHibernateUtil.getCurrentSession().save(f));
         o1 = createAndGetOrganization();        
-        o2 = createAndGetOrganization();        
+        o2 = createAndGetOrganization();
+        o3 = createAndGetOrganization();
     }
 
     @Test
@@ -140,7 +141,7 @@ public class FamilyUtilDaoTest extends AbstractServiceBeanTest {
     }
 
     @Test
-    public void testGetEarliestStartDate() {
+    public void testGetEarliestStartDate_OrgRelForFamilyAndOrg() {
         FamilyUtilDao dao = new FamilyUtilDao();
         createFamOrgRel(f, o1, oldDate, null);
         createFamOrgRel(f, o2, oldDate, null);
@@ -156,9 +157,8 @@ public class FamilyUtilDaoTest extends AbstractServiceBeanTest {
     }
 
     @Test
-    public void testGetLatestEndDate() {
+    public void testGetLatestEndDate_OrgRelForFamilyAndOrg() {
         FamilyUtilDao dao = new FamilyUtilDao();
-        Session s = PoHibernateUtil.getCurrentSession();
         createFamOrgRel(f, o1, oldDate, null);
         createFamOrgRel(f, o2, oldDate, null);
         assertEquals(null, dao.getLatestEndDate(s, f.getId(), o1.getId()));
@@ -168,6 +168,61 @@ public class FamilyUtilDaoTest extends AbstractServiceBeanTest {
         assertEquals(today, dao.getLatestEndDate(s, f.getId(), o1.getId()));
     }
 
+    @Test
+    public void testGetLatestStartDate_OrgRelForFamilyAndOrg() {
+        FamilyUtilDao dao = new FamilyUtilDao();
+        createFamOrgRel(f, o1, oldDate, null);
+        createFamOrgRel(f, o2, oldDate, null);
+        assertEquals(null, dao.getLatestStartDate(s, f.getId(), o1.getId()));
+        createOrgRel(f, o1, o2, oldDate, oldDate);
+        assertEquals(oldDate, dao.getLatestStartDate(s, f.getId(), o1.getId()));
+        createOrgRel(f, o1, o2, today, null);
+        assertEquals(today, dao.getLatestStartDate(s, f.getId(), o1.getId()));
+    }
+
+    @Test
+    public void testGetEarliestStartDate_OrgRelForFamily() {
+        FamilyUtilDao dao = new FamilyUtilDao();
+        createFamOrgRel(f, o1, oldDate, null);
+        createFamOrgRel(f, o2, oldDate, null);
+        assertEquals(null, dao.getEarliestStartDate(s, f.getId(), o1.getId()));
+        createOrgRel(f, o1, o2, oldDate, oldDate);
+        assertEquals(oldDate, dao.getEarliestStartDate(s, f.getId(), o1.getId()));
+        createOrgRel(f, o1, o2, today, null);
+        assertEquals(oldDate, dao.getEarliestStartDate(s, f.getId(), o1.getId()));
+    }
+
+    @Test
+    public void testGetLatestStartDate_OrgRelForFamily() {
+        FamilyUtilDao dao = new FamilyUtilDao();
+        createFamOrgRel(f, o1, oldDate, null);
+        createFamOrgRel(f, o2, oldDate, null);
+        assertEquals(null, dao.getLatestStartDate(s, f.getId()));
+        createOrgRel(f, o1, o2, oldDate, oldDate);
+        assertEquals(oldDate, dao.getLatestStartDate(s, f.getId()));
+        createOrgRel(f, o1, o2, DateUtils.addDays(oldDate,1), null);
+        assertEquals(DateUtils.addDays(oldDate,1), dao.getLatestStartDate(s, f.getId()));
+        createFamOrgRel(f, o3, oldDate, null);
+        createOrgRel(f, o2, o3, DateUtils.addDays(oldDate,3), null);
+        assertEquals(DateUtils.addDays(oldDate,3), dao.getLatestStartDate(s, f.getId()));
+    }
+
+    @Test
+    public void testGetLatestEndDate_OrgRelForFamily() {
+        FamilyUtilDao dao = new FamilyUtilDao();
+        createFamOrgRel(f, o1, oldDate, null);
+        createFamOrgRel(f, o2, oldDate, null);
+        assertEquals(null, dao.getLatestEndDate(s, f.getId()));
+        createOrgRel(f, o1, o2, oldDate, oldDate);
+        assertEquals(oldDate, dao.getLatestEndDate(s, f.getId()));
+        createOrgRel(f, o1, o2, oldDate, DateUtils.addDays(oldDate,1));
+        assertEquals(DateUtils.addDays(oldDate,1), dao.getLatestEndDate(s, f.getId()));
+        createFamOrgRel(f, o3, oldDate, null);
+        createOrgRel(f, o2, o3, oldDate, DateUtils.addDays(oldDate,3));
+        assertEquals(DateUtils.addDays(oldDate,3), dao.getLatestEndDate(s, f.getId()));
+    }
+    
+    
     private OrganizationRelationship createOrgRel(Family f, Organization o1, Organization o2, Date startDate, Date endDate) {
         OrganizationRelationship or = new OrganizationRelationship();
         or.setFamily(f);

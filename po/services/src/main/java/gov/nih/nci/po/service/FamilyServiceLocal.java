@@ -105,10 +105,10 @@ public interface FamilyServiceLocal extends GenericSearchService<Family, SearchC
 
     /**
      * get the family by id.
-     * @param id db id to get
+     * @param familyId db id to get
      * @return family with matching id
      */
-    Family getById(long id);
+    Family getById(long familyId);
 
     /**
      * validate the family.
@@ -127,16 +127,16 @@ public interface FamilyServiceLocal extends GenericSearchService<Family, SearchC
     /**
      * Get latest allowable start date for a Family based on existing relationships.
      * If no relationships, will return today's date.
-     * @param id family id
+     * @param familyId family id
      * @return latest allowable start date
      */
-    Date getLatestAllowableStartDate(Long id);
+    Date getLatestAllowableStartDate(Long familyId);
 
     /**
      * Get earliest allowable end date for a Family based on existing relationships.
      * If no relationships, will return today's date.
-     * @param id family id
+     * @param familyId family id
      * @return earliest allowable end date
      */
-    Date getEarliestAllowableEndDate(Long id);
+    Date getEarliestAllowableEndDate(Long familyId);
 }

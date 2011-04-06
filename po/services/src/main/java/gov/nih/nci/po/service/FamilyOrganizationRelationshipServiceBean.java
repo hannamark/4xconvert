@@ -86,6 +86,7 @@ import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.dao.FamilyUtilDao;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -94,6 +95,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
 
 /**
@@ -114,10 +116,6 @@ public class FamilyOrganizationRelationshipServiceBean extends AbstractBaseServi
      */
     public long create(FamilyOrganizationRelationship famOrgRel) throws EntityValidationException {
         return super.createHelper(famOrgRel);
-        // TODO figure out how publishing of Family entities will work w/ pa,
-        // and change methods to take other items than just curatable entities.
-        // getPublisher().sendCreate(getTypeArgument(), famOrgRel);
-        // return id;
     }
 
     /**
@@ -158,12 +156,60 @@ public class FamilyOrganizationRelationshipServiceBean extends AbstractBaseServi
     /**
      * {@inheritDoc}
      */
+    public Date getLatestStartDate(Long familyId) {
+        String hql = "select max(famOrgRel.startDate) from " + FamilyOrganizationRelationship.class.getName()
+                + FAMORGREL_FAMILY_ID_EXP;
+        Query query = PoHibernateUtil.getCurrentSession().createQuery(hql);
+        query.setLong(FAMILY_ID_PARAM, familyId);
+        return (Date) query.uniqueResult();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Date getLatestEndDate(Long familyId) {
         String hql = "select max(famOrgRel.endDate) from " + FamilyOrganizationRelationship.class.getName()
                 + FAMORGREL_FAMILY_ID_EXP;
         Query query = PoHibernateUtil.getCurrentSession().createQuery(hql);
         query.setLong(FAMILY_ID_PARAM, familyId);
         return (Date) query.uniqueResult();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getLatestAllowableStartDate(Long familyOrgRelId) {
+        FamilyOrganizationRelationship relationship = (FamilyOrganizationRelationship) PoHibernateUtil
+                .getCurrentSession().load(FamilyOrganizationRelationship.class, familyOrgRelId);
+        Date earliestOrgRelStartDate = orgRelService.getEarliestStartDate(relationship.getFamily().getId(),
+                relationship.getOrganization().getId());
+        if (earliestOrgRelStartDate == null) {
+            return DateUtils.truncate(new Date(), Calendar.DATE);
+        }
+        return earliestOrgRelStartDate;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getEarliestAllowableEndDate(Long familyOrgRelId) {
+        FamilyOrganizationRelationship relationship = (FamilyOrganizationRelationship) PoHibernateUtil
+        .getCurrentSession().load(FamilyOrganizationRelationship.class, familyOrgRelId);
+        Date earliestAllowableEndDate = relationship.getFamily().getStartDate();
+        if (relationship.getStartDate().after(earliestAllowableEndDate)) {
+            earliestAllowableEndDate = relationship.getStartDate();
+        }
+        Date latestOrgRelStartDate = orgRelService.getLatestStartDate(relationship.getFamily().getId(),
+                relationship.getOrganization().getId());
+        if (latestOrgRelStartDate != null && latestOrgRelStartDate.after(earliestAllowableEndDate)) {
+            earliestAllowableEndDate = latestOrgRelStartDate;
+        }
+        Date latestOrgRelEndDate = orgRelService.getLatestEndDate(relationship.getFamily().getId(),
+                relationship.getOrganization().getId());
+        if (latestOrgRelEndDate != null && latestOrgRelEndDate.after(earliestAllowableEndDate)) {
+            earliestAllowableEndDate = latestOrgRelEndDate;
+        }
+        return earliestAllowableEndDate;
     }
 
     /**

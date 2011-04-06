@@ -94,7 +94,7 @@ import java.util.Date;
  * @author moweis
  * 
  */
-public class ValidStartDateHelper {
+public class ValidDateRangeHelper {
 
     /**
      * Return the latest allowable start date for a Family.
@@ -123,8 +123,7 @@ public class ValidStartDateHelper {
      * @return latest allowable start date
      */
     public static Date getLatestAllowableStartDate(FamilyOrganizationRelationship relationship) {
-        return PoRegistry.getOrganizationRelationshipService().getEarliestStartDate(relationship.getFamily().getId(),
-                relationship.getOrganization().getId());
+        return PoRegistry.getFamilyOrganizationRelationshipService().getLatestAllowableStartDate(relationship.getId());
     }
 
     /**
@@ -134,8 +133,7 @@ public class ValidStartDateHelper {
      * @return earliest allowable end date
      */
     public static Date getEarliestAllowableEndDate(FamilyOrganizationRelationship relationship) {
-        return PoRegistry.getOrganizationRelationshipService().getLatestEndDate(relationship.getFamily().getId(),
-                relationship.getOrganization().getId());
+        return PoRegistry.getFamilyOrganizationRelationshipService().getEarliestAllowableEndDate(relationship.getId());
     }
 
     /**

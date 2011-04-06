@@ -85,7 +85,6 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.FamilyStatus;
-import gov.nih.nci.po.util.PoRegistry;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -110,6 +109,8 @@ public class FamilyServiceBean extends AbstractBaseServiceBean<Family> implement
 
     @EJB
     private FamilyOrganizationRelationshipServiceLocal familyOrgRelService;
+    @EJB
+    private OrganizationRelationshipServiceLocal orgRelService;
 
     /**
      * {@inheritDoc}
@@ -158,8 +159,8 @@ public class FamilyServiceBean extends AbstractBaseServiceBean<Family> implement
     /**
      * {@inheritDoc}
      */
-    public Date getLatestAllowableStartDate(Long id) {
-        Date earliestFamOrgRelStartDate = familyOrgRelService.getEarliestStartDate(id);
+    public Date getLatestAllowableStartDate(Long familyId) {
+        Date earliestFamOrgRelStartDate = familyOrgRelService.getEarliestStartDate(familyId);
         if (earliestFamOrgRelStartDate == null) {
             earliestFamOrgRelStartDate = DateUtils.truncate(new Date(), Calendar.DATE);
         }
@@ -169,26 +170,41 @@ public class FamilyServiceBean extends AbstractBaseServiceBean<Family> implement
     /**
      * {@inheritDoc}
      */
-    public Date getEarliestAllowableEndDate(Long id) {
-        if (id == null) {
-            return null;
+    public Date getEarliestAllowableEndDate(Long familyId) {
+        Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+        if (familyId == null) {
+            return today;
         }
-        Date earliestDate = familyOrgRelService.getEarliestStartDate(id);
+        Date earliestDate = familyOrgRelService.getLatestStartDate(familyId);
         if (earliestDate == null) {
-            return null;
+            return today;
         }
-        return getEarliestDate(id, earliestDate);
+        earliestDate = compareToLatestFamOrgEndDate(familyId, earliestDate);
+        earliestDate = compareToLatestOrgRelStartDate(familyId, earliestDate);
+        earliestDate = compareToLatestOrgRelEndDate(familyId, earliestDate);
+        return earliestDate;
     }
 
-    private Date getEarliestDate(Long id, Date input) {
-        Date earliestDate = input;
-        Date latestFamOrgRelEndDate = familyOrgRelService.getLatestEndDate(id);
+    private Date compareToLatestFamOrgEndDate(Long familyId, Date earliestDate) {
+        Date latestFamOrgRelEndDate = familyOrgRelService.getLatestEndDate(familyId);
         if (latestFamOrgRelEndDate != null && latestFamOrgRelEndDate.after(earliestDate)) {
-            earliestDate = latestFamOrgRelEndDate;
+            return latestFamOrgRelEndDate;
         }
-        Date latestOrgRelEndDate = PoRegistry.getOrganizationRelationshipService().getLatestEndDate(id);
+        return earliestDate;
+    }
+
+    private Date compareToLatestOrgRelStartDate(Long familyId, Date earliestDate) {
+        Date latestOrgRelStartDate = orgRelService.getLatestStartDate(familyId);
+        if (latestOrgRelStartDate != null && latestOrgRelStartDate.after(earliestDate)) {
+            return latestOrgRelStartDate;
+        }
+        return earliestDate;
+    }
+
+    private Date compareToLatestOrgRelEndDate(Long familyId, Date earliestDate) {
+        Date latestOrgRelEndDate = orgRelService.getLatestEndDate(familyId);
         if (latestOrgRelEndDate != null && latestOrgRelEndDate.after(earliestDate)) {
-            earliestDate = latestOrgRelEndDate;
+            return latestOrgRelEndDate;
         }
         return earliestDate;
     }
@@ -199,5 +215,12 @@ public class FamilyServiceBean extends AbstractBaseServiceBean<Family> implement
      */
     public void setFamilyOrgRelService(FamilyOrganizationRelationshipServiceLocal familyOrgRelService) {
         this.familyOrgRelService = familyOrgRelService;
+    }
+
+    /**
+     * @param orgRelService the orgRelService to set
+     */
+    public void setOrgRelService(OrganizationRelationshipServiceLocal orgRelService) {
+        this.orgRelService = orgRelService;
     }
 }

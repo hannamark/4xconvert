@@ -139,15 +139,32 @@ public class FamilyOrgRelDateValidator implements Validator<FamilyOrgRelDateVali
      * {@inheritDoc}
      */
     public boolean isValid(Object value) {
+        if (!(value instanceof FamilyOrganizationRelationship)) {
+            return false;
+        }
+        return isStartDateValid((FamilyOrganizationRelationship) value)
+                && isEndDateValid((FamilyOrganizationRelationship) value);
+    }
+
+    private boolean isStartDateValid(FamilyOrganizationRelationship relationship) {
+        Date startDate = relationship.getStartDate();
+        return !(startDate == null || startDate.before(relationship.getFamily().getStartDate()) || startDate
+                .after(getLatestAllowableStartDate(relationship)));
+
+    }
+
+    private Date getLatestAllowableStartDate(FamilyOrganizationRelationship relationship) {
         Session s = null;
         try {
             Connection conn = PoHibernateUtil.getCurrentSession().connection();
             s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
-            if (!(value instanceof FamilyOrganizationRelationship)) {
-                return false;
+            final Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+            if (relationship.getId() == null) {
+                return today;
             }
-            return isStartDateValid(s, (FamilyOrganizationRelationship) value)
-                    && isEndDateValid(s, (FamilyOrganizationRelationship) value);
+            Date earliestStartDate = getFamilyUtilDao().getEarliestStartDate(s, relationship.getFamily().getId(),
+                    relationship.getOrganization().getId());
+            return earliestStartDate == null ? today : earliestStartDate;
         } finally {
             if (s != null) {
                 s.close();
@@ -155,30 +172,35 @@ public class FamilyOrgRelDateValidator implements Validator<FamilyOrgRelDateVali
         }
     }
 
-    private boolean isEndDateValid(Session s, FamilyOrganizationRelationship relationship) {
+    private boolean isEndDateValid(FamilyOrganizationRelationship relationship) {
         Date endDate = relationship.getEndDate();
-        Date latestOrgRelEndDate = getFamilyUtilDao().getLatestEndDate(s, relationship.getFamily().getId(),
-                relationship.getOrganization().getId());
-        return endDate == null || latestOrgRelEndDate == null || !endDate.before(latestOrgRelEndDate);
+        return endDate == null || !endDate.before(getEarliestAllowableEndDate(relationship));
     }
 
-    private boolean isStartDateValid(Session s, FamilyOrganizationRelationship relationship) {
-        Date startDate = relationship.getStartDate();
-        return !(startDate == null || startDate.before(relationship.getFamily().getStartDate()) || startDate
-                .after(earliestRelationshipStartDate(s, relationship)));
-
-    }
-
-    private Date earliestRelationshipStartDate(Session s, FamilyOrganizationRelationship relationship) {
-        final Date today = DateUtils.truncate(new Date(), Calendar.DATE);
-        if (relationship.getId() == null) {
-            return today;
+    private Date getEarliestAllowableEndDate(FamilyOrganizationRelationship relationship) {
+        Date earliestAllowableEndDate = relationship.getFamily().getStartDate();
+        Long familyId = relationship.getFamily().getId();
+        Long orgId = relationship.getOrganization().getId();
+        Session s = null;
+        try {
+            Connection conn = PoHibernateUtil.getCurrentSession().connection();
+            s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
+            Date latestOrgRelStartDate = getFamilyUtilDao().getLatestStartDate(s, familyId, orgId);
+            if (latestOrgRelStartDate != null && latestOrgRelStartDate.after(earliestAllowableEndDate)) {
+                earliestAllowableEndDate = latestOrgRelStartDate;
+            }
+            Date latestOrgRelEndDate = getFamilyUtilDao().getLatestEndDate(s, familyId, orgId);
+            if (latestOrgRelEndDate != null && latestOrgRelEndDate.after(earliestAllowableEndDate)) {
+                earliestAllowableEndDate = latestOrgRelEndDate;
+            }
+            return earliestAllowableEndDate;
+        } finally {
+            if (s != null) {
+                s.close();
+            }
         }
-        Date earliestStartDate = getFamilyUtilDao().getEarliestStartDate(s, relationship.getFamily().getId(),
-                relationship.getOrganization().getId());
-        return earliestStartDate == null ? today : earliestStartDate;
     }
-
+    
     /**
      * @param familyUtilDao the familyUtilDao to set
      */

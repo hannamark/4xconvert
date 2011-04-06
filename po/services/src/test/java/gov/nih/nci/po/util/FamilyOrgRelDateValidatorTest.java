@@ -159,14 +159,23 @@ public class FamilyOrgRelDateValidatorTest extends AbstractServiceBeanTest {
         when(familyUtilDao.getEarliestStartDate(any(Session.class) , anyLong(), anyLong())).thenReturn(today);
         assertTrue(validator.isValid(relationship));
 
-        relationship.setEndDate(oldDate);
+        relationship.getFamily().setStartDate(oldDate);
+        relationship.setStartDate(DateUtils.addDays(oldDate, 1));
+        relationship.setEndDate(DateUtils.addDays(oldDate, 1));
+        when(familyUtilDao.getLatestStartDate(any(Session.class) , anyLong(), anyLong())).thenReturn(null);
         when(familyUtilDao.getLatestEndDate(any(Session.class) , anyLong(), anyLong())).thenReturn(null);
         assertTrue(validator.isValid(relationship));
-
-        when(familyUtilDao.getLatestEndDate(any(Session.class) , anyLong(), anyLong())).thenReturn(today);
+        
+        when(familyUtilDao.getLatestStartDate(any(Session.class) , anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate, 2));
+        assertFalse(validator.isValid(relationship));
+        
+        when(familyUtilDao.getLatestStartDate(any(Session.class) , anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate, 1));
+        assertTrue(validator.isValid(relationship));
+        
+        when(familyUtilDao.getLatestEndDate(any(Session.class) , anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate, 2));
         assertFalse(validator.isValid(relationship));
 
-        when(familyUtilDao.getLatestEndDate(any(Session.class) , anyLong(), anyLong())).thenReturn(oldDate);
+        when(familyUtilDao.getLatestEndDate(any(Session.class) , anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate, 1));
         assertTrue(validator.isValid(relationship));
     }
 }

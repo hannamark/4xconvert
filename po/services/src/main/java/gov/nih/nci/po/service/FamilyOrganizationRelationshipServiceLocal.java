@@ -149,9 +149,33 @@ public interface FamilyOrganizationRelationshipServiceLocal
     Date getEarliestStartDate(Long familyId);
     
     /**
+     * Gets the latest start date of all family organization relationships by family id.
+     * @param familyId the id of the family
+     * @return earliest start date, or null if no relationships
+     */
+    Date getLatestStartDate(Long familyId);
+    
+    /**
      * Gets the latest end date of all family organization relationships by family id.
      * @param familyId the id of the family
      * @return latest start date, or null if no relationships
      */
     Date getLatestEndDate(Long familyId);
+
+
+    /**
+     * Get latest allowable start date for a family organization relationship based on existing relationships.
+     * If no relationships, will return today's date.
+     * @param familyOrgRelId family organization relationship id
+     * @return latest allowable start date
+     */
+    Date getLatestAllowableStartDate(Long familyOrgRelId);
+
+    /**
+     * Get earliest allowable end date for a family organization relationship based on existing relationships.
+     * If no relationships, will return today's date.
+     * @param familyOrgRelId family organization relationship id
+     * @return earliest allowable end date
+     */
+    Date getEarliestAllowableEndDate(Long familyOrgRelId);
 }

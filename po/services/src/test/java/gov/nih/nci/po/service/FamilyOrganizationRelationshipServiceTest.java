@@ -86,6 +86,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
@@ -121,14 +124,13 @@ import org.junit.Test;
  */
 public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBeanTest {
     private FamilyOrganizationRelationshipServiceBean familyOrgRelServiceLocal;
-    private OrganizationRelationshipServiceLocal orgRelServiceLocal;
+    private OrganizationRelationshipServiceLocal orgRelServiceLocal = mock(OrganizationRelationshipServiceBean.class);
     private Date today = DateUtils.truncate(new Date(), Calendar.DATE);
     private Date oldDate;
 
     @Before
     public void setUpData() {
         familyOrgRelServiceLocal = (FamilyOrganizationRelationshipServiceBean) EjbTestHelper.getFamilyOrganizationRelationshipService();
-        orgRelServiceLocal = EjbTestHelper.getOrganizationRelationshipService();
         familyOrgRelServiceLocal.setOrgRelService(orgRelServiceLocal);
         Calendar cal = Calendar.getInstance();
         cal.set(2008, 01, 02);
@@ -351,7 +353,6 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         FamilyOrganizationRelationship savedFamOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil
             .getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId1);
         savedFamOrgRel.setEndDate(new Date());
-        assertEquals(1, orgRelServiceLocal.getActiveOrganizationRelationships(savedFamOrgRel.getFamily().getId(), savedOrg.getId()).size());
         familyOrgRelServiceLocal.updateEntity(savedFamOrgRel);
         FamilyOrganizationRelationship updatedFamOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil
             .getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId1);
@@ -398,6 +399,35 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
     }
 
     @Test
+    public void testGetLatestStartDate() throws EntityValidationException, JMSException  {
+        // Create all the needed data
+        Family family = new Family();
+        family.setName("FamilyName");
+        family.setStartDate(oldDate);
+        family.setStatusCode(FamilyStatus.ACTIVE);
+        long id = EjbTestHelper.getFamilyServiceBean().create(family);
+        Family savedFam = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
+        
+        Country country = new Country("testorg", "996", "IJ", "IJI");
+        PoHibernateUtil.getCurrentSession().save(country);
+        Address mailingAddress = new Address("test", "test", "test", "test", country);
+
+        Organization savedOrg = createOrg(mailingAddress);
+        createFamOrgRel(savedFam, savedOrg, oldDate);
+        assertEquals(oldDate, familyOrgRelServiceLocal.getLatestStartDate(id));
+        
+        mailingAddress.setId(null);
+        Organization savedOrg2 = createOrg(mailingAddress);
+        createFamOrgRel(savedFam, savedOrg2, DateUtils.addDays(oldDate, 1));
+        assertEquals(DateUtils.addDays(oldDate, 1), familyOrgRelServiceLocal.getLatestStartDate(id));
+
+        mailingAddress.setId(null);
+        Organization savedOrg3 = createOrg(mailingAddress);
+        createFamOrgRel(savedFam, savedOrg3, today, today);
+        assertEquals(today, familyOrgRelServiceLocal.getLatestStartDate(id));
+    }
+
+    @Test
     public void testGetLatestEndDate() throws EntityValidationException, JMSException  {
         // Create all the needed data
         Family family = new Family();
@@ -422,13 +452,75 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         assertEquals(today, familyOrgRelServiceLocal.getLatestEndDate(id));
     }
 
+    @Test
+    public void testGetLatestAllowableStartDate() throws EntityValidationException, JMSException  {
+        // Create all the needed data
+        Family family = new Family();
+        family.setName("FamilyName");
+        family.setStartDate(oldDate);
+        family.setStatusCode(FamilyStatus.ACTIVE);
+        long id = EjbTestHelper.getFamilyServiceBean().create(family);
+        Family savedFam = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
+        
+        Country country = new Country("testorg", "996", "IJ", "IJI");
+        PoHibernateUtil.getCurrentSession().save(country);
+        Address mailingAddress = new Address("test", "test", "test", "test", country);
+
+        Organization savedOrg = createOrg(mailingAddress);
+        createFamOrgRel(savedFam, savedOrg, oldDate);
+
+        when(orgRelServiceLocal.getEarliestStartDate(anyLong(), anyLong())).thenReturn(null);
+        assertEquals(today, familyOrgRelServiceLocal.getLatestAllowableStartDate(id));
+        
+        when(orgRelServiceLocal.getEarliestStartDate(anyLong(), anyLong())).thenReturn(today);
+        assertEquals(today, familyOrgRelServiceLocal.getLatestAllowableStartDate(id));
+    }
+    
+    @Test
+    public void testGetEarliestAllowableEndDate() throws EntityValidationException, JMSException  {
+        // Create all the needed data
+        Family family = new Family();
+        family.setName("FamilyName");
+        family.setStartDate(DateUtils.addDays(oldDate, -1));
+        family.setStatusCode(FamilyStatus.ACTIVE);
+        long id = EjbTestHelper.getFamilyServiceBean().create(family);
+        Family savedFam = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
+        
+        Country country = new Country("testorg", "996", "IJ", "IJI");
+        PoHibernateUtil.getCurrentSession().save(country);
+        Address mailingAddress = new Address("test", "test", "test", "test", country);
+
+        Organization savedOrg = createOrg(mailingAddress);
+        createFamOrgRel(savedFam, savedOrg, oldDate);
+
+        when(orgRelServiceLocal.getLatestStartDate(anyLong(), anyLong())).thenReturn(null);
+        when(orgRelServiceLocal.getLatestEndDate(anyLong(), anyLong())).thenReturn(null);
+        assertEquals(oldDate, familyOrgRelServiceLocal.getEarliestAllowableEndDate(id));
+        
+        when(orgRelServiceLocal.getLatestStartDate(anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate,1));
+        when(orgRelServiceLocal.getLatestEndDate(anyLong(), anyLong())).thenReturn(null);
+        assertEquals(DateUtils.addDays(oldDate,1), familyOrgRelServiceLocal.getEarliestAllowableEndDate(id));
+
+        when(orgRelServiceLocal.getLatestStartDate(anyLong(), anyLong())).thenReturn(null);
+        when(orgRelServiceLocal.getLatestEndDate(anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate,2));
+        assertEquals(DateUtils.addDays(oldDate,2), familyOrgRelServiceLocal.getEarliestAllowableEndDate(id));
+
+        when(orgRelServiceLocal.getLatestStartDate(anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate,3));
+        when(orgRelServiceLocal.getLatestEndDate(anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate,4));
+        assertEquals(DateUtils.addDays(oldDate,4), familyOrgRelServiceLocal.getEarliestAllowableEndDate(id));
+
+        when(orgRelServiceLocal.getLatestStartDate(anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate,6));
+        when(orgRelServiceLocal.getLatestEndDate(anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate,5));
+        assertEquals(DateUtils.addDays(oldDate,6), familyOrgRelServiceLocal.getEarliestAllowableEndDate(id));
+    }
+    
     private long createFamOrgRel(Family savedFam, Organization savedOrg)
             throws EntityValidationException {
         return createFamOrgRel(savedFam, savedOrg, oldDate);
     }
     
     private long createFamOrgRel(Family savedFam, Organization savedOrg, Date startDate) throws EntityValidationException {
-        return createFamOrgRel(savedFam, savedOrg, oldDate, null);
+        return createFamOrgRel(savedFam, savedOrg, startDate, null);
     }
 
     private long createFamOrgRel(Family savedFam, Organization savedOrg, Date startDate, Date endDate)

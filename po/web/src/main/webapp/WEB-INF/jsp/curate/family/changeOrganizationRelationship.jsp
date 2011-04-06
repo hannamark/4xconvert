@@ -103,7 +103,7 @@
                                 <po:inputRowElement>
                                     <po:field labelKey="organizationRelationship.popup.startDate" fieldRequired="true">
                                         <sj:datepicker readonly="true" required="true" name="newOrgRelationship.startDate" id="newOrgRelationship.startDate" 
-                                         displayFormat="mm/dd/yy" labelposition="left" minDate="@gov.nih.nci.po.web.util.validator.ValidStartDateHelper@getEarliestAllowableStartDate(orgRelationship)" maxDate="new Date()"/>
+                                         displayFormat="mm/dd/yy" labelposition="left" minDate="@gov.nih.nci.po.web.util.validator.ValidDateRangeHelper@getEarliestAllowableStartDate(orgRelationship)" maxDate="new Date()"/>
                                         <s:fielderror>
                                             <s:param>newOrgRelationship.startDate</s:param>
                                         </s:fielderror>

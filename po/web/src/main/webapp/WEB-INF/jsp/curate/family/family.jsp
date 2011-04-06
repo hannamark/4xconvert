@@ -61,7 +61,7 @@
         </s:else>
             <s:textfield key="family.name" required="true" cssClass="required" size="70"/>
             <po:field labelKey="family.startDate" fieldRequired="true">
-                <sj:datepicker required="true" readonly="true" name="family.startDate" displayFormat="mm/dd/yy" maxDate="@gov.nih.nci.po.web.util.validator.ValidStartDateHelper@getLatestAllowableStartDate(family)"/>
+                <sj:datepicker required="true" readonly="true" name="family.startDate" displayFormat="mm/dd/yy" maxDate="@gov.nih.nci.po.web.util.validator.ValidDateRangeHelper@getLatestAllowableStartDate(family)"/>
             </po:field>
             
             <div id="endDateDiv" <s:if test="family.statusCode == @gov.nih.nci.po.data.bo.FamilyStatus@ACTIVE">style="display:none;"</s:if>>
@@ -83,12 +83,7 @@
                     <po:inputRow>
                         <po:inputRowElement>
                           <po:field labelKey="family.endDate">
-                            <s:if test="@gov.nih.nci.po.web.util.validator.ValidStartDateHelper@getEarliestAllowableEndDate(family) != null">
-                             <sj:datepicker required="true" readonly="true" name="family.endDate" displayFormat="mm/dd/yy" id="familyEntityForm.family.endDate" minDate="@gov.nih.nci.po.web.util.validator.ValidStartDateHelper@getEarliestAllowableEndDate(family)" maxDate="new Date()"/>
-                            </s:if>
-                            <s:else>
-                             <sj:datepicker required="true" readonly="true" name="family.endDate" displayFormat="mm/dd/yy" id="familyEntityForm.family.endDate" maxDate="new Date()"/>
-                            </s:else>
+                             <sj:datepicker required="true" readonly="true" name="family.endDate" displayFormat="mm/dd/yy" id="familyEntityForm.family.endDate" minDate="@gov.nih.nci.po.web.util.validator.ValidDateRangeHelper@getEarliestAllowableEndDate(family)" maxDate="new Date()"/>
                           </po:field>
                         </po:inputRowElement>
                     </po:inputRow>
@@ -98,12 +93,12 @@
     </s:form>
 </div>
 <div class="btnwrapper" style="margin-bottom:20px;">
-        <po:buttonRow>
-            <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('familyEntityForm.family.statusCode',document.forms.familyEntityForm);" style="save" text="Save"/>
-            <c:url var="listUrl" value="/protected/search/family/list.action" />
-            <s:set name="returnToPageTitle" value="%{'Return to ' + getText('family.search.title')}"/>
-            <po:button id="return_to_button" href="${listUrl}" style="continue" text="${returnToPageTitle}"/>
-        </po:buttonRow>
+    <po:buttonRow>
+        <po:button id="save_button" href="javascript://noop/" onclick="confirmThenSubmit('familyEntityForm.family.statusCode',document.forms.familyEntityForm);" style="save" text="Save"/>
+        <c:url var="listUrl" value="/protected/search/family/list.action" />
+        <s:set name="returnToPageTitle" value="%{'Return to ' + getText('family.search.title')}"/>
+        <po:button id="return_to_button" href="${listUrl}" style="continue" text="${returnToPageTitle}"/>
+    </po:buttonRow>
 </div>
 
 <s:if test="isNotCreate">

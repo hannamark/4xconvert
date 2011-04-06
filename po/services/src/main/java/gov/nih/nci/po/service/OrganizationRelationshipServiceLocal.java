@@ -154,12 +154,27 @@ public interface OrganizationRelationshipServiceLocal
     Date getEarliestStartDate(Long familyId);
 
     /**
+     * Gets the latest start date of all organization relationship within a family.
+     * @param familyId the id of the family
+     * @return the latest start date, or null if no relationships
+     */
+    Date getLatestStartDate(Long familyId);
+
+    /**
      * Gets the earliest start date of all organization relationships within a family for an org.
      * @param familyId the id of the family
      * @param orgId the id of the org
      * @return the earliest start date, or null if no relationships
      */
     Date getEarliestStartDate(Long familyId, Long orgId);
+
+    /**
+     * Gets the latest start date of all organization relationships within a family for an org.
+     * @param familyId the id of the family
+     * @param orgId the id of the org
+     * @return the latest start date, or null if no relationships
+     */
+    Date getLatestStartDate(Long familyId, Long orgId);
 
     /**
      * Gets the latest start date of all organization relationship within a family for an org.

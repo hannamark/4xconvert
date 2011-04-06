@@ -94,7 +94,7 @@ import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.dao.FamilyUtilDao;
 import gov.nih.nci.po.web.AbstractPoTest;
-import gov.nih.nci.po.web.util.validator.ValidStartDateHelper;
+import gov.nih.nci.po.web.util.validator.ValidDateRangeHelper;
 
 import java.util.ArrayList;
 
@@ -164,7 +164,7 @@ public class CurateFamilyOrganizationRelationshipActionTest extends AbstractPoTe
         Organization org = new Organization();
         org.setId(3L);
         famOrgRel.setOrganization(org);
-        famOrgRel.setStartDate(ValidStartDateHelper.getLatestAllowableStartDate(famOrgRel));
+        famOrgRel.setStartDate(ValidDateRangeHelper.getLatestAllowableStartDate(famOrgRel));
 
         action.setFamilyOrgRelationship(famOrgRel);
         assertEquals(Action.SUCCESS, action.submit());
@@ -180,8 +180,8 @@ public class CurateFamilyOrganizationRelationshipActionTest extends AbstractPoTe
         Organization org = new Organization();
         org.setId(3L);
         famOrgRel.setOrganization(org);
-        famOrgRel.setStartDate(ValidStartDateHelper.getLatestAllowableStartDate(famOrgRel));
-        famOrgRel.setEndDate(ValidStartDateHelper.getEarliestAllowableEndDate(famOrgRel));
+        famOrgRel.setStartDate(ValidDateRangeHelper.getLatestAllowableStartDate(famOrgRel));
+        famOrgRel.setEndDate(ValidDateRangeHelper.getEarliestAllowableEndDate(famOrgRel));
 
         action.setFamilyOrgRelationship(famOrgRel);
         assertEquals("parent", action.submit());

@@ -104,6 +104,8 @@ import org.hibernate.Session;
 // OrgRelationshipDao).
 public class FamilyUtilDao {
     private static final String FAMILY_ID_PARAM = "familyId";
+    private static final String ORG_ID_PARAM = "orgId";
+    private static final String ORGREL_FAMILY_ID_EXP = " orgRel where orgRel.family.id = :" + FAMILY_ID_PARAM;
     
     /**
      * Gets the start date of the active family organization relationships for a family and org.
@@ -119,7 +121,7 @@ public class FamilyUtilDao {
                 + "and famOrgRel.endDate is null";
         Query query = s.createQuery(hql);
         query.setLong(FAMILY_ID_PARAM, familyId);
-        query.setLong("orgId", orgId);
+        query.setLong(ORG_ID_PARAM, orgId);
         return (Date) query.uniqueResult();
     }
 
@@ -137,7 +139,7 @@ public class FamilyUtilDao {
                 + "(organization.id = :orgId or relatedOrganization.id = :orgId)";
         Query query = s.createQuery(hql);
         query.setLong(FAMILY_ID_PARAM, familyId);
-        query.setLong("orgId", orgId);
+        query.setLong(ORG_ID_PARAM, orgId);
         return (Date) query.uniqueResult();
     }
 
@@ -155,7 +157,66 @@ public class FamilyUtilDao {
                 + "(organization.id = :orgId or relatedOrganization.id = :orgId)";
         Query query = s.createQuery(hql);
         query.setLong(FAMILY_ID_PARAM, familyId);
-        query.setLong("orgId", orgId);
+        query.setLong(ORG_ID_PARAM, orgId);
+        return (Date) query.uniqueResult();
+    }
+
+    /**
+     * Gets the latest start date of all organization relationships within a family for an org.
+     * @param s {@link org.hibernate.Session} to use for the query.
+     * @param familyId the id of the family
+     * @param orgId the id of the org
+     * @return the latest start date, or null if no relationships
+     */
+    public Date getLatestStartDate(Session s, Long familyId, Long orgId) {
+        String hql = "select max(orgRel.startDate) from " + OrganizationRelationship.class.getName()
+                + ORGREL_FAMILY_ID_EXP + " and " + "(organization.id = :" + ORG_ID_PARAM
+                + " or relatedOrganization.id = :" + ORG_ID_PARAM + ")";
+        Query query = s.createQuery(hql);
+        query.setLong(FAMILY_ID_PARAM, familyId);
+        query.setLong(ORG_ID_PARAM, orgId);
+        return (Date) query.uniqueResult();
+    }
+
+    /**
+     * Gets the earliest start date of all organization relationship within a family.
+     * @param s {@link org.hibernate.Session} to use for the query.
+     * @param familyId the id of the family
+     * @return the earliest start date, or null if no relationships
+     */
+    public Date getEarliestStartDate(Session s, Long familyId) {
+        String hql = "select min(orgRel.startDate) from " + OrganizationRelationship.class.getName()
+                + ORGREL_FAMILY_ID_EXP;
+        Query query = s.createQuery(hql);
+        query.setLong(FAMILY_ID_PARAM, familyId);
+        return (Date) query.uniqueResult();
+    }
+
+    /**
+     * Gets the latest start date of all organization relationship within a family.
+     * @param s {@link org.hibernate.Session} to use for the query.
+     * @param familyId the id of the family
+     * @return the latest start date, or null if no relationships
+     */
+    public Date getLatestStartDate(Session s, Long familyId) {
+        String hql = "select max(orgRel.startDate) from " + OrganizationRelationship.class.getName()
+                + ORGREL_FAMILY_ID_EXP;
+        Query query = s.createQuery(hql);
+        query.setLong(FAMILY_ID_PARAM, familyId);
+        return (Date) query.uniqueResult();
+    }
+
+    /**
+     * Gets the latest start date of all organization relationship within a family for an org.
+     * @param s {@link org.hibernate.Session} to use for the query.
+     * @param familyId the id of the family
+     * @return the latest start date, or null if no relationships
+     */
+    public Date getLatestEndDate(Session s, Long familyId) {
+        String hql = "select max(orgRel.endDate) from " + OrganizationRelationship.class.getName()
+                + ORGREL_FAMILY_ID_EXP;
+        Query query = s.createQuery(hql);
+        query.setLong(FAMILY_ID_PARAM, familyId);
         return (Date) query.uniqueResult();
     }
 

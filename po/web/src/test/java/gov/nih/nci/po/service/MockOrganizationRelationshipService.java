@@ -236,4 +236,18 @@ public class MockOrganizationRelationshipService implements OrganizationRelation
     public Date getLatestEndDate(Long familyId, Long orgId) {
         return new Date();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getLatestStartDate(Long familyId) {
+        return new Date();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Date getLatestStartDate(Long familyId, Long orgId) {
+        return new Date();
+    }
 }
