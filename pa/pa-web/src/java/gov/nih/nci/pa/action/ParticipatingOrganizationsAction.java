@@ -929,7 +929,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private void validatePhone(String poOrgId, String telephone) {
         Ii orgIi = IiConverter.convertToPoOrganizationIi(poOrgId);
         String countryName = paServiceUtil.getEntityCountryName(orgIi);
-        if (!PAUtil.isPhoneValid(countryName, telephone)) {
+        if (!StringUtils.isBlank(telephone) && !PAUtil.isPhoneValid(countryName, telephone)) {
             addFieldError("personContactWebDTO.telephone", getText("error.usOrCanPhone"));
        }
     }
