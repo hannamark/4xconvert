@@ -106,7 +106,6 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -118,12 +117,9 @@ import org.jdom.input.SAXBuilder;
  * 
  */
 public abstract class AbstractPDQXmlParser {
-    
-    private static final Logger LOG = Logger.getLogger(AbstractPDQXmlParser.class);
-    private static final int INSERT_LOC = 3;
-    private static final int INSERT_LOC_SEVEN = 7;
+
     private static final Pattern USA_PATTERN = Pattern.compile("^\\s*U\\.?S\\.?A\\.?\\s*$", Pattern.CASE_INSENSITIVE);
-    
+
     private URL url;
     private Document document;
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
@@ -170,7 +166,7 @@ public abstract class AbstractPDQXmlParser {
         DSet<Tel> telecomAddress = null;
         if (StringUtils.isNotEmpty(phone)) {
             List<String> phoneList = new ArrayList<String>();
-            phoneList.add(convertPhoneToUSAFormat(phone));
+            phoneList.add(phone);
             telecomAddress = DSetConverter.convertListToDSet(phoneList, "PHONE", telecomAddress);
         }
         if (StringUtils.isNotEmpty(email)) {
@@ -179,17 +175,6 @@ public abstract class AbstractPDQXmlParser {
             telecomAddress = DSetConverter.convertListToDSet(emailList, "EMAIL", telecomAddress);
         }
         return telecomAddress;
-    }
-
-    private String convertPhoneToUSAFormat(String inputPhone) {
-        String iPhone = StringUtils.deleteWhitespace(inputPhone);
-        iPhone = StringUtils.remove(iPhone, '(');
-        iPhone = StringUtils.remove(iPhone, ')');
-        iPhone = StringUtils.remove(iPhone, '-');
-        StringBuffer formattedPhone = new StringBuffer(iPhone);
-        formattedPhone.insert(INSERT_LOC, "-");
-        formattedPhone.insert(INSERT_LOC_SEVEN, "-");
-        return formattedPhone.toString();
     }
 
     /**
