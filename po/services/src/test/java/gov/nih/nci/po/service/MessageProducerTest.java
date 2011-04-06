@@ -116,7 +116,7 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  */
 public class MessageProducerTest extends AbstractHibernateTestCase {
 
-    public static <T extends PersistentObject> void assertMessageCreated(T id, AbstractBaseServiceBean<T> service, boolean isCreate)
+    public static <T extends Curatable> void assertMessageCreated(T id, AbstractCuratableServiceBean<T> service, boolean isCreate)
             throws JMSException {
         TopicStub topic = (TopicStub) ((MessageProducerBean) service.getPublisher()).getTopic(null);
         assertMessageCreated(id, isCreate, topic);
@@ -137,12 +137,12 @@ public class MessageProducerTest extends AbstractHibernateTestCase {
         }
     }
 
-    public static <T extends Curatable<?, ?>> void assertNoMessageCreated(T id, AbstractBaseServiceBean<T> service) {
+    public static <T extends Curatable<?, ?>> void assertNoMessageCreated(T id, AbstractCuratableServiceBean<T> service) {
         TopicStub topic = (TopicStub) ((MessageProducerBean) service.getPublisher()).getTopic(null);
         assertEquals(0, topic.messages.size());
     }
 
-    public static <T extends Curatable<?, ?>> void clearMessages(AbstractBaseServiceBean<T> service) {
+    public static <T extends Curatable<?, ?>> void clearMessages(AbstractCuratableServiceBean<T> service) {
         TopicStub topic = (TopicStub) ((MessageProducerBean) service.getPublisher()).getTopic(null);
         topic.messages.clear();
     }

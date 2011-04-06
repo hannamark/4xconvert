@@ -85,14 +85,19 @@ package gov.nih.nci.po.service;
 import gov.nih.nci.po.data.bo.ChangeRequest;
 import gov.nih.nci.po.data.bo.Correlation;
 import gov.nih.nci.po.data.bo.Curatable;
+import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.jms.JMSException;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 
 /**
@@ -101,6 +106,26 @@ import org.hibernate.Session;
  */
 public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractBaseServiceBean<T> {
 
+    /**
+     * message publisher used on update notification.
+     */
+    @EJB
+    private MessageProducerLocal publisher;
+
+    /**
+     * @return the publisher
+     */
+    public MessageProducerLocal getPublisher() {
+        return publisher;
+    }
+
+    /**
+     * @param publisher the publisher to set
+     */
+    public void setPublisher(MessageProducerLocal publisher) {
+        this.publisher = publisher;
+    }
+    
     /**
      * Save the object.
      * @param obj the object
@@ -132,6 +157,30 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
             s.save(object);
             getPublisher().sendCreate(getTypeArgument(), object);
         }
+    }
+    
+    /**
+     * Get the object of type T with the given IDs.
+     * @param pids the ids of players
+     * @return the object
+     */
+    @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<T> getByPlayerIds(Long[] pids) {
+        if (pids == null || pids.length == 0) {
+            return Collections.EMPTY_LIST;
+        }
+
+        if (pids.length > MAX_IN_CLAUSE_SIZE) {
+            throw new IllegalArgumentException("getByPlayerIds can only search for " 
+                    + MAX_IN_CLAUSE_SIZE + " at once.");
+        }
+
+        Query q = PoHibernateUtil.getCurrentSession().createQuery("from " + getTypeArgument().getName()
+                + " obj where obj.status != :roleStatus AND obj.player.id in (:ids_list)");
+        q.setParameter("roleStatus", RoleStatus.NULLIFIED);
+        q.setParameterList("ids_list", pids);
+        return q.list();
     }
 
     @SuppressWarnings("unchecked")

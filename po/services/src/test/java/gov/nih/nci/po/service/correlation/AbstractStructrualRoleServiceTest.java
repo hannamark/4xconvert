@@ -246,7 +246,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
 
     @Test
     public void testGetByPlayerIds() throws Exception {
-        AbstractBaseServiceBean<T> service = getService();
+        AbstractCuratableServiceBean<T> service = getService();
 
         T sr1 = createSample();
 

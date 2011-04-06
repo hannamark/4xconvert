@@ -83,7 +83,6 @@
  */
 package gov.nih.nci.po.service;
 
-import gov.nih.nci.po.data.bo.RoleStatus;
 import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.UsOrCanadaPhoneHelper;
 
@@ -92,7 +91,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.ejb.EJB;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
@@ -113,25 +111,6 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject>
     private static final String UNCHECKED = "unchecked";
     private final Class<T> typeArgument;
 
-    /**
-     * message publisher used on update notification.
-     */
-    @EJB
-    private MessageProducerLocal publisher;
-
-    /**
-     * @return the publisher
-     */
-    public MessageProducerLocal getPublisher() {
-        return publisher;
-    }
-
-    /**
-     * @param publisher the publisher to set
-     */
-    public void setPublisher(MessageProducerLocal publisher) {
-        this.publisher = publisher;
-    }
     /**
      * default constructor.
      */
@@ -180,30 +159,6 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject>
         Query q = PoHibernateUtil.getCurrentSession().createQuery("from " + getTypeArgument().getName()
                 + " obj where obj.id in (:ids_list)");
         q.setParameterList("ids_list", ids);
-        return q.list();
-    }
-    
-    /**
-     * Get the object of type T with the given IDs.
-     * @param pids the ids of players
-     * @return the object
-     */
-    @SuppressWarnings(UNCHECKED)
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<T> getByPlayerIds(Long[] pids) {
-        if (pids == null || pids.length == 0) {
-            return Collections.EMPTY_LIST;
-        }
-
-        if (pids.length > MAX_IN_CLAUSE_SIZE) {
-            throw new IllegalArgumentException("getByPlayerIds can only search for " 
-                    + MAX_IN_CLAUSE_SIZE + " at once.");
-        }
-
-        Query q = PoHibernateUtil.getCurrentSession().createQuery("from " + getTypeArgument().getName()
-                + " obj where obj.status != :roleStatus AND obj.player.id in (:ids_list)");
-        q.setParameter("roleStatus", RoleStatus.NULLIFIED);
-        q.setParameterList("ids_list", pids);
         return q.list();
     }
 

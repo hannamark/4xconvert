@@ -143,7 +143,6 @@ public class EjbTestHelper {
 
     public static OrganizationCRServiceBean getOrganizationCRServiceBean() {
         OrganizationCRServiceBean crService = new OrganizationCRServiceBean();
-        crService.setPublisher(getMessageProducer());
         return crService;
     }
 
@@ -171,7 +170,6 @@ public class EjbTestHelper {
 
     public static PersonCRServiceBean getPersonCRServiceBean() {
         PersonCRServiceBean personCRServiceBean = new PersonCRServiceBean();
-        personCRServiceBean.setPublisher(getMessageProducer());
         return personCRServiceBean;
     }
 
@@ -195,7 +193,6 @@ public class EjbTestHelper {
 
     public static HealthCareProviderCRServiceBean getHealthCareProviderCRServiceBean() {
         HealthCareProviderCRServiceBean s = new HealthCareProviderCRServiceBean();
-        s.setPublisher(getMessageProducer());
         return s;
     }
 
@@ -250,7 +247,6 @@ public class EjbTestHelper {
 
     public static OversightCommitteeCRServiceBean getOversightCommitteeRCServiceBean() {
         OversightCommitteeCRServiceBean ocService = new OversightCommitteeCRServiceBean();
-        ocService.setPublisher(getMessageProducer());
         return ocService;
     }
 
@@ -272,7 +268,6 @@ public class EjbTestHelper {
 
     public static ResearchOrganizationCRServiceBean getResearchOrganizationRCServiceBean() {
         ResearchOrganizationCRServiceBean ocService = new ResearchOrganizationCRServiceBean();
-        ocService.setPublisher(getMessageProducer());
         return ocService;
     }
 
@@ -297,7 +292,6 @@ public class EjbTestHelper {
      */
     public static HealthCareFacilityCRServiceLocal getHealthCareFacilityCRServiceBean() {
         HealthCareFacilityCRServiceBean s = new HealthCareFacilityCRServiceBean();
-        s.setPublisher(getMessageProducer());
         return s;
     }
 
@@ -320,7 +314,6 @@ public class EjbTestHelper {
 
     public static ClinicalResearchStaffCRServiceLocal getClinicalResearchStaffCRServiceBean() {
         ClinicalResearchStaffCRServiceBean s = new ClinicalResearchStaffCRServiceBean();
-        s.setPublisher(getMessageProducer());
         return s;
     }
 
@@ -395,7 +388,6 @@ public class EjbTestHelper {
     public static OrganizationalContactCRServiceLocal getOrganizationalContactCrService() {
         OrganizationalContactCRServiceBean svc = new OrganizationalContactCRServiceBean();
         OrganizationalContactServiceBean ocs = (OrganizationalContactServiceBean) getOrganizationalContactService();
-        svc.setPublisher(ocs.getPublisher());
         return svc;
     }
 
@@ -454,23 +446,11 @@ public class EjbTestHelper {
     }
 
     public static FamilyOrganizationRelationshipServiceLocal getFamilyOrganizationRelationshipService() {
-        FamilyOrganizationRelationshipServiceBean svc = new FamilyOrganizationRelationshipServiceBean();
-        try {
-            svc.setPublisher(getNoPublishMessageProducer());
-        } catch (Exception ex) {
-            throw new Error("bad test init", ex);
-        }
-        return svc;
+        return new FamilyOrganizationRelationshipServiceBean();
     }
 
     public static OrganizationRelationshipServiceLocal getOrganizationRelationshipService() {
-       OrganizationRelationshipServiceBean svc = new OrganizationRelationshipServiceBean();
-       try {
-           svc.setPublisher(getNoPublishMessageProducer());
-       } catch (Exception ex) {
-           throw new Error("bad test init", ex);
-       }
-       return svc;
+       return new OrganizationRelationshipServiceBean();
     }
 
     public static BusinessServiceRemote getBusinessService() {
@@ -503,12 +483,6 @@ public class EjbTestHelper {
      * @return the service
      */
     public static FamilyServiceBean getFamilyServiceBean() {
-        FamilyServiceBean svc = new FamilyServiceBean();
-        try {
-            svc.setPublisher(getNoPublishMessageProducer());
-        } catch (Exception ex) {
-            throw new Error("bad test init", ex);
-        }
-        return svc;
+        return new FamilyServiceBean();
     }
 }
