@@ -3,38 +3,38 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
-<script LANGUAGE="JavaScript">
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
+<script type="text/javascript" language="javascript">
      function sendEmail() {
-    	 var fromEmail = $('fromEmail').value;
-    	 var name = $('name').value;
-    	 var foundInHugo = $('foundInHugo').checked;
-    	 var hugoCode = $('hugoCode').value;
-    	 var message = $('message').value;
-    	 var url = '/pa/protected/popupPlannedMarkersendEmailRequest.action?plannedMarker.fromEmail=' + fromEmail
-    			 + '&plannedMarker.name=' + name + '&plannedMarker.foundInHugo=' + foundInHugo 
-    			 + '&plannedMarker.hugoCode=' + hugoCode + '&plannedMarker.message=' + message;
-    	 var div = $('cdeRequest');
-    	 div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
-         var aj = new Ajax.Updater(div,url, {
-             asynchronous: true,
-             method: 'get',
-             evalScripts: false,
+         var url = '/pa/protected/popupPlannedMarkersendEmailRequest.action';
+         var params = {
+             'plannedMarker.foundInHugo': $('foundInHugo').checked,
+             'plannedMarker.fromEmail': $('fromEmail').value,
+             'plannedMarker.hugoCode': $('hugoCode').value,
+             'plannedMarker.message': $('message').value,
+             'plannedMarker.name': $('name').value
+         };
+         var div = $('cdeRequest');
+         div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+         var options = {
              onComplete: function(transport) {
-            	 if ($('passedValidation').value) {
-                     top.window.loadMarkerWithRequestedCDE(name, foundInHugo, hugoCode);
-                 } else {
-            	    toggleHugoCode();            		 
-            	 }
-             }
-         });
+                             if ($('passedValidation').value) {
+                                 top.window.loadMarkerWithRequestedCDE(name, foundInHugo, hugoCode);
+                             } else {
+                                toggleHugoCode();
+                             }
+                         }
+         };
+         var aj = callAjaxPost(div, url, params, options);
      }
+
      function toggleHugoCode() {
-    	 var foundInHugo = $('foundInHugo').checked;
-    	 if (foundInHugo) {
-    		 $('hugoCodeRow').show();
-    	 } else {
-    		 $('hugoCodeRow').hide();
-    	 }
+         var foundInHugo = $('foundInHugo').checked;
+         if (foundInHugo) {
+             $('hugoCodeRow').show();
+         } else {
+             $('hugoCodeRow').hide();
+         }
      }
 </script>
 <div id="cdeRequest">

@@ -3,43 +3,37 @@
     <head>
         <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
         
         <script language="javascript" type="text/javascript">
-        	function submitform(orgid)
-        	{
-        		top.window.setorgid(orgid);
-        		top.window.loadDiv(orgid);
-        		window.top.hidePopWin(true); 
-        	}
-        	
-        	function callParentSubmit(orgid)
-        	{	
-        		top.window.setorgid(orgid);
-        		top.window.loadDiv(orgid);
-        		window.top.hidePopWin(true); 
-        	}
-        	
-        	function loadDiv() {
-        		var url = '/pa/protected/popupdisplayOrgList.action';
+            function submitform(orgid) {
+                top.window.setorgid(orgid);
+                top.window.loadDiv(orgid);
+                window.top.hidePopWin(true); 
+            }
+            
+            function callParentSubmit(orgid) {    
+                top.window.setorgid(orgid);
+                top.window.loadDiv(orgid);
+                window.top.hidePopWin(true); 
+            }
+            
+            function loadDiv() {
+                var url = '/pa/protected/popupdisplayOrgList.action';
                 var params = {
-            		orgName: $('orgNameSearch').value,
-            		countryName: $('orgCountrySearch').value,
-            		cityName: $('orgCitySearch').value,
-            		zipCode: $('orgZipSearch').value,
+                    orgName: $('orgNameSearch').value,
+                    countryName: $('orgCountrySearch').value,
+                    cityName: $('orgCitySearch').value,
+                    zipCode: $('orgZipSearch').value,
                     stateName: $('orgStateSearch').value
                 };
-        	    var div = document.getElementById('getOrgs');   	   
-        	    div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
-        	    var aj = new Ajax.Updater(div,url, {
-        	        asynchronous: true,
-        	        evalScripts: false,
-        	        method: 'get',
-        	        parameters: params
-        	    });
-        	    return false;
-        	}
-        	
-        	function formReset(){
+                var div = $('getOrgs');          
+                div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';
+                var aj = callAjaxPost(div, url, params);
+                return false;
+            }
+            
+            function formReset() {
                 document.forms[0].reset();
                 $("orgNameSearch").value = '';
                 $("orgCitySearch").value = '';
@@ -57,46 +51,46 @@
             <h2><fmt:message key="popUpOrg.header"/></h2>
             <s:label name="orgErrorMessage"/>
             <table  class="form">  
-               	<tr> 	
-             		<td scope="row" class="label">
+                   <tr>     
+                     <td scope="row" class="label">
                         <label for="name"><fmt:message key="popUpOrg.name"/></label>
                     </td>
-             		<td>
-             			<s:textfield id="orgNameSearch" name="orgSearchCriteria.name" maxlength="200" size="100" cssStyle="width:200px" />
-             		</td>
+                     <td>
+                         <s:textfield id="orgNameSearch" name="orgSearchCriteria.name" maxlength="200" size="100" cssStyle="width:200px" />
+                     </td>
             
-             		
-             		<td scope="row" class="label">
+                     
+                     <td scope="row" class="label">
                         <label for="country"><fmt:message key="popUpOrg.country"/></label>
                     </td>
                     <td>
                         <s:select id="orgCountrySearch" name="orgSearchCriteria.orgCountry" list="countryList"  
                                   listKey="alpha3" listValue="name" headerKey="USA" headerValue="United States" cssStyle="width:206px" />
-                    </td>		
-            	</tr>
-            	<tr>  
-             		 <td scope="row" class="label">
+                    </td>        
+                </tr>
+                <tr>  
+                      <td scope="row" class="label">
                         <label for="city"><fmt:message key="popUpOrg.city"/></label>
                     </td>
-             		<td> 			
-             			<s:textfield id="orgCitySearch" name="orgSearchCriteria.city" maxlength="200" size="100" cssStyle="width:200px" />
-            		</td>
-             		<td scope="row" class="label">
+                     <td>             
+                         <s:textfield id="orgCitySearch" name="orgSearchCriteria.city" maxlength="200" size="100" cssStyle="width:200px" />
+                    </td>
+                     <td scope="row" class="label">
                         <label for="state"><fmt:message key="popUpOrg.state"/></label>
                     </td>
-             		<td>
-             			<s:textfield id="orgStateSearch" name="orgSearchCriteria.state" maxlength="75" size="20"/><br><font size="1"><span class="info"><fmt:message key="popUpOrg.stateInfo"/></span></font>
-            		</td>
-            		
-            	</tr>
-            	<tr>
-             		 <td scope="row" class="label">
+                     <td>
+                         <s:textfield id="orgStateSearch" name="orgSearchCriteria.state" maxlength="75" size="20"/><br><font size="1"><span class="info"><fmt:message key="popUpOrg.stateInfo"/></span></font>
+                    </td>
+                    
+                </tr>
+                <tr>
+                      <td scope="row" class="label">
                         <label for="zip"><fmt:message key="popUpOrg.zip"/></label>
                     </td>
-             		<td>
-             			<s:textfield id="orgZipSearch" name="orgSearchCriteria.zip" maxlength="75" size="20"/>
-            		</td>	
-            	</tr>
+                     <td>
+                         <s:textfield id="orgZipSearch" name="orgSearchCriteria.zip" maxlength="75" size="20"/>
+                    </td>    
+                </tr>
             </table>
             <div class="actionsrow">
                  <del class="btnwrapper">
@@ -108,9 +102,9 @@
                      </ul>   
                  </del>
             </div>
-        	<div id="getOrgs" align="center">	
-        	   	<jsp:include page="/WEB-INF/jsp/nodecorate/displayOrgList.jsp"/>        	      
-           	</div>
+            <div id="getOrgs" align="center">    
+                   <jsp:include page="/WEB-INF/jsp/nodecorate/displayOrgList.jsp"/>
+               </div>
         </s:form>
         </div>
     </body>

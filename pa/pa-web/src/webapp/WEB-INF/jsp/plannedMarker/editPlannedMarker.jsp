@@ -10,6 +10,7 @@
         <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all" />
         <script type="text/javascript" src='<c:url value="/scripts/js/coppa.js"/>'></script>
         <script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
 
         <script type="text/javascript">
             // this function is called from body onload in main.jsp (decorator)
@@ -19,6 +20,7 @@
                 toggleAssayPurposeOtherText();
                 toggleHugoCode();
             }
+            
             function toggleHugoCode() {
                 if ($('foundInHugo').value == 'true') {
                     $('hugoCodeRow').show();
@@ -34,6 +36,7 @@
                     $('assayTypeOtherTextRow').hide();
                 }
             }
+            
             function toggleAssayPurposeOtherText() {
                 if ($('assayPurpose').value == 'Other') {
                     $('assayPurposeOtherTextRow').show();
@@ -41,34 +44,36 @@
                     $('assayPurposeOtherTextRow').hide();
                 }
             }
+            
             function cadsrLookup(){
                 showPopWin('${lookupUrl}', 1200, 600, '', 'Marker Search in caDSR');
             }
+            
             function loadDiv(markerId) {
                 window.top.hidePopWin(true);
-                var url = '/pa/protected/ajaxptpPlannedMarkerdisplaySelectedCDE.action?cdeId='+markerId;
+                var url = '/pa/protected/ajaxptpPlannedMarkerdisplaySelectedCDE.action';
+                var params = { cdeId: markerId };
                 var div = $('plannedMarkerDetails');
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
-                var aj = new Ajax.Updater(div, url, {
-                   asynchronous: true,
-                   method: 'get',
-                   evalScripts: false
-                });
+                var aj = callAjaxPost(div, url, params);
             }
+            
             function loadMarkerWithRequestedCDE(markerName, foundInHugo, hugoCode) {
                 window.top.hidePopWin(true);
-                var url = '/pa/protected/ajaxptpPlannedMarkerdisplayRequestedCDE.action?plannedMarker.name='+ markerName
-                        + '&plannedMarker.hugoCode=' + hugoCode + '&plannedMarker.foundInHugo=' + foundInHugo;
+                var url = '/pa/protected/ajaxptpPlannedMarkerdisplayRequestedCDE.action';
+                var params = {
+                    'plannedMarker.foundInHugo': foundInHugo,
+                    'plannedMarker.hugoCode': hugoCode,
+                    'plannedMarker.name': markerName
+                };
                 var div = $('plannedMarkerDetails');
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
-                var aj = new Ajax.Updater(div, url, {
-                   asynchronous: true,
-                   method: 'get',
-                   evalScripts: false,
+                var options = {
                    onComplete: function(transport) {
-                       toggleHugoCode();
-                   }
-                });
+                                   toggleHugoCode();
+                               }
+                };
+                var aj = callAjaxPost(div, url, params, options);
             }
 
         </script>

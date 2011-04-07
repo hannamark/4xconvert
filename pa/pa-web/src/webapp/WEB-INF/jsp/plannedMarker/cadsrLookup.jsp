@@ -5,45 +5,38 @@
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
-        <script type="text/javascript">
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
+        <script type="text/javascript" language="javascript">
              function reset() {
-            	 $('searchName').value = '';
-            	 $('searchMeaning').value = '';
-            	 $('searchDescription').value = '';
-            	 $('searchPublicId').value = '';
+                 $('searchName').value = '';
+                 $('searchMeaning').value = '';
+                 $('searchDescription').value = '';
+                 $('searchPublicId').value = '';
              }
-             
+
              function loadResults() {     
-                 var name = $('searchName').value;
-                 var meaning = $('searchMeaning').value;
-                 var description = $('searchDescription').value;
-                 var publicId = $('searchPublicId').value;
-                 var url= '/pa/protected/popupPlannedMarkerlookup.action?name=' + name + '&meaning=' + meaning 
-                 + '&description=' + description + '&publicId=' + publicId;  	                    	 
-                 
+                 var url= '/pa/protected/popupPlannedMarkerlookup.action';
+                 var params = {
+                         description: $('searchDescription').value,
+                         meaning: $('searchMeaning').value,
+                         name: $('searchName').value,
+                         publicId: $('searchPublicId').value
+                 };
                  var div = $('getCaDSR');
                  div.innerHTML = '<div><img alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
-                 var aj = new Ajax.Updater(div,url, {
-                     asynchronous: true,
-                     method: 'get',
-                     evalScripts: false
-                 });
+                 var aj = callAjaxPost(div, url, params);
              }
-             
+
              function loadRequestEmail() {
-            	 $('searchcaDSR').hide();
-            	 $('getCaDSR').hide();
-            	 $('actionsrow').hide();
+                 $('searchcaDSR').hide();
+                 $('getCaDSR').hide();
+                 $('actionsrow').hide();
                  $('line').hide();
-            	 $('requestEmail').show();
-            	 var url = '/pa/protected/popupPlannedMarkersetupEmailRequest.action';
+                 $('requestEmail').show();
+                 var url = '/pa/protected/popupPlannedMarkersetupEmailRequest.action';
                  var div = $('requestEmail');
                  div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
-                 var aj = new Ajax.Updater(div,url, {
-                     asynchronous: true,
-                     method: 'get',
-                     evalScripts: false
-                     });
+                 var aj = callAjaxPost(div, url, {});
              }
         </script>
     </head>

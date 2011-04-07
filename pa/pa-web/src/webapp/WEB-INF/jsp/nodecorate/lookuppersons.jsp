@@ -3,6 +3,7 @@
     <head>
         <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
         
         <script language="javascript" type="text/javascript">
             function submitform(persid) {
@@ -18,28 +19,23 @@
             }
         
             function loadDiv() {
-            	var url = '/pa/protected/popupdisplayPersonsList.action';
-            	var params = {
-            		firstName: $("personFirstName").value,
-            		lastName: $("personLastName").value,
-            		countryName: $("personCountry").value,
-            		cityName: $("personCity").value,
-            		zipCode: $("personZip").value,
-            		stateName: $("personState").value
-            	};
+                var url = '/pa/protected/popupdisplayPersonsList.action';
+                var params = {
+                    firstName: $("personFirstName").value,
+                    lastName: $("personLastName").value,
+                    countryName: $("personCountry").value,
+                    cityName: $("personCity").value,
+                    zipCode: $("personZip").value,
+                    stateName: $("personState").value
+                };
                 var div = $('getPersons');
                 div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';
-                var aj = new Ajax.Updater(div,url, {
-                    asynchronous: true,
-                    evalScripts: false,
-                    method: 'get',
-                    parameters: params
-                });
+                var aj = callAjaxPost(div, url, params);
                 return false;
             }
         
             function formReset(){
-                document.forms[0].reset();
+                $('poOrganizations').reset();
                 $("personFirstName").value = '';
                 $("personLastName").value = '';
                 $("personCity").value = '';
