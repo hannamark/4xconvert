@@ -83,13 +83,16 @@ import gov.nih.nci.accrual.convert.StudySubjectConverter;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.zip.DataFormatException;
 
@@ -98,10 +101,13 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 
 /**
  * @author Hugh Reinhart
@@ -114,44 +120,70 @@ public class StudySubjectBeanLocal
         extends AbstractBaseAccrualStudyBean<StudySubjectDto, StudySubject, StudySubjectConverter>
         implements StudySubjectService, StudySubjectServiceLocal {
 
-    private static final Logger LOG = Logger.getLogger(StudySubjectBeanLocal.class);
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public List<StudySubjectDto> getByStudySite(Ii ii) throws PAException {
+        if (PAUtil.isIiNull(ii)) {
+            throw new PAException("Called getByStudySite() with Ii == null.");
+        }
+        try {
+            Session session = HibernateUtil.getCurrentSession();
+            String hql = "select ssub from StudySubject ssub join ssub.studySite ssite where ssite.id = :studySiteId "
+                + "order by ssub.id ";
+            Query query = session.createQuery(hql);
+            query.setParameter("studySiteId", IiConverter.convertToLong(ii));
+            List<StudySubject> queryList = query.list();
+
+            List<StudySubjectDto> resultList = new ArrayList<StudySubjectDto>();
+            for (StudySubject bo : queryList) {
+                resultList.add(convertFromDomainToDto(bo));
+            }
+            return resultList;
+        } catch (HibernateException hbe) {
+            throw new PAException("Hibernate exception in getByStudyProtocol().", hbe);
+        } catch (DataFormatException e) {
+            throw new PAException("Conversion exception in getByStudyProtocol().", e);
+        }
+    }
 
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public List<StudySubjectDto> getByStudySite(Ii ii) throws RemoteException {
-        if (PAUtil.isIiNull(ii)) {
-            throw new RemoteException("Called getByStudySite() with Ii == null.");
-        }
-
-        Session session = null;
-        List<StudySubject> queryList = new ArrayList<StudySubject>();
+    public List<StudySubjectDto> getStudySubjects(String assignedIdentifier, Long studySiteId, Date birthDate,
+            FunctionalRoleStatusCode statusCode) throws PAException {
         try {
-            session = HibernateUtil.getCurrentSession();
-            Query query = null;
-            String hql = "select ssub "
-                       + "from StudySubject ssub "
-                       + "join ssub.studySite ssite "
-                       + "where ssite.id = :studySiteId "
-                       + "order by ssub.id ";
-            LOG.debug("query StudySubject = " + hql + ".");
-            query = session.createQuery(hql);
-            query.setParameter("studySiteId", IiConverter.convertToLong(ii));
-            queryList = query.list();
-        } catch (HibernateException hbe) {
-            throw new RemoteException("Hibernate exception in getByStudyProtocol().", hbe);
-        }
-        ArrayList<StudySubjectDto> resultList = new ArrayList<StudySubjectDto>();
-        for (StudySubject bo : queryList) {
-            try {
-                resultList.add(convertFromDomainToDto(bo));
-            } catch (DataFormatException e) {
-                throw new RemoteException("Iso conversion exception in getByStudyProtocol().", e);
+            Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(StudySubject.class);
+            populateCriteria(assignedIdentifier, studySiteId, birthDate, statusCode, criteria);
+            List<StudySubject> subjects = criteria.list();
+            List<StudySubjectDto> results = new ArrayList<StudySubjectDto>();
+            for (StudySubject bo : subjects) {
+                results.add(convertFromDomainToDto(bo));
             }
+            return results;
+        } catch (HibernateException e) {
+            throw new PAException("Error retrieving study subjects", e);
+        } catch (DataFormatException e) {
+            throw new PAException("Iso conversion exception in getStudySubjects.", e);
         }
-        LOG.debug("Leaving getByStudySite(), returning " + resultList.size() + " object(s).");
-        return resultList;
+    }
+
+    private void populateCriteria(String assignedIdentifier, Long studySiteId, Date birthDate,
+            FunctionalRoleStatusCode statusCode, Criteria criteria) {
+        if (StringUtils.isNotEmpty(assignedIdentifier)) {
+            criteria.add(Restrictions.ilike("assignedIdentifier", assignedIdentifier, MatchMode.ANYWHERE));
+        }
+        if (statusCode != null) {
+            criteria.add(Restrictions.eq("statusCode", statusCode));
+        }
+        if (studySiteId != null) {
+            criteria.createCriteria("studySite", "ss").add(Restrictions.eq("ss.id", studySiteId));
+        }
+        if (birthDate != null) {
+            criteria.createCriteria("patient", "p").add(Restrictions.eq("p.birthDate", birthDate));
+        }
     }
 
     /**
@@ -164,5 +196,7 @@ public class StudySubjectBeanLocal
         }
         return super.create(dto);
     }
+
+   
 
 }

@@ -85,6 +85,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -93,8 +94,10 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 
 import java.rmi.RemoteException;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -143,10 +146,31 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         bean.update(dto);
         assertTrue(newCode.equals(PaymentMethodCode.getByCode(dto.getPaymentMethodCode().getCode())));
     }
+    
     @Test
     public void getByStudySite() throws Exception {
         List<StudySubjectDto> rList = bean.getByStudySite(IiConverter.convertToIi(TestSchema.studySites.get(0).getId()));
         assertTrue(0 < rList.size());
+    }
+    
+    @Test
+    public void getStudySubjects() throws Exception {
+        Date birthDate = AccrualUtil.yearMonthStringToTimestamp("07/1963");
+        List<StudySubjectDto> results = bean.getStudySubjects("", TestSchema.studySites.get(0).getId(), birthDate, 
+                FunctionalRoleStatusCode.PENDING);
+        assertEquals(2, results.size());
+        
+        results = bean.getStudySubjects("001", TestSchema.studySites.get(0).getId(), birthDate, 
+                FunctionalRoleStatusCode.PENDING);
+        assertEquals(1, results.size());
+        
+        results = bean.getStudySubjects("002", TestSchema.studySites.get(0).getId(), birthDate, 
+                FunctionalRoleStatusCode.PENDING);
+        assertEquals(1, results.size());
+        
+        results = bean.getStudySubjects("004", TestSchema.studySites.get(0).getId(), birthDate, 
+                FunctionalRoleStatusCode.ACTIVE);
+        assertEquals(0, results.size());
     }
 
     @Test
@@ -154,7 +178,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         try {
             bean.getByStudySite(null);
             fail();
-        } catch (RemoteException ex) {
+        } catch (PAException ex) {
             // expected
         }
 

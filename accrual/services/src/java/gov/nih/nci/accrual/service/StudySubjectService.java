@@ -81,8 +81,10 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.service.PAException;
 
-import java.rmi.RemoteException;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Remote;
@@ -92,12 +94,23 @@ import javax.ejb.Remote;
  * @since Aug 29, 2009
  */
 @Remote
-public interface StudySubjectService
-        extends BaseAccrualStudyService<StudySubjectDto> {
+public interface StudySubjectService extends BaseAccrualStudyService<StudySubjectDto> {
     /**
      * @param ii study site index
      * @return list of study subjects
-     * @throws RemoteException exception
+     * @throws PAException on error
      */
-    List<StudySubjectDto> getByStudySite(Ii ii) throws RemoteException;
+    List<StudySubjectDto> getByStudySite(Ii ii) throws PAException;
+    
+    /**
+     * Retrieves study subjects based on the given parameters.
+     * @param assignedIdentifier the assigned id of the study subject
+     * @param studySiteId the study site id
+     * @param birthDate the study subject's birth date in MM/YYYY
+     * @param statusCode the subject's status code
+     * @throws PAException on error
+     * @return the list of study subjects that match the given parameters
+     */
+    List<StudySubjectDto> getStudySubjects(String assignedIdentifier, Long studySiteId, Date birthDate, 
+            FunctionalRoleStatusCode statusCode) throws PAException;
 }

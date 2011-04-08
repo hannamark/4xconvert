@@ -138,7 +138,6 @@ public class BaseBatchUploadReader {
     private static final int PATIENT_GENDER_CODE_INDEX = 5;
     private static final int PATIENT_ETHNICITY_INDEX = 6;
     private static final int PATIENT_DATE_OF_ENTRY_INDEX = 8;
-    private static final int PATIENT_REG_INST_ID_INDEX = 9;
     
     private static final List<String> PATIENT_GENDER = new ArrayList<String>();
     static {

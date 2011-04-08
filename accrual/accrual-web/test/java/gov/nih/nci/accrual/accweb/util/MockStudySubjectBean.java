@@ -83,16 +83,17 @@ import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.service.StudySubjectService;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
-import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -120,7 +121,7 @@ public class MockStudySubjectBean implements StudySubjectService {
     /**
      * {@inheritDoc}
      */
-    public List<StudySubjectDto> getByStudySite(Ii ii) throws RemoteException {
+    public List<StudySubjectDto> getByStudySite(Ii ii) throws PAException {
         return ssList;
     }
 
@@ -178,15 +179,8 @@ public class MockStudySubjectBean implements StudySubjectService {
     /**
      * {@inheritDoc}
      */
-    public StudySubjectDto createOutcomes(StudySubjectDto dto)
-            throws RemoteException {
-        return create(dto);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<StudySubjectDto> getOutcomes(St outcomesLoginName) throws RemoteException {
+    public List<StudySubjectDto> getStudySubjects(String assignedIdentifier, Long studySiteId, Date birthDate,
+            FunctionalRoleStatusCode statusCode) throws PAException {
         return ssList;
     }
 

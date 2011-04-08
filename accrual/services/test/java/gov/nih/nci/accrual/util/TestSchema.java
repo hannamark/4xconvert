@@ -470,7 +470,7 @@ public class TestSchema {
 
         // Patient
         Patient p = new Patient();
-        p.setBirthDate(PAUtil.dateStringToTimestamp("7/11/1963"));
+        p.setBirthDate(PAUtil.dateStringToTimestamp("7/1/1963"));
         p.setCountryIdentifier(countries.get(0).getId());
         p.setEthnicCode(PatientEthnicityCode.HISPANIC);
         p.setIdentifier("PO PATIENT ID 01");
@@ -543,6 +543,7 @@ public class TestSchema {
         StudySubject subj = new StudySubject();
         subj.setDisease(diseases.get(0));
         subj.setPatient(patients.get(0));
+        subj.setAssignedIdentifier("001");
         subj.setPaymentMethodCode(PaymentMethodCode.MEDICARE);
         subj.setStatusCode(FunctionalRoleStatusCode.PENDING);
         subj.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
@@ -553,7 +554,7 @@ public class TestSchema {
 
         subj = new StudySubject();
         subj.setPatient(patients.get(0));
-        subj.setAssignedIdentifier("001");
+        subj.setAssignedIdentifier("002");
         subj.setStatusCode(FunctionalRoleStatusCode.PENDING);
         subj.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));
         subj.setStudyProtocol(studyProtocols.get(0));
