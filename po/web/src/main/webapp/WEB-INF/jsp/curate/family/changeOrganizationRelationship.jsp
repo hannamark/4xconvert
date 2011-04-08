@@ -12,33 +12,33 @@
             <c:url value="/protected/popup/organization/relationship/curate/update.action" var="submitUrl"/>
             <s:set name="formAction" value="'update.action'"/>
         </s:elseif>
-        
-        <script type="text/javascript">
+
+        <script type="text/javascript" language="javascript">
             function handleSubmission(event) {
+                var params = $('organizationRelationshipForm').serialize(true);
                 var options = {
-                    asynchronous: true,
-                    method: 'post',
-                    evalScripts: false,
-                    parameters: $('organizationRelationshipForm').serialize(true),
                     onComplete: function(transport) {
-                        if ($('passedValidation').value != 'false') {
-                            window.top.reloadOrgRelationships(new IdValue('${newOrgRelationship.family.id}', '${newOrgRelationship.family.name}'));
-                        } else {
-                            bindListeners();
-                        }    
-                    }    
+                                    if ($('passedValidation').value != 'false') {
+                                        window.top.reloadOrgRelationships(new IdValue('${newOrgRelationship.family.id}', '${newOrgRelationship.family.name}'));
+                                    } else {
+                                        bindListeners();
+                                    }
+                                }
                 };
                 var div = $('wrapper');
                 div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="<c:url value='/images/loading.gif'/>"&nbsp;Loading...</div>';
-                var aj = new Ajax.Updater(div, '${submitUrl}', options);
+                var aj = callAjaxPost(div, '${submitUrl}', params, options);
             }
+
             function handleCancel(event) {
                 window.top.hidePopWin(false);
             }
+
             function bindListeners() {
             	jQuery('#add_relationship_button').bind('click', handleSubmission);
                 jQuery('#cancel_button').bind('click', handleCancel);
-            }    
+            }
+
             jQuery(bindListeners);    
         </script>
     </head>

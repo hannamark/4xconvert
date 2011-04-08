@@ -5,7 +5,7 @@
         <s:set name="isEdit" value="familyOrgRelationship.id != null"/>
         <c:url value="/protected/selector/organization/start.action" var="searchUrl"/>
         <title><fmt:message key="familyOrgRelationship.details.title"/></title>
-        <script type="text/javascript">
+        <script type="text/javascript" language="javascript">
             function orgSelectionCallback(returnValue) {
                 <c:url value="/protected/ajax/family/organization/relationship/loadOrganizationInfo.action" var="loadOrgUrl">
                    <c:param name="rootKey" value="${rootKey}"/>
@@ -17,33 +17,28 @@
 
             function reloadOrgRelationships(returnValue) {
                 window.top.hidePopWin(true);
-                <c:url value="/protected/ajax/family/organization/relationship/loadOrgRelationships.action" var="loadOrgRelationshipUrl">
-                    <c:param name="rootKey" value="${rootKey}"/>
-                </c:url>
-                var url = '${loadOrgRelationshipUrl}' + '&familyOrgRelationship.family.id=' + returnValue.id;
+                <c:url value="/protected/ajax/family/organization/relationship/loadOrgRelationships.action" var="loadOrgRelationshipUrl"/>
+                var params = {
+                    'familyOrgRelationship.family.id': returnValue.id,
+                    rootKey: '${rootKey}'
+                };
                 var div = $('org_relationships');
                 div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="<c:url value='/images/loading.gif'/>"&nbsp;Loading...</div>';
-                var aj = new Ajax.Updater(div, url, {
-                   asynchronous: true,
-                   method: 'get',
-                   evalScripts: false
-                });
+                var aj = callAjaxPost(div, '${loadOrgRelationshipUrl}', params);
             }
 
             function removeOrgRelationship(id) {
                  <c:url value="/protected/popup/organization/relationship/create/remove.action" var="removeUrl"/>
                  <s:text name="organizationRelationship.confirmationMessage" var="confirmationMessage"/>
                  var confirmation = confirm('${confirmationMessage}');
-                 var url = '${removeUrl}' + '?orgRelationship.id=' + id;
                  if (confirmation) {
-                      var aj = new Ajax.Request(url, {
-                            asynchronous: true,
-                            method: 'post',
-                            evalScripts: false,
-                            onComplete: function(transport) {
-                                   reloadOrgRelationships(new IdValue('${familyOrgRelationship.family.id}', ''));
-                             }
-                      });
+                     var params = { 'orgRelationship.id': id};
+                     var options = {
+                         onComplete: function(transport) {
+                                         reloadOrgRelationships(new IdValue('${familyOrgRelationship.family.id}', ''));
+                                     }
+                      };
+                      var aj = callAjaxPost(null, '${removeUrl}', params, options);
                  }
             }
 

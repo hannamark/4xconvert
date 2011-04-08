@@ -13,7 +13,7 @@
                 $('login_progress').show();
                 <c:choose>
                     <c:when test="${param.fromAjax == 'true'}">
-                new Ajax.Request('<c:url value="/protected/home.action"/>', { onSuccess: completeLogin });
+                var aj = callAjaxPost(null, '<c:url value="/protected/home.action"/>', {}, { onSuccess: completeLogin });
                     </c:when>
                     <c:otherwise>
                 completeLogin();
