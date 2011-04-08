@@ -10,7 +10,7 @@
     <properties>
         <log.level.nci-commons>DEBUG</log.level.nci-commons>
         <log.level.po>DEBUG</log.level.po>
-        <nci-commons.version>1.2.1</nci-commons.version>
+        <nci-commons.version>1.2.20</nci-commons.version>
         <compileSource>1.5</compileSource>
         <generatedStubsSrcDir>target/generated-sources/stubs</generatedStubsSrcDir>
         <cobertura.check.haltOnFailure>true</cobertura.check.haltOnFailure>
@@ -206,6 +206,18 @@
     
     <dependencies>
         <dependency>
+            <groupId>javax.ejb</groupId>
+            <artifactId>ejb-api</artifactId>
+            <version>3.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>jsr250-api</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.8</version>
@@ -223,7 +235,13 @@
             <version>2.0</version>
             <scope>compile</scope>
         </dependency>
-        
+
+        <dependency>
+            <groupId>com.fiveamsolutions</groupId>
+            <artifactId>nci-commons-core</artifactId>
+            <version>${nci-commons.version}</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>gov.nih.nci.cagrid</groupId>
             <artifactId>caGrid-core</artifactId>
@@ -369,6 +387,18 @@
             <version>4.0.3</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-mock</artifactId>
+            <version>2.0.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring</artifactId>
+            <version>2.0.6</version>
+            <scope>test</scope>
+        </dependency>
        
         <dependency>
             <groupId>gov.nih.nci.iso21090</groupId>
@@ -439,6 +469,7 @@
                     <instrumentation>
                         <excludes>
                             <exclude>gov/nih/nci/coppa/common/*</exclude>
+                            <exclude>gov/nih/nci/coppa/services/interceptor/*</exclude>
                             <exclude>gov/nih/nci/coppa/web/CSMSyncListener.class</exclude>
                         </excludes>
                     </instrumentation>
@@ -481,6 +512,10 @@
             <id>maven</id>
             <url>http://repo1.maven.org/maven2</url>
         </repository>
+        <repository>
+            <id>jboss</id>
+            <url>http://repository.jboss.com/maven2</url>
+        </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
@@ -491,6 +526,7 @@
             <id>maven</id>
             <url>http://repo1.maven.org/maven2</url>
         </pluginRepository>
+        
     </pluginRepositories>
 
 </project>
