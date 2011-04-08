@@ -93,7 +93,6 @@ public class ParticipatingSiteServiceTest {
         bean.setStudySiteContactService(studySiteContactService);
         bean.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
         bean.setOcsr(ocsr);
-        bean.setSessionContext(new MockStatelessContext());
         localBean = bean;
 
         rBean.setStudyProtocolService(studyProtocolService);
@@ -101,7 +100,6 @@ public class ParticipatingSiteServiceTest {
         rBean.setStudySiteContactService(studySiteContactService);
         rBean.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
         rBean.setOcsr(ocsr);
-        rBean.setSessionContext(new MockStatelessContext());
         remoteBean = rBean;
         HibernateUtil.setTestHelper(testHelper);
         Session session = HibernateUtil.getCurrentSession();
@@ -302,7 +300,7 @@ public class ParticipatingSiteServiceTest {
         Tel mail1 = new Tel();
         mail1.setValue(new URI("mailto:" + URLEncoder.encode("aaa@example.com", "UTF-8")));
         dsetTel.getItem().add(mail1);
-        
+
         Ii oldIi = localBean.getParticipatingSiteIi(spSecId, ctepIdForOrg);
         studySiteDTO.setIdentifier(oldIi);
 
@@ -430,17 +428,17 @@ public class ParticipatingSiteServiceTest {
             }
         }
     }
-    
+
     @Test(expected = PAException.class)
-    public void testNoIiForLocalUpdate() throws PAException { 
+    public void testNoIiForLocalUpdate() throws PAException {
         localBean.updateStudySiteParticipant(new StudySiteDTO(), new StudySiteAccrualStatusDTO());
     }
-    
+
     @Test(expected = PAException.class)
     public void testNoIiForRemoteUpdate() throws PAException {
         remoteBean.updateStudySiteParticipant(new StudySiteDTO(), new StudySiteAccrualStatusDTO(), null);
     }
-    
+
 
     /**
      * Tests validation of generic contacts
@@ -524,7 +522,7 @@ public class ParticipatingSiteServiceTest {
             //expected
         }
         localBean.addStudySiteGenericContact(oldIi, orgDTO, true, phoneAndEmail);
-        
+
     }
 
 }

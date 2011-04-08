@@ -90,26 +90,24 @@ import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 
 /**
- * Modified for PA.
- *
+ * JNDI lookup utilities.
  * @author Hugh Reinhart
  * @since 05/22/2008 copyright NCI 2008. All rights reserved. This code may not
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
 public final class JNDIUtil {
-
     private static final Logger LOG = Logger.getLogger(JNDIUtil.class);
-    private static final String RESOURCE_NAME = "jndi.properties";
-
+    private static final String PO_RESOURCE_NAME = "po.jndi.properties";
+    private static final String PA_RESOURCE_NAME = "jndi.properties";
     private static JNDIUtil theInstance = new JNDIUtil();
-    private final InitialContext context;
-    //private final InitialContext contextRemote;
+    private final Properties poProperties;
+    private final Properties paProperties;
+
     private JNDIUtil() {
         try {
-            Properties props = getProperties();
-            context = new InitialContext(props);
-            //contextRemote = new InitialContext(props);
+            poProperties = getProperties(PO_RESOURCE_NAME);
+            paProperties = getProperties(PA_RESOURCE_NAME);
         } catch (Exception e) {
             LOG.error("Unable to initialize the JNDI Util.", e);
             throw new IllegalStateException(e);
@@ -117,41 +115,54 @@ public final class JNDIUtil {
     }
 
     /**
-     * @return jndi (& jms) properties
-     * @throws IOException
-     *             on class load error
+     * @param resourceName the jndi.properties file name
+     * @return jndi properties
+     * @throws IOException on class load error
      */
-    public static Properties getProperties() throws IOException {
+    public static Properties getProperties(String resourceName) throws IOException {
         Properties props = new Properties();
-        props.load(JNDIUtil.class.getClassLoader().getResourceAsStream(RESOURCE_NAME));
+        props.load(JNDIUtil.class.getClassLoader().getResourceAsStream(resourceName));
         return props;
     }
 
     /**
-     * @param name
-     *            name to lookup
+     * Performs a lookup of an object in the pa context.
+     * @param name name to lookup
      * @return object in default context with given name
      */
-    public static Object lookup(String name) {
-        return lookup(theInstance.context, name);
+    public static Object lookupPa(String name) {
+        return lookup(name, theInstance.paProperties);
     }
+
     /**
-     * @param ctx
-     *            context
-     * @param name
-     *            name to get
-     * @return object in contect with given name
+     * Performs a lookup of an object in the po context.
+     * @param name name to lookup
+     * @return object in default context with given name
      */
-    public static Object lookup(InitialContext ctx, String name) {
+    public static Object lookupPo(String name) {
+        return lookup(name, theInstance.poProperties);
+    }
+
+    /**
+     * @param name name to lookup
+     * @param props the properties to use
+     * @return object in pa context with given name
+     */
+    public static Object lookup(String name, Properties props) {
+        Context context = null;
         try {
-            return ctx.lookup(name);
+            context = new InitialContext(props);
+            Object result = context.lookup(name);
+            context.close();
+            return result;
         } catch (NamingException ex) {
             LOG.error("------------------Here is what's in the context--(looking for " + name + ")----------");
-            dump(ctx, 0);
+            dump(context, 0);
             LOG.error("-----------------------------------------------------------");
             throw new IllegalStateException(ex);
         }
     }
+
 
     private static void dump(javax.naming.Context ctx, int indent) {
         try {

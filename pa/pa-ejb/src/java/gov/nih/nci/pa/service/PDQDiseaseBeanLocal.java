@@ -116,8 +116,8 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, PDQDisease, PDQDiseaseConverter> 
-    implements PDQDiseaseServiceLocal, PDQDiseaseServiceRemote {
+public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, PDQDisease, PDQDiseaseConverter>
+    implements PDQDiseaseServiceLocal {
 
     /**
      * @param searchCriteria search string

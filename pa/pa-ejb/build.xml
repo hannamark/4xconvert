@@ -124,13 +124,18 @@
     <!-- ====================================================================== -->
 
     <target name="configure-main">
-        <copy file="${pa.resourceDir}/jndi.properties"
-              tofile="${pa-ejb.build.resourceDir.0}/jndi.properties"
-              overwrite="true">
+        <copy file="${pa.resourceDir}/jndi.properties" tofile="${pa-ejb.build.resourceDir.0}/jndi.properties" overwrite="true">
+            <filterset>
+                <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
+            </filterset>
+        </copy>
+        <copy file="${pa.resourceDir}/po.jndi.properties" tofile="${pa-ejb.build.resourceDir.0}/po.jndi.properties" overwrite="true">
             <filterset>
                 <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
                 <filter token="po.username" value="${po.username}" />
                 <filter token="po.pass" value="${po.pass}" />
+                <filter token="po.server.name" value="${po.server.name}" />
+                <filter token="po.port.number" value="${po.port.number}" />
             </filterset>
         </copy>
         <copy file="${pa.resourceDir}/paear.properties"

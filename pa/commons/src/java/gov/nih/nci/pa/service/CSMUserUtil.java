@@ -87,8 +87,6 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.Set;
 
-import javax.ejb.SessionContext;
-
 /**
  * Defines method signatures for CSM User CRUD operations.
  * @author oweisms
@@ -97,7 +95,7 @@ public interface CSMUserUtil {
 
     /**
      * Create a new CSM user.
-     * 
+     *
      * @param user user
      * @param loginName loginName
      * @param password password
@@ -108,7 +106,7 @@ public interface CSMUserUtil {
 
     /**
      * Update an existing CSM user.
-     * 
+     *
      * @param user user
      * @param loginName loginName
      * @param password password
@@ -119,7 +117,7 @@ public interface CSMUserUtil {
 
     /**
      * Retrieve an existing CSM user.
-     * 
+     *
      * @param loginName loginName
      * @return user
      * @throws PAException PAException
@@ -128,7 +126,7 @@ public interface CSMUserUtil {
 
     /**
      * Retrieves an existing CSM user by id.
-     * 
+     *
      * @param id the id of the CSM user to retrieve
      * @return The CSM user with the give id
      * @throws PAException on error
@@ -143,19 +141,10 @@ public interface CSMUserUtil {
 
     /**
      * Assigns the given user to the given group.
-     * 
+     *
      * @param loginName the user to add to the group
      * @param groupName the group to add the user to
      * @throws PAException on error
      */
     void assignUserToGroup(String loginName, String groupName) throws PAException;
-
-    /**
-     * Will lookup the {@link User} object for the given EJB Context, 
-     * or throw {@link PAException} if none exist.
-     * @param ejbContext SessionContext to get Principal
-     * @return User
-     * @throws PAException on error
-     */
-    User lookupUser(SessionContext ejbContext) throws PAException;
 }

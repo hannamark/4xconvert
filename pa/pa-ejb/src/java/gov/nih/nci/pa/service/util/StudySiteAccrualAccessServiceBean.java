@@ -79,6 +79,7 @@
 
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
@@ -103,9 +104,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -132,15 +131,6 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
     private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
     @EJB
     private RegistryUserServiceLocal registryUserService;
-    private SessionContext ejbContext;
-    /**
-     * Set the invocation context.
-     * @param ctx EJB context
-     */
-    @Resource
-    public void setSessionContext(SessionContext ctx) {
-        this.ejbContext = ctx;
-    }
 
     /**
      * {@inheritDoc}
@@ -332,12 +322,12 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
         checkNull(bo.getStatusCode(), "Access Status must be set.");
         bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         if (bo.getId() == null) {
-            bo.setUserLastCreated(CSMUserService.getInstance().lookupUser(ejbContext));
+            bo.setUserLastCreated(CSMUserService.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
             bo.setDateLastCreated(new Date());
             bo.setUserLastUpdated(null);
             bo.setDateLastUpdated(null);
         } else {
-            bo.setUserLastUpdated(CSMUserService.getInstance().lookupUser(ejbContext));
+            bo.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
             bo.setDateLastUpdated(new Date());
         }
     }

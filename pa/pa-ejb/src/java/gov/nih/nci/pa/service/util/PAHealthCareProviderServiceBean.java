@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.StudySiteContact;
@@ -105,7 +106,7 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemote {
     private static final int THREE = 3;

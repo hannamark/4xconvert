@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -112,7 +113,7 @@ import org.hibernate.Session;
 * copyright holder, NCI.
 */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
 

@@ -33,7 +33,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PDQDiseaseAlternameBeanLocal
     extends AbstractBaseIsoService<PDQDiseaseAlternameDTO, PDQDiseaseAltername, PDQDiseaseAlternameConverter>
-    implements PDQDiseaseAlternameServiceLocal , PDQDiseaseAlternameServiceRemote {
+    implements PDQDiseaseAlternameServiceLocal {
 
     /**
      * {@inheritDoc}
@@ -52,7 +52,7 @@ public class PDQDiseaseAlternameBeanLocal
         PageSortParams<PDQDiseaseAltername> params = new PageSortParams<PDQDiseaseAltername>(
                 PAConstants.MAX_SEARCH_RESULTS, 0, PDQDiseaseAlternameSortCriterion.DISEASE_ALTERNAME_ID, false);
         // step 3: query the result
-        List<PDQDiseaseAltername> results = search(new AnnotatedBeanSearchCriteria<PDQDiseaseAltername>(criteria), 
+        List<PDQDiseaseAltername> results = search(new AnnotatedBeanSearchCriteria<PDQDiseaseAltername>(criteria),
                 params);
         return convertFromDomainToDTOs(results);
     }

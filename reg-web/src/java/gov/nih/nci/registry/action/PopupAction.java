@@ -474,8 +474,6 @@ public class PopupAction extends ActionSupport implements Preparable {
             handleError(e.getMessage());
         } catch (CurationException e) {
             handleError(e.getMessage());
-        } catch (PAException e) {
-            handleError(e.getMessage());
         }
         return "create_org_response";
     }

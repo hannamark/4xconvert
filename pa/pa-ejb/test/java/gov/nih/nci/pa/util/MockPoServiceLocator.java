@@ -8,7 +8,6 @@ import gov.nih.nci.pa.service.MockPoOrganizationalContactCorrelationService;
 import gov.nih.nci.pa.service.MockPoOversightCommitteeCorrelationService;
 import gov.nih.nci.pa.service.MockPoPersonEntityService;
 import gov.nih.nci.pa.service.MockPoResearchOrganizationCorrelationService;
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -23,72 +22,81 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 public class MockPoServiceLocator implements PoServiceLocator {
 
     private final OrganizationEntityServiceRemote organizationEntityServiceRemote = new MockPoOrganizationEntityService();
-    private final HealthCareFacilityCorrelationServiceRemote hcfService = new MockPoHealthCareFacilityCorrelationService(); 
+    private final HealthCareFacilityCorrelationServiceRemote hcfService = new MockPoHealthCareFacilityCorrelationService();
     private final ResearchOrganizationCorrelationServiceRemote roService = new MockPoResearchOrganizationCorrelationService();
     private final OversightCommitteeCorrelationServiceRemote ocService = new MockPoOversightCommitteeCorrelationService();
     private final PersonEntityServiceRemote personEntityService = new MockPoPersonEntityService();
     private final ClinicalResearchStaffCorrelationServiceRemote crsService = new MockPoClinicalResearchStaffCorrelationService();
     private final HealthCareProviderCorrelationServiceRemote hcpService = new MockPoHealthCareProviderCorrelationService();
     private final OrganizationalContactCorrelationServiceRemote orgContact = new MockPoOrganizationalContactCorrelationService();
-    
-  
-    public OrganizationEntityServiceRemote getOrganizationEntityService()
-            throws PAException {
+
+    /**
+     * {@inheritDoc}
+     */
+    public OrganizationEntityServiceRemote getOrganizationEntityService() {
        return organizationEntityServiceRemote;
     }
 
-    public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService()
-    throws PAException {
-        return hcfService;
-    }
-    
     /**
-     * @return HealthCareFacilityCorrelationServiceRemote
-     * @throws PAException on error
+     * {@inheritDoc}
      */
-    public ResearchOrganizationCorrelationServiceRemote
-        getResearchOrganizationCorrelationService() throws PAException {
-        return roService ;
+    public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() {
+        return hcfService;
     }
 
     /**
-     * @return OversightCommittee
+     * {@inheritDoc}
      */
-    public OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationService()
-            throws PAException {
+    public ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService() {
+        return roService;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationService() {
         return ocService;
     }
 
-    public ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService()
-            throws PAException {
+    /**
+     * {@inheritDoc}
+     */
+    public ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService() {
         return crsService;
     }
 
-    public HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService()
-            throws PAException {
+    /**
+     * {@inheritDoc}
+     */
+    public HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() {
         return hcpService;
     }
 
-    public OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService()
-            throws PAException {
+    /**
+     * {@inheritDoc}
+     */
+    public OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService() {
         return orgContact;
     }
 
-    public PersonEntityServiceRemote getPersonEntityService()
-            throws PAException {
+    /**
+     * {@inheritDoc}
+     */
+    public PersonEntityServiceRemote getPersonEntityService() {
         return personEntityService;
     }
 
-    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService()
-            throws PAException {
-        // TODO Auto-generated method stub
+    /**
+     * {@inheritDoc}
+     */
+    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() {
         return null;
     }
 
-    public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService()
-            throws PAException {
-        // TODO Auto-generated method stub
+    /**
+     * {@inheritDoc}
+     */
+    public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() {
         return null;
     }
-
 }

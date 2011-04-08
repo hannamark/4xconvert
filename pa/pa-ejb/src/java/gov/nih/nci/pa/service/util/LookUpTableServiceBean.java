@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.domain.AbstractLookUpEntity;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Country;
@@ -109,7 +110,7 @@ import org.hibernate.criterion.Restrictions;
 */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
 @SuppressWarnings("unchecked")
 public class LookUpTableServiceBean implements LookUpTableServiceRemote {
 

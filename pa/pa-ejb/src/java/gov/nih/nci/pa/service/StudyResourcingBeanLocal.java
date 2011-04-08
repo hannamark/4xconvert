@@ -96,17 +96,13 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
-import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -114,21 +110,17 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.hibernate.Session;
 
 /**
  * @author asharma
  *
  */
 @Stateless
-@Interceptors({ HibernateSessionInterceptor.class })
+@Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyResourcingBeanLocal extends
         AbstractStudyIsoService<StudyResourcingDTO, StudyResourcing, StudyResourcingConverter> implements
         StudyResourcingServiceLocal {
-
-    private static StudyResourcingConverter src = new StudyResourcingConverter();
-    private SessionContext ejbContext;
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
 
     /**
@@ -136,15 +128,6 @@ public class StudyResourcingBeanLocal extends
      */
     public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
         this.paServiceUtils = paServiceUtils;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Resource
-    public void setSessionContext(SessionContext ctx) {
-        this.ejbContext = ctx;
     }
 
     /**
@@ -184,18 +167,14 @@ public class StudyResourcingBeanLocal extends
         }
         studyResourcing.setOrganizationIdentifier(IiConverter.convertToString(
                 studyResourcingDTO.getOrganizationIdentifier()));
-        studyResourcing.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-        studyResourcing.setUserLastUpdated(CSMUserService.getInstance().lookupUser(ejbContext));
         studyResourcing.setFundingMechanismCode(CdConverter.convertCdToString(
                 studyResourcingDTO.getFundingMechanismCode()));
         studyResourcing.setNciDivisionProgramCode(NciDivisionProgramCode.getByCode(
                 studyResourcingDTO.getNciDivisionProgramCode().getCode()));
         studyResourcing.setNihInstituteCode(studyResourcingDTO.getNihInstitutionCode().getCode());
         studyResourcing.setSerialNumber(StConverter.convertToString(studyResourcingDTO.getSerialNumber()));
-        Session session = HibernateUtil.getCurrentSession();
-        session.merge(studyResourcing);
-        session.flush();
-        return src.convertFromDomainToDto(studyResourcing);
+
+        return super.update(convertFromDomainToDto(studyResourcing));
     }
 
     /**
@@ -203,20 +182,8 @@ public class StudyResourcingBeanLocal extends
      */
     public StudyResourcingDTO createStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
         validate(studyResourcingDTO);
-        Session session = null;
-        StudyResourcing studyResourcing = src.convertFromDtoToDomain(studyResourcingDTO);
-        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
-        studyResourcing.setDateLastCreated(now);
-        studyResourcing.setUserLastCreated(CSMUserService.getInstance().lookupUser(ejbContext));
-        // create Protocol Obj
-        StudyProtocol studyProtocol = new StudyProtocol();
-        studyProtocol.setId(IiConverter.convertToLong(studyResourcingDTO.getStudyProtocolIdentifier()));
-        studyResourcing.setStudyProtocol(studyProtocol);
-        studyResourcing.setActiveIndicator(true);
-        session = HibernateUtil.getCurrentSession();
-        session.save(studyResourcing);
-        session.flush();
-        return src.convertFromDomainToDto(studyResourcing);
+        studyResourcingDTO.setActiveIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        return super.create(studyResourcingDTO);
     }
 
     /**
@@ -257,7 +224,6 @@ public class StudyResourcingBeanLocal extends
         StudyResourcingDTO toDelete = super.get(studyResourcingDTO.getIdentifier());
         toDelete.setActiveIndicator(BlConverter.convertToBl(Boolean.FALSE));
         toDelete.setInactiveCommentText(studyResourcingDTO.getInactiveCommentText());
-        super.setSessionContext(ejbContext);
         super.update(toDelete);
         return Boolean.FALSE;
     }

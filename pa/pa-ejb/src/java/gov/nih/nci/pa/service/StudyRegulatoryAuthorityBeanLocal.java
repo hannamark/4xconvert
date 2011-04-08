@@ -108,7 +108,7 @@ import javax.interceptor.Interceptors;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors({HibernateSessionInterceptor.class , ProprietaryTrialInterceptor.class })
+@Interceptors({HibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
 public class StudyRegulatoryAuthorityBeanLocal
     extends AbstractCurrentStudyIsoService<StudyRegulatoryAuthorityDTO, StudyRegulatoryAuthority,
         StudyRegulatoryAuthorityConverter> implements StudyRegulatoryAuthorityServiceLocal {

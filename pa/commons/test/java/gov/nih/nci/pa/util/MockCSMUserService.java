@@ -92,8 +92,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.ejb.SessionContext;
-
 import org.apache.commons.lang.NotImplementedException;
 
 /**
@@ -138,7 +136,9 @@ public class MockCSMUserService implements CSMUserUtil {
                 return user;
             }
         }
-        return new User();
+        User user = new User();
+        user.setUserId(1L);
+        return user;
     }
 
     public Set<User> getCSMUsers() throws PAException {
@@ -152,10 +152,6 @@ public class MockCSMUserService implements CSMUserUtil {
     }
 
     public User getCSMUserById(Long id) throws PAException {
-        return users.get(0);
-    }
-
-    public User lookupUser(SessionContext sessionContext) throws PAException {
         return users.get(0);
     }
 }

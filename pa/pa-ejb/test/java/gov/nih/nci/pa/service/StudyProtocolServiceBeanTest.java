@@ -87,6 +87,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.AnatomicSiteTest;
@@ -118,9 +119,11 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MockPAServiceUtils;
 import gov.nih.nci.pa.util.AnatomicSiteComparator;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -149,7 +152,9 @@ public class StudyProtocolServiceBeanTest {
     private final StudyProtocolServiceLocal remoteEjb = bean;
     @Before
     public void setUp() throws Exception {
+        CSMUserService.setRegistryUserService(new MockCSMUserService());
         TestSchema.reset();
+        CaseSensitiveUsernameHolder.setUser(TestSchema.getUser().getLoginName());
         AnatomicSite as = new AnatomicSite();
         as.setCode("Lung");
         as.setCodingSystem("Summary 4 Anatomic Sites");
@@ -617,9 +622,9 @@ public class StudyProtocolServiceBeanTest {
             dws.setCommentText("Accepted");
             dws.setUserLastUpdated(sp.getUserLastUpdated());
             TestSchema.addUpdObject(dws);
-            
+
             AnatomicSite as1 = AnatomicSiteTest.createAnatomicSiteObj("Lung");
-            TestSchema.addUpdObject(as1);         
+            TestSchema.addUpdObject(as1);
             sp.setSummary4AnatomicSites(new TreeSet<AnatomicSite>(new AnatomicSiteComparator()));
             sp.getSummary4AnatomicSites().add(as1);
             TestSchema.addUpdObject(sp);
@@ -682,7 +687,7 @@ public class StudyProtocolServiceBeanTest {
             }
         }
     }
-    
+
     @Test
     public void testAddNciId() throws PAException {
         InterventionalStudyProtocolDTO ispDTO =
@@ -691,6 +696,6 @@ public class StudyProtocolServiceBeanTest {
         (new MockPAServiceUtils()).addNciIdentifierToTrial(ii);
         StudyProtocolDTO spDto = bean.getStudyProtocol(ii);
         assertNotNull(spDto.getIdentifier().getExtension());
-        assertNotNull(spDto.getSecondaryIdentifiers().getItem().iterator().next().getExtension());        
+        assertNotNull(spDto.getSecondaryIdentifiers().getItem().iterator().next().getExtension());
     }
 }

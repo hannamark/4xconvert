@@ -179,7 +179,7 @@
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
-    <target name="compile-tests" depends="compile, configure-tests" description="Compile the test code">
+    <target name="compile-tests" depends="compile,ivy-test,configure-tests" description="Compile the test code">
         <mkdir dir="${web.build.testOutputDir}"/>
         <javac destdir="${web.build.testOutputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
                target="1.5" verbose="false" fork="false" source="1.5">
@@ -427,7 +427,7 @@
     </target>
 
     <target name="ivy-test"
-            depends="ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian,ivy-test-cobertura"
+            depends="ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian,ivy-test-cobertura,ivy-selenium"
             description="Resolves and retrieves the JARs needed to test the subproject">
         <ivy:resolve refresh="true" conf="test"/>
         <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="test"/>

@@ -53,7 +53,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 @Interceptors(HibernateSessionInterceptor.class)
 public class PlannedActivityBeanLocal extends
         AbstractStudyIsoService<PlannedActivityDTO, PlannedActivity, PlannedActivityConverter> implements
-        PlannedActivityServiceLocal, PlannedActivityServiceRemote {
+        PlannedActivityServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(PlannedActivityBeanLocal.class);
 
@@ -642,7 +642,7 @@ public class PlannedActivityBeanLocal extends
             String interName) {
         return interName.equals(interventionName)
                 && padto.getSubcategoryCode().getCode().equals(dto.getSubcategoryCode().getCode())
-                && ((padto.getTextDescription().getValue() == null && dto.getTextDescription().getValue() == null) 
+                && ((padto.getTextDescription().getValue() == null && dto.getTextDescription().getValue() == null)
                         || (padto.getTextDescription().getValue() != null
                         && dto.getTextDescription().getValue() != null && padto.getTextDescription().getValue().equals(
                         dto.getTextDescription().getValue())))

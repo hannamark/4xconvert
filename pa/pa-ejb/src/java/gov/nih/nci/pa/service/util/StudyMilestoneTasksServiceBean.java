@@ -117,7 +117,7 @@ import org.apache.log4j.Logger;
  * @since 07/29/2009
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors({HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Local(StudyMilestoneTasksServiceLocal.class)
 @LocalHome(StudyMilestoneTasksServiceLocalHome.class)

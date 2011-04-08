@@ -1,6 +1,5 @@
 package gov.nih.nci.pa.util;
 
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -48,36 +47,29 @@ public final class PoRegistry {
     /**
      *
      * @return OrganizationEntityServiceRemote
-     * @throws PAException on error
      */
-    public static OrganizationEntityServiceRemote getOrganizationEntityService() throws PAException {
+    public static OrganizationEntityServiceRemote getOrganizationEntityService() {
         return getInstance().getPoServiceLocator().getOrganizationEntityService();
     }
 
     /**
      * @return HealthCareFacilityCorrelationServiceRemote
-     * @throws PAException on error
      */
-    public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService()
-        throws PAException {
+    public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() {
         return getInstance().getPoServiceLocator().getHealthCareFacilityCorrelationService();
     }
 
     /**
      * @return HealthCareFacilityCorrelationServiceRemote
-     * @throws PAException on error
      */
-    public static ResearchOrganizationCorrelationServiceRemote
-        getResearchOrganizationCorrelationService() throws PAException {
+    public static ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService() {
         return getInstance().getPoServiceLocator().getResearchOrganizationCorrelationService();
     }
 
     /**
      * @return HealthCareFacilityCorrelationServiceRemote
-     * @throws PAException on error
      */
-    public static OversightCommitteeCorrelationServiceRemote
-        getOversightCommitteeCorrelationService() throws PAException {
+    public static OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationService() {
         return getInstance().getPoServiceLocator().getOversightCommitteeCorrelationService();
     }
 
@@ -98,52 +90,41 @@ public final class PoRegistry {
     /**
      *
      * @return PersonEntityServiceRemote
-     * @throws PAException e
      */
-    public static PersonEntityServiceRemote getPersonEntityService() throws PAException {
+    public static PersonEntityServiceRemote getPersonEntityService() {
         return getInstance().getPoServiceLocator().getPersonEntityService();
     }
     /**
      * @return ClinicalResearchStaffCorrelationServiceRemote
-     * @throws PAException e
      */
-    public static ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService()
-    throws PAException {
+    public static ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService() {
         return getInstance().getPoServiceLocator().getClinicalResearchStaffCorrelationService();
     }
     /**
      *
      * @return HealthCareProviderCorrelationServiceRemote
-     * @throws PAException e
      */
-    public static HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService()
-    throws PAException {
+    public static HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() {
         return getInstance().getPoServiceLocator().getHealthCareProviderCorrelationService();
     }
     /**
      *
      * @return OrganizationalContactCorrelationServiceRemote
-     * @throws PAException e
      */
-    public static OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService()
-    throws PAException {
+    public static OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService() {
        return getInstance().getPoServiceLocator().getOrganizationalContactCorrelationService();
     }
     /**
-     * @throws PAException e
      * @return IdentifiedOrganizationCorrelationServiceRemote
      */
-    public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService()
-        throws PAException {
+    public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() {
         return getInstance().getPoServiceLocator().getIdentifiedOrganizationEntityService();
     }
 
     /**
-     * @throws PAException e
      * @return IdentifiedOrganizationCorrelationServiceRemote
      */
-    public static IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService()
-        throws PAException {
+    public static IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() {
         return getInstance().getPoServiceLocator().getIdentifiedPersonEntityService();
     }
 }

@@ -5,8 +5,6 @@ import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
-import java.rmi.RemoteException;
-
 
 /**
  * A class for all Po look-ups.
@@ -47,40 +45,32 @@ public final class PoRegistry {
     public void setPoServiceLocator(PoServiceLocator poServiceLocator) {
         this.poServiceLocator  = poServiceLocator;
     }
+    
     /**
-     * 
      * @return PersonEntityServiceRemote
-     * @throws RemoteException e
      */
-    public static PersonEntityServiceRemote getPersonEntityService() 
-        throws RemoteException {
+    public static PersonEntityServiceRemote getPersonEntityService() {
         return getInstance().getPoServiceLocator().getPersonEntityService();
     }
     
     /**
-     * 
      * @return PatientCorrelationServiceRemote
-     * @throws RemoteException the exception
      */
-    public static PatientCorrelationServiceRemote getPatientCorrelationService() throws RemoteException {
+    public static PatientCorrelationServiceRemote getPatientCorrelationService() {
         return getInstance().getPoServiceLocator().getPatientCorrelationService();
     }
     
     /**
-     * 
      * @return OrganizationEntityServiceRemote
-     * @throws RemoteException e
      */
-    public static OrganizationEntityServiceRemote getOrganizationEntityService() throws RemoteException {
+    public static OrganizationEntityServiceRemote getOrganizationEntityService() {
         return getInstance().getPoServiceLocator().getOrganizationEntityService();
     }
     
     /**
      * @return the identifier organization correlation service
-     * @throws RemoteException on error
      */
-    public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationCorrelationService() 
-        throws RemoteException {
+    public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationCorrelationService() {
         return getInstance().getPoServiceLocator().getIdentifiedOrganizationCorrelationService();
     }
 }

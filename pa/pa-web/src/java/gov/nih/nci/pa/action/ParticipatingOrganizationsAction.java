@@ -699,9 +699,6 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             } catch (NumberFormatException e) {
                 addActionError(Constants.FAILURE_MESSAGE + e.getMessage());
                 return ERROR_PRIMARY_CONTACTS;
-            } catch (PAException e) {
-                addActionError(Constants.FAILURE_MESSAGE + e.getMessage());
-                return ERROR_PRIMARY_CONTACTS;
             }
         }
         ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
@@ -857,7 +854,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
             .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
             String poOrgId = tab.getFacilityOrganization().getIdentifier();
-            
+
             validatePrimaryContact(poOrgId, persId, email, telephone);
             if (hasFieldErrors()) {
                 reloadPrimaryContact(persId, email, telephone);
@@ -912,20 +909,20 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     }
 
     private void validatePrimaryContact(String poOrgId, String persId, String email, String telephone) {
-        validatePersonIdAndAtLeastOneTelecom(persId, email, telephone); 
+        validatePersonIdAndAtLeastOneTelecom(persId, email, telephone);
         validateEmail(email);
         validatePhone(poOrgId, telephone);
     }
-    
+
     private void validatePersonIdAndAtLeastOneTelecom(String persId, String email, String telephone) {
         if (StringUtils.isEmpty(persId)) {
             addFieldError("personContactWebDTO.firstName", getText("Please lookup and select person"));
         }
         if (StringUtils.isEmpty(email) && StringUtils.isEmpty(telephone)) {
             addFieldError("personContactWebDTO.telephone", getText("error.enterEmailAddressOrPhone"));
-        } 
+        }
     }
-    
+
     private void validatePhone(String poOrgId, String telephone) {
         Ii orgIi = IiConverter.convertToPoOrganizationIi(poOrgId);
         String countryName = paServiceUtil.getEntityCountryName(orgIi);
@@ -933,13 +930,13 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             addFieldError("personContactWebDTO.telephone", getText("error.usOrCanPhone"));
        }
     }
-    
+
     private void validateEmail(String email) {
         if (StringUtils.isNotBlank(email) && !PAUtil.isValidEmail(email)) {
             addFieldError("personContactWebDTO.email", getText("error.enterValidEmail"));
         }
     }
- 
+
     private void reloadPrimaryContact(String persId, String email, String telephone) throws PAException,
         NullifiedRoleException {
         personContactWebDTO = new PaPersonDTO();
@@ -951,8 +948,8 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             reloadPersonContactWebDto(persId, valueOfPerId);
         }
     }
-    
-    private void reloadPersonContactWebDto(String persId, Long valueOfPerId) 
+
+    private void reloadPersonContactWebDto(String persId, Long valueOfPerId)
         throws PAException, NullifiedRoleException {
         if (selectedPersTO != null && selectedPersTO.getName() != null) {
             gov.nih.nci.pa.dto.PaPersonDTO personDTO = PADomainUtils.convertToPaPersonDTO(selectedPersTO);
@@ -1429,9 +1426,6 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             // convert the PO DTO to the pa domain
             personContactWebDTO = PADomainUtils.convertToPaPersonDTO(perDTO);
             personContactWebDTO.setSelectedPersId(personContactWebDTO.getId());
-        } catch (PAException e) {
-            LOG.error(e);
-            addActionError(e.getMessage());
         } catch (TooManyResultsException e) {
             LOG.error(e);
             addActionError(e.getMessage());

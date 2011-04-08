@@ -1214,12 +1214,8 @@ public class PAUtil {
 
           if (isIiNotNull(newIi)) {
                 try {
-                    poOrg = PoRegistry.getOrganizationEntityService().
-                    getOrganization(newIi);
-
+                    poOrg = PoRegistry.getOrganizationEntityService().getOrganization(newIi);
                 } catch (NullifiedEntityException e) {
-                    LOG.info("handleNullifiedOrganization: " + e.getMessage());
-                } catch (PAException e) {
                     LOG.info("handleNullifiedOrganization: " + e.getMessage());
                 }
                 if (poOrg == null) {
@@ -1290,8 +1286,6 @@ public class PAUtil {
             try {
                poPer = PoRegistry.getPersonEntityService().getPerson(newIi);
             } catch (NullifiedEntityException e) {
-                LOG.info("handleNullifiedPerson: " + e.getMessage());
-            } catch (PAException e) {
                 LOG.info("handleNullifiedPerson: " + e.getMessage());
             }
 

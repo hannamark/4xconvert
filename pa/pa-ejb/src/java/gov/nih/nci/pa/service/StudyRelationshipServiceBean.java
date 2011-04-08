@@ -79,6 +79,7 @@
 
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 
 import javax.annotation.security.RolesAllowed;
@@ -94,11 +95,11 @@ import org.jboss.annotation.security.SecurityDomain;
  * @since 04/01/2009
  */
 @Stateless
-@Interceptors({ HibernateSessionInterceptor.class })
+@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SecurityDomain("pa")
-@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
+@RolesAllowed({"gridClient", "client", "Abstractor" , "Submitter" , "Outcomes" })
 public class StudyRelationshipServiceBean extends StudyRelationshipBeanLocal implements StudyRelationshipServiceRemote {
-   
-   
+
+
 }

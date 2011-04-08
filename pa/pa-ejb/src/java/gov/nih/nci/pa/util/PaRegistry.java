@@ -77,14 +77,13 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
-import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
-import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
@@ -138,10 +137,6 @@ import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
  *
  */
 public final class PaRegistry {
-    /**
-     * Number of records to display by default in display tag controlled tables.
-     */
-    public static final int DEFAULT_RECORDS_PER_PAGE = 20;
     private static final PaRegistry PA_REGISTRY = new PaRegistry();
     private ServiceLocator serviceLocator;
 
@@ -352,40 +347,32 @@ public final class PaRegistry {
     }
 
     /**
-     *
      * @return CTGovXmlGeneratorServiceRemote
-     * @throws PAException on error
      */
-    public static CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService() throws PAException {
+    public static CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService() {
         return getInstance().getServiceLocator().getCTGovXmlGeneratorService();
     }
 
     /**
     *
     * @return PDQXmlGeneratorServiceRemote
-    * @throws PAException on error
     */
-    public static PDQXmlGeneratorServiceRemote getPDQXmlGeneratorService() throws PAException {
+    public static PDQXmlGeneratorServiceRemote getPDQXmlGeneratorService() {
         return getInstance().getServiceLocator().getPDQXmlGeneratorService();
     }
 
 
     /**
-     *
      * @return AbstractionCompletionServiceRemote
-     * @throws PAException on error
      */
-    public static AbstractionCompletionServiceRemote getAbstractionCompletionService() throws PAException {
+    public static AbstractionCompletionServiceRemote getAbstractionCompletionService() {
         return getInstance().getServiceLocator().getAbstractionCompletionService();
     }
 
-    // DocumentWorkflowStatusServiceRemote
     /**
-     *
      * @return DocumentWorkflowStatusServiceLocal
-     * @throws PAException on error
      */
-    public static DocumentWorkflowStatusServiceLocal getDocumentWorkflowStatusService() throws PAException {
+    public static DocumentWorkflowStatusServiceLocal getDocumentWorkflowStatusService() {
         return getInstance().getServiceLocator().getDocumentWorkflowStatusService();
     }
 
@@ -446,11 +433,9 @@ public final class PaRegistry {
     }
 
     /**
-     *
      * @return TSRReportGeneratorServiceRemote
-     * @throws PAException on error
      */
-    public static TSRReportGeneratorServiceRemote getTSRReportGeneratorService() throws PAException {
+    public static TSRReportGeneratorServiceRemote getTSRReportGeneratorService() {
         return getInstance().getServiceLocator().getTSRReportGeneratorService();
     }
 

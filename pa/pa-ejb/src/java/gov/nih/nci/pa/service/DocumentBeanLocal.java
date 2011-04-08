@@ -88,13 +88,13 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.convert.DocumentConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
-import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
@@ -105,8 +105,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -125,17 +123,6 @@ import org.hibernate.Session;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Document, DocumentConverter> implements
         DocumentServiceLocal {
-
-    private SessionContext ejbContext;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Resource
-    public void setSessionContext(SessionContext ctx) {
-        this.ejbContext = ctx;
-    }
 
     /**
      * {@inheritDoc}
@@ -163,18 +150,12 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     public DocumentDTO create(DocumentDTO docDTO) throws PAException {
         validate(docDTO);
         enforceDuplicateDocument(docDTO);
-        Document doc = new DocumentConverter().convertFromDtoToDomain(docDTO);
-        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
-        doc.setDateLastCreated(now);
-        doc.setUserLastCreated(CSMUserService.getInstance().lookupUser(ejbContext));
-
-        doc.setActiveIndicator(true);
-        Session session = HibernateUtil.getCurrentSession();
-        session.save(doc);
-        session.flush();
-        docDTO.setIdentifier(IiConverter.convertToDocumentIi(doc.getId()));
-        saveFile(docDTO);
-        return docDTO;
+        docDTO.setActiveIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        DocumentDTO saved = super.create(docDTO);
+        saved.setText(docDTO.getText());
+        saved.setFileName(docDTO.getFileName());
+        saveFile(saved);
+        return saved;
     }
 
     /**
@@ -209,8 +190,8 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     public DocumentDTO update(DocumentDTO docDTO) throws PAException {
         validate(docDTO);
         docDTO.setInactiveCommentText(null);
-        updateObjectToInActive(docDTO);
-        return create(docDTO);
+        docDTO.setActiveIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        return super.update(docDTO);
     }
 
     /**
@@ -223,7 +204,8 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         }
         DocumentDTO docDTO = get(documentIi);
         checkTypeCodesForDelete(docDTO);
-        updateObjectToInActive(docDTO);
+        docDTO.setActiveIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        super.update(docDTO);
     }
 
     /**
@@ -267,20 +249,6 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         if (PAUtil.isEdNull(docDTO.getText())) {
             throw new PAValidationException("Document data cannot be null ");
         }
-    }
-
-    private void updateObjectToInActive(DocumentDTO docDTO) throws PAException {
-        Session session = HibernateUtil.getCurrentSession();
-
-        Document doc = convertFromDtoToDomain(super.get(docDTO.getIdentifier()));
-        doc.setId(IiConverter.convertToLong(docDTO.getIdentifier()));
-        doc.setActiveIndicator(false);
-        doc.setInactiveCommentText(StConverter.convertToString(docDTO.getInactiveCommentText()));
-        doc.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
-        doc.setUserLastUpdated(CSMUserService.getInstance().lookupUser(ejbContext));
-
-        session.merge(doc);
-        session.flush();
     }
 
     private void enforceDuplicateDocument(DocumentDTO docDTO) throws PAException {

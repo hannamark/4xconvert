@@ -76,6 +76,8 @@
 */
 package gov.nih.nci.accrual.service;
 
+import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
+import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
@@ -98,6 +100,7 @@ public abstract class AbstractServiceTest<SERVICE_INTERFACE> {
     @Before
     public void setUpTestSchema() throws Exception {
         TestSchema.reset();
+        AccrualCsmUtil.setCsmUtil(new MockCsmUtil());
    }
 
     public abstract void instantiateServiceBean() throws Exception;

@@ -4,14 +4,14 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
-import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
@@ -270,8 +270,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return null;
     }
 
-    public AbstractionCompletionServiceRemote getAbstractionCompletionService()
-            throws PAException {
+    public AbstractionCompletionServiceRemote getAbstractionCompletionService() {
         return abstractionCompletionService;
     }
 
@@ -280,8 +279,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return null;
     }
 
-    public CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService()
-            throws PAException {
+    public CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -400,8 +398,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return null;
     }
 
-    public TSRReportGeneratorServiceRemote getTSRReportGeneratorService()
-            throws PAException {
+    public TSRReportGeneratorServiceRemote getTSRReportGeneratorService() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -440,7 +437,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public PDQXmlGeneratorServiceRemote getPDQXmlGeneratorService() throws PAException {
+    public PDQXmlGeneratorServiceRemote getPDQXmlGeneratorService() {
         // TODO Auto-generated method stub
         return null;
     }

@@ -537,8 +537,6 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
             gtdDTO.setResponsiblePersonName(personDTO.getLastName() + "," + personDTO.getFirstName());
         } catch (NullifiedEntityException e) {
             LOG.error("got Nullified exception from PO for person Id " + persId);
-        } catch (PAException e) {
-            LOG.error("got PAException for person Id " + persId);
         }
         return "display_responsible_contact";
     }

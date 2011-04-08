@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.pa.report.util;
 
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
@@ -97,94 +96,82 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 public class MockPoServiceLocator implements PoServiceLocator {
 
-    private final OrganizationEntityServiceRemote organizationEntityServiceRemote 
+    private final OrganizationEntityServiceRemote organizationEntityServiceRemote
         = new MockPoOrganizationEntityService();
-  
-  
-    public OrganizationEntityServiceRemote getOrganizationEntityService()
-            throws PAException {
+
+
+    public OrganizationEntityServiceRemote getOrganizationEntityService() {
        return organizationEntityServiceRemote;
     }
 
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.PoServiceLocator#getHealthCareProverService()
+    /**
+     * {@inheritDoc}
      */
-    public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() throws PAException {
+    public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() {
         // TODO Auto-generated method stub
         return null;
     }
 
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.PoServiceLocator#getResearchOrganizationCorrelationService()
+    /**
+     * {@inheritDoc}
      */
-    public ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService() throws PAException {
+    public ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService() {
         // TODO Auto-generated method stub
         return null;
     }
 
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.PoServiceLocator#getOversightCommitteeCorrelationService()
+    /**
+     * {@inheritDoc}
      */
-    public OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationService() throws PAException {
+    public OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationService() {
         // TODO Auto-generated method stub
         return null;
     }
 
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.PoServiceLocator#getPersonEntityService()
+    /**
+     * {@inheritDoc}
      */
-    public PersonEntityServiceRemote getPersonEntityService() throws PAException {
+    public PersonEntityServiceRemote getPersonEntityService() {
         // TODO Auto-generated method stub
         return null;
     }
 
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.PoServiceLocator#getClinicalResearchStaffCorrelationService()
+    /**
+     * {@inheritDoc}
      */
-    public ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService()
-            throws PAException {
+    public ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService() {
         // TODO Auto-generated method stub
         return null;
     }
 
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.PoServiceLocator#getHealthCareProviderCorrelationService()
+    /**
+     * {@inheritDoc}
      */
-    public HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() throws PAException {
+    public HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() {
         // TODO Auto-generated method stub
         return null;
     }
 
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.PoServiceLocator#getOrganizationalContactCorrelationService()
+    /**
+     * {@inheritDoc}
      */
-    public OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService()
-            throws PAException {
+    public OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService() {
         // TODO Auto-generated method stub
         return null;
     }
 
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.PoServiceLocator#getIdentifiedOrganizationEntityService()
+    /**
+     * {@inheritDoc}
      */
-    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() throws PAException {
+    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() {
         // TODO Auto-generated method stub
         return null;
     }
 
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.PoServiceLocator#getIdentifiedPersonEntityService()
+    /**
+     * {@inheritDoc}
      */
-    public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() throws PAException {
+    public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() {
         // TODO Auto-generated method stub
         return null;
     }

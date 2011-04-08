@@ -92,11 +92,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.service.util.BatchImportResults;
 import gov.nih.nci.accrual.service.util.BatchValidationResults;
 import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderBean;
 import gov.nih.nci.accrual.service.util.CountryBean;
 import gov.nih.nci.accrual.service.util.CountryService;
+import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.accrual.service.util.POPatientBean;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.util.PaServiceLocator;
@@ -157,6 +159,7 @@ public class BatchUploadReaderServiceTest {
     @Before
     public void setUp() throws Exception {
         TestSchema.reset();
+        AccrualCsmUtil.setCsmUtil(new MockCsmUtil());
         abbreviatedIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId());
         inactiveIi = IiConverter.convertToStudyContactIi(TestSchema.studyProtocols.get(1).getId());
         completeIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(2).getId());

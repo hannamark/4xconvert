@@ -4,9 +4,9 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
+import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.test.util.MockPrincipal;
 import gov.nih.nci.pa.util.Constants;
 
 import org.junit.Before;
@@ -19,19 +19,19 @@ import org.junit.Test;
  */
 public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 
-	StudyProtocolQueryAction spqAction;
-	 StudyProtocolQueryCriteria criteria;
+    StudyProtocolQueryAction spqAction;
+    StudyProtocolQueryCriteria criteria;
 
-	@Before
-	public void setUp() throws PAException {
-	  spqAction =  new StudyProtocolQueryAction();
-	  criteria = new StudyProtocolQueryCriteria();
-	  criteria.setNciIdentifier("NCI-2009-00001");
-	  getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
-	  getRequest().setUserPrincipal(new MockPrincipal("suAbstractor"));
-	  getSession().setAttribute(Constants.USER_ROLE, Constants.SUABSTRACTOR);
+    @Before
+    public void setUp() throws PAException {
+        spqAction =  new StudyProtocolQueryAction();
+        criteria = new StudyProtocolQueryCriteria();
+        criteria.setNciIdentifier("NCI-2009-00001");
+        getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
+        CaseSensitiveUsernameHolder.setUser("suAbstractor");
+        getSession().setAttribute(Constants.USER_ROLE, Constants.SUABSTRACTOR);
+    }
 
-	}
 	/**
 	 * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#execute()}.
 	 */

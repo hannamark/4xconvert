@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.service;
 import gov.nih.nci.accrual.convert.AbstractConverter;
 import gov.nih.nci.accrual.convert.Converters;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
+import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
@@ -93,9 +94,6 @@ import java.lang.reflect.Type;
 import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.zip.DataFormatException;
-
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -116,19 +114,6 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
     private final Class<BO> typeArgument;
     private final Class<CONVERTER> converterArgument;
     private static final Logger LOG = Logger.getLogger(AbstractBaseAccrualBean.class);
-    private SessionContext ejbContext;
-
-    /**
-     * @return the ejbContext
-     */
-    protected SessionContext getEjbContext() {
-        return ejbContext;
-    }
-
-    @Resource
-    void setSessionContext(SessionContext ctx) {
-        this.ejbContext = ctx;
-    }
 
     /**
      * default constructor.
@@ -254,7 +239,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
      * @param bo the new audit values
      */
     protected void setAuditValues(AbstractEntity bo) throws RemoteException {
-        bo.setUserLastUpdated(AccrualCsmUtil.getInstance().lookupUser(ejbContext));
+        bo.setUserLastUpdated(AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
         bo.setDateLastUpdated(new Date());
         if (bo.getId() == null) {
             bo.setUserLastCreated(bo.getUserLastUpdated());

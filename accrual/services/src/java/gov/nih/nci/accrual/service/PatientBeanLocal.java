@@ -86,6 +86,7 @@ import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.util.PoRegistry;
+import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
@@ -116,9 +117,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.zip.DataFormatException;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -138,20 +137,10 @@ import org.hibernate.Session;
 public class PatientBeanLocal implements PatientService, PatientServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(PatientBeanLocal.class);
-    private SessionContext ejbContext;
     @EJB
     private CountryService countryService;
     @EJB
     private POPatientService patientCorrelationSvc;
-
-    /**
-     * Set the session context.
-     * @param ctx context to set
-     */
-    @Resource
-    public void setSessionContext(SessionContext ctx) {
-        ejbContext = ctx;
-    }
 
     /**
      * {@inheritDoc}
@@ -242,7 +231,7 @@ public class PatientBeanLocal implements PatientService, PatientServiceLocal {
         Patient returnBo = null;
         try {
             session = HibernateUtil.getCurrentSession();
-            bo.setUserLastUpdated(AccrualCsmUtil.getInstance().lookupUser(ejbContext));
+            bo.setUserLastUpdated(AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
             bo.setDateLastUpdated(new Date());
             if (PAUtil.isIiNull(dto.getIdentifier())) {
                 bo.setUserLastCreated(bo.getUserLastUpdated());

@@ -40,11 +40,8 @@ import org.hibernate.Session;
  * @param <CONVERTER>
  */
 @SuppressWarnings("unchecked")
-public class PABaseCorrelation <PADTO extends PACorrelationDTO,
-    PODTO extends CorrelationDto,
-    BO extends StructuralRole,
-    CONVERTER extends AbstractPoConverter<PADTO, PODTO, BO>>
-    implements PABaseCorrelationService<PADTO> {
+public class PABaseCorrelation <PADTO extends PACorrelationDTO, PODTO extends CorrelationDto, BO extends StructuralRole,
+    CONVERTER extends AbstractPoConverter<PADTO, PODTO, BO>> implements PABaseCorrelationService<PADTO> {
 
     private  final Class<PADTO> typeArgument;
     private final Class<BO> srArgument;

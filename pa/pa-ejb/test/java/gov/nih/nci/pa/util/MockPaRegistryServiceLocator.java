@@ -4,14 +4,14 @@
 package gov.nih.nci.pa.util;
 
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
-import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
@@ -287,8 +287,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
-    public AbstractionCompletionServiceRemote getAbstractionCompletionService()
-        throws PAException {
+    public AbstractionCompletionServiceRemote getAbstractionCompletionService() {
        return null;
     }
 
@@ -352,8 +351,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
-    public TSRReportGeneratorServiceRemote getTSRReportGeneratorService()
-        throws PAException {
+    public TSRReportGeneratorServiceRemote getTSRReportGeneratorService() {
        return null;
     }
 
@@ -505,8 +503,7 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
     /**
      * {@inheritDoc}
      */
-    public PDQXmlGeneratorServiceRemote getPDQXmlGeneratorService() throws PAException {
-        // TODO Auto-generated method stub
+    public PDQXmlGeneratorServiceRemote getPDQXmlGeneratorService() {
         return null;
     }
 

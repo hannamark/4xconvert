@@ -96,41 +96,41 @@ public class JndiServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public TrialCountsLocal getTrialCountsReportService() {
-        return (TrialCountsLocal) JNDIUtil.lookup("pa/TrialCountsReportBean/local");
+        return (TrialCountsLocal) JNDIUtil.lookupPa("pa/TrialCountsReportBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public TrialListLocal getTrialListReportService() {
-        return (TrialListLocal) JNDIUtil.lookup("pa/TrialListReportBean/local");
+        return (TrialListLocal) JNDIUtil.lookupPa("pa/TrialListReportBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public TrialProcessingLocal getTrialProcessingReportService() {
-        return (TrialProcessingLocal) JNDIUtil.lookup("pa/TrialProcessingReportBean/local");
+        return (TrialProcessingLocal) JNDIUtil.lookupPa("pa/TrialProcessingReportBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public AverageMilestoneLocal getAverageMilestoneReportService() {
-        return (AverageMilestoneLocal) JNDIUtil.lookup("pa/AverageMilestoneReportBean/local");
+        return (AverageMilestoneLocal) JNDIUtil.lookupPa("pa/AverageMilestoneReportBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public SubmitterOrganizationLocal getSubmitterOrganizationReportService() {
-        return (SubmitterOrganizationLocal) JNDIUtil.lookup("pa/SubmitterOrganizationReportBean/local");
+        return (SubmitterOrganizationLocal) JNDIUtil.lookupPa("pa/SubmitterOrganizationReportBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public Summ4RepLocal getSumm4ReportService() {
-        return (Summ4RepLocal) JNDIUtil.lookup("pa/Summ4ReportBean/local");
+        return (Summ4RepLocal) JNDIUtil.lookupPa("pa/Summ4ReportBean/local");
     }
 }

@@ -20,10 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class PlannedSubstanceAdministrationServiceTest {
-
-    private PlannedSubstanceAdministrationServiceBean remoteBean = new PlannedSubstanceAdministrationServiceBean();
-    private PlannedSubstanceAdministrationServiceRemote remoteEjb = remoteBean;
-
+    private PlannedSubstanceAdministrationServiceRemote remoteEjb =  new PlannedSubstanceAdministrationServiceBean();
     private Ii spIi;
 
     @Before
@@ -31,7 +28,7 @@ public class PlannedSubstanceAdministrationServiceTest {
         TestSchema.reset();
         TestSchema.primeData();
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
-     }
+    }
 
     @Test
     public void getPlannedSubstanceAdministration() throws Exception {
@@ -43,14 +40,11 @@ public class PlannedSubstanceAdministrationServiceTest {
             remoteEjb.getPlannedSubstanceAdministration(statusList.get(0).getIdentifier());
         assertEquals(IiConverter.convertToLong(statusList.get(0).getIdentifier())
                 , (IiConverter.convertToLong(dto.getIdentifier())));
-        PlannedSubstanceAdministrationDTO dto2 = null;
 
-            dto2 = new PlannedSubstanceAdministrationDTO();
-            dto2 = remoteEjb.updatePlannedSubstanceAdministration(dto);
-            assertEquals(dto.getDoseDescription().getValue()
-                    , dto2.getDoseDescription().getValue());
-
-         remoteEjb.deletePlannedSubstanceAdministration(dto.getIdentifier());
+        PlannedSubstanceAdministrationDTO dto2 = new PlannedSubstanceAdministrationDTO();
+        dto2 = remoteEjb.updatePlannedSubstanceAdministration(dto);
+        assertEquals(dto.getDoseDescription().getValue(), dto2.getDoseDescription().getValue());
+        remoteEjb.deletePlannedSubstanceAdministration(dto.getIdentifier());
     }
 
     @Test

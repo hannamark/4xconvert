@@ -177,8 +177,7 @@ import org.hibernate.Session;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Interceptors(HibernateSessionInterceptor.class)
-public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean
-    implements TrialRegistrationServiceLocal {
+public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean implements TrialRegistrationServiceLocal {
     @EJB private StudyProtocolServiceLocal studyProtocolService = null;
     @EJB private StudyRelationshipServiceLocal studyRelationshipService = null;
     @EJB private StudyOverallStatusServiceLocal studyOverallStatusService = null;

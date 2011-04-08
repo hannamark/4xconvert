@@ -78,6 +78,7 @@
  */
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -306,8 +307,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
                 trialDTO.setSection801Indicator(null);
             }
             StudyProtocolDTO studyProtocolDTO = util.convertToStudyProtocolDTOForAmendment(trialDTO);
-            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(ServletActionContext.getRequest()
-                    .getRemoteUser()));
+            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(CaseSensitiveUsernameHolder.getUser()));
             StudyOverallStatusDTO overallStatusDTO = util.convertToStudyOverallStatusDTO(trialDTO);
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
             OrganizationDTO leadOrgDTO = util.convertToLeadOrgDTO(trialDTO);

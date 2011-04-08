@@ -81,6 +81,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
@@ -146,9 +147,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -170,7 +169,7 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
  * @since 11/03/2009
  */
 @Stateless
-@Interceptors({ HibernateSessionInterceptor.class })
+@Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol> implements StudyProtocolServiceLocal {
 
@@ -179,16 +178,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     private static final String UPDATE = "Update";
     @EJB
     private StudyIndldeServiceLocal studyIndldeService;
-    private SessionContext ejbContext;
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
-    /**
-     * Set the invocation context.
-     * @param ctx EJB context
-     */
-    @Resource
-    public void setSessionContext(SessionContext ctx) {
-        this.ejbContext = ctx;
-    }
 
     private StudyProtocolDTO getStudyProtocolById(Long id) throws PAException {
         Session session = HibernateUtil.getCurrentSession();
@@ -562,7 +552,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             try {
                 user = spDTO.getUserLastCreated() != null
                         ? CSMUserService.getInstance().getCSMUser(spDTO.getUserLastCreated().getValue())
-                        : CSMUserService.getInstance().lookupUser(ejbContext);
+                        : CSMUserService.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser());
             } catch (PAException e) {
                 LOG.info("Unable to set User for auditing", e);
             }

@@ -138,10 +138,10 @@ public class PAMessageDrivenBean implements MessageListener {
                     msgId = createAuditMessageLog(updateMessage.getId());
                     OrganizationSynchronizationServiceRemote orgRemote =
                             (OrganizationSynchronizationServiceRemote) JNDIUtil
-                                    .lookup("pa/OrganizationSynchronizationServiceBean/remote");
+                                    .lookupPa("/pa/OrganizationSynchronizationServiceBean/remote");
                     PersonSynchronizationServiceRemote perRemote =
                             (PersonSynchronizationServiceRemote) JNDIUtil
-                                    .lookup("pa/PersonSynchronizationServiceBean/remote");
+                                    .lookupPa("/pa/PersonSynchronizationServiceBean/remote");
                     if (identifierName.equals(IiConverter.ORG_IDENTIFIER_NAME)) {
                         orgRemote.synchronizeOrganization(updateMessage.getId());
                     }

@@ -27,6 +27,10 @@
 
     <!-- Filters -->
     <filter>
+        <filter-name>usernameFilter</filter-name>
+        <filter-class>gov.nih.nci.coppa.web.filter.CaseSensitiveUsernameFilter</filter-class>
+    </filter>
+    <filter>
         <filter-name>action2-cleanup</filter-name>
         <filter-class>org.apache.struts2.dispatcher.ActionContextCleanUp</filter-class>
     </filter>
@@ -50,7 +54,15 @@
         <filter-name>cgmmAuthSrcMapHelper</filter-name>
         <filter-class>gov.nih.nci.pa.filter.CGMMAuthSourceRequestFilter</filter-class>
     </filter>
-     <filter-mapping>
+    
+    
+    <filter-mapping>
+        <filter-name>usernameFilter</filter-name>
+        <url-pattern>*.action</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+    <filter-mapping>
         <filter-name>cgmmAuthSrcMapHelper</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>

@@ -117,7 +117,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class InterventionBeanLocal extends AbstractBaseIsoService<InterventionDTO, Intervention, InterventionConverter>
-        implements InterventionServiceLocal, InterventionServiceRemote {
+        implements InterventionServiceLocal {
 
     /**
      * @param searchCriteria search string

@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.registry.util;
 
+import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
@@ -145,7 +146,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.struts2.ServletActionContext;
 
 /**
  * Class TrialConvertUtils.
@@ -906,8 +906,7 @@ public class TrialConvertUtils {
        } else if (trialDto instanceof ProprietaryTrialDTO) {
            convertPropDtoToStage((ProprietaryTrialDTO) trialDto, spStageDTO);
        }
-       spStageDTO.setUserLastCreated(StConverter.convertToSt(ServletActionContext
-               .getRequest().getRemoteUser()));
+       spStageDTO.setUserLastCreated(StConverter.convertToSt(CaseSensitiveUsernameHolder.getUser()));
        return spStageDTO;
    }
 

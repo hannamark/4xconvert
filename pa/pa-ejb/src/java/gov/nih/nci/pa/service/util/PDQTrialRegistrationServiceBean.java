@@ -83,6 +83,7 @@
 
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -150,7 +151,7 @@ import org.apache.log4j.Logger;
  * @author vrushali
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelper
     implements PDQTrialRegistrationServiceBeanRemote {

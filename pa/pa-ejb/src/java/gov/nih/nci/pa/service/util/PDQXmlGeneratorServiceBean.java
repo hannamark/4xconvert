@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
@@ -126,10 +127,9 @@ import org.w3c.dom.Element;
  *
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean
-    implements PDQXmlGeneratorServiceRemote {
+public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implements PDQXmlGeneratorServiceRemote {
 
     private static final String NAME = "name";
     private static final String SEC_ID = "secondary_id";

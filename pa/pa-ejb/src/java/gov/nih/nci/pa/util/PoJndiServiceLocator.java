@@ -1,6 +1,5 @@
 package gov.nih.nci.pa.util;
 
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -18,106 +17,85 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
  *
  */
 public class PoJndiServiceLocator implements PoServiceLocator {
-    
-    private static final String JNP = "jnp://";
-
-    /** 
-     * @return OrganizationEntityServiceRemote
-     * @throws PAException on error
-     */
-    public OrganizationEntityServiceRemote getOrganizationEntityService() throws PAException {
-        String serverInfo = JNP + PaEarPropertyReader.getLookUpServerInfo()
-                + "/po/OrganizationEntityServiceBean/remote";
-        return (OrganizationEntityServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
-    }
-    
-    /**
-     * @return HealthCareFacilityCorrelationServiceRemote
-     * @throws PAException on error
-     */
-    public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() throws PAException {
-        String serverInfo = JNP + PaEarPropertyReader.getLookUpServerInfo()
-            + "/po/HealthCareFacilityCorrelationServiceBean/remote";
-        return (HealthCareFacilityCorrelationServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
-    }
-    
-    /**
-     * @return HealthCareFacilityCorrelationServiceRemote
-     * @throws PAException on error
-     */
-    public ResearchOrganizationCorrelationServiceRemote
-        getResearchOrganizationCorrelationService() throws PAException {
-        String serverInfo = JNP + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/po/ResearchOrganizationCorrelationServiceBean/remote";
-        return (ResearchOrganizationCorrelationServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
-    } 
-    
-    /**
-     * @return HealthCareFacilityCorrelationServiceRemote
-     * @throws PAException on error
-     */
-    public OversightCommitteeCorrelationServiceRemote
-        getOversightCommitteeCorrelationService() throws PAException {
-        String serverInfo = JNP + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/po/OversightCommitteeCorrelationServiceBean/remote";
-        return (OversightCommitteeCorrelationServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
-    }
-    /**
-     * @return PersonEntityServiceRemote
-     * @throws PAException on error
-     */
-    public PersonEntityServiceRemote getPersonEntityService() throws PAException {
-        String serverInfo = JNP + PaEarPropertyReader.getLookUpServerInfo() + "/po/PersonEntityServiceBean/remote";
-        return (PersonEntityServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
-    }    
 
     /**
-     * @return ClinicalResearchStaffCorrelationServiceBean
-     * @throws PAException e
+     * {@inheritDoc}
      */
-    public ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService()  
-    throws PAException { 
-        String serverInfo = JNP + PaEarPropertyReader.getLookUpServerInfo()
-            + "/po/ClinicalResearchStaffCorrelationServiceBean/remote";
-        return (ClinicalResearchStaffCorrelationServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
-    }
-    /**
-     * @return HealthCareProviderCorrelationServiceRemote
-     * @throws PAException on error
-     */
-    public HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() throws PAException {
-        String serverInfo = JNP + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/po/HealthCareProviderCorrelationServiceBean/remote";
-        return (HealthCareProviderCorrelationServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
-    } 
-    /**
-     * @return OrganizationalContactCorrelationServiceRemote
-     * @throws PAException on error
-     */
-    public OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService() 
-    throws PAException {
-        String serverInfo = JNP + PaEarPropertyReader.getLookUpServerInfo()
-                                + "/po/OrganizationalContactCorrelationServiceBean/remote";
-        return (OrganizationalContactCorrelationServiceRemote) PoJNDIUtil.lookupPo(serverInfo);
-    }
-    /**
-     * @throws PAException e
-     * @return IdentifiedOrganizationCorrelationServiceRemote
-     */    
-    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-        + "/po/IdentifiedOrganizationCorrelationServiceBean/remote";
-        return (IdentifiedOrganizationCorrelationServiceRemote) PoJNDIUtil.lookupPo(serverInfo);       
+    public OrganizationEntityServiceRemote getOrganizationEntityService() {
+        String serverInfo = "/po/OrganizationEntityServiceBean/remote";
+        return (OrganizationEntityServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
 
     /**
-     * @throws PAException e
-     * @return IdentifiedPersonCorrelationServiceRemote
-     */    
-    public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() throws PAException {
-        String serverInfo = "jnp://" + PaEarPropertyReader.getLookUpServerInfo()
-        + "/po/IdentifiedPersonCorrelationServiceBean/remote";
-        return (IdentifiedPersonCorrelationServiceRemote) PoJNDIUtil.lookupPo(serverInfo);       
+     * {@inheritDoc}
+     */
+    public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() {
+        String serverInfo = "/po/HealthCareFacilityCorrelationServiceBean/remote";
+        return (HealthCareFacilityCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService() {
+        String serverInfo = "/po/ResearchOrganizationCorrelationServiceBean/remote";
+        return (ResearchOrganizationCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationService() {
+        String serverInfo = "/po/OversightCommitteeCorrelationServiceBean/remote";
+        return (OversightCommitteeCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PersonEntityServiceRemote getPersonEntityService() {
+        String serverInfo = "/po/PersonEntityServiceBean/remote";
+        return (PersonEntityServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService() {
+        String serverInfo = "/po/ClinicalResearchStaffCorrelationServiceBean/remote";
+        return (ClinicalResearchStaffCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() {
+        String serverInfo = "/po/HealthCareProviderCorrelationServiceBean/remote";
+        return (HealthCareProviderCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService() {
+        String serverInfo = "/po/OrganizationalContactCorrelationServiceBean/remote";
+        return (OrganizationalContactCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() {
+        String serverInfo = "/po/IdentifiedOrganizationCorrelationServiceBean/remote";
+        return (IdentifiedOrganizationCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() {
+        String serverInfo = "/po/IdentifiedPersonCorrelationServiceBean/remote";
+        return (IdentifiedPersonCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
 
 }

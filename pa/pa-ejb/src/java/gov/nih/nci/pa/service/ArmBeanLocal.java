@@ -126,12 +126,12 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  *
  */
 @Stateless
-@Interceptors({ HibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
+@Interceptors({HibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConverter> implements ArmServiceLocal {
 
     @EJB private PlannedActivityServiceLocal plannedActivityService = null;
-    
+
     /**
      * @param ii index of planned activity
      * @return list of arms associated w/planned activity
@@ -186,7 +186,7 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
         return super.update(dto);
     }
 
-    
+
     /**
      * {@inheritDoc}
      */
@@ -224,8 +224,8 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
              PlannedActivityDTO activityDTO = getPlannedActivityService().get(paIi);
              activityDTO.setStudyProtocolIdentifier(toStudyProtocolIi);
              activityDTO.setIdentifier(null);
-             
-             //Check if Planned Activity already created from previous arm, if so, 
+
+             //Check if Planned Activity already created from previous arm, if so,
              //associate new Arm with previously created Planned Activity.
              Ii newPaIi = getPlannedActivityService().getDuplicateIi(activityDTO);
              if (newPaIi != null) {

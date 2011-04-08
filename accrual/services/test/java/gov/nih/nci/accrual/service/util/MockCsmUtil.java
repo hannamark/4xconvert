@@ -79,6 +79,7 @@
 
 package gov.nih.nci.accrual.service.util;
 
+import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
@@ -117,7 +118,7 @@ public class MockCsmUtil implements CsmUtil {
                 return user;
             }
         }
-        return null;
+        return TestSchema.createUser();
     }
     
     public User createCSMUser(RegistryUser registryUser, String loginName) throws RemoteException {

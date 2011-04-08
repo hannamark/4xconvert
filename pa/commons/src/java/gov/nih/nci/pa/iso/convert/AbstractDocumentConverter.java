@@ -29,6 +29,7 @@ public abstract class AbstractDocumentConverter<DTO extends DocumentDTO, BO exte
         docDTO.setIdentifier(IiConverter.convertToDocumentIi(doc.getId()));
         docDTO.setTypeCode(CdConverter.convertToCd(doc.getTypeCode()));
         docDTO.setFileName(StConverter.convertToSt(doc.getFileName()));
+
     }
     /**
      *

@@ -79,6 +79,7 @@
 
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.convert.AbstractConverter;
@@ -94,9 +95,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
-
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -120,16 +118,6 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
     private final Class<BO> typeArgument;
     private final Class<CONVERTER> converterArgument;
     private static final Logger LOG = Logger.getLogger(AbstractBaseIsoService.class);
-    private SessionContext ejbContext;
-
-    /**
-     * Set the invocation context.
-     * @param ctx EJB context
-     */
-    @Resource
-    public void setSessionContext(SessionContext ctx) {
-        this.ejbContext = ctx;
-    }
 
     /**
      * default constructor.
@@ -262,7 +250,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         try {
             session = HibernateUtil.getCurrentSession();
             bo = convertFromDtoToDomain(dto);
-            bo.setUserLastUpdated(CSMUserService.getInstance().lookupUser(ejbContext));
+            bo.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
             bo.setDateLastUpdated(new Date());
             if (PAUtil.isIiNull(dto.getIdentifier())) {
                 bo.setUserLastCreated(bo.getUserLastUpdated());

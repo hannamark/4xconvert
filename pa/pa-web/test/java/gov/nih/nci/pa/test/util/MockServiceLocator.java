@@ -80,14 +80,14 @@ package gov.nih.nci.pa.test.util;
 
 import static org.mockito.Mockito.mock;
 import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
-import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PDQDiseaseAlternameServiceLocal;
+import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceLocal;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
@@ -416,8 +416,7 @@ public class MockServiceLocator implements ServiceLocator {
          return ctGovXmlGeneratorService;
     }
 
-    public AbstractionCompletionServiceRemote getAbstractionCompletionService()
-        throws PAException {
+    public AbstractionCompletionServiceRemote getAbstractionCompletionService() {
        return abstractionCompletionService;
     }
 
@@ -466,15 +465,15 @@ public class MockServiceLocator implements ServiceLocator {
         // TODO Auto-generated method stub
         return null;
     }
- /**
-     * @return
+
+    /**
+     * {@inheritDoc}
      */
     public StudyMilestoneServicelocal getStudyMilestoneService() {
-
         return studyMilestoneService;
     }
-    public TSRReportGeneratorServiceRemote getTSRReportGeneratorService()
-        throws PAException {
+
+    public TSRReportGeneratorServiceRemote getTSRReportGeneratorService() {
        return tsrReportGeneratorService;
     }
 
@@ -590,8 +589,7 @@ public class MockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
-    public PDQXmlGeneratorServiceRemote getPDQXmlGeneratorService() throws PAException {
-        // TODO Auto-generated method stub
+    public PDQXmlGeneratorServiceRemote getPDQXmlGeneratorService() {
         return null;
     }
 

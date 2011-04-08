@@ -1,16 +1,7 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
-
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
 
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
@@ -22,6 +13,15 @@ import gov.nih.nci.pa.service.exception.PAFieldException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
 
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
 /**
  * @author asharma
  *
@@ -31,7 +31,7 @@ import gov.nih.nci.pa.util.PAUtil;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyOnholdBeanLocal extends AbstractStudyIsoService<StudyOnholdDTO, StudyOnhold, StudyOnholdConverter>
 implements StudyOnholdServiceLocal {
-   
+
     /** id for onholdReasonCode. */
     public static final int FN_REASON_CODE = 0;
     /** id for onholdDate.low. */
@@ -82,7 +82,7 @@ implements StudyOnholdServiceLocal {
         wrkDto.getOnholdDate().setHigh(dto.getOnholdDate().getHigh());
         setTimeIfToday(wrkDto);
         dateRules(wrkDto);
-        } 
+        }
         return super.update(wrkDto);
     }
 

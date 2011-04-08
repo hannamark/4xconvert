@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.service.correlation;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
+import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareProvider;
@@ -115,9 +117,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -137,7 +137,7 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PersonSynchronizationServiceBean implements PersonSynchronizationServiceRemote {
 
@@ -151,15 +151,6 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
     private StudyContactServiceLocal scLocal;
     @EJB
     private StudySiteContactServiceLocal spcLocal;
-    private SessionContext ejbContext;
-    /**
-     * Set the invocation context.
-     * @param ctx EJB context
-     */
-    @Resource
-    public void setSessionContext(SessionContext ctx) {
-        this.ejbContext = ctx;
-    }
 
     /**
      *
@@ -257,7 +248,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
 
             }
             person.setDateLastUpdated(new Timestamp((new Date()).getTime()));
-            person.setUserLastUpdated(CSMUserService.getInstance().lookupUser(ejbContext));
+            person.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
             session.update(person);
             session.flush();
         }

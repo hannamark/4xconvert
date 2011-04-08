@@ -32,7 +32,7 @@ import javax.interceptor.Interceptors;
  *
  */
 @Stateless
-@Interceptors({ HibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
+@Interceptors({HibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO, StudyIndlde, StudyIndldeConverter>
         implements StudyIndldeServiceLocal {

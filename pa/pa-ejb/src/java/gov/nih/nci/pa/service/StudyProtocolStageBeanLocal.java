@@ -71,7 +71,7 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
  *
  */
 @Stateless
-@Interceptors({ HibernateSessionInterceptor.class })
+@Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyProtocolStage>
     implements StudyProtocolStageServiceLocal {

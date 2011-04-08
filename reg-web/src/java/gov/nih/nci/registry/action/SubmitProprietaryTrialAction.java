@@ -3,6 +3,7 @@
  */
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
@@ -240,8 +241,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
         try {
             trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
             StudyProtocolDTO studyProtocolDTO = util.convertToInterventionalStudyProtocolDTO(trialDTO);
-            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(ServletActionContext.
-                    getRequest().getRemoteUser()));
+            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(CaseSensitiveUsernameHolder.getUser()));
             StudySiteAccrualStatusDTO siteAccrualStatusDTO = convertToStudySiteAccrualStatusDTO(trialDTO);
 
             OrganizationDTO leadOrganizationDTO = util.convertToLeadOrgDTO(trialDTO);

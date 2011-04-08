@@ -93,7 +93,6 @@ import java.util.List;
 
 public class MockSumm4RepService extends MockService implements Summ4RepLocal {
 
-    @SuppressWarnings("unused")
     public List<TrialListResultDto> get(AbstractStandardCriteriaDto criteria)
             throws PAException {
         List<TrialListResultDto> rList = new ArrayList<TrialListResultDto>();

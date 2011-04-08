@@ -78,6 +78,8 @@
  */
 package gov.nih.nci.pa.service.correlation;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
+import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
@@ -108,9 +110,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -128,7 +128,7 @@ import org.hibernate.criterion.Expression;
  * @since 07/07/2007
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class OrganizationSynchronizationServiceBean implements OrganizationSynchronizationServiceRemote {
 
@@ -138,15 +138,6 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
 
     @EJB
     private StudySiteServiceLocal spsLocal;
-    private SessionContext ejbContext;
-    /**
-     * Set the invocation context.
-     * @param ctx EJB context
-     */
-    @Resource
-    public void setSessionContext(SessionContext ctx) {
-        this.ejbContext = ctx;
-    }
 
     /**
      * @param orgIdentifier ii of organization
@@ -246,7 +237,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                 paOrg.setStatusCode(newOrg.getStatusCode());
             }
             paOrg.setDateLastUpdated(new Timestamp((new Date()).getTime()));
-            paOrg.setUserLastUpdated(CSMUserService.getInstance().lookupUser(ejbContext));
+            paOrg.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
             session.update(paOrg);
             session.flush();
         }
@@ -272,29 +263,29 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
 
         Organization oldPaOrg = cUtils.getPAOrganizationByIi(identifier);
         Organization newPaOrg = cUtils.getPAOrganizationByIi(dupId);
-        Session session = HibernateUtil.getCurrentSession();          
+        Session session = HibernateUtil.getCurrentSession();
         session.createQuery("update StudyResourcing set organizationIdentifier = :newPaOrgId "
                 + "where organizationIdentifier = :oldPaOrgId")
         .setString("newPaOrgId", String.valueOf(newPaOrg.getId()))
         .setString("oldPaOrgId", String.valueOf(oldPaOrg.getId()))
         .executeUpdate();
     }
-    
+
     private void updateStudyProtocolStage(Ii identifier, Ii dupId) throws NullifiedEntityException, PAException {
         Organization oldPaOrg = cUtils.getPAOrganizationByIi(identifier);
         Organization newPaOrg = cUtils.getPAOrganizationByIi(dupId);
-        cUtils.updateItemIdForStudyProtocolStage("leadOrganizationIdentifier", oldPaOrg.getIdentifier(), 
+        cUtils.updateItemIdForStudyProtocolStage("leadOrganizationIdentifier", oldPaOrg.getIdentifier(),
                 newPaOrg.getIdentifier());
-        cUtils.updateItemIdForStudyProtocolStage("sponsorIdentifier", 
+        cUtils.updateItemIdForStudyProtocolStage("sponsorIdentifier",
                 oldPaOrg.getIdentifier(), newPaOrg.getIdentifier());
-        cUtils.updateItemIdForStudyProtocolStage("summaryFourOrgIdentifier", 
+        cUtils.updateItemIdForStudyProtocolStage("summaryFourOrgIdentifier",
                 oldPaOrg.getIdentifier(), newPaOrg.getIdentifier());
-        cUtils.updateItemIdForStudyProtocolStage("siteSummaryFourOrgIdentifier", oldPaOrg.getIdentifier(), 
+        cUtils.updateItemIdForStudyProtocolStage("siteSummaryFourOrgIdentifier", oldPaOrg.getIdentifier(),
                 newPaOrg.getIdentifier());
-        cUtils.updateItemIdForStudyProtocolStage("submitterOrganizationIdentifier", oldPaOrg.getIdentifier(), 
+        cUtils.updateItemIdForStudyProtocolStage("submitterOrganizationIdentifier", oldPaOrg.getIdentifier(),
                 newPaOrg.getIdentifier());
     }
-    
+
     private void updateResearchOrganization(final Ii roIdentifier, final ResearchOrganizationDTO roDto)
             throws PAException {
         Session session = null;

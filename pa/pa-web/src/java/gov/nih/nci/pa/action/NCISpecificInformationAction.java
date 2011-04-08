@@ -344,9 +344,6 @@ public class NCISpecificInformationAction extends ActionSupport {
         OrganizationDTO selectedOrgDTO;
         try {
             selectedOrgDTO = PoRegistry.getOrganizationEntityService().search(criteria, limit).get(0);
-        } catch (PAException e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-            return ERROR;
         } catch (TooManyResultsException e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return ERROR;

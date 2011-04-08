@@ -86,7 +86,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
@@ -102,9 +101,6 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.po.data.CurationException;
-import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
@@ -115,14 +111,12 @@ import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationService
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
-import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
-import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonDTO;
@@ -143,15 +137,14 @@ import org.apache.log4j.Logger;
  */
 public class MockPoJndiServiceLocator implements PoServiceLocator {
     private static final Logger LOG = Logger.getLogger(MockPoJndiServiceLocator.class);
+    private static final String ERROR_MSG = "An error occurred during mock set up process.";
 
     /**
-     * @return remote
-     * @throws PAException on err
+     * {@inheritDoc}
      */
-    public ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService()
-            throws PAException {
-        ClinicalResearchStaffCorrelationServiceRemote crsSvc = mock(
-                ClinicalResearchStaffCorrelationServiceRemote.class);
+    public ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService() {
+        ClinicalResearchStaffCorrelationServiceRemote crsSvc =
+            mock(ClinicalResearchStaffCorrelationServiceRemote.class);
         try {
             ClinicalResearchStaffDTO csrDTO = new ClinicalResearchStaffDTO();
             csrDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoClinicalResearchStaffIi("5")));
@@ -163,24 +156,16 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
             when(crsSvc.search(any(ClinicalResearchStaffDTO.class))).thenReturn(Arrays.asList(csrDTO));
             when(crsSvc.createCorrelation(any(ClinicalResearchStaffDTO.class))).thenReturn(
                     IiConverter.convertToPoClinicalResearchStaffIi("6"));
-        } catch (TooManyResultsException e) {
-            throw new PAException(e);
-        } catch (EntityValidationException e) {
-            throw new PAException(e);
-        } catch (CurationException e) {
-            throw new PAException(e);
-        } catch (NullifiedRoleException e) {
-            throw new PAException(e);
+        } catch (Exception e) {
+            LOG.error(ERROR_MSG, e);
         }
         return crsSvc;
     }
 
     /**
-     * @return remote
-     * @throws PAException on err
+     * {@inheritDoc}
      */
-    public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService()
-            throws PAException {
+    public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() {
         HealthCareFacilityCorrelationServiceRemote hcfSvc = mock(HealthCareFacilityCorrelationServiceRemote.class);
         try {
             HealthCareFacilityDTO hcfDTO = new HealthCareFacilityDTO();
@@ -193,24 +178,16 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
             when(hcfSvc.search(any(HealthCareFacilityDTO.class))).thenReturn(Arrays.asList(hcfDTO));
             when(hcfSvc.createCorrelation(any(HealthCareFacilityDTO.class))).thenReturn(
                     IiConverter.convertToPoHealthCareFacilityIi("12"));
-        } catch (TooManyResultsException e) {
-            throw new PAException(e);
-        } catch (EntityValidationException e) {
-            throw new PAException(e);
-        } catch (CurationException e) {
-            throw new PAException(e);
-        } catch (NullifiedRoleException e) {
-            throw new PAException(e);
+        } catch (Exception e) {
+            LOG.error(ERROR_MSG, e);
         }
         return hcfSvc;
     }
 
     /**
-     * @return remote
-     * @throws PAException on err
+     * {@inheritDoc}
      */
-    public HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService()
-            throws PAException {
+    public HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() {
         HealthCareProviderCorrelationServiceRemote hcpSvc = mock(HealthCareProviderCorrelationServiceRemote.class);
         try {
             HealthCareProviderDTO hcpDTO = new HealthCareProviderDTO();
@@ -223,24 +200,16 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
             when(hcpSvc.search(any(HealthCareProviderDTO.class))).thenReturn(Arrays.asList(hcpDTO));
             when(hcpSvc.createCorrelation(any(HealthCareProviderDTO.class))).thenReturn(
                     IiConverter.convertToPoHealtcareProviderIi("8"));
-        } catch (TooManyResultsException e) {
-            throw new PAException(e);
-        } catch (EntityValidationException e) {
-            throw new PAException(e);
-        } catch (CurationException e) {
-            throw new PAException(e);
-        } catch (NullifiedRoleException e) {
-            throw new PAException(e);
+        } catch (Exception e) {
+            LOG.error(ERROR_MSG, e);
         }
         return hcpSvc;
     }
 
     /**
-     * @return remote
-     * @throws PAException on err
+     * {@inheritDoc}
      */
-    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService()
-            throws PAException {
+    public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() {
         IdentifiedOrganizationCorrelationServiceRemote  idPersonSvc = mock(
                 IdentifiedOrganizationCorrelationServiceRemote .class);
         IdentifiedOrganizationDTO identifiedOrgDTO = new IdentifiedOrganizationDTO();
@@ -249,22 +218,17 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
         when(idPersonSvc.getCorrelation(any(Ii.class))).thenReturn(identifiedOrgDTO);
         when(idPersonSvc.search(any(IdentifiedOrganizationDTO.class), any(LimitOffset.class)))
             .thenReturn(Arrays.asList(identifiedOrgDTO));
-        } catch (TooManyResultsException e) {
-            LOG.error(e);
-            throw new PAException(e);
-        } catch (NullifiedRoleException e) {
-            LOG.error(e);
-            throw new PAException(e);
+        } catch (Exception e) {
+            LOG.error(ERROR_MSG, e);
         }
         return idPersonSvc;
 
     }
+
     /**
-     * @return remote
-     * @throws PAException on err
+     * {@inheritDoc}
      */
-    public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService()
-            throws PAException {
+    public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() {
         IdentifiedPersonCorrelationServiceRemote idPersonSvc = mock(IdentifiedPersonCorrelationServiceRemote.class);
         IdentifiedPersonDTO identifiedPersonDTO = new IdentifiedPersonDTO();
         identifiedPersonDTO.setAssignedId(IiConverter.convertToIdentifiedPersonEntityIi("ctepId"));
@@ -272,22 +236,16 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
         when(idPersonSvc.getCorrelation(any(Ii.class))).thenReturn(identifiedPersonDTO);
         when(idPersonSvc.search(any(IdentifiedPersonDTO.class), any(LimitOffset.class)))
             .thenReturn(Arrays.asList(identifiedPersonDTO));
-        } catch (TooManyResultsException e) {
-            LOG.error(e);
-            throw new PAException(e);
-        } catch (NullifiedRoleException e) {
-            LOG.error(e);
-            throw new PAException(e);
+        } catch (Exception e) {
+            LOG.error(ERROR_MSG, e);
         }
         return idPersonSvc;
     }
 
     /**
-     * @return remote
-     * @throws PAException on err
+     * {@inheritDoc}
      */
-    public OrganizationEntityServiceRemote getOrganizationEntityService()
-            throws PAException {
+    public OrganizationEntityServiceRemote getOrganizationEntityService() {
         OrganizationEntityServiceRemote poOrgSvc = mock(OrganizationEntityServiceRemote.class);
         OrganizationDTO orgDto = new OrganizationDTO();
         orgDto.setIdentifier(IiConverter.convertToPoOrganizationIi("1"));
@@ -299,22 +257,16 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
             when(poOrgSvc.getOrganization(any(Ii.class))).thenReturn(orgDto);
             when(poOrgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenReturn(Arrays.asList(orgDto));
             when(poOrgSvc.validate(any(OrganizationDTO.class))).thenReturn(new HashMap<String, String[]>());
-        } catch (NullifiedEntityException e) {
-            LOG.error(e);
-           throw new PAException(e);
-        } catch (TooManyResultsException e) {
-            LOG.error(e);
-            throw new PAException(e);
+        } catch (Exception e) {
+            LOG.error(ERROR_MSG, e);
         }
         return poOrgSvc;
     }
 
     /**
-     * @return remote
-     * @throws PAException on err
+     * {@inheritDoc}
      */
-    public OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService()
-            throws PAException {
+    public OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService() {
        OrganizationalContactCorrelationServiceRemote occSvc = mock(OrganizationalContactCorrelationServiceRemote.class);
        try {
            OrganizationalContactDTO orgContDTO = new OrganizationalContactDTO();
@@ -331,25 +283,16 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
            when(occSvc.search(any(OrganizationalContactDTO.class))).thenReturn(Arrays.asList(orgContDTO));
            when(occSvc.createCorrelation(any(OrganizationalContactDTO.class))).thenReturn(
                IiConverter.convertToPoOrganizationalContactIi("13"));
-       } catch (TooManyResultsException e) {
-           throw new PAException(e);
-       } catch (EntityValidationException e) {
-           throw new PAException(e);
-       } catch (CurationException e) {
-           throw new PAException(e);
-       } catch (NullifiedRoleException e) {
-           throw new PAException(e);
+       } catch (Exception e) {
+           LOG.error(ERROR_MSG, e);
        }
-
        return occSvc;
     }
 
     /**
-     * @return remote
-     * @throws PAException on err
+     * {@inheritDoc}
      */
-    public OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationService()
-            throws PAException {
+    public OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationService() {
         OversightCommitteeCorrelationServiceRemote occSvc = mock(OversightCommitteeCorrelationServiceRemote.class);
         try {
             OversightCommitteeDTO ocDTO = new OversightCommitteeDTO();
@@ -363,25 +306,17 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
             when(occSvc.search(any(OversightCommitteeDTO.class))).thenReturn(Arrays.asList(ocDTO));
             when(occSvc.createCorrelation(any(OversightCommitteeDTO.class))).thenReturn(
                 IiConverter.convertToPoOversightCommitteeIi("10"));
-        } catch (TooManyResultsException e) {
-            throw new PAException(e);
-        } catch (EntityValidationException e) {
-            throw new PAException(e);
-        } catch (CurationException e) {
-            throw new PAException(e);
-        } catch (NullifiedRoleException e) {
-            throw new PAException(e);
+        } catch (Exception e) {
+            LOG.error(ERROR_MSG, e);
         }
 
         return occSvc;
     }
 
     /**
-     * @return remote
-     * @throws PAException on err
+     * {@inheritDoc}
      */
-    public PersonEntityServiceRemote getPersonEntityService()
-            throws PAException {
+    public PersonEntityServiceRemote getPersonEntityService() {
         PersonEntityServiceRemote poPerSvc = mock(PersonEntityServiceRemote.class);
         PersonDTO personDto = new PersonDTO();
         personDto.setIdentifier(IiConverter.convertToPoPersonIi("2"));
@@ -393,21 +328,18 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
             when(poPerSvc.getPerson(any(Ii.class))).thenReturn(personDto);
             when(poPerSvc.search(any(PersonDTO.class), any(LimitOffset.class))).thenReturn(Arrays.asList(personDto));
             when(poPerSvc.validate(any(PersonDTO.class))).thenReturn(new HashMap<String, String[]>());
-        } catch (NullifiedEntityException e) {
-            throw new PAException(e);
-        } catch (TooManyResultsException e) {
-            throw new PAException(e);
+        } catch (Exception e) {
+            LOG.error(ERROR_MSG, e);
         }
         return poPerSvc;
     }
+
     /**
-     * @return remote
-     * @throws PAException on err
+     * {@inheritDoc}
      */
-    public ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService()
-            throws PAException {
-        ResearchOrganizationCorrelationServiceRemote roOrgSvc = mock(
-                ResearchOrganizationCorrelationServiceRemote.class);
+    public ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService() {
+        ResearchOrganizationCorrelationServiceRemote roOrgSvc =
+            mock(ResearchOrganizationCorrelationServiceRemote.class);
         try {
             ResearchOrganizationDTO roDTO = new ResearchOrganizationDTO();
             roDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoResearchOrganizationIi("3")));
@@ -419,14 +351,8 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
             when(roOrgSvc.search(any(ResearchOrganizationDTO.class))).thenReturn(Arrays.asList(roDTO));
             when(roOrgSvc.createCorrelation(any(ResearchOrganizationDTO.class))).thenReturn(
                     IiConverter.convertToPoResearchOrganizationIi("4"));
-        } catch (TooManyResultsException e) {
-            throw new PAException(e);
-        } catch (EntityValidationException e) {
-            throw new PAException(e);
-        } catch (CurationException e) {
-            throw new PAException(e);
-        } catch (NullifiedRoleException e) {
-            throw new PAException(e);
+        } catch (Exception e) {
+            LOG.error(ERROR_MSG, e);
         }
         return roOrgSvc;
     }

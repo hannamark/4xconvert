@@ -94,8 +94,6 @@ import gov.nih.nci.security.exceptions.CSException;
 import java.util.List;
 import java.util.Set;
 
-import javax.ejb.SessionContext;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -193,7 +191,7 @@ public class CSMUserService implements CSMUserUtil {
         User csmUser = null;
         try {
             UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
-            csmUser = upManager.getUser(loginName);
+            csmUser = upManager.getUser(extractUserName(loginName));
             if (csmUser == null) {
                 LOG.info("Unable to look up CSM user for login name: " + loginName);
             }
@@ -264,30 +262,6 @@ public class CSMUserService implements CSMUserUtil {
         } catch (Exception e) {
             throw new PAException("CSM exception while adding " + loginName + " to " + groupName + " group.", e);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public User lookupUser(SessionContext ejbContext) throws PAException {
-        User user = null;
-        String userName = null;
-        try {
-            if (ejbContext != null && ejbContext.getCallerPrincipal() != null) {
-                userName = ejbContext.getCallerPrincipal().getName();
-                user = CSMUserService.getInstance().getCSMUser(extractUserName(userName));
-            }
-        } catch (IllegalStateException e) {
-            //catching this exception in order to run quartz's milestone job successfully since job is not able to
-            //set callerPrincipal. Once the solution found we can remove this code
-            //remove this after fixing PO-3057
-            userName = PaEarPropertyReader.getProperties().getProperty("default.user.name");
-            user = CSMUserService.getInstance().getCSMUser(userName);
-        }
-        if (user == null) {
-            throw new PAException("Unable to lookup user for: " + userName + " in SessionContext: " + ejbContext);
-        }
-        return user;
     }
 
     /**

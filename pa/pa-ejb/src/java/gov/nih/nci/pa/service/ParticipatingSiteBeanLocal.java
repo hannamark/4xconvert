@@ -84,6 +84,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
@@ -158,19 +159,15 @@ import org.jboss.annotation.security.SecurityDomain;
 @SuppressWarnings("PMD.AvoidRethrowingException") //Suppressed to catch and throw PAException to avoid re-wrapping.
 public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
 implements ParticipatingSiteServiceLocal {
-    private SessionContext ejbContext;
-
     @Resource
-    void setSessionContext(SessionContext ctx) {
-        this.ejbContext = ctx;
-    }
+    private SessionContext ejbContext;
 
     private void checkValidUser(Ii studyProtocolIi) throws PAException {
         if (this.ejbContext.isCallerInRole("Abstractor") || this.ejbContext.isCallerInRole("client")) {
             return;
         }
         CSMUserUtil userService = CSMUserService.getInstance();
-        User user = userService.lookupUser(this.ejbContext);
+        User user = userService.getCSMUser(CaseSensitiveUsernameHolder.getUser());
         StudyProtocolDTO spDTO = getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         if (spDTO == null || PAUtil.isIiNull(spDTO.getIdentifier())) {
             throw new PAException("Trial id " + studyProtocolIi.getExtension() + " does not exist.");

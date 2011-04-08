@@ -107,7 +107,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  *
  */
 @Stateless
-@Interceptors({ HibernateSessionInterceptor.class })
+@Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyRelationshipBeanLocal extends
         AbstractBaseIsoService<StudyRelationshipDTO, StudyRelationship, StudyRelationshipConverter> implements

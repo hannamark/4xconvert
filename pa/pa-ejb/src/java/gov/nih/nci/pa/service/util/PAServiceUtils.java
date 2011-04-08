@@ -183,7 +183,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -224,7 +223,6 @@ public class PAServiceUtils {
      * The size of the counter portion of the NCI ID.
      */
     protected static final int NCI_ID_SIZE = 5;
-    private static final Logger LOG  = Logger.getLogger(PAServiceUtils.class);
 
     /**
      * Executes an sql.
@@ -1119,8 +1117,6 @@ public class PAServiceUtils {
                 }
             } catch (NullifiedRoleException e) {
                 retValue = false;
-            } catch (PAException e) {
-                retValue = false;
             }
         }
         return retValue;
@@ -1154,18 +1150,14 @@ public class PAServiceUtils {
             return "";
         }
 
-        try {
-            if (poDTO instanceof OrganizationDTO) {
-                Map <String, String[]> errMap = PoRegistry.getOrganizationEntityService().validate(
+        if (poDTO instanceof OrganizationDTO) {
+            Map <String, String[]> errMap = PoRegistry.getOrganizationEntityService().validate(
                     (OrganizationDTO) poDTO);
-                retValue = PAUtil.getErrorMsg(errMap);
-            }
-            if (poDTO instanceof PersonDTO) {
-                Map <String, String[]> errMap = PoRegistry.getPersonEntityService().validate((PersonDTO) poDTO);
-                retValue = PAUtil.getErrorMsg(errMap);
-            }
-        } catch (PAException e) {
-            retValue = e.getMessage();
+            retValue = PAUtil.getErrorMsg(errMap);
+        }
+        if (poDTO instanceof PersonDTO) {
+            Map <String, String[]> errMap = PoRegistry.getPersonEntityService().validate((PersonDTO) poDTO);
+            retValue = PAUtil.getErrorMsg(errMap);
         }
         return retValue;
     }
@@ -1707,7 +1699,7 @@ public class PAServiceUtils {
         }
         return countryName;
     }
-    
+
     /**
      * Validates and format the phonenumber for the given scoper and adresses.
      * @param scoperIi The scoper Ii
@@ -1738,8 +1730,6 @@ public class PAServiceUtils {
 
         } catch (NullifiedEntityException e) {
             poOrg = null;
-        } catch (PAException e) {
-            poOrg = null;
         }
         return poOrg;
     }
@@ -1755,8 +1745,6 @@ public class PAServiceUtils {
                                  .getPerson(IiConverter.convertToPoPersonIi(entityIi.getExtension()));
 
         } catch (NullifiedEntityException e) {
-            poPerson = null;
-        } catch (PAException e) {
             poPerson = null;
         }
         return poPerson;
@@ -1823,20 +1811,15 @@ public class PAServiceUtils {
        */
       public PersonDTO getPersonByCtepId(String ctepId) {
           PersonDTO personDto = null;
-          try {
-              if (StringUtils.isNotEmpty(ctepId)) {
-                  personDto = new PersonDTO();
-                  IdentifiedPersonDTO identifiedPersonDTO = new IdentifiedPersonDTO();
-                  identifiedPersonDTO.setAssignedId(IiConverter.convertToIdentifiedPersonEntityIi(ctepId));
-                  List<IdentifiedPersonDTO> identifiedPersons;
-                  identifiedPersons = PoRegistry.getIdentifiedPersonEntityService().search(identifiedPersonDTO);
-                  if (CollectionUtils.isNotEmpty(identifiedPersons)) {
-                      personDto.setIdentifier(identifiedPersons.get(0).getPlayerIdentifier());
-                  }
+          if (StringUtils.isNotEmpty(ctepId)) {
+              personDto = new PersonDTO();
+              IdentifiedPersonDTO identifiedPersonDTO = new IdentifiedPersonDTO();
+              identifiedPersonDTO.setAssignedId(IiConverter.convertToIdentifiedPersonEntityIi(ctepId));
+              List<IdentifiedPersonDTO> identifiedPersons;
+              identifiedPersons = PoRegistry.getIdentifiedPersonEntityService().search(identifiedPersonDTO);
+              if (CollectionUtils.isNotEmpty(identifiedPersons)) {
+                  personDto.setIdentifier(identifiedPersons.get(0).getPlayerIdentifier());
               }
-          } catch (PAException e) {
-              personDto = null;
-              LOG.error(e);
           }
           return personDto;
       }
@@ -1845,20 +1828,16 @@ public class PAServiceUtils {
        * @return organization
        */
       public OrganizationDTO getOrganizationByCtepId(String ctepId) {
-          OrganizationDTO orgDto = new OrganizationDTO();
-          try {
-              if (StringUtils.isNotEmpty(ctepId)) {
-                  IdentifiedOrganizationDTO identifiedOrgDto = new IdentifiedOrganizationDTO();
-                  identifiedOrgDto.setAssignedId(IiConverter.convertToIdentifiedOrgEntityIi(ctepId));
-                  List<IdentifiedOrganizationDTO> identifiedOrgs;
-                  identifiedOrgs = PoRegistry.getIdentifiedOrganizationEntityService().search(identifiedOrgDto);
-                  if (CollectionUtils.isNotEmpty(identifiedOrgs)) {
-                      orgDto.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
-                  }
+          OrganizationDTO orgDto = null;
+          if (StringUtils.isNotEmpty(ctepId)) {
+              IdentifiedOrganizationDTO identifiedOrgDto = new IdentifiedOrganizationDTO();
+              identifiedOrgDto.setAssignedId(IiConverter.convertToIdentifiedOrgEntityIi(ctepId));
+              List<IdentifiedOrganizationDTO> identifiedOrgs =
+                  PoRegistry.getIdentifiedOrganizationEntityService().search(identifiedOrgDto);
+              if (CollectionUtils.isNotEmpty(identifiedOrgs)) {
+                  orgDto = new OrganizationDTO();
+                  orgDto.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
               }
-          } catch (PAException e) {
-              LOG.error(e);
-              return null;
           }
           return orgDto;
       }

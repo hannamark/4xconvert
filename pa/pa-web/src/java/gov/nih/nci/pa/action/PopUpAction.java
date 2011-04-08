@@ -351,9 +351,6 @@ public class PopUpAction extends ActionSupport {
             for (PersonDTO dto : persList) {
                 persons.add(PADomainUtils.convertToPaPersonDTO(dto));
             }
-        } catch (PAException e) {
-            request.setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
-            return retvalue;
         } catch (TooManyResultsException e) {
             request.setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return retvalue;

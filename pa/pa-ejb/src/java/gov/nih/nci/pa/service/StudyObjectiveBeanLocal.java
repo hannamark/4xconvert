@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.service;
 
@@ -21,7 +21,7 @@ import javax.interceptor.Interceptors;
 @Stateless
 @Interceptors({HibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class StudyObjectiveBeanLocal 
+public class StudyObjectiveBeanLocal
  extends AbstractStudyIsoService<StudyObjectiveDTO, StudyObjective, StudyObjectiveConverter>
  implements StudyObjectiveServiceLocal {
 

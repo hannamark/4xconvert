@@ -101,20 +101,15 @@ public final class JNDIUtil {
     private static final String PO_RESOURCE_NAME = "po.jndi.properties";
 
     private static JNDIUtil theInstance = new JNDIUtil();
-    private final InitialContext accContext;
-    private final InitialContext paContext;
-    private final InitialContext poContext;
+    private final Properties accProperties;
+    private final Properties poProperties;
+    private final Properties paProperties;
 
-    //private final InitialContext contextRemote;
     private JNDIUtil() {
         try {
-            Properties props = getProperties(ACCRUAL_RESOURCE_NAME);
-            accContext = new InitialContext(props);
-            props = getProperties(PA_RESOURCE_NAME);
-            paContext = new InitialContext(props);
-            props = getProperties(PO_RESOURCE_NAME);
-            poContext = new InitialContext(props);
-            //contextRemote = new InitialContext(props);
+            accProperties = getProperties(ACCRUAL_RESOURCE_NAME);
+            poProperties = getProperties(PO_RESOURCE_NAME);
+            paProperties = getProperties(PA_RESOURCE_NAME);
         } catch (Exception e) {
             LOG.error("Unable to initialize the JNDI Util.", e);
             throw new IllegalStateException(e);
@@ -138,7 +133,7 @@ public final class JNDIUtil {
      * @return object in default context with given name
      */
     public static Object lookup(String name) {
-        return lookup(theInstance.accContext, name);
+        return lookup(name, theInstance.accProperties);
     }
 
     /**
@@ -147,31 +142,33 @@ public final class JNDIUtil {
      * @return object in default context with given name
      */
     public static Object lookupPa(String name) {
-        return lookup(theInstance.paContext, name);
+        return lookup(name, theInstance.paProperties);
     }
 
     /**
-     * Call this method to access accrual services.
+     * Call this method to access po services.
      * @param name name to lookup
      * @return object in default context with given name
      */
     public static Object lookupPo(String name) {
-        return lookup(theInstance.poContext, name);
+        return lookup(name, theInstance.poProperties);
     }
 
     /**
-     * @param ctx
-     *            context
-     * @param name
-     *            name to get
-     * @return object in contect with given name
+     * @param name name to lookup
+     * @param props the properties to use
+     * @return object in pa context with given name
      */
-    public static Object lookup(InitialContext ctx, String name) {
+    public static Object lookup(String name, Properties props) {
+        Context context = null;
         try {
-            return ctx.lookup(name);
+            context = new InitialContext(props);
+            Object result = context.lookup(name);
+            context.close();
+            return result;
         } catch (NamingException ex) {
             LOG.error("------------------Here is what's in the context--(looking for " + name + ")----------");
-            dump(ctx, 0);
+            dump(context, 0);
             LOG.error("-----------------------------------------------------------");
             throw new IllegalStateException(ex);
         }

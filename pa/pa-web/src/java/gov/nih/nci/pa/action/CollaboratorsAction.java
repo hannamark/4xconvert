@@ -96,7 +96,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
-import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -130,7 +130,7 @@ public class CollaboratorsAction extends ActionSupport implements Preparable {
     private static final String ACT_CREATE = "create";
 
     private StudySiteServiceLocal sPartService;
-    private OrganizationCorrelationServiceBean ocService;
+    private OrganizationCorrelationServiceRemote ocService;
     private CorrelationUtilsRemote correlationUtils;
     private List<CountryRegAuthorityDTO> countryRegDTO;
     private Ii spIi;
@@ -163,7 +163,7 @@ public class CollaboratorsAction extends ActionSupport implements Preparable {
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")  // Method signature is inherited from Struts
     public void prepare() throws Exception {
         sPartService = PaRegistry.getStudySiteService();
-        ocService = new OrganizationCorrelationServiceBean();
+        ocService = PaRegistry.getOrganizationCorrelationService();
         correlationUtils = new CorrelationUtils();
 
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()

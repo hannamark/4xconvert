@@ -113,7 +113,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class SDCDiseaseBeanLocal extends AbstractBaseIsoService<SDCDiseaseDTO, SDCDisease, SDCDiseaseConverter>
-    implements SDCDiseaseServiceLocal, SDCDiseaseServiceRemote {
+    implements SDCDiseaseServiceLocal {
 
     /**
      * @param searchCriteria search string

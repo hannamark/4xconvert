@@ -1,6 +1,5 @@
 package gov.nih.nci.pa.util;
 
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -20,67 +19,61 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 public interface PoServiceLocator {
 
-    
-    /** 
-     * @return OrganizationEntityServiceRemote
-     * @throws PAException on error
-     */
-    OrganizationEntityServiceRemote getOrganizationEntityService() throws PAException;
-    
-    /**
-     * @return HealthCareFacilityCorrelationServiceRemote
-     * @throws PAException on error
-     */
-    HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() throws PAException;
-    
-    /**
-     * @return HealthCareFacilityCorrelationServiceRemote
-     * @throws PAException on error
-     */
-    ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService() throws PAException;
-    
-    /**
-     * @return HealthCareFacilityCorrelationServiceRemote
-     * @throws PAException on error
-     */
-    OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationService() throws PAException;
-    /**
-     * 
-     * @return PersonEntityServiceRemote
-     * @throws PAException err
-     */
-    PersonEntityServiceRemote getPersonEntityService() throws PAException;
-    /**
-     * 
-     * @return ClinicalResearchStaffCorrelationServiceRemote
-     * @throws PAException e
-     */
-    ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService() throws PAException;
-    /**
-     * 
-     * @return HealthCareProviderCorrelationServiceRemote
-     * @throws PAException e
-     */
-    HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() throws PAException;
-    /**
-     * 
-     * @return OrganizationalContactCorrelationServiceRemote
-     * @throws PAException e
-     */
-    OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService() throws PAException;
-    
-    /**
-     * 
-     * @return IdentifiedOrganizationCorrelationServiceRemote
-     * @throws PAException e
-     */
-    IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() throws PAException;
 
     /**
-     * 
-     * @return IdentifiedPersonCorrelationServiceRemote
-     * @throws PAException e
+     * @return OrganizationEntityServiceRemote
      */
-    IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() throws PAException;
-    
+    OrganizationEntityServiceRemote getOrganizationEntityService();
+
+    /**
+     * @return HealthCareFacilityCorrelationServiceRemote
+     */
+    HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService();
+
+    /**
+     * @return HealthCareFacilityCorrelationServiceRemote
+     */
+    ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService();
+
+    /**
+     * @return HealthCareFacilityCorrelationServiceRemote
+     */
+    OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationService();
+
+    /**
+     *
+     * @return PersonEntityServiceRemote
+     */
+    PersonEntityServiceRemote getPersonEntityService();
+
+    /**
+     *
+     * @return ClinicalResearchStaffCorrelationServiceRemote
+     */
+    ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService();
+
+    /**
+     *
+     * @return HealthCareProviderCorrelationServiceRemote
+     */
+    HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService();
+
+    /**
+     *
+     * @return OrganizationalContactCorrelationServiceRemote
+     */
+    OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService();
+
+    /**
+     *
+     * @return IdentifiedOrganizationCorrelationServiceRemote
+     */
+    IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService();
+
+    /**
+     *
+     * @return IdentifiedPersonCorrelationServiceRemote
+     */
+    IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService();
+
 }

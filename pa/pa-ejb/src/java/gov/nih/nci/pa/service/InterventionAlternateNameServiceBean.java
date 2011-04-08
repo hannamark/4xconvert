@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.InterventionAlternateName;
@@ -93,10 +94,13 @@ import gov.nih.nci.pa.util.PAUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
+import org.jboss.annotation.security.SecurityDomain;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
@@ -105,8 +109,10 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  * @since 10/29/2008
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
+@SecurityDomain("pa")
+@RolesAllowed({"gridClient", "client", "Abstractor" , "Submitter" , "Outcomes" })
 public class InterventionAlternateNameServiceBean
         extends AbstractBaseIsoService
                 <InterventionAlternateNameDTO, InterventionAlternateName, InterventionAlternateNameConverter>

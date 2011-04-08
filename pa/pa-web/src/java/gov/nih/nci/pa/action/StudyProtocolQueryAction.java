@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -94,7 +95,6 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayOutputStream;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -197,7 +197,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
      * Populates the identifier search parameters.
      */
     private void populateIdentifierSearchParameters() {
-        criteria.setUserLastCreated(ServletActionContext.getRequest().getUserPrincipal().getName());
+        criteria.setUserLastCreated(CaseSensitiveUsernameHolder.getUser());
         if (criteria.getIdentifierType() != null && StringUtils.isNotEmpty(getIdentifier())) {
             if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.NCI.getCode())) {
                 criteria.setNciIdentifier(getIdentifier());
@@ -282,11 +282,9 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
                     setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
 
-            Principal userPrincipal = ServletActionContext.getRequest().getUserPrincipal();
-            String loginName = userPrincipal.getName();
+            String loginName = CaseSensitiveUsernameHolder.getUser();
 
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    Constants.LOGGED_USER_NAME, loginName);
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.LOGGED_USER_NAME, loginName);
             String role = (String) ServletActionContext.getRequest().getSession().getAttribute(Constants.USER_ROLE);
             boolean superUser = false;
             if (role != null && role.equalsIgnoreCase(Constants.SUABSTRACTOR)) {
@@ -358,11 +356,9 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
      */
     public String checkout() throws PAException {
         try {
-            StudyProtocolQueryDTO studyProtocolQueryDTO = PaRegistry
-                                        .getProtocolQueryService()
-                                        .getTrialSummaryByStudyProtocolId(studyProtocolId);
-            Principal userPrincipal = ServletActionContext.getRequest().getUserPrincipal();
-            String loginName = userPrincipal.getName();
+            StudyProtocolQueryDTO studyProtocolQueryDTO =
+                PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(studyProtocolId);
+            String loginName = CaseSensitiveUsernameHolder.getUser();
             StudyCheckoutDTO scoDTO = new StudyCheckoutDTO();
             scoDTO.setStudyProtocolIdentifier(
                     IiConverter.convertToStudyProtocolIi(studyProtocolQueryDTO.getStudyProtocolId()));

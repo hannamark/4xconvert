@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.AnatomicSiteTest;
@@ -86,12 +87,6 @@ import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.CountryTest;
-import gov.nih.nci.pa.domain.PDQDisease;
-import gov.nih.nci.pa.domain.PDQDiseaseAltername;
-import gov.nih.nci.pa.domain.PDQDiseaseAlternameTest;
-import gov.nih.nci.pa.domain.PDQDiseaseParent;
-import gov.nih.nci.pa.domain.PDQDiseaseParentTest;
-import gov.nih.nci.pa.domain.PDQDiseaseTest;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.DocumentWorkFlowStatusTest;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
@@ -106,6 +101,12 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationTest;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.PAProperties;
+import gov.nih.nci.pa.domain.PDQDisease;
+import gov.nih.nci.pa.domain.PDQDiseaseAltername;
+import gov.nih.nci.pa.domain.PDQDiseaseAlternameTest;
+import gov.nih.nci.pa.domain.PDQDiseaseParent;
+import gov.nih.nci.pa.domain.PDQDiseaseParentTest;
+import gov.nih.nci.pa.domain.PDQDiseaseTest;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.domain.PlannedActivity;
@@ -689,7 +690,7 @@ public class TestSchema {
             SDCDisease sdc04 = SDCDiseaseTest.createDiseaseObj("Leg Cancer");
             addUpdObject(sdc04);
             sdcDiseaseIds.add(sdc04.getId());
-            
+
             HibernateUtil.getCurrentSession().clear();
         }
         public static Ii nonPropTrialData() {
@@ -805,13 +806,14 @@ public class TestSchema {
         }
 
         public static User getUser(Boolean createNew) {
-            if ( user == null || createNew ) {
+            if (user == null || createNew) {
                 user = new User();
                 user.setLoginName("Abstractor: " + new Date());
                 user.setFirstName("Joe");
                 user.setLastName("Smith");
                 user.setUpdateDate(new Date());
                 TestSchema.addUpdObject(user);
+                CaseSensitiveUsernameHolder.setUser(user.getLoginName());
             }
             return user;
         }
