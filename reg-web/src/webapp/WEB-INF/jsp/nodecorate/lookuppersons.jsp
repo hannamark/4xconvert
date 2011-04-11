@@ -1,114 +1,105 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
-
-<SCRIPT language="JavaScript">
-	function submitform(persid, name)
-	{	
-		//top.window.loadPersDiv(persid, func);
-		top.window.setpersid(persid, name);
-		window.top.hidePopWin(true); 
-	}
-	 
-	function callCreatePerson(persid, rolecode)
-	{		
-		top.window.loadPersDiv(persid, rolecode, 'add');
-		window.top.hidePopWin(true); 
-	}
-	function loadDiv() {
-		var firstName = document.getElementById("firstName").value;
-		var lastName = document.getElementById("lastName").value;
-		var email = document.getElementById("email").value;		
-		var city = document.getElementById("city").value;
-		var state = document.getElementById("state").value;
-		var country = document.getElementById("country").value;
-		var zip = document.getElementById("zip").value;		
-		var ctepid = document.forms[0].ctepId.value;   
-		var url = '/registry/protected/popupdisplayPersonsList.action?firstName='+firstName+'&lastName='+lastName+'&email='+email+'&ctepId='+ctepid+'&state='+state+'&country='+country+'&zip='+zip+'&city='+city;
-	    var div = document.getElementById('getPersons');   	   
-	    div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
-		ajaxCall(div, url);
-	}
-	function ajaxCall(div, url){
-	    var aj = new Ajax.Updater(div,url, {
-	        asynchronous: true,
-	        method: 'get',
-	        evalScripts: false
-	    });
-	    return false;	
-	}
-	function setSearchFormVisible(){
-		document.getElementById("searchPersJsp").style.display="";
-		document.getElementById("createPersJsp").style.display="none";
-	}
-
-	function setCreateFormVisible(){
-		document.getElementById("searchPersJsp").style.display="none";
-		document.getElementById("createPersJsp").style.display="";
-	}
-	function createPerson() {
-		var fname = document.getElementById("poOrganizations_firstName").value;		
-		var lname = document.getElementById("poOrganizations_lastName").value;		
-		var prefx = document.getElementById("poOrganizations_preFix").value;		
-		var mname = document.getElementById("poOrganizations_middleName").value;		
-		var stadd = document.getElementById("poOrganizations_streetAddress").value;		
-		var city = document.getElementById("poOrganizations_city").value;		
-		var stateSelect = document.getElementById("poOrganizations_orgStateSelect").value;	
-		var stateText = document.getElementById("poOrganizations_orgStateText").value;	
-		var zip = document.getElementById("poOrganizations_zip").value;		
-		var ct = document.getElementById("poOrganizations_country").value;		
-		var st = "";
-        if (ct == 'USA')
-         st = stateSelect;
-        else 
-         st = stateText;
-		var email = document.getElementById("poOrganizations_email").value;		
-		var phone = document.getElementById("poOrganizations_phone").value;		
-		var url = document.getElementById("poOrganizations_url").value;		
-		var tty = document.getElementById("poOrganizations_tty").value;		
-		var fax = document.getElementById("poOrganizations_fax").value;		
-		var suffix = document.getElementById("poOrganizations_suffix").value;		
-		var url = '/registry/protected/popupcreatePerson.action?firstName='+fname+'&lastName='+lname+'&preFix='+prefx+'&midName='+mname+'&streetAddr='+stadd+'&city='+city+'&state='+st+'&zip='+zip+'&country='+ct+'&email='+email+'&phone='+phone+'&tty='+tty+'&fax='+fax+'&url='+url+'&suffix='+suffix;
-		var div = document.getElementById('getPersons');   	   
-		div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Creating...</div>';
-		ajaxCall(div, url);    
-	}
-
-	   function setFocusToFirstControl() {
-	        for (var f=0; f < document.forms.length; f++) {
-	            for(var i=0; i < document.forms[f].length; i++) {
-	                var elt = document.forms[f][i];
-	                if (elt.type != "hidden" && elt.disabled != true && elt.id != 'enableEnterSubmit') {
-	                    try {
-	                        elt.focus();
-	                        return;
-	                    } catch(er) {
-	                    }
-	                }
-	            }
-	        }
-	    }
-</SCRIPT> 
-</head> 
-<body onload="setFocusToFirstControl(); window.top.centerPopWin();" class="submodal">
-<div class="box">
-<s:form id="poOrganizations" name="poOrganizations" >
-
-<div id="searchPersJsp">
-	<jsp:include page="/WEB-INF/jsp/nodecorate/searchPerson.jsp"/>
-</div>
-<div id="createPersJsp" style="display:none">
-	<jsp:include page="/WEB-INF/jsp/nodecorate/addPerson.jsp"/>
-</div>
-<div class="line"></div>
-	<div class="box" align="center">
-		<div id="getPersons">	
-			 <jsp:include page="/WEB-INF/jsp/nodecorate/displayPersonsList.jsp"/>
-   	</div>
-</div>
-</s:form>
-</div>
-
-</body>
+    <head>
+        <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
+        
+        <script type="text/javascript" language="javascript">
+            function submitform(persid, name) {    
+                top.window.setpersid(persid, name);
+                window.top.hidePopWin(true); 
+            }
+             
+            function callCreatePerson(persid, rolecode) {        
+                top.window.loadPersDiv(persid, rolecode, 'add');
+                window.top.hidePopWin(true); 
+            }
+            
+            function loadDiv() {
+                var url = '/registry/protected/popupdisplayPersonsList.action';
+                var params = {
+                    city: $("city").value,
+                    country: $("country").value,
+                    ctepId: $('poOrganizations').ctepId.value,
+                    email: $("email").value,
+                    firstName: $("firstName").value,
+                    lastName: $("lastName").value,
+                    state: $("state").value,
+                    zip: $("zip").value
+                };
+                var div = $('getPersons');          
+                div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';    
+                var aj = callAjaxPost(div, url, params);
+            }
+            
+            function setSearchFormVisible() {
+                $("searchPersJsp").style.display="";
+                $("createPersJsp").style.display="none";
+            }
+        
+            function setCreateFormVisible() {
+                $("searchPersJsp").style.display="none";
+                $("createPersJsp").style.display="";
+            }
+            
+            function createPerson() {
+                var url = '/registry/protected/popupcreatePerson.action';
+                var country = $("poOrganizations_country").value;
+                var params = {
+                    city: $("poOrganizations_city").value,
+                    country: country,
+                    email: $("poOrganizations_email").value,
+                    fax: $("poOrganizations_fax").value,
+                    firstName: $("poOrganizations_firstName").value,
+                    lastName: $("poOrganizations_lastName").value,
+                    midName: $("poOrganizations_middleName").value,
+                    phone: $("poOrganizations_phone").value,
+                    preFix: $("poOrganizations_preFix").value,
+                    state: ((country == "USA") ? $("poOrganizations_orgStateSelect").value : $("poOrganizations_orgStateText").value),
+                    streetAddr: $("poOrganizations_streetAddress").value,
+                    suffix: $("poOrganizations_suffix").value,
+                    tty: $("poOrganizations_tty").value,
+                    url: $("poOrganizations_url").value,
+                    zip: $("poOrganizations_zip").value
+                };
+                var div = $('getPersons');          
+                div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Creating...</div>';
+                var aj = callAjaxPost(div, url, params);
+            }
+        
+            function setFocusToFirstControl() {
+                for (var f=0; f < document.forms.length; f++) {
+                    for(var i=0; i < document.forms[f].length; i++) {
+                        var elt = document.forms[f][i];
+                        if (elt.type != "hidden" && elt.disabled != true && elt.id != 'enableEnterSubmit') {
+                            try {
+                                elt.focus();
+                                return;
+                            } catch(er) {
+                            }
+                        }
+                    }
+                }
+            }
+        </script> 
+    </head> 
+    <body onload="setFocusToFirstControl(); window.top.centerPopWin();" class="submodal">
+        <div class="box">
+            <s:form id="poOrganizations" name="poOrganizations" >
+                <div id="searchPersJsp">
+                    <jsp:include page="/WEB-INF/jsp/nodecorate/searchPerson.jsp"/>
+                </div>
+                <div id="createPersJsp" style="display:none">
+                    <jsp:include page="/WEB-INF/jsp/nodecorate/addPerson.jsp"/>
+                </div>
+                <div class="line"></div>
+                <div class="box" align="center">
+                    <div id="getPersons">    
+                         <jsp:include page="/WEB-INF/jsp/nodecorate/displayPersonsList.jsp"/>
+                   </div>
+                </div>
+            </s:form>
+        </div>
+    </body>
 </html>
