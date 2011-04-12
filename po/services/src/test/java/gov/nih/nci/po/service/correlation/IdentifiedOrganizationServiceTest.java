@@ -88,7 +88,7 @@ import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.IdentifierScope;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
-import gov.nih.nci.po.service.EjbTestHelper;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
 import org.hibernate.validator.InvalidStateException;
 import org.junit.Test;
@@ -147,7 +147,8 @@ public class IdentifiedOrganizationServiceTest extends AbstractStructrualRoleSer
         io1.setScoper(io2.getScoper());
         io1.setAssignedIdentifier(io2.getAssignedIdentifier());
 
-        EjbTestHelper.getIdentifiedOrganizationServiceBean().update(io1);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().update(io1);
     }
 
     @Override

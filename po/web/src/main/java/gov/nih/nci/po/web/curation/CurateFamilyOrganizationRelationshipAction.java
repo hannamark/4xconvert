@@ -87,7 +87,6 @@ import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
 import gov.nih.nci.po.data.dao.FamilyUtilDao;
-import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationRelationshipServiceLocal;
 import gov.nih.nci.po.util.OrganizationRelationshipComparator;
 import gov.nih.nci.po.util.PoRegistry;
@@ -161,18 +160,13 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
      */
     @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "familyOrgRelationship") })
     public String submit() {
-        try {
-            PoRegistry.getFamilyOrganizationRelationshipService().updateEntity(getFamilyOrgRelationship());
-            initializeCollection();
-            if (getFamilyOrgRelationship().getEndDate() == null) {
-                ActionHelper.saveMessage(getText("familyOrgRelationship.update.success"));
-            } else {
-                ActionHelper.saveMessage(getText("familyOrgRelationship.remove.success"));
-                return "parent";
-            }
-        } catch (EntityValidationException  e) {
-            //after implementing PO-3199 no need to swallow EntityValidationException
-            addActionError(e.getErrorMessages());
+        PoRegistry.getFamilyOrganizationRelationshipService().updateEntity(getFamilyOrgRelationship());
+        initializeCollection();
+        if (getFamilyOrgRelationship().getEndDate() == null) {
+            ActionHelper.saveMessage(getText("familyOrgRelationship.update.success"));
+        } else {
+            ActionHelper.saveMessage(getText("familyOrgRelationship.remove.success"));
+            return "parent";
         }
         return SUCCESS;
     }
@@ -185,13 +179,8 @@ public class CurateFamilyOrganizationRelationshipAction extends ActionSupport im
         setFamilyOrgRelationship(
                 PoRegistry.getFamilyOrganizationRelationshipService().getById(getFamilyOrgRelationship().getId()));
         getFamilyOrgRelationship().setEndDate(new Date());
-        try {
-            PoRegistry.getFamilyOrganizationRelationshipService().updateEntity(getFamilyOrgRelationship());
-            ActionHelper.saveMessage(getText("familyOrgRelationship.remove.success"));
-        } catch (EntityValidationException e) {
-            //after implementing PO-3199 no need to swallow EntityValidationException
-            addActionError(e.getErrorMessages());
-        }
+        PoRegistry.getFamilyOrganizationRelationshipService().updateEntity(getFamilyOrgRelationship());
+        ActionHelper.saveMessage(getText("familyOrgRelationship.remove.success"));
         return "parent";
     }
 

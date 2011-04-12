@@ -161,7 +161,7 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject>
         q.setParameterList("ids_list", ids);
         return q.list();
     }
-
+    
     /**
      * Save the object.
      * @param obj the object
@@ -169,7 +169,7 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject>
      * @throws EntityValidationException any validation errors.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    protected long createHelper(T obj) throws EntityValidationException {
+    protected long createAndValidate(T obj) throws EntityValidationException {
         if (obj.getId() != null) {
             throw new IllegalArgumentException("id must be null on calls to create!");
         }
@@ -179,7 +179,6 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject>
         ensureValid(obj);
         return ((Long) s.save(obj)).longValue();
     }
-
 
      /**
       *
@@ -200,21 +199,10 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject>
      * @param entity the entity to validate
      * @throws EntityValidationException is validation fails
      */
-    protected void ensureValid(T entity) throws EntityValidationException {
+    private void ensureValid(T entity) throws EntityValidationException {
         Map<String, String[]> errors = validate(entity);
         if (errors != null && !errors.isEmpty()) {
             throw new EntityValidationException(errors);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void update(T updatedEntity) {
-        Session s = PoHibernateUtil.getCurrentSession();
-        // flush here to make sure that the validators' query is correct.
-        s.flush();
-        s.update(updatedEntity);
     }
 }

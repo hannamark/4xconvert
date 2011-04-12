@@ -86,7 +86,6 @@ import static org.junit.Assert.assertEquals;
 import gov.nih.nci.po.data.bo.OversightCommittee;
 import gov.nih.nci.po.data.bo.OversightCommitteeType;
 import gov.nih.nci.po.data.bo.RoleStatus;
-import gov.nih.nci.po.service.EjbTestHelper;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import org.hibernate.validator.InvalidStateException;
@@ -137,7 +136,8 @@ public class OversightCommitteeServiceTest extends AbstractStructrualRoleService
         oc1.setPlayer(oc2.getPlayer());
         oc1.setTypeCode(oc2.getTypeCode());
         try {
-            EjbTestHelper.getOversightCommitteeServiceBean().update(oc1);
+            PoHibernateUtil.getCurrentSession().flush();
+            PoHibernateUtil.getCurrentSession().update(oc1);
             Assert.fail();
         } catch(InvalidStateException e) {
         }
@@ -145,12 +145,12 @@ public class OversightCommitteeServiceTest extends AbstractStructrualRoleService
         OversightCommitteeType otherType = new OversightCommitteeType("otherType");
         PoHibernateUtil.getCurrentSession().save(otherType);
         oc1.setTypeCode(otherType);
-        EjbTestHelper.getOversightCommitteeServiceBean().update(oc1);
+        PoHibernateUtil.getCurrentSession().update(oc1);
 
         oc2.setStatus(RoleStatus.NULLIFIED);
-        EjbTestHelper.getOversightCommitteeServiceBean().update(oc2);
+        PoHibernateUtil.getCurrentSession().update(oc2);
         oc1.setTypeCode(oc2.getTypeCode());
-        EjbTestHelper.getOversightCommitteeServiceBean().update(oc1);
+        PoHibernateUtil.getCurrentSession().update(oc1);
     }
 
     @Override

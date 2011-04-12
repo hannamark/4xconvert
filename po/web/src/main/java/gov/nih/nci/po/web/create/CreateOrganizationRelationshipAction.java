@@ -85,7 +85,6 @@ package gov.nih.nci.po.web.create;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
-import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.curation.CurateOrganizationRelationshipAction;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
@@ -142,11 +141,10 @@ public class CreateOrganizationRelationshipAction extends CurateOrganizationRela
 
     /**
      * Creates the new organization relationship.
-     * @throws EntityValidationException on hibernate validation error
      * @return success
      */
     @Validations(customValidators = {@CustomValidator(type = "hibernate", fieldName = "newOrgRelationship") })
-    public String create() throws EntityValidationException {
+    public String create() {
         getNewOrgRelationship().setFamily(getOrgRelationship().getFamily());
         getNewOrgRelationship().setOrganization(getOrgRelationship().getOrganization());
         getNewOrgRelationship().setRelatedOrganization(getOrgRelationship().getRelatedOrganization());
@@ -160,9 +158,8 @@ public class CreateOrganizationRelationshipAction extends CurateOrganizationRela
     /**
      * Removes both sides of the organization relationship by making them both inactive.
      * @return success
-     * @throws EntityValidationException on error
      */
-    public String remove() throws EntityValidationException {
+    public String remove() {
         OrganizationRelationship or =
             PoRegistry.getOrganizationRelationshipService().getById(getOrgRelationship().getId());
         OrganizationRelationship relatedOr =

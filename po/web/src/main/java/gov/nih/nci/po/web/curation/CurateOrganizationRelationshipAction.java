@@ -83,7 +83,6 @@
 package gov.nih.nci.po.web.curation;
 
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
-import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
@@ -150,11 +149,10 @@ public class CurateOrganizationRelationshipAction extends ActionSupport implemen
 
     /**
      * Creates the new organization relationship, making the old relationship inactive.
-     * @throws EntityValidationException on hibernate validation error
      * @return success
      */
     @Validations(customValidators = @CustomValidator(type = "hibernate", fieldName = "orgRelationship"))
-    public String update() throws EntityValidationException {
+    public String update() {
         PoRegistry.getOrganizationRelationshipService().updateEntity(getOrgRelationship());
         OrganizationRelationship related =
             PoRegistry.getOrganizationRelationshipService().getActiveOrganizationRelationship(

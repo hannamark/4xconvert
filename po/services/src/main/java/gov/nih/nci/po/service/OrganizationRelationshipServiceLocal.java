@@ -86,7 +86,6 @@ import gov.nih.nci.po.data.bo.OrganizationRelationship;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Local;
 
@@ -104,9 +103,8 @@ public interface OrganizationRelationshipServiceLocal
      * Creates a bidirectional Relationship.
      * @param orgRel new OrganizationRelationship
      * @return id
-     * @throws EntityValidationException if validation fails
      */
-    long create(OrganizationRelationship orgRel) throws EntityValidationException;
+    long create(OrganizationRelationship orgRel);
 
     /**
      * get the entity by id.
@@ -116,18 +114,10 @@ public interface OrganizationRelationshipServiceLocal
     OrganizationRelationship getById(long id);
 
     /**
-     * validate the entity.
-     * @param entity the entity to validate
-     * @return return validation error messages per invalid field path.
-     */
-    Map<String, String[]> validate(OrganizationRelationship entity);
-
-    /**
      * update the entity.
      * @param updatedEntity the entity to save.
-     * @throws EntityValidationException if validation fails.
      */
-    void updateEntity(OrganizationRelationship updatedEntity)throws EntityValidationException;
+    void updateEntity(OrganizationRelationship updatedEntity);
 
     /**
      * Gets a list of all active organization relationships within a family related to the given organization.

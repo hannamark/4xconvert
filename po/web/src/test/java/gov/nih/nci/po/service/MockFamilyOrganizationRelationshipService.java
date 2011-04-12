@@ -109,7 +109,7 @@ public class MockFamilyOrganizationRelationshipService implements FamilyOrganiza
     /**
      * {@inheritDoc}
      */
-    public long create(FamilyOrganizationRelationship famOrgRel) throws EntityValidationException {
+    public long create(FamilyOrganizationRelationship famOrgRel) {
         if (famOrgRel.getId() == null) {
             currentId++;
             famOrgRel.setId(currentId);

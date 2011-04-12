@@ -135,12 +135,6 @@ public interface GenericStructrualRoleServiceLocal<T extends Correlation>
     Map<String, String[]> validate(T entity);
 
     /**
-     *
-     * @param updated The structural role to update.
-     */
-    void update(T updated);
-
-    /**
      * Method for the curator to use to curate the correlation.
      * @param correlation the correlation to curate.
      * @throws JMSException if problem occurred publishing the announcement message for updates.

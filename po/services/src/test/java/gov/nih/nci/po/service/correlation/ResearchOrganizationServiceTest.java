@@ -157,7 +157,8 @@ public class ResearchOrganizationServiceTest extends AbstractOrganizationalRoleS
         ro1.setTypeCode(ro2.getTypeCode());
         ro1.setFundingMechanism(ro2.getFundingMechanism());
         try {
-            EjbTestHelper.getResearchOrganizationServiceBean().update(ro1);
+            PoHibernateUtil.getCurrentSession().flush();
+            PoHibernateUtil.getCurrentSession().update(ro1);
             Assert.fail();
         } catch (InvalidStateException e) {
         }
@@ -169,19 +170,19 @@ public class ResearchOrganizationServiceTest extends AbstractOrganizationalRoleS
         otherType.getFundingMechanisms().add(otherfm);
         PoHibernateUtil.getCurrentSession().save(otherType);
         ro1.setTypeCode(otherType);
-        EjbTestHelper.getResearchOrganizationServiceBean().update(ro1);
+        PoHibernateUtil.getCurrentSession().update(ro1);
 
         ro2.getTypeCode().getFundingMechanisms().add(otherfm);
         PoHibernateUtil.getCurrentSession().update(ro2.getTypeCode());
         ro1.setTypeCode(ro2.getTypeCode());
         ro1.setFundingMechanism(otherfm);
-        EjbTestHelper.getResearchOrganizationServiceBean().update(ro1);
+        PoHibernateUtil.getCurrentSession().update(ro1);
 
         ro2.setStatus(RoleStatus.NULLIFIED);
-        EjbTestHelper.getResearchOrganizationServiceBean().update(ro2);
+        PoHibernateUtil.getCurrentSession().update(ro2);
         ro1.setTypeCode(ro2.getTypeCode());
         ro1.setFundingMechanism(ro2.getFundingMechanism());
-        EjbTestHelper.getResearchOrganizationServiceBean().update(ro1);
+        PoHibernateUtil.getCurrentSession().update(ro1);
     }
 
     @Test
@@ -190,7 +191,7 @@ public class ResearchOrganizationServiceTest extends AbstractOrganizationalRoleS
         assertEquals(RoleStatus.PENDING, ro.getStatus());
 
         ro.setTypeCode(null);
-        EjbTestHelper.getResearchOrganizationServiceBean().update(ro);
+        PoHibernateUtil.getCurrentSession().update(ro);
 
         ro.setStatus(RoleStatus.ACTIVE);
         Map<String, String[]> errors = EjbTestHelper.getResearchOrganizationServiceBean().validate(ro);

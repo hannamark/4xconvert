@@ -80,49 +80,43 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.web.create;
+package gov.nih.nci.po.service;
 
-import static org.junit.Assert.assertEquals;
-import gov.nih.nci.po.data.bo.FamilyStatus;
-import gov.nih.nci.po.web.AbstractPoTest;
+import gov.nih.nci.po.util.PoHibernateUtil;
 
-import java.util.Iterator;
-import java.util.Set;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.opensymphony.xwork2.Action;
-
+import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 
 /**
+ * Common methods for admin-related entity services.  These are for entities that do not require curation,
+ * and only require standard persistence (create/update) support. 
  * @author moweis
- *
+ * @param <T>
+ * 
  */
-public class CreateFamilyActionTest extends AbstractPoTest {
-    private CreateFamilyAction action;
+public class AbstractAdminServiceBean<T extends PersistentObject> extends AbstractBaseServiceBean<T> {
 
-    @Before
-    public void setUp() {
-        action = new CreateFamilyAction();
+    /**
+     * Save the object.
+     * @param obj the object
+     * @return the id
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public long create(T obj) {
+        if (obj.getId() != null) {
+            throw new IllegalArgumentException("id must be null on calls to create!");
+        }
+        return ((Long) PoHibernateUtil.getCurrentSession().save(obj)).longValue();
     }
 
-    @Test
-    public void testStart() {
-        assertEquals(Action.INPUT, action.start());
-    }
-
-    @Test
-    public void testSave() {
-        assertEquals(Action.SUCCESS, action.save());
-    }
-    
-
-    @Test
-    public void getAvailableStatus() {
-        Set<FamilyStatus> availableStatus = action.getAvailableStatus();
-        assertEquals(1, availableStatus.size());
-        Iterator<FamilyStatus> iterator = availableStatus.iterator();
-        assertEquals(FamilyStatus.ACTIVE, iterator.next());
+    /**
+     * Update entity. 
+     * @param updated The structural role to update.
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void update(T updated) {
+        PoHibernateUtil.getCurrentSession().update(updated);
     }
 }

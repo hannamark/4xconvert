@@ -1,15 +1,14 @@
 package gov.nih.nci.po.web.roles;
 
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.data.bo.Organization;
+import gov.nih.nci.po.util.PoRegistry;
+import gov.nih.nci.po.web.util.PoHttpSessionUtil;
+
 import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
-
-import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
-import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
 import com.opensymphony.xwork2.ActionSupport;
@@ -55,13 +54,8 @@ public class OrganizationPerspectiveFamilyRelationshipsAction extends ActionSupp
         FamilyOrganizationRelationship familyOrganizationRelationship =
                 PoRegistry.getFamilyOrganizationRelationshipService().getById(getSelectedFamilyOrgRelId());
         familyOrganizationRelationship.setEndDate(DateUtils.truncate(new Date(), Calendar.DATE));
-        try {
-            PoRegistry.getFamilyOrganizationRelationshipService().updateEntity(familyOrganizationRelationship);
-            ActionHelper.saveMessage(getText("familyOrgRelationship.remove.success"));
-        } catch (EntityValidationException e) {
-            //after implementing PO-3199 no need to swallow EntityValidationException
-            addActionError(e.getErrorMessages());
-        }
+        PoRegistry.getFamilyOrganizationRelationshipService().updateEntity(familyOrganizationRelationship);
+        ActionHelper.saveMessage(getText("familyOrgRelationship.remove.success"));
         return SUCCESS;
     }
 

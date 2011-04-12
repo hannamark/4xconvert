@@ -106,7 +106,7 @@ import org.hibernate.Query;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class OrganizationRelationshipServiceBean extends AbstractBaseServiceBean<OrganizationRelationship> implements
+public class OrganizationRelationshipServiceBean extends AbstractAdminServiceBean<OrganizationRelationship> implements
         OrganizationRelationshipServiceLocal {
 
     private static final String ORG_ID_PARAM = "orgId";
@@ -116,7 +116,7 @@ public class OrganizationRelationshipServiceBean extends AbstractBaseServiceBean
     /**
      * {@inheritDoc}
      */
-    public long create(OrganizationRelationship orgRel) throws EntityValidationException {
+    public long create(OrganizationRelationship orgRel) {
         if (orgRel.getStartDate() == null) {
             orgRel.setStartDate(DateUtils.truncate(new Date(), Calendar.DATE));
         }
@@ -127,15 +127,14 @@ public class OrganizationRelationshipServiceBean extends AbstractBaseServiceBean
         orgRelLink.setHierarchicalType(FamilyHierarchicalType.getPairValue(orgRel.getHierarchicalType()));
         orgRelLink.setStartDate(orgRel.getStartDate());
         orgRelLink.setEndDate(orgRel.getEndDate());
-        super.createHelper(orgRelLink);
-        return super.createHelper(orgRel);
+        super.create(orgRelLink);
+        return super.create(orgRel);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void updateEntity(OrganizationRelationship updatedEntity) throws EntityValidationException {
-        super.ensureValid(updatedEntity);
+    public void updateEntity(OrganizationRelationship updatedEntity) {
         super.update(updatedEntity);
     }
 

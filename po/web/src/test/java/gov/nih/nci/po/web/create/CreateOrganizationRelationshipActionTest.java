@@ -87,7 +87,6 @@ import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyHierarchicalType;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
-import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.web.AbstractPoTest;
 
 import java.util.Date;
@@ -122,7 +121,7 @@ public class CreateOrganizationRelationshipActionTest extends AbstractPoTest {
     }
 
     @Test
-    public void testCreate() throws EntityValidationException {
+    public void testCreate() {
         OrganizationRelationship orgRelationship = new OrganizationRelationship();
 
         orgRelationship.setId(1L);
@@ -139,7 +138,7 @@ public class CreateOrganizationRelationshipActionTest extends AbstractPoTest {
     }
 
     @Test
-    public void testRemove() throws EntityValidationException {
+    public void testRemove() {
         action.getOrgRelationship().setId(1L);
         assertEquals(Action.SUCCESS, action.remove());
     }

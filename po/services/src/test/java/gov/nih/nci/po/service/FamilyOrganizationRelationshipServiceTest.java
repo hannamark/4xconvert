@@ -114,27 +114,32 @@ import javax.jms.JMSException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.PropertyValueException;
+import org.hibernate.validator.InvalidStateException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * @author mshestopalov
- *
+ * 
  */
 public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBeanTest {
     private FamilyOrganizationRelationshipServiceBean familyOrgRelServiceLocal;
     private OrganizationRelationshipServiceLocal orgRelServiceLocal = mock(OrganizationRelationshipServiceBean.class);
     private Date today = DateUtils.truncate(new Date(), Calendar.DATE);
     private Date oldDate;
+    private Country country = new Country("testorg", "996", "IJ", "IJI");
 
     @Before
     public void setUpData() {
-        familyOrgRelServiceLocal = (FamilyOrganizationRelationshipServiceBean) EjbTestHelper.getFamilyOrganizationRelationshipService();
+        familyOrgRelServiceLocal = (FamilyOrganizationRelationshipServiceBean) EjbTestHelper
+                .getFamilyOrganizationRelationshipService();
         familyOrgRelServiceLocal.setOrgRelService(orgRelServiceLocal);
         Calendar cal = Calendar.getInstance();
         cal.set(2008, 01, 02);
         oldDate = DateUtils.truncate(cal.getTime(), Calendar.DATE);
+        PoHibernateUtil.getCurrentSession().save(country);
     }
 
     @After
@@ -146,30 +151,10 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
     @Test
     public void testFamilyOrgRelationship() throws EntityValidationException, JMSException, ParseException {
         // create test
-        Family family = new Family();
-        family.setName("FamilyName");
-        family.setStartDate(oldDate);
-        family.setStatusCode(FamilyStatus.NULLIFIED);
-        long id = EjbTestHelper.getFamilyServiceBean().create(family);
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-        Family savedFam = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
+        Family savedFam = createFamily();
         assertNotNull(savedFam.getId());
 
-        Country country = new Country("testorg", "996", "IJ", "IJI");
-        PoHibernateUtil.getCurrentSession().save(country);
-        Organization org = new Organization();
-        org.setName(StringUtils.repeat("testO", 32));
-        Address mailingAddress = new Address("test", "test", "test", "test", country);
-        org.setPostalAddress(mailingAddress);
-        org.setStatusCode(EntityStatus.NULLIFIED);
-        org.getEmail().add(new Email("foo@example.com"));
-        org.getUrl().add(new URL("http://example.com"));
-
-        long orgId = EjbTestHelper.getOrganizationServiceBean().create(org);
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-        Organization savedOrg = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, orgId);
+        Organization savedOrg = createOrg();
         assertNotNull(savedOrg.getId());
 
         FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
@@ -179,9 +164,9 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         famOrgRel.setStartDate(oldDate);
 
         long famOrgRelId = familyOrgRelServiceLocal.create(famOrgRel);
-        assertEquals(oldDate, familyOrgRelServiceLocal.getActiveStartDate(id, orgId));
-        FamilyOrganizationRelationship savedFamOrgRel = (FamilyOrganizationRelationship)
-            PoHibernateUtil.getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId);
+        assertEquals(oldDate, familyOrgRelServiceLocal.getActiveStartDate(savedFam.getId(), savedOrg.getId()));
+        FamilyOrganizationRelationship savedFamOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil
+                .getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
         assertNotNull(savedFamOrgRel.getId());
@@ -195,19 +180,7 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         assertEquals(freshFamOrgRel.getFunctionalType(), FamilyFunctionalType.CONTRACTUAL);
         assertEquals(sdf.format(freshFamOrgRel.getStartDate()), "01/01/2009");
 
-        // get fam org rels by fam
-        mailingAddress.setId(null);
-        Organization org2 = new Organization();
-        org2.setName(StringUtils.repeat("test1", 32));
-        org2.setPostalAddress(mailingAddress);
-        org2.setStatusCode(EntityStatus.NULLIFIED);
-        org2.getEmail().add(new Email("foo@example.com"));
-        org2.getUrl().add(new URL("http://example.com"));
-
-        long orgId2 = EjbTestHelper.getOrganizationServiceBean().create(org2);
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-        Organization savedOrg2 = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, orgId2);
+        Organization savedOrg2 = createOrg();
         assertNotNull(savedOrg2.getId());
 
         FamilyOrganizationRelationship famOrgRel2 = new FamilyOrganizationRelationship();
@@ -238,246 +211,157 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         famOrgRel3.setStartDate(oldDate);
 
         familyOrgRelServiceLocal.create(famOrgRel3);
-        assertEquals(2, ((Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, savedOrg2.getId()))
-                .getFamilyOrganizationRelationships().size());
+        assertEquals(2,
+                ((Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, savedOrg2.getId()))
+                        .getFamilyOrganizationRelationships().size());
     }
 
-    @Test
+    @Test(expected = PropertyValueException.class)
     public void testNotNullValidation() {
+        familyOrgRelServiceLocal.create(new FamilyOrganizationRelationship());
+    }
+
+    @Test
+    public void testEndDateInTheFuture() throws EntityValidationException, JMSException {
         try {
-            familyOrgRelServiceLocal.create(new FamilyOrganizationRelationship());
-            fail("EntityValidationException should have been thrown.");
-        } catch (EntityValidationException eve) {
-            assertTrue(eve.getErrors().containsKey("family"));
-            assertTrue(eve.getErrors().containsKey("organization"));
-            assertTrue(eve.getErrors().containsKey("startDate"));
-            assertTrue(eve.getErrors().containsKey("functionalType"));
+            createFamOrgRel(createFamily(), createOrg(), new Date(), new Date(new Date().getTime() + 300000000));
+            fail("InvalidStateException expected");
+        } catch(InvalidStateException e) {
+            assertEquals(2, e.getInvalidValues().length);
+            assertEquals("Invalid date range based on family relationships.", e.getInvalidValues()[0].getMessage());
+            assertEquals("(fieldName) must not be in the future.", e.getInvalidValues()[1].getMessage());
+            assertEquals("endDate", e.getInvalidValues()[1].getPropertyName());
         }
     }
 
     @Test
-    public void testEndDateValidation() throws EntityValidationException, JMSException {
-        Family family = new Family();
-        family.setName("FamilyName");
-        Calendar cal = Calendar.getInstance();
-        cal.set(2010, 01, 02);
-        family.setStartDate(oldDate);
-        family.setStatusCode(FamilyStatus.NULLIFIED);
-        long id = EjbTestHelper.getFamilyServiceBean().create(family);
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-        Family savedFam = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
-        assertNotNull(savedFam.getId());
-
-        Country country = new Country("testorg", "996", "IJ", "IJI");
-        PoHibernateUtil.getCurrentSession().save(country);
-        Organization org = new Organization();
-        org.setName(StringUtils.repeat("testO", 32));
-        Address mailingAddress = new Address("test", "test", "test", "test", country);
-        org.setPostalAddress(mailingAddress);
-        org.setStatusCode(EntityStatus.NULLIFIED);
-        org.getEmail().add(new Email("foo@example.com"));
-        org.getUrl().add(new URL("http://example.com"));
-
-        long orgId = EjbTestHelper.getOrganizationServiceBean().create(org);
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-        Organization savedOrg = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, orgId);
-        assertNotNull(savedOrg.getId());
-
-        FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
-        famOrgRel.setOrganization(savedOrg);
-        famOrgRel.setFamily(savedFam);
-        famOrgRel.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
-        famOrgRel.setStartDate(new Date());
+    public void testEndDateBeforeStartDate() throws EntityValidationException, JMSException {
         try {
-            famOrgRel.setEndDate(new Date(new Date().getTime() + 300000000));
-            familyOrgRelServiceLocal.create(famOrgRel);
-            fail("EntityValidationException should have been thrown.");
-        } catch (EntityValidationException eve) {
-            assertTrue(eve.getErrors().containsKey("endDate"));
-        }
-
-        try {
-            famOrgRel.setStartDate(new Date(new Date().getTime() + 300000000));
-            famOrgRel.setEndDate(new Date());
-            familyOrgRelServiceLocal.create(famOrgRel);
-            fail("EntityValidationException should have been thrown.");
-        } catch (EntityValidationException eve) {
-            assertTrue(eve.getErrors().containsKey("startDate"));
+            createFamOrgRel(createFamily(), createOrg(), new Date(new Date().getTime() - 300000000), new Date(new Date().getTime() - 500000000));
+            fail("InvalidStateException expected");
+        } catch(InvalidStateException e) {
+            assertEquals(1, e.getInvalidValues().length);
+            assertEquals("startDate must be before endDate.", e.getInvalidValues()[0].getMessage());
         }
     }
 
     @Test
     public void testGetActiveRelationships() throws EntityValidationException, JMSException, ParseException {
         // Create all the needed data
-        Family family = new Family();
-        family.setName("FamilyName");
-        family.setStartDate(oldDate);
-        family.setStatusCode(FamilyStatus.NULLIFIED);
-        long id = EjbTestHelper.getFamilyServiceBean().create(family);
-        PoHibernateUtil.getCurrentSession().flush();
-        PoHibernateUtil.getCurrentSession().clear();
-        Family savedFam = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
+        Family savedFam = createFamily();
         assertNotNull(savedFam.getId());
 
-        Country country = new Country("testorg", "996", "IJ", "IJI");
-        PoHibernateUtil.getCurrentSession().save(country);
-        Address mailingAddress = new Address("test", "test", "test", "test", country);
-
-        Organization savedOrg = createOrg(mailingAddress);
+        Organization savedOrg = createOrg();
         long famOrgRelId1 = createFamOrgRel(savedFam, savedOrg);
-        assertEquals(1, familyOrgRelServiceLocal.getActiveRelationships(id).size());
+        assertEquals(1, familyOrgRelServiceLocal.getActiveRelationships(savedFam.getId()).size());
 
-        mailingAddress.setId(null);
-        Organization savedOrg2 = createOrg(mailingAddress);
+        Organization savedOrg2 = createOrg();
         long famOrgRelId2 = createFamOrgRel(savedFam, savedOrg2);
-        assertEquals(2, familyOrgRelServiceLocal.getActiveRelationships(id).size());
+        assertEquals(2, familyOrgRelServiceLocal.getActiveRelationships(savedFam.getId()).size());
 
-        mailingAddress.setId(null);
-        Organization savedOrg3 = createOrg(mailingAddress);
+        Organization savedOrg3 = createOrg();
         long famOrgRelId3 = createFamOrgRel(savedFam, savedOrg3);
-        assertEquals(3, familyOrgRelServiceLocal.getActiveRelationships(id).size());
+        assertEquals(3, familyOrgRelServiceLocal.getActiveRelationships(savedFam.getId()).size());
 
-        // test that inter-organization relationships don't cause duplicates to be returned by getActiveRelationships (PO-3323)
+        // test that inter-organization relationships don't cause duplicates to be returned by getActiveRelationships
+        // (PO-3323)
         OrganizationRelationship or = new OrganizationRelationship();
-        or.setFamily(family);
+        or.setFamily(savedFam);
         or.setHierarchicalType(FamilyHierarchicalType.PEER);
         or.setOrganization(savedOrg);
         or.setRelatedOrganization(savedOrg2);
         or.setStartDate(oldDate);
         EjbTestHelper.getOrganizationRelationshipService().create(or);
-        assertEquals(3, familyOrgRelServiceLocal.getActiveRelationships(id).size());
+        assertEquals(3, familyOrgRelServiceLocal.getActiveRelationships(savedFam.getId()).size());
 
         // now deactivate the relationship to make sure the active count decreases
         FamilyOrganizationRelationship savedFamOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil
-            .getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId1);
+                .getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId1);
         savedFamOrgRel.setEndDate(new Date());
         familyOrgRelServiceLocal.updateEntity(savedFamOrgRel);
         FamilyOrganizationRelationship updatedFamOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil
-            .getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId1);
+                .getCurrentSession().load(FamilyOrganizationRelationship.class, famOrgRelId1);
         assertNotNull(updatedFamOrgRel.getEndDate());
-        assertTrue(CollectionUtils.isEmpty(orgRelServiceLocal.getActiveOrganizationRelationships(updatedFamOrgRel.getFamily().getId(), updatedFamOrgRel.getOrganization().getId())));
-        assertEquals(2, familyOrgRelServiceLocal.getActiveRelationships(id).size());
+        assertTrue(CollectionUtils.isEmpty(orgRelServiceLocal.getActiveOrganizationRelationships(updatedFamOrgRel
+                .getFamily().getId(), updatedFamOrgRel.getOrganization().getId())));
+        assertEquals(2, familyOrgRelServiceLocal.getActiveRelationships(savedFam.getId()).size());
 
-        savedFamOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil.getCurrentSession()
-            .load(FamilyOrganizationRelationship.class, famOrgRelId2);
+        savedFamOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil.getCurrentSession().load(
+                FamilyOrganizationRelationship.class, famOrgRelId2);
         savedFamOrgRel.setEndDate(new Date());
         familyOrgRelServiceLocal.updateEntity(savedFamOrgRel);
-        assertEquals(1, familyOrgRelServiceLocal.getActiveRelationships(id).size());
+        assertEquals(1, familyOrgRelServiceLocal.getActiveRelationships(savedFam.getId()).size());
 
-        savedFamOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil.getCurrentSession()
-            .load(FamilyOrganizationRelationship.class, famOrgRelId3);
+        savedFamOrgRel = (FamilyOrganizationRelationship) PoHibernateUtil.getCurrentSession().load(
+                FamilyOrganizationRelationship.class, famOrgRelId3);
         savedFamOrgRel.setEndDate(new Date());
         familyOrgRelServiceLocal.updateEntity(savedFamOrgRel);
-        assertEquals(0, familyOrgRelServiceLocal.getActiveRelationships(id).size());
+        assertEquals(0, familyOrgRelServiceLocal.getActiveRelationships(savedFam.getId()).size());
     }
 
     @Test
-    public void testGetEarliestStartDate() throws EntityValidationException, JMSException  {
+    public void testGetEarliestStartDate() throws EntityValidationException, JMSException {
         // Create all the needed data
-        Family family = new Family();
-        family.setName("FamilyName");
-        family.setStartDate(oldDate);
-        family.setStatusCode(FamilyStatus.ACTIVE);
-        long id = EjbTestHelper.getFamilyServiceBean().create(family);
-        Family savedFam = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
-        
-        Country country = new Country("testorg", "996", "IJ", "IJI");
-        PoHibernateUtil.getCurrentSession().save(country);
-        Address mailingAddress = new Address("test", "test", "test", "test", country);
+        Family savedFam = createFamily();
 
-        Organization savedOrg = createOrg(mailingAddress);
+        Organization savedOrg = createOrg();
         createFamOrgRel(savedFam, savedOrg, oldDate);
-        mailingAddress.setId(null);
-        Organization savedOrg2 = createOrg(mailingAddress);
+        Organization savedOrg2 = createOrg();
         createFamOrgRel(savedFam, savedOrg2, today);
-        mailingAddress.setId(null);
-        Organization savedOrg3 = createOrg(mailingAddress);
+        Organization savedOrg3 = createOrg();
         createFamOrgRel(savedFam, savedOrg3, today);
-        assertEquals(oldDate, familyOrgRelServiceLocal.getEarliestStartDate(id));
+        assertEquals(oldDate, familyOrgRelServiceLocal.getEarliestStartDate(savedFam.getId()));
     }
 
     @Test
-    public void testGetLatestStartDate() throws EntityValidationException, JMSException  {
+    public void testGetLatestStartDate() throws EntityValidationException, JMSException {
         // Create all the needed data
-        Family family = new Family();
-        family.setName("FamilyName");
-        family.setStartDate(oldDate);
-        family.setStatusCode(FamilyStatus.ACTIVE);
-        long id = EjbTestHelper.getFamilyServiceBean().create(family);
-        Family savedFam = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
-        
-        Country country = new Country("testorg", "996", "IJ", "IJI");
-        PoHibernateUtil.getCurrentSession().save(country);
-        Address mailingAddress = new Address("test", "test", "test", "test", country);
+        Family savedFam = createFamily();
 
-        Organization savedOrg = createOrg(mailingAddress);
+        Organization savedOrg = createOrg();
         createFamOrgRel(savedFam, savedOrg, oldDate);
-        assertEquals(oldDate, familyOrgRelServiceLocal.getLatestStartDate(id));
-        
-        mailingAddress.setId(null);
-        Organization savedOrg2 = createOrg(mailingAddress);
+        assertEquals(oldDate, familyOrgRelServiceLocal.getLatestStartDate(savedFam.getId()));
+
+        Organization savedOrg2 = createOrg();
         createFamOrgRel(savedFam, savedOrg2, DateUtils.addDays(oldDate, 1));
-        assertEquals(DateUtils.addDays(oldDate, 1), familyOrgRelServiceLocal.getLatestStartDate(id));
+        assertEquals(DateUtils.addDays(oldDate, 1), familyOrgRelServiceLocal.getLatestStartDate(savedFam.getId()));
 
-        mailingAddress.setId(null);
-        Organization savedOrg3 = createOrg(mailingAddress);
+        Organization savedOrg3 = createOrg();
         createFamOrgRel(savedFam, savedOrg3, today, today);
-        assertEquals(today, familyOrgRelServiceLocal.getLatestStartDate(id));
+        assertEquals(today, familyOrgRelServiceLocal.getLatestStartDate(savedFam.getId()));
     }
 
     @Test
-    public void testGetLatestEndDate() throws EntityValidationException, JMSException  {
+    public void testGetLatestEndDate() throws EntityValidationException, JMSException {
         // Create all the needed data
-        Family family = new Family();
-        family.setName("FamilyName");
-        family.setStartDate(oldDate);
-        family.setStatusCode(FamilyStatus.ACTIVE);
-        long id = EjbTestHelper.getFamilyServiceBean().create(family);
-        Family savedFam = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
-        
-        Country country = new Country("testorg", "996", "IJ", "IJI");
-        PoHibernateUtil.getCurrentSession().save(country);
-        Address mailingAddress = new Address("test", "test", "test", "test", country);
+        Family savedFam = createFamily();
+        Organization savedOrg = createOrg();
 
-        Organization savedOrg = createOrg(mailingAddress);
         createFamOrgRel(savedFam, savedOrg, oldDate, null);
-        mailingAddress.setId(null);
-        Organization savedOrg2 = createOrg(mailingAddress);
+        Organization savedOrg2 = createOrg();
         createFamOrgRel(savedFam, savedOrg2, oldDate, oldDate);
-        mailingAddress.setId(null);
-        Organization savedOrg3 = createOrg(mailingAddress);
+        Organization savedOrg3 = createOrg();
         createFamOrgRel(savedFam, savedOrg3, today, today);
-        assertEquals(today, familyOrgRelServiceLocal.getLatestEndDate(id));
+        assertEquals(today, familyOrgRelServiceLocal.getLatestEndDate(savedFam.getId()));
     }
 
     @Test
-    public void testGetLatestAllowableStartDate() throws EntityValidationException, JMSException  {
+    public void testGetLatestAllowableStartDate() throws EntityValidationException, JMSException {
         // Create all the needed data
-        Family family = new Family();
-        family.setName("FamilyName");
-        family.setStartDate(oldDate);
-        family.setStatusCode(FamilyStatus.ACTIVE);
-        long id = EjbTestHelper.getFamilyServiceBean().create(family);
-        Family savedFam = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
-        
-        Country country = new Country("testorg", "996", "IJ", "IJI");
-        PoHibernateUtil.getCurrentSession().save(country);
-        Address mailingAddress = new Address("test", "test", "test", "test", country);
+        Family savedFam = createFamily();
 
-        Organization savedOrg = createOrg(mailingAddress);
+        Organization savedOrg = createOrg();
         createFamOrgRel(savedFam, savedOrg, oldDate);
 
         when(orgRelServiceLocal.getEarliestStartDate(anyLong(), anyLong())).thenReturn(null);
-        assertEquals(today, familyOrgRelServiceLocal.getLatestAllowableStartDate(id));
-        
+        assertEquals(today, familyOrgRelServiceLocal.getLatestAllowableStartDate(savedFam.getId()));
+
         when(orgRelServiceLocal.getEarliestStartDate(anyLong(), anyLong())).thenReturn(today);
-        assertEquals(today, familyOrgRelServiceLocal.getLatestAllowableStartDate(id));
+        assertEquals(today, familyOrgRelServiceLocal.getLatestAllowableStartDate(savedFam.getId()));
     }
-    
+
     @Test
-    public void testGetEarliestAllowableEndDate() throws EntityValidationException, JMSException  {
+    public void testGetEarliestAllowableEndDate() throws EntityValidationException, JMSException {
         // Create all the needed data
         Family family = new Family();
         family.setName("FamilyName");
@@ -485,46 +369,42 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         family.setStatusCode(FamilyStatus.ACTIVE);
         long id = EjbTestHelper.getFamilyServiceBean().create(family);
         Family savedFam = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
-        
-        Country country = new Country("testorg", "996", "IJ", "IJI");
-        PoHibernateUtil.getCurrentSession().save(country);
-        Address mailingAddress = new Address("test", "test", "test", "test", country);
 
-        Organization savedOrg = createOrg(mailingAddress);
+        Organization savedOrg = createOrg();
         createFamOrgRel(savedFam, savedOrg, oldDate);
 
         when(orgRelServiceLocal.getLatestStartDate(anyLong(), anyLong())).thenReturn(null);
         when(orgRelServiceLocal.getLatestEndDate(anyLong(), anyLong())).thenReturn(null);
         assertEquals(oldDate, familyOrgRelServiceLocal.getEarliestAllowableEndDate(id));
-        
-        when(orgRelServiceLocal.getLatestStartDate(anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate,1));
+
+        when(orgRelServiceLocal.getLatestStartDate(anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate, 1));
         when(orgRelServiceLocal.getLatestEndDate(anyLong(), anyLong())).thenReturn(null);
-        assertEquals(DateUtils.addDays(oldDate,1), familyOrgRelServiceLocal.getEarliestAllowableEndDate(id));
+        assertEquals(DateUtils.addDays(oldDate, 1), familyOrgRelServiceLocal.getEarliestAllowableEndDate(id));
 
         when(orgRelServiceLocal.getLatestStartDate(anyLong(), anyLong())).thenReturn(null);
-        when(orgRelServiceLocal.getLatestEndDate(anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate,2));
-        assertEquals(DateUtils.addDays(oldDate,2), familyOrgRelServiceLocal.getEarliestAllowableEndDate(id));
+        when(orgRelServiceLocal.getLatestEndDate(anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate, 2));
+        assertEquals(DateUtils.addDays(oldDate, 2), familyOrgRelServiceLocal.getEarliestAllowableEndDate(id));
 
-        when(orgRelServiceLocal.getLatestStartDate(anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate,3));
-        when(orgRelServiceLocal.getLatestEndDate(anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate,4));
-        assertEquals(DateUtils.addDays(oldDate,4), familyOrgRelServiceLocal.getEarliestAllowableEndDate(id));
+        when(orgRelServiceLocal.getLatestStartDate(anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate, 3));
+        when(orgRelServiceLocal.getLatestEndDate(anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate, 4));
+        assertEquals(DateUtils.addDays(oldDate, 4), familyOrgRelServiceLocal.getEarliestAllowableEndDate(id));
 
-        when(orgRelServiceLocal.getLatestStartDate(anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate,6));
-        when(orgRelServiceLocal.getLatestEndDate(anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate,5));
-        assertEquals(DateUtils.addDays(oldDate,6), familyOrgRelServiceLocal.getEarliestAllowableEndDate(id));
+        when(orgRelServiceLocal.getLatestStartDate(anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate, 6));
+        when(orgRelServiceLocal.getLatestEndDate(anyLong(), anyLong())).thenReturn(DateUtils.addDays(oldDate, 5));
+        assertEquals(DateUtils.addDays(oldDate, 6), familyOrgRelServiceLocal.getEarliestAllowableEndDate(id));
     }
-    
-    private long createFamOrgRel(Family savedFam, Organization savedOrg)
-            throws EntityValidationException {
+
+    private long createFamOrgRel(Family savedFam, Organization savedOrg) throws EntityValidationException {
         return createFamOrgRel(savedFam, savedOrg, oldDate);
     }
-    
-    private long createFamOrgRel(Family savedFam, Organization savedOrg, Date startDate) throws EntityValidationException {
+
+    private long createFamOrgRel(Family savedFam, Organization savedOrg, Date startDate)
+            throws EntityValidationException {
         return createFamOrgRel(savedFam, savedOrg, startDate, null);
     }
 
     private long createFamOrgRel(Family savedFam, Organization savedOrg, Date startDate, Date endDate)
-    throws EntityValidationException {
+            throws EntityValidationException {
         FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
         famOrgRel.setOrganization(savedOrg);
         famOrgRel.setFamily(savedFam);
@@ -537,7 +417,20 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         return famOrgRelId;
     }
 
-    private Organization createOrg(Address mailingAddress) throws EntityValidationException, JMSException {
+    private Family createFamily() {
+        Family family = new Family();
+        family.setName("FamilyName");
+        family.setStartDate(oldDate);
+        family.setStatusCode(FamilyStatus.NULLIFIED);
+        long id = EjbTestHelper.getFamilyServiceBean().create(family);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        return (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
+    }
+
+    private Organization createOrg() throws EntityValidationException, JMSException {
+        Address mailingAddress = new Address("test", "test", "test", "test", country);
+
         Organization org = new Organization();
         org.setName(StringUtils.repeat("testO", 32));
         org.setPostalAddress(mailingAddress);
@@ -545,6 +438,8 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         org.getEmail().add(new Email("foo@example.com"));
         org.getUrl().add(new URL("http://example.com"));
         long orgId = EjbTestHelper.getOrganizationServiceBean().create(org);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
         Organization savedOrg = (Organization) PoHibernateUtil.getCurrentSession().load(Organization.class, orgId);

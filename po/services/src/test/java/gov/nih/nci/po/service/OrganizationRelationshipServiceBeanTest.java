@@ -86,6 +86,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
@@ -112,6 +113,7 @@ import javax.jms.JMSException;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Session;
+import org.hibernate.validator.InvalidStateException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -129,8 +131,9 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
     public void setUpData() {
         orgRelServiceBean = EjbTestHelper.getOrganizationRelationshipService();
         familyServiceBean = EjbTestHelper.getFamilyServiceBean();
-        ((FamilyOrganizationRelationshipServiceBean)famOrganizationRelationshipService).setOrgRelService(orgRelServiceBean);
-        ((FamilyServiceBean)familyServiceBean).setFamilyOrgRelService(famOrganizationRelationshipService);
+        ((FamilyOrganizationRelationshipServiceBean) famOrganizationRelationshipService)
+                .setOrgRelService(orgRelServiceBean);
+        ((FamilyServiceBean) familyServiceBean).setFamilyOrgRelService(famOrganizationRelationshipService);
         orgServiceBean = EjbTestHelper.getOrganizationServiceBean();
         FamilyDateValidator.setFamilyService(familyServiceBean);
         cal.set(2011, 01, 02);
@@ -168,15 +171,16 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
         Family familyCriteria = new Family();
         familyCriteria.setName("UpdatedFamilyName");
         tosearch.setFamily(familyServiceBean.getById(orgRel.getFamily().getId()));
-        AnnotatedBeanSearchCriteria<OrganizationRelationship> scriteria
-        = new AnnotatedBeanSearchCriteria<OrganizationRelationship>(tosearch);
-        assertEquals(orgRelServiceBean.search(scriteria).size(),2);
+        AnnotatedBeanSearchCriteria<OrganizationRelationship> scriteria = new AnnotatedBeanSearchCriteria<OrganizationRelationship>(
+                tosearch);
+        assertEquals(orgRelServiceBean.search(scriteria).size(), 2);
 
         tosearch = new OrganizationRelationship();
         tosearch.setOrganization(orgServiceBean.getById(orgRel.getOrganization().getId()));
-        scriteria  = new AnnotatedBeanSearchCriteria<OrganizationRelationship>(tosearch);
-        assertEquals(orgRelServiceBean.search(scriteria).size(),1);
+        scriteria = new AnnotatedBeanSearchCriteria<OrganizationRelationship>(tosearch);
+        assertEquals(orgRelServiceBean.search(scriteria).size(), 1);
     }
+
     @Test
     public void testUpdateRelationship() throws EntityValidationException, JMSException {
         long id = createOrgRelationship().getId();
@@ -186,7 +190,7 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
 
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
-        //ensures that hierarchical Type is not updatable.
+        // ensures that hierarchical Type is not updatable.
         toUpdate.setHierarchicalType(FamilyHierarchicalType.CHILD);
 
         orgRelServiceBean.updateEntity(toUpdate);
@@ -216,26 +220,31 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
     }
 
     @Test
-    public void createOrgRelWithEndDate() throws EntityValidationException, JMSException {
+    public void createOrgRelWithEndDateInTheFuture() throws EntityValidationException, JMSException {
         OrganizationRelationship orgRel = getBasicOrgRelation();
         orgRel.setStartDate(oldDate);
         orgRel.setEndDate(DateUtils.addDays(new Date(), +2));
         try {
             orgRelServiceBean.create(orgRel);
-        } catch(EntityValidationException e) {
-            assertEquals("endDate=[must not be in the future.]",e.getErrorMessages());
-        }
-        orgRel.setStartDate(oldDate);
-        orgRel.setEndDate(DateUtils.addDays(new Date(), -2));
-        try {
-            orgRelServiceBean.create(orgRel);
-        } catch(EntityValidationException e) {
-            assertEquals("=[(startFieldName) must be before (endFieldName).]",e.getErrorMessages());
+            fail("InvalidStateException expected");
+        } catch (InvalidStateException e) {
+            assertEquals(1, e.getInvalidValues().length);
+            assertEquals("(fieldName) must not be in the future.", e.getInvalidValues()[0].getMessage());
+            assertEquals("endDate", e.getInvalidValues()[0].getPropertyName());
         }
     }
+
+    @Test
+    public void createOrgRelWithValidEndDate() throws EntityValidationException, JMSException {
+        OrganizationRelationship orgRel = getBasicOrgRelation();
+        orgRel.setStartDate(oldDate);
+        orgRel.setEndDate(DateUtils.addDays(new Date(), -2));
+        orgRelServiceBean.create(orgRel);
+    }
+
     @Test
     public void testUniqueRelationship() throws EntityValidationException, JMSException {
-        //ensures that the there will be only one Active relation
+        // ensures that the there will be only one Active relation
         OrganizationRelationship orgRel = getBasicOrgRelation();
         orgRel.setRelatedOrganization(orgServiceBean.getById(createOrg()));
         long orgId = orgRel.getOrganization().getId();
@@ -249,15 +258,17 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
         anotherSimilarOrg.setOrganization(orgServiceBean.getById(relOrgId));
         try {
             orgRelServiceBean.create(anotherSimilarOrg);
-        } catch (EntityValidationException e) {
-            assertEquals("=[Two organization should only have one Active relationship (e.g. no endDate) within a family]",
-                    e.getErrorMessages());
+            fail("InvalidStateException expected");
+        } catch (InvalidStateException e) {
+            assertEquals(1, e.getInvalidValues().length);
+            assertEquals("Two organization should only have one Active relationship (e.g. no endDate) within a family", e.getInvalidValues()[0].getMessage());
         }
     }
+
     @Test
     public void testCreateRelationship() throws EntityValidationException, JMSException {
-        //ensures that the bi-directional link is created
-        //e.g. save A is Parent of B. Then confirm that a the link B is a child of A exists in the db.
+        // ensures that the bi-directional link is created
+        // e.g. save A is Parent of B. Then confirm that a the link B is a child of A exists in the db.
         OrganizationRelationship orgRel = getBasicOrgRelation();
         orgRel.setStartDate(oldDate);
         orgRel.setHierarchicalType(FamilyHierarchicalType.PARENT);
@@ -265,8 +276,8 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
 
         OrganizationRelationship tosearch = new OrganizationRelationship();
         tosearch.setFamily(familyServiceBean.getById(orgRel.getFamily().getId()));
-        AnnotatedBeanSearchCriteria<OrganizationRelationship> scriteria
-        = new AnnotatedBeanSearchCriteria<OrganizationRelationship>(tosearch);
+        AnnotatedBeanSearchCriteria<OrganizationRelationship> scriteria = new AnnotatedBeanSearchCriteria<OrganizationRelationship>(
+                tosearch);
         List<OrganizationRelationship> list = orgRelServiceBean.search(scriteria);
         for (OrganizationRelationship orgRel1 : list) {
 
@@ -291,13 +302,13 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
     @Test
     public void testGetActiveOrganizationRelationship() throws EntityValidationException, JMSException {
         OrganizationRelationship or = createOrgRelationship();
-        assertNotNull(orgRelServiceBean.getActiveOrganizationRelationship(or.getFamily().getId(),
-                or.getOrganization().getId(), or.getRelatedOrganization().getId()));
+        assertNotNull(orgRelServiceBean.getActiveOrganizationRelationship(or.getFamily().getId(), or.getOrganization()
+                .getId(), or.getRelatedOrganization().getId()));
 
         or.setEndDate(DateUtils.truncate(new Date(), Calendar.DATE));
         orgRelServiceBean.updateEntity(or);
-        assertNull(orgRelServiceBean.getActiveOrganizationRelationship(or.getFamily().getId(),
-                or.getOrganization().getId(), or.getRelatedOrganization().getId()));
+        assertNull(orgRelServiceBean.getActiveOrganizationRelationship(or.getFamily().getId(), or.getOrganization()
+                .getId(), or.getRelatedOrganization().getId()));
     }
 
     private OrganizationRelationship getBasicOrgRelation() throws EntityValidationException, JMSException {
@@ -309,7 +320,7 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
         createFamOrgRel(orgRel.getFamily(), orgRel.getOrganization());
         return orgRel;
     }
-    
+
     private void createFamOrgRel(Family family, Organization organization) throws EntityValidationException {
         FamilyOrganizationRelationship relationship = new FamilyOrganizationRelationship();
         relationship.setFamily(family);
@@ -319,7 +330,7 @@ public class OrganizationRelationshipServiceBeanTest extends AbstractServiceBean
         famOrganizationRelationshipService.create(relationship);
     }
 
-    private long createFamily() throws EntityValidationException {
+    private long createFamily() {
         Family family = new Family();
         family.setName("FamilyName");
         family.setStartDate(oldDate);

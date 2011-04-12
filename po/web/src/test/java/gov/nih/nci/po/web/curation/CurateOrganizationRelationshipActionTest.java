@@ -91,7 +91,6 @@ import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyHierarchicalType;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationRelationship;
-import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.web.AbstractPoTest;
 import gov.nih.nci.po.web.util.validator.ValidDateRangeHelper;
 
@@ -162,7 +161,7 @@ public class CurateOrganizationRelationshipActionTest extends AbstractPoTest {
     }
 
     @Test
-    public void testUpdate() throws EntityValidationException {
+    public void testUpdate() {
         OrganizationRelationship orgRelationship = new OrganizationRelationship();
         OrganizationRelationship newOrgRelationship = new OrganizationRelationship();
 

@@ -104,19 +104,12 @@ import org.hibernate.Query;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class FamilyOrganizationRelationshipServiceBean extends AbstractBaseServiceBean<FamilyOrganizationRelationship>
+public class FamilyOrganizationRelationshipServiceBean extends AbstractAdminServiceBean<FamilyOrganizationRelationship>
         implements FamilyOrganizationRelationshipServiceLocal {
     private static final String FAMILY_ID_PARAM = "familyId";
     private static final String FAMORGREL_FAMILY_ID_EXP = " famOrgRel where famOrgRel.family.id = :" + FAMILY_ID_PARAM;
     @EJB
     private OrganizationRelationshipServiceLocal orgRelService;
-
-    /**
-     * {@inheritDoc}
-     */
-    public long create(FamilyOrganizationRelationship famOrgRel) throws EntityValidationException {
-        return super.createHelper(famOrgRel);
-    }
 
     /**
      * {@inheritDoc}
@@ -128,7 +121,7 @@ public class FamilyOrganizationRelationshipServiceBean extends AbstractBaseServi
     /**
      * {@inheritDoc}
      */
-    public void updateEntity(FamilyOrganizationRelationship updateEntity) throws EntityValidationException {
+    public void updateEntity(FamilyOrganizationRelationship updateEntity) {
         if (updateEntity.getEndDate() != null) {
             String hql = "update OrganizationRelationship set endDate = :endDate "
                     + "where family.id = :familyId and (organization.id = :orgId or relatedOrganization.id = :orgId)"

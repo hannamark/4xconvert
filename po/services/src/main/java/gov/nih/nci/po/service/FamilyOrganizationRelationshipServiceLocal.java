@@ -86,7 +86,6 @@ import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
@@ -101,9 +100,8 @@ public interface FamilyOrganizationRelationshipServiceLocal
      * Create a Family Organization Relationship.
      * @param famOrgRel new family organization relationship
      * @return id
-     * @throws EntityValidationException if validation fails
      */
-    long create(FamilyOrganizationRelationship famOrgRel) throws EntityValidationException;
+    long create(FamilyOrganizationRelationship famOrgRel);
 
     /**
      * Get Family Organization Relationship by id.
@@ -113,18 +111,10 @@ public interface FamilyOrganizationRelationshipServiceLocal
     FamilyOrganizationRelationship getById(long id);
 
     /**
-     * Validate Family Organization Relationship.
-     * @param entity the entity to validate
-     * @return return validation error messages per invalid field path.
-     */
-    Map<String, String[]> validate(FamilyOrganizationRelationship entity);
-
-    /**
      * Update Family Organization Relationship.
      * @param updatedEntity the entity to save.
-     * @throws EntityValidationException if validation fails
      */
-    void updateEntity(FamilyOrganizationRelationship updatedEntity) throws EntityValidationException;
+    void updateEntity(FamilyOrganizationRelationship updatedEntity);
 
    /**
      * Gets the list of active (i.e. no end date) family organization relationships by family id.

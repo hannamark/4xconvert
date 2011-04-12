@@ -135,7 +135,7 @@ public class AbstractCuratableServiceBean<T extends Curatable> extends AbstractB
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long create(T obj) throws EntityValidationException, JMSException {
-        long id = super.createHelper(obj);
+        long id = super.createAndValidate(obj);
         getPublisher().sendCreate(getTypeArgument(), obj);
         return id;
     }

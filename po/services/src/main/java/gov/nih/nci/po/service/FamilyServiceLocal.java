@@ -82,10 +82,12 @@
  */
 package gov.nih.nci.po.service;
 
-import java.util.Date;
-import java.util.Map;
-import javax.ejb.Local;
 import gov.nih.nci.po.data.bo.Family;
+
+import java.util.Date;
+
+import javax.ejb.Local;
+
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
 /**
@@ -99,9 +101,8 @@ public interface FamilyServiceLocal extends GenericSearchService<Family, SearchC
      * Creates the new family.
      * @param family new Family
      * @return id
-     * @throws EntityValidationException if validation fails
      */
-    long create(Family family) throws EntityValidationException;
+    long create(Family family);
 
     /**
      * get the family by id.
@@ -111,18 +112,10 @@ public interface FamilyServiceLocal extends GenericSearchService<Family, SearchC
     Family getById(long familyId);
 
     /**
-     * validate the family.
-     * @param entity the entity to validate
-     * @return return validation error messages per invalid field path.
-     */
-    Map<String, String[]> validate(Family entity);
-
-    /**
      * update the given family.
      * @param updatedEntity the entity to save.
-     * @throws EntityValidationException on error
      */
-    void updateEntity(Family updatedEntity) throws EntityValidationException;
+    void updateEntity(Family updatedEntity);
 
     /**
      * Get latest allowable start date for a Family based on existing relationships.

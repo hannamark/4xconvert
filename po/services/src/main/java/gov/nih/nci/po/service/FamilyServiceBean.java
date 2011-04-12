@@ -105,7 +105,7 @@ import org.apache.commons.lang.time.DateUtils;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class FamilyServiceBean extends AbstractBaseServiceBean<Family> implements FamilyServiceLocal {
+public class FamilyServiceBean extends AbstractAdminServiceBean<Family> implements FamilyServiceLocal {
 
     @EJB
     private FamilyOrganizationRelationshipServiceLocal familyOrgRelService;
@@ -115,19 +115,19 @@ public class FamilyServiceBean extends AbstractBaseServiceBean<Family> implement
     /**
      * {@inheritDoc}
      */
-    public long create(Family family) throws EntityValidationException {
+    public long create(Family family) {
         if (family.getStartDate() == null) {
             family.setStartDate(DateUtils.truncate(new Date(), Calendar.DATE));
         }
         family.setEndDate(null);
         family.setStatusCode(FamilyStatus.ACTIVE);
-        return super.createHelper(family);
+        return super.create(family);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void updateEntity(Family updateFamilyEntity) throws EntityValidationException {
+    public void updateEntity(Family updateFamilyEntity) {
         if (isNotActiveStatus(updateFamilyEntity)) {
             if (updateFamilyEntity.getEndDate() == null) {
                 updateFamilyEntity.setEndDate(DateUtils.truncate(new Date(), Calendar.DATE));
@@ -145,7 +145,7 @@ public class FamilyServiceBean extends AbstractBaseServiceBean<Family> implement
                || FamilyStatus.NULLIFIED.equals(updateFamilyEntity.getStatusCode());
     }
     
-    private void cascadeEndDate(Family updateFamilyEntity) throws EntityValidationException {
+    private void cascadeEndDate(Family updateFamilyEntity) {
         if (isNotActiveStatus(updateFamilyEntity)) {
             List<FamilyOrganizationRelationship> famOrgSet = familyOrgRelService.getActiveRelationships(
                     updateFamilyEntity.getId());

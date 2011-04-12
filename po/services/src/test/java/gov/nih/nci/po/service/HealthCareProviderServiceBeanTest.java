@@ -207,7 +207,7 @@ public class HealthCareProviderServiceBeanTest extends AbstractBeanTest {
         obj.getScoper().setStatusCode(EntityStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(obj.getScoper());
         obj.setStatus(RoleStatus.ACTIVE);
-        EjbTestHelper.getHealthCareProviderServiceBean().update(obj);
+        PoHibernateUtil.getCurrentSession().update(obj);
 
         obj.getPhone().clear();
         Map<String, String[]> errors = EjbTestHelper.getHealthCareProviderServiceBean().validate(obj);

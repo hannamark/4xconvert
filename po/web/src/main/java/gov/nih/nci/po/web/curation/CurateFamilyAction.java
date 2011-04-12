@@ -2,7 +2,6 @@ package gov.nih.nci.po.web.curation;
 
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyStatus;
-import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
 
@@ -49,13 +48,7 @@ public class CurateFamilyAction extends ActionSupport implements Preparable {
      */
     @Validations(customValidators = {@CustomValidator(type = "hibernate", fieldName = "family") })
     public String submit() {
-        try {
-            PoRegistry.getFamilyService().updateEntity(family);
-        } catch (EntityValidationException e) {
-           // this should never really occur during normal usage
-           // after implementing PO-3199 no need to swallow EntityValidationException
-           addActionError(e.getErrorMessages());
-        }
+        PoRegistry.getFamilyService().updateEntity(family);
         if (FamilyStatus.INACTIVE.equals(family.getStatusCode())) {
             ActionHelper.saveMessage(getText("family.inactivate.success", new String[] {family.getName()}));
             return "list";

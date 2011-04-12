@@ -1,7 +1,6 @@
 package gov.nih.nci.po.web.create;
 
 import gov.nih.nci.po.data.bo.FamilyStatus;
-import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.curation.CurateFamilyAction;
 
@@ -31,10 +30,9 @@ public class CreateFamilyAction extends CurateFamilyAction {
 
     /**
      * @return success
-     * @throws EntityValidationException if validation exception while creating family.
      */
     @Validations(customValidators = {@CustomValidator(type = "hibernate", fieldName = "family") })
-    public String save() throws EntityValidationException {
+    public String save() {
         long familyId = PoRegistry.getFamilyService().create(getFamily());
         setFamily(PoRegistry.getFamilyService().getById(familyId));
         ActionHelper.saveMessage(getText("family.create.success", new String[] {getFamily().getName()}));

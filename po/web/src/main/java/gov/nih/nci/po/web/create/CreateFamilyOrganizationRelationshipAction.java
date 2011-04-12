@@ -86,7 +86,6 @@ import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyFunctionalType;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
-import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.web.curation.CurateFamilyOrganizationRelationshipAction;
 import gov.nih.nci.po.web.util.PoHttpSessionUtil;
@@ -140,10 +139,9 @@ public class CreateFamilyOrganizationRelationshipAction extends CurateFamilyOrga
     /**
      * Creates a family organization relationship.
      * @return success
-     * @throws EntityValidationException if validation exception while creating a family organization relationship.
      */
     @Validations(customValidators = { @CustomValidator(type = "hibernate", fieldName = "familyOrgRelationship") })
-    public String create() throws EntityValidationException {
+    public String create() {
         getFamilyOrgRelationship().setId(
                 PoRegistry.getFamilyOrganizationRelationshipService().create(getFamilyOrgRelationship()));
         ActionHelper.saveMessage(getText("familyOrgRelationship.create.success"));

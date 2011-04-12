@@ -130,7 +130,7 @@ public class MockOrganizationRelationshipService implements OrganizationRelation
     /**
      * {@inheritDoc}
      */
-    public long create(OrganizationRelationship orgRel) throws EntityValidationException {
+    public long create(OrganizationRelationship orgRel) {
         if (orgRel.getId() == null) {
             currentId++;
             orgRel.setId(currentId);
@@ -174,7 +174,7 @@ public class MockOrganizationRelationshipService implements OrganizationRelation
     /**
      * {@inheritDoc}
      */
-    public void updateEntity(OrganizationRelationship updatedEntity) throws EntityValidationException {
+    public void updateEntity(OrganizationRelationship updatedEntity) {
     }
 
     /**

@@ -292,10 +292,9 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
     }
 
     protected T createNullifiedSample() throws Exception {
-        AbstractCuratableServiceBean<T> service = getService();
         T r = createSample();
         r.setStatus(RoleStatus.NULLIFIED);
-        service.update(r);
+        PoHibernateUtil.getCurrentSession().update(r);
         return r;
     }
 
@@ -496,7 +495,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         if (obj instanceof Contactable) {
             ((Contactable) obj).getPhone().add(new PhoneNumber("101-555-8888"));
             ((Contactable) obj).getPhone().add(new PhoneNumber("202-555-8888"));
-            getService().update(obj);
+            PoHibernateUtil.getCurrentSession().update(obj);
             
             obj = getSampleStructuralRole();
             ((Contactable) obj).getPhone().add(new PhoneNumber("202-555-8888"));
@@ -568,7 +567,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         if (obj instanceof Contactable) {
             ((Contactable) obj).getEmail().add(new Email("sample1@example.com"));
             ((Contactable) obj).getEmail().add(new Email("sample2@example.com"));
-            getService().update(obj);
+            PoHibernateUtil.getCurrentSession().update(obj);
         
             obj = getSampleStructuralRole();
             ((Contactable) obj).getEmail().add(new Email("sample2@example.com"));
@@ -602,7 +601,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         if (obj instanceof Contactable) {
             ((Contactable) obj).getFax().add(new PhoneNumber("101-555-8888"));
             ((Contactable) obj).getFax().add(new PhoneNumber("202-555-8888"));
-            getService().update(obj);
+            PoHibernateUtil.getCurrentSession().update(obj);
             
             obj = getSampleStructuralRole();
             ((Contactable) obj).getFax().add(new PhoneNumber("202-555-8888"));
@@ -635,7 +634,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         if (obj instanceof Contactable) {
             ((Contactable) obj).getTty().add(new PhoneNumber("101-555-8888"));
             ((Contactable) obj).getTty().add(new PhoneNumber("202-555-8888"));
-            getService().update(obj);
+            PoHibernateUtil.getCurrentSession().update(obj);
             
             obj = getSampleStructuralRole();
             ((Contactable) obj).getTty().add(new PhoneNumber("202-555-8888"));
@@ -668,7 +667,7 @@ public abstract class AbstractStructrualRoleServiceTest<T extends Correlation> e
         if (obj instanceof Contactable) {
             ((Contactable) obj).getUrl().add(new URL("http://111.com"));
             ((Contactable) obj).getUrl().add(new URL("http://222.com"));
-            getService().update(obj);
+            PoHibernateUtil.getCurrentSession().update(obj);
         
             obj = getSampleStructuralRole();
             ((Contactable) obj).getUrl().add(new URL("http://222.com"));

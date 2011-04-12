@@ -199,7 +199,7 @@ public class ClinicalResearchStaffServiceTest extends AbstractPersonRoleServiceT
         obj.getScoper().setStatusCode(EntityStatus.ACTIVE);
         PoHibernateUtil.getCurrentSession().update(obj.getScoper());
         obj.setStatus(RoleStatus.ACTIVE);
-        getService().update(obj);
+        PoHibernateUtil.getCurrentSession().update(obj);
 
         obj.getPhone().clear();
         Map<String, String[]> errors = getService().validate(obj);

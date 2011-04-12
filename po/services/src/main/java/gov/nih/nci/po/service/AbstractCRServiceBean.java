@@ -95,8 +95,6 @@ import javax.ejb.TransactionAttributeType;
  * @param <ENTITY> the PersistentObject type.
  * @author gax
  */
-@SuppressWarnings("PMD.AbstractClassWithoutAnyMethod")  // note this class was defining methods that CR service beans
-    // needed, there are no more special methods, but the class remains in case some return.
 public abstract class AbstractCRServiceBean <CR extends ChangeRequest<ENTITY>, ENTITY extends Curatable>
         extends AbstractBaseServiceBean<CR> {
     /**
@@ -107,6 +105,6 @@ public abstract class AbstractCRServiceBean <CR extends ChangeRequest<ENTITY>, E
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public long create(CR obj) throws EntityValidationException {
-        return super.createHelper(obj);
+        return super.createAndValidate(obj);
     }
 }

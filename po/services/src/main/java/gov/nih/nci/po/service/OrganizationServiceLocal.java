@@ -122,11 +122,6 @@ public interface OrganizationServiceLocal extends GenericSearchService<Organizat
     Map<String, String[]> validate(Organization entity);
 
     /**
-     * @param updatedEntity the entity to save.
-     */
-    void update(Organization updatedEntity);
-
-    /**
      * @param curatedOrg method to curate/accept Organization's w/ EntityStatus.NEW and transition to
      *            EntityStatus.ACTIVE
      * @throws JMSException if problem occurred publishing the announcement message for updates.
