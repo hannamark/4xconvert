@@ -82,18 +82,9 @@
  */
 package gov.nih.nci.po.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
-import org.hibernate.validator.ClassValidator;
-import org.hibernate.validator.InvalidValue;
 
 import com.fiveamsolutions.nci.commons.audit.AuditLogInterceptor;
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.util.CsmEnabledHibernateHelper;
 import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 
@@ -102,19 +93,15 @@ import com.fiveamsolutions.nci.commons.util.HibernateHelper;
  */
 public class PoHibernateUtil {
     private static final AuditLogInterceptor AUDIT_LOG_INTERCEPTOR = new AuditLogInterceptor(null);
-    private static final HibernateHelper HIBERNATE_HELPER = new CsmEnabledHibernateHelper(null, 
+    private static final HibernateHelper HIBERNATE_HELPER = new CsmEnabledHibernateHelper(null,
             new CompositeInterceptor(new CurationStatusInterceptor(), AUDIT_LOG_INTERCEPTOR), null);
     static {
         HIBERNATE_HELPER.initialize();
         AUDIT_LOG_INTERCEPTOR.setHibernateHelper(HIBERNATE_HELPER);
     }
 
-    private static final Map<Class<?>, ClassValidator<?>> CLASS_VALIDATOR_MAP =
-        new HashMap<Class<?>, ClassValidator<?>>();
-
     /**
      * Get the hibernate helper.
-     * 
      * @return the helper.
      */
     public static HibernateHelper getHibernateHelper() {
@@ -123,58 +110,9 @@ public class PoHibernateUtil {
 
     /**
      * Get the current session.
-     * 
      * @return the session.
      */
     public static Session getCurrentSession() {
         return getHibernateHelper().getCurrentSession();
-    }
-
-    @SuppressWarnings("unchecked")
-    private static synchronized <T> ClassValidator<T> getClassValidator(T o) {
-        ClassValidator classValidator = CLASS_VALIDATOR_MAP.get(o.getClass());
-        if (classValidator == null) {
-            classValidator = new ClassValidator(o.getClass());
-            CLASS_VALIDATOR_MAP.put(o.getClass(), classValidator);
-        }
-        return classValidator;
-    }
-
-    /**
-     * @param entity the entity to validate
-     * @return a map of validation messages keyed by the property path. The keys represent the field/property validation
-     *         errors however, when key is null it means the validation is a type/class validation error
-     */
-    public static Map<String, String[]> validate(PersistentObject entity) {
-        Map<String, List<String>> messageMap = new HashMap<String, List<String>>();
-        ClassValidator<PersistentObject> classValidator = getClassValidator(entity);
-        InvalidValue[] validationMessages = classValidator.getInvalidValues(entity);
-        for (InvalidValue validationMessage : validationMessages) {
-            String path = StringUtils.defaultString(validationMessage.getPropertyPath());
-            List<String> m = messageMap.get(path);
-            if (m == null) {
-                m = new ArrayList<String>();
-                messageMap.put(path, m);
-            }
-            String msg = validationMessage.getMessage();
-            msg = msg.replace("(fieldName)", "").trim();
-            m.add(msg);
-        }
-
-        return convertMapListToMapArray(messageMap);
-    }
-    
-    /**
-     * Convert list to array for map of string, string list.
-     * @param messageMap map of string, string list to convert.
-     * @return map string, string list.
-     */
-    public static Map<String, String[]> convertMapListToMapArray(Map<String, List<String>> messageMap) {
-        Map<String, String[]> returnMap = new HashMap<String, String[]>();
-        for (Map.Entry<String, List<String>> entry : messageMap.entrySet()) {
-            returnMap.put(entry.getKey(), entry.getValue().toArray(new String[entry.getValue().size()]));
-        }
-        return returnMap;
-        
     }
 }

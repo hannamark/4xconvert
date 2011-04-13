@@ -106,7 +106,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- *	Integration tests to ensure our topic is deployed, configured and operational
+ * Integration tests to ensure our topic is deployed, configured and operational
  */
 public class TopicIntegrationTest {
 

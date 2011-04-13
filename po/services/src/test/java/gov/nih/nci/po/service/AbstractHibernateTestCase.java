@@ -222,13 +222,13 @@ public abstract class AbstractHibernateTestCase {
                 // for each index that has no name, generate a unique name
                 Index index = subIter.next();
                 if (index.getName().startsWith(PoRegistry.GENERATE_INDEX_NAME_PREFIX)) {
-                    index.setName(gegenerateIndexName(table, index));
+                    index.setName(generateIndexName(table, index));
                 }
             }
         }
     }
 
-    private String gegenerateIndexName(Table table, Index index) {
+    private String generateIndexName(Table table, Index index) {
         List<String> columnNames = new ArrayList<String>();
         @SuppressWarnings("unchecked")
         Iterator<Column> columns = index.getColumnIterator();

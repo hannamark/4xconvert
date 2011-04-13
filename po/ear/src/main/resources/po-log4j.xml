@@ -66,7 +66,7 @@
     <!-- ================ -->
     <!-- Limit categories -->
     <!-- ================ -->
-    
+
     <!-- Limit the org.apache category to INFO as its DEBUG is verbose -->
     <category name="gov.nih.nci.po">
       <priority value="${log.level.po}"/>
@@ -78,7 +78,7 @@
       <priority value="ERROR"/>
       <appender-ref ref="EMAIL" />
     </category>
-    <!-- A (incorrect) change in struts 2.1.6 has ObjectFactory reporting ERROR's when you attempt to set parameters on a Redirect result. 
+    <!-- A (incorrect) change in struts 2.1.6 has ObjectFactory reporting ERROR's when you attempt to set parameters on a Redirect result.
     see http://cwiki.apache.org/S2WIKI/troubleshooting-guide-migrating-from-struts-20x-to-21x.html#TroubleshootingguidemigratingfromStruts2.0.xto2.1.x-RedirectandRedirectActionparameters-->
     <category name="com.opensymphony.xwork2.ObjectFactory">
        <priority value="fatal"/>
@@ -89,10 +89,10 @@
    <!-- Setup the Root category -->
    <!-- ======================= -->
     <root>
-		<!--
-			The default logging level, for any logger not configured above. Warning:
-			setting this too fine-grained can have major performance consequences
-		-->
+        <!--
+            The default logging level, for any logger not configured above. Warning:
+            setting this too fine-grained can have major performance consequences
+        -->
         <priority value="${log.level.default}" />
         <appender-ref ref="POFILE" />
     </root>

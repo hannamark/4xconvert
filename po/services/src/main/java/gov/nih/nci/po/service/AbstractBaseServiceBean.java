@@ -98,6 +98,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 
 /**
  * @author smatyas
@@ -161,7 +162,7 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject>
         q.setParameterList("ids_list", ids);
         return q.list();
     }
-    
+
     /**
      * Save the object.
      * @param obj the object
@@ -183,13 +184,13 @@ public abstract class AbstractBaseServiceBean<T extends PersistentObject>
      /**
       *
       * @param entity the entity to validate
-      * @return return validation error messages per invalid field path when key in map is 'null' 
-      *     the error messages apply to the type/class  
+      * @return return validation error messages per invalid field path when key in map is 'null'
+      *     the error messages apply to the type/class
       * @see PoHibernateUtil.validate(entity)
       */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Map<String, String[]> validate(T entity) {
-         Map<String, String[]> messages = PoHibernateUtil.validate(entity);
+         Map<String, String[]> messages = HibernateHelper.validate(entity);
          messages.putAll(UsOrCanadaPhoneHelper.phonesValidCheck(entity));
          messages.remove("statusCode");
          return messages;

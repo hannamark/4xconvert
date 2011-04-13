@@ -31,7 +31,6 @@ import gov.nih.nci.po.data.bo.PersonSex;
 import gov.nih.nci.po.data.convert.IdConverter.PersonIdConverter;
 import gov.nih.nci.po.data.convert.util.PersonNameConverterUtil;
 import gov.nih.nci.po.util.MockCountryServiceLocator;
-import gov.nih.nci.po.util.PoHibernateUtil;
 import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.po.util.ServiceLocator;
@@ -47,6 +46,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 
 public class PersonDTOTest {
     PersonDTO dto;
@@ -279,7 +280,7 @@ public class PersonDTOTest {
 
         Person p = (Person) PoXsnapshotHelper.createModel(dto);
         assertNotNull(p);
-        assertTrue(PoHibernateUtil.validate(p).isEmpty());
+        assertTrue(HibernateHelper.validate(p).isEmpty());
         assertEquals(30, p.getId().longValue());
         assertEquals("777 Preston Research Building", p.getPostalAddress().getStreetAddressLine());
         assertEquals("Division of Hematology/Oncology", p.getPostalAddress().getDeliveryAddressLine());

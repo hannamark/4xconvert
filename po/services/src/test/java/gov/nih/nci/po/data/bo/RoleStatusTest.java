@@ -13,7 +13,7 @@ import org.junit.Test;
 public class RoleStatusTest {
 
     /**
-     * This test makes sure that the emun is declared properly. some compilers might not create the correct code to init
+     * This test makes sure that the enum is declared properly. Some compilers might not create the correct code to init
      * this enum.
      */
     @Test

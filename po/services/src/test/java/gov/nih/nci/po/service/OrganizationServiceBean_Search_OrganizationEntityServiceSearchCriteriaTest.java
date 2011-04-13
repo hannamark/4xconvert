@@ -35,8 +35,8 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
 
     @Test
     public void findByName() throws EntityValidationException, JMSException {
-        createOrganization("testName", "defaultCity", "defaultOrgCode", "defaultDescription");
-        createOrganization("abc", "defaultCity", "defaultOrgCode", "defaultDescription");
+        createOrganization("testName", "defaultCity");
+        createOrganization("abc", "defaultCity");
 
         sc.getCriteria().setName("%Nam%");
         assertEquals(1, getOrgServiceBean().count(sc));

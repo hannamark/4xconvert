@@ -133,6 +133,7 @@ import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
 import com.fiveamsolutions.nci.commons.audit.AuditType;
+import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 
 /**
  * Tests the organization service.
@@ -221,26 +222,25 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
     }
 
     public long createOrganization() throws EntityValidationException, JMSException {
-        return createOrganization("defaultName", "defaultCity", "defaultOrgCode", "defaultDescription");
+        return createOrganization("defaultName", "defaultCity");
     }
 
-    public long createOrganization(String oName, String cityOrMunicipality, String abbrvName, String desc)
-            throws EntityValidationException, JMSException {
-        long orgId = createOrganizationNoSessionFlushAndClear(oName, cityOrMunicipality, abbrvName, desc);
+    public long createOrganization(String oName, String cityOrMunicipality) throws EntityValidationException,
+            JMSException {
+        long orgId = createOrganizationNoSessionFlushAndClear(oName, cityOrMunicipality);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
         return orgId;
     }
 
     public long createOrganizationNoSessionFlushAndClear() throws EntityValidationException, JMSException {
-        return createOrganizationNoSessionFlushAndClear("defaultName", "defaultCity", "defaultOrgCode",
-                "defaultDescription");
+        return createOrganizationNoSessionFlushAndClear("defaultName", "defaultCity");
     }
 
-    public long createOrganizationNoSessionFlushAndClear(String oName, String cityOrMunicipality, String abbrvName,
-            String desc) throws EntityValidationException, JMSException {
-        Address mailingAddress =
-                new Address("defaultStreetAddress", cityOrMunicipality, "defaultState", "12345", getDefaultCountry());
+    public long createOrganizationNoSessionFlushAndClear(String oName, String cityOrMunicipality)
+            throws EntityValidationException, JMSException {
+        Address mailingAddress = new Address("defaultStreetAddress", cityOrMunicipality, "defaultState", "12345",
+                getDefaultCountry());
         Organization org = new Organization();
         org.setPostalAddress(mailingAddress);
         org.setName(oName);
@@ -568,7 +568,7 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         orgToBeCurated.setStatusCode(entityStatus);
         o2 = getOrgServiceBean().getById(dupId);
         orgToBeCurated.setDuplicateOf(o2);
-        Map<String, String[]> errors = PoHibernateUtil.validate(orgToBeCurated);
+        Map<String, String[]> errors = HibernateHelper.validate(orgToBeCurated);
         assertFalse(errors.isEmpty());
         try {
             getOrgServiceBean().curate(orgToBeCurated);
@@ -990,13 +990,13 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
     public void testCount() throws EntityValidationException, JMSException {
         Organization o = getBasicOrganization();
         getOrgServiceBean().create(o);
-        
+
         FamilyServiceLocal familyServiceBean = PoRegistry.getFamilyService();
         Family familyOne = getFamily("test1");
         Family familyTwo = getFamily("test2");
         familyServiceBean.create(familyOne);
         familyServiceBean.create(familyTwo);
-        
+
         FamilyOrganizationRelationshipServiceLocal familyOrgRelServiceLocal = PoRegistry.getFamilyOrganizationRelationshipService();
         FamilyOrganizationRelationship famOrgRelOne = new FamilyOrganizationRelationship();
         famOrgRelOne.setOrganization(o);
@@ -1011,10 +1011,10 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
 
         familyOrgRelServiceLocal.create(famOrgRelOne);
         familyOrgRelServiceLocal.create(famOrgRelTwo);
-        
+
         StrutsOrganizationSearchCriteria criteria = new StrutsOrganizationSearchCriteria();
         criteria.getOrganization().getFamilyOrganizationRelationships().iterator().next().getFamily().setName("test");
-        
+
         assertEquals(1L, getOrgServiceBean().count(criteria));
     }
 
