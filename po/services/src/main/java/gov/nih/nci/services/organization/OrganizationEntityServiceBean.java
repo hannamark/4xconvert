@@ -85,14 +85,18 @@ package gov.nih.nci.services.organization;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.EnOn;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.data.bo.AbstractOrganization;
+import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.OrganizationCR;
+import gov.nih.nci.po.data.convert.EnConverter;
+import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
 import gov.nih.nci.po.data.convert.IiConverter;
 import gov.nih.nci.po.data.convert.StatusCodeConverter;
-import gov.nih.nci.po.data.convert.IdConverter.OrgIdConverter;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.service.OrganizationCRServiceLocal;
@@ -115,6 +119,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import javax.jms.JMSException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.jboss.annotation.security.SecurityDomain;
 
@@ -222,12 +227,30 @@ public class OrganizationEntityServiceBean implements OrganizationEntityServiceR
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<OrganizationDTO> search(OrganizationDTO organization, LimitOffset pagination)
             throws TooManyResultsException {
+        return search(organization, null, pagination);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT, DEFAULT_ROLE_ALLOWED_GRID_CLIENT })
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<OrganizationDTO> search(OrganizationDTO organization, EnOn familyName, LimitOffset pagination)
+            throws TooManyResultsException {
         Organization orgBO = (Organization) PoXsnapshotHelper.createModel(organization);
+        String familyNameStr = new EnConverter<EnOn>().convertToString(familyName);
+        if (StringUtils.isNotBlank(familyNameStr)) {
+            Family fam = new Family();
+            fam.setName(familyNameStr);
+            FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
+            famOrgRel.setFamily(fam);
+            orgBO.getFamilyOrganizationRelationships().add(famOrgRel);
+        }
         AnnotatedBeanSearchCriteria<Organization> sc = new AnnotatedBeanSearchCriteria<Organization>(orgBO);
         int maxLimit = Math.min(pagination.getLimit(), maxResults + 1);
         PageSortParams<Organization> params = new PageSortParams<Organization>(maxLimit, pagination

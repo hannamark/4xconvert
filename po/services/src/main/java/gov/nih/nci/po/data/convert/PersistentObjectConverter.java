@@ -151,6 +151,20 @@ public class PersistentObjectConverter extends AbstractXSnapshotConverter<Persis
             iso.setRoot(IdConverter.ORG_ROOT);
         }
     }
+    
+    /**
+     * convert the Id of an family.
+     */
+    public static class PersistentFamilyConverter extends PersistentObjectConverter {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void initIiRootAndIdentifierName(Ii iso) {
+            iso.setIdentifierName(IdConverter.FAMILY_IDENTIFIER_NAME);
+            iso.setRoot(IdConverter.FAMILY_ROOT);
+        }
+    }
 
     /**
      * convert the Id of a person.

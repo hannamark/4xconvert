@@ -89,6 +89,12 @@ import gov.nih.nci.iso21090.IdentifierScope;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.po.data.bo.Address;
+import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
+import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.HealthCareFacility;
+import gov.nih.nci.po.data.bo.HealthCareProvider;
+import gov.nih.nci.po.data.bo.IdentifiedOrganization;
+import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Patient;
 import gov.nih.nci.po.data.bo.Person;
@@ -195,5 +201,107 @@ public class PersistentObjectConverterTest {
         assertEquals(id.getExtension(), "10");
         assertEquals(id.getIdentifierName(), IdConverter.ORG_IDENTIFIER_NAME);
         assertEquals(id.getRoot(), IdConverter.ORG_ROOT);
+    }
+    
+    /**
+     * Test converting a family.
+     */
+    @Test
+    public void testConvertFamily() {
+        Family fam = new Family();
+        fam.setId(new Long(10));
+        Ii id = new PersistentObjectConverter.PersistentFamilyConverter().convert(Ii.class, fam);
+        assertEquals(id.getNullFlavor(), null);
+        assertTrue(id.getDisplayable());
+        assertEquals(id.getScope(), IdentifierScope.OBJ);
+        assertEquals(id.getReliability(), IdentifierReliability.ISS);
+        assertEquals(id.getExtension(), "10");
+        assertEquals(id.getIdentifierName(), IdConverter.FAMILY_IDENTIFIER_NAME);
+        assertEquals(id.getRoot(), IdConverter.FAMILY_ROOT);
+    }
+    
+    /**
+     * Test converting a crs.
+     */
+    @Test
+    public void testConvertCrs() {
+        ClinicalResearchStaff crs = new ClinicalResearchStaff();
+        crs.setId(new Long(10));
+        Ii id = new PersistentObjectConverter.PersistentCRSConverter().convert(Ii.class, crs);
+        assertEquals(id.getNullFlavor(), null);
+        assertTrue(id.getDisplayable());
+        assertEquals(id.getScope(), IdentifierScope.OBJ);
+        assertEquals(id.getReliability(), IdentifierReliability.ISS);
+        assertEquals(id.getExtension(), "10");
+        assertEquals(id.getIdentifierName(), IdConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
+        assertEquals(id.getRoot(), IdConverter.CLINICAL_RESEARCH_STAFF_ROOT);
+    }
+    
+    /**
+     * Test converting a hcf.
+     */
+    @Test
+    public void testConvertHcf() {
+        HealthCareFacility hcf = new HealthCareFacility();
+        hcf.setId(new Long(10));
+        Ii id = new PersistentObjectConverter.PersistentHCFConverter().convert(Ii.class, hcf);
+        assertEquals(id.getNullFlavor(), null);
+        assertTrue(id.getDisplayable());
+        assertEquals(id.getScope(), IdentifierScope.OBJ);
+        assertEquals(id.getReliability(), IdentifierReliability.ISS);
+        assertEquals(id.getExtension(), "10");
+        assertEquals(id.getIdentifierName(), IdConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
+        assertEquals(id.getRoot(), IdConverter.HEALTH_CARE_FACILITY_ROOT);
+    }
+    
+    /**
+     * Test converting a hcp.
+     */
+    @Test
+    public void testConvertHcp() {
+        HealthCareProvider hcp = new HealthCareProvider();
+        hcp.setId(new Long(10));
+        Ii id = new PersistentObjectConverter.PersistentHCPConverter().convert(Ii.class, hcp);
+        assertEquals(id.getNullFlavor(), null);
+        assertTrue(id.getDisplayable());
+        assertEquals(id.getScope(), IdentifierScope.OBJ);
+        assertEquals(id.getReliability(), IdentifierReliability.ISS);
+        assertEquals(id.getExtension(), "10");
+        assertEquals(id.getIdentifierName(), IdConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
+        assertEquals(id.getRoot(), IdConverter.HEALTH_CARE_PROVIDER_ROOT);
+    }
+    
+    /**
+     * Test converting a ip.
+     */
+    @Test
+    public void testConvertIp() {
+        IdentifiedPerson ip = new IdentifiedPerson();
+        ip.setId(new Long(10));
+        Ii id = new PersistentObjectConverter.PersistentIPConverter().convert(Ii.class, ip);
+        assertEquals(id.getNullFlavor(), null);
+        assertTrue(id.getDisplayable());
+        assertEquals(id.getScope(), IdentifierScope.OBJ);
+        assertEquals(id.getReliability(), IdentifierReliability.ISS);
+        assertEquals(id.getExtension(), "10");
+        assertEquals(id.getIdentifierName(), IdConverter.IDENTIFIED_PERSON_IDENTIFIER_NAME);
+        assertEquals(id.getRoot(), IdConverter.IDENTIFIED_PERSON_ROOT);
+    }
+    
+    /**
+     * Test converting a ip.
+     */
+    @Test
+    public void testConvertIo() {
+        IdentifiedOrganization io = new IdentifiedOrganization();
+        io.setId(new Long(10));
+        Ii id = new PersistentObjectConverter.PersistentIOConverter().convert(Ii.class, io);
+        assertEquals(id.getNullFlavor(), null);
+        assertTrue(id.getDisplayable());
+        assertEquals(id.getScope(), IdentifierScope.OBJ);
+        assertEquals(id.getReliability(), IdentifierReliability.ISS);
+        assertEquals(id.getExtension(), "10");
+        assertEquals(id.getIdentifierName(), IdConverter.IDENTIFIED_ORG_IDENTIFIER_NAME);
+        assertEquals(id.getRoot(), IdConverter.IDENTIFIED_ORG_ROOT);
     }
 }

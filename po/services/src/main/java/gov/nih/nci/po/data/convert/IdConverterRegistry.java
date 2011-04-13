@@ -83,6 +83,8 @@
 package gov.nih.nci.po.data.convert;
 
 import gov.nih.nci.po.data.bo.ClinicalResearchStaff;
+import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.HealthCareFacility;
 import gov.nih.nci.po.data.bo.HealthCareProvider;
 import gov.nih.nci.po.data.bo.IdentifiedOrganization;
@@ -94,6 +96,8 @@ import gov.nih.nci.po.data.bo.Patient;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.ResearchOrganization;
 import gov.nih.nci.po.data.convert.IdConverter.ClinicalResearchStaffIdConverter;
+import gov.nih.nci.po.data.convert.IdConverter.FamilyIdConverter;
+import gov.nih.nci.po.data.convert.IdConverter.FamilyOrganizationRelationshipIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.HealthCareFacilityIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.HealthCareProviderIdConverter;
 import gov.nih.nci.po.data.convert.IdConverter.IdentifiedOrganizationIdConverter;
@@ -133,6 +137,8 @@ public class IdConverterRegistry {
         tmp.put(IdentifiedPerson.class, new IdentifiedPersonIdConverter());
         tmp.put(OrganizationalContact.class, new OrganizationalContactIdConverter());
         tmp.put(Patient.class, new PatientIdConverter());
+        tmp.put(Family.class, new FamilyIdConverter());
+        tmp.put(FamilyOrganizationRelationship.class, new FamilyOrganizationRelationshipIdConverter());
         REGISTRY = Collections.unmodifiableMap(tmp);
     }
 

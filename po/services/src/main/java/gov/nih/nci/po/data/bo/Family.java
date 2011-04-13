@@ -82,13 +82,12 @@
  */
 package gov.nih.nci.po.data.bo;
 
+import gov.nih.nci.po.util.FamilyDateValidator.FamilyValidDate;
 import gov.nih.nci.po.util.FamilyOrganizationRelationshipOrgComparator;
-
 import gov.nih.nci.po.util.NotEmpty;
+import gov.nih.nci.po.util.OrderedDateValidator.OrderedDate;
 import gov.nih.nci.po.util.PastOrCurrentDateValidator.PastOrCurrentDate;
 import gov.nih.nci.po.util.PoRegistry;
-import gov.nih.nci.po.util.FamilyDateValidator.FamilyValidDate;
-import gov.nih.nci.po.util.OrderedDateValidator.OrderedDate;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -119,6 +118,12 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  * Family represents a set of related organizations.
  * 
  * @author moweis
+ * 
+ * @xsnapshot.snapshot-class name="iso" tostring="none"
+ *      class="gov.nih.nci.services.family.FamilyDTO"
+ *      implements="gov.nih.nci.services.PoDto"
+ *      generate-helper-methods="false"
+ *      serial-version-uid="1L"
  */
 @javax.persistence.Entity
 @OrderedDate
@@ -139,6 +144,10 @@ public class Family implements Auditable {
 
     /**
      * @return database id
+     * @xsnapshot.property match="iso"
+     *                     type="gov.nih.nci.iso21090.Ii" name="identifier"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$FamilyIdConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -155,7 +164,10 @@ public class Family implements Auditable {
     }
 
     /**
-     * @return the name
+     * @return name
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.EnOn"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.StringConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.EnConverter"
      */
     @NotEmpty
     @Length(max = DEFAULT_TEXT_COL_LENGTH)
@@ -174,6 +186,9 @@ public class Family implements Auditable {
 
     /**
      * @return the statusCode
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Cd"
+     *                     snapshot-transformer="gov.nih.nci.po.data.convert.FamilyStatusCodeConverter$EnumConverter"
+     *                     model-transformer="gov.nih.nci.po.data.convert.FamilyStatusCodeConverter$CdConverter"
      */
     @Enumerated(EnumType.STRING)
     @Searchable(matchMode = Searchable.MATCH_MODE_EXACT)

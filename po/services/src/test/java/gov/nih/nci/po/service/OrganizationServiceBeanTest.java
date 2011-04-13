@@ -991,9 +991,13 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         Organization o = getBasicOrganization();
         getOrgServiceBean().create(o);
 
+        Calendar cal = Calendar.getInstance();
+        cal.set(2008, 01, 02);
+        Date oldDate = DateUtils.truncate(cal.getTime(), Calendar.DATE);
+
         FamilyServiceLocal familyServiceBean = PoRegistry.getFamilyService();
-        Family familyOne = getFamily("test1");
-        Family familyTwo = getFamily("test2");
+        Family familyOne = getFamily("test1", oldDate);
+        Family familyTwo = getFamily("test2", oldDate);
         familyServiceBean.create(familyOne);
         familyServiceBean.create(familyTwo);
 
@@ -1018,10 +1022,10 @@ public class OrganizationServiceBeanTest extends AbstractServiceBeanTest {
         assertEquals(1L, getOrgServiceBean().count(criteria));
     }
 
-    public static Family getFamily(String name) {
+    public static Family getFamily(String name, Date date) {
         Family family = new Family();
         family.setName(name);
-        family.setStartDate(DateUtils.truncate(new Date(), Calendar.DATE));
+        family.setStartDate(date);
         family.setStatusCode(FamilyStatus.ACTIVE);
         return family;
     }

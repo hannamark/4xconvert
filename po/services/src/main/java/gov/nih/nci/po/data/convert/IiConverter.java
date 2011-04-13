@@ -87,6 +87,8 @@ package gov.nih.nci.po.data.convert;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.bo.Correlation;
+import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.util.PoRegistry;
@@ -106,6 +108,8 @@ import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
  *
  * @author gax
  */
+// we need these methods and they should all be in this one file.
+@SuppressWarnings("PMD.TooManyMethods")
 public class IiConverter extends AbstractXSnapshotConverter<Ii> {
     private static final String ROOT_NOT_ALLOWED_ERR_MSG = "The ii.root value '%s' is not allowed.";
     private static final String IDENT_NAME_NOT_ALLOWED_ERR_MSG = "The ii.identifierName value '%s' is not allowed.";
@@ -122,6 +126,10 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
             return (TO) convertToPerson(value);
         } else if (returnClass == Organization.class) {
             return (TO) convertToOrg(value);
+        } else if (returnClass == Family.class) {
+            return (TO) convertToFamily(value);
+        } else if (returnClass == FamilyOrganizationRelationship.class) {
+            return (TO) convertToFamilyOrgRel(value);
         }
 
         throw new UnsupportedOperationException(returnClass.getName());
@@ -266,6 +274,53 @@ public class IiConverter extends AbstractXSnapshotConverter<Ii> {
         }
         return PoRegistry.getOrganizationService().getById(id);
     }
+    
+    /**
+     * Convert the ii to a Family by loading from the db.
+     * @param value the ii
+     * @return the Family.
+     */
+    public static Family convertToFamily(Ii value) {
+        if (value == null || value.getNullFlavor() != null) {
+            return null;
+        }
+
+        enforcePoIsoConstraints(value);
+
+        Long id = Long.valueOf(value.getExtension());
+        if (!IdConverter.FAMILY_ROOT.equals(value.getRoot())) {
+            throw new PoIsoConstraintException(String.format(ROOT_NOT_ALLOWED_ERR_MSG, value.getRoot()));
+        }
+        if (!IdConverter.FAMILY_IDENTIFIER_NAME.equals(value.getIdentifierName())) {
+            throw new PoIsoConstraintException(String.format(IDENT_NAME_NOT_ALLOWED_ERR_MSG,
+                    value.getIdentifierName()));
+        }
+        return PoRegistry.getFamilyService().getById(id);
+    }
+    
+    /**
+     * Convert the ii to a FamilyOrganizationRelationship by loading from the db.
+     * @param value the ii
+     * @return the FamilyOrganizationRelationship.
+     */
+    public static FamilyOrganizationRelationship convertToFamilyOrgRel(Ii value) {
+        if (value == null || value.getNullFlavor() != null) {
+            return null;
+        }
+
+        enforcePoIsoConstraints(value);
+
+        Long id = Long.valueOf(value.getExtension());
+        if (!IdConverter.FAMILY_ORG_REL_ROOT.equals(value.getRoot())) {
+            throw new PoIsoConstraintException(String.format(ROOT_NOT_ALLOWED_ERR_MSG, value.getRoot()));
+        }
+        if (!IdConverter.FAMILY_ORG_REL_IDENTIFIER_NAME.equals(value.getIdentifierName())) {
+            throw new PoIsoConstraintException(String.format(IDENT_NAME_NOT_ALLOWED_ERR_MSG,
+                    value.getIdentifierName()));
+        }
+        return PoRegistry.getFamilyOrganizationRelationshipService().getById(id);
+    }
+
 
     /**
      * Converts a single Ii into a DSet containing only that Ii.

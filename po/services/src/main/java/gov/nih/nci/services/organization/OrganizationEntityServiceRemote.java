@@ -82,10 +82,11 @@
  */
 package gov.nih.nci.services.organization;
 
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.EnOn;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -155,6 +156,21 @@ public interface OrganizationEntityServiceRemote {
      */
     List<OrganizationDTO> search(OrganizationDTO organization, LimitOffset pagination) 
         throws TooManyResultsException;
+    
+    /**
+     * This method is an extension of the existing paginated search method. The key difference being the support 
+     * search by family name.
+     * 
+     * @see #search(OrganizationDTO) for general search behavior
+     * @see LimitOffset#LimitOffset(int, int) for special notes related to behavior
+     * @param organization criteria used to find matching organizations
+     * @param familyName used to find matching organizations
+     * @param pagination the settings for control pagination of results
+     * @return list of matching organizations
+     * @throws TooManyResultsException when the system's limit is exceeded
+     */
+    List<OrganizationDTO> search(OrganizationDTO organization, EnOn familyName, LimitOffset pagination)
+    throws TooManyResultsException;
 
     /**
      * Propose a new entity value to the curator.

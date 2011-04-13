@@ -109,6 +109,7 @@ import gov.nih.nci.services.correlation.PatientCorrelationServiceBean;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceBean;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.family.FamilyServiceRemoteBean;
 import gov.nih.nci.services.organization.OrganizationEntityServiceBean;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceBean;
@@ -151,6 +152,13 @@ public class EjbTestHelper {
         organizationServiceBean.setOrganizationServiceBean(getOrganizationServiceBean());
         organizationServiceBean.setOrganizationCRServiceBean(getOrganizationCRServiceBean());
         return organizationServiceBean;
+    }
+    
+    public static FamilyServiceRemoteBean getFamilyServiceRemoteBean() {
+        FamilyServiceRemoteBean familyServiceBean = new FamilyServiceRemoteBean();
+        familyServiceBean.setFamilyServiceBean(getFamilyServiceBean());
+        familyServiceBean.setFamilyOrganizationRelationshipServiceBean(getFamilyOrganizationRelationshipService());
+        return familyServiceBean;
     }
 
     public static OrganizationEntityServiceRemote getOrganizationEntityServiceBeanAsRemote() {

@@ -129,6 +129,21 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
      * The ii root value for people.
      */
     public static final String PERSON_ROOT = BASE_ROOT + ".1";
+    
+    /**
+     * The identifier name for family.
+     */
+    public static final String FAMILY_IDENTIFIER_NAME = "Family identifier";
+    
+    /**
+     * The ii base root value for family.
+     */
+    public static final String FAMILY_BASE_ROOT = BASE_ROOT + ".6";
+    
+    /**
+     * The ii base root value for family.
+     */
+    public static final String FAMILY_ROOT = FAMILY_BASE_ROOT + ".1";
 
     /**
      * The identifier name for.
@@ -212,11 +227,22 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
      * The identifier name for.
      */
     public static final String PATIENT_IDENTIFIER_NAME = "Patient identifier";
-
+    
     /**
      * The ii root value.
      */
     public static final String PATIENT_ROOT = STRUCTURAL_ROLE_ROOT + ".9";
+    
+   /**
+    * The identifier name for family organization relationship.
+    */
+   public static final String FAMILY_ORG_REL_IDENTIFIER_NAME = "Family Organization Relationship identifier";
+   
+   /**
+    * The ii root value for family organization relationship.
+    */
+   public static final String FAMILY_ORG_REL_ROOT = FAMILY_BASE_ROOT + ".2";
+    
 
     /**
      * The Patient to Person prefix string.
@@ -270,6 +296,34 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
             Ii iso = super.convertToIi(value);
             iso.setIdentifierName(ORG_IDENTIFIER_NAME);
             iso.setRoot(ORG_ROOT);
+            return iso;
+        }
+    }
+    
+    /**
+     * convert the Id of an family.
+     */
+    public static class FamilyIdConverter extends IdConverter {
+        /** {@inheritDoc} */
+        @Override
+        public Ii convertToIi(Long value) {
+            Ii iso = super.convertToIi(value);
+            iso.setIdentifierName(FAMILY_IDENTIFIER_NAME);
+            iso.setRoot(FAMILY_ROOT);
+            return iso;
+        }
+    }
+    
+    /**
+     * convert the Id of a family organizational relationship.
+     */
+    public static class FamilyOrganizationRelationshipIdConverter extends IdConverter {
+        /** {@inheritDoc} */
+        @Override
+        public Ii convertToIi(Long value) {
+            Ii iso = super.convertToIi(value);
+            iso.setIdentifierName(FAMILY_ORG_REL_IDENTIFIER_NAME);
+            iso.setRoot(FAMILY_ORG_REL_ROOT);
             return iso;
         }
     }

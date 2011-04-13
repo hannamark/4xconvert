@@ -108,7 +108,10 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  * A specific relationship of an organization to a family.
  *
  * @author moweis
- *
+ * @xsnapshot.snapshot-class name="iso" tostring="none" generate-helper-methods="false"
+ *      class="gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO"
+ *      implements="gov.nih.nci.services.PoDto"
+ *      serial-version-uid="1L"
  */
 @javax.persistence.Entity
 @UniqueFamilyOrganizationRelationship
@@ -125,6 +128,10 @@ public class FamilyOrganizationRelationship implements Auditable {
 
     /**
      * @return the id
+     * @xsnapshot.property match="iso"
+     *  type="gov.nih.nci.iso21090.Ii" name="identifier"
+     *  snapshot-transformer="gov.nih.nci.po.data.convert.IdConverter$FamilyOrganizationRelationshipIdConverter"
+     *  model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -140,6 +147,9 @@ public class FamilyOrganizationRelationship implements Auditable {
     
     /**
      * @return the family
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Ii" name="familyIdentifier"
+     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentFamilyConverter"
+     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
     @ManyToOne
     @NotNull
@@ -156,6 +166,9 @@ public class FamilyOrganizationRelationship implements Auditable {
     }
     /**
      * @return the organization
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Ii" name="orgIdentifier"
+     *            snapshot-transformer="gov.nih.nci.po.data.convert.PersistentObjectConverter$PersistentOrgConverter"
+     *            model-transformer="gov.nih.nci.po.data.convert.IiConverter"
      */
     @ManyToOne
     @NotNull
@@ -170,6 +183,9 @@ public class FamilyOrganizationRelationship implements Auditable {
     }
     /**
      * @return the functionalType
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.Cd"
+     *  snapshot-transformer="gov.nih.nci.po.data.convert.FamilyFunctionalTypeConverter$EnumConverter"
+     *  model-transformer="gov.nih.nci.po.data.convert.FamilyFunctionalTypeConverter$CdConverter"
      */
     @Enumerated(EnumType.STRING)
     @NotNull

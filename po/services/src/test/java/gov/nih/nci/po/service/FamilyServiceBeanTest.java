@@ -125,9 +125,9 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
     private FamilyServiceBean familyServiceBean;
     private OrganizationRelationshipServiceLocal orgRelServiceLocal = mock(OrganizationRelationshipServiceBean.class);
     private OrganizationServiceBean orgLocal;
-    private FamilyOrganizationRelationshipServiceBean famOrgRelService = mock(FamilyOrganizationRelationshipServiceBean.class);
-    private FamilyUtilDao familyUtilDao = mock(FamilyUtilDao.class);
-    private Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+    private final FamilyOrganizationRelationshipServiceBean famOrgRelService = mock(FamilyOrganizationRelationshipServiceBean.class);
+    private final FamilyUtilDao familyUtilDao = mock(FamilyUtilDao.class);
+    private final Date today = DateUtils.truncate(new Date(), Calendar.DATE);
 
     @Before
     public void setUpData() {
@@ -148,13 +148,19 @@ public class FamilyServiceBeanTest extends AbstractServiceBeanTest {
         familyServiceBean = null;
         orgRelServiceLocal = null;
     }
-    @Test
-    public void testFamily() throws EntityValidationException {
+    
+    public long createFamily() throws EntityValidationException {
         Family family = getFamily();
         family.setStartDate(null);
         long id = familyServiceBean.create(family);
         PoHibernateUtil.getCurrentSession().flush();
         PoHibernateUtil.getCurrentSession().clear();
+        return id;
+    }
+    
+    @Test
+    public void testFamily() throws EntityValidationException {
+        long id = createFamily();
         Family saved = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
         assertNotNull(saved.getName());
         Family toUpdate = familyServiceBean.getById(saved.getId());

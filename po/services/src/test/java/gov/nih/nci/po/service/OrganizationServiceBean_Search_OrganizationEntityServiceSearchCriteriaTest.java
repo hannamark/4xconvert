@@ -1,23 +1,34 @@
 package gov.nih.nci.po.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.po.data.bo.Address;
 import gov.nih.nci.po.data.bo.Country;
 import gov.nih.nci.po.data.bo.Email;
 import gov.nih.nci.po.data.bo.EntityStatus;
+import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyFunctionalType;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.PhoneNumber;
 import gov.nih.nci.po.data.bo.URL;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.PoRegistry;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.jms.JMSException;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
 public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCriteriaTest extends OrganizationServiceBeanTest {
 
@@ -362,4 +373,57 @@ public class OrganizationServiceBean_Search_OrganizationEntityServiceSearchCrite
         assertEquals(2, getOrgServiceBean().count(sc));
         assertEquals(2, getOrgServiceBean().search(sc).size());
     }
+    
+    @Test
+    public void familySearch() throws Exception {
+        Calendar cal = Calendar.getInstance();
+        cal.set(2008, 01, 02);
+        Date oldDate = DateUtils.truncate(cal.getTime(), Calendar.DATE);
+        Organization o = getBasicOrganization();
+        Organization o2 = getBasicOrganization();
+        createOrganization(o);
+        createOrganization(o2);
+       
+        Family family = getFamily("FamilyName", oldDate);
+        long id = EjbTestHelper.getFamilyServiceBean().create(family);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        Family savedFam = (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
+        assertNotNull(savedFam.getId());
+              
+        FamilyOrganizationRelationshipServiceLocal familyOrgRelServiceLocal 
+            = PoRegistry.getFamilyOrganizationRelationshipService();
+        FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
+        famOrgRel.setOrganization(o);
+        famOrgRel.setFamily(savedFam);
+        famOrgRel.setFunctionalType(FamilyFunctionalType.ORGANIZATIONAL);
+        famOrgRel.setStartDate(savedFam.getStartDate());
+        familyOrgRelServiceLocal.create(famOrgRel);
+        
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        FamilyOrganizationRelationship famOrgRel2 = new FamilyOrganizationRelationship();
+        famOrgRel2.setOrganization(o2);
+        famOrgRel2.setFamily(savedFam);
+        famOrgRel2.setFunctionalType(FamilyFunctionalType.CONTRACTUAL);
+        famOrgRel2.setStartDate(savedFam.getStartDate());
+        familyOrgRelServiceLocal.create(famOrgRel2);
+        PoHibernateUtil.getCurrentSession().flush();
+        PoHibernateUtil.getCurrentSession().clear();
+        
+        LimitOffset page = new LimitOffset(100, 0);
+        Organization orgBO = new Organization();
+        orgBO.setName("oName");
+        Family fam = new Family();
+        fam.setName("milyNa");
+        FamilyOrganizationRelationship searchFamOrgRel = new FamilyOrganizationRelationship();
+        searchFamOrgRel.setFamily(fam);
+        orgBO.getFamilyOrganizationRelationships().add(searchFamOrgRel);
+        sc = new AnnotatedBeanSearchCriteria<Organization>(orgBO);
+        int maxLimit = Math.min(page.getLimit(), 101);
+        PageSortParams<Organization> params = new PageSortParams<Organization>(maxLimit, page
+                .getOffset(), OrganizationSortCriterion.ORGANIZATION_ID, false);
+        assertEquals(2, getOrgServiceBean().search(sc, params).size()); 
+   }
 }

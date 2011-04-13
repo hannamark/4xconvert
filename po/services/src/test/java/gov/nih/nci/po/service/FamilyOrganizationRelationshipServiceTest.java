@@ -127,9 +127,9 @@ import org.junit.Test;
 public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBeanTest {
     private FamilyOrganizationRelationshipServiceBean familyOrgRelServiceLocal;
     private OrganizationRelationshipServiceLocal orgRelServiceLocal = mock(OrganizationRelationshipServiceBean.class);
-    private Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+    private final Date today = DateUtils.truncate(new Date(), Calendar.DATE);
     private Date oldDate;
-    private Country country = new Country("testorg", "996", "IJ", "IJI");
+    private final Country country = new Country("testorg", "996", "IJ", "IJI");
 
     @Before
     public void setUpData() {
@@ -394,7 +394,7 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         assertEquals(DateUtils.addDays(oldDate, 6), familyOrgRelServiceLocal.getEarliestAllowableEndDate(id));
     }
 
-    private long createFamOrgRel(Family savedFam, Organization savedOrg) throws EntityValidationException {
+    public long createFamOrgRel(Family savedFam, Organization savedOrg) throws EntityValidationException {
         return createFamOrgRel(savedFam, savedOrg, oldDate);
     }
 
@@ -417,7 +417,7 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         return famOrgRelId;
     }
 
-    private Family createFamily() {
+    public Family createFamily() {
         Family family = new Family();
         family.setName("FamilyName");
         family.setStartDate(oldDate);
@@ -428,7 +428,7 @@ public class FamilyOrganizationRelationshipServiceTest extends AbstractServiceBe
         return (Family) PoHibernateUtil.getCurrentSession().load(Family.class, id);
     }
 
-    private Organization createOrg() throws EntityValidationException, JMSException {
+    public Organization createOrg() throws EntityValidationException, JMSException {
         Address mailingAddress = new Address("test", "test", "test", "test", country);
 
         Organization org = new Organization();
