@@ -1,27 +1,19 @@
-function submitform(orgid, name)
-    {       
+    function submitform(orgid, name) {       
         top.window.setorgid(orgid, name);
         window.top.hidePopWin(true); 
     }
-    
-    function ajaxCall(div, url){
-        var aj = new Ajax.Updater(div,url, {
-            asynchronous: true,
-            method: 'get',
-            evalScripts: false
-        });
-        return false;   
-    }
-    function setSearchFormVisible(){
+   
+    function setSearchFormVisible() {
         document.getElementById("searchOrgJsp").style.display="";
         document.getElementById("createOrgJsp").style.display="none";
     }
 
-    function setCreateFormVisible(){
+    function setCreateFormVisible() {
         document.getElementById("searchOrgJsp").style.display="none";
         document.getElementById("createOrgJsp").style.display="";
     }   
-    function closePopup(){
+    
+    function closePopup() {
         window.top.hidePopWin(true);
     }
 

@@ -1,5 +1,5 @@
 // Calls an Ajax.Updater
-// div is the div that will be reloaded. If div i null, a Ajax.Request is used instead of an Ajax.Updater
+// div is the div that will be reloaded. If div is null, a Ajax.Request is used instead of an Ajax.Updater
 // url is the url to call
 // params is a javascript hash containing the request parameters.
 // providedOptions the options object to use (This object is optional and useful for specifying call back functions)

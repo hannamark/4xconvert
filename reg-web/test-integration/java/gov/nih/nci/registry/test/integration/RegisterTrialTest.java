@@ -154,6 +154,86 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         assertTrue("No success message found",
                    selenium.isTextPresent("The trial draft has been successfully saved and assigned the Identifier"));
     }
+    
+    /**
+     * Tests Lookup of an organization with apostrophe.
+     * @throws Exception on error
+     */
+    @Test
+    public void testLookupOrganization() throws Exception {
+        loginAsAbstractor();
+        isLoggedIn();
+        handleDisclaimer(true);
+        clickAndWaitAjax("registerTrialMenuOption");
+        selenium.selectFrame("popupFrame");
+        waitForElementById("summaryFourFundingCategoryCode", 60);
+        selenium.select("summaryFourFundingCategoryCode", "label=National");
+        clickAndWaitAjax("link=Submit");
+        waitForPageToLoad();
+        clickAndWaitAjax("link=Look Up Org");
+        waitForElementById("popupFrame", 60);
+        selenium.selectFrame("popupFrame");
+        clickAndWaitAjax("link=Add Org");
+        selenium.type("orgName", "PO-2098'test organization");
+        selenium.type("orgAddress", "2115 E Jefferson St");
+        selenium.type("orgCity", "Rockville");
+        selenium.select("orgStateSelect", "label=MD");
+        selenium.type("orgZip", "20852");
+        selenium.type("orgEmail", "po2098@example.com");
+        clickAndWaitAjax("link=Save");
+        clickAndWaitAjax("link=Cancel");
+        clickAndWaitAjax("link=Close");
+        selenium.waitForPageToLoad("30000");
+
+        selenium.selectFrame("relative=up");
+        clickAndWaitAjax("link=Look Up Org");
+        selenium.selectFrame("popupFrame");
+        selenium.type("orgNameSearch", "'");
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        assertTrue("Wrong search results returned", selenium.isTextPresent("One item found"));
+        assertTrue("Wrong search results returned", selenium.isTextPresent("PO-2098'test organization"));
+    }
+    
+    /**
+     * Tests Lookup of a person with apostrophe.
+     * @throws Exception on error
+     */
+    @Test
+    public void testLookupPerson() throws Exception {
+        loginAsAbstractor();
+        isLoggedIn();
+        handleDisclaimer(true);
+        clickAndWaitAjax("registerTrialMenuOption");
+        selenium.selectFrame("popupFrame");
+        waitForElementById("summaryFourFundingCategoryCode", 60);
+        selenium.select("summaryFourFundingCategoryCode", "label=National");
+        clickAndWaitAjax("link=Submit");
+        waitForPageToLoad();
+        clickAndWaitAjax("link=Look Up Person");
+        waitForElementById("popupFrame", 60);
+        selenium.selectFrame("popupFrame");
+        clickAndWaitAjax("link=Add Person");
+        selenium.type("poOrganizations_firstName", "Michael");
+        selenium.type("poOrganizations_lastName", "O'Grady");
+        selenium.type("poOrganizations_streetAddress", "2115 E Jefferson St");
+        selenium.type("poOrganizations_city", "Rockville");
+        selenium.select("poOrganizations_orgStateSelect", "label=MD");
+        selenium.type("poOrganizations_zip", "20852");
+        selenium.type("poOrganizations_email", "mogrady@example.com");
+        clickAndWaitAjax("link=Save");
+        clickAndWaitAjax("link=Cancel");
+        clickAndWaitAjax("link=Close");
+        selenium.waitForPageToLoad("30000");
+        selenium.selectFrame("relative=up");
+        clickAndWaitAjax("link=Look Up Person");
+        selenium.selectFrame("popupFrame");
+        selenium.type("lastName", "'");
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        assertTrue("Wrong search results returned", selenium.isTextPresent("One item found"));
+        assertTrue("Wrong search results returned", selenium.isTextPresent("O'Grady"));
+    }    
 
     private String getNciIdViaSearch(String trialName) {
 
