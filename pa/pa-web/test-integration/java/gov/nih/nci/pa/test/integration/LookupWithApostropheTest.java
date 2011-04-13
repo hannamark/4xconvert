@@ -1,0 +1,61 @@
+package gov.nih.nci.pa.test.integration;
+
+import org.junit.Test;
+
+public class LookupWithApostropheTest extends AbstractPaSeleniumTest {
+    
+    /**
+     * Tests lookup of lead organization with apostrophe.
+     *
+     * @throws Exception on error
+     */
+    @Test
+    public void testLeadOrganizationLookup() throws Exception {
+        loginAsAbstractor();
+        verifyTrialSearchPage();
+        selenium.type("id=officialTitle", "Test Summ 4 Anatomic Site Trial created by Selenium.");
+        clickAndWait("link=Search");
+        assertTrue(selenium.isTextPresent("One item found"));
+        assertTrue(selenium.isElementPresent("id=row"));
+        assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]"));
+        assertFalse(selenium.isElementPresent("xpath=//table[@id='row']//tr[2]"));
+        assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]//td[1]/a"));
+        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
+        clickAndWait("link=General Trial Details");
+        clickAndWaitAjax("link=Look Up Org");
+        waitForElementById("popupFrame", 60);
+        selenium.selectFrame("popupFrame");
+        selenium.type("orgNameSearch", "2098'");
+        clickAndWaitAjax("link=Search");
+        assertTrue("Wrong search results returned", selenium.isTextPresent("One item found"));
+        assertTrue("Wrong search results returned", selenium.isTextPresent("PO-2098'test organization"));
+    }
+    
+    /**
+     * Tests lookup of person with apostrophe.
+     *
+     * @throws Exception on error
+     */
+    @Test
+    public void testPersonLookup() throws Exception {
+        loginAsAbstractor();
+        verifyTrialSearchPage();
+        selenium.type("id=officialTitle", "Test Summ 4 Anatomic Site Trial created by Selenium.");
+        clickAndWait("link=Search");
+        assertTrue(selenium.isTextPresent("One item found"));
+        assertTrue(selenium.isElementPresent("id=row"));
+        assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]"));
+        assertFalse(selenium.isElementPresent("xpath=//table[@id='row']//tr[2]"));
+        assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]//td[1]/a"));
+        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
+        clickAndWait("link=General Trial Details");
+        clickAndWaitAjax("//div[@id='loadPersField']/table/tbody/tr/td[2]/ul/li/a/span/span");
+        waitForElementById("popupFrame", 60);
+        selenium.selectFrame("popupFrame");
+        selenium.type("personLastName", "O'g");
+        clickAndWaitAjax("link=Search");
+        assertTrue("Wrong search results returned", selenium.isTextPresent("One item found"));
+        assertTrue("Wrong search results returned", selenium.isTextPresent("O'Grady"));
+    }
+
+}
