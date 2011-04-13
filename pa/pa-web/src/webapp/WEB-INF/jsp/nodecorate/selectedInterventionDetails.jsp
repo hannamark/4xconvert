@@ -70,7 +70,7 @@
             <s:label><fmt:message key="${pagePrefix}description" /></s:label>
         </td>
         <td class="value" colspan="2">
-            <s:textarea name="interventionDescription" rows="3" cssStyle="width:280px;float:left"/>
+            <s:textarea name="interventionDescription" rows="20" cssStyle="width:280px;float:left"/>
             <span class="formErrorMsg"> 
                 <s:fielderror>
                     <s:param>interventionDescription</s:param>

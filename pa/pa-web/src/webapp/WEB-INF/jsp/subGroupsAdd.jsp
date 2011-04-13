@@ -71,7 +71,7 @@ BubbleTips.activateTipOn("dfn");
                      </label>
                     </td>
                     <td class="value">
-                        <s:textarea name="subGroupsWebDTO.description" cssStyle="width:606px" rows="4" />
+                        <s:textarea name="subGroupsWebDTO.description" cssStyle="width:606px" rows="20" />
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>subGroupsWebDTO.description</s:param>

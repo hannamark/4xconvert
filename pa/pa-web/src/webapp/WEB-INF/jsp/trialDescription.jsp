@@ -75,7 +75,7 @@
             </s:label>
             </td>
             <td colspan="2" class="value">
-            <s:textarea name="trialBriefSummary" cssStyle="width:606px" rows="4"/></td>
+            <s:textarea name="trialBriefSummary" cssStyle="width:606px" rows="20"/></td>
         </tr>        
         <tr>
         <th colspan="2"><fmt:message key="trial.detailedDescription"/></th>
@@ -87,7 +87,7 @@
            </label>
          </td>
          <td class="value">
-        <s:textarea name="outline" cssStyle="width:606px" rows="10"/> (Max 32000 chars)
+        <s:textarea name="outline" cssStyle="width:606px" rows="20"/> (Max 32000 chars)
         <span class="formErrorMsg"> 
                 <s:fielderror>
                     <s:param>outline</s:param>
