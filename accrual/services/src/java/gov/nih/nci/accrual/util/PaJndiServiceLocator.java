@@ -82,6 +82,7 @@ import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
 /**
  * @author Hugh Reinhart
@@ -115,5 +116,12 @@ public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
      */
     public MailManagerServiceRemote getMailManagerService() {
         return (MailManagerServiceRemote) JNDIUtil.lookupPa("/pa/MailManagerServiceBean/remote");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public RegistryUserServiceRemote getRegistryUserService() {
+        return (RegistryUserServiceRemote) JNDIUtil.lookupPa("/pa/RegistryUserServiceBean/remote");
     }
 }

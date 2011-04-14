@@ -109,6 +109,7 @@ import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -121,6 +122,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
@@ -171,6 +173,7 @@ public class BatchUploadReaderServiceTest {
         readerService.setSubmissionService(submissionService);
         readerService.setPerformedActivityService(new PerformedActivityBean());
      
+        
         PatientBeanLocal patientBean = new PatientBeanLocal();
         patientBean.setCountryService(countryService);
         patientBean.setPatientCorrelationSvc(new POPatientBean());        
@@ -219,10 +222,16 @@ public class BatchUploadReaderServiceTest {
             }
         });
         
+        RegistryUserServiceRemote registryUserService = mock(RegistryUserServiceRemote.class);
+        RegistryUser user = new RegistryUser();
+        user.setEmailAddress("test@example.com");
+        when(registryUserService.getUser(anyString())).thenReturn(user);
+        
         paSvcLocator = mock(ServiceLocatorPaInterface.class);
         when(paSvcLocator.getStudyProtocolService()).thenReturn(spSvc);
         when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
         when(paSvcLocator.getDiseaseService()).thenReturn(diseaseSvc);
+        when(paSvcLocator.getRegistryUserService()).thenReturn(registryUserService);
         
         PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
         
@@ -287,7 +296,7 @@ public class BatchUploadReaderServiceTest {
     }
     
     @Test
-    public void testReading() throws URISyntaxException {
+    public void testReading() throws URISyntaxException, PAException {
         File file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
         List<BatchValidationResults> results = readerService.validateBatchData(file);
         readerService.sendValidationErrorEmail(results);

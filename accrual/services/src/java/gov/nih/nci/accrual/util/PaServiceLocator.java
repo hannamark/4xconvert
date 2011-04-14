@@ -82,6 +82,7 @@ import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
 /**
  * @author Hugh Reinhart
@@ -149,5 +150,12 @@ public final class PaServiceLocator implements ServiceLocatorPaInterface {
      */
     public MailManagerServiceRemote getMailManagerService() {
         return serviceLocator.getMailManagerService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public RegistryUserServiceRemote getRegistryUserService() {
+        return serviceLocator.getRegistryUserService();
     }
 }

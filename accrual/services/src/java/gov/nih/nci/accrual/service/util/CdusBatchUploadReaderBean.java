@@ -91,11 +91,13 @@ import gov.nih.nci.accrual.enums.CDUSPatientEthnicityCode;
 import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
 import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
 import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
+import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
@@ -554,14 +556,12 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     }
 
     /**
-     * Sends the validation error email.
-     * @param validationResults the validation results
+     * {@inheritDoc}
      */
-    public void sendValidationErrorEmail(List<BatchValidationResults> validationResults) {
+    public void sendValidationErrorEmail(List<BatchValidationResults> validationResults) throws PAException {
         if (CollectionUtils.isEmpty(validationResults)) {
             return;
         }
-        String mailTO = validationResults.get(0).getMailTo();
         StringBuffer errorReport = new StringBuffer();
         for (BatchValidationResults result : validationResults) {
             if (!result.isPassedValidation()) {
@@ -570,18 +570,18 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             }
         }
         String subject = "Accrual Error Report";
-        sendEmail(mailTO, subject, errorReport);
+        RegistryUser user = PaServiceLocator.getInstance().getRegistryUserService().getUser(
+                CaseSensitiveUsernameHolder.getUser());
+        sendEmail(user.getEmailAddress(), subject, errorReport);
     }
     
     /**
-     * Sends the import validation email.
-     * @param importResults the import results
+     * {@inheritDoc}
      */
-    public void sendConfirmationEmail(List<BatchImportResults> importResults) {
+    public void sendConfirmationEmail(List<BatchImportResults> importResults) throws PAException {
         if (CollectionUtils.isEmpty(importResults)) {
             return;
         }
-        String mailTO = importResults.get(0).getMailTo();
         StringBuffer confirmation = new StringBuffer();
         for (BatchImportResults result : importResults) {
             if (result.getTotalImports() > 0) {
@@ -590,7 +590,9 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             }
         }
         String subject = "Accrual Confirmation Report";
-        sendEmail(mailTO, subject, confirmation);
+        RegistryUser user = PaServiceLocator.getInstance().getRegistryUserService().getUser(
+                CaseSensitiveUsernameHolder.getUser());
+        sendEmail(user.getEmailAddress(), subject, confirmation);
     }
     
     private void sendEmail(String to, String subject, StringBuffer msg) {

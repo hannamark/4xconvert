@@ -91,6 +91,7 @@ import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,6 +110,7 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
     private final PlannedActivityServiceRemote pActivity = new MockPaPlannedActivityServiceBean();
     private final StudyProtocolServiceRemote studyProtocolService = mock(StudyProtocolServiceRemote.class);
     private final MailManagerServiceRemote mailManagerService = mock(MailManagerServiceRemote.class);
+    private final RegistryUserServiceRemote registryUserService = mock(RegistryUserServiceRemote.class);
     
     private static Map<Long, SDCDiseaseDTO> dtos;
 
@@ -169,5 +171,12 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
      */
     public MailManagerServiceRemote getMailManagerService() {
         return mailManagerService;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public RegistryUserServiceRemote getRegistryUserService() {
+        return registryUserService;
     }
 }

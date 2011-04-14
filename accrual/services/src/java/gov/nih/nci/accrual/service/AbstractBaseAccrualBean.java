@@ -81,7 +81,7 @@ package gov.nih.nci.accrual.service;
 import gov.nih.nci.accrual.convert.AbstractConverter;
 import gov.nih.nci.accrual.convert.Converters;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
-import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
+import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.dto.BaseDTO;

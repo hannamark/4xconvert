@@ -115,12 +115,14 @@ public interface CdusBatchUploadReaderServiceLocal {
     /**
      * Sends the validation error email.
      * @param validationResults the validation results
+     * @throws PAException if unable to lookup user 
      */
-    void sendValidationErrorEmail(List<BatchValidationResults> validationResults);
+    void sendValidationErrorEmail(List<BatchValidationResults> validationResults) throws PAException;
     
     /**
      * Sends the import validation email.
      * @param importResults the import results
+     * @throws PAException if unable to lookup user 
      */
-    void sendConfirmationEmail(List<BatchImportResults> importResults);
+    void sendConfirmationEmail(List<BatchImportResults> importResults) throws PAException;
 }

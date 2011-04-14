@@ -227,8 +227,7 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         dto.setAssignedIdentifier(IiConverter.convertToIi("1"));
         dto.setPersonIdentifier(IiConverter.convertToIi("PO PERSON ID 01"));
         PatientDto r = bean.update(dto);
-       assertTrue(DSetEnumConverter.convertDSetToCsv(PatientRaceCode.class, r.getRaceCode()).contains(PatientRaceCode.ASIAN.getName()));
-
+        assertTrue(DSetEnumConverter.convertDSetToCsv(PatientRaceCode.class, r.getRaceCode()).contains(PatientRaceCode.ASIAN.getName()));
     }
 
     @Test

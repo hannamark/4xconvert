@@ -80,6 +80,7 @@ import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
 /**
  * @author Hugh Reinhart
@@ -103,4 +104,10 @@ public interface ServiceLocatorPaInterface {
      * @return the mail manager service
      */
     MailManagerServiceRemote getMailManagerService();
+    
+    /**
+     * @return the mail manager service
+     */
+    RegistryUserServiceRemote getRegistryUserService();
+    
 }

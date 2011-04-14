@@ -83,16 +83,18 @@
 package gov.nih.nci.accrual.service;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.service.util.BatchImportResults;
 import gov.nih.nci.accrual.service.util.BatchValidationResults;
 import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderServiceLocal;
+import gov.nih.nci.accrual.service.util.MockPaServiceLocator;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
+import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -118,6 +120,8 @@ public class BatchUploadProcessingTaskServiceTest {
             FileUtils.touch(new File(uploadDirectory + File.separator + fileName));
         }
         
+        TestSchema.reset();
+        PaRegistry.getInstance().setServiceLocator(new MockPaServiceLocator());
         CdusBatchUploadReaderServiceLocal readerService = mock(CdusBatchUploadReaderServiceLocal.class);
         when(readerService.validateBatchData(any(File.class))).thenReturn(new ArrayList<BatchValidationResults>());
         when(readerService.importBatchData(any(File.class))).thenReturn(new ArrayList<BatchImportResults>());
@@ -128,13 +132,7 @@ public class BatchUploadProcessingTaskServiceTest {
     
     @Test
     public void testBatchUploadProcessingTask() throws Exception {
-        try {
-            bean.processBatchUploads();
-        } catch (Exception e) {
-            fail("Processing should have completed sucessfully. It should not have thrown an exception: "  
-                    + e.getMessage());
-        }
-        
+        bean.processBatchUploads();
         File uploadDirectory = new File(PaEarPropertyReader.getAccrualBatchUploadPath());
         for (int i = 1; i <= NUMBER_OF_BATCH_FILES; i++) {
             String fileName = "accrual_batch_" + i + ".txt";
