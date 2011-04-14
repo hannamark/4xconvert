@@ -80,76 +80,142 @@ package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.MockPoServiceLocator;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class StudyContactServiceBeanTest {
-  private StudyContactServiceLocal remoteEjb = new StudyContactBeanLocal();;
-  Ii pid;
-  Ii clinicalResearchStaffId;
+    private StudyContactServiceLocal remoteEjb = new StudyContactBeanLocal();
+    Ii pid;
+    Ii clinicalResearchStaffId;
 
-  @Before
-  public void setUp() throws Exception {
-    CSMUserService.setRegistryUserService(new MockCSMUserService());
-    TestSchema.reset();
-    TestSchema.primeData();
-    pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
-    clinicalResearchStaffId = IiConverter.convertToIi(TestSchema.clinicalResearchStaffIds.get(0));
-  }
+    @Before
+    public void setUp() throws Exception {
+        PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
+        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        TestSchema.reset();
+        TestSchema.primeData();
+        pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
+        clinicalResearchStaffId = IiConverter.convertToIi(TestSchema.clinicalResearchStaffIds.get(0));
+    }
 
-  @Test
-  public void get() throws Exception {
-    List<StudyContactDTO> statusList =
-      remoteEjb.getByStudyProtocol(pid);
-    assertEquals(1, statusList.size());
-    List<StudyContactDTO> spList2 = remoteEjb.getByStudyProtocol(pid, statusList.get(0));
-    assertEquals(IiConverter.convertToLong(statusList.get(0).getIdentifier()),
-        IiConverter.convertToLong(spList2.get(0).getIdentifier()));
-    List<StudyContactDTO> spList3 = remoteEjb.getByStudyProtocol(pid, statusList);
-    assertEquals(IiConverter.convertToLong(statusList.get(0).getIdentifier()),
-        IiConverter.convertToLong(spList3.get(0).getIdentifier()));
+    @Test
+    public void get() throws Exception {
+        List<StudyContactDTO> statusList = remoteEjb.getByStudyProtocol(pid);
+        assertEquals(1, statusList.size());
+        List<StudyContactDTO> spList2 = remoteEjb.getByStudyProtocol(pid, statusList.get(0));
+        assertEquals(IiConverter.convertToLong(statusList.get(0).getIdentifier()), IiConverter.convertToLong(spList2
+            .get(0).getIdentifier()));
+        List<StudyContactDTO> spList3 = remoteEjb.getByStudyProtocol(pid, statusList);
+        assertEquals(IiConverter.convertToLong(statusList.get(0).getIdentifier()), IiConverter.convertToLong(spList3
+            .get(0).getIdentifier()));
+        remoteEjb.delete(statusList.get(0).getIdentifier());
+    }
 
-    remoteEjb.delete(statusList.get(0).getIdentifier());
-  }
+    @Test
+    public void create() throws Exception {
+        StudyContactDTO dto = createStudyContactDTO(null);
+        remoteEjb.create(dto);
+        assertEquals(dto.getStudyProtocolIdentifier(), pid);
+        searchStudyContact();
+    }
 
-  @Test
-  public void create() throws Exception {
-    StudyContactDTO dto = new StudyContactDTO();
-    dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
-    dto.setStudyProtocolIdentifier(pid);
-    dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
-    dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
-    dto.setClinicalResearchStaffIi(clinicalResearchStaffId);
-    remoteEjb.create(dto);
-    assertEquals(dto.getStudyProtocolIdentifier()
-        , pid);
+    @Test
+    public void iiRootTest() throws Exception {
+        List<StudyContactDTO> statusList = remoteEjb.getByStudyProtocol(pid);
+        assertTrue(statusList.size() > 0);
+        StudyContactDTO dto = statusList.get(0);
+        assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    }
 
-    LimitOffset pagingParams = new LimitOffset(1, 1);
-    StudyContactDTO dto2 = new StudyContactDTO();
-    dto2.setStudyProtocolIdentifier(pid);
-    List<StudyContactDTO> list = remoteEjb.search(dto2, pagingParams);
-    assertEquals(1,list.size());
-  }
+    /**
+     * Tests that the creation method with a valid normal phone number
+     */
+    @Test
+    public void createWithValidPhoneNumber() throws Exception {
+        createWithValidPhoneNumber("1112223333", "111-222-3333");
+    }
 
-  @Test
-  public void iiRootTest() throws Exception {
-      List<StudyContactDTO> statusList = remoteEjb.getByStudyProtocol(pid);
-      assertTrue(statusList.size() > 0);
-      StudyContactDTO dto = statusList.get(0);
-      assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
-  }
+    /**
+     * Tests that the creation method with a valid 800 phone number
+     */
+    @Test
+    public void createWithValid800PhoneNumber() throws Exception {
+        createWithValidPhoneNumber("1-8001112222", "800-111-2222");
+    }
+
+    /**
+     * Tests that the creation method with a valid phone number
+     */
+    private void createWithValidPhoneNumber(String input, String formatted) throws Exception {
+        StudyContactDTO dto = createStudyContactDTO(input);
+        remoteEjb.create(dto);
+        assertEquals(dto.getStudyProtocolIdentifier(), pid);
+        StudyContactDTO result = searchStudyContact();
+        List<String> phones = DSetConverter.convertDSetToList(result.getTelecomAddresses(), "PHONE");
+        assertEquals("Wrong number of phone numbers", 1, phones.size());
+        assertEquals("Wrong phone number", formatted, phones.get(0));
+    }
+    
+    /**
+     * Tests that the creation method with a invalid phone number
+     */
+    @Test
+    public void createWithInvalidPhoneNumber() throws Exception {
+        try {
+            StudyContactDTO dto = createStudyContactDTO("1234");
+            remoteEjb.create(dto);
+            fail("Create method should have failed because of the invalid phone number");
+        } catch (PAException e) {
+            assertEquals("Wrong error message",
+                         "Invalid phone number: 1234 format for USA or CANADA is xxx-xxx-xxxxextxxxx", e.getMessage());
+        }
+    }
+
+    private StudyContactDTO createStudyContactDTO(String phone) {
+        StudyContactDTO dto = new StudyContactDTO();
+        dto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        dto.setStudyProtocolIdentifier(pid);
+        dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR));
+        dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
+        dto.setClinicalResearchStaffIi(clinicalResearchStaffId);
+        if (phone != null) {
+            List<String> phones = new ArrayList<String>();
+            phones.add(phone);
+            DSet<Tel> dSet = new DSet<Tel>();
+            dSet = DSetConverter.convertListToDSet(phones, "PHONE", dSet);
+            dto.setTelecomAddresses(dSet);
+        }
+        return dto;
+    }
+
+    private StudyContactDTO searchStudyContact() throws Exception {
+        LimitOffset pagingParams = new LimitOffset(1, 1);
+        StudyContactDTO dto2 = new StudyContactDTO();
+        dto2.setStudyProtocolIdentifier(pid);
+        List<StudyContactDTO> list = remoteEjb.search(dto2, pagingParams);
+        assertEquals(1, list.size());
+        return list.get(0);
+    }
 }

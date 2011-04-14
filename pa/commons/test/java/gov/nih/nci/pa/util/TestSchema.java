@@ -99,6 +99,8 @@ import gov.nih.nci.pa.domain.InterventionAlternateName;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationTest;
+import gov.nih.nci.pa.domain.OrganizationalContact;
+import gov.nih.nci.pa.domain.OrganizationalContactTest;
 import gov.nih.nci.pa.domain.OversightCommittee;
 import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.domain.PDQDisease;
@@ -207,6 +209,7 @@ public class TestSchema {
         public static List<Long> outcomeIds;
         public static List<Long> regAuthIds;
         public static List<Long> personIds;
+        public static List<Long> organizationalContactIds;
         public static List<Country> countries;
 
         private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
@@ -333,6 +336,7 @@ public class TestSchema {
             outcomeIds = new ArrayList<Long>();
             regAuthIds = new ArrayList<Long>();
             personIds = new ArrayList<Long>();
+            organizationalContactIds = new ArrayList<Long>();
             countries = new ArrayList<Country>();
             anatomicSiteIds = new ArrayList<Long>();
 
@@ -397,6 +401,11 @@ public class TestSchema {
             per.setLastName("the Clinician");
             addUpdObject(per);
             personIds.add(per.getId());
+            
+            OrganizationalContact orgContact = OrganizationalContactTest.createOrganizationalContactObj(org, per);
+            orgContact.setIdentifier("abcd");
+            addUpdObject(orgContact);
+            organizationalContactIds.add(orgContact.getId());
 
             HealthCareProvider hcp = HealthCareProviderTest.createHealthCareProviderObj(per, org);
             addUpdObject(hcp);

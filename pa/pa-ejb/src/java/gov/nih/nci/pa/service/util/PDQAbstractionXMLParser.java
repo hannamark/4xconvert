@@ -29,7 +29,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PhoneUtil;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -176,7 +176,7 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
             String phone = getText(contactElmt, "phone");
             try {
                 if (StringUtils.isNotBlank(phone)) {
-                    phone = PAUtil.formatPhoneNumber(countryName, phone);
+                    phone = PhoneUtil.formatPhoneNumber(countryName, phone);
                 }
             } catch (IllegalArgumentException e) {
                 throw new PAException(e.getMessage(), e);

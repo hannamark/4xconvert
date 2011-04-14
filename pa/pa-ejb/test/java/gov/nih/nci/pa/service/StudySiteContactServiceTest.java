@@ -81,7 +81,11 @@ package gov.nih.nci.pa.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
@@ -91,12 +95,18 @@ import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -115,9 +125,14 @@ public class StudySiteContactServiceTest {
     Ii contactIi;
     Long healthCareProviderId;
     Ii healthCareProviderIi;
+    Long orgContactId;
+    Ii orgContactIi;
+    Long crsId;
+    Ii crsIi;
 
     @Before
     public void setUp() throws Exception {
+        PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
         CSMUserService.setRegistryUserService(new MockCSMUserService());
         TestSchema.reset();
         TestSchema.primeData();
@@ -129,7 +144,12 @@ public class StudySiteContactServiceTest {
         contactIi = IiConverter.convertToIi(contactId);
         healthCareProviderId = TestSchema.healthCareFacilityIds.get(0);
         healthCareProviderIi = IiConverter.convertToIi(healthCareProviderId);
+        orgContactId = TestSchema.organizationalContactIds.get(0);
+        orgContactIi = IiConverter.convertToIi(orgContactId);
+        crsId = TestSchema.clinicalResearchStaffIds.get(0);
+        crsIi = IiConverter.convertToIi(crsId);
     }
+
     @Test
     public void get() throws Exception {
         StudySiteContactDTO spcDto = remoteEjb.get(contactIi);
@@ -140,18 +160,107 @@ public class StudySiteContactServiceTest {
 
     @Test
     public void create() throws Exception {
-        StudySiteContactDTO spc = new StudySiteContactDTO();
-        spc.setIdentifier(IiConverter.convertToIi((Long) null));
-        spc.setPostalAddress(AddressConverterUtil.create("1", "2", "3", "4", "5", "ZZZ"));
-        spc.setPrimaryIndicator(BlConverter.convertToBl(true));
-        spc.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.COORDINATING_INVESTIGATOR));
-        spc.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
-        spc.setStatusDateRange(IvlConverter.convertTs().convertToIvl(PAUtil.dateStringToTimestamp("1/1/2005"),null));
-        spc.setStudySiteIi(siteIi);
-        spc.setStudyProtocolIdentifier(protocolIi);
-        spc.setHealthCareProviderIi(healthCareProviderIi);
-        StudySiteContactDTO result = remoteEjb.create(spc);
+        StudySiteContactDTO dto = createStudySiteContactDTO(null, null, null);
+        StudySiteContactDTO result = remoteEjb.create(dto);
         assertFalse(PAUtil.isIiNull(result.getIdentifier()));
+    }
+
+    /**
+     * Tests that the creation method with a valid normal phone number for organizational contact
+     */
+    @Test
+    public void createWithValidPhoneNumberOrg() throws Exception {
+        createWithValidPhoneNumber(true, "1112223333", "111-222-3333");
+    }
+
+    /**
+     * Tests that the creation method with a valid 800 phone number for organizational contact
+     */
+    @Test
+    public void createWithValid800PhoneNumberOrg() throws Exception {
+        createWithValidPhoneNumber(true, "1-8001112222", "800-111-2222");
+    }
+
+    /**
+     * Tests that the creation method with a valid normal phone number for clinical research staff
+     */
+    @Test
+    public void createWithValidPhoneNumberCrs() throws Exception {
+        createWithValidPhoneNumber(false, "1112223333", "111-222-3333");
+    }
+
+    /**
+     * Tests that the creation method with a valid 800 phone number for clinical research staff
+     */
+    @Test
+    public void createWithValid800PhoneNumberCrs() throws Exception {
+        createWithValidPhoneNumber(false, "1-8001112222", "800-111-2222");
+    }
+
+    /**
+     * Tests that the creation method with a valid phone number
+     */
+    private void createWithValidPhoneNumber(boolean org, String input, String formatted) throws Exception {
+        StudySiteContactDTO dto = (org) ? createStudySiteContactDTO(orgContactIi, null, input)
+                : createStudySiteContactDTO(null, crsIi, input);
+        StudySiteContactDTO inserted = remoteEjb.create(dto);
+        StudySiteContactDTO result = remoteEjb.get(inserted.getIdentifier());
+        List<String> phones = DSetConverter.convertDSetToList(result.getTelecomAddresses(), "PHONE");
+        assertEquals("Wrong number of phone numbers", 1, phones.size());
+        assertEquals("Wrong phone number", formatted, phones.get(0));
+    }
+
+    /**
+     * Tests that the creation method with a invalid phone number for organizational contact
+     */
+    @Test
+    public void createWithInvalidPhoneNumberOrg() throws Exception {
+        try {
+            StudySiteContactDTO dto = createStudySiteContactDTO(orgContactIi, null, "1234");
+            remoteEjb.create(dto);
+            fail("Create method should have failed because of the invalid phone number");
+        } catch (PAException e) {
+            assertEquals("Wrong error message",
+                         "Invalid phone number: 1234 format for USA or CANADA is xxx-xxx-xxxxextxxxx", e.getMessage());
+        }
+    }
+
+    /**
+     * Tests that the creation method with a invalid phone number for clinical research staff
+     */
+    @Test
+    public void createWithInvalidPhoneNumberCrs() throws Exception {
+        try {
+            StudySiteContactDTO dto = createStudySiteContactDTO(null, crsIi, "1234");
+            remoteEjb.create(dto);
+            fail("Create method should have failed because of the invalid phone number");
+        } catch (PAException e) {
+            assertEquals("Wrong error message",
+                         "Invalid phone number: 1234 format for USA or CANADA is xxx-xxx-xxxxextxxxx", e.getMessage());
+        }
+    }
+
+    private StudySiteContactDTO createStudySiteContactDTO(Ii orgContactIi, Ii crsIi, String phone) {
+        StudySiteContactDTO dto = new StudySiteContactDTO();
+        dto.setIdentifier(IiConverter.convertToIi((Long) null));
+        dto.setPostalAddress(AddressConverterUtil.create("1", "2", "3", "4", "5", "ZZZ"));
+        dto.setPrimaryIndicator(BlConverter.convertToBl(true));
+        dto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.COORDINATING_INVESTIGATOR));
+        dto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
+        dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(PAUtil.dateStringToTimestamp("1/1/2005"), null));
+        dto.setStudySiteIi(siteIi);
+        dto.setStudyProtocolIdentifier(protocolIi);
+        dto.setHealthCareProviderIi(healthCareProviderIi);
+        dto.setOrganizationalContactIi(orgContactIi);
+        dto.setClinicalResearchStaffIi(crsIi);
+        if (phone != null) {
+            List<String> phones = new ArrayList<String>();
+            phones.add(phone);
+            DSet<Tel> dSet = new DSet<Tel>();
+            dSet = DSetConverter.convertListToDSet(phones, "PHONE", dSet);
+            dto.setTelecomAddresses(dSet);
+        }
+        return dto;
     }
 
     @Test
@@ -160,10 +269,11 @@ public class StudySiteContactServiceTest {
         try {
             StudySiteContactDTO spc = remoteEjb.get(contactIi);
             assertNull(spc);
-        } catch(PAException e) {
+        } catch (PAException e) {
             // expected behavior
         }
     }
+
     @Test
     public void iiRootTest() throws Exception {
         StudySiteContactDTO dto = remoteEjb.get(contactIi);

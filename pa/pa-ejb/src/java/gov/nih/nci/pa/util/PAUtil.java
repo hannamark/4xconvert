@@ -160,12 +160,7 @@ public class PAUtil {
     private static final Map<String, String> ROOT_TO_NULLIFIED_ERROR_MAP = new HashMap<String, String>();
     private static final String UTF_8 = "UTF-8";
     private static final String TEMP_DOC_LOCATION = "temp_docs";
-    private static final Pattern USA_CANADA_PHONENUMBER_PATTERN = Pattern
-        .compile("^[+-]?\\d?\\D?(\\d{3})\\D*(\\d{3})\\D*(\\d{4})\\D*(\\d{1,10})?\\D*$");
-    private static final int AREA_CODE_GROUP = 1;
-    private static final int FIRST_NUMBER_GROUP = 2;
-    private static final int LAST_NUMBER_GROUP = 3;
-    private static final int EXTENSION_GROUP = 4;
+    
 
     static {
         ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.HEALTH_CARE_FACILITY_ROOT, PAExceptionConstants.NULLIFIED_HCF);
@@ -830,63 +825,6 @@ public class PAUtil {
         isTypeIntervention = true;
       }
        return isTypeIntervention;
-    }
-
-    /**
-     * Test if the given country is USA or Canada.
-     * @param countryName The country name
-     * @return true if the given country name is USA or Canada.
-     */
-    public static boolean isCountryUSAOrCanada(String countryName) {
-        return PAConstants.USA.equalsIgnoreCase(countryName) || PAConstants.CANADA.equalsIgnoreCase(countryName);
-    }
-
-    /**
-     * Validates a phone number.
-     * @param countryName The country name.
-     * @param phoneNumber The phone number to validate
-     * @return true if the phone number is valid
-     */
-    public static boolean isPhoneValid(String countryName, String phoneNumber) {
-        if (StringUtils.isBlank(phoneNumber)) {
-            return false;
-        }
-        if (isCountryUSAOrCanada(countryName)) {
-            return USA_CANADA_PHONENUMBER_PATTERN.matcher(phoneNumber).matches();
-        }
-        return true;
-    }
-
-    /**
-     * Formats a phone number.
-     * @param countryName The country name.
-     * @param phoneNumber The phone number to format
-     * @return The formatted phone number. If no formatting can be applied, the given phone number is returned.
-     */
-    public static String formatPhoneNumber(String countryName, String phoneNumber) {
-        if (StringUtils.isBlank(phoneNumber)) {
-            throw new IllegalArgumentException("Phone number is blank");
-        }
-        if (isCountryUSAOrCanada(countryName)) {
-            Matcher matcher = USA_CANADA_PHONENUMBER_PATTERN.matcher(phoneNumber);
-            if (matcher.matches()) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(matcher.group(AREA_CODE_GROUP));
-                sb.append("-");
-                sb.append(matcher.group(FIRST_NUMBER_GROUP));
-                sb.append("-");
-                sb.append(matcher.group(LAST_NUMBER_GROUP));
-                if (matcher.group(EXTENSION_GROUP) != null) {
-                    sb.append("ext");
-                    sb.append(matcher.group(EXTENSION_GROUP));
-                }
-                return sb.toString();
-            } else {
-                throw new IllegalArgumentException("Invalid phone number: " + phoneNumber
-                        + " format for USA or CANADA is xxx-xxx-xxxxextxxxx");
-            }
-        }
-        return phoneNumber;
     }
 
     /**

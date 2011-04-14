@@ -145,6 +145,7 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PhoneUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -1711,7 +1712,7 @@ public class PAServiceUtils {
         String phoneNumber = DSetConverter.convertDSetToList(addresses, PAConstants.PHONE).get(0);
         List<String> formattedNumbers = new ArrayList<String>();
         try {
-            formattedNumbers.add(PAUtil.formatPhoneNumber(countryName, phoneNumber));
+            formattedNumbers.add(PhoneUtil.formatPhoneNumber(countryName, phoneNumber));
         } catch (IllegalArgumentException e) {
             throw new PAException(e.getMessage(), e);
         }

@@ -125,6 +125,7 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PhoneUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
@@ -926,7 +927,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private void validatePhone(String poOrgId, String telephone) {
         Ii orgIi = IiConverter.convertToPoOrganizationIi(poOrgId);
         String countryName = paServiceUtil.getEntityCountryName(orgIi);
-        if (!StringUtils.isBlank(telephone) && !PAUtil.isPhoneValid(countryName, telephone)) {
+        if (!StringUtils.isBlank(telephone) && !PhoneUtil.isPhoneNumberValid(countryName, telephone)) {
             addFieldError("personContactWebDTO.telephone", getText("error.usOrCanPhone"));
        }
     }
