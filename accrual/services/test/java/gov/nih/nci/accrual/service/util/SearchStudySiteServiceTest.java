@@ -85,7 +85,6 @@ import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
@@ -110,21 +109,20 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
     @Test
     public void search() throws Exception {
         // first user can access all three sites
-        St lName1 = StConverter.convertToSt(MockCsmUtil.users.get(0).getLoginName());
+        Ii regUser1 = IiConverter.convertToIi(TestSchema.registryUsers.get(0).getId());
 
         // second user can only access 1 site
-        St lName2 = StConverter.convertToSt(MockCsmUtil.users.get(1).getLoginName());
+        Ii regUser2 = IiConverter.convertToIi(TestSchema.registryUsers.get(1).getId());
 
         // first trial has 2 accrual sites
         List<SearchStudySiteResultDto> rList = bean.search(
-                IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()), lName1);
+                IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()), regUser1);
         assertEquals(2, rList.size());
         // second user can only access one of them
         rList = bean.search(
-                IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()), lName2);
+                IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()), regUser2);
         assertEquals(1, rList.size());
-        if (rList.size() > 0)
-        {
+        if (rList.size() > 0) {
             Ii id = rList.get(0).getStudySiteIi();
             assertNotNull(id);
             id = rList.get(0).getOrganizationIi();
@@ -132,14 +130,14 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
         }
 
         // second trial has 1 accrual site (first organization)
-        rList = bean.search(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(1).getId()), lName1);
+        rList = bean.search(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(1).getId()), regUser1);
         assertEquals(1, rList.size());
         assertEquals(TestSchema.organizations.get(0).getName(), StConverter.convertToString(rList.get(0).getOrganizationName()));
         // second user can't access it
-        rList = bean.search(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(1).getId()), lName2);
+        rList = bean.search(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(1).getId()), regUser2);
         assertEquals(0, rList.size());
 
-        rList = bean.search(BII, BST);
+        rList = bean.search(BII, BII);
         assertEquals(0, rList.size());
     }
 
@@ -147,13 +145,12 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
     public void studySiteExceptions() throws Exception {
         List<SearchStudySiteResultDto> list;
         Ii ii = new Ii();
-        St st = new St();
 
         list = bean.search(null, null);
         assertNotNull(list);
         assertEquals(0, list.size());
 
-        list = bean.search(null, st);
+        list = bean.search(null, ii);
         assertNotNull(list);
         assertEquals(0, list.size());
 
@@ -161,7 +158,7 @@ public class SearchStudySiteServiceTest extends AbstractServiceTest<SearchStudyS
         assertNotNull(list);
         assertEquals(0, list.size());
 
-        list = bean.search(ii, st);
+        list = bean.search(ii, ii);
         assertNotNull(list);
         assertEquals(0, list.size());
     }

@@ -79,16 +79,16 @@
 
 package gov.nih.nci.pa.service.util;
 
-import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
-import gov.nih.nci.pa.dto.StudySiteAccrualAccessDTO;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.convert.StudySiteAccrualAccessConverter;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.AbstractBaseIsoService;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
@@ -97,7 +97,6 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -121,7 +120,9 @@ import org.hibernate.Session;
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccessServiceLocal {
+public class StudySiteAccrualAccessServiceBean
+    extends AbstractBaseIsoService<StudySiteAccrualAccessDTO, StudySiteAccrualAccess, StudySiteAccrualAccessConverter>
+    implements StudySiteAccrualAccessServiceLocal {
 
     private static final long REFRESH_TIME = 1000 * 60 * 10;  // 10 minutes
     private static Set<User> submitterList = null;
@@ -152,14 +153,10 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
         List<Object[]> queryList = null;
         session = HibernateUtil.getCurrentSession();
         Query query = null;
-        String hql = "select ss.id, org.name "
-            + "from StudyProtocol sp "
-            + "join sp.studySites ss "
-            + "join ss.healthCareFacility hcf "
-            + "join hcf.organization org "
-            + "where sp.id = :spId "
-            + "  and ss.functionalCode = '" + StudySiteFunctionalCode.TREATING_SITE.getName() + "' "
-            + "order by org.name, ss.id ";
+        String hql = "select ss.id, org.name from StudyProtocol sp join sp.studySites ss "
+            + " join ss.healthCareFacility hcf join hcf.organization org where sp.id = :spId "
+            + " and ss.functionalCode = '" + StudySiteFunctionalCode.TREATING_SITE.getName() + "' "
+            + " order by org.name, ss.id ";
         query = session.createQuery(hql);
         query.setParameter("spId", studyProtocolId);
         queryList = query.list();
@@ -183,29 +180,15 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
     /**
      * {@inheritDoc}
      */
-    public StudySiteAccrualAccessDTO create(StudySiteAccrualAccessDTO access) throws PAException {
-        if (!(access.getId() == null)) {
+    @Override
+    public StudySiteAccrualAccessDTO create(StudySiteAccrualAccessDTO dto) throws PAException {
+        if (PAUtil.isIiNotNull(dto.getIdentifier())) {
             throw new PAException("Id is not null when calling StudySiteAccrualAccess.create().");
         }
-        validateElibibleForCreate(access);
-        Session session = null;
-        StudySiteAccrualAccess bo = null;
-        session = HibernateUtil.getCurrentSession();
-        bo = access.getDomainObject();
-        validateValues(bo);
-        session.saveOrUpdate(bo);
-        return getDTO(bo);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public StudySiteAccrualAccessDTO get(Long accessId) throws PAException {
-        StudySiteAccrualAccess access = null;
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
-        access = (StudySiteAccrualAccess) session.get(StudySiteAccrualAccess.class, accessId);
-        return getDTO(access);
+        validateElibibleForCreate(dto);
+        validateValues(dto);
+        validate(dto);
+        return super.create(dto);
     }
 
     /**
@@ -213,29 +196,20 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
      */
     public List<StudySiteAccrualAccessDTO> getByStudyProtocol(Long studyProtocolId) throws PAException {
         List<StudySiteAccrualAccess> ssaaList = getBosByStudyProtocol(studyProtocolId);
-        List<StudySiteAccrualAccessDTO> rList = new ArrayList<StudySiteAccrualAccessDTO>();
-        for (StudySiteAccrualAccess ssaa : ssaaList) {
-            rList.add(getDTO(ssaa));
-        }
-        return rList;
+        return convertFromDomainToDTOs(ssaaList);
     }
 
     /**
      * {@inheritDoc}
      */
-    public StudySiteAccrualAccessDTO update(StudySiteAccrualAccessDTO access) throws PAException {
-        if (access.getId() == null) {
+    @Override
+    public StudySiteAccrualAccessDTO update(StudySiteAccrualAccessDTO dto) throws PAException {
+        if (PAUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Id is null when calling StudySiteAccrualAccess.update().");
         }
-        Session session = null;
-        StudySiteAccrualAccess bo = null;
-        session = HibernateUtil.getCurrentSession();
-        bo = (StudySiteAccrualAccess) session.get(StudySiteAccrualAccess.class, access.getId());
-        bo.setRequestDetails(access.getRequestDetails());
-        bo.setStatusCode(access.getStatusCode());
-        validateValues(bo);
-        session.saveOrUpdate(bo);
-        return getDTO(bo);
+        validateValues(dto);
+        validate(dto);
+        return super.update(dto);
     }
 
     @SuppressWarnings("unchecked")
@@ -270,66 +244,24 @@ public class StudySiteAccrualAccessServiceBean implements StudySiteAccrualAccess
         return queryList;
     }
 
-    private StudySiteAccrualAccessDTO getDTO(StudySiteAccrualAccess bo) throws PAException {
-        RegistryUser regUser = new RegistryUser();
-        User csmUser = new User();
-        for (User u : getSubmitters()) {
-            if (u.getUserId().equals(bo.getCsmUserId())) {
-                regUser = registryUserService.getUser(u.getLoginName());
-                csmUser = u;
-            }
-        }
-        StudySiteAccrualStatusDTO ssas = studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(
-                IiConverter.convertToStudySiteIi(bo.getStudySite().getId()));
-        StudySiteAccrualAccessDTO result = new StudySiteAccrualAccessDTO();
-        result.setCsmUserId(bo.getCsmUserId());
-        result.setDateLastCreated(bo.getDateLastCreated());
-        result.setDateLastUpdated(bo.getDateLastUpdated());
-        result.setEmail(regUser.getEmailAddress());
-        result.setId(bo.getId());
-        result.setPhone(regUser.getPhone());
-        result.setRequestDetails(bo.getRequestDetails());
-
-        StudySite ss;
-        ss = (StudySite) HibernateUtil.getCurrentSession().get(StudySite.class, bo.getStudySite().getId());
-        result.setSiteName(ss.getHealthCareFacility() ==  null ? null
-                : ss.getHealthCareFacility().getOrganization().getName());
-        result.setSiteRecruitmentStatus(ssas == null ? null : CdConverter.convertCdToString(ssas.getStatusCode()));
-
-        result.setStatusCode(bo.getStatusCode());
-        result.setStatusDateRangeLow(bo.getStatusDateRangeLow());
-        result.setStudySiteId(bo.getStudySite().getId());
-        result.setUserLastCreated(bo.getUserLastCreated());
-        result.setUserLastUpdated(bo.getUserLastUpdated());
-        result.setUserName(PAUtil.getGridIdentityUsername(csmUser.getLoginName()));
-        return result;
-    }
-
     private void validateElibibleForCreate(StudySiteAccrualAccessDTO access) throws PAException {
-        List<StudySiteAccrualAccess> aList = getBosByStudySite(access.getStudySiteId());
+        List<StudySiteAccrualAccess> aList =
+            getBosByStudySite(IiConverter.convertToLong(access.getStudySiteIdentifier()));
         for (StudySiteAccrualAccess a : aList) {
-            if (a.getStudySite().getId().equals(access.getStudySiteId())
-                    && a.getCsmUserId().equals(access.getCsmUserId())) {
+            if (a.getStudySite().getId().equals(IiConverter.convertToLong(access.getStudySiteIdentifier()))
+                    && a.getRegistryUser().getId().equals(
+                            IiConverter.convertToLong(access.getRegistryUserIdentifier()))) {
                 throw new PAException("User has already been assigned to the study site.  "
                         + "To update click the edit link in existing accrual users list.");
             }
         }
     }
 
-    private void validateValues(StudySiteAccrualAccess bo) throws PAException {
-        checkNull(bo.getCsmUserId(), "User Name must be set.");
-        checkNull(bo.getStudySite(), "Accessing Site must be set.");
-        checkNull(bo.getStatusCode(), "Access Status must be set.");
-        bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
-        if (bo.getId() == null) {
-            bo.setUserLastCreated(CSMUserService.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
-            bo.setDateLastCreated(new Date());
-            bo.setUserLastUpdated(null);
-            bo.setDateLastUpdated(null);
-        } else {
-            bo.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
-            bo.setDateLastUpdated(new Date());
-        }
+    private void validateValues(StudySiteAccrualAccessDTO dto) throws PAException {
+        checkNull(dto.getRegistryUserIdentifier(), "User Name must be set.");
+        checkNull(dto.getStudySiteIdentifier(), "Accessing Site must be set.");
+        checkNull(dto.getStatusCode(), "Access Status must be set.");
+        dto.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
     }
 
     private static void checkNull(Object obj, String errMsg) throws PAException {

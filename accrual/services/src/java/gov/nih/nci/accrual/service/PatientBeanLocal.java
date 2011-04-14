@@ -134,7 +134,7 @@ import org.hibernate.Session;
 @Stateless
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class PatientBeanLocal implements PatientService, PatientServiceLocal {
+public class PatientBeanLocal implements PatientServiceLocal {
 
     private static final Logger LOG  = Logger.getLogger(PatientBeanLocal.class);
     @EJB

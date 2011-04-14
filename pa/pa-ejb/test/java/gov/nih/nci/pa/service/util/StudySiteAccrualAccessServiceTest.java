@@ -83,12 +83,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.pa.dto.StudySiteAccrualAccessDTO;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusBeanLocal;
@@ -114,10 +117,10 @@ import org.junit.Test;
  * @since Sep 3, 2009
  */
 public class StudySiteAccrualAccessServiceTest {
-    private static final Long CSM_USER_ID = 23L;
     private static final String REQUEST_DETAILS = "request details";
-    private Long id;
     private Long ssId;
+    private static Ii REGISTRY_USER_IDENTIFIER;
+    private Ii identifier;
 
     StudySiteAccrualAccessServiceLocal bean;
     StudySiteAccrualStatusBeanLocal statusBean;
@@ -140,37 +143,30 @@ public class StudySiteAccrualAccessServiceTest {
         TestSchema.reset();
         TestSchema.primeData();
         ssId = TestSchema.studySiteIds.get(0);
+        REGISTRY_USER_IDENTIFIER = IiConverter.convertToIi(TestSchema.getRegistryUser().getId());
      }
 
     @Test
     public void create() throws Exception {
         StudySiteAccrualAccessDTO dto = new StudySiteAccrualAccessDTO();
-        dto.setCsmUserId(CSM_USER_ID);
-        dto.setRequestDetails(REQUEST_DETAILS);
-        dto.setStudySiteId(ssId);
-        dto.setStatusCode(ActiveInactiveCode.ACTIVE);
-        assertNull(dto.getId());
+        dto.setRegistryUserIdentifier(REGISTRY_USER_IDENTIFIER);
+        dto.setRequestDetails(StConverter.convertToSt(REQUEST_DETAILS));
+        dto.setStudySiteIdentifier(IiConverter.convertToIi(ssId));
+        dto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
+        assertNull(dto.getIdentifier());
         CSMUserService.setRegistryUserService(new MockCSMUserService());
         StudySiteAccrualAccessDTO r = bean.create(dto);
-        assertNotNull(r.getId());
-        assertEquals(CSM_USER_ID, r.getCsmUserId());
-        assertEquals(REQUEST_DETAILS, r.getRequestDetails());
-        assertEquals(ssId, r.getStudySiteId());
-        assertNotNull(r.getUserLastCreated());
-        assertNotNull(r.getDateLastCreated());
-        assertNull(r.getUserLastUpdated());
-        assertNull(r.getDateLastUpdated());
-        assertEquals(ActiveInactiveCode.ACTIVE, r.getStatusCode());
-        id = r.getId();
+        assertNotNull(r);
+        identifier = r.getIdentifier();
     }
 
     @Test
     public void get() throws Exception {
         create();
-        StudySiteAccrualAccessDTO r = bean.get(id);
-        assertEquals(CSM_USER_ID, r.getCsmUserId());
-        assertEquals(ssId, r.getStudySiteId());
-        assertEquals(REQUEST_DETAILS, r.getRequestDetails());
+        StudySiteAccrualAccessDTO r = bean.get(identifier);
+        assertEquals(REGISTRY_USER_IDENTIFIER, r.getRegistryUserIdentifier());
+        assertEquals(ssId, IiConverter.convertToLong(r.getStudySiteIdentifier()));
+        assertEquals(REQUEST_DETAILS, StConverter.convertToString(r.getRequestDetails()));
     }
 
     @Test
@@ -179,22 +175,20 @@ public class StudySiteAccrualAccessServiceTest {
         List<StudySiteAccrualAccessDTO> rList = bean.getByStudyProtocol(ssId);
         boolean found = false;
         for (StudySiteAccrualAccessDTO r : rList) {
-            found = r.getId() == id ? true : found;
+            found =  identifier.equals(r.getIdentifier()) ? true : found;
         }
         assertTrue(found);
     }
 
     @Test
     public void update() throws Exception {
-        String updatedRequestDetails = "xxx";
+        St updatedRequestDetails = StConverter.convertToSt("xxx");
         create();
-        StudySiteAccrualAccessDTO bo = bean.get(id);
-        assertFalse(bo.getRequestDetails().equals(updatedRequestDetails));
-        bo.setRequestDetails(updatedRequestDetails);
-        StudySiteAccrualAccessDTO r = bean.update(bo);
+        StudySiteAccrualAccessDTO dto = bean.get(identifier);
+        assertFalse(dto.getRequestDetails().equals(updatedRequestDetails));
+        dto.setRequestDetails(updatedRequestDetails);
+        StudySiteAccrualAccessDTO r = bean.update(dto);
         assertTrue(r.getRequestDetails().equals(updatedRequestDetails));
-        assertNotNull(r.getUserLastUpdated());
-        assertNotNull(r.getDateLastUpdated());
     }
 
     @Test

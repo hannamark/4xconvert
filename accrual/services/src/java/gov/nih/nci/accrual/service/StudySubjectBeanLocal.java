@@ -118,7 +118,7 @@ import org.hibernate.criterion.Restrictions;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudySubjectBeanLocal
         extends AbstractBaseAccrualStudyBean<StudySubjectDto, StudySubject, StudySubjectConverter>
-        implements StudySubjectService, StudySubjectServiceLocal {
+        implements StudySubjectServiceLocal {
 
     /**
      * {@inheritDoc}

@@ -81,12 +81,10 @@ package gov.nih.nci.accrual.accweb.util;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -128,7 +126,7 @@ public class MockSearchStudySiteBean implements SearchStudySiteService {
     /**
      * {@inheritDoc}
      */
-    public List<SearchStudySiteResultDto> search(Ii studyProtocolIi, St authUser) throws RemoteException {
+    public List<SearchStudySiteResultDto> search(Ii studyProtocolIi, Ii registryUserIi) throws PAException {
         return dtos.get(studyProtocolIi);
     }
     

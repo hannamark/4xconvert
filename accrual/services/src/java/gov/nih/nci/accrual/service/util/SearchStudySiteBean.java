@@ -80,7 +80,6 @@ package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -90,9 +89,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.security.authorization.domainobjects.User;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -118,24 +115,21 @@ public class SearchStudySiteBean implements SearchStudySiteService {
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public List<SearchStudySiteResultDto> search(Ii studyProtocolIi, St authorizedUser)
-            throws RemoteException {
+    public List<SearchStudySiteResultDto> search(Ii studyProtocolIi, Ii registryUserIi) throws PAException {
         List<SearchStudySiteResultDto> result = new ArrayList<SearchStudySiteResultDto>();
-        if (!PAUtil.isIiNull(studyProtocolIi) && !PAUtil.isStNull(authorizedUser)) {
-            Session session = null;
+        if (!PAUtil.isIiNull(studyProtocolIi) && !PAUtil.isIiNull(registryUserIi)) {
             try {
-                session = HibernateUtil.getCurrentSession();
-                Query query = null;
+                Session session = HibernateUtil.getCurrentSession();
                 String hql = "select ss.id, org.name, org.identifier "
-                    + "from StudyProtocol as sp "
-                    + "join sp.studySites as ss "
+                    + "from StudyProtocol as sp join sp.studySites as ss "
                     + "left outer join ss.healthCareFacility as ro "
                     + "left outer join ro.organization as org "
-                    + "where sp.id = " + IiConverter.convertToString(studyProtocolIi)
-                    + "  and ss.functionalCode ='" + StudySiteFunctionalCode.TREATING_SITE + "' ";
-                query = session.createQuery(hql);
+                    + "where sp.id = :spId and ss.functionalCode = :functionalCode";
+                Query query = session.createQuery(hql);
+                query.setParameter("spId", IiConverter.convertToLong(studyProtocolIi));
+                query.setParameter("functionalCode", StudySiteFunctionalCode.TREATING_SITE);
                 List<Object> queryList = query.list();
-                Set<Long> authIds = getAuthorizedSites(authorizedUser);
+                Set<Long> authIds = getAuthorizedSites(registryUserIi);
                 for (Object qArr : queryList) {
                     Object[] site = (Object[]) qArr;
                     if (authIds.contains(site[0])) {
@@ -147,8 +141,8 @@ public class SearchStudySiteBean implements SearchStudySiteService {
                     }
                 }
             } catch (HibernateException hbe) {
-                throw new RemoteException(
-                        "Hibernate exception in SearchStudySiteBean.getTrialSummaryByStudyProtocolIi().", hbe);
+                throw new PAException("Hibernate exception in SearchStudySiteBean.getTrialSummaryByStudyProtocolIi().", 
+                        hbe);
             }
         }
         return result;
@@ -157,8 +151,7 @@ public class SearchStudySiteBean implements SearchStudySiteService {
     /**
      * {@inheritDoc}
      */
-    public SearchStudySiteResultDto getStudySiteByOrg(Ii studyProtocolIi, Ii orgIi) 
-        throws PAException {
+    public SearchStudySiteResultDto getStudySiteByOrg(Ii studyProtocolIi, Ii orgIi)  throws PAException {
         Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(StudySite.class);
         criteria.add(Restrictions.eq("studyProtocol.id", IiConverter.convertToLong(studyProtocolIi)));
         criteria.add(Restrictions.eq("functionalCode", StudySiteFunctionalCode.TREATING_SITE));
@@ -180,29 +173,20 @@ public class SearchStudySiteBean implements SearchStudySiteService {
         }
         return returnDto;
     }
-    
-    @SuppressWarnings("unchecked")
-    private Set<Long> getAuthorizedSites(St user) throws RemoteException {
-        Set<Long> result = new HashSet<Long>();
-        User csmUser = AccrualCsmUtil.getInstance().getCSMUser(StConverter.convertToString(user));
-        if (csmUser != null) {
 
-            Session session = null;
-            try {
-                session = HibernateUtil.getCurrentSession();
-                Query query = null;
-                String hql = "select distinct ss.id "
-                    + "from StudySiteAccrualAccess ssaa "
-                    + "join ssaa.studySite ss "
-                    + "where ssaa.csmUserId = :csmUserId "
-                    + "  and ssaa.statusCode = '" + ActiveInactiveCode.ACTIVE.getName() + "' ";
-                query = session.createQuery(hql);
-                query.setParameter("csmUserId", csmUser.getUserId());
-                List<Long> queryList = query.list();
-                result.addAll(queryList);
-            } catch (HibernateException hbe) {
-                throw new RemoteException("Hibernate exception in SearchStudySiteBean.getAuthorizedTrials().", hbe);
-            }
+    @SuppressWarnings("unchecked")
+    private Set<Long> getAuthorizedSites(Ii registryUserIi) {
+        Set<Long> result = new HashSet<Long>();
+        Long userId = IiConverter.convertToLong(registryUserIi);
+        if (userId != null) {
+            Session session = HibernateUtil.getCurrentSession();
+            String hql = "select distinct ss.id from StudySiteAccrualAccess ssaa "
+                + " join ssaa.studySite ss where ssaa.registryUser.id = :userId and ssaa.statusCode = :statusCode";
+            Query query = session.createQuery(hql);
+            query.setParameter("userId", userId);
+            query.setParameter("statusCode", ActiveInactiveCode.ACTIVE);
+            List<Long> queryList = query.list();
+            result.addAll(queryList);
         }
         return result;
     }

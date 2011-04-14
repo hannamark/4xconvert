@@ -86,13 +86,13 @@ import gov.nih.nci.pa.service.PAException;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import javax.ejb.Remote;
+import javax.ejb.Local;
 
 /**
  * @author Hugh Reinhart
  * @since Sep 25, 2009
  */
-@Remote
+@Local
 public interface CountryService {
 
     /**

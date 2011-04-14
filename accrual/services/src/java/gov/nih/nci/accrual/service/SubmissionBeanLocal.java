@@ -111,7 +111,7 @@ import org.hibernate.criterion.Restrictions;
 @Interceptors(HibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class SubmissionBeanLocal extends AbstractBaseAccrualStudyBean<SubmissionDto, Submission, SubmissionConverter>
-        implements SubmissionService, SubmissionServiceLocal {
+        implements SubmissionServiceLocal {
 
     
     /**

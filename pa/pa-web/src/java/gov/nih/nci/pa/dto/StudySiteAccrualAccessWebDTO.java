@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The coppa-commons
+ * source code form and machine readable, binary, object code form. The pa
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This coppa-commons Software License (the License) is between NCI and You. You (or
+ * This pa Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the coppa-commons Software to (i) use, install, access, operate,
+ * its rights in the pa Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the coppa-commons Software; (ii) distribute and
- * have distributed to and by third parties the coppa-commons Software and any
+ * and prepare derivative works of the pa Software; (ii) distribute and
+ * have distributed to and by third parties the pa Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,49 +80,165 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.service.interceptor;
-
-import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
-
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
-
-import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
+package gov.nih.nci.pa.dto;
 
 /**
- * Associates the current authenticated user (if any) of remote EJBs with the current
- * session (via CaseInsensitiveUsernameHoler). It stores the username as given unlike the
- * AuthorizationInterceptor in nci-commons.
+ * Web DTO for study site accrual access.
  *
- * @author oweisms
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-//TODO Remove as part of PO-3500 and use Coppa-Commons RemoteAuthorizationInterceptor.
-public class RemoteAuthorizationInterceptor extends AuthorizationInterceptor {
+public class StudySiteAccrualAccessWebDTO {
+    private static final long serialVersionUID = 1L;
 
-    @Resource
-    private SessionContext sessionContext;
+    private Long identifier;
+    private Long studySiteId;
+
+    private Long registryUserId;
+    private String userName;
+    private String emailAddress;
+    private String phoneNumber;
+    private String siteName;
+    private String siteRecruitmentStatus;
+    private String requestDetails;
+    private String statusCode;
 
     /**
-     * Ensures that the current authenticated user is associated with the current session so that security filtering is
-     * correct.
-     *
-     * @param invContext the method context
-     * @return the method result
-     * @throws Exception if invoking the method throws an exception.
+     * @return the identifier
      */
-    @Override
-    @AroundInvoke
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public Object prepareReturnValue(InvocationContext invContext) throws Exception {
-        String username;
-        try {
-            username = sessionContext.getCallerPrincipal().getName();
-        } catch (IllegalStateException e) {
-            username = getUnknownUsername();
-        }
-        CaseSensitiveUsernameHolder.setUser(username);
-        return invContext.proceed();
+    public Long getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(Long identifier) {
+        this.identifier = identifier;
+    }
+
+    /**
+     * @return the studySiteId
+     */
+    public Long getStudySiteId() {
+        return studySiteId;
+    }
+
+    /**
+     * @param studySiteId the studySiteId to set
+     */
+    public void setStudySiteId(Long studySiteId) {
+        this.studySiteId = studySiteId;
+    }
+
+    /**
+     * @return the userName
+     */
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * @param userName the userName to set
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    /**
+     * @return the emailAddress
+     */
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    /**
+     * @param emailAddress the emailAddress to set
+     */
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    /**
+     * @return the phoneNumber
+     */
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    /**
+     * @param phoneNumber the phoneNumber to set
+     */
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    /**
+     * @return the siteName
+     */
+    public String getSiteName() {
+        return siteName;
+    }
+
+    /**
+     * @param siteName the siteName to set
+     */
+    public void setSiteName(String siteName) {
+        this.siteName = siteName;
+    }
+
+    /**
+     * @return the siteRecruitmentStatus
+     */
+    public String getSiteRecruitmentStatus() {
+        return siteRecruitmentStatus;
+    }
+
+    /**
+     * @param siteRecruitmentStatus the siteRecruitmentStatus to set
+     */
+    public void setSiteRecruitmentStatus(String siteRecruitmentStatus) {
+        this.siteRecruitmentStatus = siteRecruitmentStatus;
+    }
+
+    /**
+     * @return the registryUserId
+     */
+    public Long getRegistryUserId() {
+        return registryUserId;
+    }
+
+    /**
+     * @param registryUserId the registryUserId to set
+     */
+    public void setRegistryUserId(Long registryUserId) {
+        this.registryUserId = registryUserId;
+    }
+
+    /**
+     * @return the requestDetails
+     */
+    public String getRequestDetails() {
+        return requestDetails;
+    }
+
+    /**
+     * @param requestDetails the requestDetails to set
+     */
+    public void setRequestDetails(String requestDetails) {
+        this.requestDetails = requestDetails;
+    }
+
+    /**
+     * @return the statusCode
+     */
+    public String getStatusCode() {
+        return statusCode;
+    }
+
+    /**
+     * @param statusCode the statusCode to set
+     */
+    public void setStatusCode(String statusCode) {
+        this.statusCode = statusCode;
     }
 }

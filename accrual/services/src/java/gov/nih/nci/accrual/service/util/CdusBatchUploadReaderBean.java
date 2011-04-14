@@ -93,6 +93,7 @@ import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
 import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Ts;
@@ -104,6 +105,7 @@ import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -496,8 +498,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         
         try {
             if (PAUtil.isIiNull(studySiteOrgIi)            
-                || getSearchStudySiteService().getStudySiteByOrg(
-                        spDto.getIdentifier(), studySiteOrgIi) == null) {
+                || getSearchStudySiteService().getStudySiteByOrg(spDto.getIdentifier(), studySiteOrgIi) == null) {
                 addUpPatientRegInstCode(values, errMsg, lineNumber);
             }
         } catch (PAException e) {
@@ -552,6 +553,23 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         } else if (!StringUtils.equalsIgnoreCase(sp.getStatusCode().getCode(), ActStatusCode.ACTIVE.getCode())) {
             errMsg.append(key).append(appendLineNumber(lineNumber)).append(" with the identifier ")
                 .append(protocolId).append("is not an Active study.\n");   
+        } else if (!hasAccrualAccess(sp.getIdentifier())) {
+            errMsg.append(key).append(appendLineNumber(lineNumber))
+            .append(PAUtil.getGridIdentityUsername(CaseSensitiveUsernameHolder.getUser()))
+            .append(" does not have accrual access to the study protocol with the identifier ").append(protocolId);
+        }
+    }
+    
+    private boolean hasAccrualAccess(Ii spIi) {
+        String user = CaseSensitiveUsernameHolder.getUser();
+        try {
+            RegistryUser ru = 
+                PaServiceLocator.getInstance().getRegistryUserService().getUser(user);
+            Bl hasAccess = getSearchTrialService().isAuthorized(spIi, IiConverter.convertToIi(ru.getId()));
+            return BlConverter.convertToBool(hasAccess);
+        } catch (Exception e) {
+            LOG.error("Error determining accrual access for " + user + ".", e);
+            return false;
         }
     }
 

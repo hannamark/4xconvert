@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The coppa-commons
+ * source code form and machine readable, binary, object code form. The pa
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This coppa-commons Software License (the License) is between NCI and You. You (or
+ * This pa Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the coppa-commons Software to (i) use, install, access, operate,
+ * its rights in the pa Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the coppa-commons Software; (ii) distribute and
- * have distributed to and by third parties the coppa-commons Software and any
+ * and prepare derivative works of the pa Software; (ii) distribute and
+ * have distributed to and by third parties the pa Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,49 +80,71 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.service.interceptor;
+package gov.nih.nci.pa.iso.convert;
 
-import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
-
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
-
-import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 
 /**
- * Associates the current authenticated user (if any) of remote EJBs with the current
- * session (via CaseInsensitiveUsernameHoler). It stores the username as given unlike the
- * AuthorizationInterceptor in nci-commons.
+ * Convert study site accrual status to its DTO and vice versa.
  *
- * @author oweisms
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-//TODO Remove as part of PO-3500 and use Coppa-Commons RemoteAuthorizationInterceptor.
-public class RemoteAuthorizationInterceptor extends AuthorizationInterceptor {
-
-    @Resource
-    private SessionContext sessionContext;
+public class StudySiteAccrualAccessConverter
+    extends AbstractConverter<StudySiteAccrualAccessDTO, StudySiteAccrualAccess> {
 
     /**
-     * Ensures that the current authenticated user is associated with the current session so that security filtering is
-     * correct.
-     *
-     * @param invContext the method context
-     * @return the method result
-     * @throws Exception if invoking the method throws an exception.
+     * {@inheritDoc}
      */
     @Override
-    @AroundInvoke
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public Object prepareReturnValue(InvocationContext invContext) throws Exception {
-        String username;
-        try {
-            username = sessionContext.getCallerPrincipal().getName();
-        } catch (IllegalStateException e) {
-            username = getUnknownUsername();
+    public StudySiteAccrualAccess convertFromDtoToDomain(StudySiteAccrualAccessDTO dto) throws PAException {
+        StudySiteAccrualAccess access = new StudySiteAccrualAccess();
+        access.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        if (!ISOUtil.isIiNull(dto.getRegistryUserIdentifier())) {
+            RegistryUser ru = new RegistryUser();
+            ru.setId(IiConverter.convertToLong(dto.getRegistryUserIdentifier()));
+            access.setRegistryUser(ru);
         }
-        CaseSensitiveUsernameHolder.setUser(username);
-        return invContext.proceed();
+        access.setRequestDetails(StConverter.convertToString(dto.getRequestDetails()));
+        access.setStatusCode(ActiveInactiveCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
+        access.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDate()));
+        if (!ISOUtil.isIiNull(dto.getStudySiteIdentifier())) {
+            StudySite ss = new StudySite();
+            ss.setId(IiConverter.convertToLong(dto.getStudySiteIdentifier()));
+            access.setStudySite(ss);
+        }
+        return access;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudySiteAccrualAccessDTO convertFromDomainToDto(StudySiteAccrualAccess bo) throws PAException {
+        StudySiteAccrualAccessDTO dto = new StudySiteAccrualAccessDTO();
+        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setRequestDetails(StConverter.convertToSt(bo.getRequestDetails()));
+        dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
+        dto.setStatusDate(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
+
+        RegistryUser ru = bo.getRegistryUser();
+        if (ru != null) {
+            dto.setRegistryUserIdentifier(IiConverter.convertToIi(ru.getId()));
+        }
+
+        StudySite ss = bo.getStudySite();
+        if (ss != null) {
+            dto.setStudySiteIdentifier(IiConverter.convertToIi(ss.getId()));
+        }
+        return dto;
     }
 }

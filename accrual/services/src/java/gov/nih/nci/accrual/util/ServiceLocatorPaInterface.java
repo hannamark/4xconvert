@@ -104,10 +104,9 @@ public interface ServiceLocatorPaInterface {
      * @return the mail manager service
      */
     MailManagerServiceRemote getMailManagerService();
-    
+
     /**
      * @return the mail manager service
      */
     RegistryUserServiceRemote getRegistryUserService();
-    
 }

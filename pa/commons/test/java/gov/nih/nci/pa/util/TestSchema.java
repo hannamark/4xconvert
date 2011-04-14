@@ -115,6 +115,7 @@ import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.PlannedEligibilityCriterion;
 import gov.nih.nci.pa.domain.PlannedMarker;
 import gov.nih.nci.pa.domain.PlannedSubstanceAdministration;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.SDCDisease;
@@ -825,5 +826,17 @@ public class TestSchema {
                 CaseSensitiveUsernameHolder.setUser(user.getLoginName());
             }
             return user;
+        }
+
+        public static RegistryUser getRegistryUser() {
+            User user = getUser();
+            RegistryUser ru = new RegistryUser();
+            ru.setFirstName("Test");
+            ru.setLastName("User");
+            ru.setEmailAddress("test@example.com");
+            ru.setPhone("123-456-7890");
+            ru.setCsmUserId(user.getUserId());
+            TestSchema.addUpdObject(ru);
+            return ru;
         }
 }

@@ -79,7 +79,8 @@
 
 package gov.nih.nci.pa.service.util;
 
-import gov.nih.nci.pa.dto.StudySiteAccrualAccessDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
+import gov.nih.nci.pa.service.BasePaService;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
@@ -91,36 +92,21 @@ import java.util.Set;
  * @author Hugh Reinhart
  * @since Sep 2, 2009
  */
-public interface StudySiteAccrualAccessServiceLocal {
+public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudySiteAccrualAccessDTO> {
+
     /**
      * @return submitter csm accounts
      * @throws PAException exception
      */
     Set<User> getSubmitters() throws PAException;
+
     /**
      * @param studyProtocolId protocol id
      * @return list of treating sites
      * @throws PAException exception
      */
     Map<Long, String> getTreatingSites(Long studyProtocolId) throws PAException;
-    /**
-     * @param access access
-     * @return access
-     * @throws PAException exception
-     */
-    StudySiteAccrualAccessDTO create(StudySiteAccrualAccessDTO access) throws PAException;
-    /**
-     * @param accessId access primary key
-     * @return access
-     * @throws PAException exception
-     */
-    StudySiteAccrualAccessDTO get(Long accessId) throws PAException;
-    /**
-     * @param access access
-     * @return access
-     * @throws PAException exception
-     */
-    StudySiteAccrualAccessDTO update(StudySiteAccrualAccessDTO access) throws PAException;
+
     /**
      * @param studyProtocolId study site pkey
      * @return list of access

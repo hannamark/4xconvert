@@ -82,44 +82,39 @@ import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.service.PAException;
 
-import java.rmi.RemoteException;
 import java.util.List;
 
-import javax.ejb.Remote;
+import javax.ejb.Local;
 
 /**
  * @author Hugh Reinhart
  * @since Aug 17, 2009
  */
-@Remote
+@Local
 public interface SearchTrialService {
+    
     /**
      * @param criteria search criteria
-     * @param authorizedUser user
+     * @param authorizedUser ii of the registry user
      * @return list of trials fitting the criteria for which the user is authorized to submit accruals
-     * @throws RemoteException exception
+     * @throws PAException on error
      */
-    List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria, St authorizedUser)
-            throws RemoteException;
+    List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria, Ii authorizedUser) throws PAException;
+    
     /**
      * @param studyProtocolIi iso index of the study
-     * @param authorizedUser user
+     * @param authorizedUser ii of the registry user
      * @return if user is authorized to submit of given study
-     * @throws RemoteException exception
+     * @throws PAException on error
      */
-    Bl isAuthorized(Ii studyProtocolIi, St authorizedUser) throws RemoteException;
+    Bl isAuthorized(Ii studyProtocolIi, Ii authorizedUser) throws PAException;
+    
     /**
      * @param studyProtocolIi protocol id
      * @return ProtocolQueryResultDto
-     * @throws RemoteException exception
+     * @throws PAException on error
      */
-    SearchTrialResultDto getTrialSummaryByStudyProtocolIi(Ii studyProtocolIi) throws RemoteException;
-    /**
-     * @return studyProtocolIi for outcomes
-     * @throws RemoteException exception
-     */
-    Ii getOutcomesStudyProtocolIi() throws RemoteException;
-
+    SearchTrialResultDto getTrialSummaryByStudyProtocolIi(Ii studyProtocolIi) throws PAException;
 }

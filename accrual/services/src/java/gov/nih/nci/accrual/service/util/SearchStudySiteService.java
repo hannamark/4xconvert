@@ -80,28 +80,26 @@ package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.service.PAException;
 
-import java.rmi.RemoteException;
 import java.util.List;
 
-import javax.ejb.Remote;
+import javax.ejb.Local;
 
 /**
  * @author Hugh Reinhart
  * @since Aug 17, 2009
  */
-@Remote
+@Local
 public interface SearchStudySiteService {
     
     /**
      * @param studyProtocolIi ii for selected study
-     * @param authorizedUser user
+     * @param registryUserIi the ii for the registered user
      * @return list of study sites for which the user is authorized to enter accruals
-     * @throws RemoteException exception
+     * @throws PAException on error
      */
-    List<SearchStudySiteResultDto> search(Ii studyProtocolIi,  St authorizedUser) throws RemoteException;
+    List<SearchStudySiteResultDto> search(Ii studyProtocolIi,  Ii registryUserIi) throws PAException;
     
     /**
      * Returns the study site with the org ii for the given study protocol.

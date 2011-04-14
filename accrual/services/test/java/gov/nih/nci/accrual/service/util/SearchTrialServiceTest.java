@@ -93,8 +93,8 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 
-import java.rmi.RemoteException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -117,25 +117,25 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
 
     @Test
     public void searchUser1() throws Exception {
-        search(MockCsmUtil.users.get(0).getLoginName(), true);
+        search(TestSchema.registryUsers.get(0).getId(), true);
     }
 
     @Test
     public void searchUser2() throws Exception {
-        search(MockCsmUtil.users.get(1).getLoginName(), true);
+        search(TestSchema.registryUsers.get(0).getId(), true);
     }
 
     @Test
     public void searchUser3() throws Exception {
-        search(MockCsmUtil.users.get(2).getLoginName(), false);
+        search(0L, false);
     }
 
-    public void search(String loginName, boolean shouldBeAuthorized) throws Exception {
-        St authUser = StConverter.convertToSt(loginName);
+    public void search(Long registryUserId, boolean shouldBeAuthorized) throws Exception {
+        Ii ruIi = IiConverter.convertToIi(registryUserId);
         int goodCount = shouldBeAuthorized ? 1: 0;
 
         // second study is inactive
-        List<SearchTrialResultDto> results = bean.search(new SearchTrialCriteriaDto(), authUser);
+        List<SearchTrialResultDto> results = bean.search(new SearchTrialCriteriaDto(), ruIi);
         assertEquals(goodCount, results.size());
         if (results.size() > 0) {
             SearchTrialResultDto str = results.get(0);
@@ -168,23 +168,23 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         }
 
         crit.setAssignedIdentifier(StConverter.convertToSt(assignedId.getExtension()));
-        assertEquals(goodCount, bean.search(crit, authUser).size());
+        assertEquals(goodCount, bean.search(crit, ruIi).size());
         crit.setAssignedIdentifier(BST);
-        assertEquals(0, bean.search(crit, authUser).size());
+        assertEquals(0, bean.search(crit, ruIi).size());
 
         // get by title
         crit = new SearchTrialCriteriaDto();
         crit.setOfficialTitle(StConverter.convertToSt(TestSchema.studyProtocols.get(0).getOfficialTitle()));
-        assertEquals(goodCount, bean.search(crit, authUser).size());
+        assertEquals(goodCount, bean.search(crit, ruIi).size());
         crit.setOfficialTitle(BST);
-        assertEquals(0, bean.search(crit, authUser).size());
+        assertEquals(0, bean.search(crit, ruIi).size());
 
         // get by title
         crit = new SearchTrialCriteriaDto();
         crit.setLeadOrgTrialIdentifier(StConverter.convertToSt(TestSchema.studySites.get(0).getLocalStudyProtocolIdentifier()));
-        assertEquals(goodCount, bean.search(crit, authUser).size());
+        assertEquals(goodCount, bean.search(crit, ruIi).size());
         crit.setLeadOrgTrialIdentifier(BST);
-        assertEquals(0, bean.search(crit, authUser).size());
+        assertEquals(0, bean.search(crit, ruIi).size());
     }
 
     @Test
@@ -195,14 +195,14 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         try {
             bean.getTrialSummaryByStudyProtocolIi(BII);
             fail();
-        } catch (RemoteException e) {
+        } catch (PAException e) {
             // expected behavior
         }
     }
 
     @Test
     public void getStudyOverallStatus() throws Exception {
-        List<SearchTrialResultDto> rList = bean.search(new SearchTrialCriteriaDto(), BST);
+        List<SearchTrialResultDto> rList = bean.search(new SearchTrialCriteriaDto(), BII);
         for (SearchTrialResultDto r : rList) {
             if (IiConverter.convertToLong(r.getStudyProtocolIdentifier()).equals(TestSchema.studyProtocols.get(0).getId())) {
                 assertEquals(StudyStatusCode.ACTIVE, StudyStatusCode.getByCode(r.getStudyStatusCode().getCode()));

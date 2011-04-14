@@ -81,9 +81,11 @@ package gov.nih.nci.pa.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.pa.dto.StudySiteAccrualAccessDTO;
+import gov.nih.nci.pa.dto.StudySiteAccrualAccessWebDTO;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.service.MockStudySiteService;
 import gov.nih.nci.service.util.MockStudySiteAccrualAccessService;
 
@@ -95,14 +97,15 @@ import org.junit.Test;
  * @since Sep 8, 2009
  */
 public class ManageAccrualAccessTest extends AbstractPaActionTest {
-    Long testCsmUserId = MockStudySiteAccrualAccessService.csmUsers.get(0).getUserId();
-    Long testStudySiteId = MockStudySiteService.list.get(2).getId();
-    String testStatusCode = ActiveInactiveCode.ACTIVE.getCode();
-    String testRequestDetails = "test request details";
-    ManageAccrualAccessAction act;
+    private Long testRegUserId = MockStudySiteAccrualAccessService.regUsers.get(0).getId();
+    private Long testStudySiteId = MockStudySiteService.list.get(2).getId();
+    private String testStatusCode = ActiveInactiveCode.ACTIVE.getCode();
+    private String testRequestDetails = "test request details";
+    private ManageAccrualAccessAction act;
 
     @Before
     public void prepare() throws Exception {
+        CSMUserService.setRegistryUserService(new MockCSMUserService());
         MockStudySiteAccrualAccessService.list.clear();
         act = new ManageAccrualAccessAction();
         act.prepare();
@@ -133,17 +136,17 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
         assertFalse(act.hasActionErrors());
 
         // fill in data
-        act.getAccess().setCsmUserId(testCsmUserId);
+        act.getAccess().setRegistryUserId(testRegUserId);
         act.getAccess().setStudySiteId(testStudySiteId);
-        act.getAccess().setStatus(testStatusCode);
+        act.getAccess().setStatusCode(testStatusCode);
         act.getAccess().setRequestDetails(testRequestDetails);
         assertEquals(AbstractListEditAction.AR_LIST, act.add());
         assertFalse(act.hasActionErrors());
         assertEquals(1, act.getAccessList().size());
-        StudySiteAccrualAccessDTO dto = act.getAccessList().get(0);
-        assertEquals(testCsmUserId, dto.getCsmUserId());
+        StudySiteAccrualAccessWebDTO dto = act.getAccessList().get(0);
+        assertEquals(testRegUserId, dto.getRegistryUserId());
         assertEquals(testStudySiteId, dto.getStudySiteId());
-        assertEquals(testStatusCode, dto.getStatus());
+        assertEquals(testStatusCode, dto.getStatusCode());
         assertEquals(testRequestDetails, dto.getRequestDetails());
     }
 
@@ -152,22 +155,22 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
         addAccrualAccess();
 
         // click Edit button
-        act.setSelectedRowIdentifier(String.valueOf(act.getAccessList().get(0).getId()));
+        act.setSelectedRowIdentifier(String.valueOf(act.getAccessList().get(0).getIdentifier()));
         assertEquals(AbstractListEditAction.AR_EDIT, act.edit());
         assertFalse(act.hasActionErrors());
 
         // fill in data
         String newStatusCode = ActiveInactiveCode.INACTIVE.getCode();
         String newRequestDetails = "new r. details";
-        act.getAccess().setStatus(newStatusCode);
+        act.getAccess().setStatusCode(newStatusCode);
         act.getAccess().setRequestDetails(newRequestDetails);
         assertEquals(AbstractListEditAction.AR_LIST, act.update());
         assertFalse(act.hasActionErrors());
         assertEquals(1, act.getAccessList().size());
-        StudySiteAccrualAccessDTO dto = act.getAccessList().get(0);
-        assertEquals(testCsmUserId, dto.getCsmUserId());
+        StudySiteAccrualAccessWebDTO dto = act.getAccessList().get(0);
+        assertEquals(testRegUserId, dto.getRegistryUserId());
         assertEquals(testStudySiteId, dto.getStudySiteId());
-        assertEquals(newStatusCode, dto.getStatus());
+        assertEquals(newStatusCode, dto.getStatusCode());
         assertEquals(newRequestDetails, dto.getRequestDetails());
     }
 

@@ -111,19 +111,8 @@
 
     <target name="get-domain">
         <delete dir="${services.build.domainDir}"/>
-        <copy todir="${services.build.domainDir}/service/util">
-            <fileset dir="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/">
-                <include name="*Service.java"/>
-                <exclude name="CSMUserService.java"/>
-            </fileset>
-            <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/*ServiceRemote.java"/>
-            <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/*ServiceLocal.java"/>
-            <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/PAPersonServiceBean.java"/>
-            <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/util/PAHealthCareProviderRemote.java"/>
-        </copy>
         <copy todir="${services.build.domainDir}/util">
             <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/util/PaEarPropertyReader.java"/>
-            <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/util/DisplayTrialOwnershipInformation.java"/>
         </copy>
         <copy todir="${services.build.domainDir}/service/correlation">
             <fileset file="${software.dir}/pa/pa-ejb/src/java/gov/nih/nci/pa/service/correlation/OrganizationCorrelationServiceRemote.java"/>
@@ -366,22 +355,9 @@
                      includes="**/*.class"
                      excludes="**/pa/**/*.class
                                     **/convert/*
-                                    **/dto/util/PO*.class
-                                    **/dto/util/S*.class
                                     **/service/*Bean.class
                                     **/service/*BeanLocal.class
-                                    **/service/Abstract*.class
-                                    **/service/BaseLookUpService.class
-                                    **/service/util/A*.class
-                                    **/service/util/C*.class
-                                    **/service/util/S*.class
-                                    **/service/util/PatientBean.class
-                                    **/service/util/PatientServiceBean.class
-                                    **/service/util/PatientServiceRemote.class
-                                    **/svc/*Bean*.class
-                                    **/svc/util/*.class
-                                    **/Meddra*.class
-            "/>
+                                    **/service/Abstract*.class"/>
     </target>
 
     <target name="jar" depends="ivy-get, create-jar, test-dynamic-analysis"

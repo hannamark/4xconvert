@@ -83,6 +83,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -143,6 +144,10 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
           }
         });
         when(diseaseSvc.search(any(SDCDiseaseDTO.class))).thenReturn(new ArrayList<SDCDiseaseDTO>(dtos.values()));
+        
+        RegistryUser ru = new RegistryUser();
+        ru.setId(1L);
+        when(registryUserService.getUser(any(String.class))).thenReturn(ru);
     }
     
     /**

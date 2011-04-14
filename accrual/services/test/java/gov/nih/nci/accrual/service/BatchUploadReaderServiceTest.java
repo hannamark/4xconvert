@@ -101,6 +101,7 @@ import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.accrual.service.util.POPatientBean;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
+import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.accrual.util.PoServiceLocator;
@@ -108,6 +109,7 @@ import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
+import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -203,8 +205,23 @@ public class BatchUploadReaderServiceTest {
         
         SearchStudySiteService sssSvc = mock(SearchStudySiteService.class);
         when(sssSvc.getStudySiteByOrg(any(Ii.class), any(Ii.class))).thenReturn(new SearchStudySiteResultDto());
-        
         readerService.setSearchStudySiteService(sssSvc);
+        
+        SearchTrialService searchTrialSvc = mock(SearchTrialService.class);
+        when(searchTrialSvc.isAuthorized(any(Ii.class), any(Ii.class))).thenAnswer(new Answer<Bl>() {
+            public Bl answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                Ii spIi = (Ii) args[0];
+                Bl result = new Bl();
+                if (StringUtils.equals(spIi.getExtension(), "NCI-2009-00002")) {
+                    result.setValue(Boolean.FALSE);
+                } else {
+                    result.setValue(Boolean.TRUE);
+                }
+                return result;
+            }
+        });
+        readerService.setSearchTrialService(searchTrialSvc);
         
         final SDCDiseaseDTO disease = new SDCDiseaseDTO();
         disease.setIdentifier(IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
@@ -224,6 +241,7 @@ public class BatchUploadReaderServiceTest {
         
         RegistryUserServiceRemote registryUserService = mock(RegistryUserServiceRemote.class);
         RegistryUser user = new RegistryUser();
+        user.setId(1L);
         user.setEmailAddress("test@example.com");
         when(registryUserService.getUser(anyString())).thenReturn(user);
         

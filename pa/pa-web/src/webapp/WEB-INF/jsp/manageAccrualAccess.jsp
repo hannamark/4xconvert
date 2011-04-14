@@ -41,34 +41,30 @@ function handleEdit(rowId){
         <fmt:message key="manageAccrualAccess.list.title"/>
     </h2>
     <table class="form">
-        <%--  <jsp:include page="/WEB-INF/jsp/trialDetailSummary.jsp"/> --%>
         <tr><td colspan="2">
             <s:set name="accessList" value="accessList" scope="request"/>
             <display:table name="accessList" id="row" class="data" sort="list" pagesize="10" requestURI="manageAccrualAccess.action">
                 <display:column escapeXml="true" property="userName" sortable="true" titleKey="manageAccrualAccess.userName"/>
-                <display:column escapeXml="true" property="email" sortable="true" titleKey="manageAccrualAccess.email"/>
-                <display:column escapeXml="true" property="phone" sortable="true" titleKey="manageAccrualAccess.phone"/>
+                <display:column escapeXml="true" property="emailAddress" sortable="true" titleKey="manageAccrualAccess.email"/>
+                <display:column escapeXml="true" property="phoneNumber" sortable="true" titleKey="manageAccrualAccess.phone"/>
                 <display:column escapeXml="true" property="siteName" sortable="true" titleKey="manageAccrualAccess.siteName"/>
                 <display:column escapeXml="true" property="siteRecruitmentStatus" sortable="true" titleKey="manageAccrualAccess.siteRecruitmentStatus"/>
-                <display:column escapeXml="true" property="statusCode.code" sortable="true" titleKey="manageAccrualAccess.statusCode"/>
-                <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                					|| (sessionScope.role == 'SuAbstractor')}">
-                <display:column titleKey="manageAccrualAccess.edit" headerClass="centered" class="action">
-                    <s:a href="#" onclick="handleEdit(%{#attr.row.id})">
-                        <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
-                            alt="Edit" width="16" height="16" />
-                    </s:a>
-                </display:column>
-                </c:if>
+                <display:column escapeXml="true" property="statusCode" sortable="true" titleKey="manageAccrualAccess.statusCode"/>
+                <pa:displayWhenCheckedOut>
+                    <display:column titleKey="manageAccrualAccess.edit" headerClass="centered" class="action">
+                        <s:a href="#" onclick="handleEdit(%{#attr.row.identifier})">
+                            <img src='<c:url value="/images/ico_edit.gif"/>' alt="Edit" width="16" height="16" />
+                        </s:a>
+                    </display:column>
+                </pa:displayWhenCheckedOut>
              </display:table>
         </td></tr>
     </table>
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
-        <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-        					|| (sessionScope.role == 'SuAbstractor')}">
-        <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
-        </c:if>
+        <pa:displayWhenCheckedOut>
+            <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+        </pa:displayWhenCheckedOut>
     </ul>
     </del></div>
 </s:form></div>

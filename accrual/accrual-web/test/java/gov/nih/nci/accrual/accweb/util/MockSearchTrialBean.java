@@ -87,8 +87,8 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,8 +127,7 @@ public class MockSearchTrialBean implements SearchTrialService {
     /**
      * {@inheritDoc}
      */
-    public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria, St authUser)
-                                     throws RemoteException {
+    public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria, Ii authUser) throws PAException {
         List<SearchTrialResultDto> result = new ArrayList<SearchTrialResultDto>();
         for (SearchTrialResultDto dto : dtos) {
             if (contains(dto.getAssignedIdentifier(), criteria.getAssignedIdentifier())
@@ -143,7 +142,7 @@ public class MockSearchTrialBean implements SearchTrialService {
     /**
      * {@inheritDoc}
      */
-    public SearchTrialResultDto getTrialSummaryByStudyProtocolIi(Ii studyProtocolIi) throws RemoteException {
+    public SearchTrialResultDto getTrialSummaryByStudyProtocolIi(Ii studyProtocolIi) throws PAException {
         SearchTrialResultDto result = null;
         for (SearchTrialResultDto dto : dtos) {
             if (IiConverter.convertToLong(studyProtocolIi).equals(IiConverter.convertToLong(
@@ -167,15 +166,7 @@ public class MockSearchTrialBean implements SearchTrialService {
     /**
      * {@inheritDoc}
      */
-    public Bl isAuthorized(Ii studyProtocolIi, St authorizedUser) throws RemoteException {
+    public Bl isAuthorized(Ii studyProtocolIi, Ii authorizedUser) throws PAException {
         return BlConverter.convertToBl(true);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Ii getOutcomesStudyProtocolIi() throws RemoteException {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

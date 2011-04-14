@@ -85,9 +85,11 @@ import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
+import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
@@ -424,10 +426,13 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
     public List<SearchStudySiteResultWebDto> getListOfStudySites() {
         if (listOfStudySites == null) {
             try {
+                RegistryUser ru = PaServiceLocator.getInstance().getRegistryUserService().getUser(
+                        CaseSensitiveUsernameHolder.getUser());
+                Ii ruIi = IiConverter.convertToIi(ru.getId());
                 List<SearchStudySiteResultDto> isoStudySiteList =
-                    getSearchStudySiteSvc().search(getSpIi(), getAuthorizedUser());
+                    getSearchStudySiteSvc().search(getSpIi(), ruIi);
                 listOfStudySites = SearchStudySiteResultWebDto.getWebList(isoStudySiteList);
-            } catch (RemoteException e) {
+            } catch (PAException e) {
                 LOG.error("Error loading study sites.", e);
             }
         }

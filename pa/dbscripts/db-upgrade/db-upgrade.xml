@@ -658,4 +658,8 @@
         <comment>Insert SDC diseases.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.4/PO-3338.sql"/>
      </changeSet>
+     <changeSet id="PO-3408" author="aevansel">
+        <comment>Refactoring Study Site Accrual Access to use the registry user instead of the csm user.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.5/PO-3408.sql"/>
+     </changeSet>
 </databaseChangeLog>

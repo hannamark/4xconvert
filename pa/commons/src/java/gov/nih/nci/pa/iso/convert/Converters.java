@@ -78,10 +78,10 @@
 */
 package gov.nih.nci.pa.iso.convert;
 
+import gov.nih.nci.pa.service.PAException;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import gov.nih.nci.pa.service.PAException;
 
 /**
  * Class contains exclusively a static method used to return converters for iso dto's.
@@ -124,7 +124,7 @@ public class Converters {
         converterMap.put(PlannedSubstanceAdministrationConverter.class, new PlannedSubstanceAdministrationConverter());
         converterMap.put(PlannedProcedureConverter.class, new PlannedProcedureConverter());
         converterMap.put(PlannedMarkerConverter.class, new PlannedMarkerConverter());
-        
+        converterMap.put(StudySiteAccrualAccessConverter.class, new StudySiteAccrualAccessConverter());
     }
     /**
      * @param clazz class

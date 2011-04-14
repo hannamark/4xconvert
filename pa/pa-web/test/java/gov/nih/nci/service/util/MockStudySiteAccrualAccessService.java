@@ -78,12 +78,20 @@
 */
 package gov.nih.nci.service.util;
 
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
-import gov.nih.nci.pa.dto.StudySiteAccrualAccessDTO;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.iso.convert.StudySiteAccrualAccessConverter;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.service.MockAbstractBaseIsoService;
 import gov.nih.nci.service.MockStudySiteService;
 
 import java.util.ArrayList;
@@ -95,38 +103,40 @@ import java.util.Set;
  * @author Hugh Reinhart
  * @since Sep 8, 2009
  */
-public class MockStudySiteAccrualAccessService implements StudySiteAccrualAccessServiceLocal {
+public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoService<StudySiteAccrualAccessDTO>
+    implements StudySiteAccrualAccessServiceLocal {
 
     public static Long seq = 1L;
     public static List<StudySiteAccrualAccess> list = new ArrayList<StudySiteAccrualAccess>();
-    public static List<User> csmUsers;
+    public static List<RegistryUser> regUsers;
+    private static final StudySiteAccrualAccessConverter CONVERTER = new StudySiteAccrualAccessConverter();
     static {
-        csmUsers = new ArrayList<User>();
-        User user = new User();
-        user.setUserId(1L);
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setLoginName("john.doe@yahoo.com");
-        csmUsers.add(user);
-        user = new User();
-        user.setUserId(2L);
-        user.setFirstName("Jane");
-        user.setLastName("Smith");
-        user.setLoginName("jane.smith@yahoo.com");
-        csmUsers.add(user);
+        regUsers = new ArrayList<RegistryUser>();
+
+        RegistryUser ru = new RegistryUser();
+        ru.setId(1L);
+        ru.setCsmUserId(1L);
+        regUsers.add(ru);
+
+        ru = new RegistryUser();
+        ru.setId(2L);
+        ru.setCsmUserId(2L);
+        regUsers.add(ru);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudySiteAccrualAccessDTO create(StudySiteAccrualAccessDTO access) throws PAException {
         StudySiteAccrualAccess bo = new StudySiteAccrualAccess();
         bo.setId(seq++);
-        bo.setCsmUserId(access.getCsmUserId());
-        bo.setRequestDetails(access.getRequestDetails());
-        bo.setStatusCode(access.getStatusCode());
+        bo.setRegistryUser(new RegistryUser());
+        bo.getRegistryUser().setId(IiConverter.convertToLong(access.getRegistryUserIdentifier()));
+        bo.setRequestDetails(StConverter.convertToString(access.getRequestDetails()));
+        bo.setStatusCode(ActiveInactiveCode.getByCode(CdConverter.convertCdToString(access.getStatusCode())));
         for (StudySite ss : MockStudySiteService.list) {
-            if (ss.getId().equals(access.getStudySiteId())) {
+            if (ss.getId().equals(IiConverter.convertToLong(access.getStudySiteIdentifier()))) {
                 bo.setStudySite(ss);
             }
         }
@@ -137,10 +147,11 @@ public class MockStudySiteAccrualAccessService implements StudySiteAccrualAccess
     /**
      * {@inheritDoc}
      */
-    public StudySiteAccrualAccessDTO get(Long accessId) throws PAException {
+    @Override
+    public StudySiteAccrualAccessDTO get(Ii identifier) throws PAException {
         for (StudySiteAccrualAccess ssaa : list) {
-            if (ssaa.getId().equals(accessId)) {
-                return boToDto(ssaa);
+            if (ssaa.getId().equals(IiConverter.convertToLong(identifier))) {
+                return CONVERTER.convertFromDomainToDto(ssaa);
             }
         }
         return null;
@@ -150,11 +161,7 @@ public class MockStudySiteAccrualAccessService implements StudySiteAccrualAccess
      * {@inheritDoc}
      */
     public List<StudySiteAccrualAccessDTO> getByStudyProtocol(Long studyProtocolId) throws PAException {
-        List<StudySiteAccrualAccessDTO> result = new ArrayList<StudySiteAccrualAccessDTO>();
-        for (StudySiteAccrualAccess ssaa : list) {
-            result.add(boToDto(ssaa));
-        }
-        return result;
+        return CONVERTER.convertFromDomainToDtos(list);
     }
 
     /**
@@ -176,35 +183,17 @@ public class MockStudySiteAccrualAccessService implements StudySiteAccrualAccess
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudySiteAccrualAccessDTO update(StudySiteAccrualAccessDTO access) throws PAException {
         StudySiteAccrualAccess bo = null;
         for (StudySiteAccrualAccess item : list) {
-            if (item.getCsmUserId().equals(access.getCsmUserId())
-                    && access.getStudySiteId().equals(item.getStudySite().getId())) {
+            if (item.getRegistryUser().getId().equals(IiConverter.convertToLong(access.getRegistryUserIdentifier()))
+                    && item.getStudySite().getId().equals(IiConverter.convertToLong(access.getStudySiteIdentifier()))) {
                 bo = item;
             }
         }
-        bo.setRequestDetails(access.getRequestDetails());
-        bo.setStatusCode(access.getStatusCode());
+        bo.setRequestDetails(StConverter.convertToString(access.getRequestDetails()));
+        bo.setStatusCode(ActiveInactiveCode.getByCode(CdConverter.convertCdToString(access.getStatusCode())));
         return access;
     }
-
-    private static StudySiteAccrualAccessDTO boToDto(StudySiteAccrualAccess bo) {
-        StudySiteAccrualAccessDTO dto = new StudySiteAccrualAccessDTO();
-        dto.setCsmUserId(bo.getCsmUserId());
-        dto.setId(bo.getId());
-        dto.setRequestDetails(bo.getRequestDetails());
-        dto.setStudySite(bo.getStudySite());
-        dto.setStudySiteId(bo.getStudySite().getId());
-        dto.setStatusCode(bo.getStatusCode());
-        for (User user : csmUsers) {
-            if (dto.getCsmUserId().equals(user.getUserId())) {
-                dto.setEmail(user.getLoginName());
-                dto.setPhone(user.getPhoneNumber());
-            }
-        }
-        dto.setStatus(bo.getStatusCode().getCode());
-        return dto;
-    }
-
 }

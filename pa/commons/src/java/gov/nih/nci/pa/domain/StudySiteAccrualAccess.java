@@ -98,23 +98,25 @@ import org.hibernate.validator.NotNull;
 public class StudySiteAccrualAccess extends AbstractEntityWithStatusCode<ActiveInactiveCode> {
     private static final long serialVersionUID = 917387137764967830L;
 
-    private Long csmUserId;
+    private RegistryUser registryUser;
     private StudySite studySite;
     private String requestDetails;
+
     /**
-     * @return the csmUserId
+     * @return the registryUser
      */
-    @Column(name = "CSM_USER_ID")
-    @NotNull
-    public Long getCsmUserId() {
-        return csmUserId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "REGISTRY_USER_ID", nullable = false)
+    public RegistryUser getRegistryUser() {
+        return registryUser;
     }
     /**
-     * @param csmUserId the csmUserId to set
+     * @param registryUser the registryUser to set
      */
-    public void setCsmUserId(Long csmUserId) {
-        this.csmUserId = csmUserId;
+    public void setRegistryUser(RegistryUser registryUser) {
+        this.registryUser = registryUser;
     }
+
     /**
      * @return the requestDetails
      */

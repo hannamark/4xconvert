@@ -173,6 +173,8 @@ public class BaseBatchUploadReader {
     private PerformedActivityServiceLocal performedActivityService;
     @EJB
     private SearchStudySiteService searchStudySiteService;
+    @EJB
+    private SearchTrialService searchTrialService;
 
     /**
      * 
@@ -195,7 +197,7 @@ public class BaseBatchUploadReader {
      * @return string
      */
     protected String appendLineNumber(long lineNumber) {
-        return " at line " + lineNumber;
+        return " at line " + lineNumber + " ";
     }
     /**
      * 
@@ -516,5 +518,17 @@ public class BaseBatchUploadReader {
      */
     public void setSearchStudySiteService(SearchStudySiteService searchStudySiteService) {
         this.searchStudySiteService = searchStudySiteService;
+    }
+    /**
+     * @return the searchTrialService
+     */
+    public SearchTrialService getSearchTrialService() {
+        return searchTrialService;
+    }
+    /**
+     * @param searchTrialService the searchTrialService to set
+     */
+    public void setSearchTrialService(SearchTrialService searchTrialService) {
+        this.searchTrialService = searchTrialService;
     }
 }

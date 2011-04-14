@@ -89,12 +89,10 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.service.util.BatchImportResults;
 import gov.nih.nci.accrual.service.util.BatchValidationResults;
 import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderServiceLocal;
-import gov.nih.nci.accrual.service.util.MockPaServiceLocator;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
-import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -121,7 +119,6 @@ public class BatchUploadProcessingTaskServiceTest {
         }
         
         TestSchema.reset();
-        PaRegistry.getInstance().setServiceLocator(new MockPaServiceLocator());
         CdusBatchUploadReaderServiceLocal readerService = mock(CdusBatchUploadReaderServiceLocal.class);
         when(readerService.validateBatchData(any(File.class))).thenReturn(new ArrayList<BatchValidationResults>());
         when(readerService.importBatchData(any(File.class))).thenReturn(new ArrayList<BatchImportResults>());

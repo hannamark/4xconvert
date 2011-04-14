@@ -83,7 +83,6 @@ import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
@@ -94,12 +93,11 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.security.authorization.domainobjects.User;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -132,17 +130,14 @@ public class SearchTrialBean implements SearchTrialService {
     private static final int PERSON_IDX = 6;
 
     private static final String UNCHECKED = "unchecked";
-
-    private static Ii outcomesSpIi = null;
-
+    
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings(UNCHECKED)
-    public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria,  St authorizedUser)
-            throws RemoteException {
+    public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria,  Ii authorizedUser) throws PAException {
         List<SearchTrialResultDto> result = new ArrayList<SearchTrialResultDto>();
-        if (criteria != null && !PAUtil.isStNull(authorizedUser)) {
+        if (criteria != null && !PAUtil.isIiNull(authorizedUser)) {
             Session session = null;
             try {
                 session = HibernateUtil.getCurrentSession();
@@ -157,8 +152,7 @@ public class SearchTrialBean implements SearchTrialService {
                     }
                 }
             } catch (HibernateException hbe) {
-                throw new RemoteException(
-                        "Hibernate exception in SearchTrialBean.search().", hbe);
+                throw new PAException("Hibernate exception in SearchTrialBean.search().", hbe);
             }
         }
         return result;
@@ -167,16 +161,16 @@ public class SearchTrialBean implements SearchTrialService {
     /**
      * {@inheritDoc}
      */
-    public Bl isAuthorized(Ii studyProtocolIi, St authorizedUser) throws RemoteException {
-        return BlConverter.convertToBl(getAuthorizedTrials(authorizedUser).
-                contains(IiConverter.convertToLong(studyProtocolIi)));
+    public Bl isAuthorized(Ii studyProtocolIi, Ii authorizedUser) throws PAException {
+        return BlConverter.convertToBl(getAuthorizedTrials(authorizedUser)
+                .contains(IiConverter.convertToLong(studyProtocolIi)));
     }
 
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings(UNCHECKED)
-    public SearchTrialResultDto getTrialSummaryByStudyProtocolIi(Ii studyProtocolIi) throws RemoteException {
+    public SearchTrialResultDto getTrialSummaryByStudyProtocolIi(Ii studyProtocolIi) throws PAException {
         SearchTrialResultDto result = new SearchTrialResultDto();
         Session session = null;
         try {
@@ -207,7 +201,7 @@ public class SearchTrialBean implements SearchTrialService {
             query = session.createQuery(hql);
             List<Object> queryList = query.list();
             if (queryList.size() < 1) {
-                throw new RemoteException("Trial not found in SearchTrialBean.getTrialSummaryByStudyProtocolIi().");
+                throw new PAException("Trial not found in SearchTrialBean.getTrialSummaryByStudyProtocolIi().");
             }
             Object[] qArr = (Object[]) queryList.get(0);
             result.setAssignedIdentifier(StConverter.convertToSt((String) qArr[SP_IDENTIFIER_IDX]));
@@ -220,103 +214,57 @@ public class SearchTrialBean implements SearchTrialService {
             Person person = (Person) qArr[PERSON_IDX];
             result.setPrincipalInvestigator(StConverter.convertToSt(person == null ? null : person.getFullName()));
         } catch (HibernateException hbe) {
-            throw new RemoteException(
-                    "Hibernate exception in SearchTrialBean.getTrialSummaryByStudyProtocolIi().", hbe);
+            throw new PAException("Hibernate exception in SearchTrialBean.getTrialSummaryByStudyProtocolIi().", hbe);
         }
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @SuppressWarnings(UNCHECKED)
-    public Ii getOutcomesStudyProtocolIi() throws RemoteException {
-        if (outcomesSpIi == null) {
-            Session session = null;
-            List<Long> queryList = new ArrayList<Long>();
-            try {
-                session = HibernateUtil.getCurrentSession();
-                Query query = null;
-                String hql = "select sp.id from StudyProtocol sp left outer join sp.otherIdentifiers as oi "
-                           + " where oi.extension = 'Outcomes' order by sp.id ";
-                query = session.createQuery(hql);
-                queryList = query.list();
-            } catch (HibernateException hbe) {
-                throw new RemoteException("Hibernate exception in getOutcomesStudyProtocolIi().", hbe);
-            }
-            if (queryList.size() < 1) {
-                throw new RemoteException("Outcomes StudyProtocol not found.");
-            }
-            outcomesSpIi = IiConverter.convertToStudyProtocolIi(queryList.get(0));
-        }
-        return outcomesSpIi;
-    }
-
-    @SuppressWarnings(UNCHECKED)
-    private Set<Long> getAuthorizedTrials(St user) throws RemoteException {
+    private Set<Long> getAuthorizedTrials(Ii registryUserIi) {
         Set<Long> result = new HashSet<Long>();
-        User csmUser = AccrualCsmUtil.getInstance().getCSMUser(StConverter.convertToString(user));
-
-        if (csmUser != null) {
-            Session session = null;
-            try {
-                session = HibernateUtil.getCurrentSession();
-                Query query = null;
-                String hql = "select distinct sp.id "
-                    + "from StudySiteAccrualAccess ssaa "
-                    + "join ssaa.studySite ss "
-                    + "join ss.studyProtocol sp "
-                    + "where ssaa.csmUserId = :csmUserId "
-                    + "  and ssaa.statusCode = '" + ActiveInactiveCode.ACTIVE.getName() + "' ";
-                query = session.createQuery(hql);
-                query.setParameter("csmUserId", csmUser.getUserId());
-                List<Long> queryList = query.list();
-                result.addAll(queryList);
-            } catch (HibernateException hbe) {
-                throw new RemoteException("Hibernate exception in SearchTrialBean.getAuthorizedTrials().", hbe);
-            }
-        }
+        Session session = HibernateUtil.getCurrentSession();
+        String hql = "select distinct sp.id from StudySiteAccrualAccess ssaa join ssaa.studySite ss "
+            + "join ss.studyProtocol sp where ssaa.registryUser.id = :registryUserId and ssaa.statusCode = :statusCode";
+        Query query = session.createQuery(hql);
+        query.setParameter("registryUserId", IiConverter.convertToLong(registryUserIi));
+        query.setParameter("statusCode", ActiveInactiveCode.ACTIVE);
+        List<Long> queryList = query.list();
+        result.addAll(queryList);
         return result;
     }
 
-    private String generateStudyProtocolQuery(SearchTrialCriteriaDto criteria) throws RemoteException {
+    private String generateStudyProtocolQuery(SearchTrialCriteriaDto criteria) throws PAException {
         StringBuffer hql = new StringBuffer();
         try {
-            hql.append("select distinct sp.id "
-                            + "from StudyProtocol as sp "
-                            + "left outer join sp.studySites as sps "
+            hql.append("select distinct sp.id from StudyProtocol as sp left outer join sp.studySites as sps "
                             + "left outer join sp.otherIdentifiers as oi ");
             hql.append(generateWhereClause(criteria));
         } catch (Exception e) {
-            throw new RemoteException("Exception thrown in SearchTrialBean.generateStudyProtocolQuery().", e);
+            throw new PAException("Exception thrown in SearchTrialBean.generateStudyProtocolQuery().", e);
         }
         return hql.toString();
     }
 
-    private String generateWhereClause(SearchTrialCriteriaDto criteria) throws RemoteException {
+    private String generateWhereClause(SearchTrialCriteriaDto criteria) {
         String assignedIdentifier = StConverter.convertToString(criteria.getAssignedIdentifier());
         String leadOrgTrialIdentifier = StConverter.convertToString(criteria.getLeadOrgTrialIdentifier());
         String officialTitle = StConverter.convertToString(criteria.getOfficialTitle());
         StringBuffer where = new StringBuffer();
 
-        try {
-            where.append("where sp.statusCode = '" + ActStatusCode.ACTIVE.name() + "' ");
-            if (StringUtils.isNotEmpty(assignedIdentifier)) {
-                where.append(" and upper(oi.extension)  like '%"
-                        + assignedIdentifier.toUpperCase(Locale.US).trim().replaceAll("'", "''")
-                        + "%'");
-            }
-            if (StringUtils.isNotEmpty(officialTitle)) {
-                where.append(" and upper(sp.officialTitle)  like '%"
-                        + officialTitle.toUpperCase(Locale.US).trim().replaceAll("'", "''")
-                        + "%'");
-            }
-            if (StringUtils.isNotEmpty(leadOrgTrialIdentifier)) {
-                where.append(" and upper(sps.localStudyProtocolIdentifier) like '%"
-                                + leadOrgTrialIdentifier.toUpperCase(Locale.US).trim().replaceAll("'", "''") + "%'");
-            }
-        } catch (Exception e) {
-            throw new RemoteException("Exception thrown in SearchTrialBean.generateWhereClause().", e);
+        where.append("where sp.statusCode = '" + ActStatusCode.ACTIVE.name() + "' ");
+        if (StringUtils.isNotEmpty(assignedIdentifier)) {
+            where.append(" and upper(oi.extension)  like '%"
+                    + assignedIdentifier.toUpperCase(Locale.US).trim().replaceAll("'", "''")
+                    + "%'");
+        }
+        if (StringUtils.isNotEmpty(officialTitle)) {
+            where.append(" and upper(sp.officialTitle)  like '%"
+                    + officialTitle.toUpperCase(Locale.US).trim().replaceAll("'", "''")
+                    + "%'");
+        }
+        if (StringUtils.isNotEmpty(leadOrgTrialIdentifier)) {
+            where.append(" and upper(sps.localStudyProtocolIdentifier) like '%"
+                    + leadOrgTrialIdentifier.toUpperCase(Locale.US).trim().replaceAll("'", "''") + "%'");
         }
         return where.toString();
     }

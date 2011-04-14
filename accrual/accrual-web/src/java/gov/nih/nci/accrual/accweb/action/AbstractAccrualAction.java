@@ -87,12 +87,14 @@ import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
+import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.iso.util.BlConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
@@ -157,22 +159,16 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      * @return the role from the session
      */
     protected String getUserRole() {
-        return (String) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_ROLE);
+        return (String) ServletActionContext.getRequest().getSession().getAttribute(AccrualConstants.SESSION_ATTR_ROLE);
     }
-    /**
-     * @return user login name as iso string
-     */
-    protected St getAuthorizedUser() {
-        return StConverter.convertToSt(ServletActionContext.getRequest().getRemoteUser());
-    }
+    
     /**
      * @return the spIi
      */
     public Ii getSpIi() {
-        return (Ii) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_SPII);
+        return (Ii) ServletActionContext.getRequest().getSession().getAttribute(AccrualConstants.SESSION_ATTR_SPII);
     }
+    
     /**
      * @return cutoff date for current submission
      */
@@ -185,12 +181,16 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      * @param spIi
      * @throws GeneralSecurityException authorization exception
      * @throws RemoteException exception
+     * @throws PAException on error
      */
-    public void setSpIi(Ii spIi) throws GeneralSecurityException, RemoteException {
+    public void setSpIi(Ii spIi) throws GeneralSecurityException, RemoteException, PAException {
         if (PAUtil.isIiNull(spIi)) {
             ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_SPII, null);
         } else {
-            if (BlConverter.convertToBool(searchTrialSvc.isAuthorized(spIi, getAuthorizedUser()))) {
+            RegistryUser ru = 
+                PaServiceLocator.getInstance().getRegistryUserService().getUser(CaseSensitiveUsernameHolder.getUser());
+            Ii ruIi = IiConverter.convertToIi(ru.getId());
+            if (BlConverter.convertToBool(searchTrialSvc.isAuthorized(spIi, ruIi))) {
                 ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_SPII, spIi);
 
                 List<SubmissionDto> listOfSubmissions = submissionSvc.getByStudyProtocol(spIi);

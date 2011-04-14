@@ -88,7 +88,6 @@ import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
@@ -113,7 +112,7 @@ public class MockServiceTest {
     public void searchTrial() throws Exception {
         // get all
         SearchTrialCriteriaDto crit = new SearchTrialCriteriaDto();
-        St authUser = new St();
+        Ii authUser = new Ii();
         SearchTrialService service = AccrualServiceLocator.getInstance().getSearchTrialService();
         List<SearchTrialResultDto> r = service.search(crit, authUser);
         assertEquals(MockSearchTrialBean.dtos.size(), r.size());
@@ -140,12 +139,12 @@ public class MockServiceTest {
     public void searchStudySite() throws Exception {
         SearchStudySiteService service = AccrualServiceLocator.getInstance().getSearchStudySiteService();
         Ii crit = IiConverter.convertToStudyProtocolIi(1L);
-        St authUser = new St();
-        List<SearchStudySiteResultDto> r = service.search(crit, authUser);
+        Ii regUserIi = new Ii();
+        List<SearchStudySiteResultDto> r = service.search(crit, regUserIi);
         assertEquals(2, r.size());
 
         crit = IiConverter.convertToStudyProtocolIi(2L);
-        r = service.search(crit, authUser);
+        r = service.search(crit, regUserIi);
         assertEquals(1, r.size());
     }
 }

@@ -79,14 +79,18 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.dto.StudySiteAccrualAccessDTO;
+import gov.nih.nci.pa.dto.StudySiteAccrualAccessWebDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceBean;
 import gov.nih.nci.pa.util.LabelValueBean;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
@@ -106,14 +110,15 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
 
     private static final long serialVersionUID = -4655853779195760379L;
 
-    private List<StudySiteAccrualAccessDTO> accessList;
-    private StudySiteAccrualAccessDTO access;
+    private List<StudySiteAccrualAccessWebDTO> accessList;
+    private StudySiteAccrualAccessWebDTO access = new StudySiteAccrualAccessWebDTO();
     private Map<Long, RegistryUser> regUsers = null;
     private List<LabelValueBean> regUserNames = null;
     private Map<Long, String> sites = null;
     private String email;
     private String phone;
     private String siteRecruitmentStatus;
+    private Long registryUserId;
 
     /**
      * {@inheritDoc}
@@ -133,7 +138,8 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     @Override
     public String add() throws PAException {
         try {
-            getAccrualAccessSvc().create(access);
+            StudySiteAccrualAccessDTO dto = populateDTO(getAccess());
+            getAccrualAccessSvc().create(dto);
         } catch (PAException e) {
             addActionError(e.getMessage());
             return AR_EDIT;
@@ -147,7 +153,8 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     @Override
     public String update() throws PAException {
         try {
-            getAccrualAccessSvc().update(access);
+            StudySiteAccrualAccessDTO dto = populateDTO(getAccess());
+            getAccrualAccessSvc().update(dto);
         } catch (PAException e) {
             addActionError(e.getMessage());
             return AR_EDIT;
@@ -161,12 +168,15 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     @Override
     protected void loadEditForm() throws PAException {
         if (CA_EDIT.equals(getCurrentAction())) {
-            setAccess(getAccrualAccessSvc().get(Long.valueOf(getSelectedRowIdentifier())));
-            setEmail(getAccess().getEmail());
-            setPhone(getAccess().getPhone());
-            setSiteRecruitmentStatus(getAccess().getSiteRecruitmentStatus());
+            StudySiteAccrualAccessDTO dto =
+                getAccrualAccessSvc().get(IiConverter.convertToIi(getSelectedRowIdentifier()));
+            StudySiteAccrualAccessWebDTO webDTO = populateWebDTO(dto);
+            setAccess(webDTO);
+            setEmail(webDTO.getEmailAddress());
+            setPhone(webDTO.getPhoneNumber());
+            setSiteRecruitmentStatus(webDTO.getSiteRecruitmentStatus());
         } else {
-            setAccess(new StudySiteAccrualAccessDTO());
+            setAccess(new StudySiteAccrualAccessWebDTO());
         }
     }
 
@@ -175,7 +185,13 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      */
     @Override
     protected void loadListForm() throws PAException {
-        setAccessList(getAccrualAccessSvc().getByStudyProtocol(getSpDTO().getStudyProtocolId()));
+        List<StudySiteAccrualAccessDTO> dtos =
+            getAccrualAccessSvc().getByStudyProtocol(getSpDTO().getStudyProtocolId());
+        List<StudySiteAccrualAccessWebDTO> webDtos = new ArrayList<StudySiteAccrualAccessWebDTO>();
+        for (StudySiteAccrualAccessDTO dto : dtos) {
+            webDtos.add(populateWebDTO(dto));
+        }
+        setAccessList(webDtos);
     }
 
     /**
@@ -183,13 +199,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      * @throws PAException exception
      */
     public String loadEmail() throws PAException {
-        Long csmUserId;
-        try {
-            csmUserId = Long.valueOf(ServletActionContext.getRequest().getParameter("csmUserId"));
-        } catch (NumberFormatException e) {
-            csmUserId = null;
-        }
-        RegistryUser user = getRegUsers().get(csmUserId);
+        RegistryUser user = getRegUsers().get(getRegistryUserId());
         setEmail(user.getEmailAddress());
         return SUCCESS;
     }
@@ -199,13 +209,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      * @throws PAException exception
      */
     public String loadPhone() throws PAException {
-        Long csmUserId;
-        try {
-            csmUserId = Long.valueOf(ServletActionContext.getRequest().getParameter("csmUserId"));
-        } catch (NumberFormatException e) {
-            csmUserId = null;
-        }
-        RegistryUser user = getRegUsers().get(csmUserId);
+        RegistryUser user = getRegUsers().get(getRegistryUserId());
         setPhone(user.getPhone());
         return SUCCESS;
     }
@@ -230,28 +234,28 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     /**
      * @return the accessList
      */
-    public List<StudySiteAccrualAccessDTO> getAccessList() {
+    public List<StudySiteAccrualAccessWebDTO> getAccessList() {
         return accessList;
     }
 
     /**
      * @param accessList the accessList to set
      */
-    public void setAccessList(List<StudySiteAccrualAccessDTO> accessList) {
+    public void setAccessList(List<StudySiteAccrualAccessWebDTO> accessList) {
         this.accessList = accessList;
     }
 
     /**
      * @return the access
      */
-    public StudySiteAccrualAccessDTO getAccess() {
+    public StudySiteAccrualAccessWebDTO getAccess() {
         return access;
     }
 
     /**
      * @param access the access to set
      */
-    public void setAccess(StudySiteAccrualAccessDTO access) {
+    public void setAccess(StudySiteAccrualAccessWebDTO access) {
         this.access = access;
     }
 
@@ -297,10 +301,10 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
         for (User u : uSet) {
             RegistryUser usr = getRegistryUser(u);
             if (usr != null) {
-                regUsers.put(u.getUserId(), usr);
+                regUsers.put(usr.getId(), usr);
                 String loginId = u.getLoginName() != null ? u.getLoginName() : " ";
                 LabelValueBean lvBean = new LabelValueBean();
-                lvBean.setId(u.getUserId());
+                lvBean.setId(usr.getId());
                 lvBean.setName(StudySiteAccrualAccessServiceBean.getFullName(usr) + " - "
                             + PAUtil.getGridIdentityUsername(loginId));
                 lvBeanList.add(lvBean);
@@ -324,6 +328,46 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
             return null;
         }
     }
+
+    private StudySiteAccrualAccessWebDTO populateWebDTO(StudySiteAccrualAccessDTO dto) {
+        StudySiteAccrualAccessWebDTO webDTO = new StudySiteAccrualAccessWebDTO();
+        webDTO.setIdentifier(IiConverter.convertToLong(dto.getIdentifier()));
+        webDTO.setStudySiteId(IiConverter.convertToLong(dto.getStudySiteIdentifier()));
+        webDTO.setRegistryUserId(IiConverter.convertToLong(dto.getRegistryUserIdentifier()));
+        webDTO.setRequestDetails(StConverter.convertToString(dto.getRequestDetails()));
+        webDTO.setStatusCode(CdConverter.convertCdToString(dto.getStatusCode()));
+        try {
+            RegistryUser ru = PaRegistry.getRegistryUserService().getUserById(webDTO.getRegistryUserId());
+            webDTO.setEmailAddress(ru.getEmailAddress());
+            webDTO.setPhoneNumber(ru.getPhone());
+
+            User csmUser = CSMUserService.getInstance().getCSMUserById(ru.getCsmUserId());
+            webDTO.setUserName(PAUtil.getGridIdentityUsername(csmUser.getLoginName()));
+        } catch (PAException e) {
+            LOG.error("Error retrieving registry user with id " + webDTO.getRegistryUserId() + ".");
+        }
+
+        try {
+            StudySiteAccrualStatusDTO siteStatus =
+                getAccrualStatusSvc().getCurrentStudySiteAccrualStatusByStudySite(dto.getStudySiteIdentifier());
+            webDTO.setSiteRecruitmentStatus(CdConverter.convertCdToString(siteStatus.getStatusCode()));
+            webDTO.setSiteName(getSites().get(webDTO.getStudySiteId()));
+        } catch (Exception e) {
+            LOG.error("Error retrieving status for study site with id " + webDTO.getStudySiteId() + ".");
+        }
+        return webDTO;
+    }
+
+    private StudySiteAccrualAccessDTO populateDTO(StudySiteAccrualAccessWebDTO webDTO) {
+        StudySiteAccrualAccessDTO dto = new StudySiteAccrualAccessDTO();
+        dto.setIdentifier(IiConverter.convertToIi(webDTO.getIdentifier()));
+        dto.setRegistryUserIdentifier(IiConverter.convertToIi(webDTO.getRegistryUserId()));
+        dto.setRequestDetails(StConverter.convertToSt(webDTO.getRequestDetails()));
+        dto.setStudySiteIdentifier(IiConverter.convertToIi(webDTO.getStudySiteId()));
+        dto.setStatusCode(CdConverter.convertStringToCd(webDTO.getStatusCode()));
+        return dto;
+    }
+
     /**
      * @return the regUserNames
      */
@@ -375,5 +419,19 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      */
     public void setSiteRecruitmentStatus(String siteRecruitmentStatus) {
         this.siteRecruitmentStatus = siteRecruitmentStatus;
+    }
+
+    /**
+     * @return the registryUserId
+     */
+    public Long getRegistryUserId() {
+        return registryUserId;
+    }
+
+    /**
+     * @param registryUserId the registryUserId to set
+     */
+    public void setRegistryUserId(Long registryUserId) {
+        this.registryUserId = registryUserId;
     }
 }

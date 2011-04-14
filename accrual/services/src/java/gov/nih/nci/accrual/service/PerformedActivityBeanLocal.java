@@ -114,7 +114,7 @@ import org.hibernate.Session;
 @SuppressWarnings("unchecked")
 public class PerformedActivityBeanLocal extends
             AbstractBaseAccrualStudyBean<PerformedActivityDto, PerformedActivity, PerformedActivityConverter>
-        implements PerformedActivityService, PerformedActivityServiceLocal {
+        implements PerformedActivityServiceLocal {
 
     /**
      * {@inheritDoc}

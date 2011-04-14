@@ -78,6 +78,11 @@ package gov.nih.nci.accrual.accweb.action;
 
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
+import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.iso.util.IiConverter;
 
 /**
  * @author Rajani Kumar
@@ -96,7 +101,10 @@ public class ViewTrialsAction extends AbstractListEditAccrualAction<SearchTrialR
     @Override
     public void loadDisplayList() {
         try {
-            setDisplayTagList(getSearchTrialSvc().search(criteria, getAuthorizedUser()));
+            RegistryUser ru = PaServiceLocator.getInstance().getRegistryUserService().getUser(
+                    CaseSensitiveUsernameHolder.getUser());
+            Ii ruIi = IiConverter.convertToIi(ru.getId());
+            setDisplayTagList(getSearchTrialSvc().search(criteria, ruIi));
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
         }

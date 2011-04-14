@@ -39,7 +39,7 @@
 
             function loadEmailDiv() {
                 var url = '/pa/protected/ajaxManageAccrualAccessEmail.action';
-                var params = { csmUserId: $('csmUserId').value };
+                var params = { registryUserId: $('registryUserId').value };
                 var div = $('emailDiv');
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
                 var aj = callAjaxPost(div, url, params);
@@ -48,7 +48,7 @@
 
             function loadPhoneDiv() {
                 var url = '/pa/protected/ajaxManageAccrualAccessPhone.action';
-                var params = { csmUserId: $('csmUserId').value };
+                var params = { registryUserId: $('registryUserId').value };
                 var div = $('phoneDiv');
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
                 var aj = callAjaxPost(div, url, params);
@@ -88,7 +88,7 @@
                                     <s:form name="editForm">
                                         <pa:studyUniqueToken/>
                                         <s:hidden name="currentAction"/>
-                                        <s:hidden name="access.id"/> 
+                                        <s:hidden name="access.identifier"/> 
                                         <table class="form">
                                             <tr>
                                                 <td class="label">
@@ -97,11 +97,12 @@
                                                 </td>
                                                 <td class="value" style="width: 250px">
                                                     <s:if test="%{currentAction == 'create'}">
-                                                        <s:select id="csmUserId" headerKey="" headerValue="--Select--" 
-                                                                  name="access.csmUserId" list="regUserNames" listKey="id" 
+                                                        <s:select id="registryUserId" headerKey="" headerValue="--Select--" 
+                                                                  name="access.registryUserId" list="regUserNames" listKey="id" 
                                                                   listValue="name" onchange="loadEmailDiv();loadPhoneDiv();"/>
                                                     </s:if><s:else>
                                                         <s:textfield name="access.userName" cssStyle="width:200px;float:left" readonly="true" cssClass="readonly"/>
+                                                        <s:hidden name="access.registryUserId"/>
                                                     </s:else>
                                                 </td>
                                             </tr>
@@ -140,8 +141,8 @@
                                                                   onchange="loadSiteRecruitmentStatusDiv();"/>
                                                     </s:if>
                                                     <s:else>
-                                                        <s:textfield name="access.siteName" cssStyle="width:400px;float:left" 
-                                                                     readonly="true" cssClass="readonly"/>
+                                                        <s:textfield name="access.siteName" cssStyle="width:400px;float:left" readonly="true" cssClass="readonly"/>
+                                                        <s:hidden name="access.studySiteId"/>
                                                     </s:else>
                                                 </td>
                                             </tr>
@@ -163,7 +164,7 @@
                                                     <span class="required">*</span>
                                                 </td>
                                                 <td class="value" style="width: 250px">
-                                                    <s:select headerKey="" headerValue="--Select--" name="access.status" list="#statusCodeValues"/>
+                                                    <s:select headerKey="" headerValue="--Select--" name="access.statusCode" list="#statusCodeValues"/>
                                                 </td>
                                             </tr>
                                             <tr>

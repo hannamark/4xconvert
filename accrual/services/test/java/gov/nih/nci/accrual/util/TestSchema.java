@@ -146,7 +146,7 @@ public class TestSchema {
     public static List<Organization> organizations;
     public static List<StudySiteAccrualAccess> studySiteAccrualAccess;
     public static List<Country> countries;
-    public static ArrayList<RegistryUser> registryUsers;
+    public static List<RegistryUser> registryUsers;
 
     private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
 
@@ -220,6 +220,7 @@ public class TestSchema {
         organizations = new ArrayList<Organization>();
         studySiteAccrualAccess = new ArrayList<StudySiteAccrualAccess>();
         countries = new ArrayList<Country>();
+        registryUsers = new ArrayList<RegistryUser>();
 
         Country c =  new Country();
         c.setName("United States");
@@ -436,8 +437,11 @@ public class TestSchema {
         studySites.add(ss);
         
         // StudySiteAccrualAccess
+        RegistryUser registryUser = getRegistryUser();
+        registryUsers.add(registryUser);
+        
         StudySiteAccrualAccess ssaa = new StudySiteAccrualAccess();
-        ssaa.setCsmUserId(MockCsmUtil.users.get(0).getUserId());
+        ssaa.setRegistryUser(registryUser);
         ssaa.setStudySite(studySites.get(1));
         ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
         ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
@@ -445,7 +449,7 @@ public class TestSchema {
         studySiteAccrualAccess.add(ssaa);
 
         ssaa = new StudySiteAccrualAccess();
-        ssaa.setCsmUserId(MockCsmUtil.users.get(0).getUserId());
+        ssaa.setRegistryUser(registryUser);
         ssaa.setStudySite(studySites.get(2));
         ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
         ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
@@ -453,15 +457,18 @@ public class TestSchema {
         studySiteAccrualAccess.add(ssaa);
 
         ssaa = new StudySiteAccrualAccess();
-        ssaa.setCsmUserId(MockCsmUtil.users.get(0).getUserId());
+        ssaa.setRegistryUser(registryUser);
         ssaa.setStudySite(studySites.get(4));
         ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
         ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         addUpdObject(ssaa);
         studySiteAccrualAccess.add(ssaa);
-
+        
+        registryUser = getRegistryUser();
+        registryUsers.add(registryUser);
+        
         ssaa = new StudySiteAccrualAccess();
-        ssaa.setCsmUserId(MockCsmUtil.users.get(1).getUserId());
+        ssaa.setRegistryUser(registryUser);
         ssaa.setStudySite(studySites.get(1));
         ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
         ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
@@ -601,5 +608,17 @@ public class TestSchema {
         TestSchema.addUpdObject(user);
         CaseSensitiveUsernameHolder.setUser(user.getLoginName());
         return user;
+    }
+    
+    private static RegistryUser getRegistryUser() {
+        User user = createUser();
+        RegistryUser ru = new RegistryUser();
+        ru.setFirstName("Test");
+        ru.setLastName("User");
+        ru.setEmailAddress("test@example.com");
+        ru.setPhone("123-456-7890");
+        ru.setCsmUserId(user.getUserId());
+        TestSchema.addUpdObject(ru);
+        return ru;
     }
 }

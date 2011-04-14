@@ -98,56 +98,56 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
      * {@inheritDoc}
      */
     public SearchStudySiteService getSearchStudySiteService() {
-        return (SearchStudySiteService) JNDIUtil.lookup("accrual/SearchStudySiteBean/remote");
+        return (SearchStudySiteService) JNDIUtil.lookup("accrual/SearchStudySiteBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public SearchTrialService getSearchTrialService() {
-        return (SearchTrialService) JNDIUtil.lookup("accrual/SearchTrialBean/remote");
+        return (SearchTrialService) JNDIUtil.lookup("accrual/SearchTrialBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public PatientService getPatientService() {
-        return (PatientService) JNDIUtil.lookup("accrual/PatientBeanLocal/remote");
+        return (PatientService) JNDIUtil.lookup("accrual/PatientBeanLocal/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public POPatientService getPOPatientService() {
-        return (POPatientService) JNDIUtil.lookup("accrual/POPatientBean/remote");
+        return (POPatientService) JNDIUtil.lookup("accrual/POPatientBean/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public PerformedActivityService getPerformedActivityService() {
-        return (PerformedActivityService) JNDIUtil.lookup("accrual/PerformedActivityBeanLocal/remote");
+        return (PerformedActivityService) JNDIUtil.lookup("accrual/PerformedActivityBeanLocal/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public StudySubjectService getStudySubjectService() {
-        return (StudySubjectService) JNDIUtil.lookup("accrual/StudySubjectBeanLocal/remote");
+        return (StudySubjectService) JNDIUtil.lookup("accrual/StudySubjectBeanLocal/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public SubmissionService getSubmissionService() {
-        return (SubmissionService) JNDIUtil.lookup("accrual/SubmissionBeanLocal/remote");
+        return (SubmissionService) JNDIUtil.lookup("accrual/SubmissionBeanLocal/local");
     }
 
     /**
      * {@inheritDoc}
      */
     public CountryService getCountryService() {
-        return (CountryService) JNDIUtil.lookup("accrual/CountryBean/remote");
+        return (CountryService) JNDIUtil.lookup("accrual/CountryBean/local");
     }
     
     /**

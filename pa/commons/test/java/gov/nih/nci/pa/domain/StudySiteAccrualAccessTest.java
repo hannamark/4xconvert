@@ -113,7 +113,7 @@ public class StudySiteAccrualAccessTest {
 
     public static StudySiteAccrualAccess createStudySiteAccrualAccessObj(StudySite ss) {
         StudySiteAccrualAccess ssaa = new StudySiteAccrualAccess();
-        ssaa.setCsmUserId(1L);
+        ssaa.setRegistryUser(TestSchema.getRegistryUser());
         ssaa.setRequestDetails("request details");
         ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
         ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));

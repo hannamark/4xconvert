@@ -81,8 +81,12 @@ package gov.nih.nci.accrual.service.util;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.dto.util.POPatientDTO;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
+import gov.nih.nci.accrual.util.MockPaLookupTableServiceBean;
+import gov.nih.nci.accrual.util.MockPaRegistryUserServiceBean;
 import gov.nih.nci.accrual.util.MockPoServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.accrual.util.TestSchema;
@@ -92,6 +96,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 
 import java.rmi.RemoteException;
 
@@ -111,8 +116,12 @@ public class POPatientServiceTest extends AbstractServiceTest<POPatientBean>{
     public void instantiateServiceBean() throws Exception {
         TestSchema.primeData();
         ii = IiConverter.convertToIi(TestSchema.patients.get(0).getId());
+        
+        ServiceLocator paSvcLocator = mock(ServiceLocator.class);
+        when(paSvcLocator.getRegistryUserService()).thenReturn(new MockPaRegistryUserServiceBean());
+        when(paSvcLocator.getLookUpTableService()).thenReturn(new MockPaLookupTableServiceBean());
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
-        PaRegistry.getInstance().setServiceLocator(new MockPaServiceLocator());
+        PaRegistry.getInstance().setServiceLocator(paSvcLocator);
     }
 
     @Test
