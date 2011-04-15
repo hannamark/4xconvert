@@ -4,7 +4,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.domain.AbstractLookUpEntity;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import org.hibernate.Session;
 
@@ -39,7 +39,7 @@ public class BaseLookUpService<BO extends AbstractLookUpEntity> extends Abstract
      */
     @SuppressWarnings(UNCHECKED)
     public BO getById(Long boId) throws PAException {
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         return (BO) session.get(getTypeArgument(), boId);
     }
 

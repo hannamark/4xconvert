@@ -96,6 +96,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -110,7 +111,7 @@ import org.junit.Test;
  * @author hreinhart
  *
  */
-public class PlannedActivityServiceTest {
+public class PlannedActivityServiceTest extends AbstractHibernateTestCase {
 
     private PlannedActivityBeanLocal remoteBean = new PlannedActivityBeanLocal();
     private PlannedActivityServiceLocal remoteEjb = remoteBean;
@@ -124,7 +125,6 @@ public class PlannedActivityServiceTest {
     @Before
     public void setUp() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        TestSchema.reset();
         TestSchema.primeData();
         ii = IiConverter.convertToIi(TestSchema.plannedActivityIds.get(0));
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));

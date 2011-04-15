@@ -179,7 +179,7 @@ public class ParticipatingSiteConverter extends AbstractConverter<ParticipatingS
         dto.setStudySiteContacts(sscConverter.convertFromDomainToDtos(bo.getStudySiteContacts()));
 
         List<StudySiteAccrualStatus> accrualStatuses = bo.getStudySiteAccrualStatuses();
-        //Sort in reverse status date order to move the most recent status to the front of the list.
+        // Sort in reverse status date order to move the most recent status to the front of the list.
         Collections.sort(accrualStatuses, new Comparator<StudySiteAccrualStatus>() {
             public int compare(StudySiteAccrualStatus s1, StudySiteAccrualStatus s2) {
                return s2.getStatusDate().compareTo(s1.getStatusDate());
@@ -188,7 +188,7 @@ public class ParticipatingSiteConverter extends AbstractConverter<ParticipatingS
 
         if (CollectionUtils.isNotEmpty(accrualStatuses)) {
             StudySiteAccrualStatus latestStatus = accrualStatuses.iterator().next();
-            dto.setStudySiteAccrualStatus(StudySiteAccrualStatusConverter.convertFromDomainToDTO(latestStatus));
+            dto.setStudySiteAccrualStatus(new StudySiteAccrualStatusConverter().convertFromDomainToDto(latestStatus));
         }
         return dto;
     }

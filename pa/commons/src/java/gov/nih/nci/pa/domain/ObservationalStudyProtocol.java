@@ -84,8 +84,6 @@ import gov.nih.nci.pa.enums.StudyModelCode;
 import gov.nih.nci.pa.enums.TimePerspectiveCode;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -98,11 +96,6 @@ import javax.persistence.Enumerated;
  */
 
 @Entity
-@DiscriminatorColumn(
-        name = "ObservationalStudyProtocol",
-        discriminatorType = DiscriminatorType.STRING
-    )
-
 public class ObservationalStudyProtocol extends StudyProtocol {
 
     private static final long serialVersionUID = 9007234006923029024L;

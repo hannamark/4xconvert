@@ -123,7 +123,7 @@ public class EJBInvokerJob implements Job {
 
             context.setResult(returnObj);
         } catch (Exception e) {
-            LOG.info(e.getLocalizedMessage());
+            LOG.info("Caught error executing job", e);
             throw new JobExecutionException(e);
         } finally {
             // Don't close jndiContext until after method execution because
@@ -185,7 +185,7 @@ public class EJBInvokerJob implements Job {
         try {
             ejbInterface = Class.forName(ejbInterfaceName);
         } catch (ClassNotFoundException e) {
-            LOG.error("Exception occured performing class.forname on" + EJB_INTERFACE_NAME_KEY);
+            LOG.error("Exception occurred performing class.forname on" + EJB_INTERFACE_NAME_KEY);
             throw new JobExecutionException(e);
         }
 

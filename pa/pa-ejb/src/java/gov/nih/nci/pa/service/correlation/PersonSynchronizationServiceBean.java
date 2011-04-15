@@ -98,9 +98,9 @@ import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
@@ -137,7 +137,7 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
-@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PersonSynchronizationServiceBean implements PersonSynchronizationServiceRemote {
 
@@ -222,7 +222,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
 
         if (paPer != null) {
             Session session = null;
-            session = HibernateUtil.getCurrentSession();
+            session = PaHibernateUtil.getCurrentSession();
             // update the organization
             Person person = (Person) session.get(Person.class, paPer.getId());
             if (perDto == null) {
@@ -267,12 +267,13 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
 
     private void updateClinicalResearchStaff(final Ii crsIdentifier, final ClinicalResearchStaffDTO crsDto)
             throws PAException {
-        ClinicalResearchStaff crs = cUtils.getStructuralRoleByIi(crsIdentifier);
+        gov.nih.nci.pa.util.CorrelationUtils commonsCorrUtils = new gov.nih.nci.pa.util.CorrelationUtils();
+        ClinicalResearchStaff crs = commonsCorrUtils.getStructuralRoleByIi(crsIdentifier);
         Session session = null;
         StructuralRoleStatusCode newRoleCode = null;
         if (crs != null) {
             // process only if pa has any clinical research staff records
-            session = HibernateUtil.getCurrentSession();
+            session = PaHibernateUtil.getCurrentSession();
             if (crsDto == null) {
                 // this is a nullified, so treat it in a special manner
                 // step 1: get the po person,org identifier (player)
@@ -336,12 +337,13 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
 
     private void updateHealthCareProvider(final Ii hcpIdentifier, final HealthCareProviderDTO hcpDto)
             throws PAException {
-        HealthCareProvider hcp = cUtils.getStructuralRoleByIi(hcpIdentifier);
+        gov.nih.nci.pa.util.CorrelationUtils commonsCorrUtils = new gov.nih.nci.pa.util.CorrelationUtils();
+        HealthCareProvider hcp = commonsCorrUtils.getStructuralRoleByIi(hcpIdentifier);
         Session session = null;
         StructuralRoleStatusCode newRoleCode = null;
         if (hcp != null) {
             // process only if pa has any clinical research staff records
-            session = HibernateUtil.getCurrentSession();
+            session = PaHibernateUtil.getCurrentSession();
             if (hcpDto == null) {
                 // this is a nullified, so treat it in a special manner
                 // step 1: get the po person,org identifier (player)
@@ -409,7 +411,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
         StructuralRoleStatusCode newRoleCode = null;
         if (oc != null) {
             // process only if pa has any oc  records
-            session = HibernateUtil.getCurrentSession();
+            session = PaHibernateUtil.getCurrentSession();
             if (ocDto == null) {
                 Ii srIi = null;
                 //nullified without duplicate
@@ -515,7 +517,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
             + " where organizational_contact_identifier = " + fromId.getExtension();
         }
 
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         int count = session.createSQLQuery(sql).executeUpdate();
         LOG.info("nullified crs indentifier is " + fromId.getExtension());
         LOG.info("duplicate hcf indentifier is " + toId.getExtension());
@@ -607,7 +609,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
 
        hql.append(" select oc from OrganizationalContact oc  "
                + " where oc.identifier = :identifier");
-       session = HibernateUtil.getCurrentSession();
+       session = PaHibernateUtil.getCurrentSession();
        Query query = null;
        query = session.createQuery(hql.toString());
        query.setParameter("identifier", identifier);

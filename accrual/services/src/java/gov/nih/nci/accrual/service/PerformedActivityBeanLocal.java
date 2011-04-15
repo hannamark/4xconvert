@@ -87,8 +87,8 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
@@ -109,7 +109,7 @@ import org.hibernate.Session;
  * @since Aug 13, 2009
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SuppressWarnings("unchecked")
 public class PerformedActivityBeanLocal extends
@@ -126,7 +126,7 @@ public class PerformedActivityBeanLocal extends
 
         Session session = null;
         List<PerformedSubjectMilestone> queryList = new ArrayList<PerformedSubjectMilestone>();
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         Query query = null;
 
         // step 1: form the hql

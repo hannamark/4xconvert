@@ -88,8 +88,8 @@ import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.search.SDCDiseaseBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.SDCDiseaseSortCriterion;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -110,7 +110,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  * @author moweis
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class SDCDiseaseBeanLocal extends AbstractBaseIsoService<SDCDiseaseDTO, SDCDisease, SDCDiseaseConverter>
     implements SDCDiseaseServiceLocal {
@@ -151,7 +151,7 @@ public class SDCDiseaseBeanLocal extends AbstractBaseIsoService<SDCDiseaseDTO, S
      * {@inheritDoc}
      */
     public SDCDiseaseDTO getByCode(String code) throws PAException {
-        Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(SDCDisease.class);
+        Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(SDCDisease.class);
         criteria.add(Restrictions.eq("diseaseCode", code));
         try {
             return convertFromDomainToDto((SDCDisease) criteria.uniqueResult());

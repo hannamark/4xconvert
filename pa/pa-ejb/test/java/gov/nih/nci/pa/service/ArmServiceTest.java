@@ -94,6 +94,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -109,9 +110,8 @@ import org.junit.Test;
 
 /**
  * @author hreinhart
- *
  */
-public class ArmServiceTest {
+public class ArmServiceTest extends AbstractHibernateTestCase {
     private ArmBeanLocal remoteEjb = new ArmBeanLocal();
     private PlannedActivityBeanLocal paRemoteEjb = new PlannedActivityBeanLocal();
     private Ii ii;
@@ -119,13 +119,12 @@ public class ArmServiceTest {
     private Ii intIi;
 
     @Before
-    public void setUp() throws Exception {
+    public void init() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
         remoteEjb = new ArmBeanLocal();
         paRemoteEjb = new PlannedActivityBeanLocal();
         paRemoteEjb.setInterventionSrv(new InterventionServiceBean());
         remoteEjb.setPlannedActivityService(paRemoteEjb);
-        TestSchema.reset();
         TestSchema.primeData();
         ii = IiConverter.convertToIi(TestSchema.armIds.get(0));
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
@@ -139,8 +138,8 @@ public class ArmServiceTest {
         Collection<Ii> interventionIis = dto.getInterventions().getItem();
         assertTrue(0 < interventionIis.size());
         PlannedActivityDTO paDto = paRemoteEjb.get((Ii) interventionIis.toArray()[0]);
-        assertEquals(IiConverter.convertToLong(paDto.getStudyProtocolIdentifier())
-                   , IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+        assertEquals(IiConverter.convertToLong(paDto.getStudyProtocolIdentifier()),
+                     IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
     }
     @Test
     public void getByStudyProtocolTest() throws Exception {
@@ -168,8 +167,8 @@ public class ArmServiceTest {
         Set<Ii> resultIntSet = resultDto.getInterventions().getItem();
         assertEquals(1, resultIntSet.size());
         assertEquals(IiConverter.convertToLong(intIi), IiConverter.convertToLong((Ii) resultIntSet.toArray()[0]));
-
     }
+
     @Test
     public void createTestNoInterventions() throws Exception {
         List<ArmDTO> dtoList = remoteEjb.getByStudyProtocol(spIi);

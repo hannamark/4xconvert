@@ -17,8 +17,8 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ import javax.interceptor.Interceptors;
  *
  */
 @Stateless
-@Interceptors({HibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
+@Interceptors({PaHibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO, StudyIndlde, StudyIndldeConverter>
         implements StudyIndldeServiceLocal {

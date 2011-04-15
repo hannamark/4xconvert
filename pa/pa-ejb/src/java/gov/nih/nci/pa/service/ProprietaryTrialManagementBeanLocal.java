@@ -94,7 +94,7 @@ import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -125,7 +125,7 @@ import org.apache.commons.lang.StringUtils;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrationBean
     implements ProprietaryTrialManagementServiceLocal {
 

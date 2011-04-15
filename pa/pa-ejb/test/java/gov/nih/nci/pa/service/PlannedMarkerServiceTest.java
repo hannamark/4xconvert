@@ -97,6 +97,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -108,14 +109,13 @@ import org.junit.Test;
 /**
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class PlannedMarkerServiceTest {
+public class PlannedMarkerServiceTest extends AbstractHibernateTestCase {
     private PlannedMarkerServiceLocal bean = new PlannedMarkerServiceBean();
     private Ii spIi;
 
     @Before
     public void setUp() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        TestSchema.reset();
         TestSchema.primeData();
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
      }

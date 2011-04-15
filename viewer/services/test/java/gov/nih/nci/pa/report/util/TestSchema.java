@@ -93,10 +93,8 @@ import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.util.CtrpHibernateHelper;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.TestHibernateHelper;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
@@ -107,7 +105,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 /**
  *
@@ -125,28 +122,14 @@ public class TestSchema {
     public static List<StudyMilestone> studyMilestone;
     public static List<StudySite> studySite;
 
-    private static boolean dataLoaded = false;
-    private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
-
-    /**
-     *
-     */
-    public static void reset() {
-        HibernateUtil.setTestHelper(testHelper);
-        if (!dataLoaded) {
-            primeData();
-        }
-    }
 
     /**
      * @param <T> t
      * @param obj o
      */
     public static <T> void addUpdObject(T obj) {
-        Session session = HibernateUtil.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
+        Session session = PaHibernateUtil.getCurrentSession();
         session.saveOrUpdate(obj);
-        transaction.commit();
     }
 
     /**
@@ -266,7 +249,7 @@ public class TestSchema {
         studySite.add(spart);
         addUpdObject(spart);
 
-        dataLoaded = true;
+        PaHibernateUtil.getCurrentSession().flush();
     }
 
 }

@@ -102,8 +102,8 @@ import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 
 import java.io.ByteArrayOutputStream;
@@ -164,7 +164,7 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(MailManagerBeanLocal.class);
@@ -782,7 +782,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private Set<RegistryUser> getStudyOwners(StudyProtocolQueryDTO spDTO) throws PAException {
         Set<RegistryUser> studyOwners = new HashSet<RegistryUser>();
         try {
-            StudyProtocol studyProtocol = (StudyProtocol) HibernateUtil.getCurrentSession()
+            StudyProtocol studyProtocol = (StudyProtocol) PaHibernateUtil.getCurrentSession()
                 .get(StudyProtocol.class, spDTO.getStudyProtocolId());
             if (studyProtocol != null) {
                 studyOwners = studyProtocol.getStudyOwners();

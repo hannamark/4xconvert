@@ -110,6 +110,7 @@ import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserBeanLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
@@ -130,7 +131,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TrialRegistrationServiceTest {
+public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
 
     private final TrialRegistrationBeanLocal bean = new TrialRegistrationBeanLocal();
     StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
@@ -155,7 +156,7 @@ public class TrialRegistrationServiceTest {
 
     private Ii spIi;
     @Before
-    public void setUp() throws Exception {
+    public void init() throws Exception {
         bean.setStudyProtocolService(studyProtocolService);
         bean.setStudyOverallStatusService(studyOverallStatusService);
         bean.setStudyIndldeService(studyIndldeService);
@@ -170,7 +171,6 @@ public class TrialRegistrationServiceTest {
         bean.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
         bean.setStudyOutcomeMeasureService(studyOutcomeMeasureService);
         bean.setStudyRegulatoryAuthorityService(studyRegulatoryAuthorityService);
-        TestSchema.reset();
         TestSchema.primeData();
         spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
         paSvcLoc = mock (ServiceLocator.class);
@@ -215,7 +215,6 @@ public class TrialRegistrationServiceTest {
         StudySiteDTO spDto = new StudySiteDTO();
         spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
         StudySiteDTO leadOrganizationSiteIdentifierDTO  = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
-//        StudyContactDTO studyContactDTO =
         try {
             bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                 studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,

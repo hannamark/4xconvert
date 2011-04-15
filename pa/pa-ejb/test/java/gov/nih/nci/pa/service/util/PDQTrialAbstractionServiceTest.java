@@ -86,8 +86,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.refEq;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.refEq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -133,6 +133,7 @@ import gov.nih.nci.pa.service.StudyProtocolBeanLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudySiteBeanLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
@@ -170,7 +171,7 @@ import org.mockito.stubbing.Answer;
  * @author vrushali
  *
  */
-public class PDQTrialAbstractionServiceTest {
+public class PDQTrialAbstractionServiceTest extends AbstractHibernateTestCase {
     private final PDQTrialAbstractionServiceBean bean = new PDQTrialAbstractionServiceBean();
     private PoServiceLocator poSvcLoc;
     private OrganizationEntityServiceRemote poOrgSvc;
@@ -201,7 +202,6 @@ public class PDQTrialAbstractionServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        TestSchema.reset();
         TestSchema.primeData();
         setupPoSvc();
         setUpPaSvc();
@@ -365,7 +365,7 @@ public class PDQTrialAbstractionServiceTest {
         assertNotNull(bean.getOrgCorrelationService());
         assertNotNull(bean.getPaServiceUtils());
     }
-    
+
     @Test(expected = PAException.class)
     public void testLoadAbstractionElementPDQXmlInvalidLocationContactPhone() throws PAException, IOException {
         PAServiceUtils paServiceUtil = mock (PAServiceUtils.class);
@@ -384,11 +384,10 @@ public class PDQTrialAbstractionServiceTest {
                     OrganizationDTO org = (OrganizationDTO) args[0];
                     org.setIdentifier(IiConverter.convertToIi(1L));
                     return org;
-                } else {
-                    PersonDTO person = (PersonDTO) args[0];
-                    person.setIdentifier(IiConverter.convertToIi(1L));
-                    return person;
                 }
+                PersonDTO person = (PersonDTO) args[0];
+                person.setIdentifier(IiConverter.convertToIi(1L));
+                return person;
             }
         });
         bean.setPaServiceUtils(paServiceUtil);
@@ -409,11 +408,10 @@ public class PDQTrialAbstractionServiceTest {
                     OrganizationDTO org = (OrganizationDTO) args[0];
                     org.setIdentifier(IiConverter.convertToIi(1L));
                     return org;
-                } else {
-                    PersonDTO person = (PersonDTO) args[0];
-                    person.setIdentifier(IiConverter.convertToIi(1L));
-                    return person;
                 }
+                PersonDTO person = (PersonDTO) args[0];
+                person.setIdentifier(IiConverter.convertToIi(1L));
+                return person;
             }
         });
         bean.setPaServiceUtils(paServiceUtil);

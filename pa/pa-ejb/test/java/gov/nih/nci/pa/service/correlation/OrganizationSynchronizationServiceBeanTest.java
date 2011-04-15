@@ -1,11 +1,11 @@
 package gov.nih.nci.pa.service.correlation;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.domain.OrganizationTest;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolStage;
@@ -17,10 +17,11 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.StudySiteBeanLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -33,7 +34,7 @@ import org.hibernate.criterion.Expression;
 import org.junit.Before;
 import org.junit.Test;
 
-public class OrganizationSynchronizationServiceBeanTest {
+public class OrganizationSynchronizationServiceBeanTest extends AbstractHibernateTestCase {
 
     private final OrganizationSynchronizationServiceBean bean = new OrganizationSynchronizationServiceBean();
     StudySiteServiceLocal spsService = new StudySiteBeanLocal();
@@ -41,19 +42,15 @@ public class OrganizationSynchronizationServiceBeanTest {
     Long createdSpsId = null;
 
     Ii pid;
-    Session session = null;
 
     @Before
     public void setUp() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
         bean.setSpsLocal(spsService);
-        TestSchema.reset();
         TestSchema.primeData();
 
-        session  = HibernateUtil.getCurrentSession();
         createTestData();
-
     }
 
     @Test
@@ -112,92 +109,94 @@ public class OrganizationSynchronizationServiceBeanTest {
         bean.synchronizeOrganization(roIi);
     }
 
-   @Test
-   public void testOrgNullification()  throws Exception {
-       Criteria criteria = session.createCriteria(Organization.class);
-       criteria.add(Expression.eq("identifier", "22"));
-       assertTrue("new pa org should not exist yet", criteria.list().size() == 0);
-       
-       RegistryUser ru = new RegistryUser();
-       ru.setAffiliatedOrganizationId(2L);
-       ru.setAffiliateOrg("isNullified");
+    @Test
+    public void testOrgNullification() throws Exception {
+        Session session = PaHibernateUtil.getCurrentSession();
 
-       Long ruId = (Long)session.save(ru);
-       session.flush();
-       CorrelationUtils cUtils = new CorrelationUtils();
-       Ii roIi = IiConverter.convertToPoOrganizationIi("2");
-       Organization paOrg = cUtils.getPAOrganizationByIi(roIi);
-       
-       StudyProtocolStage sps = new StudyProtocolStage();
-       sps.setLeadOrganizationIdentifier(String.valueOf(paOrg.getIdentifier()));
-       sps.setSiteSummaryFourOrgIdentifier(String.valueOf(paOrg.getIdentifier()));
-       sps.setSummaryFourOrgIdentifier(String.valueOf(paOrg.getIdentifier()));
-       sps.setSponsorIdentifier(String.valueOf(paOrg.getIdentifier()));
-       sps.setSubmitterOrganizationIdentifier(String.valueOf(paOrg.getIdentifier()));
-       
-       Long spsId = (Long)session.save(sps);
-       session.flush();
-       StudyProtocolStage dbSps = (StudyProtocolStage) session.load(StudyProtocolStage.class, spsId);
-       assertTrue("Org Name was not set properly", dbSps.getLeadOrganizationIdentifier().equals("2"));
-         
-       StudyProtocol sp = new InterventionalStudyProtocol();
-       sp.setOfficialTitle("cancer for THOLA");
-       sp.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));
-       sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-       sp.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
-       sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
-       sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
-       sp.setStatusCode(ActStatusCode.ACTIVE);
-       Set<Ii> studySecondaryIdentifiers =  new HashSet<Ii>();
-       Ii spSecId = new Ii();
-       spSecId.setExtension("NCI-2009-00001");
-       spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
-       studySecondaryIdentifiers.add(spSecId);
-       sp.setOtherIdentifiers(studySecondaryIdentifiers);
-       sp.setSubmissionNumber(Integer.valueOf(1));
-       sp.setProprietaryTrialIndicator(Boolean.FALSE);
-       sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
-       Long spId = (Long)session.save(sp);
-       session.flush();
-       
-       StudyProtocol dbSp = (StudyProtocol) session.load(StudyProtocol.class, 
-               spId);
-       StudyResourcing sr = new StudyResourcing();
-       sr.setOrganizationIdentifier(String.valueOf(paOrg.getId()));
-       sr.setStudyProtocol(dbSp);
-       Long srId = (Long)session.save(sr);
-       session.flush();
-       
-       StudyResourcing dbSr = (StudyResourcing) session.load(StudyResourcing.class, srId);
-       assertTrue("Sr Org Name was not set properly", dbSr.getOrganizationIdentifier().equals("21"));
-       
-       bean.synchronizeOrganization(roIi);
-       session.flush();
-       session.clear();
+        Criteria criteria = session.createCriteria(Organization.class);
+        criteria.add(Expression.eq("identifier", "22"));
+        assertTrue("new pa org should not exist yet", criteria.list().size() == 0);
 
-       RegistryUser dbRu = (RegistryUser) session.load(RegistryUser.class, ruId);
+        RegistryUser ru = new RegistryUser();
+        ru.setAffiliatedOrganizationId(2L);
+        ru.setAffiliateOrg("isNullified");
 
-       assertTrue(dbRu.getAffiliatedOrganizationId().equals(22L));
-       assertTrue("Org Name was not updated", dbRu.getAffiliateOrg().equals("OrgName"));
-      
-       dbSps = (StudyProtocolStage) session.load(StudyProtocolStage.class, spsId);
-       assertTrue("LeadOrganizationIdentifier was not updated", dbSps.getLeadOrganizationIdentifier().equals("22"));
-       assertTrue("SummaryFourOrgIdentifier was not updated", dbSps.getSummaryFourOrgIdentifier().equals("22"));
-       assertTrue("SponsorIdentifier was not updated", dbSps.getSponsorIdentifier().equals("22"));
-       assertTrue("SiteSummaryFourOrgIdentifier was not updated", dbSps.getSiteSummaryFourOrgIdentifier().equals("22"));
-       assertTrue("SubmitterOrganizationIdentifier was not updated", dbSps.getSubmitterOrganizationIdentifier().equals("22"));
-       
-       criteria = session.createCriteria(Organization.class);
-       criteria.add(Expression.eq("identifier", "22"));
-       assertTrue("new pa org should exist", criteria.list().size() == 1);
+        Long ruId = (Long) session.save(ru);
+        session.flush();
+        CorrelationUtils cUtils = new CorrelationUtils();
+        Ii roIi = IiConverter.convertToPoOrganizationIi("2");
+        Organization paOrg = cUtils.getPAOrganizationByIi(roIi);
 
-   }
+        StudyProtocolStage sps = new StudyProtocolStage();
+        sps.setLeadOrganizationIdentifier(String.valueOf(paOrg.getIdentifier()));
+        sps.setSiteSummaryFourOrgIdentifier(String.valueOf(paOrg.getIdentifier()));
+        sps.setSummaryFourOrgIdentifier(String.valueOf(paOrg.getIdentifier()));
+        sps.setSponsorIdentifier(String.valueOf(paOrg.getIdentifier()));
+        sps.setSubmitterOrganizationIdentifier(String.valueOf(paOrg.getIdentifier()));
+
+        Long spsId = (Long) session.save(sps);
+        session.flush();
+        StudyProtocolStage dbSps = (StudyProtocolStage) session.load(StudyProtocolStage.class, spsId);
+        assertTrue("Org Name was not set properly", dbSps.getLeadOrganizationIdentifier().equals("2"));
+
+        StudyProtocol sp = new InterventionalStudyProtocol();
+        sp.setOfficialTitle("cancer for THOLA");
+        sp.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));
+        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        sp.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
+        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+        sp.setStatusCode(ActStatusCode.ACTIVE);
+        Set<Ii> studySecondaryIdentifiers = new HashSet<Ii>();
+        Ii spSecId = new Ii();
+        spSecId.setExtension("NCI-2009-00001");
+        spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        studySecondaryIdentifiers.add(spSecId);
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
+        sp.setSubmissionNumber(1);
+        sp.setProprietaryTrialIndicator(Boolean.FALSE);
+        sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
+        Long spId = (Long) session.save(sp);
+        session.flush();
+
+        StudyProtocol dbSp = (StudyProtocol) session.load(StudyProtocol.class, spId);
+        StudyResourcing sr = new StudyResourcing();
+        sr.setOrganizationIdentifier(String.valueOf(paOrg.getId()));
+        sr.setStudyProtocol(dbSp);
+        Long srId = (Long) session.save(sr);
+        session.flush();
+
+        StudyResourcing dbSr = (StudyResourcing) session.load(StudyResourcing.class, srId);
+        assertEquals("Sr Org Name was not set properly", "2", dbSr.getOrganizationIdentifier());
+
+        bean.synchronizeOrganization(roIi);
+        session.flush();
+        session.clear();
+
+        RegistryUser dbRu = (RegistryUser) session.load(RegistryUser.class, ruId);
+
+        assertTrue(dbRu.getAffiliatedOrganizationId().equals(22L));
+        assertTrue("Org Name was not updated", dbRu.getAffiliateOrg().equals("OrgName"));
+
+        dbSps = (StudyProtocolStage) session.load(StudyProtocolStage.class, spsId);
+        assertTrue("LeadOrganizationIdentifier was not updated", dbSps.getLeadOrganizationIdentifier().equals("22"));
+        assertTrue("SummaryFourOrgIdentifier was not updated", dbSps.getSummaryFourOrgIdentifier().equals("22"));
+        assertTrue("SponsorIdentifier was not updated", dbSps.getSponsorIdentifier().equals("22"));
+        assertTrue("SiteSummaryFourOrgIdentifier was not updated", dbSps.getSiteSummaryFourOrgIdentifier().equals("22"));
+        assertTrue("SubmitterOrganizationIdentifier was not updated", dbSps.getSubmitterOrganizationIdentifier()
+            .equals("22"));
+
+        criteria = session.createCriteria(Organization.class);
+        criteria.add(Expression.eq("identifier", "22"));
+        assertTrue("new pa org should exist", criteria.list().size() == 1);
+    }
 
     private void createTestData() {
 
-        Organization org  = OrganizationTest.createOrganizationObj();
+        Organization org  = TestSchema.createOrganizationObj();
         org.setIdentifier("2");
         org.setName("Will be nullified Org");
+        Session session = PaHibernateUtil.getCurrentSession();
         session.save(org);
         session.flush();
 

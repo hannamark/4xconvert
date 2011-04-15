@@ -87,7 +87,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudySiteOverallStatusSortCriterion;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -124,7 +124,7 @@ public class StudySiteOverallStatusBeanLocal extends AbstractBaseSearchBean<Stud
             throw new PAException(errMsg);
         }
 
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         validate(dto);
 
         StudySiteOverallStatus bo = Converters.get(StudySiteOverallStatusConverter.class).convertFromDtoToDomain(dto);

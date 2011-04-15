@@ -37,6 +37,7 @@ public abstract class AbstractDocumentConverter<DTO extends DocumentDTO, BO exte
      * @param doc domain
      */
     public void convertFromDtoToDomain(DocumentDTO docDTO, AbstractDocument doc) {
+        doc.setId(IiConverter.convertToLong(docDTO.getIdentifier()));
         if (docDTO.getTypeCode() != null) {
             doc.setTypeCode(DocumentTypeCode.getByCode(docDTO.getTypeCode().getCode()));
         }

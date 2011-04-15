@@ -98,9 +98,10 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -113,7 +114,7 @@ import org.junit.Test;
  * @author hreinhart
  *
  */
-public class StudySiteServiceTest {
+public class StudySiteServiceTest extends AbstractHibernateTestCase {
     private final StudySiteServiceLocal remoteEjb = new StudySiteBeanLocal();
     private final StudySiteConverter studySiteConverter = new StudySiteConverter();
     Long studyId;
@@ -128,9 +129,8 @@ public class StudySiteServiceTest {
     Ii oversightCommitteeIi;
 
     @Before
-    public void setUp() throws Exception {
+    public void init() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        TestSchema.reset();
         TestSchema.primeData();
         studyId = TestSchema.studyProtocolIds.get(0);
         studyIi = IiConverter.convertToStudyProtocolIi(studyId);
@@ -148,8 +148,7 @@ public class StudySiteServiceTest {
         StudySiteDTO spDto = remoteEjb.get(siteIi);
         StudySite spBo = studySiteConverter.convertFromDtoToDomain(spDto);
         assertEquals(studyId, spBo.getStudyProtocol().getId());
-        assertEquals(StudySiteFunctionalCode.LEAD_ORGANIZATION.getName()
-                    , spBo.getFunctionalCode().getName());
+        assertEquals(StudySiteFunctionalCode.LEAD_ORGANIZATION.getName(), spBo.getFunctionalCode().getName());
         assertEquals(FunctionalRoleStatusCode.ACTIVE.getName(), spBo.getStatusCode().getName());
         assertEquals("Local SP ID 01", spBo.getLocalStudyProtocolIdentifier());
     }
@@ -159,8 +158,8 @@ public class StudySiteServiceTest {
         StudySiteDTO result = remoteEjb.create(spDto);
 
         assertFalse(PAUtil.isIiNull(result.getIdentifier()));
-        assertEquals(CdConverter.convertCdToString(spDto.getFunctionalCode())
-                , CdConverter.convertCdToString(result.getFunctionalCode()));
+        assertEquals(CdConverter.convertCdToString(spDto.getFunctionalCode()),
+                     CdConverter.convertCdToString(result.getFunctionalCode()));
         assertEquals(new Integer(63), IntConverter.convertToInteger(result.getTargetAccrualNumber()));
         assertEquals("abc", result.getOversightCommitteeIi().getExtension());
 
@@ -190,12 +189,8 @@ public class StudySiteServiceTest {
     @Test
     public void delete() throws Exception {
         remoteEjb.delete(siteIi);
-        try {
-            StudySiteDTO spDto = remoteEjb.get(siteIi);
-            assertNull(spDto);
-        } catch(PAException e) {
-            // expected behavior
-        }
+        StudySiteDTO spDto = remoteEjb.get(siteIi);
+        assertNull(spDto);
     }
     @Test
     public void getByProtocol() throws Exception {
@@ -280,7 +275,7 @@ public class StudySiteServiceTest {
 
         remoteEjb.cascadeRoleStatus(ii, roleStatusCode);
 
-        HibernateUtil.getCurrentSession().clear();
+        PaHibernateUtil.getCurrentSession().clear();
 
         StudySiteDTO ssdto = remoteEjb.get(result.getIdentifier());
         // verify Id is still abc
@@ -306,7 +301,7 @@ public class StudySiteServiceTest {
 
         remoteEjb.cascadeRoleStatus(ii, roleStatusCode);
 
-        HibernateUtil.getCurrentSession().clear();
+        PaHibernateUtil.getCurrentSession().clear();
 
         StudySiteDTO ssdto = remoteEjb.get(result.getIdentifier());
         // verify Id is still abc

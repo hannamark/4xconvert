@@ -13,10 +13,10 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudySiteAccrualStatusSortCriterion;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -27,7 +27,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
@@ -38,12 +37,11 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
  *
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<StudySiteAccrualStatus>
     implements StudySiteAccrualStatusServiceLocal {
 
-    private static final Logger LOG = Logger.getLogger(StudySiteAccrualStatusBeanLocal.class);
     private static String errMsgMethodNotImplemented = "Method not yet implemented.";
 
     /**
@@ -53,7 +51,6 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudySiteAccrualStatusDTO getStudySiteAccrualStatus(Ii ii) throws PAException {
-        LOG.error(errMsgMethodNotImplemented);
         throw new PAException(errMsgMethodNotImplemented);
     }
 
@@ -64,13 +61,11 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
      */
     public StudySiteAccrualStatusDTO createStudySiteAccrualStatus(StudySiteAccrualStatusDTO dto) throws PAException {
         if (!PAUtil.isIiNull(dto.getIdentifier())) {
-            String errMsg = " Existing StudySiteAccrualStatus objects cannot be modified.  Append new object instead. ";
-            LOG.error(errMsg);
+            String errMsg = "Existing StudySiteAccrualStatus objects cannot be modified.  Append new object instead.";
             throw new PAException(errMsg);
         }
         StudySiteAccrualStatusDTO resultDto = null;
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         StudySiteAccrualStatusDTO current = getCurrentStudySiteAccrualStatusByStudySite(dto.getStudySiteIi());
         RecruitmentStatusCode oldCode = null;
         Timestamp oldDate = null;
@@ -82,18 +77,23 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
         RecruitmentStatusCode newCode = RecruitmentStatusCode.getByCode(dto.getStatusCode().getCode());
         Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
 
-        if (newCode == null) {
-            throw new PAException(" Study site accrual status must be set ");
-        }
-        if (newDate == null) {
-            throw new PAException(" Study site accrual status date must be set ");
-        }
+        validateNewStatus(newCode, newDate);
         if (!newCode.equals(oldCode) || !newDate.equals(oldDate)) {
-            StudySiteAccrualStatus bo = StudySiteAccrualStatusConverter.convertFromDtoToDomain(dto);
+            final StudySiteAccrualStatusConverter converter = new StudySiteAccrualStatusConverter();
+            StudySiteAccrualStatus bo = converter.convertFromDtoToDomain(dto);
             session.saveOrUpdate(bo);
-            resultDto = StudySiteAccrualStatusConverter.convertFromDomainToDTO(bo);
+            resultDto = converter.convertFromDomainToDto(bo);
         }
         return resultDto;
+    }
+
+    private void validateNewStatus(RecruitmentStatusCode newCode, Timestamp newDate) throws PAException {
+        if (newCode == null) {
+            throw new PAException("Study site accrual status must be set.");
+        }
+        if (newDate == null) {
+            throw new PAException("Study site accrual status date must be set.");
+        }
     }
 
     /**
@@ -102,7 +102,6 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
      * @throws PAException PAException
      */
     public StudySiteAccrualStatusDTO updateStudySiteAccrualStatus(StudySiteAccrualStatusDTO dto) throws PAException {
-        LOG.error(errMsgMethodNotImplemented);
         throw new PAException(errMsgMethodNotImplemented);
     }
 
@@ -128,7 +127,7 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
 
         List<StudySiteAccrualStatusDTO> returnList = new ArrayList<StudySiteAccrualStatusDTO>();
         for (StudySiteAccrualStatus bo : results) {
-            returnList.add(StudySiteAccrualStatusConverter.convertFromDomainToDTO(bo));
+            returnList.add(new StudySiteAccrualStatusConverter().convertFromDomainToDto(bo));
         }
         return returnList;
     }

@@ -91,13 +91,13 @@ import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
@@ -116,15 +116,10 @@ import org.junit.Test;
  * @author NAmiruddin
  *
  */
-public class StudyProtocolConverterTest  {
+public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
 
-    /**
-     *
-     * @throws Exception e
-     */
     @Before
-    public void setUp() throws Exception {
-        TestSchema.reset();
+    public void init() throws Exception {
         ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
         LookUpTableServiceRemote lookupSvc = mock(LookUpTableServiceRemote.class);
         AnatomicSite as = new AnatomicSite();
@@ -135,13 +130,10 @@ public class StudyProtocolConverterTest  {
         PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
     }
 
-    /**
-     *
-     */
     @Test
     public void convertFromDomainToDTOTest() {
-        Session session  = HibernateUtil.getCurrentSession();
-        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj(new StudyProtocol());
+        Session session  = PaHibernateUtil.getCurrentSession();
+        StudyProtocol sp = TestSchema.createStudyProtocolObj(new StudyProtocol());
         session.save(sp);
         assertNotNull(sp.getId());
         StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(sp);
@@ -155,8 +147,8 @@ public class StudyProtocolConverterTest  {
 
     @Test
     public void convertFromDomainToDTOTest1() {
-        Session session  = HibernateUtil.getCurrentSession();
-        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj(new StudyProtocol());
+        Session session  = PaHibernateUtil.getCurrentSession();
+        StudyProtocol sp = TestSchema.createStudyProtocolObj(new StudyProtocol());
         session.save(sp);
         assertNotNull(sp.getId());
         StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(sp , new StudyProtocolDTO());
@@ -169,13 +161,13 @@ public class StudyProtocolConverterTest  {
     }
 
     /**
-     * @throws PAException 
+     * @throws PAException
      *
      */
     @Test
     public void convertFromDtoToDomainTest() throws PAException {
-        Session session  = HibernateUtil.getCurrentSession();
-        StudyProtocol create = StudyProtocolTest.createStudyProtocolObj(new StudyProtocol());
+        Session session  = PaHibernateUtil.getCurrentSession();
+        StudyProtocol create = TestSchema.createStudyProtocolObj(new StudyProtocol());
         session.save(create);
         assertNotNull(create.getId());
 
@@ -194,8 +186,8 @@ public class StudyProtocolConverterTest  {
 
     @Test
     public void convertFromDtoToDomainTest1() throws PAException {
-        Session session  = HibernateUtil.getCurrentSession();
-        StudyProtocol create = StudyProtocolTest.createStudyProtocolObj(new StudyProtocol());
+        Session session  = PaHibernateUtil.getCurrentSession();
+        StudyProtocol create = TestSchema.createStudyProtocolObj(new StudyProtocol());
         session.save(create);
         assertNotNull(create.getId());
         //convert to DTO
@@ -229,16 +221,16 @@ public class StudyProtocolConverterTest  {
         assertEquals(sp.getAmendmentReasonCode().getCode() ,spDTO.getAmendmentReasonCode().getCode());
         assertEquals(sp.getStatusCode().getCode() ,spDTO.getStatusCode().getCode());
     }
-    
+
     @Test
     public void convertToDSetCd() throws PAException {
         Set<AnatomicSite> sasList = new HashSet<AnatomicSite>();
         AnatomicSite as1 = new AnatomicSite();
         as1.setCode("Lung");
         as1.setCodingSystem("Summary 4 Anatomic Sites");
-       
+
         sasList.add(as1);
-        
+
         DSet<Cd> dset = AnatomicSiteConverter.convertToDSet(sasList);
         List<String> sites = new ArrayList<String>();
         for (Cd cd : dset.getItem()) {

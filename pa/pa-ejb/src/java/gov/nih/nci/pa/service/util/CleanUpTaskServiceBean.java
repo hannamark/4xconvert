@@ -83,8 +83,8 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.io.File;
 import java.util.Date;
@@ -99,12 +99,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 /**
- *  Implementation of deleting any uploaded documents as part of the Draft after 30 days.
+ * Implementation of deleting any uploaded documents as part of the Draft after 30 days.
  * @author vrushali
  *
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Local(CleanUpTaskServiceLocal.class)
 public class CleanUpTaskServiceBean implements CleanUpTaskServiceLocal {

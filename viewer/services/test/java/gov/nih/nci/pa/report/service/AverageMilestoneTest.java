@@ -78,6 +78,7 @@ package gov.nih.nci.pa.report.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -86,6 +87,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.criteria.SubmissionTypeCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.AverageMilestoneResultDto;
 import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.List;
@@ -96,11 +98,9 @@ import org.junit.Test;
 public class AverageMilestoneTest
     extends AbstractReportBeanTest<SubmissionTypeCriteriaDto, AverageMilestoneResultDto, AverageMilestoneReportBean>{
 
-    @Override
     @Before
     public void setUp() throws Exception {
         bean = new AverageMilestoneReportBean();
-        super.setUp();
     }
 
     @Override
@@ -110,7 +110,7 @@ public class AverageMilestoneTest
         try {
             bean.get(criteria);
             fail("Should fail for criteria not instantiated");
-        } catch (Exception e) {
+        } catch (PAException e) {
             // expected behavior
         }
 
@@ -120,7 +120,7 @@ public class AverageMilestoneTest
         try {
             bean.get(criteria);
             fail("Should fail for start date is null.");
-        } catch (Exception e) {
+        } catch (PAException e) {
             // expected behavior
         }
 
@@ -128,7 +128,7 @@ public class AverageMilestoneTest
         try {
             bean.get(criteria);
             fail("Should fail for end date is null.");
-        } catch (Exception e) {
+        } catch (PAException e) {
             // expected behavior
         }
 
@@ -136,16 +136,20 @@ public class AverageMilestoneTest
         try {
             bean.get(criteria);
             fail("Should fail for end date before start date.");
-        } catch (Exception e) {
+        } catch (PAException e) {
             // expected behavior
         }
 
+    }
+
+    @Test
+    public void testValidCriteria() throws Exception {
+        SubmissionTypeCriteriaDto criteria = new SubmissionTypeCriteriaDto();
+        criteria.setCtep(BlConverter.convertToBl(true));
+        criteria.setSubmissionType(CdConverter.convertToCd(SubmissionTypeCode.BOTH));
         criteria.setTimeInterval(IvlConverter.convertTs().convertToIvl("1/1/2000", PAUtil.today()));
-        try {
-            bean.get(criteria);
-        } catch (Exception e) {
-            fail("Exception thrown when valid criteria used.");
-        }
+
+        assertTrue(bean.get(criteria).size() > 0);
     }
 
     @Override

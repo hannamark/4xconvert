@@ -29,6 +29,7 @@
     <property name="web.build.testResourceDir" value="${web.build.dir}/test/resources"/>
     <property name="web.build.coberturaOutputDir" value="${web.build.dir}/generated-classes"/>
     <property name="web.test.reports" value="${web.report.dir}/test-reports"/>
+    <property name="web.coverage.reports" value="${web.report.dir}/coverage-reports"/>
 
     <property name="ivy.file" value="ivy-2.0.0.jar" />
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
@@ -119,9 +120,10 @@
 
     <target name="pre-clean" description="Clean the output directory">
         <delete dir="${web.build.dir}"/>
+        <delete dir="${web.test.reports}"/>
     </target>
-    
-    
+
+
     <!-- ====================================================================== -->
     <!-- Get quartz ejb3 invoked job                                            -->
     <!-- ====================================================================== -->
@@ -215,7 +217,7 @@
         </cobertura-instrument>
 
         <mkdir dir="${web.test.reports}"/>
-        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." failureproperty="junit.failure">
             <sysproperty key="basedir" value="."/>
             <sysproperty key="net.sourceforge.cobertura.datafile" file="${web.build.dir}/cobertura.ser"/>
             <formatter type="xml"/>
@@ -233,14 +235,21 @@
                 </fileset>
             </batchtest>
         </junit>
+        <junitreport todir="${web.test.reports}">
+            <fileset dir="${web.test.reports}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report todir="${web.test.reports}" />
+        </junitreport>
+        <fail if="junit.failure" message="Unit test(s) failed.  See reports at ${web.test.reports}/index.html."/>
 
         <cobertura-report datafile="${web.build.dir}/cobertura.ser"
-                          destdir="${web.test.reports}"
+                          destdir="${web.coverage.reports}"
                           srcdir="${web.build.srcDir}"/>
 
         <cobertura-report datafile="${web.build.dir}/cobertura.ser"
                           format="xml"
-                          destdir="${web.test.reports}"
+                          destdir="${web.coverage.reports}"
                           srcdir="${web.build.srcDir}"/>
 
         <cobertura-check datafile="${web.build.dir}/cobertura.ser"

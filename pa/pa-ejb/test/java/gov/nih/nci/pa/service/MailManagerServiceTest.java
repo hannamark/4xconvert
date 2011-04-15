@@ -85,30 +85,19 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
-import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.CountryTest;
-import gov.nih.nci.pa.domain.DocumentWorkFlowStatusTest;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.HealthCareFacility;
-import gov.nih.nci.pa.domain.HealthCareFacilityTest;
 import gov.nih.nci.pa.domain.HealthCareProvider;
-import gov.nih.nci.pa.domain.HealthCareProviderTest;
 import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.domain.OrganizationTest;
 import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyContact;
-import gov.nih.nci.pa.domain.StudyContactTest;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
-import gov.nih.nci.pa.domain.StudyRecruitmentStatusTest;
 import gov.nih.nci.pa.domain.StudySite;
-import gov.nih.nci.pa.domain.StudySiteTest;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
@@ -132,8 +121,11 @@ import gov.nih.nci.pa.service.util.RegistryUserServiceBean;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceBean;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -144,7 +136,7 @@ import org.junit.Test;
  * @author Vrushali
  *
  */
-public class MailManagerServiceTest {
+public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
     MailManagerBeanLocal bean = new MailManagerBeanLocal();
     ProtocolQueryServiceLocal protocolQrySrv = new ProtocolQueryServiceBean();
@@ -165,8 +157,6 @@ public class MailManagerServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        TestSchema.reset();
-
         bean.setCtGovXmlGeneratorService(ctGovXmlSrv);
         bean.setProtocolQueryService(protocolQrySrv);
         bean.setRegistryUserService(registryUserSrv);
@@ -188,23 +178,22 @@ public class MailManagerServiceTest {
         owner2.setEmailAddress(email2);
         TestSchema.addUpdObject(owner2);
 
-        Organization o = OrganizationTest.createOrganizationObj();
+        Organization o = TestSchema.createOrganizationObj();
         TestSchema.addUpdObject(o);
-        Person p = PersonTest.createPersonObj();
+        Person p = TestSchema.createPersonObj();
         p.setIdentifier("11");
         TestSchema.addUpdObject(p);
-        HealthCareFacility hcf = HealthCareFacilityTest.createHealthCareFacilityObj(o);
+        HealthCareFacility hcf = TestSchema.createHealthCareFacilityObj(o);
         TestSchema.addUpdObject(hcf);
 
-        HealthCareProvider hcp = HealthCareProviderTest.createHealthCareProviderObj(p, o);
+        HealthCareProvider hcp = TestSchema.createHealthCareProviderObj(p, o);
         TestSchema.addUpdObject(hcp);
 
-        Country c = CountryTest.createCountryObj();
+        Country c = TestSchema.createCountryObj();
         TestSchema.addUpdObject(c);
 
-        ClinicalResearchStaff crs = ClinicalResearchStaffTest.createClinicalResearchStaffObj(o, p);
+        ClinicalResearchStaff crs = TestSchema.createClinicalResearchStaffObj(o, p);
         TestSchema.addUpdObject(crs);
-
 
         ResearchOrganization ro = new ResearchOrganization();
         ro.setOrganization(o);
@@ -213,24 +202,24 @@ public class MailManagerServiceTest {
         TestSchema.addUpdObject(ro);
 
         // Non Prop Trial
-        StudyProtocol nonPropTrial = StudyProtocolTest.createStudyProtocolObj();
+        StudyProtocol nonPropTrial = TestSchema.createStudyProtocolObj();
         nonPropTrial.getStudyOwners().add(owner1);
         nonPropTrial.getStudyOwners().add(owner2);
         TestSchema.addUpdObject(nonPropTrial);
         nonProprietaryTrialIi = IiConverter.convertToIi(nonPropTrial.getId());
 
-        StudyContact sc = StudyContactTest.createStudyContactObj(nonPropTrial, c, hcp, crs);
+        StudyContact sc = TestSchema.createStudyContactObj(nonPropTrial, c, hcp, crs);
         TestSchema.addUpdObject(sc);
 
-        StudySite spc = StudySiteTest.createStudySiteObj(nonPropTrial, hcf);
+        StudySite spc = TestSchema.createStudySiteObj(nonPropTrial, hcf);
         spc.setResearchOrganization(ro);
         TestSchema.addUpdObject(spc);
         nonPropTrial.getStudySites().add(spc);
 
-        StudyRecruitmentStatus studyRecStatus = StudyRecruitmentStatusTest.createStudyRecruitmentStatusobj(nonPropTrial);
+        StudyRecruitmentStatus studyRecStatus = TestSchema.createStudyRecruitmentStatus(nonPropTrial);
         TestSchema.addUpdObject(studyRecStatus);
 
-        DocumentWorkflowStatus docWrk = DocumentWorkFlowStatusTest.createDocumentWorkflowStatus(nonPropTrial);
+        DocumentWorkflowStatus docWrk = TestSchema.createDocumentWorkflowStatus(nonPropTrial);
         TestSchema.addUpdObject(docWrk);
 
         // Prop Trial
@@ -247,18 +236,18 @@ public class MailManagerServiceTest {
         TestSchema.addUpdObject(propTrial);
         proprietaryTrialIi = IiConverter.convertToIi(propTrial.getId());
 
-        sc = StudyContactTest.createStudyContactObj(propTrial, c, hcp, crs);
+        sc = TestSchema.createStudyContactObj(propTrial, c, hcp, crs);
         TestSchema.addUpdObject(sc);
 
-        spc = StudySiteTest.createStudySiteObj(propTrial, hcf);
+        spc = TestSchema.createStudySiteObj(propTrial, hcf);
         spc.setResearchOrganization(ro);
         TestSchema.addUpdObject(spc);
         propTrial.getStudySites().add(spc);
 
-        studyRecStatus = StudyRecruitmentStatusTest.createStudyRecruitmentStatusobj(propTrial);
+        studyRecStatus = TestSchema.createStudyRecruitmentStatus(propTrial);
         TestSchema.addUpdObject(studyRecStatus);
 
-        docWrk = DocumentWorkFlowStatusTest.createDocumentWorkflowStatus(propTrial);
+        docWrk = TestSchema.createDocumentWorkflowStatus(propTrial);
         TestSchema.addUpdObject(docWrk);
 
         RegistryUser registryUser = new RegistryUser();
@@ -518,7 +507,7 @@ public class MailManagerServiceTest {
 
     private StudyProtocol createProprietaryStudyProtocolObj() {
         StudyProtocol sp = new StudyProtocol();
-        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
+        Timestamp now = new Timestamp(new Date().getTime());
 
         sp.setAcronym("Acronym .....");
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
@@ -547,7 +536,7 @@ public class MailManagerServiceTest {
         sp.setSection801Indicator(Boolean.TRUE);
         sp.setStartDate(now);
         sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
-        sp.setDateLastUpdated(new java.sql.Timestamp((new java.util.Date()).getTime()));
+        sp.setDateLastUpdated(new Timestamp(new Date().getTime()));
         sp.setUserLastUpdated(TestSchema.getUser());
         sp.setDateLastCreated(now);
         sp.setUserLastCreated(TestSchema.getUser());

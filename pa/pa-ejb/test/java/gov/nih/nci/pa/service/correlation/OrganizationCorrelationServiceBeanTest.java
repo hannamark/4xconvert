@@ -25,6 +25,7 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -56,7 +57,7 @@ import org.junit.Test;
  * @author vrushali
  *
  */
-public class OrganizationCorrelationServiceBeanTest {
+public class OrganizationCorrelationServiceBeanTest extends AbstractHibernateTestCase {
     private final OrganizationCorrelationServiceBean bean = new OrganizationCorrelationServiceBean();
     private CorrelationUtils corrUtils;
     private final HealthCareFacility hcfBO = new HealthCareFacility();
@@ -65,13 +66,15 @@ public class OrganizationCorrelationServiceBeanTest {
     private PoServiceLocator poSvcLoc;
     private OrganizationEntityServiceRemote poOrgSvc;
     private OversightCommitteeCorrelationServiceRemote poOcSvc;
+
     @Before
     public void setUp() throws Exception {
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
     }
+
     @Test
-    public void testCreateHealthCareFacilityCorrelations() throws PAException,
-        NullifiedRoleException, NullifiedEntityException, EntityValidationException, CurationException {
+    public void testCreateHealthCareFacilityCorrelations() throws PAException, NullifiedRoleException,
+            NullifiedEntityException, EntityValidationException, CurationException {
         try {
             bean.createHealthCareFacilityCorrelations(null);
             fail();
@@ -82,7 +85,8 @@ public class OrganizationCorrelationServiceBeanTest {
             bean.createHealthCareFacilityCorrelations("2");
             fail("Nullified org");
         } catch (PAException e) {
-            assertEquals("This Organization is no longer available (id = 2) , instead use OrgName (id = 22)", e.getMessage());
+            assertEquals("This Organization is no longer available (id = 2) , instead use OrgName (id = 22)",
+                         e.getMessage());
         }
         setUpCorrSvcMock();
         bean.createHealthCareFacilityCorrelations("1");
@@ -93,7 +97,7 @@ public class OrganizationCorrelationServiceBeanTest {
             fail("No org Found");
         } catch (PAException e) {
             assertEquals("PO and PA databases out of synchronization.  Error getting "
-                    + "organization from PO for id = 12. ", e.getMessage());
+                    + "organization from PO for id = 12.", e.getMessage());
         }
         setupPoSvcLocMock();
         setupCorSvcMockForHCF();
@@ -122,26 +126,27 @@ public class OrganizationCorrelationServiceBeanTest {
             bean.createHealthCareFacilityCorrelations("1");
             fail("Validation exception during create ClinicalResearchStaff ");
         } catch (PAException e) {
-            assertEquals("Validation exception during create ClinicalResearchStaff ", e.getMessage());
+            assertEquals("Validation exception during create ClinicalResearchStaff", e.getMessage());
         }
         setupPoSvcLocMock();
         setupCorSvcMockForHCF();
-        CurationException cE = new CurationException ();
+        CurationException cE = new CurationException();
         when(poHcfSvc.createCorrelation(any(HealthCareFacilityDTO.class))).thenThrow(cE);
         try {
             bean.createHealthCareFacilityCorrelations("1");
-            fail("CurationException during create ClinicalResearchStaff ");
+            fail("CurationException during create ClinicalResearchStaff");
         } catch (PAException e) {
-            assertEquals("CurationException during create ClinicalResearchStaff ", e.getMessage());
+            assertEquals("CurationException during create ClinicalResearchStaff", e.getMessage());
         }
         setupPoSvcLocMock();
         setupCorSvcMockForHCF();
         when(corrUtils.getPAOrganizationByIi(any(Ii.class))).thenReturn(new Organization());
         bean.createHealthCareFacilityCorrelations("1");
     }
+
     @Test
     public void testCreateResearchOrganizationCorrelations() throws PAException, NullifiedEntityException,
-        NullifiedRoleException, EntityValidationException, CurationException {
+            NullifiedRoleException, EntityValidationException, CurationException {
         try {
             bean.createResearchOrganizationCorrelations(null);
             fail();
@@ -152,14 +157,15 @@ public class OrganizationCorrelationServiceBeanTest {
             bean.createResearchOrganizationCorrelations("2");
             fail("Nullified org");
         } catch (PAException e) {
-            assertEquals("This Organization is no longer available (id = 2) , instead use OrgName (id = 22)", e.getMessage());
+            assertEquals("This Organization is no longer available (id = 2) , instead use OrgName (id = 22)",
+                         e.getMessage());
         }
         try {
             bean.createResearchOrganizationCorrelations("12");
             fail("No org Found");
         } catch (PAException e) {
             assertEquals("PO and PA databases out of synchronization.  Error getting "
-                    + "organization from PO for id = 12.  ", e.getMessage());
+                    + "organization from PO for id = 12.", e.getMessage());
         }
         setUpCorrSvcMock();
         bean.createResearchOrganizationCorrelations("1");
@@ -194,21 +200,22 @@ public class OrganizationCorrelationServiceBeanTest {
             bean.createResearchOrganizationCorrelations("1");
             fail("Validation exception during create Research Org");
         } catch (PAException e) {
-            assertEquals("Validation exception during create ClinicalResearchStaff ", e.getMessage());
+            assertEquals("Validation exception during create ClinicalResearchStaff", e.getMessage());
         }
         setupPoSvcLocMock();
-        CurationException cE = new CurationException ();
+        CurationException cE = new CurationException();
         when(poRoSvc.createCorrelation(any(ResearchOrganizationDTO.class))).thenThrow(cE);
         try {
             bean.createResearchOrganizationCorrelations("1");
             fail("CurationException during create Research org ");
         } catch (PAException e) {
-            assertEquals("Curation exception during create ClinicalResearchStaff ", e.getMessage());
+            assertEquals("Curation exception during create ClinicalResearchStaff", e.getMessage());
         }
     }
+
     @Test
     public void testGetPoResearchOrganizationByEntityIdentifier() throws NullifiedEntityException,
-        NullifiedRoleException, PAException {
+            NullifiedRoleException, PAException {
         try {
             bean.getPoResearchOrganizationByEntityIdentifier(null);
             fail("Ii Cannot be null");
@@ -231,9 +238,10 @@ public class OrganizationCorrelationServiceBeanTest {
         when(poRoSvc.search(any(ResearchOrganizationDTO.class))).thenReturn(roList);
         assertNotNull(bean.getPoResearchOrganizationByEntityIdentifier(orgPoIdentifier));
     }
+
     @Test
-    public void testGetPOOrgIdentifierByIdentifierType() throws NullifiedEntityException,
-        NullifiedRoleException, PAException, TooManyResultsException {
+    public void testGetPOOrgIdentifierByIdentifierType() throws NullifiedEntityException, NullifiedRoleException,
+            PAException, TooManyResultsException {
         try {
             bean.getPOOrgIdentifierByIdentifierType("");
             fail("Org name is null");
@@ -263,7 +271,7 @@ public class OrganizationCorrelationServiceBeanTest {
         } catch (PAException e) {
             assertEquals(" there cannot be more than 1 record for DCPIdentifier", e.getMessage());
         }
-        TooManyResultsException tmException = new TooManyResultsException (0);
+        TooManyResultsException tmException = new TooManyResultsException(0);
         when(poOrgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenThrow(tmException);
         try {
             bean.getPOOrgIdentifierByIdentifierType(PAConstants.DCP_IDENTIFIER_TYPE);
@@ -272,56 +280,60 @@ public class OrganizationCorrelationServiceBeanTest {
             assertEquals("gov.nih.nci.coppa.services.TooManyResultsException", e.getMessage());
         }
     }
+
     @Test
     public void testCreatePAOrganizationUsingPO() throws PAException {
         setUpCorrSvcMock();
         Organization org = bean.createPAOrganizationUsingPO(new OrganizationDTO());
         assertNull(org);
     }
+
     @Test
     public void testGetOrganizationByFunctionRole() throws PAException {
         ServiceLocator paSvcLoc = mock(ServiceLocator.class);
         PaRegistry.getInstance().setServiceLocator(paSvcLoc);
-        StudySiteServiceLocal studySiteSvc = mock (StudySiteServiceLocal.class);
+        StudySiteServiceLocal studySiteSvc = mock(StudySiteServiceLocal.class);
         when(paSvcLoc.getStudySiteService()).thenReturn(studySiteSvc);
-        when(studySiteSvc.getByStudyProtocol(any(Ii.class),any(StudySiteDTO.class))).thenReturn(null);
+        when(studySiteSvc.getByStudyProtocol(any(Ii.class), any(StudySiteDTO.class))).thenReturn(null);
         assertNull(bean.getOrganizationByFunctionRole(null, null));
         List<StudySiteDTO> siteList = new ArrayList<StudySiteDTO>();
         StudySiteDTO ssDTO = new StudySiteDTO();
         ssDTO.setResearchOrganizationIi(IiConverter.convertToPoResearchOrganizationIi("1"));
         siteList.add(ssDTO);
-        when(studySiteSvc.getByStudyProtocol(any(Ii.class),any(StudySiteDTO.class))).thenReturn(siteList);
+        when(studySiteSvc.getByStudyProtocol(any(Ii.class), any(StudySiteDTO.class))).thenReturn(siteList);
         setUpCorrSvcMock();
         when(corrUtils.getPAOrganizationByIi(any(Ii.class))).thenReturn(null);
         assertNull(bean.getOrganizationByFunctionRole(new Ii(), new Cd()));
         StudySiteDTO siteDTO = new StudySiteDTO();
         siteDTO.setResearchOrganizationIi(new Ii());
         siteList.add(siteDTO);
-        when(studySiteSvc.getByStudyProtocol(any(Ii.class),any(StudySiteDTO.class))).thenReturn(siteList);
+        when(studySiteSvc.getByStudyProtocol(any(Ii.class), any(StudySiteDTO.class))).thenReturn(siteList);
         when(corrUtils.getPAOrganizationByIi(any(Ii.class))).thenReturn(new Organization());
         assertNotNull(bean.getOrganizationByFunctionRole(new Ii(), new Cd()));
     }
+
     @Test
     public void testCreateOversightCommitteeCorrelations() throws PAException, NullifiedEntityException,
-        NullifiedRoleException, EntityValidationException, CurationException {
+            NullifiedRoleException, EntityValidationException, CurationException {
         try {
             bean.createOversightCommitteeCorrelations(null);
             fail();
         } catch (PAException e) {
-            assertEquals(" Organization PO Identifier is null", e.getMessage());
+            assertEquals("Organization PO Identifier is null", e.getMessage());
         }
         try {
             bean.createOversightCommitteeCorrelations("2");
             fail("Nullified org");
         } catch (PAException e) {
-            assertEquals("This Organization is no longer available (id = 2) , instead use OrgName (id = 22)", e.getMessage());
+            assertEquals("This Organization is no longer available (id = 2) , instead use OrgName (id = 22)",
+                         e.getMessage());
         }
         try {
             bean.createOversightCommitteeCorrelations("12");
             fail("No org Found");
         } catch (PAException e) {
             assertEquals("PO and PA databases out of synchronization.  Error getting "
-                    + "organization from PO for id = 12.  ", e.getMessage());
+                    + "organization from PO for id = 12.", e.getMessage());
         }
         setUpCorrSvcMock();
         try {
@@ -329,7 +341,7 @@ public class OrganizationCorrelationServiceBeanTest {
             fail();
         } catch (PAException e) {
             assertEquals("Error thrown during get/create PO OversightCommitte w/type code = "
-                        + "Institutional Review Board (IRB).  ", e.getMessage());
+                    + "Institutional Review Board (IRB).", e.getMessage());
         }
         OversightCommittee ocBO = new OversightCommittee();
         ocBO.setIdentifier("4");
@@ -341,7 +353,7 @@ public class OrganizationCorrelationServiceBeanTest {
         OversightCommitteeDTO ocDTO = new OversightCommitteeDTO();
         Ii ocIi = IiConverter.convertToIi("1");
         ocIi.setReliability(IdentifierReliability.ISS);
-        ocIi.setRoot("2.16.840.1.113883.3.26.4");
+        ocIi.setRoot("2.16.840.1.113883.3.26.4.4.4");
         ocDTO.setIdentifier(DSetConverter.convertIiToDset(ocIi));
         ocDTOList.add(ocDTO);
         ocDTOList.add(new OversightCommitteeDTO());
@@ -359,7 +371,7 @@ public class OrganizationCorrelationServiceBeanTest {
         when(poOcSvc.getCorrelation(any(Ii.class))).thenThrow(nRE);
         try {
             bean.createOversightCommitteeCorrelations("1");
-            fail("NullifiedRoleException exception during oversight commotte");
+            fail("NullifiedRoleException exception during oversight committee");
         } catch (PAException e) {
             assertEquals("The Oversight Committee is no longer available (id = 1)", e.getMessage());
         }
@@ -371,17 +383,17 @@ public class OrganizationCorrelationServiceBeanTest {
             bean.createOversightCommitteeCorrelations("1");
             fail("Validation exception during create Oversight Committee");
         } catch (PAException e) {
-            assertEquals("Validation exception during create PO OversightCommittee.  ", e.getMessage());
+            assertEquals("Validation exception during create PO OversightCommittee.", e.getMessage());
         }
         setupPoSvcLocMock();
-        CurationException cE = new CurationException ();
+        CurationException cE = new CurationException();
         when(poOcSvc.createCorrelation(any(OversightCommitteeDTO.class))).thenThrow(cE);
         try {
             bean.createOversightCommitteeCorrelations("1");
             fail("CurationException during create Oversight Committee");
         } catch (PAException e) {
-            assertEquals("Error thrown during get/create PO OversightCommitte w/type code = Institutional Review Board (IRB).  ",
-                    e.getMessage());
+            assertEquals("Error thrown during get/create PO OversightCommitte w/type code = Institutional Review Board (IRB).",
+                         e.getMessage());
         }
     }
 
@@ -389,23 +401,25 @@ public class OrganizationCorrelationServiceBeanTest {
         corrUtils = mock(CorrelationUtils.class);
         bean.setCorrUtils(corrUtils);
     }
+
     private void setupCorSvcMockForHCF() throws PAException, NullifiedRoleException {
         hcfBO.setIdentifier("5");
         corrUtils = mock(CorrelationUtils.class);
         when(corrUtils.getStructuralRoleByIi(any(Ii.class))).thenReturn(hcfBO);
         bean.setCorrUtils(corrUtils);
     }
+
     private void setupPoSvcLocMock() throws PAException, NullifiedEntityException, NullifiedRoleException {
         poSvcLoc = mock(PoServiceLocator.class);
         PoRegistry.getInstance().setPoServiceLocator(poSvcLoc);
         poOrgSvc = mock(OrganizationEntityServiceRemote.class);
         poHcfSvc = mock(HealthCareFacilityCorrelationServiceRemote.class);
         poRoSvc = mock(ResearchOrganizationCorrelationServiceRemote.class);
-        poOcSvc = mock (OversightCommitteeCorrelationServiceRemote.class);
+        poOcSvc = mock(OversightCommitteeCorrelationServiceRemote.class);
         when(poSvcLoc.getOrganizationEntityService()).thenReturn(poOrgSvc);
         when(poSvcLoc.getHealthCareFacilityCorrelationService()).thenReturn(poHcfSvc);
         when(poSvcLoc.getResearchOrganizationCorrelationService()).thenReturn(poRoSvc);
-        when (poSvcLoc.getOversightCommitteeCorrelationService()).thenReturn(poOcSvc);
+        when(poSvcLoc.getOversightCommitteeCorrelationService()).thenReturn(poOcSvc);
         OrganizationDTO orgDto = new OrganizationDTO();
         orgDto.setName(EnOnConverter.convertToEnOn("Mock org name"));
         when(poOrgSvc.getOrganization(any(Ii.class))).thenReturn(orgDto);

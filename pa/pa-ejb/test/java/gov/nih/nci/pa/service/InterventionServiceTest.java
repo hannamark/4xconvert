@@ -92,6 +92,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
@@ -106,15 +107,14 @@ import org.junit.Test;
  * @author hreinhart
  *
  */
-public class InterventionServiceTest {
+public class InterventionServiceTest extends AbstractHibernateTestCase {
     private InterventionServiceLocal remoteEjb = new InterventionBeanLocal();
     private InterventionAlternateNameServiceRemote ianService = new InterventionAlternateNameServiceBean();
     private Ii ii;
 
     @Before
-    public void setUp() throws Exception {
+    public void init() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        TestSchema.reset();
         TestSchema.primeData();
         ii = IiConverter.convertToIi(TestSchema.interventionIds.get(0));
      }

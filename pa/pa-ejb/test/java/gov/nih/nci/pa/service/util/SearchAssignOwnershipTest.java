@@ -82,6 +82,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -97,22 +98,20 @@ import org.junit.Test;
  * @author mshestopalov
  *
  */
-public class SearchAssignOwnershipTest {
+public class SearchAssignOwnershipTest extends AbstractHibernateTestCase {
     private final RegistryUserServiceRemote remoteEjb = new MockRegistryUserServiceBean();
 
     @Before
     public void setUp() throws Exception {
-        TestRegistryUserSchema.reset();
-        TestRegistryUserSchema.reset1();
         TestRegistryUserSchema.primeData();
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
     }
-    
+
 
     @Test
     public void searchTrialOwnershipInformation() throws PAException{
         DisplayTrialOwnershipInformation criteria = new DisplayTrialOwnershipInformation();
-       
+
         Long spId = TestRegistryUserSchema.studyProtocolId;
         Long userId = TestRegistryUserSchema.trialOwnerUserId;
         remoteEjb.assignOwnership(userId, spId);
@@ -123,6 +122,6 @@ public class SearchAssignOwnershipTest {
         assertEquals("Local SP ID 01", usrLst.get(0).getLeadOrgId());
         assertEquals("NCI-2009-00001", usrLst.get(0).getNciIdentifier());
         assertEquals("1", usrLst.get(0).getTrialId());
-        
+
     }
 }

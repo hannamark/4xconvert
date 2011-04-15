@@ -91,8 +91,8 @@ import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
 import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.report.util.ReportUtil;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -115,7 +115,7 @@ import org.hibernate.Session;
 * @since 4/10/2009
 */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 public class TrialListReportBean extends AbstractStandardReportBean<AbstractStandardCriteriaDto, TrialListResultDto>
         implements TrialListLocal {
 
@@ -149,7 +149,7 @@ public class TrialListReportBean extends AbstractStandardReportBean<AbstractStan
         }
         List<TrialListResultDto> rList = null;
         try {
-            Session session = HibernateUtil.getCurrentSession();
+            Session session = PaHibernateUtil.getCurrentSession();
             SQLQuery query = null;
             String sqlStart =
                     "SELECT oi.extension, sp.submission_number, cm.organization, sp.date_last_created "

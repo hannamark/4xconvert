@@ -16,7 +16,7 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jboss-annotations-ejb3-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jericho-html-2.4.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/jstl-1.1.2.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/compile/nci-commons-struts2-1.2.18.jar"/>
+	<classpathentry kind="var" path="PA_LIB/pa-web/compile/nci-commons-struts2-1.2.21.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/ognl-2.6.11.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/persistence-api-1.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/compile/postgresql-8.4-701.jdbc3.jar"/>
@@ -34,7 +34,7 @@
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/spring-2.0.5.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/struts2-core-2.1.6.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/xwork-2.1.2.jar"/>
-	<classpathentry kind="var" path="PA_LIB/pa-web/test-junit/junit-4.4.jar"/>
+	<classpathentry kind="var" path="PA_LIB/reg-web/test-junit/junit-4.8.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/poi-3.2-FINAL.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/javax.servlet-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/javax.servlet.jsp-4.0.5.GA.jar"/>
@@ -50,7 +50,7 @@
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/commons-beanutils-1.8.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/compile/cgmmapi-0.7.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-web/test/mockrunner-0.4.1.jar"/>
-	<classpathentry kind="var" path="PA_LIB/reg-web/compile/nci-commons-core-1.2.18.jar"/>
+	<classpathentry kind="var" path="PA_LIB/reg-web/compile/nci-commons-core-1.2.21.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/selenium/selenium-java-client-driver-1.0.2.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/selenium/selenium-server-1.0.3.jar"/>
 	<classpathentry kind="var" path="PA_LIB/reg-web/selenium/selenium-server-coreless-1.0.3.jar"/>

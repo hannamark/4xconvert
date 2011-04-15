@@ -95,9 +95,9 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -119,7 +119,7 @@ import org.hibernate.Session;
  * @author asharma
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Document, DocumentConverter> implements
         DocumentServiceLocal {
@@ -215,7 +215,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
         Map<Ii, Ii> map = super.copy(fromStudyProtocolIi, toStudyProtocolIi);
         List<DocumentDTO> dtos = getByStudyProtocol(fromStudyProtocolIi);
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         String fromName = null;
         String toName = null;
         StudyProtocolBeanLocal spBean = new StudyProtocolBeanLocal();

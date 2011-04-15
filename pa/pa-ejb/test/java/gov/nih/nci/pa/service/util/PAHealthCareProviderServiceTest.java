@@ -81,21 +81,16 @@ package gov.nih.nci.pa.service.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
-import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
 import gov.nih.nci.pa.domain.HealthCareFacility;
-import gov.nih.nci.pa.domain.HealthCareFacilityTest;
 import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.domain.OrganizationTest;
 import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteContact;
-import gov.nih.nci.pa.domain.StudySiteTest;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -108,7 +103,7 @@ import org.junit.Test;
  * @author NAmiruddin
  *
  */
-public class PAHealthCareProviderServiceTest {
+public class PAHealthCareProviderServiceTest extends AbstractHibernateTestCase {
 
     private PAHealthCareProviderServiceBean bean = new PAHealthCareProviderServiceBean();
     private PAHealthCareProviderRemote remoteEjb = bean;
@@ -116,22 +111,21 @@ public class PAHealthCareProviderServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        TestSchema.reset();
-        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
+        StudyProtocol sp = TestSchema.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
-        Organization o = OrganizationTest.createOrganizationObj();
+        Organization o = TestSchema.createOrganizationObj();
         TestSchema.addUpdObject(o);
-        Person p = PersonTest.createPersonObj();
+        Person p = TestSchema.createPersonObj();
         p.setIdentifier("11");
         TestSchema.addUpdObject(p);
-        HealthCareFacility hcf = HealthCareFacilityTest.createHealthCareFacilityObj(o);
+        HealthCareFacility hcf = TestSchema.createHealthCareFacilityObj(o);
         TestSchema.addUpdObject(hcf);
-        StudySite spc = StudySiteTest.createStudySiteObj(sp, hcf);
+        StudySite spc = TestSchema.createStudySiteObj(sp, hcf);
         TestSchema.addUpdObject(spc);
 
         ssId = spc.getId();
 
-        ClinicalResearchStaff crs = ClinicalResearchStaffTest.createClinicalResearchStaffObj(o, p);
+        ClinicalResearchStaff crs = TestSchema.createClinicalResearchStaffObj(o, p);
         TestSchema.addUpdObject(crs);
         StudySiteContact spcc = new StudySiteContact();
         spcc.setClinicalResearchStaff(crs);

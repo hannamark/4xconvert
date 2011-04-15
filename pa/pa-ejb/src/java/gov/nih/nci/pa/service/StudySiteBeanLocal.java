@@ -24,17 +24,17 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudySiteSortCriterion;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.AssignedIdentifierEnum;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.CorrelationUtils;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -62,7 +62,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  *
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, StudySite, StudySiteConverter> implements
         StudySiteServiceLocal {
@@ -113,7 +113,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
         Map<Ii, Ii> map = new HashMap<Ii, Ii>();
         List<StudySiteContactDTO> spcDtos = null;
         List<StudySiteAccrualStatusDTO> accDtos = null;
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         StudySite bo = null;
         Ii from = null;
         Ii to = null;
@@ -143,7 +143,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
                 for (StudySiteAccrualStatusDTO accDto : accDtos) {
                     accDto.setIdentifier(null);
                     accDto.setStudySiteIi(to);
-                    session.save(StudySiteAccrualStatusConverter.convertFromDtoToDomain(accDto));
+                    session.save(new StudySiteAccrualStatusConverter().convertFromDtoToDomain(accDto));
                 }
             }
             map.put(from, to);
@@ -155,16 +155,16 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
         if (PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && PAUtil.isIiNull(dto.getResearchOrganizationIi())
             && PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
             throw new PAException("Either healthcare facility or research organization or Oversight committee"
-                + " must be set.  ");
+                + " must be set.");
         }
         if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && !PAUtil.isIiNull(dto.getResearchOrganizationIi())) {
-            throw new PAException("Healthcare facility , research organization cannot both be set.  ");
+            throw new PAException("Healthcare facility and research organization cannot both be set.");
         }
         if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && !PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
-            throw new PAException("Healthcare facility and over sight " + "committee cannot both be set.  ");
+            throw new PAException("Healthcare facility and oversight committee cannot both be set.");
         }
         if (!PAUtil.isIiNull(dto.getResearchOrganizationIi()) && !PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
-            throw new PAException("research organization and over sight " + "committee cannot both be set.  ");
+            throw new PAException("research organization and oversight committee cannot both be set.");
         }
         final String approvalStatusCodeString = CdConverter.convertCdToString(dto.getReviewBoardApprovalStatusCode());
         ReviewBoardApprovalStatusCode code = ReviewBoardApprovalStatusCode.getByCode(approvalStatusCodeString);
@@ -173,7 +173,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
             if (ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode().toString().equals(code.getCode().toString())
                 && ((approvalNumber == null) || (approvalNumber.length() == 0))) {
                 throw new PAException("Review board approval number must be set for status '"
-                    + ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getDisplayName() + "'.  ");
+                    + ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getDisplayName() + "'.");
             }
             if (ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getCode().toString().equals(code.getCode().toString())
                 || ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.getCode().toString()
@@ -186,7 +186,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
             if (PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
                 throw new PAException("Oversight committee (board) must be set when review board approval status is '"
                     + ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getDisplayName() + "' or '"
-                    + ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getDisplayName() + "'.  ");
+                    + ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getDisplayName() + "'.");
             }
         } else {
             dto.setOversightCommitteeIi(null);
@@ -250,7 +250,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
     private void enforceNoDuplicateTrial(StudySiteDTO dto) throws PAException {
         Session session = null;
         List<StudySite> queryList = new ArrayList<StudySite>();
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         Query query = null;
         // step 1: form the hql
         String hql = " select spart " + " from StudySite spart " + " join spart.researchOrganization as ro "
@@ -269,8 +269,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
         if (PAUtil.isIiNotNull(dto.getResearchOrganizationIi())
             && IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equalsIgnoreCase(dto.getResearchOrganizationIi()
                                                                             .getIdentifierName())) {
-            CorrelationUtils cUtils = new CorrelationUtils();
-            ResearchOrganization ro = cUtils.getStructuralRoleByIi(dto.getResearchOrganizationIi());
+            ResearchOrganization ro = new CorrelationUtils().getStructuralRoleByIi(dto.getResearchOrganizationIi());
             query.setParameter("orgIdentifier", ro.getId());
         } else {
             query.setParameter("orgIdentifier", IiConverter.convertToLong(dto.getResearchOrganizationIi()));
@@ -380,21 +379,16 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
      * @throws PAException when error
      * @throws TooManyResultsException when error
      */
-    public Ii getStudySiteIiByTrialAndPoHcfIi(Ii studyProtocolIi, Ii poHcfIi)
-        throws EntityValidationException, CurationException, PAException, TooManyResultsException {
-
+    public Ii getStudySiteIiByTrialAndPoHcfIi(Ii studyProtocolIi, Ii poHcfIi) throws EntityValidationException,
+            CurationException, PAException, TooManyResultsException {
         StudySiteDTO criteria = new StudySiteDTO();
         criteria.setStudyProtocolIdentifier(studyProtocolIi);
         // get the pa hcf from the po hcf
-        CorrelationUtils corrUtils = new CorrelationUtils();
-
-        StructuralRole strRl = corrUtils.getStructuralRoleByIi(poHcfIi);
+        StructuralRole strRl = new CorrelationUtils().getStructuralRoleByIi(poHcfIi);
         Ii myIi = IiConverter.convertToPoHealthCareFacilityIi(strRl.getId().toString());
         criteria.setHealthcareFacilityIi(myIi);
-        LimitOffset limit = new LimitOffset(1 , 0);
-        List<StudySiteDTO> freshStudySiteDTOList =
-            search(criteria, limit);
-       return  freshStudySiteDTOList.get(0).getIdentifier();
-
+        LimitOffset limit = new LimitOffset(1, 0);
+        List<StudySiteDTO> freshStudySiteDTOList = search(criteria, limit);
+        return freshStudySiteDTOList.get(0).getIdentifier();
     }
 }

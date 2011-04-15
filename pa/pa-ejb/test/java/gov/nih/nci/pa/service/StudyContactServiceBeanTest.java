@@ -81,7 +81,6 @@ package gov.nih.nci.pa.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
@@ -94,6 +93,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -105,7 +105,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-public class StudyContactServiceBeanTest {
+public class StudyContactServiceBeanTest extends AbstractHibernateTestCase {
     private StudyContactServiceLocal remoteEjb = new StudyContactBeanLocal();
     Ii pid;
     Ii clinicalResearchStaffId;
@@ -114,7 +114,6 @@ public class StudyContactServiceBeanTest {
     public void setUp() throws Exception {
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        TestSchema.reset();
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         clinicalResearchStaffId = IiConverter.convertToIi(TestSchema.clinicalResearchStaffIds.get(0));
@@ -177,7 +176,7 @@ public class StudyContactServiceBeanTest {
         assertEquals("Wrong number of phone numbers", 1, phones.size());
         assertEquals("Wrong phone number", formatted, phones.get(0));
     }
-    
+
     /**
      * Tests that the creation method with a invalid phone number
      */

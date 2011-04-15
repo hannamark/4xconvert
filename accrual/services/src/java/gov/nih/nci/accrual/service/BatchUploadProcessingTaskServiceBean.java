@@ -87,7 +87,7 @@ import gov.nih.nci.accrual.service.util.BatchValidationResults;
 import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 
 import java.io.File;
@@ -111,7 +111,7 @@ import org.apache.log4j.Logger;
  * @author Abraham J. Evans-EL
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Local(BatchUploadProcessingTaskServiceLocal.class)
 public class BatchUploadProcessingTaskServiceBean implements BatchUploadProcessingTaskServiceLocal {

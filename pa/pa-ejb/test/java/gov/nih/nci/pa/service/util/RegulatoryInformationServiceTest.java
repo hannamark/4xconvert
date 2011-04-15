@@ -81,11 +81,10 @@ package gov.nih.nci.pa.service.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.CountryTest;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
-import gov.nih.nci.pa.domain.RegulatoryAuthorityTest;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -98,7 +97,7 @@ import org.junit.Test;
  * @author NAmiruddin
  *
  */
-public class RegulatoryInformationServiceTest {
+public class RegulatoryInformationServiceTest extends AbstractHibernateTestCase  {
 
     private RegulatoryInformationBean bean = new RegulatoryInformationBean();
     private RegulatoryInformationServiceRemote remoteEjb = bean;
@@ -107,9 +106,8 @@ public class RegulatoryInformationServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        TestSchema.reset();
-        Country c = CountryTest.createCountryObj();
-        RegulatoryAuthority ra = RegulatoryAuthorityTest.createRegulatoryObj(c);
+        Country c = TestSchema.createCountryObj();
+        RegulatoryAuthority ra = TestSchema.createRegulatoryObj(c);
         TestSchema.addUpdObject(c);
         TestSchema.addUpdObject(ra);
 

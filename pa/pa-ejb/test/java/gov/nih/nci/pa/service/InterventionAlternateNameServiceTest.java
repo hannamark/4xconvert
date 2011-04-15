@@ -82,6 +82,7 @@ import static org.junit.Assert.assertEquals;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -93,13 +94,12 @@ import org.junit.Test;
  * @author hreinhart
  *
  */
-public class InterventionAlternateNameServiceTest {
+public class InterventionAlternateNameServiceTest extends AbstractHibernateTestCase {
     private InterventionAlternateNameServiceRemote remoteEjb = new InterventionAlternateNameServiceBean();
     private Ii ii;
 
     @Before
-    public void setUp() throws Exception {
-        TestSchema.reset();
+    public void init() throws Exception {
         TestSchema.primeData();
         ii = IiConverter.convertToIi(TestSchema.interventionIds.get(0));
      }

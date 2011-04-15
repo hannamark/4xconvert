@@ -80,58 +80,62 @@ package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.pa.domain.Document;
-import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.util.TestSchema;
 
-import org.hibernate.Session;
-import org.junit.Before;
-import org.junit.Test;
+public class DocumentConverterTest extends AbstractConverterTest<DocumentConverter, DocumentDTO, Document> {
 
-public class DocumentConverterTest {
-private Session sess;
+    private static final Long ID = 123L;
 
-    @Before
-    public void setUp() throws Exception {
-        TestSchema.reset();
-        TestSchema.primeData();
-        sess = HibernateUtil.getCurrentSession();
-    }
-
-    @Test
-    public void convertFromDomainToDTO() throws Exception {
-        StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Document makeBo() {
         Document bo = new Document();
-        bo.setId(123L);
+        bo.setId(ID);
         bo.setTypeCode(DocumentTypeCode.PROTOCOL_DOCUMENT);
         bo.setFileName("Protocol_Document.doc");
-        bo.setStudyProtocol(sp);
-        DocumentConverter dc = new DocumentConverter();
-        DocumentDTO dto = dc.convertFromDomainToDto(bo);
-        assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
-        assertEquals(bo.getTypeCode().getCode(), dto.getTypeCode().getCode());
-        assertEquals(bo.getFileName(), dto.getFileName().getValue());
-        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+        bo.setStudyProtocol(getStudyProtocol());
+        return bo;
     }
 
-    @Test
-    public void convertFromDTOToDomain() throws Exception {
-        StudyProtocol sp = (StudyProtocol) sess.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DocumentDTO makeDto() {
         DocumentDTO dto = new DocumentDTO();
-        dto.setIdentifier(IiConverter.convertToIi((Long) null));
+        dto.setIdentifier(IiConverter.convertToIi(ID));
         dto.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
         dto.setFileName(StConverter.convertToSt("IRB_Approval_Document.doc"));
-        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(STUDY_PROTOCOL_ID));
+        return dto;
+    }
 
-        Document bo = new DocumentConverter().convertFromDtoToDomain(dto);
-        assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
-        assertEquals(bo.getTypeCode().getCode(), dto.getTypeCode().getCode());
-        assertEquals(bo.getFileName(), dto.getFileName().getValue());
-        assertEquals(bo.getStudyProtocol().getId(), IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void verifyBo(Document bo) {
+        assertEquals(ID, bo.getId());
+        assertEquals(DocumentTypeCode.IRB_APPROVAL_DOCUMENT, bo.getTypeCode());
+        assertEquals("IRB_Approval_Document.doc", bo.getFileName());
+        assertEquals(STUDY_PROTOCOL_ID, bo.getStudyProtocol().getId());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void verifyDto(DocumentDTO dto) {
+        assertEquals(ID, IiConverter.convertToLong(dto.getIdentifier()));
+        assertEquals(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode(), dto.getTypeCode().getCode());
+        assertEquals("Protocol_Document.doc", dto.getFileName().getValue());
+        assertEquals(STUDY_PROTOCOL_ID, IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+        assertEquals("2.16.840.1.113883.3.26.4.3.8", dto.getIdentifier().getRoot());
     }
 }

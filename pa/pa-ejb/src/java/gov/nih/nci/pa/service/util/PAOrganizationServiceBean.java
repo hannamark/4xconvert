@@ -83,9 +83,9 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -113,7 +113,7 @@ import org.hibernate.Session;
 * copyright holder, NCI.
 */
 @Stateless
-@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
 
@@ -142,7 +142,7 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
         if (organization.getId() == null && organization.getIdentifier() == null) {
             throw new PAException("Id or poIdentifier should not be null");
         }
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
 
         StringBuffer hql = new StringBuffer();
         hql.append(" select org from Organization org  where 1 = 1 ");
@@ -169,7 +169,7 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
         List<Organization> sortedOrganizations = new ArrayList<Organization>();
         Set<Long> orgSet = new HashSet<Long>();
 
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         StringBuffer hql = new StringBuffer();
         if (organizationType.equalsIgnoreCase(PAConstants.LEAD_ORGANIZATION)) {
             hql.append("select o from Organization o join o.researchOrganizations as ros join ros.studySites as sps"

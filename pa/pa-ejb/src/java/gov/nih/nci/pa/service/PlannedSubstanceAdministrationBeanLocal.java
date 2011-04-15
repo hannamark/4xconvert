@@ -90,10 +90,10 @@ import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.PlannedSubstanceAdministrationSortCriterion;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -113,7 +113,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 public class PlannedSubstanceAdministrationBeanLocal
 extends AbstractStudyIsoService<PlannedSubstanceAdministrationDTO, PlannedSubstanceAdministration,
     PlannedSubstanceAdministrationConverter> implements PlannedSubstanceAdministrationServiceLocal {
@@ -184,7 +184,7 @@ extends AbstractStudyIsoService<PlannedSubstanceAdministrationDTO, PlannedSubsta
     private PlannedSubstanceAdministrationDTO createOrUpdatePlannedSubstanceAdministration(
             PlannedSubstanceAdministrationDTO dto) throws PAException {
         PlannedSubstanceAdministration bo = null;
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         PlannedSubstanceAdministrationConverter converter = new PlannedSubstanceAdministrationConverter();
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             bo = converter.convertFromDtoToDomain(dto);

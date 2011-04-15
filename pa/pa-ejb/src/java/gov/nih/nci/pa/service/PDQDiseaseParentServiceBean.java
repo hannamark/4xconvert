@@ -88,8 +88,8 @@ import gov.nih.nci.pa.iso.dto.PDQDiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.PDQDiseaseParentSortCriterion;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +109,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 * @since 11/30/2008
 */
 @Stateless
-@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SecurityDomain("pa")
 @RolesAllowed({"gridClient", "client", "Abstractor" , "Submitter" , "Outcomes" })

@@ -80,7 +80,7 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.service.interceptor.RemoteAuthorizationInterceptor;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
@@ -95,10 +95,10 @@ import org.jboss.annotation.security.SecurityDomain;
  * @since Aug 29, 2009
  */
 @Stateless
-@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SecurityDomain("accrual")
 @RolesAllowed({"client" , "Abstractor" , "Submitter" })
 public class StudySubjectBean extends StudySubjectBeanLocal implements StudySubjectService {
-    
+
 }

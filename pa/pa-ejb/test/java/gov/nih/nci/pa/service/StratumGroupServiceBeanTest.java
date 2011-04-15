@@ -85,6 +85,7 @@ import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -94,7 +95,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-public class StratumGroupServiceBeanTest {
+public class StratumGroupServiceBeanTest extends AbstractHibernateTestCase {
 
     private StratumGroupServiceLocal remoteEjb = new StratumGroupBeanLocal();;
     Ii pid;
@@ -102,7 +103,6 @@ public class StratumGroupServiceBeanTest {
     @Before
     public void setUp() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        TestSchema.reset();
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
     }

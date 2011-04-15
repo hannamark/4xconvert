@@ -84,6 +84,9 @@
 package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.domain.StudyIndIdeStage;
 import gov.nih.nci.pa.domain.StudyProtocolStage;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
@@ -97,7 +100,6 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.ISOUtil;
 
 import org.junit.Test;
 
@@ -105,74 +107,126 @@ import org.junit.Test;
  * @author vrushali
  *
  */
-public class StudyIndIdeStageConverterTest {
+public class StudyIndIdeStageConverterTest extends AbstractConverterTest<StudyIndIdeStageConverter, StudyIndIdeStageDTO, StudyIndIdeStage> {
 
-    @Test
-    public void convertFromDomainToDTO() throws Exception {
+    protected StudyProtocolStage getStudyProtocolStage() {
         StudyProtocolStage sp = new StudyProtocolStage();
-        sp.setId(1L);
+        sp.setId(STUDY_PROTOCOL_ID);
+        return sp;
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudyIndIdeStage makeBo() {
         StudyIndIdeStage bo = new StudyIndIdeStage();
-        bo.setId(123L);
+        bo.setId(ID);
         bo.setExpandedAccessStatusCode(ExpandedAccessStatusCode.AVAILABLE);
-        bo.setStudyProtocolStage(sp);
+        bo.setStudyProtocolStage(getStudyProtocolStage());
         bo.setExpandedAccessIndicator(Boolean.TRUE);
         bo.setHolderTypeCode(HolderTypeCode.NIH);
         bo.setNihInstHolderCode(NihInstituteCode.NCMHD);
+        bo.setNciDivPrgHolderCode(NciDivisionProgramCode.CCR);
         bo.setIndldeTypeCode(IndldeTypeCode.IND);
         bo.setGrantorCode(GrantorCode.CDER);
         bo.setIndIdeNumber("1234");
-        StudyIndIdeStageDTO dto = StudyIndIdeStageConverter.convertFromDomainToDTO(bo);
-        assertStudyIndIdeStage(bo, dto);
+        return bo;
     }
 
-    private void assertStudyIndIdeStage(StudyIndIdeStage bo, StudyIndIdeStageDTO dto) {
-        assertEquals(bo.getId(), IiConverter.convertToLong(dto.getIdentifier()));
-        assertEquals(bo.getExpandedAccessStatusCode().getCode() , dto.getExpandedAccessStatusCode().getCode());
-        assertEquals(bo.getExpandedAccessIndicator() ,  dto.getExpandedAccessIndicator().getValue());
-        assertEquals(bo.getHolderTypeCode().getCode() ,  dto.getHolderTypeCode().getCode());
-        if (bo.getHolderTypeCode().equals(HolderTypeCode.NIH)) {
-            assertEquals(bo.getNihInstHolderCode().getCode() ,  dto.getNihInstHolderCode().getCode());
-        }
-        if (bo.getHolderTypeCode().equals(HolderTypeCode.NCI)) {
-            assertEquals(bo.getNciDivPrgHolderCode().getCode() , dto.getNciDivProgHolderCode().getCode());
-        }
-        assertEquals(bo.getStudyProtocolStage().getId(), IiConverter.convertToLong(dto.getStudyProtocolStageIi()));
-        assertEquals(bo.getIndldeTypeCode().getCode() , dto.getIndldeTypeCode().getCode());
-        assertEquals(bo.getGrantorCode().getCode() , dto.getGrantorCode().getCode());
-        assertEquals(bo.getIndIdeNumber() , dto.getIndldeNumber().getValue());
-        if (ISOUtil.isBlNull(dto.getExemptIndicator())) {
-            assertEquals(bo.getExemptIndicator() , Boolean.FALSE);
-        } else {
-            assertEquals(bo.getExemptIndicator() , dto.getExemptIndicator().getValue());
-        }
-    }
-
-    @Test
-    public void convertFromDTOToDomain() throws Exception {
-        StudyProtocolStage sp = new StudyProtocolStage();
-        sp.setId(1L);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudyIndIdeStageDTO makeDto() {
         StudyIndIdeStageDTO dto = new StudyIndIdeStageDTO();
-        dto.setIdentifier(IiConverter.convertToIi((Long) null));
+        dto.setIdentifier(IiConverter.convertToIi(ID));
         dto.setExpandedAccessStatusCode(CdConverter.convertToCd(ExpandedAccessStatusCode.AVAILABLE));
         dto.setHolderTypeCode(CdConverter.convertToCd(HolderTypeCode.NIH));
         dto.setNihInstHolderCode(CdConverter.convertToCd(NihInstituteCode.NCMHD));
+        dto.setNciDivProgHolderCode(CdConverter.convertToCd(NciDivisionProgramCode.CCR));
         dto.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        dto.setStudyProtocolStageIi(IiConverter.convertToIi(sp.getId()));
+        dto.setStudyProtocolStageIi(IiConverter.convertToIi(STUDY_PROTOCOL_ID));
         dto.setIndldeTypeCode(CdConverter.convertToCd(IndldeTypeCode.IND));
         dto.setGrantorCode(CdConverter.convertToCd(GrantorCode.CDER));
         dto.setIndldeNumber(StConverter.convertToSt("1234"));
-        dto.setExemptIndicator(BlConverter.convertToBl(null));
-        StudyIndIdeStage bo = StudyIndIdeStageConverter.convertFromDTOToDomain(dto);
-        assertStudyIndIdeStage(bo, dto);
-        dto.setHolderTypeCode(CdConverter.convertToCd(HolderTypeCode.NCI));
-        dto.setExemptIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        dto.setNciDivProgHolderCode(CdConverter.convertToCd(NciDivisionProgramCode.CCR));
-        bo = StudyIndIdeStageConverter.convertFromDTOToDomain(dto);
-        assertStudyIndIdeStage(bo, dto);
-        dto = new StudyIndIdeStageDTO();
-        dto.setIdentifier(IiConverter.convertToIi((Long) null));
-        dto.setStudyProtocolStageIi(IiConverter.convertToIi(sp.getId()));
-        bo = StudyIndIdeStageConverter.convertFromDTOToDomain(dto);
+        dto.setExemptIndicator(BlConverter.convertToBl(false));
+        return dto;
     }
 
+    @Test
+    public void testDtoHolderTypes() {
+        StudyIndIdeStageDTO dto = makeDto();
+        // the base test covers the NIH Holder type, so just need to verify the NCI type here
+        dto.setHolderTypeCode(CdConverter.convertToCd(HolderTypeCode.NCI));
+        StudyIndIdeStage bo = new StudyIndIdeStageConverter().convertFromDtoToDomain(dto);
+        verifyCoreBo(bo);
+
+        assertEquals(HolderTypeCode.NCI, bo.getHolderTypeCode());
+        assertNull(bo.getNihInstHolderCode());
+        assertEquals(NciDivisionProgramCode.CCR, bo.getNciDivPrgHolderCode());
+    }
+
+    @Test
+    public void testDtoExemptIndicator() {
+        // the base test covers setting the exempt indicator to false, so we need to verify null and true here
+        StudyIndIdeStageDTO dto = makeDto();
+        dto.setExemptIndicator(null);
+        StudyIndIdeStage bo = new StudyIndIdeStageConverter().convertFromDtoToDomain(dto);
+        verifyCoreBo(bo);
+        assertFalse(bo.getExemptIndicator());
+
+        dto.setExemptIndicator(BlConverter.convertToBl(null));
+        bo = new StudyIndIdeStageConverter().convertFromDtoToDomain(dto);
+        verifyCoreBo(bo);
+        assertFalse(bo.getExemptIndicator());
+
+        dto.setExemptIndicator(BlConverter.convertToBl(true));
+        bo = new StudyIndIdeStageConverter().convertFromDtoToDomain(dto);
+        verifyCoreBo(bo);
+        assertTrue(bo.getExemptIndicator());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void verifyBo(StudyIndIdeStage bo) {
+        verifyCoreBo(bo);
+
+        assertEquals(HolderTypeCode.NIH, bo.getHolderTypeCode());
+        assertEquals(NihInstituteCode.NCMHD, bo.getNihInstHolderCode());
+        assertNull(bo.getNciDivPrgHolderCode());
+        assertFalse(bo.getExemptIndicator());
+    }
+
+    private void verifyCoreBo(StudyIndIdeStage bo) {
+        assertNull(bo.getId());
+        assertEquals(ExpandedAccessStatusCode.AVAILABLE, bo.getExpandedAccessStatusCode());
+        assertTrue(bo.getExpandedAccessIndicator());
+        assertEquals(STUDY_PROTOCOL_ID, bo.getStudyProtocolStage().getId());
+        assertEquals(IndldeTypeCode.IND, bo.getIndldeTypeCode());
+        assertEquals(GrantorCode.CDER, bo.getGrantorCode());
+        assertEquals("1234", bo.getIndIdeNumber());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void verifyDto(StudyIndIdeStageDTO dto) {
+        assertEquals(ID, IiConverter.convertToLong(dto.getIdentifier()));
+        assertEquals(ExpandedAccessStatusCode.AVAILABLE.getCode(), dto.getExpandedAccessStatusCode().getCode());
+        assertTrue(dto.getExpandedAccessIndicator().getValue());
+        assertEquals(STUDY_PROTOCOL_ID, IiConverter.convertToLong(dto.getStudyProtocolStageIi()));
+        assertEquals(IndldeTypeCode.IND.getCode(), dto.getIndldeTypeCode().getCode());
+        assertEquals(GrantorCode.CDER.getCode(), dto.getGrantorCode().getCode());
+        assertEquals("1234", dto.getIndldeNumber().getValue());
+
+        assertEquals(HolderTypeCode.NIH.getCode(), dto.getHolderTypeCode().getCode());
+        assertEquals(NihInstituteCode.NCMHD.getCode(), dto.getNihInstHolderCode().getCode());
+        assertEquals(NciDivisionProgramCode.CCR.getCode(), dto.getNciDivProgHolderCode().getCode());
+        assertFalse(dto.getExemptIndicator().getValue());
+    }
 }

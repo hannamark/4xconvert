@@ -124,8 +124,8 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -160,7 +160,7 @@ import org.apache.log4j.Logger;
 * @author vrushali
 */
 @Stateless
-@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelper
             implements PDQTrialAbstractionServiceBeanRemote {

@@ -87,8 +87,8 @@ import gov.nih.nci.pa.report.dto.result.TrialProcessingHeaderResultDto;
 import gov.nih.nci.pa.report.dto.result.TrialProcessingResultDto;
 import gov.nih.nci.pa.report.util.ReportUtil;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
@@ -109,7 +109,7 @@ import org.hibernate.Session;
 * @since 06/04/2009
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 public class TrialProcessingReportBean extends
         AbstractReportBean<AssignedIdentifierCriteriaDto, TrialProcessingResultDto> implements TrialProcessingLocal {
 
@@ -146,7 +146,7 @@ public class TrialProcessingReportBean extends
         AssignedIdentifierCriteriaDto.validate(criteria);
         TrialProcessingHeaderResultDto result = null;
         try {
-            Session session = HibernateUtil.getCurrentSession();
+            Session session = PaHibernateUtil.getCurrentSession();
             SQLQuery query = null;
             String sql = "SELECT cm.organization, cm.first_name, cm.last_name, oi.extension "
                     + "       , sp.official_title, dws.status_code, sp.identifier "
@@ -194,7 +194,7 @@ public class TrialProcessingReportBean extends
         AssignedIdentifierCriteriaDto.validate(criteria);
         List<TrialProcessingResultDto> rList = new ArrayList<TrialProcessingResultDto>();
         try {
-            Session session = HibernateUtil.getCurrentSession();
+            Session session = PaHibernateUtil.getCurrentSession();
             SQLQuery query = null;
             String sql = "SELECT sp.submission_number, sm.milestone_code, sm.milestone_date "
                     + "FROM study_milestone AS sm "

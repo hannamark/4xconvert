@@ -84,120 +84,53 @@ package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import gov.nih.nci.pa.domain.StudyProtocol;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
-import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateUtil;
-import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.hibernate.Session;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class ParticipatingSiteConverterTest {
-    private Session session;
-    private Date today;
+public class ParticipatingSiteConverterTest extends
+        AbstractConverterTest<ParticipatingSiteConverter, ParticipatingSiteDTO, StudySite> {
+    private final Date today = DateUtils.truncate(new Date(), Calendar.DATE);
 
-
-    @Before
-    public void setUp() throws Exception {
-        TestSchema.reset();
-        TestSchema.primeData();
-        session = HibernateUtil.getCurrentSession();
-        today = DateUtils.truncate(new Date(), Calendar.DATE);
-    }
-
-    /**
-     * Tests converting from study sites to participating site DTOs.
-     * @throws Exception on error
-     */
-    @Test
-    public void convertFromDomainToDTO() throws Exception {
-        StudySite studySite = constuctStudySite();
-
-        ParticipatingSiteConverter converter = new ParticipatingSiteConverter();
-        ParticipatingSiteDTO dto = converter.convertFromDomainToDto(studySite);
-        assertParticipatingSiteConverter(studySite, dto);
-    }
-
-
-    /**
-     * Tests converting the Participating Site DTO to a study site.
-     * @throws Exception on error
-     */
-    @Test
-    public void testConvertFromDTOToDomain() throws Exception {
-        ParticipatingSiteConverter converter = new ParticipatingSiteConverter();
-        StudySite studySite = constuctStudySite();
-        ParticipatingSiteDTO dto = converter.convertFromDomainToDto(studySite);
-        studySite = converter.convertFromDtoToDomain(dto);
-
-        assertParticipatingSiteConverter(studySite, dto);
-    }
-
-    private void assertParticipatingSiteConverter(StudySite studySite, ParticipatingSiteDTO dto) {
-        assertEquals(studySite.getId(), IiConverter.convertToLong(dto.getIdentifier()));
-        assertEquals(studySite.getStudyProtocol().getId(),
-                IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
-        assertEquals(studySite.getLocalStudyProtocolIdentifier(),  dto.getLocalStudyProtocolIdentifier().getValue());
-        assertEquals(studySite.getReviewBoardApprovalDate().getTime(),
-                dto.getReviewBoardApprovalDate().getValue().getTime());
-        assertEquals(studySite.getReviewBoardApprovalNumber(), dto.getReviewBoardApprovalNumber().getValue());
-        assertEquals(studySite.getReviewBoardApprovalStatusCode().getCode(),
-                dto.getReviewBoardApprovalStatusCode().getCode());
-        assertEquals(studySite.getReviewBoardOrganizationalAffiliation(),
-                dto.getReviewBoardOrganizationalAffiliation().getValue());
-        assertEquals(studySite.getProgramCodeText(), dto.getProgramCodeText().getValue());
-        assertEquals(studySite.getAccrualDateRangeHigh().getTime(),
-                dto.getAccrualDateRange().getHigh().getValue().getTime());
-        assertEquals(studySite.getAccrualDateRangeLow().getTime(),
-                dto.getAccrualDateRange().getLow().getValue().getTime());
-        assertFalse(dto.getStudySiteContacts().isEmpty());
-        assertEquals(RecruitmentStatusCode.SUSPENDED_RECRUITING.getCode(),
-                dto.getStudySiteAccrualStatus().getStatusCode().getCode());
-        assertEquals(today.getTime(), dto.getStudySiteAccrualStatus().getStatusDate().getValue().getTime());
-    }
-
-    /**
-     * @throws PAException
-     */
-    private StudySite constuctStudySite() throws PAException {
-        StudyProtocol sp = (StudyProtocol) session.load(StudyProtocol.class, TestSchema.studyProtocolIds.get(0));
+    @Override
+    public StudySite makeBo() {
         StudySite studySite = new StudySite();
-        studySite.setId(123L);
-        studySite.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        studySite.setId(ID);
+        studySite.setStudyProtocol(getStudyProtocol());
         studySite.setLocalStudyProtocolIdentifier("ABE");
-        studySite.setStudyProtocol(sp);
-        studySite.setReviewBoardApprovalDate(new Timestamp(new Date().getTime()));
+        studySite.setReviewBoardApprovalDate(new Timestamp(today.getTime()));
         studySite.setReviewBoardApprovalNumber("1");
         studySite.setReviewBoardApprovalStatusCode(ReviewBoardApprovalStatusCode.SUBMITTED_PENDING);
         studySite.setReviewBoardOrganizationalAffiliation("TEST");
-        studySite.setStatusCode(FunctionalRoleStatusCode.PENDING);
-        studySite.setStatusDateRangeHigh(new Timestamp(new Date().getTime()));
-        studySite.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         studySite.setProgramCodeText("Testing");
-        studySite.setAccrualDateRangeHigh(new Timestamp(new Date().getTime()));
-        studySite.setAccrualDateRangeLow(new Timestamp(new Date().getTime()));
-        for (Long id : TestSchema.studySiteContactIds) {
-            StudySiteContact ssc = (StudySiteContact) session.load(StudySiteContact.class, id);
-            studySite.getStudySiteContacts().add(ssc);
-        }
+        studySite.setAccrualDateRangeLow(new Timestamp(today.getTime()));
+        studySite.setAccrualDateRangeHigh(new Timestamp(today.getTime()));
+        studySite.getStudySiteContacts().add(makeStudySiteContact());
 
         Date yesterday = DateUtils.addDays(today, -1);
         Date twoDaysAgo = DateUtils.addDays(today, -2);
@@ -222,4 +155,96 @@ public class ParticipatingSiteConverterTest {
 
         return studySite;
     }
+
+    private StudySiteContact makeStudySiteContact() {
+        StudySiteContact ssc = new StudySiteContact();
+        ssc.setAddressLine("Address 1");
+        ssc.setCity("City");
+        ssc.setPhone("111");
+        ssc.setEmail("test@example.com");
+        ssc.setDeliveryAddressLine("Del. Address 1");
+        ssc.setPostalCode("ZZZZZ");
+        ssc.setPrimaryIndicator(true);
+        ssc.setRoleCode(StudySiteContactRoleCode.SUBMITTER);
+        ssc.setState("ZZ");
+        ssc.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ssc.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("1/15/2008"));
+        ssc.setStudyProtocol(getStudyProtocol());
+        return ssc;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ParticipatingSiteDTO makeDto() {
+        ParticipatingSiteDTO dto = new ParticipatingSiteDTO();
+        dto.setIdentifier(IiConverter.convertToIi(ID));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(STUDY_PROTOCOL_ID));
+        dto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("ABE"));
+        dto.setReviewBoardApprovalDate(TsConverter.convertToTs(today));
+        dto.setReviewBoardApprovalNumber(StConverter.convertToSt("1"));
+        dto.setReviewBoardApprovalStatusCode(CdConverter
+            .convertStringToCd(ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.getCode()));
+
+        dto.setReviewBoardOrganizationalAffiliation(StConverter.convertToSt("TEST"));
+        dto.setProgramCodeText(StConverter.convertToSt("Testing"));
+        dto.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(today, today));
+        dto.setStudySiteContacts(new ArrayList<StudySiteContactDTO>());
+        try {
+            dto.getStudySiteContacts().add(new StudySiteContactConverter()
+                                               .convertFromDomainToDto(makeStudySiteContact()));
+        } catch (PAException e) {
+            throw new IllegalStateException("An unexpected exception occurred", e);
+        }
+
+        StudySiteAccrualStatusDTO ssasDto = new StudySiteAccrualStatusDTO();
+        ssasDto.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.SUSPENDED_RECRUITING.getCode()));
+        ssasDto.setStatusDate(TsConverter.convertToTs(today));
+
+        return dto;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void verifyBo(StudySite bo) {
+        assertEquals(ID, bo.getId());
+        assertEquals(STUDY_PROTOCOL_ID, bo.getStudyProtocol().getId());
+        assertEquals("ABE", bo.getLocalStudyProtocolIdentifier());
+        assertEquals(today, bo.getReviewBoardApprovalDate());
+        assertEquals("1", bo.getReviewBoardApprovalNumber());
+        assertEquals(ReviewBoardApprovalStatusCode.SUBMITTED_PENDING, bo.getReviewBoardApprovalStatusCode());
+        assertEquals("TEST", bo.getReviewBoardOrganizationalAffiliation());
+        assertEquals("Testing", bo.getProgramCodeText());
+        assertEquals(today, bo.getAccrualDateRangeHigh());
+        assertEquals(today, bo.getAccrualDateRangeLow());
+
+        assertTrue(bo.getStudySiteContacts().isEmpty());
+        assertTrue(bo.getStudySiteAccrualStatuses().isEmpty());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void verifyDto(ParticipatingSiteDTO dto) {
+        assertEquals(ID, IiConverter.convertToLong(dto.getIdentifier()));
+        assertEquals(STUDY_PROTOCOL_ID, IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+        assertEquals("ABE", dto.getLocalStudyProtocolIdentifier().getValue());
+        assertEquals(today, dto.getReviewBoardApprovalDate().getValue());
+        assertEquals("1", dto.getReviewBoardApprovalNumber().getValue());
+        assertEquals(ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.getCode(), dto.getReviewBoardApprovalStatusCode()
+            .getCode());
+        assertEquals("TEST", dto.getReviewBoardOrganizationalAffiliation().getValue());
+        assertEquals("Testing", dto.getProgramCodeText().getValue());
+        assertEquals(today, dto.getAccrualDateRange().getHigh().getValue());
+        assertEquals(today, dto.getAccrualDateRange().getLow().getValue());
+        assertFalse(dto.getStudySiteContacts().isEmpty());
+        assertEquals(RecruitmentStatusCode.SUSPENDED_RECRUITING.getCode(), dto.getStudySiteAccrualStatus()
+            .getStatusCode().getCode());
+        assertEquals(today, dto.getStudySiteAccrualStatus().getStatusDate().getValue());
+    }
+
 }

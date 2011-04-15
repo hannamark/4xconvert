@@ -139,11 +139,11 @@ import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PhoneUtil;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -231,7 +231,7 @@ public class PAServiceUtils {
      * @return number of counts
      */
     public int executeSql(String sql) {
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         return session.createSQLQuery(sql).executeUpdate();
     }
 
@@ -287,7 +287,7 @@ public class PAServiceUtils {
         if (PAUtil.isIiNull(spIi)) {
             throw new PAException("Trial must have an Ii created.");
         }
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         StudyProtocol sp = (StudyProtocol) session.get(StudyProtocol.class, Long.valueOf(spIi.getExtension()));
         //check if the assigned identifier exists
         //if no - generate the nci identifier and set it in the sp.
@@ -901,7 +901,7 @@ public class PAServiceUtils {
      * @return next submission number
      */
     public Integer generateSubmissionNumber(String identifier) {
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         String query = "select max(sp.submissionNumber) from StudyProtocol sp where "
             + "sp.otherIdentifiers.extension = '" + identifier + "' ";
         Integer maxValue = (Integer) session.createQuery(query).list().get(0);
@@ -1405,7 +1405,7 @@ public class PAServiceUtils {
         } else {
             throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());
         }
-        List<T> queryList = HibernateUtil.getCurrentSession().createQuery(hql.toString()).list();
+        List<T> queryList = PaHibernateUtil.getCurrentSession().createQuery(hql.toString()).list();
         T sr = null;
 
         if (!queryList.isEmpty()) {
@@ -1509,8 +1509,9 @@ public class PAServiceUtils {
         CorrelationUtils cUtils = new CorrelationUtils();
         CorrelationDto poDto = (CorrelationDto) getCorrelationByIi(isoIi);
         // Step 1 : Check of PA has structural role , if not create one
-        OrganizationalStructuralRole dupSR =
-            cUtils.getStructuralRoleByIi(DSetConverter.convertToIi(poDto.getIdentifier()));
+        gov.nih.nci.pa.util.CorrelationUtils commonsCorrUtils = new gov.nih.nci.pa.util.CorrelationUtils();
+        OrganizationalStructuralRole dupSR = commonsCorrUtils.getStructuralRoleByIi(DSetConverter.convertToIi(poDto
+            .getIdentifier()));
         if (dupSR == null) {
             // create a new structural role
             if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
@@ -1608,62 +1609,60 @@ public class PAServiceUtils {
        * @param identifierDTO study site identifier
        * @throws PAException on error
        */
-      public void manageStudyIdentifiers(StudySiteDTO identifierDTO) throws PAException {
-          if (identifierDTO == null) {
-              throw new PAException("Identifier DTO cannot be null");
-          }
-          if (PAUtil.isIiNull(identifierDTO.getResearchOrganizationIi())) {
-              throw new PAException("Research Org Identifier cannot be null");
-          }
-          if (PAUtil.isIiNull(identifierDTO.getStudyProtocolIdentifier())) {
-              throw new PAException("Study Protocol Identifier cannot be null");
-          }
-          if (PAUtil.isCdNull(identifierDTO.getFunctionalCode())) {
-              throw new PAException("Functional Code cannot be null");
-          }
-          if (PAUtil.isIiNotNull(identifierDTO.getResearchOrganizationIi())) {
-              StructuralRole srRO = new CorrelationUtils().getStructuralRoleByIi(
-                      identifierDTO.getResearchOrganizationIi());
-              if (srRO == null) {
-                   ResearchOrganizationDTO  poSrDto = (ResearchOrganizationDTO) getCorrelationByIi(
-                           IiConverter.convertToPoResearchOrganizationIi(
-                      identifierDTO.getResearchOrganizationIi().getExtension()));
-                 if (poSrDto == null) {
-                     throw new PAException("Structral Role is not found in PO"
-                             + identifierDTO.getResearchOrganizationIi());
-                 }
-                 Long roId = PaRegistry.getOrganizationCorrelationService().createResearchOrganizationCorrelations(
-                          poSrDto.getPlayerIdentifier().getExtension());
-                 srRO = getStructuralRole(IiConverter.convertToPoResearchOrganizationIi(String.valueOf(roId)));
-              }
-              //here only using pa ro id but expecting allways po ro id
-              identifierDTO.setResearchOrganizationIi(IiConverter.convertToIi(srRO.getId()));
-          }
-          //check if any record is there in db
-          LimitOffset pagingParams = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
-          List<StudySiteDTO> spDtos;
-          try {
-              StudySiteDTO criteriaDTO = new StudySiteDTO();
-              criteriaDTO.setFunctionalCode(identifierDTO.getFunctionalCode());
-              criteriaDTO.setStudyProtocolIdentifier(identifierDTO.getStudyProtocolIdentifier());
-              if (identifierDTO.getFunctionalCode().getCode().equalsIgnoreCase(
-                      StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getCode())) {
-                  criteriaDTO.setResearchOrganizationIi(identifierDTO.getResearchOrganizationIi());
-              }
-              spDtos = PaRegistry.getStudySiteService().search(criteriaDTO, pagingParams);
-          } catch (TooManyResultsException e) {
-              throw new PAException(String.format(ERR_MSG, identifierDTO.getStudyProtocolIdentifier().getExtension()
-                      , identifierDTO.getFunctionalCode().getCode()), e);
-          }
-          StudySiteDTO studySiteDB = PAUtil.getFirstObj(spDtos);
-          if (studySiteDB != null && PAUtil.isIiNotNull(studySiteDB.getIdentifier())) {
-              identifierDTO.setIdentifier(studySiteDB.getIdentifier());
-          }
-          List<StudySiteDTO> newSiteDTOS = new ArrayList<StudySiteDTO>();
-          newSiteDTOS.add(identifierDTO);
-          createOrUpdate(newSiteDTOS, IiConverter.convertToStudySiteIi(null),
-                      identifierDTO.getStudyProtocolIdentifier());
-      }
+    public void manageStudyIdentifiers(StudySiteDTO identifierDTO) throws PAException {
+        if (identifierDTO == null) {
+            throw new PAException("Identifier DTO cannot be null");
+        }
+        if (PAUtil.isIiNull(identifierDTO.getResearchOrganizationIi())) {
+            throw new PAException("Research Org Identifier cannot be null");
+        }
+        if (PAUtil.isIiNull(identifierDTO.getStudyProtocolIdentifier())) {
+            throw new PAException("Study Protocol Identifier cannot be null");
+        }
+        if (PAUtil.isCdNull(identifierDTO.getFunctionalCode())) {
+            throw new PAException("Functional Code cannot be null");
+        }
+        if (PAUtil.isIiNotNull(identifierDTO.getResearchOrganizationIi())) {
+            gov.nih.nci.pa.util.CorrelationUtils commonsCorrUtils = new gov.nih.nci.pa.util.CorrelationUtils();
+            StructuralRole srRO = commonsCorrUtils.getStructuralRoleByIi(identifierDTO.getResearchOrganizationIi());
+            if (srRO == null) {
+                ResearchOrganizationDTO poSrDto = (ResearchOrganizationDTO) getCorrelationByIi(IiConverter
+                    .convertToPoResearchOrganizationIi(identifierDTO.getResearchOrganizationIi().getExtension()));
+                if (poSrDto == null) {
+                    throw new PAException("Structral Role is not found in PO"
+                            + identifierDTO.getResearchOrganizationIi());
+                }
+                Long roId = PaRegistry.getOrganizationCorrelationService()
+                    .createResearchOrganizationCorrelations(poSrDto.getPlayerIdentifier().getExtension());
+                srRO = getStructuralRole(IiConverter.convertToPoResearchOrganizationIi(String.valueOf(roId)));
+            }
+            // here only using pa ro id but expecting allways po ro id
+            identifierDTO.setResearchOrganizationIi(IiConverter.convertToIi(srRO.getId()));
+        }
+        // check if any record is there in db
+        LimitOffset pagingParams = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+        List<StudySiteDTO> spDtos;
+        try {
+            StudySiteDTO criteriaDTO = new StudySiteDTO();
+            criteriaDTO.setFunctionalCode(identifierDTO.getFunctionalCode());
+            criteriaDTO.setStudyProtocolIdentifier(identifierDTO.getStudyProtocolIdentifier());
+            if (identifierDTO.getFunctionalCode().getCode()
+                .equalsIgnoreCase(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getCode())) {
+                criteriaDTO.setResearchOrganizationIi(identifierDTO.getResearchOrganizationIi());
+            }
+            spDtos = PaRegistry.getStudySiteService().search(criteriaDTO, pagingParams);
+        } catch (TooManyResultsException e) {
+            throw new PAException(String.format(ERR_MSG, identifierDTO.getStudyProtocolIdentifier().getExtension(),
+                                                identifierDTO.getFunctionalCode().getCode()), e);
+        }
+        StudySiteDTO studySiteDB = PAUtil.getFirstObj(spDtos);
+        if (studySiteDB != null && PAUtil.isIiNotNull(studySiteDB.getIdentifier())) {
+            identifierDTO.setIdentifier(studySiteDB.getIdentifier());
+        }
+        List<StudySiteDTO> newSiteDTOS = new ArrayList<StudySiteDTO>();
+        newSiteDTOS.add(identifierDTO);
+        createOrUpdate(newSiteDTOS, IiConverter.convertToStudySiteIi(null), identifierDTO.getStudyProtocolIdentifier());
+    }
 
     /**
      * Gets the country name of the entity (organization of person).

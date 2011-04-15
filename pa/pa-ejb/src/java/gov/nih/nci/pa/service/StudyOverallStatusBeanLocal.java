@@ -96,8 +96,8 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.exception.PAValidationException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -120,7 +120,7 @@ import org.hibernate.Session;
  *
  */
 @Stateless
-@Interceptors({HibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
+@Interceptors({PaHibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyOverallStatusBeanLocal extends
         AbstractCurrentStudyIsoService<StudyOverallStatusDTO, StudyOverallStatus, StudyOverallStatusConverter>
@@ -151,7 +151,7 @@ public class StudyOverallStatusBeanLocal extends
         if (!PAUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Existing StudyOverallStatus objects cannot be modified. Append new object instead.");
         }
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         // enforce business rules
         StudyOverallStatusDTO oldStatus = getCurrentByStudyProtocol(dto.getStudyProtocolIdentifier());
         if (oldStatus != null && !isTrialStatusOrDateChanged(dto, dto.getStudyProtocolIdentifier())) {
@@ -202,7 +202,7 @@ public class StudyOverallStatusBeanLocal extends
 
         StudyOverallStatus intermediateStatus = null;
         StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         if (StringUtils.equals(oldStatus.getStatusCode().getCode(), StudyStatusCode.IN_REVIEW.getCode())
                 && StringUtils.equals(newStatus.getStatusCode().getCode(), StudyStatusCode.ACTIVE.getCode())) {
             //Creating missing approved status here.
@@ -276,7 +276,7 @@ public class StudyOverallStatusBeanLocal extends
         }
         validateReasonText(dto);
 
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         StudyOverallStatus bo = Converters.get(StudyOverallStatusConverter.class).convertFromDtoToDomain(dto);
 
         session.merge(bo);

@@ -85,13 +85,10 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.DocumentWorkFlowStatusTest;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
-import gov.nih.nci.pa.domain.StudyOverallStatusTest;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
@@ -100,11 +97,14 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -116,28 +116,28 @@ import org.junit.Test;
  * @author hreinhart
  *
  */
-public class StudyOverallStatusServiceTest {
+public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
     private final StudyOverallStatusServiceBean bean = new StudyOverallStatusServiceBean();
-    private final StudyOverallStatusServiceRemote remoteEjb = bean;
-    Ii pid;
+    private Ii spIi;
 
     @Before
     public void setUp() throws Exception {
-        ServiceLocator paSvcLoc = mock (ServiceLocator.class);
+        ServiceLocator paSvcLoc = mock(ServiceLocator.class);
         PaRegistry.getInstance().setServiceLocator(paSvcLoc);
         when(paSvcLoc.getDocumentWorkflowStatusService()).thenReturn(new DocumentWorkflowStatusBeanLocal());
         when(paSvcLoc.getStudyProtocolService()).thenReturn(new StudyProtocolServiceBean());
 
-        TestSchema.reset();
         TestSchema.primeData();
-        pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
+        spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
     }
 
     @Test
     public void updateTest() throws Exception {
-        StudyOverallStatusDTO dto = remoteEjb.getCurrentByStudyProtocol(pid);
+        TestSchema.addAbstractedWorkflowStatus(IiConverter.convertToLong(spIi));
+
+        StudyOverallStatusDTO dto = bean.getCurrentByStudyProtocol(spIi);
         try {
-            remoteEjb.create(dto);
+            bean.create(dto);
             fail("StudyOverallStatus objects cannot be modified.");
         } catch (PAException e) {
             // expected behavior
@@ -151,8 +151,8 @@ public class StudyOverallStatusServiceTest {
         try {
             dto.setIdentifier(IiConverter.convertToIi((Long) null));
             dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.COMPLETE));
-            dto.setStudyProtocolIdentifier(pid);
-            remoteEjb.create(dto);
+            dto.setStudyProtocolIdentifier(spIi);
+            bean.create(dto);
             fail("StudyOverallStatus transitions must follow business rules.");
         } catch (PAException e) {
             // expected behavior
@@ -160,15 +160,15 @@ public class StudyOverallStatusServiceTest {
         dto.setIdentifier(IiConverter.convertToIi((Long) null));
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.CLOSED_TO_ACCRUAL));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("2/2/2009")));
-        dto.setStudyProtocolIdentifier(pid);
-        remoteEjb.create(dto);
+        dto.setStudyProtocolIdentifier(spIi);
+        bean.create(dto);
 
-        StudyOverallStatusDTO result = remoteEjb.getCurrentByStudyProtocol(pid);
+        StudyOverallStatusDTO result = bean.getCurrentByStudyProtocol(spIi);
         assertNotNull(IiConverter.convertToLong(result.getIdentifier()));
         assertEquals(result.getStatusCode().getCode(), dto.getStatusCode().getCode());
         assertEquals(TsConverter.convertToTimestamp(result.getStatusDate()),
                      TsConverter.convertToTimestamp(dto.getStatusDate()));
-        assertEquals(IiConverter.convertToLong(pid), IiConverter.convertToLong(result.getStudyProtocolIdentifier()));
+        assertEquals(IiConverter.convertToLong(spIi), IiConverter.convertToLong(result.getStudyProtocolIdentifier()));
 
     }
 
@@ -183,25 +183,25 @@ public class StudyOverallStatusServiceTest {
     public void testIntermediateStudyOverallStatusCreation() throws Exception {
         StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
         InterventionalStudyProtocol sp = new InterventionalStudyProtocol();
-        sp = (InterventionalStudyProtocol) StudyProtocolTest.createStudyProtocolObj(sp);
-        sp = StudyProtocolTest.createInterventionalStudyProtocolObj(sp);
+        sp = (InterventionalStudyProtocol) TestSchema.createStudyProtocolObj(sp);
+        sp = TestSchema.createInterventionalStudyProtocolObj(sp);
         TestSchema.addUpdObject(sp);
         Ii spId = IiConverter.convertToStudyProtocolIi(sp.getId());
 
-        DocumentWorkflowStatus docWorkflow = DocumentWorkFlowStatusTest.createDocumentWorkflowStatus(sp);
+        DocumentWorkflowStatus docWorkflow = TestSchema.createDocumentWorkflowStatus(sp);
         TestSchema.addUpdObject(docWorkflow);
 
-        StudyOverallStatus inReview = StudyOverallStatusTest.createStudyOverallStatusobj(sp);
+        StudyOverallStatus inReview = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
         inReview.setStatusCode(StudyStatusCode.IN_REVIEW);
-        remoteEjb.create(statusConverter.convertFromDomainToDto(inReview));
-        assertEquals(remoteEjb.getByStudyProtocol(spId).size(), 1);
+        bean.create(statusConverter.convertFromDomainToDto(inReview));
+        assertEquals(bean.getByStudyProtocol(spId).size(), 1);
 
-        StudyOverallStatus active = StudyOverallStatusTest.createStudyOverallStatusobj(sp);
+        StudyOverallStatus active = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
         active.setStatusCode(StudyStatusCode.ACTIVE);
-        remoteEjb.create(statusConverter.convertFromDomainToDto(active));
+        bean.create(statusConverter.convertFromDomainToDto(active));
 
         StudyOverallStatusDTO approved = null;
-        for (StudyOverallStatusDTO dto : remoteEjb.getByStudyProtocol(spId)) {
+        for (StudyOverallStatusDTO dto : bean.getByStudyProtocol(spId)) {
             if (StringUtils.equals(dto.getStatusCode().getCode(), StudyStatusCode.APPROVED.getCode())) {
                 approved = dto;
                 break;
@@ -211,12 +211,12 @@ public class StudyOverallStatusServiceTest {
         assertEquals("Approved and In Review should have the same status date", active.getStatusDate(),
                 TsConverter.convertToTimestamp(approved.getStatusDate()));
 
-        StudyOverallStatus closedToAccrualAndIntervention = StudyOverallStatusTest.createStudyOverallStatusobj(sp);
+        StudyOverallStatus closedToAccrualAndIntervention = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
         closedToAccrualAndIntervention.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION);
-        remoteEjb.create(statusConverter.convertFromDomainToDto(closedToAccrualAndIntervention));
+        bean.create(statusConverter.convertFromDomainToDto(closedToAccrualAndIntervention));
 
         StudyOverallStatusDTO closedToAccrual = null;
-        for (StudyOverallStatusDTO dto : remoteEjb.getByStudyProtocol(spId)) {
+        for (StudyOverallStatusDTO dto : bean.getByStudyProtocol(spId)) {
             if (StringUtils.equals(dto.getStatusCode().getCode(), StudyStatusCode.CLOSED_TO_ACCRUAL.getCode())) {
                 closedToAccrual = dto;
                 break;
@@ -231,10 +231,10 @@ public class StudyOverallStatusServiceTest {
 
     @Test
     public void getByProtocolTest() throws Exception {
-        List<StudyOverallStatusDTO> statusList = remoteEjb.getByStudyProtocol(pid);
+        List<StudyOverallStatusDTO> statusList = bean.getByStudyProtocol(spIi);
         assertEquals(2, statusList.size());
 
-        StudyOverallStatusDTO dto = remoteEjb.getCurrentByStudyProtocol(pid);
+        StudyOverallStatusDTO dto = bean.getCurrentByStudyProtocol(spIi);
         assertEquals(IiConverter.convertToLong(statusList.get(1).getIdentifier()),
                      (IiConverter.convertToLong(dto.getIdentifier())));
     }
@@ -242,7 +242,7 @@ public class StudyOverallStatusServiceTest {
     @Test
     public void createTest() throws Exception {
         // simulate creating new protocol using registry
-        StudyProtocol spNew = StudyProtocolTest.createStudyProtocolObj();
+        StudyProtocol spNew = TestSchema.createStudyProtocolObj();
         spNew.setOfficialTitle("New Protocol");
         TestSchema.addUpdObject(spNew);
 
@@ -253,13 +253,13 @@ public class StudyOverallStatusServiceTest {
         Ii initialIi = null;
         dto.setIdentifier(initialIi);
         assertTrue(PAUtil.isIiNull(dto.getIdentifier()));
-        StudyOverallStatusDTO resultDto = remoteEjb.create(dto);
+        StudyOverallStatusDTO resultDto = bean.create(dto);
         assertFalse(PAUtil.isIiNull(resultDto.getIdentifier()));
     }
 
     @Test
     public void nullInDateTest() throws Exception {
-        StudyProtocol spNew = StudyProtocolTest.createStudyProtocolObj();
+        StudyProtocol spNew = TestSchema.createStudyProtocolObj();
         spNew.setOfficialTitle("New Protocol");
         TestSchema.addUpdObject(spNew);
 
@@ -269,26 +269,26 @@ public class StudyOverallStatusServiceTest {
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew.getId()));
         dto.setIdentifier(null);
         try {
-            remoteEjb.create(dto);
+            bean.create(dto);
             fail("PAException should have been thrown for null in status date.");
         } catch (PAException e) {
             // expected behavior
         }
         dto.setStatusDate(TsConverter.convertToTs(null));
         try {
-            remoteEjb.create(dto);
+            bean.create(dto);
             fail("PAException should have been thrown for Ts null in status date.");
         } catch (PAException e) {
             // expected behavior
         }
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2000")));
-        dto = remoteEjb.create(dto);
+        dto = bean.create(dto);
         assertFalse(PAUtil.isIiNull(dto.getIdentifier()));
     }
 
     @Test
     public void iiRootTest() throws Exception {
-        List<StudyOverallStatusDTO> dtoList = remoteEjb.getByStudyProtocol(pid);
+        List<StudyOverallStatusDTO> dtoList = bean.getByStudyProtocol(spIi);
         assertTrue(dtoList.size() > 0);
         StudyOverallStatusDTO dto = dtoList.get(0);
         assertEquals(dto.getIdentifier().getRoot(), IiConverter.STUDY_OVERALL_STATUS_ROOT);
@@ -298,7 +298,7 @@ public class StudyOverallStatusServiceTest {
     @Test
     public void createWithReasonTextTest() throws Exception {
         // simulate creating new protocol using registry
-        StudyProtocol spNew = StudyProtocolTest.createStudyProtocolObj();
+        StudyProtocol spNew = TestSchema.createStudyProtocolObj();
         spNew.setOfficialTitle("New Protocol");
         TestSchema.addUpdObject(spNew);
 
@@ -309,17 +309,28 @@ public class StudyOverallStatusServiceTest {
         Ii initialIi = null;
         dto.setIdentifier(initialIi);
         try {
-             remoteEjb.create(dto);
+             bean.create(dto);
         } catch(PAException e) {
             assertTrue(StringUtils.startsWith(e.getMessage(), "Validation Exception A reason must be entered when the study status "));
         }
         dto.setReasonText(StConverter.convertToSt(RandomStringUtils.random(2001)));
         try {
-            remoteEjb.create(dto);
+            bean.create(dto);
         } catch(PAException e) {
            assertTrue(StringUtils.startsWith(e.getMessage(), "Validation Exception Reason must be less than 2000 characters."));
         }
         dto.setReasonText(StConverter.convertToSt(RandomStringUtils.random(2000)));
-        remoteEjb.create(dto);
+        bean.create(dto);
+    }
+
+    public static StudyOverallStatus createStudyOverallStatusobj(StudyProtocol sp) {
+        StudyOverallStatus create = new StudyOverallStatus();
+        Timestamp now = new Timestamp(new Date().getTime());
+        create.setStudyProtocol(sp);
+        create.setStatusCode(StudyStatusCode.ACTIVE);
+        create.setStatusDate(now);
+        create.setUserLastUpdated(TestSchema.getUser());
+        create.setDateLastUpdated(now);
+        return create;
     }
 }

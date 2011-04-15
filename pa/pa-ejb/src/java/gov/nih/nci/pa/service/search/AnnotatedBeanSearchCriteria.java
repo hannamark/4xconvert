@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.pa.service.search;
 
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -135,6 +135,6 @@ public class AnnotatedBeanSearchCriteria<T extends PersistentObject> extends
      */
     @Override
     public Session getSession() {
-        return HibernateUtil.getCurrentSession();
+        return PaHibernateUtil.getCurrentSession();
     }
 }

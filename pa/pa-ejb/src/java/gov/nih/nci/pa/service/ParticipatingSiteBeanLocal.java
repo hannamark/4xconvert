@@ -110,8 +110,8 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
 import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -153,7 +153,7 @@ import org.jboss.annotation.security.SecurityDomain;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @SecurityDomain("pa")
 @RolesAllowed({ "client", "Abstractor" })
 @SuppressWarnings("PMD.AvoidRethrowingException") //Suppressed to catch and throw PAException to avoid re-wrapping.
@@ -211,7 +211,7 @@ implements ParticipatingSiteServiceLocal {
             }
         });
 
-        Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(StudySite.class);
+        Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(StudySite.class);
         criteria.add(Restrictions.in("id", ids));
         return converter.convertFromDomainToDtos(criteria.list());
     }
@@ -437,7 +437,7 @@ implements ParticipatingSiteServiceLocal {
     }
 
     private StudySite getStudySite(Ii studySiteIi) {
-        return (StudySite) HibernateUtil.getCurrentSession().get(StudySite.class,
+        return (StudySite) PaHibernateUtil.getCurrentSession().get(StudySite.class,
                 IiConverter.convertToLong(studySiteIi));
     }
 

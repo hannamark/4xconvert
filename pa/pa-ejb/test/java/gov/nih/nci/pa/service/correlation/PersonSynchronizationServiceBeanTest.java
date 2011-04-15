@@ -5,11 +5,8 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
-import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
 import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.domain.OrganizationTest;
 import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.domain.StudyProtocolStage;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.StudyContactBeanLocal;
@@ -17,9 +14,10 @@ import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactBeanLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -27,7 +25,7 @@ import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
-public class PersonSynchronizationServiceBeanTest {
+public class PersonSynchronizationServiceBeanTest extends AbstractHibernateTestCase {
 
     private final PersonSynchronizationServiceBean bean = new PersonSynchronizationServiceBean();
     private final PersonSynchronizationServiceRemote remoteEjb = bean;
@@ -44,10 +42,8 @@ public class PersonSynchronizationServiceBeanTest {
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
         bean.setSpcLocal(spcService);
         bean.setScLocal(scService);
-        TestSchema.reset();
-        TestSchema.reset();
         // TestSchema.primeData();
-        session  = HibernateUtil.getCurrentSession();
+        session  = PaHibernateUtil.getCurrentSession();
         createTestData();
     }
 
@@ -55,7 +51,7 @@ public class PersonSynchronizationServiceBeanTest {
     public void synchronizePersonUpdateTest() throws Exception {
         Ii roIi = IiConverter.convertToPoPersonIi("abc");
         remoteEjb.synchronizePerson(roIi);
-        Person np = (Person) HibernateUtil.getCurrentSession().load(Person.class, personId);
+        Person np = (Person) PaHibernateUtil.getCurrentSession().load(Person.class, personId);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
         // do assert with the changed values
     }
@@ -77,12 +73,12 @@ public class PersonSynchronizationServiceBeanTest {
         remoteEjb.synchronizePerson(poIi);
         session.flush();
         session.clear();
-        
+
         dbSps = (StudyProtocolStage) session.load(StudyProtocolStage.class, spsId);
         assertTrue("PiIdentifier was not updated", dbSps.getPiIdentifier().equals("2"));
         assertTrue("ResponsibleIdentifier was not updated", dbSps.getResponsibleIdentifier().equals("2"));
         assertTrue("SitePiIdentifier was not updated", dbSps.getSitePiIdentifier().equals("2"));
-        
+
     }
 
     @Test
@@ -138,22 +134,22 @@ public class PersonSynchronizationServiceBeanTest {
 
     private void createTestData() {
 
-        Person p = PersonTest.createPersonObj();
+        Person p = TestSchema.createPersonObj();
         TestSchema.addUpdObject(p);
         assertNotNull(p.getId());
         personId = p.getId();
-        Person np = (Person) HibernateUtil.getCurrentSession().load(Person.class, personId);
+        Person np = (Person) PaHibernateUtil.getCurrentSession().load(Person.class, personId);
         // System.out.println("id = "+personId);
         // System.out.println("id = "+np.getId());
         // System.out.println("name id = "+np.getFirstMiddleLastName());
         // System.out.println("name id = "+np.getStatusCode());
         // System.out.println("---------------");
 
-        Organization o = OrganizationTest.createOrganizationObj();
+        Organization o = TestSchema.createOrganizationObj();
         TestSchema.addUpdObject(o);
         assertNotNull(o.getId());
 
-        ClinicalResearchStaff crs = ClinicalResearchStaffTest.createClinicalResearchStaffObj(o, p);
+        ClinicalResearchStaff crs = TestSchema.createClinicalResearchStaffObj(o, p);
         TestSchema.addUpdObject(crs);
         assertNotNull(crs.getId());
 

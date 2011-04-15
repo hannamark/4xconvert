@@ -99,11 +99,9 @@ import org.junit.Test;
 public class TrialListTest
         extends AbstractReportBeanTest<AbstractStandardCriteriaDto, TrialListResultDto, TrialListReportBean> {
 
-    @Override
     @Before
     public void setUp() throws Exception {
         bean = new TrialListReportBean();
-        super.setUp();
      }
 
     @Override

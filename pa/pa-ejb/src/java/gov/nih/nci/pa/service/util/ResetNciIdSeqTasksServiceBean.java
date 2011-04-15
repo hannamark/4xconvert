@@ -83,8 +83,8 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
@@ -101,7 +101,7 @@ import org.hibernate.Session;
  * @author Max Shestopalov
  */
 @Stateless
-@Interceptors({ HibernateSessionInterceptor.class })
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Local(ResetNciIdSeqTasksServiceLocal.class)
 public class ResetNciIdSeqTasksServiceBean implements ResetNciIdSeqTasksServiceLocal {
@@ -112,11 +112,10 @@ public class ResetNciIdSeqTasksServiceBean implements ResetNciIdSeqTasksServiceL
      * {@inheritDoc}
      */
     public void performTask() throws PAException {
-        Session session = HibernateUtil.getCurrentSession();
-        String queryCheckForExisting =
-            "select cast(substring(max(extension),10) as int) from study_otheridentifiers sp"
-            + " where sp.extension"
-            + " like 'NCI-'||to_char(now(), 'YYYY')||'%' and sp.root = '2.16.840.1.113883.3.26.4.3'";
+        Session session = PaHibernateUtil.getCurrentSession();
+        String queryCheckForExisting = "select cast(substring(max(extension),10) as int) from study_otheridentifiers sp"
+                + " where sp.extension like 'NCI-'||to_char(now(), 'YYYY')||'%'"
+                + " and sp.root = '2.16.840.1.113883.3.26.4.3'";
         Query queryObject = session.createSQLQuery(queryCheckForExisting);
         int resetValue = 1;
         Object currVal = queryObject.uniqueResult();
@@ -130,4 +129,4 @@ public class ResetNciIdSeqTasksServiceBean implements ResetNciIdSeqTasksServiceL
         LOG.info("sequence nci_identifiers_seq reset to " + resetValue);
     }
 
-  }
+}

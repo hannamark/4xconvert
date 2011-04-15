@@ -24,9 +24,9 @@ import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyMilestoneSortCriterion;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.sql.Timestamp;
@@ -50,7 +50,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  *
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyMilestoneBeanLocal
     extends AbstractCurrentStudyIsoService<StudyMilestoneDTO, StudyMilestone, StudyMilestoneConverter>
@@ -165,7 +165,7 @@ public class StudyMilestoneBeanLocal
         if (newDate.after(new Timestamp(new Date().getTime()))) {
             throw new PAException("Milestone dates may not be in the future.");
         }
-        if ((lastDate != null) && lastDate.after(newDate)) {
+        if (lastDate != null && lastDate.after(newDate)) {
             throw new PAException("Milestone's must not predate existing milestones.  The prior milestone date is "
                     + PAUtil.normalizeDateStringWithTime(lastDate.toString()) + ".");
         }
@@ -420,12 +420,10 @@ public class StudyMilestoneBeanLocal
 
             createDocumentWorkflowStatus(DocumentWorkflowStatusCode.REJECTED , dto);
         }
-        if (newCode.equals(MilestoneCode.QC_COMPLETE)
-                && (dwStatus != null)
+        if (newCode.equals(MilestoneCode.QC_COMPLETE) && dwStatus != null
                 && DocumentWorkflowStatusCode.ACCEPTED.equals(dwStatus)
                 && canTransition(dwStatus, DocumentWorkflowStatusCode.ABSTRACTED)) {
-
-            createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTED , dto);
+            createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTED, dto);
         }
 
         if (newCode.equals(MilestoneCode.INITIAL_ABSTRACTION_VERIFY)

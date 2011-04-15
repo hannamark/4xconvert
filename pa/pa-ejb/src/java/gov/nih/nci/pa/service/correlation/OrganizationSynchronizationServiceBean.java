@@ -95,9 +95,9 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -128,13 +128,15 @@ import org.hibernate.criterion.Expression;
  * @since 07/07/2007
  */
 @Stateless
-@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class OrganizationSynchronizationServiceBean implements OrganizationSynchronizationServiceRemote {
 
     private static final Logger LOG = Logger.getLogger(OrganizationSynchronizationServiceBean.class);
-    private static CorrelationUtils cUtils = new CorrelationUtils();
+    private CorrelationUtils cUtils = new CorrelationUtils();
+    private gov.nih.nci.pa.util.CorrelationUtils commonsCorrUtils = new gov.nih.nci.pa.util.CorrelationUtils();
     private static PAServiceUtils paServiceUtil = new PAServiceUtils();
+
 
     @EJB
     private StudySiteServiceLocal spsLocal;
@@ -208,7 +210,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
         Organization paOrg = cUtils.getPAOrganizationByIi(ii);
 
         if (paOrg != null) {
-            Session session = HibernateUtil.getCurrentSession();
+            Session session = PaHibernateUtil.getCurrentSession();
             // update the organization
 
             if (orgDto == null) {
@@ -246,7 +248,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
     private void updateRegistryUsers(Ii identifier, Ii dupId) throws NullifiedEntityException, PAException {
         OrganizationDTO poOrg = PoRegistry.getOrganizationEntityService().getOrganization(dupId);
 
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         Criteria crit = session.createCriteria(RegistryUser.class);
         crit.add(Expression.eq("affiliatedOrganizationId", Long.valueOf(identifier.getExtension())));
         List<RegistryUser> regUsers = crit.list();
@@ -263,7 +265,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
 
         Organization oldPaOrg = cUtils.getPAOrganizationByIi(identifier);
         Organization newPaOrg = cUtils.getPAOrganizationByIi(dupId);
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         session.createQuery("update StudyResourcing set organizationIdentifier = :newPaOrgId "
                 + "where organizationIdentifier = :oldPaOrgId")
         .setString("newPaOrgId", String.valueOf(newPaOrg.getId()))
@@ -289,11 +291,11 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
     private void updateResearchOrganization(final Ii roIdentifier, final ResearchOrganizationDTO roDto)
             throws PAException {
         Session session = null;
-        ResearchOrganization ro = cUtils.getStructuralRoleByIi(roIdentifier);
+        ResearchOrganization ro = commonsCorrUtils.getStructuralRoleByIi(roIdentifier);
         StructuralRoleStatusCode newRoleCode = null;
         Ii roCurrentIi = roIdentifier;
         if (ro != null) {
-            session = HibernateUtil.getCurrentSession();
+            session = PaHibernateUtil.getCurrentSession();
             if (roDto == null) {
                 // this is a nullified scenario .....
                 Long duplicateRoId = null;
@@ -329,12 +331,11 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
 
     private void updateOversightCommittee(final Ii oscIdentifier, final OversightCommitteeDTO oscDto)
             throws PAException {
-        Session session = null;
-        OversightCommittee osc = cUtils.getStructuralRoleByIi(oscIdentifier);
+        OversightCommittee osc = commonsCorrUtils.getStructuralRoleByIi(oscIdentifier);
         StructuralRoleStatusCode newRoleCode = null;
         Ii hcfCurrentIi = oscIdentifier;
         if (osc != null) {
-            session = HibernateUtil.getCurrentSession();
+            Session session = PaHibernateUtil.getCurrentSession();
             if (oscDto == null) {
                 // this is a nullified scenario .....
                 Ii dupSRIi = paServiceUtil.getDuplicateIiOfNullifiedSR(oscIdentifier);
@@ -368,12 +369,11 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
 
     private void updateHealthCareFacility(final Ii hcfIdentifier, final HealthCareFacilityDTO hcfDto)
             throws PAException {
-        Session session = null;
-        HealthCareFacility hcf = cUtils.getStructuralRoleByIi(hcfIdentifier);
+        HealthCareFacility hcf = commonsCorrUtils.getStructuralRoleByIi(hcfIdentifier);
         StructuralRoleStatusCode newRoleCode = null;
         Ii hcfCurrentIi = hcfIdentifier;
         if (hcf != null) {
-            session = HibernateUtil.getCurrentSession();
+            Session session = PaHibernateUtil.getCurrentSession();
             if (hcfDto == null) {
                 // this is a nullified scenario .....
                 // check sr has duplicate
@@ -422,7 +422,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                     + " where oversight_committee_identifier = " + from.getExtension();
         }
 
-        int i = HibernateUtil.getCurrentSession().createSQLQuery(sql).executeUpdate();
+        int i = PaHibernateUtil.getCurrentSession().createSQLQuery(sql).executeUpdate();
         LOG.debug("Sql for update " + sql);
         LOG.debug("total records got update in STUDY_SITE IS " + i);
     }

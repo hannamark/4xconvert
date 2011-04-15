@@ -177,10 +177,10 @@ import gov.nih.nci.pa.service.util.report.TSRReportSubGroupStratificationCriteri
 import gov.nih.nci.pa.service.util.report.TSRReportSummary4Information;
 import gov.nih.nci.pa.service.util.report.TSRReportTrialDesign;
 import gov.nih.nci.pa.service.util.report.TSRReportTrialIdentification;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -213,7 +213,7 @@ import org.apache.commons.lang.StringUtils;
  * @since 01/21/2009
  */
 @Stateless
-@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceRemote {
 

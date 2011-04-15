@@ -6,6 +6,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-public class StudyCheckoutServiceBeanTest {
+public class StudyCheckoutServiceBeanTest extends AbstractHibernateTestCase {
 
     private StudyCheckoutServiceLocal localEjb = new StudyCheckoutServiceBean();
     StudyCheckoutDTO dto = new StudyCheckoutDTO();
@@ -21,7 +22,6 @@ public class StudyCheckoutServiceBeanTest {
 
     @Before
     public void setUp() throws Exception {
-      TestSchema.reset();
       TestSchema.primeData();
       pid = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
     }

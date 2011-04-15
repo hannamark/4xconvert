@@ -83,13 +83,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.domain.StudyResourcing;
-import gov.nih.nci.pa.domain.StudyResourcingTest;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -99,7 +99,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-public class StudyResourcingServiceBeanTest {
+public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
 
     private StudyResourcingServiceLocal remoteEjb = new StudyResourcingBeanLocal();
     Ii pid;
@@ -107,18 +107,17 @@ public class StudyResourcingServiceBeanTest {
     @Before
     public void setUp() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        TestSchema.reset();
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
     }
 
     @Test
     public void getTest() throws Exception {
-        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
+        StudyProtocol sp = TestSchema.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());
 
-        StudyResourcing sr =  StudyResourcingTest.createStudyResourcingObj(sp);
+        StudyResourcing sr = StudyResourcingServiceBeanTest.createStudyResourcingObj(sp);
         TestSchema.addUpdObject(sr);
         assertNotNull(sr.getId());
 
@@ -133,11 +132,11 @@ public class StudyResourcingServiceBeanTest {
     @Test
     public void createStudyResourcingTest() throws Exception {
 
-        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
+        StudyProtocol sp = TestSchema.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());
 
-        StudyResourcing sr =  StudyResourcingTest.createStudyResourcingObj(sp);
+        StudyResourcing sr = StudyResourcingServiceBeanTest.createStudyResourcingObj(sp);
         TestSchema.addUpdObject(sr);
         assertNotNull(sr.getId());
 
@@ -148,19 +147,19 @@ public class StudyResourcingServiceBeanTest {
         StudyResourcingDTO srDTO2 = remoteEjb.createStudyResourcing(srDTO1);
         assertNotNull(srDTO2);
 
-        //assertEquals (srDTO1.getFundingMechanismCode().getCode() , srDTO2.getFundingMechanismCode().getCode());
-        assertEquals (srDTO1.getSerialNumber().getValue(), srDTO2.getSerialNumber().getValue());
+        // assertEquals (srDTO1.getFundingMechanismCode().getCode() , srDTO2.getFundingMechanismCode().getCode());
+        assertEquals(srDTO1.getSerialNumber().getValue(), srDTO2.getSerialNumber().getValue());
 
     }
 
     @Test
     public void updateStudyResourcingTest() throws Exception {
 
-        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
+        StudyProtocol sp = TestSchema.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());
 
-        StudyResourcing sr =  StudyResourcingTest.createStudyResourcingObj(sp);
+        StudyResourcing sr = StudyResourcingServiceBeanTest.createStudyResourcingObj(sp);
         TestSchema.addUpdObject(sr);
         assertNotNull(sr.getId());
 
@@ -170,25 +169,25 @@ public class StudyResourcingServiceBeanTest {
 
         StudyResourcingDTO srDTO2 = remoteEjb.createStudyResourcing(srDTO1);
         assertNotNull(srDTO2);
-        assertEquals (srDTO1.getSerialNumber().getValue(), srDTO2.getSerialNumber().getValue());
+        assertEquals(srDTO1.getSerialNumber().getValue(), srDTO2.getSerialNumber().getValue());
 
         srDTO2.setStudyProtocolIdentifier(IiConverter.convertToIi(sp.getId()));
         srDTO2.setSerialNumber(StConverter.convertToSt("123123"));
         StudyResourcingDTO srDTO3 = remoteEjb.updateStudyResourcing(srDTO2);
         assertNotNull(srDTO3);
-        assertEquals (srDTO3.getSerialNumber().getValue().toString(), "123123");
+        assertEquals(srDTO3.getSerialNumber().getValue().toString(), "123123");
 
-        List<StudyResourcingDTO> statusList =remoteEjb.getStudyResourcingByStudyProtocol(pid);
+        List<StudyResourcingDTO> statusList = remoteEjb.getStudyResourcingByStudyProtocol(pid);
         assertNotNull(statusList);
     }
 
     @Test
     public void iiRootTest() throws Exception {
-        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
+        StudyProtocol sp = TestSchema.createStudyProtocolObj();
         TestSchema.addUpdObject(sp);
         assertNotNull(sp.getId());
 
-        StudyResourcing sr =  StudyResourcingTest.createStudyResourcingObj(sp);
+        StudyResourcing sr = StudyResourcingServiceBeanTest.createStudyResourcingObj(sp);
         TestSchema.addUpdObject(sr);
         assertNotNull(sr.getId());
 
@@ -197,4 +196,18 @@ public class StudyResourcingServiceBeanTest {
         assertTrue(StringUtils.isNotEmpty(dto.getIdentifier().getIdentifierName()));
         assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
     }
+
+    private static StudyResourcing createStudyResourcingObj(StudyProtocol sp) {
+        StudyResourcing sr = new StudyResourcing();
+        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
+        sr.setDateLastUpdated(now);
+        sr.setOrganizationIdentifier("1");
+        sr.setStudyProtocol(sp);
+        sr.setSummary4ReportedResourceIndicator(Boolean.TRUE);
+        sr.setTypeCode(SummaryFourFundingCategoryCode.INDUSTRIAL);
+        sr.setUserLastUpdated(TestSchema.getUser());
+
+        return sr;
+    }
+
 }

@@ -86,6 +86,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -93,13 +94,12 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-public class StudySiteAccrualStatusServiceBeanTest {
+public class StudySiteAccrualStatusServiceBeanTest extends AbstractHibernateTestCase {
 
   private StudySiteAccrualStatusServiceLocal remoteEjb = new StudySiteAccrualStatusBeanLocal();;
   Ii studySiteId;
   @Before
   public void setUp() throws Exception {
-    TestSchema.reset();
     TestSchema.primeData();
     studySiteId = IiConverter.convertToIi(TestSchema.studySiteIds.get(0));
   }

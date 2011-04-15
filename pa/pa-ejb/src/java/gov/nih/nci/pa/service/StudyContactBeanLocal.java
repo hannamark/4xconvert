@@ -17,7 +17,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyContactSortCriterion;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
@@ -37,7 +37,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 public class StudyContactBeanLocal extends AbstractRoleIsoService<StudyContactDTO, StudyContact, StudyContactConverter>
         implements StudyContactServiceLocal {
 

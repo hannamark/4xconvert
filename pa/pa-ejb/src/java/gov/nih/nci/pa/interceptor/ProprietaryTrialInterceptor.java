@@ -7,7 +7,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import javax.interceptor.AroundInvoke;
@@ -42,7 +42,7 @@ public class ProprietaryTrialInterceptor {
             }
         }
         if (PAUtil.isIiNotNull(ii)) {
-            Session session = HibernateUtil.getCurrentSession();
+            Session session = PaHibernateUtil.getCurrentSession();
             StudyProtocol studyProtocol = (StudyProtocol) session.get(StudyProtocol.class,
                                                                       Long.valueOf(ii.getExtension()));
             if (studyProtocol != null && BooleanUtils.isTrue(studyProtocol.getProprietaryTrialIndicator())) {

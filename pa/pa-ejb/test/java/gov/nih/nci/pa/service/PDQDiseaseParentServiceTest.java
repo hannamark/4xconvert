@@ -86,13 +86,12 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.PDQDiseaseParent;
-import gov.nih.nci.pa.domain.PDQDiseaseParentTest;
-import gov.nih.nci.pa.domain.PDQDiseaseTest;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
@@ -107,7 +106,7 @@ import org.junit.Test;
  * @author hreinhart
  *
  */
-public class PDQDiseaseParentServiceTest {
+public class PDQDiseaseParentServiceTest extends AbstractHibernateTestCase {
     private PDQDiseaseParentServiceBean bean = new PDQDiseaseParentServiceBean();
     private PDQDiseaseParentServiceRemote remote = bean;
     private PDQDiseaseBeanLocal diseaseBean = new PDQDiseaseBeanLocal();
@@ -116,7 +115,6 @@ public class PDQDiseaseParentServiceTest {
     @Before
     public void setUp() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        TestSchema.reset();
         TestSchema.primeData();
         dIi = IiConverter.convertToIi(TestSchema.pdqDiseaseIds.get(0));
      }
@@ -163,12 +161,12 @@ public class PDQDiseaseParentServiceTest {
 
     @Test
     public void createTest() throws Exception {
-        PDQDiseaseDTO tn = diseaseBean.create(diseaseBean.convertFromDomainToDto(PDQDiseaseTest.createDiseaseObj("toenail cancer")));
+        PDQDiseaseDTO tn = diseaseBean.create(diseaseBean.convertFromDomainToDto(TestSchema.createPdqDisease("toenail cancer")));
         PDQDisease toeNail = new PDQDisease();
         toeNail.setId(IiConverter.convertToLong(tn.getIdentifier()));
         PDQDisease toe = diseaseBean.convertFromDtoToDomain(diseaseBean.get(dIi));
 
-        PDQDiseaseParent bo = PDQDiseaseParentTest.createDiseaseParentObj(toeNail, toe);
+        PDQDiseaseParent bo = TestSchema.createPdqDiseaseParent(toeNail, toe);
         assertNull(bo.getId());
         PDQDiseaseParentDTO resultDto = remote.create(bean.convertFromDomainToDto(bo));
         PDQDiseaseParent resultBo = bean.convertFromDtoToDomain(resultDto);

@@ -80,19 +80,17 @@ package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.pa.domain.AnatomicSite;
-import gov.nih.nci.pa.domain.AnatomicSiteTest;
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.CountryTest;
 import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.NIHinstitute;
 import gov.nih.nci.pa.domain.PAProperties;
-import gov.nih.nci.pa.domain.PAPropertiesTest;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -100,68 +98,66 @@ import org.junit.Test;
  * @author NAmiruddin
  *
  */
-public class LookUpTableServiceTest {
+public class LookUpTableServiceTest extends AbstractHibernateTestCase {
 
     private final LookUpTableServiceBean bean = new LookUpTableServiceBean();
-    private final LookUpTableServiceRemote remoteEjb = bean;
 
-    @Before
-    public void setUp() throws Exception {
-        TestSchema.reset();
-
-    }
     @Test
     public void getFundingMechanismsTest() throws Exception {
         FundingMechanism fm = new FundingMechanism();
         fm.setFundingMechanismCode("xxx");
-        TestSchema.addUpdObject(fm);
-        List<FundingMechanism> fms = remoteEjb.getFundingMechanisms();
-        assertEquals("Size does not match  " , fms.size(), 1);
+        PaHibernateUtil.getCurrentSession().save(fm);
+        List<FundingMechanism> fms = bean.getFundingMechanisms();
+        assertEquals("Size does not match", fms.size(), 1);
     }
 
     @Test
     public void getNihInstitutesTest () throws Exception {
         NIHinstitute nih = new NIHinstitute();
         nih.setNihInstituteCode("xxx");
-        TestSchema.addUpdObject(nih);
-        List<NIHinstitute> nihs = remoteEjb.getNihInstitutes();
-        assertEquals("Size does not match  " , nihs.size(), 1);
+        PaHibernateUtil.getCurrentSession().save(nih);
+        List<NIHinstitute> nihs = bean.getNihInstitutes();
+        assertEquals("Size does not match", nihs.size(), 1);
     }
 
     @Test
     public void getCountriesTest () throws Exception {
-        Country country = CountryTest.createCountryObj();
-        TestSchema.addUpdObject(country);
-        List<Country> con = remoteEjb.getCountries();
-        assertEquals("Size does not match  " , con.size(), 1);
+        Country country = TestSchema.createCountryObj();
+        PaHibernateUtil.getCurrentSession().save(country);
+        List<Country> con = bean.getCountries();
+        assertEquals("Size does not match", con.size(), 1);
     }
 
     @Test
     public void getPropertyValue () throws Exception {
-        PAProperties prop =  PAPropertiesTest.createPAPropertiesObj();
-        TestSchema.addUpdObject(prop);
-        String data = remoteEjb.getPropertyValue("xxxx");
-        assertEquals("Size does not match  " , data, "yyyyyyyyyyyyyyy");
+        PAProperties prop = new PAProperties();
+        prop.setName("xxxx");
+        prop.setValue("yyyyyyyyyyyyyyy");
+
+        PaHibernateUtil.getCurrentSession().save(prop);
+        String data = bean.getPropertyValue("xxxx");
+        assertEquals("Size does not match", data, "yyyyyyyyyyyyyyy");
     }
+
     @Test
     public void getCountryNameUsingAlpha3Code() throws PAException {
-        Country country = CountryTest.createCountryObj();
-        TestSchema.addUpdObject(country);
-        assertEquals(remoteEjb.searchCountry(country).size(), 1);
+        Country country = TestSchema.createCountryObj();
+        PaHibernateUtil.getCurrentSession().save(country);
+        assertEquals(bean.searchCountry(country).size(), 1);
     }
     @Test
     public void getAnatomicSiteUsingCode() throws PAException {
-        AnatomicSite as = AnatomicSiteTest.createAnatomicSiteObj("Lung");
-        TestSchema.addUpdObject(as);
-        assertEquals(remoteEjb.getLookupEntityByCode(AnatomicSite.class, "Lung").getCode(), "Lung");
+        AnatomicSite as = TestSchema.createAnatomicSiteObj("Lung");
+        PaHibernateUtil.getCurrentSession().save(as);
+        assertEquals(bean.getLookupEntityByCode(AnatomicSite.class, "Lung").getCode(), "Lung");
     }
-    
+
     @Test
     public void getAnatomicSitesTest () throws Exception {
-        AnatomicSite as = AnatomicSiteTest.createAnatomicSiteObj("Lung");
-        TestSchema.addUpdObject(as);
-        List<AnatomicSite> asList = remoteEjb.getAnatomicSites();
-        assertEquals("Size does not match  " , asList.size(), 1);
+        AnatomicSite as = TestSchema.createAnatomicSiteObj("Lung");
+        PaHibernateUtil.getCurrentSession().save(as);
+        List<AnatomicSite> asList = bean.getAnatomicSites();
+        assertEquals("Size does not match", asList.size(), 1);
     }
 
 }

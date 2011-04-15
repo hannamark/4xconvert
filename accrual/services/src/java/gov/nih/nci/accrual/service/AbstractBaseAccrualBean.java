@@ -86,8 +86,8 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -170,7 +170,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
         DTO resultDto = null;
         Session session = null;
         try {
-            session = HibernateUtil.getCurrentSession();
+            session = PaHibernateUtil.getCurrentSession();
             bo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(ii));
             if (bo == null) {
                 LOG.error("Object not found using get() for id = "
@@ -198,7 +198,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
         }
         Session session = null;
         try {
-            session = HibernateUtil.getCurrentSession();
+            session = PaHibernateUtil.getCurrentSession();
             BO bo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(ii));
             session.delete(bo);
             session.flush();
@@ -269,9 +269,8 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
             throw new RemoteException("Iso conversion exception in createOrUpdateNew().", e);
         }
         DTO2 resultDto = null;
-        Session session = null;
         try {
-            session = HibernateUtil.getCurrentSession();
+            Session session = PaHibernateUtil.getCurrentSession();
             setAuditValues(bo);
             bo = (BO2) session.merge(bo);
             session.flush();

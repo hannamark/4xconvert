@@ -47,11 +47,10 @@ import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteBeanLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
-import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,7 +63,7 @@ import org.junit.Test;
  * @author asharma
  *
  */
-public class StudyMilestoneTasksServiceBeanTest extends AbstractMockitoTest {
+public class StudyMilestoneTasksServiceBeanTest extends AbstractHibernateTestCase {
 
     Session sess;
     StudyMilestoneBeanLocal result = new StudyMilestoneBeanLocal();
@@ -72,14 +71,14 @@ public class StudyMilestoneTasksServiceBeanTest extends AbstractMockitoTest {
 
     @Before
     public void setup() throws Exception {
-        TestSchema.reset();
-        TestSchema.primeData();
-        sess = HibernateUtil.getCurrentSession();
+        AbstractMockitoTest mockitoTest = new AbstractMockitoTest();
+        mockitoTest.setUp();
+
         taskBean.setSmRemote(result);
         result.setStudyOnholdService(new StudyOnholdBeanLocal());
         result.setStudyInboxService(new StudyInboxServiceBean());
         AbstractionCompletionServiceBean abstractionBean = new AbstractionCompletionServiceBean();
-        abstractionBean.setPlannedMarkerSvc(plannedMarkerSvc);
+        abstractionBean.setPlannedMarkerSvc(mockitoTest.getPlannedMarkerSvc());
         result.setAbstractionCompletionService(abstractionBean);
         abstractionBean.setStudyProtocolService(new StudyProtocolBeanLocal());
         abstractionBean.setStudySiteService(new StudySiteBeanLocal());
@@ -135,8 +134,8 @@ public class StudyMilestoneTasksServiceBeanTest extends AbstractMockitoTest {
         when(mockStudyRecruitBean.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(recruitDto);
         when(mockStudyRecruitBean.getByStudyProtocol(any(Ii.class))).thenReturn(Arrays.asList(recruitDto));
         abstractionBean.setStudyRecruitmentStatusServiceLocal(mockStudyRecruitBean);
-        when(paRegSvcLoc.getLookUpTableService()).thenReturn(lookupSvc);
-        when(lookupSvc.getPropertyValue(anyString())).thenReturn("");
+        when(paRegSvcLoc.getLookUpTableService()).thenReturn(mockitoTest.getLookupSvc());
+        when(mockitoTest.getLookupSvc().getPropertyValue(anyString())).thenReturn("");
     }
 
     /**

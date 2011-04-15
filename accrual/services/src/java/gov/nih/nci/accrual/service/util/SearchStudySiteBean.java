@@ -86,9 +86,9 @@ import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -108,7 +108,7 @@ import org.hibernate.criterion.Restrictions;
  * @since Aug 17, 2009
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 public class SearchStudySiteBean implements SearchStudySiteService {
 
     /**
@@ -119,7 +119,7 @@ public class SearchStudySiteBean implements SearchStudySiteService {
         List<SearchStudySiteResultDto> result = new ArrayList<SearchStudySiteResultDto>();
         if (!PAUtil.isIiNull(studyProtocolIi) && !PAUtil.isIiNull(registryUserIi)) {
             try {
-                Session session = HibernateUtil.getCurrentSession();
+                Session session = PaHibernateUtil.getCurrentSession();
                 String hql = "select ss.id, org.name, org.identifier "
                     + "from StudyProtocol as sp join sp.studySites as ss "
                     + "left outer join ss.healthCareFacility as ro "
@@ -141,18 +141,18 @@ public class SearchStudySiteBean implements SearchStudySiteService {
                     }
                 }
             } catch (HibernateException hbe) {
-                throw new PAException("Hibernate exception in SearchStudySiteBean.getTrialSummaryByStudyProtocolIi().", 
+                throw new PAException("Hibernate exception in SearchStudySiteBean.getTrialSummaryByStudyProtocolIi().",
                         hbe);
             }
         }
         return result;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public SearchStudySiteResultDto getStudySiteByOrg(Ii studyProtocolIi, Ii orgIi)  throws PAException {
-        Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(StudySite.class);
+        Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(StudySite.class);
         criteria.add(Restrictions.eq("studyProtocol.id", IiConverter.convertToLong(studyProtocolIi)));
         criteria.add(Restrictions.eq("functionalCode", StudySiteFunctionalCode.TREATING_SITE));
         criteria.createCriteria("healthCareFacility").createCriteria("organization")
@@ -179,7 +179,7 @@ public class SearchStudySiteBean implements SearchStudySiteService {
         Set<Long> result = new HashSet<Long>();
         Long userId = IiConverter.convertToLong(registryUserIi);
         if (userId != null) {
-            Session session = HibernateUtil.getCurrentSession();
+            Session session = PaHibernateUtil.getCurrentSession();
             String hql = "select distinct ss.id from StudySiteAccrualAccess ssaa "
                 + " join ssaa.studySite ss where ssaa.registryUser.id = :userId and ssaa.statusCode = :statusCode";
             Query query = session.createQuery(hql);

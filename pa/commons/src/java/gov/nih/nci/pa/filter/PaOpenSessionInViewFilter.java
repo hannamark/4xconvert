@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The pa
+ * source code form and machine readable, binary, object code form. The po
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This pa Software License (the License) is between NCI and You. You (or
+ * This po Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the pa Software to (i) use, install, access, operate,
+ * its rights in the po Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the pa Software; (ii) distribute and
- * have distributed to and by third parties the pa Software and any
+ * and prepare derivative works of the po Software; (ii) distribute and
+ * have distributed to and by third parties the po Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,149 +80,23 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.filter;
 
-import java.security.Identity;
-import java.security.Principal;
-import java.util.Properties;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
-import javax.ejb.EJBHome;
-import javax.ejb.EJBLocalHome;
-import javax.ejb.EJBLocalObject;
-import javax.ejb.EJBObject;
-import javax.ejb.SessionContext;
-import javax.ejb.TimerService;
-import javax.transaction.UserTransaction;
-import javax.xml.rpc.handler.MessageContext;
+import com.fiveamsolutions.nci.commons.util.HibernateHelper;
+import com.fiveamsolutions.nci.commons.web.filter.OpenSessionInViewFilter;
 
 /**
- * @author mshestopalov
- *
+ * Filter extension that uses the PaHibernateUtil.
  */
-@SuppressWarnings("deprecation") // inherited use of deprecated class from implemented interface
-public class MockStatelessContext implements SessionContext {
-
+public class PaOpenSessionInViewFilter extends OpenSessionInViewFilter {
     /**
      * {@inheritDoc}
      */
-    public Identity getCallerIdentity() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Principal getCallerPrincipal() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public EJBHome getEJBHome() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public EJBLocalHome getEJBLocalHome() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Properties getEnvironment() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean getRollbackOnly() throws IllegalStateException {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public TimerService getTimerService() throws IllegalStateException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public UserTransaction getUserTransaction() throws IllegalStateException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isCallerInRole(Identity arg0) {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isCallerInRole(String arg0) {
-        if ("Abstractor".equals(arg0) || "client".equals(arg0)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Object lookup(String arg0) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setRollbackOnly() throws IllegalStateException {
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public <T> T getBusinessObject(Class<T> arg0) throws IllegalStateException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public EJBLocalObject getEJBLocalObject() throws IllegalStateException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public EJBObject getEJBObject() throws IllegalStateException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Class getInvokedBusinessInterface() throws IllegalStateException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public MessageContext getMessageContext() throws IllegalStateException {
-        return null;
+    @Override
+    public HibernateHelper getHibernateHelper() {
+        return PaHibernateUtil.getHibernateHelper();
     }
 
 }

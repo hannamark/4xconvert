@@ -96,7 +96,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusBeanLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceBean;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -107,8 +107,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -116,7 +114,7 @@ import org.junit.Test;
  * @author Hugh Reinhart
  * @since Sep 3, 2009
  */
-public class StudySiteAccrualAccessServiceTest {
+public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase {
     private static final String REQUEST_DETAILS = "request details";
     private Long ssId;
     private static Ii REGISTRY_USER_IDENTIFIER;
@@ -140,7 +138,6 @@ public class StudySiteAccrualAccessServiceTest {
         users.add(user);
         StudySiteAccrualAccessServiceBean.setSubmitterList(users);
         this.bean = bean;
-        TestSchema.reset();
         TestSchema.primeData();
         ssId = TestSchema.studySiteIds.get(0);
         REGISTRY_USER_IDENTIFIER = IiConverter.convertToIi(TestSchema.getRegistryUser().getId());
@@ -205,11 +202,9 @@ public class StudySiteAccrualAccessServiceTest {
             // expected behavior
         }
     }
-  @Test
-  public void testGetTreatingSites() throws PAException {
-        Session session = HibernateUtil.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
+
+    @Test
+    public void testGetTreatingSites() throws PAException {
         assertNotNull(bean.getTreatingSites(TestSchema.studyProtocolIds.get(0)));
-        transaction.commit();
-  }
+    }
 }

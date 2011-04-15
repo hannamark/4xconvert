@@ -46,9 +46,9 @@
     <!-- ====================================================================== -->
 
     <path id="common.package.classpath">
-                 <fileset dir="${pa.dir}/commons/target">
-                    <include name="*.jar"/>
-                 </fileset>
+        <fileset dir="${pa.dir}/commons/target">
+            <include name="*.jar"/>
+        </fileset>
     </path>
 
     <path id="ejb.package.classpath">
@@ -283,18 +283,16 @@
 
         <delete file="${viewer.build.dir}/cobertura.ser"/>
 
-        <cobertura-instrument datafile="${viewer.build.dir}/cobertura.ser"
-                              toDir="${viewer.build.coberturaOutputDir}">
+        <cobertura-instrument datafile="${viewer.build.dir}/cobertura.ser" toDir="${viewer.build.coberturaOutputDir}">
             <fileset dir="${viewer.build.outputDir}">
                 <include name="**/*.class"/>
             </fileset>
         </cobertura-instrument>
 
         <mkdir dir="${viewer.test.reports}"/>
-        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." failureproperty="junit.failure">
             <sysproperty key="basedir" value="."/>
-            <sysproperty key="net.sourceforge.cobertura.datafile"
-                    file="${viewer.build.dir}/cobertura.ser"/>
+            <sysproperty key="net.sourceforge.cobertura.datafile" file="${viewer.build.dir}/cobertura.ser"/>
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
             <classpath location="${viewer.build.coberturaOutputDir}"/>
@@ -312,6 +310,13 @@
                 </fileset>
             </batchtest>
         </junit>
+        <junitreport todir="${viewer.test.reports}">
+            <fileset dir="${viewer.test.reports}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report todir="${viewer.test.reports}" />
+        </junitreport>
+        <fail if="junit.failure" message="Unit test(s) failed.  See reports at ${viewer.test.reports}/index.html."/>
 
         <cobertura-report datafile="${viewer.build.dir}/cobertura.ser"
                           destdir="${viewer.coverage.reports}"

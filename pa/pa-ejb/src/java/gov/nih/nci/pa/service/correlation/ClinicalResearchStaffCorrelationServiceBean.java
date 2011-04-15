@@ -87,8 +87,8 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PAExceptionConstants;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -112,6 +112,7 @@ public class ClinicalResearchStaffCorrelationServiceBean {
 
     private static final Logger LOG  = Logger.getLogger(ClinicalResearchStaffCorrelationServiceBean.class);
     private final CorrelationUtils corrUtils = new CorrelationUtils();
+    private final gov.nih.nci.pa.util.CorrelationUtils commonsCorrUtils = new gov.nih.nci.pa.util.CorrelationUtils();
     /**
      * This method assumes Organization and Person record exists in PO.
      * @param orgPoIdentifier po primary org id
@@ -183,7 +184,8 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         }
 
         // Step 6 : Check of PA has crs , if not create one
-        ClinicalResearchStaff crs = corrUtils.getStructuralRoleByIi(DSetConverter.convertToIi(crsDTO.getIdentifier()));
+        ClinicalResearchStaff crs = commonsCorrUtils.getStructuralRoleByIi(DSetConverter.convertToIi(crsDTO
+            .getIdentifier()));
         if (crs == null) {
             // create a new crs
             crs = new ClinicalResearchStaff();
@@ -195,8 +197,8 @@ public class ClinicalResearchStaffCorrelationServiceBean {
         }
         return crs.getId();
     }
-    
-    private ClinicalResearchStaffDTO getCrsDTOByIdentifier(Ii poCrsIdentifier) 
+
+    private ClinicalResearchStaffDTO getCrsDTOByIdentifier(Ii poCrsIdentifier)
         throws PAException {
         ClinicalResearchStaffDTO crsDTO = null;
         try {
@@ -218,7 +220,7 @@ public class ClinicalResearchStaffCorrelationServiceBean {
      */
     public Long createClinicalResearchStaffCorrelationsWithExistingPoCrs(Ii poCrsIdentifier) throws PAException {
         ClinicalResearchStaffDTO crsDTO = getCrsDTOByIdentifier(poCrsIdentifier);
-        ClinicalResearchStaff crs = corrUtils.getStructuralRoleByIi(poCrsIdentifier);
+        ClinicalResearchStaff crs = commonsCorrUtils.getStructuralRoleByIi(poCrsIdentifier);
         if (crs == null) {
 
             PersonDTO poPersonDTO;
@@ -230,17 +232,17 @@ public class ClinicalResearchStaffCorrelationServiceBean {
             } catch (NullifiedEntityException e) {
                 throw new PAException(PAUtil.handleNullifiedEntityException(e), e);
             }
-            
+
             if (poPersonDTO == null) {
-                throw new PAException("Unable to find Person for identifier: " 
+                throw new PAException("Unable to find Person for identifier: "
                         + crsDTO.getPlayerIdentifier().getExtension());
             }
-            
+
             if (poOrganizationDTO == null) {
-                throw new PAException("Unable to find Organization for identifier: " 
+                throw new PAException("Unable to find Organization for identifier: "
                         + crsDTO.getScoperIdentifier().getExtension());
             }
-            
+
             Person paPerson = corrUtils.createPAPerson(poPersonDTO);
             Organization paOrg = corrUtils.createPAOrganization(poOrganizationDTO);
             crs = new ClinicalResearchStaff();
@@ -266,7 +268,7 @@ public class ClinicalResearchStaffCorrelationServiceBean {
             throw new PAException(" ClinicalResearchStaff should not be null ");
         }
         Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         session.save(crs);
         session.flush();
         return crs;

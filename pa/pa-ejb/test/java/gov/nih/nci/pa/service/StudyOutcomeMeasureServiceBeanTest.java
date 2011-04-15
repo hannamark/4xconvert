@@ -88,6 +88,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
@@ -98,15 +99,15 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-public class StudyOutcomeMeasureServiceBeanTest {
+public class StudyOutcomeMeasureServiceBeanTest extends AbstractHibernateTestCase {
 
     private StudyOutcomeMeasureServiceLocal remoteEjb = new StudyOutcomeMeasureBeanLocal();;
-     Ii pid;
-     Ii outComesid;
+    private Ii pid;
+    private Ii outComesid;
+
     @Before
     public void setUp() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        TestSchema.reset();
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         outComesid=IiConverter.convertToIi(TestSchema.outcomeIds.get(0));
@@ -157,7 +158,7 @@ public class StudyOutcomeMeasureServiceBeanTest {
     }
     @Test
     public void delete() throws Exception {
-    	StudyOutcomeMeasureDTO dto = new StudyOutcomeMeasureDTO();
+        StudyOutcomeMeasureDTO dto = new StudyOutcomeMeasureDTO();
         dto.setIdentifier(IiConverter.convertToIi((Long) null));
         dto.setStudyProtocolIdentifier(pid);
         dto.setName(StConverter.convertToSt("StudyOutcomeMeasure secondary"));

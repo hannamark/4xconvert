@@ -83,6 +83,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 
 import org.junit.Before;
 
@@ -91,7 +92,7 @@ import org.junit.Before;
  * @author Hugh Reinhart
  * @since 7/7/2009
  */
-public abstract class AbstractServiceTest<SERVICE_INTERFACE> {
+public abstract class AbstractServiceTest<SERVICE_INTERFACE> extends AbstractHibernateTestCase {
 
     protected static final St BST = StConverter.convertToSt("ASLDKFJAaldfjks");
     protected static final Ii BII = IiConverter.convertToIi(-1L);
@@ -99,7 +100,8 @@ public abstract class AbstractServiceTest<SERVICE_INTERFACE> {
 
     @Before
     public void setUpTestSchema() throws Exception {
-        TestSchema.reset();
+        TestSchema.primeData();
+        AccrualCsmUtil.setCsmUtil(new MockCsmUtil());
         AccrualCsmUtil.setCsmUtil(new MockCsmUtil());
    }
 

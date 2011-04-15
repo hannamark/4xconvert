@@ -135,6 +135,7 @@ import gov.nih.nci.pa.service.StudySiteServiceBean;
 import gov.nih.nci.pa.service.TrialRegistrationBeanLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -168,7 +169,7 @@ import org.mockito.stubbing.Answer;
  * @author vrushali
  *
  */
-public class PDQTrialRegistrationServiceTest {
+public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
     private final PDQTrialRegistrationServiceBean bean = new PDQTrialRegistrationServiceBean();
 
     private PoServiceLocator poSvcLoc;
@@ -190,7 +191,6 @@ public class PDQTrialRegistrationServiceTest {
         setupOrgCorrelationSvcMock();
         setupPoSvc();
         setUpPaSvc();
-        TestSchema.reset();
 
         Country c = new Country();
         c.setAlpha2("US");

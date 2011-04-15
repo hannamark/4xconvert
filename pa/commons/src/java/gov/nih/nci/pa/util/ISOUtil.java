@@ -408,6 +408,4 @@ public class ISOUtil {
         }
         return precision;
     }
-
-
 }

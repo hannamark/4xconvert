@@ -80,6 +80,7 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.report.util.TestSchema;
 import gov.nih.nci.pa.report.util.TestUtil;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.List;
@@ -87,13 +88,13 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-public class SubmitterOrganizationTest {
+public class SubmitterOrganizationTest extends AbstractHibernateTestCase {
     public SubmitterOrganizationReportBean bean = null;
 
     @Before
     public void setUp() throws Exception {
         bean = new SubmitterOrganizationReportBean();
-        TestSchema.reset();
+        TestSchema.primeData();
     }
 
     @Test

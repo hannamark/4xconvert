@@ -143,9 +143,6 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @DiscriminatorColumn(name = "Study_Protocol_type", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "STUDY_PROTOCOL")
 public class StudyProtocol extends AbstractStudyProtocol {
-    /**
-     *
-     */
     private static final String STUDY_PROTOCOL_MAPPING = "studyProtocol";
 
     private static final long serialVersionUID = 1234567890L;
@@ -188,6 +185,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
     private Set<StudyCheckout> studyCheckout = new TreeSet<StudyCheckout>(new LastCreatedComparator());
 
     private Set<RegistryUser> studyOwners = new HashSet<RegistryUser>();
+
     /**
      * @return accrualReportingMethodCode
      */

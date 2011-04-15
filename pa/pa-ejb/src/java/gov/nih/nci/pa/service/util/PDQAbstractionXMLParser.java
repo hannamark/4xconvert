@@ -50,6 +50,7 @@ import org.jdom.Element;
  * @author vrushali
  *
  */
+@SuppressWarnings("unchecked")
 public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
 
     private static final Logger LOG = Logger.getLogger(PDQAbstractionXMLParser.class);
@@ -72,7 +73,6 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void parse() throws PAException {
         super.parse();
@@ -98,7 +98,6 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     /**
      * @param clinicalStudy The clinical_study element
      */
-    @SuppressWarnings("unchecked")
     private void readLocations(Element clinicalStudy) throws PAException {
         Ts recrutingStatusDate = null;
         Element leadOrgStatusElmt = clinicalStudy.getChild("lead_org_status");
@@ -196,7 +195,6 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     /**
      * @param parent
      */
-    @SuppressWarnings("unchecked")
     private void readArmGroups(Element parent) {
         setListOfArmDTOS(new ArrayList<ArmDTO>());
         List<Element> armElmtList = parent.getChildren("arm_group");
@@ -214,7 +212,6 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     /**
      * @param parent
      */
-    @SuppressWarnings("unchecked")
     private void readInterventions(Element parent) {
         setListOfInterventionsDTOS(new ArrayList<InterventionDTO>());
         List<Element> interventionElmtList = parent.getChildren("intervention");
@@ -244,7 +241,6 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
      * reads the outcomes of the study.
      * @param parent The clinical_study element
      */
-    @SuppressWarnings("unchecked")
     private void readOutcomes(Element parent) {
         List<StudyOutcomeMeasureDTO> outcomes = new ArrayList<StudyOutcomeMeasureDTO>();
         for (Element primaryOutcome : (List<Element>) parent.getChildren("primary_outcome")) {
@@ -274,7 +270,6 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     /**
      * @param parent
      */
-    @SuppressWarnings("unchecked")
     private void readConditons(Element parent) {
         List<Element> conditionList = parent.getChildren("condition");
         setListOfDiseaseDTOs(new ArrayList<PDQDiseaseDTO>());

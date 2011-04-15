@@ -111,7 +111,6 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.w3c.dom.Document;
@@ -128,12 +127,6 @@ public class PDQXmlGeneratorServiceTest extends CTGovXmlGeneratorServiceTest {
     @Override
     public PDQXmlGeneratorServiceBean getBean() {
         return pdqBean;
-    }
-
-    @Override
-    @Before
-    public void setup() throws Exception {
-        super.setup();
     }
 
     @Test
@@ -166,9 +159,6 @@ public class PDQXmlGeneratorServiceTest extends CTGovXmlGeneratorServiceTest {
     }
 
     class CentralContactMatcher extends ArgumentMatcher<StudyContactDTO> {
-        /* (non-Javadoc)
-         * @see org.mockito.ArgumentMatcher#matches(java.lang.Object)
-         */
         @Override
         public boolean matches(Object argument) {
             if (argument instanceof StudyContactDTO) {
@@ -180,9 +170,6 @@ public class PDQXmlGeneratorServiceTest extends CTGovXmlGeneratorServiceTest {
     }
 
     class StudySiteMatcher extends ArgumentMatcher<StudySiteDTO> {
-        /* (non-Javadoc)
-         * @see org.mockito.ArgumentMatcher#matches(java.lang.Object)
-         */
         @Override
         public boolean matches(Object o) {
             if (o instanceof StudySiteDTO) {
@@ -196,9 +183,6 @@ public class PDQXmlGeneratorServiceTest extends CTGovXmlGeneratorServiceTest {
     }
 
     class StudySiteWrongFCMatcher extends ArgumentMatcher<StudySiteDTO> {
-        /* (non-Javadoc)
-         * @see org.mockito.ArgumentMatcher#matches(java.lang.Object)
-         */
         @Override
         public boolean matches(Object o) {
             if (o instanceof StudySiteDTO) {

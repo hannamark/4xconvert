@@ -99,6 +99,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PAUtil;
@@ -115,7 +116,7 @@ import org.junit.Test;
  * Test service and converter.
  * @author hreinhart
  */
-public class StudySiteContactServiceTest {
+public class StudySiteContactServiceTest extends AbstractHibernateTestCase {
     private StudySiteContactServiceLocal remoteEjb = new StudySiteContactBeanLocal();
     Long protocolId;
     Ii protocolIi;
@@ -134,7 +135,6 @@ public class StudySiteContactServiceTest {
     public void setUp() throws Exception {
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        TestSchema.reset();
         TestSchema.primeData();
         protocolId = TestSchema.studyProtocolIds.get(0);
         protocolIi = IiConverter.convertToStudyProtocolIi(protocolId);

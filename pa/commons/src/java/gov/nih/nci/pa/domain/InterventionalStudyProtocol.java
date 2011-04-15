@@ -85,8 +85,6 @@ import gov.nih.nci.pa.enums.DesignConfigurationCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -99,7 +97,6 @@ import javax.persistence.Enumerated;
  */
 
 @Entity
-@DiscriminatorColumn(name = "InterventionalStudyProtocol", discriminatorType = DiscriminatorType.STRING)
 public class InterventionalStudyProtocol extends StudyProtocol {
 
     private static final long serialVersionUID = -7019574546215547954L;

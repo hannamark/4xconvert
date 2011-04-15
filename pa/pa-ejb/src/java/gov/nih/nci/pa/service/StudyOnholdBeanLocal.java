@@ -10,8 +10,8 @@ import gov.nih.nci.pa.iso.convert.StudyOnholdConverter;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.service.exception.PAFieldException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -27,7 +27,7 @@ import javax.interceptor.Interceptors;
  *
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyOnholdBeanLocal extends AbstractStudyIsoService<StudyOnholdDTO, StudyOnhold, StudyOnholdConverter>
 implements StudyOnholdServiceLocal {

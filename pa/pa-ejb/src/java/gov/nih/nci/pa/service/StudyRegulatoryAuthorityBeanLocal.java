@@ -91,7 +91,7 @@ import gov.nih.nci.pa.iso.convert.StudyRegulatoryAuthorityConverter;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -108,7 +108,7 @@ import javax.interceptor.Interceptors;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors({HibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
+@Interceptors({PaHibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
 public class StudyRegulatoryAuthorityBeanLocal
     extends AbstractCurrentStudyIsoService<StudyRegulatoryAuthorityDTO, StudyRegulatoryAuthority,
         StudyRegulatoryAuthorityConverter> implements StudyRegulatoryAuthorityServiceLocal {

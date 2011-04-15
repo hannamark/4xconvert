@@ -79,7 +79,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
@@ -91,13 +91,9 @@ import org.jboss.annotation.security.SecurityDomain;
 
 /**
 * @author Anupama Sharma
-* @since 07/30/2009
-* copyright NCI 2009.  All rights reserved.
-* This code may not be used without the express written permission of the
-* copyright holder, NCI.
 */
 @Stateless
-@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SecurityDomain("pa")
 @RolesAllowed({"gridClient", "client", "Abstractor" , "Submitter" , "Outcomes" })

@@ -87,7 +87,7 @@ import gov.nih.nci.pa.iso.convert.AbstractConverter;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.exception.PAValidationException;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
@@ -123,7 +123,7 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
             throw new PAException("Check the Ii value; null found.  ");
         }
 
-        Session  session = HibernateUtil.getCurrentSession();
+        Session  session = PaHibernateUtil.getCurrentSession();
         List<BO> queryList = new ArrayList<BO>();
 
         Query query = null;
@@ -158,7 +158,7 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
     public Map<Ii , Ii> copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException {
         List<DTO> dtos = getByStudyProtocol(fromStudyProtocolIi);
         Map<Ii , Ii> map = new HashMap<Ii , Ii>();
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         Ii from = null;
         Ii to = new Ii();
         for (DTO dto : dtos) {
@@ -208,7 +208,7 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
      * @param studyProtocolIi the new Study Protocol Ii.
      */
     protected void createMappingIdentifier(Map<Ii, Ii> map, Ii studyProtocolIi) {
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         Ii value = null;
         MappingIdentifier mi = null;
         for (Ii key : map.keySet()) {

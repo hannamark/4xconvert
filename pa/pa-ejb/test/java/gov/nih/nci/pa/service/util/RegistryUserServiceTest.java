@@ -85,6 +85,7 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestRegistryUserSchema;
@@ -100,13 +101,11 @@ import org.junit.Test;
  * @author NAmiruddin
  *
  */
-public class RegistryUserServiceTest {
+public class RegistryUserServiceTest  extends AbstractHibernateTestCase {
     private final RegistryUserServiceRemote remoteEjb = new MockRegistryUserServiceBean();
 
     @Before
     public void setUp() throws Exception {
-        TestRegistryUserSchema.reset();
-        TestRegistryUserSchema.reset1();
         TestRegistryUserSchema.primeData();
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
     }

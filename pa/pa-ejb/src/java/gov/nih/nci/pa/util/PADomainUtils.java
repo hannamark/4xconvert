@@ -255,21 +255,21 @@ public class PADomainUtils {
     public static boolean checkIfValueExists(String value, String tableName, String column) throws PAException {
         String sql = "SELECT * FROM " + tableName + " WHERE " + column + " = '" + value + "'";
         Session session = null;
-        boolean exists = true;
+        boolean exists = false;
         int count = 0;
         try {
-            session = HibernateUtil.getCurrentSession();
+            session = PaHibernateUtil.getCurrentSession();
             Statement st = session.connection().createStatement();
             ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
                 count++;
             }
-            if (count == 0) {
-                exists = false;
+            if (count > 0) {
+                exists = true;
             }
 
         }  catch (SQLException sqle) {
-            LOG.error(" Hibernate exception while checking for value " + value + " from table " + tableName , sqle);
+            LOG.error("Hibernate exception while checking for value " + value + " from table " + tableName , sqle);
         }
         return exists;
     }
@@ -311,7 +311,7 @@ public class PADomainUtils {
         }
         return assignedIdentifier;
     }
-    
+
     /**
      * Extract lead org sp id from study protocol.
      * @param sp trial
@@ -327,7 +327,7 @@ public class PADomainUtils {
                 }
             }
         }
-        
+
         if (returnVal == null) {
             throw new PAException("Trial with id " + sp.getId() + " is missing a Lead Org Id");
         }

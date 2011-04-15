@@ -241,19 +241,10 @@
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
-    <target name="compile-tests"
-      depends="compile"
-      description="Compile the test code">
+    <target name="compile-tests" depends="compile" description="Compile the test code">
         <mkdir dir="${pa-ejb.build.testOutputDir}"/>
-        <javac destdir="${pa-ejb.build.testOutputDir}"
-               nowarn="false"
-               debug="true"
-               optimize="false"
-               deprecation="true"
-               target="1.5"
-               verbose="false"
-               fork="false"
-               source="1.5">
+        <javac destdir="${pa-ejb.build.testOutputDir}" nowarn="false" debug="true" optimize="false"
+               deprecation="true" source="1.5" target="1.5" verbose="false" fork="false">
             <src>
                 <pathelement location="${pa-ejb.build.testDir.0}"/>
             </src>
@@ -296,17 +287,15 @@
     <target name="test-cobertura" depends="compile-tests">
         <taskdef classpathref="test-cobertura.classpath" resource="tasks.properties" />
         <delete file="${pa-ejb.build.dir}/cobertura.ser" />
-        <cobertura-instrument datafile="${pa-ejb.build.dir}/cobertura.ser"
-                              toDir="${pa-ejb.build.coberturaOutputDir}">
+        <cobertura-instrument datafile="${pa-ejb.build.dir}/cobertura.ser" toDir="${pa-ejb.build.coberturaOutputDir}">
             <fileset dir="${pa-ejb.build.outputDir}">
                 <include name="**/*.class" />
             </fileset>
         </cobertura-instrument>
         <mkdir dir="${pa-ejb.test.reports}"/>
-        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir="." showoutput="no">
+        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." showoutput="no" failureproperty="junit.failure">
             <sysproperty key="basedir" value="."/>
-            <sysproperty key="net.sourceforge.cobertura.datafile"
-                    file="${pa-ejb.build.dir}/cobertura.ser" />
+            <sysproperty key="net.sourceforge.cobertura.datafile" file="${pa-ejb.build.dir}/cobertura.ser" />
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
             <classpath location="${pa-ejb.build.coberturaOutputDir}"/>
@@ -323,10 +312,17 @@
                 </fileset>
             </batchtest>
         </junit>
+        <junitreport todir="${pa-ejb.test.reports}">
+            <fileset dir="${pa-ejb.test.reports}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report todir="${pa-ejb.test.reports}" />
+        </junitreport>
+        <fail if="junit.failure" message="Unit test(s) failed.  See reports at ${pa-ejb.test.reports}/index.html."/>
+
         <cobertura-report datafile="${pa-ejb.build.dir}/cobertura.ser"
                           destdir="${pa-ejb.coverage.reports}"
                           srcdir="${pa-ejb.build.srcDir.0}" />
-
         <cobertura-report datafile="${pa-ejb.build.dir}/cobertura.ser"
                           format="xml"
                           destdir="${pa-ejb.coverage.reports}"
@@ -362,7 +358,7 @@
 
     <target name="test-pmd">
         <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
-        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="424">
+        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="421">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa.report.dir}/pa-ejb/pmd.txt"/>
             <formatter type="xml"  toFile="${pa.report.dir}/pa-ejb/pmd.xml"/>

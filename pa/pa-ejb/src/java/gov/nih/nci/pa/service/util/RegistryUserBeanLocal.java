@@ -91,8 +91,8 @@ import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -120,7 +120,7 @@ import org.hibernate.criterion.Restrictions;
  * @author aevansel@5amsolutions.com
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     private static final Logger LOG = Logger.getLogger(RegistryUserBeanLocal.class);
@@ -138,7 +138,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * {@inheritDoc}
      */
     public RegistryUser createUser(RegistryUser user) throws PAException {
-        HibernateUtil.getCurrentSession().saveOrUpdate(user);
+        PaHibernateUtil.getCurrentSession().saveOrUpdate(user);
         return user;
     }
 
@@ -146,7 +146,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * {@inheritDoc}
      */
     public RegistryUser updateUser(RegistryUser user) throws PAException {
-        HibernateUtil.getCurrentSession().merge(user);
+        PaHibernateUtil.getCurrentSession().merge(user);
         return user;
     }
 
@@ -164,7 +164,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     public boolean isTrialOwner(Long userId, Long studyProtocolId) throws PAException {
         RegistryUser myUser = getUserById(userId);
         StudyProtocol studyProtocol =
-            (StudyProtocol) HibernateUtil.getCurrentSession().get(StudyProtocol.class, studyProtocolId);
+            (StudyProtocol) PaHibernateUtil.getCurrentSession().get(StudyProtocol.class, studyProtocolId);
         if (myUser == null) {
             throw new PAException("Could not find user.");
         }
@@ -176,7 +176,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      */
     public boolean hasTrialAccess(RegistryUser user, Long studyProtocolId) throws PAException {
         StudyProtocol studyProtocol =
-            (StudyProtocol) HibernateUtil.getCurrentSession().get(StudyProtocol.class, studyProtocolId);
+            (StudyProtocol) PaHibernateUtil.getCurrentSession().get(StudyProtocol.class, studyProtocolId);
 
         // first check that the user isn't already a trial owner
         if (studyProtocol.getStudyOwners().contains(user)) {
@@ -211,7 +211,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
 
             // if csm user exists retrieve the registry user
             if (csmUser != null) {
-                Session session = HibernateUtil.getCurrentSession();
+                Session session = PaHibernateUtil.getCurrentSession();
 
                 // HQL query
                 String hql = "select reguser from RegistryUser reguser where reguser.csmUserId = :csmuserId ";
@@ -236,7 +236,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         RegistryUser registryUser = null;
         if (userId != null) {
             try {
-                Session session = HibernateUtil.getCurrentSession();
+                Session session = PaHibernateUtil.getCurrentSession();
                 registryUser = (RegistryUser) session.get(RegistryUser.class, userId);
             } catch (Exception e) {
                 throw new PAException(" CSM exception while retrieving  user with id: " + userId, e);
@@ -253,7 +253,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         if (userType == null) {
             throw new PAException("UserOrgType cannot be null.");
         }
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         Criteria criteria = session.createCriteria(RegistryUser.class, "regUser")
             .add(Property.forName("regUser.affiliatedOrganizationId").isNotNull())
             .add(Restrictions.eq("regUser.affiliatedOrgUserType", userType));
@@ -288,7 +288,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      */
     @SuppressWarnings("unchecked")
     public List<RegistryUser> search(RegistryUser regUser) throws PAException {
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         Criteria criteria = session.createCriteria(RegistryUser.class, "regUser");
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
@@ -345,7 +345,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             hql.append(criteriaClause);
         }
 
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         Query query = session.createQuery(hql.toString());
         for (Iterator<Object[]> iter = query.iterate(); iter.hasNext();) {
             Object[] row = iter.next();
@@ -405,8 +405,8 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         StudyProtocol sp = new StudyProtocol();
         sp.setId(studyProtocolId);
         usr.getStudyProtocols().add(sp);
-        HibernateUtil.getCurrentSession().update(usr);
-        HibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().update(usr);
+        PaHibernateUtil.getCurrentSession().flush();
     }
 
     /**
@@ -424,8 +424,8 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
                 iter.remove();
             }
         }
-        HibernateUtil.getCurrentSession().saveOrUpdate(usr);
-        HibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().saveOrUpdate(usr);
+        PaHibernateUtil.getCurrentSession().flush();
     }
 
     private RegistryUser getUser(Long userId, Long studyProtocolId) throws PAException {
@@ -449,7 +449,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     public List<String> getTrialOwnerNames(Long studyProtocolId) throws PAException {
         List<String> names = new ArrayList<String>();
         StudyProtocol studyProtocol =
-            (StudyProtocol) HibernateUtil.getCurrentSession().get(StudyProtocol.class, studyProtocolId);
+            (StudyProtocol) PaHibernateUtil.getCurrentSession().get(StudyProtocol.class, studyProtocolId);
 
         for (RegistryUser myUser : studyProtocol.getStudyOwners()) {
             names.add(myUser.getFirstName() + " " + myUser.getLastName());
@@ -462,7 +462,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * {@inheritDoc}
      */
     public Set<RegistryUser> getAllTrialOwners(Long studyProtocolId) throws PAException {
-        return ((StudyProtocol) HibernateUtil.getCurrentSession()
+        return ((StudyProtocol) PaHibernateUtil.getCurrentSession()
                 .get(StudyProtocol.class, studyProtocolId)).getStudyOwners();
     }
 

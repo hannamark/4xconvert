@@ -83,8 +83,8 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -106,7 +106,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 public class PAPersonServiceBean implements PAPersonServiceRemote {
 
     /**
@@ -125,14 +125,14 @@ public class PAPersonServiceBean implements PAPersonServiceRemote {
         List<Person> sortedPersons = new ArrayList<Person>();
         Set<Long> perSet = new HashSet<Long>();
 
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         StringBuffer hql = new StringBuffer();
         hql.append("select p from Person  p join p.healthCareProviders as crs "
                 + " join crs.studyContacts as sc join sc.studyProtocol as sp where sc.roleCode = '");
         hql.append(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
         hql.append("' order by p.lastName , p.firstName");
 
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         List<Person> persons = session.createQuery(hql.toString()).list();
         for (Person p : persons) {
             if (perSet.add(p.getId())) {

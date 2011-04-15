@@ -79,7 +79,7 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.ExcelReader;
@@ -163,7 +163,7 @@ public class BatchHelper implements Runnable {
         try {
 
             // open a new Hibernate session and bind to the context
-            HibernateUtil.getHibernateHelper().openAndBindSession();
+            PaHibernateUtil.getHibernateHelper().openAndBindSession();
 
             // start reading the xls file and create the required DTO
             List<StudyProtocolBatchDTO> dtoList = processExcel(uploadLoc + File.separator + trialDataFileName);
@@ -186,7 +186,7 @@ public class BatchHelper implements Runnable {
             RegistryUtil.generateMail(Constants.ERROR_PROCESSING, userName, "", "", "", "", e.getMessage());
         } finally {
             // unbind the Hibernate session
-            HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
+            PaHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
         }
 
     }

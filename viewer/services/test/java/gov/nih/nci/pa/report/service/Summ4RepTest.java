@@ -104,12 +104,10 @@ import org.junit.Test;
 public class Summ4RepTest
     extends AbstractReportBeanTest<Summ4RepCriteriaDto, Summ4RepResultDto, Summ4ReportBean> {
 
-    @Override
     @Before
     public void setUp() throws Exception {
         bean = new Summ4RepBeanExtenderForTest();
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
-        super.setUp();        
     }
 
     @Override
@@ -134,13 +132,13 @@ public class Summ4RepTest
         List<Summ4RepResultDto> resultList = bean.get(criteria);
         assertEquals(resultList.size(), TestSchema.studySite.size());
     }
-    
+
     @Test
-    public void getAutoComplete() throws Exception  {        
+    public void getAutoComplete() throws Exception  {
         List<String> orgs =  bean.searchPoOrgNames("OrgName", 10);
         assertEquals(5, orgs.size());
     }
-    
+
     private class Summ4RepBeanExtenderForTest extends Summ4ReportBean {
         /**
          * Overriding the sql string because the postges sql and the hqldb are different enough
@@ -149,12 +147,12 @@ public class Summ4RepTest
          * bean functionality.
          */
         @Override
-        protected StringBuffer generateSqlQuery(Summ4RepCriteriaDto criteria) {            
+        protected StringBuffer generateSqlQuery(Summ4RepCriteriaDto criteria) {
             StringBuffer sql = new StringBuffer(
-            "select sp.official_title,  " 
-            + "ss.local_sp_indentifier, "        
+            "select sp.official_title,  "
+            + "ss.local_sp_indentifier, "
             + "sp.public_tittle, "
-            + "sp.program_code_text, " 
+            + "sp.program_code_text, "
             + "null, "
             + "null, "
             + "sp.phase_code, "
@@ -169,12 +167,12 @@ public class Summ4RepTest
             + "and ss.study_protocol_identifier = sp.identifier "
             + "and :LOW <= now() "
             + "and :HIGH <= now() "
-            + "and 'Agent/Device' = :AGENT_DEVICE " 
-            + "and 'Other Intervention' = :OTHER_INTERVENTION " 
-            + "and 'Epidemiologic/Other/Outcome' = :EPIDEM_OTHER_OUTCOME " 
+            + "and 'Agent/Device' = :AGENT_DEVICE "
+            + "and 'Other Intervention' = :OTHER_INTERVENTION "
+            + "and 'Epidemiologic/Other/Outcome' = :EPIDEM_OTHER_OUTCOME "
             + "and 'Ancillary/Correlative' = :ANCILLARY_CORRELATIVE");
             return sql;
         }
     }
-    
+
 }

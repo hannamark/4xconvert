@@ -92,24 +92,22 @@ import org.junit.Test;
 public class TrialCountsTest
         extends AbstractReportBeanTest<StandardCriteriaDto, TrialCountsResultDto, TrialCountsReportBean> {
 
-    @Override
     @Before
     public void setUp() throws Exception {
         bean = new TrialCountsReportBean();
-        super.setUp();
     }
 
     @Override
     @Test (expected=PAException.class)
     public void criteriaValidateTest() throws Exception {
-    	StandardCriteriaDto crit = new StandardCriteriaDto();
+        StandardCriteriaDto crit = new StandardCriteriaDto();
         bean.get(crit);
     }
 
     @Override
     @Test
     public void getTest() throws Exception {
-    	StandardCriteriaDto crit = new StandardCriteriaDto();
+        StandardCriteriaDto crit = new StandardCriteriaDto();
         crit.setCtep(BlConverter.convertToBl(true));
         crit.setTimeInterval(IvlConverter.convertTs().convertToIvl("01/01/2009", "06/01/2009"));
         List<TrialCountsResultDto> resultList = bean.get(crit);

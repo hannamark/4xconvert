@@ -11,8 +11,8 @@ import gov.nih.nci.pa.iso.convert.POConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PAExceptionConstants;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -143,7 +143,7 @@ public class PABaseCorrelation <PADTO extends PACorrelationDTO, PODTO extends Co
             // create a new oc
             sr = convertToDomain(dto, paOrg, paPer);
             sr.setIdentifier(srPoIi.getExtension());
-            Session session =  HibernateUtil.getCurrentSession();
+            Session session =  PaHibernateUtil.getCurrentSession();
             session.save(sr);
             session.flush();
             srPaIdentifier = sr.getId();
@@ -202,7 +202,7 @@ public class PABaseCorrelation <PADTO extends PACorrelationDTO, PODTO extends Co
      private Long getStructuralRole(String poIdentifier) throws PAException {
          Session session = null;
          List<BO> queryList = new ArrayList<BO>();
-         session = HibernateUtil.getCurrentSession();
+         session = PaHibernateUtil.getCurrentSession();
          Query query = null;
          Long paIdentifier = null;
          // step 1: form the hql

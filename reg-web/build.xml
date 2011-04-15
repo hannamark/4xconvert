@@ -449,7 +449,7 @@
             </fileset>
         </cobertura-instrument>
         <mkdir dir="${reg-web.test.reports}"/>
-        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." failureproperty="junit.failure" maxmemory="128m">
             <sysproperty key="basedir" value="."/>
             <sysproperty key="net.sourceforge.cobertura.datafile" file="${reg-web.build.dir}/cobertura.ser" />
             <formatter type="xml"/>
@@ -463,7 +463,7 @@
             <classpath refid="compile.classpath"/>
             <classpath refid="ejb.package.classpath"/>
             <classpath refid="common.package.classpath"/>
-            <test if="test" name="${test}" haltonerror="false" haltonfailure="false"></test>
+            <test if="test" name="${test}"></test>
             <batchtest todir="${reg-web.test.reports}" unless="test">
                 <fileset dir="${reg-web.build.testDir.0}">
                     <include name="**/*Test.java"/>
@@ -471,6 +471,13 @@
                 </fileset>
             </batchtest>
         </junit>
+        <junitreport todir="${reg-web.test.reports}">
+            <fileset dir="${reg-web.test.reports}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report todir="${reg-web.test.reports}" />
+        </junitreport>
+        <fail if="junit.failure" message="Unit test(s) failed.  See reports in ${reg-web.test.reports}."/>
 
         <cobertura-report datafile="${reg-web.build.dir}/cobertura.ser"
                           destdir="${reg-web.coverage.reports}"

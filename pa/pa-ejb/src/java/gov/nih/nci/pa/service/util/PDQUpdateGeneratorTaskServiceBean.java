@@ -84,7 +84,7 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -122,7 +122,7 @@ import org.apache.commons.lang.time.DateUtils;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Local(PDQUpdateGeneratorTaskServiceLocal.class)
 public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTaskServiceLocal {

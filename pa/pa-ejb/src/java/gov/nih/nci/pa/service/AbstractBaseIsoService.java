@@ -88,7 +88,7 @@ import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.lang.reflect.ParameterizedType;
@@ -207,7 +207,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         DTO resultDto = null;
         Session session = null;
         try {
-            session = HibernateUtil.getCurrentSession();
+            session = PaHibernateUtil.getCurrentSession();
             BO bo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(ii));
             if (bo == null) {
                 LOG.error("Object not found using get() for id = " + IiConverter.convertToString(ii));
@@ -231,7 +231,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         }
         Session session = null;
         try {
-            session = HibernateUtil.getCurrentSession();
+            session = PaHibernateUtil.getCurrentSession();
             //session.beginTransaction();
             BO bo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(ii));
             session.delete(bo);
@@ -248,7 +248,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         DTO resultDto = null;
         Session session = null;
         try {
-            session = HibernateUtil.getCurrentSession();
+            session = PaHibernateUtil.getCurrentSession();
             bo = convertFromDtoToDomain(dto);
             bo.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
             bo.setDateLastUpdated(new Date());

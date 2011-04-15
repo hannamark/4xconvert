@@ -76,9 +76,8 @@
     <filter-mapping>
         <filter-name>action2-cleanup</filter-name>
         <url-pattern>/*</url-pattern>
-                <dispatcher>REQUEST</dispatcher>
+        <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
-
     </filter-mapping>
     <filter-mapping>
         <filter-name>sitemesh</filter-name>
@@ -138,7 +137,7 @@
             <param-value>300</param-value>
         </init-param>
     </servlet>
-    
+
 
     <!-- Welcome file lists -->
     <welcome-file-list>

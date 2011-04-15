@@ -83,7 +83,7 @@ import gov.nih.nci.pa.domain.MessageLog;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.correlation.OrganizationSynchronizationServiceRemote;
 import gov.nih.nci.pa.service.correlation.PersonSynchronizationServiceRemote;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.JNDIUtil;
 import gov.nih.nci.services.SubscriberUpdateMessage;
 
@@ -126,7 +126,7 @@ public class PAMessageDrivenBean implements MessageListener {
     public void onMessage(final Message message) {
         ObjectMessage msg = null;
         Long msgId = null;
-        HibernateUtil.getHibernateHelper().openAndBindSession();
+        PaHibernateUtil.getHibernateHelper().openAndBindSession();
         try {
             if (message instanceof ObjectMessage) {
                 msg = (ObjectMessage) message;
@@ -179,12 +179,12 @@ public class PAMessageDrivenBean implements MessageListener {
             LOG.error("PAMessageDrivenBean onMessage() method threw an JMSException ", e);
             updateExceptionAuditMessageLog(msgId, "Failed", " JMSException-" + e.getMessage(), false);
         } finally {
-            HibernateUtil.getHibernateHelper().unbindAndCleanupSession();
+            PaHibernateUtil.getHibernateHelper().unbindAndCleanupSession();
         }
     }
 
     private Long createAuditMessageLog(Ii identifier) throws PAException {
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         MessageLog log = new MessageLog();
         log.setAssignedIdentifier(identifier.getExtension());
         log.setDateCreated(new Date());
@@ -196,7 +196,7 @@ public class PAMessageDrivenBean implements MessageListener {
     }
 
     private void updateExceptionAuditMessageLog(Long id, String msgAction, String errorMessage, boolean result) {
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         MessageLog msg = (MessageLog) session.get(MessageLog.class, id);
         msg.setMessageAction(msgAction);
         msg.setResult(Boolean.valueOf(result));

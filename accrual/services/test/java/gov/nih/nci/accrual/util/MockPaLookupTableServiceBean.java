@@ -5,12 +5,12 @@ package gov.nih.nci.accrual.util;
 
 import gov.nih.nci.pa.domain.AbstractLookUpEntity;
 import gov.nih.nci.pa.domain.AnatomicSite;
-import gov.nih.nci.pa.domain.AnatomicSiteTest;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.NIHinstitute;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,9 +70,9 @@ public class MockPaLookupTableServiceBean implements LookUpTableServiceRemote {
      */
     public List<AnatomicSite> getAnatomicSites() throws PAException {
         List<AnatomicSite> returnVal = new ArrayList<AnatomicSite>();
-        returnVal.add(AnatomicSiteTest.createAnatomicSiteObj("Lung"));
-        returnVal.add(AnatomicSiteTest.createAnatomicSiteObj("Kidney"));
-        returnVal.add(AnatomicSiteTest.createAnatomicSiteObj("Heart"));
+        returnVal.add(TestSchema.createAnatomicSiteObj("Lung"));
+        returnVal.add(TestSchema.createAnatomicSiteObj("Kidney"));
+        returnVal.add(TestSchema.createAnatomicSiteObj("Heart"));
         return returnVal;
     }
 
@@ -82,7 +82,7 @@ public class MockPaLookupTableServiceBean implements LookUpTableServiceRemote {
     @SuppressWarnings("unchecked")
     public <T extends AbstractLookUpEntity> T getLookupEntityByCode(Class<T> clazz, String code) throws PAException {
         if (AnatomicSite.class.getName().equals(clazz.getName())) {
-            return (T) AnatomicSiteTest.createAnatomicSiteObj(code);
+            return (T) TestSchema.createAnatomicSiteObj(code);
         }
         return null;
     }

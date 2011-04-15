@@ -17,7 +17,7 @@ import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -387,7 +387,7 @@ public abstract class AbstractRegWebTest {
     * @param obj o
     */
     protected  <T> void addUpdObject(T obj) {
-       Session session = HibernateUtil.getCurrentSession();
+       Session session = PaHibernateUtil.getCurrentSession();
        Transaction transaction = session.beginTransaction();
        session.saveOrUpdate(obj);
        transaction.commit();
@@ -455,7 +455,7 @@ public abstract class AbstractRegWebTest {
        country.setName("Zanzibar");
        country.setNumeric("67");
        addUpdObject(country);
-       HibernateUtil.getCurrentSession().clear();
+       PaHibernateUtil.getCurrentSession().clear();
    }
 
    protected String getTomorrowDate() {

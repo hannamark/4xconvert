@@ -91,6 +91,7 @@ import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
@@ -101,13 +102,12 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DocumentServiceBeanTest {
+public class DocumentServiceBeanTest extends AbstractHibernateTestCase {
     private DocumentServiceLocal remoteEjb = new DocumentBeanLocal();
     private Ii pid;
 
     @Before
-    public void setUp() throws Exception {
-        TestSchema.reset();
+    public void init() throws Exception {
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         CSMUserService.setRegistryUserService(new MockCSMUserService());
@@ -128,19 +128,16 @@ public class DocumentServiceBeanTest {
         docDTO.setFileName(StConverter.convertToSt("Other.doc"));
         docDTO.setText(EdConverter.convertToEd("Other".getBytes()));
         remoteEjb.create(docDTO);
+    }
 
-        docDTO = new DocumentDTO();
+    @Test(expected = PAException.class)
+    public void testFailedCreate() throws Exception {
+        DocumentDTO docDTO = new DocumentDTO();
         docDTO.setStudyProtocolIdentifier(pid);
         docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
         docDTO.setFileName(StConverter.convertToSt("Protocol_Document.doc"));
         docDTO.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-
-        try {
-            remoteEjb.create(docDTO);
-            fail();
-        } catch (PAException e) {
-            //Expected exception
-        }
+        remoteEjb.create(docDTO);
     }
 
     @Test

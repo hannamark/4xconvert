@@ -6,7 +6,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.iso.convert.StudyOutcomeMeasureConverter;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -19,9 +19,9 @@ import javax.interceptor.Interceptors;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 public class StudyOutcomeMeasureBeanLocal extends
-AbstractStudyIsoService<StudyOutcomeMeasureDTO, StudyOutcomeMeasure, StudyOutcomeMeasureConverter>
-implements StudyOutcomeMeasureServiceLocal {
+        AbstractStudyIsoService<StudyOutcomeMeasureDTO, StudyOutcomeMeasure, StudyOutcomeMeasureConverter> implements
+        StudyOutcomeMeasureServiceLocal {
 
 }

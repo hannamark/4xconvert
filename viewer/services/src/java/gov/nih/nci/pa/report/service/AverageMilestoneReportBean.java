@@ -87,8 +87,8 @@ import gov.nih.nci.pa.report.dto.result.AverageMilestoneResultDto;
 import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.report.util.ReportUtil;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
@@ -111,7 +111,7 @@ import org.hibernate.Session;
 * @since 5/12/2009
 */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 public class AverageMilestoneReportBean extends
         AbstractStandardReportBean<SubmissionTypeCriteriaDto, AverageMilestoneResultDto> implements
         AverageMilestoneLocal {
@@ -149,8 +149,7 @@ public class AverageMilestoneReportBean extends
     /**
      * {@inheritDoc}
      */
-    public List<AverageMilestoneResultDto> get(
-            SubmissionTypeCriteriaDto criteria) throws PAException {
+    public List<AverageMilestoneResultDto> get(SubmissionTypeCriteriaDto criteria) throws PAException {
         SubmissionTypeCriteriaDto.validate(criteria);
         List<Counts> cList = getMilestoneList(getTrialList(criteria));
         return createResultList(createResultHash(cList));
@@ -283,8 +282,7 @@ public class AverageMilestoneReportBean extends
     private List<BigInteger> getTrialList(SubmissionTypeCriteriaDto criteria) throws PAException {
         List<BigInteger> rList = new ArrayList<BigInteger>();
         try {
-            Session session = HibernateUtil.getCurrentSession();
-            SQLQuery query = null;
+            Session session = PaHibernateUtil.getCurrentSession();
             StringBuffer sql = new StringBuffer(
                   "SELECT distinct sp.identifier "
                 + "FROM study_protocol AS sp "
@@ -300,7 +298,7 @@ public class AverageMilestoneReportBean extends
             sql.append(dateRangeSql(criteria, "sm.milestone_date"));
             sql.append(ctepSql(criteria));
             LOG.debug("query = " + sql);
-            query = session.createSQLQuery(sql.toString());
+            SQLQuery query = session.createSQLQuery(sql.toString());
             setDateRangeParameters(criteria, query);
             query.setParameterList("REPORTING_MILESTONES", REPORTING_MILESTONES);
             @SuppressWarnings(UNCHECKED)
@@ -318,8 +316,7 @@ public class AverageMilestoneReportBean extends
     private List<Counts> getMilestoneList(List<BigInteger> trialList) throws PAException {
         List<Counts> rList = new ArrayList<Counts>();
         try {
-            Session session = HibernateUtil.getCurrentSession();
-            SQLQuery query = null;
+            Session session = PaHibernateUtil.getCurrentSession();
             StringBuffer sql = new StringBuffer(
                   "SELECT study_protocol_identifier, milestone_date, milestone_code "
                 + "FROM study_milestone "
@@ -327,7 +324,7 @@ public class AverageMilestoneReportBean extends
                 + "  AND study_protocol_identifier IN (:TRIAL_LIST) "
                 + "ORDER BY study_protocol_identifier, milestone_date, identifier ");
             LOG.debug("query = " + sql);
-            query = session.createSQLQuery(sql.toString());
+            SQLQuery query = session.createSQLQuery(sql.toString());
             query.setParameterList("REPORTING_MILESTONES", REPORTING_MILESTONES);
             query.setParameterList("TRIAL_LIST", trialList);
             @SuppressWarnings(UNCHECKED)

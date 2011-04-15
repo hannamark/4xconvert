@@ -96,10 +96,10 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.ArmSortCriterion;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -126,7 +126,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  *
  */
 @Stateless
-@Interceptors({HibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
+@Interceptors({PaHibernateSessionInterceptor.class, ProprietaryTrialInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConverter> implements ArmServiceLocal {
 
@@ -194,7 +194,7 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
     public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
         List<ArmDTO> dtos = getByStudyProtocol(fromStudyProtocolIi);
         Map<Ii , Ii> map = new HashMap<Ii , Ii>();
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         Ii from = null;
         Ii to = new Ii();
         for (ArmDTO dto : dtos) {

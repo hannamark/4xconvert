@@ -92,6 +92,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PAFieldException;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
@@ -107,7 +108,7 @@ import org.junit.Test;
  * @author hreinhart
  *
  */
-public class StudyOnholdServiceTest {
+public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
     private StudyOnholdServiceLocal remote = new StudyOnholdBeanLocal();
     private Long spId;
     private Ii spIi;
@@ -121,7 +122,6 @@ public class StudyOnholdServiceTest {
     @Before
     public void setUp() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        TestSchema.reset();
         TestSchema.primeData();
         spId = TestSchema.studyProtocolIds.get(0);
         spIi = IiConverter.convertToStudyProtocolIi(spId);

@@ -90,8 +90,8 @@ import gov.nih.nci.pa.iso.convert.StudyRelationshipConverter;
 import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyRelationshipSortCriterion;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.util.List;
 
@@ -107,7 +107,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  *
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyRelationshipBeanLocal extends
         AbstractBaseIsoService<StudyRelationshipDTO, StudyRelationship, StudyRelationshipConverter> implements

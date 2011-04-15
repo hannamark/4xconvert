@@ -93,8 +93,8 @@ import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.criteria.Summ4RepCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.Summ4RepResultDto;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -117,7 +117,7 @@ import org.hibernate.Session;
 * @author Max Shestopalov
 */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteriaDto, Summ4RepResultDto>
         implements Summ4RepLocal {
 
@@ -287,7 +287,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         }
         List<Summ4RepResultDto> rList = null;
         try {
-            Session session = HibernateUtil.getCurrentSession();
+            Session session = PaHibernateUtil.getCurrentSession();
             SQLQuery query = null;
             StringBuffer sql = generateSqlQuery(criteria);
             query = session.createSQLQuery(sql.toString());

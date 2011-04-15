@@ -183,7 +183,6 @@ import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
-import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
@@ -225,10 +224,10 @@ import org.mockito.stubbing.Answer;
  *
  * Extend this class whenever you need mocikto-mocked services.
  * Set the instances in your test class.
- *
  */
 @Ignore
 public class AbstractMockitoTest {
+
     protected PoServiceLocator poSvcLoc;
     protected StudyProtocolServiceLocal spSvc;
     protected StudySiteServiceLocal studySiteSvc;
@@ -236,7 +235,8 @@ public class AbstractMockitoTest {
     protected StudyIndldeServiceLocal studyIndIdeSvc;
     protected OrganizationCorrelationServiceRemote orgSvc;
     protected StudyContactServiceLocal studyContactSvc;
-    protected CorrelationUtils corUtils;
+    protected gov.nih.nci.pa.service.correlation.CorrelationUtils corUtils;
+    protected CorrelationUtils commonsCorrUtils = new CorrelationUtils();
     protected StudyRegulatoryAuthorityServiceLocal studyRegAuthSvc;
     protected RegulatoryInformationServiceRemote regulInfoSvc;
     protected StudyOverallStatusServiceLocal studyOverallStatusSvc;
@@ -938,12 +938,7 @@ public class AbstractMockitoTest {
     }
 
     private void setupCorSvcMock() throws PAException, NullifiedRoleException {
-        corUtils = mock(CorrelationUtils.class);
-        when(corUtils.getPAPersonByIi(any(Ii.class))).thenReturn(person);
-        when(corUtils.getContactByPAOrganizationalContactId(anyLong())).thenReturn(paContactDto);
-        when(corUtils.getPAOrganizationByIi(any(Ii.class))).thenReturn(org);
-
-        when(corUtils.getStructuralRoleByIi(any(Ii.class))).thenAnswer(new Answer<StructuralRole>() {
+        final Answer<StructuralRole> getStructuralRoleByIiAnswer = new Answer<StructuralRole>() {
             public StructuralRole answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
                 Ii input = (Ii) args[0];
@@ -956,7 +951,16 @@ public class AbstractMockitoTest {
                 }
 
                 return null;
-            }});
+            }
+        };
+        corUtils = mock(gov.nih.nci.pa.service.correlation.CorrelationUtils.class);
+        when(corUtils.getPAPersonByIi(any(Ii.class))).thenReturn(person);
+        when(corUtils.getContactByPAOrganizationalContactId(anyLong())).thenReturn(paContactDto);
+        when(corUtils.getPAOrganizationByIi(any(Ii.class))).thenReturn(org);
+        when(corUtils.getStructuralRoleByIi(any(Ii.class))).thenAnswer(getStructuralRoleByIiAnswer);
+
+        commonsCorrUtils = mock(CorrelationUtils.class);
+        when(commonsCorrUtils.getStructuralRoleByIi(any(Ii.class))).thenAnswer(getStructuralRoleByIiAnswer);
     }
 
     private void setupScSvcMock() throws PAException {
@@ -999,6 +1003,354 @@ public class AbstractMockitoTest {
         when(spSvc.getInterventionalStudyProtocol((Ii)anyObject())).thenReturn(interventionalSPDto);
         when(spSvc.getObservationalStudyProtocol(any(Ii.class))).thenReturn(observationalSPDto);
         when(spSvc.getCollaborativeTrials()).thenReturn(Arrays.asList(spDto));
+    }
+
+    public PoServiceLocator getPoSvcLoc() {
+        return poSvcLoc;
+    }
+
+    public StudyProtocolServiceLocal getSpSvc() {
+        return spSvc;
+    }
+
+    public StudySiteServiceLocal getStudySiteSvc() {
+        return studySiteSvc;
+    }
+
+    public RegistryUserServiceLocal getRegUserSvc() {
+        return regUserSvc;
+    }
+
+    public StudyIndldeServiceLocal getStudyIndIdeSvc() {
+        return studyIndIdeSvc;
+    }
+
+    public OrganizationCorrelationServiceRemote getOrgSvc() {
+        return orgSvc;
+    }
+
+    public StudyContactServiceLocal getStudyContactSvc() {
+        return studyContactSvc;
+    }
+
+    public gov.nih.nci.pa.service.correlation.CorrelationUtils getCorUtils() {
+        return corUtils;
+    }
+
+    public CorrelationUtils getCommonsCorrUtils() {
+        return commonsCorrUtils;
+    }
+
+    public StudyRegulatoryAuthorityServiceLocal getStudyRegAuthSvc() {
+        return studyRegAuthSvc;
+    }
+
+    public RegulatoryInformationServiceRemote getRegulInfoSvc() {
+        return regulInfoSvc;
+    }
+
+    public StudyOverallStatusServiceLocal getStudyOverallStatusSvc() {
+        return studyOverallStatusSvc;
+    }
+
+    public StudyRecruitmentStatusServiceLocal getStudyRecruitmentStatusSvc() {
+        return studyRecruitmentStatusSvc;
+    }
+
+    public StudyOutcomeMeasureServiceLocal getStudyOutcomeMeasureSvc() {
+        return studyOutcomeMeasureSvc;
+    }
+
+    public StudyDiseaseServiceLocal getStudyDiseaseSvc() {
+        return studyDiseaseSvc;
+    }
+
+    public ArmServiceLocal getArmSvc() {
+        return armSvc;
+    }
+
+    public PlannedActivityServiceLocal getPlannedActSvc() {
+        return plannedActSvc;
+    }
+
+    public DocumentWorkflowStatusServiceLocal getDwsSvc() {
+        return dwsSvc;
+    }
+
+    public PDQDiseaseServiceLocal getDiseaseSvc() {
+        return diseaseSvc;
+    }
+
+    public StudySiteAccrualStatusServiceLocal getStudySiteAccrualStatusSvc() {
+        return studySiteAccrualStatusSvc;
+    }
+
+    public StudySiteContactServiceLocal getStudySiteContactSvc() {
+        return studySiteContactSvc;
+    }
+
+    public OrganizationEntityServiceRemote getPoOrgSvc() {
+        return poOrgSvc;
+    }
+
+    public PersonEntityServiceRemote getPoPerSvc() {
+        return poPerSvc;
+    }
+
+    public ResearchOrganizationCorrelationServiceRemote getPoRoSvc() {
+        return poRoSvc;
+    }
+
+    public InterventionServiceLocal getInterventionSvc() {
+        return interventionSvc;
+    }
+
+    public StudyResourcingServiceLocal getStudyResourcingSvc() {
+        return studyResourcingSvc;
+    }
+
+    public InterventionAlternateNameServiceRemote getInterventionAltNameSvc() {
+        return interventionAltNameSvc;
+    }
+
+    public DocumentServiceLocal getDocumentSvc() {
+        return documentSvc;
+    }
+
+    public LookUpTableServiceRemote getLookupSvc() {
+        return lookupSvc;
+    }
+
+    public ClinicalResearchStaffCorrelationServiceRemote getPoCrsSvc() {
+        return poCrsSvc;
+    }
+
+    public HealthCareFacilityCorrelationServiceRemote getPoHcfSvc() {
+        return poHcfSvc;
+    }
+
+    public IdentifiedPersonCorrelationServiceRemote getPoIpSvc() {
+        return poIpSvc;
+    }
+
+    public StratumGroupServiceLocal getStratumGroupSvc() {
+        return stratumGroupSvc;
+    }
+
+    public PlannedMarkerServiceLocal getPlannedMarkerSvc() {
+        return plannedMarkerSvc;
+    }
+
+    public Ii getSpId() {
+        return spId;
+    }
+
+    public StudyProtocolDTO getSpDto() {
+        return spDto;
+    }
+
+    public StudySiteDTO getStudySiteDto() {
+        return studySiteDto;
+    }
+
+    public List<StudySiteDTO> getStudySiteDtoList() {
+        return studySiteDtoList;
+    }
+
+    public List<StratumGroupDTO> getStratumGroupDtoList() {
+        return stratumGroupDtoList;
+    }
+
+    public RegistryUser getRegUser() {
+        return regUser;
+    }
+
+    public StudyIndldeDTO getStudySiteIndIdeDto() {
+        return studySiteIndIdeDto;
+    }
+
+    public List<StudyIndldeDTO> getStudySiteIndIdeDtoList() {
+        return studySiteIndIdeDtoList;
+    }
+
+    public Organization getOrg() {
+        return org;
+    }
+
+    public List<Organization> getOrgList() {
+        return orgList;
+    }
+
+    public StudyContactDTO getStudyContactDto() {
+        return studyContactDto;
+    }
+
+    public List<StudyContactDTO> getScDtoList() {
+        return scDtoList;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public StudyRegulatoryAuthorityDTO getStudyRegulatoryAuthDto() {
+        return studyRegulatoryAuthDto;
+    }
+
+    public RegulatoryAuthority getRa() {
+        return ra;
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public StudyOverallStatusDTO getStudyOverallStatusDto() {
+        return studyOverallStatusDto;
+    }
+
+    public StudyRecruitmentStatusDTO getStudyRecruitmentStatusDto() {
+        return studyRecruitmentStatusDto;
+    }
+
+    public InterventionalStudyProtocolDTO getInterventionalSPDto() {
+        return interventionalSPDto;
+    }
+
+    public StudyOutcomeMeasureDTO getStudyOutcomeMeasureDto() {
+        return studyOutcomeMeasureDto;
+    }
+
+    public List<StudyOutcomeMeasureDTO> getStudyOutcomeMeasureDtoList() {
+        return studyOutcomeMeasureDtoList;
+    }
+
+    public StudyDiseaseDTO getStudyDiseaseDto() {
+        return studyDiseaseDto;
+    }
+
+    public List<StudyDiseaseDTO> getStudyDiseaseDtoList() {
+        return studyDiseaseDtoList;
+    }
+
+    public ArmDTO getArmDto() {
+        return armDto;
+    }
+
+    public ResearchOrganization getResearchOrg() {
+        return researchOrg;
+    }
+
+    public ClinicalResearchStaff getClinicalReStaff() {
+        return clinicalReStaff;
+    }
+
+    public ClinicalResearchStaffDTO getClinicalReStaffDto() {
+        return clinicalReStaffDto;
+    }
+
+    public HealthCareFacility getHealthCareFacility() {
+        return healthCareFacility;
+    }
+
+    public HealthCareFacilityDTO getHealthCareFacilityDto() {
+        return healthCareFacilityDto;
+    }
+
+    public ResearchOrganizationDTO getResearchOrgDto() {
+        return researchOrgDto;
+    }
+
+    public List<ArmDTO> getArmDtoList() {
+        return armDtoList;
+    }
+
+    public PlannedActivityDTO getPlannedActDto() {
+        return plannedActDto;
+    }
+
+    public List<PlannedActivityDTO> getPlannedActDtoList() {
+        return plannedActDtoList;
+    }
+
+    public DocumentWorkflowStatusDTO getDwsDto() {
+        return dwsDto;
+    }
+
+    public List<DocumentWorkflowStatusDTO> getDwsDtoList() {
+        return dwsDtoList;
+    }
+
+    public PDQDiseaseDTO getDiseaseDto() {
+        return diseaseDto;
+    }
+
+    public PersonDTO getPersonDto() {
+        return personDto;
+    }
+
+    public PAContactDTO getPaContactDto() {
+        return paContactDto;
+    }
+
+    public OrganizationDTO getOrgDto() {
+        return orgDto;
+    }
+
+    public StudySiteAccrualStatusDTO getStudyStieAccrualStatusDto() {
+        return studyStieAccrualStatusDto;
+    }
+
+    public StudySiteContactDTO getStudySiteContactDto() {
+        return studySiteContactDto;
+    }
+
+    public List<StudySiteContactDTO> getStudySiteContactDtoList() {
+        return studySiteContactDtoList;
+    }
+
+    public PlannedEligibilityCriterionDTO getPlannedECDto() {
+        return plannedECDto;
+    }
+
+    public List<PlannedEligibilityCriterionDTO> getPlannedEcDtoList() {
+        return plannedEcDtoList;
+    }
+
+    public InterventionDTO getInterventionDto() {
+        return interventionDto;
+    }
+
+    public InterventionAlternateNameDTO getInterventionAltNameDto() {
+        return interventionAltNameDto;
+    }
+
+    public List<InterventionAlternateNameDTO> getInterventionAltNameDtoList() {
+        return interventionAltNameDtoList;
+    }
+
+    public ObservationalStudyProtocolDTO getObservationalSPDto() {
+        return observationalSPDto;
+    }
+
+    public List<StudyResourcingDTO> getStudyResourcingDtoList() {
+        return studyResourcingDtoList;
+    }
+
+    public PlannedMarkerDTO getPlannedMarkerDto() {
+        return plannedMarkerDto;
+    }
+
+    public List<PlannedMarkerDTO> getPlannedMarkerDtoList() {
+        return plannedMarkerDtoList;
+    }
+
+    public List<IdentifiedPersonDTO> getIdentifiedPersonDtoList() {
+        return identifiedPersonDtoList;
+    }
+
+    public IdentifiedPersonDTO getIdentifiedPersonDto() {
+        return identifiedPersonDto;
     }
 
 }

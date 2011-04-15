@@ -11,6 +11,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.math.BigDecimal;
@@ -19,13 +20,12 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-public class PlannedSubstanceAdministrationServiceTest {
+public class PlannedSubstanceAdministrationServiceTest extends AbstractHibernateTestCase {
     private PlannedSubstanceAdministrationServiceRemote remoteEjb =  new PlannedSubstanceAdministrationServiceBean();
     private Ii spIi;
 
     @Before
     public void setUp() throws Exception {
-        TestSchema.reset();
         TestSchema.primeData();
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
     }

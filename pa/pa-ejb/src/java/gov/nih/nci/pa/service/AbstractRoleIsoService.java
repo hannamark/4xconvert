@@ -94,7 +94,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -168,7 +168,7 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
             throw new PAException("Cannot call getByStudyProtocol method with a null identifier.");
         }
         StringBuffer criteria = new StringBuffer();
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         StringBuffer hql = new StringBuffer("select spart from ");
         hql.append(getTypeArgument().getName());
         hql.append(" spart join spart.studyProtocol spro where spro.id = :studyProtocolId");
@@ -242,7 +242,7 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
      * @throws PAException on error
      */
     public void cascadeRoleStatus(Ii ii , Cd roleStatusCode) throws PAException {
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
 
         String roleLink = ROLE_ASSOCIATION_MAP.get(ii.getIdentifierName());
 

@@ -81,7 +81,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.iso.convert.StudyCheckoutConverter;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -93,7 +93,7 @@ import javax.interceptor.Interceptors;
  * @since 02/11/2009
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyCheckoutServiceBean
 extends AbstractStudyIsoService<StudyCheckoutDTO, StudyCheckout, StudyCheckoutConverter>

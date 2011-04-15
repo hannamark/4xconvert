@@ -86,11 +86,11 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.StudyDisease;
-import gov.nih.nci.pa.domain.StudyDiseaseTest;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
@@ -104,7 +104,7 @@ import org.junit.Test;
  * @author hreinhart
  *
  */
-public class StudyDiseaseServiceTest {
+public class StudyDiseaseServiceTest extends AbstractHibernateTestCase {
     private final StudyDiseaseBeanLocal bean = new StudyDiseaseBeanLocal();
     private final StudyDiseaseServiceLocal remote = bean;
     private Ii spIi;
@@ -113,7 +113,6 @@ public class StudyDiseaseServiceTest {
     @Before
     public void setUp() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        TestSchema.reset();
         TestSchema.primeData();
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         dIi = IiConverter.convertToStudyDiseaseIi(TestSchema.pdqDiseaseIds.get(1));
@@ -143,7 +142,7 @@ public class StudyDiseaseServiceTest {
         disease.setId(IiConverter.convertToLong(dIi));
         StudyProtocol studyProtocol = new StudyProtocol();
         studyProtocol.setId(IiConverter.convertToLong(spIi));
-        StudyDisease bo = StudyDiseaseTest.createStudyDiseaseObj(studyProtocol, disease);
+        StudyDisease bo = TestSchema.createStudyDiseaseObj(studyProtocol, disease);
         assertNull(bo.getId());
         StudyDisease resultBo = bean.convertFromDtoToDomain(remote.create(bean.convertFromDomainToDto(bo)));
         compareDataAttributes(bo, resultBo);

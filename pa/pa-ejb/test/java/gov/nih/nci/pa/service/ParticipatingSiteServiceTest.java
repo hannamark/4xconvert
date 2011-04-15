@@ -36,15 +36,14 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.util.CtrpHibernateHelper;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.MockPaRegistryServiceLocator;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
-import gov.nih.nci.pa.util.TestHibernateHelper;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
@@ -65,26 +64,23 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ParticipatingSiteServiceTest {
-
-
+public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
 
     private final ParticipatingSiteBeanLocal bean = new ParticipatingSiteBeanLocal();
-    ParticipatingSiteServiceLocal localBean = null;
-    ParticipatingSiteServiceBean rBean = new ParticipatingSiteServiceBean();
-    ParticipatingSiteServiceRemote remoteBean = null;
-    StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
-    StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
-    StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
-    StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
-    OrganizationCorrelationServiceRemote ocsr = new OrganizationCorrelationServiceBean();
-    private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
+    private ParticipatingSiteServiceLocal localBean = null;
+    private final ParticipatingSiteServiceBean rBean = new ParticipatingSiteServiceBean();
+    private ParticipatingSiteServiceRemote remoteBean = null;
+    private final StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
+    private final StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
+    private final StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
+    private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
+    private final OrganizationCorrelationServiceRemote ocsr = new OrganizationCorrelationServiceBean();
+
     @Before
-    public void setUp() throws Exception {
+    public void init() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
         PaRegistry.getInstance().setServiceLocator(new MockPaRegistryServiceLocator());
@@ -101,15 +97,10 @@ public class ParticipatingSiteServiceTest {
         rBean.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
         rBean.setOcsr(ocsr);
         remoteBean = rBean;
-        HibernateUtil.setTestHelper(testHelper);
-        Session session = HibernateUtil.getCurrentSession();
-        session.clear();
     }
 
-    private Ii prepareStudyProtocol(String nciId, boolean isPropTrial)
-        throws PAException {
-        Session session = HibernateUtil.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
+    private Ii prepareStudyProtocol(String nciId, boolean isPropTrial) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
 
         User user = new User();
         user.setLoginName("Abstractor: " + new Date());
@@ -117,7 +108,6 @@ public class ParticipatingSiteServiceTest {
         user.setLastName("Smith");
         user.setUpdateDate(new Date());
         session.saveOrUpdate(user);
-        transaction.commit();
 
         StudyProtocol sp = new InterventionalStudyProtocol();
         sp.setOfficialTitle("cacncer for THOLA");
@@ -127,7 +117,7 @@ public class ParticipatingSiteServiceTest {
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.TREATMENT);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
-        Set<Ii> studySecondaryIdentifiers =  new HashSet<Ii>();
+        Set<Ii> studySecondaryIdentifiers = new HashSet<Ii>();
         Ii spSecId = new Ii();
         spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         spSecId.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
@@ -139,9 +129,7 @@ public class ParticipatingSiteServiceTest {
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
         sp.setStatusCode(ActStatusCode.ACTIVE);
 
-        transaction = session.beginTransaction();
         session.saveOrUpdate(sp);
-        transaction.commit();
 
         Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(sp.getId());
         StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
@@ -151,12 +139,9 @@ public class ParticipatingSiteServiceTest {
         dws.setStatusCode(DocumentWorkflowStatusCode.SUBMITTED);
         dws.setStudyProtocol(sp);
 
-        transaction = session.beginTransaction();
         session.saveOrUpdate(dws);
-        transaction.commit();
 
         return spSecId;
-
     }
 
     private OrganizationDTO getOrg1() {
@@ -165,17 +150,13 @@ public class ParticipatingSiteServiceTest {
         List<String> emailList = new ArrayList<String>();
         emailList.add("aaa@bbb.com");
 
-
         OrganizationDTO org = new OrganizationDTO();
         org.setName(EnOnConverter.convertToEnOn("my org"));
         org.setStatusCode(CdConverter.convertStringToCd("PENDING"));
-        org.setPostalAddress(
-                AddressConverterUtil.create("1000 Some St.", "1000 Some St.",
-                        "Rockville", "MD", "20855", "USA"));
-        org.setTelecomAddress(
-                DSetConverter.convertListToDSet(telList, "PHONE", new DSet<Tel>()));
-        org.setTelecomAddress(
-                DSetConverter.convertListToDSet(emailList, "EMAIL", org.getTelecomAddress()));
+        org.setPostalAddress(AddressConverterUtil.create("1000 Some St.", "1000 Some St.", "Rockville", "MD", "20855",
+                                                         "USA"));
+        org.setTelecomAddress(DSetConverter.convertListToDSet(telList, "PHONE", new DSet<Tel>()));
+        org.setTelecomAddress(DSetConverter.convertListToDSet(emailList, "EMAIL", org.getTelecomAddress()));
         return org;
     }
 
@@ -185,17 +166,15 @@ public class ParticipatingSiteServiceTest {
         List<String> emailList = new ArrayList<String>();
         emailList.add("bbb@ccc.com");
 
-
         PersonDTO person = new PersonDTO();
         person.setBirthDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         person.setName(EnPnConverter.convertToEnPn("first", "middle", "lastName", "prefix", "suffix"));
-        person.setPostalAddress(AddressConverterUtil.create("1000 Some St.", "1000 Some St.",
-                "Rockville", "MD", "20855", "USA"));
+        person.setPostalAddress(AddressConverterUtil.create("1000 Some St.", "1000 Some St.", "Rockville", "MD",
+                                                            "20855", "USA"));
         person.setSexCode(CdConverter.convertStringToCd("MALE"));
         person.setStatusCode(CdConverter.convertStringToCd("PENDING"));
         person.setTelecomAddress(DSetConverter.convertListToDSet(telList, "PHONE", new DSet<Tel>()));
-        person.setTelecomAddress(
-                DSetConverter.convertListToDSet(emailList, "EMAIL", person.getTelecomAddress()));
+        person.setTelecomAddress(DSetConverter.convertListToDSet(emailList, "EMAIL", person.getTelecomAddress()));
         return person;
     }
 
@@ -208,19 +187,20 @@ public class ParticipatingSiteServiceTest {
         PersonDTO person2 = new PersonDTO();
         person2.setBirthDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         person2.setName(EnPnConverter.convertToEnPn("first2", "middle2", "lastName2", "prefix", "suffix"));
-        person2.setPostalAddress(AddressConverterUtil.create("1000 Some St.", "1000 Some St.",
-                "Rockville", "MD", "20855", "USA"));
+        person2.setPostalAddress(AddressConverterUtil.create("1000 Some St.", "1000 Some St.", "Rockville", "MD",
+                                                             "20855", "USA"));
         person2.setSexCode(CdConverter.convertStringToCd("MALE"));
         person2.setStatusCode(CdConverter.convertStringToCd("PENDING"));
         person2.setTelecomAddress(DSetConverter.convertListToDSet(telList, "PHONE", new DSet<Tel>()));
-        person2.setTelecomAddress(
-                DSetConverter.convertListToDSet(emailList, "EMAIL", person2.getTelecomAddress()));
+        person2.setTelecomAddress(DSetConverter.convertListToDSet(emailList, "EMAIL", person2.getTelecomAddress()));
         return person2;
     }
 
     private StudySiteDTO getBasicStudySiteDTO(Ii spIi) {
         StudySiteDTO studySiteDTO = new StudySiteDTO();
-        studySiteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime() - Long.valueOf("300000000")), null));
+        studySiteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()
+                                                                                       - Long.valueOf("300000000")),
+                                                                               null));
         studySiteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt("LOCAL SP ID"));
         studySiteDTO.setProgramCodeText(StConverter.convertToSt("PROGRAM CODE"));
         studySiteDTO.setStudyProtocolIdentifier(spIi);
@@ -231,17 +211,16 @@ public class ParticipatingSiteServiceTest {
         StudySiteAccrualStatusDTO currentStatus = new StudySiteAccrualStatusDTO();
         currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.RECRUITING.getCode()));
 
-        currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() - Long.valueOf("300000000"))));
+        currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime()
+                - Long.valueOf("300000000"))));
         return currentStatus;
     }
 
-    private Ii mimicCtepSynch(Ii hcfIi, String ctepExt)
-    throws NullifiedRoleException, PAException, EntityValidationException {
+    private Ii mimicCtepSynch(Ii hcfIi, String ctepExt) throws NullifiedRoleException, PAException,
+            EntityValidationException {
         // mimic ctep synch and update
 
-        HealthCareFacilityDTO hcfDTO =
-            PoRegistry.getHealthCareFacilityCorrelationService()
-            .getCorrelation(hcfIi);
+        HealthCareFacilityDTO hcfDTO = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(hcfIi);
         hcfDTO.setIdentifier(new DSet<Ii>());
         hcfDTO.getIdentifier().setItem(new HashSet<Ii>());
         Ii ctepIdForOrg = new Ii();
@@ -252,7 +231,6 @@ public class ParticipatingSiteServiceTest {
         PoRegistry.getHealthCareFacilityCorrelationService().updateCorrelation(hcfDTO);
         return ctepIdForOrg;
     }
-
 
     @Test
     public void createAndUpdateSiteForPropTrialTest() throws Exception {
@@ -265,14 +243,14 @@ public class ParticipatingSiteServiceTest {
 
         ParticipatingSiteDTO dto = localBean.createStudySiteParticipant(studySiteDTO, currentStatus, org, null);
         localBean.addStudySiteInvestigator(dto.getIdentifier(), null, null, person,
-                StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getName());
+                                           StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getName());
 
         StudySiteDTO freshSiteDTO = studySiteService.get(dto.getIdentifier());
 
         assertEquals("Treating Site", freshSiteDTO.getFunctionalCode().getCode());
 
-        StudySiteAccrualStatusDTO freshAccStatus =
-            studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(dto.getIdentifier());
+        StudySiteAccrualStatusDTO freshAccStatus = studySiteAccrualStatusService
+            .getCurrentStudySiteAccrualStatusByStudySite(dto.getIdentifier());
         assertEquals(RecruitmentStatusCode.RECRUITING.getCode(), freshAccStatus.getStatusCode().getCode());
 
         List<StudySiteContactDTO> contList = studySiteContactService.getByStudySite(dto.getIdentifier());
@@ -283,9 +261,10 @@ public class ParticipatingSiteServiceTest {
 
         // test update.
         studySiteDTO.setIdentifier(null);
-        studySiteDTO.setAccrualDateRange(IvlConverter.convertTs()
-                .convertToIvl(new Timestamp(new Date().getTime() - Long.valueOf("300000000")),
-                        new Timestamp(new Date().getTime() - Long.valueOf("200000000"))));
+        studySiteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()
+                                                                                       - Long.valueOf("300000000")),
+                                                                               new Timestamp(new Date().getTime()
+                                                                                       - Long.valueOf("200000000"))));
         studySiteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt("changedLocalSp"));
         studySiteDTO.setStudyProtocolIdentifier(spSecId);
         currentStatus.setIdentifier(null);
@@ -309,16 +288,15 @@ public class ParticipatingSiteServiceTest {
             localBean.addStudySitePrimaryContact(oldIi, null, null, person2, null);
             fail();
         } catch (PAException e) {
-            //expected
+            // expected
         }
         localBean.addStudySitePrimaryContact(oldIi, null, null, person2, dsetTel);
-
 
         StudySiteDTO fresherSiteDTO = studySiteService.get(dto.getIdentifier());
         assertEquals("changedLocalSp", fresherSiteDTO.getLocalStudyProtocolIdentifier().getValue());
 
-        StudySiteAccrualStatusDTO fresherAccStatus =
-            studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(dto.getIdentifier());
+        StudySiteAccrualStatusDTO fresherAccStatus = studySiteAccrualStatusService
+            .getCurrentStudySiteAccrualStatusByStudySite(dto.getIdentifier());
         assertEquals(RecruitmentStatusCode.COMPLETED.getCode(), fresherAccStatus.getStatusCode().getCode());
 
         contList = studySiteContactService.getByStudySite(dto.getIdentifier());
@@ -340,25 +318,26 @@ public class ParticipatingSiteServiceTest {
         StudySiteAccrualStatusDTO currentStatus = getStatusDTO();
 
         ParticipatingSiteDTO dto = localBean.createStudySiteParticipant(studySiteDTO, currentStatus, org, null);
-        localBean.addStudySiteInvestigator(dto.getIdentifier(), null, null,
-                person, StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode());
+        localBean.addStudySiteInvestigator(dto.getIdentifier(), null, null, person,
+                                           StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode());
         List<StudySiteContactDTO> contList = studySiteContactService.getByStudySite(dto.getIdentifier());
         assertEquals(1, contList.size());
 
-        localBean.addStudySiteInvestigator(dto.getIdentifier(), null, null,
-                person2, StudySiteContactRoleCode.SUB_INVESTIGATOR.getCode());
-        List<ClinicalResearchStaffDTO> crsDTOs =
-            PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelationsByPlayerIds(new Ii[]{person2.getIdentifier()});
-        List<HealthCareProviderDTO> hcpDTOs =
-            PoRegistry.getHealthCareProviderCorrelationService().getCorrelationsByPlayerIds(new Ii[]{person2.getIdentifier()});
-        localBean.addStudySitePrimaryContact(dto.getIdentifier(), crsDTOs.get(0), hcpDTOs.get(0), null, person2.getTelecomAddress());
+        localBean.addStudySiteInvestigator(dto.getIdentifier(), null, null, person2,
+                                           StudySiteContactRoleCode.SUB_INVESTIGATOR.getCode());
+        List<ClinicalResearchStaffDTO> crsDTOs = PoRegistry.getClinicalResearchStaffCorrelationService()
+            .getCorrelationsByPlayerIds(new Ii[] {person2.getIdentifier() });
+        List<HealthCareProviderDTO> hcpDTOs = PoRegistry.getHealthCareProviderCorrelationService()
+            .getCorrelationsByPlayerIds(new Ii[] {person2.getIdentifier() });
+        localBean.addStudySitePrimaryContact(dto.getIdentifier(), crsDTOs.get(0), hcpDTOs.get(0), null,
+                                             person2.getTelecomAddress());
 
         StudySiteDTO freshSiteDTO = studySiteService.get(dto.getIdentifier());
 
         assertEquals("Treating Site", freshSiteDTO.getFunctionalCode().getCode());
 
-        StudySiteAccrualStatusDTO freshAccStatus =
-            studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(dto.getIdentifier());
+        StudySiteAccrualStatusDTO freshAccStatus = studySiteAccrualStatusService
+            .getCurrentStudySiteAccrualStatusByStudySite(dto.getIdentifier());
         assertEquals(RecruitmentStatusCode.RECRUITING.getCode(), freshAccStatus.getStatusCode().getCode());
 
         contList = studySiteContactService.getByStudySite(dto.getIdentifier());
@@ -370,15 +349,14 @@ public class ParticipatingSiteServiceTest {
 
         // test update.
         studySiteDTO.setIdentifier(null);
-        studySiteDTO.setAccrualDateRange(IvlConverter.convertTs()
-                .convertToIvl(new Timestamp(new Date().getTime() - Long.valueOf("300000000")),
-                        new Timestamp(new Date().getTime() - Long.valueOf("200000000"))));
+        studySiteDTO.setAccrualDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()
+                                                                                       - Long.valueOf("300000000")),
+                                                                               new Timestamp(new Date().getTime()
+                                                                                       - Long.valueOf("200000000"))));
         studySiteDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt("changedLocalSp"));
         studySiteDTO.setStudyProtocolIdentifier(spSecId);
         currentStatus.setIdentifier(null);
         currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.COMPLETED.getCode()));
-
-
 
         Ii oldIi = localBean.getParticipatingSiteIi(spSecId, ctepIdForOrg);
         studySiteDTO.setIdentifier(oldIi);
@@ -393,12 +371,11 @@ public class ParticipatingSiteServiceTest {
         localBean.updateStudySiteParticipant(studySiteDTO, currentStatus);
         localBean.addStudySitePrimaryContact(oldIi, null, null, person, dsetTel);
 
-
         StudySiteDTO fresherSiteDTO = studySiteService.get(dto.getIdentifier());
         assertEquals("changedLocalSp", fresherSiteDTO.getLocalStudyProtocolIdentifier().getValue());
 
-        StudySiteAccrualStatusDTO fresherAccStatus =
-            studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(dto.getIdentifier());
+        StudySiteAccrualStatusDTO fresherAccStatus = studySiteAccrualStatusService
+            .getCurrentStudySiteAccrualStatusByStudySite(dto.getIdentifier());
         assertEquals(RecruitmentStatusCode.COMPLETED.getCode(), fresherAccStatus.getStatusCode().getCode());
 
         contList = studySiteContactService.getByStudySite(dto.getIdentifier());
@@ -454,15 +431,19 @@ public class ParticipatingSiteServiceTest {
         StudySiteAccrualStatusDTO currentStatus = getStatusDTO();
 
         ParticipatingSiteDTO dto = localBean.createStudySiteParticipant(studySiteDTO, currentStatus, org, null);
-        //localBean.addStudySiteInvestigator(dto.getIdentifier(), null, null,
-        //        person, StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode());
+        // localBean.addStudySiteInvestigator(dto.getIdentifier(), null, null,
+        // person, StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode());
 
-        //localBean.addStudySiteInvestigator(dto.getIdentifier(), null, null, person2, StudySiteContactRoleCode.SUB_INVESTIGATOR.getCode());
-        //List<ClinicalResearchStaffDTO> crsDTOs =
-        //    PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelationsByPlayerIds(new Ii[]{person2.getIdentifier()});
-        //List<HealthCareProviderDTO> hcpDTOs =
-        //    PoRegistry.getHealthCareProviderCorrelationService().getCorrelationsByPlayerIds(new Ii[]{person2.getIdentifier()});
-        //localBean.addStudySitePrimaryContact(dto.getIdentifier(), crsDTOs.get(0), hcpDTOs.get(0), null, person2.getTelecomAddress());
+        // localBean.addStudySiteInvestigator(dto.getIdentifier(), null, null, person2,
+        // StudySiteContactRoleCode.SUB_INVESTIGATOR.getCode());
+        // List<ClinicalResearchStaffDTO> crsDTOs =
+        // PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelationsByPlayerIds(new
+        // Ii[]{person2.getIdentifier()});
+        // List<HealthCareProviderDTO> hcpDTOs =
+        // PoRegistry.getHealthCareProviderCorrelationService().getCorrelationsByPlayerIds(new
+        // Ii[]{person2.getIdentifier()});
+        // localBean.addStudySitePrimaryContact(dto.getIdentifier(), crsDTOs.get(0), hcpDTOs.get(0), null,
+        // person2.getTelecomAddress());
 
         StudySiteDTO freshSiteDTO = studySiteService.get(dto.getIdentifier());
         Ii ctepIdForOrg = mimicCtepSynch(freshSiteDTO.getHealthcareFacilityIi(), "TEST_CTEP_ORG3");
@@ -476,7 +457,7 @@ public class ParticipatingSiteServiceTest {
             localBean.addStudySiteGenericContact(oldIi, orgDTO, true, null);
             fail();
         } catch (PAException e) {
-            //expected
+            // expected
         }
 
         orgDTO.setTypeCode(CdConverter.convertStringToCd("Site"));
@@ -484,7 +465,7 @@ public class ParticipatingSiteServiceTest {
             localBean.addStudySiteGenericContact(oldIi, orgDTO, true, null);
             fail();
         } catch (PAException e) {
-            //expected
+            // expected
         }
 
         List<String> emailList = new ArrayList<String>();
@@ -496,7 +477,7 @@ public class ParticipatingSiteServiceTest {
             localBean.addStudySiteGenericContact(oldIi, orgDTO, true, null);
             fail();
         } catch (PAException e) {
-            //expected
+            // expected
         }
 
         phoneAndEmail = new DSet<Tel>();
@@ -508,7 +489,7 @@ public class ParticipatingSiteServiceTest {
             localBean.addStudySiteGenericContact(oldIi, orgDTO, true, null);
             fail();
         } catch (PAException e) {
-            //expected
+            // expected
         }
 
         phoneAndEmail = new DSet<Tel>();
@@ -519,7 +500,7 @@ public class ParticipatingSiteServiceTest {
             localBean.addStudySiteGenericContact(oldIi, orgDTO, true, null);
             fail();
         } catch (PAException e) {
-            //expected
+            // expected
         }
         localBean.addStudySiteGenericContact(oldIi, orgDTO, true, phoneAndEmail);
 

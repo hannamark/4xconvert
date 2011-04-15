@@ -110,14 +110,10 @@ import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.util.CtrpHibernateHelper;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.TestHibernateHelper;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
-import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -126,7 +122,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 /**
 * @author Hugh Reinhart
@@ -148,52 +143,13 @@ public class TestSchema {
     public static List<Country> countries;
     public static List<RegistryUser> registryUsers;
 
-    private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
-
-    /**
-     *  Reset the schema.
-     */
-    @SuppressWarnings("unused")
-    public static void reset() throws Exception {
-        /* just to exercise the getHibernateHelper with a null value */
-        HibernateUtil ahu = new HibernateUtil();
-        HibernateUtil.setTestHelper(null);
-        HibernateUtil.getHibernateHelper();
-        /* end test */
-
-        HibernateUtil.setTestHelper(testHelper);
-        Session session = HibernateUtil.getHibernateHelper().getCurrentSession();
-        session.flush();
-        Connection connection = session.connection();
-        Statement statement = connection.createStatement();
-        statement.executeUpdate("delete from regulatory_authority");
-        statement.executeUpdate("delete from country");
-        statement.executeUpdate("delete from performed_activity");
-        statement.executeUpdate("delete from activity_relationship");
-        statement.executeUpdate("delete from performed_observation_result");
-        statement.executeUpdate("delete from study_disease");
-        statement.executeUpdate("delete from study_subject");
-        statement.executeUpdate("delete from patient");
-        statement.executeUpdate("delete from study_site");
-        statement.executeUpdate("delete from submission");
-        statement.executeUpdate("delete from study_overall_status");
-        statement.executeUpdate("delete from study_otheridentifiers");
-        statement.executeUpdate("delete from study_protocol");
-        statement.executeUpdate("delete from sdc_disease");
-        statement.executeUpdate("delete from healthcare_facility");
-        statement.executeUpdate("delete from organization");
-        primeData();
-    }
-
     /**
      * @param <T> t
      * @param obj o
      */
     public static <T> void addUpdObject(T obj) {
-        Session session = HibernateUtil.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
+        Session session = PaHibernateUtil.getCurrentSession();
         session.saveOrUpdate(obj);
-        transaction.commit();
     }
 
     /**
@@ -363,7 +319,7 @@ public class TestSchema {
         sub.setStudyProtocol(studyProtocols.get(0));
         addUpdObject(sub);
         submissions.add(sub);
-        
+
         sub = new Submission();
         sub.setCutOffDate(PAUtil.dateStringToTimestamp("12/31/2012"));
         sub.setDescription("description");
@@ -418,7 +374,7 @@ public class TestSchema {
         ss.setStudyProtocol(studyProtocols.get(1));
         addUpdObject(ss);
         studySites.add(ss);
-        
+
         ss = new StudySite();
         ss.setLocalStudyProtocolIdentifier("T2 Local SP 001");
         ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
@@ -435,7 +391,7 @@ public class TestSchema {
         ss.setStudyProtocol(studyProtocols.get(2));
         addUpdObject(ss);
         studySites.add(ss);
-        
+
         // StudySiteAccrualAccess
         RegistryUser registryUser = getRegistryUser();
         registryUsers.add(registryUser);
@@ -592,13 +548,12 @@ public class TestSchema {
         ru.setPoPersonId(IiConverter.convertToLong(MockPoPersonEntityService.personList.get(0).getIdentifier()));
         ru.setState("MD");
         addUpdObject(ru);
+
+        PaHibernateUtil.getCurrentSession().flush();
     }
 
     public static User createUser() {
-        User user = null;
-        Session session  = HibernateUtil.getCurrentSession();
-        session.beginTransaction();
-        user = new User();
+        User user = new User();
         user.setLoginName("Abstractor: " + new Date());
         user.setFirstName("Joe");
         user.setLastName("Smith");

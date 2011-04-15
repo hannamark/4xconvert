@@ -91,9 +91,9 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.AbstractBaseIsoService;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
@@ -118,7 +118,7 @@ import org.hibernate.Session;
  * @since Sep 2, 2009
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudySiteAccrualAccessServiceBean
     extends AbstractBaseIsoService<StudySiteAccrualAccessDTO, StudySiteAccrualAccess, StudySiteAccrualAccessConverter>
@@ -151,7 +151,7 @@ public class StudySiteAccrualAccessServiceBean
     public Map<Long, String> getTreatingSites(Long studyProtocolId) throws PAException {
         Session session = null;
         List<Object[]> queryList = null;
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         Query query = null;
         String hql = "select ss.id, org.name from StudyProtocol sp join sp.studySites ss "
             + " join ss.healthCareFacility hcf join hcf.organization org where sp.id = :spId "
@@ -216,7 +216,7 @@ public class StudySiteAccrualAccessServiceBean
     private List<StudySiteAccrualAccess> getBosByStudyProtocol(Long studyProtocolId) throws PAException {
         Session session = null;
         List<StudySiteAccrualAccess> queryList = null;
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         Query query = null;
         String hql = "select ssaa "
             + "from StudyProtocol sp "
@@ -234,7 +234,7 @@ public class StudySiteAccrualAccessServiceBean
     private List<StudySiteAccrualAccess> getBosByStudySite(Long studySiteId) throws PAException {
         Session session = null;
         List<StudySiteAccrualAccess> queryList = null;
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         Query query = null;
         String hql = "select ssaa from StudySite ss join ss.studySiteAccrualAccess ssaa where ss.id = :ssId "
             + "order by ss.id, ssaa.id ";

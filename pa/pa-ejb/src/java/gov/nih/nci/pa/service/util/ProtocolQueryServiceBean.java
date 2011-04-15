@@ -112,8 +112,8 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.search.StudyProtocolBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyProtocolOptions;
 import gov.nih.nci.pa.service.search.StudyProtocolQueryBeanSearchCriteria;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
@@ -146,7 +146,7 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtocol>
     implements ProtocolQueryServiceLocal {
 
@@ -353,7 +353,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         StringBuffer hql = new StringBuffer();
         Session session = null;
         long[] ids = getProtocolIds(spDtos);
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         hql.append(" select sp , soh from StudyProtocol as sp  "
                 + "join sp.studyOnholds as soh  where sp.id in ( ");
         for (int i = 0; i < ids.length; i++) {

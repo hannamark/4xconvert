@@ -7,9 +7,11 @@
 <project name="commons" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>
+    <property name="commons.dir" value="${pa.dir}/commons"/>
     <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
     <property file="${software.dir}/pa/build.properties"/>
-    <property name="pa.resourceDir" value="${software.dir}/pa/resources"/>
+    <property name="pa.resourceDir" value="${pa.dir}/resources"/>
+    <property name="pa.test.resourceDir" value="${pa.dir}/commons/test/resources"/>
 
     <property name="pa.pmd" value="${pa.resourceDir}/paPmd.xml"/>
     <property name="pa.checkstyle.url" value="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml"/>
@@ -17,13 +19,13 @@
     <property name="jboss.server.jndi.port" value="1099" />
 
     <property name="commons.build.finalName" value="pa-commons"/>
-    <property name="commons.build.dir" value="${pa.dir}/commons/target"/>
+    <property name="commons.build.dir" value="${commons.dir}/target"/>
     <property name="commons.build.outputDir" value="${commons.build.dir}/classes"/>
-    <property name="commons.build.srcDir.0" value="${pa.dir}/commons/src/java"/>
-    <property name="commons.build.resourceDir.0" value="${pa.dir}/commons/src/resources"/>
+    <property name="commons.build.srcDir.0" value="${commons.dir}/src/java"/>
+    <property name="commons.build.resourceDir.0" value="${commons.dir}/src/resources"/>
     <property name="commons.build.testOutputDir" value="${commons.build.dir}/test-classes"/>
-    <property name="commons.build.testDir.0" value="${pa.dir}/commons/test/java"/>
-    <property name="commons.build.testResourceDir.0" value="${pa.dir}/commons/test/resources"/>
+    <property name="commons.build.testDir.0" value="${commons.dir}/test/java"/>
+    <property name="commons.build.testResourceDir.0" value="${commons.dir}/test/resources"/>
     <property name="commons.test.reports" value="${pa.report.dir}/commons/test-reports"/>
     <property name="commons.coverage.reports" value="${pa.report.dir}/commons/coverage-reports"/>
     <property name="commons.reporting.outputDirectory" value="${pa.report.dir}/commons/site"/>
@@ -39,12 +41,20 @@
     <property name="ivy.def.file" location="ivy-commons.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
 
+    <!-- Test properties, override in build.properties if necessary -->
+    <property name="test.jdbc.driverClassName" value="org.hsqldb.jdbcDriver"/>
+    <property name="test.jdbc.url" value="jdbc:hsqldb:mem:pa-test"/>
+    <property name="test.jdbc.username" value="sa"/>
+    <property name="test.jdbc.password" value=""/>
+    <property name="test.hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+    <property name="test.schema.showsql" value="false"/>
+
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
 
      <path id="common.package.classpath">
-         <fileset dir="${pa.dir}/commons/target">
+         <fileset dir="${commons.dir}/target">
              <include name="*.jar"/>
          </fileset>
       </path>
@@ -133,16 +143,8 @@
 
     <target name="compile" description="Compile the code">
         <mkdir dir="${commons.build.outputDir}"/>
-        <javac destdir="${commons.build.outputDir}"
-               nowarn="false"
-               debug="true"
-               optimize="false"
-               deprecation="true"
-               target="1.5"
-               verbose="false"
-               fork="false"
-               source="1.5"
-               encoding="Cp1252">
+        <javac destdir="${commons.build.outputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
+               target="1.5" source="1.5" verbose="false" fork="false" encoding="Cp1252">
             <src>
                 <pathelement location="${commons.build.srcDir.0}"/>
             </src>
@@ -165,33 +167,28 @@
     <!-- Configure test compilation target                                      -->
     <!-- ====================================================================== -->
 
-   <!-- <target name="configure-tests">
-        <copy file="${pa.resourceDir}/test.properties.commons"
-              tofile="${commons.build.testResourceDir.0}/test.properties"
-              overwrite="true">
+    <target name="configure-tests">
+        <copy todir="${commons.build.testOutputDir}" overwrite="true" filtering="true">
+            <fileset dir="${pa.test.resourceDir}"/>
             <filterset>
+                <filter token="test.jdbc.driverClassName" value="${test.jdbc.driverClassName}"/>
+                <filter token="test.jdbc.url" value="${test.jdbc.url}"/>
+                <filter token="test.jdbc.username" value="${test.jdbc.username}"/>
+                <filter token="test.jdbc.password" value="${test.jdbc.password}"/>
+                <filter token="test.hibernate.dialect" value="${test.hibernate.dialect}"/>
                 <filter token="test.schema.showsql" value="${test.schema.showsql}"/>
             </filterset>
         </copy>
-    </target> -->
+    </target>
 
     <!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
-    <target name="compile-tests"
-      depends="compile"
-      description="Compile the test code">
+    <target name="compile-tests" depends="compile, configure-tests" description="Compile the test code">
         <mkdir dir="${commons.build.testOutputDir}"/>
-        <javac destdir="${commons.build.testOutputDir}"
-               nowarn="false"
-               debug="true"
-               optimize="false"
-               deprecation="true"
-               target="1.5"
-               verbose="false"
-               fork="false"
-               source="1.5">
+        <javac destdir="${commons.build.testOutputDir}" nowarn="false" debug="true" optimize="false"
+               deprecation="true" target="1.5" verbose="false" fork="false" source="1.5">
             <src>
                 <pathelement location="${commons.build.testDir.0}"/>
             </src>
@@ -217,9 +214,9 @@
             <sysproperty key="basedir" value="."/>
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
+            <classpath location="${commons.build.testOutputDir}"/>
             <classpath location="${commons.build.coberturaOutputDir}"/>
             <classpath location="${commons.build.outputDir}"/>
-            <classpath location="${commons.build.testOutputDir}"/>
             <classpath refid="test.classpath"/>
             <classpath refid="test-junit.classpath"/>
             <classpath refid="test-cobertura.classpath"/>
@@ -227,8 +224,8 @@
             <test if="test" name="${test}" haltonerror="false" haltonfailure="false"></test>
             <batchtest todir="${commons.test.reports}" fork="yes" unless="test">
                 <fileset dir="${commons.build.testDir.0}">
-                <include name="**/*Test.java"/>
-                <exclude name="**/*Abstract*Test.java"/>
+                    <include name="**/*Test.java"/>
+                    <exclude name="**/*Abstract*Test.java"/>
                 </fileset>
             </batchtest>
         </junit>
@@ -248,15 +245,14 @@
         </cobertura-instrument>
 
         <mkdir dir="${commons.test.reports}"/>
-        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir="." showoutput="no">
+        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." showoutput="no" failureproperty="junit.failure">
             <sysproperty key="basedir" value="."/>
-            <sysproperty key="net.sourceforge.cobertura.datafile"
-                    file="${commons.build.dir}/cobertura.ser" />
+            <sysproperty key="net.sourceforge.cobertura.datafile" file="${commons.build.dir}/cobertura.ser" />
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
+            <classpath location="${commons.build.testOutputDir}"/>
             <classpath location="${commons.build.coberturaOutputDir}"/>
             <classpath location="${commons.build.outputDir}"/>
-            <classpath location="${commons.build.testOutputDir}"/>
             <classpath refid="test.classpath"/>
             <classpath refid="test-junit.classpath"/>
             <classpath refid="test-cobertura.classpath"/>
@@ -268,7 +264,13 @@
                 </fileset>
             </batchtest>
         </junit>
-
+        <junitreport todir="${commons.test.reports}">
+            <fileset dir="${commons.test.reports}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report todir="${commons.test.reports}" />
+        </junitreport>
+        <fail if="junit.failure" message="Unit test(s) failed.  See reports in ${commons.test.reports}."/>
         <cobertura-report datafile="${commons.build.dir}/cobertura.ser"
                           destdir="${commons.coverage.reports}"
                           srcdir="${commons.build.srcDir.0}" />
@@ -279,8 +281,8 @@
                           srcdir="${commons.build.srcDir.0}" />
 
         <cobertura-check datafile="${commons.build.dir}/cobertura.ser"
-                         totalbranchrate="48"
-                         totallinerate="69"
+                         totalbranchrate="36"
+                         totallinerate="47"
                          haltonfailure="true"/>
      </target>
 
@@ -308,7 +310,7 @@
 
     <target name="test-pmd">
         <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
-        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="65">
+        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="64">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa.report.dir}/commons/pmd.txt"/>
             <formatter type="xml"  toFile="${pa.report.dir}/commons/pmd.xml"/>
@@ -338,11 +340,11 @@
     <!-- ====================================================================== -->
 
     <target name="test-dynamic-analysis"
-            depends="ivy-get,compile,jar,compile-tests,test-cobertura"
+            depends="ivy-get,jar,jar-test,test-cobertura"
             description="Run dynamic analysis."/>
 
     <target name="test-static-analysis"
-            depends="ivy-get,compile,jar,test-checkstyle,test-pmd,test-simian"
+            depends="ivy-get,jar,jar-test,test-checkstyle,test-pmd,test-simian"
             description="Run static analysis."/>
 
     <target name="test-all"
@@ -353,7 +355,7 @@
     <!-- Package target                                                         -->
     <!-- ====================================================================== -->
 
-    <target name="jar" depends="jar-test">
+    <target name="jar" depends="compile">
         <jar jarfile="${commons.build.dir}/${commons.jar}"
              compress="true"
              index="false"
@@ -365,12 +367,10 @@
              compress="true"
              index="false"
              basedir="${commons.build.testOutputDir}"
-             includes="**/*.class"
              excludes="**/enums/*
-                        **/iso/dto/Regulatory*.class
-                        **/iso/dto/Study*.class
-                        **/iso/util/*
-        "/>
+                       **/iso/dto/Regulatory*.class
+                       **/iso/dto/Study*.class
+                       **/iso/util/*"/>
     </target>
 
     <target name="package-notest-noivy" depends="compile,jar"/>
@@ -378,7 +378,7 @@
     <target name="package-notest" depends="ivy-get,compile,jar"
             description="Package the application.  Do not run tests."/>
 
-    <target name="package" depends="ivy-get,compile,jar,test-all"
+    <target name="package" depends="ivy-get,compile,jar,jar-test,test-all"
             description="Package the application"/>
 
     <target name="package-client" depends="package-notest-noivy"

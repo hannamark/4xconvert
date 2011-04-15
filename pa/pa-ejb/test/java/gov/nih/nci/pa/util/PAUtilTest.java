@@ -8,8 +8,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
@@ -20,31 +18,23 @@ import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.dto.PaOrganizationDTO;
-import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
-import gov.nih.nci.pa.iso.util.EnOnConverter;
-import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.services.person.PersonDTO;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -253,8 +243,10 @@ public class PAUtilTest {
      */
     @Test
     public void testConvertTsToFormarttedDate() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(2009, 10, 16); // month field is 0-based, so 10 is november
         String date =
-            PAUtil.convertTsToFormattedDate(TsConverter.convertToTs(new Timestamp(new Date("11/16/2009").getTime())), "yyyy-MM");
+            PAUtil.convertTsToFormattedDate(TsConverter.convertToTs(new Timestamp(cal.getTimeInMillis())), "yyyy-MM");
         assertEquals("2009-11",date);
     }
 
@@ -263,8 +255,10 @@ public class PAUtilTest {
      */
     @Test
     public void testConvertTsToDefaultFormattedDate() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(2009, 0, 16); // month field is 0-based, so 0 is january
         String date =
-            PAUtil.convertTsToFormattedDate(TsConverter.convertToTs(new Timestamp(new Date("1/16/2009").getTime())));
+            PAUtil.convertTsToFormattedDate(TsConverter.convertToTs(new Timestamp(cal.getTimeInMillis())));
         assertEquals("01/16/2009",date);
     }
 
@@ -482,14 +476,6 @@ public class PAUtilTest {
         assertFalse(
                   PAUtil.isAbstractedAndAbove(CdConverter.convertStringToCd(
                           DocumentWorkflowStatusCode.ACCEPTED.getCode())));
-    }
-
-    /**
-     * Test method for {@link gov.nih.nci.pa.util.PAUtil#checkIfValueExists(java.lang.String, java.lang.String, java.lang.String)}.
-     */
-    @Test(expected=Exception.class)
-    public void testCheckIfValueExists() throws PAException {
-        PADomainUtils.checkIfValueExists("GAS", "DoseForm", "code");
     }
 
     /**
@@ -750,56 +736,6 @@ public class PAUtilTest {
         iiSet.add(IiConverter.convertToStudyProtocolIi(new Long(2222)));
         spDto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(iiSet));
         assertTrue(PAUtil.checkAssignedIdentifierExists(spDto));
-    }
-
-    @Test
-    public void testConvertPoOrganizationDTO() throws Exception{
-        OrganizationDTO org = new OrganizationDTO();
-        org.setName(EnOnConverter.convertToEnOn("org"));
-        org.setIdentifier(IiConverter.convertToPoOrganizationalContactIi("1"));
-        Ad address = AddressConverterUtil.create("101 Renner rd", "deliveryAddress", "Richardson", "TX", "75081", "USA");
-        org.setPostalAddress(address);
-        TestSchema.reset();
-        List<Country> con = TestSchema.countries;
-        PaOrganizationDTO paOrgDTO = PADomainUtils.convertPoOrganizationDTO(org, con);
-        assertEquals("Testing org name", "org", paOrgDTO.getName());
-        assertEquals("Testing Country name", "USA", paOrgDTO.getCountry());
-    }
-
-
-    private PersonDTO setUpPerson() {
-        PersonDTO poPerson = new PersonDTO();
-        poPerson.setName(EnPnConverter.convertToEnPn("firstName", "middleName", "lastName", "prefix", "suffix"));
-        poPerson.setIdentifier(IiConverter.convertToPoPersonIi("1"));
-         List<String> phones = new ArrayList<String>();
-         String phone="1111111111";
-         String email="a@a.com";
-            phones.add(phone);
-            List<String> emails = new ArrayList<String>();
-            emails.add(email);
-            DSet<Tel> dsetList = null;
-            dsetList =  DSetConverter.convertListToDSet(phones, "PHONE", dsetList);
-            dsetList =  DSetConverter.convertListToDSet(emails, "EMAIL", dsetList);
-          poPerson.setTelecomAddress(dsetList);
-          Ad address = AddressConverterUtil.create("101 Renner rd", "deliveryAddress", "Richardson", "TX", "75081", "USA");
-          poPerson.setPostalAddress(address);
-        return poPerson;
-    }
-
-    @Test
-    public void testConvertToPaPerson() {
-        PersonDTO poPerson = setUpPerson();
-         Person person = PADomainUtils.convertToPaPerson(poPerson);
-         assertNotNull(person);
-         assertEquals("Testing first name","firstName",person.getFirstName());
-    }
-
-    @Test
-    public void testConvertToPaPersonDTO() {
-        PersonDTO poPerson = setUpPerson();
-        PaPersonDTO paPersonDTO = PADomainUtils.convertToPaPersonDTO(poPerson);
-        assertEquals("testing last name", "lastName",paPersonDTO.getLastName());
-        assertEquals("testing last name","a@a.com",paPersonDTO.getEmail());
     }
 
     @Test

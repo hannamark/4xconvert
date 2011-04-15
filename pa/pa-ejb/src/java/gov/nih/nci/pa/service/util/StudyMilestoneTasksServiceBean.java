@@ -89,8 +89,8 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.sql.Timestamp;
@@ -117,7 +117,7 @@ import org.apache.log4j.Logger;
  * @since 07/29/2009
  */
 @Stateless
-@Interceptors({HibernateSessionInterceptor.class })
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Local(StudyMilestoneTasksServiceLocal.class)
 @LocalHome(StudyMilestoneTasksServiceLocalHome.class)
@@ -159,7 +159,8 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
      * @throws PAException
      */
     private void createMilestone(StudyMilestone smdto) throws PAException {
-        LOG.info("Creating a new milestone with code - initial abstraction verify" + smdto.getStudyProtocol().getId());
+        LOG.info("Creating a new milestone with code - initial abstraction verify for study protocol "
+                + smdto.getStudyProtocol().getId());
         StudyMilestoneDTO newDTO = new StudyMilestoneDTO();
         newDTO.setCommentText(StConverter.convertToSt("Milestone auto-set based on Non-Response within 5 days"));
         newDTO.setMilestoneCode(CdConverter.convertStringToCd(
@@ -212,8 +213,7 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
         if (milestoneDate.before(today)) {
             ret = true;
         }
-        LOG.info("StudyMilestoneTasksServiceBean: study's TSR sent date " + milestoneDate.getTime()
-                + " isMoreThan5Businessdays " + ret);
+        LOG.info("Study's TSR sent date is " + milestoneDate.getTime() + ". isMoreThan5Businessdays: " + ret);
         return ret;
     }
 
@@ -230,7 +230,7 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
             + " from StudyMilestone sm2 where sm2.milestoneCode='" + MilestoneCode.INITIAL_ABSTRACTION_VERIFY + "'))";
 
         Set<StudyMilestone> mileStoneList = new TreeSet<StudyMilestone>(new MilestoneComparator());
-        mileStoneList.addAll(HibernateUtil.getCurrentSession().createQuery(hsql).list());
+        mileStoneList.addAll(PaHibernateUtil.getCurrentSession().createQuery(hsql).list());
         return mileStoneList;
     }
 

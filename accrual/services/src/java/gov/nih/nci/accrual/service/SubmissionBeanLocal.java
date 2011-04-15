@@ -86,8 +86,8 @@ import gov.nih.nci.pa.domain.Submission;
 import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
@@ -108,7 +108,7 @@ import org.hibernate.criterion.Restrictions;
  * @since Aug 29, 2009
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class SubmissionBeanLocal extends AbstractBaseAccrualStudyBean<SubmissionDto, Submission, SubmissionConverter>
         implements SubmissionServiceLocal {
@@ -147,7 +147,7 @@ public class SubmissionBeanLocal extends AbstractBaseAccrualStudyBean<Submission
      * {@inheritDoc}
      */
     public SubmissionDto getOpenSubmission(Ii studyProtocolIi) throws PAException {
-        Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(Submission.class);
+        Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(Submission.class);
         criteria.add(Restrictions.eq("studyProtocol.id", IiConverter.convertToLong(studyProtocolIi)));
         criteria.add(Restrictions.eq("statusCode", AccrualSubmissionStatusCode.OPENED));
         try {

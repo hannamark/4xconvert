@@ -100,10 +100,10 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -117,13 +117,10 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.interceptor.Interceptors;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -138,28 +135,12 @@ import org.hibernate.criterion.Example;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @SuppressWarnings("unchecked")
 public class CorrelationUtils implements CorrelationUtilsRemote {
     private static final Logger LOG = Logger.getLogger(CorrelationUtils.class);
-    private static final Map<String, String> SR_II_ROOT_MAP = new HashMap<String, String>();
-    static {
-        SR_II_ROOT_MAP.put(IiConverter.HEALTH_CARE_FACILITY_ROOT, "HealthCareFacility ");
-        SR_II_ROOT_MAP.put(IiConverter.RESEARCH_ORG_ROOT, "ResearchOrganization ");
-        SR_II_ROOT_MAP.put(IiConverter.OVERSIGHT_COMMITTEE_ROOT, "OversightCommittee ");
-        SR_II_ROOT_MAP.put(IiConverter.CLINICAL_RESEARCH_STAFF_ROOT, "ClinicalResearchStaff ");
-        SR_II_ROOT_MAP.put(IiConverter.HEALTH_CARE_PROVIDER_ROOT, "HealthCareProvider ");
-        SR_II_ROOT_MAP.put(IiConverter.ORGANIZATIONAL_CONTACT_ROOT, "OrganizationalContact ");
-    }
-    private static final Map<String, String> SR_II_IDENTIFIER_NAME_MAP = new HashMap<String, String>();
-    static {
-        SR_II_IDENTIFIER_NAME_MAP.put(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME, "HealthCareFacility ");
-        SR_II_IDENTIFIER_NAME_MAP.put(IiConverter.RESEARCH_ORG_IDENTIFIER_NAME, "ResearchOrganization ");
-        SR_II_IDENTIFIER_NAME_MAP.put(IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME, "OversightCommittee ");
-        SR_II_IDENTIFIER_NAME_MAP.put(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME, "ClinicalResearchStaff ");
-        SR_II_IDENTIFIER_NAME_MAP.put(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME, "HealthCareProvider ");
-        SR_II_IDENTIFIER_NAME_MAP.put(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME, "OrganizationalContact ");
-    }
+    private gov.nih.nci.pa.util.CorrelationUtils commonsCorrelationUtils = new gov.nih.nci.pa.util.CorrelationUtils();
+
     /**
      * @param poOrganizationalContactId id
      * @return Person
@@ -174,7 +155,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         }
         PAContactDTO returnDto = new PAContactDTO();
         Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         OrganizationalContact exampleBo  = new OrganizationalContact();
         exampleBo.setIdentifier(poOrganizationalContactId.toString());
         Example example = Example.create(exampleBo);
@@ -242,7 +223,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());
         }
 
-        List<Organization> queryList = HibernateUtil.getCurrentSession().createQuery(hql.toString()).list();
+        List<Organization> queryList = PaHibernateUtil.getCurrentSession().createQuery(hql.toString()).list();
         if (queryList.size() > 1) {
             throw new PAException("  Organization  should not be more than 1 record for a Po Identifier  "
                     + isoIi.getExtension() + isoIi.getIdentifierName());
@@ -280,7 +261,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());
         }
 
-        List<Person> queryList = HibernateUtil.getCurrentSession().createQuery(hql.toString()).list();
+        List<Person> queryList = PaHibernateUtil.getCurrentSession().createQuery(hql.toString()).list();
         if (queryList.size() > 1) {
             throw new PAException(" Person  should not be more than 1 record for a Po Identifier = "
                     + isoIi.getExtension());
@@ -290,51 +271,6 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         }
         return per;
 
-    }
-    /**
-     *
-     * @param <T> any class extends {@link StructuralRole}
-     * @param isoIi iso identitifier
-     * @return StucturalRole class for an correspondong iso ii
-     * @throws PAException on error
-     */
-
-    public <T extends StructuralRole> T getStructuralRoleByIi(Ii isoIi) throws PAException {
-
-        StringBuffer hql = new StringBuffer("select role from ").append(getObjectName(isoIi))
-            .append(" role where role.identifier = '" + isoIi.getExtension() + "'");
-        Session session = HibernateUtil.getCurrentSession();
-        List<T> queryList = session.createQuery(hql.toString()).list();
-        T sr = null;
-        if (queryList.size() > 1) {
-            throw new PAException(" More than 1 structural role found for a given identifier "
-                        + isoIi.getIdentifierName() + " " + isoIi.getExtension());
-        }
-
-        if (!queryList.isEmpty()) {
-            sr = queryList.get(0);
-        }
-        session.flush();
-        return sr;
-    }
-
-    /**
-     * This method returns the bo name based on Identifier name or root.
-     * @param isoIi ii
-     * @return object name based on ii's identifier name or root. Ideally it should just check root
-     * @throws PAException when Ii's identifier name and root is null.
-     */
-    private String getObjectName(Ii isoIi) throws PAException {
-        String objectName = "";
-        if (StringUtils.isNotEmpty(isoIi.getRoot())) {
-            objectName = SR_II_ROOT_MAP.get(isoIi.getRoot());
-        } else {
-            objectName = SR_II_IDENTIFIER_NAME_MAP.get(isoIi.getIdentifierName());
-        }
-        if (StringUtils.isEmpty(objectName)) {
-            throw new PAException("Unknown identifier name or root provided.");
-        }
-        return objectName;
     }
 
     /**
@@ -349,7 +285,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
 
     <T extends StructuralRole> T getStructuralRole(T sr) throws PAException {
 
-        Session s = HibernateUtil.getCurrentSession();
+        Session s = PaHibernateUtil.getCurrentSession();
 
         T sr1 = (T) s.get(sr.getClass(), sr.getId());
         s.flush();
@@ -429,11 +365,9 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      */
     public AbstractEntity createPADomain(AbstractEntity ae) throws PAException {
         if (ae == null) {
-            LOG.error(" domain should not be null ");
-            throw new PAException(" domaon should not be null ");
+            throw new PAException("domain should not be null");
         }
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         session.save(ae);
         session.flush();
         return ae;
@@ -502,7 +436,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             throw new PAException(" organization should not be null ");
         }
         Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         Query query = session.createQuery("select org from Organization org  where org.identifier = :poOrg");
         query.setParameter("poOrg", organization.getIdentifier());
         returnVal = (Organization) query.uniqueResult();
@@ -528,7 +462,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             throw new PAException(" Person should not be null ");
         }
         Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         Query query = session.createQuery("select per from Person per where per.identifier = :poId ");
         query.setParameter("poId", person.getIdentifier());
         if (query.uniqueResult() == null) {
@@ -681,7 +615,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      * @throws PAException when error.
      */
     public Ii getPoOrgIiFromPaHcfIi(Ii hcfIi) throws PAException {
-        HealthCareFacility hcf = getStructuralRoleByIi(hcfIi);
+        HealthCareFacility hcf = commonsCorrelationUtils.getStructuralRoleByIi(hcfIi);
         return IiConverter.convertToPoOrganizationIi(hcf.getOrganization().getIdentifier());
     }
 
@@ -763,7 +697,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
     public void updateItemIdForStudyProtocolStage(String item, String oldPoId,
             String newPoId) throws NullifiedEntityException, PAException {
 
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         session.createQuery("update StudyProtocolStage set "
                 + item + " = :newPoId "
                 + "where " + item + " = :oldPoId")
@@ -772,5 +706,18 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         .executeUpdate();
     }
 
+    /**
+     *
+     * @param <T> any class extends {@link StructuralRole}
+     * @param isoIi iso identitifier
+     * @return StucturalRole class for an correspondong iso ii
+     * @throws PAException on error
+     * @deprecated Use {@link gov.nih.nci.pa.util.CorrelationUtils#getStructuralRoleByIi(Ii)} instead
+     */
+    @Deprecated
+    public <T extends StructuralRole> T getStructuralRoleByIi(Ii isoIi) throws PAException {
+        // This method was moved, but a delegate was left to keep existing callers from breaking
+        return (T) commonsCorrelationUtils.getStructuralRoleByIi(isoIi);
+    }
 
 }

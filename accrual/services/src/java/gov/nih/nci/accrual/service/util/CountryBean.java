@@ -83,8 +83,8 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
@@ -106,7 +106,7 @@ import org.hibernate.criterion.Restrictions;
  * @since Sep 25, 2009
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 public class CountryBean implements CountryService {
 
     /**
@@ -119,7 +119,7 @@ public class CountryBean implements CountryService {
         Country bo = null;
         Session session = null;
         try {
-            session = HibernateUtil.getCurrentSession();
+            session = PaHibernateUtil.getCurrentSession();
             bo = (Country) session.get(Country.class, IiConverter.convertToLong(ii));
         } catch (HibernateException hbe) {
             throw new RemoteException("Hibernate exception in getCountry().", hbe);
@@ -139,7 +139,7 @@ public class CountryBean implements CountryService {
         Session session = null;
         try {
             Set<String> dupCountryFilter = new HashSet<String>();
-            session = HibernateUtil.getCurrentSession();
+            session = PaHibernateUtil.getCurrentSession();
             List<Country> results = session.createQuery(
                     "select country from RegulatoryAuthority as ra "
                             + "order by ra.country.name ").list();
@@ -159,7 +159,7 @@ public class CountryBean implements CountryService {
      * {@inheritDoc}
      */
     public Country getByCode(String code) throws PAException {
-        Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(Country.class);
+        Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(Country.class);
         criteria.add(Restrictions.eq("alpha2", code));
         try {
             return (Country) criteria.uniqueResult();

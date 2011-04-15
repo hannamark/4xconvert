@@ -87,6 +87,7 @@ import gov.nih.nci.pa.util.ISOUtil;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * @author Hugh Reinhart
@@ -179,10 +180,10 @@ public class IvlConverter<Iso extends Qty, T> {
             Ivl<Ts> wrk = new Ivl<Ts>();
             wrk.setLow(low instanceof String
                     ? TsConverter.convertToTs(ISOUtil.dateStringToTimestamp((String) low))
-                    : TsConverter.convertToTs((Timestamp) low));
+                    : TsConverter.convertToTs((Date) low));
             wrk.setHigh(high instanceof String
                     ? TsConverter.convertToTs(ISOUtil.dateStringToTimestamp((String) high))
-                    : TsConverter.convertToTs((Timestamp) high));
+                    : TsConverter.convertToTs((Date) high));
             result = (Ivl<Iso>) wrk;
         } else if (aggregatedType.equals(Int.class)) {
             Ivl<Int> wrk = new Ivl<Int>();

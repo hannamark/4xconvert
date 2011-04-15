@@ -126,6 +126,7 @@ public class Converters {
         converterMap.put(PlannedMarkerConverter.class, new PlannedMarkerConverter());
         converterMap.put(StudySiteAccrualAccessConverter.class, new StudySiteAccrualAccessConverter());
     }
+
     /**
      * @param clazz class
      * @param <TYPE> the converter type to get

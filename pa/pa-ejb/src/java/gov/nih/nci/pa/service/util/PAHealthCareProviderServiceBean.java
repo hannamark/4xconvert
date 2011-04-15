@@ -84,8 +84,8 @@ import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.StudySiteContact;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +106,7 @@ import org.hibernate.Session;
  *        holder, NCI.
  */
 @Stateless
-@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemote {
     private static final int THREE = 3;
@@ -122,7 +122,7 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PaPersonDTO> getPersonsByStudySiteId(Long id, String roleCd) throws PAException {
         Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         List<Object> queryList = new ArrayList<Object>();
         Query query = null;
         String queryStr = "select sp , spc , hcp , p from StudySite as sp  "
@@ -172,7 +172,7 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
         //HealthCareProvider
         ClinicalResearchStaff careProvider = null;
         PaPersonDTO personWebDTO = new PaPersonDTO();
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         List<Object> queryList = new ArrayList<Object>();
         Query query = null;
         String queryStr = "select spc , hcp from StudySiteContact as spc"

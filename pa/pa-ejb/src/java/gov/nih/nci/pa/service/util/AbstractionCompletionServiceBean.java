@@ -141,11 +141,11 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
@@ -173,10 +173,14 @@ import org.apache.log4j.Logger;
  * @since 11/27/2008
  */
 @Stateless
-@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class AbstractionCompletionServiceBean implements AbstractionCompletionServiceRemote {
 
+    private static final String SELECT_INT_TRIAL_DESIGN_DETAILS_MSG = "Select Design Details from Interventional Trial"
+            + " Design under Scientific Data menu.";
+    private static final String SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG = "Select Design Details from Observational Trial"
+            + " Design under Scientific Data menu.";
     private CorrelationUtils correlationUtils = new CorrelationUtils();
     @EJB
     private StudyProtocolServiceLocal studyProtocolService;
@@ -1173,84 +1177,69 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     private void enforceObservational(ObservationalStudyProtocolDTO ospDTO,
             List<AbstractionCompletionDTO> abstractionList) {
         if (ospDTO.getStudyModelCode().getCode() == null) {
-            abstractionList.add(createError("Error", "Select Design Details from "
-                    + "Observational Trial Design under Scientific Data menu.", "Study Model must be Entered"));
+            abstractionList
+                .add(createError("Error", SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG, "Study Model must be Entered"));
         }
         if (ospDTO.getStudyModelCode().getCode() != null
                 && ospDTO.getStudyModelCode().getCode().equalsIgnoreCase("Other")
                 && ospDTO.getStudyModelOtherText() == null) {
-            abstractionList.add(createError("Error", "Select Design Details from "
-                    + "Observational Trial Design under Scientific Data menu.", "Study Model Comment must be Entered"));
+            abstractionList.add(createError("Error", SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
+                                            "Study Model Comment must be Entered"));
         }
 
         if (ospDTO.getTimePerspectiveCode().getCode() == null) {
-            abstractionList.add(createError("Error", "Select Design Details from "
-                    + "Observational Trial Design under Scientific Data menu.", "Time Perspective must be Entered"));
+            abstractionList.add(createError("Error", SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
+                                            "Time Perspective must be Entered"));
         }
         if (ospDTO.getTimePerspectiveCode().getCode() != null
                 && ospDTO.getTimePerspectiveCode().getCode().equalsIgnoreCase("Other")
                 && ospDTO.getTimePerspectiveOtherText() == null) {
-            abstractionList.add(createError("Error", "Select Design Details from "
-                    + "Observational Trial Design under Scientific Data menu.",
-                    "Time Perspective Comment must be Entered"));
+            abstractionList.add(createError("Error", SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
+                                            "Time Perspective Comment must be Entered"));
         }
         if (ospDTO.getBiospecimenRetentionCode().getCode() == null) {
-            abstractionList.add(createError("Error", "Select Design Details from "
-                    + "Observational Trial Design under Scientific Data menu.",
-                    "Bio-specimen Retention must be Entered"));
+            abstractionList.add(createError("Error", SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
+                                            "Bio-specimen Retention must be Entered"));
         }
         if (ospDTO.getNumberOfGroups().getValue() == null) {
-            abstractionList.add(createError("Error", "Select Design Details from "
-                    + "Observational Trial Design under Scientific Data menu.",
-                    "Number of Groups/Cohorts must be Entered"));
+            abstractionList.add(createError("Error", SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
+                                            "Number of Groups/Cohorts must be Entered"));
         }
         if (ospDTO.getTargetAccrualNumber().getLow().getValue() == null) {
-            abstractionList.add(createError("Error", "Select Design Details from "
-                    + "Observational Trial Design under Scientific Data menu.", "Target Enrollment must be Entered"));
+            abstractionList.add(createError("Error", SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
+                                            "Target Enrollment must be Entered"));
         }
     }
 
     private void enforceInterventional(InterventionalStudyProtocolDTO ispDTO,
             List<AbstractionCompletionDTO> abstractionList) {
         if (ispDTO.getPrimaryPurposeCode().getCode() == null) {
-            abstractionList.add(createError("Error", "Select Design Details from "
-                    + "Interventional Trial Design under Scientific Data menu.", "Primary Purpose must be Entered"));
+            abstractionList.add(createError("Error", SELECT_INT_TRIAL_DESIGN_DETAILS_MSG,
+                                            "Primary Purpose must be Entered"));
         }
-        /*
-         * if (ispDTO.getPrimaryPurposeCode().getCode() != null) { if
-         * (ispDTO.getPrimaryPurposeCode().getCode().equalsIgnoreCase("Early Detection") ||
-         * ispDTO.getPrimaryPurposeCode().getCode().equalsIgnoreCase("Epidemiologic") ||
-         * ispDTO.getPrimaryPurposeCode().getCode().equalsIgnoreCase("Observational") ||
-         * ispDTO.getPrimaryPurposeCode().getCode().equalsIgnoreCase("Outcome") ||
-         * ispDTO.getPrimaryPurposeCode().getCode().equalsIgnoreCase("Ancillary") ||
-         * ispDTO.getPrimaryPurposeCode().getCode().equalsIgnoreCase("Correlative")) {
-         * abstractionList.add(createError("Error", "Select Design Details from " +
-         * "Interventional Trial Design under Scientific Data menu.", "Primary Purpose must not be " +
-         * ispDTO.getPrimaryPurposeCode().getCode() + ", Please Modify the Primary Purpose")); } }
-         */
+
         if (ispDTO.getPhaseCode().getCode() == null) {
-            abstractionList.add(createError("Error", "Select Design Details from "
-                    + "Interventional Trial Design under Scientific Data menu.", "Trial Phase must be Entered"));
+            abstractionList
+                .add(createError("Error", SELECT_INT_TRIAL_DESIGN_DETAILS_MSG, "Trial Phase must be Entered"));
         }
         if (ispDTO.getDesignConfigurationCode().getCode() == null) {
-            abstractionList.add(createError("Error", "Select Design Details from "
-                    + "Interventional Trial Design under Scientific Data menu.", "Intervention Model must be Entered"));
+            abstractionList.add(createError("Error", SELECT_INT_TRIAL_DESIGN_DETAILS_MSG,
+                                            "Intervention Model must be Entered"));
         }
         if (ispDTO.getNumberOfInterventionGroups().getValue() == null) {
-            abstractionList.add(createError("Error", "Select Design Details from "
-                    + "Interventional Trial Design under Scientific Data menu.", "Number of Arms must be Entered"));
+            abstractionList.add(createError("Error", SELECT_INT_TRIAL_DESIGN_DETAILS_MSG,
+                                            "Number of Arms must be Entered"));
         }
         if (ispDTO.getBlindingSchemaCode().getCode() == null) {
-            abstractionList.add(createError("Error", "Select Design Details from "
-                    + "Interventional Trial Design under Scientific Data menu.", "Masking must be Entered"));
+            abstractionList.add(createError("Error", SELECT_INT_TRIAL_DESIGN_DETAILS_MSG, "Masking must be Entered"));
         }
         if (ispDTO.getAllocationCode().getCode() == null) {
-            abstractionList.add(createError("Error", "Select Design Details from "
-                    + "Interventional Trial Design under Scientific Data menu.", "Allocation must be Entered"));
+            abstractionList
+                .add(createError("Error", SELECT_INT_TRIAL_DESIGN_DETAILS_MSG, "Allocation must be Entered"));
         }
         if (ispDTO.getTargetAccrualNumber().getLow().getValue() == null) {
-            abstractionList.add(createError("Error", "Select Design Details from "
-                    + "Interventional Trial Design under Scientific Data menu.", "Target Enrollment must be Entered"));
+            abstractionList.add(createError("Error", SELECT_INT_TRIAL_DESIGN_DETAILS_MSG,
+                                            "Target Enrollment must be Entered"));
         }
     }
 

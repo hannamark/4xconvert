@@ -109,7 +109,6 @@ import com.opensymphony.xwork2.util.ValueStackFactory;
  */
 public abstract class AbstractPaActionTest {
 
-
     protected StudyProtocolQueryDTO protocolSessionBean;
 
     /**
@@ -121,13 +120,11 @@ public abstract class AbstractPaActionTest {
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
     }
 
-
     /**
      * Initialize the mock request.
      */
     @Before
     public void initMockRequest() {
-
         ConfigurationManager configurationManager = new ConfigurationManager();
         configurationManager.addContainerProvider(new XWorkConfigurationProvider());
         Configuration config = configurationManager.getConfiguration();

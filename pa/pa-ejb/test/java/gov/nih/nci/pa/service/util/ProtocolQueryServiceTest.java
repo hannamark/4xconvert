@@ -84,32 +84,22 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
-import gov.nih.nci.pa.domain.ClinicalResearchStaffTest;
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.CountryTest;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.HealthCareFacility;
-import gov.nih.nci.pa.domain.HealthCareFacilityTest;
 import gov.nih.nci.pa.domain.HealthCareProvider;
-import gov.nih.nci.pa.domain.HealthCareProviderTest;
 import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.domain.OrganizationTest;
 import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.domain.PersonTest;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyContact;
-import gov.nih.nci.pa.domain.StudyContactTest;
 import gov.nih.nci.pa.domain.StudyInbox;
-import gov.nih.nci.pa.domain.StudyInboxTest;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.domain.StudySite;
-import gov.nih.nci.pa.domain.StudySiteTest;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
@@ -124,6 +114,7 @@ import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -139,7 +130,7 @@ import org.junit.Test;
  * @author NAmiruddin
  *
  */
-public class ProtocolQueryServiceTest {
+public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
     private final ProtocolQueryServiceBean bean = new ProtocolQueryServiceBean();
     private final ProtocolQueryServiceLocal localEjb = bean;
     private Long spId = null;
@@ -148,7 +139,6 @@ public class ProtocolQueryServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        TestSchema.reset();
         bean.setRegistryUserService(new RegistryUserServiceBean());
         createStudyProtocol("1", false, Boolean.FALSE, false, false, false, true);
     }
@@ -402,7 +392,7 @@ public class ProtocolQueryServiceTest {
 
     private StudyProtocol createStudyProtocol(String orgId, boolean createRejected, Boolean isPropTrial,
             boolean onHold, boolean locked, boolean amendment, boolean update) {
-        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
+        StudyProtocol sp = TestSchema.createStudyProtocolObj();
         sp.setProprietaryTrialIndicator(isPropTrial);
 
         if (amendment) {
@@ -425,48 +415,48 @@ public class ProtocolQueryServiceTest {
         TestSchema.addUpdObject(sp);
         spId = sp.getId();
 
-        Organization org = OrganizationTest.createOrganizationObj();
+        Organization org = TestSchema.createOrganizationObj();
         org.setIdentifier(orgId);
         TestSchema.addUpdObject(org);
         leadOrgId = org.getId();
 
-        Organization nctOrg = OrganizationTest.createOrganizationObj();
+        Organization nctOrg = TestSchema.createOrganizationObj();
         nctOrg.setIdentifier(orgId);
         nctOrg.setName(PAConstants.CTGOV_ORG_NAME);
         TestSchema.addUpdObject(nctOrg);
 
-        Organization dcpOrg = OrganizationTest.createOrganizationObj();
+        Organization dcpOrg = TestSchema.createOrganizationObj();
         dcpOrg.setIdentifier(orgId);
         dcpOrg.setName(PAConstants.DCP_ORG_NAME);
         TestSchema.addUpdObject(dcpOrg);
 
-        Organization ctepOrg = OrganizationTest.createOrganizationObj();
+        Organization ctepOrg = TestSchema.createOrganizationObj();
         ctepOrg.setIdentifier(orgId);
         ctepOrg.setName(PAConstants.CTEP_ORG_NAME);
         TestSchema.addUpdObject(ctepOrg);
 
-        Person p = PersonTest.createPersonObj();
+        Person p = TestSchema.createPersonObj();
         p.setIdentifier("11");
         TestSchema.addUpdObject(p);
         principalInvestigator = p.getId();
 
-        HealthCareFacility hcf = HealthCareFacilityTest.createHealthCareFacilityObj(org);
+        HealthCareFacility hcf = TestSchema.createHealthCareFacilityObj(org);
         TestSchema.addUpdObject(hcf);
 
-        HealthCareProvider hcp = HealthCareProviderTest.createHealthCareProviderObj(p, org);
+        HealthCareProvider hcp = TestSchema.createHealthCareProviderObj(p, org);
         TestSchema.addUpdObject(hcp);
 
-        Country c = CountryTest.createCountryObj();
+        Country c = TestSchema.createCountryObj();
         TestSchema.addUpdObject(c);
 
-        ClinicalResearchStaff crs = ClinicalResearchStaffTest.createClinicalResearchStaffObj(org, p);
+        ClinicalResearchStaff crs = TestSchema.createClinicalResearchStaffObj(org, p);
         TestSchema.addUpdObject(crs);
 
-        StudyContact sc = StudyContactTest.createStudyContactObj(sp, c, hcp, crs);
+        StudyContact sc = TestSchema.createStudyContactObj(sp, c, hcp, crs);
         TestSchema.addUpdObject(sc);
         sp.getStudyContacts().add(sc);
 
-        StudyContact sc2 = StudyContactTest.createStudyContactObj(sp, c, hcp, crs);
+        StudyContact sc2 = TestSchema.createStudyContactObj(sp, c, hcp, crs);
         sc2.setRoleCode(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR);
         TestSchema.addUpdObject(sc2);
         sp.getStudyContacts().add(sc2);
@@ -495,27 +485,27 @@ public class ProtocolQueryServiceTest {
         ctepRo.setIdentifier("abc");
         TestSchema.addUpdObject(ctepRo);
 
-        StudySite spc = StudySiteTest.createStudySiteObj(sp, hcf);
+        StudySite spc = TestSchema.createStudySiteObj(sp, hcf);
         spc.setLocalStudyProtocolIdentifier("Local" + orgId);
         spc.setResearchOrganization(ro);
         TestSchema.addUpdObject(spc);
         sp.getStudySites().add(spc);
 
-        StudySite spc2 = StudySiteTest.createStudySiteObj(sp, hcf);
+        StudySite spc2 = TestSchema.createStudySiteObj(sp, hcf);
         spc2.setLocalStudyProtocolIdentifier("NCT-" + orgId);
         spc2.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
         spc2.setResearchOrganization(nctRo);
         TestSchema.addUpdObject(spc2);
         sp.getStudySites().add(spc2);
 
-        StudySite spc3 = StudySiteTest.createStudySiteObj(sp, hcf);
+        StudySite spc3 = TestSchema.createStudySiteObj(sp, hcf);
         spc3.setLocalStudyProtocolIdentifier("DCP-" + orgId);
         spc3.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
         spc3.setResearchOrganization(dcpRo);
         TestSchema.addUpdObject(spc3);
         sp.getStudySites().add(spc3);
 
-        StudySite spc4 = StudySiteTest.createStudySiteObj(sp, hcf);
+        StudySite spc4 = TestSchema.createStudySiteObj(sp, hcf);
         spc4.setLocalStudyProtocolIdentifier("CTEP-" + orgId);
         spc4.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
         spc4.setResearchOrganization(ctepRo);
@@ -580,11 +570,11 @@ public class ProtocolQueryServiceTest {
         TestSchema.addUpdObject(milestone2);
         sp.getStudyMilestones().add(milestone2);
 
-        StudyInbox si = StudyInboxTest.createStudyInboxobj(sp);
+        StudyInbox si = ProtocolQueryServiceTest.createStudyInboxobj(sp);
         TestSchema.addUpdObject(si);
         sp.getStudyInbox().add(si);
 
-        StudyInbox si2 = StudyInboxTest.createStudyInboxobj(sp);
+        StudyInbox si2 = ProtocolQueryServiceTest.createStudyInboxobj(sp);
         if (update) {
             si2.setCloseDate(null);
         }
@@ -611,5 +601,17 @@ public class ProtocolQueryServiceTest {
         }
         TestSchema.addUpdObject(sp);
         return sp;
+    }
+
+    private static StudyInbox createStudyInboxobj(StudyProtocol sp) {
+        StudyInbox create = new StudyInbox();
+        Timestamp now = new Timestamp(new Date().getTime());
+        create.setStudyProtocol(sp);
+        create.setComments("idName");
+        create.setOpenDate(now);
+        create.setCloseDate(now);
+        create.setUserLastUpdated(TestSchema.getUser());
+        create.setDateLastUpdated(now);
+        return create;
     }
 }

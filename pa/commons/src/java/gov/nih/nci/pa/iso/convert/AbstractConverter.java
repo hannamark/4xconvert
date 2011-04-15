@@ -82,27 +82,22 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.domain.StructuralRole;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PAInvalidStateException;
 import gov.nih.nci.pa.util.CommonsConstant;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.CorrelationUtils;
 import gov.nih.nci.pa.util.ISOUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.Session;
-
 /**
  * @author Hugh Reinhart
- * @since 11/05/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the copyright holder, NCI.
  * @param <BO> domain object
  * @param <DTO> dto
  */
 public abstract class AbstractConverter<DTO extends BaseDTO, BO extends AbstractEntity> {
+
     /**
      * @param dto dto
      * @return domain object
@@ -161,7 +156,7 @@ public abstract class AbstractConverter<DTO extends BaseDTO, BO extends Abstract
         if (CommonsConstant.PA_INTERNAL.equals(poIdentifier.getIdentifierName())) {
             return Long.valueOf(poIdentifier.getExtension());
         }
-        StructuralRole sr = getStructuralRoleByIi(poIdentifier);
+        StructuralRole sr = new CorrelationUtils().getStructuralRoleByIi(poIdentifier);
         if (sr == null) {
             //No structural role cached in PA. This should never happen and as such is an invalid state.
             throw new PAInvalidStateException("No " + poIdentifier.getIdentifierName() + " with the Ii of "
@@ -170,47 +165,4 @@ public abstract class AbstractConverter<DTO extends BaseDTO, BO extends Abstract
         return sr.getId();
     }
 
-
-    /**
-     *
-     * @param <T> any class extends {@link StructuralRole}
-     * @param isoIi ISO identifier
-     * @return StucturalRole class for an corresponding ISO ii
-     * @throws PAException on error
-     */
-
-    // Copied this method from CorrelationUtils. If you update this method please update in CorrelationUtils also.
-    @SuppressWarnings("unchecked")
-    private <T extends StructuralRole> T getStructuralRoleByIi(Ii isoIi) throws PAException {
-
-        StringBuffer hql = new StringBuffer("select role from ");
-        if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-            hql.append("HealthCareFacility role where role.identifier = '" + isoIi.getExtension() + "'");
-        } else if (IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-            hql.append("ResearchOrganization role where role.identifier = '" + isoIi.getExtension() + "'");
-        } else if (IiConverter.OVERSIGHT_COMMITTEE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-            hql.append("OversightCommittee role where role.identifier = '" + isoIi.getExtension() + "'");
-        } else if (IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-            hql.append("ClinicalResearchStaff role where role.identifier = '" + isoIi.getExtension() + "'");
-        } else if (IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-            hql.append("HealthCareProvider role where role.identifier = '" + isoIi.getExtension() + "'");
-        } else if (IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
-            hql.append("OrganizationalContact role where role.identifier = '" + isoIi.getExtension() + "'");
-        } else {
-            throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());
-        }
-        Session session = HibernateUtil.getCurrentSession();
-        List<T> queryList = session.createQuery(hql.toString()).list();
-        T sr = null;
-        if (queryList.size() > 1) {
-            throw new PAException(" More than 1 structural role found for a given identifier "
-                        + isoIi.getIdentifierName() + " " + isoIi.getExtension());
-        }
-
-        if (!queryList.isEmpty()) {
-            sr = queryList.get(0);
-        }
-        session.flush();
-        return sr;
-    }
 }

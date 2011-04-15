@@ -6,6 +6,7 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -13,14 +14,13 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-public class StudyRelationshipServiceBeanTest {
+public class StudyRelationshipServiceBeanTest extends AbstractHibernateTestCase {
 
     private StudyRelationshipServiceLocal localEjb = new StudyRelationshipBeanLocal();;
     private StudyRelationshipDTO srDto = new StudyRelationshipDTO();
 
     @Before
     public void setUp() throws Exception {
-      TestSchema.reset();
       TestSchema.primeData();
       srDto.setSourceStudyProtocolIdentifier(IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0)));
 

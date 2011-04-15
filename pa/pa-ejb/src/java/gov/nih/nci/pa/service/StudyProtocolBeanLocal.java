@@ -134,11 +134,11 @@ import gov.nih.nci.pa.service.search.StudyProtocolBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyProtocolSortCriterion;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
@@ -169,7 +169,7 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
  * @since 11/03/2009
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol> implements StudyProtocolServiceLocal {
 
@@ -181,7 +181,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
 
     private StudyProtocolDTO getStudyProtocolById(Long id) throws PAException {
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         StudyProtocol studyProtocol = (StudyProtocol) session.get(StudyProtocol.class, id);
 
         if (studyProtocol == null) {
@@ -203,7 +203,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         }
 
         enForceBusinessRules(studyProtocolDTO);
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         StudyProtocol sp = (StudyProtocol) session.load(StudyProtocol.class,
                 Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
 
@@ -227,7 +227,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         if (PAUtil.isIiNull(ii)) {
             throw new PAException("Ii should not be null");
         }
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         InterventionalStudyProtocol isp = (InterventionalStudyProtocol) session.load(InterventionalStudyProtocol.class,
                     Long.valueOf(ii.getExtension()));
         return InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
@@ -253,7 +253,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             totBlindCodes = ispDTO.getBlindedRoleCode().getItem().size();
         }
         checkBlindingSchemaCode(ispDTO, totBlindCodes);
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         InterventionalStudyProtocol isp = (InterventionalStudyProtocol)
         session.load(InterventionalStudyProtocol.class, Long.valueOf(ispDTO.getIdentifier().getExtension()));
         InterventionalStudyProtocol upd = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
@@ -300,7 +300,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         }
         enForceBusinessRules(ispDTO);
         InterventionalStudyProtocol isp = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         setDefaultValues(isp, ispDTO, CREATE);
         session.save(isp);
         return IiConverter.convertToStudyProtocolIi(isp.getId());
@@ -317,7 +317,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         if (PAUtil.isIiNull(ii)) {
             throw new PAException("Ii should not be null ");
         }
-        Session  session = HibernateUtil.getCurrentSession();
+        Session  session = PaHibernateUtil.getCurrentSession();
         ObservationalStudyProtocol osp = (ObservationalStudyProtocol) session.load(ObservationalStudyProtocol.class,
                 Long.valueOf(ii.getExtension()));
         return ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
@@ -337,7 +337,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
         }
         //enForceBusinessRules(ospDTO);
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         ObservationalStudyProtocol osp = (ObservationalStudyProtocol)
         session.load(ObservationalStudyProtocol.class, Long.valueOf(ospDTO.getIdentifier().getExtension()));
         ObservationalStudyProtocol upd = ObservationalStudyProtocolConverter.convertFromDTOToDomain(ospDTO);
@@ -366,7 +366,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         enForceBusinessRules(ospDTO);
         ObservationalStudyProtocol osp = ObservationalStudyProtocolConverter.
         convertFromDTOToDomain(ospDTO);
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         setDefaultValues(osp, ospDTO, CREATE);
         session.save(osp);
         return IiConverter.convertToStudyProtocolIi(osp.getId());
@@ -412,7 +412,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
 
             Long spId = IiConverter.convertToLong(ii);
-            Session session = HibernateUtil.getCurrentSession();
+            Session session = PaHibernateUtil.getCurrentSession();
             session.createSQLQuery("DELETE from study_otheridentifiers where study_protocol_id = "
                     + spId).executeUpdate();
             session.createSQLQuery("DELETE from study_owner where study_id = " + spId).executeUpdate();
@@ -656,7 +656,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
         }
         Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         StudyProtocol prevStudyProtocol = (StudyProtocol) session.load(StudyProtocol.class,
                 Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
         String newUserLastCreated = StConverter.convertToString(studyProtocolDTO.getUserLastCreated());
@@ -664,7 +664,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         String prevUserLastCreated = prevUserLastCreatedObj != null ? prevUserLastCreatedObj.getLoginName() : null;
         if (StringUtils.isNotEmpty(newUserLastCreated) && StringUtils.isNotEmpty(prevUserLastCreated)
                 && !prevUserLastCreated.equals(newUserLastCreated)) {
-            session = HibernateUtil.getCurrentSession();
+            session = PaHibernateUtil.getCurrentSession();
             String sql = "UPDATE STUDY_PROTOCOL SET USER_LAST_CREATED='" + newUserLastCreated
                 + "' WHERE IDENTIFIER=" + prevStudyProtocol.getId();
             session.createSQLQuery(sql).executeUpdate();

@@ -84,7 +84,7 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.List;
@@ -108,7 +108,7 @@ public class MockRegistryUserServiceBean extends RegistryUserServiceBean {
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public RegistryUser getUser(String loginName) throws PAException {
         RegistryUser registryUser = null;
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
 
         try {
             // /first get the CSM user through non csm means.

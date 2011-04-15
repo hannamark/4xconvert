@@ -79,8 +79,8 @@ package gov.nih.nci.pa.report.service;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -102,7 +102,7 @@ import org.hibernate.Session;
  * @since 06/11/2009
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 public class SubmitterOrganizationReportBean implements SubmitterOrganizationLocal {
 
     private static final long REFRESH_TIME = 1000 * 60 * 10;  // 10 minutes
@@ -113,10 +113,10 @@ public class SubmitterOrganizationReportBean implements SubmitterOrganizationLoc
      * {@inheritDoc}
      */
     public List<St> get() throws PAException {
-        if ((lastUpdate == null)
+        if (lastUpdate == null
                 || ((lastUpdate.getTime() + REFRESH_TIME) < new Timestamp(new Date().getTime()).getTime())) {
             try {
-                Session session = HibernateUtil.getCurrentSession();
+                Session session = PaHibernateUtil.getCurrentSession();
                 SQLQuery query = null;
                 String sql = "SELECT DISTINCT u.organization"
                         + " FROM study_protocol AS sp JOIN csm_user AS u ON sp.user_last_created_id = u.user_id"

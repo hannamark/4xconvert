@@ -27,6 +27,7 @@
     <property name="services.build.testResourceDir" value="${basedir}/test/resources"/>
     <property name="services.build.coberturaOutputDir" value="${services.build.dir}/generated-classes"/>
     <property name="services.test.reports" value="${services.report.dir}/test-reports"/>
+    <property name="services.coverage.reports" value="${services.report.dir}/coverage-reports"/>
 
     <property name="ivy.file" value="ivy-2.0.0.jar" />
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
@@ -47,8 +48,14 @@
 
 
     <property name="test.jar.dir" location="${lib.dir}/services/test"/>
+    <!-- order here is important so that the tests pull hibernate.cfg.xml from pa-commons-test.jar instead of just
+         pa-commons.jar -->
     <path id="test.classpath">
         <fileset dir="${test.jar.dir}">
+            <include name="pa-commons-test-*.jar"/>
+        </fileset>
+        <fileset dir="${test.jar.dir}">
+            <exclude name="pa-commons-test-*.jar"/>
             <include name="*.jar"/>
         </fileset>
     </path>
@@ -102,6 +109,7 @@
     <target name="pre-clean"
             description="Deletes subproject's classes and other target directories which should not exist before starting the build">
         <delete dir="${services.build.dir}"/>
+        <delete dir="${services.test.reports}"/>
     </target>
 
 
@@ -177,9 +185,7 @@
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
-    <target name="compile-tests"
-      depends="compile"
-      description="Compile the test code">
+    <target name="compile-tests" depends="compile" description="Compile the test code">
         <mkdir dir="${services.build.testOutputDir}"/>
         <javac destdir="${services.build.testOutputDir}"
                nowarn="false"
@@ -218,25 +224,23 @@
 
         <delete file="${services.build.dir}/cobertura.ser"/>
 
-        <cobertura-instrument datafile="${services.build.dir}/cobertura.ser"
-                              toDir="${services.build.coberturaOutputDir}">
+        <cobertura-instrument datafile="${services.build.dir}/cobertura.ser" toDir="${services.build.coberturaOutputDir}">
             <fileset dir="${services.build.outputDir}">
                 <include name="**/accrual/**/*.class"/>
             </fileset>
         </cobertura-instrument>
 
         <mkdir dir="${services.test.reports}"/>
-        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." failureproperty="junit.failure">
             <sysproperty key="basedir" value="."/>
-            <sysproperty key="net.sourceforge.cobertura.datafile"
-                    file="${services.build.dir}/cobertura.ser"/>
+            <sysproperty key="net.sourceforge.cobertura.datafile" file="${services.build.dir}/cobertura.ser"/>
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
             <classpath location="${services.build.coberturaOutputDir}"/>
             <classpath location="${services.build.outputDir}"/>
             <classpath location="${services.build.testOutputDir}"/>
-            <classpath refid="compile.classpath"/>
             <classpath refid="test.classpath"/>
+            <classpath refid="compile.classpath"/>
             <classpath refid="test-cobertura.classpath"/>
             <batchtest todir="${services.test.reports}">
                 <fileset dir="${services.build.testSrcDir}">
@@ -245,14 +249,21 @@
                 </fileset>
             </batchtest>
         </junit>
+        <junitreport todir="${services.test.reports}">
+            <fileset dir="${services.test.reports}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report todir="${services.test.reports}" />
+        </junitreport>
+        <fail if="junit.failure" message="Unit test(s) failed.  See reports at ${services.test.reports}/index.html."/>
 
         <cobertura-report datafile="${services.build.dir}/cobertura.ser"
-                          destdir="${services.test.reports}"
+                          destdir="${services.coverage.reports}"
                           srcdir="${services.build.srcDir}"/>
 
         <cobertura-report datafile="${services.build.dir}/cobertura.ser"
                           format="xml"
-                          destdir="${services.test.reports}"
+                          destdir="${services.coverage.reports}"
                           srcdir="${services.build.srcDir}"/>
 
         <cobertura-check datafile="${services.build.dir}/cobertura.ser"

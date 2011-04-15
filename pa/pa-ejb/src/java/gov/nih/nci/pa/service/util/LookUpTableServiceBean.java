@@ -86,8 +86,8 @@ import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.NIHinstitute;
 import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,7 +110,7 @@ import org.hibernate.criterion.Restrictions;
 */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors({RemoteAuthorizationInterceptor.class, HibernateSessionInterceptor.class })
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @SuppressWarnings("unchecked")
 public class LookUpTableServiceBean implements LookUpTableServiceRemote {
 
@@ -123,7 +123,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
     public List<FundingMechanism> getFundingMechanisms() throws PAException {
         Session session = null;
         List<FundingMechanism> fmList = new ArrayList<FundingMechanism>();
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         Query query = null;
         String hql = "select fm from FundingMechanism fm order by fundingMechanismCode";
         query = session.createQuery(hql);
@@ -140,7 +140,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
     public List<NIHinstitute> getNihInstitutes() throws PAException {
         Session session = null;
         List<NIHinstitute> nihList = new ArrayList<NIHinstitute>();
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         Query query = null;
         String hql = "select nih from NIHinstitute nih order by nihInstituteCode";
         query = session.createQuery(hql);
@@ -157,7 +157,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
     public List<Country> getCountries() throws PAException {
         Session session = null;
         List<Country> countries = new ArrayList<Country>();
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         Query query = session.createQuery("select c from Country c order by name");
         countries = query.list();
         return countries;
@@ -168,7 +168,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Country getCountryByName(String name) throws PAException {
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         Query query = session.createQuery("select c from Country c where c.name = :name");
         query.setParameter("name", name);
         return (Country) query.uniqueResult();
@@ -184,7 +184,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
         Session session = null;
         String value = "";
         List<PAProperties> paProperties = new ArrayList<PAProperties>();
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         Query query = session.createQuery("select p from PAProperties p where p.name = '" + name + "'");
         paProperties =  query.list();
         if (paProperties == null || paProperties.isEmpty()) {
@@ -202,7 +202,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
             throw new PAException("country cannot be null");
         }
         List<Country> countryList = new ArrayList<Country>();
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         Criteria criteria = session.createCriteria(Country.class, "country");
         if (StringUtils.isNotEmpty(country.getName())) {
             criteria.add(Restrictions.eq("country.name", country.getName()));
@@ -222,7 +222,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<AnatomicSite> getAnatomicSites() throws PAException {
-        return HibernateUtil.getCurrentSession()
+        return PaHibernateUtil.getCurrentSession()
             .createQuery("select items from AnatomicSite items order by code").list();
     }
 
@@ -233,7 +233,7 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
     public <T extends AbstractLookUpEntity> T getLookupEntityByCode(Class<T> clazz, String code) throws PAException {
         StringBuffer hql = new StringBuffer("select item from ").append(clazz.getName())
         .append(" item where item.code = :code");
-        return (T) HibernateUtil.getCurrentSession()
+        return (T) PaHibernateUtil.getCurrentSession()
             .createQuery(hql.toString())
             .setString("code", code)
             .uniqueResult();

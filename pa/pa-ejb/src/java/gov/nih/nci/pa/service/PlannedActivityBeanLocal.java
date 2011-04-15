@@ -22,11 +22,11 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.PlannedActivitySortCriterion;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,7 +50,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 public class PlannedActivityBeanLocal extends
         AbstractStudyIsoService<PlannedActivityDTO, PlannedActivity, PlannedActivityConverter> implements
         PlannedActivityServiceLocal {
@@ -117,7 +117,7 @@ public class PlannedActivityBeanLocal extends
 
         Session session = null;
         List<PlannedEligibilityCriterion> queryList = new ArrayList<PlannedEligibilityCriterion>();
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         Query query = null;
 
         // step 1: form the hql
@@ -132,7 +132,7 @@ public class PlannedActivityBeanLocal extends
         queryList = query.list();
         ArrayList<PlannedEligibilityCriterionDTO> resultList = new ArrayList<PlannedEligibilityCriterionDTO>();
         for (PlannedEligibilityCriterion bo : queryList) {
-            resultList.add(PlannedEligibilityCriterionConverter.convertFromDomainToDTO(bo));
+            resultList.add(new PlannedEligibilityCriterionConverter().convertFromDomainToDto(bo));
         }
         return resultList;
     }
@@ -149,13 +149,13 @@ public class PlannedActivityBeanLocal extends
         }
         PlannedEligibilityCriterionDTO resultDto = null;
         Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         PlannedEligibilityCriterion bo = (PlannedEligibilityCriterion) session.get(PlannedEligibilityCriterion.class,
                                                                                    IiConverter.convertToLong(ii));
         if (bo == null) {
             throw new PAException("Object not found using get() for id = " + IiConverter.convertToString(ii) + ".  ");
         }
-        resultDto = PlannedEligibilityCriterionConverter.convertFromDomainToDTO(bo);
+        resultDto = new PlannedEligibilityCriterionConverter().convertFromDomainToDto(bo);
         return resultDto;
     }
 
@@ -196,7 +196,7 @@ public class PlannedActivityBeanLocal extends
         if (PAUtil.isIiNull(ii)) {
             throw new PAException(II_NOTFOUND);
         }
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         PlannedEligibilityCriterion bo = (PlannedEligibilityCriterion) session.get(PlannedEligibilityCriterion.class,
                                                                                    IiConverter.convertToLong(ii));
         session.delete(bo);
@@ -258,7 +258,7 @@ public class PlannedActivityBeanLocal extends
             return new ArrayList<PlannedSubstanceAdministrationDTO>();
         }
 
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         List<PlannedSubstanceAdministration> queryList = new ArrayList<PlannedSubstanceAdministration>();
         Query query = null;
 
@@ -288,7 +288,7 @@ public class PlannedActivityBeanLocal extends
             return null;
         }
         PlannedSubstanceAdministrationDTO resultDto = null;
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         PlannedSubstanceAdministration bo =
             (PlannedSubstanceAdministration) session.get(PlannedSubstanceAdministration.class,
                                                          IiConverter.convertToLong(ii));
@@ -336,7 +336,7 @@ public class PlannedActivityBeanLocal extends
             return new ArrayList<PlannedProcedureDTO>();
         }
 
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         List<PlannedProcedure> queryList = new ArrayList<PlannedProcedure>();
         Query query = null;
 
@@ -366,7 +366,7 @@ public class PlannedActivityBeanLocal extends
             return null;
         }
         PlannedProcedureDTO resultDto = null;
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         PlannedProcedure bo = (PlannedProcedure) session.get(PlannedProcedure.class, IiConverter.convertToLong(ii));
         if (bo == null) {
             throw new PAException("Object not found using get() for id = " + IiConverter.convertToString(ii) + ".  ");
@@ -504,7 +504,7 @@ public class PlannedActivityBeanLocal extends
         PlannedSubstanceAdministration bo = null;
         PlannedSubstanceAdministrationDTO resultDto = null;
         Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         PlannedSubstanceAdministrationConverter converter = new PlannedSubstanceAdministrationConverter();
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             bo = converter.convertFromDtoToDomain(dto);
@@ -527,7 +527,7 @@ public class PlannedActivityBeanLocal extends
         PlannedProcedure bo = null;
         PlannedProcedureDTO resultDto = null;
         Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             bo = PlannedProcedureConverter.convertFromDTOToDomain(dto);
         } else {
@@ -548,16 +548,15 @@ public class PlannedActivityBeanLocal extends
     private PlannedEligibilityCriterionDTO createOrUpdatePlannedEligibilityCriterion(PlannedEligibilityCriterionDTO dto)
         throws PAException {
         PlannedEligibilityCriterion bo = null;
-        PlannedEligibilityCriterionDTO resultDto = null;
-        Session session = null;
-        session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
+        final PlannedEligibilityCriterionConverter converter = new PlannedEligibilityCriterionConverter();
         if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo = PlannedEligibilityCriterionConverter.convertFromDTOToDomain(dto);
+            bo = converter.convertFromDtoToDomain(dto);
         } else {
             bo = (PlannedEligibilityCriterion) session.get(PlannedEligibilityCriterion.class,
                                                            IiConverter.convertToLong(dto.getIdentifier()));
 
-            PlannedEligibilityCriterion delta = PlannedEligibilityCriterionConverter.convertFromDTOToDomain(dto);
+            PlannedEligibilityCriterion delta = converter.convertFromDtoToDomain(dto);
             bo.setCriterionName(delta.getCriterionName());
             bo.setInclusionIndicator(delta.getInclusionIndicator());
             bo.setOperator(delta.getOperator());
@@ -576,8 +575,7 @@ public class PlannedActivityBeanLocal extends
         }
         bo.setDateLastUpdated(new Date());
         session.saveOrUpdate(bo);
-        resultDto = PlannedEligibilityCriterionConverter.convertFromDomainToDTO(bo);
-        return resultDto;
+        return converter.convertFromDomainToDto(bo);
     }
 
     private void businessRules(PlannedActivityDTO dto) throws PAException {
@@ -588,7 +586,6 @@ public class PlannedActivityBeanLocal extends
             throw new PAException("PlannedActivity.categoryCode must be set.");
         }
         if (PAUtil.isTypeIntervention(dto.getCategoryCode())) {
-
             if (PAUtil.isCdNull(dto.getSubcategoryCode())) {
                 throw new PAException("Intervention type must be set.");
             }

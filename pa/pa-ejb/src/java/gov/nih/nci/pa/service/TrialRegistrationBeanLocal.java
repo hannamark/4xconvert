@@ -140,10 +140,10 @@ import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TrialRegistrationHelper;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -176,7 +176,7 @@ import org.hibernate.Session;
  */
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean implements TrialRegistrationServiceLocal {
     @EJB private StudyProtocolServiceLocal studyProtocolService = null;
     @EJB private StudyRelationshipServiceLocal studyRelationshipService = null;
@@ -838,7 +838,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         //PO-2646: We're adding an explicit evict of the study protocol so the complete trial is loaded
         //when searched upon later in the trial creation process. Failure to do so was resulting in NPE further down
         //the line.
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         session.evict(session.get(StudyProtocol.class, IiConverter.convertToLong(studyProtocolIi)));
     }
 
@@ -1428,7 +1428,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
                 // overwrite with the target
                 sourceSpDto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
                 // studyProtocolService.updateStudyProtocol(sourceSpDto);
-                Session session = HibernateUtil.getCurrentSession();
+                Session session = PaHibernateUtil.getCurrentSession();
                 InterventionalStudyProtocol source = InterventionalStudyProtocolConverter
                         .convertFromDTOToDomain(sourceSpDto);
                 Long id = IiConverter.convertToLong(targetSpIi);
@@ -1579,7 +1579,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
 
         try {
             validateStudyExist(studyProtocolDTO, UPDATE);
-            // get
             CorrelationUtils cUtils = new CorrelationUtils();
             OrganizationDTO leadOrgDTO = new OrganizationDTO();
             StudySiteDTO studySiteDto = new StudySiteDTO();

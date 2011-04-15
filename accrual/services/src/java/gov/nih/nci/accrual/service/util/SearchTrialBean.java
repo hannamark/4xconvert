@@ -94,9 +94,9 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -118,7 +118,7 @@ import org.hibernate.Session;
  */
 
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 public class SearchTrialBean implements SearchTrialService {
 
     private static final int SP_IDENTIFIER_IDX = 0;
@@ -130,7 +130,7 @@ public class SearchTrialBean implements SearchTrialService {
     private static final int PERSON_IDX = 6;
 
     private static final String UNCHECKED = "unchecked";
-    
+
     /**
      * {@inheritDoc}
      */
@@ -140,7 +140,7 @@ public class SearchTrialBean implements SearchTrialService {
         if (criteria != null && !PAUtil.isIiNull(authorizedUser)) {
             Session session = null;
             try {
-                session = HibernateUtil.getCurrentSession();
+                session = PaHibernateUtil.getCurrentSession();
                 Query query = null;
                 String hql = generateStudyProtocolQuery(criteria);
                 query = session.createQuery(hql);
@@ -174,7 +174,7 @@ public class SearchTrialBean implements SearchTrialService {
         SearchTrialResultDto result = new SearchTrialResultDto();
         Session session = null;
         try {
-            session = HibernateUtil.getCurrentSession();
+            session = PaHibernateUtil.getCurrentSession();
             Query query = null;
             String hql =
                 " select oi.extension, org.name, ss.localStudyProtocolIdentifier, sp.officialTitle, "
@@ -222,7 +222,7 @@ public class SearchTrialBean implements SearchTrialService {
     @SuppressWarnings(UNCHECKED)
     private Set<Long> getAuthorizedTrials(Ii registryUserIi) {
         Set<Long> result = new HashSet<Long>();
-        Session session = HibernateUtil.getCurrentSession();
+        Session session = PaHibernateUtil.getCurrentSession();
         String hql = "select distinct sp.id from StudySiteAccrualAccess ssaa join ssaa.studySite ss "
             + "join ss.studyProtocol sp where ssaa.registryUser.id = :registryUserId and ssaa.statusCode = :statusCode";
         Query query = session.createQuery(hql);

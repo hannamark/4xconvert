@@ -101,9 +101,9 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
@@ -132,7 +132,7 @@ import org.hibernate.Session;
  * @since Aug 18, 2009
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PatientBeanLocal implements PatientServiceLocal {
 
@@ -181,7 +181,7 @@ public class PatientBeanLocal implements PatientServiceLocal {
         PatientDto resultDto = null;
         Session session = null;
         try {
-            session = HibernateUtil.getCurrentSession();
+            session = PaHibernateUtil.getCurrentSession();
             bo = (Patient) session.get(Patient.class, IiConverter.convertToLong(ii));
             if (bo == null) {
                 LOG.error("Object not found using get() for id = "
@@ -230,7 +230,7 @@ public class PatientBeanLocal implements PatientServiceLocal {
         Session session = null;
         Patient returnBo = null;
         try {
-            session = HibernateUtil.getCurrentSession();
+            session = PaHibernateUtil.getCurrentSession();
             bo.setUserLastUpdated(AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
             bo.setDateLastUpdated(new Date());
             if (PAUtil.isIiNull(dto.getIdentifier())) {

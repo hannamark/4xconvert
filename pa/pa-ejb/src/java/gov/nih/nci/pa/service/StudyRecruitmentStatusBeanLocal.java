@@ -9,7 +9,7 @@ import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
 import gov.nih.nci.pa.iso.convert.StudyRecruitmentStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -21,7 +21,7 @@ import javax.interceptor.Interceptors;
  *
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyRecruitmentStatusBeanLocal extends
     AbstractCurrentStudyIsoService<StudyRecruitmentStatusDTO, StudyRecruitmentStatus, StudyRecruitmentStatusConverter>

@@ -11,7 +11,7 @@ import gov.nih.nci.pa.iso.dto.PDQDiseaseAlternameDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.PDQDiseaseAlternameSortCriterion;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 
@@ -29,7 +29,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
  *
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PDQDiseaseAlternameBeanLocal
     extends AbstractBaseIsoService<PDQDiseaseAlternameDTO, PDQDiseaseAltername, PDQDiseaseAlternameConverter>

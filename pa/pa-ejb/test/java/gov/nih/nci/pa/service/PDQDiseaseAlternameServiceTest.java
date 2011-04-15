@@ -86,10 +86,10 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.PDQDiseaseAltername;
-import gov.nih.nci.pa.domain.PDQDiseaseAlternameTest;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseAlternameDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
@@ -103,7 +103,7 @@ import org.junit.Test;
  * @author hreinhart
  *
  */
-public class PDQDiseaseAlternameServiceTest {
+public class PDQDiseaseAlternameServiceTest extends AbstractHibernateTestCase {
     private PDQDiseaseAlternameBeanLocal bean = new PDQDiseaseAlternameBeanLocal();
     private PDQDiseaseAlternameServiceLocal remote = bean;
     private Ii dIi;
@@ -111,7 +111,6 @@ public class PDQDiseaseAlternameServiceTest {
     @Before
     public void setUp() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        TestSchema.reset();
         TestSchema.primeData();
         dIi = IiConverter.convertToIi(TestSchema.pdqDiseaseIds.get(0));
      }
@@ -136,7 +135,7 @@ public class PDQDiseaseAlternameServiceTest {
     public void createTest() throws Exception {
         PDQDisease disease = new PDQDisease();
         disease.setId(IiConverter.convertToLong(dIi));
-        PDQDiseaseAltername bo = PDQDiseaseAlternameTest.createDiseaseAlternameObj("new name", disease);
+        PDQDiseaseAltername bo = TestSchema.createPdqDiseaseAltername("new name", disease);
         assertNull(bo.getId());
         PDQDiseaseAltername resultBo = bean.convertFromDtoToDomain(remote.create(bean.convertFromDomainToDto(bo)));
         compareDataAttributes(bo, resultBo);

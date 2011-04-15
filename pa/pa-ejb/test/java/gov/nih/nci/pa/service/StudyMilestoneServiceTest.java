@@ -108,11 +108,12 @@ import gov.nih.nci.pa.service.util.LookUpTableServiceBean;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceBean;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceBean;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
@@ -123,15 +124,16 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  * @author hreinhart
  *
  */
-public class StudyMilestoneServiceTest {
+public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     private final StudyMilestoneBeanLocal bean = new StudyMilestoneBeanLocal();
-    private final StudyMilestoneServicelocal remote = bean;
     private final DocumentWorkflowStatusBeanLocal dws = new DocumentWorkflowStatusBeanLocal();
     private final StudyOnholdServiceLocal ohs = new StudyOnholdServiceBean();
     private final StudyProtocolServiceLocal sps = new StudyProtocolServiceBean();
@@ -141,6 +143,9 @@ public class StudyMilestoneServiceTest {
 
     private Ii spIi;
     private Ii spAmendIi;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -157,10 +162,9 @@ public class StudyMilestoneServiceTest {
         mailSrc.setProtocolQueryService(new ProtocolQueryServiceBean());
         bean.setValidateAbstractions(false);
         bean.setAbstractionCompletionService(abstractionCompletionSerivce);
-        TestSchema.reset();
         TestSchema.primeData();
-        spAmendIi = TestSchema.createAmendStudyProtocol();
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
+        spAmendIi = TestSchema.createAmendStudyProtocol();
     }
 
     private void compareDataAttributes(StudyMilestoneDTO dto1, StudyMilestoneDTO dto2) throws Exception {
@@ -174,7 +178,7 @@ public class StudyMilestoneServiceTest {
 
     @Test
     public void getTest() throws Exception {
-        List<StudyMilestoneDTO> dtoList = remote.getByStudyProtocol(spIi);
+        List<StudyMilestoneDTO> dtoList = bean.getByStudyProtocol(spIi);
         assertTrue(dtoList.size() > 0);
         Ii ii = dtoList.get(0).getIdentifier();
         assertFalse(PAUtil.isIiNull(ii));
@@ -184,7 +188,10 @@ public class StudyMilestoneServiceTest {
 
     @Test
     public void updateTest() throws Exception {
-        List<StudyMilestoneDTO> dtoList = remote.getByStudyProtocol(spIi);
+        expectedException.expect(PAException.class);
+        expectedException.expectMessage("The update() method in the StudyMilestoneService has been disabled.");
+
+        List<StudyMilestoneDTO> dtoList = bean.getByStudyProtocol(spIi);
         assertTrue(dtoList.size() > 0);
 
         StudyMilestoneDTO dto = dtoList.get(0);
@@ -192,43 +199,35 @@ public class StudyMilestoneServiceTest {
         dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.SUBMISSION_ACCEPTED));
         dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         dto.setStudyProtocolIdentifier(spIi);
-        try {
-            remote.update(dto);
-            fail("The update method in milestones service should be disabled.");
-        } catch (PAException e) {
-            // expected behavior
-        }
+        bean.update(dto);
     }
 
     @Test
     public void createTest() throws Exception {
-        List<StudyMilestoneDTO> dtoList = remote.getByStudyProtocol(spIi);
+        List<StudyMilestoneDTO> dtoList = bean.getByStudyProtocol(spIi);
         int oldSize = dtoList.size();
-
-        StudyMilestoneDTO dto;
-        remote.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
-        dtoList = remote.getByStudyProtocol(spIi);
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
+        dtoList = bean.getByStudyProtocol(spIi);
         assertEquals(oldSize + 1, dtoList.size());
         DocumentWorkflowStatusDTO dwfDto = getDocWrkStatusDTO();
         dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ACCEPTED));
         dws.create(dwfDto);
-        remote.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
-        remote.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
-        remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
-        remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
-        remote.create(getMilestoneDTO(MilestoneCode.QC_START));
-        remote.create(getMilestoneDTO(MilestoneCode.QC_COMPLETE));
-        dto = getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED);
+
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.QC_START));
+        bean.create(getMilestoneDTO(MilestoneCode.QC_COMPLETE));
+        StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED);
         dto.setCommentText(null);
         dto.setStudyProtocolIdentifier(spAmendIi);
-        remote.create(dto);
-        remote.create(getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_FEEDBACK));
-        remote.create(getMilestoneDTO(MilestoneCode.INITIAL_ABSTRACTION_VERIFY));
+        bean.create(dto);
+        PaHibernateUtil.getCurrentSession().flush();
+        bean.create(getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_FEEDBACK));
+        bean.create(getMilestoneDTO(MilestoneCode.INITIAL_ABSTRACTION_VERIFY));
     }
 
-    /**
-     * @return
-     */
     private StudyMilestoneDTO getMilestoneDTO(MilestoneCode mileCode) {
         StudyMilestoneDTO dto = new StudyMilestoneDTO();
         dto.setCommentText(StConverter.convertToSt("comment"));
@@ -240,19 +239,16 @@ public class StudyMilestoneServiceTest {
 
     @Test
     public void deleteTest() throws Exception {
-        List<StudyMilestoneDTO> dtoList = remote.getByStudyProtocol(spIi);
+        expectedException.expect(PAException.class);
+        expectedException.expectMessage("The delete() method in the StudyMilestoneService has been disabled.");
+        List<StudyMilestoneDTO> dtoList = bean.getByStudyProtocol(spIi);
         dtoList.size();
-        try {
-            remote.delete(dtoList.get(0).getIdentifier());
-            fail("The delete method in milestones service should be disabled.");
-        } catch (PAException e) {
-            // expected behavior
-        }
+        bean.delete(dtoList.get(0).getIdentifier());
     }
 
     @Test
     public void iiRootTest() throws Exception {
-        List<StudyMilestoneDTO> dtoList = remote.getByStudyProtocol(spIi);
+        List<StudyMilestoneDTO> dtoList = bean.getByStudyProtocol(spIi);
         assertTrue(dtoList.size() > 0);
         StudyMilestoneDTO dto = dtoList.get(0);
         assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
@@ -260,7 +256,7 @@ public class StudyMilestoneServiceTest {
 
     @Test
     public void onholdTest() throws Exception {
-        List<StudyMilestoneDTO> dtoList = remote.getByStudyProtocol(spIi);
+        List<StudyMilestoneDTO> dtoList = bean.getByStudyProtocol(spIi);
         int oldSize = dtoList.size();
 
         // set on-hold and dwf status
@@ -270,14 +266,14 @@ public class StudyMilestoneServiceTest {
         ohDto.setStudyProtocolIdentifier(spIi);
         ohs.create(ohDto);
         DocumentWorkflowStatus dwf = new DocumentWorkflowStatus();
-        dwf.setStudyProtocol((StudyProtocol) HibernateUtil.getCurrentSession().get(StudyProtocol.class,
+        dwf.setStudyProtocol((StudyProtocol) PaHibernateUtil.getCurrentSession().get(StudyProtocol.class,
                                                                                    IiConverter.convertToLong(spIi)));
         dwf.setStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         dwf.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         TestSchema.addUpdObject(dwf);
         // try to create
         try {
-            remote.create(getMilestoneDTO(MilestoneCode.INITIAL_SUBMISSION_TO_CLINICALTRIALS_GOV_DATE));
+            bean.create(getMilestoneDTO(MilestoneCode.INITIAL_SUBMISSION_TO_CLINICALTRIALS_GOV_DATE));
             fail("Should have failed because the trial is on-hold.");
         } catch (PAException e) {
             // expected behavior
@@ -292,8 +288,8 @@ public class StudyMilestoneServiceTest {
             }
         }
         // create
-        remote.create(getMilestoneDTO(MilestoneCode.INITIAL_SUBMISSION_TO_CLINICALTRIALS_GOV_DATE));
-        dtoList = remote.getByStudyProtocol(spIi);
+        bean.create(getMilestoneDTO(MilestoneCode.INITIAL_SUBMISSION_TO_CLINICALTRIALS_GOV_DATE));
+        dtoList = bean.getByStudyProtocol(spIi);
         assertEquals(oldSize + 1, dtoList.size());
     }
 
@@ -305,7 +301,7 @@ public class StudyMilestoneServiceTest {
         }
         // try to create w/ null dwf
         try {
-            remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
+            bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
             fail("Should have failed because of no DWF.");
         } catch (PAException e) {
             // expected behavior
@@ -314,7 +310,7 @@ public class StudyMilestoneServiceTest {
         // create
         DocumentWorkflowStatusDTO dwfDto = getDocWrkStatusDTO();
         dws.create(dwfDto);
-        StudyMilestoneDTO dto = remote.create(getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED));
+        StudyMilestoneDTO dto = bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED));
         assertFalse(PAUtil.isIiNull(dto.getIdentifier()));
     }
 
@@ -335,7 +331,7 @@ public class StudyMilestoneServiceTest {
         // spId is null
         dto.setStudyProtocolIdentifier(null);
         try {
-            remote.create(dto);
+            bean.create(dto);
             fail();
         } catch (PAException e) {
             // expected behavior
@@ -344,7 +340,7 @@ public class StudyMilestoneServiceTest {
         dto.setStudyProtocolIdentifier(spIi);
         dto.setMilestoneCode(null);
         try {
-            remote.create(dto);
+            bean.create(dto);
             fail();
         } catch (PAException e) {
             // expected behavior
@@ -353,7 +349,7 @@ public class StudyMilestoneServiceTest {
         dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.SUBMISSION_RECEIVED));
         dto.setMilestoneDate(null);
         try {
-            remote.create(dto);
+            bean.create(dto);
             fail();
         } catch (PAException e) {
             // expected behavior
@@ -361,37 +357,37 @@ public class StudyMilestoneServiceTest {
         // date is future
         dto.setMilestoneDate(TsConverter.convertToTs(getDate(1)));
         try {
-            remote.create(dto);
+            bean.create(dto);
             fail();
         } catch (PAException e) {
             // expected behavior
         }
         dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         // create
-        remote.create(dto);
+        bean.create(dto);
         // date must not predate existing milestone
         dto = getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED);
         dto.setMilestoneDate(TsConverter.convertToTs(getDate(-1)));
         try {
-            remote.create(dto);
+            bean.create(dto);
             fail("Milestone's must not predate existing milestones.  The prior milestone date is");
         } catch (PAException e) {
             // expected behavior
         }
         dto.setMilestoneDate(TsConverter.convertToTs(getDate(0)));
-        remote.create(dto);
+        bean.create(dto);
         // comment is required when milestone is late rejection date
         dto = getMilestoneDTO(MilestoneCode.LATE_REJECTION_DATE);
         dto.setCommentText(null);
         try {
-            remote.create(dto);
+            bean.create(dto);
             fail("comment is required when milestone is late rejection date");
         } catch (PAException e) {
             assertEquals("Milestone Comment is required.", e.getMessage());
         }
         dto.setCommentText(StConverter.convertToSt("some"));
         try {
-            remote.create(dto);
+            bean.create(dto);
             fail("Not recorded as sending the rejection email to the submitter  failed");
         } catch (Exception e) {
             // excepted
@@ -404,16 +400,16 @@ public class StudyMilestoneServiceTest {
         StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.LATE_REJECTION_DATE);
         dto.setStudyProtocolIdentifier(spAmendIi);
         try {
-            remote.create(dto);
+            bean.create(dto);
             fail("Late Rejection Date is applicable to Original Submission");
         } catch (PAException e) {
             assertEquals("Late Rejection Date is applicable to Original Submission.", e.getMessage());
         }
         // uniqueness rules
         dto = getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED);
-        remote.create(dto);
+        bean.create(dto);
         try {
-            remote.create(dto);
+            bean.create(dto);
             fail("Milestone's must be unique.");
         } catch (PAException e) {
             // expected behavior
@@ -428,8 +424,8 @@ public class StudyMilestoneServiceTest {
             mailSrc.setLookUpTableService(new LookUpTableServiceBean());
             TSRReportGeneratorServiceRemote tsrBean = new TSRReportGeneratorServiceBean();
             mailSrc.setTsrReportGeneratorService(tsrBean);
-            remote.create(dto);
-            fail("sending the TSR report to the submitter  failed.");
+            bean.create(dto);
+            fail("sending the TSR report to the submitter failed.");
         } catch (PAException e) {
             // expected behavior
         }
@@ -439,27 +435,28 @@ public class StudyMilestoneServiceTest {
         inboxDto.setInboxDateRange(IvlConverter.convertTs().convertToIvl(getDate(0), null));
         inboxDto = sis.create(inboxDto);
         try {
-            remote.create(getMilestoneDTO(MilestoneCode.QC_COMPLETE));
-            fail("sending the TSR report to the submitter  failed.");
+            bean.create(getMilestoneDTO(MilestoneCode.QC_COMPLETE));
+            fail("sending the TSR report to the submitter failed.");
         } catch (PAException e) {
             // expected behavior
         }
         wrkDto = getDocWrkStatusDTO();
         wrkDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTED));
         dws.create(wrkDto);
-        remote.create(getMilestoneDTO(MilestoneCode.QC_START));
+        PaHibernateUtil.getCurrentSession().flush();
+        bean.create(getMilestoneDTO(MilestoneCode.QC_START));
         inboxDto.setInboxDateRange(IvlConverter.convertTs().convertToIvl(getDate(0), getDate(0)));
         sis.update(inboxDto);
         bean.setValidateAbstractions(true);
         try {
             bean.setAbstractionCompletionService(null);
-            remote.create(getMilestoneDTO(MilestoneCode.QC_COMPLETE));
+            bean.create(getMilestoneDTO(MilestoneCode.QC_COMPLETE));
             fail("Error injecting reference to AbstractionCompletionService");
         } catch (PAException e) {
             assertEquals("Error injecting reference to AbstractionCompletionService.", e.getMessage());
         }
         try {
-            remote.create(dto);
+            bean.create(dto);
             fail("Abstraction validation exception");
         } catch (Exception e) {
         }
@@ -467,60 +464,69 @@ public class StudyMilestoneServiceTest {
 
     @Test
     public void newValidationsForReadyForQc() throws PAException {
-        remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
-        remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
-        remote.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
-        remote.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
-        remote.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
+        addAbstractedWorkflowStatus();
+
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
         try {
-            remote.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
+            bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
             fail();
         } catch (PAException e) {
             assertEquals("Scientific Processing Start Date must be followed by "
                     + " Scientific Processing Completion Date", e.getMessage());
         }
-        remote.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
-        remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
         try {
-            remote.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
+            bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
             fail();
         } catch (PAException e) {
             assertEquals("Administartive Processing Start Date must be followed by  "
                     + "Administrative Processing Completion Date", e.getMessage());
         }
-        remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
-        remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
         try {
             bean.setAbstractionCompletionService(abstractionCompletionSerivce);
-            remote.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
+            bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
             fail();
         } catch (PAException e) {
         }
     }
 
+    private void addAbstractedWorkflowStatus() throws PAException {
+        DocumentWorkflowStatusDTO dwfDto = getDocWrkStatusDTO();
+        dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTED));
+        dws.create(dwfDto);
+    }
+
     @Test
     public void newValidationsForScientificProcessingStartDate() throws PAException {
-        remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
+        addAbstractedWorkflowStatus();
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
         try {
-            remote.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
+            bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
             fail();
         } catch (PAException e) {
             assertEquals("Scientific Processing Start Date cannot be recorded"
                     + " if Administrative Processing started but was not completed", e.getMessage());
         }
-        remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
-        remote.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
         try {
-            remote.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
+            bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
             fail();
         } catch (PAException e) {
             assertEquals("Scientific Processing Start Date must be followed by "
                     + " Scientific Processing Completion Date", e.getMessage());
         }
-        remote.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
-        remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
         try {
-            remote.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
+            bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
             fail();
         } catch (PAException e) {
             assertEquals("Administartive Processing Start Date must be "
@@ -530,27 +536,28 @@ public class StudyMilestoneServiceTest {
 
     @Test
     public void newValidationForAdministrativeProcessingStartDate() throws PAException {
-        remote.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
+        addAbstractedWorkflowStatus();
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
         try {
-            remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
+            bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
             fail();
         } catch (PAException e) {
             assertEquals("Administrative Processing Start Date cannot be recorded"
                     + " if Scientific Processing started but was not completed", e.getMessage());
         }
-        remote.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
-        remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
         try {
-            remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
+            bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
             fail();
         } catch (PAException e) {
             assertEquals("Administartive Processing Start Date must be followed by "
                     + " Administrative Processing Completion Date", e.getMessage());
         }
-        remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
-        remote.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
         try {
-            remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
+            bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
             fail();
         } catch (PAException e) {
             assertEquals("Scientific Processing Start Date must be followed by "
@@ -560,18 +567,19 @@ public class StudyMilestoneServiceTest {
 
     @Test
     public void newValidationForCompletedDate() throws PAException {
-        remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
-        remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
+        addAbstractedWorkflowStatus();
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
         try {
-            remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
+            bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
         } catch (PAException e) {
             assertEquals("Administartive Processing Completion Date must be preceded by "
                     + " Administrative Processing Start Date", e.getMessage());
         }
-        remote.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
-        remote.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
         try {
-            remote.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
+            bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
         } catch (PAException e) {
             assertEquals("Scientific Processing Completion Date must be preceded by "
                     + " Scientific Processing Start Date", e.getMessage());
@@ -583,25 +591,25 @@ public class StudyMilestoneServiceTest {
     public void prerequisiteTest() throws Exception {
         // SUBMISSION_ACCEPTED is prerequisite for LATE_REJECTION_DATE
         try {
-            remote.create(getMilestoneDTO(MilestoneCode.LATE_REJECTION_DATE));
+            bean.create(getMilestoneDTO(MilestoneCode.LATE_REJECTION_DATE));
             fail("Should fail for missing prerequisite.");
         } catch (PAException e) {
             assertEquals("'Submission Acceptance Date' is a prerequisite to 'Late Rejection Date'.", e.getMessage());
         }
         try {
-            remote.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
+            bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
             fail("Should fail for missing prerequisite.");
         } catch (PAException e) {
             // expected behavior
         }
         try {
-            remote.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
+            bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
             fail("Should fail for missing prerequisite.");
         } catch (PAException e) {
             // expected behavior
         }
         try {
-            remote.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
+            bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
             fail("Should fail for missing prerequisite.");
         } catch (PAException e) {
             // expected behavior
@@ -610,51 +618,53 @@ public class StudyMilestoneServiceTest {
 
     @Test
     public void creaeDocumentWrkStatusForRejectedTest() throws Exception {
-        remote.create(getMilestoneDTO(MilestoneCode.SUBMISSION_REJECTED));
+        addAbstractedWorkflowStatus();
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_REJECTED));
         DocumentWorkflowStatusDTO dwsDTO = dws.getCurrentByStudyProtocol(spIi);
         assertTrue(DocumentWorkflowStatusCode.REJECTED.getCode().equalsIgnoreCase(dwsDTO.getStatusCode().getCode()));
     }
 
     @Test
     public void createDocumentWorkflowStatusesTest() throws Exception {
+        addAbstractedWorkflowStatus();
         List<DocumentWorkflowStatusDTO> dwsList = dws.getByStudyProtocol(spIi);
         int dwsCount = dwsList.size();
         assertTrue(dwsCount > 0);
 
-        remote.create(getMilestoneDTO(MilestoneCode.QC_START));
+        bean.create(getMilestoneDTO(MilestoneCode.QC_START));
         dwsList = dws.getByStudyProtocol(spIi);
         assertEquals(dwsCount, dwsList.size());
 
         // complete qc only changes dws if current dws is accepted
         DocumentWorkflowStatusDTO dtoDwf = dws.getCurrentByStudyProtocol(spIi);
         assertFalse(DocumentWorkflowStatusCode.ACCEPTED.equals(DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dtoDwf.getStatusCode()))));
-        remote.create(getMilestoneDTO(MilestoneCode.QC_COMPLETE));
+        bean.create(getMilestoneDTO(MilestoneCode.QC_COMPLETE));
         dwsList = dws.getByStudyProtocol(spIi);
         assertEquals(dwsCount, dwsList.size());
 
         // initial verification set dws to verified-noresponse if no feedback has been received
         assertFalse(bean.milestoneExists(MilestoneCode.TRIAL_SUMMARY_FEEDBACK,
                                          getMilestoneDTO(MilestoneCode.QC_COMPLETE)));
-        remote.create(getMilestoneDTO(MilestoneCode.INITIAL_ABSTRACTION_VERIFY));
+        bean.create(getMilestoneDTO(MilestoneCode.INITIAL_ABSTRACTION_VERIFY));
         dtoDwf = dws.getCurrentByStudyProtocol(spIi);
         assertTrue(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.equals(DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dtoDwf.getStatusCode()))));
         dwsList = dws.getByStudyProtocol(spIi);
         assertEquals(++dwsCount, dwsList.size());
 
         // ongoing verifications do not change dws if still no feedback
-        remote.create(getMilestoneDTO(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION));
+        bean.create(getMilestoneDTO(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION));
         dwsList = dws.getByStudyProtocol(spIi);
         assertEquals(dwsCount, dwsList.size());
         assertFalse(dwsList.contains(DocumentWorkflowStatusCode.VERIFICATION_PENDING.getCode()));
         try {
-            remote.create(getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_SENT));
+            bean.create(getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_SENT));
             fail();
         } catch (PAException e) {
 
         }
         // ongoing verifications change dws if there is feedback
-        remote.create(getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_FEEDBACK));
-        remote.create(getMilestoneDTO(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION));
+        bean.create(getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_FEEDBACK));
+        bean.create(getMilestoneDTO(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION));
         dtoDwf = dws.getCurrentByStudyProtocol(spIi);
         assertTrue(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode()
                                                                            .equalsIgnoreCase(dtoDwf.getStatusCode()
@@ -663,6 +673,7 @@ public class StudyMilestoneServiceTest {
 
     @Test
     public void updateRecordVerificationDateTest() throws Exception {
+        addAbstractedWorkflowStatus();
         // set initial date
         StudyProtocolDTO sp = sps.getStudyProtocol(spIi);
         sp.setRecordVerificationDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
@@ -671,7 +682,7 @@ public class StudyMilestoneServiceTest {
         DocumentWorkflowStatusDTO dwfsDTO = getDocWrkStatusDTO();
         dwfsDTO.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ACCEPTED));
         // milestone triggers change of date
-        remote.create(getMilestoneDTO(MilestoneCode.INITIAL_ABSTRACTION_VERIFY));
+        bean.create(getMilestoneDTO(MilestoneCode.INITIAL_ABSTRACTION_VERIFY));
         sp = sps.getStudyProtocol(spIi);
         String recordVerificationDate = TsConverter.convertToString(sp.getRecordVerificationDate());
         assertTrue(ISOUtil.normalizeDateString(getDate(0).toString()).equals(recordVerificationDate));
@@ -685,7 +696,7 @@ public class StudyMilestoneServiceTest {
         studyMilestone.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.READY_FOR_QC));
         LimitOffset limitOffset = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
 
-        List<StudyMilestoneDTO> milestones = remote.search(studyMilestone, limitOffset);
+        List<StudyMilestoneDTO> milestones = bean.search(studyMilestone, limitOffset);
         assertEquals("There should only be one milestone present for READY_FOR_QC", milestones.size(), 1);
         StudyMilestoneDTO milestone = milestones.get(0);
         assertEquals(milestone.getMilestoneCode(), studyMilestone.getMilestoneCode());
@@ -695,7 +706,7 @@ public class StudyMilestoneServiceTest {
         studyMilestone.setStudyProtocolIdentifier(spIi);
         studyMilestone.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_SENT));
 
-        milestones = remote.search(studyMilestone, limitOffset);
+        milestones = bean.search(studyMilestone, limitOffset);
         assertEquals("There should only be one milestone present for TRIAL_SUMMARY_SENT", milestones.size(), 2);
         milestone = milestones.get(0);
         assertEquals(milestone.getMilestoneCode(), studyMilestone.getMilestoneCode());

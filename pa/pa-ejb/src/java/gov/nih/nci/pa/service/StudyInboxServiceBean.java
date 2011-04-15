@@ -90,8 +90,8 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PAFieldException;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
@@ -114,7 +114,7 @@ import org.hibernate.criterion.Restrictions;
  * @since 09/08/2009
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO, StudyInbox, StudyInboxConverter>
     implements StudyInboxServiceLocal {
@@ -188,7 +188,7 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
      */
     public List<StudyInboxDTO> getOpenInboxEntries(Ii studyProtocolIi) throws PAException {
         Criteria crit =
-            HibernateUtil.getCurrentSession().createCriteria(StudyInbox.class).add(Restrictions.isNull("closeDate"))
+            PaHibernateUtil.getCurrentSession().createCriteria(StudyInbox.class).add(Restrictions.isNull("closeDate"))
             .addOrder(Order.desc("openDate"))
             .createCriteria("studyProtocol").add(Restrictions.eq("id", IiConverter.convertToLong(studyProtocolIi)));
         try {

@@ -86,9 +86,9 @@ import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -114,7 +114,7 @@ import org.hibernate.criterion.Restrictions;
  * @since Aug 29, 2009
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudySubjectBeanLocal
         extends AbstractBaseAccrualStudyBean<StudySubjectDto, StudySubject, StudySubjectConverter>
@@ -129,7 +129,7 @@ public class StudySubjectBeanLocal
             throw new PAException("Called getByStudySite() with Ii == null.");
         }
         try {
-            Session session = HibernateUtil.getCurrentSession();
+            Session session = PaHibernateUtil.getCurrentSession();
             String hql = "select ssub from StudySubject ssub join ssub.studySite ssite where ssite.id = :studySiteId "
                 + "order by ssub.id ";
             Query query = session.createQuery(hql);
@@ -155,7 +155,7 @@ public class StudySubjectBeanLocal
     public List<StudySubjectDto> getStudySubjects(String assignedIdentifier, Long studySiteId, Date birthDate,
             FunctionalRoleStatusCode statusCode) throws PAException {
         try {
-            Criteria criteria = HibernateUtil.getCurrentSession().createCriteria(StudySubject.class);
+            Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(StudySubject.class);
             populateCriteria(assignedIdentifier, studySiteId, birthDate, statusCode, criteria);
             List<StudySubject> subjects = criteria.list();
             List<StudySubjectDto> results = new ArrayList<StudySubjectDto>();
@@ -197,6 +197,6 @@ public class StudySubjectBeanLocal
         return super.create(dto);
     }
 
-   
+
 
 }

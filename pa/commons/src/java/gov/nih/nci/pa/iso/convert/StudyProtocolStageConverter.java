@@ -18,26 +18,16 @@ import org.apache.commons.collections.CollectionUtils;
  * @author Vrushali
  *
  */
-public class StudyProtocolStageConverter {
-    
+public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocolStageDTO, StudyProtocolStage> {
+
     /**
-     *
-     * @param studyProtocolStage sp
-     * @return dto
+     * {@inheritDoc}
      */
-    public static StudyProtocolStageDTO convertFromDomainToDTO(StudyProtocolStage studyProtocolStage) {
-        return convertFromDomainToDTO(studyProtocolStage, new StudyProtocolStageDTO());
-    }
-    /**
-     *
-     * @param studyProtocolStage domain
-     * @param studyProtocolStageDTO isoDTO
-     * @return dto
-     */
-    public static StudyProtocolStageDTO convertFromDomainToDTO(
-            StudyProtocolStage studyProtocolStage, StudyProtocolStageDTO studyProtocolStageDTO) {
+    @Override
+    public StudyProtocolStageDTO convertFromDomainToDto(StudyProtocolStage studyProtocolStage) {
+        StudyProtocolStageDTO studyProtocolStageDTO = new StudyProtocolStageDTO();
         AbstractStudyProtocolConverter.convertFromDomainToDTO(studyProtocolStage, studyProtocolStageDTO);
-        studyProtocolStageDTO.setIdentifier(IiConverter.convertToIi(studyProtocolStage.getId()));            
+        studyProtocolStageDTO.setIdentifier(IiConverter.convertToIi(studyProtocolStage.getId()));
         studyProtocolStageDTO.setNctIdentifier(StConverter.convertToSt(studyProtocolStage.getNctIdentifier()));
         studyProtocolStageDTO.setLocalProtocolIdentifier(StConverter.convertToSt(
                 studyProtocolStage.getLocalProtocolIdentifier()));
@@ -81,7 +71,7 @@ public class StudyProtocolStageConverter {
         return studyProtocolStageDTO;
     }
 
-    private static void setSiteFields(StudyProtocolStage studyProtocolStage, 
+    private static void setSiteFields(StudyProtocolStage studyProtocolStage,
             StudyProtocolStageDTO studyProtocolStageDTO) {
         studyProtocolStageDTO.setSiteProtocolIdentifier(IiConverter.convertToIi(studyProtocolStage
                 .getSiteProtocolIdentifier()));
@@ -110,22 +100,11 @@ public class StudyProtocolStageConverter {
     }
 
     /**
-     *
-     * @param studyProtocolStageDTO isoDTO
-     * @return domain
+     * {@inheritDoc}
      */
-    public static StudyProtocolStage convertFromDTOToDomain(StudyProtocolStageDTO studyProtocolStageDTO) {
-        return convertFromDTOToDomain(studyProtocolStageDTO, new StudyProtocolStage());
-    }
-
-    /**
-     *
-     * @param studyProtocolStageDTO isoDTO
-     * @param studyProtocolStage domain
-     * @return domain
-     */
-    public static StudyProtocolStage convertFromDTOToDomain(StudyProtocolStageDTO studyProtocolStageDTO,
-            StudyProtocolStage studyProtocolStage) {
+    @Override
+    public StudyProtocolStage convertFromDtoToDomain(StudyProtocolStageDTO studyProtocolStageDTO) {
+        StudyProtocolStage studyProtocolStage = new StudyProtocolStage();
         AbstractStudyProtocolConverter.convertFromDTOToDomain(studyProtocolStageDTO, studyProtocolStage);
         studyProtocolStage.setId(IiConverter.convertToLong(studyProtocolStageDTO.getIdentifier()));
         studyProtocolStage.setNctIdentifier(StConverter.convertToString(studyProtocolStageDTO.getNctIdentifier()));
@@ -158,7 +137,7 @@ public class StudyProtocolStageConverter {
                 studyProtocolStageDTO.getOversightAuthorityOrgId()));
         studyProtocolStage.setNciDesignatedCancerCenterIndicator(BlConverter.convertToBool(
                 studyProtocolStageDTO.getNciDesignatedCancerCenterIndicator()));
-        
+
         studyProtocolStage.setSubmitterOrganizationIdentifier(IiConverter.convertToString(
                 studyProtocolStageDTO.getSubmitterOrganizationIdentifier()));
         setSiteFields(studyProtocolStageDTO, studyProtocolStage);
@@ -174,7 +153,7 @@ public class StudyProtocolStageConverter {
         return studyProtocolStage;
     }
 
-    private static void setSiteFields(StudyProtocolStageDTO studyProtocolStageDTO, 
+    private static void setSiteFields(StudyProtocolStageDTO studyProtocolStageDTO,
             StudyProtocolStage studyProtocolStage) {
         studyProtocolStage.setSiteProtocolIdentifier(IiConverter.convertToString(studyProtocolStageDTO
                 .getSiteProtocolIdentifier()));

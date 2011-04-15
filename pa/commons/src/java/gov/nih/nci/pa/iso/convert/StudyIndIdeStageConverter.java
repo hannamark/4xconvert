@@ -25,26 +25,14 @@ import java.util.Date;
  * @author Vrushali
  *
  */
-public class StudyIndIdeStageConverter {
-    /**
-     * @param studyIndIdeStage studyIndIdeStage
-     * @return studyIndIdeStageDTO
-     */
-    public static StudyIndIdeStageDTO convertFromDomainToDTO(StudyIndIdeStage studyIndIdeStage) {
-        return convertFromDomainToDTO(studyIndIdeStage, new StudyIndIdeStageDTO());
-    }
+public class StudyIndIdeStageConverter extends AbstractConverter<StudyIndIdeStageDTO, StudyIndIdeStage> {
 
     /**
-     *
-     * @param studyIndIdeStageDTO studyIndIdeStageDTO
-     * @return studyIndIdeStage studyIndIdeStage
+     * {@inheritDoc}
      */
-    public static StudyIndIdeStage convertFromDTOToDomain(StudyIndIdeStageDTO studyIndIdeStageDTO) {
-        return convertFromDTOToDomain(studyIndIdeStageDTO, new StudyIndIdeStage());
-    }
-
-    private static StudyIndIdeStageDTO convertFromDomainToDTO(StudyIndIdeStage studyIndIdeStage,
-            StudyIndIdeStageDTO studyIndIdeStageDTO) {
+    @Override
+    public StudyIndIdeStageDTO convertFromDomainToDto(StudyIndIdeStage studyIndIdeStage) {
+        StudyIndIdeStageDTO studyIndIdeStageDTO = new StudyIndIdeStageDTO();
         studyIndIdeStageDTO.setIdentifier(IiConverter.convertToStudyIndIdeIi(studyIndIdeStage.getId()));
         studyIndIdeStageDTO.setStudyProtocolStageIi(IiConverter.convertToIi(studyIndIdeStage.getStudyProtocolStage()
                                                                                             .getId()));
@@ -60,49 +48,54 @@ public class StudyIndIdeStageConverter {
         studyIndIdeStageDTO.setIndldeTypeCode(CdConverter.convertToCd(studyIndIdeStage.getIndldeTypeCode()));
         studyIndIdeStageDTO.setExemptIndicator(BlConverter.convertToBl(studyIndIdeStage.getExemptIndicator()));
         return studyIndIdeStageDTO;
+
     }
 
-    private static StudyIndIdeStage convertFromDTOToDomain(StudyIndIdeStageDTO studyIndIdeStageDTO,
-            StudyIndIdeStage studyIndIdeStage) {
-      StudyProtocolStage spBo = new StudyProtocolStage();
-      spBo.setId(IiConverter.convertToLong(studyIndIdeStageDTO.getStudyProtocolStageIi()));
-      studyIndIdeStage.setDateLastUpdated(new Date());
-      studyIndIdeStage.setStudyProtocolStage(spBo);
-      if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getExpandedAccessStatusCode())) {
-          studyIndIdeStage.setExpandedAccessStatusCode(
-                  ExpandedAccessStatusCode.getByCode(studyIndIdeStageDTO.getExpandedAccessStatusCode().getCode()));
-      }
-      if (!ISOUtil.isBlNull(studyIndIdeStageDTO.getExpandedAccessIndicator())) {
-          studyIndIdeStage.setExpandedAccessIndicator(studyIndIdeStageDTO.getExpandedAccessIndicator().getValue());
-      }
-      if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getGrantorCode())) {
-          studyIndIdeStage.setGrantorCode(GrantorCode.getByCode(studyIndIdeStageDTO.getGrantorCode().getCode()));
-      }
-      if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getHolderTypeCode())
-              && studyIndIdeStageDTO.getHolderTypeCode().getCode().equals("NIH")) {
-          studyIndIdeStage.setNihInstHolderCode(NihInstituteCode.getByCode(
-                  studyIndIdeStageDTO.getNihInstHolderCode().getCode()));
-      }
-      if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getHolderTypeCode())
-              && studyIndIdeStageDTO.getHolderTypeCode().getCode().equals("NCI")) {
-          studyIndIdeStage.setNciDivPrgHolderCode(NciDivisionProgramCode.getByCode(
-                  studyIndIdeStageDTO.getNciDivProgHolderCode().getCode()));
-      }
-      if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getHolderTypeCode())) {
-          studyIndIdeStage.setHolderTypeCode(HolderTypeCode.getByCode(
-                  studyIndIdeStageDTO.getHolderTypeCode().getCode()));
-      }
-      if (!ISOUtil.isStNull(studyIndIdeStageDTO.getIndldeNumber())) {
-          studyIndIdeStage.setIndIdeNumber(studyIndIdeStageDTO.getIndldeNumber().getValue());
-      }
-      if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getIndldeTypeCode())) {
-          studyIndIdeStage.setIndldeTypeCode(IndldeTypeCode.getByCode(
-                  studyIndIdeStageDTO.getIndldeTypeCode().getCode()));
-      }
-      if (!ISOUtil.isBlNull(studyIndIdeStageDTO.getExemptIndicator())) {
-          studyIndIdeStage.setExemptIndicator(studyIndIdeStageDTO.getExemptIndicator().getValue());
-      }
-      return studyIndIdeStage;
-  }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudyIndIdeStage convertFromDtoToDomain(StudyIndIdeStageDTO studyIndIdeStageDTO) {
+        StudyIndIdeStage studyIndIdeStage = new StudyIndIdeStage();
+        StudyProtocolStage spBo = new StudyProtocolStage();
+        spBo.setId(IiConverter.convertToLong(studyIndIdeStageDTO.getStudyProtocolStageIi()));
+        studyIndIdeStage.setDateLastUpdated(new Date());
+        studyIndIdeStage.setStudyProtocolStage(spBo);
+        if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getExpandedAccessStatusCode())) {
+            studyIndIdeStage.setExpandedAccessStatusCode(
+                    ExpandedAccessStatusCode.getByCode(studyIndIdeStageDTO.getExpandedAccessStatusCode().getCode()));
+        }
+        if (!ISOUtil.isBlNull(studyIndIdeStageDTO.getExpandedAccessIndicator())) {
+            studyIndIdeStage.setExpandedAccessIndicator(studyIndIdeStageDTO.getExpandedAccessIndicator().getValue());
+        }
+        if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getGrantorCode())) {
+            studyIndIdeStage.setGrantorCode(GrantorCode.getByCode(studyIndIdeStageDTO.getGrantorCode().getCode()));
+        }
+        if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getHolderTypeCode())
+                && studyIndIdeStageDTO.getHolderTypeCode().getCode().equals("NIH")) {
+            studyIndIdeStage.setNihInstHolderCode(NihInstituteCode.getByCode(
+                    studyIndIdeStageDTO.getNihInstHolderCode().getCode()));
+        }
+        if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getHolderTypeCode())
+                && studyIndIdeStageDTO.getHolderTypeCode().getCode().equals("NCI")) {
+            studyIndIdeStage.setNciDivPrgHolderCode(NciDivisionProgramCode.getByCode(
+                    studyIndIdeStageDTO.getNciDivProgHolderCode().getCode()));
+        }
+        if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getHolderTypeCode())) {
+            studyIndIdeStage.setHolderTypeCode(HolderTypeCode.getByCode(
+                    studyIndIdeStageDTO.getHolderTypeCode().getCode()));
+        }
+        if (!ISOUtil.isStNull(studyIndIdeStageDTO.getIndldeNumber())) {
+            studyIndIdeStage.setIndIdeNumber(studyIndIdeStageDTO.getIndldeNumber().getValue());
+        }
+        if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getIndldeTypeCode())) {
+            studyIndIdeStage.setIndldeTypeCode(IndldeTypeCode.getByCode(
+                    studyIndIdeStageDTO.getIndldeTypeCode().getCode()));
+        }
+        if (!ISOUtil.isBlNull(studyIndIdeStageDTO.getExemptIndicator())) {
+            studyIndIdeStage.setExemptIndicator(studyIndIdeStageDTO.getExemptIndicator().getValue());
+        }
+        return studyIndIdeStage;
 
+    }
 }

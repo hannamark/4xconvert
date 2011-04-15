@@ -86,7 +86,7 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.util.SiteAdministrationCriteria;
 
@@ -165,9 +165,9 @@ public class SiteAdministrationAction extends ActionSupport {
             registryUsers = (List<RegistryUser>) ServletActionContext.getRequest().getSession().
             getAttribute(SiteAdministrationAction.REG_USERS_LIST);
             for (RegistryUser regUser : registryUsers) {
-                HibernateUtil.getCurrentSession().saveOrUpdate(regUser);
+                PaHibernateUtil.getCurrentSession().saveOrUpdate(regUser);
             }
-            HibernateUtil.getCurrentSession().flush();
+            PaHibernateUtil.getCurrentSession().flush();
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
             throw new PAException(e);

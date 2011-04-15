@@ -85,12 +85,12 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.CountryTest;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.iso.dto.RegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.HibernateUtil;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -99,7 +99,7 @@ import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
-public class RegulatoryAuthorityServiceBeanTest {
+public class RegulatoryAuthorityServiceBeanTest extends AbstractHibernateTestCase {
 
   private final RegulatoryAuthorityServiceLocal remoteEjb = new RegulatoryAuthorityBeanLocal();
   RegulatoryAuthority reg;
@@ -109,11 +109,10 @@ public class RegulatoryAuthorityServiceBeanTest {
 
   @Before
   public void setUp() throws Exception {
-    TestSchema.reset();
     TestSchema.primeData();
-    sess = HibernateUtil.getCurrentSession();
+    sess = PaHibernateUtil.getCurrentSession();
     reg = (RegulatoryAuthority) sess.get(RegulatoryAuthority.class, TestSchema.regAuthIds.get(0));
-    c = CountryTest.createCountryObj();
+    c = TestSchema.createCountryObj();
     TestSchema.addUpdObject(c);
     assertNotNull(c.getId());
     dto =  remoteEjb.get(IiConverter.convertToRegulatoryAuthorityIi(reg.getId()));

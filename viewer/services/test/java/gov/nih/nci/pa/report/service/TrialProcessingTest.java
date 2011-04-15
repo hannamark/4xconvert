@@ -102,12 +102,10 @@ public class TrialProcessingTest
     extends AbstractReportBeanTest<AssignedIdentifierCriteriaDto, TrialProcessingResultDto, TrialProcessingReportBean> {
 
     Ii assignedIdentifier = new Ii();
-    
-    @Override
+
     @Before
     public void setUp() throws Exception {
         bean = new TrialProcessingReportBean();
-        super.setUp();        
         for (Ii id : TestSchema.studyProtocol.get(0).getOtherIdentifiers()) {
             if (StringUtils.equals(id.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT)) {
                 assignedIdentifier = id;

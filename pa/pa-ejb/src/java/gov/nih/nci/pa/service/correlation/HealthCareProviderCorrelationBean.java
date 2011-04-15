@@ -86,8 +86,8 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PAExceptionConstants;
-import gov.nih.nci.pa.util.HibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -115,7 +115,8 @@ public class HealthCareProviderCorrelationBean {
 
     private static final Logger LOG  = Logger.getLogger(HealthCareProviderCorrelationBean.class);
     private final CorrelationUtils corrUtils = new CorrelationUtils();
-    
+    private final gov.nih.nci.pa.util.CorrelationUtils commonsCorrUtils = new gov.nih.nci.pa.util.CorrelationUtils();
+
     /**
      * This method assumes Organization and Person record exists in PO.
      * @param orgPoIdentifier po primary org id
@@ -188,7 +189,8 @@ public class HealthCareProviderCorrelationBean {
         }
 
         // Step 6 : Check of PA has hcp , if not create one
-        HealthCareProvider hcp = corrUtils.getStructuralRoleByIi(DSetConverter.convertToIi(hcpDTO.getIdentifier()));
+        HealthCareProvider hcp = commonsCorrUtils.getStructuralRoleByIi(DSetConverter.convertToIi(hcpDTO
+            .getIdentifier()));
         if (hcp == null) {
             // create a new crs
             hcp = new HealthCareProvider();
@@ -200,8 +202,8 @@ public class HealthCareProviderCorrelationBean {
         }
         return hcp.getId();
     }
-    
-    private HealthCareProviderDTO getHcpDTOByIdentifier(Ii poHcpIdentifier) 
+
+    private HealthCareProviderDTO getHcpDTOByIdentifier(Ii poHcpIdentifier)
         throws PAException {
         HealthCareProviderDTO hcpDTO = null;
         try {
@@ -223,7 +225,7 @@ public class HealthCareProviderCorrelationBean {
      */
     public Long createHealthCareProviderCorrelationsWithExistingPoHcp(Ii poHcpIdentifier) throws PAException {
         HealthCareProviderDTO hcpDTO = getHcpDTOByIdentifier(poHcpIdentifier);
-        HealthCareProvider hcp = corrUtils.getStructuralRoleByIi(poHcpIdentifier);
+        HealthCareProvider hcp = commonsCorrUtils.getStructuralRoleByIi(poHcpIdentifier);
         if (hcp == null) {
             PersonDTO poPersonDTO;
             OrganizationDTO poOrganizationDTO;
@@ -235,12 +237,12 @@ public class HealthCareProviderCorrelationBean {
                 throw new PAException(PAUtil.handleNullifiedEntityException(e), e);
             }
             if (poPersonDTO == null) {
-                throw new PAException("Unable to find Person for identifier: " 
+                throw new PAException("Unable to find Person for identifier: "
                         + hcpDTO.getPlayerIdentifier().getExtension());
             }
-            
+
             if (poOrganizationDTO == null) {
-                throw new PAException("Unable to find Organization for identifier: " 
+                throw new PAException("Unable to find Organization for identifier: "
                         + hcpDTO.getScoperIdentifier().getExtension());
             }
             Person paPerson = corrUtils.createPAPerson(poPersonDTO);
@@ -269,7 +271,7 @@ public class HealthCareProviderCorrelationBean {
         }
         Session session = null;
 
-        session = HibernateUtil.getCurrentSession();
+        session = PaHibernateUtil.getCurrentSession();
         session.save(hcp);
         session.flush();
         return hcp;

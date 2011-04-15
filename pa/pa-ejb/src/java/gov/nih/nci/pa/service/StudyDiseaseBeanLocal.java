@@ -7,7 +7,7 @@ import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.iso.convert.StudyDiseaseConverter;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.util.HibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.List;
@@ -22,7 +22,7 @@ import javax.interceptor.Interceptors;
  *
  */
 @Stateless
-@Interceptors(HibernateSessionInterceptor.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyDiseaseBeanLocal extends
         AbstractStudyIsoService<StudyDiseaseDTO, StudyDisease, StudyDiseaseConverter> implements

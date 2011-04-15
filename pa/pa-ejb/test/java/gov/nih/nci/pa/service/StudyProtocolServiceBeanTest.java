@@ -88,40 +88,42 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AnatomicSite;
-import gov.nih.nci.pa.domain.AnatomicSiteTest;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.domain.OrganizationTest;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.domain.StudyProtocolTest;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.AllocationCode;
+import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTOTest;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTOTest;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MockPAServiceUtils;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.AnatomicSiteComparator;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAConstants;
@@ -146,14 +148,14 @@ import org.junit.Test;
  * @author Naveen Amiruddin
  * @since 08/26/2008
  */
-public class StudyProtocolServiceBeanTest {
+public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
     private final StudyProtocolBeanLocal bean = new StudyProtocolBeanLocal();
     private final StudyProtocolServiceLocal remoteEjb = bean;
     @Before
     public void setUp() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        TestSchema.reset();
+        CaseSensitiveUsernameHolder.setUser(TestSchema.getUser().getLoginName());
         CaseSensitiveUsernameHolder.setUser(TestSchema.getUser().getLoginName());
         AnatomicSite as = new AnatomicSite();
         as.setCode("Lung");
@@ -230,57 +232,50 @@ public class StudyProtocolServiceBeanTest {
 
     @Test(expected=PAException.class)
     public void businessRulesException1() throws Exception {
-        InterventionalStudyProtocolDTO ispDTO =
-            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
         ispDTO.setStartDateTypeCode(null);
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
     }
 
     @Test(expected=PAException.class)
     public void businessRulesException2() throws Exception {
-        InterventionalStudyProtocolDTO ispDTO =
-            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
         ispDTO.setPrimaryCompletionDateTypeCode(null);
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
     }
 
-    @Test(expected=PAException.class)
+    @Test(expected = PAException.class)
     public void businessRulesException3() throws Exception {
-        InterventionalStudyProtocolDTO ispDTO =
-            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
         ispDTO.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/9999")));
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
     }
 
-    @Test(expected=PAException.class)
+    @Test(expected = PAException.class)
     public void businessRulesException4() throws Exception {
-        InterventionalStudyProtocolDTO ispDTO =
-            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
         ispDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/9999")));
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
     }
 
-    @Test(expected=PAException.class)
+    @Test(expected = PAException.class)
     public void businessRulesException5() throws Exception {
-        InterventionalStudyProtocolDTO ispDTO =
-            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
         ispDTO.setStartDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ANTICIPATED.getCode()));
         ispDTO.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2000")));
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
     }
 
-    @Test(expected=PAException.class)
+    @Test(expected = PAException.class)
     public void businessRulesException6() throws Exception {
-        InterventionalStudyProtocolDTO ispDTO =
-            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
         ispDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2000")));
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
     }
 
-    @Test(expected=PAException.class)
+    @Test(expected = PAException.class)
     public void businessRulesException7() throws Exception {
-        InterventionalStudyProtocolDTO ispDTO =
-            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
         ispDTO.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2001")));
         ispDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2000")));
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
@@ -288,8 +283,7 @@ public class StudyProtocolServiceBeanTest {
 
     @Test
     public void businessRulesExceptionForUpdate() throws Exception {
-        InterventionalStudyProtocolDTO ispDTO =
-            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
         Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
         InterventionalStudyProtocolDTO saved =  remoteEjb.getInterventionalStudyProtocol(ii);
         saved.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(Boolean.FALSE));
@@ -323,8 +317,7 @@ public class StudyProtocolServiceBeanTest {
 
     @Test
     public void createInterventionalStudyProtocol() throws Exception {
-        InterventionalStudyProtocolDTO ispDTO =
-                InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
         Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
         assertNotNull(ii.getExtension());
     }
@@ -332,8 +325,8 @@ public class StudyProtocolServiceBeanTest {
     @Test
     public void deleteStudyProtocol() throws Exception {
         InterventionalStudyProtocol sp = new InterventionalStudyProtocol();
-        sp = (InterventionalStudyProtocol) StudyProtocolTest.createStudyProtocolObj(sp);
-        sp = StudyProtocolTest.createInterventionalStudyProtocolObj(sp);
+        sp = (InterventionalStudyProtocol) TestSchema.createStudyProtocolObj(sp);
+        sp = TestSchema.createInterventionalStudyProtocolObj(sp);
         remoteEjb.deleteStudyProtocol(IiConverter.convertToStudyProtocolIi(sp.getId()));
     }
 
@@ -398,7 +391,7 @@ public class StudyProtocolServiceBeanTest {
     @Test
     public void getInterventionalStudyProtocol() throws Exception {
         InterventionalStudyProtocolDTO create =
-                InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+                StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
         Ii ii = remoteEjb.createInterventionalStudyProtocol(create);
         assertNotNull(ii.getExtension());
         InterventionalStudyProtocolDTO saved =  remoteEjb.getInterventionalStudyProtocol(ii);
@@ -419,7 +412,7 @@ public class StudyProtocolServiceBeanTest {
     @Test
     public void updateInterventionalStudyProtocol() throws Exception {
         InterventionalStudyProtocol create =
-                StudyProtocolTest.createInterventionalStudyProtocolObj(new InterventionalStudyProtocol());
+                TestSchema.createInterventionalStudyProtocolObj(new InterventionalStudyProtocol());
 
         InterventionalStudyProtocolDTO createDTO = InterventionalStudyProtocolConverter.convertFromDomainToDTO(create);
 
@@ -440,42 +433,6 @@ public class StudyProtocolServiceBeanTest {
         assertEquals(saved.getFdaRegulatedIndicator().getValue(),update.getFdaRegulatedIndicator().getValue());
         assertEquals(saved.getOfficialTitle().getValue(),update.getOfficialTitle().getValue());
         assertEquals(saved.getPhaseCode().getCode(),update.getPhaseCode().getCode());
-        assertNotNull(update.getIdentifier().getExtension());
-    }
-    @Test
-    public void getObservationalStudyProtocol() throws Exception {
-        ObservationalStudyProtocolDTO create =
-            ObservationalStudyProtocolDTOTest.createObservationalStudyProtocolDTOObj();
-        Ii ii = remoteEjb.createObservationalStudyProtocol(create);
-        assertNotNull(ii.getExtension());
-        ObservationalStudyProtocolDTO saved =  remoteEjb.getObservationalStudyProtocol(ii);
-        assertNotNull(saved);
-        assertEquals(create.getStudyModelCode().getCode(),saved.getStudyModelCode().getCode());
-        assertEquals(create.getTimePerspectiveCode().getCode(),saved.getTimePerspectiveCode().getCode());
-        assertEquals(create.getBiospecimenDescription().getValue(),saved.getBiospecimenDescription().getValue());
-        assertEquals(create.getBiospecimenRetentionCode().getCode(),saved.getBiospecimenRetentionCode().getCode());
-        assertEquals(create.getNumberOfGroups().getValue() ,saved.getNumberOfGroups().getValue());
-        assertNotNull(saved.getIdentifier().getExtension());
-    }
-    @Test
-    public void updateObservationalStudyProtocol() throws Exception {
-        ObservationalStudyProtocolDTO create =
-            ObservationalStudyProtocolDTOTest.createObservationalStudyProtocolDTOObj();
-        Ii ii = remoteEjb.createObservationalStudyProtocol(create);
-        assertNotNull(ii.getExtension());
-        ObservationalStudyProtocolDTO saved =  remoteEjb.getObservationalStudyProtocol(ii);
-
-        saved.setTargetAccrualNumber(IvlConverter.convertInt().convertToIvl(1234, null));
-
-        ObservationalStudyProtocolDTO update =  remoteEjb.updateObservationalStudyProtocol(saved);
-
-        assertNotNull(saved);
-        assertEquals(update.getStudyModelCode().getCode(),saved.getStudyModelCode().getCode());
-        assertEquals(update.getTimePerspectiveCode().getCode(),saved.getTimePerspectiveCode().getCode());
-        assertEquals(update.getBiospecimenDescription().getValue(),saved.getBiospecimenDescription().getValue());
-        assertEquals(update.getBiospecimenRetentionCode().getCode(),saved.getBiospecimenRetentionCode().getCode());
-        assertEquals(update.getNumberOfGroups().getValue() ,saved.getNumberOfGroups().getValue());
-        assertEquals(IvlConverter.convertInt().convertLow(update.getTargetAccrualNumber()).intValue() ,IvlConverter.convertInt().convertLow(saved.getTargetAccrualNumber()).intValue());
         assertNotNull(update.getIdentifier().getExtension());
     }
 
@@ -569,7 +526,7 @@ public class StudyProtocolServiceBeanTest {
     @Test
     public void iiRootTest() throws Exception {
         InterventionalStudyProtocolDTO ispDTO =
-            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+            StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
         Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
         assertEquals(ii.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
         assertTrue(StringUtils.isNotEmpty(ii.getIdentifierName()));
@@ -585,8 +542,8 @@ public class StudyProtocolServiceBeanTest {
     private void createStudyProtocols(int count, String sponsorName, String identifierAssignerId) {
         for (int i = 1; i <= count; i++) {
             InterventionalStudyProtocol sp = new InterventionalStudyProtocol();
-            sp = (InterventionalStudyProtocol) StudyProtocolTest.createStudyProtocolObj(sp);
-            sp = StudyProtocolTest.createInterventionalStudyProtocolObj(sp);
+            sp = (InterventionalStudyProtocol) TestSchema.createStudyProtocolObj(sp);
+            sp = TestSchema.createInterventionalStudyProtocolObj(sp);
 
             Set<Ii> secondaryIdentifiers =  new HashSet<Ii>();
             Ii spSecId = new Ii();
@@ -623,14 +580,15 @@ public class StudyProtocolServiceBeanTest {
             dws.setUserLastUpdated(sp.getUserLastUpdated());
             TestSchema.addUpdObject(dws);
 
-            AnatomicSite as1 = AnatomicSiteTest.createAnatomicSiteObj("Lung");
+            AnatomicSite as1 = TestSchema.createAnatomicSiteObj("Lung");
             TestSchema.addUpdObject(as1);
+
             sp.setSummary4AnatomicSites(new TreeSet<AnatomicSite>(new AnatomicSiteComparator()));
             sp.getSummary4AnatomicSites().add(as1);
             TestSchema.addUpdObject(sp);
 
             if (StringUtils.isNotEmpty(sponsorName)) {
-                Organization org = OrganizationTest.createOrganizationObj();
+                Organization org = TestSchema.createOrganizationObj();
                 org.setName(sponsorName);
                 TestSchema.addUpdObject(org);
 
@@ -658,7 +616,7 @@ public class StudyProtocolServiceBeanTest {
             if (StringUtils.isNotEmpty(identifierAssignerId)) {
                 ResearchOrganization ro = null;
                 if (StringUtils.isNotEmpty(sponsorName)) {
-                    Organization org = OrganizationTest.createOrganizationObj();
+                    Organization org = TestSchema.createOrganizationObj();
                     org.setName(sponsorName);
                     TestSchema.addUpdObject(org);
 
@@ -690,12 +648,41 @@ public class StudyProtocolServiceBeanTest {
 
     @Test
     public void testAddNciId() throws PAException {
-        InterventionalStudyProtocolDTO ispDTO =
-            InterventionalStudyProtocolDTOTest.createInterventionalStudyProtocolDTOObj();
+        InterventionalStudyProtocolDTO ispDTO = StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
         Ii ii = bean.createInterventionalStudyProtocol(ispDTO);
         (new MockPAServiceUtils()).addNciIdentifierToTrial(ii);
         StudyProtocolDTO spDto = bean.getStudyProtocol(ii);
         assertNotNull(spDto.getIdentifier().getExtension());
         assertNotNull(spDto.getSecondaryIdentifiers().getItem().iterator().next().getExtension());
     }
+
+    private static InterventionalStudyProtocolDTO createInterventionalStudyProtocolDTOObj() {
+        InterventionalStudyProtocolDTO ispDTO = new InterventionalStudyProtocolDTO();
+        ispDTO.setAccrualReportingMethodCode(CdConverter.convertStringToCd(AccrualReportingMethodCode.ABBREVIATED.getCode()));
+        ispDTO.setAcronym(StConverter.convertToSt("abcd"));
+        ispDTO.setAllocationCode(CdConverter.convertStringToCd(AllocationCode.NA.getCode()));
+        ispDTO.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        ispDTO.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        ispDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        ispDTO.setOfficialTitle(StConverter.convertToSt("Phase Ii trial"));
+        Timestamp now = new Timestamp((new Date()).getTime());
+        ispDTO.setStartDate(TsConverter.convertToTs(now));
+        ispDTO.setStartDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ACTUAL.getCode()));
+        ispDTO.setPrimaryCompletionDate(TsConverter.convertToTs(now));
+        ispDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ACTUAL.getCode()));
+        ispDTO.setPhaseCode(CdConverter.convertStringToCd(PhaseCode.I.getCode()));
+        ispDTO.setStatusCode(CdConverter.convertStringToCd(ActStatusCode.ACTIVE.getCode()));
+        ispDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(AmendmentReasonCode.BOTH.getCode()));
+        ispDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        ispDTO.setSubmissionNumber(IntConverter.convertToInt(Integer.valueOf(1)));
+        DSet<Cd> dsetSa = new DSet<Cd>();
+        dsetSa.setItem(new HashSet<Cd>());
+        Cd cdSas = new Cd();
+        cdSas.setCode("Lung");
+        cdSas.setCodeSystem("Summary 4 Anatomic Sites");
+        dsetSa.getItem().add(cdSas);
+        ispDTO.setSummary4AnatomicSites(dsetSa);
+        return ispDTO;
+    }
+
 }

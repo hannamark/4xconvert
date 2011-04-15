@@ -6,6 +6,7 @@ batch.upload.filepath.relative.dir=batch_docs
 tooltips.filepath.relative.dir=tooltips
 pa.server.name=localhost
 cteprss.user=/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=ctep-rss
+showErrorStackTraces=false
 
 ########################### INCLUDE/EXCLUDE VIEWER #########################
 #exclude.viewer=true
@@ -26,11 +27,9 @@ db.username=pauser
 db.password=pauser
 jdbc.base=jdbc:${db.type}://${db.server}:${db.port}
 jdbc.url=${jdbc.base}/${db.name}
-test.schema.showsql=false
 
 ci.schema.files=csmCreateSchema.sql,csmBootstrapData.sql,PG_CTODS_PA.sql,country.sql,regulatoryAuthority.sql,FUNDING_MECHANISM.SQL,PA_PROPERTIES.SQL,organizationBootstrapData.sql
 
-test.java.naming.provider=localhost
 doc.upload.filepath.loc=${application.base.path}/${doc.upload.filepath.relative.dir}
 pdq.upload.filepath.loc=${doc.upload.filepath.loc}/${pdq.upload.filepath.relative.dir}
 tooltips.filepath.loc=${application.base.path}/${tooltips.filepath.relative.dir}

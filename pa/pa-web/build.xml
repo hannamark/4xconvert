@@ -438,6 +438,7 @@
             <filterset >
                 <filter token="project.version" value="${project.version}"/>
                 <filter token="project.revision" value="${project.revision}"/>
+                <filter token="showErrorStackTraces" value="${showErrorStackTraces}"/>
             </filterset>
         </copy>
 
@@ -511,10 +512,9 @@
         </cobertura-instrument>
 
         <mkdir dir="${pa-web.test.reports}"/>
-        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir=".">
+        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." failureproperty="junit.failure" maxmemory="256m">
             <sysproperty key="basedir" value="."/>
-            <sysproperty key="net.sourceforge.cobertura.datafile"
-                    file="${pa-web.build.dir}/cobertura.ser" />
+            <sysproperty key="net.sourceforge.cobertura.datafile" file="${pa-web.build.dir}/cobertura.ser" />
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
             <classpath location="${pa-web.build.coberturaOutputDir}"/>
@@ -533,7 +533,13 @@
                 </fileset>
             </batchtest>
         </junit>
-
+        <junitreport todir="${pa-web.test.reports}">
+            <fileset dir="${pa-web.test.reports}">
+                <include name="TEST-*.xml" />
+            </fileset>
+            <report todir="${pa-web.test.reports}" />
+        </junitreport>
+        <fail if="junit.failure" message="Unit test(s) failed.  See reports in ${pa-web.test.reports}."/>
         <cobertura-report datafile="${pa-web.build.dir}/cobertura.ser" destdir="${pa-web.coverage.reports}"
                           srcdir="${pa-web.build.srcDir.0}" />
         <cobertura-report datafile="${pa-web.build.dir}/cobertura.ser" format="xml" destdir="${pa-web.coverage.reports}"
