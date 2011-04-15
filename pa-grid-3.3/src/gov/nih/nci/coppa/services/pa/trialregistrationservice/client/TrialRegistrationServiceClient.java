@@ -20,6 +20,11 @@ import gov.nih.nci.coppa.services.pa.trialregistrationservice.common.TrialRegist
 import gov.nih.nci.iso21090.extensions.Id;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.GrantorCode;
+import gov.nih.nci.pa.enums.HolderTypeCode;
+import gov.nih.nci.pa.enums.IndldeTypeCode;
+import gov.nih.nci.pa.enums.NciDivisionProgramCode;
+import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
@@ -57,6 +62,15 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
 
     private static II organizationIi = new II();
     private static II personIi = new II();
+
+    private static BL falseBL = new BL();
+    private static BL trueBL = new BL();
+
+    static {
+        falseBL.setValue(false);
+        trueBL.setValue(true);
+    }
+
 
     public TrialRegistrationServiceClient(String url) throws MalformedURIException, RemoteException {
         this(url,null);
@@ -137,20 +151,47 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         phase.setCode(PhaseCode.I.getCode());
         studyProtocol.setPhaseCode(phase);
         studyProtocol.setUserLastCreated(ISOUtils.buildST("aevansel@5amsolutions.com"));
-        BL fdaRegInd = new BL();
-        fdaRegInd.setValue(Boolean.FALSE);
-        studyProtocol.setFdaRegulatedIndicator(fdaRegInd);
-        BL ctGovInd = new BL();
-        ctGovInd.setValue(Boolean.FALSE);
-        studyProtocol.setCtgovXmlRequiredIndicator(ctGovInd);
+        studyProtocol.setFdaRegulatedIndicator(falseBL);
+        studyProtocol.setCtgovXmlRequiredIndicator(falseBL);
         StudyOverallStatus studyOverallStatus = new StudyOverallStatus();
         studyOverallStatus.setStatusDate(pastDate);
         CD studyOverallStatusCode = new CD();
         studyOverallStatusCode.setCode(StudyStatusCode.ACTIVE.getCode());
         studyOverallStatus.setStatusCode(studyOverallStatusCode);
 
-        StudyIndlde[] studyIndlde = new StudyIndlde[0];
-        StudyResourcing[] studyResourcing = new StudyResourcing[0];
+        StudyIndlde[] studyIndIde = new StudyIndlde[1];
+        CD indIdeType = new CD();
+        indIdeType.setCode(IndldeTypeCode.IND.getCode());
+
+        ST number = new ST();
+        number.setValue("1");
+        CD grantorCode = new CD();
+        grantorCode.setCode(GrantorCode.CDER.getCode());
+        CD holderType = new CD();
+        holderType.setCode(HolderTypeCode.ORGANIZATION.getCode());
+
+        studyIndIde[0] = new StudyIndlde();
+        studyIndIde[0].setIndldeTypeCode(indIdeType);
+        studyIndIde[0].setIndldeNumber(number);
+        studyIndIde[0].setGrantorCode(grantorCode);
+        studyIndIde[0].setHolderTypeCode(holderType);
+        studyIndIde[0].setExpandedAccessIndicator(falseBL);
+
+        StudyResourcing[] studyResourcing = new StudyResourcing[1];
+        CD fundMech = new CD();
+        fundMech.setCode("D71");
+        CD instCode = new CD();
+        instCode.setCode("AI");
+        ST serial = new ST();
+        serial.setValue("023099");
+        CD nciDivCode = new CD();
+        nciDivCode.setCode(NciDivisionProgramCode.CTEP.getCode());
+
+        studyResourcing[0] = new StudyResourcing();
+        studyResourcing[0].setFundingMechanismCode(fundMech);
+        studyResourcing[0].setNihInstitutionCode(instCode);
+        studyResourcing[0].setSerialNumber(serial);
+        studyResourcing[0].setNciDivisionProgramCode(nciDivCode);
 
         Document d = new Document();
         d.setFileName(ISOUtils.buildST("empty.doc"));
@@ -215,7 +256,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         regAuthId.setExtension(results[0].getIdentifier().getExtension());
         studyRegulatoryAuthority.setRegulatoryAuthorityIdentifier(regAuthId);
 
-        Id ispId = client.createCompleteInterventionalStudyProtocol(studyProtocol, studyOverallStatus, studyIndlde, studyResourcing,
+        Id ispId = client.createCompleteInterventionalStudyProtocol(studyProtocol, studyOverallStatus, studyIndIde, studyResourcing,
                 document, leadOrganization, principalInvestigator, sponsorOrganization, leadOrganizationSiteIdentifier,
                 nctIdentifierSiteIdentifiers, studyContact, studySiteContact, summaryForOrganization,
                 summaryForStudyResourcing, responsiblePartyContact, studyRegulatoryAuthority);
@@ -249,9 +290,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyProtocol.setPhaseCode(phase);
         studyProtocol.setUserLastCreated(ISOUtils.buildST("aevansel@5amsolutions.com"));
 
-        BL ctGovInd = new BL();
-        ctGovInd.setValue(Boolean.FALSE);
-        studyProtocol.setCtgovXmlRequiredIndicator(ctGovInd);
+        studyProtocol.setCtgovXmlRequiredIndicator(falseBL);
 
         StudyOverallStatus studyOverallStatus = new StudyOverallStatus();
         studyOverallStatus.setStudyProtocol(studyProtocolII);
@@ -328,9 +367,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyProtocol.setOfficialTitle(dummyString);
         studyProtocol.setAmendmentDate(amendmentDate);
 
-        BL fdaRegInd = new BL();
-        fdaRegInd.setValue(Boolean.FALSE);
-        studyProtocol.setFdaRegulatedIndicator(fdaRegInd);
+        studyProtocol.setFdaRegulatedIndicator(falseBL);
 
         CD phase = new CD();
         phase.setCode(PhaseCode.I.getCode());
