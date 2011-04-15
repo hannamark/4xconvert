@@ -26,6 +26,9 @@
     <property name="pa-ejb.build.testResourceDir.0" value="${pa.dir}/pa-ejb/test/resources"/>
     <property name="pa-ejb.test.reports" value="${pa.report.dir}/pa-ejb/test-reports"/>
     <property name="pa-ejb.coverage.reports" value="${pa.report.dir}/pa-ejb/coverage-reports"/>
+    <property name="pa-ejb.coverage.line" value="67"/>
+    <property name="pa-ejb.coverage.branch" value="52"/>
+    <property name="pa-ejb.pmd.maxerrors" value="421"/>
     <property name="pa-ejb.reporting.outputDirectory" value="${pa.report.dir}/pa-ejb/site"/>
     <property name="pa-ejb.jar" value="${pa-ejb.build.finalName}.jar"/>
     <property name="pa-ejb.build.coberturaOutputDir" value="${pa-ejb.build.dir}/generated-classes"/>
@@ -328,8 +331,8 @@
                           destdir="${pa-ejb.coverage.reports}"
                           srcdir="${pa-ejb.build.srcDir.0}" />
         <cobertura-check datafile="${pa-ejb.build.dir}/cobertura.ser"
-                         totalbranchrate="52"
-                         totallinerate="67"
+                         totalbranchrate="${pa-ejb.coverage.branch}"
+                         totallinerate="${pa-ejb.coverage.line}"
                          haltonfailure="true"/>
      </target>
 
@@ -358,7 +361,7 @@
 
     <target name="test-pmd">
         <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
-        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="421">
+        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="${pa-ejb.pmd.maxerrors}">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa.report.dir}/pa-ejb/pmd.txt"/>
             <formatter type="xml"  toFile="${pa.report.dir}/pa-ejb/pmd.xml"/>

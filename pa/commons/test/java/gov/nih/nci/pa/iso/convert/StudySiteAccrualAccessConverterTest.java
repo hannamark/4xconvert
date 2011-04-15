@@ -82,8 +82,7 @@
  */
 package gov.nih.nci.pa.iso.convert;
 
-import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.domain.StudySite;
+import static org.junit.Assert.assertEquals;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
@@ -91,60 +90,73 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.ISOUtil;
+
+import java.sql.Timestamp;
+import java.util.Date;
 
 /**
- * Convert study site accrual status to its DTO and vice versa.
- *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ *
  */
-public class StudySiteAccrualAccessConverter
-    extends AbstractConverter<StudySiteAccrualAccessDTO, StudySiteAccrualAccess> {
+public class StudySiteAccrualAccessConverterTest
+    extends AbstractConverterTest<StudySiteAccrualAccessConverter, StudySiteAccrualAccessDTO, StudySiteAccrualAccess> {
+
+    private final Date now = new Date();
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public StudySiteAccrualAccess convertFromDtoToDomain(StudySiteAccrualAccessDTO dto) throws PAException {
-        StudySiteAccrualAccess access = new StudySiteAccrualAccess();
-        access.setId(IiConverter.convertToLong(dto.getIdentifier()));
-        if (!ISOUtil.isIiNull(dto.getRegistryUserIdentifier())) {
-            RegistryUser ru = new RegistryUser();
-            ru.setId(IiConverter.convertToLong(dto.getRegistryUserIdentifier()));
-            access.setRegistryUser(ru);
-        }
-        access.setRequestDetails(StConverter.convertToString(dto.getRequestDetails()));
-        access.setStatusCode(ActiveInactiveCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
-        access.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDate()));
-        if (!ISOUtil.isIiNull(dto.getStudySiteIdentifier())) {
-            StudySite ss = new StudySite();
-            ss.setId(IiConverter.convertToLong(dto.getStudySiteIdentifier()));
-            access.setStudySite(ss);
-        }
-        return access;
+    public StudySiteAccrualAccess makeBo() {
+        StudySiteAccrualAccess bo = new StudySiteAccrualAccess();
+        bo.setId(ID);
+        bo.setStudySite(getStudySite());
+        bo.setRegistryUser(getRegistryUser());
+        bo.setRequestDetails("Request Details");
+        bo.setStatusCode(ActiveInactiveCode.ACTIVE);
+        bo.setStatusDateRangeLow(new Timestamp(now.getTime()));
+        return bo;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public StudySiteAccrualAccessDTO convertFromDomainToDto(StudySiteAccrualAccess bo) throws PAException {
+    public StudySiteAccrualAccessDTO makeDto() {
         StudySiteAccrualAccessDTO dto = new StudySiteAccrualAccessDTO();
-        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
-        dto.setRequestDetails(StConverter.convertToSt(bo.getRequestDetails()));
-        dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
-        dto.setStatusDate(TsConverter.convertToTs(bo.getStatusDateRangeLow()));
-
-        RegistryUser ru = bo.getRegistryUser();
-        if (ru != null) {
-            dto.setRegistryUserIdentifier(IiConverter.convertToIi(ru.getId()));
-        }
-
-        StudySite ss = bo.getStudySite();
-        if (ss != null) {
-            dto.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(ss.getId()));
-        }
+        dto.setIdentifier(IiConverter.convertToIi(ID));
+        dto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
+        dto.setStatusDate(TsConverter.convertToTs(now));
+        dto.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(STUDY_SITE_ID));
+        dto.setRequestDetails(StConverter.convertToSt("Request Details"));
+        dto.setRegistryUserIdentifier(IiConverter.convertToIi(REGISTRY_USER_ID));
         return dto;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void verifyBo(StudySiteAccrualAccess bo) {
+        assertEquals(ID, bo.getId());
+        assertEquals(STUDY_SITE_ID, bo.getStudySite().getId());
+        assertEquals(REGISTRY_USER_ID, bo.getRegistryUser().getId());
+        assertEquals("Request Details", bo.getRequestDetails());
+        assertEquals(ActiveInactiveCode.ACTIVE, bo.getStatusCode());
+        assertEquals(now, bo.getStatusDateRangeLow());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void verifyDto(StudySiteAccrualAccessDTO dto) {
+        assertEquals(ID, IiConverter.convertToLong(dto.getIdentifier()));
+        assertEquals(STUDY_SITE_ID, IiConverter.convertToLong(dto.getStudySiteIdentifier()));
+        assertEquals(REGISTRY_USER_ID, IiConverter.convertToLong(dto.getRegistryUserIdentifier()));
+        assertEquals(ActiveInactiveCode.ACTIVE.getCode(), dto.getStatusCode().getCode());
+        assertEquals(now, dto.getStatusDate().getValue());
+        assertEquals("Request Details", StConverter.convertToString(dto.getRequestDetails()));
+    }
+
 }

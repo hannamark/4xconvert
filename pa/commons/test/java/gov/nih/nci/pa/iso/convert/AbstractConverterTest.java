@@ -85,6 +85,7 @@ package gov.nih.nci.pa.iso.convert;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.domain.AbstractEntity;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
@@ -107,6 +108,7 @@ public abstract class AbstractConverterTest<C extends AbstractConverter<DTO, BO>
     protected static final Long ID = 123L;
     protected static final Long STUDY_PROTOCOL_ID = 1L;
     protected static final Long STUDY_SITE_ID = 2L;
+    protected static final Long REGISTRY_USER_ID = 3L;
     private static final int NUM_OBJ_TO_CONVERT = 10;
 
     private C converter;
@@ -131,6 +133,14 @@ public abstract class AbstractConverterTest<C extends AbstractConverter<DTO, BO>
         StudySite ss = new StudySite();
         ss.setId(STUDY_SITE_ID);
         return ss;
+    }
+
+    protected RegistryUser getRegistryUser() {
+        RegistryUser ru = new RegistryUser();
+        ru.setId(REGISTRY_USER_ID);
+        ru.setEmailAddress("test@example.com");
+        ru.setPhone("123-456-7890");
+        return ru;
     }
 
     @Before

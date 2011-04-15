@@ -28,6 +28,9 @@
     <property name="commons.build.testResourceDir.0" value="${commons.dir}/test/resources"/>
     <property name="commons.test.reports" value="${pa.report.dir}/commons/test-reports"/>
     <property name="commons.coverage.reports" value="${pa.report.dir}/commons/coverage-reports"/>
+    <property name="commons.coverage.line" value="48"/>
+    <property name="commons.coverage.branch" value="37"/>
+    <property name="commons.pmd.maxerrors" value="64"/>
     <property name="commons.reporting.outputDirectory" value="${pa.report.dir}/commons/site"/>
     <property name="commons.jar" value="${commons.build.finalName}.jar"/>
     <property name="commons-test.jar" value="${commons.build.finalName}-test.jar"/>
@@ -281,8 +284,8 @@
                           srcdir="${commons.build.srcDir.0}" />
 
         <cobertura-check datafile="${commons.build.dir}/cobertura.ser"
-                         totalbranchrate="36"
-                         totallinerate="47"
+                         totalbranchrate="${commons.coverage.branch}"
+                         totallinerate="${commons.coverage.line}"
                          haltonfailure="true"/>
      </target>
 
@@ -310,7 +313,7 @@
 
     <target name="test-pmd">
         <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
-        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="64">
+        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="${commons.pmd.maxerrors}">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${pa.report.dir}/commons/pmd.txt"/>
             <formatter type="xml"  toFile="${pa.report.dir}/commons/pmd.xml"/>

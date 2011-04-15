@@ -97,10 +97,7 @@ public class StudySiteAccrualAccessDTO extends SiteDTO {
     private Cd statusCode;
     private Ts statusDate;
     private Ii registryUserIdentifier;
-    private St registryUserName;
     private St requestDetails;
-    private St emailAddress;
-    private St phoneNumber;
 
     /**
      * @return the statusCode
@@ -156,47 +153,5 @@ public class StudySiteAccrualAccessDTO extends SiteDTO {
      */
     public void setRegistryUserIdentifier(Ii registryUserIdentifier) {
         this.registryUserIdentifier = registryUserIdentifier;
-    }
-
-    /**
-     * @return the emailAddress
-     */
-    public St getEmailAddress() {
-        return emailAddress;
-    }
-
-    /**
-     * @param emailAddress the emailAddress to set
-     */
-    public void setEmailAddress(St emailAddress) {
-        this.emailAddress = emailAddress;
-    }
-
-    /**
-     * @return the phoneNumber
-     */
-    public St getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    /**
-     * @param phoneNumber the phoneNumber to set
-     */
-    public void setPhoneNumber(St phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    /**
-     * @return the registryUserName
-     */
-    public St getRegistryUserName() {
-        return registryUserName;
-    }
-
-    /**
-     * @param registryUserName the registryUserName to set
-     */
-    public void setRegistryUserName(St registryUserName) {
-        this.registryUserName = registryUserName;
     }
 }

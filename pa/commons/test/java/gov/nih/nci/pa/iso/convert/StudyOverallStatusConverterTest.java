@@ -89,7 +89,10 @@ import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
+
+import org.junit.Test;
 
 /**
  * @author hreinhart
@@ -145,5 +148,13 @@ public class StudyOverallStatusConverterTest extends
         assertEquals(ISOUtil.dateStringToTimestamp("7/11/2002"), bo.getStatusDate());
         assertEquals(STUDY_PROTOCOL_ID, bo.getStudyProtocol().getId());
     }
+
+    @Test(expected = PAException.class)
+    public void testConvertDtoWithoutStudyProtocol() throws Exception {
+        StudyOverallStatusDTO dto = makeDto();
+        dto.setStudyProtocolIdentifier(null);
+        new StudyOverallStatusConverter().convertFromDtoToDomain(dto);
+    }
+
 
 }
