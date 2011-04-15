@@ -418,7 +418,7 @@
 
     <target name="runTest" description="Runs the test you specify on the command line with -Dtest=" depends="compile-tests">
         <mkdir dir="${reg-web.test.reports}"/>
-        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir="." showoutput="no">
+        <junit printSummary="yes" haltonerror="true" haltonfailure="true" fork="true" dir="." showoutput="no" maxmemory="128m">
             <sysproperty key="basedir" value="."/>
             <formatter type="xml"/>
             <formatter type="plain" usefile="false"/>
