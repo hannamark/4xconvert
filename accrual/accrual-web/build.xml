@@ -30,6 +30,9 @@
     <property name="web.build.coberturaOutputDir" value="${web.build.dir}/generated-classes"/>
     <property name="web.test.reports" value="${web.report.dir}/test-reports"/>
     <property name="web.coverage.reports" value="${web.report.dir}/coverage-reports"/>
+    <property name="web.coverage.line" value="88"/>
+    <property name="web.coverage.branch" value="79"/>
+    <property name="web.pmd.maxerrors" value="4"/>
 
     <property name="ivy.file" value="ivy-2.0.0.jar" />
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
@@ -253,8 +256,8 @@
                           srcdir="${web.build.srcDir}"/>
 
         <cobertura-check datafile="${web.build.dir}/cobertura.ser"
-                         totalbranchrate="79"
-                         totallinerate="87"
+                         totalbranchrate="${web.coverage.branch}"
+                         totallinerate="${web.coverage.line}"
                          haltonfailure="true"/>
      </target>
 
@@ -318,10 +321,11 @@
 
     <target name="test-pmd">
         <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
-        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pmdFile}" maxruleviolations="4">
+        <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pmdFile}" maxruleviolations="${web.pmd.maxerrors}">
             <formatter type="text" toConsole="true"/>
             <formatter type="text" toFile="${web.report.dir}/pmd.txt"/>
             <formatter type="xml"  toFile="${web.report.dir}/pmd.xml"/>
+            <formatter type="html" toFile="${web.report.dir}/pmd.html"/>
             <fileset dir="src">
                 <include name="**/*.java"/>
             </fileset>
