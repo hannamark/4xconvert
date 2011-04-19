@@ -9,7 +9,7 @@
 <display:column titleKey="report.result.sponsor" property="sponsor"/>
 <display:column titleKey="report.result.cancerSite">
     <ol>
-        <c:forEach var="anatomicSiteVal" items="${table_uid.anatomicSite}">
+        <c:forEach var="anatomicSiteVal" items="${table_uid.anatomicSites}">
             <li>${anatomicSiteVal}</li>
         </c:forEach>
     </ol>
