@@ -142,11 +142,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="jboss-conf.dist.dir" location="${dist.exploded.dir}/${jboss-conf.dist.relative.dir}" />
     <property name="db-install.dist.dir" location="${dist.exploded.dir}/${db-install.dist.relative.dir}" />
     <property name="db-upgrade.dist.dir" location="${dist.exploded.dir}/${db-upgrade.dist.relative.dir}" />
-	<property name="pa.javadoc.file" location="${pa.base.dir}/javadoc/pa-javadoc.zip"/>
-	<property name="accrual.javadoc.file" location="${accrual-ear.base.dir}/javadoc/accrual-javadoc.zip"/>
-	<property name="viewer.javadoc.file" location="${viewer.base.dir}/javadoc/viewer-javadoc.zip"/>
-	<property name="reg-web.javadoc.file" location="${reg-web.base.dir}/javadoc/reg-web-javadoc.zip"/>
-    
+    <property name="pa.javadoc.file" location="${pa.base.dir}/javadoc/pa-javadoc.zip"/>
+    <property name="accrual.javadoc.file" location="${accrual-ear.base.dir}/javadoc/accrual-javadoc.zip"/>
+    <property name="viewer.javadoc.file" location="${viewer.base.dir}/javadoc/viewer-javadoc.zip"/>
+    <property name="reg-web.javadoc.file" location="${reg-web.base.dir}/javadoc/reg-web-javadoc.zip"/>
+
     <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
     <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
 
@@ -336,7 +336,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                     </else>
                 </if>
         <property name="jboss.deploy.dir" location="${local.jboss.home}/server/${jboss.server.name}/deploy"/>
-      <echoproperties prefix="env"/>
+        <echoproperties prefix="env"/>
     </target>
 
     <target name="ivy:clean" description="Clean">
@@ -386,34 +386,34 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <target name="ivy-get"/>
         </ant>
     </target>
-    
+
     <target name="javadoc:all" description="Generates Javadoc for accrual, pa, registry, accrual and viewer">
-	    <ant inheritAll="false" inheritRefs="false" antfile="${pa.build.file}"
-	               dir="${pa.base.dir}" >
-		    <target name="${pa.javadoc.target}"/>
-	    </ant>	
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa.build.file}"
+                   dir="${pa.base.dir}" >
+            <target name="${pa.javadoc.target}"/>
+        </ant>
         <copy file="${pa.javadoc.file}" todir="${dist.javadoc.dir}"/>
-        
-	    <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}"
-	               dir="${accrual-ear.base.dir}" >
-		    <target name="${pa.javadoc.target}"/> 
-	    </ant>
+
+        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}"
+                   dir="${accrual-ear.base.dir}" >
+            <target name="${pa.javadoc.target}"/>
+        </ant>
         <copy file="${accrual.javadoc.file}" todir="${dist.javadoc.dir}"/>
-        
-	    <ant inheritAll="false" inheritRefs="false"
-	               dir="${viewer.base.dir}" >
-		    <target name="${pa.javadoc.target}"/>
-	    </ant>	
-    	<copy file="${viewer.javadoc.file}" todir="${dist.javadoc.dir}"/>
-        
-	    <ant inheritAll="false" inheritRefs="false"
-	               dir="${reg-web.base.dir}" >
-		    <target name="${pa.javadoc.target}"/>
-	    </ant>	
+
+        <ant inheritAll="false" inheritRefs="false"
+                   dir="${viewer.base.dir}" >
+            <target name="${pa.javadoc.target}"/>
+        </ant>
+        <copy file="${viewer.javadoc.file}" todir="${dist.javadoc.dir}"/>
+
+        <ant inheritAll="false" inheritRefs="false"
+                   dir="${reg-web.base.dir}" >
+            <target name="${pa.javadoc.target}"/>
+        </ant>
         <copy file="${reg-web.javadoc.file}" todir="${dist.javadoc.dir}"/>
-        
+
     </target>
-    
+
     <!-- Wrapper build target, call appropriate builds for sub-projects -->
     <target name="build:all" description="Builds all the sub projects, putting artifacts in the project level target directory, used by distribution targets to make distributions"
         depends="
@@ -1318,8 +1318,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Wrapper test target, call appropriate test for sub-projects -->
     <target name="test:all" description="Runs test target for all sub-projects"
         depends="
-        clean,
-        init,
         test:pa-commons,
         test:pa-ejb,
         test:pa-web,
@@ -1328,6 +1326,21 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         test:viewer
         "/>
 
+    <target name="test:pa-commons" depends="init">
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}"
+            target="test-dynamic-analysis"
+            dir="${pa-commons.base.dir}" >
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
+            <property name="jboss.port" value="${jboss.server.port}"/>
+            <property name="hibernate.dialect" value="${database.dialect}"/>
+            <property name="db.username" value="${database.user}"/>
+            <property name="db.password" value="${database.password}"/>
+            <property name="jdbc.driver" value="${database.dirver}"/>
+            <property name="jdbc.url" value="${database.url}"/>
+            <property name="test.schema.showsql" value="false"/>
+            <property name="test.java.naming.provider" value="localhost"/>
+        </ant>
+    </target>
     <target name="test:pa-web" depends="init">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}" target="test-dynamic-analysis"
             dir="${pa-web.base.dir}" >
@@ -1355,21 +1368,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jdbc.driver" value="${database.dirver}"/>
             <property name="jdbc.url" value="${database.url}"/>
         </ant>
-    </target>
-    <target name="test:pa-commons" depends="init">
-            <ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}"
-                target="test-dynamic-analysis"
-                dir="${pa-commons.base.dir}" >
-                <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
-                <property name="jboss.port" value="${jboss.server.port}"/>
-                <property name="hibernate.dialect" value="${database.dialect}"/>
-                <property name="db.username" value="${database.user}"/>
-                <property name="db.password" value="${database.password}"/>
-                <property name="jdbc.driver" value="${database.dirver}"/>
-                <property name="jdbc.url" value="${database.url}"/>
-                <property name="test.schema.showsql" value="false"/>
-                <property name="test.java.naming.provider" value="localhost"/>
-            </ant>
     </target>
     <target name="test:pa-ejb" depends="init">
         <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
@@ -1425,8 +1423,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Wrapper test target, call appropriate test for sub-projects -->
     <target name="static-analysis:all" description="Runs static-analysis target for all sub-projects"
         depends="
-        clean,
-        init,
         static-analysis:pa-commons,
         static-analysis:pa-ejb,
         static-analysis:pa-web,
@@ -1475,11 +1471,11 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </target>
 
     <target name="continuous-integration" description="calls wrapper targets for continuous integration build"
-        depends="build:all, static-analysis:all, test:all"/>
+        depends="static-analysis:all, test:all"/>
 
 
     <macrodef name="run-selenium" description="Macro that starts selenium server, runs test, then stops Selenium server">
-    	<attribute name="runDir"/>
+        <attribute name="runDir"/>
         <attribute name="runTarget" default="run-selenium-tests"/>
         <sequential>
             <ant inheritAll="false" inheritRefs="false" target="start-selenium-server" dir="${pa.base.dir}">
@@ -1487,7 +1483,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 <property name="jboss.port" value="${selenium.jboss.port}"/>
                 <property name="selenium.server.port" value="${selenium.proxy.port}"/>
             </ant>
-            
+
             <ant inheritAll="false" inheritRefs="false" target="@{runTarget}" dir="@{runDir}">
                 <property name="pa.server.name" value="${jboss.server.hostname}"/>
                 <property name="jboss.port" value="${selenium.jboss.port}"/>
@@ -1501,36 +1497,36 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             </ant>
         </sequential>
     </macrodef>
-    
+
     <target name="populate-ci-db" description="Populates the CI db with data necessary for testing.">
         <ant inheritAll="false" inheritRefs="false" target="populate-test-db" dir="${pa.base.dir}">
             <property name="db.username" value="${database.user}"/>
             <property name="db.password" value="${database.password}"/>
             <property name="jdbc.driver" value="${database.driver}"/>
-            <property name="jdbc.url" value="${database.url}"/>    
+            <property name="jdbc.url" value="${database.url}"/>
         </ant>
     </target>
-    
+
     <target name="run-selenium:paear" description="Runs Selenium for pa" depends="build:pa-web">
         <run-selenium runDir="${pa.base.dir}"/>
     </target>
 
     <target name="run-selenium:reg-web" description="Runs Selenium for registry" depends="build:reg-web">
-        <run-selenium runDir="${reg-web.base.dir}"/>		
+        <run-selenium runDir="${reg-web.base.dir}"/>
     </target>
 
     <target name="run-selenium:accrual" description="Runs Selenium for Accrual" depends="build:accrual-ear" unless="exclude.accrual">
-        <run-selenium runDir="${accrual-ear.base.dir}"/>		
+        <run-selenium runDir="${accrual-ear.base.dir}"/>
     </target>
 
     <target name="run-selenium:viewer" description="Runs Selenium for Viewer" depends="build:viewer-services,build:viewer-web" unless="exclude.viewer">
-        <run-selenium runDir="${viewer.base.dir}"/>		
+        <run-selenium runDir="${viewer.base.dir}"/>
     </target>
-    
+
     <target name="run-selenium:all" description="Runs Selenium tests for pa, registry, viewer and accrual"
         depends="run-selenium:reg-web,run-selenium:paear, run-selenium:viewer, run-selenium:accrual">
     </target>
-    
+
     <target name="init:ivy">
         <mkdir dir="${local.repo.dir}"/>
         <property name="ivy.dep.file" value="${bda-download.dir}/ivy-bda-2.0.0.xml"/>
