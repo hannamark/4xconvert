@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.coppa.services.pa.grid;
 
+import org.iso._21090.BL;
 import org.iso._21090.CD;
 import org.iso._21090.ED;
 import org.iso._21090.ST;
@@ -129,4 +130,14 @@ public class ISOUtils {
         return ed;
     }
 
+    /**
+     * Build a new BL.
+     * @param value the value to set on the BL
+     * @return the BL with the given value
+     */
+    public static BL buildBL(boolean value) {
+        BL bl = new BL();
+        bl.setValue(value);
+        return bl;
+    }
 }

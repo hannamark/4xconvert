@@ -24,13 +24,16 @@ import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
-import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Date;
 
@@ -38,7 +41,6 @@ import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
 import org.globus.gsi.GlobusCredential;
-import org.iso._21090.BL;
 import org.iso._21090.CD;
 import org.iso._21090.DSETTEL;
 import org.iso._21090.II;
@@ -62,15 +64,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
 
     private static II organizationIi = new II();
     private static II personIi = new II();
-
-    private static BL falseBL = new BL();
-    private static BL trueBL = new BL();
-
-    static {
-        falseBL.setValue(false);
-        trueBL.setValue(true);
-    }
-
+    private static II nctResearchOrganizationIi = new II();
 
     public TrialRegistrationServiceClient(String url) throws MalformedURIException, RemoteException {
         this(url,null);
@@ -98,8 +92,11 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         organizationIi.setRoot("2.16.840.1.113883.3.26.4.2");
         organizationIi.setExtension("501");
         organizationIi.setIdentifierName("NCI organization entity identifier");
+        nctResearchOrganizationIi.setRoot("2.16.840.1.113883.3.26.4.4.5");
+        nctResearchOrganizationIi.setExtension("1");
+        nctResearchOrganizationIi.setIdentifierName("NCI Research Organization identifier");
         personIi.setRoot("2.16.840.1.113883.3.26.4.1");
-        personIi.setExtension("1231");
+        personIi.setExtension("1");
         personIi.setIdentifierName("NCI person entity identifier");
 
         try{
@@ -131,7 +128,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         }
     }
 
-    private static Id createCompleteInterventionalStudyProtocol(TrialRegistrationServiceClient client)  throws RemoteException, MalformedURIException {
+    private static Id createCompleteInterventionalStudyProtocol(TrialRegistrationServiceClient client)  throws RemoteException, MalformedURIException, IOException {
         TS pastDate = new TS();
         pastDate.setValue("20090922090000.0000-0500");
         TS futureDate = new TS();
@@ -146,13 +143,14 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyProtocol.setPrimaryCompletionDate(futureDate);
         studyProtocol.setPrimaryCompletionDateTypeCode(ISOUtils.buildCD("Anticipated"));
         studyProtocol.setOfficialTitle(dummyString);
+        studyProtocol.setProgramCodeText(ISOUtils.buildST("PROGRAM CODE"));
 
         CD phase = new CD();
         phase.setCode(PhaseCode.I.getCode());
         studyProtocol.setPhaseCode(phase);
         studyProtocol.setUserLastCreated(ISOUtils.buildST("aevansel@5amsolutions.com"));
-        studyProtocol.setFdaRegulatedIndicator(falseBL);
-        studyProtocol.setCtgovXmlRequiredIndicator(falseBL);
+        studyProtocol.setFdaRegulatedIndicator(ISOUtils.buildBL(false));
+        studyProtocol.setCtgovXmlRequiredIndicator(ISOUtils.buildBL(false));
         StudyOverallStatus studyOverallStatus = new StudyOverallStatus();
         studyOverallStatus.setStatusDate(pastDate);
         CD studyOverallStatusCode = new CD();
@@ -175,7 +173,8 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyIndIde[0].setIndldeNumber(number);
         studyIndIde[0].setGrantorCode(grantorCode);
         studyIndIde[0].setHolderTypeCode(holderType);
-        studyIndIde[0].setExpandedAccessIndicator(falseBL);
+        studyIndIde[0].setExpandedAccessIndicator(ISOUtils.buildBL(false));
+        studyIndIde[0].setExemptIndicator(ISOUtils.buildBL(true));
 
         StudyResourcing[] studyResourcing = new StudyResourcing[1];
         CD fundMech = new CD();
@@ -193,10 +192,16 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyResourcing[0].setSerialNumber(serial);
         studyResourcing[0].setNciDivisionProgramCode(nciDivCode);
 
+        File sampleFile = new File(TrialRegistrationServiceClient.class.getResource("/README.txt").getPath());
+        byte[] fileData = new byte[(int) sampleFile.length()];
+        FileInputStream fin = new FileInputStream(sampleFile);
+        DataInputStream din = new DataInputStream(fin);
+        din.readFully(fileData);
+
         Document d = new Document();
-        d.setFileName(ISOUtils.buildST("empty.doc"));
+        d.setFileName(ISOUtils.buildST(sampleFile.getName()));
         d.setTypeCode(ISOUtils.buildCD(DocumentTypeCode.OTHER.getCode()));
-        d.setText(ISOUtils.buildED("dummy ed".getBytes()));
+        d.setText(ISOUtils.buildED(fileData));
         Document d1 = new Document();
         d1.setFileName(ISOUtils.buildST("empty-irb-approval.doc"));
         d1.setTypeCode(ISOUtils.buildCD(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode()));
@@ -222,7 +227,13 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
                 + new Date().getTime());
         leadOrganizationSiteIdentifier.setLocalStudyProtocolIdentifier(localStudyProtocolIdentifier);
 
-        StudySite[] nctIdentifierSiteIdentifiers = new StudySite[] {new StudySite()};
+        //The important factor for setting the NCT number is the ii of the research organization related to
+        //the study site.
+        StudySite nctSite = new StudySite();
+        nctSite.setResearchOrganization(nctResearchOrganizationIi);
+        nctSite.setLocalStudyProtocolIdentifier(ISOUtils.buildST("NCT-2"));
+
+        StudySite[] nctIdentifierSiteIdentifiers = new StudySite[] {nctSite};
 
         StudyContact studyContact = new StudyContact();
         TELEmail email = new TELEmail();
@@ -290,7 +301,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyProtocol.setPhaseCode(phase);
         studyProtocol.setUserLastCreated(ISOUtils.buildST("aevansel@5amsolutions.com"));
 
-        studyProtocol.setCtgovXmlRequiredIndicator(falseBL);
+        studyProtocol.setCtgovXmlRequiredIndicator(ISOUtils.buildBL(false));
 
         StudyOverallStatus studyOverallStatus = new StudyOverallStatus();
         studyOverallStatus.setStudyProtocol(studyProtocolII);
@@ -367,7 +378,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyProtocol.setOfficialTitle(dummyString);
         studyProtocol.setAmendmentDate(amendmentDate);
 
-        studyProtocol.setFdaRegulatedIndicator(falseBL);
+        studyProtocol.setFdaRegulatedIndicator(ISOUtils.buildBL(false));
 
         CD phase = new CD();
         phase.setCode(PhaseCode.I.getCode());
