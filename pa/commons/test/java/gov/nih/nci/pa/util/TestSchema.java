@@ -328,7 +328,7 @@ public class TestSchema {
         organizationalContactIds.add(orgContact.getId());
 
         StudySite sPart = new StudySite();
-        sPart.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        sPart.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
         sPart.setHealthCareFacility(hfc);
         sPart.setLocalStudyProtocolIdentifier("Local SP ID 01");
         sPart.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
@@ -336,6 +336,16 @@ public class TestSchema {
         sPart.setStudyProtocol(sp);
         addUpdObject(sPart);
         studySiteIds.add(sPart.getId());
+
+        StudySite sPart2 = new StudySite();
+        sPart2.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        sPart2.setResearchOrganization(rOrg);
+        sPart2.setLocalStudyProtocolIdentifier("Local SP ID 02");
+        sPart2.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        sPart2.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("6/1/2008"));
+        sPart2.setStudyProtocol(sp);
+        addUpdObject(sPart2);
+        studySiteIds.add(sPart2.getId());
 
         Country country = new Country();
         country.setAlpha2("ZZ");
@@ -479,6 +489,7 @@ public class TestSchema {
         sc.setStudyProtocol(sp);
         sc.setRoleCode(StudyContactRoleCode.SCIENTIFIC_LEADERSHIP);
         sc.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        sc.setClinicalResearchStaff(crs);
         addUpdObject(sc);
 
         StudySiteAccrualStatus ssas = new StudySiteAccrualStatus();

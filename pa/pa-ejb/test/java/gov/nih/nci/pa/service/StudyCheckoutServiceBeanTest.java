@@ -6,7 +6,9 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -17,13 +19,13 @@ import org.junit.Test;
 public class StudyCheckoutServiceBeanTest extends AbstractHibernateTestCase {
 
     private StudyCheckoutServiceLocal localEjb = new StudyCheckoutServiceBean();
-    StudyCheckoutDTO dto = new StudyCheckoutDTO();
     Ii pid;
 
     @Before
     public void setUp() throws Exception {
       TestSchema.primeData();
       pid = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
+      CSMUserService.setRegistryUserService(new MockCSMUserService());
     }
 
     @Test
@@ -37,21 +39,24 @@ public class StudyCheckoutServiceBeanTest extends AbstractHibernateTestCase {
          assertTrue(dto.getUserIdentifier().getValue().equals("Abstractor"));
       }
 
-    @Test(expected=PAException.class)
+    @Test
     public void create() throws Exception {
         StudyCheckoutDTO dtoNew = new StudyCheckoutDTO();
         dtoNew.setUserIdentifier(StConverter.convertToSt("Checkout"));
+        dtoNew.setStudyProtocolIdentifier(pid);
         localEjb.create(dtoNew);
     }
 
-    @Test(expected=PAException.class)
+    @Test
     public void update() throws Exception {
+        StudyCheckoutDTO dto = localEjb.getByStudyProtocol(pid).get(0);
         dto.setUserIdentifier(StConverter.convertToSt("Checkout User"));
         localEjb.update(dto);
     }
 
-    @Test (expected=PAException.class)
+    @Test
     public void delete() throws Exception {
+        StudyCheckoutDTO dto = localEjb.getByStudyProtocol(pid).get(0);
         localEjb.delete(dto.getIdentifier());
     }
 

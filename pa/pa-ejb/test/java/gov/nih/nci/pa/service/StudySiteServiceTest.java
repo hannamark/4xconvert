@@ -148,7 +148,7 @@ public class StudySiteServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = remoteEjb.get(siteIi);
         StudySite spBo = studySiteConverter.convertFromDtoToDomain(spDto);
         assertEquals(studyId, spBo.getStudyProtocol().getId());
-        assertEquals(StudySiteFunctionalCode.LEAD_ORGANIZATION.getName(), spBo.getFunctionalCode().getName());
+        assertEquals(StudySiteFunctionalCode.TREATING_SITE.getName(), spBo.getFunctionalCode().getName());
         assertEquals(FunctionalRoleStatusCode.ACTIVE.getName(), spBo.getStatusCode().getName());
         assertEquals("Local SP ID 01", spBo.getLocalStudyProtocolIdentifier());
     }

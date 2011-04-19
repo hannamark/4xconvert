@@ -942,14 +942,15 @@ public class AbstractMockitoTest {
             public StructuralRole answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
                 Ii input = (Ii) args[0];
-                if (IiConverter.RESEARCH_ORG_ROOT.equals(input.getRoot())) {
+                if (PAUtil.isIiNull(input)) {
+                  return null;
+                } else if (IiConverter.RESEARCH_ORG_ROOT.equals(input.getRoot())) {
                     return researchOrg;
                 } else if (IiConverter.CLINICAL_RESEARCH_STAFF_ROOT.equals(input.getRoot())) {
                     return clinicalReStaff;
                 } else if (IiConverter.HEALTH_CARE_FACILITY_ROOT.equals(input.getRoot())) {
                     return healthCareFacility;
                 }
-
                 return null;
             }
         };

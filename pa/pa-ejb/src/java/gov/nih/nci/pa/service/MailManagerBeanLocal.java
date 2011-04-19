@@ -102,9 +102,9 @@ import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -586,7 +586,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
             OutputFormat format = new OutputFormat(document);
             format.setLineWidth(LINE_WIDTH);
-            format.setEncoding("ISO-8859-1");
+            format.setEncoding("UTF-8");
             format.setIndenting(true);
             format.setIndent(2);
             format.setLineSeparator(LineSeparator.Web);

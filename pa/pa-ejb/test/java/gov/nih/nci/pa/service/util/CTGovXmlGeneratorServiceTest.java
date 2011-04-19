@@ -535,9 +535,12 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
     @Test
     public void testOrgTelEmpty() throws PAException {
         orgDto.setTelecomAddress(new DSet<Tel>());
-        assertTrue(getBean().generateCTGovXml(spId).contains("<irb_info>\n"
-                + "<approval_status>Approved</approval_status>\n<name>some name</name>\n"
-                + "<full_address>street, city, MD, 20000 USA</full_address>\n</irb_info>"));
+        String results = getBean().generateCTGovXml(spId);
+        assertTrue(results.contains("<irb_info>\n"));
+        assertTrue(results.contains("<approval_status>Approved</approval_status>\n"));
+        assertTrue(results.contains("<name>some name</name>\n"));
+        assertTrue(results.contains("<full_address>street, city, MD, 20000 USA</full_address>\n"));
+        assertTrue(results.contains("</irb_info>"));
     }
 
     @Test

@@ -282,8 +282,10 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
             StreamResult result = new StreamResult(writer);
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
-            transformer.setOutputProperty("encoding", "ISO-8859-1");
-            // set indentation
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            // set indentation, there's a bug in java 1.5 that makes the indent property not work properly.
+            // setting an indent-amount fixes it.
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(domSource, result);
             return writer.toString();

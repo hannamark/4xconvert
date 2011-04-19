@@ -83,6 +83,8 @@
 
 package gov.nih.nci.pa.service;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Country;
@@ -111,6 +113,7 @@ import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceBean;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceBean;
@@ -122,6 +125,9 @@ import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceBean;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
@@ -157,6 +163,12 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
     @Before
     public void setUp() throws Exception {
+        ServiceLocator svcLocator = mock(ServiceLocator.class);
+        when(svcLocator.getStudyProtocolService()).thenReturn(new StudyProtocolServiceBean());
+        PaRegistry.getInstance().setServiceLocator(svcLocator);
+
+        CSMUserService.setRegistryUserService(new MockCSMUserService());
+
         bean.setCtGovXmlGeneratorService(ctGovXmlSrv);
         bean.setProtocolQueryService(protocolQrySrv);
         bean.setRegistryUserService(registryUserSrv);
@@ -270,6 +282,11 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         prop = new PAProperties();
         prop.setName("tsr.amend.body");
         prop.setValue("${CurrentDate} ${SubmitterName}${leadOrgTrialIdentifier}, ${trialTitle},${nciTrialIdentifier}, (${amendmentNumber}), ${amendmentDate}, (${fileName}), ${fileName2}.");
+        TestSchema.addUpdObject(prop);
+
+        prop = new PAProperties();
+        prop.setName("tsr.proprietary.subject");
+        prop.setValue("Proprietary Subject");
         TestSchema.addUpdObject(prop);
 
         prop = new PAProperties();
@@ -454,7 +471,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         bean.sendRejectionEmail(nonProprietaryTrialIi);
     }
 
-    @Test (expected=PAException.class)
+    @Test
     public void testSendXmlTSREmail() throws PAException {
         bean.sendXMLAndTSREmail(email1, email1, nonProprietaryTrialIi);
     }
@@ -493,7 +510,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         bean.sendMailWithAttachment(email1, "testSubject", "testBody", null);
     }
 
-    @Test (expected=PAException.class)
+    @Test
     public void testSendTSREmailProprietary() throws PAException {
         bean.sendTSREmail(proprietaryTrialIi);
     }

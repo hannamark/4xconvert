@@ -68,7 +68,7 @@ public class PDQXMLParserTest {
     private ServiceLocator paSvcLoc;
     private LookUpTableServiceRemote lookupSvc;
     private HealthCareFacilityCorrelationServiceRemote hcfSvc;
-    
+
     @Before
     public void setup() throws PAException, NullifiedEntityException, TooManyResultsException {
         abstractionElementParser = new PDQAbstractionXMLParser();
@@ -183,7 +183,7 @@ public class PDQXMLParserTest {
         setURLAndParse();
         Map<OrganizationDTO, Map<StudySiteAccrualStatusDTO,Map<PoDto, String>>> location
             = abstractionElementParser.getLocationsMap();
-        Set<String> locOrgNames = new HashSet<String>(); 
+        Set<String> locOrgNames = new HashSet<String>();
         locOrgNames.add("London Regional Cancer Program at London Health Sciences Centre");
         locOrgNames.add("Adena Regional Medical Center");
         locOrgNames.add("Adventist Medical Center");

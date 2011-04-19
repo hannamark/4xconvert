@@ -103,8 +103,10 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
+import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -140,6 +142,11 @@ public class PDQRegistrationXMLParserTest {
         rXMLParser.setPaServiceUtils(paServiceUtil);
         when(paServiceUtil.getOrganizationByCtepId(anyString())).thenReturn(new OrganizationDTO());
         when(paServiceUtil.getPersonByCtepId(anyString())).thenReturn(new PersonDTO());
+
+        ServiceLocator paSvcLoc = mock (ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(paSvcLoc);
+        LookUpTableServiceRemote lookupSvc = mock (LookUpTableServiceRemote.class);
+        when(paSvcLoc.getLookUpTableService()).thenReturn(lookupSvc);
     }
 
     private void setupPoSvc() throws NullifiedEntityException, PAException, TooManyResultsException {
@@ -221,7 +228,7 @@ public class PDQRegistrationXMLParserTest {
             .convertEnOnToString(rXMLParser.getLeadOrganizationDTO().getName()), "Southwest Oncology Group"));
         assertEquals("12/15/2007", TsConverter.convertToString(rXMLParser.getStudyOverallStatusDTO().getStatusDate()));
     }
-    
+
     @Test
     public void testResponsiblePartyPhone() throws PAException {
         rXMLParser.setUrl(this.getClass().getResource("/CDR65658.xml"));
@@ -334,7 +341,7 @@ public class PDQRegistrationXMLParserTest {
     public void testGetAlpha3CountryName() throws PAException {
         assertEquals("USA", rXMLParser.getAlpha3CountryName("U.S.A"));
     }
-    
+
     @Test(expected = PAException.class)
     public void testGetAlpha3CountryNameNotFound() throws PAException {
         rXMLParser.getAlpha3CountryName("XXXX");

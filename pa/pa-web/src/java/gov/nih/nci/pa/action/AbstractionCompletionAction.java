@@ -85,10 +85,10 @@ import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Random;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts2.ServletActionContext;
@@ -142,13 +142,13 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
 
             String xmlData = PaRegistry.getCTGovXmlGeneratorService().generateCTGovXml(IiConverter
                     .convertToIi(studyProtocolId));
-            byte[] xmlByteData = xmlData.getBytes();
-            servletResponse.setContentType("application/xml;charset=ISO-8859-1");
-            servletResponse.setContentLength(xmlByteData.length);
-            ServletOutputStream out = servletResponse.getOutputStream();
-            out.write(xmlByteData);
-            out.flush();
-            out.close();
+            servletResponse.setContentType("application/xml");
+            servletResponse.setCharacterEncoding("UTF-8");
+            servletResponse.setContentLength(xmlData.getBytes("UTF-8").length);
+            PrintWriter writer = servletResponse.getWriter();
+            writer.write(xmlData);
+            writer.flush();
+            writer.close();
         } catch (Exception e) {
             return DISPLAY_XML;
         }
