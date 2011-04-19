@@ -16,7 +16,7 @@
         <ajax:displayTag id="summ4SearchResultsepidemiologicOutcomeList" tableClass="data">
         <display:table class="data" pagesize="20" uid="epidemRow" name="${sessionScope.epidemiologicOutcomeList}" 
             requestURI="${epidemSortUrl}" export="true">
-            <viewer:summ4RepResultTableColumns/>
+            <viewer:summ4RepResultTableColumns table_uid="${epidemRow}"/>
         </display:table>
         </ajax:displayTag>
     </c:if>

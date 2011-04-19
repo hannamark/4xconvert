@@ -16,7 +16,7 @@
         <ajax:displayTag id="summ4SearchResultsancillaryCorrelativeList" tableClass="data">
         <display:table class="data" pagesize="20" uid="ancCorRow" name="${sessionScope.ancillaryCorrelativeList}" 
             requestURI="${ancCorSortUrl}" export="true">
-            <viewer:summ4RepResultTableColumns/>
+            <viewer:summ4RepResultTableColumns table_uid="${ancCorRow}"/>
         </display:table>
         </ajax:displayTag>
     </c:if>

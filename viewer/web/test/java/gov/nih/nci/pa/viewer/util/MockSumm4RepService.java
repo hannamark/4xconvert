@@ -76,7 +76,9 @@
 */
 package gov.nih.nci.pa.viewer.util;
 
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -127,7 +129,9 @@ public class MockSumm4RepService extends MockService implements Summ4RepLocal {
         dto.setTarget(IntConverter.convertToInt(TEST_INT));
         dto.setTitle(StConverter.convertToSt(TEST_STR));
         dto.setType(StConverter.convertToSt(TEST_STR));
-
+        List<Cd> cdList = new ArrayList<Cd>();
+        cdList.add(CdConverter.convertStringToCd(TEST_STR));
+        dto.setAnatomicSiteCodes(DSetConverter.convertCdListToDSet(cdList));
         return dto;
     }
 

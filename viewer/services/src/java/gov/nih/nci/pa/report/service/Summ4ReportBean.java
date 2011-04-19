@@ -86,6 +86,7 @@ package gov.nih.nci.pa.report.service;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -93,6 +94,7 @@ import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.criteria.Summ4RepCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.Summ4RepResultDto;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -100,10 +102,12 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
@@ -112,7 +116,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-
 /**
 * @author Max Shestopalov
 */
@@ -122,7 +125,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         implements Summ4RepLocal {
 
     private static final Logger LOG = Logger.getLogger(Summ4ReportBean.class);
-
+    @EJB private StudyProtocolServiceLocal studyProtocolService = null;
     private static final int SPN_IDX = 0;
     private static final int PID_IDX = 1;
     private static final int PI_IDX = 2;
@@ -137,6 +140,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     private static final int ACTD_IDX = 11;
     private static final int SC_IDX = 12;
     private static final int SSC_IDX = 13;
+    private static final int TRIAL_IDX = 14;
     
     /** Db returned value for Epidemiologic/Other/Outcome. */
     public static final String EPIDEM_OUTCOME = "Epidemiologic/Other/Outcome";
@@ -155,6 +159,19 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     public static final String INSTITUTIONAL = "INSTITUTIONAL";
     /** Db returned value for EXTERNALLY_PEER_REVIEWED. */
     public static final String EXTERNALLY_PEER_REVIEWED = "EXTERNALLY_PEER_REVIEWED";
+    
+    /**
+     * @return the studyProtocolService
+     */
+    public StudyProtocolServiceLocal getStudyProtocolService() {
+        return studyProtocolService;
+    }
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
+    }
     
     /**
      * Query for pulling summ4 data.
@@ -192,7 +209,8 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "and perAct.registration_date <= now() "
         + ") as accrual_center_todate, "        
         + "trial_list.sort_category, "
-        + "trial_list.sort_sub_category  "
+        + "trial_list.sort_sub_category, "
+        + "trial_list.trial_id "
         + "from  "
         + "(select distinct "
         + "sponsor_org.name as Sponsor, "
@@ -334,6 +352,10 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
             rdto.setAccrualCenterToDate(IntConverter.convertToInt(convertToInteger(q[ACTD_IDX])));
             rdto.setSortCriteria(StConverter.convertToSt((String) q[SC_IDX]));
             rdto.setSubSortCriteria(StConverter.convertToSt((String) q[SSC_IDX]));
+            rdto.setAnatomicSiteCodes(studyProtocolService
+                    .getStudyProtocol(IiConverter.convertToStudyProtocolIi(((BigInteger) q[TRIAL_IDX]).longValue()))
+                    .getSummary4AnatomicSites()
+            );           
             rList.add(rdto);
         }
         return rList;

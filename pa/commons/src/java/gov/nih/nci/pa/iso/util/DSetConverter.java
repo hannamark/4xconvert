@@ -305,6 +305,25 @@ public class DSetConverter {
         dSet.setItem(cdSet);
         return dSet;
     }
+    
+    /**
+    * Convert dset of cd to list of strings.
+    * @param dSet dset of cd
+    * @return list of strings
+    */
+   public static List<String> convertDSetCdToList(DSet<Cd> dSet) {
+       List<String> returnList = null;
+       if (dSet != null && CollectionUtils.isNotEmpty(dSet.getItem())) {
+            
+           returnList = new ArrayList<String>();
+           for (Cd cd : dSet.getItem()) {
+               if (cd.getNullFlavor() == null) {
+                   returnList.add(cd.getCode());
+               }
+           }
+       }
+       return returnList;
+   }
 
     /**
      * Converts a DSet to a list of cds. Returns an empty list if the dset is null or empty.

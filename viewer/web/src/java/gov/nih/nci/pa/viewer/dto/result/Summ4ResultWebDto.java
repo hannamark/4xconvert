@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.viewer.dto.result;
 
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -14,256 +15,6 @@ import java.util.List;
  */
 public final class Summ4ResultWebDto {
    
-    /**
-     * @return the sponsor
-     */
-    public String getSponsor() {
-        return sponsor;
-    }
-
-
-
-    /**
-     * @param sponsor the sponsor to set
-     */
-    public void setSponsor(String sponsor) {
-        this.sponsor = sponsor;
-    }
-
-
-
-    /**
-     * @return the protoId
-     */
-    public String getProtoId() {
-        return protoId;
-    }
-
-
-
-    /**
-     * @param protoId the protoId to set
-     */
-    public void setProtoId(String protoId) {
-        this.protoId = protoId;
-    }
-
-
-
-    /**
-     * @return the pi
-     */
-    public String getPi() {
-        return pi;
-    }
-
-
-
-    /**
-     * @param pi the pi to set
-     */
-    public void setPi(String pi) {
-        this.pi = pi;
-    }
-
-
-
-    /**
-     * @return the programCode
-     */
-    public String getProgramCode() {
-        return programCode;
-    }
-
-
-
-    /**
-     * @param programCode the programCode to set
-     */
-    public void setProgramCode(String programCode) {
-        this.programCode = programCode;
-    }
-
-
-
-    /**
-     * @return the openDate
-     */
-    public Timestamp getOpenDate() {
-        return openDate;
-    }
-
-
-
-    /**
-     * @param openDate the openDate to set
-     */
-    public void setOpenDate(Timestamp openDate) {
-        this.openDate = openDate;
-    }
-
-
-
-    /**
-     * @return the closedDate
-     */
-    public Timestamp getClosedDate() {
-        return closedDate;
-    }
-
-
-
-    /**
-     * @param closedDate the closedDate to set
-     */
-    public void setClosedDate(Timestamp closedDate) {
-        this.closedDate = closedDate;
-    }
-
-
-
-    /**
-     * @return the phase
-     */
-    public String getPhase() {
-        return phase;
-    }
-
-
-
-    /**
-     * @param phase the phase to set
-     */
-    public void setPhase(String phase) {
-        this.phase = phase;
-    }
-
-
-
-    /**
-     * @return the type
-     */
-    public String getType() {
-        return type;
-    }
-
-
-
-    /**
-     * @param type the type to set
-     */
-    public void setType(String type) {
-        this.type = type;
-    }
-
-
-
-    /**
-     * @return the title
-     */
-    public String getTitle() {
-        return title;
-    }
-
-
-
-    /**
-     * @param tit the title to set
-     */
-    public void setTitle(String tit) {
-        this.title = tit;
-    }
-
-
-
-    /**
-     * @return the target
-     */
-    public Integer getTarget() {
-        return target;
-    }
-
-
-
-    /**
-     * @param target the target to set
-     */
-    public void setTarget(Integer target) {
-        this.target = target;
-    }
-
-
-
-    /**
-     * @return the accrualCenter12m
-     */
-    public Integer getAccrualCenter12m() {
-        return accrualCenter12m;
-    }
-
-
-
-    /**
-     * @param accrualCenter12m the accrualCenter12m to set
-     */
-    public void setAccrualCenter12m(Integer accrualCenter12m) {
-        this.accrualCenter12m = accrualCenter12m;
-    }
-
-
-
-    /**
-     * @return the accrualCenterToDate
-     */
-    public Integer getAccrualCenterToDate() {
-        return accrualCenterToDate;
-    }
-
-
-
-    /**
-     * @param accrualCenterToDate the accrualCenterToDate to set
-     */
-    public void setAccrualCenterToDate(Integer accrualCenterToDate) {
-        this.accrualCenterToDate = accrualCenterToDate;
-    }
-
-
-
-    /**
-     * @return the sortCriteria
-     */
-    public String getSortCriteria() {
-        return sortCriteria;
-    }
-
-
-
-    /**
-     * @param sortCriteria the sortCriteria to set
-     */
-    public void setSortCriteria(String sortCriteria) {
-        this.sortCriteria = sortCriteria;
-    }
-
-
-
-    /**
-     * @return the subSortCriteria
-     */
-    public String getSubSortCriteria() {
-        return subSortCriteria;
-    }
-
-
-
-    /**
-     * @param subSortCriteria the subSortCriteria to set
-     */
-    public void setSubSortCriteria(String subSortCriteria) {
-        this.subSortCriteria = subSortCriteria;
-    }
-
     private String sponsor = "";
     private String protoId = "";
     private String pi = "";
@@ -278,23 +29,8 @@ public final class Summ4ResultWebDto {
     private Integer accrualCenterToDate = null;
     private String sortCriteria = "";
     private String subSortCriteria = "";
+    private List<String> anatomicSites = null;
     
-    /**
-     * Static method for generating a list of web dto's from a list of service dto's.
-     * @param serviceDtoList service dto list
-     * @return web dto list
-     */
-    public static List<Summ4ResultWebDto> getWebList(List<Summ4RepResultDto> serviceDtoList) {
-        List<Summ4ResultWebDto> resultList = new ArrayList<Summ4ResultWebDto>();
-        
-        for (Summ4RepResultDto dto : serviceDtoList) {
-            resultList.add(new Summ4ResultWebDto(dto));
-        }
-        return resultList;
-    }
-
-   
-
     /**
      * Default constructor.
      */
@@ -321,7 +57,126 @@ public final class Summ4ResultWebDto {
         accrualCenterToDate = IntConverter.convertToInteger(dto.getAccrualCenterToDate());
         sortCriteria = StConverter.convertToString(dto.getSortCriteria());
         subSortCriteria = StConverter.convertToString(dto.getSubSortCriteria());
+        anatomicSites = DSetConverter.convertDSetCdToList(dto.getAnatomicSiteCodes());
+    }
+    
+    /**
+     * @return the sponsor
+     */
+    public String getSponsor() {
+        return sponsor;
     }
 
-   
+    /**
+     * @return the protoId
+     */
+    public String getProtoId() {
+        return protoId;
+    }
+
+    /**
+     * @return the pi
+     */
+    public String getPi() {
+        return pi;
+    }
+
+    /**
+     * @return the programCode
+     */
+    public String getProgramCode() {
+        return programCode;
+    }
+
+    /**
+     * @return the openDate
+     */
+    public Timestamp getOpenDate() {
+        return openDate;
+    }
+
+    /**
+     * @return the closedDate
+     */
+    public Timestamp getClosedDate() {
+        return closedDate;
+    }
+
+    /**
+     * @return the phase
+     */
+    public String getPhase() {
+        return phase;
+    }
+
+    /**
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * @return the target
+     */
+    public Integer getTarget() {
+        return target;
+    }
+
+    /**
+     * @return the accrualCenter12m
+     */
+    public Integer getAccrualCenter12m() {
+        return accrualCenter12m;
+    }
+
+    /**
+     * @return the accrualCenterToDate
+     */
+    public Integer getAccrualCenterToDate() {
+        return accrualCenterToDate;
+    }
+
+    /**
+     * @return the sortCriteria
+     */
+    public String getSortCriteria() {
+        return sortCriteria;
+    }
+
+    /**
+     * @return the subSortCriteria
+     */
+    public String getSubSortCriteria() {
+        return subSortCriteria;
+    }
+    
+    /**
+     * @return the anatomicSite
+     */
+    public List<String> getAnatomicSites() {
+        return this.anatomicSites;
+    }
+    
+    /**
+     * Static method for generating a list of web dto's from a list of service dto's.
+     * @param serviceDtoList service dto list
+     * @return web dto list
+     */
+    public static List<Summ4ResultWebDto> getWebList(List<Summ4RepResultDto> serviceDtoList) {
+        List<Summ4ResultWebDto> resultList = new ArrayList<Summ4ResultWebDto>();
+        
+        for (Summ4RepResultDto dto : serviceDtoList) {
+            resultList.add(new Summ4ResultWebDto(dto));
+        }
+        return resultList;
+    }
+ 
 }

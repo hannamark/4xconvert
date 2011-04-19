@@ -1,17 +1,32 @@
 package gov.nih.nci.pa.report.dto.result;
 
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.iso.util.IntConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 
 /**
  * @author Max Shestopalov
  */
 public class Summ4RepResultDto {
 
+    private St sponsor = new St();
+    private St protoId = new St();
+    private St pi = new St();
+    private St programCode = new St();
+    private Ts openDate = new Ts();
+    private Ts closedDate = new Ts();
+    private St phase = new St();
+    private St type = new St();
+    private St title = new St();
+    private Int target = new Int();
+    private Int accrualCenter12m = new Int();
+    private Int accrualCenterToDate = new Int();
+    private St sortCriteria = new St();
+    private St subSortCriteria = new St();
+    private DSet<Cd> anatomicSiteCodes = new DSet<Cd>();
+    
     /**
      * @return the sponsor
      */
@@ -184,20 +199,17 @@ public class Summ4RepResultDto {
         this.subSortCriteria = subSortCriteria;
     }
     
-    private St sponsor = StConverter.convertToSt(null);
-    private St protoId = StConverter.convertToSt(null);
-    private St pi = StConverter.convertToSt(null);
-    private St programCode = StConverter.convertToSt(null);
-    private Ts openDate = TsConverter.convertToTs(null);
-    private Ts closedDate = TsConverter.convertToTs(null);
-    private St phase = StConverter.convertToSt(null);
-    private St type = StConverter.convertToSt(null);
-    private St title = StConverter.convertToSt(null);
-    private Int target = IntConverter.convertToInt((Integer) null);
-    private Int accrualCenter12m = IntConverter.convertToInt((Integer) null);
-    private Int accrualCenterToDate = IntConverter.convertToInt((Integer) null);
-    private St sortCriteria = StConverter.convertToSt(null);
-    private St subSortCriteria = StConverter.convertToSt(null);
-    
-    
+    /**
+     * @param siteCodes the anatomic site codes to set
+     */
+    public void setAnatomicSiteCodes(DSet<Cd> siteCodes) {
+        this.anatomicSiteCodes = siteCodes;
+    }
+    /**
+     * @return dset of natomic site codes.
+     */
+    public DSet<Cd> getAnatomicSiteCodes() {
+        return this.anatomicSiteCodes;
+    }
+        
 }

@@ -84,7 +84,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelPerson;
@@ -107,6 +107,18 @@ import org.junit.Test;
 
 public class DSetConverterTest {
 
+    
+    @Test
+    public void convertDSetCdToListTest () {
+        DSet<Cd> dSet = new DSet<Cd>();
+        Set<Cd> items = new HashSet<Cd>();
+        items.add(CdConverter.convertStringToCd("anatomicSite1"));
+        items.add(CdConverter.convertStringToCd("anatomicSite2"));  
+        dSet.setItem(items);
+        List<String> strList = DSetConverter.convertDSetCdToList(dSet);
+        assertEquals(2, strList.size());
+        assertTrue(strList.get(0).contains("anatomicSite"));
+    }
     
     @Test
     public void convertPhoneListToDSetTest () {

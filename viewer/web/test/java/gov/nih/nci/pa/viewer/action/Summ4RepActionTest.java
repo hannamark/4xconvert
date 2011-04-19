@@ -162,6 +162,7 @@ public class Summ4RepActionTest extends AbstractReportActionTest<Summ4RepAction>
         assertEquals(MockService.TEST_INT, item.getTarget());
         assertEquals(MockService.TEST_STR, item.getTitle());
         assertEquals(MockService.TEST_STR, item.getType());
+        assertEquals(MockService.TEST_STR, item.getAnatomicSites().get(0));
         
         assertEquals(1, action.getAgentDeviceMap().get("NATIONAL").size());  
         assertEquals(1, action.getAgentDeviceMap().get("INDUSTRIAL").size());

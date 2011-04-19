@@ -1,11 +1,19 @@
 <%@ tag display-name="summ4RepResult"  description="Displays the results for a cat of the summ4 report"  body-content="empty" %>
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%> 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="viewer" %>
+<%@ attribute name="table_uid" type="gov.nih.nci.pa.viewer.dto.result.Summ4ResultWebDto" required="true" rtexprvalue = "true" %>
 
 <display:setProperty name="export.excel" value="true" />
 <viewer:displayTagProperties/>
 <display:column titleKey="report.result.sponsor" property="sponsor"/>
-<display:column titleKey="report.result.cancerSite"/>
+<display:column titleKey="report.result.cancerSite">
+    <ol>
+        <c:forEach var="anatomicSiteVal" items="${table_uid.anatomicSite}">
+            <li>${anatomicSiteVal}</li>
+        </c:forEach>
+    </ol>
+</display:column>
 <display:column titleKey="report.result.protoId" property="protoId"/>
 <display:column titleKey="report.result.pi" property="pi"/>
 <display:column titleKey="report.result.programCode" property="programCode"/>

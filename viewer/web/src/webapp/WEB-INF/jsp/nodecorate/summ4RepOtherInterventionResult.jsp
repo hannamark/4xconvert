@@ -21,7 +21,7 @@
                         <ajax:displayTag id="summ4SearchResultsotherInterventionListNational" tableClass="data">
                         <display:table class="data" pagesize="20" uid="otherIntNatRow" name="${sessionScope.otherInterventionMap['NATIONAL']}" 
                             requestURI="${otherIntSortUrl}" export="true">
-                            <viewer:summ4RepResultTableColumns/>
+                            <viewer:summ4RepResultTableColumns table_uid="${otherIntNatRow}"/>
                         </display:table>
                         </ajax:displayTag>
                     </c:if>
@@ -40,7 +40,7 @@
                         <ajax:displayTag id="summ4SearchResultsotherInterventionListExternallyPeerReviewed" tableClass="data">
                         <display:table class="data" pagesize="20" uid="otherIntEPRRow" name="${sessionScope.otherInterventionMap['EXTERNALLY_PEER_REVIEWED']}" 
                             requestURI="${otherIntSortUrl}" export="true">
-                            <viewer:summ4RepResultTableColumns/>
+                            <viewer:summ4RepResultTableColumns table_uid="${otherIntEPRRow}"/>
                         </display:table>
                         </ajax:displayTag>
                     </c:if>
@@ -59,7 +59,7 @@
                         <ajax:displayTag id="summ4SearchResultsotherInterventionListInstitutional" tableClass="data">
                         <display:table class="data" pagesize="20" uid="otherIntInstRow" name="${sessionScope.otherInterventionMap['INSTITUTIONAL']}" 
                             requestURI="${otherIntSortUrl}" export="true">                         
-                            <viewer:summ4RepResultTableColumns/>
+                            <viewer:summ4RepResultTableColumns table_uid="${otherIntInstRow}"/>
                         </display:table>
                         </ajax:displayTag>
                     </c:if>

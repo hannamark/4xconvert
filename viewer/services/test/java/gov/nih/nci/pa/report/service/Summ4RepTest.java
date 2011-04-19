@@ -84,8 +84,15 @@
 package gov.nih.nci.pa.report.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.criteria.Summ4RepCriteriaDto;
@@ -93,9 +100,11 @@ import gov.nih.nci.pa.report.dto.result.Summ4RepResultDto;
 import gov.nih.nci.pa.report.util.MockPoServiceLocator;
 import gov.nih.nci.pa.report.util.TestSchema;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Before;
@@ -108,6 +117,19 @@ public class Summ4RepTest
     public void setUp() throws Exception {
         bean = new Summ4RepBeanExtenderForTest();
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
+        StudyProtocolServiceLocal spSvcLocal = mock(StudyProtocolServiceLocal.class);
+        bean.setStudyProtocolService(spSvcLocal);
+        StudyProtocolDTO spDto = new StudyProtocolDTO();
+        DSet<Cd> dSetCd = new DSet<Cd>();
+        dSetCd.setItem(new HashSet<Cd>());
+        Cd cd1 = new Cd();
+        cd1.setCode("anatomicSite1");
+        Cd cd2 = new Cd();
+        cd2.setCode("anatomicSite2");
+        dSetCd.getItem().add(cd1);
+        dSetCd.getItem().add(cd2);
+        spDto.setSummary4AnatomicSites(dSetCd);
+        when(spSvcLocal.getStudyProtocol(any(Ii.class))).thenReturn(spDto);
     }
 
     @Override
@@ -131,6 +153,7 @@ public class Summ4RepTest
         criteria.setTimeInterval(wrk);
         List<Summ4RepResultDto> resultList = bean.get(criteria);
         assertEquals(resultList.size(), TestSchema.studySite.size());
+        assertEquals(2, resultList.get(0).getAnatomicSiteCodes().getItem().size());
     }
 
     @Test
@@ -161,7 +184,8 @@ public class Summ4RepTest
             + "sp.max_target_accrual_num, "
             + "1, 1,"
             + "sp.study_protocol_type,"
-            + "sp.public_description "
+            + "sp.public_description, "
+            + "sp.identifier "
             + "from study_protocol sp, study_site ss "
             + "where 'Duke' = :ORG_NAME "
             + "and ss.study_protocol_identifier = sp.identifier "
