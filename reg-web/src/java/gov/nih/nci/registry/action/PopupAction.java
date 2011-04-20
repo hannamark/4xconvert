@@ -353,7 +353,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             return pagination ? ORGS_RESULT : SUCCESS;
         } catch (Exception e) {
             orgs = null;
-            LOG.error("Error occured while searching PO Organizations " + e.getMessage(), e);
+            LOG.error("Error occurred while searching PO Organizations", e);
             return pagination ? ORGS_RESULT : SUCCESS;
         }
     }

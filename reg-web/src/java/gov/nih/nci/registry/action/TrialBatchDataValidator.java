@@ -700,8 +700,7 @@ public class TrialBatchDataValidator {
         }
         return false;
     }
-    /**
-     */
+
     private void getCountryList() {
 
         TrialBatchDataValidator.countryList = new ArrayList<String>();
@@ -716,6 +715,7 @@ public class TrialBatchDataValidator {
             LOG.error("error while validaing country.." + e.getMessage());
         }
     }
+
     private StringBuffer validateAmendmentInfo(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
         if (StringUtils.isNotEmpty(batchDto.getSubmissionType())

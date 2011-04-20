@@ -57,7 +57,7 @@ public class BatchHelperTest {
     }
 
     @Test
-    public void testrun() {
+    public void testRun() {
         helper = new BatchHelper("uploadLoc", "dataFileName", "unzipLoc", "userName", "");
         try {
             helper.run();

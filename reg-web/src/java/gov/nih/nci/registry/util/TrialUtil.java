@@ -87,14 +87,14 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setPrimaryPurposeCode(spDTO.getPrimaryPurposeCode().getCode());
         trialDTO.setPrimaryPurposeAdditionalQualifierCode(spDTO.getPrimaryPurposeAdditionalQualifierCode().getCode());
         trialDTO.setPrimaryPurposeOtherText(spDTO.getPrimaryPurposeOtherText().getValue());
+        trialDTO.setTrialType(spDTO.getStudyProtocolType().getValue());
+        trialDTO.setIdentifier(spDTO.getIdentifier().getExtension());
         trialDTO.setStartDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(spDTO.getStartDate())
             .toString()));
         trialDTO.setStartDateType(spDTO.getStartDateTypeCode().getCode());
         trialDTO.setCompletionDate(PAUtil.normalizeDateString(TsConverter
             .convertToTimestamp(spDTO.getPrimaryCompletionDate()).toString()));
         trialDTO.setCompletionDateType(spDTO.getPrimaryCompletionDateTypeCode().getCode());
-        trialDTO.setTrialType(spDTO.getStudyProtocolType().getValue());
-        trialDTO.setIdentifier(spDTO.getIdentifier().getExtension());
         trialDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
         trialDTO.setSubmissionNumber(IntConverter.convertToString(spDTO.getSubmissionNumber()));
         trialDTO.setXmlRequired(!PAUtil.isBlNull(spDTO.getCtgovXmlRequiredIndicator())
@@ -712,8 +712,8 @@ public class TrialUtil extends TrialConvertUtils {
      * @throws PAException the PA exception
      * @throws NullifiedRoleException the nullified role exception
      */
-    public void getProprietaryTrialDTOFromDb(Ii studyProtocolIi, ProprietaryTrialDTO trialDTO)
-    throws PAException, NullifiedRoleException {
+    public void getProprietaryTrialDTOFromDb(Ii studyProtocolIi, ProprietaryTrialDTO trialDTO) throws PAException,
+            NullifiedRoleException {
         StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         StudyProtocolQueryDTO spqDto = PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
                                                 Long.valueOf(studyProtocolIi.getExtension()));

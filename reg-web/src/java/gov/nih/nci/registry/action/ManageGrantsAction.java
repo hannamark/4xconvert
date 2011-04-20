@@ -120,25 +120,24 @@ public class ManageGrantsAction extends ActionSupport {
      * @return s
      */
     public String addGrant() {
+        addNewGrantToSession(Constants.GRANT_LIST);
+        return "display_grants";
+    }
+
+    private void addNewGrantToSession(final String sessionListName) {
         TrialFundingWebDTO grantHolder = new TrialFundingWebDTO();
         grantHolder.setFundingMechanismCode(fundingMechanismCode);
         grantHolder.setNihInstitutionCode(nihInstitutionCode);
         grantHolder.setSerialNumber(serialNumber);
         grantHolder.setNciDivisionProgramCode(nciDivisionProgramCode);
         grantHolder.setRowId(UUID.randomUUID().toString());
-        List<TrialFundingWebDTO> sessionList =
-                (List<TrialFundingWebDTO>) ServletActionContext.getRequest().getSession().getAttribute(
-                        Constants.GRANT_LIST);
-        if (sessionList != null) {
-            sessionList.add(grantHolder);
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST, sessionList);
-        } else {
-            List<TrialFundingWebDTO> tempList = new ArrayList<TrialFundingWebDTO>();
-            tempList.add(grantHolder);
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST, tempList);
+        List<TrialFundingWebDTO> sessionList = (List<TrialFundingWebDTO>) ServletActionContext.getRequest()
+            .getSession().getAttribute(sessionListName);
+        if (sessionList == null) {
+            sessionList = new ArrayList<TrialFundingWebDTO>();
         }
-
-        return "display_grants";
+        sessionList.add(grantHolder);
+        ServletActionContext.getRequest().getSession().setAttribute(sessionListName, sessionList);
     }
 
     /**
@@ -230,24 +229,7 @@ public class ManageGrantsAction extends ActionSupport {
      * @return s
      */
     public String addGrantForUpdate() {
-        TrialFundingWebDTO grantHolder = new TrialFundingWebDTO();
-        grantHolder.setFundingMechanismCode(fundingMechanismCode);
-        grantHolder.setNihInstitutionCode(nihInstitutionCode);
-        grantHolder.setSerialNumber(serialNumber);
-        grantHolder.setNciDivisionProgramCode(nciDivisionProgramCode);
-        grantHolder.setRowId(UUID.randomUUID().toString());
-        List<TrialFundingWebDTO> sessionList =
-                (List<TrialFundingWebDTO>) ServletActionContext.getRequest().getSession().getAttribute(
-                        Constants.GRANT_ADD_LIST);
-        if (sessionList != null) {
-            sessionList.add(grantHolder);
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_ADD_LIST, sessionList);
-        } else {
-            List<TrialFundingWebDTO> tempList = new ArrayList<TrialFundingWebDTO>();
-            tempList.add(grantHolder);
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_ADD_LIST, tempList);
-        }
-
+        addNewGrantToSession(Constants.GRANT_ADD_LIST);
         return "display_grants_add";
     }
 

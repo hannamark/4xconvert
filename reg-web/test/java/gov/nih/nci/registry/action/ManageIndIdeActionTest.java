@@ -6,7 +6,10 @@ package gov.nih.nci.registry.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
+
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -22,8 +25,10 @@ import com.mockrunner.mock.web.MockHttpSession;
  */
 public class ManageIndIdeActionTest extends AbstractRegWebTest {
     private ManageIndIdeAction indAction;
+
     @Test
-    public void testAddIndIdeToExitingList(){
+    @SuppressWarnings("unchecked")
+    public void testAddIndIdeToExitingList() {
         indAction = new ManageIndIdeAction();
         HttpSession sess = new MockHttpSession();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -38,11 +43,20 @@ public class ManageIndIdeActionTest extends AbstractRegWebTest {
         sess.setAttribute(Constants.INDIDE_ADD_LIST, getIndDtos());
         request.setSession(sess);
         ServletActionContext.setRequest(request);
-        assertEquals("display_ideind",indAction.addIdeIndIndicator());
-        assertEquals("display_ideindadd",indAction.addIdeIndIndicatorForUpdate());
+        assertEquals(3, ((List<TrialIndIdeDTO>) sess.getAttribute(Constants.INDIDE_LIST)).size());
+        assertEquals(3, ((List<TrialIndIdeDTO>) sess.getAttribute(Constants.INDIDE_ADD_LIST)).size());
+
+        assertEquals("display_ideind", indAction.addIdeIndIndicator());
+        assertEquals(4, ((List<TrialIndIdeDTO>) sess.getAttribute(Constants.INDIDE_LIST)).size());
+        assertEquals(3, ((List<TrialIndIdeDTO>) sess.getAttribute(Constants.INDIDE_ADD_LIST)).size());
+        assertEquals("display_ideindadd", indAction.addIdeIndIndicatorForUpdate());
+        assertEquals(4, ((List<TrialIndIdeDTO>) sess.getAttribute(Constants.INDIDE_LIST)).size());
+        assertEquals(4, ((List<TrialIndIdeDTO>) sess.getAttribute(Constants.INDIDE_ADD_LIST)).size());
     }
+
     @Test
-    public void testAddIndIde(){
+    @SuppressWarnings("unchecked")
+    public void testAddIndIde() {
         indAction = new ManageIndIdeAction();
         HttpSession sess = new MockHttpSession();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -55,9 +69,17 @@ public class ManageIndIdeActionTest extends AbstractRegWebTest {
         request.setupAddParameter("expandedaccesstype", "arg1");
         request.setSession(sess);
         ServletActionContext.setRequest(request);
-        assertEquals("display_ideind",indAction.addIdeIndIndicator());
-        assertEquals("display_ideindadd" ,indAction.addIdeIndIndicatorForUpdate());
+        assertNull(sess.getAttribute(Constants.INDIDE_LIST));
+        assertNull(sess.getAttribute(Constants.INDIDE_ADD_LIST));
+
+        assertEquals("display_ideind", indAction.addIdeIndIndicator());
+        assertEquals(1, ((List<TrialIndIdeDTO>) sess.getAttribute(Constants.INDIDE_LIST)).size());
+        assertNull(sess.getAttribute(Constants.INDIDE_ADD_LIST));
+        assertEquals("display_ideindadd", indAction.addIdeIndIndicatorForUpdate());
+        assertEquals(1, ((List<TrialIndIdeDTO>) sess.getAttribute(Constants.INDIDE_LIST)).size());
+        assertEquals(1, ((List<TrialIndIdeDTO>) sess.getAttribute(Constants.INDIDE_ADD_LIST)).size());
     }
+
     @Test
     public void testAddIndIdeSomeEmpty(){
         indAction = new ManageIndIdeAction();

@@ -12,6 +12,7 @@ import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -86,37 +87,30 @@ public class MailManager {
      * @param mailBody mailBody
      * @param subject subject
      */
-    public synchronized void sendMail(String mailTo, String mailCC,
-            String mailBody, String subject) {
+    public synchronized void sendMail(String mailTo, String mailCC, String mailBody, String subject) {
         try {
-            // get system properties
-            Properties props = System.getProperties();
-
-            String to = mailTo;
-            // Set up mail server
-
-            props.put("mail.smtp.host",
-                    PaRegistry.getLookUpTableService().getPropertyValue("smtp"));
-
-            // Get session
-            Session session = Session.getDefaultInstance(props, null);
-
-            // Define Message
-            MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(formatFromAddress()));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(
-                    to));
-
-            message.setSubject(subject);
+            MimeMessage message = prepareMessage(mailTo, subject);
             message.setText(mailBody);
-
-            // Send Message
-
             Transport.send(message);
         } catch (Exception e) {
             LOG.error("Send Mail error", e);
         }
     }
+
+    private MimeMessage prepareMessage(String mailTo, String subject) throws PAException, MessagingException {
+        Properties props = System.getProperties();
+        String to = mailTo;
+        props.put("mail.smtp.host", PaRegistry.getLookUpTableService().getPropertyValue("smtp"));
+        Session session = Session.getDefaultInstance(props, null);
+
+        // Define Message
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(formatFromAddress()));
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+        message.setSubject(subject);
+        return message;
+    }
+
     /**
      *
      * @param mailTo m
@@ -128,21 +122,8 @@ public class MailManager {
     public void sendMailWithAattchement(String mailTo, String mailCC, String mailBody, String subject,
             String attachFileName) {
         try {
+            MimeMessage message = prepareMessage(mailTo, subject);
 
-            // get system properties
-            Properties props = System.getProperties();
-            String to = mailTo;
-            // Set up mail server
-            props.put("mail.smtp.host",
-                    PaRegistry.getLookUpTableService().getPropertyValue("smtp"));
-            // Get session
-            Session session = Session.getDefaultInstance(props, null);
-            //Define Message
-            MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(formatFromAddress()));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(
-                    to));
-            message.setSubject(subject);
             // create and fill the message Body
             MimeBodyPart mbp1 = new MimeBodyPart();
             mbp1.setText(mailBody);
@@ -162,13 +143,10 @@ public class MailManager {
             // add the Multipart to the message
             message.setContent(mp);
 
-            // set the Date: header
             message.setSentDate(new Date());
-
-            // send the message
             Transport.send(message);
         } catch (Exception e) {
             LOG.error("Exception sending mail with attachment", e);
         }
-      }
+    }
 }

@@ -134,6 +134,11 @@ public class ManageIndIdeAction extends ActionSupport {
         if (isNoParamSet()) {
             return SUCCESS;
         }
+        addEmptyIndIdeToSession(Constants.INDIDE_LIST);
+        return "display_ideind";
+    }
+
+    private void addEmptyIndIdeToSession(final String sessionListName) {
         TrialIndIdeDTO indIdeHolder = new TrialIndIdeDTO();
         indIdeHolder.setExpandedAccess(StringUtils.defaultIfEmpty(expandedAccess, "-"));
         indIdeHolder.setExpandedAccessType(StringUtils.defaultIfEmpty(expandedAccessType, "-"));
@@ -145,16 +150,12 @@ public class ManageIndIdeAction extends ActionSupport {
         indIdeHolder.setRowId(UUID.randomUUID().toString());
         indIdeHolder.setExemptIndicator(exemptIndicator);
         final HttpSession session = ServletActionContext.getRequest().getSession();
-        List<TrialIndIdeDTO> sessionList = (List<TrialIndIdeDTO>) session.getAttribute(Constants.INDIDE_LIST);
-        if (sessionList != null) {
-            sessionList.add(indIdeHolder);
-            session.setAttribute(Constants.INDIDE_LIST, sessionList);
-        } else {
-            List<TrialIndIdeDTO> tempList = new ArrayList<TrialIndIdeDTO>();
-            tempList.add(indIdeHolder);
-            session.setAttribute(Constants.INDIDE_LIST, tempList);
+        List<TrialIndIdeDTO> sessionList = (List<TrialIndIdeDTO>) session.getAttribute(sessionListName);
+        if (sessionList == null) {
+            sessionList = new ArrayList<TrialIndIdeDTO>();
         }
-        return "display_ideind";
+        sessionList.add(indIdeHolder);
+        session.setAttribute(sessionListName, sessionList);
     }
 
     private boolean isNoParamSet() {
@@ -174,36 +175,17 @@ public class ManageIndIdeAction extends ActionSupport {
             return SUCCESS;
         }
 
-        TrialIndIdeDTO indIdeHolder = new TrialIndIdeDTO();
-        indIdeHolder.setExpandedAccess(StringUtils.defaultIfEmpty(expandedAccess, "-"));
-        indIdeHolder.setExpandedAccessType(StringUtils.defaultIfEmpty(expandedAccessType, "-"));
-        indIdeHolder.setGrantor(StringUtils.defaultIfEmpty(grantor, "-"));
-        indIdeHolder.setHolderType(StringUtils.defaultIfEmpty(holderType, "-"));
-        indIdeHolder.setNumber(StringUtils.defaultIfEmpty(number, "-"));
-        indIdeHolder.setProgramCode(StringUtils.defaultIfEmpty(programCode, "-"));
-        indIdeHolder.setIndIde(StringUtils.defaultIfEmpty(indIde, "-"));
-        indIdeHolder.setRowId(UUID.randomUUID().toString());
-        indIdeHolder.setExemptIndicator(exemptIndicator);
         String studyid = request.getParameter("studyid");
         setStudyProtocolId(studyid);
-        final HttpSession session = request.getSession();
-        List<TrialIndIdeDTO> sessionList = (List<TrialIndIdeDTO>) session.getAttribute(Constants.INDIDE_ADD_LIST);
-        if (sessionList != null) {
-            sessionList.add(indIdeHolder);
-            session.setAttribute(Constants.INDIDE_ADD_LIST, sessionList);
-        } else {
-            List<TrialIndIdeDTO> tempList = new ArrayList<TrialIndIdeDTO>();
-            tempList.add(indIdeHolder);
-            session.setAttribute(Constants.INDIDE_ADD_LIST, tempList);
-        }
-         return "display_ideindadd";
+        addEmptyIndIdeToSession(Constants.INDIDE_ADD_LIST);
+        return "display_ideindadd";
     }
 
     /**
      *
      * @return result
      */
-    public String deleteIndIde() {       
+    public String deleteIndIde() {
         List<TrialIndIdeDTO> sessionList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest().getSession()
             .getAttribute(Constants.INDIDE_LIST);
         TrialIndIdeDTO holder;
