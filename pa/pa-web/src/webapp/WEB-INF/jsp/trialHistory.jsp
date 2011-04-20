@@ -14,7 +14,7 @@
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
         <script type="text/javascript" src="<c:url value="/scripts/js/control.tabs.js"/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
-        
+
         <script type="text/javascript" language="javascript">
         // this function is called from body onload in main.jsp (decorator)
 
@@ -37,7 +37,7 @@
             function acceptTrialUpdate(id) {
                 input_remove_box = confirm("Do you want to accept this update and remove it from the list?");
                 if (input_remove_box==true) {
-                    var url = "/pa/protected/ajaxTrialHistoryacceptUpdate.action';
+                    var url = '/pa/protected/ajaxTrialHistoryacceptUpdate.action';
                     var params = { studyInboxId: id };
                     var div = document.getElementById('updates');
                     var aj = callAjaxPost(div, url, params);
