@@ -662,4 +662,8 @@
         <comment>Refactoring Study Site Accrual Access to use the registry user instead of the csm user.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.5/PO-3408.sql"/>
      </changeSet>
+     <changeSet id="PO-2848" author="mvisee">
+        <comment>Adding quartz table for persistent JobStore</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.5/PO-2848.sql"/>
+     </changeSet>
 </databaseChangeLog>

@@ -1,177 +1,174 @@
-<quartz xmlns="http://www.quartzscheduler.org/ns/quartz"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://www.quartzscheduler.org/ns/quartz http://www.quartzscheduler.org/ns/quartz/job_scheduling_data_1_5.xsd"
-               version="1.1">
-<job>
-    <job-detail>
-        <name>milestoneJob</name>
-        <group>DEFAULT</group>
-        <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
-        <volatility>false</volatility>  
-        <durability>false</durability>  
-        <recover>false</recover>  
-        <job-data-map allows-transient-data="true">
-            <entry>
-                <key>ejb</key>
-                <value>pa/StudyMilestoneTasksServiceBean/local</value>
-            </entry>
-            <entry>
-                <key>interfaceName</key>
-                <value>gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal</value>
-            </entry>
-            <entry>
-                <key>method</key>
-                <value>performTask</value>
-            </entry>
-            <entry>
-                <key>java.naming.factory.initial</key>
-                <value>org.jnp.interfaces.NamingContextFactory</value>
-            </entry>        
-            <entry>
-                <key>java.naming.provider.url</key>
-                <value>jnp://localhost:@jboss.server.jndi.port@</value>
-            </entry>
-        </job-data-map>
-    </job-detail>  
-    <trigger>  
-        <cron>  
-            <name>milestoneTrigger</name>  
-            <group>DailyTriggerGroup</group>  
-            <description>Daily milestone Trigger</description> 
-            <job-name>milestoneJob</job-name>  
-            <job-group>DEFAULT</job-group>  
-            <start-time>2009-08-04T11:15:00</start-time> 
-            <cron-expression>0 0 21 ? * *</cron-expression> 
-        </cron>  
-    </trigger>  
-</job>
-<job>
-<job-detail>
-    <name>resetNciIdSeqJob</name>
-    <group>DEFAULT</group>
-    <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
-    <volatility>false</volatility>  
-    <durability>false</durability>  
-    <recover>false</recover>  
-    <job-data-map allows-transient-data="true">
-        <entry>
-            <key>ejb</key>
-            <value>pa/ResetNciIdSeqTasksServiceBean/local</value>
-        </entry>
-        <entry>
-            <key>interfaceName</key>
-            <value>gov.nih.nci.pa.service.util.ResetNciIdSeqTasksServiceLocal</value>
-        </entry>
-        <entry>
-            <key>method</key>
-            <value>performTask</value>
-        </entry>
-        <entry>
-            <key>java.naming.factory.initial</key>
-            <value>org.jnp.interfaces.NamingContextFactory</value>
-        </entry>        
-        <entry>
-        	<key>java.naming.provider.url</key>
-            <value>jnp://localhost:@jboss.server.jndi.port@</value>
-        </entry>
-    </job-data-map>
-</job-detail>  
-<trigger>  
-    <cron>  
-        <name>nciIdsTrigger</name>  
-        <group>DailyTriggerGroup</group>  
-        <description>Yearly Nci Ids Trigger</description> 
-        <job-name>resetNciIdSeqJob</job-name>  
-        <job-group>DEFAULT</job-group>  
-        <start-time>2009-08-04T11:15:00</start-time> 
-        <cron-expression>0 0 0 1 1 ? *</cron-expression> 
-    </cron>  
-</trigger>  
-</job>
-<job>
-    <job-detail>
-        <name>pdqUpdateXMLGeneratorJob</name>
-        <group>DEFAULT</group>
-        <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
-        <volatility>false</volatility>  
-        <durability>false</durability>  
-        <recover>false</recover>  
-        <job-data-map allows-transient-data="true">
-            <entry>
-                <key>ejb</key>
-                <value>pa/PDQUpdateGeneratorTaskServiceBean/local</value>
-            </entry>
-            <entry>
-                <key>interfaceName</key>
-                <value>gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal</value>
-            </entry>
-            <entry>
-                <key>method</key>
-                <value>performTask</value>
-            </entry>
-            <entry>
-                <key>java.naming.factory.initial</key>
-                <value>org.jnp.interfaces.NamingContextFactory</value>
-            </entry>        
-            <entry>
-                <key>java.naming.provider.url</key>
-                <value>jnp://localhost:@jboss.server.jndi.port@</value>
-            </entry>
-        </job-data-map>
-    </job-detail>  
-    <trigger>  
-        <cron>  
-            <name>pdqUpdateXMLGeneratorTrigger</name>  
-            <group>DailyTriggerGroup</group>  
-            <description>Daily PDQ Update XML generation Trigger</description> 
-            <job-name>pdqUpdateXMLGeneratorJob</job-name>  
-            <job-group>DEFAULT</job-group>  
-            <start-time>2010-10-15T00:00:00</start-time> 
-            <cron-expression>0 0 19 ? * MON-FRI</cron-expression> 
-        </cron>  
-    </trigger>
-   </job>
+<quartz xmlns="http://www.opensymphony.com/quartz/JobSchedulingData"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.opensymphony.com/quartz/JobSchedulingData http://www.quartz-scheduler.org/xml/job_scheduling_data_1_5.xsd"
+    version="1.5">
     <job>
-    <job-detail>
-        <name>cleanUpJob</name>
-        <group>DEFAULT</group>
-        <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
-        <volatility>false</volatility>  
-        <durability>false</durability>  
-        <recover>false</recover>  
-        <job-data-map allows-transient-data="true">
-            <entry>
-                <key>ejb</key>
-                <value>pa/CleanUpTaskServiceBean/local</value>
-            </entry>
-            <entry>
-                <key>interfaceName</key>
-                <value>gov.nih.nci.pa.service.util.CleanUpTaskServiceLocal</value>
-            </entry>
-            <entry>
-                <key>method</key>
-                <value>deleteDocAfter30DaysTask</value>
-            </entry>
-            <entry>
-                <key>java.naming.factory.initial</key>
-                <value>org.jnp.interfaces.NamingContextFactory</value>
-            </entry>        
-            <entry>
-                <key>java.naming.provider.url</key>
-                <value>jnp://localhost:@jboss.server.jndi.port@</value>
-            </entry>
-        </job-data-map>
-    </job-detail>
-    <trigger>  
-        <cron>  
-            <name>cleanUpTrigger</name>  
-            <group>DailyTriggerGroup</group>  
-            <description>Daily Cleaning up Trigger</description> 
-            <job-name>cleanUpJob</job-name>  
-            <job-group>DEFAULT</job-group>  
-            <start-time>2011-01-15T00:00:00</start-time> 
-            <cron-expression>0 0 19 ? * MON-FRI</cron-expression> 
-        </cron>  
-    </trigger>  
+        <job-detail>
+            <name>milestoneJob</name>
+            <group>DEFAULT</group>
+            <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
+            <volatility>false</volatility>
+            <durability>false</durability>
+            <recover>false</recover>
+            <job-data-map allows-transient-data="true">
+                <entry>
+                    <key>ejb</key>
+                    <value>pa/StudyMilestoneTasksServiceBean/local</value>
+                </entry>
+                <entry>
+                    <key>interfaceName</key>
+                    <value>gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal</value>
+                </entry>
+                <entry>
+                    <key>method</key>
+                    <value>performTask</value>
+                </entry>
+                <entry>
+                    <key>java.naming.factory.initial</key>
+                    <value>org.jnp.interfaces.NamingContextFactory</value>
+                </entry>
+                <entry>
+                    <key>java.naming.provider.url</key>
+                    <value>jnp://localhost:@jboss.server.jndi.port@</value>
+                </entry>
+            </job-data-map>
+        </job-detail>
+        <trigger>
+            <cron>
+                <name>milestoneTrigger</name>
+                <group>DailyTriggerGroup</group>
+                <description>Daily milestone Trigger</description>
+                <job-name>milestoneJob</job-name>
+                <job-group>DEFAULT</job-group>
+                <cron-expression>0 0 21 ? * *</cron-expression>
+            </cron>
+        </trigger>
+    </job>
+    <job>
+        <job-detail>
+            <name>resetNciIdSeqJob</name>
+            <group>DEFAULT</group>
+            <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
+            <volatility>false</volatility>
+            <durability>false</durability>
+            <recover>false</recover>
+            <job-data-map allows-transient-data="true">
+                <entry>
+                    <key>ejb</key>
+                    <value>pa/ResetNciIdSeqTasksServiceBean/local</value>
+                </entry>
+                <entry>
+                    <key>interfaceName</key>
+                    <value>gov.nih.nci.pa.service.util.ResetNciIdSeqTasksServiceLocal</value>
+                </entry>
+                <entry>
+                    <key>method</key>
+                    <value>performTask</value>
+                </entry>
+                <entry>
+                    <key>java.naming.factory.initial</key>
+                    <value>org.jnp.interfaces.NamingContextFactory</value>
+                </entry>
+                <entry>
+                    <key>java.naming.provider.url</key>
+                    <value>jnp://localhost:@jboss.server.jndi.port@</value>
+                </entry>
+            </job-data-map>
+        </job-detail>
+        <trigger>
+            <cron>
+                <name>nciIdsTrigger</name>
+                <group>DailyTriggerGroup</group>
+                <description>Yearly Nci Ids Trigger</description>
+                <job-name>resetNciIdSeqJob</job-name>
+                <job-group>DEFAULT</job-group>
+                <cron-expression>0 0 0 1 1 ?</cron-expression>
+            </cron>
+        </trigger>
+    </job>
+    <job>
+        <job-detail>
+            <name>pdqUpdateXMLGeneratorJob</name>
+            <group>DEFAULT</group>
+            <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
+            <volatility>false</volatility>
+            <durability>false</durability>
+            <recover>false</recover>
+            <job-data-map allows-transient-data="true">
+                <entry>
+                    <key>ejb</key>
+                    <value>pa/PDQUpdateGeneratorTaskServiceBean/local</value>
+                </entry>
+                <entry>
+                    <key>interfaceName</key>
+                    <value>gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal</value>
+                </entry>
+                <entry>
+                    <key>method</key>
+                    <value>performTask</value>
+                </entry>
+                <entry>
+                    <key>java.naming.factory.initial</key>
+                    <value>org.jnp.interfaces.NamingContextFactory</value>
+                </entry>
+                <entry>
+                    <key>java.naming.provider.url</key>
+                    <value>jnp://localhost:@jboss.server.jndi.port@</value>
+                </entry>
+            </job-data-map>
+        </job-detail>
+        <trigger>
+            <cron>
+                <name>pdqUpdateXMLGeneratorTrigger</name>
+                <group>DailyTriggerGroup</group>
+                <description>Daily PDQ Update XML generation Trigger</description>
+                <misfire-instruction>MISFIRE_INSTRUCTION_DO_NOTHING</misfire-instruction>
+                <job-name>pdqUpdateXMLGeneratorJob</job-name>
+                <job-group>DEFAULT</job-group>
+                <cron-expression>0 0 19 ? * MON-FRI</cron-expression>
+            </cron>
+        </trigger>
+    </job>
+    <job>
+        <job-detail>
+            <name>cleanUpJob</name>
+            <group>DEFAULT</group>
+            <job-class>gov.nih.nci.pa.util.EJBInvokerJob</job-class>
+            <volatility>false</volatility>
+            <durability>false</durability>
+            <recover>false</recover>
+            <job-data-map allows-transient-data="true">
+                <entry>
+                    <key>ejb</key>
+                    <value>pa/CleanUpTaskServiceBean/local</value>
+                </entry>
+                <entry>
+                    <key>interfaceName</key>
+                    <value>gov.nih.nci.pa.service.util.CleanUpTaskServiceLocal</value>
+                </entry>
+                <entry>
+                    <key>method</key>
+                    <value>deleteDocAfter30DaysTask</value>
+                </entry>
+                <entry>
+                    <key>java.naming.factory.initial</key>
+                    <value>org.jnp.interfaces.NamingContextFactory</value>
+                </entry>
+                <entry>
+                    <key>java.naming.provider.url</key>
+                    <value>jnp://localhost:@jboss.server.jndi.port@</value>
+                </entry>
+            </job-data-map>
+        </job-detail>
+        <trigger>
+            <cron>
+                <name>cleanUpTrigger</name>
+                <group>DailyTriggerGroup</group>
+                <description>Daily Cleaning up Trigger</description>
+                <job-name>cleanUpJob</job-name>
+                <job-group>DEFAULT</job-group>
+                <cron-expression>0 0 19 ? * MON-FRI</cron-expression>
+            </cron>
+        </trigger>
     </job>
 </quartz> 
