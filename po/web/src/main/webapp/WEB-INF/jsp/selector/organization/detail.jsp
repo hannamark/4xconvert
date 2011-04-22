@@ -87,6 +87,6 @@
 <div class="btnwrapper">
 	<po:buttonRow>
 	    <po:button href="javascript://nop/" onclick="$('duplicateSearchResultDetails').hide(); $('findDuplicates').show();" style="continue" text="Back to Search Results" id="selector_org_back_to_search_results"/>
-	    <po:button href="javascript://nop/" onclick="selectAndClose(new IdValue('${organization.id}', '${pofn:escapeJavaScript(organization.name)}'));" style="reject" text="Select" id="selector_select_org"/>
+	    <po:button href="javascript://nop/" onclick="selectAndClose(new IdValue('${organization.id}', '${func:escapeJavaScript(organization.name)}'));" style="reject" text="Select" id="selector_select_org"/>
 	</po:buttonRow>
 </div>

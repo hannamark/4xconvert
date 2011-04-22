@@ -91,7 +91,7 @@
 <div class="btnwrapper">
 	<po:buttonRow>
 	    <po:button href="javascript://nop/" onclick="$('duplicateSearchResultDetails').hide(); $('findDuplicates').show();" style="continue" text="Back to Search Results" id="selector_person_back_to_search_results"/>
-        <c:set var="personFullName">${pofn:escapeJavaScript(person.lastName)}, ${pofn:escapeJavaScript(person.firstName)} ${pofn:escapeJavaScript(person.middleName)}</c:set>
+        <c:set var="personFullName">${func:escapeJavaScript(person.lastName)}, ${func:escapeJavaScript(person.firstName)} ${func:escapeJavaScript(person.middleName)}</c:set>
 	    <po:button href="javascript://nop/" onclick="selectAndClose(new IdValue('${person.id}',  '${personFullName}' ));" style="reject" text="Select" id="selector_select_person"/>
 	</po:buttonRow>
 </div>

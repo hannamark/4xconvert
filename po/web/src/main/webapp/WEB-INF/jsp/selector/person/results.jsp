@@ -63,7 +63,7 @@
         </display:column>
         <display:column titleKey="th.action" class="action">
             <po:buttonRow>
-                <c:set var="personFullName">${pofn:escapeJavaScript(row.lastName)}, ${pofn:escapeJavaScript(row.firstName)} ${pofn:escapeJavaScript(row.middleName)}</c:set>
+                <c:set var="personFullName">${func:escapeJavaScript(row.lastName)}, ${func:escapeJavaScript(row.firstName)} ${func:escapeJavaScript(row.middleName)}</c:set>
                 <po:button id="mark_as_dup_${row.id}"href="javascript://nop/" onclick="selectAndClose(new IdValue('${row.id}', '${personFullName}'));" style="add" text="Select" />
             </po:buttonRow>
         </display:column>

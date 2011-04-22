@@ -8,7 +8,7 @@
             <div class="box_white">
             <po:copyButton
              id="copy_curateCrForm_role_name"
-             onclick="copyValueToTextField('${pofn:escapeJavaScript(cr.name)}', 'curateRoleForm.role.name');"
+             onclick="copyValueToTextField('${func:escapeJavaScript(cr.name)}', 'curateRoleForm.role.name');"
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
                 <s:textfield label="%{getText('researchOrganization.name')}" name="cr.name" maxlength="160" size="50"/>
             </po:copyButton>
@@ -26,7 +26,7 @@
             </po:copyButton>
             <po:copyButton
              id="copy_curateCrForm_role_status"
-             onclick="selectValueInSelectField('${pofn:escapeJavaScript(cr.status)}', 'curateRoleForm.role.status');"
+             onclick="selectValueInSelectField('${func:escapeJavaScript(cr.status)}', 'curateRoleForm.role.status');"
                 bodyStyle="clear:left; float:left;" buttonStyle="clear:right;float:right;">
                 <s:textfield label="%{getText('researchOrganization.status')}" name="cr.status" required="true" cssClass="required"/>
             </po:copyButton>
