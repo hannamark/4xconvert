@@ -126,6 +126,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         super.setServerPort(TstProperties.getServerPort());
         super.setBrowser(TstProperties.getSeleniumBrowser());
         super.setUp();
+        selenium.setSpeed("50");
     }
 
     @Override
@@ -232,7 +233,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
      * @return the row number where the text was found. -1 if not found
      */
     protected int getRow(String text, int column) {
-        return getRowHelper(text, column, false);    
+        return getRowHelper(text, column, false);
     }
 
     /**
@@ -264,7 +265,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
                 return row;
             } else if (text.equalsIgnoreCase(tblValue)) {
                 return row;
-            } 
+            }
 
             if (row % PAGE_SIZE == 0) {
                 // Moving to next page
@@ -279,7 +280,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
             }
         }
     }
-    
+
     protected void clickLinkInTable(String locator) {
         if (selenium.isElementPresent(locator)) {
             clickAndWait(locator);
@@ -291,7 +292,7 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
                 if (selenium.isElementPresent(locator)) {
                     clickAndWait(locator);
                     return;
-                }                
+                }
             }
         }
         fail("Locator not found in table: " + locator);

@@ -122,7 +122,12 @@ public enum OrganizationalContactSortCriterion implements PoSortCriterion<Organi
     /**
      * Sort by OrganizationalContact's status date.
      */
-    STATUS_DATE("statusDate", null);
+    STATUS_DATE("statusDate", null),
+
+    /**
+     * Sort by the OrganizationalContact type's code.
+     */
+    CONTACT_TYPE("type.code", null);
 
     private final String orderField;
     private final String leftJoinField;
