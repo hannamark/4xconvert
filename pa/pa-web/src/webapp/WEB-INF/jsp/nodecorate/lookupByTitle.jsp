@@ -9,8 +9,7 @@
             function submitform(persid, name) {   
                 var email = $(persid + 'email');
                 var phone = $(persid + 'phone');
-                
-                if(email == undefined || email.value == '') {
+                if (email == undefined || email.value == '') {
                     email = '';
                 } else {
                     email = email[$(persid + 'email').selectedIndex].value;
