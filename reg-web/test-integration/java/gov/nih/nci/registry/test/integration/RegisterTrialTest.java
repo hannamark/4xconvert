@@ -174,7 +174,8 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         waitForElementById("popupFrame", 60);
         selenium.selectFrame("popupFrame");
         clickAndWaitAjax("link=Add Org");
-        selenium.type("orgName", "PO-2098'test organization");
+        String orgName = "PO-2098'test organization";
+        selenium.type("orgName", orgName);
         selenium.type("orgAddress", "2115 E Jefferson St");
         selenium.type("orgCity", "Rockville");
         selenium.select("orgStateSelect", "label=MD");
@@ -192,7 +193,10 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         clickAndWaitAjax("link=Search");
         waitForElementById("row", 15);
         assertTrue("Wrong search results returned", selenium.isTextPresent("One item found"));
-        assertTrue("Wrong search results returned", selenium.isTextPresent("PO-2098'test organization"));
+        assertTrue("Wrong search results returned", selenium.isTextPresent(orgName));
+        clickAndWait("//table[@id='row']/tbody/tr[1]/td[7]/a/span/span");
+        selenium.selectWindow(null);
+        assertEquals("Wrong Principal investigator", orgName, selenium.getValue("name=trialDTO.leadOrganizationName"));
     }
     
     /**
@@ -233,6 +237,9 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
         waitForElementById("row", 15);
         assertTrue("Wrong search results returned", selenium.isTextPresent("One item found"));
         assertTrue("Wrong search results returned", selenium.isTextPresent("O'Grady"));
+        clickAndWait("//table[@id='row']/tbody/tr[1]/td[6]/a/span/span");
+        selenium.selectWindow(null);
+        assertEquals("Wrong Principal investigator", "O'Grady,Michael", selenium.getValue("name=trialDTO.piName"));
     }    
 
     private String getNciIdViaSearch(String trialName) {
