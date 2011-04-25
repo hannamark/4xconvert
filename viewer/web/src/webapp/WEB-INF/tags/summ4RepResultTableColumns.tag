@@ -14,8 +14,12 @@
         </c:forEach>
     </ol>
 </display:column>
+<display:column titleKey="report.result.nciIdentifier" property="nciIdentifier"/>
+<display:column titleKey="report.result.nctIdentifier" property="nctIdentifier"/>
+<display:column titleKey="report.result.ctepIdentifier" property="ctepIdentifier"/>
 <display:column titleKey="report.result.protoId" property="protoId"/>
 <display:column titleKey="report.result.pi" property="pi"/>
+<display:column titleKey="report.result.leadOrgName" property="leadOrgName"/>
 <display:column titleKey="report.result.programCode" property="programCode"/>
 <display:column titleKey="report.result.openDate" format="{0,date,dd-MM-yyyy}" property="openDate"/>
 <display:column titleKey="report.result.closedDate" format="{0,date,dd-MM-yyyy}" property="closedDate"/>

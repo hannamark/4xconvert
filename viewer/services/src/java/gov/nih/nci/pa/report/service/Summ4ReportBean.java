@@ -85,6 +85,13 @@ package gov.nih.nci.pa.report.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
@@ -95,6 +102,7 @@ import gov.nih.nci.pa.report.dto.criteria.Summ4RepCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.Summ4RepResultDto;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -126,6 +134,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
 
     private static final Logger LOG = Logger.getLogger(Summ4ReportBean.class);
     @EJB private StudyProtocolServiceLocal studyProtocolService = null;
+    @EJB private ProtocolQueryServiceLocal protocolQueryService = null;
     private static final int SPN_IDX = 0;
     private static final int PID_IDX = 1;
     private static final int PI_IDX = 2;
@@ -141,6 +150,13 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     private static final int SC_IDX = 12;
     private static final int SSC_IDX = 13;
     private static final int TRIAL_IDX = 14;
+    private static final int NCI_ID_IDX = 15;
+    private static final int LEAD_ORG_IDX = 16;
+    private static final int NCT_IDX = 17;
+    private static final int CTEP_IDX = 18;
+    private static final String SP_PROP_TRIAL_CLAUSE 
+        = "WHEN sp.proprietary_trial_indicator = FALSE AND ss.functional_code = '";
+    
     
     /** Db returned value for Epidemiologic/Other/Outcome. */
     public static final String EPIDEM_OUTCOME = "Epidemiologic/Other/Outcome";
@@ -172,7 +188,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
         this.studyProtocolService = studyProtocolService;
     }
-    
+      
     /**
      * Query for pulling summ4 data.
      * @param criteria dto.
@@ -210,9 +226,31 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + ") as accrual_center_todate, "        
         + "trial_list.sort_category, "
         + "trial_list.sort_sub_category, "
-        + "trial_list.trial_id "
+        + "trial_list.trial_id, "
+        + "trial_list.NciIdentifier, "
+        + "(select org_lo.name from study_site ss_lo, research_organization ro_lo, organization org_lo " 
+        + "where ss_lo.research_organization_identifier = ro_lo.identifier "
+        + "AND ro_lo.organization_identifier = org_lo.identifier "
+        + "AND ss_lo.functional_code = '" + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName()
+        + "' AND ss_lo.study_protocol_identifier = trial_list.trial_id "
+        + ") as lead_org_name, "
+        + "(select ss_nct.local_sp_indentifier from study_site ss_nct, research_organization ro_nct, "
+        + "organization org_nct where ss_nct.research_organization_identifier = ro_nct.identifier "
+        + "AND ro_nct.organization_identifier = org_nct.identifier "
+        + "AND ss_nct.functional_code = '" + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getName() 
+        + "' AND ss_nct.study_protocol_identifier = trial_list.trial_id "
+        + "AND org_nct.name = 'ClinicalTrials.gov' "
+        + ") as nct_identifier, "
+        + "(select ss_ctep.local_sp_indentifier from study_site ss_ctep, research_organization ro_ctep, "
+        + "organization org_ctep where ss_ctep.research_organization_identifier = ro_ctep.identifier "
+        + "AND ro_ctep.organization_identifier = org_ctep.identifier "
+        + "AND ss_ctep.functional_code = '" + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getName()
+        + "' AND ss_ctep.study_protocol_identifier = trial_list.trial_id "
+        + "AND org_ctep.name = 'Cancer Therapy Evaluation Program' "
+        + ") as ctep_identifier "
         + "from  "
         + "(select distinct "
+        + "sOi.extension as NciIdentifier, "
         + "sponsor_org.name as Sponsor, "
         + "sp.identifier as trial_id, "
         + "ss.identifier as Study_Site_Id, "
@@ -223,20 +261,27 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "THEN crs_p.last_name||', '||crs_p.first_name END as Pi, "
         + "sp.program_code_text as program_code,  "
         + "CASE  "
-        + "WHEN sp.proprietary_trial_indicator = TRUE AND ss.functional_code = 'LEAD_ORGANIZATION' THEN null  "
-        + "WHEN sp.proprietary_trial_indicator = TRUE AND ss.functional_code = 'TREATING_SITE' " 
-        + "THEN ss.accrual_date_range_low "
-        + "WHEN sp.proprietary_trial_indicator = FALSE AND ss.functional_code = 'LEAD_ORGANIZATION' THEN sp.start_date "
-        + "WHEN sp.proprietary_trial_indicator = FALSE AND ss.functional_code = 'TREATING_SITE' and " 
-        + "ssAs.status_code = 'RECRUITING' THEN ssAs.status_date "
+        + "WHEN sp.proprietary_trial_indicator = TRUE AND ss.functional_code = '" 
+        + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName()
+        + "' THEN null WHEN sp.proprietary_trial_indicator = TRUE AND ss.functional_code = '" 
+        + StudySiteFunctionalCode.TREATING_SITE.getName() + "' THEN ss.accrual_date_range_low "
+        + SP_PROP_TRIAL_CLAUSE
+        + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "' THEN sp.start_date "
+        + SP_PROP_TRIAL_CLAUSE
+        + StudySiteFunctionalCode.TREATING_SITE.getName() + "' and " 
+        + "ssAs.status_code = '" + RecruitmentStatusCode.RECRUITING.getName() + "' THEN ssAs.status_date "
         + "END as open_date, "
-        + "CASE WHEN sp.proprietary_trial_indicator = TRUE AND ss.functional_code = 'LEAD_ORGANIZATION' THEN null "
-        + "WHEN sp.proprietary_trial_indicator = TRUE AND ss.functional_code = 'TREATING_SITE' THEN " 
+        + "CASE WHEN sp.proprietary_trial_indicator = TRUE AND ss.functional_code = '"
+        + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "' THEN null "
+        + "WHEN sp.proprietary_trial_indicator = TRUE AND ss.functional_code = '"
+        + StudySiteFunctionalCode.TREATING_SITE.getName() + "' THEN " 
         + "ss.accrual_date_range_high "
-        + "WHEN sp.proprietary_trial_indicator = FALSE AND ss.functional_code = 'LEAD_ORGANIZATION' AND " 
-        + "ssOv.status_code = 'CLOSED_TO_ACCRUAL' THEN ssOv.status_date "
-        + "WHEN sp.proprietary_trial_indicator = FALSE AND ss.functional_code = 'TREATING_SITE' AND " 
-        + "ssAs.status_code = 'ACTIVE_NOT_RECRUITING' THEN ssAs.status_date "
+        + SP_PROP_TRIAL_CLAUSE
+        + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "' AND " 
+        + "ssOv.status_code = '" + StudyStatusCode.CLOSED_TO_ACCRUAL.getName() + "' THEN ssOv.status_date "
+        + SP_PROP_TRIAL_CLAUSE
+        + StudySiteFunctionalCode.TREATING_SITE.getName() + "' AND " 
+        + "ssAs.status_code = '" + RecruitmentStatusCode.ACTIVE_NOT_RECRUITING.getName() + "' THEN ssAs.status_date "
         + "END as closed_date, "
         + "sp.phase_code as phase, "
         + "sp.primary_purpose_code as type, "
@@ -271,14 +316,18 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "CAST(sr.organization_identifier AS INTEGER)  "
         + "left join study_indlde AS sindide ON sp.identifier = sindide.study_protocol_identifier "
         + "left join planned_activity AS plnAct ON sp.identifier = plnAct.study_protocol_identifier "
-        + "left join study_site AS ss2 ON ss2.functional_code = 'LEAD_ORGANIZATION' and " 
+        + "left join study_site AS ss2 ON ss2.functional_code = '"
+        + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "' and " 
         + "ss2.identifier = ss.identifier  "
-        + "where sp.status_code = 'ACTIVE'  "
-        + "and sm.milestone_code = 'QC_COMPLETE' "
-        + "and dws.status_code in ('ABSTRACTED','ABSTRACTION_VERIFIED_NORESPONSE'," 
-        + "'ABSTRACTION_VERIFIED_RESPONSE','AMENDMENT_SUBMITTED') "
+        + "where sp.status_code = '" + StudyStatusCode.ACTIVE.getName() + "'  "
+        + "and sm.milestone_code = '" + MilestoneCode.QC_COMPLETE.getName() + "' "
+        + "and dws.status_code in ('" + DocumentWorkflowStatusCode.ABSTRACTED.getName() 
+        + "',' " + DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getName() + "'," 
+        + "'" + DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getName() 
+        + "','" + DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED.getName() + "') "
         + "and sr.summ_4_rept_indicator = TRUE "
-        + "and ss.functional_code in ('LEAD_ORGANIZATION', 'TREATING_SITE') "
+        + "and ss.functional_code in ('" + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "', '"
+        + StudySiteFunctionalCode.TREATING_SITE.getName() + "') "
         + "and (ro_org.name = :ORG_NAME or hcf_org.name = :ORG_NAME) "
         + "and sp.start_date >= :LOW "
         + "and sp.pri_compl_date <= :HIGH "
@@ -352,10 +401,16 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
             rdto.setAccrualCenterToDate(IntConverter.convertToInt(convertToInteger(q[ACTD_IDX])));
             rdto.setSortCriteria(StConverter.convertToSt((String) q[SC_IDX]));
             rdto.setSubSortCriteria(StConverter.convertToSt((String) q[SSC_IDX]));
-            rdto.setAnatomicSiteCodes(studyProtocolService
-                    .getStudyProtocol(IiConverter.convertToStudyProtocolIi(((BigInteger) q[TRIAL_IDX]).longValue()))
-                    .getSummary4AnatomicSites()
-            );           
+            rdto.setNciIdentifier(StConverter.convertToSt((String) q[NCI_ID_IDX]));
+            rdto.setLeadOrgName(StConverter.convertToSt((String) q[LEAD_ORG_IDX]));
+            rdto.setNctIdentifier(StConverter.convertToSt((String) q[NCT_IDX]));
+            rdto.setCtepIdentifier(StConverter.convertToSt((String) q[CTEP_IDX]));
+            
+            Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(((BigInteger) q[TRIAL_IDX]).longValue());
+            StudyProtocolDTO spDTO = studyProtocolService
+            .getStudyProtocol(studyProtocolIi);
+            rdto.setAnatomicSiteCodes(spDTO.getSummary4AnatomicSites());
+            
             rList.add(rdto);
         }
         return rList;
@@ -389,6 +444,18 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         }
         
         return returnVal;
+    }
+    /**
+     * @param protocolQueryService the protocolQueryService to set
+     */
+    public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
+    }
+    /**
+     * @return the protocolQueryService
+     */
+    public ProtocolQueryServiceLocal getProtocolQueryService() {
+        return protocolQueryService;
     }
     
 }

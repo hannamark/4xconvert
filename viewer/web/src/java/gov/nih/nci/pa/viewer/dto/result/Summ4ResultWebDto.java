@@ -13,6 +13,8 @@ import java.util.List;
 /**
  * @author Max Shestopalov
  */
+// need all these fields
+@SuppressWarnings("PMD.TooManyFields")
 public final class Summ4ResultWebDto {
    
     private String sponsor = "";
@@ -30,7 +32,11 @@ public final class Summ4ResultWebDto {
     private String sortCriteria = "";
     private String subSortCriteria = "";
     private List<String> anatomicSites = null;
-    
+    private String nciIdentifier = "";
+    private String nctIdentifier = "";
+    private String ctepIdentifier = "";
+    private String leadOrgName = "";
+
     /**
      * Default constructor.
      */
@@ -58,7 +64,40 @@ public final class Summ4ResultWebDto {
         sortCriteria = StConverter.convertToString(dto.getSortCriteria());
         subSortCriteria = StConverter.convertToString(dto.getSubSortCriteria());
         anatomicSites = DSetConverter.convertDSetCdToList(dto.getAnatomicSiteCodes());
+        nciIdentifier = StConverter.convertToString(dto.getNciIdentifier());
+        nctIdentifier = StConverter.convertToString(dto.getNctIdentifier());
+        leadOrgName = StConverter.convertToString(dto.getLeadOrgName());
+        ctepIdentifier = StConverter.convertToString(dto.getCtepIdentifier());
     }
+    
+    /**
+     * @return the nciIdentifier
+     */
+    public String getNciIdentifier() {
+        return nciIdentifier;
+    }
+
+    /**
+     * @return the nctIdentifier
+     */
+    public String getNctIdentifier() {
+        return nctIdentifier;
+    }
+
+    /**
+     * @return the ctepIdentifier
+     */
+    public String getCtepIdentifier() {
+        return ctepIdentifier;
+    }
+
+    /**
+     * @return the leadOrgName
+     */
+    public String getLeadOrgName() {
+        return leadOrgName;
+    }
+
     
     /**
      * @return the sponsor

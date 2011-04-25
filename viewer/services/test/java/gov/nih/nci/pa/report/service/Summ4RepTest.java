@@ -154,6 +154,10 @@ public class Summ4RepTest
         List<Summ4RepResultDto> resultList = bean.get(criteria);
         assertEquals(resultList.size(), TestSchema.studySite.size());
         assertEquals(2, resultList.get(0).getAnatomicSiteCodes().getItem().size());
+        assertEquals("StudyProtocol", resultList.get(0).getLeadOrgName().getValue());
+        assertEquals("StudyProtocol", resultList.get(0).getNciIdentifier().getValue());
+        assertEquals("StudyProtocol", resultList.get(0).getNctIdentifier().getValue());
+        assertEquals("StudyProtocol", resultList.get(0).getCtepIdentifier().getValue());
     }
 
     @Test
@@ -182,10 +186,14 @@ public class Summ4RepTest
             + "sp.primary_purpose_code, "
             + "sp.public_tittle, "
             + "sp.max_target_accrual_num, "
-            + "1, 1,"
+            + "sp.identifier, sp.identifier, "
             + "sp.study_protocol_type,"
             + "sp.public_description, "
-            + "sp.identifier "
+            + "sp.identifier, "
+            + "sp.study_protocol_type, "
+            + "sp.study_protocol_type, "
+            + "sp.study_protocol_type, "
+            + "sp.study_protocol_type "
             + "from study_protocol sp, study_site ss "
             + "where 'Duke' = :ORG_NAME "
             + "and ss.study_protocol_identifier = sp.identifier "

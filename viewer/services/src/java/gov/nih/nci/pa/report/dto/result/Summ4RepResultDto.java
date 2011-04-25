@@ -9,6 +9,8 @@ import gov.nih.nci.iso21090.Ts;
 /**
  * @author Max Shestopalov
  */
+//need all these fields
+@SuppressWarnings("PMD.TooManyFields")
 public class Summ4RepResultDto {
 
     private St sponsor = new St();
@@ -26,6 +28,10 @@ public class Summ4RepResultDto {
     private St sortCriteria = new St();
     private St subSortCriteria = new St();
     private DSet<Cd> anatomicSiteCodes = new DSet<Cd>();
+    private St nciIdentifier = new St();
+    private St nctIdentifier = new St();
+    private St ctepIdentifier = new St();
+    private St leadOrgName = new St();
     
     /**
      * @return the sponsor
@@ -210,6 +216,54 @@ public class Summ4RepResultDto {
      */
     public DSet<Cd> getAnatomicSiteCodes() {
         return this.anatomicSiteCodes;
+    }
+    /**
+     * @param nciIdentifier the nciIdentifier to set
+     */
+    public void setNciIdentifier(St nciIdentifier) {
+        this.nciIdentifier = nciIdentifier;
+    }
+    /**
+     * @return the nciIdentifier
+     */
+    public St getNciIdentifier() {
+        return nciIdentifier;
+    }
+    /**
+     * @param nctIdentifier the nctIdentifier to set
+     */
+    public void setNctIdentifier(St nctIdentifier) {
+        this.nctIdentifier = nctIdentifier;
+    }
+    /**
+     * @return the nctIdentifier
+     */
+    public St getNctIdentifier() {
+        return nctIdentifier;
+    }
+    /**
+     * @param ctepIdentifier the ctepIdentifier to set
+     */
+    public void setCtepIdentifier(St ctepIdentifier) {
+        this.ctepIdentifier = ctepIdentifier;
+    }
+    /**
+     * @return the ctepIdentifier
+     */
+    public St getCtepIdentifier() {
+        return ctepIdentifier;
+    }
+    /**
+     * @param name the name to set
+     */
+    public void setLeadOrgName(St name) {
+        this.leadOrgName = name;
+    }
+    /**
+     * @return the name
+     */
+    public St getLeadOrgName() {
+        return this.leadOrgName;
     }
         
 }
