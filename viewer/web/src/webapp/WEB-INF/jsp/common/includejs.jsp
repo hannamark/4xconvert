@@ -7,6 +7,7 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/wwhbaseurl.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/control.tabs.js'/>"> </script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/scriptaculous/scriptaculous.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/scriptaculous/effects.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/scriptaculous/builder.js'/>"></script>

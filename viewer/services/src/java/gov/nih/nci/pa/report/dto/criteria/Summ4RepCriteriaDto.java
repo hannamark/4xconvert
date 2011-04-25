@@ -1,29 +1,25 @@
 package gov.nih.nci.pa.report.dto.criteria;
 
 import gov.nih.nci.iso21090.St;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * @author Max Shestopalov
  */
 public class Summ4RepCriteriaDto extends AbstractStandardCriteriaDto {
 
-    private St orgName = StConverter.convertToSt(null);
+    private final List<St> orgNames = new ArrayList<St>();
 
     /**
-     * @param orgName the orgName to set
+     * @return list of orgNames
      */
-    public void setOrgName(St orgName) {
-        this.orgName = orgName;
-    }
-
-    /**
-     * @return the orgName
-     */
-    public St getOrgName() {
-        return orgName;
+    public List<St> getOrgNames() {
+        return orgNames;
     }
 
     /**
@@ -33,8 +29,8 @@ public class Summ4RepCriteriaDto extends AbstractStandardCriteriaDto {
      */
     public static void validate(Object criteria) throws PAException {
         AbstractCriteriaDto.validate(criteria);
-        if (PAUtil.isStNull(((Summ4RepCriteriaDto) criteria).getOrgName())) {
-            throw new PAException("ERROR:  Organization criteria not entered.");
+        if (CollectionUtils.isEmpty(((Summ4RepCriteriaDto) criteria).getOrgNames())) {
+            throw new PAException("At least one Organization is required to run the Summary 4 Report.");
         }
     }
 }

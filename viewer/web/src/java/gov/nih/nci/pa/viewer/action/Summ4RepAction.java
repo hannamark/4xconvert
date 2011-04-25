@@ -13,15 +13,18 @@ import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 /**
  * @author Max Shestopalov
  */
-public class Summ4RepAction
+public class Summ4RepAction 
         extends AbstractReportAction <Summ4RepCriteriaWebDto, Summ4ResultWebDto> {
 
     private static final long serialVersionUID = 7222372874396709972L;
@@ -30,8 +33,12 @@ public class Summ4RepAction
     private final Map<String, List<Summ4ResultWebDto>> agentDeviceMap = new HashMap<String, List<Summ4ResultWebDto>>();
     private final Map<String, List<Summ4ResultWebDto>> otherInterventionMap
         = new HashMap<String, List<Summ4ResultWebDto>>();
-    
-    private List<String> autoCompleteResult;
+
+    private final Map<String, String> families = new TreeMap<String, String>();
+    private final Map<String, String> organizations = new TreeMap<String, String>();
+    private final List<String> autoCompleteResult = new ArrayList<String>();
+    private final List<String> orgSearchTypes = new ArrayList<String>();
+    private String orgSearchType = getText("report.orgSearchType.byName");
     
     /**
      * Limit of search results.
@@ -39,14 +46,13 @@ public class Summ4RepAction
     public static final int MAX_LIMIT = 100;
     
     /**
-     * @return the serialversionuid
+     * Default constructor.
      */
-    public static long getSerialversionuid() {
-        return serialVersionUID;
+    public Summ4RepAction() {
+        getOrgSearchTypes().add(getText("report.orgSearchType.byName"));
+        getOrgSearchTypes().add(getText("report.orgSearchType.byFamily"));
     }
-
-
-   
+    
     /**
      * @return the epidemOutcomeList
      */
@@ -69,22 +75,34 @@ public class Summ4RepAction
     @Override
     public String execute() {
         setCriteria(new Summ4RepCriteriaWebDto());
+        loadFamilies();
+        loadOrganizations();
         return super.execute();
+    }
+
+    private void loadFamilies() {
+        Summ4RepLocal local = ViewerServiceLocator.getInstance().getSumm4ReportService();
+        try {
+            getFamilies().clear();
+            getFamilies().putAll(local.getFamilies(MAX_LIMIT));
+        } catch (TooManyResultsException e) {
+            addActionError(e.getMessage());
+        }
     }
 
     private boolean isCriteriaValid() {
         boolean returnVal = true;
-        if (StringUtils.isEmpty(criteria.getOrgName())) {
+        if (CollectionUtils.isEmpty(criteria.getOrgNames()) && StringUtils.isBlank(criteria.getOrgName())) {
             addActionError("An Organization name is required.");
             returnVal = false;
         }
         
-        if (StringUtils.isEmpty(criteria.getIntervalStartDate())) {
+        if (StringUtils.isBlank(criteria.getIntervalStartDate())) {
             addActionError("A Start Date is required.");
             returnVal = false;
         }
         
-        if (StringUtils.isEmpty(criteria.getIntervalEndDate())) {
+        if (StringUtils.isBlank(criteria.getIntervalEndDate())) {
             addActionError("An End Date is required.");
             returnVal = false;
         }
@@ -96,7 +114,7 @@ public class Summ4RepAction
         if (!isCriteriaValid()) {
             return true;
         }
-       
+        
         Summ4RepLocal local = ViewerServiceLocator.getInstance().getSumm4ReportService();
         List<Summ4RepResultDto> isoList;
         try {
@@ -149,8 +167,9 @@ public class Summ4RepAction
      */
     @Override
     public String getReport() {
-        
-        
+        loadFamilies();
+        loadOrganizations();
+
         if (isReportInError()) {
             return super.execute();
         }
@@ -172,10 +191,34 @@ public class Summ4RepAction
     public String getAutoComplete() throws PAException {
         Summ4RepLocal local = ViewerServiceLocator.getInstance().getSumm4ReportService();
        
+        getAutoCompleteResult().clear();
         try {
-                autoCompleteResult = local.searchPoOrgNames(criteria.getOrgName(), MAX_LIMIT);
+            getAutoCompleteResult().addAll(local.searchPoOrgNames(criteria.getOrgName(), MAX_LIMIT));
         } catch (TooManyResultsException e) {
-            autoCompleteResult.add(criteria.getOrgName());
+            getAutoCompleteResult().add(criteria.getOrgName());
+        }    
+        
+        return super.getReport();
+    }
+
+    /**
+     * Get organizations based on family name.
+     * @return list
+     */
+    public String loadOrganizations() {
+        Summ4RepLocal local = ViewerServiceLocator.getInstance().getSumm4ReportService();
+        getOrganizations().clear();
+        if (criteria == null || StringUtils.isEmpty(criteria.getFamilyId())) {
+            return super.getReport();
+        }
+        try {
+            Map<String, String> orgMap = local.getOrganizations(criteria.getFamilyId(), MAX_LIMIT);
+            for (String orgName : orgMap.keySet()) {
+                getOrganizations().put(orgName,
+                        orgName.concat(" (" + orgMap.get(orgName).toUpperCase(Locale.getDefault()) + ")"));
+            }
+        } catch (TooManyResultsException e) {
+            addActionError(e.getMessage());
         }    
         
         return super.getReport();
@@ -202,6 +245,13 @@ public class Summ4RepAction
     }
 
     /**
+     * @return the organizations
+     */
+    public Map<String, String> getOrganizations() {
+        return organizations;
+    }
+
+    /**
      * @return the agentDeviceMap
      */
     public Map<String, List<Summ4ResultWebDto>> getAgentDeviceMap() {
@@ -214,5 +264,40 @@ public class Summ4RepAction
      */
     public Map<String, List<Summ4ResultWebDto>> getOtherInterventionMap() {
         return otherInterventionMap;
+    }
+
+    /**
+     * @return the families
+     */
+    public Map<String, String> getFamilies() {
+        return families;
+    }
+
+    /**
+     * @return the orgSearchTypes
+     */
+    public List<String> getOrgSearchTypes() {
+        return orgSearchTypes;
+    }
+    
+    /**
+     * @return the defaultOrgSearchType
+     */
+    public String getDefaultOrgSearchType() {
+        return "Find by Org Name";
+    }
+
+    /**
+     * @return the orgSearchType
+     */
+    public String getOrgSearchType() {
+        return orgSearchType;
+    }
+
+    /**
+     * @param orgSearchType the orgSearchType to set
+     */
+    public void setOrgSearchType(String orgSearchType) {
+        this.orgSearchType = orgSearchType;
     }
 }

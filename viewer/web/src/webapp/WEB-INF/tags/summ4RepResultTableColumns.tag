@@ -20,6 +20,7 @@
 <display:column titleKey="report.result.protoId" property="protoId"/>
 <display:column titleKey="report.result.pi" property="pi"/>
 <display:column titleKey="report.result.leadOrgName" property="leadOrgName"/>
+<display:column titleKey="report.result.orgMember" property="orgMember"/>
 <display:column titleKey="report.result.programCode" property="programCode"/>
 <display:column titleKey="report.result.openDate" format="{0,date,dd-MM-yyyy}" property="openDate"/>
 <display:column titleKey="report.result.closedDate" format="{0,date,dd-MM-yyyy}" property="closedDate"/>

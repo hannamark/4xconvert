@@ -84,12 +84,14 @@
 package gov.nih.nci.pa.report.service;
 
 import static org.junit.Assert.assertEquals;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -106,6 +108,7 @@ import gov.nih.nci.pa.util.PoRegistry;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -139,14 +142,12 @@ public class Summ4RepTest
         bean.get(criteria);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     @Test
     public void getTest() throws Exception {
         Summ4RepCriteriaDto criteria = new Summ4RepCriteriaDto();
-        criteria.setOrgName(StConverter.convertToSt("Duke"));
+        criteria.getOrgNames().clear();
+        criteria.getOrgNames().add(StConverter.convertToSt("Duke"));
         Ivl<Ts> wrk = new Ivl<Ts>();
         wrk.setLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2009")));
         wrk.setHigh(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2010")));
@@ -161,9 +162,42 @@ public class Summ4RepTest
     }
 
     @Test
-    public void getAutoComplete() throws Exception  {
+    public void testOrgClause() throws Exception  {
+        Summ4RepCriteriaDto criteria = new Summ4RepCriteriaDto();
+        criteria.getOrgNames().clear();
+        criteria.getOrgNames().add(StConverter.convertToSt("Duke1"));
+        criteria.getOrgNames().add(StConverter.convertToSt("Duke2"));
+        criteria.getOrgNames().add(StConverter.convertToSt("Duke3"));
+        criteria.getOrgNames().add(StConverter.convertToSt("Duke4"));
+        StringBuffer orgNameClause = new StringBuffer();
+        orgNameClause.append(" ((ro_org.name = :ORG_NAME0 or hcf_org.name = :ORG_NAME0)");
+        orgNameClause.append(" or ");
+        orgNameClause.append("(ro_org.name = :ORG_NAME1 or hcf_org.name = :ORG_NAME1)");
+        orgNameClause.append(" or ");
+        orgNameClause.append("(ro_org.name = :ORG_NAME2 or hcf_org.name = :ORG_NAME2)");
+        orgNameClause.append(" or ");
+        orgNameClause.append("(ro_org.name = :ORG_NAME3 or hcf_org.name = :ORG_NAME3)");
+        orgNameClause.append(") ");
+        String query = new Summ4ReportBean().generateSqlQuery(criteria).toString();
+        assertTrue(query.contains(orgNameClause.toString()));
+    }
+    
+    @Test
+    public void testOrgSearch() throws Exception  {
         List<String> orgs =  bean.searchPoOrgNames("OrgName", 10);
         assertEquals(5, orgs.size());
+    }
+    
+    @Test
+    public void testGetOrganizations() throws Exception  {
+        assertEquals(0, bean.getOrganizations("0", 10).size());
+        assertEquals(1, bean.getOrganizations("1", 10).size());
+    }
+
+    @Test
+    public void testGetFamilies() throws Exception  {
+        Map<String, String> families =  bean.getFamilies(10);
+        assertEquals(5, families.size());
     }
 
     private class Summ4RepBeanExtenderForTest extends Summ4ReportBean {
@@ -193,9 +227,11 @@ public class Summ4RepTest
             + "sp.study_protocol_type, "
             + "sp.study_protocol_type, "
             + "sp.study_protocol_type, "
-            + "sp.study_protocol_type "
+            + "sp.study_protocol_type, "
+            + "'', "
+            + "'Duke' "
             + "from study_protocol sp, study_site ss "
-            + "where 'Duke' = :ORG_NAME "
+            + "where 'Duke' = :ORG_NAME0 "
             + "and ss.study_protocol_identifier = sp.identifier "
             + "and :LOW <= now() "
             + "and :HIGH <= now() "

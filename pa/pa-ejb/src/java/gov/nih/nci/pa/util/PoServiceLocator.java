@@ -8,6 +8,7 @@ import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.family.FamilyServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
@@ -75,5 +76,11 @@ public interface PoServiceLocator {
      * @return IdentifiedPersonCorrelationServiceRemote
      */
     IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService();
+
+    /**
+     *
+     * @return FamilyServiceRemote
+     */
+    FamilyServiceRemote getFamilyService();
 
 }

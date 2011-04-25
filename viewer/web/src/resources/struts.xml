@@ -116,5 +116,9 @@
             <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/nodecorate/summ4RepAutoCompleteResult.jsp</result> 
         </action>
+        <action name="refreshOrganizations*" class="gov.nih.nci.pa.viewer.action.{1}Action" method="loadOrganizations">
+            <interceptor-ref name="methodValidationStack" />
+            <result>/WEB-INF/jsp/nodecorate/summ4RepOrganizationsResult.jsp</result> 
+        </action>
     </package>
 </struts>

@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.EnOn;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.coppa.services.LimitOffset;
@@ -29,6 +30,8 @@ public class MockPoOrganizationEntityService implements OrganizationEntityServic
     final private Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
 
     private final List<OrganizationDTO> orgDtoList;
+    private final Map<String, String[]> familyOrgMap;
+
 
     public MockPoOrganizationEntityService() {
         orgDtoList = new ArrayList<OrganizationDTO>();
@@ -39,6 +42,9 @@ public class MockPoOrganizationEntityService implements OrganizationEntityServic
         orgDtoList.add(basicOrgDto("584"));
 
         orgDtoList.add(basicOrgDto("22"));
+        familyOrgMap = new HashMap<String, String[]>();
+        familyOrgMap.put("family1", new String[] {"22", "1"});
+        familyOrgMap.put("family2", new String[] {"abc"});
         
         OrganizationDTO orgDto = basicOrgDto("2");
         orgDto.setStatusCode(CdConverter.convertStringToCd("NULLIFIED"));  
@@ -48,20 +54,15 @@ public class MockPoOrganizationEntityService implements OrganizationEntityServic
         nullifiedEntities.put(IiConverter.convertToPoOrganizationIi("2"), IiConverter.convertToPoOrganizationIi("22"));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seegov.nih.nci.services.organization.OrganizationEntityServiceRemote#createOrganization(gov.nih.nci.services.
-     * organization.OrganizationDTO)
+    /**
+     * {@inheritDoc}
      */
     public Ii createOrganization(OrganizationDTO arg0) throws EntityValidationException {
         return IiConverter.convertToPoOrganizationIi("1");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#getOrganization(gov.nih.nci.iso21090.Ii)
+    /**
+     * {@inheritDoc}
      */
     public OrganizationDTO getOrganization(Ii id) throws NullifiedEntityException {
         if (NullFlavor.NA.equals(id.getNullFlavor())) {
@@ -79,11 +80,8 @@ public class MockPoOrganizationEntityService implements OrganizationEntityServic
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seegov.nih.nci.services.organization.OrganizationEntityServiceRemote#search(gov.nih.nci.services.organization.
-     * OrganizationDTO)
+    /**
+     * {@inheritDoc}
      */
     @Deprecated
     public List<OrganizationDTO> search(OrganizationDTO arg0) {
@@ -98,46 +96,32 @@ public class MockPoOrganizationEntityService implements OrganizationEntityServic
         return matchingDtosList;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seegov.nih.nci.services.organization.OrganizationEntityServiceRemote#updateOrganization(gov.nih.nci.services.
-     * organization.OrganizationDTO)
+    /**
+     * {@inheritDoc}
      */
     public void updateOrganization(OrganizationDTO arg0) throws EntityValidationException {
         // TODO Auto-generated method stub
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * gov.nih.nci.services.organization.OrganizationEntityServiceRemote#updateOrganizationStatus(gov.nih.nci.iso21090
-     * .Ii, gov.nih.nci.iso21090.Cd)
+    /**
+     * {@inheritDoc}
      */
     public void updateOrganizationStatus(Ii arg0, Cd arg1) throws EntityValidationException {
         // TODO Auto-generated method stub
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * gov.nih.nci.services.organization.OrganizationEntityServiceRemote#validate(gov.nih.nci.services.organization.
-     * OrganizationDTO)
+    /**
+     * {@inheritDoc}
      */
     public Map<String, String[]> validate(OrganizationDTO arg0) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @seegov.nih.nci.services.organization.OrganizationEntityServiceRemote#search(gov.nih.nci.services.organization.
-     * OrganizationDTO, gov.nih.nci.coppa.services.LimitOffset)
+    /**
+     * {@inheritDoc}
      */
     public List<OrganizationDTO> search(OrganizationDTO arg0, LimitOffset arg1) throws TooManyResultsException {
         List<OrganizationDTO> matchingDtosList = new ArrayList<OrganizationDTO>();
@@ -173,6 +157,25 @@ public class MockPoOrganizationEntityService implements OrganizationEntityServic
         orgDto.setPostalAddress(AddressConverterUtil.create("streetAddressLine", "deliveryAddressLine",
                 "cityOrMunicipality", "stateOrProvince", "postalCode", "USA"));
         return orgDto;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<OrganizationDTO> search(OrganizationDTO arg0, EnOn arg1, LimitOffset arg2)
+            throws TooManyResultsException {
+        List<OrganizationDTO> matchingDtosList = new ArrayList<OrganizationDTO>();
+        String[] orgIds = familyOrgMap.get(EnOnConverter.convertEnOnToString(arg1));
+        if( orgIds != null ) {
+            for (String orgId : orgIds) {
+                for (OrganizationDTO dto : orgDtoList) {
+                    if (dto.getIdentifier().getExtension().equals(orgId)) {
+                        matchingDtosList.add(dto);
+                    }
+                }
+            }
+        }
+        return matchingDtosList;
     }
     
 }

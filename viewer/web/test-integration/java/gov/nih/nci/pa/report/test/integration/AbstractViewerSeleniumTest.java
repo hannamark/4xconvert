@@ -139,9 +139,25 @@ public abstract class AbstractViewerSeleniumTest extends AbstractSeleneseTestCas
         assertTrue(selenium.isTextPresent("SUPPORT"));
     }
     
+    private void verifyReportsMenu() {
+        assertTrue(selenium.isElementPresent("link=Summary of Submission"));
+        assertTrue(selenium.isElementPresent("link=Trial Processing"));
+        assertTrue(selenium.isElementPresent("link=Portfolio Average Milestone"));
+        assertTrue(selenium.isElementPresent("link=Trials Submitted by Date"));
+        assertTrue(selenium.isElementPresent("link=Trials Submitted by Institution"));
+        assertTrue(selenium.isElementPresent("link=Current Milestone"));
+        assertTrue(selenium.isElementPresent("link=Summary 4 Type"));
+        assertTrue(selenium.isElementPresent("link=Log Out"));
+    }
+
+    protected void verifyCTROWelcomePage() {
+        verifyReportsMenu();
+    }
+    
     protected void disclaimer(boolean accept) {
         if (accept) {
             clickAndWait("id=acceptDisclaimer");
+            verifyCTROWelcomePage();
         } else {
             clickAndWait("id=rejectDisclaimer");
             verifyHomePage();

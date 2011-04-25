@@ -8,6 +8,7 @@ import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.family.FamilyServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
@@ -126,5 +127,12 @@ public final class PoRegistry {
      */
     public static IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() {
         return getInstance().getPoServiceLocator().getIdentifiedPersonEntityService();
+    }
+
+    /**
+     * @return FamilyServiceRemote
+     */
+    public static FamilyServiceRemote getFamilyService() {
+        return getInstance().getPoServiceLocator().getFamilyService();
     }
 }

@@ -19,12 +19,49 @@ function handleReset(){
     document.forms[0].action="criteriaSumm4Rep.action";
     document.forms[0].submit();
 }
+function loadOrgsDiv() { 
+    var familyId = $('familyId').value;
+    var div = $('organization_choices');
+    if (familyId == "") {
+        div.innerHTML = "";
+        return false;
+    }
+    var url = '/viewer/ctro/ajax/refreshOrganizationsSumm4Rep.action';
+    var params = { "criteria.familyId": familyId };
+    div.innerHTML = '<div align="left"><img  src="/viewer/images/loading.gif"/>&nbsp;Loading...</div>';
+    var aj = callAjaxPost(div, url, params);
+    return false;
+}
+function selectAll(checkbox, selectBox) {
+    var selectValue = false;
+    if (checkbox.checked) {
+        selectValue = true;
+    }
+    var selectBox = $(selectBox);
+    for (var i = 0; i < selectBox.options.length; i++) {
+        selectBox.options[i].selected = selectValue;
+    }
+}
+function displaySearch() {
+    var selected = $('criteria').getInputs('radio','orgSearchType').find(function(radio) { return radio.checked; });
+    if (selected == undefined || selected.value == "Find by Org Name") {
+        $('familyId').value = "";
+        $('organization_choices').innerHTML = "";
+        $('familyId').disabled = true;
+        $('autocomplete').disabled = false;
+    } else {
+        $('familyId').disabled = false;
+        $('autocomplete').value = "";
+        $('autocomplete').disabled = true;
+    }
+}
+
 </script>
 </head>
 <body>
 <!-- main content begins-->
     <h1><fmt:message key="summ4Rep.header"/></h1>
-    <s:form name="criteria">
+    <s:form name="criteria" id="criteria">
         <table class="form">
             <s:if test="hasActionErrors()"><tr><td colspan="2"><div class="error_msg"><s:actionerror /></div></td></tr></s:if> 
             <tr><td colspan="2">
@@ -36,7 +73,7 @@ function handleReset(){
                     <span class="required">*</span>
                 </td>
                 <td class="value">
-                    <s:textfield name="criteria.intervalStartDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                    <s:textfield id="intervalStartDate" name="criteria.intervalStartDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                     <a href="javascript:showCal('Cal1')">
                         <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
                     </a>
@@ -48,7 +85,7 @@ function handleReset(){
                     <span class="required">*</span>
                 </td>
                 <td class="value">
-                    <s:textfield name="criteria.intervalEndDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                    <s:textfield id="intervalEndDate" name="criteria.intervalEndDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                     <a href="javascript:showCal('Cal2')">
                         <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
                     </a>
@@ -58,28 +95,48 @@ function handleReset(){
             <tr><td colspan="2">
                 <p style="margin:0; padding:20"><fmt:message key="report.organizationName"/></p>
             </td></tr>
-            <tr> 
-                <td class="label">
-                    <label><fmt:message key="report.criteria.organizationName"/></label>
-                    <span class="required">*</span>
-                </td>
-                <td class="value">
-                
-                    <s:textfield 
-                        id="autocomplete" name="criteria.orgName" maxlength="100" size="100" 
-                        cssStyle="width:200px;float:left"/>
-                        
-                        <div id="autocomplete_choices" class="autocomplete"></div>            
-                        <script type="text/javascript" language="javascript" charset="utf-8">
-                        // <![CDATA[
-                          new Ajax.Autocompleter("autocomplete", 
-                        		   "autocomplete_choices", 
-                                   "/viewer/ctro/ajax/refreshAutocompleteResultsSumm4Rep.action",
-                                   {minChars: 2});
-                        // ]]>
-                        </script>   
-                </td>
-            </tr>
+            <s:iterator value="orgSearchTypes" var="orgSearchType">
+                <s:if test="#orgSearchType == 'Find by Org Name'">
+                    <tr> 
+                        <td class="label">
+                            <label><s:radio name="orgSearchType" list="#orgSearchType" onchange="displaySearch()"/></label>
+                        </td>
+                        <td class="value">
+                            <s:textfield 
+                                id="autocomplete" name="criteria.orgName" maxlength="100" size="100" 
+                                cssStyle="width:200px;float:left"/>
+                                
+                                <div id="autocomplete_choices" class="autocomplete"></div>            
+                                <script type="text/javascript" language="javascript" charset="utf-8">
+                                // <![CDATA[
+                                  new Ajax.Autocompleter("autocomplete", 
+                                		   "autocomplete_choices", 
+                                           "/viewer/ctro/ajax/refreshAutocompleteResultsSumm4Rep.action",
+                                           {minChars: 2});
+                                // ]]>
+                                </script>   
+                        </td>
+                    </tr>
+                </s:if>
+                <s:elseif test="#orgSearchType == 'Find by Family'">
+                    <tr> 
+                        <td class="label">
+                            <label><s:radio name="orgSearchType" list="#orgSearchType" onchange="displaySearch()"/></label>
+                        </td>
+                        <td class="value">
+                            <s:select id="familyId" name="criteria.familyId" list="families" onchange="loadOrgsDiv()" headerKey="" headerValue="--Select--"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">&nbsp;</td>
+                        <td class="value">
+                            <div id="organization_choices">
+                                <jsp:include page="/WEB-INF/jsp/nodecorate/summ4RepOrganizationsResult.jsp"/>
+                            </div>  
+                        </td>
+                    </tr>    
+                </s:elseif>        
+            </s:iterator>
         </table>
         <div class="actionsrow">
             <del class="btnwrapper">
@@ -93,6 +150,7 @@ function handleReset(){
                 </ul>   
             </del>
         </div>
+        <script type="text/javascript">displaySearch();</script>
         <table width="100%">
             <tr><td colspan="2">
                 <h2><fmt:message key="summ4Rep.header"/></h2>
@@ -106,7 +164,7 @@ function handleReset(){
                 </td>
                 <td>
                     <fmt:message key="report.header.user"/>
-                    <%=request.getRemoteUser()%>
+                    <viewer:displayUser />
                 </td>
             </tr>
             <tr><td colspan="2">

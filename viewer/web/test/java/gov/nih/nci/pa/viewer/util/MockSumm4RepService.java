@@ -77,6 +77,7 @@
 package gov.nih.nci.pa.viewer.util;
 
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
@@ -92,6 +93,8 @@ import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class MockSumm4RepService extends MockService implements Summ4RepLocal {
 
@@ -153,6 +156,24 @@ public class MockSumm4RepService extends MockService implements Summ4RepLocal {
         List<String> returnList = new ArrayList<String>();
         returnList.add("org1");
         returnList.add("org2");
+        return returnList;
+    }
+
+    public Map<String, String> getFamilies(int maxLimit) throws TooManyResultsException {
+        Map<String, String> returnList = new TreeMap<String, String>();
+        returnList.put("1", "Family1");
+        returnList.put("2", "Family2");
+        returnList.put("3", "Family3");
+        returnList.put("4", "Family4");
+        returnList.put("5", "Family5");
+        return returnList;
+    }
+
+    public Map<String, String> getOrganizations(String familyName, int maxLimit) throws TooManyResultsException {
+        Map<String, String> returnList = new TreeMap<String, String>();
+        returnList.put("org1", "org1 (CONTRACTUAL)");
+        returnList.put("org2", "org2 (ORGANIZATIONAL)");
+        returnList.put("org3", "org3 (CONTRACTUAL)");
         return returnList;
     }
 

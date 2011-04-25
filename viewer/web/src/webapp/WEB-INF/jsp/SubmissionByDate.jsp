@@ -105,7 +105,7 @@ function handleReset(){
                 </td>
                 <td>
                     <fmt:message key="report.header.user"/>
-                    <%=request.getRemoteUser()%>
+                    <viewer:displayUser />
                 </td>
             </tr>
             <tr><td><br/></td></tr>

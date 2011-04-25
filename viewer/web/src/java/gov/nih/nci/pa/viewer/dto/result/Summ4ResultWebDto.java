@@ -16,11 +16,12 @@ import java.util.List;
 // need all these fields
 @SuppressWarnings("PMD.TooManyFields")
 public final class Summ4ResultWebDto {
-   
+
     private String sponsor = "";
     private String protoId = "";
     private String pi = "";
     private String programCode = "";
+    private String orgMember = "";
     private Timestamp openDate = null;
     private Timestamp closedDate = null;
     private String phase = "";
@@ -53,6 +54,7 @@ public final class Summ4ResultWebDto {
         protoId = StConverter.convertToString(dto.getProtoId());
         pi = StConverter.convertToString(dto.getPi());
         programCode = StConverter.convertToString(dto.getProgramCode());
+        orgMember = StConverter.convertToString(dto.getOrgMember());
         openDate = TsConverter.convertToTimestamp(dto.getOpenDate());
         closedDate = TsConverter.convertToTimestamp(dto.getClosedDate());
         phase = StConverter.convertToString(dto.getPhase());
@@ -128,6 +130,13 @@ public final class Summ4ResultWebDto {
     }
 
     /**
+     * @return the orgMember
+     */
+    public String getOrgMember() {
+        return orgMember;
+    }
+
+    /**
      * @return the openDate
      */
     public Timestamp getOpenDate() {
@@ -196,26 +205,26 @@ public final class Summ4ResultWebDto {
     public String getSubSortCriteria() {
         return subSortCriteria;
     }
-    
+
     /**
      * @return the anatomicSite
      */
     public List<String> getAnatomicSites() {
         return this.anatomicSites;
     }
-    
+
     /**
      * Static method for generating a list of web dto's from a list of service dto's.
+     * 
      * @param serviceDtoList service dto list
      * @return web dto list
      */
     public static List<Summ4ResultWebDto> getWebList(List<Summ4RepResultDto> serviceDtoList) {
         List<Summ4ResultWebDto> resultList = new ArrayList<Summ4ResultWebDto>();
-        
+
         for (Summ4RepResultDto dto : serviceDtoList) {
             resultList.add(new Summ4ResultWebDto(dto));
         }
         return resultList;
     }
- 
 }

@@ -8,6 +8,7 @@ import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.family.FamilyServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
@@ -96,6 +97,14 @@ public class PoJndiServiceLocator implements PoServiceLocator {
     public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() {
         String serverInfo = "/po/IdentifiedPersonCorrelationServiceBean/remote";
         return (IdentifiedPersonCorrelationServiceRemote) JNDIUtil.lookupPo(serverInfo);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public FamilyServiceRemote getFamilyService() {
+        String serverInfo = "/po/FamilyServiceRemoteBean/remote";
+        return (FamilyServiceRemote) JNDIUtil.lookupPo(serverInfo);
     }
 
 }

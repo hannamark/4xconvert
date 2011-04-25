@@ -103,8 +103,32 @@ public class Summ4RepActionTest extends AbstractReportActionTest<Summ4RepAction>
     }
 
     @Test
-    public void noCriteriaReportTest() {
+    public void noCriteriaOrgNameReportTest() {
         // user selects type of report
+        assertEquals(Action.SUCCESS, action.getReport());
+        assertTrue(action.getActionErrors().size() > 0);
+        
+        action.getCriteria().getOrgNames().add("Duke");
+        assertEquals(Action.SUCCESS, action.getReport());
+        assertTrue(action.getActionErrors().size() > 0);
+    }
+    
+    @Test
+    public void noCriteriaEndDateReportTest() {
+        // user selects type of report
+        action.getCriteria().getOrgNames().add("Duke");
+        action.getCriteria().setIntervalStartDate(DATE_1);
+        action.getCriteria().setIntervalEndDate(null);
+        assertEquals(Action.SUCCESS, action.getReport());
+        assertTrue(action.getActionErrors().size() > 0);
+    }
+    
+    @Test
+    public void noCriteriaStartDateReportTest() {
+        // user selects type of report
+        action.getCriteria().setOrgName("Duke");
+        action.getCriteria().setIntervalStartDate(null);
+        action.getCriteria().setIntervalEndDate(DATE_2);
         assertEquals(Action.SUCCESS, action.getReport());
         assertTrue(action.getActionErrors().size() > 0);
     }
@@ -113,6 +137,7 @@ public class Summ4RepActionTest extends AbstractReportActionTest<Summ4RepAction>
     public void executeTest() {
         // user selects type of report
         assertEquals(Action.SUCCESS, action.execute());
+        assertEquals(0, action.getActionErrors().size());
     }
     
     @Test 
@@ -130,9 +155,10 @@ public class Summ4RepActionTest extends AbstractReportActionTest<Summ4RepAction>
         assertEquals(Action.SUCCESS, action.execute());
 
         // user enters criteria
+        action.getCriteria().setFamilyId("1");
         action.getCriteria().setIntervalStartDate(DATE_1);
         action.getCriteria().setIntervalEndDate(DATE_2);
-        action.getCriteria().setOrgName("Duke");
+        action.getCriteria().getOrgNames().add("Duke");
 
         // user clicks "Run report"
         assertEquals(Action.SUCCESS, action.getReport());
@@ -175,5 +201,13 @@ public class Summ4RepActionTest extends AbstractReportActionTest<Summ4RepAction>
         assertEquals(1, action.getOtherInterventionMap().get("NATIONAL").size());
         assertEquals(1, action.getOtherInterventionMap().get("INSTITUTIONAL").size());
         assertEquals(1, action.getOtherInterventionMap().get("EXTERNALLY_PEER_REVIEWED").size());
+    }
+    
+    
+    @Test
+    public void testLoadOrg() {
+        // user selects type of report
+        assertEquals(Action.SUCCESS, action.loadOrganizations());
+        assertEquals(0, action.getActionErrors().size());
     }
 }

@@ -213,6 +213,12 @@ public class IiConverter {
     /** The ii root value for orgs. */
     public static final String ORG_ROOT = "2.16.840.1.113883.3.26.4.2";
 
+    /** The identifier name for family. */
+    public static final String FAMILY_IDENTIFIER_NAME = "Family identifier";
+    
+    /** The ii base root value for family. */
+    public static final String FAMILY_ROOT = "2.16.840.1.113883.3.26.4.6.1";
+
     /** The identifier name for person ii's. */
     public static final String PERSON_IDENTIFIER_NAME = "NCI person entity identifier";
 
@@ -553,6 +559,18 @@ public class IiConverter {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(PERSON_PA_IDENTIFIER_NAME);
         ii.setRoot(PERSON_ROOT);
+        return ii;
+    }
+
+    /**
+     * converts to Po Family Ii.
+     * @param id id
+     * @return Ii
+     */
+    public static Ii convertToPoFamilyIi(String id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(ORG_IDENTIFIER_NAME);
+        ii.setRoot(FAMILY_ROOT);
         return ii;
     }
 

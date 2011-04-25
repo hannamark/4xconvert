@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.util;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
@@ -103,6 +104,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
@@ -117,6 +119,8 @@ import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemo
 import gov.nih.nci.services.correlation.OversightCommitteeDTO;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
+import gov.nih.nci.services.family.FamilyDTO;
+import gov.nih.nci.services.family.FamilyServiceRemote;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonDTO;
@@ -124,9 +128,11 @@ import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -355,6 +361,28 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
             LOG.error(ERROR_MSG, e);
         }
         return roOrgSvc;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public FamilyServiceRemote getFamilyService() {
+        FamilyServiceRemote remote = mock(FamilyServiceRemote.class);
+        try {
+            FamilyDTO family = new FamilyDTO();
+            family.setName(EnOnConverter.convertToEnOn("some family name"));
+            family.setStatusCode(CdConverter.convertStringToCd("active"));
+            family.setIdentifier(null);
+            List<FamilyDTO> familyList = new ArrayList<FamilyDTO>();
+            familyList.add(family);
+            when(remote.getFamily(any(Ii.class))).thenReturn(family);
+            when(remote.search(any(FamilyDTO.class), any(LimitOffset.class))).thenReturn(familyList);
+            when(remote.getActiveRelationships(anyLong())).thenReturn(
+                    new ArrayList<FamilyOrganizationRelationshipDTO>());
+        } catch (Exception e) {
+            LOG.error(ERROR_MSG, e);
+        }
+        return remote;
     }
 
     /**

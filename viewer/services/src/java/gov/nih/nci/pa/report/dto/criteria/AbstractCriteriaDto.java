@@ -17,7 +17,7 @@ public class AbstractCriteriaDto {
      */
     public static void validate(Object criteria) throws PAException {
         if (criteria == null) {
-            throw new PAException("ERROR:  Criteria is null.");
+            throw new PAException("Criteria is null.");
         }
     }
 }

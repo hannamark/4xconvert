@@ -17,6 +17,7 @@ public class Summ4RepResultDto {
     private St protoId = new St();
     private St pi = new St();
     private St programCode = new St();
+    private St orgMember = new St();
     private Ts openDate = new Ts();
     private Ts closedDate = new Ts();
     private St phase = new St();
@@ -82,6 +83,20 @@ public class Summ4RepResultDto {
         this.programCode = programCode;
     }
   
+    /**
+     * @return the orgMember
+     */
+    public St getOrgMember() {
+        return orgMember;
+    }
+    
+    /**
+     * @param orgMember the orgMember to set
+     */
+    public void setOrgMember(St orgMember) {
+        this.orgMember = orgMember;
+    }
+
     /**
      * @return the openDate
      */
@@ -265,5 +280,4 @@ public class Summ4RepResultDto {
     public St getLeadOrgName() {
         return this.leadOrgName;
     }
-        
 }

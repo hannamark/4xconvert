@@ -85,6 +85,7 @@ package gov.nih.nci.pa.report.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -106,6 +107,8 @@ import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
+import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.lang.reflect.InvocationTargetException;
@@ -114,13 +117,14 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Hibernate;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -132,7 +136,6 @@ import org.hibernate.Session;
 public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteriaDto, Summ4RepResultDto>
         implements Summ4RepLocal {
 
-    private static final Logger LOG = Logger.getLogger(Summ4ReportBean.class);
     @EJB private StudyProtocolServiceLocal studyProtocolService = null;
     @EJB private ProtocolQueryServiceLocal protocolQueryService = null;
     private static final int SPN_IDX = 0;
@@ -154,6 +157,8 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     private static final int LEAD_ORG_IDX = 16;
     private static final int NCT_IDX = 17;
     private static final int CTEP_IDX = 18;
+    private static final int HCFORG_IDX = 19;
+    private static final int ROORG_IDX = 20;
     private static final String SP_PROP_TRIAL_CLAUSE 
         = "WHEN sp.proprietary_trial_indicator = FALSE AND ss.functional_code = '";
     
@@ -214,16 +219,17 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "where sub1.study_site_identifier = trial_list.Study_Site_id "
         + "and sub1.study_protocol_identifier = trial_list.trial_id "
         + "and sub1.status_code <> 'PENDING' "); 
-        sql.append(dateRangeSql(criteria, "perAct.registration_date")); 
-        sql.append(") as accrual_center_12m, "
-        + "(select count(sub1.patient_identifier) from study_subject sub1  "
-        + "inner join performed_activity AS perAct ON perAct.study_subject_identifier = sub1.identifier  "
-        + "AND perAct.study_protocol_identifier = sub1.study_protocol_identifier "
-        + "where sub1.study_site_identifier = trial_list.Study_Site_id  "
-        + "and sub1.study_protocol_identifier = trial_list.trial_id "
-        + "and sub1.status_code <> 'PENDING'  "
-        + "and perAct.registration_date <= now() "
-        + ") as accrual_center_todate, "        
+        sql.append(dateRangeSql(criteria, "perAct.registration_date"));
+        String accrualCenterToDate = ") as accrual_center_12m, "
+            + "(select count(sub1.patient_identifier) from study_subject sub1  "
+            + "inner join performed_activity AS perAct ON perAct.study_subject_identifier = sub1.identifier  "
+            + "AND perAct.study_protocol_identifier = sub1.study_protocol_identifier "
+            + "where sub1.study_site_identifier = trial_list.Study_Site_id  "
+            + "and sub1.study_protocol_identifier = trial_list.trial_id "
+            + "and sub1.status_code <> 'PENDING'  "
+            + "and perAct.registration_date <= now() "
+            + ") as accrual_center_todate, "; 
+        sql.append(accrualCenterToDate
         + "trial_list.sort_category, "
         + "trial_list.sort_sub_category, "
         + "trial_list.trial_id, "
@@ -247,7 +253,9 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "AND ss_ctep.functional_code = '" + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getName()
         + "' AND ss_ctep.study_protocol_identifier = trial_list.trial_id "
         + "AND org_ctep.name = 'Cancer Therapy Evaluation Program' "
-        + ") as ctep_identifier "
+        + ") as ctep_identifier, "
+        + "trial_list.hcf_org_name,  "
+        + "trial_list.ro_org_name  "
         + "from  "
         + "(select distinct "
         + "sOi.extension as NciIdentifier, "
@@ -294,7 +302,9 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "WHEN sp.primary_purpose_code = 'ANCILLARY' OR sp.primary_purpose_code = 'CORRELATIVE' " 
         + "THEN :ANCILLARY_CORRELATIVE "
         + "END as sort_category, "
-        + "sr.type_code as sort_sub_category "
+        + "sr.type_code as sort_sub_category, "
+        + "hcf_org.name as hcf_org_name, "
+        + "ro_org.name as ro_org_name "
         + "from study_protocol sp  "
         + "inner JOIN document_workflow_status AS dws ON sp.identifier = dws.study_protocol_identifier "
         + "inner JOIN study_milestone AS sm ON sp.identifier = sm.study_protocol_identifier  "
@@ -327,9 +337,9 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "','" + DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED.getName() + "') "
         + "and sr.summ_4_rept_indicator = TRUE "
         + "and ss.functional_code in ('" + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "', '"
-        + StudySiteFunctionalCode.TREATING_SITE.getName() + "') "
-        + "and (ro_org.name = :ORG_NAME or hcf_org.name = :ORG_NAME) "
-        + "and sp.start_date >= :LOW "
+        + StudySiteFunctionalCode.TREATING_SITE.getName() + "') ");
+        sql.append(generateOrgClause(criteria));
+        sql.append("and sp.start_date >= :LOW "
         + "and sp.pri_compl_date <= :HIGH "
         + ") trial_list  "
         + "where "
@@ -339,6 +349,20 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         return sql;
     }
     
+    private String generateOrgClause(Summ4RepCriteriaDto criteria) {
+        int size = criteria.getOrgNames().size();
+        StringBuffer orgNameClause = new StringBuffer("and (");
+        for (int i = 0; i < size; i++) {
+            final String paramName = ":ORG_NAME" + i;
+            orgNameClause.append("(ro_org.name = " + paramName + " or hcf_org.name = " + paramName + ")");
+            if (i != size - 1) {
+                orgNameClause.append(" or ");
+            }
+        }
+        orgNameClause.append(") ");
+        return orgNameClause.toString();
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -368,18 +392,18 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in " + this.getClass(), hbe);
         }
-        LOG.debug("Leaving get(Summ4RepCriteriaDto), returning " + rList.size() + " object(s).");
         return rList;
     }
 
     private static void setNameParameters(Summ4RepCriteriaDto criteria, SQLQuery query) {
-        String org = StConverter.convertToString(criteria.getOrgName());
+        for (int i = 0; i < criteria.getOrgNames().size(); i++) {
+            query.setString("ORG_NAME" + i, StConverter.convertToString(criteria.getOrgNames().get(i)));
+        }
        
-        query.setParameter("ORG_NAME", org, Hibernate.STRING);
-        query.setParameter("EPIDEM_OTHER_OUTCOME", EPIDEM_OUTCOME, Hibernate.STRING);
-        query.setParameter("AGENT_DEVICE", AGENT_DEVICE, Hibernate.STRING);
-        query.setParameter("OTHER_INTERVENTION", OTHER_INTERVENTION, Hibernate.STRING);
-        query.setParameter("ANCILLARY_CORRELATIVE", ANCILLARY_CORRELATIVE, Hibernate.STRING);
+        query.setString("EPIDEM_OTHER_OUTCOME", EPIDEM_OUTCOME);
+        query.setString("AGENT_DEVICE", AGENT_DEVICE);
+        query.setString("OTHER_INTERVENTION", OTHER_INTERVENTION);
+        query.setString("ANCILLARY_CORRELATIVE", ANCILLARY_CORRELATIVE);
     }
 
     private List<Summ4RepResultDto> getResultList(List<Object[]> queryList) throws PAException {
@@ -411,6 +435,13 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
             .getStudyProtocol(studyProtocolIi);
             rdto.setAnatomicSiteCodes(spDTO.getSummary4AnatomicSites());
             
+            
+            // Either HCF Org Name is set or RO Org Name, but not both.
+            // if func_code = lead_org then, then ro org name is set, 
+            // else if func_code = treating site, then hcf org name is set
+            String orgMember = (StringUtils.isBlank((String) q[HCFORG_IDX]) ? (String) q[ROORG_IDX]
+                    : (String) q[HCFORG_IDX]);
+            rdto.setOrgMember(StConverter.convertToSt(orgMember));
             rList.add(rdto);
         }
         return rList;
@@ -426,7 +457,6 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
 
     /**
      * {@inheritDoc}
-     * @throws TooManyResultsException 
      */
     public List<String> searchPoOrgNames(String partial, int maxLimit) throws PAException, 
         TooManyResultsException {
@@ -445,6 +475,48 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         
         return returnVal;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Map<String, String> getFamilies(int maxLimit) throws TooManyResultsException {
+        FamilyDTO familyDTO = new FamilyDTO();
+        familyDTO.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
+        Map<String, String> returnMap = new TreeMap<String, String>();
+        for (FamilyDTO item : PoRegistry.getFamilyService().search(familyDTO, new LimitOffset(maxLimit, 0))) {
+            String name = EnOnConverter.convertEnOnToString(item.getName());
+            returnMap.put(item.getIdentifier().getExtension(), name);
+        }
+        return returnMap;
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Map<String, String> getOrganizations(String familyId, int maxLimit) throws TooManyResultsException {
+        Map<String, String> returnMap = new TreeMap<String, String>();
+        LimitOffset limit = new LimitOffset(maxLimit, 0);
+
+        FamilyDTO familyDTO = PoRegistry.getFamilyService().getFamily(IiConverter.convertToPoFamilyIi(familyId));
+        List<OrganizationDTO> list = PoRegistry.getOrganizationEntityService().search(new OrganizationDTO(),
+                familyDTO.getName(), limit);
+        List<FamilyOrganizationRelationshipDTO> relationshipDTOs = PoRegistry.getFamilyService()
+                .getActiveRelationships(IiConverter.convertToLong(familyDTO.getIdentifier()));
+        for (OrganizationDTO dto : list) {
+            String functionalRelationship = "";
+            for (FamilyOrganizationRelationshipDTO relationshipDTO : relationshipDTOs) {
+                if (relationshipDTO.getOrgIdentifier().getExtension().equals(dto.getIdentifier().getExtension())) {
+                    functionalRelationship = CdConverter.convertCdToString(relationshipDTO.getFunctionalType());
+                }
+            }
+            String orgName = EnOnConverter.convertEnOnToString(dto.getName()); 
+            returnMap
+                    .put(orgName, functionalRelationship);
+        }
+        return returnMap;
+    }
+    
     /**
      * @param protocolQueryService the protocolQueryService to set
      */
@@ -457,5 +529,4 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     public ProtocolQueryServiceLocal getProtocolQueryService() {
         return protocolQueryService;
     }
-    
 }
