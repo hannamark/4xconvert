@@ -29,6 +29,9 @@ public class LookupWithApostropheTest extends AbstractPaSeleniumTest {
         clickAndWaitAjax("link=Search");
         assertTrue("Wrong search results returned", selenium.isTextPresent("One item found"));
         assertTrue("Wrong search results returned", selenium.isTextPresent("PO-2098'test organization"));
+        clickAndWaitAjax("//table[@id='row']/tbody/tr[1]/td[7]/a/span/span");
+        selenium.selectFrame("relative=up");
+        assertEquals("Wrong Principal investigator", "PO-2098'test organization", selenium.getValue("name=gtdDTO.leadOrganizationName"));
     }
     
     /**
@@ -56,6 +59,9 @@ public class LookupWithApostropheTest extends AbstractPaSeleniumTest {
         clickAndWaitAjax("link=Search");
         assertTrue("Wrong search results returned", selenium.isTextPresent("One item found"));
         assertTrue("Wrong search results returned", selenium.isTextPresent("O'Grady"));
+        clickAndWaitAjax("//table[@id='row']/tbody/tr[1]/td[8]/a/span/span");
+        selenium.selectFrame("relative=up");
+        assertEquals("Wrong Principal investigator", "O'Grady,Michael", selenium.getValue("name=gtdDTO.piName"));
     }
 
 }
