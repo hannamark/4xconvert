@@ -84,9 +84,9 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.BufferedOutputStream;
@@ -98,6 +98,7 @@ import java.nio.channels.FileLock;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -196,17 +197,19 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
         File folder = new File(PaEarPropertyReader.getPDQUploadPath());
         File[] listOfFiles = folder.listFiles();
         for (int i = 0; i < listOfFiles.length; i++) {
-               listOfFileNames.add(listOfFiles[i].getName());
+            listOfFileNames.add(listOfFiles[i].getName());
         }
+        Collections.sort(listOfFileNames);
         return listOfFileNames;
     }
+
     /**
      * Returns the file name.
      * @param requestedFileName requestedFileName
      * @return requested file name
      * @throws PAException on error
      */
-    public  String getRequestedFileName(String requestedFileName) throws PAException {
+    public String getRequestedFileName(String requestedFileName) throws PAException {
         StringBuffer filePath = new StringBuffer();
         filePath.append(PaEarPropertyReader.getPDQUploadPath()).append(File.separator);
         String fileRequested = "";

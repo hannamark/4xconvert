@@ -193,7 +193,7 @@ public class CSMUserService implements CSMUserUtil {
             UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
             csmUser = upManager.getUser(extractUserName(loginName));
             if (csmUser == null) {
-                LOG.info("Unable to look up CSM user for login name: " + loginName);
+                LOG.debug("Unable to look up CSM user for login name: " + loginName);
             }
         } catch (CSConfigurationException csce) {
             throw new PAException(CSM_LOOKUP_ERR_MSG + loginName, csce);
