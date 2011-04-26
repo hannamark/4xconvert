@@ -17,6 +17,7 @@ import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OversightCommitteeCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ResearchOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.family.FamilyServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
@@ -37,6 +38,7 @@ public class MockPoServiceLocator implements PoServiceLocator {
     private final OrganizationalContactCorrelationServiceRemote orgContact = new MockOrganizationalContactCorrelationService();
     private final IdentifiedOrganizationCorrelationServiceRemote identifiedOrganizationCorrelationService = new MockIdentifiedOrganizationCorrelationService();
     private final IdentifiedPersonCorrelationServiceRemote identifiedPersonCorrelationService = new MockIdentifiedPersonCorrelationService();
+    private final FamilyServiceRemote familyService = null;
 
     /**
      * {@inheritDoc}
@@ -106,6 +108,13 @@ public class MockPoServiceLocator implements PoServiceLocator {
      */
     public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() {
         return identifiedPersonCorrelationService;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public FamilyServiceRemote getFamilyService() {
+        return familyService;
     }
 }
 

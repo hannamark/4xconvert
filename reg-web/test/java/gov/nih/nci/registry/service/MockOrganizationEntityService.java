@@ -6,6 +6,7 @@ package gov.nih.nci.registry.service;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.EnOn;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -39,16 +40,16 @@ public class MockOrganizationEntityService implements
                         "postalCode", "USA"));
         orgDtoList.add(dto);
     }
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#createOrganization(gov.nih.nci.services.organization.OrganizationDTO)
+    /**
+     * {@inheritDoc}
      */
     public Ii createOrganization(OrganizationDTO arg0)
             throws EntityValidationException {
         return IiConverter.convertToIi("1");
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#getOrganization(gov.nih.nci.iso21090.Ii)
+    /**
+     * {@inheritDoc}
      */
     public OrganizationDTO getOrganization(Ii arg0)
             throws NullifiedEntityException {
@@ -60,8 +61,8 @@ public class MockOrganizationEntityService implements
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#search(gov.nih.nci.services.organization.OrganizationDTO)
+    /**
+     * {@inheritDoc}
      */
     public List<OrganizationDTO> search(OrganizationDTO arg0) {
         List<OrganizationDTO> matchingDtosList = new ArrayList<OrganizationDTO>();
@@ -75,8 +76,8 @@ public class MockOrganizationEntityService implements
         return matchingDtosList ;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#updateOrganization(gov.nih.nci.services.organization.OrganizationDTO)
+    /**
+     * {@inheritDoc}
      */
     public void updateOrganization(OrganizationDTO arg0)
             throws EntityValidationException {
@@ -84,8 +85,8 @@ public class MockOrganizationEntityService implements
 
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#updateOrganizationStatus(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Cd)
+    /**
+     * {@inheritDoc}
      */
     public void updateOrganizationStatus(Ii arg0, Cd arg1)
             throws EntityValidationException {
@@ -93,8 +94,8 @@ public class MockOrganizationEntityService implements
 
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.services.organization.OrganizationEntityServiceRemote#validate(gov.nih.nci.services.organization.OrganizationDTO)
+    /**
+     * {@inheritDoc}
      */
     public Map<String, String[]> validate(OrganizationDTO arg0) {
         // TODO Auto-generated method stub
@@ -122,6 +123,14 @@ public class MockOrganizationEntityService implements
         }
         return matchingDtosList ;
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<OrganizationDTO> search(OrganizationDTO arg0, EnOn arg1, LimitOffset arg2)
+            throws TooManyResultsException {
+        return this.search(arg0, arg2);
     }
 
 }
