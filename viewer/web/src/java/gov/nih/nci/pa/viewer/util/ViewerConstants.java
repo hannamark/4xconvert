@@ -113,6 +113,13 @@ public final class ViewerConstants {
     
     /** Attribute used to store summ4 Ancillary/Correlative list. */
     public static final String SUMM4_ANCILLARY_CORRELATIVE_RESULT_LIST = "ancillaryCorrelativeList";
-    
+    /** Attribute returned value for NATIONAL. */
+    public static final String NATIONAL = "NATIONAL";
+    /** Attribute returned value for INDUSTRIAL. */
+    public static final String INDUSTRIAL = "INDUSTRIAL";
+    /** Attribute returned value for INSTITUTIONAL. */
+    public static final String INSTITUTIONAL = "INSTITUTIONAL";
+    /** Attribute returned value for EXTERNALLY_PEER_REVIEWED. */
+    public static final String EXTERNALLY_PEER_REVIEWED = "EXTERNALLY_PEER_REVIEWED";
     
 }

@@ -85,7 +85,6 @@ package gov.nih.nci.pa.report.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -93,6 +92,7 @@ import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
@@ -171,15 +171,6 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     public static final String OTHER_INTERVENTION = "Other Intervention";
     /** Db returned value for Ancillary/Correlative. */
     public static final String ANCILLARY_CORRELATIVE = "Ancillary/Correlative";
-    
-    /** Db returned value for NATIONAL. */
-    public static final String NATIONAL = "NATIONAL";
-    /** Db returned value for INDUSTRIAL. */
-    public static final String INDUSTRIAL = "INDUSTRIAL";
-    /** Db returned value for INSTITUTIONAL. */
-    public static final String INSTITUTIONAL = "INSTITUTIONAL";
-    /** Db returned value for EXTERNALLY_PEER_REVIEWED. */
-    public static final String EXTERNALLY_PEER_REVIEWED = "EXTERNALLY_PEER_REVIEWED";
     
     /**
      * @return the studyProtocolService

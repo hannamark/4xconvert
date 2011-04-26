@@ -104,14 +104,37 @@
             <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/nodecorate/summ4RepEpidemOutcomeResult.jsp</result> 
         </action>
-        <action name="refreshAgencyDeviceResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
+        <!-- agency/device -->
+        <action name="refreshAgencyDeviceNationalResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
             <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceResult.jsp</result> 
+            <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceNationalResult.jsp</result> 
         </action>
-        <action name="refreshOtherIntResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
+        <action name="refreshAgencyDeviceEPPResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
             <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepOtherInterventionResult.jsp</result> 
+            <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceEPPResult.jsp</result> 
         </action>
+        <action name="refreshAgencyDeviceInstitutionalResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
+            <interceptor-ref name="methodValidationStack" />
+            <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceInstitutionalResult.jsp</result> 
+        </action>
+        <action name="refreshAgencyDeviceIndustrialResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
+            <interceptor-ref name="methodValidationStack" />
+            <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceIndustrialResult.jsp</result> 
+        </action>
+        <!-- other interventions -->
+        <action name="refreshOtherIntEPPResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
+            <interceptor-ref name="methodValidationStack" />
+            <result>/WEB-INF/jsp/nodecorate/summ4RepOtherInterventionEPPResult.jsp</result> 
+        </action>
+        <action name="refreshOtherIntNationalResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
+            <interceptor-ref name="methodValidationStack" />
+            <result>/WEB-INF/jsp/nodecorate/summ4RepOtherInterventionNationalResult.jsp</result> 
+        </action>
+        <action name="refreshOtherIntInstitutionalResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
+            <interceptor-ref name="methodValidationStack" />
+            <result>/WEB-INF/jsp/nodecorate/summ4RepOtherInterventionInstitutionalResult.jsp</result> 
+        </action>
+        
         <action name="refreshAutocompleteResults*" class="gov.nih.nci.pa.viewer.action.{1}Action" method="getAutoComplete">
             <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/nodecorate/summ4RepAutoCompleteResult.jsp</result> 

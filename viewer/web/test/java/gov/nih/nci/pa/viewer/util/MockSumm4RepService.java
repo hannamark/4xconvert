@@ -76,8 +76,8 @@
 */
 package gov.nih.nci.pa.viewer.util;
 
-import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
@@ -140,13 +140,13 @@ public class MockSumm4RepService extends MockService implements Summ4RepLocal {
 
     public List<Summ4RepResultDto> get(Summ4RepCriteriaDto criteria) throws PAException {
         List<Summ4RepResultDto> rList = new ArrayList<Summ4RepResultDto>();
-        rList.add(generateDto(Summ4ReportBean.AGENT_DEVICE, Summ4ReportBean.NATIONAL));
-        rList.add(generateDto(Summ4ReportBean.AGENT_DEVICE, Summ4ReportBean.INSTITUTIONAL));
-        rList.add(generateDto(Summ4ReportBean.AGENT_DEVICE, Summ4ReportBean.EXTERNALLY_PEER_REVIEWED));
-        rList.add(generateDto(Summ4ReportBean.AGENT_DEVICE, Summ4ReportBean.INDUSTRIAL));
-        rList.add(generateDto(Summ4ReportBean.OTHER_INTERVENTION, Summ4ReportBean.NATIONAL));
-        rList.add(generateDto(Summ4ReportBean.OTHER_INTERVENTION, Summ4ReportBean.INSTITUTIONAL));
-        rList.add(generateDto(Summ4ReportBean.OTHER_INTERVENTION, Summ4ReportBean.EXTERNALLY_PEER_REVIEWED));
+        rList.add(generateDto(Summ4ReportBean.AGENT_DEVICE, ViewerConstants.NATIONAL));
+        rList.add(generateDto(Summ4ReportBean.AGENT_DEVICE, ViewerConstants.INSTITUTIONAL));
+        rList.add(generateDto(Summ4ReportBean.AGENT_DEVICE, ViewerConstants.EXTERNALLY_PEER_REVIEWED));
+        rList.add(generateDto(Summ4ReportBean.AGENT_DEVICE, ViewerConstants.INDUSTRIAL));
+        rList.add(generateDto(Summ4ReportBean.OTHER_INTERVENTION, ViewerConstants.NATIONAL));
+        rList.add(generateDto(Summ4ReportBean.OTHER_INTERVENTION, ViewerConstants.INSTITUTIONAL));
+        rList.add(generateDto(Summ4ReportBean.OTHER_INTERVENTION, ViewerConstants.EXTERNALLY_PEER_REVIEWED));
         rList.add(generateDto(Summ4ReportBean.EPIDEM_OUTCOME, "n/a"));
         rList.add(generateDto(Summ4ReportBean.ANCILLARY_CORRELATIVE, "n/a"));
         return rList;

@@ -152,8 +152,7 @@ public class Summ4RepAction
         
     private void sessionScopeStoreAttributes() {
         ServletActionContext.getRequest().getSession()
-            .setAttribute(ViewerConstants.SUMM4_AGENT_DEVICE_RESULT_MAP, agentDeviceMap);
-        
+            .setAttribute(ViewerConstants.SUMM4_AGENT_DEVICE_RESULT_MAP, agentDeviceMap);   
         ServletActionContext.getRequest().getSession()
             .setAttribute(ViewerConstants.SUMM4_OTHER_INTERVENTION_RESULT_MAP, otherInterventionMap);
         ServletActionContext.getRequest().getSession()
