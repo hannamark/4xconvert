@@ -146,6 +146,9 @@
 
     <target name="compile" description="Compile the code">
         <mkdir dir="${commons.build.outputDir}"/>
+        <!-- Only needed here to keep eclipse happy -->
+        <mkdir dir="${commons.build.testOutputDir}"/>
+
         <javac destdir="${commons.build.outputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
                target="1.5" source="1.5" verbose="false" fork="false" encoding="Cp1252">
             <src>
