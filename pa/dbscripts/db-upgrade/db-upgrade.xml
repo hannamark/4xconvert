@@ -666,4 +666,8 @@
         <comment>Adding quartz table for persistent JobStore</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.5/PO-2848.sql"/>
      </changeSet>
+     <changeSet id="PO-2848-accrual" author="mvisee">
+        <comment>Adding quartz tables for persistent JobStore for accrual</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.5/PO-2848-accrual.sql"/>
+     </changeSet>
 </databaseChangeLog>
