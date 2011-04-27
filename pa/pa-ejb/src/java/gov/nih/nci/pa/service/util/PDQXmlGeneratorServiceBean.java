@@ -108,6 +108,8 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,11 +117,21 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Generates the xml representation of pdq data.
@@ -131,6 +143,8 @@ import org.w3c.dom.Element;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implements PDQXmlGeneratorServiceRemote {
 
+    private static final Logger LOG = Logger.getLogger(PDQXmlGeneratorServiceBean.class);
+    private static final String PDQ_XSD_FILE = "CTRPProtocolExport.xsd";
     private static final String NAME = "name";
     private static final String SEC_ID = "secondary_id";
     private static final String ID = "id";
@@ -302,7 +316,26 @@ public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implemen
      * {@inheritDoc}
      */
     public String generatePdqXml(Ii studyProtocolIi) throws PAException {
-        return super.generateCTGovXml(studyProtocolIi);
+        String generatedXml = super.generateCTGovXml(studyProtocolIi);
+        try {
+            this.validate(generatedXml);
+        } catch (Exception e) {
+            String errorMsg = String.format("Exception in generating PDQ XML for Study %s", studyProtocolIi
+                    .getExtension());
+            LOG.error(errorMsg.concat(" (see generated xml file for source xml)"), e);
+            return errorMsg.concat("\n").concat(e.getMessage()).concat("\n").concat(generatedXml);
+        }
+        return generatedXml;
+    }
+
+    private void validate(String generatedXml) throws ParserConfigurationException, SAXException, IOException {
+        DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        Schema schemaXSD = schemaFactory.newSchema(this.getClass().getClassLoader().getResource(PDQ_XSD_FILE));
+        
+        Document document = parser.parse(new InputSource(new StringReader(generatedXml)));
+        schemaXSD.newValidator().validate(new DOMSource(document));
     }
 
     /**

@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -90,31 +91,29 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 
 import java.io.File;
-import java.io.StringReader;
+import java.io.FileInputStream;
+import java.net.URI;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
-
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 
 /**
  * @author mshestopalov
@@ -145,17 +144,43 @@ public class PDQXmlGeneratorServiceTest extends CTGovXmlGeneratorServiceTest {
 
         when(studyContactSvc.getByStudyProtocol(any(Ii.class),
                 argThat(new CentralContactMatcher()))).thenReturn(new ArrayList<StudyContactDTO>());
+        
+        FileChannel fc = new FileInputStream(new File(new URI(this.getClass().getClassLoader().getResource(
+                "PDQExpectedGeneratedXML.xml").toString()))).getChannel();
+        String expectedPdqXml = Charset.defaultCharset().decode(fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size())).toString();
+        assertEquals(expectedPdqXml, pdqBean.generatePdqXml(spId));
+    }
 
-        String pdqXml = pdqBean.generatePdqXml(spId);
-        DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    @Test
+    public void testXsdInvalid() throws Exception {
+        when(studyIndIdeSvc.getByStudyProtocol(any(Ii.class))).thenReturn(null);
 
-        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schemaXSD = schemaFactory
-            .newSchema(new File("../public/CTRPProtocolExport.xsd"));
-        Validator validator = schemaXSD.newValidator();
+        List<StudySiteDTO> ssList = new ArrayList<StudySiteDTO>();
+        studySiteDto = new StudySiteDTO();
+        studySiteDto.setReviewBoardApprovalStatusCode(CdConverter
+                .convertStringToCd(ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode()));
+        studySiteDto.setHealthcareFacilityIi(IiConverter.convertToPoHealthCareFacilityIi("1"));
+        studySiteDto.setResearchOrganizationIi(IiConverter.convertToPoResearchOrganizationIi("1"));
+        studySiteDto.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.SUSPENDED));
+        studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
+//        studySiteDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("LEAD_ORG_1"));
+        ssList.add(studySiteDto);
+        
+        when(studySiteSvc.getByStudyProtocol(any(Ii.class),
+                argThat(new StudySiteWrongFCMatcher()))).thenReturn(new ArrayList<StudySiteDTO>());
+        when(studySiteSvc.getByStudyProtocol(any(Ii.class), argThat(new StudySiteMatcher()))).thenReturn(ssList);
 
-        Document document = parser.parse(new InputSource(new StringReader(pdqXml)));
-        validator.validate(new DOMSource(document));
+        interventionalSPDto.setBlindedRoleCode(null);
+
+        when(stratumGroupSvc.getByStudyProtocol(any(Ii.class))).thenReturn(new ArrayList<StratumGroupDTO>());
+
+        when(studyContactSvc.getByStudyProtocol(any(Ii.class),
+                argThat(new CentralContactMatcher()))).thenReturn(new ArrayList<StudyContactDTO>());
+        
+        FileChannel fc = new FileInputStream(new File(new URI(this.getClass().getClassLoader().getResource(
+                "PDQExpectedGeneratedXML_invalid.xml").toString()))).getChannel();
+        String expectedPdqXml = Charset.defaultCharset().decode(fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size())).toString();
+        assertEquals(expectedPdqXml, pdqBean.generatePdqXml(spId));
     }
 
     class CentralContactMatcher extends ArgumentMatcher<StudyContactDTO> {
