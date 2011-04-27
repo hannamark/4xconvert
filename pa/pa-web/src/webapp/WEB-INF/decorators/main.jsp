@@ -15,13 +15,17 @@
         <link rel="icon" href="<%=request.getContextPath()%>/images/favicon.ico" type="image/x-icon" />
         <link rel="shortcut icon" href="<%=request.getContextPath()%>/images/favicon.ico" type="image/x-icon" />
         <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/Help.js"/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/subModalcommon.js"/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/subModal.js"/>"></script>
         <script type="text/javascript" language="javascript">
             Help.url = '<s:property value="@gov.nih.nci.pa.util.PaEarPropertyReader@getPaHelpUrl()" />';
+            setDefaultPopupBasePage('<c:url value="/images/loading.gif" />');
+            setSubmodalImagesDirectory('<c:url value="/images" />');
             function mainOnLoadHandler() {
                 if (window.callOnloadFunctions) {
                     callOnloadFunctions();
-                }    
-            }    
+                }
+            }
         </script>
         <!-- Version: ${initParam["appTagVersion"]}, revision: ${initParam["appTagRevision"]} -->
         <decorator:head/>
