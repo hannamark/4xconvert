@@ -17,11 +17,16 @@
         <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/Help.js"/>"></script>
         <script type="text/javascript" language="javascript">
             Help.url = '<s:property value="@gov.nih.nci.pa.util.PaEarPropertyReader@getPaHelpUrl()" />';
+            function mainOnLoadHandler() {
+                if (window.callOnloadFunctions) {
+                    callOnloadFunctions();
+                }    
+            }    
         </script>
         <!-- Version: ${initParam["appTagVersion"]}, revision: ${initParam["appTagRevision"]} -->
         <decorator:head/>
     </head>
-    <body onload="callOnloadFunctions();">
+    <body onload="mainOnLoadHandler();">
     <div id="wrapper" class="curate">
         <jsp:include page="/WEB-INF/jsp/common/nciheader.jsp"/>
         <jsp:include page="/WEB-INF/jsp/common/paheader.jsp"/>
