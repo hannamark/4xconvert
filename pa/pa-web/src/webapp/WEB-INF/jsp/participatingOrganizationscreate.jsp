@@ -61,18 +61,18 @@
             }
 
             function lookup() {
-                showPopup('${lookupUrl}', '', 'Organization');
+                showPopup('${lookupUrl}', null, 'Organization');
             }
 
             function lookupperson() {
-                showPopup('${lookupPersonsUrl}','', 'Persons');
+                showPopup('${lookupPersonsUrl}', null, 'Persons');
             }
 
             function lookupcontactperson() {
                 var tel = $('personContactWebDTO.telephone').value;
                 var email = $('personContactWebDTO.email').value;
                 var url = '${lookupContactPersonsUrl}?tel='+tel+'&email='+email;
-                showPopup(url, '', 'Persons');
+                showPopup(url, null, 'Persons');
             }
 
             function loadDiv(orgid) {

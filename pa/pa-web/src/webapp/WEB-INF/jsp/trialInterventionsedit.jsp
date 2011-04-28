@@ -63,43 +63,43 @@
             }
 
             function lookup() {
-                showPopup('${lookupUrl}','', 'Intervention');
+                showPopup('${lookupUrl}', null, 'Intervention');
             }   
 
             function lookupDoseForm() {
-                showPopup('${lookupDoseFormUrl}', '', 'Dose Form');
+                showPopup('${lookupDoseFormUrl}', null, 'Dose Form');
             }
 
             function lookupROA() {
-                showPopup('${lookupROAUrl}', '', 'Route of Administration');
+                showPopup('${lookupROAUrl}', null, 'Route of Administration');
             }
             
             function lookupDoseFreq() {
-                showPopup('${lookupDoseFreqUrl}', '', 'Dose Frequency');
+                showPopup('${lookupDoseFreqUrl}', null, 'Dose Frequency');
             }
 
             function lookupDoseUOM() {
-                showPopup('${lookupDoseUOMUrl}', '', 'Dose Unit Of Measure');
+                showPopup('${lookupDoseUOMUrl}', null, 'Dose Unit Of Measure');
             }
 
             function lookupDoseDurationUOM() {
-                showPopup('${lookupDoseDurationUOMUrl}', '', 'Dose Duration Unit Of Measure');
+                showPopup('${lookupDoseDurationUOMUrl}', null, 'Dose Duration Unit Of Measure');
             }
 
             function lookupTotalDoseUOM() {
-                showPopup('${lookupTotalDoseUOMUrl}','', 'Total Dose Unit Of Measure');
+                showPopup('${lookupTotalDoseUOMUrl}', null, 'Total Dose Unit Of Measure');
             }
 
             function lookupTargetSite() {
-                showPopup('${lookupTargetSiteUrl}','', 'Target Site');
+                showPopup('${lookupTargetSiteUrl}', null, 'Target Site');
             }
 
             function lookupApproachSite() {
-                showPopup('${lookupApproachSiteUrl}','', 'Approach Site');
+                showPopup('${lookupApproachSiteUrl}', null, 'Approach Site');
             }
 
             function lookupMethodCode() {
-                showPopup('${lookupMethodCodeUrl}', '', 'Method Code');
+                showPopup('${lookupMethodCodeUrl}', null, 'Method Code');
             }
 
             function loadDiv(intid) {
@@ -109,7 +109,7 @@
                  div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
                  var aj = callAjaxPost(div, url, params);
                  return false;
-            }   
+            }
 
             function cancel(){
                 document.interventionForm.action="trialInterventions.action";

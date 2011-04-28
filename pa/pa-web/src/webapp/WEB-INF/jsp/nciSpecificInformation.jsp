@@ -28,7 +28,7 @@
             }
              
             function lookup() {
-                showPopup('${lookupUrl}', '', 'Organization');
+                showPopup('${lookupUrl}', null, 'Organization');
             }    
             
             function loadDiv(orgid) {

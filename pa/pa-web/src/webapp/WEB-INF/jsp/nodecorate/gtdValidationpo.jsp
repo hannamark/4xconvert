@@ -51,8 +51,6 @@
         var params = { orgId: orgid };
         $('gtdDTO.responsiblePersonIdentifier').value = '';
         $('gtdDTO.responsibleGenericContactName').value = '';
-        $("gtdDTO.contactEmail").value = '';
-        $("gtdDTO.contactPhone").value = '';
         $('gtdDTO.responsiblePersonName').value = '';
         var div = $('loadSponsorField');
         div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading Sponsor...</div>';

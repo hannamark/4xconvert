@@ -47,15 +47,15 @@
             }    
 
             function lookup() {
-                showPopup('${lookupUrl}', '', 'Organization');
+                showPopup('${lookupUrl}', null, 'Organization');
             }   
 
             function lookupperson() {
-                showPopup('${lookupPersonsUrl}', '', 'Persons');
+                showPopup('${lookupPersonsUrl}', null, 'Persons');
             }   
 
             function lookupStatusHistory() {
-                showPopup('${lookupUrlstatusHistory}?studySiteId='+$('studySiteIdentifier').value, '', 'Status History');
+                showPopup('${lookupUrlstatusHistory}?studySiteId='+$('studySiteIdentifier').value, null, 'Status History');
             }   
 
             function loadDiv(orgid) {

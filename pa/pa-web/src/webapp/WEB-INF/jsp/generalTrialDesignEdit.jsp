@@ -23,8 +23,6 @@
         <script type="text/javascript" language="javascript">
             var orgid;
             var persid;
-            var contactMail;
-            var contactPhone;
             var selectedName;
 
             // this function is called from body onload in main.jsp (decorator)
@@ -55,8 +53,6 @@
             function setpersid(persIdentifier,name,email,phone) {
                 persid = persIdentifier;
                 selectedName = name;
-                contactMail = email;
-                contactPhone = phone;
             }
 
             function tooltip() {
@@ -73,8 +69,6 @@
                 var params = { persId: persid };
                 $('gtdDTO.centralContactTitle').value = '';
                 $('gtdDTO.centralContactIdentifier').value =  persid;
-                $("gtdDTO.centralContactEmail").value = '';
-                $("gtdDTO.centralContactPhone").value = '';
                 var div = $('loadCentralContactDiv');
                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
                 var aj = callAjaxPost(div, url, params);
@@ -89,8 +83,6 @@
                $('gtdDTO.centralContactName').value = '';
                $('gtdDTO.centralContactTitle').value = selectedName;
                $('gtdDTO.centralContactIdentifier').value =  persid;
-               $("gtdDTO.centralContactEmail").value = contactMail;
-               $("gtdDTO.centralContactPhone").value = contactPhone;
             }
 
             function loadDiv(orgid) {

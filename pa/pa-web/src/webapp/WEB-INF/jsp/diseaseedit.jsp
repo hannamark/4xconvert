@@ -37,7 +37,7 @@
             }
 
             function lookup() {
-                showPopup('${lookupUrl}', '', 'Disease');
+                showPopup('${lookupUrl}', null, 'Disease');
             }
 
             function loadDiv(intid) {
