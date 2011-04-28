@@ -90,13 +90,13 @@ import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformer;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 
 /**
  * @author Steve Lustbader
  */
-public final class DiseaseTransformer extends AbstractTransformer<Disease, DiseaseDTO> implements
-        Transformer<Disease, DiseaseDTO> {
+public final class DiseaseTransformer extends AbstractTransformer<Disease, PDQDiseaseDTO> implements
+        Transformer<Disease, PDQDiseaseDTO> {
     /**
      * Public singleton.
      */
@@ -108,19 +108,19 @@ public final class DiseaseTransformer extends AbstractTransformer<Disease, Disea
     /**
      * {@inheritDoc}
      */
-    public DiseaseDTO toDto(Disease input) throws DtoTransformException {
+    public PDQDiseaseDTO toDto(Disease input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
 
-        DiseaseDTO result = new DiseaseDTO();
+        PDQDiseaseDTO result = new PDQDiseaseDTO();
         result.setIdentifier(IITransformer.INSTANCE.toDto(input.getIdentifier()));
         result.setStatusCode(CDTransformer.INSTANCE.toDto(input.getStatusCode()));
         result.setStatusDateRangeLow(TSTransformer.INSTANCE.toDto(input.getStatusDateRangeLow()));
         result.setDiseaseCode(STTransformer.INSTANCE.toDto(input.getDiseaseCode()));
         result.setNtTermIdentifier(STTransformer.INSTANCE.toDto(input.getNtTermIdentifier()));
         result.setPreferredName(STTransformer.INSTANCE.toDto(input.getPreferredName()));
-        result.setMenuDisplayName(STTransformer.INSTANCE.toDto(input.getMenuDisplayName()));
+        result.setDisplayName(STTransformer.INSTANCE.toDto(input.getMenuDisplayName()));
         result.setIncludeSynonym(STTransformer.INSTANCE.toDto(input.getIncludeSynonym()));
         result.setExactMatch(STTransformer.INSTANCE.toDto(input.getExactMatch()));
         return result;
@@ -129,7 +129,7 @@ public final class DiseaseTransformer extends AbstractTransformer<Disease, Disea
     /**
      * {@inheritDoc}
      */
-    public Disease toXml(DiseaseDTO input) throws DtoTransformException {
+    public Disease toXml(PDQDiseaseDTO input) throws DtoTransformException {
         if (input == null) {
             return null;
         }
@@ -140,7 +140,7 @@ public final class DiseaseTransformer extends AbstractTransformer<Disease, Disea
         result.setDiseaseCode(STTransformer.INSTANCE.toXml(input.getDiseaseCode()));
         result.setNtTermIdentifier(STTransformer.INSTANCE.toXml(input.getNtTermIdentifier()));
         result.setPreferredName(STTransformer.INSTANCE.toXml(input.getPreferredName()));
-        result.setMenuDisplayName(STTransformer.INSTANCE.toXml(input.getMenuDisplayName()));
+        result.setMenuDisplayName(STTransformer.INSTANCE.toXml(input.getDisplayName()));
         result.setIncludeSynonym(STTransformer.INSTANCE.toXml(input.getIncludeSynonym()));
         result.setExactMatch(STTransformer.INSTANCE.toXml(input.getExactMatch()));
         return result;

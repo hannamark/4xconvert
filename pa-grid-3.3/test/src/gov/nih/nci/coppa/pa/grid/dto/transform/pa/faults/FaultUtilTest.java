@@ -4,14 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.coppa.common.faults.TooManyResultsFault;
 import gov.nih.nci.coppa.po.faults.EntityValidationFault;
 import gov.nih.nci.coppa.po.faults.NullifiedEntityFault;
 import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
 import gov.nih.nci.coppa.po.faults.SimpleIIMapTypeEntry;
 import gov.nih.nci.coppa.po.faults.StringMapTypeEntry;
-import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.services.pa.faults.DuplicateParticipatingSiteFault;
 import gov.nih.nci.coppa.services.pa.faults.PAFault;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
@@ -36,7 +33,6 @@ public class FaultUtilTest {
     public void testReThrowRemote_RE() {
         RemoteException cause = new RemoteException();
         RemoteException result = FaultUtil.reThrowRemote(cause);
-        assertTrue(result instanceof RemoteException);
         assertSame(cause, result);
     }
 
@@ -44,7 +40,6 @@ public class FaultUtilTest {
     public void testReThrowRemote_Unknown() {
         RuntimeException cause = new RuntimeException("123");
         RemoteException result = FaultUtil.reThrowRemote(cause);
-        assertTrue(result instanceof RemoteException);
         assertEquals(cause, result.getCause());
     }
 
@@ -55,7 +50,7 @@ public class FaultUtilTest {
         assertNull(result.getCause());
         assertEquals("123", result.getDescription()[0].get_value());
     }
-    
+
 
     @Test
     public void testReThrowRemoteNullifiedEntityException() throws DtoTransformException {
@@ -100,18 +95,18 @@ public class FaultUtilTest {
         assertNotNull(errorEntry);
         assertEquals(1, errorEntry.length);
         assertEquals("test", errorEntry[0].getKey());
-        assertEquals("invalid", ((String[])errorEntry[0].getValue())[0]);
-        assertEquals("not found", ((String[])errorEntry[0].getValue())[1]);
+        assertEquals("invalid", errorEntry[0].getValue()[0]);
+        assertEquals("not found", errorEntry[0].getValue()[1]);
     }
-    
+
     @Test
     public void testReThrowRemoteDuplicateParticipatingSiteException() {
-        DuplicateParticipatingSiteException cause = 
-            new DuplicateParticipatingSiteException(new IITransformerTest().makeDtoSimple(), 
+        DuplicateParticipatingSiteException cause =
+            new DuplicateParticipatingSiteException(new IITransformerTest().makeDtoSimple(),
                     new IITransformerTest().makeDtoSimple());
         DuplicateParticipatingSiteFault result = (DuplicateParticipatingSiteFault) FaultUtil.reThrowRemote(cause);
         assertNull(result.getCause());
-        assertEquals("A Participating Site with trial id 123 and HCF id 123 already exists.", 
+        assertEquals("A Participating Site with trial id 123 and HCF id 123 already exists.",
                 result.getDescription()[0].get_value());
     }
 

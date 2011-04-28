@@ -89,26 +89,26 @@ import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformerTest;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 
 /**
  * @author Steve Lustbader
  */
-public class DiseaseTransformerTest extends AbstractTransformerTestBase<DiseaseTransformer, Disease, DiseaseDTO> {
+public class DiseaseTransformerTest extends AbstractTransformerTestBase<DiseaseTransformer, Disease, PDQDiseaseDTO> {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public DiseaseDTO makeDtoSimple() {
-        DiseaseDTO result = new DiseaseDTO();
+    public PDQDiseaseDTO makeDtoSimple() {
+        PDQDiseaseDTO result = new PDQDiseaseDTO();
         result.setIdentifier(new IITransformerTest().makeDtoSimple());
         result.setStatusCode(new CDTransformerTest().makeDtoSimple());
         result.setStatusDateRangeLow(new TSTransformerTest().makeDtoSimple());
         result.setDiseaseCode(new STTransformerTest().makeDtoSimple());
         result.setNtTermIdentifier(new STTransformerTest().makeDtoSimple());
         result.setPreferredName(new STTransformerTest().makeDtoSimple());
-        result.setMenuDisplayName(new STTransformerTest().makeDtoSimple());
+        result.setDisplayName(new STTransformerTest().makeDtoSimple());
         result.setIncludeSynonym(new STTransformerTest().makeDtoSimple());
         result.setExactMatch(new STTransformerTest().makeDtoSimple());
         return result;
@@ -136,14 +136,14 @@ public class DiseaseTransformerTest extends AbstractTransformerTestBase<DiseaseT
      * {@inheritDoc}
      */
     @Override
-    public void verifyDtoSimple(DiseaseDTO dto) {
+    public void verifyDtoSimple(PDQDiseaseDTO dto) {
         new IITransformerTest().verifyDtoSimple(dto.getIdentifier());
         new CDTransformerTest().verifyDtoSimple(dto.getStatusCode());
         new TSTransformerTest().verifyDtoSimple(dto.getStatusDateRangeLow());
         new STTransformerTest().verifyDtoSimple(dto.getDiseaseCode());
         new STTransformerTest().verifyDtoSimple(dto.getNtTermIdentifier());
         new STTransformerTest().verifyDtoSimple(dto.getPreferredName());
-        new STTransformerTest().verifyDtoSimple(dto.getMenuDisplayName());
+        new STTransformerTest().verifyDtoSimple(dto.getDisplayName());
         new STTransformerTest().verifyDtoSimple(dto.getIncludeSynonym());
         new STTransformerTest().verifyDtoSimple(dto.getExactMatch());
     }

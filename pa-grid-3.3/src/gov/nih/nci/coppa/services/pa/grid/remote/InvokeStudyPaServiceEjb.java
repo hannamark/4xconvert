@@ -29,6 +29,7 @@ public class InvokeStudyPaServiceEjb<DTO extends StudyDTO> extends InvokePaServi
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public Map<Ii , Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
         try {
             return getLocator().getStudyPaService(getType()).copy(fromStudyProtocolIi, toStudyProtocolIi);
@@ -46,7 +47,7 @@ public class InvokeStudyPaServiceEjb<DTO extends StudyDTO> extends InvokePaServi
     @SuppressWarnings("unchecked")
     public List<DTO> getByStudyProtocol(Ii studyProtocolIi) throws PAException {
         try {
-            return (List<DTO>) getLocator().getStudyPaService(getType()).getByStudyProtocol(studyProtocolIi);
+            return getLocator().getStudyPaService(getType()).getByStudyProtocol(studyProtocolIi);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {

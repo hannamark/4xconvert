@@ -101,7 +101,7 @@ public class InvokePlannedActivityEjb extends InvokeStudyPaServiceEjb<PlannedAct
     /**
      * {@inheritDoc}
      */
-    public List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(Ii id) 
+    public List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(Ii id)
         throws PAException {
         try {
             List<PlannedEligibilityCriterionDTO> result = GridSecurityJNDIServiceLocator.newInstance()
@@ -201,4 +201,16 @@ public class InvokePlannedActivityEjb extends InvokeStudyPaServiceEjb<PlannedAct
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public Ii getDuplicateIi(PlannedActivityDTO dto) throws PAException {
+        try {
+            return GridSecurityJNDIServiceLocator.newInstance().getPlannedActivityService().getDuplicateIi(dto);
+        } catch (PAException pe) {
+            throw pe;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
 }

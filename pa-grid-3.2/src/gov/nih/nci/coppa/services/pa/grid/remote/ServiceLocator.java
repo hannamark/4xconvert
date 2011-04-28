@@ -86,9 +86,9 @@ import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.service.ArmServiceRemote;
 import gov.nih.nci.pa.service.BasePaService;
-import gov.nih.nci.pa.service.DiseaseServiceRemote;
 import gov.nih.nci.pa.service.DocumentServiceRemote;
 import gov.nih.nci.pa.service.InterventionServiceRemote;
+import gov.nih.nci.pa.service.PDQDiseaseServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.RegulatoryAuthorityServiceRemote;
 import gov.nih.nci.pa.service.StudyContactServiceRemote;
@@ -243,7 +243,6 @@ public interface ServiceLocator {
     * @return BasePaService
     * @throws NamingException on error looking up the service
     */
-   @SuppressWarnings("unchecked")
    <Z extends BaseDTO> BasePaService getBasePaService(Class<Z> type) throws NamingException;
 
    /**
@@ -253,7 +252,6 @@ public interface ServiceLocator {
     * @return StudyPaService
     * @throws NamingException on error looking up the service
     */
-   @SuppressWarnings("unchecked")
    <S extends StudyDTO> StudyPaService getStudyPaService(Class<S> type) throws NamingException;
 
    /**
@@ -263,7 +261,6 @@ public interface ServiceLocator {
     * @return StudyCurrentPaService
     * @throws NamingException on error looking up the service
     */
-   @SuppressWarnings("unchecked")
    <S extends StudyDTO> StudyCurrentPaService getStudyCurrentPaService(Class<S> type) throws NamingException;
 
    /**
@@ -274,11 +271,11 @@ public interface ServiceLocator {
    TrialRegistrationServiceRemote getTrialRegistrationService() throws NamingException;
 
    /**
-    * Gets the Disease service.
-    * @return the remote Disease service
+    * Gets the PDQ Disease service.
+    * @return the remote PDQ Disease service
     * @throws NamingException if unable to lookup.
     */
-   DiseaseServiceRemote getDiseaseService() throws NamingException;
+   PDQDiseaseServiceRemote getPdqDiseaseService() throws NamingException;
 
    /**
     * Gets the Intervention service.
@@ -286,7 +283,7 @@ public interface ServiceLocator {
     * @throws NamingException if unable to lookup.
     */
    InterventionServiceRemote getInterventionService() throws NamingException;
-   
+
    /**
     * Gets the RegulatoryAuthority service.
     * @return the remote RegulatoryAuthority service

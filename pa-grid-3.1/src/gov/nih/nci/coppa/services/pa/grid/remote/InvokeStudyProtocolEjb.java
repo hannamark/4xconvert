@@ -97,7 +97,7 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
 
     /**
      * ObservationalStudyProtocol methods are not implemented!
-     * 
+     *
      * @param arg0 ignored
      * @return always throws exception!
      * @exception PAException always thrown
@@ -108,7 +108,7 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
 
     /**
      * ObservationalStudyProtocol methods are not implemented!
-     * 
+     *
      * @param arg0 ignored
      * @return always throws exception!
      * @exception PAException always thrown
@@ -119,7 +119,7 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
 
     /**
      * ObservationalStudyProtocol methods are not implemented!
-     * 
+     *
      * @param arg0 ignored
      * @return always throws exception!
      * @exception PAException always thrown
@@ -154,5 +154,16 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
      */
     public List<StudyProtocolDTO> getCollaborativeTrials() throws PAException {
         throw new UnsupportedOperationException("method not supported");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public StudyProtocolDTO loadStudyProtocol(Ii ii) {
+        try {
+            return GridSecurityJNDIServiceLocator.newInstance().getStudyProtocolService().loadStudyProtocol(ii);
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
     }
 }

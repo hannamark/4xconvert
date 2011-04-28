@@ -83,9 +83,9 @@
 package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
-import gov.nih.nci.pa.service.DiseaseServiceRemote;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PDQDiseaseServiceRemote;
 
 import java.util.List;
 
@@ -93,21 +93,21 @@ import java.util.List;
  * Wrapper class for invoking the Disease remote EJB.
  * @author Steve Lustbader
  */
-public class InvokeDiseaseEjb extends InvokePaServiceEjb<DiseaseDTO> implements DiseaseServiceRemote {
+public class InvokeDiseaseEjb extends InvokePaServiceEjb<PDQDiseaseDTO> implements PDQDiseaseServiceRemote {
 
     /**
      * Default constructor.
      */
     public InvokeDiseaseEjb() {
-        super(DiseaseDTO.class);
+        super(PDQDiseaseDTO.class);
     }
 
     /**
      * {@inheritDoc}
      */
-    public List<DiseaseDTO> search(DiseaseDTO diseaseDto) throws PAException {
+    public List<PDQDiseaseDTO> search(PDQDiseaseDTO diseaseDto) throws PAException {
         try {
-            return GridSecurityJNDIServiceLocator.newInstance().getDiseaseService().search(diseaseDto);
+            return GridSecurityJNDIServiceLocator.newInstance().getPdqDiseaseService().search(diseaseDto);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {

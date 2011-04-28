@@ -79,7 +79,6 @@ public class GenericPaGridServiceImpl<DTO extends BaseDTO, XML extends Object> i
      * Get transformer.
      * @return transformer.
      */
-    @SuppressWarnings("unchecked")
     protected Transformer getTransformer() {
         return TransformerRegistry.INSTANCE.getTransformer(this.getDTOType());
     }
@@ -87,6 +86,7 @@ public class GenericPaGridServiceImpl<DTO extends BaseDTO, XML extends Object> i
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public XML create(XML xml) throws RemoteException {
         try {
             DTO dto = getService().create((DTO) getTransformer().toDto(xml));
@@ -112,10 +112,11 @@ public class GenericPaGridServiceImpl<DTO extends BaseDTO, XML extends Object> i
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public XML get(Id id) throws RemoteException {
         try {
             Ii iiIso = IITransformer.INSTANCE.toDto(id);
-            DTO dto = (DTO) getService().get(iiIso);
+            DTO dto = getService().get(iiIso);
             XML result = (XML) getTransformer().toXml(dto);
             return result;
         } catch (Exception e) {
@@ -127,6 +128,7 @@ public class GenericPaGridServiceImpl<DTO extends BaseDTO, XML extends Object> i
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     public XML update(XML xml) throws RemoteException {
         try {
             DTO dto = getService().update((DTO) getTransformer().toDto(xml));

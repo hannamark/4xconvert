@@ -30,7 +30,7 @@
     <property name="java.naming.security.principal" value="Gr1DU5er" />
     <property name="java.naming.security.credentials" value="Pa44Wurd" />
     <property name="cobertura.dir" value="tools/cobertura" />
-    
+
     <property name="jboss.serverinstance.name" value="pagrid-3.3"/>
     <property name="jboss.dir" value="${user.home}/apps/pa/${jboss.serverinstance.name}/jboss-4.0.5.GA-jems-ejb3"/>
 
@@ -459,103 +459,104 @@
                 <jvmarg value="-DGLOBUS_LOCATION=${ext.globus.dir}" />
                 <arg value="-url" />
                 <arg value="${run-client.service.url}" />
+                <arg line="${args}"/>
             </java>
         </sequential>
     </macrodef>
 
-    <target name="runArmClient" depends="checkGlobus, defineClasspaths" description="Run the sample Arm Client">
+    <target name="runArmClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample Arm Client">
         <run-client serviceendpointname="ArmService" class="gov.nih.nci.coppa.services.pa.armservice.client.ArmServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runDiseaseClient" depends="checkGlobus, defineClasspaths" description="Run the sample Disease Client">
+    <target name="runDiseaseClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample Disease Client">
         <run-client serviceendpointname="DiseaseService" class="gov.nih.nci.coppa.services.pa.diseaseservice.client.DiseaseServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runDocumentClient" depends="checkGlobus, defineClasspaths" description="Run the sample Document Client">
+    <target name="runDocumentClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample Document Client">
         <run-client serviceendpointname="DocumentService" class="gov.nih.nci.coppa.services.pa.documentservice.client.DocumentServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runDocumentWorkflowStatusClient" depends="checkGlobus, defineClasspaths" description="Run the sample DocumentWorkflowStatusService Client">
+    <target name="runDocumentWorkflowStatusClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample DocumentWorkflowStatusService Client">
         <run-client serviceendpointname="DocumentWorkflowStatusService" class="gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.client.DocumentWorkflowStatusServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runInterventionClient" depends="checkGlobus, defineClasspaths" description="Run the sample Intervention Client">
+    <target name="runInterventionClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample Intervention Client">
         <run-client serviceendpointname="InterventionService" class="gov.nih.nci.coppa.services.pa.interventionservice.client.InterventionServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runPlannedActivityClient" depends="checkGlobus, defineClasspaths" description="Run the sample PlannedActivityService Client">
+    <target name="runPlannedActivityClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample PlannedActivityService Client">
         <run-client serviceendpointname="PlannedActivityService" class="gov.nih.nci.coppa.services.pa.plannedactivityservice.client.PlannedActivityServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runStudyOverallStatusClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyOverallStatusService Client">
+    <target name="runStudyOverallStatusClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample StudyOverallStatusService Client">
         <run-client serviceendpointname="StudyOverallStatusService" class="gov.nih.nci.coppa.services.pa.studyoverallstatusservice.client.StudyOverallStatusServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runStudyResourcingClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyResourcingService Client">
+    <target name="runStudyResourcingClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample StudyResourcingService Client">
         <run-client serviceendpointname="StudyResourcingService" class="gov.nih.nci.coppa.services.pa.studyresourcingservice.client.StudyResourcingServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runStudyProtocolClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyProtocolService Client">
+    <target name="runStudyProtocolClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample StudyProtocolService Client">
         <run-client serviceendpointname="StudyProtocolService" class="gov.nih.nci.coppa.services.pa.studyprotocolservice.client.StudyProtocolServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runStudyRegulatoryAuthorityClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyRegulatoryAuthorityService Client">
+    <target name="runStudyRegulatoryAuthorityClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample StudyRegulatoryAuthorityService Client">
         <run-client serviceendpointname="StudyRegulatoryAuthorityService" class="gov.nih.nci.coppa.services.pa.studyregulatoryauthorityservice.client.StudyRegulatoryAuthorityServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runStudyRecruitmentStatusClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyRecruitmentStatusService Client">
+    <target name="runStudyRecruitmentStatusClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample StudyRecruitmentStatusService Client">
         <run-client serviceendpointname="StudyRecruitmentStatusService" class="gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.client.StudyRecruitmentStatusServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runStudySiteAccrualStatusClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudySiteAccrualStatusService Client">
+    <target name="runStudySiteAccrualStatusClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample StudySiteAccrualStatusService Client">
         <run-client serviceendpointname="StudySiteAccrualStatusService" class="gov.nih.nci.coppa.services.pa.studysiteaccrualstatusservice.client.StudySiteAccrualStatusServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runStudySiteContactClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudySiteContactService Client">
+    <target name="runStudySiteContactClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample StudySiteContactService Client">
         <run-client serviceendpointname="StudySiteContactService" class="gov.nih.nci.coppa.services.pa.studysitecontactservice.client.StudySiteContactServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runStudyOnholdClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyOnholdService Client">
+    <target name="runStudyOnholdClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample StudyOnholdService Client">
         <run-client serviceendpointname="StudyOnholdService" class="gov.nih.nci.coppa.services.pa.studyonholdservice.client.StudyOnholdServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runStudyOutcomeMeasureClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyOutcomeMeasureService Client">
+    <target name="runStudyOutcomeMeasureClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample StudyOutcomeMeasureService Client">
         <run-client serviceendpointname="StudyOutcomeMeasureService" class="gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.client.StudyOutcomeMeasureServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runStudySiteClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudySiteService Client">
+    <target name="runStudySiteClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample StudySiteService Client">
         <run-client serviceendpointname="StudySiteService" class="gov.nih.nci.coppa.services.pa.studysiteservice.client.StudySiteServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runStudyDiseaseClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyDiseaseService Client">
+    <target name="runStudyDiseaseClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample StudyDiseaseService Client">
         <run-client serviceendpointname="StudyDiseaseService" class="gov.nih.nci.coppa.services.pa.studydiseaseservice.client.StudyDiseaseServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runStudyContactClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyContactService Client">
+    <target name="runStudyContactClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample StudyContactService Client">
         <run-client serviceendpointname="StudyContactService" class="gov.nih.nci.coppa.services.pa.studycontactservice.client.StudyContactServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runStudyIndIdeClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyIndIdeService Client">
+    <target name="runStudyIndIdeClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample StudyIndIdeService Client">
         <run-client serviceendpointname="StudyIndIdeService" class="gov.nih.nci.coppa.services.pa.studyindideservice.client.StudyIndIdeServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runStudyRelationshipClient" depends="checkGlobus, defineClasspaths" description="Run the sample StudyRelationshipService Client">
+    <target name="runStudyRelationshipClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample StudyRelationshipService Client">
         <run-client serviceendpointname="StudyRelationshipService" class="gov.nih.nci.coppa.services.pa.studyrelationshipservice.client.StudyRelationshipServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runTrialRegistrationClient" depends="checkGlobus, defineClasspaths" description="Run the sample TrialRegistrationService Client">
+    <target name="runTrialRegistrationClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample TrialRegistrationService Client">
         <run-client serviceendpointname="TrialRegistrationService" class="gov.nih.nci.coppa.services.pa.trialregistrationservice.client.TrialRegistrationServiceClient" debug-suspend="n" />
     </target>
 
-    <target name="runRegulatoryAuthorityClient" depends="checkGlobus, defineClasspaths" description="Run the sample regulatoryauthorityService Client">
-            <run-client serviceendpointname="RegulatoryAuthorityService" class="gov.nih.nci.coppa.services.pa.regulatoryauthorityservice.client.RegulatoryAuthorityServiceClient" debug-suspend="n" />
+    <target name="runRegulatoryAuthorityClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample regulatoryauthorityService Client">
+        <run-client serviceendpointname="RegulatoryAuthorityService" class="gov.nih.nci.coppa.services.pa.regulatoryauthorityservice.client.RegulatoryAuthorityServiceClient" debug-suspend="n" />
     </target>
-    
-    <target name="runStudySiteParticipationClient" depends="checkGlobus, defineClasspaths" description="Run the sample studysiteparticipation Client">
-            <run-client serviceendpointname="StudySiteParticipationService" class="gov.nih.nci.coppa.services.pa.studysiteparticipationservice.client.StudySiteParticipationServiceClient" debug-suspend="n" />
+
+    <target name="runStudySiteParticipationClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample studysiteparticipation Client">
+        <run-client serviceendpointname="StudySiteParticipationService" class="gov.nih.nci.coppa.services.pa.studysiteparticipationservice.client.StudySiteParticipationServiceClient" debug-suspend="n" />
     </target>
-    
-    <target name="runStudySiteParticipationSimpleClient" depends="checkGlobus, defineClasspaths" description="Run the sample studysiteparticipation Client">
-            <run-client serviceendpointname="StudySiteParticipationService" class="gov.nih.nci.coppa.services.pa.studysiteparticipationservice.client.StudySiteParticipationServiceSimpleClient" debug-suspend="n" />
+
+    <target name="runStudySiteParticipationSimpleClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample studysiteparticipation Client">
+        <run-client serviceendpointname="StudySiteParticipationService" class="gov.nih.nci.coppa.services.pa.studysiteparticipationservice.client.StudySiteParticipationServiceSimpleClient" debug-suspend="n" />
     </target>
 </project>

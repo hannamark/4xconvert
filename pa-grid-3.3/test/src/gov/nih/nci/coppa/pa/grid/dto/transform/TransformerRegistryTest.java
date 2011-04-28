@@ -29,11 +29,11 @@ import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.TransformerRegistry;
 import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.RegulatoryAuthorityDTO;
@@ -67,7 +67,6 @@ public class TransformerRegistryTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testGetTransformer() {
         //#1
         Transformer trans = TransformerRegistry.INSTANCE.getTransformer(ArmDTO.class);
@@ -130,7 +129,7 @@ public class TransformerRegistryTest {
         trans = TransformerRegistry.INSTANCE.getTransformer(DocumentDTO.class);
         assertTrue(trans instanceof DocumentTransformer);
         //#21
-        trans = TransformerRegistry.INSTANCE.getTransformer(DiseaseDTO.class);
+        trans = TransformerRegistry.INSTANCE.getTransformer(PDQDiseaseDTO.class);
         assertTrue(trans instanceof DiseaseTransformer);
         //#22
         trans = TransformerRegistry.INSTANCE.getTransformer(InterventionDTO.class);

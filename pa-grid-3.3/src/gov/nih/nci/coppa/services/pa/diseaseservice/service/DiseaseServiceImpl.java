@@ -5,7 +5,7 @@ import gov.nih.nci.coppa.services.pa.grid.GenericPaGridServiceImpl;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.DiseaseTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
 import gov.nih.nci.coppa.services.pa.grid.remote.InvokeDiseaseEjb;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -24,8 +24,8 @@ public class DiseaseServiceImpl extends DiseaseServiceImplBase {
 
     private final InvokeDiseaseEjb diseaseService = new InvokeDiseaseEjb();
 
-    private GenericPaGridServiceImpl<DiseaseDTO, Disease> impl =
-            new GenericPaGridServiceImpl<DiseaseDTO, Disease>(Disease.class, DiseaseDTO.class);
+    private GenericPaGridServiceImpl<PDQDiseaseDTO, Disease> impl =
+            new GenericPaGridServiceImpl<PDQDiseaseDTO, Disease>(Disease.class, PDQDiseaseDTO.class);
 
     public DiseaseServiceImpl() throws RemoteException {
         super();
@@ -37,8 +37,8 @@ public class DiseaseServiceImpl extends DiseaseServiceImplBase {
 
   public gov.nih.nci.coppa.services.pa.Disease[] search(gov.nih.nci.coppa.services.pa.Disease searchCriteria) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       try {
-          DiseaseDTO diseaseDto = DiseaseTransformer.INSTANCE.toDto(searchCriteria);
-          List<DiseaseDTO> results = diseaseService.search(diseaseDto);
+          PDQDiseaseDTO diseaseDto = DiseaseTransformer.INSTANCE.toDto(searchCriteria);
+          List<PDQDiseaseDTO> results = diseaseService.search(diseaseDto);
           return DiseaseTransformer.INSTANCE.convert(results);
       } catch (Exception e) {
           logger.error(e.getMessage(), e);

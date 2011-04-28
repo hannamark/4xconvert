@@ -84,11 +84,11 @@ package gov.nih.nci.coppa.services.pa.grid.dto.pa;
 
 import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
-import gov.nih.nci.pa.iso.dto.DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.RegulatoryAuthorityDTO;
@@ -142,7 +142,7 @@ public final class TransformerRegistry {
         VALUES.put(PlannedActivityDTO.class, PlannedActivityTransformer.INSTANCE);
         VALUES.put(PlannedEligibilityCriterionDTO.class, PlannedEligibilityCriterionTransformer.INSTANCE);
         VALUES.put(DocumentDTO.class, DocumentTransformer.INSTANCE);
-        VALUES.put(DiseaseDTO.class, DiseaseTransformer.INSTANCE);
+        VALUES.put(PDQDiseaseDTO.class, DiseaseTransformer.INSTANCE);
         VALUES.put(InterventionDTO.class, InterventionTransformer.INSTANCE);
         VALUES.put(RegulatoryAuthorityDTO.class, RegulatoryAuthorityTransformer.INSTANCE);
     }
