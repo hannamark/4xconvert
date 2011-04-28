@@ -98,9 +98,8 @@ import org.apache.commons.lang.StringUtils;
  * @author Hugh Reinhart
  * @since 7/13/2009
  */
-public class PDQDisease extends AbstractPDQProcessor {
+public class PDQProcessor extends AbstractPDQProcessor {
     private static final Logger LOG = Logger.getLogger(PDQDisease.class);
-
 
     /**
      * {@inheritDoc}

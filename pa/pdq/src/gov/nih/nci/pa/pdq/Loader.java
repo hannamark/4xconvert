@@ -79,7 +79,7 @@ package gov.nih.nci.pa.pdq;
 import gov.nih.nci.pa.pdq.dml.DiseaseScript;
 import gov.nih.nci.pa.pdq.dml.InterventionScript;
 import gov.nih.nci.pa.pdq.xml.Interpret;
-import gov.nih.nci.pa.pdq.xml.PDQDisease;
+import gov.nih.nci.pa.pdq.xml.PDQProcessor;
 import gov.nih.nci.pa.pdq.xml.PDQIntervention;
 import gov.nih.nci.pa.pdq.xml.Rule;
 import gov.nih.nci.pa.pdq.xml.XMLFileParser;
@@ -130,7 +130,7 @@ public class Loader {
             throw new PDQException("Either dir " + PDQConstants.DIRECTORY_NAME + " does not exist or is not a directory.  ");
         } else {
             PDQIntervention pi = new PDQIntervention();
-            PDQDisease pd = new PDQDisease();
+            PDQProcessor pd = new PDQProcessor();
             for (String filename : children) {
                 // Get filename of file or directory
                 Document doc;
@@ -145,7 +145,7 @@ public class Loader {
                         if (rule.clazz.toString().equals(PDQIntervention.class.toString())) {
                             pi.process(doc, rule, filename);
                         }
-                        if (rule.clazz.toString().equals(PDQDisease.class.toString())) {
+                        if (rule.clazz.toString().equals(PDQProcessor.class.toString())) {
                             pd.process(doc, rule, filename);
                         }
                     }

@@ -111,7 +111,7 @@ public final class ExistingIds {
             connect();
             try {
                 Statement sql = postGresConn.createStatement();
-                ResultSet rs = sql.executeQuery("SELECT identifier, disease_code FROM disease ORDER BY identifier ");
+                ResultSet rs = sql.executeQuery("SELECT identifier, disease_code FROM pdq_disease ORDER BY identifier ");
                 while (rs.next()) {
                     String code = rs.getString("disease_code");
                     if (diseases.containsKey(code)) {

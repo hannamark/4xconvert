@@ -102,6 +102,17 @@
         </java>
     </target>
 
+    <target name="replaceSponsor" depends="jar">
+        <java fork="true" classname="gov.nih.nci.pa.pdq.PDQReplaceSponsor" dir="${basedir}">
+            <classpath>
+                <path refid="classpath"/>
+                <path location="${basedir}/target/pdq.jar"/>
+            </classpath>
+            <arg value="${pdqReplaceSponsor.srcDir}"/>
+            <arg value="${pdqReplaceSponsor.destDir}"/>
+        </java>
+    </target>
+
     <target name="run-trial-loader" depends="jar">
         <java fork="true" classname="gov.nih.nci.pa.pdq.PDQTrialLoader" dir="${basedir}">
             <classpath>

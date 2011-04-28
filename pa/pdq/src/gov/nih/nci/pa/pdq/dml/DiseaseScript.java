@@ -101,10 +101,10 @@ import org.apache.log4j.Logger;
  * @author Hugh Reinhart
  * @since 7/13/2009
  */
-public class PDQDiseaseScript extends BaseScript {
-    private static final Logger LOG = Logger.getLogger(PDQDiseaseScript.class);
+public class DiseaseScript extends BaseScript {
+    private static final Logger LOG = Logger.getLogger(DiseaseScript.class);
     private static String fName = "disease.sql";
-    private static PDQDiseaseScript script = new PDQDiseaseScript();
+    private static DiseaseScript script = new DiseaseScript();
     private static Map<String, Long> codeMap = new HashMap<String, Long>();
 
     private class DisPar {
@@ -115,11 +115,11 @@ public class PDQDiseaseScript extends BaseScript {
 
     private static List<DisPar> parents = new ArrayList<DisPar>();
 
-    public static PDQDiseaseScript get() {
+    public static DiseaseScript get() {
         return script;
     }
 
-    public PDQDiseaseScript() {
+    public DiseaseScript() {
         try{
             new FileOutputStream(fName);
             out = new PrintStream(new BufferedOutputStream(new FileOutputStream(fName, true)));

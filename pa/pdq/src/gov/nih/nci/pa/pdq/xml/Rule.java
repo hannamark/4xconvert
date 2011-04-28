@@ -95,7 +95,7 @@ public enum Rule {
      * XML record has TermTypeName item, it is semantic type or obsolete term.
      * TermTypeName is ‘Semantic type’ and  PreferredName is in the list.
      */
-    RULE1(PDQDisease.class),
+    RULE1(PDQProcessor.class),
 
     /**
      * XML record has TermTypeName item, it is semantic type or obsolete term.
@@ -113,7 +113,7 @@ public enum Rule {
      * XML record has SemanticType item, it is a disease or intervention record.
      * SemanticType is in the list.
      */
-    RULE4(PDQDisease.class),
+    RULE4(PDQProcessor.class),
 
     /**
      * XML record has SemanticType item, it is a disease or intervention record.
