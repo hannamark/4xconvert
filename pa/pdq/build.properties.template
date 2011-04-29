@@ -1,3 +1,6 @@
 database.url=jdbc:postgresql://localhost:5432/ctods_pa
 database.username=pauser
 database.password=pauser
+
+pdqReplaceSponsor.srcDir =
+pdqReplaceSponsor.destDir = 
