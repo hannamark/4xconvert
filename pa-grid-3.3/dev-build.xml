@@ -441,6 +441,8 @@
 
     <target name="all-full" depends="compileTests, jars-quick, -test" description="BUILD ALL QUICKLY" />
 
+    <property name="args" value=""/>
+
     <macrodef name="run-client">
         <attribute name="class" default="gov.nih.nci.coppa.services.pa.client.PaServicesClient" />
         <attribute name="serviceendpointname" default="PaServices" />

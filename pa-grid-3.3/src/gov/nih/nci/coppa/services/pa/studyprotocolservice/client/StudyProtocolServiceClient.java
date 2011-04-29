@@ -1,19 +1,23 @@
 package gov.nih.nci.coppa.services.pa.studyprotocolservice.client;
 
 import gov.nih.nci.coppa.common.LimitOffset;
+import gov.nih.nci.coppa.services.client.ClientUtils;
+import gov.nih.nci.coppa.services.grid.util.GridTestMethod;
 import gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol;
 import gov.nih.nci.coppa.services.pa.StudyProtocol;
+import gov.nih.nci.coppa.services.pa.client.util.ClientParameterHelper;
+import gov.nih.nci.coppa.services.pa.grid.ISOUtils;
 import gov.nih.nci.coppa.services.pa.studyprotocolservice.common.StudyProtocolServiceI;
 import gov.nih.nci.iso21090.extensions.Id;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 
 import org.apache.axis.client.Stub;
 import org.apache.axis.message.addressing.EndpointReferenceType;
 import org.apache.axis.types.URI.MalformedURIException;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.globus.gsi.GlobusCredential;
 
 /**
@@ -28,8 +32,11 @@ import org.globus.gsi.GlobusCredential;
  * @created by Introduce Toolkit version 1.3
  */
 public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase implements StudyProtocolServiceI {
+    private static final ClientParameterHelper<StudyProtocolServiceClient> HELPER =
+        new ClientParameterHelper<StudyProtocolServiceClient>(StudyProtocolServiceClient.class);
 
-    private static String protocolExtention = "44343";
+    private static final String[] LOCAL_ARGS = new String[] {"-id", "-title" };
+
     public StudyProtocolServiceClient(String url) throws MalformedURIException, RemoteException {
         this(url,null);
     }
@@ -50,64 +57,71 @@ public class StudyProtocolServiceClient extends StudyProtocolServiceClientBase i
         System.out.println(StudyProtocolServiceClient.class.getName() + " -url <service url>");
     }
 
-    public static void main(String [] args){
+    public static void main(String[] args) {
         System.out.println("Running the Grid Service Client");
-        try{
-        if(!(args.length < 2)){
-            if(args[0].equals("-url")){
-              StudyProtocolServiceClient client = new StudyProtocolServiceClient(args[1]);
 
-              System.out.println("Getting study protocol");
-              getStudyProtocol(client);
-
-              System.out.println("Getting interventional study protocol");
-              getInterventionalStudyProtocol(client);
-
-              System.out.println("searching for study protocols");
-              search(client);
-
-            } else {
-                usage();
-                System.exit(1);
-            }
-        } else {
-            usage();
-            System.exit(1);
-        }
+        HELPER.setLocalArgs(LOCAL_ARGS);
+        HELPER.setupParams(args);
+        StudyProtocolServiceClient client = null;
+        try {
+            client = new StudyProtocolServiceClient(args[1]);
         } catch (Exception e) {
+            System.out.println("Exception getting client");
             e.printStackTrace();
             System.exit(1);
         }
+
+        for (Method method : HELPER.getRunMethods()) {
+            System.out.println("Running " + method.getName());
+            try {
+                method.invoke(null, client);
+            } catch (InvocationTargetException e) {
+                e.getCause().printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
+    @GridTestMethod
     private static void getStudyProtocol(StudyProtocolServiceClient client) throws RemoteException {
-        Id id = new Id();
-        id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
-        id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        id.setExtension(protocolExtention);
+        Id id = getII();
         StudyProtocol result = client.getStudyProtocol(id);
-        System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+        ClientUtils.print(result);
     }
 
+    @GridTestMethod
     private static void getInterventionalStudyProtocol(StudyProtocolServiceClient client) throws RemoteException {
+        Id id = getII();
+        InterventionalStudyProtocol result = client.getInterventionalStudyProtocol(id);
+        ClientUtils.print(result);
+    }
+
+    private static Id getII() {
         Id id = new Id();
         id.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         id.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        id.setExtension(protocolExtention);
-        InterventionalStudyProtocol result = client.getInterventionalStudyProtocol(id);
-        System.out.println(ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+        id.setExtension(HELPER.getArgument("-id", "1"));
+        return id;
     }
 
+    @GridTestMethod
     private static void search(StudyProtocolServiceClient client) throws RemoteException {
         StudyProtocol sp = new StudyProtocol();
+        sp.setOfficialTitle(ISOUtils.buildST(HELPER.getArgument("-title", "title")));
 
         LimitOffset limit = new LimitOffset();
         limit.setLimit(10);
         limit.setOffset(0);
         StudyProtocol[] results = client.search(sp, limit);
-        System.out.println("search found " + results.length + " study relationship objects based on source protocol");
-        for (int i = 0; i < results.length; i++) {
-            System.out.println(ToStringBuilder.reflectionToString(results[i], ToStringStyle.MULTI_LINE_STYLE));
+        if (results == null) {
+            System.out.println("No results found");
+        } else {
+            System.out.println("search found " + results.length + " study protocols");
+            for (int i = 0; i < results.length; i++) {
+                ClientUtils.print(results[i]);
+            }
         }
     }
 
