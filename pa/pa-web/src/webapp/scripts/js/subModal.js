@@ -22,10 +22,11 @@ var gPopupContainer = null;
 var gPopFrame = null;
 var gReturnFunc;
 var gPopupIsShown = false;
-var gDefaultPage;
+// Changes to the default page and close gif variables are deviations from the base subModal code
+var gDefaultPage = contextPath + "/images/loading.gif";
+var gCloseGif = contextPath + "/images/close.gif";
 var gHideSelects = false;
 var gReturnVal = null;
-var gImagesDir;
 
 var gTabIndexes = new Array();
 // Pre-defined list of tags we want to disable/enable tabbing into
@@ -36,26 +37,10 @@ if (!document.all) {
     document.onkeypress = keyDownHandler;
 }
 
-// customizations allowing gDefaultPage and gImagesDir to be customized were added to address PO-3501
-// and are not stock subModal.
-function setDefaultPopupBasePage(newDefaultPage) {
-    gDefaultPage = newDefaultPage;
-}
-
-function setSubmodalImagesDirectory(imagesDir) {
-    gImagesDir = imagesDir;
-}
-
 /**
  * Initializes popup code on load.
  */
 function initPopUp() {
-    if (gImagesDir == null) {
-        gImagesDir = "../images";
-    }
-    if (gDefaultPage == null) {
-        gDefaultPage = gImagesDir + "/loading.gif";
-    }
     // Add the HTML to the body
     theBody = document.getElementsByTagName('BODY')[0];
     popmask = document.createElement('div');
@@ -67,7 +52,7 @@ function initPopUp() {
             '<div id="popupTitleBar">' +
                 '<div id="popupTitle"></div>' +
                 '<div id="popupControls">' +
-                    '<img src="' + gImagesDir + '/close.gif" onclick="hidePopWin(false);" id="popCloseBox" />' +
+                    '<img src="' + gCloseGif + '" onclick="hidePopWin(false);" id="popCloseBox" />' +
                 '</div>' +
             '</div>' +
             '<iframe src="'+ gDefaultPage +'" style="width:100%;height:100%;background-color:transparent;" scrolling="auto" frameborder="0" allowtransparency="true" id="popupFrame" name="popupFrame" width="100%" height="100%"></iframe>' +
