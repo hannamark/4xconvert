@@ -201,7 +201,7 @@ public class TrialValidator {
      * @param addFieldError
      */
     private void validateDateAndFormat(TrialDTO trialDto, Map<String, String> addFieldError) {
-        String err = "error.submit.invalidDate";      // validate date and its format
+        String err = getText("error.submit.invalidDate");      // validate date and its format
         addErrorForDate(trialDto.getStatusDate(), "trialDTO.statusDate", err, addFieldError);
         addErrorForDate(trialDto.getStartDate(), "trialDTO.startDate", err, addFieldError);
         addErrorForDate(trialDto.getCompletionDate(), TRIAL_COMPLETION_DATE, err, addFieldError);

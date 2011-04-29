@@ -53,7 +53,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         assertEquals("edit", submitAction.edit());
     }
     @Test
-    public void testCancle() {
+    public void testCancel() {
         submitAction = new SubmitTrialAction();
         assertEquals("redirect_to_search", submitAction.cancel());
     }
@@ -385,6 +385,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         submitAction.setTrialDTO(dto);
         assertEquals("error", submitAction.review());
         assertTrue(submitAction.getFieldErrors().containsKey("trialDTO.statusDate"));
+        assertEquals("Please enter a valid date", submitAction.getFieldErrors().get("trialDTO.statusDate").get(0));
     }
     @Test
     public void testValidateTrialDatesRule18Pass() {
@@ -404,6 +405,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         submitAction.setTrialDTO(dto);
         assertEquals("error", submitAction.review());
         assertTrue(submitAction.getFieldErrors().containsKey("trialDTO.startDate"));
+        assertEquals("Please enter a valid date", submitAction.getFieldErrors().get("trialDTO.startDate").get(0));
     }
     @Test
     public void testValidateTrialDatesRule19AnticipatedFail(){
@@ -424,6 +426,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         submitAction.setTrialDTO(dto);
         assertEquals("error", submitAction.review());
         assertTrue(submitAction.getFieldErrors().containsKey("trialDTO.completionDate"));
+        assertEquals("Please enter a valid date", submitAction.getFieldErrors().get("trialDTO.completionDate").get(0));
     }
     @Test
     public void testValidateTrialDatesRule20AnticipatedFail(){
