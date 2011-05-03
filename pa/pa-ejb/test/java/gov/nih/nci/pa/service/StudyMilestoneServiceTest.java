@@ -207,12 +207,12 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         List<StudyMilestoneDTO> dtoList = bean.getByStudyProtocol(spIi);
         int oldSize = dtoList.size();
         bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED));
         dtoList = bean.getByStudyProtocol(spIi);
-        assertEquals(oldSize + 1, dtoList.size());
+        assertEquals(oldSize + 2, dtoList.size());
         DocumentWorkflowStatusDTO dwfDto = getDocWrkStatusDTO();
         dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ACCEPTED));
         dws.create(dwfDto);
-
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
@@ -463,37 +463,33 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void newValidationsForReadyForQc() throws PAException {
+    public void checkReadyForQc() throws PAException {
+        String errorMessage = "Abstraction can not be completed. It can only happen just after"
+            + " Administrative and Scientific Processing are completed.";
         addAbstractedWorkflowStatus();
-
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
+        checkMilestoneFailure(MilestoneCode.READY_FOR_QC, errorMessage);
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED));
+        checkMilestoneFailure(MilestoneCode.READY_FOR_QC, errorMessage);
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
-        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
+        checkMilestoneFailure(MilestoneCode.READY_FOR_QC, errorMessage);
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
-        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
-        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
-        try {
-            bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
-            fail();
-        } catch (PAException e) {
-            assertEquals("Scientific Processing Start Date must be followed by "
-                    + " Scientific Processing Completion Date", e.getMessage());
-        }
-        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
-        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
-        try {
-            bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
-            fail();
-        } catch (PAException e) {
-            assertEquals("Administartive Processing Start Date must be followed by  "
-                    + "Administrative Processing Completion Date", e.getMessage());
-        }
+        checkMilestoneFailure(MilestoneCode.READY_FOR_QC, errorMessage);
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
-        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
+        checkMilestoneFailure(MilestoneCode.READY_FOR_QC, errorMessage);
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
+        checkMilestoneFailure(MilestoneCode.READY_FOR_QC, "Abstraction is already completed.");
+        bean.create(getMilestoneDTO(MilestoneCode.QC_START));
+        checkMilestoneFailure(MilestoneCode.READY_FOR_QC, errorMessage);
+    }
+    
+    private void checkMilestoneFailure(MilestoneCode milestone, String message) {
         try {
-            bean.setAbstractionCompletionService(abstractionCompletionSerivce);
-            bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
+            bean.create(getMilestoneDTO(milestone));
             fail();
         } catch (PAException e) {
+            assertEquals(message, e.getMessage());
         }
     }
 
@@ -504,87 +500,75 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void newValidationsForScientificProcessingStartDate() throws PAException {
+    public void checkScientificProcessingStartDate() throws PAException {
         addAbstractedWorkflowStatus();
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
+        String canNotStartMsg = "Scientific Processing can not be started at this stage.";
+        checkMilestoneFailure(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, canNotStartMsg);
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED));
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
-        try {
-            bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
-            fail();
-        } catch (PAException e) {
-            assertEquals("Scientific Processing Start Date cannot be recorded"
-                    + " if Administrative Processing started but was not completed", e.getMessage());
-        }
-        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
-        try {
-            bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
-            fail();
-        } catch (PAException e) {
-            assertEquals("Scientific Processing Start Date must be followed by "
-                    + " Scientific Processing Completion Date", e.getMessage());
-        }
+        String alreadyStartedMsg = "Scientific Processing already started.";
+        checkMilestoneFailure(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, alreadyStartedMsg);
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
-        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
-        try {
-            bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
-            fail();
-        } catch (PAException e) {
-            assertEquals("Administartive Processing Start Date must be "
-                    + "followed by  Administrative Processing Completion Date", e.getMessage());
-        }
+        String alreadyCompletedMsg = "Scientific Processing already completed.";
+        checkMilestoneFailure(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, alreadyCompletedMsg);
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
+        checkMilestoneFailure(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, canNotStartMsg);
     }
-
+    
     @Test
-    public void newValidationForAdministrativeProcessingStartDate() throws PAException {
+    public void checkScientificProcessingCompletedDate() throws PAException {
         addAbstractedWorkflowStatus();
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
+        String canNotCompleteMsg = "Scientific Processing can not be completed at this stage.";
+        checkMilestoneFailure(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, canNotCompleteMsg);
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED));
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
-        try {
-            bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
-            fail();
-        } catch (PAException e) {
-            assertEquals("Administrative Processing Start Date cannot be recorded"
-                    + " if Scientific Processing started but was not completed", e.getMessage());
-        }
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
+        String alreadyCompletedMsg = "Scientific Processing already completed.";
+        checkMilestoneFailure(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, alreadyCompletedMsg);
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
-        try {
-            bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
-            fail();
-        } catch (PAException e) {
-            assertEquals("Administartive Processing Start Date must be followed by "
-                    + " Administrative Processing Completion Date", e.getMessage());
-        }
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
-        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
-        try {
-            bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
-            fail();
-        } catch (PAException e) {
-            assertEquals("Scientific Processing Start Date must be followed by "
-                    + " Scientific Processing Completion Date", e.getMessage());
-        }
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
+        checkMilestoneFailure(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, canNotCompleteMsg);
     }
-
+    
     @Test
-    public void newValidationForCompletedDate() throws PAException {
+    public void checkAdministrativeProcessingStartDate() throws PAException {
         addAbstractedWorkflowStatus();
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
+        String canNotStartMsg = "Administrative Processing can not be started at this stage.";
+        checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, canNotStartMsg);
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED));
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
+        String alreadyStartedMsg = "Administrative Processing already started.";
+        checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, alreadyStartedMsg);
+        bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
+        String alreadyCompletedMsg = "Administrative Processing already completed.";
+        checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, alreadyCompletedMsg);
+        bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
+        checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, canNotStartMsg);
+    }
+    
+    @Test
+    public void checkAdministrativeProcessingCompletedDate() throws PAException {
+        addAbstractedWorkflowStatus();
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
+        String canNotCompleteMsg = "Administrative Processing can not be completed at this stage.";
+        checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, canNotCompleteMsg);
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED));
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
-        try {
-            bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
-        } catch (PAException e) {
-            assertEquals("Administartive Processing Completion Date must be preceded by "
-                    + " Administrative Processing Start Date", e.getMessage());
-        }
+        String alreadyCompletedMsg = "Administrative Processing already completed.";
+        checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, alreadyCompletedMsg);
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
-        try {
-            bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
-        } catch (PAException e) {
-            assertEquals("Scientific Processing Completion Date must be preceded by "
-                    + " Scientific Processing Start Date", e.getMessage());
-        }
-
+        bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
+        checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, canNotCompleteMsg);
     }
 
     @Test
@@ -594,7 +578,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
             bean.create(getMilestoneDTO(MilestoneCode.LATE_REJECTION_DATE));
             fail("Should fail for missing prerequisite.");
         } catch (PAException e) {
-            assertEquals("'Submission Acceptance Date' is a prerequisite to 'Late Rejection Date'.", e.getMessage());
+            assertEquals("\"Submission Acceptance Date\" is a prerequisite to \"Late Rejection Date\".", e.getMessage());
         }
         try {
             bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
@@ -602,22 +586,10 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         } catch (PAException e) {
             // expected behavior
         }
-        try {
-            bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
-            fail("Should fail for missing prerequisite.");
-        } catch (PAException e) {
-            // expected behavior
-        }
-        try {
-            bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE));
-            fail("Should fail for missing prerequisite.");
-        } catch (PAException e) {
-            // expected behavior
-        }
     }
 
     @Test
-    public void creaeDocumentWrkStatusForRejectedTest() throws Exception {
+    public void createDocumentWrkStatusForRejectedTest() throws Exception {
         addAbstractedWorkflowStatus();
         bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_REJECTED));
         DocumentWorkflowStatusDTO dwsDTO = dws.getCurrentByStudyProtocol(spIi);
