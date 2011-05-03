@@ -88,7 +88,6 @@ import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Tel;
-import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
@@ -162,8 +161,7 @@ public class PADomainUtilsTest {
         org.setIdentifier(IiConverter.convertToPoOrganizationalContactIi("1"));
         Ad address = AddressConverterUtil.create("101 Renner rd", "deliveryAddress", "Richardson", "TX", "75081", "USA");
         org.setPostalAddress(address);
-        List<Country> con = TestSchema.countries;
-        PaOrganizationDTO paOrgDTO = PADomainUtils.convertPoOrganizationDTO(org, con);
+        PaOrganizationDTO paOrgDTO = PADomainUtils.convertPoOrganizationDTO(org, null);
         assertEquals("Testing org name", "org", paOrgDTO.getName());
         assertEquals("Testing Country name", "USA", paOrgDTO.getCountry());
     }

@@ -220,7 +220,7 @@
         </cobertura-instrument>
 
         <mkdir dir="${web.test.reports}"/>
-        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." failureproperty="junit.failure">
+        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" forkMode="once" dir="." failureproperty="junit.failure">
             <sysproperty key="basedir" value="."/>
             <sysproperty key="net.sourceforge.cobertura.datafile" file="${web.build.dir}/cobertura.ser"/>
             <formatter type="xml"/>

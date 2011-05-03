@@ -178,7 +178,7 @@ public abstract class AbstractPaActionTest {
      *
      * @return the response
      */
-    protected MockHttpServletResponse  getResponse() {
+    protected MockHttpServletResponse getResponse() {
         return (MockHttpServletResponse) ServletActionContext.getResponse();
     }
 }

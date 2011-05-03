@@ -207,26 +207,26 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      */
     @Override
     public String update() throws PAException {
-     try {
-      enforceBusinessRules();
-      if (isSubstance()) {
-           PlannedSubstanceAdministrationDTO plannedDto = generateSubstanceIsoDto();
-           plannedDto.setIdentifier(IiConverter.convertToIi(getSelectedRowIdentifier()));
-           getPlannedActivitySvc().updatePlannedSubstanceAdministration(plannedDto);
-      } else if (isProcedure()) {
-          PlannedProcedureDTO plannedDto = generateProcedureIsoDto();
-          plannedDto.setIdentifier(IiConverter.convertToIi(getSelectedRowIdentifier()));
-          getPlannedActivitySvc().updatePlannedProcedure(plannedDto);
-      } else {
-         PlannedActivityDTO pa = generateIsoDto();
-         pa.setIdentifier(IiConverter.convertToIi(getSelectedRowIdentifier()));
-         getPlannedActivitySvc().update(pa);
-    }
-     } catch (PAException e) {
-        addActionError(e.getMessage());
-        return AR_EDIT;
-     }
-     return super.update();
+        try {
+            enforceBusinessRules();
+            if (isSubstance()) {
+                PlannedSubstanceAdministrationDTO plannedDto = generateSubstanceIsoDto();
+                plannedDto.setIdentifier(IiConverter.convertToIi(getSelectedRowIdentifier()));
+                getPlannedActivitySvc().updatePlannedSubstanceAdministration(plannedDto);
+            } else if (isProcedure()) {
+                PlannedProcedureDTO plannedDto = generateProcedureIsoDto();
+                plannedDto.setIdentifier(IiConverter.convertToIi(getSelectedRowIdentifier()));
+                getPlannedActivitySvc().updatePlannedProcedure(plannedDto);
+            } else {
+                PlannedActivityDTO pa = generateIsoDto();
+                pa.setIdentifier(IiConverter.convertToIi(getSelectedRowIdentifier()));
+                getPlannedActivitySvc().update(pa);
+            }
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            return AR_EDIT;
+        }
+        return super.update();
     }
 
     /**

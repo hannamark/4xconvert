@@ -296,7 +296,7 @@
             </fileset>
         </cobertura-instrument>
         <mkdir dir="${pa-ejb.test.reports}"/>
-        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." showoutput="no" failureproperty="junit.failure">
+        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" forkMode="once" dir="." showoutput="no" failureproperty="junit.failure">
             <sysproperty key="basedir" value="."/>
             <sysproperty key="net.sourceforge.cobertura.datafile" file="${pa-ejb.build.dir}/cobertura.ser" />
             <formatter type="xml"/>

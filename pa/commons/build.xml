@@ -251,7 +251,7 @@
         </cobertura-instrument>
 
         <mkdir dir="${commons.test.reports}"/>
-        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." showoutput="no" failureproperty="junit.failure">
+        <junit printSummary="yes" haltonerror="false" haltonfailure="false" fork="true" dir="." showoutput="no" failureproperty="junit.failure" forkMode="once" >
             <sysproperty key="basedir" value="."/>
             <sysproperty key="net.sourceforge.cobertura.datafile" file="${commons.build.dir}/cobertura.ser" />
             <formatter type="xml"/>

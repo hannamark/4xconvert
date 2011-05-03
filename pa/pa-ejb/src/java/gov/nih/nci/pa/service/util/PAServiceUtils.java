@@ -1265,10 +1265,10 @@ public class PAServiceUtils {
     public <Entity extends PoDto> Entity findEntity(Entity entity) throws PAException {
         if (entity instanceof EntityDto && PAUtil.isIiNotNull(((EntityDto) entity).getIdentifier())) {
             return (Entity) getEntityByIi(((EntityDto) entity).getIdentifier());
-        } else {
-            return search(entity);
         }
+        return search(entity);
     }
+
     private <Entity extends PoDto> Entity search(Entity entity) throws PAException {
         LimitOffset limit = new LimitOffset(PAAttributeMaxLen.LEN_2, 0);
         List<? extends Entity> entities = null;

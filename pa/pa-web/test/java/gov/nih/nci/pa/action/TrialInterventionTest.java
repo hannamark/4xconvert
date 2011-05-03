@@ -15,43 +15,43 @@ import org.junit.Test;
 
 public class TrialInterventionTest extends AbstractPaActionTest {
 
-	TrialInterventionsAction  trialIntervention;
-	@Before
+    TrialInterventionsAction  trialIntervention;
+    @Before
     public void prepare() throws Exception {
-		trialIntervention = new TrialInterventionsAction();
-		getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
-		trialIntervention.prepare();
+        trialIntervention = new TrialInterventionsAction();
+        getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
+        trialIntervention.prepare();
      }
-	@Test
-	public void testAddWithErrors() throws PAException{
-		assertEquals(trialIntervention.add(),"edit");
-	}
-	@Test
-	public void testAddSubstance() throws PAException{
-		trialIntervention.setInterventionType(ActivitySubcategoryCode.DRUG.getCode());
-		trialIntervention.setInterventionIdentifier("1");
-		trialIntervention.setMinDoseValue("2");
-		trialIntervention.setMaxDoseValue("4");
-		trialIntervention.setMinDoseTotalValue("8");
-		trialIntervention.setMaxDoseTotalValue("10");
-		trialIntervention.setDoseUOM("ml");
-		trialIntervention.setDoseTotalUOM("ml");
-		assertEquals(trialIntervention.add(),"list");
-	}
-	@Test
-	public void testAddSubstanceErr() throws PAException{
-	    trialIntervention.setInterventionType(ActivitySubcategoryCode.DRUG.getCode());
-	    trialIntervention.setInterventionIdentifier("1");
-	    trialIntervention.setMinDoseValue("a");
-	    trialIntervention.setMaxDoseValue("b");
-	    trialIntervention.setMinDoseTotalValue("c");
-	    trialIntervention.setMaxDoseTotalValue("d");
-	    trialIntervention.setDoseUOM("ml");
-	    trialIntervention.setDoseTotalUOM("ml");
-	    assertEquals(trialIntervention.add(),"edit");
-	    assertTrue(CollectionUtils.isNotEmpty(trialIntervention.getActionErrors()));
+    @Test
+    public void testAddWithErrors() throws PAException{
+        assertEquals("edit", trialIntervention.add());
+    }
+    @Test
+    public void testAddSubstance() throws PAException{
+        trialIntervention.setInterventionType(ActivitySubcategoryCode.DRUG.getCode());
+        trialIntervention.setInterventionIdentifier("1");
+        trialIntervention.setMinDoseValue("2");
+        trialIntervention.setMaxDoseValue("4");
+        trialIntervention.setMinDoseTotalValue("8");
+        trialIntervention.setMaxDoseTotalValue("10");
+        trialIntervention.setDoseUOM("ml");
+        trialIntervention.setDoseTotalUOM("ml");
+        assertEquals("list", trialIntervention.add());
+    }
+    @Test
+    public void testAddSubstanceErr() throws PAException{
+        trialIntervention.setInterventionType(ActivitySubcategoryCode.DRUG.getCode());
+        trialIntervention.setInterventionIdentifier("1");
+        trialIntervention.setMinDoseValue("a");
+        trialIntervention.setMaxDoseValue("b");
+        trialIntervention.setMinDoseTotalValue("c");
+        trialIntervention.setMaxDoseTotalValue("d");
+        trialIntervention.setDoseUOM("ml");
+        trialIntervention.setDoseTotalUOM("ml");
+        assertEquals(trialIntervention.add(),"edit");
+        assertTrue(CollectionUtils.isNotEmpty(trialIntervention.getActionErrors()));
 
-	    trialIntervention.setMinDoseValue(null);
+        trialIntervention.setMinDoseValue(null);
         trialIntervention.setMaxDoseValue("b");
         trialIntervention.setMinDoseTotalValue(null);
         trialIntervention.setMaxDoseTotalValue("d");
@@ -92,160 +92,160 @@ public class TrialInterventionTest extends AbstractPaActionTest {
         assertEquals(trialIntervention.add(),"edit");
         assertTrue(CollectionUtils.isNotEmpty(trialIntervention.getActionErrors()));
 
-	}
+    }
 
-	@Test
-	public void testAddProcedure() throws PAException{
-		trialIntervention.setInterventionType("Procedure/Surgery");
-		trialIntervention.setInterventionIdentifier("1");
-		trialIntervention.setInterventionDescription("test");
-		trialIntervention.setTargetSite("chest");
-		trialIntervention.setProcedureName("test");
-		assertEquals(trialIntervention.add(),"list");
-	}
-	@Test
-	public void testAdd() throws PAException{
-		trialIntervention.setInterventionType("Device");
-		trialIntervention.setInterventionIdentifier("1");
-		trialIntervention.setInterventionDescription("test");
-		assertEquals(trialIntervention.add(),"list");
-	}
-	@Test
-	public void testUpdateWithErrors() throws PAException {
-		assertEquals(trialIntervention.update(),"edit");
-	}
-	@Test
-	public void testUpdateSubstance() throws PAException{
-		trialIntervention.setSelectedRowIdentifier("1");
-		trialIntervention.setInterventionType("Drug");
-		trialIntervention.setInterventionIdentifier("1");
-		trialIntervention.setMinDoseValue("2");
-		trialIntervention.setMaxDoseValue("4");
-		trialIntervention.setMinDoseTotalValue("8");
-		trialIntervention.setMaxDoseTotalValue("10");
-		trialIntervention.setDoseUOM("ml");
-		trialIntervention.setDoseTotalUOM("ml");
-		assertEquals(trialIntervention.update(),"list");
-	}
-	@Test
-	public void testUpdateProcedure() throws PAException{
-		trialIntervention.setSelectedRowIdentifier("1");
-		trialIntervention.setInterventionType("Procedure/Surgery");
-		trialIntervention.setInterventionIdentifier("1");
-		trialIntervention.setInterventionDescription("test");
-		trialIntervention.setTargetSite("chest");
-		trialIntervention.setProcedureName("test");
-		assertEquals(trialIntervention.update(),"list");
-	}
-	@Test
-	public void testUpdate() throws PAException{
-		trialIntervention.setSelectedRowIdentifier("1");
-		trialIntervention.setInterventionType("Device");
-		trialIntervention.setInterventionIdentifier("1");
-		trialIntervention.setInterventionDescription("test");
-		assertEquals(trialIntervention.update(),"list");
-	}
+    @Test
+    public void testAddProcedure() throws PAException{
+        trialIntervention.setInterventionType("Procedure/Surgery");
+        trialIntervention.setInterventionIdentifier("1");
+        trialIntervention.setInterventionDescription("test");
+        trialIntervention.setTargetSite("chest");
+        trialIntervention.setProcedureName("test");
+        assertEquals("list", trialIntervention.add());
+    }
+    @Test
+    public void testAdd() throws PAException{
+        trialIntervention.setInterventionType("Device");
+        trialIntervention.setInterventionIdentifier("1");
+        trialIntervention.setInterventionDescription("test");
+        assertEquals("list", trialIntervention.add());
+    }
+    @Test
+    public void testUpdateWithErrors() throws PAException {
+        assertEquals("edit", trialIntervention.update());
+    }
+    @Test
+    public void testUpdateSubstance() throws PAException{
+        trialIntervention.setSelectedRowIdentifier("1");
+        trialIntervention.setInterventionType("Drug");
+        trialIntervention.setInterventionIdentifier("1");
+        trialIntervention.setMinDoseValue("2");
+        trialIntervention.setMaxDoseValue("4");
+        trialIntervention.setMinDoseTotalValue("8");
+        trialIntervention.setMaxDoseTotalValue("10");
+        trialIntervention.setDoseUOM("ml");
+        trialIntervention.setDoseTotalUOM("ml");
+        assertEquals("list", trialIntervention.update());
+    }
+    @Test
+    public void testUpdateProcedure() throws PAException{
+        trialIntervention.setSelectedRowIdentifier("1");
+        trialIntervention.setInterventionType("Procedure/Surgery");
+        trialIntervention.setInterventionIdentifier("1");
+        trialIntervention.setInterventionDescription("test");
+        trialIntervention.setTargetSite("chest");
+        trialIntervention.setProcedureName("test");
+        assertEquals("list", trialIntervention.update());
+    }
+    @Test
+    public void testUpdate() throws PAException{
+        trialIntervention.setSelectedRowIdentifier("1");
+        trialIntervention.setInterventionType("Device");
+        trialIntervention.setInterventionIdentifier("1");
+        trialIntervention.setInterventionDescription("test");
+        assertEquals("list", trialIntervention.update());
+    }
 
-	@Test
-	public void testDelete() throws PAException{
-		trialIntervention.setSelectedRowIdentifier("1");
-		assertEquals(trialIntervention.delete(),"list");
-		trialIntervention.setSelectedRowIdentifier("6");
+    @Test
+    public void testDelete() throws PAException{
+        trialIntervention.setSelectedRowIdentifier("1");
+        assertEquals(trialIntervention.delete(),"list");
+        trialIntervention.setSelectedRowIdentifier("6");
         assertEquals(trialIntervention.delete(),"list");
         assertTrue(!CollectionUtils.isEmpty(trialIntervention.getActionErrors()));
-	}
-	@Test
-	public void testDisplay() throws PAException{
-		getRequest().setupAddParameter("interventionId", "1");
-		trialIntervention.setInterventionIdentifier("1");
-		assertEquals(trialIntervention.display(),"edit");
-		getRequest().setupAddParameter("interventionId", "");
+    }
+    @Test
+    public void testDisplay() throws PAException{
+        getRequest().setupAddParameter("interventionId", "1");
         trialIntervention.setInterventionIdentifier("1");
         assertEquals(trialIntervention.display(),"edit");
-	}
-	@Test(expected=Exception.class)
-	public void testDisplaySelectedTypeDoseForm() throws PAException{
-		getRequest().setupAddParameter("id", "1");
-		getRequest().setupAddParameter("className", "DoseForm");
-		getRequest().setupAddParameter("divName", "DoseForm");
-		trialIntervention.displaySelectedType();
-		getRequest().setupAddParameter("id", "");
+        getRequest().setupAddParameter("interventionId", "");
+        trialIntervention.setInterventionIdentifier("1");
+        assertEquals(trialIntervention.display(),"edit");
+    }
+    @Test(expected=Exception.class)
+    public void testDisplaySelectedTypeDoseForm() throws PAException{
+        getRequest().setupAddParameter("id", "1");
+        getRequest().setupAddParameter("className", "DoseForm");
+        getRequest().setupAddParameter("divName", "DoseForm");
+        trialIntervention.displaySelectedType();
+        getRequest().setupAddParameter("id", "");
         getRequest().setupAddParameter("className", "DoseForm");
         getRequest().setupAddParameter("divName", "DoseForm");
         assertEquals("divName", trialIntervention.displaySelectedType());
-	}
-	@Test(expected=Exception.class)
-	public void testDisplaySelectedTypeDoseFrequency() throws PAException{
-		getRequest().setupAddParameter("id", "1");
-		getRequest().setupAddParameter("className", "DoseFrequency");
-		getRequest().setupAddParameter("divName", "DoseFrequency");
-		trialIntervention.displaySelectedType();
-	}
-	@Test(expected=Exception.class)
-	public void testDisplaySelectedTypeRouteOfAdministration() throws PAException{
-		getRequest().setupAddParameter("id", "1");
-		getRequest().setupAddParameter("className", "RouteOfAdministration");
-		getRequest().setupAddParameter("divName", "RouteOfAdministration");
-		trialIntervention.displaySelectedType();
-	}
-	@Test(expected=Exception.class)
-	public void testDisplaySelectedTypeMethodCode() throws PAException{
-		getRequest().setupAddParameter("id", "1");
-		getRequest().setupAddParameter("className", "MethodCode");
-		getRequest().setupAddParameter("divName", "MethodCode");
-		trialIntervention.displaySelectedType();
-	}
-	@Test(expected=Exception.class)
-	public void testDisplaySelectedTypeDoseUnitOfMeasurement() throws PAException{
-		getRequest().setupAddParameter("id", "1");
-		getRequest().setupAddParameter("className", "UnitOfMeasurement");
-		getRequest().setupAddParameter("divName", "loadDoseUOM");
-		trialIntervention.displaySelectedType();
-	}
-	@Test(expected=Exception.class)
-	public void testDisplaySelectedTypeDoseDurationUnitOfMeasurement() throws PAException{
-		getRequest().setupAddParameter("id", "1");
-		getRequest().setupAddParameter("className", "UnitOfMeasurement");
-		getRequest().setupAddParameter("divName", "loadDoseDurationUOM");
-		trialIntervention.displaySelectedType();
-	}
-	@Test(expected=Exception.class)
-	public void testDisplaySelectedTypeTotalDoseUnitOfMeasurement() throws PAException{
-		getRequest().setupAddParameter("id", "1");
-		getRequest().setupAddParameter("className", "UnitOfMeasurement");
-		getRequest().setupAddParameter("divName", "loadTotalDoseUOM");
-		trialIntervention.displaySelectedType();
-	}
-	@Test(expected=Exception.class)
-	public void testDisplaySelectedTypeTargetSite() throws PAException{
-		getRequest().setupAddParameter("id", "1");
-		getRequest().setupAddParameter("className", "TargetSite");
-		getRequest().setupAddParameter("divName", "TargetSite");
-		trialIntervention.displaySelectedType();
-	}
-	@Test(expected=Exception.class)
-	public void testDisplaySelectedTypeApproachSite() throws PAException{
-		getRequest().setupAddParameter("id", "1");
-		getRequest().setupAddParameter("className", "TargetSite");
-		getRequest().setupAddParameter("divName", "ApproachSite");
-		trialIntervention.displaySelectedType();
-	}
-	@Test
-	public void testDisplaySubPage() throws PAException{
-		getRequest().setupAddParameter("interventionId", "1");
-		getRequest().setupAddParameter("interventionName", "Aspirin");
-		getRequest().setupAddParameter("interventionOtherNames", "baby aspirin");
-		getRequest().setupAddParameter("interventionType", "Drug");
-		assertEquals("edit",trialIntervention.displaySubPage());
+    }
+    @Test(expected=Exception.class)
+    public void testDisplaySelectedTypeDoseFrequency() throws PAException{
+        getRequest().setupAddParameter("id", "1");
+        getRequest().setupAddParameter("className", "DoseFrequency");
+        getRequest().setupAddParameter("divName", "DoseFrequency");
+        trialIntervention.displaySelectedType();
+    }
+    @Test(expected=Exception.class)
+    public void testDisplaySelectedTypeRouteOfAdministration() throws PAException{
+        getRequest().setupAddParameter("id", "1");
+        getRequest().setupAddParameter("className", "RouteOfAdministration");
+        getRequest().setupAddParameter("divName", "RouteOfAdministration");
+        trialIntervention.displaySelectedType();
+    }
+    @Test(expected=Exception.class)
+    public void testDisplaySelectedTypeMethodCode() throws PAException{
+        getRequest().setupAddParameter("id", "1");
+        getRequest().setupAddParameter("className", "MethodCode");
+        getRequest().setupAddParameter("divName", "MethodCode");
+        trialIntervention.displaySelectedType();
+    }
+    @Test(expected=Exception.class)
+    public void testDisplaySelectedTypeDoseUnitOfMeasurement() throws PAException{
+        getRequest().setupAddParameter("id", "1");
+        getRequest().setupAddParameter("className", "UnitOfMeasurement");
+        getRequest().setupAddParameter("divName", "loadDoseUOM");
+        trialIntervention.displaySelectedType();
+    }
+    @Test(expected=Exception.class)
+    public void testDisplaySelectedTypeDoseDurationUnitOfMeasurement() throws PAException{
+        getRequest().setupAddParameter("id", "1");
+        getRequest().setupAddParameter("className", "UnitOfMeasurement");
+        getRequest().setupAddParameter("divName", "loadDoseDurationUOM");
+        trialIntervention.displaySelectedType();
+    }
+    @Test(expected=Exception.class)
+    public void testDisplaySelectedTypeTotalDoseUnitOfMeasurement() throws PAException{
+        getRequest().setupAddParameter("id", "1");
+        getRequest().setupAddParameter("className", "UnitOfMeasurement");
+        getRequest().setupAddParameter("divName", "loadTotalDoseUOM");
+        trialIntervention.displaySelectedType();
+    }
+    @Test(expected=Exception.class)
+    public void testDisplaySelectedTypeTargetSite() throws PAException{
+        getRequest().setupAddParameter("id", "1");
+        getRequest().setupAddParameter("className", "TargetSite");
+        getRequest().setupAddParameter("divName", "TargetSite");
+        trialIntervention.displaySelectedType();
+    }
+    @Test(expected=Exception.class)
+    public void testDisplaySelectedTypeApproachSite() throws PAException{
+        getRequest().setupAddParameter("id", "1");
+        getRequest().setupAddParameter("className", "TargetSite");
+        getRequest().setupAddParameter("divName", "ApproachSite");
+        trialIntervention.displaySelectedType();
+    }
+    @Test
+    public void testDisplaySubPage() throws PAException{
+        getRequest().setupAddParameter("interventionId", "1");
+        getRequest().setupAddParameter("interventionName", "Aspirin");
+        getRequest().setupAddParameter("interventionOtherNames", "baby aspirin");
+        getRequest().setupAddParameter("interventionType", "Drug");
+        assertEquals("edit",trialIntervention.displaySubPage());
 
-		getRequest().setupAddParameter("interventionId", "");
-	    getRequest().setupAddParameter("interventionName", "Aspirin");
-	    getRequest().setupAddParameter("interventionOtherNames", "baby aspirin");
-	    getRequest().setupAddParameter("interventionType", "Drug");
-	    assertEquals("edit",trialIntervention.displaySubPage());
+        getRequest().setupAddParameter("interventionId", "");
+        getRequest().setupAddParameter("interventionName", "Aspirin");
+        getRequest().setupAddParameter("interventionOtherNames", "baby aspirin");
+        getRequest().setupAddParameter("interventionType", "Drug");
+        assertEquals("edit",trialIntervention.displaySubPage());
 
-	}
-	@Test
+    }
+    @Test
     public void testGenerateErr() throws PAException{
         trialIntervention.setInterventionType(ActivitySubcategoryCode.DRUG.getCode());
         trialIntervention.setInterventionIdentifier("1");
@@ -258,7 +258,7 @@ public class TrialInterventionTest extends AbstractPaActionTest {
         assertEquals(trialIntervention.generate(),"edit");
         assertNotNull(CollectionUtils.isNotEmpty(trialIntervention.getActionErrors()));
     }
-	@Test
+    @Test
     public void testGenerateForDevice() throws PAException{
         trialIntervention.setInterventionType(ActivitySubcategoryCode.DEVICE.getCode());
         trialIntervention.setInterventionIdentifier("1");
@@ -270,18 +270,18 @@ public class TrialInterventionTest extends AbstractPaActionTest {
         trialIntervention.setDoseTotalUOM("ml");
         assertEquals(trialIntervention.generate(),"edit");
     }
-	@Test
-	public void testGenerateSubstance() throws PAException{
-		trialIntervention.setInterventionType(ActivitySubcategoryCode.DRUG.getCode());
-		trialIntervention.setInterventionIdentifier("1");
-		trialIntervention.setMinDoseValue("2");
-		trialIntervention.setMaxDoseValue("4");
-		trialIntervention.setMinDoseTotalValue("8");
-		trialIntervention.setMaxDoseTotalValue("10");
-		trialIntervention.setDoseUOM("ml");
-		trialIntervention.setDoseTotalUOM("ml");
-		trialIntervention.setDoseDurationValue("1");
-		trialIntervention.setDoseDurationUOM("ml");
+    @Test
+    public void testGenerateSubstance() throws PAException{
+        trialIntervention.setInterventionType(ActivitySubcategoryCode.DRUG.getCode());
+        trialIntervention.setInterventionIdentifier("1");
+        trialIntervention.setMinDoseValue("2");
+        trialIntervention.setMaxDoseValue("4");
+        trialIntervention.setMinDoseTotalValue("8");
+        trialIntervention.setMaxDoseTotalValue("10");
+        trialIntervention.setDoseUOM("ml");
+        trialIntervention.setDoseTotalUOM("ml");
+        trialIntervention.setDoseDurationValue("1");
+        trialIntervention.setDoseDurationUOM("ml");
         trialIntervention.setDoseForm("doseForm");
         trialIntervention.setRouteOfAdministration("routeOfAdministration");
         trialIntervention.setDoseDurationValue("3");
@@ -290,10 +290,10 @@ public class TrialInterventionTest extends AbstractPaActionTest {
         trialIntervention.setApproachSite("approachSite");
         trialIntervention.setTargetSite("targetSite");
         trialIntervention.setProcedureName("procedureName");
-		assertEquals(trialIntervention.generate(),"edit");
-		assertNotNull(trialIntervention.getInterventionDescription());
-	}
-	@Test
+        assertEquals(trialIntervention.generate(),"edit");
+        assertNotNull(trialIntervention.getInterventionDescription());
+    }
+    @Test
     public void testGenerateRadiation() throws PAException{
         trialIntervention.setInterventionType(ActivitySubcategoryCode.RADIATION.getCode());
         trialIntervention.setInterventionIdentifier("1");
@@ -402,6 +402,9 @@ public class TrialInterventionTest extends AbstractPaActionTest {
     }
     @Test
     public void testEditOther() throws PAException {
+        // first create the new intervention to edit
+        testAdd();
+        // now edit it
         trialIntervention.setSelectedRowIdentifier("3");
         trialIntervention.setSelectedType(ActivitySubcategoryCode.DEVICE.getCode());
         assertEquals("edit",trialIntervention.edit());

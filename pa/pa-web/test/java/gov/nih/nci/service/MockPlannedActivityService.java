@@ -109,19 +109,14 @@ import java.util.Map;
  *
  * @author hreinhart
  */
-public class MockPlannedActivityService extends MockAbstractBaseIsoService <PlannedActivityDTO>
+public class MockPlannedActivityService extends MockAbstractBaseIsoService<PlannedActivityDTO>
     implements PlannedActivityServiceLocal {
 
-    /** The list. */
-    public static List<PlannedActivity> list;
+    private List<PlannedActivity> list;
+    private static PlannedActivityConverter converter = new PlannedActivityConverter();
+    private Long seq = 1L;
 
-    /** The converter. */
-    static PlannedActivityConverter converter = new PlannedActivityConverter();
-
-    /** The seq. */
-    private static Long seq = 1L;
-
-    static {
+    public MockPlannedActivityService() {
         list = new ArrayList<PlannedActivity>();
         PlannedActivity pa = new PlannedActivity();
         pa.setId(seq++);

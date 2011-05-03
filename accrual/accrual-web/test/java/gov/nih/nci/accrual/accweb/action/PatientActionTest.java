@@ -92,7 +92,9 @@ import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -124,6 +126,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient = new PatientWebDto();
         listOfPatients = new ArrayList<PatientWebDto>();
         listOfStudySites = new ArrayList<SearchStudySiteResultWebDto>();
+        setCutOffDate(new Timestamp(new Date().getTime()));
     }
 
     @Override

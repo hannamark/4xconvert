@@ -307,8 +307,8 @@ public class MockServiceLocator implements ServiceLocator {
     * @return RegulatoryInformationServiceRemote
     */
    public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
-		return regulatoryInformationService;
-	}
+        return regulatoryInformationService;
+    }
 
     /**
      * return StudyResourcingServiceRemote
@@ -317,59 +317,36 @@ public class MockServiceLocator implements ServiceLocator {
         return studyResourcingService;
     }
 
-    /**
-     * return StudyRegulatoryAuthorityServiceRemote
-     */
     public StudyRegulatoryAuthorityServiceLocal getStudyRegulatoryAuthorityService() {
-        // TODO Auto-generated method stub
         return null;
     }
 
-    /**
-    *
-    * @return OrganizationEntityServiceRemote
-    */
     public  OrganizationEntityServiceRemote getPoOrganizationEntityService() {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.ServiceLocator#getLookUpTableService()
-     */
     public LookUpTableServiceRemote getLookUpTableService() {
-    	return lookUpService;
+        return lookUpService;
     }
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.ServiceLocator#getProtocolQueryService()
-     */
+
     public ProtocolQueryServiceLocal getProtocolQueryService() {
         return protocolQueryService;
     }
 
-
-    /**
-     * return DocumentServiceRemote
-     */
     public DocumentServiceLocal getDocumentService() {
         return documentService;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.ServiceLocator#getPoHealthCareProverService()
-     */
     public HealthCareFacilityCorrelationServiceRemote getPoHealthCareProverService() {
-        // TODO Auto-generated method stub
         return null;
     }
 
 
     public StudySiteContactServiceLocal getStudySiteContactService() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public PersonEntityServiceRemote getPoPersonEntityService() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -378,13 +355,9 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
     public HealthCareProviderCorrelationServiceRemote getPoPersonCorrelationService() {
-        // TODO Auto-generated method stub
         return null;
     }
 
-    /**
-     * return SubGroupsServiceRemote
-     */
     public StratumGroupServiceRemote getSubGroupsService() {
         return null;
     }
@@ -397,21 +370,14 @@ public class MockServiceLocator implements ServiceLocator {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.ServiceLocator#getArmService()
-     */
     public ArmServiceLocal getArmService() {
         return armService;
     }
 
     public StudyIndldeServiceLocal getStudyIndldeService() {
-        // TODO Auto-generated method stub
         return studyIndIdeService;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.util.ServiceLocator#getCTGovXmlGeneratorService()
-     */
     public CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService() {
          return ctGovXmlGeneratorService;
     }
@@ -421,7 +387,6 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
     public DocumentWorkflowStatusServiceLocal getDocumentWorkflowStatusService() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -462,7 +427,6 @@ public class MockServiceLocator implements ServiceLocator {
 
     public OrganizationalContactCorrelationServiceRemote getPoOrganizationalContactCorrelationService()
             throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -529,23 +493,20 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
     public StudyRecruitmentStatusServiceLocal getStudyRecruitmentStatusService() {
-        // TODO Auto-generated method stub
         return null;
     }
-	/**
-	 * @return the studyInboxService
-	 */
-	public StudyInboxServiceLocal getStudyInboxService() {
-		return studyInboxService;
-	}
+    /**
+     * @return the studyInboxService
+     */
+    public StudyInboxServiceLocal getStudyInboxService() {
+        return studyInboxService;
+    }
 
     public TrialRegistrationServiceLocal getTrialRegistrationService() {
-        // TODO Auto-generated method stub
         return mock(TrialRegistrationServiceLocal.class);
     }
 
     public StudySiteOverallStatusServiceLocal getStudySiteOverallStatusService() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -558,12 +519,10 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
     public StudyRelationshipServiceLocal getStudyRelationshipService() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public StudyProtocolStageServiceLocal getStudyProtocolStageService() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -575,7 +534,6 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
     public ProprietaryTrialManagementServiceLocal getProprietaryTrialService() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -597,7 +555,6 @@ public class MockServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public PDQUpdateGeneratorTaskServiceLocal getPDQUpdateGeneratorTaskService() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -605,7 +562,6 @@ public class MockServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public PDQTrialAbstractionServiceBeanRemote getPDQTrialAbstractionServiceRemote() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -613,7 +569,6 @@ public class MockServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public PDQTrialRegistrationServiceBeanRemote getPDQTrialRegistrationServiceRemote() {
-        // TODO Auto-generated method stub
         return null;
     }
 
