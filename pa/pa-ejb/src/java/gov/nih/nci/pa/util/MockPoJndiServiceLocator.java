@@ -372,7 +372,7 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
             FamilyDTO family = new FamilyDTO();
             family.setName(EnOnConverter.convertToEnOn("some family name"));
             family.setStatusCode(CdConverter.convertStringToCd("active"));
-            family.setIdentifier(null);
+            family.setIdentifier(IiConverter.convertToIi(1L));
             List<FamilyDTO> familyList = new ArrayList<FamilyDTO>();
             familyList.add(family);
             when(remote.getFamily(any(Ii.class))).thenReturn(family);

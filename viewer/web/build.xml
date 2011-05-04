@@ -43,6 +43,8 @@
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo"/>
 
     <property name="bda-utils" value="${software.dir}/target/pa/bda-utils"/>
+    
+    <property name="selenium.delay" value="10"/>
 
 
     <!-- ====================================================================== -->
@@ -171,6 +173,7 @@
                 <filter token="pa.server.name" value="${pa.server.name}"/>
                 <filter token="jboss.port" value="${jboss.port}" />
                 <filter token="selenium.server.port" value="${selenium.server.port}"/>
+                <filter token="selenium.delay" value="${selenium.delay}" />
             </filterset>
         </copy>
     </target>

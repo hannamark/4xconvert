@@ -1,16 +1,17 @@
 package gov.nih.nci.pa.test.integration;
 
-import org.junit.Test;
+import org.junit.Ignore;
 
+@Ignore
 public class LookupWithApostropheTest extends AbstractPaSeleniumTest {
-    
+
     /**
      * Tests lookup of lead organization with apostrophe.
      *
      * @throws Exception on error
      */
-    @Test
-    public void testLeadOrganizationLookup() throws Exception {
+    @Ignore
+    public void leadOrganizationLookup() throws Exception {
         loginAsAbstractor();
         verifyTrialSearchPage();
         selenium.type("id=officialTitle", "Test Summ 4 Anatomic Site Trial created by Selenium.");
@@ -33,14 +34,14 @@ public class LookupWithApostropheTest extends AbstractPaSeleniumTest {
         selenium.selectFrame("relative=up");
         assertEquals("Wrong Principal investigator", "PO-2098'test organization", selenium.getValue("name=gtdDTO.leadOrganizationName"));
     }
-    
+
     /**
      * Tests lookup of person with apostrophe.
      *
      * @throws Exception on error
      */
-    @Test
-    public void testPersonLookup() throws Exception {
+    @Ignore
+    public void personLookup() throws Exception {
         loginAsAbstractor();
         verifyTrialSearchPage();
         selenium.type("id=officialTitle", "Test Summ 4 Anatomic Site Trial created by Selenium.");

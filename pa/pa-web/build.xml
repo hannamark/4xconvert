@@ -45,6 +45,8 @@
     <property name="jboss.server.jndi.port" value="1099" />
     <property name="bda-utils" value="${basedir}/../../target/pa/bda-utils" />
     <property name="database.upgrades.dir" value="${basedir}/../dbscripts/db-upgrade"/>
+    
+    <property name="selenium.delay" value="10"/>
 
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
@@ -215,6 +217,7 @@
                 <filter token="pa.server.name" value="${pa.server.name}"/>
                 <filter token="jboss.port" value="${jboss.port}" />
                 <filter token="selenium.server.port" value="${selenium.server.port}"/>
+                <filter token="selenium.delay" value="${selenium.delay}" />
             </filterset>
         </copy>
         <replaceregexp file="${pa-web.build.testResourceDir.0}/test.properties" match="\\" replace="/" flags="g"/>

@@ -108,7 +108,7 @@
     </target>
     
     <target name="run-selenium-tests" depends="build-notest" description="Runs integration tests against an already deployed application">
-        <ant target="run-selenium-tests" dir="accrual-web" inheritAll="false"/>
+        <ant target="run-selenium-tests" dir="accrual-web" inheritAll="false" inheritrefs="false"/>
     </target>
 
     <!-- The emptySessionPath must be false to avoid Session Fixation Appscan issues and be compatible with the
@@ -178,7 +178,10 @@
             dir="${services.dir}" >
             <property name="hibernate.dialect" value="${hibernate.dialect}"/>
             <property name="jboss.deploy.dir" location="${jboss.deploy.dir}" />
+            <property name="po.server.name" value="${po.server.name}" />
             <property name="po.port.number" value="${po.port.number}" />
+            <property name="po.username" value="${po.username}" />
+            <property name="po.pass" value="${po.pass}" />
             <property name="jboss.server.hostname" value="${jboss.server.hostname}" />
             <property name="accrual.jnp.url" value="${accrual.jnp.url}" />
             <property name="pa.jnp.url" value="${pa.jnp.url}" />
@@ -202,7 +205,7 @@
         <fail unless="database.user" message="Missing required property database.user"/>
         <fail unless="database.password" message="Missing required property database.password"/>
         <fail unless="database.url" message="Missing required property database.url"/>
-        <fail unless="jdbc.driver" message="Missing required property database.driver"/>
+        <fail unless="jdbc.driver" message="Missing required property jdbc.driver"/>
         <fail unless="gridServicePrincipal" message="Missing required property gridServicePrincipal"/>
         <fail unless="gridServiceCredential" message="Missing required property gridServiceCredential"/>
 

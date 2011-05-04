@@ -103,10 +103,13 @@ public final class TestProperties {
     public static final String SELENIUM_BROWSER_KEY = "selenium.browser";
     public static final String SELENIUM_BROWSER_DEFAULT = "*chrome";
 
+    public static final String SELENIUM_DELAY_KEY = "selenium.delay";
+    public static final String SELENIUM_DELAY_DEFAULT = "10";
+
     private static Properties properties = new Properties();
     static {
         try {
-            InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("test.properties");
+            InputStream stream = TestProperties.class.getClassLoader().getResourceAsStream("test.properties");
             properties.load(stream);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -121,11 +124,15 @@ public final class TestProperties {
         return Integer.parseInt(properties.getProperty(SERVER_PORT_KEY, SERVER_PORT_DEFAULT));
     }
 
-    public static int getSeleniumServerPort() {
-        return Integer.parseInt(properties.getProperty(SELENIUM_SERVER_PORT_KEY, SELENIUM_SERVER_PORT_DEFAULT));
+    public static String getSeleniumServerPort() {
+        return properties.getProperty(SELENIUM_SERVER_PORT_KEY, SELENIUM_SERVER_PORT_DEFAULT);
     }
 
     public static String getSeleniumBrowser() {
         return properties.getProperty(SELENIUM_BROWSER_KEY, SELENIUM_BROWSER_DEFAULT);
+    }
+
+    public static String getSeleniumCommandDelay() {
+        return properties.getProperty(SELENIUM_DELAY_KEY, SELENIUM_DELAY_DEFAULT);
     }
 }

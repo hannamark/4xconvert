@@ -38,6 +38,8 @@
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
     <property name="ivy.def.file" location="ivy-accrual-accrual-web.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
+    
+    <property name="selenium.delay" value="10"/>
 
 
     <!-- ====================================================================== -->
@@ -271,6 +273,7 @@
                 <filter token="pa.server.name" value="${jboss.server.hostname}"/>
                 <filter token="jboss.port" value="${jboss.server.port}" />
                 <filter token="selenium.server.port" value="${selenium.server.port}"/>
+                <filter token="selenium.delay" value="${selenium.delay}" />
             </filterset>
         </copy>
     </target>

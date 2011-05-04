@@ -176,11 +176,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
     <!-- Selenium settings -->
     <property name="selenium.browser" value="*chrome"/>
-    <!--  What you would need for a ci server, recommend setting in local.properties
-    <property name="selenium.browser" value="*firefox /usr/lib64/firefox-1.5.0.12/firefox-bin"/>
-    -->
     <property name="selenium.proxy.port" value="4444"/>
     <property name="selenium.jboss.port" value="39480"/>
+    <property name="selenium.delay" value="10"/>
     <property name="selenium.report.dir" location="${reports.dir}/selenium"/>
     <property name="selenium.report.file" value="selenium-rpt.html"/>
     <property name="selenium.test.dir" location="${software.dir}/test/selenium"/>
@@ -1486,9 +1484,21 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
             <ant inheritAll="false" inheritRefs="false" target="@{runTarget}" dir="@{runDir}">
                 <property name="pa.server.name" value="${jboss.server.hostname}"/>
-                <property name="jboss.port" value="${selenium.jboss.port}"/>
+                <property name="jboss.server.hostname" value="${jboss.server.hostname}"/>
+                <property name="jboss.server.port" value="${selenium.jboss.port}"/>
+                <property name="jboss.port" value="${selenium.jboss.port}" />
                 <property name="selenium.server.port" value="${selenium.proxy.port}"/>
+                <property name="selenium.delay" value="${selenium.delay}"/>
                 <property name="jboss.deploy.directory" value="${jboss.deploy.dir}"/>
+                <property name="hibernate.dialect" value="${database.dialect}"/>
+                <property name="database.user" value="${database.user}"/>
+                <property name="database.password" value="${database.password}"/>
+                <property name="database.url" value="${database.url}"/>
+                <property name="jdbc.driver" value="${database.driver}"/>
+                <property name="gridServicePrincipal" value="${grid.security.jndi.principal}"/>
+                <property name="gridServiceCredential" value="${grid.security.jndi.credentials.encrypted}"/>
+                <property name="jboss.deploy.dir" value="${jboss.deploy.dir}" />
+                <property name="application.url" value="${application.url}" />
            </ant>
 
             <ant inheritAll="false" inheritRefs="false" target="stop-selenium-server" dir="${pa.base.dir}">

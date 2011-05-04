@@ -83,7 +83,7 @@
 package gov.nih.nci.registry.test.integration;
 
 import gov.nih.nci.coppa.test.integration.AbstractSeleneseTestCase;
-import gov.nih.nci.pa.test.integration.util.TestProperties;
+import gov.nih.nci.registry.integration.TestProperties;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -112,6 +112,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         super.setServerPort(TestProperties.getServerPort());
         super.setBrowser(TestProperties.getSeleniumBrowser());
         super.setUp();
+        selenium.setSpeed(TestProperties.getSeleniumCommandDelay());
     }
 
     @Override
@@ -203,7 +204,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         waitForPageToLoad();
 
         selenium.selectFrame("relative=up");
-        waitForElementById("submitTrial_trialDTO_leadOrgTrialIdentifier", 15);
+        waitForElementById("submitTrial_trialDTO_leadOrgTrialIdentifier", 30);
         selenium.type("submitTrial_trialDTO_leadOrgTrialIdentifier", leadOrgTrialId);
         selenium.type("submitTrial_trialDTO_officialTitle", trialName);
         selenium.select("trialDTO.phaseCode", "label=0");
@@ -213,14 +214,14 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         clickAndWaitAjax("link=Look Up Org");
         waitForElementById("popupFrame", 60);
         selenium.selectFrame("popupFrame");
-        waitForElementById("search_organization_btn", 15);
+        waitForElementById("search_organization_btn", 30);
         if (firstRun) {
             // compiling the popup jsp the first time screws up selenium, so give it some time
             System.out.println("Waiting on first run - org");
             pause(2000);
         }
         clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
+        waitForElementById("row", 30);
         selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
         waitForPageToLoad();
 
@@ -229,7 +230,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         clickAndWaitAjax("link=Look Up Person");
         waitForElementById("popupFrame", 60);
         selenium.selectFrame("popupFrame");
-        waitForElementById("search_person_btn", 15);
+        waitForElementById("search_person_btn", 30);
         if (firstRun) {
             // compiling the popup jsp the first time screws up selenium, so give it some time
             System.out.println("Waiting on first run - pers");
@@ -286,9 +287,9 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         selenium.type("submitTrial_protocolDoc", protocolDocPath);
         selenium.type("submitTrial_irbApproval", irbDocPath);
 
-        pause(5000);
+        pause(1000);
         clickAndWaitAjax("link=Review Trial");
-        waitForElementById("reviewTrialForm", 15);
+        waitForElementById("reviewTrialForm", 60);
         clickAndWaitAjax("link=Submit");
         waitForPageToLoad();
         firstRun = false;
@@ -351,7 +352,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         selenium.selectFrame("popupFrame");
         waitForElementById("search_organization_btn", 15);
         clickAndWaitAjax("link=Search");
-        waitForElementById("row", 15);
+        waitForElementById("row", 25);
         selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
         waitForPageToLoad();
 

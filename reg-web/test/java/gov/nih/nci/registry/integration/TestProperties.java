@@ -80,88 +80,59 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.accweb.integration;
+package gov.nih.nci.registry.integration;
 
-import gov.nih.nci.coppa.test.integration.AbstractSeleneseTestCase;
-import gov.nih.nci.pa.test.integration.util.TestProperties;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
- * Abstract base class for selenium tests.
- *
- * @author Abraham J. Evans-EL <aevanse@5amsolutions.com>
+ * Properties for tests.
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-@Ignore
-public abstract class AbstractAccrualSeleniumTest extends AbstractSeleneseTestCase {
+public final class TestProperties {
+    public static final String SERVER_HOSTNAME_KEY = "server.hostname";
+    public static final String SERVER_PORT_KEY = "server.port";
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setSeleniumPort(TestProperties.getSeleniumServerPort());
-        super.setServerHostname(TestProperties.getServerHostname());
-        super.setServerPort(TestProperties.getServerPort());
-        super.setBrowser(TestProperties.getSeleniumBrowser());
-        super.setUp();
-        selenium.setSpeed(TestProperties.getSeleniumCommandDelay());
-    }
+    public static final String SERVER_HOSTNAME_DEFAULT = "localhost";
+    public static final String SERVER_PORT_DEFAULT = "8080";
 
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        logoutUser();
-        super.tearDown();
-    }
+    public static final String SELENIUM_SERVER_PORT_KEY = "selenium.server.port";
+    public static final String SELENIUM_SERVER_PORT_DEFAULT = "4444";
 
-    private void logoutUser() {
-        openAndWait("/accrual/login/logout.action");
-    }
+    public static final String SELENIUM_BROWSER_KEY = "selenium.browser";
+    public static final String SELENIUM_BROWSER_DEFAULT = "*chrome";
 
-    protected void login(String username, String password) {
-        selenium.open("/accrual");
-        verifyHomePage();
-        clickAndWait("link=Log In");
-        selenium.type("j_username", username);
-        selenium.type("j_password", password);
-        clickAndWait("id=loginButton");
-        verifyDisclaimerPage();
-    }
+    public static final String SELENIUM_DELAY_KEY = "selenium.delay";
+    public static final String SELENIUM_DELAY_DEFAULT = "10";
 
-    protected void verifyDisclaimerPage() {
-        assertTrue(selenium.isElementPresent("id=acceptDisclaimer"));
-        assertTrue(selenium.isElementPresent("id=rejectDisclaimer"));
-    }
-
-    protected void verifyHomePage() {
-        assertTrue(selenium.isTextPresent("Log In"));
-        assertTrue(selenium.isTextPresent("CONTACT US"));
-        assertTrue(selenium.isTextPresent("PRIVACY NOTICE"));
-        assertTrue(selenium.isTextPresent("DISCLAIMER"));
-        assertTrue(selenium.isTextPresent("ACCESSIBILITY"));
-        assertTrue(selenium.isTextPresent("SUPPORT"));
-    }
-
-    protected void disclaimer(boolean accept) {
-        if (accept) {
-            clickAndWait("id=acceptDisclaimer");
-        } else {
-            clickAndWait("id=rejectDisclaimer");
-            verifyHomePage();
+    private static Properties properties = new Properties();
+    static {
+        try {
+            InputStream stream = TestProperties.class.getClassLoader().getResourceAsStream("test.properties");
+            properties.load(stream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public void loginAsAbstractor() {
-        login("abstractor-ci", "Coppa#12345");
+    public static String getServerHostname() {
+        return properties.getProperty(SERVER_HOSTNAME_KEY, SERVER_HOSTNAME_DEFAULT);
     }
 
-    protected boolean isLoggedIn() {
-        return selenium.isElementPresent("link=Logout") && !selenium.isElementPresent("link=Login");
+    public static int getServerPort() {
+        return Integer.parseInt(properties.getProperty(SERVER_PORT_KEY, SERVER_PORT_DEFAULT));
     }
 
-    protected void openAndWait(String url) {
-        selenium.open(url);
-        waitForPageToLoad();
+    public static String getSeleniumServerPort() {
+        return properties.getProperty(SELENIUM_SERVER_PORT_KEY, SELENIUM_SERVER_PORT_DEFAULT);
+    }
+
+    public static String getSeleniumBrowser() {
+        return properties.getProperty(SELENIUM_BROWSER_KEY, SELENIUM_BROWSER_DEFAULT);
+    }
+
+    public static String getSeleniumCommandDelay() {
+        return properties.getProperty(SELENIUM_DELAY_KEY, SELENIUM_DELAY_DEFAULT);
     }
 }

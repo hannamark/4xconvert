@@ -26,8 +26,6 @@
                 setFormat("mm/dd/yyyy");
         </script>
         <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
-        <!-- c:url value="/protected/ajaxorganizationContactsavePI.action" var="lookupOrgUrl"/-->
-        
         <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
         <c:url value="/protected/ajaxSubmitTrialActionshowWaitDialog.action" var="submitProtocol"/>
         <c:url value="/protected/ajaxorganizationContactgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
@@ -124,12 +122,10 @@
             
             function reviewProtocol () {
                 submitFirstForm("review", "submitTrialreview.action");
-                showPopWin('${reviewProtocol}', 600, 200, '', 'Review Register Trial');
             }
             
             function partialSave() {
                 submitFirstForm(null, "submitTrialpartialSave.action");
-                showPopWin('${partialSave}', 600, 200, '', 'Partial Saving Trial');
             }
             
             function cancelProtocol() {

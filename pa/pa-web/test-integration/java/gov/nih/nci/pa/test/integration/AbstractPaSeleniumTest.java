@@ -97,11 +97,12 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
 
     @Override
     public void setUp() throws Exception {
-        super.setSeleniumPort(Integer.toString(TestProperties.getSeleniumServerPort()));
+        super.setSeleniumPort(TestProperties.getSeleniumServerPort());
         super.setServerHostname(TestProperties.getServerHostname());
         super.setServerPort(TestProperties.getServerPort());
         super.setBrowser(TestProperties.getSeleniumBrowser());
         super.setUp();
+        selenium.setSpeed(TestProperties.getSeleniumCommandDelay());
     }
 
     @Override

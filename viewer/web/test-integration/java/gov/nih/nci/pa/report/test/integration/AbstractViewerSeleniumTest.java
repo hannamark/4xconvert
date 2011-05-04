@@ -98,11 +98,12 @@ public abstract class AbstractViewerSeleniumTest extends AbstractSeleneseTestCas
 
     @Override
     public void setUp() throws Exception {
-        super.setSeleniumPort(TestProperties.getServerHostname());
+        super.setSeleniumPort(TestProperties.getSeleniumServerPort());
         super.setServerHostname(TestProperties.getServerHostname());
         super.setServerPort(TestProperties.getServerPort());
         super.setBrowser(TestProperties.getSeleniumBrowser());
         super.setUp();
+        selenium.setSpeed(TestProperties.getSeleniumCommandDelay());
     }
 
     @Override
@@ -138,7 +139,7 @@ public abstract class AbstractViewerSeleniumTest extends AbstractSeleneseTestCas
         assertTrue(selenium.isTextPresent("ACCESSIBILITY"));
         assertTrue(selenium.isTextPresent("SUPPORT"));
     }
-    
+
     private void verifyReportsMenu() {
         assertTrue(selenium.isElementPresent("link=Summary of Submission"));
         assertTrue(selenium.isElementPresent("link=Trial Processing"));
@@ -153,7 +154,7 @@ public abstract class AbstractViewerSeleniumTest extends AbstractSeleneseTestCas
     protected void verifyCTROWelcomePage() {
         verifyReportsMenu();
     }
-    
+
     protected void disclaimer(boolean accept) {
         if (accept) {
             clickAndWait("id=acceptDisclaimer");
