@@ -273,7 +273,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(dwf);
         // try to create
         try {
-            bean.create(getMilestoneDTO(MilestoneCode.INITIAL_SUBMISSION_TO_CLINICALTRIALS_GOV_DATE));
+            bean.create(getMilestoneDTO(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION));
             fail("Should have failed because the trial is on-hold.");
         } catch (PAException e) {
             // expected behavior
@@ -288,7 +288,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
             }
         }
         // create
-        bean.create(getMilestoneDTO(MilestoneCode.INITIAL_SUBMISSION_TO_CLINICALTRIALS_GOV_DATE));
+        bean.create(getMilestoneDTO(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION));
         dtoList = bean.getByStudyProtocol(spIi);
         assertEquals(oldSize + 1, dtoList.size());
     }
@@ -483,7 +483,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.QC_START));
         checkMilestoneFailure(MilestoneCode.READY_FOR_QC, errorMessage);
     }
-    
+
     private void checkMilestoneFailure(MilestoneCode milestone, String message) {
         try {
             bean.create(getMilestoneDTO(milestone));
@@ -517,7 +517,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
         checkMilestoneFailure(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, canNotStartMsg);
     }
-    
+
     @Test
     public void checkScientificProcessingCompletedDate() throws PAException {
         addAbstractedWorkflowStatus();
@@ -534,7 +534,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
         checkMilestoneFailure(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, canNotCompleteMsg);
     }
-    
+
     @Test
     public void checkAdministrativeProcessingStartDate() throws PAException {
         addAbstractedWorkflowStatus();
@@ -553,7 +553,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.READY_FOR_QC));
         checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, canNotStartMsg);
     }
-    
+
     @Test
     public void checkAdministrativeProcessingCompletedDate() throws PAException {
         addAbstractedWorkflowStatus();

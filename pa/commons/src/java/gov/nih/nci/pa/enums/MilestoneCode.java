@@ -106,7 +106,7 @@ public enum MilestoneCode implements CodedEnum<String> {
     /** 4. */
     ADMINISTRATIVE_PROCESSING_START_DATE("Administrative processing start date", false, false, null, true, true),
     /** 5. */
-    ADMINISTRATIVE_PROCESSING_COMPLETED_DATE("Administrative processing completed date", false, false, null, true, 
+    ADMINISTRATIVE_PROCESSING_COMPLETED_DATE("Administrative processing completed date", false, false, null, true,
                                              true),
     /** 6. */
     SCIENTIFIC_PROCESSING_START_DATE("Scientific processing start date", false, false, null, true, true),
@@ -126,11 +126,8 @@ public enum MilestoneCode implements CodedEnum<String> {
     /** 13. */
     INITIAL_ABSTRACTION_VERIFY("Initial Abstraction Verified Date", true, true, null, false, false),
     /** 14. */
-    INITIAL_SUBMISSION_TO_CLINICALTRIALS_GOV_DATE("Initial Submission To Clinicaltrials.gov Date", true,
-            false, null, false, false),
-    /** 15. */
     ONGOING_ABSTRACTION_VERIFICATION("On-going Abstraction Verified Date", false, true, null, false, false),
-    /** 16. */
+    /** 15. */
     LATE_REJECTION_DATE("Late Rejection Date", true, false, MilestoneCode.SUBMISSION_ACCEPTED, false, false);
 
     private String code;
@@ -233,11 +230,6 @@ public enum MilestoneCode implements CodedEnum<String> {
         tmpSet = new HashSet<DocumentWorkflowStatusCode>();
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
-        tmp.put(INITIAL_SUBMISSION_TO_CLINICALTRIALS_GOV_DATE, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
         tmp.put(ONGOING_ABSTRACTION_VERIFICATION, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = new HashSet<DocumentWorkflowStatusCode>();
@@ -253,7 +245,6 @@ public enum MilestoneCode implements CodedEnum<String> {
         tsrAndAbove.add(MilestoneCode.TRIAL_SUMMARY_SENT);
         tsrAndAbove.add(MilestoneCode.TRIAL_SUMMARY_FEEDBACK);
         tsrAndAbove.add(MilestoneCode.INITIAL_ABSTRACTION_VERIFY);
-        tsrAndAbove.add(MilestoneCode.INITIAL_SUBMISSION_TO_CLINICALTRIALS_GOV_DATE);
         tsrAndAbove.add(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION);
         tsrAndAbove.add(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION);
 

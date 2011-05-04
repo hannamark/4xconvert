@@ -670,4 +670,8 @@
         <comment>Adding quartz tables for persistent JobStore for accrual</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.5/PO-2848-accrual.sql"/>
      </changeSet>
+     <changeSet id="PO-3533.sql" author="aevansel">
+        <comment>Removing INITIAL_SUBMISSION_TO_CLINICALTRIALS_GOV_DATE milestones.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.5/PO-3533.sql"/>
+     </changeSet>
 </databaseChangeLog>
