@@ -109,8 +109,8 @@ import org.junit.Test;
 public class FamilyDateValidatorTest extends AbstractServiceBeanTest {
 
     private FamilyServiceBean familyService = mock(FamilyServiceBean.class);
-    private Date today = DateUtils.truncate(new Date(), Calendar.DATE);
-    private Date oldDate;
+    private final Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+    private final Date oldDate = DateUtils.addDays(today, -1);
 
     /**
      * setup the service.
@@ -118,9 +118,6 @@ public class FamilyDateValidatorTest extends AbstractServiceBeanTest {
     @Before
     public void setupService() {
         FamilyDateValidator.setFamilyService(familyService);
-        Calendar cal = Calendar.getInstance();
-        cal.set(2008, 01, 02);
-        oldDate = DateUtils.truncate(cal.getTime(), Calendar.DATE);
     }
     
     @After

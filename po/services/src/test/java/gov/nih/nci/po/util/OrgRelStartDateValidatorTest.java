@@ -112,7 +112,7 @@ public class OrgRelStartDateValidatorTest extends AbstractServiceBeanTest {
 
     private FamilyUtilDao familyUtilDao = mock(FamilyUtilDao.class);
     private final Date today = DateUtils.truncate(new Date(), Calendar.DATE);
-    private Date oldDate;
+    private final Date oldDate = DateUtils.addDays(today, -1);
     
     /**
      * setup the service.
@@ -120,9 +120,6 @@ public class OrgRelStartDateValidatorTest extends AbstractServiceBeanTest {
     @Before
     public void setupService() {
         OrgRelStartDateValidator.setFamilyDao(familyUtilDao);
-        Calendar cal = Calendar.getInstance();
-        cal.set(2008, 01, 02);
-        oldDate = DateUtils.truncate(cal.getTime(), Calendar.DATE);
     }
     
     @After

@@ -87,9 +87,9 @@ import static org.junit.Assert.assertTrue;
 import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.service.AbstractHibernateTestCase;
 
-import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
 /**
@@ -105,13 +105,11 @@ public class OrderedDateValidatorTest extends AbstractHibernateTestCase {
         validator.setEndFieldName("endDate");
         Family family = new Family();
         assertTrue(validator.isValid(family));
-        Calendar cal = Calendar.getInstance();
-        cal.set(2010, 04, 04);
-        family.setEndDate(cal.getTime());
-        family.setStartDate(new Date());
+        Date today = new Date();
+        family.setEndDate(DateUtils.addDays(today, -1));
+        family.setStartDate(today);
         assertFalse(validator.isValid(family));
-        cal.set(2011, 04, 04);
-        family.setEndDate(cal.getTime());
+        family.setEndDate(DateUtils.addDays(today, 1));
         assertTrue(validator.isValid(family));
     }
 }

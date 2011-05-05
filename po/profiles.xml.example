@@ -4,9 +4,6 @@
         <activation>
             <activeByDefault>true</activeByDefault>
         </activation>
-        <properties>
-            <!--maven.surefire.debug>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8787 -Xnoagent -Djava.compiler=NONE</maven.surefire.debug-->
-        </properties>
     </profile>
     <profile>
         <id>quick</id>
@@ -20,6 +17,15 @@
             <!-- maven.test.skip>true</maven.test.skip-->
             <pmd.skip>true</pmd.skip>
             <checkstyle.skip>true</checkstyle.skip>
+        </properties>
+    </profile>
+    <profile>
+        <id>debug</id>
+        <activation>
+            <activeByDefault>false</activeByDefault>
+        </activation>
+        <properties>
+            <maven.surefire.debug>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8787 -Xnoagent -Djava.compiler=NONE</maven.surefire.debug>
         </properties>
     </profile>
 </profiles>

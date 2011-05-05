@@ -85,9 +85,9 @@ package gov.nih.nci.po.util;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
 
@@ -101,12 +101,10 @@ public class PastOrCurrentDateValidatorTest {
     @Test
     public void testIsValid() {
         PastOrCurrentDateValidator validator = new PastOrCurrentDateValidator();
+        Date today = new Date();
         assertTrue(validator.isValid(null));
-        assertTrue(validator.isValid(new Date()));
-        Calendar cal = Calendar.getInstance();
-        cal.set(2010, 04, 04);
-        assertTrue(validator.isValid(cal.getTime()));
-        cal.set(2012, 04, 04);
-        assertFalse(validator.isValid(cal.getTime()));
+        assertTrue(validator.isValid(today));
+        assertTrue(validator.isValid(DateUtils.addDays(today, -1)));
+        assertFalse(validator.isValid(DateUtils.addDays(new Date(), 1)));
     }
 }
