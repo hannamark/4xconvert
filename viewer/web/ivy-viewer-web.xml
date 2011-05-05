@@ -58,6 +58,8 @@
     <!-- test -->
     <dependency org="com.mockrunner"         name="mockrunner"              rev="0.4.1"           conf="test->master"/>
     <dependency org="junit"                  name="junit"                   rev="4.8.2"           conf="test->master"/>
+    <dependency org="org.mockito"            name="mockito-all"             rev="1.8.4"           conf="test->master"/>
+    <dependency org="ncicb"                  name="nci-commons-core"        rev="1.2.21"          conf="test->master"/>
 
     <!-- other test targets -->
     <dependency org="checkstyle"                name="checkstyle"           rev="5.0"             conf="test-checkstyle->master,runtime"/>

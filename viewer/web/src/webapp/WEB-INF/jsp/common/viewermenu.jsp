@@ -71,6 +71,14 @@
                        <li><a href="criteriaSumm4Rep.action" >Summary 4 Type</a></li>
                     </c:otherwise>
                 </c:choose>
+                <c:choose>
+                    <c:when test="${requestScope.topic == 'run_ad_hoc'}">
+                       <li><a href="criteriaAdHocReport.action" class="selected">Ad Hoc</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                       <li><a href="criteriaAdHocReport.action" >Ad Hoc</a></li>
+                    </c:otherwise>
+                </c:choose>
               </c:if>  
               <li><a href="/viewer/logout.action" >Log Out</a></li>
             </c:when>

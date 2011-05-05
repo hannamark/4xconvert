@@ -76,138 +76,120 @@
 *
 *
 */
-package gov.nih.nci.pa.service.util;
-
-import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
-import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.dto.PaOrganizationDTO;
-import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAConstants;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
-import gov.nih.nci.pa.util.PaHibernateUtil;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
-import org.apache.log4j.Logger;
-import org.hibernate.NonUniqueResultException;
-import org.hibernate.Query;
-import org.hibernate.Session;
+package gov.nih.nci.pa.viewer.dto.result;
 
 
 /**
-* Bean implementation for providing access to the client.
-*
-* @author Naveen Amiruddin
-* @since 06/26/2008
-* copyright NCI 2007.  All rights reserved.
-* This code may not be used without the express written permission of the
-* copyright holder, NCI.
-*/
-@Stateless
-@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
-
-    private static final Logger LOG  = Logger.getLogger(PAOrganizationServiceRemote.class);
-
+ * Web DTO class for displaying list of diseases associated with SP.
+ * @author Hugh Reinhart
+ * @since 12/02/2008 copyright NCI 2008. All rights reserved. This code may not
+ *        be used without the express written permission of the copyright
+ *        holder, NCI.
+ */
+public class DiseaseWebDTO {
+    private String studyDiseaseIdentifier;
+    private String diseaseIdentifier;
+    private String preferredName;
+    private String code;
+    private String conceptId;
+    private String menuDisplayName;
+    private String parentPreferredName;
+    private String alternames;
     /**
-     * returns distinct organization that have been associated with a protocol.
-     * @return OrganizationDTO
-     * @param organizationType Organization Type
-     * @throws PAException pa exception
+     * @return the studyDiseaseIdentifier
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<PaOrganizationDTO> getOrganizationsAssociatedWithStudyProtocol(String organizationType)
-    throws PAException {
-        return createOrganizationDTO(generateDistinctOrganizationQuery(organizationType));
+    public String getStudyDiseaseIdentifier() {
+        return studyDiseaseIdentifier;
     }
-    
     /**
-     * This expects only id and identifier.
-     * @param organization organization
-     * @return Organization
-     * @throws PAException PAException
+     * @param studyDiseaseIdentifier the studyDiseaseIdentifier to set
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Organization getOrganizationByIndetifers(Organization organization) throws PAException {
-        if (organization.getId() == null && organization.getIdentifier() == null) {
-            throw new PAException("Id or poIdentifier should not be null");
-        }
-        Session session = PaHibernateUtil.getCurrentSession();
-
-        StringBuffer hql = new StringBuffer();
-        hql.append(" select org from Organization org  where 1 = 1 ");
-        if (organization.getId() != null) {
-            hql.append(" and org.id = ").append(organization.getId());
-        }
-        if (organization.getIdentifier() != null) {
-            hql.append(" and org.identifier = '").append(organization.getIdentifier()).append('\'');
-        }
-
-        LOG.info(" query getOrganizationByPoIndetifer = " + hql);
-
-        Query query = session.createQuery(hql.toString());
-        try {
-            return (Organization) query.uniqueResult();
-        } catch (NonUniqueResultException e) {
-            throw new PAException("Organization should not be more than 1 record for a PO Identifier = "
-                    + organization.getIdentifier(), e);
-        }
+    public void setStudyDiseaseIdentifier(String studyDiseaseIdentifier) {
+        this.studyDiseaseIdentifier = studyDiseaseIdentifier;
+    }
+    /**
+     * @return the diseaseIdentifier
+     */
+    public String getDiseaseIdentifier() {
+        return diseaseIdentifier;
+    }
+    /**
+     * @param diseaseIdentifier the diseaseIdentifier to set
+     */
+    public void setDiseaseIdentifier(String diseaseIdentifier) {
+        this.diseaseIdentifier = diseaseIdentifier;
+    }
+    /**
+     * @return the preferredName
+     */
+    public String getPreferredName() {
+        return preferredName;
+    }
+    /**
+     * @param preferredName the preferredName to set
+     */
+    public void setPreferredName(String preferredName) {
+        this.preferredName = preferredName;
+    }
+    /**
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
+    /**
+     * @param code the code to set
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
+    /**
+     * @return the conceptId
+     */
+    public String getConceptId() {
+        return conceptId;
+    }
+    /**
+     * @param conceptId the conceptId to set
+     */
+    public void setConceptId(String conceptId) {
+        this.conceptId = conceptId;
+    }
+    /**
+     * @return the menuDisplayName
+     */
+    public String getMenuDisplayName() {
+        return menuDisplayName;
+    }
+    /**
+     * @param menuDisplayName the menuDisplayName to set
+     */
+    public void setMenuDisplayName(String menuDisplayName) {
+        this.menuDisplayName = menuDisplayName;
+    }
+    /**
+     * @return the parentPreferredName
+     */
+    public String getParentPreferredName() {
+        return parentPreferredName;
+    }
+    /**
+     * @param parentPreferredName the parentPreferredName to set
+     */
+    public void setParentPreferredName(String parentPreferredName) {
+        this.parentPreferredName = parentPreferredName;
+    }
+    /**
+     * @return the alternames
+     */
+    public String getAlternames() {
+        return alternames;
+    }
+    /**
+     * @param alternames the alternames to set
+     */
+    public void setAlternames(String alternames) {
+        this.alternames = alternames;
     }
 
-    @SuppressWarnings("unchecked")
-    private List<Organization> generateDistinctOrganizationQuery(String organizationType) throws PAException {
-        List<Organization> sortedOrganizations = new ArrayList<Organization>();
-        Set<Long> orgSet = new HashSet<Long>();
-
-        Session session = PaHibernateUtil.getCurrentSession();
-        StringBuffer hql = new StringBuffer();
-        if (organizationType.equalsIgnoreCase(PAConstants.LEAD_ORGANIZATION)) {
-            hql.append("select o from Organization o join o.researchOrganizations as ros join ros.studySites as sps"
-                    + " join sps.studyProtocol as sp where sps.functionalCode = '");
-            hql.append(StudySiteFunctionalCode.LEAD_ORGANIZATION);
-            hql.append("' order by o.name");
-        } else if (organizationType.equalsIgnoreCase(PAConstants.PARTICIPATING_SITE)) {
-            hql.append("select o from Organization o join o.healthCareFacilities as hcf join hcf.studySites as sps "
-                    + " join sps.studyProtocol as sp where sps.functionalCode = '");
-            hql.append(StudySiteFunctionalCode.TREATING_SITE);
-            hql.append("' order by o.name");
-        } else if (organizationType.equalsIgnoreCase(PAConstants.SUMM4_SPONSOR)) {
-            hql.append("select o from Organization o, StudyResourcing as sr where "
-                    + "cast(o.id as string) = sr.organizationIdentifier and "
-                    + "sr.summary4ReportedResourceIndicator = true order by o.name");
-        }
-        try {
-            List<Organization> organizations = session.createQuery(hql.toString()).list();
-            for (Organization o : organizations) {
-                if (orgSet.add(o.getId())) {
-                    sortedOrganizations.add(o);
-                }
-            }
-        } catch (Exception ext) {
-            LOG.error(ext);
-        }
-        return sortedOrganizations;
-    }
-
-    private List<PaOrganizationDTO> createOrganizationDTO(List<Organization> organizations) {
-        List<PaOrganizationDTO> organizationDTOs = new ArrayList<PaOrganizationDTO>();
-        PaOrganizationDTO oganizationDTO = null;
-        for (int i = 0; i < organizations.size(); i++) {
-            oganizationDTO = new PaOrganizationDTO();
-            oganizationDTO.setId((organizations.get(i)).getId().toString());
-            oganizationDTO.setName((organizations.get(i)).getName());
-            organizationDTOs.add(oganizationDTO);
-        }
-        return organizationDTOs;
-    }
 }

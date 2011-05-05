@@ -113,6 +113,7 @@ public class PlannedActivity extends Activity {
      * @return the leadProductIndicator
      */
     @Column(name = "LEAD_PRODUCT_INDICATOR")
+    @Searchable
     public Boolean getLeadProductIndicator() {
         return leadProductIndicator;
     }
@@ -127,6 +128,7 @@ public class PlannedActivity extends Activity {
      */
     @ManyToOne
     @JoinColumn(name = "INTERVENTION_IDENTIFIER")
+    @Searchable(nested = true)
     public Intervention getIntervention() {
         return intervention;
     }

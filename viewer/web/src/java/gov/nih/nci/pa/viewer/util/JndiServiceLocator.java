@@ -84,6 +84,7 @@ import gov.nih.nci.pa.report.service.Summ4RepLocal;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
 import gov.nih.nci.pa.report.service.TrialListLocal;
 import gov.nih.nci.pa.report.service.TrialProcessingLocal;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.JNDIUtil;
 
 /**
@@ -132,5 +133,12 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public Summ4RepLocal getSumm4ReportService() {
         return (Summ4RepLocal) JNDIUtil.lookupPa("pa/Summ4ReportBean/local");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ProtocolQueryServiceLocal getProtocolQueryService() {
+        return (ProtocolQueryServiceLocal) JNDIUtil.lookupPa("pa/ProtocolQueryServiceBean/local");
     }
 }

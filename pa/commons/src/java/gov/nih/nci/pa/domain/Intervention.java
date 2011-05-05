@@ -141,6 +141,7 @@ public class Intervention extends AbstractEntityWithStatusCode<ActiveInactivePen
     @Column(name = "TYPE_CODE")
     @Enumerated(EnumType.STRING)
     @NotNull
+    @Searchable
     public InterventionTypeCode getTypeCode() {
         return typeCode;
     }

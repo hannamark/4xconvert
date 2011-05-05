@@ -231,9 +231,11 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         StudyRecruitmentStatus studyRecStatus = TestSchema.createStudyRecruitmentStatus(nonPropTrial);
         TestSchema.addUpdObject(studyRecStatus);
 
-        DocumentWorkflowStatus docWrk = TestSchema.createDocumentWorkflowStatus(nonPropTrial);
-        TestSchema.addUpdObject(docWrk);
-
+        DocumentWorkflowStatus docWrkNonProp = TestSchema.createDocumentWorkflowStatus(nonPropTrial);
+        TestSchema.addUpdObject(docWrkNonProp);
+        nonPropTrial.getDocumentWorkflowStatuses().add(docWrkNonProp);
+        TestSchema.addUpdObject(nonPropTrial);
+        
         // Prop Trial
         StudyProtocol propTrial = createProprietaryStudyProtocolObj();
         propTrial.getStudyOwners().add(owner1);
@@ -259,9 +261,11 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         studyRecStatus = TestSchema.createStudyRecruitmentStatus(propTrial);
         TestSchema.addUpdObject(studyRecStatus);
 
-        docWrk = TestSchema.createDocumentWorkflowStatus(propTrial);
+        DocumentWorkflowStatus docWrk = TestSchema.createDocumentWorkflowStatus(propTrial);
         TestSchema.addUpdObject(docWrk);
-
+        propTrial.getDocumentWorkflowStatuses().add(docWrk);
+        TestSchema.addUpdObject(propTrial);
+        
         RegistryUser registryUser = new RegistryUser();
         registryUser.setFirstName("firstName");
         registryUser.setLastName("lastName");

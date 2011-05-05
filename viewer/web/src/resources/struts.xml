@@ -92,7 +92,15 @@
         <action name="results*" class="gov.nih.nci.pa.viewer.action.{1}Action" method="getReport">
             <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/{1}.jsp</result> 
-        </action>    
+        </action>     
+        <action name="popupDis*" class="gov.nih.nci.pa.viewer.action.PopUpDisAction"  method="{1}">
+            <interceptor-ref name="methodValidationStack" />
+            <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
+        </action>  
+        <action name="ajaxptpDiseasedisplay" class="gov.nih.nci.pa.viewer.action.AdHocReportAction" method="fillInDiseaseId">
+            <interceptor-ref name="methodValidationStack" />
+            <result name="success">/WEB-INF/jsp/nodecorate/selectedDiseaseDetails.jsp</result>
+        </action>
     </package>
     
     <package name="ctroajax" namespace="/ctro/ajax" extends="public">
@@ -143,5 +151,8 @@
             <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/nodecorate/summ4RepOrganizationsResult.jsp</result> 
         </action>
+        <action name="resultsAdHocReportviewTSR" class="gov.nih.nci.pa.viewer.action.AdHocReportAction" method="viewTSR">
+            <interceptor-ref name="methodValidationStack" />
+        </action>  
     </package>
 </struts>

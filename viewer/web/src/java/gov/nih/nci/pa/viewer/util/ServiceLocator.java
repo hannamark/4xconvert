@@ -84,6 +84,7 @@ import gov.nih.nci.pa.report.service.Summ4RepLocal;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
 import gov.nih.nci.pa.report.service.TrialListLocal;
 import gov.nih.nci.pa.report.service.TrialProcessingLocal;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 
 /**
  * @author Hugh Reinhart
@@ -116,5 +117,10 @@ public interface ServiceLocator {
      * @return summary 4 report types service.
      */
     Summ4RepLocal getSumm4ReportService();
+    
+    /**
+     * @return protocol query service.
+     */
+    ProtocolQueryServiceLocal getProtocolQueryService();
     
 }

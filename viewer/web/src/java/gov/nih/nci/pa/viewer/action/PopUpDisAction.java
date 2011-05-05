@@ -76,138 +76,138 @@
 *
 *
 */
-package gov.nih.nci.pa.service.util;
+package gov.nih.nci.pa.viewer.action;
 
-import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
-import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.dto.PaOrganizationDTO;
-import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAConstants;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
-import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.viewer.dto.result.DiseaseWebDTO;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.NonUniqueResultException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-
+import org.apache.struts2.ServletActionContext;
 
 /**
-* Bean implementation for providing access to the client.
-*
-* @author Naveen Amiruddin
-* @since 06/26/2008
-* copyright NCI 2007.  All rights reserved.
-* This code may not be used without the express written permission of the
-* copyright holder, NCI.
+* @author Hugh Reinhart
+* @since 11/31/2008
 */
-@Stateless
-@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
+public class PopUpDisAction extends AbstractReportAction <PDQDiseaseDTO, DiseaseWebDTO>   {
+    private static final long serialVersionUID = 8987838321L;
 
-    private static final Logger LOG  = Logger.getLogger(PAOrganizationServiceRemote.class);
+    private static final Logger LOG = Logger.getLogger(PopUpDisAction.class);
+    private static final String FAILURE_MESSAGE = "failureMessage"; 
+    private String searchName;
+    private String includeSynonym;
+    private String exactMatch;
+    private List<DiseaseWebDTO> disWebList = new ArrayList<DiseaseWebDTO>();
 
-    /**
-     * returns distinct organization that have been associated with a protocol.
-     * @return OrganizationDTO
-     * @param organizationType Organization Type
-     * @throws PAException pa exception
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<PaOrganizationDTO> getOrganizationsAssociatedWithStudyProtocol(String organizationType)
-    throws PAException {
-        return createOrganizationDTO(generateDistinctOrganizationQuery(organizationType));
+    private void loadResultList() {
+        disWebList.clear();
+       
+        if (StringUtils.isEmpty(searchName)) {
+            String message = "Please enter at least one search criteria";
+            ServletActionContext.getRequest().setAttribute(FAILURE_MESSAGE, message);
+            return;
+        }
+
+        PDQDiseaseDTO criteria = new PDQDiseaseDTO();
+        criteria.setPreferredName(StConverter.convertToSt(searchName));
+        criteria.setIncludeSynonym(StConverter.convertToSt(includeSynonym));
+        criteria.setExactMatch(StConverter.convertToSt(exactMatch));
+
+        List<PDQDiseaseDTO> diseaseList = null;
+        try {
+            diseaseList = PaRegistry.getDiseaseService().search(criteria);
+        } catch (PAException e) {
+            error(e.getMessage());
+            return;
+        } catch (Exception e) {
+            error("Exception while loading disease results.", e);
+            return;
+        }
+        for (PDQDiseaseDTO disease : diseaseList) {
+            DiseaseWebDTO newRec = new DiseaseWebDTO();
+            newRec.setDiseaseIdentifier(IiConverter.convertToString(disease.getIdentifier()));
+            newRec.setPreferredName(StConverter.convertToString(disease.getPreferredName()));
+            newRec.setCode(StConverter.convertToString(disease.getDiseaseCode()));
+            newRec.setConceptId(StConverter.convertToString(disease.getNtTermIdentifier()));
+            newRec.setMenuDisplayName(StConverter.convertToString(disease.getDisplayName()));
+            getDisWebList().add(newRec);
+        }
     }
     
+    private void error(String errMsg, Throwable t) {
+        LOG.error(errMsg, t);
+        ServletActionContext.getRequest().setAttribute(FAILURE_MESSAGE, errMsg);
+    }
+
+    private void error(String errMsg) {
+        error(errMsg, null);
+    }
+
     /**
-     * This expects only id and identifier.
-     * @param organization organization
-     * @return Organization
-     * @throws PAException PAException
+     * @return result
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public Organization getOrganizationByIndetifers(Organization organization) throws PAException {
-        if (organization.getId() == null && organization.getIdentifier() == null) {
-            throw new PAException("Id or poIdentifier should not be null");
-        }
-        Session session = PaHibernateUtil.getCurrentSession();
-
-        StringBuffer hql = new StringBuffer();
-        hql.append(" select org from Organization org  where 1 = 1 ");
-        if (organization.getId() != null) {
-            hql.append(" and org.id = ").append(organization.getId());
-        }
-        if (organization.getIdentifier() != null) {
-            hql.append(" and org.identifier = '").append(organization.getIdentifier()).append('\'');
-        }
-
-        LOG.info(" query getOrganizationByPoIndetifer = " + hql);
-
-        Query query = session.createQuery(hql.toString());
-        try {
-            return (Organization) query.uniqueResult();
-        } catch (NonUniqueResultException e) {
-            throw new PAException("Organization should not be more than 1 record for a PO Identifier = "
-                    + organization.getIdentifier(), e);
-        }
+    public String displayList() {
+        loadResultList();
+        return SUCCESS;
+    }
+     
+    /**
+     * @return the searchName
+     */
+    public String getSearchName() {
+        return searchName;
+    }
+    /**
+     * @param searchName the searchName to set
+     */
+    public void setSearchName(String searchName) {
+        this.searchName = searchName;
+    }
+    /**
+     * @return the disWebList
+     */
+    public List<DiseaseWebDTO> getDisWebList() {
+        return disWebList;
+    }
+    /**
+     * @param disWebList the disWebList to set
+     */
+    public void setDisWebList(List<DiseaseWebDTO> disWebList) {
+        this.disWebList = disWebList;
     }
 
-    @SuppressWarnings("unchecked")
-    private List<Organization> generateDistinctOrganizationQuery(String organizationType) throws PAException {
-        List<Organization> sortedOrganizations = new ArrayList<Organization>();
-        Set<Long> orgSet = new HashSet<Long>();
-
-        Session session = PaHibernateUtil.getCurrentSession();
-        StringBuffer hql = new StringBuffer();
-        if (organizationType.equalsIgnoreCase(PAConstants.LEAD_ORGANIZATION)) {
-            hql.append("select o from Organization o join o.researchOrganizations as ros join ros.studySites as sps"
-                    + " join sps.studyProtocol as sp where sps.functionalCode = '");
-            hql.append(StudySiteFunctionalCode.LEAD_ORGANIZATION);
-            hql.append("' order by o.name");
-        } else if (organizationType.equalsIgnoreCase(PAConstants.PARTICIPATING_SITE)) {
-            hql.append("select o from Organization o join o.healthCareFacilities as hcf join hcf.studySites as sps "
-                    + " join sps.studyProtocol as sp where sps.functionalCode = '");
-            hql.append(StudySiteFunctionalCode.TREATING_SITE);
-            hql.append("' order by o.name");
-        } else if (organizationType.equalsIgnoreCase(PAConstants.SUMM4_SPONSOR)) {
-            hql.append("select o from Organization o, StudyResourcing as sr where "
-                    + "cast(o.id as string) = sr.organizationIdentifier and "
-                    + "sr.summary4ReportedResourceIndicator = true order by o.name");
-        }
-        try {
-            List<Organization> organizations = session.createQuery(hql.toString()).list();
-            for (Organization o : organizations) {
-                if (orgSet.add(o.getId())) {
-                    sortedOrganizations.add(o);
-                }
-            }
-        } catch (Exception ext) {
-            LOG.error(ext);
-        }
-        return sortedOrganizations;
+    /**
+     * @return the includeSynonym
+     */
+    public String getIncludeSynonym() {
+        return includeSynonym;
     }
 
-    private List<PaOrganizationDTO> createOrganizationDTO(List<Organization> organizations) {
-        List<PaOrganizationDTO> organizationDTOs = new ArrayList<PaOrganizationDTO>();
-        PaOrganizationDTO oganizationDTO = null;
-        for (int i = 0; i < organizations.size(); i++) {
-            oganizationDTO = new PaOrganizationDTO();
-            oganizationDTO.setId((organizations.get(i)).getId().toString());
-            oganizationDTO.setName((organizations.get(i)).getName());
-            organizationDTOs.add(oganizationDTO);
-        }
-        return organizationDTOs;
+    /**
+     * @param includeSynonym the includeSynonym to set
+     */
+    public void setIncludeSynonym(String includeSynonym) {
+        this.includeSynonym = includeSynonym;
+    }
+
+    /**
+     * @return the exactMatch
+     */
+    public String getExactMatch() {
+        return exactMatch;
+    }
+
+    /**
+     * @param exactMatch the exactMatch to set
+     */
+    public void setExactMatch(String exactMatch) {
+        this.exactMatch = exactMatch;
     }
 }

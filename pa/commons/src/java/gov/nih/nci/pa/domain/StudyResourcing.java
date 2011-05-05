@@ -120,6 +120,7 @@ public class StudyResourcing extends AbstractStudyEntity {
      */
     @Column(name = "TYPE_CODE")
     @Enumerated(EnumType.STRING)
+    @Searchable
     public SummaryFourFundingCategoryCode getTypeCode() {
         return typeCode;
     }
@@ -152,6 +153,7 @@ public class StudyResourcing extends AbstractStudyEntity {
      * @return organizationIdentifier
      */
     @Column(name = "ORGANIZATION_IDENTIFIER")
+    @Searchable
     public String getOrganizationIdentifier() {
         return organizationIdentifier;
     }

@@ -95,6 +95,9 @@ public class PAConstants {
 
     /** Organization Type- Lead Organization. */
     public static final String LEAD_ORGANIZATION = "Lead Organization";
+    
+    /** Summary 4 Sponsor Organization. */
+    public static final String SUMM4_SPONSOR = "Summ4 Sponsor";
 
     /** Organization Type- Participating Site. */
     public static final String PARTICIPATING_SITE = "Participating Site";

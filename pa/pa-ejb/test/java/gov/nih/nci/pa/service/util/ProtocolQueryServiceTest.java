@@ -88,22 +88,31 @@ import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.HealthCareProvider;
+import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyContact;
+import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
+import gov.nih.nci.pa.enums.ActivityCategoryCode;
+import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
@@ -112,9 +121,11 @@ import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.TestSchema;
 
@@ -136,6 +147,8 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
     private Long spId = null;
     private Long leadOrgId = null;
     private Long principalInvestigator = null;
+    private Long diseaseId = null;
+    private String interventionType = null;
 
     @Before
     public void setUp() throws Exception {
@@ -359,6 +372,38 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         otherCriteria.setLeadOrganizationId(leadOrgId.toString());
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 1, results.size());
+        
+        createStudyProtocol("12", false, Boolean.FALSE, false, false, false, true);
+        otherCriteria = new StudyProtocolQueryCriteria();
+        otherCriteria.setSumm4FundingSourceId(leadOrgId);
+        results = localEjb.getStudyProtocolByCriteria(otherCriteria);
+        assertEquals("Size does not match.", 1, results.size());
+        otherCriteria.setSumm4FundingSourceTypeCode(SummaryFourFundingCategoryCode.INSTITUTIONAL.getCode());
+        results = localEjb.getStudyProtocolByCriteria(otherCriteria);
+        assertEquals("Size does not match.", 1, results.size());
+        otherCriteria.setSumm4FundingSourceTypeCode(SummaryFourFundingCategoryCode.NATIONAL.getCode());
+        results = localEjb.getStudyProtocolByCriteria(otherCriteria);
+        assertEquals("Size does not match.", 0, results.size());
+        otherCriteria.setSumm4FundingSourceId(null);
+        otherCriteria.setSumm4FundingSourceTypeCode(SummaryFourFundingCategoryCode.INSTITUTIONAL.getCode());
+        results = localEjb.getStudyProtocolByCriteria(otherCriteria);
+        assertEquals("Size does not match.", 12, results.size());
+        otherCriteria = new StudyProtocolQueryCriteria();
+        otherCriteria.setDiseaseConditionId(diseaseId);
+        results = localEjb.getStudyProtocolByCriteria(otherCriteria);
+        assertEquals("Size does not match.", 1, results.size());
+        otherCriteria.setDiseaseConditionId(999L);
+        results = localEjb.getStudyProtocolByCriteria(otherCriteria);
+        assertEquals("Size does not match.", 0, results.size());
+        otherCriteria = new StudyProtocolQueryCriteria();
+        otherCriteria.setInterventionType(interventionType);
+        results = localEjb.getStudyProtocolByCriteria(otherCriteria);
+        assertEquals("Size does not match.", 12, results.size());
+        otherCriteria = new StudyProtocolQueryCriteria();
+        otherCriteria.setInterventionType(InterventionTypeCode.BIOLOGICAL_VACCINE.getCode());
+        results = localEjb.getStudyProtocolByCriteria(otherCriteria);
+        assertEquals("Size does not match.", 0, results.size());
+        
     }
 
     @Test
@@ -529,7 +574,47 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         sos2.setStudyProtocol(sp);
         TestSchema.addUpdObject(sos2);
         sp.getStudyOverallStatuses().add(sos2);
-
+        
+        // add Summ4 Fund Sponsor and Type
+        StudyResourcing stdRes = new StudyResourcing();
+        stdRes.setSummary4ReportedResourceIndicator(true);
+        stdRes.setOrganizationIdentifier(org.getId().toString());
+        stdRes.setTypeCode(SummaryFourFundingCategoryCode.INSTITUTIONAL);
+        stdRes.setActiveIndicator(true);
+        stdRes.setStudyProtocol(sp);
+        TestSchema.addUpdObject(stdRes);
+        sp.getStudyResourcings().add(stdRes);
+        
+        //add Disease/Condition
+        StudyDisease stdDes = new StudyDisease();
+        PDQDisease dis01 = TestSchema.createPdqDisease("Toe Cancer");
+        TestSchema.addUpdObject(dis01);
+        diseaseId = dis01.getId();
+        stdDes.setDisease(dis01);
+        stdDes.setStudyProtocol(sp);
+        TestSchema.addUpdObject(stdDes);
+        sp.getStudyDiseases().add(stdDes);
+        
+        //add PlannedActivity - Intervention
+        Intervention inv = new Intervention();
+        inv.setName("Chocolate Bar");
+        inv.setDescriptionText("Oral intervention to improve morale");
+        inv.setDateLastUpdated(new Date());
+        inv.setStatusCode(ActiveInactivePendingCode.ACTIVE);
+        inv.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("1/1/2000"));
+        inv.setTypeCode(InterventionTypeCode.DRUG);
+        TestSchema.addUpdObject(inv);
+        interventionType = inv.getTypeCode().getCode();
+        PlannedActivity pa = new PlannedActivity();
+        pa.setCategoryCode(ActivityCategoryCode.INTERVENTION);
+        pa.setDateLastUpdated(new Date());
+        pa.setIntervention(inv);
+        pa.setLeadProductIndicator(true);
+        pa.setStudyProtocol(sp);
+        pa.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT.getCode());
+        TestSchema.addUpdObject(pa);
+        sp.getPlannedActivities().add(pa);
+         
         DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
         dws.setStudyProtocol(sp);
         dws.setStatusCode(DocumentWorkflowStatusCode.VERIFICATION_PENDING);

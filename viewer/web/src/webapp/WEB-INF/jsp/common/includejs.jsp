@@ -16,6 +16,8 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/scriptaculous/slider.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/ajax/ajaxtags.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/ajax/ajaxtags_controls.js'/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/ajax/ajaxtags_parser.js'/>"></script>
-
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/ajax/ajaxtags_parser.js'/>"></script> 
+<script type="text/javascript" language="javascript">
+    var contextPath = '<%=request.getContextPath()%>';
+</script>
 

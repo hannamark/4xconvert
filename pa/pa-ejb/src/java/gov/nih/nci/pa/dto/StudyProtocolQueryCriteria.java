@@ -134,6 +134,11 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private boolean studyLockedBy;
     private String trialCategory;
     private Long userId;
+    
+    private Long summ4FundingSourceId;
+    private Long diseaseConditionId;
+    private String interventionType;
+    private String summ4FundingSourceTypeCode;
     /**
      * @return the inBoxProcessing
      */
@@ -501,5 +506,55 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setCtepIdentifier(String ctepIdentifier) {
         this.ctepIdentifier = ctepIdentifier;
+    }
+    
+    /**
+     * @return the summ4FundingSourceId
+     */
+    public Long getSumm4FundingSourceId() {
+        return summ4FundingSourceId;
+    }
+    /**
+     * Note that this is the PA Db Org Id.
+     * @param summ4FundingSourceId the summ4FundingSourceId to set
+     */
+    public void setSumm4FundingSourceId(Long summ4FundingSourceId) {
+        this.summ4FundingSourceId = summ4FundingSourceId;
+    }
+    /**
+     * @return the diseaseConditionId
+     */
+    public Long getDiseaseConditionId() {
+        return diseaseConditionId;
+    }
+    /**
+     * @param diseaseConditionId the diseaseConditionId to set
+     */
+    public void setDiseaseConditionId(Long diseaseConditionId) {
+        this.diseaseConditionId = diseaseConditionId;
+    }
+    /**
+     * @return the leadAgentInterventionId
+     */
+    public String getInterventionType() {
+        return interventionType;
+    }
+    /**
+     * @param interventionType the interventionType to set
+     */
+    public void setInterventionType(String interventionType) {
+        this.interventionType = interventionType;
+    }
+    /**
+     * @return the summ4FundingSourceTypeCode
+     */
+    public String getSumm4FundingSourceTypeCode() {
+        return summ4FundingSourceTypeCode;
+    }
+    /**
+     * @param summ4FundingSourceTypeCode the summ4FundingSourceTypeCode to set
+     */
+    public void setSumm4FundingSourceTypeCode(String summ4FundingSourceTypeCode) {
+        this.summ4FundingSourceTypeCode = summ4FundingSourceTypeCode;
     }
 }

@@ -91,6 +91,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 
 /**
@@ -120,7 +122,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     private String studyProtocolType;
     private String amend;
     private String update;
-    private String viewTSR;
+    private boolean viewTSR;
     private String primaryPurpose;
     private String primaryPurposeOtherText;
     private String userLastCreated;
@@ -144,6 +146,9 @@ public class StudyProtocolQueryDTO implements Serializable {
     private Boolean ctgovXmlRequiredIndicator;
     private Boolean showSendXml = false;
     private List<String> otherIdentifiers = new ArrayList<String>();
+    private Set<String> diseaseNames = new TreeSet<String>();
+    private Set<String> interventionTypes = new TreeSet<String>();
+    private String summ4FundingSrcCategory;
     private boolean searcherTrialOwner = false;
 
     /**
@@ -463,14 +468,14 @@ public class StudyProtocolQueryDTO implements Serializable {
      *
      * @return tsr
      */
-    public String getViewTSR() {
+    public boolean isViewTSR() {
         return viewTSR;
     }
     /**
      *
      * @param viewTSR tsr
      */
-    public void setViewTSR(String viewTSR) {
+    public void setViewTSR(boolean viewTSR) {
         this.viewTSR = viewTSR;
     }
     /**
@@ -738,5 +743,47 @@ public class StudyProtocolQueryDTO implements Serializable {
      */
     public void setSearcherTrialOwner(boolean isSearcherTrialOwner) {
         this.searcherTrialOwner = isSearcherTrialOwner;
+    }
+
+    /**
+     * @param diseaseNames the diseaseNames to set
+     */
+    public void setDiseaseNames(Set<String> diseaseNames) {
+        this.diseaseNames = diseaseNames;
+    }
+
+    /**
+     * @return the diseaseNames
+     */
+    public Set<String> getDiseaseNames() {
+        return diseaseNames;
+    }
+
+    /**
+     * @param intTypes the interventionTypes to set
+     */
+    public void setInterventionType(Set<String> intTypes) {
+        this.interventionTypes = intTypes;
+    }
+
+    /**
+     * @return the interventionTypes
+     */
+    public Set<String> getInterventionTypes() {
+        return interventionTypes;
+    }
+
+    /**
+     * @param summ4FundingSrcCategory the summ4FundingSrcCategory to set
+     */
+    public void setSumm4FundingSrcCategory(String summ4FundingSrcCategory) {
+        this.summ4FundingSrcCategory = summ4FundingSrcCategory;
+    }
+
+    /**
+     * @return the summ4FundingSrcCategory
+     */
+    public String getSumm4FundingSrcCategory() {
+        return summ4FundingSrcCategory;
     }
 }

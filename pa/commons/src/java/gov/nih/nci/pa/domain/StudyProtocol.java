@@ -461,6 +461,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
      * @return studyResourcings
      */
     @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
+    @Searchable(nested = true)
     public List<StudyResourcing> getStudyResourcings() {
         return studyResourcings;
     }
@@ -479,6 +480,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
      */
     @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @Searchable(nested = true)
     public List<PlannedActivity> getPlannedActivities() {
         return plannedActivities;
     }
@@ -530,6 +532,7 @@ public class StudyProtocol extends AbstractStudyProtocol {
      */
     @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @Searchable(nested = true)
     public List<StudyDisease> getStudyDiseases() {
         return studyDiseases;
     }

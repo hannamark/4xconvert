@@ -81,23 +81,29 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyContact;
+import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
@@ -107,16 +113,17 @@ import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.search.StudyProtocolBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyProtocolOptions;
 import gov.nih.nci.pa.service.search.StudyProtocolQueryBeanSearchCriteria;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
-import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -232,6 +239,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         StudySite studySite = null;
         StudyInbox studyInbox = null;
         StudyCheckout studyCheckout = null;
+        StudyResourcing studyResourcing = null;
         RegistryUser potentialOwner = userId == null ? null : registryUserService.getUserById(userId);
         try {
             for (StudyProtocol studyProtocol : protocolQueryResult) {
@@ -266,6 +274,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 studyCheckout = studyProtocol.getStudyCheckout().isEmpty() ? null
                         : studyProtocol.getStudyCheckout().iterator().next();
 
+                studyResourcing = findSumm4FundingSrc(studyProtocol);
+                
                 // transfer protocol to studyProtocolDto
                 if (documentWorkflowStatus != null) {
                     studyProtocolDto.setDocumentWorkflowStatusCode(documentWorkflowStatus.getStatusCode());
@@ -280,14 +290,20 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 studyProtocolDto.setStudyProtocolId(studyProtocol.getId());
                 studyProtocolDto.setNciIdentifier(PADomainUtils.getAssignedIdentifierExtension(studyProtocol));
                 studyProtocolDto.setOtherIdentifiers(PADomainUtils.getOtherIdentifierExtensions(studyProtocol));
+                studyProtocolDto.setDiseaseNames(PADomainUtils.getDiseaseNames(studyProtocol));
+                studyProtocolDto.setInterventionType(PADomainUtils.getInterventionTypes(studyProtocol));
                 studyProtocolDto.setStudyTypeCode(StudyTypeCode.INTERVENTIONAL);
                 studyProtocolDto.setPhaseCode(studyProtocol.getPhaseCode());
                 studyProtocolDto.setPhaseAdditionalQualifier(studyProtocol.getPhaseAdditionalQualifierCode());
                 if (studyProtocol.getUserLastCreated() != null) {
                     studyProtocolDto.setUserLastCreated(studyProtocol.getUserLastCreated().getLoginName());
                 }
+                if (studyProtocol.getPrimaryPurposeCode() != null) {
+                    studyProtocolDto.setPrimaryPurpose(studyProtocol.getPrimaryPurposeCode().getCode());
+                }
                 studyProtocolDto.setDateLastCreated(studyProtocol.getDateLastCreated());
-
+                studyProtocolDto.setSumm4FundingSrcCategory(studyResourcing != null 
+                        && studyResourcing.getTypeCode() != null ? studyResourcing.getTypeCode().getCode() : null);
                 if (studyInbox != null && studyInbox.getCloseDate() == null) {
                     //Studies are considered updated if they have a study inbox entry without a closed date
                     studyProtocolDto.setSubmissionTypeCode(SubmissionTypeCode.U);
@@ -338,15 +354,36 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                     studyProtocolDto.setSearcherTrialOwner(registryUserService.hasTrialAccess(potentialOwner,
                             studyProtocol.getId()));
                 }
+                
+                List<DocumentWorkflowStatusCode> nonViewableMilestones = new ArrayList<DocumentWorkflowStatusCode>();
+                nonViewableMilestones.add(DocumentWorkflowStatusCode.SUBMITTED);
+                nonViewableMilestones.add(DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED);
+                nonViewableMilestones.add(DocumentWorkflowStatusCode.REJECTED);
+                studyProtocolDto.setViewTSR(!nonViewableMilestones.contains(documentWorkflowStatus));
+                
                 if ((myTrialsOnly && studyProtocolDto.isSearcherTrialOwner()) || !myTrialsOnly) {
                     studyProtocolDtos.add(studyProtocolDto);
                 }
+                
+                
             }
         } catch (Exception e) {
             throw new PAException("General error in while converting to StudyProtocolQueryDTO", e);
         }
         return studyProtocolDtos;
     }
+    
+    private StudyResourcing findSumm4FundingSrc(StudyProtocol studyProtocol) {
+        
+        for (StudyResourcing item : studyProtocol.getStudyResourcings()) {
+            if (item.getSummary4ReportedResourceIndicator()) {
+                return item;
+            }
+        }
+            
+        return null;
+    }
+    
 
     @SuppressWarnings("unchecked")
     private List<StudyProtocolQueryDTO> appendOnHold(List<StudyProtocolQueryDTO> spDtos) throws PAException {
@@ -479,6 +516,41 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
 
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(crit.getPrimaryPurposeCode()));
+        populateExampleStudyProtocolDiseaseInterventionType(crit, sp);
+    }
+    private void populateExampleStudyProtocolSumm4FundSrc(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
+        if (crit.getSumm4FundingSourceId() != null
+                || StringUtils.isNotBlank(crit.getSumm4FundingSourceTypeCode())) {
+            StudyResourcing stdRes = new StudyResourcing();
+            if (crit.getSumm4FundingSourceId() != null 
+                    && StringUtils.isNotBlank(crit.getSumm4FundingSourceId().toString())) {
+                stdRes.setOrganizationIdentifier(crit.getSumm4FundingSourceId().toString());
+            }
+            stdRes.setSummary4ReportedResourceIndicator(true);
+            stdRes.setTypeCode(SummaryFourFundingCategoryCode.getByCode(crit.getSumm4FundingSourceTypeCode()));
+            stdRes.setActiveIndicator(true);
+            sp.getStudyResourcings().add(stdRes);
+        }
+    }
+    private void populateExampleStudyProtocolDiseaseInterventionType(
+            StudyProtocolQueryCriteria crit, StudyProtocol sp) {
+        populateExampleStudyProtocolSumm4FundSrc(crit, sp);
+        
+        if (crit.getDiseaseConditionId() != null) {
+            StudyDisease stdDis = new StudyDisease();
+            PDQDisease des = new PDQDisease();
+            des.setId(crit.getDiseaseConditionId());
+            stdDis.setDisease(des);
+            sp.getStudyDiseases().add(stdDis);
+        }
+        
+        if (crit.getInterventionType() != null) {
+            PlannedActivity plndAct = new PlannedActivity();        
+            Intervention intVen = new Intervention();
+            intVen.setTypeCode(InterventionTypeCode.getByCode(crit.getInterventionType()));
+            plndAct.setIntervention(intVen);
+            sp.getPlannedActivities().add(plndAct);
+        }
     }
 
     private void populateExampleSpOtherIdentifiers(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
@@ -608,6 +680,10 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && !criteria.isStudyLockedBy()
                 && StringUtils.isEmpty(criteria.getSubmissionType())
                 && StringUtils.isEmpty(criteria.getTrialCategory())
+                && criteria.getSumm4FundingSourceId() == null
+                && StringUtils.isEmpty(criteria.getSumm4FundingSourceTypeCode())
+                && criteria.getInterventionType() == null
+                && criteria.getDiseaseConditionId() == null
                 && (criteria.isMyTrialsOnly() != null && !criteria.isMyTrialsOnly()
                         || criteria.isMyTrialsOnly() == null));
     }

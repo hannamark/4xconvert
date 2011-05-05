@@ -93,7 +93,9 @@ import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
@@ -111,6 +113,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -345,6 +348,38 @@ public class PADomainUtils {
             for (Ii id : sp.getOtherIdentifiers()) {
                 if (StringUtils.equals(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT, id.getRoot())) {
                     results.add(id.getExtension());
+                }
+            }
+        }
+        return results;
+    }
+    
+    /**
+     * Returns a listing of a disease names associated with a studyProtocol.
+     * @param sp the study protocol to get the diseases for
+     * @return the disease names.
+     */
+    public static Set<String> getDiseaseNames(StudyProtocol sp) {
+        Set<String> results = new TreeSet<String>();
+        if (CollectionUtils.isNotEmpty(sp.getStudyDiseases())) {
+            for (StudyDisease sd : sp.getStudyDiseases()) {
+                results.add(sd.getDisease().getPreferredName());
+            }
+        }
+        return results;
+    }
+    
+    /**
+     * Returns a listing of a intervention type names associated with a studyProtocol.
+     * @param sp the study protocol to get the intervention types for
+     * @return the intervention type names.
+     */
+    public static Set<String> getInterventionTypes(StudyProtocol sp) {
+        Set<String> results = new TreeSet<String>();
+        if (CollectionUtils.isNotEmpty(sp.getPlannedActivities())) {
+            for (PlannedActivity pa : sp.getPlannedActivities()) {
+                if (pa.getIntervention() != null) { 
+                    results.add(pa.getIntervention().getTypeCode().getCode());
                 }
             }
         }
