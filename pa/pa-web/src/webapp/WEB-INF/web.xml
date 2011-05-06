@@ -147,6 +147,8 @@
         </web-resource-collection>
         <auth-constraint>
             <role-name>Abstractor</role-name>
+            <role-name>AdminAbstractor</role-name>
+            <role-name>ScientificAbstractor</role-name>
             <role-name>SuAbstractor</role-name>
         </auth-constraint>
     </security-constraint>
@@ -157,6 +159,8 @@
         </web-resource-collection>
         <auth-constraint>
             <role-name>Abstractor</role-name>
+            <role-name>AdminAbstractor</role-name>
+            <role-name>ScientificAbstractor</role-name>
             <role-name>ReportViewer</role-name>
             <role-name>SuAbstractor</role-name>
         </auth-constraint>
@@ -173,6 +177,14 @@
     <security-role>
         <description>Super abstractors who can break check-outs of trials.</description>
         <role-name>SuAbstractor</role-name>
+    </security-role>
+    <security-role>
+        <description>Scientific Abstractor for trials registered in CTRP.</description>
+        <role-name>ScientificAbstractor</role-name>
+    </security-role>
+    <security-role>
+        <description>Administrative Abstractor for trials registered in CTRP.</description>
+        <role-name>AdminAbstractor</role-name>
     </security-role>
 
     <login-config>

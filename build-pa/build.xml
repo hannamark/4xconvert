@@ -1704,6 +1704,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 <filtersfile file="${properties.file}"/>
                 <filtersfile file="project.properties"/>
                 <filter token="db-upgrade.run.dir" value="${working.dir}/db-upgrade/${database.type}"/>
+                <filter token="gridgrouper.url" value="${gridgrouper.url}"/>
             </filterset>
         </copy>
     </target>

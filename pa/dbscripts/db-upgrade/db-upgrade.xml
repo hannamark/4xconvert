@@ -674,4 +674,9 @@
         <comment>Removing INITIAL_SUBMISSION_TO_CLINICALTRIALS_GOV_DATE milestones.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.5/PO-3533.sql"/>
      </changeSet>
+     <changeSet id="PO-3567" author="aevansel">
+        <comment>Adding the scientific and administrative roles to the db.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.5/PO-3567.sql"/>
+     </changeSet>
+     
 </databaseChangeLog>
