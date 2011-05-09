@@ -1,6 +1,6 @@
 /* Default Tags */
 
-:root 
+:root
 { overflow-y:scroll; }
 BODY, HTML
 { margin:0; padding:0; font-family:arial,helvetica,sans-serif; color:#000; font-size:85% !important; background:#fff; min-width:920px }
@@ -23,7 +23,7 @@ A:hover
 { color:#455681; text-decoration:underline }
 LI
 { list-style-type:none; }
-OL LI 
+OL LI
 { list-style-type:decimal; padding:3px }
 P,LI,H1,H2,H3,H4
 { line-height:1.4em }
@@ -51,7 +51,7 @@ SUB
 { font-size:80%; vertical-align:-15% }
 SUP
 { font-size:80%; vertical-align:35% }
-:lang(en) SUB 
+:lang(en) SUB
 { font-size:70%; vertical-align:-20% }
 FIELDSET
 { -moz-border-radius:5px; padding:0 10px 10px 10px; margin:10px 15px 10px 15px;  }
@@ -274,10 +274,6 @@ DIV.homepage
 
 /* Filters */
 
-.filter_checkbox
-{ font-size:92%; width:15em; float:left; margin-left:17em; margin-top:-2.0em; }
-.filter_checkbox LABEL
-{ color:#fff; float:left; margin:-19px 0 0 20px; cursor:pointer; }
 .filter_checkbox LABEL:hover
 { text-decoration:underline }
 .filter_wrapper
@@ -448,23 +444,23 @@ TABLE.data TD A IMG.thumbnail:hover
 
 /* ToolTip Bubble */
 
-ACRONYM, DFN 
-{ background:url("../images/ico_tooltip.gif") no-repeat right; padding-right:15px; border-bottom:1px dotted #90b93e; font-style:normal; cursor:pointer	}
-.bubbleTooltip 
-{ width:203px; font-size:11px; color:#000; text-decoration:none; padding-left:10px	}			
+ACRONYM, DFN
+{ background:url("../images/ico_tooltip.gif") no-repeat right; padding-right:15px; border-bottom:1px dotted #90b93e; font-style:normal; cursor:pointer    }
+.bubbleTooltip
+{ width:203px; font-size:11px; color:#000; text-decoration:none; padding-left:10px    }
 .bubbleTooltip SPAN.top
 { padding:30px 8px 0; background:url("../images/bubble_right.gif") no-repeat top; }
-.bubbleTooltip SPAN.bottom 
+.bubbleTooltip SPAN.bottom
 { padding:3px 8px 15px; color:#000; background:url("../images/bubble_right.gif") no-repeat bottom; }
 
 
 /* Centered Buttons at the Bottom */
 
-.btnrow, .btnrow2 
+.btnrow, .btnrow2
 { display:table; padding:0; margin:0 auto; list-style-type:none; white-space:nowrap; }
-.btnrow LI,.btnrow2 LI 
+.btnrow LI,.btnrow2 LI
 { display:table-cell; }
-.actionsrow 
+.actionsrow
 { margin-top:20px; padding:5px 10px 10px 10px; clear:both; text-decoration:none; text-align:center; border-top:1px dotted #aeaeae}
 * .btnrow LI,* .btnrow2 LI { float:left; }
 HTML>BODY .btnrow LI,HTML>BODY .btnrow2 LI{ *float:left }
@@ -473,18 +469,18 @@ HTML>BODY .btnrow A, HTML>BODY .btnrow2 A { *float:left }
 * .btnwrapper  {display:inline-block;  }
 HTML>BODY .container { *display:inline-block; }
 
-A.btn 
+A.btn
 { width:auto; background:transparent url("../images/bg_btn_right.gif") no-repeat scroll top right; color:#5a5a5a; display:block; float:left; font:bold 14px arial, sans-serif; height:24px; line-height:24px; margin:0 10px; padding-right:9px; /* sliding doors padding */ text-decoration:none; }
 
-A.btn SPAN.btn_img 
+A.btn SPAN.btn_img
 { background:transparent url("../images/bg_btn_left.gif") no-repeat; display:block; line-height:17px; padding:4px 0 3px 9px; }
 A.btn:hover
 { background-position:center right; text-decoration:none ; }
-A.btn:hover SPAN.btn_img 
+A.btn:hover SPAN.btn_img
 { background:transparent url("../images/bg_btn_left.gif") no-repeat 0 -29px; display:block; line-height:17px; padding:4px 0 3px 9px; }
-A.btn:active 
+A.btn:active
 { background-position:bottom right; color:#000; outline:none; /* hide dotted outline in Firefox */ }
-A.btn:active SPAN.btn_img 
+A.btn:active SPAN.btn_img
 { background-position:bottom left; padding:5px 0 2px 9px; /* push text down 1px */ }
 A.btn SPAN SPAN
 { display:block; padding:0 0 0 20px }
@@ -560,12 +556,12 @@ UL#maintabs
 { height:1.6em; }
 
 UL#maintabs LI
-{ float:left;	margin:0; padding:0 0 0 5px; text-align:center; background:none }
-UL#maintabs LI A 
+{ float:left;    margin:0; padding:0 0 0 5px; text-align:center; background:none }
+UL#maintabs LI A
 { font-size:115%; text-decoration:none !important; display:block; margin:0; padding:5px 10px; background:#e4e4e4 url("../images/bg_h2.gif") repeat-x 0 -10px; color:#475b82; text-decoration:none; border-top:2px solid #efefef;  border-right:1px solid #ccc;  }
-UL#maintabs LI A:hover 
-{	color:#333;	background:#efefef; text-decoration:none !important; }
-UL#maintabs LI A.active, UL#maintabs LI A.active:hover  
+UL#maintabs LI A:hover
+{    color:#333;    background:#efefef; text-decoration:none !important; }
+UL#maintabs LI A.active, UL#maintabs LI A.active:hover
 { outline:none; color:#fff; background-color:#5d7ba2; border-top:3px solid #475b82; border-left:1px solid #475b82; border-right:0;  background-image:none }
 UL#maintabs LI.active
 { color:#333; background-color:#5d7ba2; }

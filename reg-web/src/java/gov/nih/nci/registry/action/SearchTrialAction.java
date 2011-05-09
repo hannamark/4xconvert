@@ -142,6 +142,7 @@ public class SearchTrialAction extends ActionSupport {
     private Long studyProtocolId = null;
     private String trialAction;
     private Long identifier = null;
+
     /**
      * @return the identifier
      */
@@ -155,6 +156,7 @@ public class SearchTrialAction extends ActionSupport {
     public void setIdentifier(Long identifier) {
         this.identifier = identifier;
     }
+
     private final TrialUtil trialUtil = new TrialUtil();
     private static final Set<StudyStatusCode> UPDATEABLE_STATUS = new HashSet<StudyStatusCode>();
     static {

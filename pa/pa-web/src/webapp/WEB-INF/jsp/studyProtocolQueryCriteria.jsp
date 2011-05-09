@@ -19,7 +19,7 @@
                  document.forms[0].submit();
             }
             function generateReport(pid) {
-            	showPopup('/pa/protected/ajaxStudyProtocolviewTSR.action?studyProtocolId=' + pid, null, 'View Trial Summary Report');
+                showPopup('/pa/protected/ajaxStudyProtocolviewTSR.action?studyProtocolId=' + pid, null, 'View Trial Summary Report');
             }
             function resetValues() {
                 $("officialTitle").value="";
@@ -43,7 +43,9 @@
     <!-- main content begins-->
         <h1><fmt:message key="studyProtocol.search.header"/></h1>
         <c:set var="topic" scope="request" value="searchtrial"/>
-        <div class="filter_checkbox"><input type="checkbox" name="checkbox" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Hide Search Fields</label></div>
+        <s:if test="records.size > 0">
+            <div class="filter_checkbox"><input type="checkbox" name="checkbox" id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Hide Search Fields</label></div>
+        </s:if>
         <div class="box" id="filters">
             <s:form>
                 <pa:failureMessage/>
@@ -70,13 +72,13 @@
                             <label for="identfierType"><fmt:message key="studyProtocol.identifierType"/></label>
                         </td>
                         <td>
-                            <s:select id="identifierType" headerKey="" headerValue="--Select--" name="criteria.identifierType"  
+                            <s:select id="identifierType" headerKey="" headerValue="--Select--" name="criteria.identifierType"
                                 list="#identifierSearchTypes" value="criteria.identifierType"  cssStyle="width:206px" />
-                            <span class="formErrorMsg"> 
+                            <span class="formErrorMsg">
                                 <s:fielderror>
                                     <s:param>criteria.identifierType</s:param>
-                                </s:fielderror>                            
-                            </span> 
+                                </s:fielderror>
+                            </span>
                         </td>
                         <td scope="row" class="label">
                             <label for="identifier"><fmt:message key="studyProtocol.identifier"/></label>
@@ -84,11 +86,11 @@
                         </td>
                         <td>
                             <s:textfield id="identifier" name="identifier" maxlength="200" size="100"  cssStyle="width:200px" />
-                            <span class="formErrorMsg"> 
+                            <span class="formErrorMsg">
                                 <s:fielderror>
                                     <s:param>identifier</s:param>
-                               </s:fielderror>                            
-                            </span>  
+                               </s:fielderror>
+                            </span>
                         </td>
                     </tr>
                     <tr>
@@ -193,9 +195,7 @@
             </s:form>
         </div>
         <div class="line"></div>
-        <s:if test="records != null">
-            <h2>Search Results</h2>
-            <jsp:include page="/WEB-INF/jsp/studyProtocolQueryResults.jsp"/>
-        </s:if>
+        <h2>Search Results</h2>
+        <jsp:include page="/WEB-INF/jsp/studyProtocolQueryResults.jsp"/>
     </body>
 </html>

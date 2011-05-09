@@ -95,13 +95,13 @@ import javax.ejb.Local;
 public interface ProtocolQueryServiceLocal {
 
     /**
-     *
+     * Gets study protocols matching the given criteria. Returns an empty list (not null) if no matching study protocols
+     * are found.
      * @param pSc StudyProtocolSearchCriteria
      * @return list protocolDto
      * @throws PAException on error
      */
     List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(StudyProtocolQueryCriteria pSc) throws PAException;
-
 
     /**
      *
@@ -109,12 +109,12 @@ public interface ProtocolQueryServiceLocal {
      * @return StudyProtocolQueryDTO
      * @throws PAException on error
      */
-     StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(Long studyProtocolId) throws PAException;
+    StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(Long studyProtocolId) throws PAException;
 
-     /**
-      * @param orgIdentifier the org identifier
-      * @return list studyProtocols
-      * @throws PAException on error
-      */
-     List<StudyProtocol> getStudyProtocolByOrgIdentifier(Long orgIdentifier) throws PAException;
+    /**
+     * @param orgIdentifier the org identifier
+     * @return list studyProtocols
+     * @throws PAException on error
+     */
+    List<StudyProtocol> getStudyProtocolByOrgIdentifier(Long orgIdentifier) throws PAException;
 }

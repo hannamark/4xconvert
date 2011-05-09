@@ -162,13 +162,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     private static final Logger LOG = Logger.getLogger(ProtocolQueryServiceBean.class);
 
     /**
-     * gets a list StudyProtocl by criteria.
-     *
-     * @param spsc
-     *            spsc
-     * @return pdtos
-     * @throws PAException
-     *             PAException
+     * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(StudyProtocolQueryCriteria spsc) throws PAException {
@@ -185,12 +179,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     }
 
     /**
-     *
-     * @param studyProtocolId
-     *            studyProtocolId
-     * @return StudyProtocolQueryDTO
-     * @throws PAException
-     *             PAException
+     * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(Long studyProtocolId) throws PAException {
@@ -275,7 +264,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                         : studyProtocol.getStudyCheckout().iterator().next();
 
                 studyResourcing = findSumm4FundingSrc(studyProtocol);
-                
+
                 // transfer protocol to studyProtocolDto
                 if (documentWorkflowStatus != null) {
                     studyProtocolDto.setDocumentWorkflowStatusCode(documentWorkflowStatus.getStatusCode());
@@ -302,7 +291,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                     studyProtocolDto.setPrimaryPurpose(studyProtocol.getPrimaryPurposeCode().getCode());
                 }
                 studyProtocolDto.setDateLastCreated(studyProtocol.getDateLastCreated());
-                studyProtocolDto.setSumm4FundingSrcCategory(studyResourcing != null 
+                studyProtocolDto.setSumm4FundingSrcCategory(studyResourcing != null
                         && studyResourcing.getTypeCode() != null ? studyResourcing.getTypeCode().getCode() : null);
                 if (studyInbox != null && studyInbox.getCloseDate() == null) {
                     //Studies are considered updated if they have a study inbox entry without a closed date
@@ -354,36 +343,36 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                     studyProtocolDto.setSearcherTrialOwner(registryUserService.hasTrialAccess(potentialOwner,
                             studyProtocol.getId()));
                 }
-                
+
                 List<DocumentWorkflowStatusCode> nonViewableMilestones = new ArrayList<DocumentWorkflowStatusCode>();
                 nonViewableMilestones.add(DocumentWorkflowStatusCode.SUBMITTED);
                 nonViewableMilestones.add(DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED);
                 nonViewableMilestones.add(DocumentWorkflowStatusCode.REJECTED);
                 studyProtocolDto.setViewTSR(!nonViewableMilestones.contains(documentWorkflowStatus));
-                
+
                 if ((myTrialsOnly && studyProtocolDto.isSearcherTrialOwner()) || !myTrialsOnly) {
                     studyProtocolDtos.add(studyProtocolDto);
                 }
-                
-                
+
+
             }
         } catch (Exception e) {
             throw new PAException("General error in while converting to StudyProtocolQueryDTO", e);
         }
         return studyProtocolDtos;
     }
-    
+
     private StudyResourcing findSumm4FundingSrc(StudyProtocol studyProtocol) {
-        
+
         for (StudyResourcing item : studyProtocol.getStudyResourcings()) {
             if (item.getSummary4ReportedResourceIndicator()) {
                 return item;
             }
         }
-            
+
         return null;
     }
-    
+
 
     @SuppressWarnings("unchecked")
     private List<StudyProtocolQueryDTO> appendOnHold(List<StudyProtocolQueryDTO> spDtos) throws PAException {
@@ -391,8 +380,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         Session session = null;
         long[] ids = getProtocolIds(spDtos);
         session = PaHibernateUtil.getCurrentSession();
-        hql.append(" select sp , soh from StudyProtocol as sp  "
-                + "join sp.studyOnholds as soh  where sp.id in ( ");
+        hql.append(" select sp , soh from StudyProtocol as sp  join sp.studyOnholds as soh where sp.id in ( ");
         for (int i = 0; i < ids.length; i++) {
             hql.append(ids[i]);
             hql.append((i < ids.length - 1 ? " ," : " "));
@@ -400,8 +388,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         hql.append(" ) and soh.offholdDate is null");
         Query query = null;
         query = session.createQuery(hql.toString());
-        Map<Long , List<StudyOnhold>> studyOnHolds = generateOnholdMap(query.list());
-        populateOnHoldData(spDtos , studyOnHolds);
+        Map<Long, List<StudyOnhold>> studyOnHolds = generateOnholdMap(query.list());
+        populateOnHoldData(spDtos, studyOnHolds);
         return spDtos;
     }
 
@@ -429,7 +417,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         return studyOnHolds;
     }
 
-    private void populateOnHoldData(List<StudyProtocolQueryDTO> spDtos , Map<Long , List<StudyOnhold>> onHold) {
+    private void populateOnHoldData(List<StudyProtocolQueryDTO> spDtos, Map<Long, List<StudyOnhold>> onHold) {
         List<StudyOnhold> sohLists = null;
         StringBuffer sb = new StringBuffer();
         StringBuffer sbDate = new StringBuffer();
@@ -522,7 +510,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         if (crit.getSumm4FundingSourceId() != null
                 || StringUtils.isNotBlank(crit.getSumm4FundingSourceTypeCode())) {
             StudyResourcing stdRes = new StudyResourcing();
-            if (crit.getSumm4FundingSourceId() != null 
+            if (crit.getSumm4FundingSourceId() != null
                     && StringUtils.isNotBlank(crit.getSumm4FundingSourceId().toString())) {
                 stdRes.setOrganizationIdentifier(crit.getSumm4FundingSourceId().toString());
             }
@@ -535,7 +523,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     private void populateExampleStudyProtocolDiseaseInterventionType(
             StudyProtocolQueryCriteria crit, StudyProtocol sp) {
         populateExampleStudyProtocolSumm4FundSrc(crit, sp);
-        
+
         if (crit.getDiseaseConditionId() != null) {
             StudyDisease stdDis = new StudyDisease();
             PDQDisease des = new PDQDisease();
@@ -543,9 +531,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             stdDis.setDisease(des);
             sp.getStudyDiseases().add(stdDis);
         }
-        
+
         if (crit.getInterventionType() != null) {
-            PlannedActivity plndAct = new PlannedActivity();        
+            PlannedActivity plndAct = new PlannedActivity();
             Intervention intVen = new Intervention();
             intVen.setTypeCode(InterventionTypeCode.getByCode(crit.getInterventionType()));
             plndAct.setIntervention(intVen);

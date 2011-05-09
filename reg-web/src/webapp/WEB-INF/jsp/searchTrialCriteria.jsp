@@ -76,7 +76,7 @@
     <a href="#search_results" id="navskip2">Skip Search Filters and go to Search Results</a>
     <h1><fmt:message key="search.trial.page.header"/></h1>
     <c:set var="topic"  scope="request" value="searchtrials"/>
-    <s:if test="records != null">
+    <s:if test="records.size > 0">
         <div class="filter_checkbox"><input type="checkbox" name="checkbox"  id="filtercheckbox" onclick="toggledisplay('filters', this)" /><label for="filtercheckbox">Hide Search Fields</label></div>
     </s:if>
     <div class="box" id="filters">
@@ -224,9 +224,6 @@
     </s:form>
     </div>
     <div class="line"></div>
-    <s:if test="records != null && records.size > 0">
-        <c:set var="topic" scope="request" value="searchresults"/>
-        <jsp:include page="/WEB-INF/jsp/searchTrialResults.jsp"/>
-    </s:if>
+    <jsp:include page="/WEB-INF/jsp/searchTrialResults.jsp"/>
     </body>
 </html>
