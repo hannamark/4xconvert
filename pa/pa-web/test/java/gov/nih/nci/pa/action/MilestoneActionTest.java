@@ -55,7 +55,7 @@ public class MilestoneActionTest extends AbstractPaActionTest {
         MilestoneWebDTO webDTO = new MilestoneWebDTO();
         webDTO.setComment("comment");
         webDTO.setDate("06/18/2009");
-        webDTO.setMilestone(MilestoneCode.QC_START.getDisplayName());
+        webDTO.setMilestone(MilestoneCode.ADMINISTRATIVE_QC_START.getDisplayName());
         action.setMilestone(webDTO);
         action.setSpIi(IiConverter.convertToIi("9"));
         action.add();
@@ -65,7 +65,7 @@ public class MilestoneActionTest extends AbstractPaActionTest {
         MilestoneWebDTO webDTO = new MilestoneWebDTO();
         webDTO.setComment("comment");
         webDTO.setDate("06/19/2009");
-        webDTO.setMilestone(MilestoneCode.QC_START.getDisplayName());
+        webDTO.setMilestone(MilestoneCode.ADMINISTRATIVE_QC_START.getDisplayName());
         action.setMilestone(webDTO);
         action.setSpIi(IiConverter.convertToIi("1"));
         action.add();

@@ -32,6 +32,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -83,6 +84,7 @@ public class StudyMilestoneBeanLocal
         StudyMilestoneDTO resultDto = super.create(workDto);
         createDocumentWorkflowStatuses(resultDto);
         updateRecordVerificationDates(resultDto);
+        createReadyForTSRMilestone(resultDto);
         // Send TSR e-mail for the appropriate milestone
         sendTSREmail(workDto);
         sendLateRejectionEmail(workDto);
@@ -122,6 +124,7 @@ public class StudyMilestoneBeanLocal
         checkDateRules(dto, existingDtoList);
         checkLateRejectionRules(dto);
         checkOnHoldRules(dto, newCode);
+        checkInboxRules(dto, newCode);
         checkTransitionRules(newCode, existingDtoList);
         checkUniquenessRules(newCode, existingDtoList);
         checkMilestoneSpecificRules(newCode, existingDtoList);
@@ -170,10 +173,12 @@ public class StudyMilestoneBeanLocal
     private void checkOnHoldRules(StudyMilestoneDTO dto, MilestoneCode newCode) throws PAException {
         if (!newCode.isAllowedIfOnhold()
                 && BlConverter.convertToBool(studyOnholdService.isOnhold(dto.getStudyProtocolIdentifier()))) {
-            throw new PAException(MessageFormat
-                .format("The milestone \"{0}\" cannot be recorded if there is an active on-hold record.", newCode
-                    .getCode()));
+            String msg = "The milestone \"{0}\" cannot be recorded if there is an active on-hold record.";
+            throw new PAException(MessageFormat.format(msg, newCode.getCode()));
         }
+    }
+
+    private void checkInboxRules(StudyMilestoneDTO dto, MilestoneCode newCode) throws PAException {
         if (!newCode.isAllowedIfInBox()) {
             List<StudyInboxDTO> listInboxDTO = studyInboxService.getByStudyProtocol(dto.getStudyProtocolIdentifier());
             if (CollectionUtils.isNotEmpty(listInboxDTO)) {
@@ -262,146 +267,94 @@ public class StudyMilestoneBeanLocal
             }
         }
     }
+    
+    private boolean hasAnyAbstractionErrors(List<AbstractionCompletionDTO> errorList) {
+        for (AbstractionCompletionDTO absDto : errorList) {
+            if (absDto.getErrorType().equalsIgnoreCase("error")) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private void checkMilestoneSpecificRules(MilestoneCode newCode, List<StudyMilestoneDTO> existingDtoList)
             throws PAException {
         List<MilestoneCode> mileStones = getExistingMilestones(existingDtoList);
         switch (newCode) {
-        case READY_FOR_QC:
-            checkReadyForQCRules(mileStones);
-            break;
-        case SCIENTIFIC_PROCESSING_START_DATE:
-            checkScientificStartRules(mileStones);
-            break;
-        case SCIENTIFIC_PROCESSING_COMPLETED_DATE:
-            checkScientificCompletedRules(mileStones);
-            break;
         case ADMINISTRATIVE_PROCESSING_START_DATE:
-            checkAdminStartRules(mileStones);
-            break;
         case ADMINISTRATIVE_PROCESSING_COMPLETED_DATE:
-            checkAdminCompletedRules(mileStones);
+        case ADMINISTRATIVE_READY_FOR_QC:
+        case ADMINISTRATIVE_QC_START:
+        case ADMINISTRATIVE_QC_COMPLETE:
+        case SCIENTIFIC_PROCESSING_START_DATE:
+        case SCIENTIFIC_PROCESSING_COMPLETED_DATE:
+        case SCIENTIFIC_READY_FOR_QC:    
+        case SCIENTIFIC_QC_START:
+        case SCIENTIFIC_QC_COMPLETE:
+            checkProcessAndQC(mileStones, newCode);
             break;
         default:
             break;
         }
     }
     
-    private void checkReadyForQCRules(List<MilestoneCode> mileStones) throws PAException {
-        boolean adminCompleted = false;
-        boolean scientificCompleted = false;
-        for (int i = mileStones.size() - 1; i >= 0; i--) {
-            switch (mileStones.get(i)) {
-            case ADMINISTRATIVE_PROCESSING_START_DATE:
-            case SCIENTIFIC_PROCESSING_START_DATE:
-                break;
-            case ADMINISTRATIVE_PROCESSING_COMPLETED_DATE:
-                adminCompleted = true;
-                if (scientificCompleted) {
-                    return;
-                }
-                break;
-            case SCIENTIFIC_PROCESSING_COMPLETED_DATE:
-                scientificCompleted = true;
-                if (adminCompleted) {
-                    return;
-                }
-                break;
-            case READY_FOR_QC:
-                throw new PAException("Abstraction is already completed.");
-            default:
-                throw new PAException("Abstraction can not be completed. It can only happen just after"
-                        + " Administrative and Scientific Processing are completed.");
-            }
+    /**
+     * Check the milestones in the processing and QC branches.
+     * @param mileStones The list of all milestones
+     * @param milestone The milestone to check
+     * @param predecessors The accepted predecessor milestones
+     * @param successors The successor milestones
+     * @param others the milestones of the other branch
+     */
+    private void checkProcessAndQC(List<MilestoneCode> mileStones, MilestoneCode milestone) throws PAException {
+        List<MilestoneCode> adminSequence = Arrays.asList(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE,
+                                                          MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE,
+                                                          MilestoneCode.ADMINISTRATIVE_READY_FOR_QC,
+                                                          MilestoneCode.ADMINISTRATIVE_QC_START,
+                                                          MilestoneCode.ADMINISTRATIVE_QC_COMPLETE);
+        List<MilestoneCode> scienceSequence = Arrays.asList(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE,
+                                                            MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE,
+                                                            MilestoneCode.SCIENTIFIC_READY_FOR_QC,
+                                                            MilestoneCode.SCIENTIFIC_QC_START,
+                                                            MilestoneCode.SCIENTIFIC_QC_COMPLETE);
+        List<MilestoneCode> mainSequence = null;
+        List<MilestoneCode> altSequence = null;
+        if (adminSequence.contains(milestone)) {
+            mainSequence = adminSequence;
+            altSequence = scienceSequence;
+        } else {
+            mainSequence = scienceSequence;
+            altSequence = adminSequence;
         }
-        throw new PAException("Abstraction can not be completed. It can only happen just after"
-                + " Administrative and Scientific Processing are completed.");
-    }
-
-    private void checkScientificStartRules(List<MilestoneCode> mileStones) throws PAException {
+        int milestoneIndex = mainSequence.indexOf(milestone);
+        List<MilestoneCode> predecessors = new ArrayList<MilestoneCode>();
+        if (milestoneIndex > 0) {
+            predecessors.add(mainSequence.get(milestoneIndex - 1));
+        } else {
+            predecessors.add(MilestoneCode.SUBMISSION_ACCEPTED);
+            predecessors.add(MilestoneCode.TRIAL_SUMMARY_FEEDBACK);
+        }
         for (int i = mileStones.size() - 1; i >= 0; i--) {
-            switch (mileStones.get(i)) {
-            case ADMINISTRATIVE_PROCESSING_START_DATE:
-            case ADMINISTRATIVE_PROCESSING_COMPLETED_DATE:
-                break;
-            case SCIENTIFIC_PROCESSING_START_DATE:
-                throw new PAException("Scientific Processing already started.");
-            case SCIENTIFIC_PROCESSING_COMPLETED_DATE:
-                throw new PAException("Scientific Processing already completed.");
-            case SUBMISSION_ACCEPTED:
-            case TRIAL_SUMMARY_FEEDBACK:
+            MilestoneCode current = mileStones.get(i);
+            if (predecessors.contains(current)) {
                 return;
-            default:
-                throw new PAException("Scientific Processing can not be started at this stage.");
             }
+            if (altSequence.contains(current)) {
+                continue;
+            }
+            int currentIndex = mainSequence.indexOf(current);
+            if (currentIndex >= milestoneIndex) {
+                String msg = "\"{0}\" already reached.";
+                throw new PAException(MessageFormat.format(msg, milestone.getCode()));
+            }
+            String msg = "\"{0}\" can not be reached at this stage.";
+            throw new PAException(MessageFormat.format(msg, milestone.getCode()));
         }
-        throw new PAException("Scientific Processing can not be started at this stage.");
+        String msg = "\"{0}\" can not be reached at this stage.";
+        throw new PAException(MessageFormat.format(msg, milestone.getCode()));
     }
 
-    private void checkScientificCompletedRules(List<MilestoneCode> mileStones) throws PAException {
-        for (int i = mileStones.size() - 1; i >= 0; i--) {
-            switch (mileStones.get(i)) {
-            case ADMINISTRATIVE_PROCESSING_START_DATE:
-            case ADMINISTRATIVE_PROCESSING_COMPLETED_DATE:
-                break;
-            case SCIENTIFIC_PROCESSING_START_DATE:
-                return;
-            case SCIENTIFIC_PROCESSING_COMPLETED_DATE:
-                throw new PAException("Scientific Processing already completed.");
-            default:
-                throw new PAException("Scientific Processing can not be completed at this stage.");
-            }
-        }
-        throw new PAException("Scientific Processing can not be completed at this stage.");
-    }
-
-    private void checkAdminStartRules(List<MilestoneCode> mileStones) throws PAException {
-        for (int i = mileStones.size() - 1; i >= 0; i--) {
-            switch (mileStones.get(i)) {
-            case SCIENTIFIC_PROCESSING_START_DATE:
-            case SCIENTIFIC_PROCESSING_COMPLETED_DATE:
-                break;
-            case ADMINISTRATIVE_PROCESSING_START_DATE:
-                throw new PAException("Administrative Processing already started.");
-            case ADMINISTRATIVE_PROCESSING_COMPLETED_DATE:
-                throw new PAException("Administrative Processing already completed.");
-            case SUBMISSION_ACCEPTED:
-            case TRIAL_SUMMARY_FEEDBACK:
-                return;
-            default:
-                throw new PAException("Administrative Processing can not be started at this stage.");
-            }
-        }
-        throw new PAException("Administrative Processing can not be started at this stage.");
-    }
-
-    private void checkAdminCompletedRules(List<MilestoneCode> mileStones) throws PAException {
-        for (int i = mileStones.size() - 1; i >= 0; i--) {
-            switch (mileStones.get(i)) {
-            case SCIENTIFIC_PROCESSING_START_DATE:
-            case SCIENTIFIC_PROCESSING_COMPLETED_DATE:
-                break;
-            case ADMINISTRATIVE_PROCESSING_START_DATE:
-                return;
-            case ADMINISTRATIVE_PROCESSING_COMPLETED_DATE:
-                throw new PAException("Administrative Processing already completed.");
-            default:
-                throw new PAException("Administrative Processing can not be completed at this stage.");
-            }
-        }
-        throw new PAException("Administrative Processing can not be completed at this stage.");
-    }
-
-    private boolean hasAnyAbstractionErrors(List<AbstractionCompletionDTO> errorList) {
-        boolean errorExist = false;
-        for (AbstractionCompletionDTO  absDto : errorList) {
-            if (absDto.getErrorType().equalsIgnoreCase("error")) {
-                errorExist = true;
-                break;
-            }
-        }
-        return errorExist;
-    }
+   
 
     private List<MilestoneCode> getExistingMilestones(List<StudyMilestoneDTO> existingDTOs) {
         List<MilestoneCode> existingMilestones = new ArrayList<MilestoneCode>();
@@ -418,34 +371,30 @@ public class StudyMilestoneBeanLocal
         DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
         StudyProtocolDTO sp = studyProtocolService.getStudyProtocol(dto.getStudyProtocolIdentifier());
 
-        if (newCode.equals(MilestoneCode.SUBMISSION_RECEIVED) && sp.getSubmissionNumber().getValue().intValue() == 1) {
-
+        if (newCode == MilestoneCode.SUBMISSION_RECEIVED && sp.getSubmissionNumber().getValue().intValue() == 1) {
             createDocumentWorkflowStatus(DocumentWorkflowStatusCode.SUBMITTED , dto);
         }
-        if (newCode.equals(MilestoneCode.SUBMISSION_RECEIVED) && sp.getSubmissionNumber().getValue().intValue() > 1) {
-
+        if (newCode == MilestoneCode.SUBMISSION_RECEIVED && sp.getSubmissionNumber().getValue().intValue() > 1) {
             createDocumentWorkflowStatus(DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED , dto);
         }
-        if (newCode.equals(MilestoneCode.SUBMISSION_ACCEPTED)
+        if (newCode == MilestoneCode.SUBMISSION_ACCEPTED
                 && canTransition(dwStatus, DocumentWorkflowStatusCode.ACCEPTED)) {
-
             createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ACCEPTED , dto);
         }
-        if (newCode.equals(MilestoneCode.SUBMISSION_REJECTED)
+        if (newCode == MilestoneCode.SUBMISSION_REJECTED
                 && canTransition(dwStatus, DocumentWorkflowStatusCode.REJECTED)) {
-
             createDocumentWorkflowStatus(DocumentWorkflowStatusCode.REJECTED , dto);
         }
-        if (newCode.equals(MilestoneCode.QC_COMPLETE) && dwStatus != null
-                && DocumentWorkflowStatusCode.ACCEPTED.equals(dwStatus)
+        if (newCode == MilestoneCode.READY_FOR_TSR && dwStatus != null
+                && DocumentWorkflowStatusCode.ACCEPTED == dwStatus
                 && canTransition(dwStatus, DocumentWorkflowStatusCode.ABSTRACTED)) {
             createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTED, dto);
         }
 
-        if (newCode.equals(MilestoneCode.INITIAL_ABSTRACTION_VERIFY)
+        if (newCode == MilestoneCode.INITIAL_ABSTRACTION_VERIFY
                 && (dwStatus != null)
-                && (DocumentWorkflowStatusCode.ABSTRACTED.equals(dwStatus)
-                        || DocumentWorkflowStatusCode.VERIFICATION_PENDING.equals(dwStatus))) {
+                && (DocumentWorkflowStatusCode.ABSTRACTED == dwStatus
+                        || DocumentWorkflowStatusCode.VERIFICATION_PENDING == dwStatus)) {
 
             if (milestoneExists(MilestoneCode.TRIAL_SUMMARY_FEEDBACK, dto)) {
                 if (canTransition(dwStatus, DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE)) {
@@ -458,9 +407,9 @@ public class StudyMilestoneBeanLocal
             }
         }
 
-        if (newCode.equals(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION)
+        if (newCode == MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION
                 && (dwStatus != null)
-                && DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.equals(dwStatus)
+                && DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE == dwStatus
                 && canTransition(dwStatus, DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE)
                 && milestoneExists(MilestoneCode.TRIAL_SUMMARY_FEEDBACK, dto)) {
 
@@ -468,14 +417,14 @@ public class StudyMilestoneBeanLocal
         }
 
 
-        if (newCode.equals(MilestoneCode.TRIAL_SUMMARY_SENT)
+        if (newCode == MilestoneCode.TRIAL_SUMMARY_SENT
                 && (dwStatus != null)
-                && DocumentWorkflowStatusCode.ABSTRACTED.equals(dwStatus)
+                && DocumentWorkflowStatusCode.ABSTRACTED == dwStatus
                 && canTransition(dwStatus, DocumentWorkflowStatusCode.VERIFICATION_PENDING)) {
 
             createDocumentWorkflowStatus(DocumentWorkflowStatusCode.VERIFICATION_PENDING, dto);
         }
-        if (newCode.equals(MilestoneCode.LATE_REJECTION_DATE)
+        if (newCode == MilestoneCode.LATE_REJECTION_DATE
                 && canTransition(dwStatus, DocumentWorkflowStatusCode.REJECTED)) {
 
             createDocumentWorkflowStatus(DocumentWorkflowStatusCode.REJECTED , dto);
@@ -497,14 +446,14 @@ public class StudyMilestoneBeanLocal
 
     private void updateRecordVerificationDates(StudyMilestoneDTO dto) throws PAException {
         MilestoneCode newCode = MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode()));
-        if (newCode.equals(MilestoneCode.QC_COMPLETE)) {
+        if (newCode == MilestoneCode.READY_FOR_TSR) {
             DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
-            if ((dwStatus != null) && DocumentWorkflowStatusCode.ACCEPTED.equals(dwStatus)) {
+            if ((dwStatus != null) && DocumentWorkflowStatusCode.ACCEPTED == dwStatus) {
                 updateRecordVerificationDate(dto);
             }
         }
-        if (newCode.equals(MilestoneCode.INITIAL_ABSTRACTION_VERIFY)
-                || newCode.equals(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION)) {
+        if (newCode == MilestoneCode.INITIAL_ABSTRACTION_VERIFY
+                || newCode == MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION) {
             updateRecordVerificationDate(dto);
         }
     }
@@ -524,6 +473,41 @@ public class StudyMilestoneBeanLocal
             }
         }
         return false;
+    }
+    
+    private void createReadyForTSRMilestone(StudyMilestoneDTO dto) throws PAException {
+        List<StudyMilestoneDTO> existingDtoList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+        List<MilestoneCode> mileStones = getExistingMilestones(existingDtoList);
+        boolean admin = false;
+        boolean scientific = false;
+        for (int i = mileStones.size() - 1; i >= 0; i--) {
+            switch (mileStones.get(i)) {
+            case ADMINISTRATIVE_QC_COMPLETE:
+                admin = true;
+                break;
+            case SCIENTIFIC_QC_COMPLETE:
+                scientific = true;
+                break;
+            case ADMINISTRATIVE_PROCESSING_START_DATE:
+            case ADMINISTRATIVE_PROCESSING_COMPLETED_DATE:
+            case ADMINISTRATIVE_READY_FOR_QC:
+            case ADMINISTRATIVE_QC_START:
+            case SCIENTIFIC_PROCESSING_START_DATE:
+            case SCIENTIFIC_PROCESSING_COMPLETED_DATE:
+            case SCIENTIFIC_READY_FOR_QC:
+            case SCIENTIFIC_QC_START:
+                break;
+            default: return;    
+            }
+            if (admin && scientific) {
+                StudyMilestoneDTO readyForTSR = new StudyMilestoneDTO();
+                readyForTSR.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.READY_FOR_TSR));
+                readyForTSR.setMilestoneDate(dto.getMilestoneDate());
+                readyForTSR.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
+                create(readyForTSR);
+                return;
+            }
+        }    
     }
 
     private void sendTSREmail(StudyMilestoneDTO workDto) throws PAException {

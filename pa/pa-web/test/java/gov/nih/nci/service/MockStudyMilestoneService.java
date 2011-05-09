@@ -29,7 +29,7 @@ public class MockStudyMilestoneService extends MockAbstractBaseIsoService <Study
         mileList = new ArrayList<StudyMilestoneDTO>();
         StudyMilestoneDTO dto = new StudyMilestoneDTO();
         dto.setIdentifier(IiConverter.convertToIi("1"));
-        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.QC_START));
+        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.ADMINISTRATIVE_QC_START));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi("1"));
         dto.setMilestoneDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("06/19/2009")));
         mileList.add(dto);

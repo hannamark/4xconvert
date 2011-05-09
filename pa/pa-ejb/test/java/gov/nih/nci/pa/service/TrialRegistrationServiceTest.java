@@ -308,11 +308,12 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         bean.setUserServiceLocal(mock(RegistryUserBeanLocal.class));
         assertNotNull(bean.getUserServiceLocal());
     }
+    
     @Test
     public void testSendTSRXML() throws PAException {
         bean.sendTSRXML(null, null, null);
         bean.sendTSRXML(spIi, null, new ArrayList<StudyInboxDTO>());
-        bean.sendTSRXML(spIi, CdConverter.convertToCd(MilestoneCode.QC_COMPLETE), new ArrayList<StudyInboxDTO>());
+        bean.sendTSRXML(spIi, CdConverter.convertToCd(MilestoneCode.READY_FOR_TSR), new ArrayList<StudyInboxDTO>());
         List<StudyInboxDTO> inboxList = new ArrayList<StudyInboxDTO>();
         StudyInboxDTO inboxDto = new StudyInboxDTO();
         Ivl<Ts> ivlTs = new Ivl<Ts>();

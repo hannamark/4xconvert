@@ -786,7 +786,7 @@ public class TestSchema {
     private static StudyMilestone createStudyMilestoneObj(String comment, StudyProtocol studyProtocol) {
         StudyMilestone result = new StudyMilestone();
         result.setCommentText(comment);
-        result.setMilestoneCode(MilestoneCode.READY_FOR_QC);
+        result.setMilestoneCode(MilestoneCode.TRIAL_SUMMARY_SENT);
         result.setMilestoneDate(new Timestamp(new Date().getTime()));
         result.setStudyProtocol(studyProtocol);
         return result;

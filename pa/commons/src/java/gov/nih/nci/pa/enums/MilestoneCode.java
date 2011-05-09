@@ -85,8 +85,8 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -97,37 +97,46 @@ import java.util.Set;
  */
 public enum MilestoneCode implements CodedEnum<String> {
 
-    /** 1. */
+    /** Submission Received. */
     SUBMISSION_RECEIVED("Submission Received Date", true, false, null, true, true),
-    /** 2. */
+    /** Submission Accepted. */
     SUBMISSION_ACCEPTED("Submission Acceptance Date", true, false, null, true, true),
-    /** 3. */
+    /** Submission Rejected. */
     SUBMISSION_REJECTED("Submission Rejection Date", true, false, null, true, true),
-    /** 4. */
-    ADMINISTRATIVE_PROCESSING_START_DATE("Administrative processing start date", false, false, null, true, true),
-    /** 5. */
-    ADMINISTRATIVE_PROCESSING_COMPLETED_DATE("Administrative processing completed date", false, false, null, true,
+    /** Administrative processing start. */
+    ADMINISTRATIVE_PROCESSING_START_DATE("Administrative Processing Start Date", false, false, null, true, true),
+    /** Administrative processing completed. */
+    ADMINISTRATIVE_PROCESSING_COMPLETED_DATE("Administrative Processing Completed Date", false, false, null, true, 
                                              true),
-    /** 6. */
-    SCIENTIFIC_PROCESSING_START_DATE("Scientific processing start date", false, false, null, true, true),
-    /** 7. */
-    SCIENTIFIC_PROCESSING_COMPLETED_DATE("Scientific processing completed date", false, false, null, true, true),
-    /** 8. */
-    READY_FOR_QC("Ready for QC Date", false, true, null, true, true),
-    /** 9. */
-    QC_START("QC Start Date", false, false, MilestoneCode.READY_FOR_QC, true, true),
-    /** 10. */
-    QC_COMPLETE("QC Completed Date", false, true, MilestoneCode.QC_START, false, false),
-    /** 11. */
+    /** Ready for Administrative QC Date.*/
+    ADMINISTRATIVE_READY_FOR_QC("Ready for Administrative QC Date", false, false, null, true, true),
+    /** Administrative QC Start. */
+    ADMINISTRATIVE_QC_START("Administrative QC Start Date", false, false, null, true, true),
+    /** Administrative QC Completed. */
+    ADMINISTRATIVE_QC_COMPLETE("Administrative QC Completed Date", false, false, null, false, false),
+    /** Scientific processing start. */
+    SCIENTIFIC_PROCESSING_START_DATE("Scientific Processing Start Date", false, false, null, true, true),
+    /** Scientific processing completed. */
+    SCIENTIFIC_PROCESSING_COMPLETED_DATE("Scientific Processing Completed Date", false, false, null, true, true),
+    /** Ready for Scientific QC Date.*/
+    SCIENTIFIC_READY_FOR_QC("Ready for Scientific QC Date", false, false, null, true, true),
+    /** Scientific QC Start. */
+    SCIENTIFIC_QC_START("Scientific QC Start Date", false, false, null, true, true),
+    /** Scientific QC Completed. */
+    SCIENTIFIC_QC_COMPLETE("Scientific QC Completed Date", false, false, null, false, false),
+    /** Ready for Trial Summary Report. */
+    READY_FOR_TSR("Ready for Trial Summary Report Date", false, true, null, false, false),
+    /** Trial Summary Report Sent. */
     TRIAL_SUMMARY_SENT("Trial Summary Report Sent Date", false, true, null, false, false),
-    /** 12. */
+    /** Submitter Trial Summary Report Feedback. */
     TRIAL_SUMMARY_FEEDBACK("Submitter Trial Summary Report Feedback Date", false, false,
-             MilestoneCode.TRIAL_SUMMARY_SENT, false, false),
-    /** 13. */
+            MilestoneCode.TRIAL_SUMMARY_SENT, false, false),
+    /** Initial Abstraction Verified. */
     INITIAL_ABSTRACTION_VERIFY("Initial Abstraction Verified Date", true, true, null, false, false),
-    /** 14. */
+    
+    /** On-going Abstraction Verified. */
     ONGOING_ABSTRACTION_VERIFICATION("On-going Abstraction Verified Date", false, true, null, false, false),
-    /** 15. */
+    /** Late Rejection. */
     LATE_REJECTION_DATE("Late Rejection Date", true, false, MilestoneCode.SUBMISSION_ACCEPTED, false, false);
 
     private String code;
@@ -137,117 +146,61 @@ public enum MilestoneCode implements CodedEnum<String> {
     private boolean allowedIfOnhold;
     private boolean allowedInInBox;
     private static final Map<MilestoneCode, Set<DocumentWorkflowStatusCode>> ALLOWED_DWF_STATUSES;
-    private static Set<MilestoneCode> tsrAndAbove = new HashSet<MilestoneCode>();
+    private static final Set<MilestoneCode> TRS_AND_ABOVE = EnumSet.of(MilestoneCode.TRIAL_SUMMARY_SENT,
+                                                                       MilestoneCode.TRIAL_SUMMARY_FEEDBACK,
+                                                                       MilestoneCode.INITIAL_ABSTRACTION_VERIFY,
+                                                                       MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION);
     static {
-        Map<MilestoneCode, Set<DocumentWorkflowStatusCode>> tmp
-                = new HashMap<MilestoneCode, Set<DocumentWorkflowStatusCode>>();
+        Map<MilestoneCode, Set<DocumentWorkflowStatusCode>> tmp = 
+            new HashMap<MilestoneCode, Set<DocumentWorkflowStatusCode>>();
 
-        Set<DocumentWorkflowStatusCode> tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(DocumentWorkflowStatusCode.SUBMITTED);
+        Set<DocumentWorkflowStatusCode> tmpSet = EnumSet.of(DocumentWorkflowStatusCode.SUBMITTED);
         tmp.put(SUBMISSION_RECEIVED, Collections.unmodifiableSet(tmpSet));
 
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
+        tmpSet = EnumSet.of(DocumentWorkflowStatusCode.ACCEPTED);
         tmp.put(SUBMISSION_ACCEPTED, Collections.unmodifiableSet(tmpSet));
 
-
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(DocumentWorkflowStatusCode.REJECTED);
+        tmpSet = EnumSet.of(DocumentWorkflowStatusCode.REJECTED);
         tmp.put(SUBMISSION_REJECTED, Collections.unmodifiableSet(tmpSet));
 
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
-        tmp.put(ADMINISTRATIVE_PROCESSING_START_DATE, Collections.unmodifiableSet(tmpSet));
+        tmpSet = EnumSet.of(DocumentWorkflowStatusCode.ACCEPTED, DocumentWorkflowStatusCode.ABSTRACTED,
+                            DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE,
+                            DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE,
+                            DocumentWorkflowStatusCode.VERIFICATION_PENDING);
+        Set<DocumentWorkflowStatusCode> inProcessStatuses = Collections.unmodifiableSet(tmpSet);
+        tmp.put(ADMINISTRATIVE_PROCESSING_START_DATE, inProcessStatuses);
+        tmp.put(ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, inProcessStatuses);
+        tmp.put(SCIENTIFIC_PROCESSING_START_DATE, inProcessStatuses);
+        tmp.put(SCIENTIFIC_PROCESSING_COMPLETED_DATE, inProcessStatuses);
 
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
-        tmp.put(ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, Collections.unmodifiableSet(tmpSet));
+        tmpSet = EnumSet.of(DocumentWorkflowStatusCode.ACCEPTED, DocumentWorkflowStatusCode.ABSTRACTED,
+                            DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE,
+                            DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
+        Set<DocumentWorkflowStatusCode> inQCStatuses = Collections.unmodifiableSet(tmpSet);
+        tmp.put(ADMINISTRATIVE_READY_FOR_QC, inQCStatuses);
+        tmp.put(ADMINISTRATIVE_QC_START, inQCStatuses);
+        tmp.put(ADMINISTRATIVE_QC_COMPLETE, inQCStatuses);
+        tmp.put(SCIENTIFIC_READY_FOR_QC, inQCStatuses);
+        tmp.put(SCIENTIFIC_QC_START, inQCStatuses);
+        tmp.put(SCIENTIFIC_QC_COMPLETE, inQCStatuses);
+        tmp.put(READY_FOR_TSR, inQCStatuses);
+        tmp.put(TRIAL_SUMMARY_SENT, inQCStatuses);
+        tmp.put(TRIAL_SUMMARY_FEEDBACK, inQCStatuses);
 
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
-        tmp.put(SCIENTIFIC_PROCESSING_START_DATE, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
-        tmp.put(SCIENTIFIC_PROCESSING_COMPLETED_DATE, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
-        tmp.put(READY_FOR_QC, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
-        tmp.put(QC_START, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
-        tmp.put(QC_COMPLETE, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
-        tmp.put(TRIAL_SUMMARY_SENT, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
-        tmp.put(TRIAL_SUMMARY_FEEDBACK, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
-        tmpSet.add(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
+        tmpSet = EnumSet.of(DocumentWorkflowStatusCode.ABSTRACTED, DocumentWorkflowStatusCode.VERIFICATION_PENDING);
         tmp.put(INITIAL_ABSTRACTION_VERIFY, Collections.unmodifiableSet(tmpSet));
 
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
+        tmpSet = EnumSet.of(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE,
+                            DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
         tmp.put(ONGOING_ABSTRACTION_VERIFICATION, Collections.unmodifiableSet(tmpSet));
 
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(DocumentWorkflowStatusCode.ACCEPTED);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTED);
-        tmpSet.add(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
-        tmpSet.add(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
+        tmpSet = EnumSet.of(DocumentWorkflowStatusCode.ACCEPTED, DocumentWorkflowStatusCode.ABSTRACTED,
+                            DocumentWorkflowStatusCode.VERIFICATION_PENDING,
+                            DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE,
+                            DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
         tmp.put(LATE_REJECTION_DATE, Collections.unmodifiableSet(tmpSet));
 
         ALLOWED_DWF_STATUSES = Collections.unmodifiableMap(tmp);
-
-        tsrAndAbove.add(MilestoneCode.TRIAL_SUMMARY_SENT);
-        tsrAndAbove.add(MilestoneCode.TRIAL_SUMMARY_FEEDBACK);
-        tsrAndAbove.add(MilestoneCode.INITIAL_ABSTRACTION_VERIFY);
-        tsrAndAbove.add(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION);
-        tsrAndAbove.add(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION);
-
     }
 
     /**
@@ -265,7 +218,7 @@ public enum MilestoneCode implements CodedEnum<String> {
         this.validationTrigger = validationTrigger;
         this.prerequisite = prerequisite;
         this.allowedIfOnhold = allowedIfOnhold;
-        this.allowedInInBox =  allowedIfInBox;
+        this.allowedInInBox = allowedIfInBox;
         register(this);
     }
 
@@ -275,6 +228,7 @@ public enum MilestoneCode implements CodedEnum<String> {
     public String getCode() {
         return code;
     }
+
     /**
      *@return String DisplayName
      */
@@ -296,7 +250,6 @@ public enum MilestoneCode implements CodedEnum<String> {
         return unique;
     }
 
-
     /**
      * @return the validationTrigger
      */
@@ -311,20 +264,21 @@ public enum MilestoneCode implements CodedEnum<String> {
         return prerequisite;
     }
 
-
     /**
      * @return the allowedIfOnhold
      */
     public boolean isAllowedIfOnhold() {
         return allowedIfOnhold;
     }
+
     /**
-     *
+     * 
      * @return the allowedIfInBox
      */
     public boolean isAllowedIfInBox() {
         return allowedInInBox;
     }
+
     /**
      * @param documentWorkflowStatusCode dwf status code to check
      * @return if milestone is valid for given dwf status code
@@ -351,7 +305,7 @@ public enum MilestoneCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         MilestoneCode[] l = MilestoneCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -366,17 +320,19 @@ public enum MilestoneCode implements CodedEnum<String> {
     public String getNameByCode(String str) {
         return getByCode(str).name();
     }
+
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNamesForAddMilestone() {
+    public static String[] getDisplayNamesForAddMilestone() {
         List<String> list = new ArrayList<String>(Arrays.asList(getDisplayNames()));
         list.remove(MilestoneCode.SUBMISSION_REJECTED.getCode());
         list.remove(MilestoneCode.LATE_REJECTION_DATE.getCode());
         return list.toArray(new String[list.size()]);
     }
+
     /**
-     *
+     * 
      * @return milestone code for super user
      */
     public static String[] getDisplayNamesMilestoneForSuperUser() {
@@ -391,6 +347,6 @@ public enum MilestoneCode implements CodedEnum<String> {
      * @return true, if is above trial summary report
      */
     public static boolean isAboveTrialSummaryReport(MilestoneCode mc) {
-        return tsrAndAbove.contains(mc);
+        return TRS_AND_ABOVE.contains(mc);
     }
 }

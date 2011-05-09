@@ -678,5 +678,8 @@
         <comment>Adding the scientific and administrative roles to the db.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.5/PO-3567.sql"/>
      </changeSet>
-     
+     <changeSet id="PO-3531-3532" author="mvisee">
+        <comment>Splitting QC milestones and adding READY_FOR_TSR milestone</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.5/PO-3531.sql"/>
+     </changeSet>
 </databaseChangeLog>
