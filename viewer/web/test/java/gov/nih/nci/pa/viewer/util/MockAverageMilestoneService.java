@@ -110,7 +110,7 @@ public class MockAverageMilestoneService extends MockService implements AverageM
         dto.setHigh(StConverter.convertToSt(TEST_STR));
         dto.setLow(StConverter.convertToSt(TEST_STR));
         dto.setMilestoneCode(CdConverter
-                .convertStringToCd(MilestoneCode.QC_START.getName()));
+                .convertStringToCd(MilestoneCode.ADMINISTRATIVE_QC_START.getName()));
         dto.setOrder(IntConverter.convertToInt(TEST_INT));
         rList.add(dto);
         return rList;

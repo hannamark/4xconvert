@@ -321,7 +321,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "' and " 
         + "ss2.identifier = ss.identifier  "
         + "where sp.status_code = '" + StudyStatusCode.ACTIVE.getName() + "'  "
-        + "and sm.milestone_code = '" + MilestoneCode.QC_COMPLETE.getName() + "' "
+        + "and sm.milestone_code = '" + MilestoneCode.READY_FOR_TSR.getName() + "' "
         + "and dws.status_code in ('" + DocumentWorkflowStatusCode.ABSTRACTED.getName() 
         + "',' " + DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getName() + "'," 
         + "'" + DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getName() 
