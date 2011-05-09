@@ -203,37 +203,37 @@
         </action>
         <action name="studyOverallStatus*" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
-            <result>/WEB-INF/jsp/studyOverallStatus.jsp</result>
+            <result>/WEB-INF/jsp/administrative/studyOverallStatus.jsp</result>
             <result name="historypopup">/WEB-INF/jsp/nodecorate/statusHistory.jsp</result>
         </action>
         <action name="participatingOrganizations*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
             <result name="lookup">/WEB-INF/jsp/nodecorate/lookup.jsp</result>
-            <result name="edit">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
-            <result name="delete">/WEB-INF/jsp/participatingOrganizations.jsp</result>
-            <result name="facilitySave">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
-            <result>/WEB-INF/jsp/participatingOrganizations{1}.jsp</result>
-            <result name="display_StudyPartipants">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
-            <result name="display_StudyPartipants_Contacts">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
-            <result name="display_spContacts">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
-            <result name="input">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
-            <result name="error">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
-            <result name="proprietaryList">/WEB-INF/jsp/proprietaryParticipatingOrg.jsp</result>
-            <result name="proprietaryCreate">/WEB-INF/jsp/proprietaryParticipatingOrgCreate.jsp</result>
-            <result name="proprietaryEdit">/WEB-INF/jsp/proprietaryParticipatingOrgCreate.jsp</result>
-            <result name="error_proprietary">/WEB-INF/jsp/proprietaryParticipatingOrgCreate.jsp</result>
+            <result name="edit">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
+            <result name="delete">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizations.jsp</result>
+            <result name="facilitySave">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
+            <result>/WEB-INF/jsp/administrative/participatingSites/participatingOrganizations{1}.jsp</result>
+            <result name="display_StudyPartipants">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
+            <result name="display_StudyPartipants_Contacts">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
+            <result name="display_spContacts">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
+            <result name="input">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
+            <result name="error">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
+            <result name="proprietaryList">/WEB-INF/jsp/administrative/participatingSites/proprietaryParticipatingOrg.jsp</result>
+            <result name="proprietaryCreate">/WEB-INF/jsp/administrative/participatingSites/proprietaryParticipatingOrgCreate.jsp</result>
+            <result name="proprietaryEdit">/WEB-INF/jsp/administrative/participatingSites/proprietaryParticipatingOrgCreate.jsp</result>
+            <result name="error_proprietary">/WEB-INF/jsp/administrative/participatingSites/proprietaryParticipatingOrgCreate.jsp</result>
             <result name="historypopup">/WEB-INF/jsp/nodecorate/statusHistory.jsp</result>
          </action>
 
         <action name="collaborators*" class="gov.nih.nci.pa.action.CollaboratorsAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
             <result name="lookup">/WEB-INF/jsp/nodecorate/lookup.jsp</result>
-            <result name="create">/WEB-INF/jsp/collaboratorscreate.jsp</result>
-            <result name="edit">/WEB-INF/jsp/collaboratorscreate.jsp</result>
-            <result name="delete">/WEB-INF/jsp/collaborators.jsp</result>
-            <result name="facilitySave">/WEB-INF/jsp/collaborators.jsp</result>
-            <result name="facilityUpdate">//WEB-INF/jsp/collaborators.jsp</result>
-            <result>/WEB-INF/jsp/collaborators.jsp</result>
+            <result name="create">/WEB-INF/jsp/administrative/collaborators/collaboratorscreate.jsp</result>
+            <result name="edit">/WEB-INF/jsp/administrative/collaborators/collaboratorscreate.jsp</result>
+            <result name="delete">/WEB-INF/jsp/administrative/collaborators/collaborators.jsp</result>
+            <result name="facilitySave">/WEB-INF/jsp/administrative/collaborators/collaborators.jsp</result>
+            <result name="facilityUpdate">//WEB-INF/jsp/administrative/collaborators/collaborators.jsp</result>
+            <result>/WEB-INF/jsp/administrative/collaborators/collaborators.jsp</result>
          </action>
         <action name="ajaxdisplaypersoninfo*" class="gov.nih.nci.pa.action.DisplayInfoAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/displayUserInfo.jsp</result>
@@ -246,7 +246,7 @@
             <result name="edit">/WEB-INF/jsp/nodecorate/selectedInterventionDetails.jsp</result>
         </action>
         <action name="ajaxptpPlannedMarker*" class="gov.nih.nci.pa.action.PlannedMarkerAction" method="{1}">
-            <result name="edit">/WEB-INF/jsp/plannedMarker/selectedPlannedMarker.jsp</result>
+            <result name="edit">/WEB-INF/jsp/scientific/plannedMarker/selectedPlannedMarker.jsp</result>
         </action>
          <action name="ajaxptpTypeIntervention*" class="gov.nih.nci.pa.action.TrialInterventionsAction" method="{1}">
             <result name="loadDoseUOMDetails">/WEB-INF/jsp/nodecorate/displayDoseUOM.jsp</result>
@@ -261,14 +261,14 @@
         </action>
         <action name="ajaxptpOrg*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">
             <result name="edit">/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp</result>
-            <result name="facilitySave">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
+            <result name="facilitySave">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
             <result name="displayJsp">/WEB-INF/jsp/nodecorate/selectedOrgDetails.jsp</result>
             <result name="display_spContacts">/WEB-INF/jsp/nodecorate/displaySPContactsTable.jsp</result>
             <result name="display_primContacts">/WEB-INF/jsp/nodecorate/displayPrimaryContact.jsp</result>
             <result name="error_prim_contacts">/WEB-INF/jsp/nodecorate/displayPrimaryContact.jsp</result>
             <result name="display_StudyPartipants_Contacts">/WEB-INF/jsp/nodecorate/selectedName.jsp</result>
-            <result name="input">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
-            <result name="error">/WEB-INF/jsp/participatingOrganizationscreate.jsp</result>
+            <result name="input">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
+            <result name="error">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
             <result name="error_edit">/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp</result>
             <result name="displayPerson">/WEB-INF/jsp/nodecorate/sitePrincipalInvestigator.jsp</result>
          </action>
@@ -281,25 +281,25 @@
         </action>
         <action name="trialFunding*" class="gov.nih.nci.pa.action.TrialFundingAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
-            <result>/WEB-INF/jsp/trialFundingAdd.jsp</result>
-            <result name="add">/WEB-INF/jsp/trialFundingAdd.jsp</result>
-            <result name="query">/WEB-INF/jsp/trialFunding.jsp</result>
-            <result name="error">/WEB-INF/jsp/trialFundingAdd.jsp</result>
-            <result name="delete">/WEB-INF/jsp/trialFundingDelete.jsp</result>
+            <result>/WEB-INF/jsp/administrative/trialFunding/trialFundingAdd.jsp</result>
+            <result name="add">/WEB-INF/jsp/administrative/trialFunding/trialFundingAdd.jsp</result>
+            <result name="query">/WEB-INF/jsp/administrative/trialFunding/trialFunding.jsp</result>
+            <result name="error">/WEB-INF/jsp/administrative/trialFunding/trialFundingAdd.jsp</result>
+            <result name="delete">/WEB-INF/jsp/administrative/trialFunding/trialFundingDelete.jsp</result>
         </action>
         <action name="regulatoryInfo*" class="gov.nih.nci.pa.action.RegulatoryInformationAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
-            <result>/WEB-INF/jsp/RegulatoryInformation.jsp</result>
-            <result name="view_page">/WEB-INF/jsp/regulatoryinformationview.jsp</result>
+            <result>/WEB-INF/jsp/administrative/regulatoryInfo/RegulatoryInformation.jsp</result>
+            <result name="view_page">/WEB-INF/jsp/administrative/regulatoryInfo/regulatoryinformationview.jsp</result>
         </action>
         <action name="irb*" class="gov.nih.nci.pa.action.IrbAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
-            <result>/WEB-INF/jsp/irb.jsp</result>
+            <result>/WEB-INF/jsp/administrative/irb.jsp</result>
         </action>
         <action name="nciSpecificInformation*" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
-            <result>/WEB-INF/jsp/nciSpecificInformation.jsp</result>
-            <result name="error">/WEB-INF/jsp/nciSpecificInformation.jsp</result>
+            <result>/WEB-INF/jsp/administrative/nciSpecificInformation.jsp</result>
+            <result name="error">/WEB-INF/jsp/administrative/nciSpecificInformation.jsp</result>
         </action>
         <action name="ajaxorg*" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
@@ -307,10 +307,10 @@
         </action>
         <action name="trialDocument*" class="gov.nih.nci.pa.action.TrialDocumentAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
-             <result>/WEB-INF/jsp/trialDocuments.jsp</result>
-             <result name="input">/WEB-INF/jsp/trialDocumentAdd.jsp</result>
-             <result name="error">/WEB-INF/jsp/trialDocuments.jsp</result>
-             <result name="delete">/WEB-INF/jsp/trialDocumentDelete.jsp</result>
+             <result>/WEB-INF/jsp/administrative/trialDocuments/trialDocuments.jsp</result>
+             <result name="input">/WEB-INF/jsp/administrative/trialDocuments/trialDocumentAdd.jsp</result>
+             <result name="error">/WEB-INF/jsp/administrative/trialDocuments/trialDocuments.jsp</result>
+             <result name="delete">/WEB-INF/jsp/administrative/trialDocuments/trialDocumentDelete.jsp</result>
          </action>
 
         <action name="popupDiseaseDetails" class="gov.nih.nci.pa.action.PopUpDiseaseDetailsAction">
@@ -337,9 +337,9 @@
            <result name="lookUp">/WEB-INF/jsp/nodecorate/lookUpInterventionTypes.jsp</result>
         </action>
         <action name="popupPlannedMarker*" class="gov.nih.nci.pa.action.popup.PlannedMarkerPopupAction" method="{1}">
-            <result>/WEB-INF/jsp/plannedMarker/cadsrLookup.jsp</result>
-            <result name="results">/WEB-INF/jsp/plannedMarker/cadsrLookupResults.jsp</result>
-            <result name="email">/WEB-INF/jsp/plannedMarker/requestEmail.jsp</result>
+            <result>/WEB-INF/jsp/scientific/plannedMarker/cadsrLookup.jsp</result>
+            <result name="results">/WEB-INF/jsp/scientific/plannedMarker/cadsrLookupResults.jsp</result>
+            <result name="email">/WEB-INF/jsp/scientific/plannedMarker/requestEmail.jsp</result>
         </action>
         <action name="popup*" class="gov.nih.nci.pa.action.PopUpAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/{1}.jsp</result>
@@ -350,17 +350,17 @@
 
         <action name="subGroups*" class="gov.nih.nci.pa.action.SubGroupsAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
-             <result>/WEB-INF/jsp/subGroups.jsp</result>
-             <result name="input">/WEB-INF/jsp/subGroupsAdd.jsp</result>
-             <result name="error">/WEB-INF/jsp/subGroups.jsp</result>
-             <result name="delete">/WEB-INF/jsp/subGroupsDelete.jsp</result>
+             <result>/WEB-INF/jsp/scientific/subGroups/subGroups.jsp</result>
+             <result name="input">/WEB-INF/jsp/scientific/subGroups/subGroupsAdd.jsp</result>
+             <result name="error">/WEB-INF/jsp/scientific/subGroups/subGroups.jsp</result>
+             <result name="delete">/WEB-INF/jsp/scientific/subGroups/subGroupsDelete.jsp</result>
          </action>
 
         <action name="interventionalStudyDesign*" class="gov.nih.nci.pa.action.InterventionalStudyDesignAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
-            <result name="details">/WEB-INF/jsp/isdesignDetails.jsp</result>
-            <result name="outcome">/WEB-INF/jsp/outcomeMeasure.jsp</result>
-            <result name="outcomeAdd">/WEB-INF/jsp/outcomeMeasureAdd.jsp</result>
+            <result name="details">/WEB-INF/jsp/scientific/isdesignDetails.jsp</result>
+            <result name="outcome">/WEB-INF/jsp/scientific/outcomeMeasures/outcomeMeasure.jsp</result>
+            <result name="outcomeAdd">/WEB-INF/jsp/scientific/outcomeMeasures/outcomeMeasureAdd.jsp</result>
         </action>
         <action name="observationalStudyDesign*" class="gov.nih.nci.pa.action.ObservationalStudyDesignAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
@@ -368,41 +368,41 @@
         </action>
         <action name="generalTrialDesign*" class="gov.nih.nci.pa.action.GeneralTrialDesignAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
-            <result name="edit">/WEB-INF/jsp/generalTrialDesignEdit.jsp</result>
+            <result name="edit">/WEB-INF/jsp/administrative/generalTrialDesignEdit.jsp</result>
         </action>
         <action name="trialDescription*" class="gov.nih.nci.pa.action.TrialDescriptionAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
-            <result name="input">/WEB-INF/jsp/trialDescription.jsp</result>
-            <result name="error">/WEB-INF/jsp/trialDescription.jsp</result>
-            <result name="edit">/WEB-INF/jsp/trialDescription.jsp</result>
+            <result name="input">/WEB-INF/jsp/scientific/trialDescription.jsp</result>
+            <result name="error">/WEB-INF/jsp/scientific/trialDescription.jsp</result>
+            <result name="edit">/WEB-INF/jsp/scientific/trialDescription.jsp</result>
         </action>
         <action name="trialInterventions*" class="gov.nih.nci.pa.action.TrialInterventionsAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
             <result name="displayDetails">/WEB-INF/jsp/nodecorate/selectedInterventionDetails.jsp</result>
-            <result name="edit">/WEB-INF/jsp/trialInterventionsedit.jsp</result>
-            <result name="input">/WEB-INF/jsp/trialInterventionsedit.jsp</result>
-            <result name="error">/WEB-INF/jsp/trialInterventionsedit.jsp</result>
-            <result name="list">/WEB-INF/jsp/trialInterventions.jsp</result>
+            <result name="edit">/WEB-INF/jsp/scientific/interventions/trialInterventionsedit.jsp</result>
+            <result name="input">/WEB-INF/jsp/scientific/interventions/trialInterventionsedit.jsp</result>
+            <result name="error">/WEB-INF/jsp/scientific/interventions/trialInterventionsedit.jsp</result>
+            <result name="list">/WEB-INF/jsp/scientific/interventions/trialInterventions.jsp</result>
         </action>
         <action name="trialArms*" class="gov.nih.nci.pa.action.TrialArmsAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
-            <result name="edit">/WEB-INF/jsp/trialArmsedit.jsp</result>
-            <result name="list">/WEB-INF/jsp/trialArms.jsp</result>
+            <result name="edit">/WEB-INF/jsp/scientific/arms/trialArmsedit.jsp</result>
+            <result name="list">/WEB-INF/jsp/scientific/arms/trialArms.jsp</result>
         </action>
         <action name="eligibilityCriteria*" class="gov.nih.nci.pa.action.EligibilityCriteriaAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
-            <result name="eligibility">/WEB-INF/jsp/isEligibilityCriteria.jsp</result>
-            <result name="eligibilityAdd">/WEB-INF/jsp/isEligibilityCriteriaAdd.jsp</result>
+            <result name="eligibility">/WEB-INF/jsp/scientific/eligibilityCriteria/isEligibilityCriteria.jsp</result>
+            <result name="eligibilityAdd">/WEB-INF/jsp/scientific/eligibilityCriteria/isEligibilityCriteriaAdd.jsp</result>
             <result name="displaycde">/WEB-INF/jsp/nodecorate/eligibilityBuildCriterion.jsp</result>
         </action>
         <action name="trialIndide*" class="gov.nih.nci.pa.action.TrialIndideAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
-            <result>/WEB-INF/jsp/trialIndideAdd.jsp</result>
-            <result name="add">/WEB-INF/jsp/trialIndideAdd.jsp</result>
-            <result name="edit">/WEB-INF/jsp/trialIndideEdit.jsp</result>
-            <result name="query">/WEB-INF/jsp/trialIndide.jsp</result>
-            <result name="error">/WEB-INF/jsp/trialIndideAdd.jsp</result>
-            <result name="delete">/WEB-INF/jsp/trialIndide.jsp</result>
+            <result>/WEB-INF/jsp/administrative/trialIndIde/trialIndideAdd.jsp</result>
+            <result name="add">/WEB-INF/jsp/administrative/trialIndIde/trialIndideAdd.jsp</result>
+            <result name="edit">/WEB-INF/jsp/administrative/trialIndIde/trialIndideEdit.jsp</result>
+            <result name="query">/WEB-INF/jsp/administrative/trialIndIde/trialIndide.jsp</result>
+            <result name="error">/WEB-INF/jsp/administrative/trialIndIde/trialIndideAdd.jsp</result>
+            <result name="delete">/WEB-INF/jsp/administrative/trialIndIde/trialIndide.jsp</result>
         </action>
         <action name="abstractionCompletion*" class="gov.nih.nci.pa.action.AbstractionCompletionAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
@@ -413,18 +413,18 @@
         </action>
         <action name="disease*" class="gov.nih.nci.pa.action.DiseaseAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
-            <result name="edit">/WEB-INF/jsp/diseaseedit.jsp</result>
-            <result name="list">/WEB-INF/jsp/disease.jsp</result>
+            <result name="edit">/WEB-INF/jsp/scientific/disease/diseaseedit.jsp</result>
+            <result name="list">/WEB-INF/jsp/scientific/disease/disease.jsp</result>
         </action>
         <action name="anatomicSite*" class="gov.nih.nci.pa.action.AnatomicSiteAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
-            <result name="edit">/WEB-INF/jsp/anatomicSiteEdit.jsp</result>
-            <result name="list">/WEB-INF/jsp/anatomicSite.jsp</result>
+            <result name="edit">/WEB-INF/jsp/scientific/anatomicSites/anatomicSiteEdit.jsp</result>
+            <result name="list">/WEB-INF/jsp/scientific/anatomicSites/anatomicSite.jsp</result>
         </action>
         <action name="plannedMarker*" class="gov.nih.nci.pa.action.PlannedMarkerAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>
-            <result name="list">/WEB-INF/jsp/plannedMarker/plannedMarkers.jsp</result>
-            <result name="edit">/WEB-INF/jsp/plannedMarker/editPlannedMarker.jsp</result>
+            <result name="list">/WEB-INF/jsp/scientific/plannedMarker/plannedMarkers.jsp</result>
+            <result name="edit">/WEB-INF/jsp/scientific/plannedMarker/editPlannedMarker.jsp</result>
         </action>
         <action name="trialValidation*" class="gov.nih.nci.pa.action.TrialValidationAction" method="{1}">
           <interceptor-ref name="paPreventDuplicateStudyInterceptor"/>

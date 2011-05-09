@@ -104,7 +104,7 @@
                         <s:form id="plannedMarkerForm" action="%{#submitUrl}">
                             <pa:studyUniqueToken/>
                             <div id="plannedMarkerDetails">
-                                <%@ include file="/WEB-INF/jsp/plannedMarker/selectedPlannedMarker.jsp"%>
+                                <%@ include file="/WEB-INF/jsp/scientific/plannedMarker/selectedPlannedMarker.jsp"%>
                             </div>
                             <div class="actionsrow">
                                 <del class="btnwrapper">

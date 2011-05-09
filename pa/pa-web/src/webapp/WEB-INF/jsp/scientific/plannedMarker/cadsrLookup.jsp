@@ -76,7 +76,7 @@
                 </table>
             </div>
             <div id="requestEmail" style="display: none">
-                <jsp:include page="/WEB-INF/jsp/plannedMarker/requestEmail.jsp"/>
+                <jsp:include page="/WEB-INF/jsp/scientific/plannedMarker/requestEmail.jsp"/>
             </div>
             <div id="actionsrow" class="actionsrow">
                 <del class="btnwrapper">
@@ -100,7 +100,7 @@
             </div>
             <div id="line" class="line"></div>
             <div id="getCaDSR" align="center">
-                <jsp:include page="/WEB-INF/jsp/plannedMarker/cadsrLookupResults.jsp"/>
+                <jsp:include page="/WEB-INF/jsp/scientific/plannedMarker/cadsrLookupResults.jsp"/>
             </div>
         </s:form>
     </body>
