@@ -125,7 +125,6 @@ public class StudyMilestoneBeanLocal
         checkLateRejectionRules(dto);
         checkOnHoldRules(dto, newCode);
         checkInboxRules(dto, newCode);
-        checkTransitionRules(newCode, existingDtoList);
         checkUniquenessRules(newCode, existingDtoList);
         checkMilestoneSpecificRules(newCode, existingDtoList);
         checkDocumentWorkflowStatusRules(dto, newCode);
@@ -189,25 +188,6 @@ public class StudyMilestoneBeanLocal
                         throw new PAException(MessageFormat.format(msg, newCode.getCode()));
                     }
                 }
-            }
-        }
-    }
-
-    private void checkTransitionRules(MilestoneCode newCode, List<StudyMilestoneDTO> existingDtoList)
-            throws PAException {
-        if (newCode.getPrerequisite() != null) {
-            boolean prerequisiteFound = false;
-            for (StudyMilestoneDTO edto : existingDtoList) {
-                MilestoneCode cd = MilestoneCode.getByCode(CdConverter.convertCdToString(edto.getMilestoneCode()));
-                if (newCode.getPrerequisite().getCode().equals(cd.getCode())) {
-                    prerequisiteFound = true;
-                    continue;
-                }
-            }
-            if (!prerequisiteFound) {
-                String msg = "\"{0}\" is a prerequisite to \"{1}\".";
-                throw new PAException(MessageFormat.format(msg, newCode.getPrerequisite().getCode(), 
-                                                           newCode.getCode()));
             }
         }
     }
@@ -279,7 +259,7 @@ public class StudyMilestoneBeanLocal
 
     private void checkMilestoneSpecificRules(MilestoneCode newCode, List<StudyMilestoneDTO> existingDtoList)
             throws PAException {
-        List<MilestoneCode> mileStones = getExistingMilestones(existingDtoList);
+        List<MilestoneCode> milestones = getExistingMilestones(existingDtoList);
         switch (newCode) {
         case ADMINISTRATIVE_PROCESSING_START_DATE:
         case ADMINISTRATIVE_PROCESSING_COMPLETED_DATE:
@@ -288,10 +268,18 @@ public class StudyMilestoneBeanLocal
         case ADMINISTRATIVE_QC_COMPLETE:
         case SCIENTIFIC_PROCESSING_START_DATE:
         case SCIENTIFIC_PROCESSING_COMPLETED_DATE:
-        case SCIENTIFIC_READY_FOR_QC:    
+        case SCIENTIFIC_READY_FOR_QC:
         case SCIENTIFIC_QC_START:
         case SCIENTIFIC_QC_COMPLETE:
-            checkProcessAndQC(mileStones, newCode);
+            checkProcessAndQC(milestones, newCode);
+            break;
+        case TRIAL_SUMMARY_FEEDBACK:
+            checkPrerequisite(milestones, newCode, Arrays.asList(MilestoneCode.SUBMISSION_ACCEPTED,
+                                                                 MilestoneCode.TRIAL_SUMMARY_FEEDBACK),
+                                                                 MilestoneCode.TRIAL_SUMMARY_SENT);
+            break;
+        case LATE_REJECTION_DATE:
+            checkPrerequisite(milestones, newCode, new ArrayList<MilestoneCode>(), MilestoneCode.SUBMISSION_ACCEPTED);
             break;
         default:
             break;
@@ -300,31 +288,20 @@ public class StudyMilestoneBeanLocal
     
     /**
      * Check the milestones in the processing and QC branches.
-     * @param mileStones The list of all milestones
-     * @param milestone The milestone to check
-     * @param predecessors The accepted predecessor milestones
-     * @param successors The successor milestones
-     * @param others the milestones of the other branch
+     * @param milestones The list of all existing milestones
+     * @param milestone The new milestone to check. It must be one of the administrative or scientific processing or QC
+     *        milestones.
+     * @throws PAException if the given milestone is not acceptable in the current state.
      */
-    private void checkProcessAndQC(List<MilestoneCode> mileStones, MilestoneCode milestone) throws PAException {
-        List<MilestoneCode> adminSequence = Arrays.asList(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE,
-                                                          MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE,
-                                                          MilestoneCode.ADMINISTRATIVE_READY_FOR_QC,
-                                                          MilestoneCode.ADMINISTRATIVE_QC_START,
-                                                          MilestoneCode.ADMINISTRATIVE_QC_COMPLETE);
-        List<MilestoneCode> scienceSequence = Arrays.asList(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE,
-                                                            MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE,
-                                                            MilestoneCode.SCIENTIFIC_READY_FOR_QC,
-                                                            MilestoneCode.SCIENTIFIC_QC_START,
-                                                            MilestoneCode.SCIENTIFIC_QC_COMPLETE);
+    private void checkProcessAndQC(List<MilestoneCode> milestones, MilestoneCode milestone) throws PAException {
         List<MilestoneCode> mainSequence = null;
         List<MilestoneCode> altSequence = null;
-        if (adminSequence.contains(milestone)) {
-            mainSequence = adminSequence;
-            altSequence = scienceSequence;
+        if (MilestoneCode.ADMIN_SEQ.contains(milestone)) {
+            mainSequence = MilestoneCode.ADMIN_SEQ;
+            altSequence = MilestoneCode.SCIENTIFIC_SEQ;
         } else {
-            mainSequence = scienceSequence;
-            altSequence = adminSequence;
+            mainSequence = MilestoneCode.SCIENTIFIC_SEQ;
+            altSequence = MilestoneCode.ADMIN_SEQ;
         }
         int milestoneIndex = mainSequence.indexOf(milestone);
         List<MilestoneCode> predecessors = new ArrayList<MilestoneCode>();
@@ -334,8 +311,8 @@ public class StudyMilestoneBeanLocal
             predecessors.add(MilestoneCode.SUBMISSION_ACCEPTED);
             predecessors.add(MilestoneCode.TRIAL_SUMMARY_FEEDBACK);
         }
-        for (int i = mileStones.size() - 1; i >= 0; i--) {
-            MilestoneCode current = mileStones.get(i);
+        for (int i = milestones.size() - 1; i >= 0; i--) {
+            MilestoneCode current = milestones.get(i);
             if (predecessors.contains(current)) {
                 return;
             }
@@ -353,8 +330,21 @@ public class StudyMilestoneBeanLocal
         String msg = "\"{0}\" can not be reached at this stage.";
         throw new PAException(MessageFormat.format(msg, milestone.getCode()));
     }
-
-   
+    
+    private void checkPrerequisite(List<MilestoneCode> milestones, MilestoneCode milestone,
+            List<MilestoneCode> stopSearchMilestones, MilestoneCode preRequisite) throws PAException {
+        for (int i = milestones.size() - 1; i >= 0; i--) {
+            MilestoneCode current = milestones.get(i);
+            if (current == preRequisite) {
+                return;
+            }
+            if (stopSearchMilestones.contains(current)) {
+                break;
+            }
+        }
+        String msg = "\"{0}\" is a prerequisite to \"{1}\".";
+        throw new PAException(MessageFormat.format(msg, preRequisite.getCode(), milestone.getCode()));
+    }
 
     private List<MilestoneCode> getExistingMilestones(List<StudyMilestoneDTO> existingDTOs) {
         List<MilestoneCode> existingMilestones = new ArrayList<MilestoneCode>();

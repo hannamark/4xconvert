@@ -98,51 +98,47 @@ import java.util.Set;
 public enum MilestoneCode implements CodedEnum<String> {
 
     /** Submission Received. */
-    SUBMISSION_RECEIVED("Submission Received Date", true, false, null, true, true),
+    SUBMISSION_RECEIVED("Submission Received Date", true, false, true, true),
     /** Submission Accepted. */
-    SUBMISSION_ACCEPTED("Submission Acceptance Date", true, false, null, true, true),
+    SUBMISSION_ACCEPTED("Submission Acceptance Date", true, false, true, true),
     /** Submission Rejected. */
-    SUBMISSION_REJECTED("Submission Rejection Date", true, false, null, true, true),
+    SUBMISSION_REJECTED("Submission Rejection Date", true, false, true, true),
     /** Administrative processing start. */
-    ADMINISTRATIVE_PROCESSING_START_DATE("Administrative Processing Start Date", false, false, null, true, true),
+    ADMINISTRATIVE_PROCESSING_START_DATE("Administrative Processing Start Date", false, false, true, true),
     /** Administrative processing completed. */
-    ADMINISTRATIVE_PROCESSING_COMPLETED_DATE("Administrative Processing Completed Date", false, false, null, true, 
-                                             true),
-    /** Ready for Administrative QC Date.*/
-    ADMINISTRATIVE_READY_FOR_QC("Ready for Administrative QC Date", false, false, null, true, true),
+    ADMINISTRATIVE_PROCESSING_COMPLETED_DATE("Administrative Processing Completed Date", false, false, true, true),
+    /** Ready for Administrative QC Date. */
+    ADMINISTRATIVE_READY_FOR_QC("Ready for Administrative QC Date", false, false, true, true),
     /** Administrative QC Start. */
-    ADMINISTRATIVE_QC_START("Administrative QC Start Date", false, false, null, true, true),
+    ADMINISTRATIVE_QC_START("Administrative QC Start Date", false, false, true, true),
     /** Administrative QC Completed. */
-    ADMINISTRATIVE_QC_COMPLETE("Administrative QC Completed Date", false, false, null, false, false),
+    ADMINISTRATIVE_QC_COMPLETE("Administrative QC Completed Date", false, false, false, false),
     /** Scientific processing start. */
-    SCIENTIFIC_PROCESSING_START_DATE("Scientific Processing Start Date", false, false, null, true, true),
+    SCIENTIFIC_PROCESSING_START_DATE("Scientific Processing Start Date", false, false, true, true),
     /** Scientific processing completed. */
-    SCIENTIFIC_PROCESSING_COMPLETED_DATE("Scientific Processing Completed Date", false, false, null, true, true),
-    /** Ready for Scientific QC Date.*/
-    SCIENTIFIC_READY_FOR_QC("Ready for Scientific QC Date", false, false, null, true, true),
+    SCIENTIFIC_PROCESSING_COMPLETED_DATE("Scientific Processing Completed Date", false, false, true, true),
+    /** Ready for Scientific QC Date. */
+    SCIENTIFIC_READY_FOR_QC("Ready for Scientific QC Date", false, false, true, true),
     /** Scientific QC Start. */
-    SCIENTIFIC_QC_START("Scientific QC Start Date", false, false, null, true, true),
+    SCIENTIFIC_QC_START("Scientific QC Start Date", false, false, true, true),
     /** Scientific QC Completed. */
-    SCIENTIFIC_QC_COMPLETE("Scientific QC Completed Date", false, false, null, false, false),
+    SCIENTIFIC_QC_COMPLETE("Scientific QC Completed Date", false, false, false, false),
     /** Ready for Trial Summary Report. */
-    READY_FOR_TSR("Ready for Trial Summary Report Date", false, true, null, false, false),
+    READY_FOR_TSR("Ready for Trial Summary Report Date", false, true, false, false),
     /** Trial Summary Report Sent. */
-    TRIAL_SUMMARY_SENT("Trial Summary Report Sent Date", false, true, null, false, false),
+    TRIAL_SUMMARY_SENT("Trial Summary Report Sent Date", false, true, false, false),
     /** Submitter Trial Summary Report Feedback. */
-    TRIAL_SUMMARY_FEEDBACK("Submitter Trial Summary Report Feedback Date", false, false,
-            MilestoneCode.TRIAL_SUMMARY_SENT, false, false),
+    TRIAL_SUMMARY_FEEDBACK("Submitter Trial Summary Report Feedback Date", false, false, false, false),
     /** Initial Abstraction Verified. */
-    INITIAL_ABSTRACTION_VERIFY("Initial Abstraction Verified Date", true, true, null, false, false),
-    
+    INITIAL_ABSTRACTION_VERIFY("Initial Abstraction Verified Date", true, true, false, false),
     /** On-going Abstraction Verified. */
-    ONGOING_ABSTRACTION_VERIFICATION("On-going Abstraction Verified Date", false, true, null, false, false),
+    ONGOING_ABSTRACTION_VERIFICATION("On-going Abstraction Verified Date", false, true, false, false),
     /** Late Rejection. */
-    LATE_REJECTION_DATE("Late Rejection Date", true, false, MilestoneCode.SUBMISSION_ACCEPTED, false, false);
+    LATE_REJECTION_DATE("Late Rejection Date", true, false, false, false);
 
     private String code;
     private boolean unique;
     private boolean validationTrigger;
-    private MilestoneCode prerequisite;
     private boolean allowedIfOnhold;
     private boolean allowedInInBox;
     private static final Map<MilestoneCode, Set<DocumentWorkflowStatusCode>> ALLOWED_DWF_STATUSES;
@@ -150,6 +146,20 @@ public enum MilestoneCode implements CodedEnum<String> {
                                                                        MilestoneCode.TRIAL_SUMMARY_FEEDBACK,
                                                                        MilestoneCode.INITIAL_ABSTRACTION_VERIFY,
                                                                        MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION);
+    /** Sequence of administrative milestones. */                                                                   
+    public static final List<MilestoneCode> ADMIN_SEQ = Arrays
+        .asList(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE,
+                MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, 
+                MilestoneCode.ADMINISTRATIVE_READY_FOR_QC,
+                MilestoneCode.ADMINISTRATIVE_QC_START, 
+                MilestoneCode.ADMINISTRATIVE_QC_COMPLETE);
+    /** Sequence of scientific milestones. */  
+    public static final List<MilestoneCode> SCIENTIFIC_SEQ = Arrays
+        .asList(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, 
+                MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE,
+                MilestoneCode.SCIENTIFIC_READY_FOR_QC, 
+                MilestoneCode.SCIENTIFIC_QC_START,
+                MilestoneCode.SCIENTIFIC_QC_COMPLETE);
     static {
         Map<MilestoneCode, Set<DocumentWorkflowStatusCode>> tmp = 
             new HashMap<MilestoneCode, Set<DocumentWorkflowStatusCode>>();
@@ -208,15 +218,13 @@ public enum MilestoneCode implements CodedEnum<String> {
      * @param code code
      * @param unique only one allowed per study
      * @param requiredDwfStatus required document workflow status
-     * @param prerequisite prior milestone which must have been reached before this one
      */
     @SuppressWarnings("PMD.ExcessiveParameterList")
-    private MilestoneCode(String code, boolean unique, boolean validationTrigger, MilestoneCode prerequisite,
-            boolean allowedIfOnhold, boolean allowedIfInBox) {
+    private MilestoneCode(String code, boolean unique, boolean validationTrigger, boolean allowedIfOnhold,
+            boolean allowedIfInBox) {
         this.code = code;
         this.unique = unique;
         this.validationTrigger = validationTrigger;
-        this.prerequisite = prerequisite;
         this.allowedIfOnhold = allowedIfOnhold;
         this.allowedInInBox = allowedIfInBox;
         register(this);
@@ -255,13 +263,6 @@ public enum MilestoneCode implements CodedEnum<String> {
      */
     public boolean isValidationTrigger() {
         return validationTrigger;
-    }
-
-    /**
-     * @return the prerequisite
-     */
-    public MilestoneCode getPrerequisite() {
-        return prerequisite;
     }
 
     /**

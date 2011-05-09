@@ -131,7 +131,7 @@ import org.junit.rules.ExpectedException;
 
 /**
  * @author hreinhart
- *
+ * 
  */
 public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     private final StudyMilestoneBeanLocal bean = new StudyMilestoneBeanLocal();
@@ -152,10 +152,10 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     public void setUp() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
 
-        ServiceLocator paSvcLoc = mock (ServiceLocator.class);
+        ServiceLocator paSvcLoc = mock(ServiceLocator.class);
         PaRegistry.getInstance().setServiceLocator(paSvcLoc);
         when(paSvcLoc.getDocumentWorkflowStatusService()).thenReturn(new DocumentWorkflowStatusBeanLocal());
-        
+
         bean.setStudyOnholdService(ohs);
         bean.setStudyProtocolService(sps);
         bean.setStudyInboxService(sis);
@@ -229,8 +229,6 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         dto.setStudyProtocolIdentifier(spAmendIi);
         bean.create(dto);
         PaHibernateUtil.getCurrentSession().flush();
-        bean.create(getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_FEEDBACK));
-        bean.create(getMilestoneDTO(MilestoneCode.INITIAL_ABSTRACTION_VERIFY));
     }
 
     private StudyMilestoneDTO getMilestoneDTO(MilestoneCode mileCode) {
@@ -258,35 +256,35 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         StudyMilestoneDTO dto = dtoList.get(0);
         assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
     }
-    
+
     @Test
     public void checkRequiredDataRulesMissingStudyProtocol() throws Exception {
         StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED);
         dto.setStudyProtocolIdentifier(null);
         checkMilestoneFailure(dto, "Check the Ii value; null found.  ");
     }
-    
+
     @Test
     public void checkRequiredDataRulesMissingCode() throws Exception {
         StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED);
         dto.setMilestoneCode(null);
         checkMilestoneFailure(dto, "Milestone code is required.");
     }
-    
+
     @Test
-    public void checkDateRulesMissingDate() throws Exception { 
+    public void checkDateRulesMissingDate() throws Exception {
         StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED);
         dto.setMilestoneDate(null);
         checkMilestoneFailure(dto, "Milestone date is required.");
     }
-    
+
     @Test
-    public void checkDateRulesFutureDate() throws Exception { 
+    public void checkDateRulesFutureDate() throws Exception {
         StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED);
         dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() + 86400000L)));
         checkMilestoneFailure(dto, "Milestone dates may not be in the future.");
     }
-    
+
     @Test
     public void checkDateRulesPastLastMilestone() throws Exception {
         StudyMilestoneDTO dto1 = getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED);
@@ -300,21 +298,21 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         checkMilestoneFailure(dto2, message);
         bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED));
     }
-    
+
     @Test
     public void checkLateRejectionRulesMissingComment() throws Exception {
         StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.LATE_REJECTION_DATE);
         dto.setCommentText(null);
         checkMilestoneFailure(dto, "Milestone Comment is required.");
     }
-    
+
     @Test
     public void checkLateRejectionRulesNotOriginal() throws Exception {
         StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.LATE_REJECTION_DATE);
         dto.setStudyProtocolIdentifier(spAmendIi);
         checkMilestoneFailure(dto, "Late Rejection Date is applicable to Original Submission.");
     }
-    
+
     @Test
     public void checkOnHoldRules() throws Exception {
         bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
@@ -342,7 +340,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         }
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE));
     }
-    
+
     @Test
     public void checkInboxRules() throws Exception {
         bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
@@ -363,14 +361,9 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         sis.update(inboxDto);
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE));
     }
+
     
-    @Test
-    public void checkTransitionRules() throws Exception {
-        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
-        String msg = "\"Submission Acceptance Date\" is a prerequisite to \"Late Rejection Date\".";
-        checkMilestoneFailure(MilestoneCode.LATE_REJECTION_DATE, msg);
-    }
-    
+
     @Test
     public void checkUniquenessRules() throws Exception {
         StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED);
@@ -380,7 +373,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         String msg = MessageFormat.format(pat, date);
         checkMilestoneFailure(MilestoneCode.SUBMISSION_RECEIVED, msg);
     }
-    
+
     @Test
     public void checkScientificProcessingStartDate() throws PAException {
         String canNotReachMsg = "\"Scientific Processing Start Date\" can not be reached at this stage.";
@@ -406,7 +399,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE));
         checkMilestoneFailure(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, canNotReachMsg);
     }
-    
+
     @Test
     public void checkScientificProcessingCompletedDate() throws PAException {
         String canNotReachMsg = "\"Scientific Processing Completed Date\" can not be reached at this stage.";
@@ -432,7 +425,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE));
         checkMilestoneFailure(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, canNotReachMsg);
     }
-    
+
     @Test
     public void checkScientificReadyForQCDate() throws PAException {
         String canNotReachMsg = "\"Ready for Scientific QC Date\" can not be reached at this stage.";
@@ -458,6 +451,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE));
         checkMilestoneFailure(MilestoneCode.SCIENTIFIC_READY_FOR_QC, canNotReachMsg);
     }
+
     @Test
     public void checkScientificQCStartDate() throws PAException {
         String canNotReachMsg = "\"Scientific QC Start Date\" can not be reached at this stage.";
@@ -483,7 +477,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE));
         checkMilestoneFailure(MilestoneCode.SCIENTIFIC_QC_START, canNotReachMsg);
     }
-    
+
     @Test
     public void checkScientificQCCompletedDate() throws PAException {
         String canNotReachMsg = "\"Scientific QC Completed Date\" can not be reached at this stage.";
@@ -509,7 +503,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE));
         checkMilestoneFailure(MilestoneCode.SCIENTIFIC_QC_COMPLETE, canNotReachMsg);
     }
-    
+
     @Test
     public void checkAdministrativeProcessingStartDate() throws PAException {
         String canNotReachMsg = "\"Administrative Processing Start Date\" can not be reached at this stage.";
@@ -535,7 +529,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
         checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, canNotReachMsg);
     }
-    
+
     @Test
     public void checkAdministrativeProcessingCompletedDate() throws PAException {
         String canNotReachMsg = "\"Administrative Processing Completed Date\" can not be reached at this stage.";
@@ -561,7 +555,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
         checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, canNotReachMsg);
     }
-    
+
     @Test
     public void checkAdministrativeReadyForQCDate() throws PAException {
         String canNotReachMsg = "\"Ready for Administrative QC Date\" can not be reached at this stage.";
@@ -587,7 +581,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
         checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_READY_FOR_QC, canNotReachMsg);
     }
-    
+
     @Test
     public void checkAdministrativeQCStartDate() throws PAException {
         String canNotReachMsg = "\"Administrative QC Start Date\" can not be reached at this stage.";
@@ -613,7 +607,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
         checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_QC_START, canNotReachMsg);
     }
-    
+
     @Test
     public void checkAdministrativeQCCompletedDate() throws PAException {
         String canNotReachMsg = "\"Administrative QC Completed Date\" can not be reached at this stage.";
@@ -656,7 +650,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         dws.create(dwfDto);
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE));
     }
-    
+
     @Test
     public void checkAbstractionsRules() throws Exception {
         DocumentWorkflowStatusDTO dwfDto = getDocWrkStatusDTO();
@@ -666,6 +660,30 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.setAbstractionCompletionService(null);
         String msg = "Error injecting reference to AbstractionCompletionService.";
         checkMilestoneFailure(MilestoneCode.READY_FOR_TSR, msg);
+    }
+    
+    @Test
+    public void checkTrialSummaryFeedbackPrerequisiteOK() throws PAException {
+        addAbstractedWorkflowStatus();
+        bean.create(getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_FEEDBACK));
+        bean.create(getMilestoneDTO(MilestoneCode.INITIAL_ABSTRACTION_VERIFY));
+    }
+
+    @Test
+    public void checkTrialSummaryFeedbackPrerequisiteMissing() throws PAException {
+        addAbstractedWorkflowStatus();
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED));
+        String msg = "\"Trial Summary Report Sent Date\" is a prerequisite to "
+                + "\"Submitter Trial Summary Report Feedback Date\".";
+        checkMilestoneFailure(MilestoneCode.TRIAL_SUMMARY_FEEDBACK, msg);
+    }
+
+    @Test
+    public void checkLateRejectionPrerequisiteMissing() throws Exception {
+        bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_RECEIVED));
+        String msg = "\"Submission Acceptance Date\" is a prerequisite to \"Late Rejection Date\".";
+        checkMilestoneFailure(MilestoneCode.LATE_REJECTION_DATE, msg);
     }
 
     /**
@@ -698,7 +716,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
             assertEquals(message, e.getMessage());
         }
     }
-    
+
     private void checkMilestoneFailure(StudyMilestoneDTO milestoneDTO, String message) {
         try {
             bean.create(milestoneDTO);
@@ -721,7 +739,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_REJECTED));
         checkDWS(2, DocumentWorkflowStatusCode.REJECTED);
     }
-    
+
     @Test
     public void createDocumentWorkflowStatusesUntilAbstracted() throws Exception {
         List<DocumentWorkflowStatusDTO> dwsList = dws.getByStudyProtocol(spIi);
@@ -743,7 +761,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
         checkDWS(3, DocumentWorkflowStatusCode.ABSTRACTED);
     }
-    
+
     @Test
     public void createDocumentWorkflowStatusesWithNOResponse() throws Exception {
         addAbstractedWorkflowStatus();
@@ -756,7 +774,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION));
         checkDWS(3, DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
     }
-    
+
     @Test
     public void createDocumentWorkflowStatusesWithResponse() throws Exception {
         addAbstractedWorkflowStatus();
@@ -766,9 +784,8 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.INITIAL_ABSTRACTION_VERIFY));
         checkDWS(2, DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
     }
-    
-    private void checkDWS(int expectedSize, DocumentWorkflowStatusCode expectedStatus)
-            throws PAException {
+
+    private void checkDWS(int expectedSize, DocumentWorkflowStatusCode expectedStatus) throws PAException {
         List<DocumentWorkflowStatusDTO> dwsList = dws.getByStudyProtocol(spIi);
         assertEquals("Wrong size of Document workflow status list", expectedSize, dwsList.size());
         assertEquals("Wrong Document workflow status", expectedStatus, getCurrentDocumentWorkflowStatus());
@@ -779,7 +796,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         return (dtoDwf != null) ? DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dtoDwf
             .getStatusCode())) : null;
     }
-    
+
     @Test
     public void updateRecordVerificationDateTest() throws Exception {
         addAbstractedWorkflowStatus();
