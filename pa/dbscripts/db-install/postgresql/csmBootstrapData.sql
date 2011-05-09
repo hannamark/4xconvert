@@ -69,12 +69,14 @@ INSERT INTO CSM_USER(LOGIN_NAME, FIRST_NAME, LAST_NAME, PASSWORD, UPDATE_DATE) V
 ;
 INSERT INTO CSM_USER_PE(PROTECTION_ELEMENT_ID, USER_ID, UPDATE_DATE) VALUES (2, 2,current_date)
 ;
-INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALUES ('Abstractor', 'Abstractor group - security role', (select application_id from csm_application where application_name = 'pa'),current_date);
-INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALUES ('AdminAbstractor', 'Admin Abstractor - security role', (select application_id from csm_application where application_name = 'pa'),current_date);
-INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALUES ('ScientificAbstractor', 'Scientific Abstractor- security role', (select application_id from csm_application where application_name = 'pa'),current_date);
-INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALUES ('Submitter', 'Trial Submitter group - security role', (select application_id from csm_application where application_name = 'pa'),current_date);
-INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALUES ('RegAdmin', 'Registry Administrator - security role', (select application_id from csm_application where application_name = 'pa'),current_date);
-INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES (2, 1);
+INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALUES ('Abstractor', 'Abstractor group - security role', (select application_id from csm_application where application_name = 'pa'),current_date)
+;
+INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALUES ('Submitter', 'Trial Submitter group - security role', (select application_id from csm_application where application_name = 'pa'),current_date)
+;
+INSERT INTO CSM_GROUP (GROUP_NAME, GROUP_DESC, APPLICATION_ID, UPDATE_DATE) VALUES ('RegAdmin', 'Registry Administrator - security role', (select application_id from csm_application where application_name = 'pa'),current_date)
+;
+INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES (2, 1)
+;
 -- Password is pass
 INSERT INTO CSM_USER(LOGIN_NAME, FIRST_NAME, LAST_NAME, PASSWORD, UPDATE_DATE) VALUES ('subscriber', 'Test', 'Subscriber','BtM2GNbiAxg=',current_date)
 ;
@@ -134,8 +136,6 @@ INSERT INTO CSM_USER_GROUP (USER_ID, GROUP_ID) VALUES ((select user_id from csm_
 insert into CSM_REMOTE_GROUP (GROUP_ID, APPLICATION_ID, GRID_GROUPER_URL, GRID_GROUPER_GROUP_NAME) values ((select group_id from csm_group where group_name = 'Abstractor'), (select application_id from csm_application where application_name = 'pa'), 'https://grouper.training.cagrid.org:8443/wsrf/services/cagrid/GridGrouper', 'COPPA:PA:Abstractor');
 insert into CSM_REMOTE_GROUP (GROUP_ID, APPLICATION_ID, GRID_GROUPER_URL, GRID_GROUPER_GROUP_NAME) values ((select group_id from csm_group where group_name = 'Submitter'), (select application_id from csm_application where application_name = 'pa'), 'https://grouper.training.cagrid.org:8443/wsrf/services/cagrid/GridGrouper', 'COPPA:PA:Submitter');
 insert into CSM_REMOTE_GROUP (GROUP_ID, APPLICATION_ID, GRID_GROUPER_URL, GRID_GROUPER_GROUP_NAME) values ((select group_id from csm_group where group_name = 'RegAdmin'), (select application_id from csm_application where application_name = 'pa'), 'https://grouper.training.cagrid.org:8443/wsrf/services/cagrid/GridGrouper', 'COPPA:PA:RegAdmin');
-insert into CSM_REMOTE_GROUP (GROUP_ID, APPLICATION_ID, GRID_GROUPER_URL, GRID_GROUPER_GROUP_NAME) values ((select group_id from csm_group where group_name = 'ScientificAbstractor'), (select application_id from csm_application where application_name = 'pa'), 'https://grouper.training.cagrid.org:8443/wsrf/services/cagrid/GridGrouper', 'COPPA:PA:ScientificAbstractor');
-insert into CSM_REMOTE_GROUP (GROUP_ID, APPLICATION_ID, GRID_GROUPER_URL, GRID_GROUPER_GROUP_NAME) values ((select group_id from csm_group where group_name = 'AdminAbstractor'), (select application_id from csm_application where application_name = 'pa'), 'https://grouper.training.cagrid.org:8443/wsrf/services/cagrid/GridGrouper', 'COPPA:PA:AdminAbstractor');
 --The below commands are commented out due to the fact that they are added later in the upgrade process. If you need to add these remote group mappings, do so manually.
 --insert into CSM_REMOTE_GROUP (GROUP_ID, APPLICATION_ID, GRID_GROUPER_URL, GRID_GROUPER_GROUP_NAME) values ((select group_id from csm_group where group_name = 'gridClient'), (select application_id from csm_application where application_name = 'pa'), 'https://grouper.training.cagrid.org:8443/wsrf/services/cagrid/GridGrouper', 'COPPA:PA:GridClient');
 --insert into CSM_REMOTE_GROUP (GROUP_ID, APPLICATION_ID, GRID_GROUPER_URL, GRID_GROUPER_GROUP_NAME) values ((select group_id from csm_group where group_name = 'Outcomes'), (select application_id from csm_application where application_name = 'pa'), 'https://grouper.training.cagrid.org:8443/wsrf/services/cagrid/GridGrouper', 'COPPA:PA:Outcomes');
