@@ -177,25 +177,26 @@ public enum MilestoneCode implements CodedEnum<String> {
                             DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE,
                             DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE,
                             DocumentWorkflowStatusCode.VERIFICATION_PENDING);
-        Set<DocumentWorkflowStatusCode> inProcessStatuses = Collections.unmodifiableSet(tmpSet);
-        tmp.put(ADMINISTRATIVE_PROCESSING_START_DATE, inProcessStatuses);
-        tmp.put(ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, inProcessStatuses);
-        tmp.put(SCIENTIFIC_PROCESSING_START_DATE, inProcessStatuses);
-        tmp.put(SCIENTIFIC_PROCESSING_COMPLETED_DATE, inProcessStatuses);
-
-        tmpSet = EnumSet.of(DocumentWorkflowStatusCode.ACCEPTED, DocumentWorkflowStatusCode.ABSTRACTED,
+        Set<DocumentWorkflowStatusCode> inProcessOrQCStatuses = Collections.unmodifiableSet(tmpSet);
+        tmp.put(ADMINISTRATIVE_PROCESSING_START_DATE, inProcessOrQCStatuses);
+        tmp.put(ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, inProcessOrQCStatuses);
+        tmp.put(ADMINISTRATIVE_READY_FOR_QC, inProcessOrQCStatuses);
+        tmp.put(ADMINISTRATIVE_QC_START, inProcessOrQCStatuses);
+        tmp.put(ADMINISTRATIVE_QC_COMPLETE, inProcessOrQCStatuses);
+        tmp.put(SCIENTIFIC_PROCESSING_START_DATE, inProcessOrQCStatuses);
+        tmp.put(SCIENTIFIC_PROCESSING_COMPLETED_DATE, inProcessOrQCStatuses);
+        tmp.put(SCIENTIFIC_READY_FOR_QC, inProcessOrQCStatuses);
+        tmp.put(SCIENTIFIC_QC_START, inProcessOrQCStatuses);
+        tmp.put(SCIENTIFIC_QC_COMPLETE, inProcessOrQCStatuses);
+        tmp.put(READY_FOR_TSR, inProcessOrQCStatuses);
+        
+        tmpSet = EnumSet.of(DocumentWorkflowStatusCode.ABSTRACTED,
                             DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE,
-                            DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
-        Set<DocumentWorkflowStatusCode> inQCStatuses = Collections.unmodifiableSet(tmpSet);
-        tmp.put(ADMINISTRATIVE_READY_FOR_QC, inQCStatuses);
-        tmp.put(ADMINISTRATIVE_QC_START, inQCStatuses);
-        tmp.put(ADMINISTRATIVE_QC_COMPLETE, inQCStatuses);
-        tmp.put(SCIENTIFIC_READY_FOR_QC, inQCStatuses);
-        tmp.put(SCIENTIFIC_QC_START, inQCStatuses);
-        tmp.put(SCIENTIFIC_QC_COMPLETE, inQCStatuses);
-        tmp.put(READY_FOR_TSR, inQCStatuses);
-        tmp.put(TRIAL_SUMMARY_SENT, inQCStatuses);
-        tmp.put(TRIAL_SUMMARY_FEEDBACK, inQCStatuses);
+                            DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE,
+                            DocumentWorkflowStatusCode.VERIFICATION_PENDING);
+        Set<DocumentWorkflowStatusCode> tsrStatuses = Collections.unmodifiableSet(tmpSet);
+        tmp.put(TRIAL_SUMMARY_SENT, tsrStatuses);
+        tmp.put(TRIAL_SUMMARY_FEEDBACK, tsrStatuses);
 
         tmpSet = EnumSet.of(DocumentWorkflowStatusCode.ABSTRACTED, DocumentWorkflowStatusCode.VERIFICATION_PENDING);
         tmp.put(INITIAL_ABSTRACTION_VERIFY, Collections.unmodifiableSet(tmpSet));

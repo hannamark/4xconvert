@@ -83,12 +83,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.StudyMilestone;
-import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
@@ -701,6 +700,11 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     public void checkTSRSentMail() throws PAException {
         StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_SENT);
         dto.setStudyProtocolIdentifier(TestSchema.nonPropTrialData());
+        DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
+        dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTED));
+        dwfDto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
+        dwfDto.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
+        dws.create(dwfDto);
         mailSrc.setLookUpTableService(new LookUpTableServiceBean());
         TSRReportGeneratorServiceRemote tsrBean = new TSRReportGeneratorServiceBean();
         mailSrc.setTsrReportGeneratorService(tsrBean);
