@@ -190,7 +190,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     public DocumentDTO update(DocumentDTO docDTO) throws PAException {
         validate(docDTO);
         docDTO.setInactiveCommentText(null);
-        docDTO.setActiveIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        saveFile(docDTO);
         return super.update(docDTO);
     }
 
@@ -290,7 +290,9 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
 
         try {
             File outFile = new File(docPath);
-            FileUtils.writeByteArrayToFile(outFile, docDTO.getText().getData());
+            if (!outFile.exists()) {
+                FileUtils.writeByteArrayToFile(outFile, docDTO.getText().getData());
+            }
         } catch (IOException e) {
             throw new PAException("Error while attempting to save the file to " + docPath, e);
         }
