@@ -24,7 +24,7 @@ public class InboxProcessingActionTest extends AbstractPaActionTest {
 	 inboxAction	= new InboxProcessingAction();
 	 MockHttpServletRequest request = getRequest();
      MockHttpSession session = getSession();
-     getSession().setAttribute(Constants.USER_ROLE, Constants.ABSTRACTOR);
+     getSession().setAttribute(Constants.IS_ABSTRACTOR, Boolean.TRUE);
      request.setSession(session);
      ServletActionContext.setRequest(getRequest());
 
@@ -33,14 +33,14 @@ public class InboxProcessingActionTest extends AbstractPaActionTest {
     public void testExecute() throws PAException {
         assertEquals("success", inboxAction.execute());
         assertEquals(1,inboxAction.getPendingAdminUsers().size());
-        getSession().setAttribute(Constants.USER_ROLE, null);
+        getSession().setAttribute(Constants.IS_ABSTRACTOR, null);
         getRequest().setSession(getSession());
         getRequest().setUserInRole(Constants.ABSTRACTOR, true);
         ServletActionContext.setRequest(getRequest());
         assertEquals("criteriaProtected", inboxAction.execute());
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession session = getSession();
-        session.setAttribute(Constants.USER_ROLE, null);
+        session.setAttribute(Constants.IS_ABSTRACTOR, null);
         request.setSession(session);
         request.setUserInRole(Constants.REPORT_VIEWER, true);
         ServletActionContext.setRequest(request);
@@ -64,7 +64,7 @@ public class InboxProcessingActionTest extends AbstractPaActionTest {
         assertEquals("view", inboxAction.view());
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpSession session = new MockHttpSession();
-        session.setAttribute(Constants.USER_ROLE, null);
+        session.setAttribute(Constants.IS_ABSTRACTOR, null);
         request.setSession(session);
         request.setUserInRole(Constants.ABSTRACTOR, true);
         ServletActionContext.setRequest(request);

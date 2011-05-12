@@ -29,7 +29,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
         criteria.setNciIdentifier("NCI-2009-00001");
         getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
         CaseSensitiveUsernameHolder.setUser("suAbstractor");
-        getSession().setAttribute(Constants.USER_ROLE, Constants.SUABSTRACTOR);
+        getSession().setAttribute(Constants.IS_SU_ABSTRACTOR, Boolean.TRUE);
     }
 
 	/**

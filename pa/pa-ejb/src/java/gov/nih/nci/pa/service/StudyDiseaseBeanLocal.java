@@ -7,11 +7,12 @@ import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.iso.convert.StudyDiseaseConverter;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -49,6 +50,7 @@ public class StudyDiseaseBeanLocal extends
      * @throws PAException exception
      */
     @Override
+    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public StudyDiseaseDTO create(StudyDiseaseDTO dto) throws PAException {
         StudyDiseaseDTO createDto = businessRules(dto);
         return super.create(createDto);
@@ -60,6 +62,7 @@ public class StudyDiseaseBeanLocal extends
      * @throws PAException exception
      */
     @Override
+    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public StudyDiseaseDTO update(StudyDiseaseDTO dto) throws PAException {
         StudyDiseaseDTO updateDto = businessRules(dto);
         return super.update(updateDto);

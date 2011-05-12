@@ -83,6 +83,8 @@
 
 package gov.nih.nci.pa.service;
 
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.ABSTRACTOR_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
@@ -101,7 +103,7 @@ import org.jboss.annotation.security.SecurityDomain;
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SecurityDomain("pa")
-@RolesAllowed({"gridClient", "client", "Abstractor" })
+@RolesAllowed({CLIENT_ROLE, ABSTRACTOR_ROLE })
 public class ParticipatingSiteServiceBean extends ParticipatingSiteBeanLocal implements ParticipatingSiteServiceRemote {
 
 }

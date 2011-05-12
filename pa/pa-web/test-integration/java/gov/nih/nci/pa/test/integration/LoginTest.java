@@ -94,5 +94,10 @@ public class LoginTest extends AbstractPaSeleniumTest {
     @Test
     public void testLogin() throws Exception {
         loginAsAbstractor();
+        logoutUser();
+        loginAsAdminAbstractor();
+        logoutUser();
+        loginAsScientificAbstractor();
+        logoutUser();
     }
 }

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.action;
 
@@ -17,12 +17,12 @@ import org.junit.Test;
 public class LogoutTest extends AbstractPaActionTest {
 
 	Logout logout;
-	
-	@Before 
+
+	@Before
 	public void setUp() throws PAException {
-	  logout =  new Logout();	
-	  getSession().setAttribute(Constants.USER_ROLE, Constants.ABSTRACTOR);
-	 
+	  logout =  new Logout();
+	  getSession().setAttribute(Constants.IS_ABSTRACTOR, Boolean.TRUE);
+
 	}
 	/**
 	 * Test method for {@link gov.nih.nci.pa.action.Logout#logout()}.

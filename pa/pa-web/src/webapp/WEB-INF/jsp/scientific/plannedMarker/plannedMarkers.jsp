@@ -42,15 +42,13 @@
                                 <display:column escapeXml="true" property="assayPurpose" sortable="true" titleKey="plannedMarker.assayPurpose" headerClass="sortable"/>
                                 <display:column escapeXml="true" property="tissueCollectionMethod" sortable="true" titleKey="plannedMarker.tissueCollectionMethod" headerClass="sortable"/>
                                 <display:column escapeXml="true" property="status" sortable="true" titleKey="plannedMarker.status" headerClass="sortable" />
-                                <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null
-                                    && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                                    || (sessionScope.role == 'SuAbstractor')}">
+                                <pa:scientificAbstractorDisplayWhenCheckedOut>
                                     <display:column titleKey="plannedMarker.edit" headerClass="centered" class="action">
                                         <s:url id="editUrl" namespace="/protected" action="plannedMarker" method="edit">
                                             <s:param name="selectedRowIdentifier" value="%{#attr.row.id}"/>
                                         </s:url>
                                         <s:a href="%{editUrl}">
-                                            <img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16" />
+                                            <img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16" />
                                         </s:a>
                                     </display:column>
                                     <display:column titleKey="plannedMarker.delete" headerClass="centered" class="action">
@@ -58,10 +56,10 @@
                                             <s:param name="selectedRowIdentifier" value="%{#attr.row.id}"/>
                                         </s:url>
                                         <s:a href="%{deleteUrl}" onclick="return confirm('Click OK to remove the marker from the study. Cancel to abort.');">
-                                            <img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16" />
+                                            <img src="<c:url value='/images/ico_delete.gif'/>" alt="Delete" width="16" height="16" />
                                         </s:a>
                                     </display:column>
-                                </c:if>
+                                </pa:scientificAbstractorDisplayWhenCheckedOut>
                             </display:table>
                         </td>
                     </tr>
@@ -69,16 +67,14 @@
                 <div class="actionsrow">
                     <del class="btnwrapper">
                         <ul class="btnrow">
-                            <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null
-                                && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                                || (sessionScope.role == 'SuAbstractor')}">
+                            <pa:scientificAbstractorDisplayWhenCheckedOut>
                                 <li>
                                     <s:url id="addUrl" namespace="/protected" action="plannedMarker" method="create"/>
                                     <s:a href="%{addUrl}" cssClass="btn">
                                         <span class="btn_img"><span class="add">Add</span></span>
                                     </s:a>
                                 </li>
-                            </c:if>
+                            </pa:scientificAbstractorDisplayWhenCheckedOut>
                         </ul>
                     </del>
                 </div>

@@ -111,7 +111,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         super.tearDown();
     }
 
-    private void logoutUser() {
+    protected void logoutUser() {
         openAndWait("/pa/login/logout.action");
     }
 
@@ -288,6 +288,20 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         login("abstractor-ci", "Coppa#12345");
         disclaimer(false);
         login("abstractor-ci", "Coppa#12345");
+        disclaimer(true);
+    }
+
+    public void loginAsScientificAbstractor() {
+        login("scientific-ci", "Coppa#12345");
+        disclaimer(false);
+        login("scientific-ci", "Coppa#12345");
+        disclaimer(true);
+    }
+
+    public void loginAsAdminAbstractor() {
+        login("admin-ci", "Coppa#12345");
+        disclaimer(false);
+        login("admin-ci", "Coppa#12345");
         disclaimer(true);
     }
 

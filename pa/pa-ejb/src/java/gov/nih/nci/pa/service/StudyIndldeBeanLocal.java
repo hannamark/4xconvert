@@ -22,6 +22,7 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -53,6 +54,7 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
     * @throws PAException PAException
     */
     @Override
+    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public StudyIndldeDTO create(StudyIndldeDTO dto) throws PAException {
       validate(dto);
       return super.create(dto);
@@ -64,6 +66,7 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
      * @throws PAException PAException
      */
     @Override
+    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public StudyIndldeDTO update(StudyIndldeDTO dto) throws PAException {
       validate(dto);
       return super.update(dto);

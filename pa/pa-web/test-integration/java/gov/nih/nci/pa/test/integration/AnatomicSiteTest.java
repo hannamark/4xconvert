@@ -97,7 +97,7 @@ public class AnatomicSiteTest extends AbstractPaSeleniumTest {
      */
     @Test
     public void testAnatomicSite() throws Exception {
-        loginAsAbstractor();
+        loginAsScientificAbstractor();
         verifyTrialSearchPage();
         selenium.type("id=officialTitle", "Test Summ 4 Anatomic Site Trial created by Selenium.");
         clickAndWait("link=Search");

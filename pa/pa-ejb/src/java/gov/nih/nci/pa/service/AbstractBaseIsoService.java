@@ -88,8 +88,8 @@ import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -118,6 +118,32 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
     private final Class<BO> typeArgument;
     private final Class<CONVERTER> converterArgument;
     private static final Logger LOG = Logger.getLogger(AbstractBaseIsoService.class);
+
+    /**
+     * Admin Abstractor Role name.
+     */
+    public static final String ADMIN_ABSTRACTOR_ROLE = "AdminAbstractor";
+
+    /**
+     * Abstractor Role name.
+     */
+    public static final String ABSTRACTOR_ROLE = "Abstractor";
+
+
+    /**
+     * Scientific Abstractor Role name.
+     */
+    public static final String SCIENTIFIC_ABSTRACTOR_ROLE = "ScientificAbstractor";
+
+    /**
+     * Submitter Role name.
+     */
+    public static final String SUBMITTER_ROLE = "Submitter";
+
+    /**
+     * EJB client Role name.
+     */
+    public static final String CLIENT_ROLE = "client";
 
     /**
      * default constructor.

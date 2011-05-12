@@ -55,24 +55,22 @@ function handleDelete(studyResourcingId){
         <display:column escapeXml="true" titleKey="trialFunding.institution.code" property="nihInstitutionCode" sortable="true" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="trialFunding.serial.number" property="serialNumber"  sortable="true" headerClass="sortable" />
         <display:column escapeXml="true" titleKey="studyProtocol.monitorCode" property="nciDivisionProgramCode" sortable="true" headerClass="sortable" />
-        <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                            || (sessionScope.role == 'SuAbstractor')}">
-        <display:column title="Edit" class="action">
-            <s:a href="#" onclick="handleAction(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
-        </display:column>
-        <display:column title="Delete" class="action">
-            <s:a href="#" onclick="handleDelete(%{#attr.row.id})"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16"/></s:a>
-        </display:column>
-        </c:if>
+        <pa:adminAbstractorDisplayWhenCheckedOut>
+            <display:column title="Edit" class="action">
+                <s:a href="#" onclick="handleAction(%{#attr.row.id})"><img src='<c:url value="/images/ico_edit.gif"/>' alt="Edit" width="16" height="16" /></s:a>
+            </display:column>
+            <display:column title="Delete" class="action">
+                <s:a href="#" onclick="handleDelete(%{#attr.row.id})"><img src='<c:url value="/images/ico_delete.gif"/>' alt="Delete" width="16" height="16"/></s:a>
+            </display:column>
+        </pa:adminAbstractorDisplayWhenCheckedOut>
     </display:table>
   </s:if>
         <div class="actionsrow">
             <del class="btnwrapper">
                 <ul class="btnrow">
-                    <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                                        || (sessionScope.role == 'SuAbstractor')}">
-                    <li><s:a href="trialFunding.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
-                    </c:if>
+                    <pa:adminAbstractorDisplayWhenCheckedOut>
+                        <li><s:a href="trialFunding.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
+                    </pa:adminAbstractorDisplayWhenCheckedOut>
                 </ul>
             </del>
         </div>

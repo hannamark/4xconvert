@@ -90,16 +90,15 @@
                                         <display:column escapeXml="true" property="submissionDate" sortable="false" titleKey="trialHistory.submissionDate" />
                                         <display:column escapeXml="true" property="amendmentReasonCode" sortable="false" titleKey="trialHistory.amendmentReasonCode"/>
                                         <display:column escapeXml="false" property="documents" sortable="false" style="word-wrap: break-word"  titleKey="trialHistory.documents"/>
-                                        <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                                                            || (sessionScope.role == 'SuAbstractor')}">
-                                        <display:column title="Action" headerClass="centered" class="action">
-                                        <s:if test="%{#attr.row.submissionNumber != 1}">
-                                             <s:a href="#" onclick="handleEdit(%{#attr.row.identifier})">
-                                                <img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16" />
-                                            </s:a>
-                                        </s:if>
-                                        </display:column>
-                                        </c:if>
+                                        <pa:displayWhenCheckedOut>
+                                            <display:column title="Action" headerClass="centered" class="action">
+                                                <s:if test="%{#attr.row.submissionNumber != 1}">
+                                                    <s:a href="#" onclick="handleEdit(%{#attr.row.identifier})">
+                                                        <img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16" />
+                                                    </s:a>
+                                                </s:if>
+                                            </display:column>
+                                        </pa:displayWhenCheckedOut>
                                      </display:table>
                                 </div>
                                 <div id="updates" class="box" style="display:none;">

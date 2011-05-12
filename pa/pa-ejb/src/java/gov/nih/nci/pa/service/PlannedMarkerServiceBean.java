@@ -90,11 +90,12 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.PlannedMarkerSortCriterion;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -126,6 +127,7 @@ public class PlannedMarkerServiceBean extends
      * {@inheritDoc}
      */
     @Override
+    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public PlannedMarkerDTO create(PlannedMarkerDTO dto) throws PAException {
         validate(dto);
         return super.create(dto);
@@ -135,6 +137,7 @@ public class PlannedMarkerServiceBean extends
      * {@inheritDoc}
      */
     @Override
+    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public PlannedMarkerDTO update(PlannedMarkerDTO dto) throws PAException {
         validate(dto);
         return super.update(dto);

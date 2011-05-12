@@ -109,6 +109,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -170,6 +171,7 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
      * @throws PAException exception
      */
     @Override
+    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public ArmDTO create(ArmDTO dto) throws PAException {
         businessRules(dto);
         return super.create(dto);
@@ -181,6 +183,7 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
      * @throws PAException exception
      */
     @Override
+    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public ArmDTO update(ArmDTO dto) throws PAException {
         businessRules(dto);
         return super.update(dto);

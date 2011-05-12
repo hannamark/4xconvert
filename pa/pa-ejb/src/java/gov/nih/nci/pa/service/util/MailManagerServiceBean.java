@@ -102,7 +102,7 @@ import org.jboss.annotation.security.SecurityDomain;
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SecurityDomain("pa")
-@RolesAllowed({"gridClient", "client" , "Abstractor" , "Submitter" , "Outcomes" })
+@RolesAllowed({"client" , "Abstractor" , "Submitter" })
 public class MailManagerServiceBean extends  MailManagerBeanLocal implements MailManagerServiceRemote {
 
 

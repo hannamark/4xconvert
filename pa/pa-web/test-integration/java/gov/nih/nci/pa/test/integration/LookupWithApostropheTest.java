@@ -12,7 +12,7 @@ public class LookupWithApostropheTest extends AbstractPaSeleniumTest {
      */
     @Ignore
     public void leadOrganizationLookup() throws Exception {
-        loginAsAbstractor();
+        loginAsAdminAbstractor();
         verifyTrialSearchPage();
         selenium.type("id=officialTitle", "Test Summ 4 Anatomic Site Trial created by Selenium.");
         clickAndWait("link=Search");
@@ -42,7 +42,7 @@ public class LookupWithApostropheTest extends AbstractPaSeleniumTest {
      */
     @Ignore
     public void personLookup() throws Exception {
-        loginAsAbstractor();
+        loginAsAdminAbstractor();
         verifyTrialSearchPage();
         selenium.type("id=officialTitle", "Test Summ 4 Anatomic Site Trial created by Selenium.");
         clickAndWait("link=Search");

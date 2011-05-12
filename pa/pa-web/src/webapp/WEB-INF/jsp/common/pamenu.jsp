@@ -30,7 +30,7 @@
 </li>
 
 
-<c:if test="${(sessionScope.trialSummary  != null) && (sessionScope.role == 'Abstractor' || sessionScope.role == 'SuAbstractor')}">
+<c:if test="${sessionScope.trialSummary != null && (sessionScope.isAbstractor || sessionScope.isSuAbstractor)}">
     <li class="sub"><div><c:out value="${sessionScope.trialSummary.nciIdentifier }"/></div>
         <ul>
             <li><div>Trial Overview</div>
@@ -309,7 +309,7 @@
                             </c:otherwise>
                         </c:choose>
                         <c:choose>
-                            <c:when test="${requestScope.topic == 'anatomicsite'}">
+                            <c:when test="${requestScope.topic == 'abstractanatomicsite'}">
                                 <li><a href="anatomicSite.action" class="selected">Summary 4 Anatomic Site</a></li>
                             </c:when>
                             <c:otherwise>
@@ -317,7 +317,7 @@
                             </c:otherwise>
                         </c:choose>
                         <c:choose>
-                            <c:when test="${requestScope.topic == 'plannedmarker'}">
+                            <c:when test="${requestScope.topic == 'abstractmarkers'}">
                                 <li><a href="plannedMarker.action" class="selected">Markers</a></li>
                             </c:when>
                             <c:otherwise>

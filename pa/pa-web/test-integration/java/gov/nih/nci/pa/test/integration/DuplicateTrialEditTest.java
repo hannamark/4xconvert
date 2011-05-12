@@ -92,7 +92,7 @@ package gov.nih.nci.pa.test.integration;
 public class DuplicateTrialEditTest extends AbstractPaSeleniumTest {
 
     public void testEditPrevention() throws Exception {
-        loginAsAbstractor();
+        loginAsAdminAbstractor();
         verifyTrialSearchPage();
         selenium.type("id=officialTitle", "Duplicate");
         clickAndWait("link=Search");

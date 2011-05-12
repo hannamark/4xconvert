@@ -97,7 +97,7 @@ public class StudyOwnershipTest extends AbstractPaSeleniumTest {
      */
     @Test
     public void testAnatomicSite() throws Exception {
-        loginAsAbstractor();
+        loginAsAdminAbstractor();
         verifyTrialSearchPage();
         selenium.type("id=officialTitle", "Test Assign Ownership Trial created by Selenium.");
         clickAndWait("link=Search");

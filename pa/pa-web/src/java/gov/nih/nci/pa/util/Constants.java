@@ -117,14 +117,26 @@ public class Constants {
     public static final String PARTICIPATING_ORGANIZATIONS_TAB = "participatingOrganizationsTabs";
     /** work flow status used for menu. **/
     public static final String DOC_WFS_MENU = "docWFSMenu";
-    /** Session bean used to hold the role. **/
-    public static final String USER_ROLE = "role";
+    /** Is user in the abstractor role.**/
+    public static final String IS_ABSTRACTOR = "isAbstractor";
+    /** Is user in the su abstractor role.**/
+    public static final String IS_SU_ABSTRACTOR = "isSuAbstractor";
+    /** Is user in the scientific abstractor role.**/
+    public static final String IS_SCIENTIFIC_ABSTRACTOR = "isScientificAbstractor";
+    /** Is user in the admin abstractor role.**/
+    public static final String IS_ADMIN_ABSTRACTOR = "isAdminAbstractor";
+    /** Is user in the report viewer role.**/
+    public static final String IS_REPORT_VIEWER = "isReportViewer";
     /** CSM Group used to define reporting role. **/
     public static final String REPORT_VIEWER = "ReportViewer";
     /** CSM Group used to define abstractor role. **/
     public static final String ABSTRACTOR = "Abstractor";
     /** CSM Group used to define suabstractor role. **/
     public static final String SUABSTRACTOR = "SuAbstractor";
+    /** CSM Group used to define scientific abstractor role.**/
+    public static final String SCIENTIFIC_ABSTRACTOR = "ScientificAbstractor";
+    /** CSM Group used to define admin abstractor role.**/
+    public static final String ADMIN_ABSTRACTOR = "AdminAbstractor";
     /** NCI. */
     public static final String NCI = "NCI";
     /** OTHER_IDENTIFIERS_LIST. */

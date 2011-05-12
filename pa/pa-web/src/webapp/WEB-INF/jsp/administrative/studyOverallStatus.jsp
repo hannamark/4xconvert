@@ -177,12 +177,11 @@
                 <div class="actionsrow">
                     <del class="btnwrapper">
                         <ul class="btnrow">
-                             <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                                                 || (sessionScope.role == 'SuAbstractor')}">
-                                 <li>
+                            <pa:adminAbstractorDisplayWhenCheckedOut>
+                                <li>
                                     <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="save">Save</span></span></s:a>
-                                 </li>
-                             </c:if>
+                                </li>
+                            </pa:adminAbstractorDisplayWhenCheckedOut>
                         </ul>   
                     </del>
                 </div>

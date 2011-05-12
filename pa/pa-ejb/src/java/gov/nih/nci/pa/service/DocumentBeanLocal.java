@@ -105,6 +105,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -147,6 +148,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
      * {@inheritDoc}
      */
     @Override
+    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public DocumentDTO create(DocumentDTO docDTO) throws PAException {
         validate(docDTO);
         enforceDuplicateDocument(docDTO);
@@ -161,8 +163,8 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     /**
      * {@inheritDoc}
      */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public DocumentDTO get(Ii id) throws PAException {
         DocumentDTO docDTO = super.get(id);
         if (docDTO != null) {
@@ -187,6 +189,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
      * {@inheritDoc}
      */
     @Override
+    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public DocumentDTO update(DocumentDTO docDTO) throws PAException {
         validate(docDTO);
         docDTO.setInactiveCommentText(null);
@@ -198,6 +201,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
      * {@inheritDoc}
      */
     @Override
+    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public void delete(Ii documentIi) throws PAException {
         if (PAUtil.isIiNull(documentIi)) {
             throw new PAException("Document Ii should not be null.");

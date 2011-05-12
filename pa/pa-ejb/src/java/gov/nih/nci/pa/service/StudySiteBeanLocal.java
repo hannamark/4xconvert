@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -78,6 +79,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
      * @throws PAException PAException
      */
     @Override
+    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public StudySiteDTO create(StudySiteDTO dto) throws PAException {
         StudySiteDTO createDto = businessRules(dto);
         createDto.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
@@ -92,6 +94,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
      * @throws PAException PAException
      */
     @Override
+    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public StudySiteDTO update(StudySiteDTO dto) throws PAException {
         StudySiteDTO updateDto = businessRules(dto);
         getStatusCode(updateDto);

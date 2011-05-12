@@ -78,6 +78,9 @@
 */
 package gov.nih.nci.pa.service;
 
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.ABSTRACTOR_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Intervention;
@@ -112,7 +115,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SecurityDomain("pa")
-@RolesAllowed({"gridClient", "client", "Abstractor" , "Submitter" , "Outcomes" })
+@RolesAllowed({CLIENT_ROLE, ABSTRACTOR_ROLE, SUBMITTER_ROLE })
 public class InterventionAlternateNameServiceBean
         extends AbstractBaseIsoService
                 <InterventionAlternateNameDTO, InterventionAlternateName, InterventionAlternateNameConverter>

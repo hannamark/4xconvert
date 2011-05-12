@@ -93,6 +93,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
@@ -129,12 +130,21 @@ public class InboxProcessingAction extends ActionSupport implements ServletRespo
      * @throws PAException exception
      */
     public String showCriteria() throws PAException {
-        if (ServletActionContext.getRequest().isUserInRole(Constants.ABSTRACTOR)) {
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.USER_ROLE, Constants.ABSTRACTOR);
+        boolean isAbstractor = ServletActionContext.getRequest().isUserInRole(Constants.ABSTRACTOR);
+        boolean isSuAbstractor = ServletActionContext.getRequest().isUserInRole(Constants.SUABSTRACTOR);
+        boolean isScientificAbstractor =
+            ServletActionContext.getRequest().isUserInRole(Constants.SCIENTIFIC_ABSTRACTOR);
+        boolean isAdminAbstractor = ServletActionContext.getRequest().isUserInRole(Constants.ADMIN_ABSTRACTOR);
+        boolean isReportViewer = ServletActionContext.getRequest().isUserInRole(Constants.REPORT_VIEWER);
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.IS_ABSTRACTOR, isAbstractor);
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.IS_SU_ABSTRACTOR, isSuAbstractor);
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.IS_ADMIN_ABSTRACTOR, isAdminAbstractor);
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR,
+                isScientificAbstractor);
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.IS_REPORT_VIEWER, isReportViewer);
+        if (isAbstractor || isSuAbstractor || isScientificAbstractor || isAdminAbstractor) {
             return "criteriaProtected";
-        }
-        if (ServletActionContext.getRequest().isUserInRole(Constants.REPORT_VIEWER)) {
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.USER_ROLE, Constants.REPORT_VIEWER);
+        } else if (ServletActionContext.getRequest().isUserInRole(Constants.REPORT_VIEWER)) {
             return "criteriaReport";
         }
         throw new PAException("User configured improperly.  Use UPT to assign user to a valid group "
@@ -233,8 +243,19 @@ public class InboxProcessingAction extends ActionSupport implements ServletRespo
     }
 
     private boolean userRoleInSession() {
-        return (null != ServletActionContext.getRequest().getSession().getAttribute(Constants.USER_ROLE));
+        boolean isSuAbstractor = BooleanUtils.toBoolean(
+                (Boolean) ServletActionContext.getRequest().getSession().getAttribute(Constants.IS_SU_ABSTRACTOR));
+        boolean isAbstractor = BooleanUtils.toBoolean(
+                (Boolean) ServletActionContext.getRequest().getSession().getAttribute(Constants.IS_ABSTRACTOR));
+        boolean isAdminAbstractor = BooleanUtils.toBoolean(
+                (Boolean) ServletActionContext.getRequest().getSession().getAttribute(Constants.IS_ADMIN_ABSTRACTOR));
+        boolean isScientificAbstractor = BooleanUtils.toBoolean((Boolean)
+                ServletActionContext.getRequest().getSession().getAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR));
+        boolean isReportViewer = BooleanUtils.toBoolean(
+                (Boolean) ServletActionContext.getRequest().getSession().getAttribute(Constants.IS_REPORT_VIEWER));
+        return isAbstractor || isSuAbstractor || isScientificAbstractor || isAdminAbstractor || isReportViewer;
     }
+
     /**
      *@return success
      */

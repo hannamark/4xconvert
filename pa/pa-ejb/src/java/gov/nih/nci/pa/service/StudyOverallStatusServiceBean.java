@@ -78,6 +78,10 @@
 */
 package gov.nih.nci.pa.service;
 
+
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.ABSTRACTOR_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
@@ -99,7 +103,7 @@ import org.jboss.annotation.security.SecurityDomain;
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @SecurityDomain("pa")
-@RolesAllowed({"gridClient", "client", "Abstractor" , "Submitter" , "Outcomes" })
+@RolesAllowed({CLIENT_ROLE, ABSTRACTOR_ROLE, SUBMITTER_ROLE })
 public class StudyOverallStatusServiceBean extends StudyOverallStatusBeanLocal
     implements StudyOverallStatusServiceRemote {
 

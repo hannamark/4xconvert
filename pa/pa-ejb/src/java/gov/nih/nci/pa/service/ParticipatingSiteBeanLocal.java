@@ -82,6 +82,10 @@
  */
 package gov.nih.nci.pa.service;
 
+
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.ABSTRACTOR_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
@@ -110,10 +114,10 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
 import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
-import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -155,7 +159,7 @@ import org.jboss.annotation.security.SecurityDomain;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(PaHibernateSessionInterceptor.class)
 @SecurityDomain("pa")
-@RolesAllowed({ "client", "Abstractor" })
+@RolesAllowed({CLIENT_ROLE, ABSTRACTOR_ROLE })
 @SuppressWarnings("PMD.AvoidRethrowingException") //Suppressed to catch and throw PAException to avoid re-wrapping.
 public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
 implements ParticipatingSiteServiceLocal {
@@ -237,6 +241,7 @@ implements ParticipatingSiteServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @RolesAllowed(ADMIN_ABSTRACTOR_ROLE)
     public void addStudySiteGenericContact(Ii studySite, OrganizationalContactDTO contactDTO, boolean isPrimaryContact,
             DSet<Tel> telecom) throws PAException {
         try {
@@ -274,6 +279,7 @@ implements ParticipatingSiteServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @RolesAllowed(ADMIN_ABSTRACTOR_ROLE)
     public void addStudySiteInvestigator(Ii studySiteIi, ClinicalResearchStaffDTO poCrsDTO,
             HealthCareProviderDTO poHcpDTO, PersonDTO investigatorDTO, String roleCode) throws PAException {
         try {
@@ -291,6 +297,7 @@ implements ParticipatingSiteServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @RolesAllowed(ADMIN_ABSTRACTOR_ROLE)
     public void addStudySitePrimaryContact(Ii studySiteIi, ClinicalResearchStaffDTO poCrsDTO,
             HealthCareProviderDTO poHcpDTO, PersonDTO personDTO, DSet<Tel> telecom) throws PAException {
         try {
@@ -309,6 +316,7 @@ implements ParticipatingSiteServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @RolesAllowed(ADMIN_ABSTRACTOR_ROLE)
     public ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO, OrganizationDTO orgDTO, HealthCareFacilityDTO hcfDTO)
             throws PAException {
@@ -326,6 +334,7 @@ implements ParticipatingSiteServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @RolesAllowed(ADMIN_ABSTRACTOR_ROLE)
     public ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO, Ii poHcfIi) throws PAException {
         // assume that there is a poHcf out there already
@@ -352,6 +361,7 @@ implements ParticipatingSiteServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @RolesAllowed(ADMIN_ABSTRACTOR_ROLE)
     public ParticipatingSiteDTO updateStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO) throws PAException {
         // assume that siteDTO has a real Ii for studyProtocol
@@ -444,6 +454,7 @@ implements ParticipatingSiteServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @RolesAllowed(ADMIN_ABSTRACTOR_ROLE)
     public ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO, OrganizationDTO orgDTO, HealthCareFacilityDTO hcfDTO,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
@@ -458,6 +469,7 @@ implements ParticipatingSiteServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @RolesAllowed(ADMIN_ABSTRACTOR_ROLE)
     public ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO, Ii poHcfIi,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
@@ -472,6 +484,7 @@ implements ParticipatingSiteServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @RolesAllowed(ADMIN_ABSTRACTOR_ROLE)
     public ParticipatingSiteDTO updateStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {

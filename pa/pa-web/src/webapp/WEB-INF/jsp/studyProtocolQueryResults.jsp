@@ -19,11 +19,11 @@
     		<c:out value="${row.studyCheckoutByUsername}"/>
     	</s:if>
     </display:column>
-    <c:if test="${(sessionScope.role == 'Abstractor') || (sessionScope.role == 'SuAbstractor')}">
+    <c:if test="${sessionScope.isAbstractor || sessionScope.isSuAbstractor}">
         <display:column class="title" titleKey="studyProtocol.action" href="studyProtocolview.action" property="action"
             paramId="studyProtocolId" paramProperty="studyProtocolId" sortable="true" headerClass="sortable"/>
     </c:if>
-    <c:if test="${(sessionScope.role == 'SuAbstractor')}">
+    <c:if test="${sessionScope.isSuAbstractor}">
         <display:column class="title" title="Super User Action" sortable="true" headerClass="sortable">
         	<s:if test="%{#attr.row.studyCheckoutBy != null}">
                 <s:url id="url" action="studyProtocolcheckout"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>

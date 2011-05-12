@@ -48,26 +48,23 @@ function handleEdit(rowId){
                 <display:column escapeXml="true" property="reasonText" sortable="false" titleKey="onhold.reason.text"/>
                 <display:column escapeXml="true" property="dateLow" sortable="false" titleKey="onhold.date.low"/>
                 <display:column escapeXml="true" property="dateHigh" sortable="false" titleKey="onhold.date.high"/>
-                <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                					|| (sessionScope.role == 'SuAbstractor')}">
-                <display:column titleKey="onhold.edit" headerClass="centered" class="action">
-                    <c:if test="${(row.dateHigh==null)}">
-                    <s:a href="#" onclick="handleEdit(%{#attr.row.identifier})">
-                        <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
-                            alt="Edit" width="16" height="16" />
-                    </s:a>
-                    </c:if>
-                </display:column>
-                </c:if>
+                <pa:displayWhenCheckedOut>
+                    <display:column titleKey="onhold.edit" headerClass="centered" class="action">
+                        <c:if test="${(row.dateHigh==null)}">
+                            <s:a href="#" onclick="handleEdit(%{#attr.row.identifier})">
+                                <img src="<c:url value='images/ico_edit.gif'/>" alt="Edit" width="16" height="16" />
+                            </s:a>
+                        </c:if>
+                    </display:column>
+                </pa:displayWhenCheckedOut>
              </display:table>
         </td></tr>
     </table>
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
-    <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-    					|| (sessionScope.role == 'SuAbstractor')}">
-        <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
-     </c:if>
+        <pa:displayWhenCheckedOut>
+            <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+        </pa:displayWhenCheckedOut>
         <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'}">
             <li><a href="trialValidationquery.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
         </c:if>

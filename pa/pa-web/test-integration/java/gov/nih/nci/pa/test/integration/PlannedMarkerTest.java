@@ -99,7 +99,7 @@ public class PlannedMarkerTest extends AbstractPaSeleniumTest {
      */
     @Test
     public void testPlannedMarkers() throws Exception {
-        loginAsAbstractor();
+        loginAsScientificAbstractor();
         verifyTrialSearchPage();
         selenium.type("id=officialTitle", "Test Trial created by Selenium.");
         clickAndWait("link=Search");

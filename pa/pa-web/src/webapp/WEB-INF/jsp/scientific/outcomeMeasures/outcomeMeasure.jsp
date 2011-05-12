@@ -51,26 +51,24 @@
 	    <display:column escapeXml="true" titleKey="osdesign.outcome.safety" sortable="true" headerClass="sortable">
             <pa:displayBoolean value="${row.outcomeMeasure.safetyIndicator}"/>
         </display:column>
-	    <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-	    					|| (sessionScope.role == 'SuAbstractor')}">
-	    <display:column title="Edit" class="action">
-    		<s:url id="url" action="interventionalStudyDesignoutcomeedit"><s:param name="id" value="%{#attr.row.outcomeMeasure.id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
-    		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16"/></s:a>
-    	</display:column>
-    	<display:column title="Delete" class="action">
-			<s:url id="url" action="interventionalStudyDesignoutcomedelete"><s:param name="id" value="%{#attr.row.outcomeMeasure.id}" /></s:url>
-    		<s:a href="%{url}"><img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16"/></s:a>
-		</display:column>
-		</c:if>
+        <pa:scientificAbstractorDisplayWhenCheckedOut>
+            <display:column title="Edit" class="action">
+                <s:url id="url" action="interventionalStudyDesignoutcomeedit"><s:param name="id" value="%{#attr.row.outcomeMeasure.id}" /> <s:param name="page" value="%{'Edit'}"/></s:url>
+                <s:a href="%{url}"><img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16"/></s:a>
+            </display:column>
+            <display:column title="Delete" class="action">
+                <s:url id="url" action="interventionalStudyDesignoutcomedelete"><s:param name="id" value="%{#attr.row.outcomeMeasure.id}" /></s:url>
+                <s:a href="%{url}"><img src="<c:url value='/images/ico_delete.gif'/>" alt="Delete" width="16" height="16"/></s:a>
+            </display:column>
+        </pa:scientificAbstractorDisplayWhenCheckedOut>
 	</display:table>
   </s:if>
 		<div class="actionsrow">
 			<del class="btnwrapper">
 				<ul class="btnrow">
-					<c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-										|| (sessionScope.role == 'SuAbstractor')}">
-					<li><s:a href="interventionalStudyDesignoutcomeinput.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
-					</c:if>
+                    <pa:scientificAbstractorDisplayWhenCheckedOut>
+					   <li><s:a href="interventionalStudyDesignoutcomeinput.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
+                    </pa:scientificAbstractorDisplayWhenCheckedOut>
 				</ul>
 			</del>
 		</div>

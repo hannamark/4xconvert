@@ -63,7 +63,7 @@
                                                 titleKey="disease.preferredName" headerClass="sortable"/>
                                 <display:column titleKey="disease.view" headerClass="centered" class="action">
                                     <s:a href="#" onclick="handleView(%{#attr.row.diseaseIdentifier})">
-                                        <img src="<%=request.getContextPath()%>/images/ico_search.gif" alt="View" width="16" height="16" />
+                                        <img src="<c:url value='/images/ico_search.gif'/>" alt="View" width="16" height="16" />
                                     </s:a>
                                 </display:column>
                                 <display:column escapeXml="true" property="code" sortable="true"
@@ -76,19 +76,18 @@
                                                 titleKey="disease.parentPreferredName" headerClass="sortable" />
                                 <display:column escapeXml="true" property="ctGovXmlIndicator" sortable="true" 
                                                 titleKey="disease.includeInXML" headerClass="sortable"/>
-                                <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                                            || (sessionScope.role == 'SuAbstractor')}">
+                                <pa:scientificAbstractorDisplayWhenCheckedOut>x
                                     <display:column titleKey="disease.edit" headerClass="centered" class="action">
                                         <s:a href="#" onclick="handleEdit(%{#attr.row.studyDiseaseIdentifier})">
-                                            <img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16" />
+                                            <img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16" />
                                         </s:a>
                                     </display:column>
                                     <display:column titleKey="disease.delete" headerClass="centered" class="action">
                                         <s:a href="#" onclick="handleDelete(%{#attr.row.studyDiseaseIdentifier})">
-                                            <img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16" />
+                                            <img src="<c:url value='/images/ico_delete.gif'/>" alt="Delete" width="16" height="16" />
                                         </s:a>
                                     </display:column>
-                                </c:if>
+                                </pa:scientificAbstractorDisplayWhenCheckedOut>
                             </display:table>
                         </td>
                     </tr>
@@ -96,14 +95,13 @@
                 <div class="actionsrow">
                     <del class="btnwrapper">
                         <ul class="btnrow">
-                            <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                                        || (sessionScope.role == 'SuAbstractor')}">
+                            <pa:scientificAbstractorDisplayWhenCheckedOut>
                                 <li>
                                     <a href="#" class="btn" onclick="this.blur();handleCreate();">
                                         <span class="btn_img"><span class="add">Add </span></span>
                                     </a>
                                 </li>
-                            </c:if>
+                            </pa:scientificAbstractorDisplayWhenCheckedOut>
                         </ul>
                     </del>
                 </div>

@@ -42,14 +42,13 @@
                 <div class="actionsrow">
                     <del class="btnwrapper">
                         <ul class="btnrow">
-                            <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                            					|| (sessionScope.role == 'SuAbstractor')}">
+                            <pa:displayWhenCheckedOut>
                                 <li>
                                     <a href="#" class="btn" onclick="this.blur();handleCreate();">
                                         <span class="btn_img"><span class="add">Add </span></span>
                                     </a>
                                 </li>
-                            </c:if>
+                            </pa:displayWhenCheckedOut>
                         </ul>
                     </del>
                 </div>

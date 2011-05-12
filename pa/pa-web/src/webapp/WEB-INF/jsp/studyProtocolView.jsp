@@ -125,7 +125,7 @@
             </table>
         <c:if test="${(sessionScope.trialSummary.studyCheckoutBy == null)
                             || (sessionScope.trialSummary.studyCheckoutBy == sessionScope.loggedUserName)
-                            || (sessionScope.role == 'SuAbstractor')}">
+                            || (sessionScope.isSuAbstractor)}">
  <div class="actionsrow">
     <del class="btnwrapper">
         <ul class="btnrow">

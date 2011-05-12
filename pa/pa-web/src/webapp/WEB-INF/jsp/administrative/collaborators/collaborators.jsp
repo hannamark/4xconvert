@@ -57,31 +57,28 @@ function handleCreate(){
                 <display:column escapeXml="true" property="name" titleKey="participatingOrganizations.name" class="sortable" />
                 <display:column escapeXml="true" property="status" titleKey="participatingOrganizations.status" class="sortable" />
                 <display:column escapeXml="true" property="functionalRole" titleKey="participatingOrganizations.functionalRole" class="sortable" />
-                <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                                        || (sessionScope.role == 'SuAbstractor')}">
+                <pa:adminAbstractorDisplayWhenCheckedOut>
                     <display:column titleKey="participatingOrganizations.edit" headerClass="centered" class="action">
                         <s:a href="#" onclick="handleEdit(%{#attr.row.id})">
-                            <img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Edit" width="16" height="16" />
+                            <img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16" />
                         </s:a>
                     </display:column>
                     <display:column titleKey="participatingOrganizations.unlink" headerClass="centered" class="action">
                         <s:a href="#" onclick="handleDelete(%{#attr.row.id})">
-                            <img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Un-link" width="16" height="16" />
+                            <img src="<c:url value='/images/ico_delete.gif'/>" alt="Un-link" width="16" height="16" />
                         </s:a>
                     </display:column>
-                </c:if>
+                </pa:adminAbstractorDisplayWhenCheckedOut>
             </display:table>
             </td>
         </tr>
     </table>
     <div class="actionsrow"><del class="btnwrapper">
-    <ul class="btnrow">
-    <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                            || (sessionScope.role == 'SuAbstractor')}">
-        <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span
-            class="btn_img"><span class="add">Add </span></span></a></li>
-    </c:if>
-    </ul>
+        <ul class="btnrow">
+            <pa:adminAbstractorDisplayWhenCheckedOut>
+                <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+            </pa:adminAbstractorDisplayWhenCheckedOut>
+        </ul>
     </del></div>
 </s:form></div>
 </body>

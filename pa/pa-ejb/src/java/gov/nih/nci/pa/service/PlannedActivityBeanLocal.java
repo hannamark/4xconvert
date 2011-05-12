@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -68,6 +69,7 @@ public class PlannedActivityBeanLocal extends
      * @throws PAException exception.
      */
     @Override
+    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public PlannedActivityDTO create(PlannedActivityDTO dto) throws PAException {
         businessRules(dto);
         return super.create(dto);
@@ -79,6 +81,7 @@ public class PlannedActivityBeanLocal extends
      * @throws PAException exception.
      */
     @Override
+    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public PlannedActivityDTO update(PlannedActivityDTO dto) throws PAException {
         businessRules(dto);
         return super.update(dto);
@@ -164,6 +167,7 @@ public class PlannedActivityBeanLocal extends
      * @return the created PlannedEligibilityCriterion
      * @throws PAException exception.
      */
+    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public PlannedEligibilityCriterionDTO createPlannedEligibilityCriterion(PlannedEligibilityCriterionDTO dto)
         throws PAException {
         if (PAUtil.isIiNotNull(dto.getIdentifier())) {
@@ -180,6 +184,7 @@ public class PlannedActivityBeanLocal extends
      * @return the updated PlannedEligibilityCriterion
      * @throws PAException exception.
      */
+    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public PlannedEligibilityCriterionDTO updatePlannedEligibilityCriterion(PlannedEligibilityCriterionDTO dto)
         throws PAException {
         if (PAUtil.isIiNull(dto.getIdentifier())) {
@@ -192,6 +197,7 @@ public class PlannedActivityBeanLocal extends
      * @param ii index
      * @throws PAException exception.
      */
+    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public void deletePlannedEligibilityCriterion(Ii ii) throws PAException {
         if (PAUtil.isIiNull(ii)) {
             throw new PAException(II_NOTFOUND);
@@ -223,6 +229,7 @@ public class PlannedActivityBeanLocal extends
     /**
      * {@inheritDoc}
      */
+    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public PlannedSubstanceAdministrationDTO createPlannedSubstanceAdministration(PlannedSubstanceAdministrationDTO dto)
         throws PAException {
         if (PAUtil.isIiNotNull(dto.getIdentifier())) {
@@ -239,6 +246,7 @@ public class PlannedActivityBeanLocal extends
     /**
      * {@inheritDoc}
      */
+    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public PlannedSubstanceAdministrationDTO updatePlannedSubstanceAdministration(PlannedSubstanceAdministrationDTO dto)
         throws PAException {
         if (PAUtil.isIiNull(dto.getIdentifier())) {
@@ -305,6 +313,7 @@ public class PlannedActivityBeanLocal extends
     /**
      * {@inheritDoc}
      */
+    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public PlannedProcedureDTO createPlannedProcedure(PlannedProcedureDTO dto) throws PAException {
         if (PAUtil.isIiNotNull(dto.getIdentifier())) {
             throw new PAException("Update method should be used to modify existing.  ");
@@ -319,6 +328,7 @@ public class PlannedActivityBeanLocal extends
     /**
      * {@inheritDoc}
      */
+    @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public PlannedProcedureDTO updatePlannedProcedure(PlannedProcedureDTO dto) throws PAException {
         if (PAUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Create method should be used to modify existing.  ");

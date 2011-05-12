@@ -47,30 +47,24 @@ function handleCreate(){
         <tr>
             <td colspan="2">
             <s:set name="anatomicSiteList" value="anatomicSiteList" scope="request"/>
-            <display:table name="anatomicSiteList" id="row" class="data" sort="list"
-                pagesize="10" requestURI="anatomicSite.action" defaultorder="ascending" defaultsort="1">
-                <display:column escapeXml="true" property="code" sortable="true"
-                    titleKey="anatomicSite.code" headerClass="sortable" />
-                <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                                        || (sessionScope.role == 'SuAbstractor')}">
+            <display:table name="anatomicSiteList" id="row" class="data" sort="list" pagesize="10" requestURI="anatomicSite.action" defaultorder="ascending" defaultsort="1">
+                <display:column escapeXml="true" property="code" sortable="true" titleKey="anatomicSite.code" headerClass="sortable" />
+                <pa:scientificAbstractorDisplayWhenCheckedOut>
                     <display:column titleKey="anatomicSite.delete" headerClass="centered" class="action">
                         <s:a href="#" onclick="handleDelete(\"%{#attr.row.code}\")">
-                            <img src="<%=request.getContextPath()%>/images/ico_delete.gif"
-                                alt="Delete" width="16" height="16" />
+                            <img src="<c:url value='/images/ico_delete.gif'/>" alt="Delete" width="16" height="16" />
                         </s:a>
                     </display:column>
-                </c:if>
+                </pa:scientificAbstractorDisplayWhenCheckedOut>
             </display:table>
         </td>
         </tr>
     </table>
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
-        <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                                || (sessionScope.role == 'SuAbstractor')}">
-        <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span
-                class="btn_img"><span class="add">Add </span></span></a></li>
-        </c:if>
+        <pa:scientificAbstractorDisplayWhenCheckedOut>
+            <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+        </pa:scientificAbstractorDisplayWhenCheckedOut>
     </ul>
     </del></div>
 </s:form></div>

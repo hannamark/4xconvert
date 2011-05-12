@@ -70,47 +70,39 @@ function handleCreateGroup(){
                 <s:if test="%{currentAction == 'listArm'}"><display:column escapeXml="true" property="type" sortable="true" titleKey="arms.type" headerClass="sortable"/></s:if>
                 <display:column escapeXml="true" property="description" sortable="true" titleKey="arms.description" headerClass="sortable" />
                 <display:column escapeXml="true" property="interventions" titleKey="arms.interventions"/>
-                <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                					|| (sessionScope.role == 'SuAbstractor')}">
-                <display:column titleKey="arms.edit" headerClass="centered" class="action">
-                    <s:if test="%{currentAction == 'listArm'}">
-                    <s:a href="#" onclick="handleEditArm(%{#attr.row.identifier})">
-                        <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
-                            alt="Edit" width="16" height="16" />
-                    </s:a>
-                    </s:if>
-                    <s:elseif test="%{currentAction == 'listGroup'}">
-                    <s:a href="#" onclick="handleEditGroup(%{#attr.row.identifier})">
-                        <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
-                            alt="Edit" width="16" height="16" />
-                    </s:a>
-                    </s:elseif>
-                </display:column>
-                <display:column titleKey="arms.delete" headerClass="centered" class="action">
-                    <s:a href="#" onclick="handleDelete(%{#attr.row.identifier})">
-                        <img src="<%=request.getContextPath()%>/images/ico_delete.gif"
-                            alt="Delete" width="16" height="16" />
-                    </s:a>
-                </display:column>
-                </c:if>
+                <pa:adminAbstractorDisplayWhenCheckedOut>
+                    <display:column titleKey="arms.edit" headerClass="centered" class="action">
+                        <s:if test="%{currentAction == 'listArm'}">
+                            <s:a href="#" onclick="handleEditArm(%{#attr.row.identifier})">
+                                <img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16" />
+                            </s:a>
+                        </s:if>
+                        <s:elseif test="%{currentAction == 'listGroup'}">
+                            <s:a href="#" onclick="handleEditGroup(%{#attr.row.identifier})">
+                                <img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16" />
+                            </s:a>
+                        </s:elseif>
+                    </display:column>
+                    <display:column titleKey="arms.delete" headerClass="centered" class="action">
+                        <s:a href="#" onclick="handleDelete(%{#attr.row.identifier})">
+                            <img src="<c:url value='/images/ico_delete.gif'/>" alt="Delete" width="16" height="16" />
+                        </s:a>
+                    </display:column>
+                </pa:adminAbstractorDisplayWhenCheckedOut>
             </display:table>
-
-
             </td>
         </tr>
     </table>
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
-    <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-    					|| (sessionScope.role == 'SuAbstractor')}">
-        <s:if test="%{currentAction == 'listArm'}">
-            <li><a href="#" class="btn" onclick="this.blur();handleCreateArm();"><span
-                class="btn_img"><span class="add">Add </span></span></a></li>
-        </s:if><s:elseif test="%{currentAction == 'listGroup'}">
-            <li><a href="#" class="btn" onclick="this.blur();handleCreateGroup();"><span
-                class="btn_img"><span class="add">Add </span></span></a></li>
-        </s:elseif>
-     </c:if>
+        <pa:scientificAbstractorDisplayWhenCheckedOut>
+            <s:if test="%{currentAction == 'listArm'}">
+                <li><a href="#" class="btn" onclick="this.blur();handleCreateArm();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+            </s:if>
+            <s:elseif test="%{currentAction == 'listGroup'}">
+                <li><a href="#" class="btn" onclick="this.blur();handleCreateGroup();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+            </s:elseif>
+        </pa:scientificAbstractorDisplayWhenCheckedOut>
     </ul>
     </del></div>
 </s:form></div>

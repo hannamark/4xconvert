@@ -61,32 +61,27 @@ function handleCreate(){
                 <display:column escapeXml="true" property="otherNames" sortable="true" titleKey="interventions.otherNames" headerClass="sortable" />
                 <display:column escapeXml="true" property="description" sortable="true" titleKey="interventions.description" headerClass="sortable" />
                 <display:column escapeXml="true" property="type" sortable="true" titleKey="interventions.type" headerClass="sortable"  />
-                <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                                    || (sessionScope.role == 'SuAbstractor')}">
-                <display:column titleKey="interventions.edit" headerClass="centered" class="action">
-                    <s:a href="#" onclick="handleEdit(%{#attr.row.plannedActivityIdentifier},'%{#attr.row.type}')">
-                        <img src="<%=request.getContextPath()%>/images/ico_edit.gif"
-                            alt="Edit" width="16" height="16" />
-                    </s:a>
-                </display:column>
-                <display:column titleKey="interventions.delete" headerClass="centered" class="action">
-                    <s:a href="#" onclick="handleDelete(%{#attr.row.plannedActivityIdentifier})">
-                        <img src="<%=request.getContextPath()%>/images/ico_delete.gif"
-                            alt="Delete" width="16" height="16" />
-                    </s:a>
-                </display:column>
-                </c:if>
+                <pa:scientificAbstractorDisplayWhenCheckedOut>
+                    <display:column titleKey="interventions.edit" headerClass="centered" class="action">
+                        <s:a href="#" onclick="handleEdit(%{#attr.row.plannedActivityIdentifier},'%{#attr.row.type}')">
+                            <img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16" />
+                        </s:a>
+                    </display:column>
+                    <display:column titleKey="interventions.delete" headerClass="centered" class="action">
+                        <s:a href="#" onclick="handleDelete(%{#attr.row.plannedActivityIdentifier})">
+                            <img src="<c:url value='/images/ico_delete.gif'/>" alt="Delete" width="16" height="16" />
+                        </s:a>
+                    </display:column>
+                </pa:scientificAbstractorDisplayWhenCheckedOut>
             </display:table>
            </td>
         </tr>
     </table>
     <div class="actionsrow"><del class="btnwrapper">
     <ul class="btnrow">
-        <c:if test="${(sessionScope.trialSummary.studyCheckoutBy != null && sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy)
-                            || (sessionScope.role == 'SuAbstractor')}">
-        <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span
-            class="btn_img"><span class="add">Add </span></span></a></li>
-        </c:if>
+        <pa:scientificAbstractorDisplayWhenCheckedOut>
+            <li><a href="#" class="btn" onclick="this.blur();handleCreate();"><span class="btn_img"><span class="add">Add </span></span></a></li>
+        </pa:scientificAbstractorDisplayWhenCheckedOut>
     </ul>
     </del></div>
 </s:form></div>

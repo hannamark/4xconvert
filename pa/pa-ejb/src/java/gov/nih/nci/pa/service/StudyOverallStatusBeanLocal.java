@@ -96,10 +96,10 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.exception.PAValidationException;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
-import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.sql.Timestamp;
@@ -107,6 +107,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -147,6 +148,7 @@ public class StudyOverallStatusBeanLocal extends
      * @throws PAException PAException
      */
     @Override
+    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public StudyOverallStatusDTO create(StudyOverallStatusDTO dto) throws PAException {
         if (!PAUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Existing StudyOverallStatus objects cannot be modified. Append new object instead.");
@@ -257,6 +259,7 @@ public class StudyOverallStatusBeanLocal extends
      * @throws PAException exception
      */
     @Override
+    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public StudyOverallStatusDTO update(StudyOverallStatusDTO dto) throws PAException {
         StudyOverallStatusDTO resultDto = null;
         Session session = null;
@@ -289,6 +292,7 @@ public class StudyOverallStatusBeanLocal extends
      * @throws PAException exception
      */
     @Override
+    @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public void delete(Ii ii) throws PAException {
         throw new PAException(ERR_MSG_METHOD_NOT_IMPLEMENTED);
     }
