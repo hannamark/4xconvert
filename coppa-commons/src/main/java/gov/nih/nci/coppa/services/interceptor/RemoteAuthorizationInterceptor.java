@@ -103,6 +103,13 @@ public class RemoteAuthorizationInterceptor extends AuthorizationInterceptor {
     private SessionContext sessionContext;
 
     /**
+     * @param sessionContext the session context to set
+     */
+    public void setSessionContext(SessionContext sessionContext) {
+        this.sessionContext = sessionContext;
+    }
+    
+    /**
      * Ensures that the current authenticated user is associated with the current session so that security filtering is
      * correct.
      *
