@@ -305,7 +305,7 @@ public class TrialValidator {
         StudyOverallStatusWebDTO  dto = getStatusDTO(trialDto.getIdentifier());
         StudyStatusCode oldStatusCode = StudyStatusCode.getByCode(dto.getStatusCode());
         if (oldStatusCode != null && !oldStatusCode.canTransitionTo(newCode)) {
-            addActionError.add("Illegal study status transition from '" + oldStatusCode.getCode()
+            addActionError.add("Invalid study status transition from '" + oldStatusCode.getCode()
                     + "' to '" + newCode.getCode() + "'.  ");
         }
         if (trialDto.getStartDateType() != null && trialDto.getCompletionDateType() != null) {
