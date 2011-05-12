@@ -6,7 +6,8 @@
  </s:if>
 
 <s:set name="personWebDTOList" value="personWebDTOList" scope="request"/>
-<display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" uid="row"  name="personWebDTOList" export="false" >
+<display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" 
+        uid="row"  name="personWebDTOList" export="false" requestURI="participatingOrganizationsedit.action#investigators">
 	<display:column escapeXml="true" title="Last Name" property="lastName"  headerClass="sortable"/>
 	<display:column escapeXml="true" title="First Name" property="firstName"  headerClass="sortable"/>
 	<display:column escapeXml="true" title="Role" property="roleName.code"  headerClass="sortable"/>
