@@ -89,39 +89,36 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 
 /**
  * Convert StudyDocumentStage domain to DTO, and vice versa.
+ * 
  * @author vrushali
- *
+ * 
  */
 public class StudyDocumentStageConverter extends AbstractDocumentConverter<DocumentDTO, StudyDocumentStage> {
     /**
-    *
-    * @param documentStage  tempDocument
-    * @return tempStudyFundingDTO
-    */
-   @Override
-   public DocumentDTO convertFromDomainToDto(StudyDocumentStage documentStage) {
-       DocumentDTO docDTO = new DocumentDTO();
-       super.convertFromDomainToDto(documentStage, docDTO);
-       docDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
-               documentStage.getStudyProtocolStage().getId()));
-       return docDTO;
-
-   }
-
-   /**
-     *
-     * @param documentStageDTO studyFundingStageDTO
-     * @return StudyProtocol StudyProtocol
+     * {@inheritDoc}
      */
-   @Override
-   public StudyDocumentStage convertFromDtoToDomain(DocumentDTO documentStageDTO) {
-       StudyDocumentStage doc = new StudyDocumentStage();
-       super.convertFromDtoToDomain(documentStageDTO, doc);
-       StudyProtocolStage spBo = new StudyProtocolStage();
-       spBo.setId(IiConverter.convertToLong(documentStageDTO.getStudyProtocolIdentifier()));
-       doc.setStudyProtocolStage(spBo);
-       return doc;
+    @Override
+    public DocumentDTO convertFromDomainToDto(StudyDocumentStage documentStage) {
+        DocumentDTO docDTO = new DocumentDTO();
+        super.convertFromDomainToDto(documentStage, docDTO);
+        docDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(documentStage.getStudyProtocolStage()
+                .getId()));
+        return docDTO;
 
-  }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudyDocumentStage convertFromDtoToDomain(DocumentDTO documentStageDTO) {
+        StudyDocumentStage doc = new StudyDocumentStage();
+        super.convertFromDtoToDomain(documentStageDTO, doc);
+        StudyProtocolStage spBo = new StudyProtocolStage();
+        spBo.setId(IiConverter.convertToLong(documentStageDTO.getStudyProtocolIdentifier()));
+        doc.setStudyProtocolStage(spBo);
+        return doc;
+
+    }
 
 }

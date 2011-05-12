@@ -131,8 +131,17 @@ public class PlannedEligibilityCriterionConverter extends
      */
     @Override
     public PlannedEligibilityCriterion convertFromDtoToDomain(PlannedEligibilityCriterionDTO pecDTO) {
-        PlannedEligibilityCriterion pec = (PlannedEligibilityCriterion) PlannedActivityConverter
-            .convertFromDTOToDomain(pecDTO, new PlannedEligibilityCriterion());
+        PlannedEligibilityCriterion pec = new PlannedEligibilityCriterion();
+        convertFromDtoToDomain(pecDTO, pec);
+        return pec;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(PlannedEligibilityCriterionDTO pecDTO, PlannedEligibilityCriterion pec) {
+        new PlannedActivityConverter().convertFromDtoToDomain(pecDTO, pec);
         pec.setCriterionName(StConverter.convertToString(pecDTO.getCriterionName()));
         pec.setInclusionIndicator(BlConverter.convertToBoolean(pecDTO.getInclusionIndicator()));
         pec.setOperator(StConverter.convertToString(pecDTO.getOperator()));
@@ -157,7 +166,6 @@ public class PlannedEligibilityCriterionConverter extends
                 pec.setMaxUnit(pecDTO.getValue().getHigh().getUnit());
             }
         }
-        return pec;
     }
 
 }

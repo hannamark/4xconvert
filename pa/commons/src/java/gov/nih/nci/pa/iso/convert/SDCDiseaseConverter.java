@@ -86,7 +86,6 @@ import gov.nih.nci.pa.domain.SDCDisease;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.PAException;
 
 /**
 * @author moweis
@@ -94,12 +93,10 @@ import gov.nih.nci.pa.service.PAException;
 public class SDCDiseaseConverter extends AbstractConverter<SDCDiseaseDTO, SDCDisease> {
 
     /**
-     * @param bo domain object
-     * @return iso dto
-     * @throws PAException exception
+     * {@inheritDoc}
      */
     @Override
-    public SDCDiseaseDTO convertFromDomainToDto(SDCDisease bo) throws PAException {
+    public SDCDiseaseDTO convertFromDomainToDto(SDCDisease bo) {
         if (bo == null) {
             return null;
         }
@@ -112,21 +109,27 @@ public class SDCDiseaseConverter extends AbstractConverter<SDCDiseaseDTO, SDCDis
     }
 
     /**
-     * @param dto iso dto
-     * @return domain object
-     * @throws PAException exception
+     * {@inheritDoc}
      */
     @Override
-    public SDCDisease convertFromDtoToDomain(SDCDiseaseDTO dto) throws PAException {
+    public SDCDisease convertFromDtoToDomain(SDCDiseaseDTO dto) {
         if (dto == null) {
             return null;
         }
         SDCDisease bo = new SDCDisease();
+        convertFromDtoToDomain(dto, bo);
+        return bo;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(SDCDiseaseDTO dto, SDCDisease bo) {
         bo.setDiseaseCode(StConverter.convertToString(dto.getDiseaseCode()));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setDisplayName(StConverter.convertToString(dto.getDisplayName()));
         bo.setPreferredName(StConverter.convertToString(dto.getPreferredName()));
-        return bo;
     }
 
 }

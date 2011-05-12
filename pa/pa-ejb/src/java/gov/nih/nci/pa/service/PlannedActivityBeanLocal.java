@@ -518,7 +518,7 @@ public class PlannedActivityBeanLocal extends
             session.evict(bo);
         }
 
-        session.merge(bo);
+        session.saveOrUpdate(bo);
         resultDto = converter.convertFromDomainToDto(bo);
         return resultDto;
     }
@@ -540,7 +540,7 @@ public class PlannedActivityBeanLocal extends
             session.evict(bo);
         }
 
-        session.merge(bo);
+        session.saveOrUpdate(bo);
         resultDto = PlannedProcedureConverter.convertFromDomainToDTO(bo);
         return resultDto;
     }

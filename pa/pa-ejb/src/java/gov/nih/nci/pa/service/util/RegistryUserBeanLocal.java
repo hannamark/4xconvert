@@ -146,7 +146,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * {@inheritDoc}
      */
     public RegistryUser updateUser(RegistryUser user) throws PAException {
-        PaHibernateUtil.getCurrentSession().merge(user);
+        PaHibernateUtil.getCurrentSession().update(user);
         return user;
     }
 
@@ -239,7 +239,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
                 Session session = PaHibernateUtil.getCurrentSession();
                 registryUser = (RegistryUser) session.get(RegistryUser.class, userId);
             } catch (Exception e) {
-                throw new PAException(" CSM exception while retrieving  user with id: " + userId, e);
+                throw new PAException("CSM exception while retrieving  user with id: " + userId, e);
             }
         }
         return registryUser;
@@ -401,7 +401,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * @throws PAException on error
      */
     public void assignOwnership(Long userId, Long studyProtocolId) throws PAException {
-        RegistryUser usr =  getUser(userId, studyProtocolId);
+        RegistryUser usr = getUser(userId, studyProtocolId);
         StudyProtocol sp = new StudyProtocol();
         sp.setId(studyProtocolId);
         usr.getStudyProtocols().add(sp);

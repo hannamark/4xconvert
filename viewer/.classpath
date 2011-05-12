@@ -11,7 +11,7 @@
 	<classpathentry kind="var" path="VIEWER_LIB/services/compile/commons-logging-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/services/compile/hibernate3-4.0.5.GA.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/services/compile/log4j-4.0.5.GA.jar"/>
-	<classpathentry kind="var" path="VIEWER_LIB/services/compile/nci-commons-core-1.2.21.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/services/compile/nci-commons-core-1.2.22.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/services/compile/persistence-api-1.0.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/services/test/dom4j-1.6.1.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/services/test/hsqldb-1.8.0.7.jar"/>
@@ -31,7 +31,7 @@
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/ejb-api-3.0.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/freemarker-2.3.13.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/jstl-1.1.2.jar"/>
-	<classpathentry kind="var" path="VIEWER_LIB/web/compile/nci-commons-struts2-1.2.21.jar"/>
+	<classpathentry kind="var" path="VIEWER_LIB/web/compile/nci-commons-struts2-1.2.22.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/ognl-2.6.11.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/poi-3.2-FINAL.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/postgresql-8.4-701.jdbc3.jar"/>

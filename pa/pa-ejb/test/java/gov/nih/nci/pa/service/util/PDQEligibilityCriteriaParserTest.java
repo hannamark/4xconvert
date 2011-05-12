@@ -194,8 +194,5 @@ public class PDQEligibilityCriteriaParserTest {
         assertFalse(otherCriterionTextBlock[5].contains("Hematopoietic"));
         assertTrue(otherCriterionTextBlock[5].startsWith("Recovered from any major infection"));
         assertTrue(otherCriterionTextBlock[11].contains("* Single or combination therapy allowed"));
-        for (String str : otherCriterionTextBlock) {
-            System.out.println(str);
-        }
     }
 }

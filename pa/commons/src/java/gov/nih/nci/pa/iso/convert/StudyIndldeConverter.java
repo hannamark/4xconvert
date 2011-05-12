@@ -127,7 +127,15 @@ public class StudyIndldeConverter extends AbstractConverter<StudyIndldeDTO, Stud
     @Override
     public StudyIndlde convertFromDtoToDomain(StudyIndldeDTO siDTO) {
         StudyIndlde si = new StudyIndlde();
+        convertFromDtoToDomain(siDTO, si);
+        return si;
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(StudyIndldeDTO siDTO, StudyIndlde si) {
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(siDTO.getStudyProtocolIdentifier()));
         si.setDateLastUpdated(new Date());
@@ -163,6 +171,5 @@ public class StudyIndldeConverter extends AbstractConverter<StudyIndldeDTO, Stud
         if (!ISOUtil.isBlNull(siDTO.getExemptIndicator())) {
             si.setExemptIndicator(BlConverter.convertToBoolean(siDTO.getExemptIndicator()));
         }
-        return si;
     }
 }

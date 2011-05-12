@@ -149,11 +149,6 @@ public abstract class AbstractConverterTest<C extends AbstractConverter<DTO, BO>
     }
 
     @Test
-    public void testAll() throws Exception {
-        testBoConvert();
-        testDtoConvert();
-    }
-
     public void testBoConvert() throws Exception {
         // test converting an empty list
         List<BO> bos = new ArrayList<BO>();
@@ -173,6 +168,7 @@ public abstract class AbstractConverterTest<C extends AbstractConverter<DTO, BO>
         verifyDto(converter.convertFromDomainToDto(makeBo()));
     }
 
+    @Test
     public void testDtoConvert() throws Exception {
         // test converting an empty list
         List<DTO> dtos = new ArrayList<DTO>();
@@ -189,7 +185,18 @@ public abstract class AbstractConverterTest<C extends AbstractConverter<DTO, BO>
         for (BO bo : bos) {
             verifyBo(bo);
         }
+    }
+    
+    @Test
+    public void testDtoConvertUpdate() throws Exception {
         verifyBo(converter.convertFromDtoToDomain(makeDto()));
+        BO bo = makeBo();
+        converter.convertFromDtoToDomain(makeDto(), bo);
+        verifyBoUpdate(bo);
+    }
+
+    public void verifyBoUpdate(BO bo) {
+        this.verifyBo(bo);
     }
 
     public abstract BO makeBo();

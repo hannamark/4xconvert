@@ -25,18 +25,18 @@ public abstract class AbstractDocumentConverter<DTO extends DocumentDTO, BO exte
      *@param doc domain
      *@param docDTO dto
      */
-    public void convertFromDomainToDto(AbstractDocument doc, DocumentDTO docDTO) {
+    public void convertFromDomainToDto(BO doc, DTO docDTO) {
         docDTO.setIdentifier(IiConverter.convertToDocumentIi(doc.getId()));
         docDTO.setTypeCode(CdConverter.convertToCd(doc.getTypeCode()));
         docDTO.setFileName(StConverter.convertToSt(doc.getFileName()));
 
     }
+
     /**
-     *
-     * @param docDTO dto
-     * @param doc domain
+     * {@inheritDoc}
      */
-    public void convertFromDtoToDomain(DocumentDTO docDTO, AbstractDocument doc) {
+    @Override
+    public void convertFromDtoToDomain(DTO docDTO, BO doc) {
         doc.setId(IiConverter.convertToLong(docDTO.getIdentifier()));
         if (docDTO.getTypeCode() != null) {
             doc.setTypeCode(DocumentTypeCode.getByCode(docDTO.getTypeCode().getCode()));

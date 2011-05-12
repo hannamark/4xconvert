@@ -101,8 +101,7 @@ import gov.nih.nci.pa.util.ISOUtil;
 public class PlannedActivityConverter extends AbstractConverter<PlannedActivityDTO, PlannedActivity> {
 
     /**
-     * @param pa PlannedActivity
-     * @return PlannedActivityDTO
+     * {@inheritDoc}
      */
     @Override
     public PlannedActivityDTO convertFromDomainToDto(PlannedActivity pa) {
@@ -110,13 +109,13 @@ public class PlannedActivityConverter extends AbstractConverter<PlannedActivityD
     }
 
     /**
-     *
-     * @param paDTO PlannedActivityDTO
-     * @return PlannedActivity PlannedActivity
+     * {@inheritDoc}
      */
     @Override
     public PlannedActivity convertFromDtoToDomain(PlannedActivityDTO paDTO) {
-        return convertFromDTOToDomain(paDTO, new PlannedActivity());
+        PlannedActivity bo = new PlannedActivity();
+        convertFromDtoToDomain(paDTO, bo);
+        return bo;
     }
 
     /**
@@ -141,12 +140,10 @@ public class PlannedActivityConverter extends AbstractConverter<PlannedActivityD
     }
 
     /**
-     * Create a new domain object from a given dto.
-     * @param dto PlannedActivityDTO
-     * @param bo PlannedActivity
-     * @return PlannedActivity
+     * {@inheritDoc}
      */
-    public static PlannedActivity convertFromDTOToDomain(PlannedActivityDTO dto, PlannedActivity bo) {
+    @Override
+    public void convertFromDtoToDomain(PlannedActivityDTO dto, PlannedActivity bo) {
         StudyProtocol spBo = null;
         if (!ISOUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             spBo = new StudyProtocol();
@@ -166,7 +163,5 @@ public class PlannedActivityConverter extends AbstractConverter<PlannedActivityD
         bo.setStudyProtocol(spBo);
         bo.setSubcategoryCode(CdConverter.convertCdToString(dto.getSubcategoryCode()));
         bo.setTextDescription(StConverter.convertToString(dto.getTextDescription()));
-        return bo;
     }
-
 }

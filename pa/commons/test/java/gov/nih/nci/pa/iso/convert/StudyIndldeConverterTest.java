@@ -188,6 +188,19 @@ public class StudyIndldeConverterTest extends AbstractConverterTest<StudyIndldeC
         assertFalse(bo.getExemptIndicator());
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void verifyBoUpdate(StudyIndlde bo) {
+        verifyCoreBo(bo);
+
+        assertEquals(HolderTypeCode.NIH, bo.getHolderTypeCode());
+        assertEquals(NihInstituteCode.NCMHD, bo.getNihInstHolderCode());
+        assertEquals(NciDivisionProgramCode.CCR, bo.getNciDivProgHolderCode());
+        assertFalse(bo.getExemptIndicator());
+    }
+
     private void verifyCoreBo(StudyIndlde bo) {
         assertEquals(ID, bo.getId());
         assertEquals(ExpandedAccessStatusCode.AVAILABLE, bo.getExpandedAccessStatusCode());

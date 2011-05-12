@@ -153,7 +153,14 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         return Converters.get(getConverterArgument()).convertFromDtoToDomain(dto);
     }
 
-
+    /**
+     * @param dto iso transfer object
+     * @param bo domain ojbect to update
+     * @throws PAException exception
+     */
+    protected void convertFromDtoToDomain(DTO dto, BO bo) throws PAException {
+        Converters.get(getConverterArgument()).convertFromDtoToDomain(dto, bo);
+    }
 
     /**
      * Get class of the implementation.
@@ -249,20 +256,18 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         Session session = null;
         try {
             session = PaHibernateUtil.getCurrentSession();
-            bo = convertFromDtoToDomain(dto);
-            bo.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
-            bo.setDateLastUpdated(new Date());
+            Date today = new Date();
             if (PAUtil.isIiNull(dto.getIdentifier())) {
-                bo.setUserLastCreated(bo.getUserLastUpdated());
-                bo.setDateLastCreated(bo.getDateLastUpdated());
+                bo = convertFromDtoToDomain(dto);
+                bo.setUserLastCreated(CSMUserService.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
+                bo.setDateLastCreated(today);
             } else {
-                BO oldBo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(dto.getIdentifier()));
-                bo.setDateLastCreated(oldBo.getDateLastCreated());
-                bo.setUserLastCreated(oldBo.getUserLastCreated());
-                session.evict(oldBo);
+                bo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(dto.getIdentifier()));
+                convertFromDtoToDomain(dto, bo);
             }
-            bo = (BO) session.merge(bo);
-            session.flush();
+            bo.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
+            bo.setDateLastUpdated(today);
+            session.saveOrUpdate(bo);
             resultDto = convertFromDomainToDto(bo);
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in createOrUpdate().", hbe);

@@ -98,8 +98,7 @@ import java.util.Date;
 public class DocumentWorkflowStatusConverter extends
 AbstractConverter<DocumentWorkflowStatusDTO, DocumentWorkflowStatus> {
     /**
-     * @param dws DocumentWorkflowStatus
-     * @return DocumentWorkflowStatusDTO
+     * {@inheritDoc}
      */
     @Override
     public DocumentWorkflowStatusDTO convertFromDomainToDto(DocumentWorkflowStatus dws) {
@@ -113,14 +112,22 @@ AbstractConverter<DocumentWorkflowStatusDTO, DocumentWorkflowStatus> {
         return dwsDTO;
     }
 
-
     /**
-     * @param dwsDTO DocumentWorkflowStatusDTO
-     * @return DocumentWorkflowStatus
+     * {@inheritDoc}
      */
     @Override
     public DocumentWorkflowStatus convertFromDtoToDomain(DocumentWorkflowStatusDTO dwsDTO) {
         DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
+        convertFromDtoToDomain(dwsDTO, dws);
+        return dws;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(DocumentWorkflowStatusDTO dwsDTO, DocumentWorkflowStatus dws) {
+
         dws.setId(IiConverter.convertToLong(dwsDTO.getIdentifier()));
 
         StudyProtocol spBo = new StudyProtocol();
@@ -135,7 +142,6 @@ AbstractConverter<DocumentWorkflowStatusDTO, DocumentWorkflowStatus> {
         }
         dws.setStatusDateRangeLow(IvlConverter.convertTs().convertLow(dwsDTO.getStatusDateRange()));
         dws.setStatusDateRangeHigh(null);
-        return dws;
     }
 
 }

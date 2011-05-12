@@ -84,20 +84,20 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.ISOUtil;
+
 /**
  * Convert Document from domain to DTO.
- *
+ * 
  * @author Kalpana Guthikonda
  * @since 09/30/2008
  */
 public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Document> {
 
     /**
-     * @param doc Document
-     * @return DocumentDTO
+     * {@inheritDoc}
      */
     @Override
-    public  DocumentDTO convertFromDomainToDto(Document doc) {
+    public DocumentDTO convertFromDomainToDto(Document doc) {
         DocumentDTO docDTO = new DocumentDTO();
         super.convertFromDomainToDto(doc, docDTO);
         docDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(doc.getStudyProtocol().getId()));
@@ -105,13 +105,11 @@ public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Do
         return docDTO;
     }
 
-
     /**
-     * @param docDTO DocumentDTO
-     * @return Document
+     * {@inheritDoc}
      */
     @Override
-    public  Document convertFromDtoToDomain(DocumentDTO docDTO) {
+    public Document convertFromDtoToDomain(DocumentDTO docDTO) {
         Document doc = new Document();
         super.convertFromDtoToDomain(docDTO, doc);
 

@@ -15,22 +15,18 @@ import gov.nih.nci.pa.util.ISOUtil;
 
 import java.util.Date;
 
-
 /**
  * @author Vrushali
- *
+ * 
  */
-public class StudySiteOverallStatusConverter 
-    extends AbstractConverter<StudySiteOverallStatusDTO, StudySiteOverallStatus> {
-    
+public class StudySiteOverallStatusConverter extends
+        AbstractConverter<StudySiteOverallStatusDTO, StudySiteOverallStatus> {
+
     /**
-     *@param bo bObject 
-     *@return iso
-     *@throws PAException e
+     *{@inheritDoc}
      */
     @Override
-    public StudySiteOverallStatusDTO convertFromDomainToDto(
-            StudySiteOverallStatus bo) throws PAException {
+    public StudySiteOverallStatusDTO convertFromDomainToDto(StudySiteOverallStatus bo) {
         StudySiteOverallStatusDTO dto = new StudySiteOverallStatusDTO();
         dto.setIdentifier(IiConverter.convertToStudySiteOverallStatusIi(bo.getId()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
@@ -38,17 +34,25 @@ public class StudySiteOverallStatusConverter
         dto.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(bo.getStudySite().getId()));
         return dto;
     }
+
     /**
-     * @param dto d
-     * @return bo
-     * @throws PAException e
+     *{@inheritDoc}
      */
     @Override
-    public StudySiteOverallStatus convertFromDtoToDomain(
-            StudySiteOverallStatusDTO dto) throws PAException {
+    public StudySiteOverallStatus convertFromDtoToDomain(StudySiteOverallStatusDTO dto) throws PAException {
+        StudySiteOverallStatus bo = new StudySiteOverallStatus();
+        convertFromDtoToDomain(dto, bo);
+        return bo;
+    }
+
+    /**
+     *{@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(StudySiteOverallStatusDTO dto, StudySiteOverallStatus bo) throws PAException {
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             String errmsg = " convertFromDtoToDomain has been implemented for new domain"
-                          + " objects only.  StudySiteOverallStatusDTO.ii must be null. ";
+                    + " objects only.  StudySiteOverallStatusDTO.ii must be null. ";
             throw new PAException(errmsg);
         }
         if (ISOUtil.isIiNull(dto.getStudySiteIdentifier())) {
@@ -56,7 +60,6 @@ public class StudySiteOverallStatusConverter
             throw new PAException(errmsg);
         }
 
-        StudySiteOverallStatus bo = new StudySiteOverallStatus();
         StudySite spBo = new StudySite();
         spBo.setId(IiConverter.convertToLong(dto.getStudySiteIdentifier()));
 
@@ -64,7 +67,6 @@ public class StudySiteOverallStatusConverter
         bo.setStatusCode(StudySiteStatusCode.getByCode(dto.getStatusCode().getCode()));
         bo.setStatusDate(TsConverter.convertToTimestamp(dto.getStatusDate()));
         bo.setStudySite(spBo);
-        return bo;
     }
 
 }

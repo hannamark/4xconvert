@@ -1,6 +1,6 @@
 UPDATE pdq_disease SET status_code = 'INACTIVE';
-TRUNCATE disease_altername;
-TRUNCATE disease_parent;
+TRUNCATE pdq_disease_altername;
+TRUNCATE pdq_disease_parent;
 UPDATE pdq_disease SET nt_term_identifier=null,preferred_name='Disease/diagnosis',menu_display_name='Disease/diagnosis',status_code='ACTIVE',status_date_range_low=now(),date_last_updated='09/16/2009'WHERE identifier=101;
 UPDATE pdq_disease SET nt_term_identifier=null,preferred_name='Cancer diagnosis',menu_display_name='Not menu term',status_code='ACTIVE',status_date_range_low=now(),date_last_updated='09/16/2009'WHERE identifier=102;
 UPDATE pdq_disease SET nt_term_identifier=null,preferred_name='Cancer stage',menu_display_name='Not menu term',status_code='ACTIVE',status_date_range_low=now(),date_last_updated='09/16/2009'WHERE identifier=103;

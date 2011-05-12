@@ -96,23 +96,19 @@ import java.util.Date;
 
 /**
  * Convert StudyProtocol domain to DTO.
- *
+ * 
  * @author Hugh Reinhart
- * @since 09/02/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @since 09/02/2008 copyright NCI 2008. All rights reserved. This code may not be used without the express written
+ *        permission of the copyright holder, NCI.
  */
 public class StudySiteAccrualStatusConverter extends
         AbstractConverter<StudySiteAccrualStatusDTO, StudySiteAccrualStatus> {
 
     /**
-     * @param bo StudyProtocol domain object
-     * @return dto
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @Override
-    public StudySiteAccrualStatusDTO convertFromDomainToDto(StudySiteAccrualStatus bo) throws PAException {
+    public StudySiteAccrualStatusDTO convertFromDomainToDto(StudySiteAccrualStatus bo) {
         StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
         dto.setIdentifier(IiConverter.convertToStudySiteAccuralStatusIi(bo.getId()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
@@ -122,13 +118,21 @@ public class StudySiteAccrualStatusConverter extends
     }
 
     /**
-     * Create a new domain object from a given dto.
-     * @param dto StudySiteAccrualStatusDTO
-     * @return StudyProtocol StudyProtocol
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @Override
     public StudySiteAccrualStatus convertFromDtoToDomain(StudySiteAccrualStatusDTO dto) throws PAException {
+        StudySiteAccrualStatus bo = new StudySiteAccrualStatus();
+        convertFromDtoToDomain(dto, bo);
+        return bo;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(StudySiteAccrualStatusDTO dto, StudySiteAccrualStatus bo) throws PAException {
+        StudySite spBo = new StudySite();
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("convertFromDtoToDomain has been implemented for new domain objects only. "
                     + "StudySiteAccrualStatusDTO.ii must be null.");
@@ -137,15 +141,12 @@ public class StudySiteAccrualStatusConverter extends
             throw new PAException("StudySiteAccrualStatus.studySite cannot be null.");
         }
 
-        StudySite spBo = new StudySite();
         spBo.setId(IiConverter.convertToLong(dto.getStudySiteIi()));
 
-        StudySiteAccrualStatus bo = new StudySiteAccrualStatus();
         bo.setDateLastUpdated(new Date());
         bo.setStatusCode(RecruitmentStatusCode.getByCode(dto.getStatusCode().getCode()));
         bo.setStatusDate(TsConverter.convertToTimestamp(dto.getStatusDate()));
         bo.setStudySite(spBo);
-        return bo;
     }
 
 }

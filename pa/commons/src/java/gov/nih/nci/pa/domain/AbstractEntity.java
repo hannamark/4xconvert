@@ -90,6 +90,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
@@ -99,7 +100,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  * @since 05/22/2008
  */
 @MappedSuperclass
-public class AbstractEntity implements PersistentObject {
+public class AbstractEntity implements PersistentObject, Auditable {
 
     private static final long serialVersionUID = 1234567890L;
 

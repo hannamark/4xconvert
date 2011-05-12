@@ -95,6 +95,7 @@ import java.util.Date;
  * @param <Iso> iso type which is aggregated in Ivl
  * @param <T> standard java class corresponding to aggregated iso type
  */
+@SuppressWarnings("unchecked")
 public class IvlConverter<Iso extends Qty, T> {
     private static IvlConverter<Ts, Timestamp> tsInstance = new IvlConverter<Ts, Timestamp>(Ts.class);
     private static IvlConverter<Int, Integer> intInstance = new IvlConverter<Int, Integer>(Int.class);
@@ -173,7 +174,6 @@ public class IvlConverter<Iso extends Qty, T> {
      * @param high the high value
      * @return the resulting Ivl
      */
-    @SuppressWarnings("unchecked")
     public Ivl<Iso> convertToIvl(Object low, Object high) {
         Ivl<Iso> result = null;
         if (aggregatedType.equals(Ts.class)) {
@@ -213,7 +213,6 @@ public class IvlConverter<Iso extends Qty, T> {
      * @param ivl the Ivl
      * @return the low value
      */
-    @SuppressWarnings("unchecked")
     public T convertLow(Ivl ivl) {
         if (ivl == null) {
             return null;
@@ -234,7 +233,6 @@ public class IvlConverter<Iso extends Qty, T> {
      * @param ivl the Ivl
      * @return the high value
      */
-    @SuppressWarnings("unchecked")
     public T convertHigh(Ivl ivl) {
         if (ivl == null) {
             return null;

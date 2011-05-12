@@ -92,7 +92,6 @@ import gov.nih.nci.pa.enums.TissueSpecimenTypeCode;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.PAException;
 
 /**
  * Converter for transforming between the PlannedMarker and the PlannedMarkerDTO and vice versa.
@@ -105,23 +104,9 @@ public class PlannedMarkerConverter extends AbstractConverter<PlannedMarkerDTO, 
      * {@inheritDoc}
      */
     @Override
-    public PlannedMarker convertFromDtoToDomain(PlannedMarkerDTO dto) throws PAException {
-        PlannedMarker marker =
-            (PlannedMarker) PlannedActivityConverter.convertFromDTOToDomain(dto, new PlannedMarker());
-        marker.setName(StConverter.convertToString(dto.getName()));
-        marker.setLongName(StConverter.convertToString(dto.getLongName()));
-        marker.setHugoBiomarkerCode(CdConverter.convertCdToString(dto.getHugoBiomarkerCode()));
-        marker.setAssayTypeCode(AssayTypeCode.getByCode(CdConverter.convertCdToString(dto.getAssayTypeCode())));
-        marker.setAssayTypeOtherText(StConverter.convertToString(dto.getAssayTypeOtherText()));
-        marker.setAssayUseCode(AssayUseCode.getByCode(CdConverter.convertCdToString(dto.getAssayUseCode())));
-        marker.setAssayPurposeCode(
-                AssayPurposeCode.getByCode(CdConverter.convertCdToString(dto.getAssayPurposeCode())));
-        marker.setAssayPurposeOtherText(StConverter.convertToString(dto.getAssayPurposeOtherText()));
-        marker.setTissueSpecimenTypeCode(
-                TissueSpecimenTypeCode.getByCode(CdConverter.convertCdToString(dto.getTissueSpecimenTypeCode())));
-        marker.setTissueCollectionMethodCode(TissueCollectionMethodCode.getByCode(
-                CdConverter.convertCdToString(dto.getTissueCollectionMethodCode())));
-        marker.setStatusCode(ActiveInactivePendingCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
+    public PlannedMarker convertFromDtoToDomain(PlannedMarkerDTO dto) {
+        PlannedMarker marker = new PlannedMarker();
+        convertFromDtoToDomain(dto, marker);
         return marker;
     }
 
@@ -129,7 +114,7 @@ public class PlannedMarkerConverter extends AbstractConverter<PlannedMarkerDTO, 
      * {@inheritDoc}
      */
     @Override
-    public PlannedMarkerDTO convertFromDomainToDto(PlannedMarker marker) throws PAException {
+    public PlannedMarkerDTO convertFromDomainToDto(PlannedMarker marker) {
         PlannedMarkerDTO dto =
             (PlannedMarkerDTO) PlannedActivityConverter.convertFromDomainToDTO(marker, new PlannedMarkerDTO());
         dto.setName(StConverter.convertToSt(marker.getName()));
@@ -144,6 +129,28 @@ public class PlannedMarkerConverter extends AbstractConverter<PlannedMarkerDTO, 
         dto.setTissueCollectionMethodCode(CdConverter.convertToCd(marker.getTissueCollectionMethodCode()));
         dto.setStatusCode(CdConverter.convertToCd(marker.getStatusCode()));
         return dto;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(PlannedMarkerDTO dto, PlannedMarker marker) {
+        new PlannedActivityConverter().convertFromDtoToDomain(dto, marker);
+        marker.setName(StConverter.convertToString(dto.getName()));
+        marker.setLongName(StConverter.convertToString(dto.getLongName()));
+        marker.setHugoBiomarkerCode(CdConverter.convertCdToString(dto.getHugoBiomarkerCode()));
+        marker.setAssayTypeCode(AssayTypeCode.getByCode(CdConverter.convertCdToString(dto.getAssayTypeCode())));
+        marker.setAssayTypeOtherText(StConverter.convertToString(dto.getAssayTypeOtherText()));
+        marker.setAssayUseCode(AssayUseCode.getByCode(CdConverter.convertCdToString(dto.getAssayUseCode())));
+        marker.setAssayPurposeCode(
+                AssayPurposeCode.getByCode(CdConverter.convertCdToString(dto.getAssayPurposeCode())));
+        marker.setAssayPurposeOtherText(StConverter.convertToString(dto.getAssayPurposeOtherText()));
+        marker.setTissueSpecimenTypeCode(
+                TissueSpecimenTypeCode.getByCode(CdConverter.convertCdToString(dto.getTissueSpecimenTypeCode())));
+        marker.setTissueCollectionMethodCode(TissueCollectionMethodCode.getByCode(
+                CdConverter.convertCdToString(dto.getTissueCollectionMethodCode())));
+        marker.setStatusCode(ActiveInactivePendingCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
     }
 
 }

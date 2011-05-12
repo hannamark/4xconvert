@@ -98,12 +98,10 @@ import gov.nih.nci.pa.util.ISOUtil;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public class StudyResourcingConverter  extends AbstractConverter<StudyResourcingDTO, StudyResourcing> {
+public class StudyResourcingConverter extends AbstractConverter<StudyResourcingDTO, StudyResourcing> {
 
     /**
-     *
-     * @param studyResourcing sr
-     * @return InterventionalStudyProtocolDTO InterventionalStudyProtocolDTO
+     * {@inheritDoc}
      */
     @Override
     public StudyResourcingDTO convertFromDomainToDto(StudyResourcing studyResourcing) {
@@ -123,18 +121,24 @@ public class StudyResourcingConverter  extends AbstractConverter<StudyResourcing
         srDTO.setStudyProtocolIdentifier(
                 IiConverter.convertToStudyProtocolIi(studyResourcing.getStudyProtocol().getId()));
         srDTO.setActiveIndicator(BlConverter.convertToBl(studyResourcing.getActiveIndicator()));
-        //@tdo: date range
         return srDTO;
     }
 
     /**
-     *
-     * @param studyResourcingDTO studyResourcingDTO
-     * @return StudyResourcing
+     * {@inheritDoc}
      */
     @Override
     public StudyResourcing convertFromDtoToDomain(StudyResourcingDTO studyResourcingDTO) {
         StudyResourcing studyResourcing = new StudyResourcing();
+        convertFromDtoToDomain(studyResourcingDTO, studyResourcing);
+        return studyResourcing;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(StudyResourcingDTO studyResourcingDTO, StudyResourcing studyResourcing) {
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(studyResourcingDTO.getStudyProtocolIdentifier()));
         if (studyResourcingDTO.getIdentifier() != null) {
@@ -170,6 +174,5 @@ public class StudyResourcingConverter  extends AbstractConverter<StudyResourcing
         if (ISOUtil.isBlNull(studyResourcingDTO.getActiveIndicator())) {
             studyResourcing.setActiveIndicator(Boolean.TRUE);
         }
-        return studyResourcing;
     }
 }

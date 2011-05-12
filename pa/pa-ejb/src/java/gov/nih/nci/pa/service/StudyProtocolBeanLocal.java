@@ -254,12 +254,11 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         }
         checkBlindingSchemaCode(ispDTO, totBlindCodes);
         Session session = PaHibernateUtil.getCurrentSession();
-        InterventionalStudyProtocol isp = (InterventionalStudyProtocol)
-        session.load(InterventionalStudyProtocol.class, Long.valueOf(ispDTO.getIdentifier().getExtension()));
-        InterventionalStudyProtocol upd = InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO);
-        setDefaultValues(upd, ispDTO, UPDATE);
-        isp = upd;
-        session.merge(isp);
+        InterventionalStudyProtocol isp = (InterventionalStudyProtocol) session.load(InterventionalStudyProtocol.class,
+                Long.valueOf(ispDTO.getIdentifier().getExtension()));
+        InterventionalStudyProtocolConverter.convertFromDTOToDomain(ispDTO, isp);
+        setDefaultValues(isp, ispDTO, UPDATE);
+        session.update(isp);
         return InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
     }
 
@@ -343,7 +342,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         ObservationalStudyProtocol upd = ObservationalStudyProtocolConverter.convertFromDTOToDomain(ospDTO);
         setDefaultValues(osp, ospDTO, UPDATE);
         osp = upd;
-        session.merge(osp);
+        session.update(osp);
         return ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
     }
 

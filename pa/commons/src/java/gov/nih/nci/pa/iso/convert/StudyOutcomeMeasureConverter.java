@@ -88,17 +88,16 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import java.util.Date;
 
 /**
- *
+ * 
  * @author Kalpana Guthikonda
  * @since 10/29/2008
  */
 
 public class StudyOutcomeMeasureConverter extends
-   gov.nih.nci.pa.iso.convert.AbstractConverter<StudyOutcomeMeasureDTO, StudyOutcomeMeasure> {
+        gov.nih.nci.pa.iso.convert.AbstractConverter<StudyOutcomeMeasureDTO, StudyOutcomeMeasure> {
 
     /**
-     * @param som StudyOutcomeMeasure
-     * @return StudyOutcomeMeasureDTO
+     * {@inheritDoc}
      */
     @Override
     public StudyOutcomeMeasureDTO convertFromDomainToDto(StudyOutcomeMeasure som) {
@@ -114,12 +113,20 @@ public class StudyOutcomeMeasureConverter extends
     }
 
     /**
-     * @param somDTO StudyOutcomeMeasureDTO
-     * @return StudyOutcomeMeasure
+     * {@inheritDoc}
      */
     @Override
-    public  StudyOutcomeMeasure convertFromDtoToDomain(StudyOutcomeMeasureDTO somDTO) {
+    public StudyOutcomeMeasure convertFromDtoToDomain(StudyOutcomeMeasureDTO somDTO) {
         StudyOutcomeMeasure som = new StudyOutcomeMeasure();
+        convertFromDtoToDomain(somDTO, som);
+        return som;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(StudyOutcomeMeasureDTO somDTO, StudyOutcomeMeasure som) {
 
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(somDTO.getStudyProtocolIdentifier()));
@@ -132,8 +139,6 @@ public class StudyOutcomeMeasureConverter extends
         som.setTimeFrame(StConverter.convertToString(somDTO.getTimeFrame()));
         som.setPrimaryIndicator(BlConverter.convertToBoolean(somDTO.getPrimaryIndicator()));
         som.setSafetyIndicator(BlConverter.convertToBoolean(somDTO.getSafetyIndicator()));
-
-        return som;
     }
 
 }

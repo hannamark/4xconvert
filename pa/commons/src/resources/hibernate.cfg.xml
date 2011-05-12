@@ -114,5 +114,10 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <mapping class="gov.nih.nci.pa.domain.LesionLocationAnatomicSite" />
         <mapping class="gov.nih.nci.pa.domain.ProcedureName" />
         <mapping class="gov.nih.nci.pa.domain.TumorMarker" />
+
+        <!-- mapping classes for auditing -->
+        <mapping class="com.fiveamsolutions.nci.commons.audit.AuditLogRecord" />
+        <mapping class="com.fiveamsolutions.nci.commons.audit.AuditLogDetail" />
+        
      </session-factory>
 </hibernate-configuration>

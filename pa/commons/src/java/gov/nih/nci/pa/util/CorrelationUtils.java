@@ -167,4 +167,25 @@ public class CorrelationUtils {
         }
         return objectName;
     }
+    
+
+    /**
+     * This method returns the bo based on Identifier name or root.
+     * @param srIi iso identifier - either internal PA identifier or PO identifier.
+     * @param srClass StructuralRole class (needed for PA identifier)  
+     * @return StucturalRole for the corresponding ii
+     * @throws PAException on error
+     */
+    public StructuralRole getStructuralRole(Ii srIi, Class<? extends StructuralRole> srClass) throws PAException {
+        StructuralRole sr = null;
+        if (!ISOUtil.isIiNull(srIi)) {
+            if (CommonsConstant.PA_INTERNAL.equals(srIi.getIdentifierName())) {
+                sr = (StructuralRole) PaHibernateUtil.getCurrentSession().get(srClass,
+                        Long.parseLong(srIi.getExtension()));
+            } else {
+                sr = getStructuralRoleByIi(srIi);
+            }
+        }
+        return sr;
+    }
 }

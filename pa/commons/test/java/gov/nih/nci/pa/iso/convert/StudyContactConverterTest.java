@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.domain.StudyContact;
@@ -126,6 +127,17 @@ public class StudyContactConverterTest extends
         assertNull(bo.getPrimaryIndicator());
         assertNull(bo.getPhone());
         assertNull(bo.getEmail());
+        assertEquals(STUDY_PROTOCOL_ID, bo.getStudyProtocol().getId());
+        assertEquals(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR, bo.getRoleCode());
+        assertEquals(FunctionalRoleStatusCode.ACTIVE, bo.getStatusCode());
+    }
+
+    @Override
+    public void verifyBoUpdate(StudyContact bo) {
+        assertEquals(ID, bo.getId());
+        assertTrue(bo.getPrimaryIndicator());
+        assertEquals("1111", bo.getPhone());
+        assertEquals("test@example.com", bo.getEmail());
         assertEquals(STUDY_PROTOCOL_ID, bo.getStudyProtocol().getId());
         assertEquals(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR, bo.getRoleCode());
         assertEquals(FunctionalRoleStatusCode.ACTIVE, bo.getStatusCode());

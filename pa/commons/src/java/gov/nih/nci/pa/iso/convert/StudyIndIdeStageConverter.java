@@ -57,6 +57,15 @@ public class StudyIndIdeStageConverter extends AbstractConverter<StudyIndIdeStag
     @Override
     public StudyIndIdeStage convertFromDtoToDomain(StudyIndIdeStageDTO studyIndIdeStageDTO) {
         StudyIndIdeStage studyIndIdeStage = new StudyIndIdeStage();
+        convertFromDtoToDomain(studyIndIdeStageDTO, studyIndIdeStage);
+        return studyIndIdeStage;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(StudyIndIdeStageDTO studyIndIdeStageDTO, StudyIndIdeStage studyIndIdeStage) {
         StudyProtocolStage spBo = new StudyProtocolStage();
         spBo.setId(IiConverter.convertToLong(studyIndIdeStageDTO.getStudyProtocolStageIi()));
         studyIndIdeStage.setDateLastUpdated(new Date());
@@ -95,7 +104,5 @@ public class StudyIndIdeStageConverter extends AbstractConverter<StudyIndIdeStag
         if (!ISOUtil.isBlNull(studyIndIdeStageDTO.getExemptIndicator())) {
             studyIndIdeStage.setExemptIndicator(studyIndIdeStageDTO.getExemptIndicator().getValue());
         }
-        return studyIndIdeStage;
-
     }
 }

@@ -98,17 +98,10 @@ import java.util.Set;
 
 /**
  * @author Hugh Reinhart
- * @since 11/05/2008
-
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 public class ArmConverter extends AbstractConverter<ArmDTO, Arm> {
     /**
-     *
-     * @param bo StudyProtocol domain object
-     * @return dto
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @Override
     public ArmDTO convertFromDomainToDto(Arm bo) throws PAException {
@@ -131,20 +124,25 @@ public class ArmConverter extends AbstractConverter<ArmDTO, Arm> {
     }
 
     /**
-     * Create a new domain object from a given dto.
-     * @param dto ArmDTO
-     * @return StudyProtocol StudyProtocol
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @Override
-    public Arm convertFromDtoToDomain(ArmDTO dto) throws PAException {
+    public Arm convertFromDtoToDomain(ArmDTO dto) {
+        Arm bo = new Arm();
+        convertFromDtoToDomain(dto, bo);
+        return bo;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(ArmDTO dto, Arm bo) {
         StudyProtocol spBo = null;
         if (!ISOUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             spBo = new StudyProtocol();
             spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
         }
-        Arm bo = new Arm();
-        bo.setDateLastCreated(null);
         bo.setDescriptionText(StConverter.convertToString(dto.getDescriptionText()));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         Collection<PlannedActivity> interventions = new ArrayList<PlannedActivity>();
@@ -161,6 +159,5 @@ public class ArmConverter extends AbstractConverter<ArmDTO, Arm> {
         bo.setName(StConverter.convertToString(dto.getName()));
         bo.setStudyProtocol(spBo);
         bo.setTypeCode(ArmTypeCode.getByCode(CdConverter.convertCdToString(dto.getTypeCode())));
-        return bo;
     }
 }

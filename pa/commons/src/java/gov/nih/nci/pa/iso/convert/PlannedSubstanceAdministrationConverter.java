@@ -141,8 +141,17 @@ public class PlannedSubstanceAdministrationConverter
      */
     @Override
     public PlannedSubstanceAdministration convertFromDtoToDomain(PlannedSubstanceAdministrationDTO psaDTO) {
-        PlannedSubstanceAdministration psa = (PlannedSubstanceAdministration) PlannedActivityConverter
-        .convertFromDTOToDomain(psaDTO , new PlannedSubstanceAdministration());
+        PlannedSubstanceAdministration psa = new PlannedSubstanceAdministration();
+        convertFromDtoToDomain(psaDTO, psa);
+        return psa;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(PlannedSubstanceAdministrationDTO psaDTO, PlannedSubstanceAdministration psa) {
+        new PlannedActivityConverter().convertFromDtoToDomain(psaDTO, psa);
         if (!ISOUtil.isStNull(psaDTO.getDoseDescription())) {
             psa.setDoseDescription(StConverter.convertToString(psaDTO.getDoseDescription()));
         }
@@ -200,6 +209,5 @@ public class PlannedSubstanceAdministrationConverter
                 psa.setDoseDurationUnit(psaDTO.getDoseDuration().getUnit());
             }
         }
-        return psa;
     }
 }

@@ -91,7 +91,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 
 /**
@@ -106,22 +105,9 @@ public class StudySiteAccrualAccessConverter
      * {@inheritDoc}
      */
     @Override
-    public StudySiteAccrualAccess convertFromDtoToDomain(StudySiteAccrualAccessDTO dto) throws PAException {
+    public StudySiteAccrualAccess convertFromDtoToDomain(StudySiteAccrualAccessDTO dto) {
         StudySiteAccrualAccess access = new StudySiteAccrualAccess();
-        access.setId(IiConverter.convertToLong(dto.getIdentifier()));
-        if (!ISOUtil.isIiNull(dto.getRegistryUserIdentifier())) {
-            RegistryUser ru = new RegistryUser();
-            ru.setId(IiConverter.convertToLong(dto.getRegistryUserIdentifier()));
-            access.setRegistryUser(ru);
-        }
-        access.setRequestDetails(StConverter.convertToString(dto.getRequestDetails()));
-        access.setStatusCode(ActiveInactiveCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
-        access.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDate()));
-        if (!ISOUtil.isIiNull(dto.getStudySiteIdentifier())) {
-            StudySite ss = new StudySite();
-            ss.setId(IiConverter.convertToLong(dto.getStudySiteIdentifier()));
-            access.setStudySite(ss);
-        }
+        convertFromDtoToDomain(dto, access);
         return access;
     }
 
@@ -129,7 +115,7 @@ public class StudySiteAccrualAccessConverter
      * {@inheritDoc}
      */
     @Override
-    public StudySiteAccrualAccessDTO convertFromDomainToDto(StudySiteAccrualAccess bo) throws PAException {
+    public StudySiteAccrualAccessDTO convertFromDomainToDto(StudySiteAccrualAccess bo) {
         StudySiteAccrualAccessDTO dto = new StudySiteAccrualAccessDTO();
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setRequestDetails(StConverter.convertToSt(bo.getRequestDetails()));
@@ -146,5 +132,26 @@ public class StudySiteAccrualAccessConverter
             dto.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(ss.getId()));
         }
         return dto;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(StudySiteAccrualAccessDTO dto, StudySiteAccrualAccess access) {
+        access.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        if (!ISOUtil.isIiNull(dto.getRegistryUserIdentifier())) {
+            RegistryUser ru = new RegistryUser();
+            ru.setId(IiConverter.convertToLong(dto.getRegistryUserIdentifier()));
+            access.setRegistryUser(ru);
+        }
+        access.setRequestDetails(StConverter.convertToString(dto.getRequestDetails()));
+        access.setStatusCode(ActiveInactiveCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
+        access.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDate()));
+        if (!ISOUtil.isIiNull(dto.getStudySiteIdentifier())) {
+            StudySite ss = new StudySite();
+            ss.setId(IiConverter.convertToLong(dto.getStudySiteIdentifier()));
+            access.setStudySite(ss);
+        }
     }
 }

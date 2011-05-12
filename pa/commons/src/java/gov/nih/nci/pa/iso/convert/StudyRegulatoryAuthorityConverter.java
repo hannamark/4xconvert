@@ -97,9 +97,7 @@ public class StudyRegulatoryAuthorityConverter extends
 gov.nih.nci.pa.iso.convert.AbstractConverter<StudyRegulatoryAuthorityDTO, StudyRegulatoryAuthority> {
     
     /**
-     * 
-     * @param sra as a parameter
-     * @return StudyProtocolDTO is returned as DTO
+     * {@inheritDoc}
      */
     @Override
     public StudyRegulatoryAuthorityDTO convertFromDomainToDto(StudyRegulatoryAuthority sra) {
@@ -111,13 +109,20 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyRegulatoryAuthorityDTO, StudyR
     }
     
     /**
-     * 
-     * @param dto to be converted
-     * @return StudyRegulatoryAuthority as domain object 
+     * {@inheritDoc}
      */
     @Override
     public StudyRegulatoryAuthority convertFromDtoToDomain(StudyRegulatoryAuthorityDTO dto) {
         StudyRegulatoryAuthority authority = new StudyRegulatoryAuthority();
+        convertFromDtoToDomain(dto, authority);
+        return authority;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(StudyRegulatoryAuthorityDTO dto, StudyRegulatoryAuthority authority) {
         if (dto.getIdentifier() != null) {
             authority.setId(IiConverter.convertToLong(dto.getIdentifier()));
         }
@@ -127,7 +132,6 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<StudyRegulatoryAuthorityDTO, StudyR
         ra.setId(IiConverter.convertToLong(dto.getRegulatoryAuthorityIdentifier()));
         authority.setRegulatoryAuthority(ra);
         authority.setStudyProtocol(sp);
-        return authority;
     }
 
 }

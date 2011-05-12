@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.util;
 
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Map;
 
 import org.hibernate.HibernateException;
@@ -140,11 +142,35 @@ public abstract class AbstractHibernateTestCase {
     }
 
     @Before
-    final public void initDb() throws HibernateException {
+    final public void initDb() throws HibernateException, SQLException {
+        
+        dropAuditTable();
+        createAuditTable();
         Transaction tx = PaHibernateUtil.getHibernateHelper().beginTransaction();
         SchemaExport se = new SchemaExport(PaHibernateUtil.getHibernateHelper().getConfiguration());
         se.drop(false, true);
         se.create(false, true);
+        tx.commit();
+    }
+
+    private void createAuditTable() throws HibernateException, SQLException {
+        // create sequence and fake table for selecting from
+        Transaction tx = PaHibernateUtil.getHibernateHelper().beginTransaction();
+        Statement s = PaHibernateUtil.getCurrentSession().connection().createStatement();
+        s.execute("create sequence AUDIT_ID_SEQ");
+        s.execute("create table dual_AUDIT_ID_SEQ(test boolean)");
+        tx.commit();
+    }
+
+    private void dropAuditTable() throws HibernateException, SQLException {
+        Transaction tx = PaHibernateUtil.getHibernateHelper().beginTransaction();
+        Statement s = PaHibernateUtil.getCurrentSession().connection().createStatement();
+        try {
+            s.execute("drop sequence AUDIT_ID_SEQ");
+            s.execute("drop table if exists dual_AUDIT_ID_SEQ");
+        } catch (SQLException e) {
+            // expected
+        }
         tx.commit();
     }
 

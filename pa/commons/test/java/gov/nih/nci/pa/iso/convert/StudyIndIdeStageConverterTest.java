@@ -210,6 +210,26 @@ public class StudyIndIdeStageConverterTest extends AbstractConverterTest<StudyIn
         assertEquals(GrantorCode.CDER, bo.getGrantorCode());
         assertEquals("1234", bo.getIndIdeNumber());
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void verifyBoUpdate(StudyIndIdeStage bo) {
+        assertEquals(ID, bo.getId());
+        assertEquals(ExpandedAccessStatusCode.AVAILABLE, bo.getExpandedAccessStatusCode());
+        assertTrue(bo.getExpandedAccessIndicator());
+        assertEquals(STUDY_PROTOCOL_ID, bo.getStudyProtocolStage().getId());
+        assertEquals(IndldeTypeCode.IND, bo.getIndldeTypeCode());
+        assertEquals(GrantorCode.CDER, bo.getGrantorCode());
+        assertEquals("1234", bo.getIndIdeNumber());
+
+        assertEquals(HolderTypeCode.NIH, bo.getHolderTypeCode());
+        assertEquals(NihInstituteCode.NCMHD, bo.getNihInstHolderCode());
+        assertEquals(NciDivisionProgramCode.CCR, bo.getNciDivPrgHolderCode());
+        assertFalse(bo.getExemptIndicator());
+    }
+
 
     /**
      * {@inheritDoc}

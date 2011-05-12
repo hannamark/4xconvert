@@ -82,18 +82,17 @@
  */
 package gov.nih.nci.coppa.services.interceptor;
 
-import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
-
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
 import com.fiveamsolutions.nci.commons.ejb.AuthorizationInterceptor;
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * Associates the current authenticated user (if any) of remote EJBs with the current
- * session (via CaseInsensitiveUsernameHoler). It stores the username as given unlike the
+ * session (via UsernameHolder). It maintains the capitalization of the username, unlike the
  * AuthorizationInterceptor in nci-commons.
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
@@ -121,7 +120,7 @@ public class RemoteAuthorizationInterceptor extends AuthorizationInterceptor {
         } catch (IllegalStateException e) {
             username = getUnknownUsername();
         }
-        CaseSensitiveUsernameHolder.setUser(username);
+        UsernameHolder.setUserCaseSensitive(username);
         return invContext.proceed();
     }
 }

@@ -86,7 +86,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.PAException;
 
 /**
  * @author hreinhart
@@ -95,12 +94,10 @@ import gov.nih.nci.pa.service.PAException;
 public class PDQDiseaseAlternameConverter extends AbstractConverter<PDQDiseaseAlternameDTO, PDQDiseaseAltername> {
 
     /**
-     * @param bo domain object
-     * @return iso dto
-     * @throws PAException exception
+     * {@inheritDoc}
      */
     @Override
-    public PDQDiseaseAlternameDTO convertFromDomainToDto(PDQDiseaseAltername bo) throws PAException {
+    public PDQDiseaseAlternameDTO convertFromDomainToDto(PDQDiseaseAltername bo) {
         PDQDiseaseAlternameDTO dto = new PDQDiseaseAlternameDTO();
         dto.setAlternateName(StConverter.convertToSt(bo.getAlternateName()));
         dto.setDiseaseIdentifier(IiConverter.convertToIi(bo.getDisease().getId()));
@@ -111,22 +108,28 @@ public class PDQDiseaseAlternameConverter extends AbstractConverter<PDQDiseaseAl
     }
 
     /**
-     * @param dto iso dto
-     * @return domain object
-     * @throws PAException exception
+     * {@inheritDoc}
      */
     @Override
-    public PDQDiseaseAltername convertFromDtoToDomain(PDQDiseaseAlternameDTO dto) throws PAException {
+    public PDQDiseaseAltername convertFromDtoToDomain(PDQDiseaseAlternameDTO dto) {
+        PDQDiseaseAltername bo = new PDQDiseaseAltername();
+        convertFromDtoToDomain(dto, bo);
+        return bo;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(PDQDiseaseAlternameDTO dto, PDQDiseaseAltername bo) {
         PDQDisease dBo = new PDQDisease();
         dBo.setId(IiConverter.convertToLong(dto.getDiseaseIdentifier()));
         
-        PDQDiseaseAltername bo = new PDQDiseaseAltername();
         bo.setAlternateName(StConverter.convertToString(dto.getAlternateName()));
         bo.setDisease(dBo);
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setStatusCode(ActiveInactiveCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
         bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
-        return bo;
     }
 
 }

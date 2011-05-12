@@ -110,11 +110,10 @@ public class PlannedProcedureConverter extends PlannedActivityConverter {
     * @return PlannedProcedure PlannedProcedure
     */
     public static PlannedProcedure convertFromDTOToDomain(PlannedProcedureDTO psaDTO) {
-      PlannedProcedure psa =  (PlannedProcedure) PlannedActivityConverter
-                                     .convertFromDTOToDomain(psaDTO , new PlannedProcedure());
-       psa.setMethodCode(CdConverter.convertCdToString(psaDTO.getMethodCode()));
-       psa.setTargetSiteCode(CdConverter.convertCdToString(psaDTO.getTargetSiteCode()));
-       
-       return psa;
+        PlannedProcedure psa = new PlannedProcedure();
+        new PlannedActivityConverter().convertFromDtoToDomain(psaDTO, psa);
+        psa.setMethodCode(CdConverter.convertCdToString(psaDTO.getMethodCode()));
+        psa.setTargetSiteCode(CdConverter.convertCdToString(psaDTO.getTargetSiteCode()));
+        return psa;
    }
 }

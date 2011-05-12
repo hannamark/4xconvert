@@ -142,6 +142,17 @@ public class StudySiteAccrualStatusConverterTest extends
      * {@inheritDoc}
      */
     @Override
+    public void verifyBoUpdate(StudySiteAccrualStatus bo) {
+        assertEquals(ID, bo.getId());
+        assertEquals(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING, bo.getStatusCode());
+        assertEquals(now, bo.getStatusDate());
+        assertEquals(STUDY_SITE_ID, bo.getStudySite().getId());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void verifyDto(StudySiteAccrualStatusDTO dto) {
         assertEquals(ID, IiConverter.convertToLong(dto.getIdentifier()));
         assertEquals(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING.getCode(), dto.getStatusCode().getCode());

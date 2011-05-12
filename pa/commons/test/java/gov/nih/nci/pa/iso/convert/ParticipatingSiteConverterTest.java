@@ -229,6 +229,26 @@ public class ParticipatingSiteConverterTest extends
      * {@inheritDoc}
      */
     @Override
+    public void verifyBoUpdate(StudySite bo) {
+        assertEquals(ID, bo.getId());
+        assertEquals(STUDY_PROTOCOL_ID, bo.getStudyProtocol().getId());
+        assertEquals("ABE", bo.getLocalStudyProtocolIdentifier());
+        assertEquals(today, bo.getReviewBoardApprovalDate());
+        assertEquals("1", bo.getReviewBoardApprovalNumber());
+        assertEquals(ReviewBoardApprovalStatusCode.SUBMITTED_PENDING, bo.getReviewBoardApprovalStatusCode());
+        assertEquals("TEST", bo.getReviewBoardOrganizationalAffiliation());
+        assertEquals("Testing", bo.getProgramCodeText());
+        assertEquals(today, bo.getAccrualDateRangeHigh());
+        assertEquals(today, bo.getAccrualDateRangeLow());
+
+        assertEquals(1, bo.getStudySiteContacts().size());
+        assertEquals(3, bo.getStudySiteAccrualStatuses().size());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void verifyDto(ParticipatingSiteDTO dto) {
         assertEquals(ID, IiConverter.convertToLong(dto.getIdentifier()));
         assertEquals(STUDY_PROTOCOL_ID, IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));

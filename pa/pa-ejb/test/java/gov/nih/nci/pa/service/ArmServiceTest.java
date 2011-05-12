@@ -192,14 +192,9 @@ public class ArmServiceTest extends AbstractHibernateTestCase {
         assertFalse(newName.equals(oldName));
         dto.setName(StConverter.convertToSt(newName));
         dto.setTypeCode(CdConverter.convertToCd(ArmTypeCode.EXPERIMENTAL));
-        try {
-            remoteEjb.update(dto);
-        } catch (PAException e) {
-            // expected behavior, failure for not logging user
-        }
         remoteEjb.update(dto);
         ArmDTO newDto = remoteEjb.get(ii);
-        assertTrue(newName.equals(StConverter.convertToString(newDto.getName())));
+        assertEquals(newName, StConverter.convertToString(newDto.getName()));
     }
     @Test
     public void deleteTest() throws Exception {

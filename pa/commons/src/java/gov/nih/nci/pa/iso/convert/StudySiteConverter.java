@@ -94,7 +94,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.CorrelationUtils;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -149,33 +149,29 @@ public class StudySiteConverter extends AbstractConverter<StudySiteDTO, StudySit
      */
     @Override
     public StudySite convertFromDtoToDomain(StudySiteDTO dto) throws PAException {
+        StudySite bo = new StudySite();
+        convertFromDtoToDomain(dto, bo);
+        return bo;
+    }
+    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(StudySiteDTO dto, StudySite bo) throws PAException {
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
 
-        HealthCareFacility hfBo = null;
-        if (!ISOUtil.isIiNull(dto.getHealthcareFacilityIi())) {
-            hfBo = new HealthCareFacility();
-            hfBo.setId(getPaIdentifier(dto.getHealthcareFacilityIi()));
-        }
-
-        ResearchOrganization roBo = null;
-        if (!ISOUtil.isIiNull(dto.getResearchOrganizationIi())) {
-            roBo = new ResearchOrganization();
-            roBo.setId(getPaIdentifier(dto.getResearchOrganizationIi()));
-        }
-
-        OversightCommittee ocBo = null;
-        if (!ISOUtil.isIiNull(dto.getOversightCommitteeIi())) {
-            ocBo = new OversightCommittee();
-            ocBo.setId(getPaIdentifier(dto.getOversightCommitteeIi()));
-        }
-
-        StudySite bo = new StudySite();
+        CorrelationUtils utils = new CorrelationUtils();
         bo.setDateLastUpdated(new Timestamp(new Date().getTime()));
         bo.setFunctionalCode(StudySiteFunctionalCode.getByCode(CdConverter.convertCdToString(dto.getFunctionalCode())));
-        bo.setHealthCareFacility(hfBo);
-        bo.setResearchOrganization(roBo);
-        bo.setOversightCommittee(ocBo);
+        bo.setHealthCareFacility((HealthCareFacility) utils.getStructuralRole(dto.getHealthcareFacilityIi(),
+                HealthCareFacility.class));
+        bo.setResearchOrganization((ResearchOrganization) utils.getStructuralRole(dto.getResearchOrganizationIi(),
+                ResearchOrganization.class));
+        bo.setOversightCommittee((OversightCommittee) utils.getStructuralRole(dto.getOversightCommitteeIi(),
+                OversightCommittee.class));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setLocalStudyProtocolIdentifier(StConverter.convertToString(dto.getLocalStudyProtocolIdentifier()));
         bo.setStatusCode(FunctionalRoleStatusCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
@@ -194,7 +190,5 @@ public class StudySiteConverter extends AbstractConverter<StudySiteDTO, StudySit
             bo.setAccrualDateRangeLow(IvlConverter.convertTs().convertLow(dto.getAccrualDateRange()));
             bo.setAccrualDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getAccrualDateRange()));
         }
-        return bo;
     }
-
 }

@@ -98,10 +98,7 @@ import gov.nih.nci.pa.service.PAException;
 public class InterventionAlternateNameConverter 
         extends AbstractConverter<InterventionAlternateNameDTO, InterventionAlternateName> {
     /**
-     * 
-     * @param bo StudyProtocol domain object
-     * @return dto
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @Override
     public InterventionAlternateNameDTO convertFromDomainToDto(InterventionAlternateName bo) throws PAException {
@@ -116,24 +113,29 @@ public class InterventionAlternateNameConverter
     }
 
     /**
-     * Create a new domain object from a given dto.
-     * @param dto InterventionAlternateNameDTO
-     * @return StudyProtocol StudyProtocol
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @Override
-    public InterventionAlternateName convertFromDtoToDomain(InterventionAlternateNameDTO dto) throws PAException {
+    public InterventionAlternateName convertFromDtoToDomain(InterventionAlternateNameDTO dto) {
+        InterventionAlternateName bo = new InterventionAlternateName();
+        convertFromDtoToDomain(dto, bo);
+        return bo;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(InterventionAlternateNameDTO dto, InterventionAlternateName bo) {
         Intervention iBo = new Intervention();
         iBo.setId(IiConverter.convertToLong(dto.getInterventionIdentifier()));
 
-        InterventionAlternateName bo = new InterventionAlternateName();
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setIntervention(iBo);
         bo.setName(StConverter.convertToString(dto.getName()));
         bo.setNameTypeCode(StConverter.convertToString(dto.getNameTypeCode()));
         bo.setStatusCode(ActiveInactiveCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
         bo.setStatusDateRangeLow(TsConverter.convertToTimestamp(dto.getStatusDateRangeLow()));
-        return bo;
     }
 
 }

@@ -158,21 +158,21 @@ public class StudySiteContactConverter extends AbstractConverter<StudySiteContac
      */
     @Override
     public StudySiteContact convertFromDtoToDomain(StudySiteContactDTO dto) throws PAException {
-        return convertFromDtoToDomain(dto, new StudySiteContact());
+        StudySiteContact bo = new StudySiteContact();
+        convertFromDtoToDomain(dto, bo);
+        return bo;
     }
 
     /**
      * Create a new domain object from a given dto.
      * @param dto StudySiteContactDTO
      * @param bo StudySiteContact
-     * @return StudyProtocol StudyProtocol
      * @throws PAException PAException
      */
-    public StudySiteContact convertFromDtoToDomain(StudySiteContactDTO dto, StudySiteContact bo) throws PAException {
+    public void convertFromDtoToDomain(StudySiteContactDTO dto, StudySiteContact bo) throws PAException {
 
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setPrimaryIndicator(BlConverter.convertToBoolean(dto.getPrimaryIndicator()));
-       // bo.setRoleCode(StudySiteContactRoleCode.getByCode(dto.getRoleCode().getCode()));
         bo.setRoleCode(gov.nih.nci.pa.enums.StudySiteContactRoleCode.getByCode(
                 dto.getRoleCode().getCode()));
         bo.setStatusCode(FunctionalRoleStatusCode.getByCode(dto.getStatusCode().getCode()));
@@ -209,8 +209,6 @@ public class StudySiteContactConverter extends AbstractConverter<StudySiteContac
         StudySite studySite = new StudySite();
         studySite.setId(IiConverter.convertToLong(dto.getStudySiteIi()));
         bo.setStudySite(studySite);
-
-        return bo;
     }
 
 }

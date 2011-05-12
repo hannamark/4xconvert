@@ -26,26 +26,26 @@
     <module>
         <ejb>pa-commons.jar</ejb>
     </module>
-	<module>
-		<java>commons-collections-3.2.1.jar</java>
-	</module>
-	<module>
-	  <java>commons-io-1.4.jar</java>
-	</module>
-	<module>
-	  <java>commons-fileupload-1.2.1.jar</java>
-	</module>
-	<module>
-	  <java>commons-lang-2.4.jar</java>
-	</module>
     <module>
-      <java>itext-2.1.7.jar</java>
+        <java>commons-collections-3.2.1.jar</java>
     </module>
     <module>
-      <java>itext-rtf-2.1.7.jar</java>
+        <java>commons-io-1.4.jar</java>
     </module>
     <module>
-      <java>ehcache-1.2.4.jar</java>
+        <java>commons-fileupload-1.2.1.jar</java>
+    </module>
+    <module>
+        <java>commons-lang-2.4.jar</java>
+    </module>
+    <module>
+        <java>itext-2.1.7.jar</java>
+    </module>
+    <module>
+        <java>itext-rtf-2.1.7.jar</java>
+    </module>
+    <module>
+        <java>ehcache-1.2.4.jar</java>
     </module>
     <security-role><role-name>Abstractor</role-name></security-role>
     <security-role><role-name>AdminAbstractor</role-name></security-role>

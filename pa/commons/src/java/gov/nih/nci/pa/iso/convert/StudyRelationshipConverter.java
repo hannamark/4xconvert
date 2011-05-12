@@ -88,7 +88,7 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
 /**
- *
+ * 
  *@author NAmiruddin
  */
 public class StudyRelationshipConverter extends AbstractConverter<StudyRelationshipDTO, StudyRelationship> {
@@ -102,10 +102,10 @@ public class StudyRelationshipConverter extends AbstractConverter<StudyRelations
         srDTO.setCommentText(StConverter.convertToSt(sr.getCommentText()));
         srDTO.setDescriptionText(StConverter.convertToSt(sr.getDescriptionText()));
         srDTO.setSequenceNumber(IntConverter.convertToInt(sr.getSequenceNumber()));
-        srDTO.setSourceStudyProtocolIdentifier(
-                IiConverter.convertToStudyProtocolIi(sr.getSourceStudyProtocol().getId()));
-        srDTO.setTargetStudyProtocolIdentifier(
-                IiConverter.convertToStudyProtocolIi(sr.getTargetStudyProtocol().getId()));
+        srDTO.setSourceStudyProtocolIdentifier(IiConverter
+                .convertToStudyProtocolIi(sr.getSourceStudyProtocol().getId()));
+        srDTO.setTargetStudyProtocolIdentifier(IiConverter
+                .convertToStudyProtocolIi(sr.getTargetStudyProtocol().getId()));
         srDTO.setTypeCode(CdConverter.convertToCd(sr.getTypeCode()));
 
         return srDTO;
@@ -115,8 +115,17 @@ public class StudyRelationshipConverter extends AbstractConverter<StudyRelations
      * {@inheritDoc}
      */
     @Override
-    public  StudyRelationship convertFromDtoToDomain(StudyRelationshipDTO srDTO) {
+    public StudyRelationship convertFromDtoToDomain(StudyRelationshipDTO srDTO) {
         StudyRelationship sr = new StudyRelationship();
+        convertFromDtoToDomain(srDTO, sr);
+        return sr;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(StudyRelationshipDTO srDTO, StudyRelationship sr) {
         StudyProtocol spSoruce = new StudyProtocol();
         spSoruce.setId(IiConverter.convertToLong(srDTO.getSourceStudyProtocolIdentifier()));
         StudyProtocol spTarget = new StudyProtocol();
@@ -143,6 +152,5 @@ public class StudyRelationshipConverter extends AbstractConverter<StudyRelations
         if (srDTO.getTypeCode() != null) {
             sr.setTypeCode(StudyRelationshipTypeCode.getByCode(CdConverter.convertCdToString(srDTO.getTypeCode())));
         }
-        return sr;
     }
 }

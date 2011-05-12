@@ -97,8 +97,7 @@ import java.util.Date;
 public class StratumGroupConverter extends AbstractConverter<StratumGroupDTO, StratumGroup> {
 
     /**
-     * @param sg StratumGroup
-     * @return SubGroupsDTO
+     * {@inheritDoc}
      */
     @Override
     public StratumGroupDTO convertFromDomainToDto(StratumGroup sg) {
@@ -110,15 +109,22 @@ public class StratumGroupConverter extends AbstractConverter<StratumGroupDTO, St
         return sgDTO;
     }
 
-
     /**
-     * @param sgDTO SubGroupsDTO
-     * @return StratumGroup
+     * {@inheritDoc}
      */
     @Override
     public StratumGroup convertFromDtoToDomain(StratumGroupDTO sgDTO) {
         StratumGroup sg = new StratumGroup();
+        convertFromDtoToDomain(sgDTO, sg);
+        return sg;
+    }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(StratumGroupDTO sgDTO, StratumGroup sg) {
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(sgDTO.getStudyProtocolIdentifier()));
         sg.setDateLastUpdated(new Date());
@@ -130,7 +136,6 @@ public class StratumGroupConverter extends AbstractConverter<StratumGroupDTO, St
         if (sgDTO.getGroupNumberText() != null) {
             sg.setGroupNumberText(sgDTO.getGroupNumberText().getValue());
         }
-        return sg;
     }
 
 }

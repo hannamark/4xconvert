@@ -117,37 +117,10 @@ public class ParticipatingSiteConverter extends AbstractConverter<ParticipatingS
      * {@inheritDoc}
      */
     @Override
-    public StudySite convertFromDtoToDomain(ParticipatingSiteDTO dto) throws PAException {
-        StudyProtocol sp = new StudyProtocol();
-        sp.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
-
-        StudySite studySite = new StudySite();
-        Ii hcfIdentifier = DSetConverter.convertToIi(dto.getOrganizationRoleIdentifiers());
-
-        if (!ISOUtil.isIiNull(hcfIdentifier)) {
-            studySite.setHealthCareFacility(new HealthCareFacility());
-            studySite.getHealthCareFacility().setIdentifier(hcfIdentifier.getExtension());
-        }
-
-        studySite.setStudyProtocol(sp);
-        studySite.setDateLastUpdated(new Timestamp(new Date().getTime()));
-        studySite.setId(IiConverter.convertToLong(dto.getIdentifier()));
-        studySite.setLocalStudyProtocolIdentifier(StConverter.convertToString(dto.getLocalStudyProtocolIdentifier()));
-        studySite.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
-        studySite.setStatusDateRangeHigh(null);
-        studySite.setReviewBoardApprovalDate(TsConverter.convertToTimestamp(dto.getReviewBoardApprovalDate()));
-        studySite.setReviewBoardApprovalNumber(StConverter.convertToString(dto.getReviewBoardApprovalNumber()));
-        studySite.setTargetAccrualNumber(IntConverter.convertToInteger(dto.getTargetAccrualNumber()));
-        studySite.setReviewBoardOrganizationalAffiliation(
-                StConverter.convertToString(dto.getReviewBoardOrganizationalAffiliation()));
-        studySite.setReviewBoardApprovalStatusCode(ReviewBoardApprovalStatusCode.getByCode(
-                    CdConverter.convertCdToString(dto.getReviewBoardApprovalStatusCode())));
-        studySite.setProgramCodeText(StConverter.convertToString(dto.getProgramCodeText()));
-        if (dto.getAccrualDateRange() != null) {
-            studySite.setAccrualDateRangeLow(IvlConverter.convertTs().convertLow(dto.getAccrualDateRange()));
-            studySite.setAccrualDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getAccrualDateRange()));
-        }
-        return studySite;
+    public StudySite convertFromDtoToDomain(ParticipatingSiteDTO dto) {
+        StudySite bo = new StudySite();
+        convertFromDtoToDomain(dto, bo);
+        return bo;
     }
 
     /**
@@ -191,6 +164,41 @@ public class ParticipatingSiteConverter extends AbstractConverter<ParticipatingS
             dto.setStudySiteAccrualStatus(new StudySiteAccrualStatusConverter().convertFromDomainToDto(latestStatus));
         }
         return dto;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(ParticipatingSiteDTO dto, StudySite bo) {
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
+
+        Ii hcfIdentifier = DSetConverter.convertToIi(dto.getOrganizationRoleIdentifiers());
+
+        if (!ISOUtil.isIiNull(hcfIdentifier)) {
+            bo.setHealthCareFacility(new HealthCareFacility());
+            bo.getHealthCareFacility().setIdentifier(hcfIdentifier.getExtension());
+        }
+
+        bo.setStudyProtocol(sp);
+        bo.setDateLastUpdated(new Timestamp(new Date().getTime()));
+        bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
+        bo.setLocalStudyProtocolIdentifier(StConverter.convertToString(dto.getLocalStudyProtocolIdentifier()));
+        bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        bo.setStatusDateRangeHigh(null);
+        bo.setReviewBoardApprovalDate(TsConverter.convertToTimestamp(dto.getReviewBoardApprovalDate()));
+        bo.setReviewBoardApprovalNumber(StConverter.convertToString(dto.getReviewBoardApprovalNumber()));
+        bo.setTargetAccrualNumber(IntConverter.convertToInteger(dto.getTargetAccrualNumber()));
+        bo.setReviewBoardOrganizationalAffiliation(
+                StConverter.convertToString(dto.getReviewBoardOrganizationalAffiliation()));
+        bo.setReviewBoardApprovalStatusCode(ReviewBoardApprovalStatusCode.getByCode(
+                    CdConverter.convertCdToString(dto.getReviewBoardApprovalStatusCode())));
+        bo.setProgramCodeText(StConverter.convertToString(dto.getProgramCodeText()));
+        if (dto.getAccrualDateRange() != null) {
+            bo.setAccrualDateRangeLow(IvlConverter.convertTs().convertLow(dto.getAccrualDateRange()));
+            bo.setAccrualDateRangeHigh(IvlConverter.convertTs().convertHigh(dto.getAccrualDateRange()));
+        }
     }
 
 }

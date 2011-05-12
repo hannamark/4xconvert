@@ -10,7 +10,7 @@
     <properties>
         <log.level.nci-commons>DEBUG</log.level.nci-commons>
         <log.level.po>DEBUG</log.level.po>
-        <nci-commons.version>1.2.20</nci-commons.version>
+        <nci-commons.version>1.2.22</nci-commons.version>
         <compileSource>1.5</compileSource>
         <generatedStubsSrcDir>target/generated-sources/stubs</generatedStubsSrcDir>
         <cobertura.check.haltOnFailure>true</cobertura.check.haltOnFailure>
@@ -203,7 +203,7 @@
             </extension>
         </extensions>
     </build>
-    
+
     <dependencies>
         <dependency>
             <groupId>javax.ejb</groupId>
@@ -367,7 +367,7 @@
             <artifactId>wss4j</artifactId>
             <version>1.5.1</version>
         </dependency>
-        
+
         <!-- Testing only jars -->
         <dependency>
             <groupId>junit</groupId>
@@ -399,7 +399,7 @@
             <version>2.0.6</version>
             <scope>test</scope>
         </dependency>
-       
+
         <dependency>
             <groupId>gov.nih.nci.iso21090</groupId>
             <artifactId>iso-datatypes-extensions</artifactId>
@@ -526,7 +526,7 @@
             <id>maven</id>
             <url>http://repo1.maven.org/maven2</url>
         </pluginRepository>
-        
+
     </pluginRepositories>
 
 </project>

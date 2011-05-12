@@ -102,12 +102,8 @@ import java.util.Date;
  */
 public class StudyOverallStatusConverter extends AbstractConverter<StudyOverallStatusDTO, StudyOverallStatus> {
 
-
     /**
-     *
-     * @param bo StudyProtocol domain object
-     * @return dto
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @Override
     public StudyOverallStatusDTO convertFromDomainToDto(StudyOverallStatus bo) throws PAException {
@@ -121,10 +117,7 @@ public class StudyOverallStatusConverter extends AbstractConverter<StudyOverallS
     }
 
     /**
-     * Create a new domain object from a given dto.
-     * @param dto StudyOverallStatusDTO
-     * @return StudyProtocol StudyProtocol
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @Override
     public StudyOverallStatus convertFromDtoToDomain(StudyOverallStatusDTO dto) throws PAException {
@@ -132,10 +125,19 @@ public class StudyOverallStatusConverter extends AbstractConverter<StudyOverallS
             throw new PAException("StudyOverallStatus.studyProtocol cannot be null.");
         }
 
+        StudyOverallStatus bo = new StudyOverallStatus();
+        convertFromDtoToDomain(dto, bo);
+        return bo;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(StudyOverallStatusDTO dto, StudyOverallStatus bo) {
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
 
-        StudyOverallStatus bo = new StudyOverallStatus();
         if (dto.getIdentifier() != null) {
             bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         }
@@ -144,7 +146,6 @@ public class StudyOverallStatusConverter extends AbstractConverter<StudyOverallS
         bo.setStatusCode(StudyStatusCode.getByCode(dto.getStatusCode().getCode()));
         bo.setStatusDate(TsConverter.convertToTimestamp(dto.getStatusDate()));
         bo.setStudyProtocol(spBo);
-        return bo;
     }
 
 }

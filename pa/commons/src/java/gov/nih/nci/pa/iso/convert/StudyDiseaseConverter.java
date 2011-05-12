@@ -87,18 +87,12 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 
 /**
-* @author Hugh Reinhart
-* @since 11/30/2008
-* copyright NCI 2008.  All rights reserved.
-* This code may not be used without the express written permission of the
-* copyright holder, NCI.
-*/
+ * @author Hugh Reinhart
+ */
 public class StudyDiseaseConverter extends AbstractConverter<StudyDiseaseDTO, StudyDisease> {
 
     /**
-     * @param bo domain object
-     * @return iso dto
-     * @throws PAException exception
+     * {@inheritDoc}
      */
     @Override
     public StudyDiseaseDTO convertFromDomainToDto(StudyDisease bo) throws PAException {
@@ -111,24 +105,29 @@ public class StudyDiseaseConverter extends AbstractConverter<StudyDiseaseDTO, St
     }
 
     /**
-     * @param dto iso dto
-     * @return domain object
-     * @throws PAException exception
+     * {@inheritDoc}
      */
     @Override
-    public StudyDisease convertFromDtoToDomain(StudyDiseaseDTO dto) throws PAException {
+    public StudyDisease convertFromDtoToDomain(StudyDiseaseDTO dto) {
+        StudyDisease bo = new StudyDisease();
+        convertFromDtoToDomain(dto, bo);
+        return bo;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(StudyDiseaseDTO dto, StudyDisease bo) {
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
 
         PDQDisease dBo = new PDQDisease();
         dBo.setId(IiConverter.convertToLong(dto.getDiseaseIdentifier()));
 
-        StudyDisease bo = new StudyDisease();
         bo.setDisease(dBo);
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setStudyProtocol(spBo);
         bo.setCtGovXmlIndicator(BlConverter.convertToBoolean(dto.getCtGovXmlIndicator()));
-        return bo;
     }
-
 }

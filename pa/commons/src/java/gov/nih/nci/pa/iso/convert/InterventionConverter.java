@@ -97,10 +97,7 @@ import gov.nih.nci.pa.service.PAException;
  */
 public class InterventionConverter extends AbstractConverter<InterventionDTO, Intervention> {
     /**
-     * 
-     * @param bo StudyProtocol domain object
-     * @return dto
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @Override
     public InterventionDTO convertFromDomainToDto(Intervention bo) throws PAException {
@@ -118,14 +115,20 @@ public class InterventionConverter extends AbstractConverter<InterventionDTO, In
     }
 
     /**
-     * Create a new domain object from a given dto.
-     * @param dto InterventionDTO
-     * @return StudyProtocol StudyProtocol
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @Override
-    public Intervention convertFromDtoToDomain(InterventionDTO dto) throws PAException {
+    public Intervention convertFromDtoToDomain(InterventionDTO dto) {
         Intervention bo = new Intervention();
+        convertFromDtoToDomain(dto, bo);
+        return bo;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(InterventionDTO dto, Intervention bo) {
         bo.setDescriptionText(StConverter.convertToString(dto.getDescriptionText()));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setName(StConverter.convertToString(dto.getName()));
@@ -135,6 +138,5 @@ public class InterventionConverter extends AbstractConverter<InterventionDTO, In
         bo.setNtTermIdentifier(StConverter.convertToString(dto.getNtTermIdentifier()));
         bo.setPdqTermIdentifier(StConverter.convertToString(dto.getPdqTermIdentifier()));
         bo.setCtGovTypeCode(InterventionTypeCode.getByCode(CdConverter.convertCdToString(dto.getCtGovTypeCode())));
-        return bo;
     }
 }

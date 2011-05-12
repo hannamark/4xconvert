@@ -159,17 +159,16 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
      */
     @Override
     public StudyContact convertFromDtoToDomain(StudyContactDTO dto) throws PAException {
-        return convertFromDtoToDomain(dto, new StudyContact());
+        StudyContact bo = new StudyContact();
+        convertFromDtoToDomain(dto, bo);
+        return bo;
     }
 
     /**
-     * Create a new domain object from a given DTO.
-     * @param dto StudyContactDTO
-     * @param bo StudyContact
-     * @return StudyContact StudyContact
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
-    public StudyContact convertFromDtoToDomain(StudyContactDTO dto , StudyContact bo) throws PAException {
+    @Override
+    public void convertFromDtoToDomain(StudyContactDTO dto, StudyContact bo) throws PAException {
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
         bo.setStudyProtocol(spBo);
@@ -212,7 +211,6 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
         }
         bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         bo.setStatusDateRangeHigh(null);
-        return bo;
     }
 
 }

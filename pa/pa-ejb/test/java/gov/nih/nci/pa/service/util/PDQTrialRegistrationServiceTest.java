@@ -138,6 +138,7 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
@@ -394,6 +395,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.SUBMISSION_ACCEPTED,
                 StConverter.convertToSt("Accepted."));
 
+        PaHibernateUtil.getCurrentSession().flush();
         Ii newTrialIi = bean.loadRegistrationElementFromPDQXml(testUpdateXMLUrl, TestSchema.getUser().getLoginName());
         Ii newNciId = PAUtil.getAssignedIdentifier(PaRegistry.getStudyProtocolService().getStudyProtocol(trialIi));
         assertNotNull("Null identifier returned when updating a trial.", trialIi);

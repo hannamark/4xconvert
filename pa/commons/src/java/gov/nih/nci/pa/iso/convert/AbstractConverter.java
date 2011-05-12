@@ -106,6 +106,13 @@ public abstract class AbstractConverter<DTO extends BaseDTO, BO extends Abstract
     public abstract BO convertFromDtoToDomain(DTO dto) throws PAException;
 
     /**
+     * @param dto dto
+     * @param bo domain object to update
+     * @throws PAException exception
+     */
+    public abstract void convertFromDtoToDomain(DTO dto, BO bo) throws PAException;
+
+    /**
      * @param bo domain object
      * @return dto
      * @throws PAException exception

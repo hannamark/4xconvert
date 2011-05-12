@@ -279,7 +279,7 @@ public class StudyOverallStatusBeanLocal extends
         session = PaHibernateUtil.getCurrentSession();
         StudyOverallStatus bo = Converters.get(StudyOverallStatusConverter.class).convertFromDtoToDomain(dto);
 
-        session.merge(bo);
+        session.update(bo);
         resultDto = Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(bo);
         return resultDto;
     }

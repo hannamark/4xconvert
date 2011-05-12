@@ -93,13 +93,11 @@ import gov.nih.nci.pa.iso.util.StConverter;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public class RegulatoryAuthorityConverter extends 
-gov.nih.nci.pa.iso.convert.AbstractConverter<RegulatoryAuthorityDTO, RegulatoryAuthority> {
+public class RegulatoryAuthorityConverter extends
+        gov.nih.nci.pa.iso.convert.AbstractConverter<RegulatoryAuthorityDTO, RegulatoryAuthority> {
     
     /**
-     * 
-     * @param sra as a parameter
-     * @return StudyProtocolDTO is returned as DTO
+     * {@inheritDoc}
      */
     @Override
     public RegulatoryAuthorityDTO convertFromDomainToDto(RegulatoryAuthority sra) {
@@ -111,13 +109,20 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<RegulatoryAuthorityDTO, RegulatoryA
     }
     
     /**
-     * 
-     * @param dto to be converted
-     * @return StudyRegulatoryAuthority as domain object 
+     * {@inheritDoc}
      */
     @Override
     public RegulatoryAuthority convertFromDtoToDomain(RegulatoryAuthorityDTO dto) {
         RegulatoryAuthority authority = new RegulatoryAuthority();
+        convertFromDtoToDomain(dto, authority);
+        return authority;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(RegulatoryAuthorityDTO dto, RegulatoryAuthority authority) {
         if (dto.getIdentifier() != null) {
             authority.setId(IiConverter.convertToLong(dto.getIdentifier()));
         }
@@ -125,7 +130,6 @@ gov.nih.nci.pa.iso.convert.AbstractConverter<RegulatoryAuthorityDTO, RegulatoryA
         country.setId(IiConverter.convertToLong(dto.getCountryIdentifier()));
         authority.setCountry(country);
         authority.setAuthorityName(StConverter.convertToString(dto.getAuthorityName()));
-        return authority;
     }
 
 }

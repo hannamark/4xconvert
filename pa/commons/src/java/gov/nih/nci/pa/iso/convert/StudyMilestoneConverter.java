@@ -95,9 +95,7 @@ import gov.nih.nci.pa.service.PAException;
 public class StudyMilestoneConverter extends AbstractConverter<StudyMilestoneDTO, StudyMilestone> {
 
     /**
-     * @param bo domain object
-     * @return dto
-     * @throws PAException exception
+     * {@inheritDoc}
      */
     @Override
     public StudyMilestoneDTO convertFromDomainToDto(StudyMilestone bo)
@@ -112,15 +110,21 @@ public class StudyMilestoneConverter extends AbstractConverter<StudyMilestoneDTO
     }
 
     /**
-     * @param dto dto
-     * @return domain object
-     * @throws PAException exception
+     * {@inheritDoc}
      */
     @Override
     public StudyMilestone convertFromDtoToDomain(StudyMilestoneDTO dto)
             throws PAException {
         StudyMilestone bo = new StudyMilestone();
+        convertFromDtoToDomain(dto, bo);
+        return bo;
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(StudyMilestoneDTO dto, StudyMilestone bo) {
         if (IiConverter.convertToLong(dto.getStudyProtocolIdentifier()) != null) {
             StudyProtocol spBo = new StudyProtocol();
             spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
@@ -131,7 +135,6 @@ public class StudyMilestoneConverter extends AbstractConverter<StudyMilestoneDTO
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setMilestoneCode(MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode())));
         bo.setMilestoneDate(TsConverter.convertToTimestamp(dto.getMilestoneDate()));
-        return bo;
     }
 
 }
