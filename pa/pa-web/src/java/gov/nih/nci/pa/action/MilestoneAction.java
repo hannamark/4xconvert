@@ -78,6 +78,10 @@
 */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.dto.MilestoneTrialHistoryWebDTO;
 import gov.nih.nci.pa.dto.MilestoneWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -85,12 +89,14 @@ import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -98,7 +104,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.struts2.ServletActionContext;
 
 /**
@@ -110,6 +119,9 @@ public final class MilestoneAction extends AbstractListEditAction {
 
     private MilestoneWebDTO milestone;
     private List<MilestoneWebDTO> milestoneList;
+    private Map<Integer, MilestoneTrialHistoryWebDTO> amendmentMap;
+    private Integer submissionNumber;
+    private boolean addAllowed;
 
     /**
      * @throws PAException exception
@@ -124,12 +136,38 @@ public final class MilestoneAction extends AbstractListEditAction {
      */
     @Override
     protected void loadListForm() throws PAException {
-        List<StudyMilestoneDTO> smList = getStudyMilestoneSvc().getByStudyProtocol(getSpIi());
+        loadAmendmentMap();
+        Ii spIi = amendmentMap.get(submissionNumber).getIdentifier();
+        addAllowed = spIi.getExtension().equals(getSpIi().getExtension());
+        List<StudyMilestoneDTO> smList = getStudyMilestoneSvc().getByStudyProtocol(spIi);
         milestoneList = new ArrayList<MilestoneWebDTO>();
         for (StudyMilestoneDTO sm : smList) {
             milestoneList.add(new MilestoneWebDTO(sm));
-
         }
+    }
+    
+    private void loadAmendmentMap() throws PAException {
+        Ii studyProtocolIi = getSpIi();
+        StudyProtocolDTO spDTO = getStudyProtocolSvc().getStudyProtocol(studyProtocolIi);
+        StudyProtocolDTO toSearchspDTO = new StudyProtocolDTO();
+        toSearchspDTO.setSecondaryIdentifiers(DSetConverter.convertIiToDset(PAUtil.getAssignedIdentifier(spDTO)));
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
+        Map<Integer, MilestoneTrialHistoryWebDTO> spMap = new TreeMap<Integer, MilestoneTrialHistoryWebDTO>();
+        try {
+            List<StudyProtocolDTO> spList = getStudyProtocolSvc().search(toSearchspDTO, limit);
+            if (CollectionUtils.isNotEmpty(spList)) {
+                for (StudyProtocolDTO sp : spList) {
+                    Integer sn = IntConverter.convertToInteger(sp.getSubmissionNumber());
+                    spMap.put(sn, new MilestoneTrialHistoryWebDTO(sp));
+                    if (submissionNumber == null && studyProtocolIi.equals(sp.getIdentifier())) {
+                        submissionNumber = sn;
+                    }
+                }
+            }
+        } catch (TooManyResultsException e) {
+            throw new PAException(e);
+        }
+        setAmendmentMap(spMap);
     }
 
     /**
@@ -160,8 +198,8 @@ public final class MilestoneAction extends AbstractListEditAction {
                 paServiceUtil.createMilestone(spIi, MilestoneCode.READY_FOR_PDQ_ABSTRACTION, null);*/
 
                 StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(getSpIi());
-                Integer submissionNumber = IntConverter.convertToInteger(spDTO.getSubmissionNumber());
-                if (submissionNumber > 1) {
+                Integer sn = IntConverter.convertToInteger(spDTO.getSubmissionNumber());
+                if (sn > 1) {
                     //send mail
                     PaRegistry.getMailManagerService().sendAmendAcceptEmail(getSpIi());
                 } else {
@@ -205,5 +243,47 @@ public final class MilestoneAction extends AbstractListEditAction {
      */
     public void setMilestoneList(List<MilestoneWebDTO> milestoneList) {
         this.milestoneList = milestoneList;
+    }
+
+    /**
+     * @return the amendmentMap
+     */
+    public Map<Integer, MilestoneTrialHistoryWebDTO> getAmendmentMap() {
+        return amendmentMap;
+    }
+
+    /**
+     * @param amendmentMap the amendmentMap to set
+     */
+    public void setAmendmentMap(Map<Integer, MilestoneTrialHistoryWebDTO> amendmentMap) {
+        this.amendmentMap = amendmentMap;
+    }
+
+    /**
+     * @return the submissionNumber
+     */
+    public Integer getSubmissionNumber() {
+        return submissionNumber;
+    }
+
+    /**
+     * @param submissionNumber the submissionNumber to set
+     */
+    public void setSubmissionNumber(Integer submissionNumber) {
+        this.submissionNumber = submissionNumber;
+    }
+    
+    /**
+     * @return the addAllowed
+     */
+    public boolean isAddAllowed() {
+        return addAllowed;
+    }
+    
+    /**
+     * @param addAllowed the addAllowed to set
+     */
+    public void setAddAllowed(boolean addAllowed) {
+        this.addAllowed = addAllowed;
     }
 }

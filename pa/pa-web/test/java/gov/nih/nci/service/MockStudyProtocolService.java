@@ -132,6 +132,7 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
         sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("4/15/2010"));
+        sp.setSubmissionNumber(1);
         User userLastCreated = new User();
         userLastCreated.setLoginName("user2@mail.nih.gov");
         sp.setUserLastCreated(userLastCreated);

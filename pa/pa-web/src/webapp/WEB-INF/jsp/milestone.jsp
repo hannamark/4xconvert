@@ -10,6 +10,11 @@
                 form.action="milestonecreate.action";
                 form.submit();
             }
+            function handleChange() {
+                var form = document.milestoneForm;
+                form.action="milestone.action";
+                form.submit();
+            }    
         </script>
     </head>
     <body>
@@ -24,6 +29,13 @@
             <s:form name="milestoneForm">
                 <pa:studyUniqueToken/>
                 <s:hidden name="selectedRowIdentifier"/>
+                <s:if test="%{amendmentMap.size > 1}">
+                    <div>
+                        <span class="label"><label for="submissionNumber"><fmt:message key="milestone.submissionNumber"/></label></span>
+                        <s:select id="submissionNumber" list="amendmentMap" listValue="value.submissionNumber" 
+                                  name="submissionNumber" onchange="handleChange();" value="submissionNumber"/>
+                    </div>
+                </s:if>
                 <h2>
                     <fmt:message key="milestone.details.title"/>
                 </h2>
@@ -42,12 +54,14 @@
                 <div class="actionsrow">
                     <del class="btnwrapper">
                         <ul class="btnrow">
-                            <pa:displayWhenCheckedOut>
-                                <li>
-                                    <a href="#" class="btn" onclick="this.blur();handleCreate();">
-                                        <span class="btn_img"><span class="add">Add </span></span>
-                                    </a>
-                                </li>
+                        	<pa:displayWhenCheckedOut>
+                                <s:if test="%{addAllowed}">
+                                    <li>
+                                        <a href="#" class="btn" onclick="this.blur();handleCreate();">
+                                            <span class="btn_img"><span class="add">Add</span></span>
+                                        </a>
+                                    </li>
+                                </s:if>
                             </pa:displayWhenCheckedOut>
                         </ul>
                     </del>
