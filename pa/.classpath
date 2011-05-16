@@ -44,7 +44,7 @@
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/jericho-html-2.4.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/jstl-1.1.2.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/nci-commons-struts2-1.2.23.jar"/>
-    <classpathentry kind="var" path="PA_LIB/pa-web/compile/nci-commons-core-1.2.23.jar" sourcepath="/PA_LIB/pa-web/compile/nci-commons-core-1.2.23.jar"/>
+    <classpathentry kind="var" path="PA_LIB/pa-web/compile/nci-commons-core-1.2.23.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/ognl-2.6.11.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/persistence-api-1.0.jar"/>
     <classpathentry kind="var" path="PA_LIB/pa-web/compile/postgresql-8.4-701.jdbc3.jar"/>
