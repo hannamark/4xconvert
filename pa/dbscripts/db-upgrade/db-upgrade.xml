@@ -686,4 +686,8 @@
         <comment>Add audit log tables.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.5/PO-2731.sql"/>
      </changeSet>
+     <changeSet id="PO-3597" author="ludetc" runOnChange="true">
+        <comment>Change grid abstractor names based on property</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.5/PO-3597.sql"/>
+     </changeSet>
 </databaseChangeLog>
