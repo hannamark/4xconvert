@@ -89,6 +89,7 @@ import javax.persistence.MappedSuperclass;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
@@ -97,7 +98,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  *
  */
 @MappedSuperclass
-public class StructuralRole extends AbstractEntity {
+public class StructuralRole extends AbstractEntity implements Auditable {
 
     private static final long serialVersionUID = 7498499786106581528L;
     private StructuralRoleStatusCode  statusCode;

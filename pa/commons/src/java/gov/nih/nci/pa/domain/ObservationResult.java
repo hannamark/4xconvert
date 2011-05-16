@@ -88,14 +88,16 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 /**
  * The Class ObservationResult.
- * 
+ *
  * @author Kalpana Guthikonda
  * @since 11/4/2009
  */
 @MappedSuperclass
-public class ObservationResult extends AbstractStudyEntity {
+public class ObservationResult extends AbstractStudyEntity implements Auditable {
 
     private static final long serialVersionUID = 1L;
     private String resultCode;
@@ -108,7 +110,7 @@ public class ObservationResult extends AbstractStudyEntity {
     private String unitOfMeasureCode;
     private Timestamp resultDateRangeLow;
     private Timestamp resultDateRangeHigh;
-    
+
     /**
      * Gets the result code.
      * @return the result code
@@ -117,7 +119,7 @@ public class ObservationResult extends AbstractStudyEntity {
     public String getResultCode() {
         return resultCode;
     }
-    
+
     /**
      * Sets the result code.
      * @param resultCode the new result code
@@ -125,7 +127,7 @@ public class ObservationResult extends AbstractStudyEntity {
     public void setResultCode(String resultCode) {
         this.resultCode = resultCode;
     }
-    
+
     /**
      * Gets the result code modified text.
      * @return the result code modified text
@@ -134,7 +136,7 @@ public class ObservationResult extends AbstractStudyEntity {
     public String getResultCodeModifiedText() {
         return resultCodeModifiedText;
     }
-    
+
     /**
      * Sets the result code modified text.
      * @param resultCodeModifiedText the new result code modified text
@@ -142,7 +144,7 @@ public class ObservationResult extends AbstractStudyEntity {
     public void setResultCodeModifiedText(String resultCodeModifiedText) {
         this.resultCodeModifiedText = resultCodeModifiedText;
     }
-    
+
     /**
      * Gets the result indicator.
      * @return the result indicator
@@ -151,7 +153,7 @@ public class ObservationResult extends AbstractStudyEntity {
     public Boolean getResultIndicator() {
         return resultIndicator;
     }
-    
+
     /**
      * Sets the result indicator.
      * @param resultIndicator the new result indicator
@@ -193,7 +195,7 @@ public class ObservationResult extends AbstractStudyEntity {
     public void setResultQuantityUnit(String resultQuantityUnit) {
         this.resultQuantityUnit = resultQuantityUnit;
     }
-    
+
     /**
      * Gets the result text.
      * @return the result text
@@ -202,7 +204,7 @@ public class ObservationResult extends AbstractStudyEntity {
     public String getResultText() {
         return resultText;
     }
-    
+
     /**
      * Sets the result text.
      * @param resultText the new result text
@@ -210,7 +212,7 @@ public class ObservationResult extends AbstractStudyEntity {
     public void setResultText(String resultText) {
         this.resultText = resultText;
     }
-    
+
     /**
      * Gets the type code.
      * @return the type code
@@ -220,7 +222,7 @@ public class ObservationResult extends AbstractStudyEntity {
     public PerformedObservationResultTypeCode getTypeCode() {
         return typeCode;
     }
-    
+
     /**
      * Sets the type code.
      * @param typeCode the new type code
@@ -228,7 +230,7 @@ public class ObservationResult extends AbstractStudyEntity {
     public void setTypeCode(PerformedObservationResultTypeCode typeCode) {
         this.typeCode = typeCode;
     }
-    
+
     /**
      * Gets the unit of measure code.
      * @return the unit of measure code
@@ -237,7 +239,7 @@ public class ObservationResult extends AbstractStudyEntity {
     public String getUnitOfMeasureCode() {
         return unitOfMeasureCode;
     }
-    
+
     /**
      * Sets the unit of measure code.
      * @param unitOfMeasureCode the new unit of measure code

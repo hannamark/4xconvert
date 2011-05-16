@@ -93,13 +93,15 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 /**
  * @author Bala Nair
  *
  */
 @Entity
 @Table(name = "REGISTRY_USER")
-public class RegistryUser extends AbstractEntity {
+public class RegistryUser extends AbstractEntity implements Auditable {
     private static final long serialVersionUID = -6519568778371398209L;
     private String firstName;
     private String lastName;

@@ -89,6 +89,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 /**
  * An action plan for InterventionalStudyProtocol.
  *
@@ -97,7 +99,7 @@ import javax.persistence.Enumerated;
  */
 
 @Entity
-public class InterventionalStudyProtocol extends StudyProtocol {
+public class InterventionalStudyProtocol extends StudyProtocol implements Auditable {
 
     private static final long serialVersionUID = -7019574546215547954L;
     private AllocationCode allocationCode;

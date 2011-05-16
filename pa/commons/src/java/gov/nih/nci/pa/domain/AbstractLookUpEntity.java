@@ -82,6 +82,7 @@ package gov.nih.nci.pa.domain;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
@@ -90,7 +91,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  * @since 05/22/2008
  */
 @MappedSuperclass
-public abstract class AbstractLookUpEntity extends AbstractEntity {
+public abstract class AbstractLookUpEntity extends AbstractEntity implements Auditable {
 
     private static final long serialVersionUID = 1234567890L;
 

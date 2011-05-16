@@ -92,6 +92,7 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
@@ -102,7 +103,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @Table(name = "DOCUMENT_WORKFLOW_STATUS")
-public class DocumentWorkflowStatus extends AbstractEntity {
+public class DocumentWorkflowStatus extends AbstractEntity implements Auditable {
 
     private static final long serialVersionUID = 1234567890L;
     private String commentText;

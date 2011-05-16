@@ -91,6 +91,7 @@ import javax.persistence.MappedSuperclass;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
@@ -100,7 +101,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  * @since 05/22/2008
  */
 @MappedSuperclass
-public class FunctionalRole extends AbstractEntity {
+public class FunctionalRole extends AbstractEntity implements Auditable {
 
     /** The Constant serialVersionUID. */
     static final long serialVersionUID = 8492645655L;

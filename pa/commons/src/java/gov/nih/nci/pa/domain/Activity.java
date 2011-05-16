@@ -85,12 +85,14 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 /**
  * @author Hugh Reinhart
  * @since 10/28/2008
  */
 @MappedSuperclass
-public class Activity extends AbstractStudyEntity {
+public class Activity extends AbstractStudyEntity implements Auditable {
 
     private static final long serialVersionUID = -4911602940850620244L;
 

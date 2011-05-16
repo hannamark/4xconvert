@@ -87,6 +87,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 
@@ -101,7 +102,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @Table(name =  "STUDY_RESOURCING")
-public class StudyResourcing extends AbstractStudyEntity {
+public class StudyResourcing extends AbstractStudyEntity implements Auditable {
 
     private static final long serialVersionUID = 4862154740562809004L;
     private SummaryFourFundingCategoryCode typeCode;

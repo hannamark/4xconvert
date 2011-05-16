@@ -126,6 +126,7 @@ import org.hibernate.annotations.SortType;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
@@ -142,7 +143,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "Study_Protocol_type", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "STUDY_PROTOCOL")
-public class StudyProtocol extends AbstractStudyProtocol {
+public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     private static final String STUDY_PROTOCOL_MAPPING = "studyProtocol";
 
     private static final long serialVersionUID = 1234567890L;

@@ -85,6 +85,8 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 /**
  * The participation of a Regulatory Authority in the governmental oversight of a
  * clinical trial.
@@ -96,7 +98,7 @@ import org.hibernate.validator.NotNull;
  */
 @Entity
 @Table (name = "STUDY_REGULATORY_AUTHORITY")
-public class StudyRegulatoryAuthority extends AbstractStudyEntity {
+public class StudyRegulatoryAuthority extends AbstractStudyEntity implements Auditable {
 
     private static final long serialVersionUID = 1L;
     private RegulatoryAuthority regulatoryAuthority;

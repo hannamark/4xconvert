@@ -87,6 +87,7 @@ import javax.persistence.MappedSuperclass;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
@@ -97,7 +98,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  * @since 11/29/2008
  */
 @MappedSuperclass
-public abstract class AbstractEntityWithStatusCode<ENUM> extends AbstractEntity {
+public abstract class AbstractEntityWithStatusCode<ENUM> extends AbstractEntity implements Auditable {
 
     private static final long serialVersionUID = 8383567890L;
 

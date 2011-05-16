@@ -95,6 +95,8 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 /**
  *
  * @author Kalpana Guthikonda
@@ -102,7 +104,7 @@ import org.hibernate.validator.NotNull;
  */
 @Entity
 @Table(name =  "STUDY_INDLDE")
-public class StudyIndlde extends AbstractEntity {
+public class StudyIndlde extends AbstractEntity implements Auditable {
 
     private static final long serialVersionUID = -4624022065301553590L;
     private StudyProtocol studyProtocol;

@@ -4,6 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 /**
  * Storing the protocol ids for every incoming messages.
  * @author  Harsha
@@ -11,12 +13,12 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "MESSAGES_LOG_AUDIT")
-public class MessageLogAudit extends AbstractEntity {
-    
+public class MessageLogAudit extends AbstractEntity implements Auditable {
+
     private static final long serialVersionUID = -4684858490042459986L;
     private Long studyProtocolIdentifier;
     private Long messageIdentifier;
-    
+
     /**
      * @return the studyProtocolIdentifier
      */
@@ -43,10 +45,10 @@ public class MessageLogAudit extends AbstractEntity {
     public void setMessageIdentifier(Long messageIdentifier) {
         this.messageIdentifier = messageIdentifier;
     }
- 
-   
 
-    
-    
-  
+
+
+
+
+
 }

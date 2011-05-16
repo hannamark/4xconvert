@@ -87,6 +87,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 
 /**
  * The organization that has responsibility for protocol management,
@@ -96,7 +98,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "STUDY_COORDINATING_CENTER")
-public class StudyCoordinatingCenter  extends AbstractEntity {
+public class StudyCoordinatingCenter  extends AbstractEntity implements Auditable {
     private static final long serialVersionUID = 1234567890L;
     private StudyProtocol studyProtocol;
     private Organization organization;

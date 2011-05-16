@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.pa.domain;
 
@@ -15,18 +15,20 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 /**
  * Maintains history of overall status for the Site.
- * 
+ *
  * @author Vrushali
  *
  */
 @Entity
 @Table(name = "STUDY_SITE_OVERALL_STATUS")
-public class StudySiteOverallStatus extends AbstractSiteEntity {
+public class StudySiteOverallStatus extends AbstractSiteEntity implements Auditable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     private StudySiteStatusCode statusCode;

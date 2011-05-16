@@ -88,6 +88,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 /**
  * Describes the recruitment state of the study.
  *
@@ -96,7 +98,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "STUDY_RECRUITMENT_STATUS")
-public class StudyRecruitmentStatus extends AbstractStudyEntity {
+public class StudyRecruitmentStatus extends AbstractStudyEntity implements Auditable {
     private static final long serialVersionUID = 1234568364L;
 
     private StudyRecruitmentStatusCode statusCode;

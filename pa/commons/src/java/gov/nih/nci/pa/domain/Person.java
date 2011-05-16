@@ -92,6 +92,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 
 /**
  * A human being.
@@ -101,7 +103,7 @@ import org.hibernate.validator.NotNull;
  */
 
 @Entity
-public class Person extends AbstractEntity {
+public class Person extends AbstractEntity implements Auditable {
 
     private static final long serialVersionUID = 1234567890L;
 

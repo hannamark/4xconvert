@@ -86,6 +86,7 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 /**
  *
@@ -94,7 +95,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @Table(name =  "DOCUMENT")
-public class Document extends AbstractDocument {
+public class Document extends AbstractDocument implements Auditable {
 
     private static final long serialVersionUID = 8042681583974060450L;
     private Boolean activeIndicator;

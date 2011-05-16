@@ -94,6 +94,7 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.Length;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
@@ -103,7 +104,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @Table(name = "SDC_DISEASE")
-public class SDCDisease extends AbstractEntity implements Disease {
+public class SDCDisease extends AbstractEntity implements Disease, Auditable {
     private static final long serialVersionUID = 1521727625970317564L;
     private static final int DISEASE_CODE_MAX = 10;
 

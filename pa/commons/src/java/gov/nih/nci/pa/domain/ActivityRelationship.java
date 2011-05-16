@@ -91,26 +91,28 @@ import javax.persistence.Table;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 /**
  * The Class ActivityRelationship.
- * 
+ *
  * @author Kalpana Guthikonda
  * @since 11/6/2009
  */
 @Entity
 @Table(name = "ACTIVITY_RELATIONSHIP")
-public class ActivityRelationship extends AbstractEntity {
+public class ActivityRelationship extends AbstractEntity implements Auditable {
     private static final long serialVersionUID = 1L;
 
     private ActivityRelationshipTypeCode typeCode;
     private PerformedActivity sourcePerformedActivity = new PerformedActivity();
     private PerformedActivity targetPerformedActivity = new PerformedActivity();
-       
+
     /**
      * Gets the type code.
      * @return the type code
      */
-    @Column(name = "TYPE_CODE")    
+    @Column(name = "TYPE_CODE")
     @Enumerated(EnumType.STRING)
     public ActivityRelationshipTypeCode getTypeCode() {
         return typeCode;
@@ -130,7 +132,7 @@ public class ActivityRelationship extends AbstractEntity {
      */
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "SOURCE_PERFORMED_ACTIVITY_IDENTIFIER")    
+    @JoinColumn(name = "SOURCE_PERFORMED_ACTIVITY_IDENTIFIER")
     public PerformedActivity getSourcePerformedActivity() {
         return sourcePerformedActivity;
     }
@@ -149,7 +151,7 @@ public class ActivityRelationship extends AbstractEntity {
      */
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "TARGET_PERFORMED_ACTIVITY_IDENTIFIER") 
+    @JoinColumn(name = "TARGET_PERFORMED_ACTIVITY_IDENTIFIER")
     public PerformedActivity getTargetPerformedActivity() {
         return targetPerformedActivity;
     }

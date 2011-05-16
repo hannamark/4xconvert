@@ -88,6 +88,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 
 /**
  * .
@@ -97,7 +99,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "STUDY_COORDINATING_CENTER_ROLES")
-public class StudyCoordinatingCenterRole extends AbstractEntity {
+public class StudyCoordinatingCenterRole extends AbstractEntity implements Auditable {
 
     private static final long serialVersionUID = 1234567890L;
 

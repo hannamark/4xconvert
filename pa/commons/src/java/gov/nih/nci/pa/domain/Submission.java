@@ -91,6 +91,8 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.Min;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 
 
 /**
@@ -99,7 +101,7 @@ import org.hibernate.validator.Min;
  */
 @Entity
 @Table(name = "submission")
-public class Submission extends AbstractStudyEntity {
+public class Submission extends AbstractStudyEntity implements Auditable {
     private static final long serialVersionUID = -7575618820609877824L;
 
     private String label;

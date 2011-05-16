@@ -96,6 +96,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "ANATOMIC_SITES")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE) // Unit tests write, so cannot use read-only
 public class AnatomicSite extends AbstractLookUpEntity {
-   
+
     private static final long serialVersionUID = 1L;
 }

@@ -86,6 +86,7 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
@@ -94,7 +95,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @Table(name = "STUDY_DISEASE")
-public class StudyDisease extends AbstractStudyEntity {
+public class StudyDisease extends AbstractStudyEntity implements Auditable {
     private static final long serialVersionUID = 1898967890L;
 
     private PDQDisease disease;

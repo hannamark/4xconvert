@@ -79,10 +79,13 @@
 package gov.nih.nci.pa.domain;
 
 import javax.persistence.Column;
-import javax.persistence.Table;
 import javax.persistence.Entity;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 
 
 /**
@@ -96,7 +99,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @org.hibernate.annotations.Entity(mutable = false)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE) // Unit tests write, so cannot use read-only
 
-public class Country extends AbstractEntity {
+public class Country extends AbstractEntity implements Auditable {
     private static final long serialVersionUID = 1L;
     private String alpha2;
     private String alpha3;

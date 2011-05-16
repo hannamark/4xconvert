@@ -88,6 +88,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 /**
  * domain class for ObservationalStudyProtocol.
  *
@@ -96,7 +98,7 @@ import javax.persistence.Enumerated;
  */
 
 @Entity
-public class ObservationalStudyProtocol extends StudyProtocol {
+public class ObservationalStudyProtocol extends StudyProtocol implements Auditable {
 
     private static final long serialVersionUID = 9007234006923029024L;
     private String biospecimenDescription;

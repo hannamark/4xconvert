@@ -91,6 +91,8 @@ import javax.persistence.Table;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 /**
  * Describes the comprehensive state of the study.
  *
@@ -99,7 +101,7 @@ import org.hibernate.validator.NotNull;
  */
 @Entity
 @Table(name = "STUDY_OVERALL_STATUS")
-public class StudyOverallStatus extends AbstractStudyEntity {
+public class StudyOverallStatus extends AbstractStudyEntity implements Auditable {
 
     private static final long serialVersionUID = 1234567890L;
     private static final int MAX_COMMENT_LENGTH = 2000;

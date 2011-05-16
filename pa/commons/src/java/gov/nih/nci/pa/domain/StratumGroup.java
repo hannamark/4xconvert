@@ -86,6 +86,8 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
+
 /**
  *
  * @author Kalpana Guthikonda
@@ -93,7 +95,7 @@ import org.hibernate.validator.NotNull;
  */
 @Entity
 @Table(name =  "STRATUM_GROUP")
-public class StratumGroup extends AbstractEntity {
+public class StratumGroup extends AbstractEntity implements Auditable {
 
     private static final long serialVersionUID = 4232189962059209724L;
     private StudyProtocol studyProtocol;

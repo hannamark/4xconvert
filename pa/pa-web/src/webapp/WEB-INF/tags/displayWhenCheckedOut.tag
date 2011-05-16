@@ -3,6 +3,6 @@
 <%@taglib prefix="s" uri="/struts-tags" %>
 
 <c:if test="${(sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy && (sessionScope.isAdminAbstractor || sessionScope.isScientificAbstractor))
-                                    || (sessionScope.role == 'SuAbstractor')}">
+                                    || (sessionScope.isSuAbstractor)}">
     <jsp:doBody />
 </c:if>
