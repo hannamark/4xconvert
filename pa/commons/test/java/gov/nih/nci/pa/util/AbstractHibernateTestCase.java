@@ -133,7 +133,7 @@ public abstract class AbstractHibernateTestCase {
      */
     @After
     public final void tearDown() {
-        TestSchema.clearUser();
+        clearUser();
         try {
             transaction.commit();
         } catch (Exception e) {
@@ -143,7 +143,7 @@ public abstract class AbstractHibernateTestCase {
 
     @Before
     final public void initDb() throws HibernateException, SQLException {
-        
+
         dropAuditTable();
         createAuditTable();
         Transaction tx = PaHibernateUtil.getHibernateHelper().beginTransaction();
@@ -176,5 +176,9 @@ public abstract class AbstractHibernateTestCase {
 
     protected Session getCurrentSession() {
         return PaHibernateUtil.getHibernateHelper().getCurrentSession();
+    }
+
+    public void clearUser() {
+        TestSchema.clearUser();
     }
 }

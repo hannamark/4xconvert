@@ -81,7 +81,6 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
@@ -163,6 +162,7 @@ import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * @author Naveen Amiruddin
@@ -551,7 +551,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             try {
                 user = spDTO.getUserLastCreated() != null
                         ? CSMUserService.getInstance().getCSMUser(spDTO.getUserLastCreated().getValue())
-                        : CSMUserService.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser());
+                        : CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser());
             } catch (PAException e) {
                 LOG.info("Unable to set User for auditing", e);
             }

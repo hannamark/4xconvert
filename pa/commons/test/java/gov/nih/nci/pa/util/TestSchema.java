@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.pa.util;
 
-import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Arm;
@@ -181,6 +180,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.hibernate.Session;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  *
@@ -754,14 +755,14 @@ public class TestSchema {
             user.setLastName("Smith");
             user.setUpdateDate(new Date());
             TestSchema.addUpdObject(user);
-            CaseSensitiveUsernameHolder.setUser(user.getLoginName());
+            UsernameHolder.setUser(user.getLoginName());
         }
         return user;
     }
 
     public static void clearUser() {
         user = null;
-        CaseSensitiveUsernameHolder.setUser(null);
+        UsernameHolder.setUser(null);
     }
 
     public static Country createCountryObj() {

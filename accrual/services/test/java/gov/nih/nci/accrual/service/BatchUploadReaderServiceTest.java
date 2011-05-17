@@ -102,6 +102,7 @@ import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.accrual.service.util.POPatientBean;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.util.AbstractAccrualHibernateTestCase;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.accrual.util.PoServiceLocator;
@@ -125,7 +126,6 @@ import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
-import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
@@ -150,7 +150,7 @@ import org.mockito.stubbing.Answer;
 /**
  * @author vrushali
  */
-public class BatchUploadReaderServiceTest extends AbstractHibernateTestCase {
+public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCase {
     private Ii abbreviatedIi;
     private Ii completeIi;
     private Ii inactiveIi;

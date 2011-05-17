@@ -4,13 +4,14 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
-import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 
 /**
@@ -28,7 +29,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
         criteria = new StudyProtocolQueryCriteria();
         criteria.setNciIdentifier("NCI-2009-00001");
         getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
-        CaseSensitiveUsernameHolder.setUser("suAbstractor");
+        UsernameHolder.setUser("suAbstractor");
         getSession().setAttribute(Constants.IS_SU_ABSTRACTOR, Boolean.TRUE);
     }
 

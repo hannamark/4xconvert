@@ -79,7 +79,6 @@
 package gov.nih.nci.pa.service.correlation;
 
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
-import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
@@ -120,6 +119,8 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * Synchronization service bean for organization and its structural roles.
@@ -239,7 +240,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                 paOrg.setStatusCode(newOrg.getStatusCode());
             }
             paOrg.setDateLastUpdated(new Timestamp((new Date()).getTime()));
-            paOrg.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
+            paOrg.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser()));
             session.update(paOrg);
             session.flush();
         }

@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.pa.action;
 
-import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -106,6 +105,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.opensymphony.xwork2.ActionSupport;
 
 
@@ -203,7 +203,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
      * Populates the identifier search parameters.
      */
     private void populateIdentifierSearchParameters() {
-        criteria.setUserLastCreated(CaseSensitiveUsernameHolder.getUser());
+        criteria.setUserLastCreated(UsernameHolder.getUser());
         if (criteria.getIdentifierType() != null && StringUtils.isNotEmpty(getIdentifier())) {
             if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.NCI.getCode())) {
                 criteria.setNciIdentifier(getIdentifier());
@@ -288,7 +288,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
                     setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
 
-            String loginName = CaseSensitiveUsernameHolder.getUser();
+            String loginName = UsernameHolder.getUser();
 
             ServletActionContext.getRequest().getSession().setAttribute(Constants.LOGGED_USER_NAME, loginName);
             Boolean isSuperUser =
@@ -362,7 +362,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         try {
             StudyProtocolQueryDTO studyProtocolQueryDTO =
                 PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(studyProtocolId);
-            String loginName = CaseSensitiveUsernameHolder.getUser();
+            String loginName = UsernameHolder.getUser();
             StudyCheckoutDTO scoDTO = new StudyCheckoutDTO();
             scoDTO.setStudyProtocolIdentifier(
                     IiConverter.convertToStudyProtocolIi(studyProtocolQueryDTO.getStudyProtocolId()));

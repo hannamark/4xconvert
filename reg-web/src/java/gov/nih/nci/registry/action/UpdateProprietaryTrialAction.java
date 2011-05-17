@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.registry.action;
 
-import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
@@ -120,6 +119,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * The Class UpdateProprietaryTrialAction.
@@ -233,7 +234,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
             StudyProtocolDTO studyProtocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(
                     IiConverter.convertToStudyProtocolIi(Long.parseLong(trialDTO.getIdentifier())));
             util.convertToStudyProtocolDTO(trialDTO, studyProtocolDTO);
-            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(CaseSensitiveUsernameHolder.getUser()));
+            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(UsernameHolder.getUser()));
             OrganizationDTO leadOrganizationDTO = util.convertToLeadOrgDTO(trialDTO);
             St leadOrganizationIdentifier = StConverter.convertToSt(trialDTO.getLeadOrgTrialIdentifier());
             St nctIdentifier = StConverter.convertToSt(trialDTO.getNctIdentifier());

@@ -1,7 +1,6 @@
 package gov.nih.nci.registry.action;
 
 
-import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -50,6 +49,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.opensymphony.xwork2.Preparable;
 import com.opensymphony.xwork2.util.CreateIfNull;
 import com.opensymphony.xwork2.util.Element;
@@ -553,7 +553,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
             StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             util.addSecondaryIdentifiers(spDTO, trialDTO);
             util.updateStudyProtcolDTO(spDTO, trialDTO);
-            spDTO.setUserLastCreated(StConverter.convertToSt(CaseSensitiveUsernameHolder.getUser()));
+            spDTO.setUserLastCreated(StConverter.convertToSt(UsernameHolder.getUser()));
 
             //set the overall status
             StudyOverallStatusDTO sosDto = null;

@@ -78,12 +78,12 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.service.util.MockCsmUtil;
+import gov.nih.nci.accrual.util.AbstractAccrualHibernateTestCase;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 
 import org.junit.Before;
 
@@ -92,7 +92,7 @@ import org.junit.Before;
  * @author Hugh Reinhart
  * @since 7/7/2009
  */
-public abstract class AbstractServiceTest<SERVICE_INTERFACE> extends AbstractHibernateTestCase {
+public abstract class AbstractServiceTest<SERVICE_INTERFACE> extends AbstractAccrualHibernateTestCase {
 
     protected static final St BST = StConverter.convertToSt("ASLDKFJAaldfjks");
     protected static final Ii BII = IiConverter.convertToIi(-1L);

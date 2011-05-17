@@ -10,7 +10,6 @@ import gov.nih.nci.pa.domain.FundingMechanism;
 import gov.nih.nci.pa.domain.NIHinstitute;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
-import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.ArrayList;
 import java.util.List;

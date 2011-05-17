@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.registry.action;
 
-import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -120,6 +119,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.opensymphony.xwork2.Preparable;
 
 /**
@@ -186,7 +186,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             } else {
                 studyProtocolDTO = util.convertToInterventionalStudyProtocolDTO(trialDTO);
             }
-            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(CaseSensitiveUsernameHolder.getUser()));
+            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(UsernameHolder.getUser()));
             StudyOverallStatusDTO overallStatusDTO = util.convertToStudyOverallStatusDTO(trialDTO);
             List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
             for (DocumentDTO dto : documentDTOs) {

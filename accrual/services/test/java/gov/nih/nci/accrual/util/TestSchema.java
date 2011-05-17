@@ -80,6 +80,7 @@ import gov.nih.nci.accrual.service.MockPoOrganizationEntityService;
 import gov.nih.nci.accrual.service.MockPoPersonEntityService;
 import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
@@ -551,6 +552,10 @@ public class TestSchema {
 
         PaHibernateUtil.getCurrentSession().flush();
     }
+    
+    public static void clearUser() {
+        CaseSensitiveUsernameHolder.setUser(null);
+    }
 
     public static User createUser() {
         User user = new User();
@@ -575,5 +580,17 @@ public class TestSchema {
         ru.setCsmUserId(user.getUserId());
         TestSchema.addUpdObject(ru);
         return ru;
+    }
+    
+    public static AnatomicSite createAnatomicSiteObj(String preferredName) {
+        AnatomicSite create = new AnatomicSite();
+        create.setCode(preferredName);
+        create.setDisplayName("displayName");
+        create.setCodingSystem("Summary 4 Anatomic Sites");
+        create.setUserLastCreated(createUser());
+        create.setDateLastCreated(new Timestamp(new Date().getTime()));
+        create.setUserLastUpdated(createUser());
+        create.setDateLastUpdated(new Timestamp(new Date().getTime()));
+        return create;
     }
 }

@@ -79,7 +79,6 @@
 
 package gov.nih.nci.pa.service;
 
-import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.convert.AbstractConverter;
@@ -103,6 +102,7 @@ import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
 
 import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * @author Hugh Reinhart
@@ -285,13 +285,13 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
             Date today = new Date();
             if (PAUtil.isIiNull(dto.getIdentifier())) {
                 bo = convertFromDtoToDomain(dto);
-                bo.setUserLastCreated(CSMUserService.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
+                bo.setUserLastCreated(CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser()));
                 bo.setDateLastCreated(today);
             } else {
                 bo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(dto.getIdentifier()));
                 convertFromDtoToDomain(dto, bo);
             }
-            bo.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
+            bo.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser()));
             bo.setDateLastUpdated(today);
             session.saveOrUpdate(bo);
             resultDto = convertFromDomainToDto(bo);

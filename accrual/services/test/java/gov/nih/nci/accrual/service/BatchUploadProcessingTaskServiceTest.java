@@ -89,10 +89,10 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.service.util.BatchImportResults;
 import gov.nih.nci.accrual.service.util.BatchValidationResults;
 import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderServiceLocal;
+import gov.nih.nci.accrual.util.AbstractAccrualHibernateTestCase;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
 import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 
 import java.io.File;
@@ -107,7 +107,7 @@ import org.junit.Test;
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class BatchUploadProcessingTaskServiceTest extends AbstractHibernateTestCase {
+public class BatchUploadProcessingTaskServiceTest extends AbstractAccrualHibernateTestCase {
     private static final int NUMBER_OF_BATCH_FILES = 3;
     private BatchUploadProcessingTaskServiceBean bean = new BatchUploadProcessingTaskServiceBean();
 

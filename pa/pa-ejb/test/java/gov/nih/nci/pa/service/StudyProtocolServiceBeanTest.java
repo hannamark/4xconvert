@@ -87,7 +87,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
@@ -144,6 +143,8 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+
 /**
  * @author Naveen Amiruddin
  * @since 08/26/2008
@@ -155,8 +156,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
     @Before
     public void setUp() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
-        CaseSensitiveUsernameHolder.setUser(TestSchema.getUser().getLoginName());
-        CaseSensitiveUsernameHolder.setUser(TestSchema.getUser().getLoginName());
+        UsernameHolder.setUser(TestSchema.getUser().getLoginName());
         AnatomicSite as = new AnatomicSite();
         as.setCode("Lung");
         as.setCodingSystem("Summary 4 Anatomic Sites");

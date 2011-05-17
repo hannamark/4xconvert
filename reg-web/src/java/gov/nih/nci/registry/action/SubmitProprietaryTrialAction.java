@@ -3,7 +3,6 @@
  */
 package gov.nih.nci.registry.action;
 
-import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
@@ -46,6 +45,8 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * @author Vrushali
@@ -241,7 +242,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
         try {
             trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
             StudyProtocolDTO studyProtocolDTO = util.convertToInterventionalStudyProtocolDTO(trialDTO);
-            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(CaseSensitiveUsernameHolder.getUser()));
+            studyProtocolDTO.setUserLastCreated(StConverter.convertToSt(UsernameHolder.getUser()));
             StudySiteAccrualStatusDTO siteAccrualStatusDTO = convertToStudySiteAccrualStatusDTO(trialDTO);
 
             OrganizationDTO leadOrganizationDTO = util.convertToLeadOrgDTO(trialDTO);

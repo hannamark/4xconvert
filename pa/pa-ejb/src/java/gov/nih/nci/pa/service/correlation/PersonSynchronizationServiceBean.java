@@ -79,7 +79,6 @@
 package gov.nih.nci.pa.service.correlation;
 
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
-import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareProvider;
@@ -127,6 +126,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * Syncrhonization service bean for Person and its structural roles.
@@ -248,7 +249,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
 
             }
             person.setDateLastUpdated(new Timestamp((new Date()).getTime()));
-            person.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
+            person.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser()));
             session.update(person);
             session.flush();
         }

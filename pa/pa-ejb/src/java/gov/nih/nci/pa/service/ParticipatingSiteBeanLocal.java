@@ -88,7 +88,6 @@ import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROL
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
@@ -151,6 +150,8 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.jboss.annotation.security.SecurityDomain;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
+
 /**
  * @author mshestopalov
  *
@@ -171,7 +172,7 @@ implements ParticipatingSiteServiceLocal {
             return;
         }
         CSMUserUtil userService = CSMUserService.getInstance();
-        User user = userService.getCSMUser(CaseSensitiveUsernameHolder.getUser());
+        User user = userService.getCSMUser(UsernameHolder.getUser());
         StudyProtocolDTO spDTO = getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         if (spDTO == null || PAUtil.isIiNull(spDTO.getIdentifier())) {
             throw new PAException("Trial id " + studyProtocolIi.getExtension() + " does not exist.");

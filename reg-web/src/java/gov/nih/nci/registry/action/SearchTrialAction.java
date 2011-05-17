@@ -80,7 +80,6 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.coppa.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
@@ -128,6 +127,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
@@ -315,7 +315,7 @@ public class SearchTrialAction extends ActionSupport {
         } else {
             queryCriteria.setMyTrialsOnly(Boolean.FALSE);
         }
-        queryCriteria.setUserLastCreated(CaseSensitiveUsernameHolder.getUser());
+        queryCriteria.setUserLastCreated(UsernameHolder.getUser());
         // exclude rejected protocols during search
         queryCriteria.setExcludeRejectProtocol(Boolean.TRUE);
         if (StringUtils.isNotEmpty(criteria.getPrincipalInvestigatorId())) {
@@ -550,7 +550,7 @@ public class SearchTrialAction extends ActionSupport {
      */
     public String getMyPartiallySavedTrial() {
         StudyProtocolStageDTO criteriaSpDTO = new StudyProtocolStageDTO();
-        criteriaSpDTO.setUserLastCreated(StConverter.convertToSt(CaseSensitiveUsernameHolder.getUser()));
+        criteriaSpDTO.setUserLastCreated(StConverter.convertToSt(UsernameHolder.getUser()));
         criteriaSpDTO.setOfficialTitle(StConverter.convertToSt(criteria.getOfficialTitle()));
         criteriaSpDTO.setPhaseCode(CdConverter.convertStringToCd(criteria.getPhaseCode()));
         criteriaSpDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(criteria.getPrimaryPurposeCode()));
