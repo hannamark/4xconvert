@@ -98,6 +98,7 @@ import gov.nih.nci.po.data.bo.IdentifiedPerson;
 import gov.nih.nci.po.data.bo.Organization;
 import gov.nih.nci.po.data.bo.Person;
 import gov.nih.nci.po.data.bo.RoleStatus;
+import gov.nih.nci.po.data.convert.IdConverter;
 import gov.nih.nci.po.service.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.po.service.ClinicalResearchStaffServiceLocal;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -108,7 +109,6 @@ import gov.nih.nci.po.util.PoRegistry;
 import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
-import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.Iterator;
@@ -128,14 +128,9 @@ import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class CtepPersonImporter extends CtepEntityImporter {
     /**
-     * The root value of the ctep ii's that reference the main db identifier of the person in ctep's system.
-     */
-    public static final String CTEP_PERSON_DB_ROOT = "Cancer Therapy Evaluation Program Person Identifier";
-
-    /**
      * The root value of the ctep ii's that reference the friendly user known identifier of the person in ctep's system.
      */
-    public static final String CTEP_PERSON_OTHER_ROOT = "Cancer Therapy Evaluation Program Person Other Identifier";
+    public static final String CTEP_PERSON_ROOT = "Cancer Therapy Evaluation Program Person Other Identifier";
 
     private static final Logger LOG = Logger.getLogger(CtepPersonImporter.class);
     private static final String LOG_SEP = " : ";
@@ -174,19 +169,19 @@ public class CtepPersonImporter extends CtepEntityImporter {
      */
     @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
     public Person importPerson(Ii ctepPersonId) throws JMSException, EntityValidationException {
+        ctepPersonId.setReliability(IdentifierReliability.VRF);
+        ctepPersonId.setIdentifierName(IdConverter.IDENTIFIED_PERSON_IDENTIFIER_NAME);
         try {
             // get org from ctep and convert to local data model
             PersonDTO ctepPersonDto = getCtepPersonService().getPersonById(ctepPersonId);
             printPersonDataToDebugLog(ctepPersonDto);
-            Ii assignedId = ctepPersonDto.getIdentifier();
-            assignedId.setReliability(IdentifierReliability.VRF);
             Person ctepPerson = convertToLocalPerson(ctepPersonDto);
             // search for org based on the ctep provided ii
-            IdentifiedPerson identifiedPerson = searchForPreviousRecord(assignedId);
+            IdentifiedPerson identifiedPerson = searchForPreviousRecord(ctepPersonId);
             if (identifiedPerson == null) {
-                return createCtepPerson(ctepPerson, assignedId);
+                return createCtepPerson(ctepPerson, ctepPersonId);
             }
-            return updateCtepPerson(ctepPerson, identifiedPerson, assignedId);
+            return updateCtepPerson(ctepPerson, identifiedPerson);
         } catch (CTEPEntException e) {
             // importing an object that is does not exist remotely, so inactivate it if we have it locally.
             IdentifiedPerson identifiedPerson = searchForPreviousRecord(ctepPersonId);
@@ -250,52 +245,25 @@ public class CtepPersonImporter extends CtepEntityImporter {
         return identifiedPeople.get(0);
     }
 
-    private Person createCtepPerson(Person ctepPerson, Ii assignedId) throws JMSException, EntityValidationException {
+    private Person createCtepPerson(Person ctepPerson, Ii ctepId) throws JMSException, EntityValidationException {
         // create the local entity record
         this.personService.curate(ctepPerson);
-
-        // create the identified entity record for the db id in ctep
-        createIdentifiedPerson(ctepPerson, assignedId);
-
-        // create identified person record for any other person identifiers provied in ctep services
-        IdentifiedPersonDTO otherIdentifier = getOtherId(assignedId);
-
-        if (otherIdentifier != null) {
-            createIdentifiedPerson(ctepPerson, otherIdentifier.getAssignedId());
-        }
+        createIdentifiedPerson(ctepPerson, ctepId);
 
         // create records for all health care provider records
-        HealthCareProviderDTO hcp = getHcpFromCtep(assignedId);
+        HealthCareProviderDTO hcp = getHcpFromCtep(ctepId);
         if (hcp != null) {
             printHcpDataToDebugLog(hcp);
             createHcp(hcp, ctepPerson);
         }
 
-
         // create records for all clinical research staff records.
-        ClinicalResearchStaffDTO crs = getCrsFromCtep(assignedId);
+        ClinicalResearchStaffDTO crs = getCrsFromCtep(ctepId);
         if (crs != null) {
             printCrsDataToDebugLog(crs);
             createCrs(crs, ctepPerson);
         }
-
-
-
         return ctepPerson;
-    }
-
-    private IdentifiedPersonDTO getOtherId(Ii assignedId) {
-        // In case ctep does not have the latest version of iso datatypes which
-        // has the VRF reliability, we set it back to ISS before querying and
-        // then change it to VRF for the rest of the import process.
-        try {
-            assignedId.setReliability(IdentifierReliability.ISS);
-            return getCtepPersonService().getIdentifiedPersonById(assignedId);
-        } catch (CTEPEntException e) {
-            return null;
-        } finally {
-            assignedId.setReliability(IdentifierReliability.VRF);
-        }
     }
 
     private void createIdentifiedPerson(Person ctepPerson, Ii assignedId) throws JMSException,
@@ -316,7 +284,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
         this.identifiedPersonService.curate(identifiedPerson);
     }
 
-    private Person updateCtepPerson(Person ctepPerson, IdentifiedPerson identifiedPerson, Ii unPrefixedIi)
+    private Person updateCtepPerson(Person ctepPerson, IdentifiedPerson identifiedPerson)
             throws JMSException, EntityValidationException {
         Person p = identifiedPerson.getPlayer();
 
@@ -324,20 +292,14 @@ public class CtepPersonImporter extends CtepEntityImporter {
         copyCtepPersonToExistingPerson(ctepPerson, p);
         this.personService.curate(p);
 
-        // update the other identiers
-        IdentifiedPersonDTO newIdentifier = getOtherId(unPrefixedIi);
-        if (newIdentifier != null) {
-            updateOtherIdentifier(p, identifiedPerson, newIdentifier);
-        }
-
         // update the hcp role
-        HealthCareProviderDTO hcpDto = getHcpFromCtep(unPrefixedIi);
+        HealthCareProviderDTO hcpDto = getHcpFromCtep(identifiedPerson.getAssignedIdentifier());
         if (hcpDto != null) {
             updateHcpRoles(p, hcpDto);
         }
 
         // update the crs role
-        ClinicalResearchStaffDTO crsDto = getCrsFromCtep(unPrefixedIi);
+        ClinicalResearchStaffDTO crsDto = getCrsFromCtep(identifiedPerson.getAssignedIdentifier());
         if (crsDto != null) {
             updateCrsRoles(p, crsDto);
         }
@@ -441,48 +403,6 @@ public class CtepPersonImporter extends CtepEntityImporter {
         }
     }
 
-    private void updateOtherIdentifier(Person ctepPerson, IdentifiedPerson identifiedPerson,
-            IdentifiedPersonDTO newIdentifier) throws JMSException, EntityValidationException {
-        Ii newId = newIdentifier.getAssignedId();
-        boolean found = searchForAndUpdateCtepIds(ctepPerson, identifiedPerson, newId);
-        if (!found) {
-            // someone removed the record using the curation tool, add it back
-            createIdentifiedPerson(ctepPerson, newId);
-        }
-    }
-
-    private boolean searchForAndUpdateCtepIds(Person ctepPerson, IdentifiedPerson identifiedPerson, Ii newId)
-            throws JMSException, EntityValidationException {
-        boolean found = false;
-        for (IdentifiedPerson ip : ctepPerson.getIdentifiedPersons()) {
-            if (ip.getScoper().getId().equals(getCtepOrganization().getId()) && ip != identifiedPerson) {
-                // if the scopers match, the current record is either the person's
-                // db id in CTEP or the user friendly CTEP-ID. So check if this
-                // ip record is the same as the provided identifiedPErson record passed
-                // in, if not, then it is the CTEP-ID record and we should update
-                found = true;
-                updateOtherIdentifierIfChangOccurred(newId, ip);
-                break;
-            } else if (ip == identifiedPerson && !RoleStatus.ACTIVE.equals(ip.getStatus())) {
-                // make sure the primary db record is active
-                ip.setStatus(RoleStatus.ACTIVE);
-                this.identifiedPersonService.curate(ip);
-            }
-        }
-        return found;
-    }
-
-    private void updateOtherIdentifierIfChangOccurred(Ii newId, IdentifiedPerson ip) throws JMSException {
-        Ii currentId = ip.getAssignedIdentifier();
-        if (!currentId.getExtension().equals(newId.getExtension()) || !currentId.getRoot().equals(newId.getRoot())
-                || !RoleStatus.ACTIVE.equals(ip.getStatus())) {
-            // if the extension, root, or status changed we need to update
-            ip.setStatus(RoleStatus.ACTIVE);
-            ip.setAssignedIdentifier(newId);
-            this.identifiedPersonService.curate(ip);
-        }
-    }
-
     private void copyCtepPersonToExistingPerson(Person ctepPerson, Person p) {
         // doing this here instead of a 'copy' method in the person itself because all
         // of the relationships are not copied (change requests, roles, etc) The person
@@ -505,16 +425,10 @@ public class CtepPersonImporter extends CtepEntityImporter {
     }
 
     private HealthCareProviderDTO getHcpFromCtep(Ii personIi) {
-        // In case ctep does not have the latest version of iso datatypes which
-        // has the VRF reliability, we set it back to ISS before querying and
-        // then change it to VRF for the rest of the import process.
         try {
-            personIi.setReliability(IdentifierReliability.ISS);
             return getCtepPersonService().getHealthCareProviderByPlayerId(personIi);
         } catch (CTEPEntException e) {
             return null;
-        } finally {
-            personIi.setReliability(IdentifierReliability.VRF);
         }
     }
 
@@ -541,16 +455,10 @@ public class CtepPersonImporter extends CtepEntityImporter {
     }
 
     private ClinicalResearchStaffDTO getCrsFromCtep(Ii personIi) {
-        // In case ctep does not have the latest version of iso datatypes which
-        // has the VRF reliability, we set it back to ISS before querying and
-        // then change it to VRF for the rest of the import process.
         try {
-            personIi.setReliability(IdentifierReliability.ISS);
             return getCtepPersonService().getClinicalResearchStaffByPlayerId(personIi);
         } catch (CTEPEntException e) {
             return null;
-        } finally {
-            personIi.setReliability(IdentifierReliability.VRF);
         }
     }
 

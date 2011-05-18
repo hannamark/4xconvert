@@ -150,14 +150,14 @@ public class StrutsPersonSearchCriteriaTest extends AbstractBeanTest {
         assertEquals(0, l.size());
 
         c.getAssignedIdentifier().setExtension("MY_CTEP_ID");
-        c.getAssignedIdentifier().setRoot(CtepPersonImporter.CTEP_PERSON_OTHER_ROOT);
+        c.getAssignedIdentifier().setRoot(CtepPersonImporter.CTEP_PERSON_ROOT);
         PoHibernateUtil.getCurrentSession().update(c);
         l = criteria.getQuery("", false).list();
         assertEquals(1, l.size());
 
         // test for PO-1087
         c.getAssignedIdentifier().setExtension("MY_CTEP_ID");
-        c.getAssignedIdentifier().setRoot(" " + CtepPersonImporter.CTEP_PERSON_OTHER_ROOT);
+        c.getAssignedIdentifier().setRoot(" " + CtepPersonImporter.CTEP_PERSON_ROOT);
         PoHibernateUtil.getCurrentSession().update(c);
         l = criteria.getQuery("", false).list();
         assertEquals(1, l.size());

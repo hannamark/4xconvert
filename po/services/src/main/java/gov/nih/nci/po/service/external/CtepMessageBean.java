@@ -270,7 +270,7 @@ public class CtepMessageBean implements MessageListener {
         if (msgType.equals(RecordType.ORGANIZATION) || msgType.equals(RecordType.ORGANIZATION_ADDRESS)) {
             ii.setRoot(CtepOrganizationImporter.CTEP_ORG_ROOT);
         } else {
-            ii.setRoot(CtepPersonImporter.CTEP_PERSON_DB_ROOT);
+            ii.setRoot(CtepPersonImporter.CTEP_PERSON_ROOT);
         }
         return ii;
     }

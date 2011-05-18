@@ -34,6 +34,8 @@ import java.util.List;
 import javax.jms.JMSException;
 import javax.naming.Context;
 
+import org.hibernate.validator.InvalidStateException;
+import org.hibernate.validator.InvalidValue;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -136,6 +138,7 @@ public class CtepPersonImporterTest extends AbstractServiceBeanTest {
         assertNotNull(importedPer);
         assertNotNull(service.getPerId());
         IdentifiedPerson ip = getByCtepPersonId(service.getPerId());
+        System.out.println(ip.getId());
         assertNotNull(ip);
         assertNotNull(ip.getPlayer());
         assertEquals(IdentifierReliability.VRF, ip.getAssignedIdentifier().getReliability());

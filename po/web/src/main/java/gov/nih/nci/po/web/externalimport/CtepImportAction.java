@@ -215,7 +215,7 @@ public class CtepImportAction extends ActionSupport {
         public Ii generateIi(String id) {
             Ii ii = new Ii();
             ii.setExtension(id);
-            ii.setRoot(CtepPersonImporter.CTEP_PERSON_DB_ROOT);
+            ii.setRoot(CtepPersonImporter.CTEP_PERSON_ROOT);
             return ii;
         }
 

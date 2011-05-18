@@ -12,6 +12,7 @@ import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.po.data.convert.util.AddressConverterUtil;
 import gov.nih.nci.po.service.external.CtepOrganizationImporterTest;
+import gov.nih.nci.po.service.external.CtepPersonImporter;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
@@ -66,7 +67,7 @@ public class CTEPPerServiceStubBuilder {
         Ii id = new Ii();
         id.setExtension("AAA");
         id.setIdentifierName("CTEP ID");
-        id.setRoot(CtepOrganizationImporterTest.CTEP_ORG_ROOT);
+        id.setRoot(CtepPersonImporter.CTEP_PERSON_ROOT);
         
         return id;
     }
