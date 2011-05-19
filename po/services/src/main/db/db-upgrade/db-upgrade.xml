@@ -149,7 +149,7 @@
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.4/PO-3203.sql"/>
     </changeSet>
     <changeSet id="PO-3579" author="oweisms">
-       <comment>PO-3579: Remove PO records of CTEP internal ids.</comment>
+       <comment>PO-3579: Nullify PO records of CTEP internal ids.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.5/PO-3579.sql"/>
     </changeSet>
 </databaseChangeLog>
