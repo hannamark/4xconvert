@@ -84,7 +84,8 @@
 package gov.nih.nci.pa.pdq;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.io.FilenameFilter;
 
@@ -155,10 +156,12 @@ public class PDQReplaceSponsor {
         
         agency.setText(toBe);
         
-        String output = new XMLOutputter().outputString(document);
-        FileWriter fileWriter = new FileWriter(destFileDir + "/" + xmlFile);
-        fileWriter.write(output);
-        fileWriter.close();
+        FileOutputStream fos = new FileOutputStream(destFileDir + "/" + xmlFile);
+        XMLOutputter outputter = new XMLOutputter();
+        OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+        String output = outputter.outputString(document);
+        osw.write(output);
+        osw.close();
     }
 
 }
