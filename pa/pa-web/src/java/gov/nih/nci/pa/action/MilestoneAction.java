@@ -103,13 +103,18 @@ import gov.nih.nci.pa.util.PaRegistry;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.struts2.ServletActionContext;
+import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.struts2.ServletActionContext;
+import gov.nih.nci.pa.enums.SubmissionTypeCode;
 /**
 * @author Hugh Reinhart
 * @since 1/16/2009
@@ -121,6 +126,7 @@ public final class MilestoneAction extends AbstractListEditAction {
     private List<MilestoneWebDTO> milestoneList;
     private Map<Integer, MilestoneTrialHistoryWebDTO> amendmentMap;
     private Integer submissionNumber;
+    private List<String> allowedMilestones;
     private boolean addAllowed;
 
     /**
@@ -129,6 +135,34 @@ public final class MilestoneAction extends AbstractListEditAction {
     @Override
     protected void loadEditForm() throws PAException {
         milestone = new MilestoneWebDTO();
+        allowedMilestones = computeAllowedMilestones();
+    }
+    
+    private List<String> computeAllowedMilestones() {
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        StudyProtocolQueryDTO sqpDTO = (StudyProtocolQueryDTO) session.getAttribute(Constants.TRIAL_SUMMARY);
+        boolean suAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SU_ABSTRACTOR));
+        boolean adminAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_ADMIN_ABSTRACTOR));
+        boolean scAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR));
+        Set<MilestoneCode> milestones = EnumSet.allOf(MilestoneCode.class);
+        if (!adminAbs && !suAbs) {
+            milestones.removeAll(MilestoneCode.ADMIN_SEQ);
+        }
+        if (!scAbs && !suAbs) {
+            milestones.removeAll(MilestoneCode.SCIENTIFIC_SEQ);
+        }
+        milestones.remove(MilestoneCode.READY_FOR_TSR);
+        milestones.remove(MilestoneCode.SUBMISSION_REJECTED);
+        if (!suAbs || sqpDTO.getSubmissionTypeCode() != SubmissionTypeCode.O) {
+            milestones.remove(MilestoneCode.LATE_REJECTION_DATE);
+        }
+        List<String> milestoneCodes = new ArrayList<String>();
+        for (MilestoneCode milestoneCode : MilestoneCode.values()) {
+            if (milestones.contains(milestoneCode)) {
+                milestoneCodes.add(milestoneCode.getCode());
+            }
+        }
+        return milestoneCodes;
     }
 
     /**
@@ -138,7 +172,7 @@ public final class MilestoneAction extends AbstractListEditAction {
     protected void loadListForm() throws PAException {
         loadAmendmentMap();
         Ii spIi = amendmentMap.get(submissionNumber).getIdentifier();
-        addAllowed = spIi.getExtension().equals(getSpIi().getExtension());
+        addAllowed = spIi.getExtension().equals(getSpIi().getExtension()) && !computeAllowedMilestones().isEmpty();
         List<StudyMilestoneDTO> smList = getStudyMilestoneSvc().getByStudyProtocol(spIi);
         milestoneList = new ArrayList<MilestoneWebDTO>();
         for (StudyMilestoneDTO sm : smList) {
@@ -285,5 +319,19 @@ public final class MilestoneAction extends AbstractListEditAction {
      */
     public void setAddAllowed(boolean addAllowed) {
         this.addAllowed = addAllowed;
+    }
+
+    /**
+     * @return the allowedMilestones
+     */
+    public List<String> getAllowedMilestones() {
+        return allowedMilestones;
+    }
+
+    /**
+     * @param allowedMilestones the allowedMilestones to set
+     */
+    public void setAllowedMilestones(List<String> allowedMilestones) {
+        this.allowedMilestones = allowedMilestones;
     }
 }

@@ -3,7 +3,9 @@ package gov.nih.nci.pa.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.CheckOutType;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -31,8 +33,7 @@ public class StudyCheckoutServiceBeanTest extends AbstractHibernateTestCase {
     @Test
     public void get() throws Exception {
         List<StudyCheckoutDTO> statusList = localEjb.getByStudyProtocol(pid);
-        assertEquals(1, statusList.size());
-
+        assertEquals(2, statusList.size());
         StudyCheckoutDTO dto = localEjb.get(statusList.get(0).getIdentifier());
         assertEquals(IiConverter.convertToLong(statusList.get(0).getIdentifier())
                 , (IiConverter.convertToLong(dto.getIdentifier())));
@@ -42,6 +43,7 @@ public class StudyCheckoutServiceBeanTest extends AbstractHibernateTestCase {
     @Test
     public void create() throws Exception {
         StudyCheckoutDTO dtoNew = new StudyCheckoutDTO();
+        dtoNew.setCheckOutTypeCode(CdConverter.convertStringToCd(CheckOutType.ADMININISTRATIVE.getCode()));
         dtoNew.setUserIdentifier(StConverter.convertToSt("Checkout"));
         dtoNew.setStudyProtocolIdentifier(pid);
         localEjb.create(dtoNew);

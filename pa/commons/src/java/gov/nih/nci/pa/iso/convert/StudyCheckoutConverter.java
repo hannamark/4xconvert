@@ -80,7 +80,9 @@ package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.CheckOutType;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
@@ -96,6 +98,7 @@ public class StudyCheckoutConverter extends AbstractConverter<StudyCheckoutDTO, 
     @Override
     public StudyCheckoutDTO convertFromDomainToDto(StudyCheckout bo) {
         StudyCheckoutDTO dto = new StudyCheckoutDTO();
+        dto.setCheckOutTypeCode(CdConverter.convertStringToCd(bo.getCheckOutType().getCode()));
         dto.setUserIdentifier(StConverter.convertToSt(bo.getUserIdentifier()));
         dto.setIdentifier(IiConverter.convertToStudyOnHoldIi(bo.getId()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
@@ -119,7 +122,7 @@ public class StudyCheckoutConverter extends AbstractConverter<StudyCheckoutDTO, 
     public void convertFromDtoToDomain(StudyCheckoutDTO dto, StudyCheckout bo) {
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
-
+        bo.setCheckOutType(CheckOutType.getByCode(CdConverter.convertCdToString(dto.getCheckOutTypeCode())));
         bo.setUserIdentifier(StConverter.convertToString(dto.getUserIdentifier()));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setStudyProtocol(spBo);

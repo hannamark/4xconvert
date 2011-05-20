@@ -83,18 +83,8 @@
                                                     <span class="required">*</span>
                                                 </td>
                                                 <td class="value" style="width: 250px">
-                                                    <c:choose>
-                                                        <c:when test="${sessionScope.isSuAbstractor && sessionScope.trialSummary.submissionTypeCode == 'O'}">
-                                                            <s:set name="milestoneValues" value="@gov.nih.nci.pa.enums.MilestoneCode@getDisplayNamesMilestoneForSuperUser()" />
-                                                            <s:select headerKey="" headerValue="--Select--" name="milestone.milestone" list="#milestoneValues"
-                                                                      onchange="statusChange()" onfocus="statusChange()"/>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <s:set name="milestoneValues" value="@gov.nih.nci.pa.enums.MilestoneCode@getDisplayNamesForAddMilestone()" />
-                                                            <s:select headerKey="" headerValue="--Select--" name="milestone.milestone" list="#milestoneValues" 
-                                                                      onchange="statusChange()" onfocus="statusChange()"/>
-                                                        </c:otherwise>
-                                                </c:choose>
+                                                    <s:select headerKey="" headerValue="--Select--" name="milestone.milestone" list="%{allowedMilestones}" 
+                                                              onchange="statusChange()" onfocus="statusChange()"/>
                                                 </td>
                                             </tr>
                                             <tr>

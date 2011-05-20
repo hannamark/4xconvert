@@ -163,32 +163,6 @@ public class DisplayInfoAction extends ActionSupport implements Preparable {
     }
 
     /**
-     *
-     * @return String success or failure
-     */
-    public String checkoutUser() {
-        try {
-            StudyProtocolQueryDTO studyProtocolQueryDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest()
-                    .getSession().getAttribute(Constants.TRIAL_SUMMARY);
-
-            RegistryUser userInfo = PaRegistry.getRegistryUserService()
-                                    .getUser(studyProtocolQueryDTO.getStudyCheckoutBy());
-            persWebDTO.setFirstName(userInfo.getFirstName());
-            persWebDTO.setLastName(userInfo.getLastName());
-            persWebDTO.setEmail(userInfo.getEmailAddress());
-            persWebDTO.setMiddleName(userInfo.getMiddleName());
-            persWebDTO.setCity(userInfo.getCity());
-            persWebDTO.setState(userInfo.getState());
-            persWebDTO.setCountry(userInfo.getCountry());
-            persWebDTO.setZip(userInfo.getPostalCode());
-            persWebDTO.setTelephone(userInfo.getPhone());
-            return SUCCESS;
-        } catch (PAException pax) {
-            return ERROR;
-        }
-    }
-
-    /**
      * @return the persWebDTO
      */
     public PaPersonDTO getWebDTO() {

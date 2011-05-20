@@ -690,4 +690,8 @@
         <comment>Change grid abstractor names based on property</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.5/PO-3597.sql"/>
      </changeSet>
+     <changeSet id="PO-3538" author="mvisee">
+        <comment>Allow parallel check-outs</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.5/PO-3538.sql"/>
+     </changeSet>
 </databaseChangeLog>

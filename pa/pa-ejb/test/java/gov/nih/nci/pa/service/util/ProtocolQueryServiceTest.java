@@ -111,6 +111,7 @@ import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
+import gov.nih.nci.pa.enums.CheckOutType;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -153,7 +154,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
     @Before
     public void setUp() throws Exception {
         bean.setRegistryUserService(new RegistryUserServiceBean());
-        createStudyProtocol("1", false, Boolean.FALSE, false, false, false, true);
+        createStudyProtocol("1", false, Boolean.FALSE, false, false, false, false, true);
     }
 
     @Test
@@ -269,7 +270,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         assertNotNull(results.get(0).getUpdatedComments());
         assertNotNull(results.get(0).getUpdatedDate());
 
-        createStudyProtocol("2", true, Boolean.FALSE, false, false, false, false);
+        createStudyProtocol("2", true, Boolean.FALSE, false, false, false, false, false);
         StudyProtocolQueryCriteria otherCriteria = new StudyProtocolQueryCriteria();
         otherCriteria.setNciIdentifier("NCI");
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
@@ -286,9 +287,9 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         assertEquals("Size does not match.",1, results.size());
         assertFalse(DocumentWorkflowStatusCode.REJECTED == results.get(0).getDocumentWorkflowStatusCode());
 
-        createStudyProtocol("3", false, Boolean.TRUE, false, false, false, false);
-        createStudyProtocol("4", false, Boolean.TRUE, false, false, false, false);
-        createStudyProtocol("5", false, Boolean.TRUE, false, false, false, false);
+        createStudyProtocol("3", false, Boolean.TRUE, false, false, false, false, false);
+        createStudyProtocol("4", false, Boolean.TRUE, false, false, false, false, false);
+        createStudyProtocol("5", false, Boolean.TRUE, false, false, false, false, false);
 
         otherCriteria = new StudyProtocolQueryCriteria();
         otherCriteria.setNciIdentifier("NCI");
@@ -309,7 +310,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
             assertEquals("Abbreviated Trial", dto.getTrialCategory());
         }
 
-        StudyProtocol sp = createStudyProtocol("6", false, Boolean.FALSE, false, false, false, false);
+        StudyProtocol sp = createStudyProtocol("6", false, Boolean.FALSE, false, false, false, false, false);
         RegistryUser owner = sp.getStudyOwners().iterator().next();
 
         otherCriteria = new StudyProtocolQueryCriteria();
@@ -325,7 +326,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         assertEquals("Size does not match.", 1, results.size());
 
 
-        createStudyProtocol("7", false, Boolean.FALSE, true, false, false, false);
+        createStudyProtocol("7", false, Boolean.FALSE, true, false, false, false, false);
 
         otherCriteria = new StudyProtocolQueryCriteria();
         otherCriteria.setOfficialTitle("Cancer");
@@ -337,7 +338,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 1, results.size());
 
-        createStudyProtocol("8", false, Boolean.FALSE, false, true, false, false);
+        createStudyProtocol("8", false, Boolean.FALSE, false, true, true, false, false);
 
         otherCriteria.setSearchOnHold(false);
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
@@ -347,9 +348,10 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         otherCriteria.setUserLastCreated("user");
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 1, results.size());
-        assertEquals("user", results.get(0).getStudyCheckoutByUsername());
+        assertEquals("user", results.get(0).getStudyAdminCheckoutByUsername());
+        assertEquals("user", results.get(0).getStudyScientificCheckoutByUsername());
 
-        createStudyProtocol("9", false, Boolean.FALSE, false, false, true, false);
+        createStudyProtocol("9", false, Boolean.FALSE, false, false, false, true, false);
 
         otherCriteria = new StudyProtocolQueryCriteria();
         otherCriteria.setOfficialTitle("Cancer");
@@ -361,19 +363,19 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 1, results.size());
 
-        createStudyProtocol("10", false, Boolean.FALSE, false, false, false, true);
+        createStudyProtocol("10", false, Boolean.FALSE, false, false, false, false, true);
         otherCriteria = new StudyProtocolQueryCriteria();
         otherCriteria.setSubmissionType("Update");
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 2, results.size());
 
-        createStudyProtocol("11", false, Boolean.FALSE, false, false, false, true);
+        createStudyProtocol("11", false, Boolean.FALSE, false, false, false, false, true);
         otherCriteria = new StudyProtocolQueryCriteria();
         otherCriteria.setLeadOrganizationId(leadOrgId.toString());
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 1, results.size());
         
-        createStudyProtocol("12", false, Boolean.FALSE, false, false, false, true);
+        createStudyProtocol("12", false, Boolean.FALSE, false, false, false, false, true);
         otherCriteria = new StudyProtocolQueryCriteria();
         otherCriteria.setSumm4FundingSourceId(leadOrgId);
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
@@ -403,7 +405,6 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         otherCriteria.setInterventionType(InterventionTypeCode.BIOLOGICAL_VACCINE.getCode());
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 0, results.size());
-        
     }
 
     @Test
@@ -416,7 +417,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
 
     @Test
     public void getStudyProtocolByOrgIdentifierTest() throws Exception {
-        createStudyProtocol("2", false, Boolean.FALSE, false, false, false, false);
+        createStudyProtocol("2", false, Boolean.FALSE, false, false, false, false, false);
         List<StudyProtocol> results = localEjb.getStudyProtocolByOrgIdentifier(Long.valueOf(1));
         assertEquals(1, results.size());
 
@@ -436,7 +437,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
 
 
     private StudyProtocol createStudyProtocol(String orgId, boolean createRejected, Boolean isPropTrial,
-            boolean onHold, boolean locked, boolean amendment, boolean update) {
+            boolean onHold, boolean adminCheckout, boolean scientificCheckout, boolean amendment, boolean update) {
         StudyProtocol sp = TestSchema.createStudyProtocolObj();
         sp.setProprietaryTrialIndicator(isPropTrial);
 
@@ -676,9 +677,17 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
             TestSchema.addUpdObject(soh);
             sp.getStudyOnholds().add(soh);
         }
-
-        if (locked) {
+        if (adminCheckout) {
             StudyCheckout co = new StudyCheckout();
+            co.setCheckOutType(CheckOutType.ADMININISTRATIVE);
+            co.setUserIdentifier("user");
+            co.setStudyProtocol(sp);
+            TestSchema.addUpdObject(co);
+            sp.getStudyCheckout().add(co);
+        }
+        if (scientificCheckout) {
+            StudyCheckout co = new StudyCheckout();
+            co.setCheckOutType(CheckOutType.SCIENTIFIC);
             co.setUserIdentifier("user");
             co.setStudyProtocol(sp);
             TestSchema.addUpdObject(co);

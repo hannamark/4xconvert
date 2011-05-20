@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@taglib prefix="s" uri="/struts-tags" %>
 
-<c:if test="${(sessionScope.loggedUserName == sessionScope.trialSummary.studyCheckoutBy  && sessionScope.isAdminAbstractor) || (sessionScope.isSuAbstractor)}">
+<c:if test="${sessionScope.trialSummary.studyAdminCheckoutBy != null &&
+              sessionScope.loggedUserName == sessionScope.trialSummary.studyAdminCheckoutBy && (sessionScope.isAdminAbstractor || sessionScope.isSuAbstractor)}">
     <jsp:doBody />
 </c:if>

@@ -139,9 +139,12 @@ public class StudyProtocolQueryDTO implements Serializable {
     private Date updatedDate;
     private Long studyInboxId;
     private boolean proprietaryTrial;
-    private String studyCheckoutBy;
-    private String studyCheckoutByUsername;
-    private Long studyCheckoutId;
+    private String studyAdminCheckoutBy;
+    private String studyAdminCheckoutByUsername;
+    private Long studyAdminCheckoutId;
+    private String studyScientificCheckoutBy;
+    private String studyScientificCheckoutByUsername;
+    private Long studyScientificCheckoutId;
     private Date recordVerificationDate;
     private Boolean ctgovXmlRequiredIndicator;
     private Boolean showSendXml = false;
@@ -176,42 +179,42 @@ public class StudyProtocolQueryDTO implements Serializable {
      * @return the studyInboxId
      */
     public Long getStudyInboxId() {
-      return studyInboxId;
+        return studyInboxId;
     }
 
     /**
      * @param studyInboxId the studyInboxId to set
      */
     public void setStudyInboxId(Long studyInboxId) {
-      this.studyInboxId = studyInboxId;
+        this.studyInboxId = studyInboxId;
     }
 
     /**
      * @return the updatedComments
      */
     public String getUpdatedComments() {
-      return updatedComments;
+        return updatedComments;
     }
 
     /**
      * @param updatedComments the updatedComments to set
      */
     public void setUpdatedComments(String updatedComments) {
-      this.updatedComments = updatedComments;
+        this.updatedComments = updatedComments;
     }
 
     /**
      * @return the updatedDate
      */
     public Date getUpdatedDate() {
-      return updatedDate;
+        return updatedDate;
     }
 
     /**
      * @param updatedDate the updatedDate to set
      */
     public void setUpdatedDate(Date updatedDate) {
-      this.updatedDate = updatedDate;
+        this.updatedDate = updatedDate;
     }
 
     /**
@@ -229,7 +232,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     }
 
     /**
-     *
+     * 
      * @return studyProtocolId
      */
     public Long getStudyProtocolId() {
@@ -237,148 +240,167 @@ public class StudyProtocolQueryDTO implements Serializable {
     }
 
     /**
-     *
+     * 
      * @param studyProtocolId studyProtocolId
      */
     public void setStudyProtocolId(Long studyProtocolId) {
         this.studyProtocolId = studyProtocolId;
     }
+
     /**
-     *
+     * 
      * @return nciIdentifier
      */
     public String getNciIdentifier() {
         return nciIdentifier;
     }
+
     /**
-     *
+     * 
      * @param nciIdentifier nciIdentifier
      */
     public void setNciIdentifier(String nciIdentifier) {
         this.nciIdentifier = nciIdentifier;
     }
+
     /**
-     *
+     * 
      * @return officialTitle
      */
     public String getOfficialTitle() {
         return officialTitle;
     }
+
     /**
-     *
+     * 
      * @param officialTitle officialTitle
      */
     public void setOfficialTitle(String officialTitle) {
         this.officialTitle = officialTitle;
     }
+
     /**
-     *
+     * 
      * @return studyStatusCode
      */
     public StudyStatusCode getStudyStatusCode() {
         return studyStatusCode;
     }
+
     /**
-     *
+     * 
      * @param studyStatusCode studyStatusCode
      */
     public void setStudyStatusCode(StudyStatusCode studyStatusCode) {
         this.studyStatusCode = studyStatusCode;
     }
+
     /**
-     *
+     * 
      * @return studyStatusDate
      */
     public Date getStudyStatusDate() {
         return studyStatusDate;
     }
+
     /**
-     *
+     * 
      * @param studyStatusDate studyStatusDate
      */
     public void setStudyStatusDate(Date studyStatusDate) {
         this.studyStatusDate = studyStatusDate;
     }
+
     /**
-     *
+     * 
      * @return documentWorkflowStatusCode
      */
     public DocumentWorkflowStatusCode getDocumentWorkflowStatusCode() {
         return documentWorkflowStatusCode;
     }
+
     /**
-     *
+     * 
      * @param documentWorkflowStatusCode documentWorkflowStatusCode
      */
-    public void setDocumentWorkflowStatusCode(
-            DocumentWorkflowStatusCode documentWorkflowStatusCode) {
+    public void setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode documentWorkflowStatusCode) {
         this.documentWorkflowStatusCode = documentWorkflowStatusCode;
     }
+
     /**
-     *
+     * 
      * @return documentWorkflowStatusDate
      */
     public Date getDocumentWorkflowStatusDate() {
         return documentWorkflowStatusDate;
     }
+
     /**
-     *
+     * 
      * @param documentWorkflowStatusDate documentWorkflowStatusDate
      */
     public void setDocumentWorkflowStatusDate(Date documentWorkflowStatusDate) {
         this.documentWorkflowStatusDate = documentWorkflowStatusDate;
     }
+
     /**
-     *
+     * 
      * @return leadOrganizationName
      */
     public String getLeadOrganizationName() {
         return leadOrganizationName;
     }
+
     /**
-     *
+     * 
      * @param leadOrganizationName leadOrganizationName
      */
     public void setLeadOrganizationName(String leadOrganizationName) {
         this.leadOrganizationName = leadOrganizationName;
     }
+
     /**
-     *
+     * 
      * @return leadOrganizationId
      */
     public Long getLeadOrganizationId() {
         return leadOrganizationId;
     }
+
     /**
-     *
+     * 
      * @param leadOrganizationId leadOrganizationId
      */
     public void setLeadOrganizationId(Long leadOrganizationId) {
         this.leadOrganizationId = leadOrganizationId;
     }
+
     /**
-     *
+     * 
      * @return piFullName
      */
     public String getPiFullName() {
         return piFullName;
     }
+
     /**
-     *
+     * 
      * @param piFullName piFullName
      */
     public void setPiFullName(String piFullName) {
         this.piFullName = piFullName;
     }
+
     /**
-     *
+     * 
      * @return piId
      */
     public Long getPiId() {
         return piId;
     }
+
     /**
-     *
+     * 
      * @param piId piId
      */
     public void setPiId(Long piId) {
@@ -386,54 +408,61 @@ public class StudyProtocolQueryDTO implements Serializable {
     }
 
     /**
-     *
+     * 
      * @return localStudyProtocolIdentifier
      */
     public String getLocalStudyProtocolIdentifier() {
         return localStudyProtocolIdentifier;
     }
+
     /**
-     *
+     * 
      * @param localStudyProtocolIdentifier localStudyProtocolIdentifier
      */
     public void setLocalStudyProtocolIdentifier(String localStudyProtocolIdentifier) {
         this.localStudyProtocolIdentifier = localStudyProtocolIdentifier;
     }
+
     /**
-     *
+     * 
      * @return studyTypeCode
      */
     public StudyTypeCode getStudyTypeCode() {
         return studyTypeCode;
     }
+
     /**
-     *
+     * 
      * @param studyTypeCode studyTypeCode
      */
     public void setStudyTypeCode(StudyTypeCode studyTypeCode) {
         this.studyTypeCode = studyTypeCode;
     }
+
     /**
      * @return the phaseCode
      */
     public PhaseCode getPhaseCode() {
         return phaseCode;
     }
+
     /**
      * @param phaseCode the phaseCode to set
      */
     public void setPhaseCode(PhaseCode phaseCode) {
         this.phaseCode = phaseCode;
     }
+
     /**
-     *
+     * 
      * @return studyProtocolType
      */
     public String getStudyProtocolType() {
         return studyProtocolType;
     }
+
     /**
-     *
+     * 
      * @param studyProtocolType studyProtocolType
      */
     public void setStudyProtocolType(String studyProtocolType) {
@@ -446,68 +475,79 @@ public class StudyProtocolQueryDTO implements Serializable {
     public String getAmend() {
         return amend;
     }
+
     /**
      * @param amend the amend to set
      */
     public void setAmend(String amend) {
         this.amend = amend;
     }
+
     /**
      * @return the update
      */
     public String getUpdate() {
         return update;
     }
+
     /**
      * @param update the update to set
      */
     public void setUpdate(String update) {
         this.update = update;
     }
+
     /**
-     *
+     * 
      * @return tsr
      */
     public boolean isViewTSR() {
         return viewTSR;
     }
+
     /**
-     *
+     * 
      * @param viewTSR tsr
      */
     public void setViewTSR(boolean viewTSR) {
         this.viewTSR = viewTSR;
     }
+
     /**
      * @return the primaryPurpose
      */
     public String getPrimaryPurpose() {
         return primaryPurpose;
     }
+
     /**
      * @param primaryPurpose the primaryPurpose to set
      */
     public void setPrimaryPurpose(String primaryPurpose) {
         this.primaryPurpose = primaryPurpose;
     }
+
     /**
      * @return the primaryPurposeOtherText
      */
     public String getPrimaryPurposeOtherText() {
         return primaryPurposeOtherText;
     }
+
     /**
      * @param primaryPurposeOtherText the primaryPurposeOtherText to set
      */
     public void setPrimaryPurposeOtherText(String primaryPurposeOtherText) {
         this.primaryPurposeOtherText = primaryPurposeOtherText;
     }
+
     /**
      * @return the userLastCreated
      */
     public String getUserLastCreated() {
         return userLastCreated;
     }
+
     /**
      * @param userLastCreated the userLastCreated to set
      */
@@ -515,34 +555,39 @@ public class StudyProtocolQueryDTO implements Serializable {
         this.userLastCreated = userLastCreated;
         this.userLastCreatedUsername = PAUtil.getGridIdentityUsername(userLastCreated);
     }
+
     /**
      * @return dateLastCreated
      */
     public Date getDateLastCreated() {
-      return dateLastCreated;
+        return dateLastCreated;
     }
+
     /**
      * @param dateLastCreated dateLastCreated
      */
     public void setDateLastCreated(Date dateLastCreated) {
-      this.dateLastCreated = dateLastCreated;
+        this.dateLastCreated = dateLastCreated;
     }
+
     /**
-     *
+     * 
      * @return onHoldReasons
      */
     public String getOnHoldReasons() {
         return onHoldReasons;
     }
+
     /**
-     *
+     * 
      * @param onHoldReasons onHoldReasons
      */
     public void setOnHoldReasons(String onHoldReasons) {
         this.onHoldReasons = onHoldReasons;
     }
+
     /**
-     *
+     * 
      * @return offHoldDates
      */
     public String getOffHoldDates() {
@@ -550,7 +595,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     }
 
     /**
-     *
+     * 
      * @param offHoldDates offHoldDates
      */
     public void setOffHoldDates(String offHoldDates) {
@@ -563,72 +608,126 @@ public class StudyProtocolQueryDTO implements Serializable {
     public void setStudyMilsetone(MilestoneCode studyMilsetone) {
         this.studyMilsetone = studyMilsetone;
     }
+
     /**
      * @return the studyMilsetone
      */
     public MilestoneCode getStudyMilsetone() {
         return studyMilsetone;
     }
+
     /**
      * @param studyMilestoneDate the studyMilestoneDate to set
      */
     public void setStudyMilestoneDate(Date studyMilestoneDate) {
         this.studyMilestoneDate = studyMilestoneDate;
     }
+
     /**
      * @return the studyMilestoneDate
      */
     public Date getStudyMilestoneDate() {
         return studyMilestoneDate;
     }
+
     /**
      * @param amendmentNumber the amendmentNumber to set
      */
     public void setAmendmentNumber(String amendmentNumber) {
         this.amendmentNumber = amendmentNumber;
     }
+
     /**
      * @return the amendmentNumber
      */
     public String getAmendmentNumber() {
         return amendmentNumber;
     }
+
     /**
      * @param amendmentDate the amendmentDate to set
      */
     public void setAmendmentDate(Date amendmentDate) {
         this.amendmentDate = amendmentDate;
     }
+
     /**
      * @return the amendmentDate
      */
     public Date getAmendmentDate() {
         return amendmentDate;
     }
+
     /**
-     * @return the studyCheckoutBy
+     * @return the studyAdminCheckoutBy
      */
-    public String getStudyCheckoutBy() {
-        return studyCheckoutBy;
+    public String getStudyAdminCheckoutBy() {
+        return studyAdminCheckoutBy;
     }
+
     /**
-     * @param studyCheckoutBy the studyCheckoutBy to set
+     * @param studyAdminCheckoutBy the studyCheckoutBy to set
      */
-    public void setStudyCheckoutBy(String studyCheckoutBy) {
-        this.studyCheckoutBy = studyCheckoutBy;
-        this.studyCheckoutByUsername = PAUtil.getGridIdentityUsername(studyCheckoutBy);
+    public void setStudyAdminCheckoutBy(String studyAdminCheckoutBy) {
+        this.studyAdminCheckoutBy = studyAdminCheckoutBy;
+        this.studyAdminCheckoutByUsername = PAUtil.getGridIdentityUsername(studyAdminCheckoutBy);
     }
+
     /**
-     * @return the studyCheckoutId
+     * @return the studyAdminCheckoutByUsername
      */
-    public Long getStudyCheckoutId() {
-        return studyCheckoutId;
+    public String getStudyAdminCheckoutByUsername() {
+        return studyAdminCheckoutByUsername;
     }
+
     /**
-     * @param studyCheckoutId the studyCheckoutId to set
+     * @return the studyAdminCheckoutId
      */
-    public void setStudyCheckoutId(Long studyCheckoutId) {
-        this.studyCheckoutId = studyCheckoutId;
+    public Long getStudyAdminCheckoutId() {
+        return studyAdminCheckoutId;
+    }
+
+    /**
+     * @param studyAdminCheckoutId the studyCheckoutId to set
+     */
+    public void setStudyAdminCheckoutId(Long studyAdminCheckoutId) {
+        this.studyAdminCheckoutId = studyAdminCheckoutId;
+    }
+
+    /**
+     * @return the studyScientificCheckoutBy
+     */
+    public String getStudyScientificCheckoutBy() {
+        return studyScientificCheckoutBy;
+    }
+
+    /**
+     * @param studyScientificCheckoutBy the studyScientificCheckoutBy to set
+     */
+    public void setStudyScientificCheckoutBy(String studyScientificCheckoutBy) {
+        this.studyScientificCheckoutBy = studyScientificCheckoutBy;
+        this.studyScientificCheckoutByUsername = PAUtil.getGridIdentityUsername(studyScientificCheckoutBy);
+    }
+
+    /**
+     * @return the studyScientificCheckoutByUsername
+     */
+    public String getStudyScientificCheckoutByUsername() {
+        return studyScientificCheckoutByUsername;
+    }
+
+    /**
+     * @return the studyScientificCheckoutId
+     */
+    public Long getStudyScientificCheckoutId() {
+        return studyScientificCheckoutId;
+    }
+
+    /**
+     * @param studyScientificCheckoutId the studyScientificCheckoutId to set
+     */
+    public void setStudyScientificCheckoutId(Long studyScientificCheckoutId) {
+        this.studyScientificCheckoutId = studyScientificCheckoutId;
     }
 
     /**
@@ -695,13 +794,6 @@ public class StudyProtocolQueryDTO implements Serializable {
     }
 
     /**
-     * @return the studyCheckoutByUsername
-     */
-    public String getStudyCheckoutByUsername() {
-        return studyCheckoutByUsername;
-    }
-
-    /**
      * @param phaseAdditionalQualifier the phaseAdditionalQualifier to set
      */
     public void setPhaseAdditionalQualifier(PhaseAdditionalQualifierCode phaseAdditionalQualifier) {
@@ -730,8 +822,7 @@ public class StudyProtocolQueryDTO implements Serializable {
     }
 
     /**
-     * This field is set to true if and only if the person performing the search is
-     * considered a trial owner.
+     * This field is set to true if and only if the person performing the search is considered a trial owner.
      * @return the isSearcherTrialOwner
      */
     public boolean isSearcherTrialOwner() {

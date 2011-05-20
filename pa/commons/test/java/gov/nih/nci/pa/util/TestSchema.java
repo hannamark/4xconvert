@@ -139,6 +139,7 @@ import gov.nih.nci.pa.enums.AssayTypeCode;
 import gov.nih.nci.pa.enums.AssayUseCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
+import gov.nih.nci.pa.enums.CheckOutType;
 import gov.nih.nci.pa.enums.DesignConfigurationCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
@@ -553,6 +554,13 @@ public class TestSchema {
 
         StudyCheckout scheckout = new StudyCheckout();
         scheckout.setStudyProtocol(sp);
+        scheckout.setCheckOutType(CheckOutType.ADMININISTRATIVE);
+        scheckout.setUserIdentifier("Abstractor");
+        addUpdObject(scheckout);
+        
+        scheckout = new StudyCheckout();
+        scheckout.setStudyProtocol(sp);
+        scheckout.setCheckOutType(CheckOutType.SCIENTIFIC);
         scheckout.setUserIdentifier("Abstractor");
         addUpdObject(scheckout);
 

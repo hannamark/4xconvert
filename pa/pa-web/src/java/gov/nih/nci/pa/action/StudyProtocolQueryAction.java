@@ -80,14 +80,17 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.CheckOutType;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.IdentifierType;
 import gov.nih.nci.pa.interceptor.PreventTrialEditingInterceptor;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
@@ -99,6 +102,7 @@ import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -120,7 +124,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     private StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
     private Long studyProtocolId = null;
     private HttpServletResponse servletResponse;
-    private boolean checkoutStatus = false;
+    private List<String> checkoutCommands;
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
     private static final String SHOW_VIEW = "view";
     private static final String SHOW_VIEW_REFRESH = "viewRefresh";
@@ -272,47 +276,62 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             return showCriteria();
         }
         try {
-            StudyProtocolQueryDTO studyProtocolQueryDTO = PaRegistry
-                    .getProtocolQueryService()
-                    .getTrialSummaryByStudyProtocolId(studyProtocolId);
+            ProtocolQueryServiceLocal protocolQueryService = PaRegistry.getProtocolQueryService();
+            StudyProtocolQueryDTO studyProtocolQueryDTO = protocolQueryService
+                .getTrialSummaryByStudyProtocolId(studyProtocolId);
             // put an entry in the session and store StudyProtocolQueryDTO
             studyProtocolQueryDTO.setOfficialTitle(StringUtils.abbreviate(studyProtocolQueryDTO.getOfficialTitle(),
-                    PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE));
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.STUDY_PROTOCOL_II,
-                    IiConverter.convertToStudyProtocolIi(studyProtocolId));
-            //When the study protocol is selected, set its token to be the current time in milliseconds.
-            ServletActionContext.getRequest().getSession()
-                .setAttribute(PreventTrialEditingInterceptor.STUDY_PROTOCOL_TOKEN,
-                        PreventTrialEditingInterceptor.generateToken());
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
-                    setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
+                                                                          PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE));
+            HttpSession session = ServletActionContext.getRequest().getSession();
+            session.setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
+            session.setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToStudyProtocolIi(studyProtocolId));
+            // When the study protocol is selected, set its token to be the current time in milliseconds.
+            session.setAttribute(PreventTrialEditingInterceptor.STUDY_PROTOCOL_TOKEN, PreventTrialEditingInterceptor
+                .generateToken());
+            session.setAttribute(Constants.DOC_WFS_MENU, setMenuLinks(studyProtocolQueryDTO
+                .getDocumentWorkflowStatusCode()));
 
             String loginName = UsernameHolder.getUser();
-
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.LOGGED_USER_NAME, loginName);
-            Boolean isSuperUser =
-                (Boolean) ServletActionContext.getRequest().getSession().getAttribute(Constants.IS_SU_ABSTRACTOR);
-            boolean superUser = BooleanUtils.isTrue(isSuperUser);
-            if ((studyProtocolQueryDTO.getStudyCheckoutBy() != null && loginName != null
-                    && studyProtocolQueryDTO.getStudyCheckoutBy().equalsIgnoreCase(loginName)) || superUser) {
-                setCheckoutStatus(true);
-            }
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    "nctIdentifier", paServiceUtils.getStudyIdentifier(IiConverter.convertToStudyProtocolIi(
-                            studyProtocolId), PAConstants.NCT_IDENTIFIER_TYPE));
+            session.setAttribute(Constants.LOGGED_USER_NAME, loginName);
+            setCheckoutCommands(studyProtocolQueryDTO);
+            session.setAttribute("nctIdentifier", paServiceUtils.getStudyIdentifier(IiConverter
+                .convertToStudyProtocolIi(studyProtocolId), PAConstants.NCT_IDENTIFIER_TYPE));
             if (!studyProtocolQueryDTO.isProprietaryTrial()) {
-                ServletActionContext.getRequest().getSession().setAttribute(
-                        "dcpIdentifier", paServiceUtils.getStudyIdentifier(IiConverter.convertToStudyProtocolIi(
-                    studyProtocolId), PAConstants.DCP_IDENTIFIER_TYPE));
-                ServletActionContext.getRequest().getSession().setAttribute(
-                        "ctepIdentifier", paServiceUtils.getStudyIdentifier(IiConverter.convertToStudyProtocolIi(
-                    studyProtocolId), PAConstants.CTEP_IDENTIFIER_TYPE));
+                session.setAttribute("dcpIdentifier", paServiceUtils.getStudyIdentifier(IiConverter
+                    .convertToStudyProtocolIi(studyProtocolId), PAConstants.DCP_IDENTIFIER_TYPE));
+                session.setAttribute("ctepIdentifier", paServiceUtils.getStudyIdentifier(IiConverter
+                    .convertToStudyProtocolIi(studyProtocolId), PAConstants.CTEP_IDENTIFIER_TYPE));
             }
             return SHOW_VIEW;
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
             return SHOW_VIEW;
+        }
+    }
+    
+    private void setCheckoutCommands(StudyProtocolQueryDTO spqDTO) {
+        checkoutCommands = new ArrayList<String>();
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        boolean suAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SU_ABSTRACTOR));
+        if (spqDTO.getStudyAdminCheckoutBy() != null) {
+            if (spqDTO.getStudyAdminCheckoutBy().equalsIgnoreCase(UsernameHolder.getUser()) || suAbs) {
+                checkoutCommands.add("adminCheckIn");
+            }
+        } else {
+            boolean adminAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_ADMIN_ABSTRACTOR));
+            if (adminAbs || suAbs) {
+                checkoutCommands.add("adminCheckOut");
+            }
+        }
+        if (spqDTO.getStudyScientificCheckoutBy() != null) {
+            if (spqDTO.getStudyScientificCheckoutBy().equalsIgnoreCase(UsernameHolder.getUser()) || suAbs) {
+                checkoutCommands.add("scientificCheckIn");
+            }
+        } else {
+            boolean scAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR));
+            if (scAbs || suAbs) {
+                checkoutCommands.add("scientificCheckOut");
+            }
         }
     }
 
@@ -353,29 +372,74 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         }
         return action;
     }
-
+    
     /**
-     * @return res
+     * Administrative check-out.
+     * @return The result name
      * @throws PAException exception
      */
-    public String checkout() throws PAException {
+    public String adminCheckOut() throws PAException {
+        return checkOut(CheckOutType.ADMININISTRATIVE);
+    }
+    
+    /**
+     * Scientific check-out.
+     * @return The result name
+     * @throws PAException exception
+     */
+    public String scientificCheckOut() throws PAException {
+        return checkOut(CheckOutType.SCIENTIFIC);
+    }
+    
+    private String checkOut(CheckOutType checkOutType) throws PAException {
         try {
-            StudyProtocolQueryDTO studyProtocolQueryDTO =
-                PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(studyProtocolId);
-            String loginName = UsernameHolder.getUser();
-            StudyCheckoutDTO scoDTO = new StudyCheckoutDTO();
-            scoDTO.setStudyProtocolIdentifier(
-                    IiConverter.convertToStudyProtocolIi(studyProtocolQueryDTO.getStudyProtocolId()));
-            scoDTO.setUserIdentifier(StConverter.convertToSt(loginName));
-            if (checkoutStatus) {
+            ProtocolQueryServiceLocal protocolQueryService = PaRegistry.getProtocolQueryService();
+            StudyProtocolQueryDTO spqDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(studyProtocolId);
+            boolean canCheckOut = (checkOutType == CheckOutType.ADMININISTRATIVE)
+                    ? spqDTO.getStudyAdminCheckoutBy() == null : spqDTO.getStudyScientificCheckoutBy() == null;
+            if (canCheckOut) {
+                StudyCheckoutDTO scoDTO = new StudyCheckoutDTO();
+                scoDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(spqDTO.getStudyProtocolId()));
+                scoDTO.setCheckOutTypeCode(CdConverter.convertStringToCd(checkOutType.getCode()));
+                scoDTO.setUserIdentifier(StConverter.convertToSt(UsernameHolder.getUser()));
                 PaRegistry.getStudyCheckoutService().create(scoDTO);
-                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
-                        getText("studyProtocol.trial.checkOut"));
-            } else if (studyProtocolQueryDTO.getStudyCheckoutId() != null) {
-                PaRegistry.getStudyCheckoutService().delete(
-                        IiConverter.convertToIi(studyProtocolQueryDTO.getStudyCheckoutId()));
-                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
-                        getText("studyProtocol.trial.checkIn"));
+                String msg = getText("studyProtocol.trial.checkOut." + checkOutType.name());
+                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, msg);
+            }
+        } catch (PAException e) {
+            addActionError(e.getLocalizedMessage());
+        }
+        return SHOW_VIEW_REFRESH;
+    }
+    
+    /**
+     * Administrative check-in.
+     * @return The result name
+     * @throws PAException exception
+     */
+    public String adminCheckIn() throws PAException {
+        return checkIn(CheckOutType.ADMININISTRATIVE);
+    }
+    
+    /**
+     * Scientific check-in.
+     * @return The result name
+     * @throws PAException exception
+     */
+    public String scientificCheckIn() throws PAException {
+        return checkIn(CheckOutType.SCIENTIFIC);
+    }
+    
+    private String checkIn(CheckOutType checkOutType) throws PAException {
+        try {
+            ProtocolQueryServiceLocal protocolQueryService = PaRegistry.getProtocolQueryService();
+            StudyProtocolQueryDTO spqDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(studyProtocolId);
+            Long checkoutId = (checkOutType == CheckOutType.ADMININISTRATIVE) ? spqDTO.getStudyAdminCheckoutId()
+                    : spqDTO.getStudyScientificCheckoutId();
+            if (checkoutId != null) {
+                PaRegistry.getStudyCheckoutService().delete(IiConverter.convertToIi(checkoutId));
+                String msg = getText("studyProtocol.trial.checkIn." + checkOutType.name());
+                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, msg);
             }
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
@@ -399,33 +463,29 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     }
 
     private boolean userRoleInSession() {
-        boolean isSuAbstractor = BooleanUtils.toBoolean(
-                (Boolean) ServletActionContext.getRequest().getSession().getAttribute(Constants.IS_SU_ABSTRACTOR));
-        boolean isAbstractor = BooleanUtils.toBoolean(
-                (Boolean) ServletActionContext.getRequest().getSession().getAttribute(Constants.IS_ABSTRACTOR));
-        boolean isAdminAbstractor = BooleanUtils.toBoolean(
-                (Boolean) ServletActionContext.getRequest().getSession().getAttribute(Constants.IS_ADMIN_ABSTRACTOR));
-        boolean isScientificAbstractor = BooleanUtils.toBoolean((Boolean)
-                ServletActionContext.getRequest().getSession().getAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR));
-        boolean isReportViewer = BooleanUtils.toBoolean(
-                (Boolean) ServletActionContext.getRequest().getSession().getAttribute(Constants.IS_REPORT_VIEWER));
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        boolean isSuAbstractor = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SU_ABSTRACTOR));
+        boolean isAbstractor = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_ABSTRACTOR));
+        boolean isAdminAbstractor = BooleanUtils.toBoolean((Boolean) session
+            .getAttribute(Constants.IS_ADMIN_ABSTRACTOR));
+        boolean isScientificAbstractor = BooleanUtils.toBoolean((Boolean) session
+            .getAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR));
+        boolean isReportViewer = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_REPORT_VIEWER));
         return isAbstractor || isSuAbstractor || isScientificAbstractor || isAdminAbstractor || isReportViewer;
     }
 
     /**
-     * Checks if is checkout status.
-     * @return true, if is checkout status
+     * @return the checkoutCommands
      */
-    public boolean isCheckoutStatus() {
-        return checkoutStatus;
+    public List<String> getCheckoutCommands() {
+        return checkoutCommands;
     }
 
     /**
-     * Sets the checkout status.
-     * @param checkoutStatus the new checkout status
+     * @param checkoutCommands the checkoutCommands to set
      */
-    public void setCheckoutStatus(boolean checkoutStatus) {
-        this.checkoutStatus = checkoutStatus;
+    public void setCheckoutCommands(List<String> checkoutCommands) {
+        this.checkoutCommands = checkoutCommands;
     }
 
     /**

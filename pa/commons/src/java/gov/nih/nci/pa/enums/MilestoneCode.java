@@ -324,26 +324,6 @@ public enum MilestoneCode implements CodedEnum<String> {
     }
 
     /**
-     * @return String[] display names of enums
-     */
-    public static String[] getDisplayNamesForAddMilestone() {
-        List<String> list = new ArrayList<String>(Arrays.asList(getDisplayNames()));
-        list.remove(MilestoneCode.SUBMISSION_REJECTED.getCode());
-        list.remove(MilestoneCode.LATE_REJECTION_DATE.getCode());
-        return list.toArray(new String[list.size()]);
-    }
-
-    /**
-     * 
-     * @return milestone code for super user
-     */
-    public static String[] getDisplayNamesMilestoneForSuperUser() {
-        List<String> list = new ArrayList<String>(Arrays.asList(getDisplayNames()));
-        list.remove(MilestoneCode.SUBMISSION_REJECTED.getCode());
-        return list.toArray(new String[list.size()]);
-    }
-
-    /**
      * Checks if is above trial summary report.
      * @param mc the mc
      * @return true, if is above trial summary report

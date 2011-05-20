@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.iso.dto;
 
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.St;
 
 /**
@@ -86,29 +87,46 @@ import gov.nih.nci.iso21090.St;
  * @author Kalpana Guthikonda
  * @since 09/18/2009
  */
-public class StudyCheckoutDTO  extends StudyDTO {
-  
-  /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = -487404345792624715L;
-  
-  /** The user identifier. */
-  private St userIdentifier;
-  
-/**
- * Gets the user identifier.
- * 
- * @return the user identifier
- */
-public St getUserIdentifier() {
-    return userIdentifier;
-}
+public class StudyCheckoutDTO extends StudyDTO {
 
-/**
- * Sets the user identifier.
- * 
- * @param userIdentifier the new user identifier
- */
-public void setUserIdentifier(St userIdentifier) {
-    this.userIdentifier = userIdentifier;
-}
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -3330234611494500532L;
+    
+    /** The checkout type code. */
+    private Cd checkOutTypeCode;
+    
+    /** The user identifier. */
+    private St userIdentifier;
+
+    /**
+     * @return the checkOutTypeCode
+     */
+    public Cd getCheckOutTypeCode() {
+        return checkOutTypeCode;
+    }
+
+    /**
+     * @param checkOutTypeCode the checkOutTypeCode to set
+     */
+    public void setCheckOutTypeCode(Cd checkOutTypeCode) {
+        this.checkOutTypeCode = checkOutTypeCode;
+    }
+
+    /**
+     * Gets the user identifier.
+     * 
+     * @return the user identifier
+     */
+    public St getUserIdentifier() {
+        return userIdentifier;
+    }
+
+    /**
+     * Sets the user identifier.
+     * 
+     * @param userIdentifier the new user identifier
+     */
+    public void setUserIdentifier(St userIdentifier) {
+        this.userIdentifier = userIdentifier;
+    }
 }

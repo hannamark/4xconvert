@@ -219,51 +219,34 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             boolean myTrialsOnly)
         throws PAException {
         List<StudyProtocolQueryDTO> studyProtocolDtos = new ArrayList<StudyProtocolQueryDTO>();
-        StudyProtocolQueryDTO studyProtocolDto = null;
-        StudyOverallStatus studyOverallStatus = null;
-        DocumentWorkflowStatus documentWorkflowStatus = null;
-        StudyMilestone studyMilestone;
-        Organization organization = null;
-        Person person = null;
-        StudySite studySite = null;
-        StudyInbox studyInbox = null;
-        StudyCheckout studyCheckout = null;
-        StudyResourcing studyResourcing = null;
         RegistryUser potentialOwner = userId == null ? null : registryUserService.getUserById(userId);
         try {
             for (StudyProtocol studyProtocol : protocolQueryResult) {
-                studyProtocolDto = new StudyProtocolQueryDTO();
+                StudyProtocolQueryDTO studyProtocolDto = new StudyProtocolQueryDTO();
 
                 // get documentWorkflowStatus
-                documentWorkflowStatus = studyProtocol.getDocumentWorkflowStatuses().isEmpty() ? null
-                        : studyProtocol.getDocumentWorkflowStatuses().iterator().next();
+                DocumentWorkflowStatus documentWorkflowStatus = studyProtocol.getDocumentWorkflowStatuses().isEmpty()
+                        ? null : studyProtocol.getDocumentWorkflowStatuses().iterator().next();
 
-                studyMilestone = studyProtocol.getStudyMilestones().isEmpty() ? null
+                StudyMilestone studyMilestone = studyProtocol.getStudyMilestones().isEmpty() ? null
                         : studyProtocol.getStudyMilestones().iterator().next();
                 // get studyOverallStatus
-                studyOverallStatus = studyProtocol.getStudyOverallStatuses().isEmpty() ? null
+                StudyOverallStatus studyOverallStatus = studyProtocol.getStudyOverallStatuses().isEmpty() ? null
                         : studyProtocol.getStudyOverallStatuses().iterator().next();
                 // get the person
                 StudyContact sc = studyProtocol.getStudyContacts().isEmpty() ? null
                         : studyProtocol.getStudyContacts().iterator().next();
-                if (sc != null) {
-                    person = sc.getClinicalResearchStaff().getPerson();
-                }
+                Person person = (sc != null) ? sc.getClinicalResearchStaff().getPerson() : null;
 
                 // study site and organization
-                studySite = studyProtocol.getStudySites().isEmpty() ? null
+                StudySite studySite = studyProtocol.getStudySites().isEmpty() ? null
                         : studyProtocol.getStudySites().iterator().next();
-                if (studySite != null) {
-                    organization =  studySite.getResearchOrganization().getOrganization();
-                }
-
+                Organization organization = (studySite != null) ? studySite.getResearchOrganization().getOrganization()
+                        : null;
                 // get the StudyInbox
-                studyInbox = studyProtocol.getStudyInbox().isEmpty() ? null
+                StudyInbox studyInbox = studyProtocol.getStudyInbox().isEmpty() ? null
                         : studyProtocol.getStudyInbox().iterator().next();
-                studyCheckout = studyProtocol.getStudyCheckout().isEmpty() ? null
-                        : studyProtocol.getStudyCheckout().iterator().next();
-
-                studyResourcing = findSumm4FundingSrc(studyProtocol);
+                StudyResourcing studyResourcing = findSumm4FundingSrc(studyProtocol);
 
                 // transfer protocol to studyProtocolDto
                 if (documentWorkflowStatus != null) {
@@ -335,9 +318,21 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                     studyProtocolDto.setUpdatedComments(studyInbox.getComments());
                     studyProtocolDto.setUpdatedDate(studyInbox.getOpenDate());
                 }
-                if (studyCheckout != null) {
-                    studyProtocolDto.setStudyCheckoutBy(studyCheckout.getUserIdentifier());
-                    studyProtocolDto.setStudyCheckoutId(studyCheckout.getId());
+                if (CollectionUtils.isNotEmpty(studyProtocol.getStudyCheckout())) {
+                    for (StudyCheckout studyCheckout : studyProtocol.getStudyCheckout()) {
+                        switch (studyCheckout.getCheckOutType()) {
+                        case ADMININISTRATIVE:
+                            studyProtocolDto.setStudyAdminCheckoutBy(studyCheckout.getUserIdentifier());
+                            studyProtocolDto.setStudyAdminCheckoutId(studyCheckout.getId());
+                            break;
+                        case SCIENTIFIC:
+                            studyProtocolDto.setStudyScientificCheckoutBy(studyCheckout.getUserIdentifier());
+                            studyProtocolDto.setStudyScientificCheckoutId(studyCheckout.getId());
+                            break;
+                        default:
+                            break;
+                        }
+                    }
                 }
                 if (potentialOwner != null) {
                     studyProtocolDto.setSearcherTrialOwner(registryUserService.hasTrialAccess(potentialOwner,

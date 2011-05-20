@@ -1,4 +1,4 @@
-/*
+/**
 * caBIG Open Source Software License
 *
 * Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
@@ -78,19 +78,23 @@
 */
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.CheckOutType;
 import gov.nih.nci.pa.util.CommonsConstant;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
 
 /**
  * The Class StudyCheckout.
- *
+ * 
  * @author Kalpana Guthikonda
  * @since 09/18/2009
  */
@@ -98,32 +102,50 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
 @Table(name = "STUDY_CHECKOUT")
 public class StudyCheckout extends AbstractStudyEntity implements Auditable {
 
-  /** The Constant serialVersionUID. */
-  private static final long serialVersionUID = 1234509870L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1234509870L;
 
-  /** The user identifier. */
-  private String userIdentifier;
+    /** The checkout type. */
+    private CheckOutType checkOutType;
+    /** The user identifier. */
+    private String userIdentifier;
 
-/**
- * Gets the user identifier.
- *
- * @return the user identifier
- */
-@Column(name = "USER_IDENTIFIER")
-@Length(max = CommonsConstant.LONG_TEXT_LENGTH)
-public String getUserIdentifier() {
-    return userIdentifier;
-}
+    /**
+     * @return the checkOutType
+     */
+    @Column(name = "CHECKOUT_TYPE")
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
+    public CheckOutType getCheckOutType() {
+        return checkOutType;
+    }
 
-/**
- * Sets the user identifier.
- *
- * @param userIdentifier the new user identifier
- */
-public void setUserIdentifier(String userIdentifier) {
-    this.userIdentifier = userIdentifier;
-}
+    /**
+     * @param checkOutType the checkOutType to set
+     */
+    public void setCheckOutType(CheckOutType checkOutType) {
+        this.checkOutType = checkOutType;
+    }
 
+    /**
+     * Gets the user identifier.
+     * 
+     * @return the user identifier
+     */
+    @Column(name = "USER_IDENTIFIER")
+    @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
+    public String getUserIdentifier() {
+        return userIdentifier;
+    }
 
+    /**
+     * Sets the user identifier.
+     * 
+     * @param userIdentifier the new user identifier
+     */
+    public void setUserIdentifier(String userIdentifier) {
+        this.userIdentifier = userIdentifier;
+    }
 
 }
