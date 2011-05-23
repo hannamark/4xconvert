@@ -679,7 +679,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         }
         if (adminCheckout) {
             StudyCheckout co = new StudyCheckout();
-            co.setCheckOutType(CheckOutType.ADMININISTRATIVE);
+            co.setCheckOutType(CheckOutType.ADMINISTRATIVE);
             co.setUserIdentifier("user");
             co.setStudyProtocol(sp);
             TestSchema.addUpdObject(co);

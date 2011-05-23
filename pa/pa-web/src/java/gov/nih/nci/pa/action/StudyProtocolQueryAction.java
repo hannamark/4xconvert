@@ -389,7 +389,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
      * @throws PAException exception
      */
     public String adminCheckOut() throws PAException {
-        return checkOut(CheckOutType.ADMININISTRATIVE);
+        return checkOut(CheckOutType.ADMINISTRATIVE);
     }
     
     /**
@@ -405,7 +405,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         try {
             ProtocolQueryServiceLocal protocolQueryService = PaRegistry.getProtocolQueryService();
             StudyProtocolQueryDTO spqDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(studyProtocolId);
-            boolean canCheckOut = (checkOutType == CheckOutType.ADMININISTRATIVE)
+            boolean canCheckOut = (checkOutType == CheckOutType.ADMINISTRATIVE)
                     ? spqDTO.getStudyAdminCheckoutBy() == null : spqDTO.getStudyScientificCheckoutBy() == null;
             if (canCheckOut) {
                 StudyCheckoutDTO scoDTO = new StudyCheckoutDTO();
@@ -428,7 +428,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
      * @throws PAException exception
      */
     public String adminCheckIn() throws PAException {
-        return checkIn(CheckOutType.ADMININISTRATIVE);
+        return checkIn(CheckOutType.ADMINISTRATIVE);
     }
     
     /**
@@ -444,7 +444,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         try {
             ProtocolQueryServiceLocal protocolQueryService = PaRegistry.getProtocolQueryService();
             StudyProtocolQueryDTO spqDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(studyProtocolId);
-            Long checkoutId = (checkOutType == CheckOutType.ADMININISTRATIVE) ? spqDTO.getStudyAdminCheckoutId()
+            Long checkoutId = (checkOutType == CheckOutType.ADMINISTRATIVE) ? spqDTO.getStudyAdminCheckoutId()
                     : spqDTO.getStudyScientificCheckoutId();
             if (checkoutId != null) {
                 PaRegistry.getStudyCheckoutService().delete(IiConverter.convertToIi(checkoutId));

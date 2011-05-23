@@ -43,7 +43,7 @@ public class StudyCheckoutServiceBeanTest extends AbstractHibernateTestCase {
     @Test
     public void create() throws Exception {
         StudyCheckoutDTO dtoNew = new StudyCheckoutDTO();
-        dtoNew.setCheckOutTypeCode(CdConverter.convertStringToCd(CheckOutType.ADMININISTRATIVE.getCode()));
+        dtoNew.setCheckOutTypeCode(CdConverter.convertStringToCd(CheckOutType.ADMINISTRATIVE.getCode()));
         dtoNew.setUserIdentifier(StConverter.convertToSt("Checkout"));
         dtoNew.setStudyProtocolIdentifier(pid);
         localEjb.create(dtoNew);

@@ -321,7 +321,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 if (CollectionUtils.isNotEmpty(studyProtocol.getStudyCheckout())) {
                     for (StudyCheckout studyCheckout : studyProtocol.getStudyCheckout()) {
                         switch (studyCheckout.getCheckOutType()) {
-                        case ADMININISTRATIVE:
+                        case ADMINISTRATIVE:
                             studyProtocolDto.setStudyAdminCheckoutBy(studyCheckout.getUserIdentifier());
                             studyProtocolDto.setStudyAdminCheckoutId(studyCheckout.getId());
                             break;

@@ -92,7 +92,7 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 public enum CheckOutType implements CodedEnum<String> {
     /** Administrative Checkout. */
-    ADMININISTRATIVE("Administrative"), 
+    ADMINISTRATIVE("Administrative"), 
     /** Scientific Checkout. */
     SCIENTIFIC("Scientific");
 

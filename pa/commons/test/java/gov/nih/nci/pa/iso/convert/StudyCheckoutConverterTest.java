@@ -16,7 +16,7 @@ public class StudyCheckoutConverterTest extends
         StudyCheckout bo = new StudyCheckout();
         bo.setId(ID);
         bo.setStudyProtocol(getStudyProtocol());
-        bo.setCheckOutType(CheckOutType.ADMININISTRATIVE);
+        bo.setCheckOutType(CheckOutType.ADMINISTRATIVE);
         bo.setUserIdentifier("Test");
         return bo;
     }
@@ -25,7 +25,7 @@ public class StudyCheckoutConverterTest extends
     public StudyCheckoutDTO makeDto() {
         StudyCheckoutDTO dto = new StudyCheckoutDTO();
         dto.setIdentifier(IiConverter.convertToIi(ID));
-        dto.setCheckOutTypeCode(CdConverter.convertStringToCd(CheckOutType.ADMININISTRATIVE.getCode()));
+        dto.setCheckOutTypeCode(CdConverter.convertStringToCd(CheckOutType.ADMINISTRATIVE.getCode()));
         dto.setUserIdentifier(StConverter.convertToSt("Test"));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(STUDY_PROTOCOL_ID));
         return dto;
@@ -34,7 +34,7 @@ public class StudyCheckoutConverterTest extends
     @Override
     public void verifyBo(StudyCheckout bo) {
         assertEquals(ID, bo.getId());
-        assertEquals(CheckOutType.ADMININISTRATIVE, bo.getCheckOutType());
+        assertEquals(CheckOutType.ADMINISTRATIVE, bo.getCheckOutType());
         assertEquals("Test", bo.getUserIdentifier());
         assertEquals(STUDY_PROTOCOL_ID, bo.getStudyProtocol().getId());
     }
@@ -42,7 +42,7 @@ public class StudyCheckoutConverterTest extends
     @Override
     public void verifyDto(StudyCheckoutDTO dto) {
         assertEquals(ID, IiConverter.convertToLong(dto.getIdentifier()));
-        assertEquals(CheckOutType.ADMININISTRATIVE.getCode(), CdConverter.convertCdToString(dto.getCheckOutTypeCode()));
+        assertEquals(CheckOutType.ADMINISTRATIVE.getCode(), CdConverter.convertCdToString(dto.getCheckOutTypeCode()));
         assertEquals("Test", dto.getUserIdentifier().getValue());
         assertEquals(STUDY_PROTOCOL_ID, IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
     }
