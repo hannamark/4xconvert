@@ -84,6 +84,7 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -330,5 +331,20 @@ public enum MilestoneCode implements CodedEnum<String> {
      */
     public static boolean isAboveTrialSummaryReport(MilestoneCode mc) {
         return TRS_AND_ABOVE.contains(mc);
+    }
+    
+    /**
+     * Gets the codes of the given MilestoneCode collection.
+     * @param milestones The milestones
+     * @return The list of codes of the given milestones
+     */
+    public static List<String> getCodes(Collection<MilestoneCode> milestones) {
+        List<String> milestoneCodes = new ArrayList<String>();
+        for (MilestoneCode milestoneCode : MilestoneCode.values()) {
+            if (milestones.contains(milestoneCode)) {
+                milestoneCodes.add(milestoneCode.getCode());
+            }
+        }
+        return milestoneCodes;
     }
 }

@@ -313,21 +313,31 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         checkoutCommands = new ArrayList<String>();
         HttpSession session = ServletActionContext.getRequest().getSession();
         boolean suAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SU_ABSTRACTOR));
+        setAdminCheckoutCommands(spqDTO, suAbs);
+        setScientificCheckoutCommands(spqDTO, suAbs);
+    }
+
+    private void setAdminCheckoutCommands(StudyProtocolQueryDTO spqDTO, boolean suAbs) {
         if (spqDTO.getStudyAdminCheckoutBy() != null) {
             if (spqDTO.getStudyAdminCheckoutBy().equalsIgnoreCase(UsernameHolder.getUser()) || suAbs) {
                 checkoutCommands.add("adminCheckIn");
             }
         } else {
+            HttpSession session = ServletActionContext.getRequest().getSession();
             boolean adminAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_ADMIN_ABSTRACTOR));
             if (adminAbs || suAbs) {
                 checkoutCommands.add("adminCheckOut");
             }
         }
+    }
+
+    private void setScientificCheckoutCommands(StudyProtocolQueryDTO spqDTO, boolean suAbs) {
         if (spqDTO.getStudyScientificCheckoutBy() != null) {
             if (spqDTO.getStudyScientificCheckoutBy().equalsIgnoreCase(UsernameHolder.getUser()) || suAbs) {
                 checkoutCommands.add("scientificCheckIn");
             }
         } else {
+            HttpSession session = ServletActionContext.getRequest().getSession();
             boolean scAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR));
             if (scAbs || suAbs) {
                 checkoutCommands.add("scientificCheckOut");

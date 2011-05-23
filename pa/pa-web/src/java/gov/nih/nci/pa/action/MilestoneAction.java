@@ -137,7 +137,7 @@ public final class MilestoneAction extends AbstractListEditAction {
         milestone = new MilestoneWebDTO();
         allowedMilestones = computeAllowedMilestones();
     }
-    
+
     private List<String> computeAllowedMilestones() {
         HttpSession session = ServletActionContext.getRequest().getSession();
         StudyProtocolQueryDTO sqpDTO = (StudyProtocolQueryDTO) session.getAttribute(Constants.TRIAL_SUMMARY);
@@ -145,24 +145,30 @@ public final class MilestoneAction extends AbstractListEditAction {
         boolean adminAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_ADMIN_ABSTRACTOR));
         boolean scAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR));
         Set<MilestoneCode> milestones = EnumSet.allOf(MilestoneCode.class);
+        milestones.remove(MilestoneCode.READY_FOR_TSR);
+        milestones.remove(MilestoneCode.SUBMISSION_REJECTED);
+        checkAdminMilestones(milestones, adminAbs, suAbs);
+        checkScientificMilestones(milestones, scAbs, suAbs);
+        checkSuperUserMilestones(milestones, suAbs, sqpDTO);
+        return MilestoneCode.getCodes(milestones);
+    }
+
+    private void checkAdminMilestones(Set<MilestoneCode> milestones, boolean adminAbs, boolean suAbs) {
         if (!adminAbs && !suAbs) {
             milestones.removeAll(MilestoneCode.ADMIN_SEQ);
         }
+    }
+
+    private void checkScientificMilestones(Set<MilestoneCode> milestones, boolean scAbs, boolean suAbs) {
         if (!scAbs && !suAbs) {
             milestones.removeAll(MilestoneCode.SCIENTIFIC_SEQ);
         }
-        milestones.remove(MilestoneCode.READY_FOR_TSR);
-        milestones.remove(MilestoneCode.SUBMISSION_REJECTED);
+    }
+
+    private void checkSuperUserMilestones(Set<MilestoneCode> milestones, boolean suAbs, StudyProtocolQueryDTO sqpDTO) {
         if (!suAbs || sqpDTO.getSubmissionTypeCode() != SubmissionTypeCode.O) {
             milestones.remove(MilestoneCode.LATE_REJECTION_DATE);
         }
-        List<String> milestoneCodes = new ArrayList<String>();
-        for (MilestoneCode milestoneCode : MilestoneCode.values()) {
-            if (milestones.contains(milestoneCode)) {
-                milestoneCodes.add(milestoneCode.getCode());
-            }
-        }
-        return milestoneCodes;
     }
 
     /**
