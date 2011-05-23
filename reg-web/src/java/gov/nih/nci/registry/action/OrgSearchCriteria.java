@@ -6,6 +6,7 @@ package gov.nih.nci.registry.action;
  */
 public class OrgSearchCriteria {
     private String orgName;
+    private String familyName;
     private String nciOrgNumber;
     private String orgCountry;
     private String orgCity;
@@ -28,6 +29,18 @@ public class OrgSearchCriteria {
      */
     public void setOrgName(String orgName) {
         this.orgName = orgName;
+    }
+    /**
+     * @return the familyName
+     */
+    public String getFamilyName() {
+        return familyName;
+    }
+    /**
+     * @param familyName the familyName to set
+     */
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
     }
     /**
      * @return the nciOrgNumber
@@ -161,7 +174,4 @@ public class OrgSearchCriteria {
     public void setOrgStreetAddress(String orgStreetAddress) {
         this.orgStreetAddress = orgStreetAddress;
     }
-    
-    
-    
 }

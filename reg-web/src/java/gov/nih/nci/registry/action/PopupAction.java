@@ -157,6 +157,7 @@ public class PopupAction extends ActionSupport implements Preparable {
 
     //Organization attribute;
     private String orgName;
+    private String familyName;
     private String orgStAddress;
     private String countryName;
     private String cityName;
@@ -235,9 +236,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     private String populatePersons(boolean pagination) throws PAException {
         final HttpServletRequest request = ServletActionContext.getRequest();
         try {
-            if (StringUtils.isEmpty(firstName)  && StringUtils.isEmpty(lastName)  && StringUtils.isEmpty(email)
-                    && StringUtils.isEmpty(ctepId) && StringUtils.isEmpty(city) && StringUtils.isEmpty(zip)
-                    && StringUtils.isEmpty(state) && StringUtils.isEmpty(country)) {
+            if (isPersonCriterionSet()) {
                 String message = "Please enter at least one search criteria";
                 persons = null;
                 addActionError(message);
@@ -295,8 +294,13 @@ public class PopupAction extends ActionSupport implements Preparable {
         return pagination ? "persons" : SUCCESS;
     }
 
+    private boolean isPersonCriterionSet() {
+        return StringUtils.isEmpty(firstName)  && StringUtils.isEmpty(lastName)  && StringUtils.isEmpty(email)
+                && StringUtils.isEmpty(ctepId) && StringUtils.isEmpty(city) && StringUtils.isEmpty(zip)
+                && StringUtils.isEmpty(state) && StringUtils.isEmpty(country);
+    }
+
     /**
-     *
      * @return result
      */
     public String displayOrgListDisplayTag() {
@@ -305,8 +309,7 @@ public class PopupAction extends ActionSupport implements Preparable {
 
     private String populateOrgs(boolean pagination) {
         try {
-            if (StringUtils.isEmpty(orgName) && StringUtils.isEmpty(countryName) && StringUtils.isEmpty(cityName)
-                    && StringUtils.isEmpty(zipCode)  && StringUtils.isEmpty(ctepid)) {
+            if (isOrgCriterionSet()) {
                 String message = "Please enter at least one search criteria";
                 orgs = null;
                 addActionError(message);
@@ -323,6 +326,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             }
             if (pagination) {
                 orgSearchCriteria.setOrgName(orgName);
+                orgSearchCriteria.setFamilyName(familyName);
                 orgSearchCriteria.setOrgCity(cityName);
                 orgSearchCriteria.setOrgCountry(countryName);
                 orgSearchCriteria.setOrgZip(zipCode);
@@ -345,9 +349,11 @@ public class PopupAction extends ActionSupport implements Preparable {
             List<OrganizationDTO> callConvert = new ArrayList<OrganizationDTO>();
             if (criteria.getIdentifier() != null
                     || criteria.getName() != null
-                    || criteria.getPostalAddress() != null) {
+                    || criteria.getPostalAddress() != null
+                    || StringUtils.isNotEmpty(familyName)) {
                 LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
-                callConvert = PoRegistry.getOrganizationEntityService().search(criteria, limit);
+                callConvert = PoRegistry.getOrganizationEntityService().search(criteria,
+                        EnOnConverter.convertToEnOn(familyName), limit);
             }
             convertPoOrganizationDTO(callConvert);
             return pagination ? ORGS_RESULT : SUCCESS;
@@ -356,6 +362,12 @@ public class PopupAction extends ActionSupport implements Preparable {
             LOG.error("Error occurred while searching PO Organizations", e);
             return pagination ? ORGS_RESULT : SUCCESS;
         }
+    }
+
+    private boolean isOrgCriterionSet() {
+        return StringUtils.isEmpty(orgName) && StringUtils.isEmpty(countryName) && StringUtils.isEmpty(cityName)
+                && StringUtils.isEmpty(zipCode)  && StringUtils.isEmpty(ctepid) 
+                && StringUtils.isEmpty(familyName);
     }
 
     private String getCountryNameUsingCode(String code) {
@@ -847,6 +859,20 @@ public class PopupAction extends ActionSupport implements Preparable {
      */
     public void setOrgName(String orgName) {
         this.orgName = orgName;
+    }
+
+    /**
+     * @return the familyName
+     */
+    public String getFamilyName() {
+        return familyName;
+    }
+    
+    /**
+     * @param familyName the familyName to set
+     */
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
     }
 
     /**

@@ -90,6 +90,7 @@ public class PaOrganizationDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private String id;
     private String name;
+    private String familyName;
     private String nciNumber;
     private String recruitmentStatus;
     private String recruitmentStatusDate;
@@ -145,6 +146,20 @@ public class PaOrganizationDTO implements Serializable {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * @return the familyName
+     */
+    public String getFamilyName() {
+        return familyName;
+    }
+
+    /**
+     * @param familyName the familyName to set
+     */
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
     }
 
     /**

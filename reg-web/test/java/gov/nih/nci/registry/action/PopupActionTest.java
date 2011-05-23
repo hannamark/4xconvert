@@ -31,6 +31,7 @@ public class PopupActionTest extends AbstractRegWebTest {
     public void testLookuporgs(){
         popUpAction = new PopupAction();
         assertEquals("orgs",popUpAction.lookuporgs());
+        assertNull(popUpAction.getOrgs());        
     }
     @Test
     public void testLookuporgsCountryListInSession(){
@@ -52,12 +53,14 @@ public class PopupActionTest extends AbstractRegWebTest {
         ServletActionContext.setRequest(request);
 
         assertEquals("orgs",popUpAction.lookuporgs());
+        assertEquals(3, popUpAction.getCountryList().size());
     }
 
     @Test
     public void testLookuppersons(){
         popUpAction = new PopupAction();
         assertEquals("persons",popUpAction.lookuppersons());
+        assertNull(popUpAction.getPersons());
     }
     @Test
     public void testDisplayOrgList(){

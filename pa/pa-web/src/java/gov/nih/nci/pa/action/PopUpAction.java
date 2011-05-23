@@ -98,8 +98,7 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -117,7 +116,17 @@ public class PopUpAction extends ActionSupport {
     private List<PaPersonDTO> persons = new ArrayList<PaPersonDTO>();
     private PaOrganizationDTO orgSearchCriteria = new PaOrganizationDTO();
     private PaPersonDTO perSearchCriteria = new PaPersonDTO();
-
+    private String firstName;
+    private String lastName;
+    private String countryName;
+    private String cityName;
+    private String zipCode;
+    private String stateName;
+    private String email;
+    private String telephone;
+    private String orgName;
+    private String familyName;
+    
     /**
      *
      * @return String success or failure
@@ -126,13 +135,11 @@ public class PopUpAction extends ActionSupport {
         try {
             persons = null;
             getCountriesList();
-            String email = ServletActionContext.getRequest().getParameter("email");
-            String telephone = ServletActionContext.getRequest().getParameter("tel");
-            if (email != null) {
-                ServletActionContext.getRequest().getSession().setAttribute("emailEntered", email);
+            if (getEmail() != null) {
+                ServletActionContext.getRequest().getSession().setAttribute("emailEntered", getEmail());
             }
-            if (telephone != null) {
-                ServletActionContext.getRequest().getSession().setAttribute("telephoneEntered", telephone);
+            if (getTelephone() != null) {
+                ServletActionContext.getRequest().getSession().setAttribute("telephoneEntered", getTelephone());
             }
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
@@ -279,34 +286,27 @@ public class PopUpAction extends ActionSupport {
     private String processDisplayOrganizations(String retvalue) {
         try {
             getCountriesList();
-            final HttpServletRequest request = ServletActionContext.getRequest();
-            String orgName = request.getParameter("orgName");
-            // String nciOrgName = ServletActionContext.getRequest().getParameter("nciNumber");
-            String countryName = request.getParameter("countryName");
-            String cityName = request.getParameter("cityName");
-            String zipCode = request.getParameter("zipCode");
-            String stateName = request.getParameter("stateName");
-            if (checkOrgSearchCriteria(orgName, countryName, cityName, zipCode)) {
+            if (isOrgSearchCriteriaSet()) {
                 String message = "Please enter at least one search criteria";
                 orgs = null;
-                request.setAttribute(Constants.FAILURE_MESSAGE, message);
+                ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
                 return retvalue;
             }
             // Set the values; so paging will retain them
-            orgSearchCriteria.setName(orgName);
+            orgSearchCriteria.setName(getOrgName());
+            orgSearchCriteria.setFamilyName(getFamilyName());
             orgSearchCriteria.setCity(cityName);
             orgSearchCriteria.setCountry(countryName);
             orgSearchCriteria.setZip(zipCode);
             orgSearchCriteria.setState(stateName);
-            //
             OrganizationDTO criteria = new OrganizationDTO();
-            criteria.setName(EnOnConverter.convertToEnOn(orgName));
+            criteria.setName(EnOnConverter.convertToEnOn(getOrgName()));
             criteria.setPostalAddress(AddressConverterUtil.create(null, null, cityName,
                                                                             stateName, zipCode, countryName));
             LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
-            List<OrganizationDTO> personsList = new ArrayList<OrganizationDTO>();
-            personsList = PoRegistry.getOrganizationEntityService().search(criteria, limit);
-            for (OrganizationDTO dto : personsList) {
+            List<OrganizationDTO> orgList = PoRegistry.getOrganizationEntityService().search(criteria,
+                    EnOnConverter.convertToEnOn(getFamilyName()), limit);
+            for (OrganizationDTO dto : orgList) {
                 orgs.add(PADomainUtils.convertPoOrganizationDTO(dto, countryList));
             }
             return retvalue;
@@ -315,24 +315,18 @@ public class PopUpAction extends ActionSupport {
         }
     }
 
-    private boolean checkOrgSearchCriteria(String orgName, String countryName, String cityName, String zipCode) {
-        return "".equals(orgName) && ("aaa").equals(countryName) && "".equals(cityName) && "".equals(zipCode);
+    private boolean isOrgSearchCriteriaSet() {
+        return StringUtils.isBlank(orgName) && StringUtils.isBlank(familyName) && StringUtils.isBlank(countryName)
+                && StringUtils.isBlank(cityName) && StringUtils.isBlank(zipCode);
     }
 
     private String processDisplayPersons(String retvalue) {
-        final HttpServletRequest request = ServletActionContext.getRequest();
-        if (checkPersonSearchCriteria(request)) {
+        if (isPersonSearchCriteriaSet()) {
             String message = "Please enter at least one search criteria";
             persons = null;
-            request.setAttribute(Constants.FAILURE_MESSAGE, message);
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
             return retvalue;
         }
-        String firstName = request.getParameter("firstName");
-        String lastName = request.getParameter("lastName");
-        String countryName = request.getParameter("countryName");
-        String cityName = request.getParameter("cityName");
-        String zipCode = request.getParameter("zipCode");
-        String stateName = request.getParameter("stateName");
         // Set the values; so paging will retain them
         perSearchCriteria.setFirstName(firstName);
         perSearchCriteria.setLastName(lastName);
@@ -352,21 +346,15 @@ public class PopUpAction extends ActionSupport {
                 persons.add(PADomainUtils.convertToPaPersonDTO(dto));
             }
         } catch (TooManyResultsException e) {
-            request.setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             return retvalue;
         }
         return retvalue;
     }
 
-    private boolean checkPersonSearchCriteria(HttpServletRequest request) {
-        String firstName = request.getParameter("firstName");
-        String lastName = request.getParameter("lastName");
-        String countryName = request.getParameter("countryName");
-        String cityName = request.getParameter("cityName");
-        String zipCode = request.getParameter("zipCode");
-        String stateName = request.getParameter("stateName");
-        return "".equals(firstName) && "".equals(lastName) && "".equals(countryName) && "".equals(cityName)
-                && "".equals(zipCode) && "".equals(stateName);
+    private boolean isPersonSearchCriteriaSet() {
+        return StringUtils.isBlank(firstName) && StringUtils.isBlank(lastName) && StringUtils.isBlank(countryName)
+                && StringUtils.isBlank(cityName) && StringUtils.isBlank(zipCode) && StringUtils.isBlank(stateName);
     }
 
     @SuppressWarnings("unchecked")
@@ -390,5 +378,145 @@ public class PopUpAction extends ActionSupport {
      */
     public void setPerSearchCriteria(PaPersonDTO perSearchCriteria) {
         this.perSearchCriteria = perSearchCriteria;
+    }
+
+    /**
+     * @return the firstName
+     */
+    public String getFirstName() {
+        return firstName;
+    }
+
+    /**
+     * @param firstName the firstName to set
+     */
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    /**
+     * @return the lastName
+     */
+    public String getLastName() {
+        return lastName;
+    }
+
+    /**
+     * @param lastName the lastName to set
+     */
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    /**
+     * @return the countryName
+     */
+    public String getCountryName() {
+        return countryName;
+    }
+
+    /**
+     * @param countryName the countryName to set
+     */
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
+    }
+
+    /**
+     * @return the cityName
+     */
+    public String getCityName() {
+        return cityName;
+    }
+
+    /**
+     * @param cityName the cityName to set
+     */
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+
+    /**
+     * @return the zipCode
+     */
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    /**
+     * @param zipCode the zipCode to set
+     */
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    /**
+     * @return the stateName
+     */
+    public String getStateName() {
+        return stateName;
+    }
+
+    /**
+     * @param stateName the stateName to set
+     */
+    public void setStateName(String stateName) {
+        this.stateName = stateName;
+    }
+
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * @param telephone the telephone to set
+     */
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
+    /**
+     * @return the telephone
+     */
+    public String getTelephone() {
+        return telephone;
+    }
+
+    /**
+     * @param orgName the orgName to set
+     */
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
+
+    /**
+     * @return the orgName
+     */
+    public String getOrgName() {
+        return orgName;
+    }
+
+    /**
+     * @param familyName the familyName to set
+     */
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
+    }
+
+    /**
+     * @return the familyName
+     */
+    public String getFamilyName() {
+        return familyName;
     }
 }

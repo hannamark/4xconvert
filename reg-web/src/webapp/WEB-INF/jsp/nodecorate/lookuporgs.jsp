@@ -36,6 +36,7 @@
                     countryName: $("orgCountrySearch").value,
                     ctepid: $("orgCtepIdSearch").value,
                     orgName: $("orgNameSearch").value,
+                    familyName: $("orgFamilyNameSearch").value,
                     stateName: $("orgStateSearch").value,
                     zipCode: $("orgZipSearch").value
                 };

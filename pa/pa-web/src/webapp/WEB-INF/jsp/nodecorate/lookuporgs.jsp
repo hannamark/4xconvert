@@ -22,6 +22,7 @@
                 var url = '/pa/protected/popupdisplayOrgList.action';
                 var params = {
                     orgName: $('orgNameSearch').value,
+                    familyName: $('orgFamilyNameSearch').value,
                     countryName: $('orgCountrySearch').value,
                     cityName: $('orgCitySearch').value,
                     zipCode: $('orgZipSearch').value,
@@ -36,6 +37,7 @@
             function formReset() {
                 document.forms[0].reset();
                 $("orgNameSearch").value = '';
+                $("orgFamilyNameSearch").value = '';
                 $("orgCitySearch").value = '';
                 $("orgStateSearch").value = '';
                 $("orgCountrySearch").value = 'USA';
@@ -59,31 +61,36 @@
                          <s:textfield id="orgNameSearch" name="orgSearchCriteria.name" maxlength="200" size="100" cssStyle="width:200px" />
                      </td>
             
-                     
-                     <td scope="row" class="label">
-                        <label for="country"><fmt:message key="popUpOrg.country"/></label>
-                    </td>
-                    <td>
-                        <s:select id="orgCountrySearch" name="orgSearchCriteria.orgCountry" list="countryList"  
-                                  listKey="alpha3" listValue="name" headerKey="USA" headerValue="United States" cssStyle="width:206px" />
-                    </td>        
-                </tr>
-                <tr>  
                       <td scope="row" class="label">
                         <label for="city"><fmt:message key="popUpOrg.city"/></label>
                     </td>
                      <td>             
                          <s:textfield id="orgCitySearch" name="orgSearchCriteria.city" maxlength="200" size="100" cssStyle="width:200px" />
                     </td>
+                     
+                </tr>
+                <tr>  
+                     <td scope="row" class="label">
+                        <label for="familyName"><fmt:message key="popUpOrg.familyName"/></label>
+                    </td>
+                     <td>
+                         <s:textfield id="orgFamilyNameSearch" name="orgSearchCriteria.familyName" maxlength="200" size="100" cssStyle="width:200px" />
+                     </td>
+                     <td scope="row" class="label">
+                        <label for="country"><fmt:message key="popUpOrg.country"/></label>
+                    </td>
+                    <td>
+                        <s:select id="orgCountrySearch" name="orgSearchCriteria.orgCountry" list="countryList"  
+                                  listKey="alpha3" listValue="name" value="defaultCountrydsds" cssStyle="width:206px" />
+                    </td>        
+                </tr>
+                <tr>
                      <td scope="row" class="label">
                         <label for="state"><fmt:message key="popUpOrg.state"/></label>
                     </td>
                      <td>
                          <s:textfield id="orgStateSearch" name="orgSearchCriteria.state" maxlength="75" size="20"/><br><font size="1"><span class="info"><fmt:message key="popUpOrg.stateInfo"/></span></font>
                     </td>
-                    
-                </tr>
-                <tr>
                       <td scope="row" class="label">
                         <label for="zip"><fmt:message key="popUpOrg.zip"/></label>
                     </td>
