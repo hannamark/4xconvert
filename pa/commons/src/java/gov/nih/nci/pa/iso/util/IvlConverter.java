@@ -177,36 +177,46 @@ public class IvlConverter<Iso extends Qty, T> {
     public Ivl<Iso> convertToIvl(Object low, Object high) {
         Ivl<Iso> result = null;
         if (aggregatedType.equals(Ts.class)) {
-            Ivl<Ts> wrk = new Ivl<Ts>();
-            wrk.setLow(low instanceof String
-                    ? TsConverter.convertToTs(ISOUtil.dateStringToTimestamp((String) low))
-                    : TsConverter.convertToTs((Date) low));
-            wrk.setHigh(high instanceof String
-                    ? TsConverter.convertToTs(ISOUtil.dateStringToTimestamp((String) high))
-                    : TsConverter.convertToTs((Date) high));
-            result = (Ivl<Iso>) wrk;
+            result = (Ivl<Iso>) convertToIvlTs(low, high);
         } else if (aggregatedType.equals(Int.class)) {
-            Ivl<Int> wrk = new Ivl<Int>();
-            wrk.setLow(low instanceof String
-                    ? IntConverter.convertToInt((String) low)
-                    : IntConverter.convertToInt((Integer) low));
-            wrk.setHigh(high instanceof Integer
-                    ? IntConverter.convertToInt((Integer) high)
-                     : IntConverter.convertToInt((Integer) high));
-            result = (Ivl<Iso>) wrk;
+            result = (Ivl<Iso>) convertToIvlInt(low, high);
         } else if (aggregatedType.equals(Pq.class)) {
-            Ivl<Pq> wrk = new Ivl<Pq>();
-            if (low instanceof IvlConverter.JavaPq) {
-                wrk.setLow(PqConverter.convertToPq((ISOUtil.convertPqToDecimal((JavaPq) low)) ,
-                        ISOUtil.convertPqToPrecision((JavaPq) low), ISOUtil.convertPqToUnit((JavaPq) low)));
-            }
-            if (high instanceof IvlConverter.JavaPq) {
-                wrk.setHigh(PqConverter.convertToPq((ISOUtil.convertPqToDecimal((JavaPq) high)) ,
-                        ISOUtil.convertPqToPrecision((JavaPq) high), ISOUtil.convertPqToUnit((JavaPq) high)));
-            }
-            result = (Ivl<Iso>) wrk;
+            result = (Ivl<Iso>) convertToIvlPq(low, high);
         }
         return result;
+    }
+
+    private Ivl<Pq> convertToIvlPq(Object low, Object high) {
+        Ivl<Pq> wrk = new Ivl<Pq>();
+        if (low instanceof IvlConverter.JavaPq) {
+            wrk.setLow(PqConverter.convertToPq((ISOUtil.convertPqToDecimal((JavaPq) low)),
+                                               ISOUtil.convertPqToPrecision((JavaPq) low),
+                                               ISOUtil.convertPqToUnit((JavaPq) low)));
+        }
+        if (high instanceof IvlConverter.JavaPq) {
+            wrk.setHigh(PqConverter.convertToPq((ISOUtil.convertPqToDecimal((JavaPq) high)),
+                                                ISOUtil.convertPqToPrecision((JavaPq) high),
+                                                ISOUtil.convertPqToUnit((JavaPq) high)));
+        }
+        return wrk;
+    }
+
+    private Ivl<Int> convertToIvlInt(Object low, Object high) {
+        Ivl<Int> wrk = new Ivl<Int>();
+        wrk.setLow(low instanceof String ? IntConverter.convertToInt((String) low) : IntConverter
+            .convertToInt((Integer) low));
+        wrk.setHigh(high instanceof Integer ? IntConverter.convertToInt((Integer) high) : IntConverter
+            .convertToInt((Integer) high));
+        return wrk;
+    }
+
+    private Ivl<Ts> convertToIvlTs(Object low, Object high) {
+        Ivl<Ts> wrk = new Ivl<Ts>();
+        wrk.setLow(low instanceof String ? TsConverter.convertToTs(ISOUtil.dateStringToTimestamp((String) low))
+                : TsConverter.convertToTs((Date) low));
+        wrk.setHigh(high instanceof String ? TsConverter.convertToTs(ISOUtil.dateStringToTimestamp((String) high))
+                : TsConverter.convertToTs((Date) high));
+        return wrk;
     }
 
     /**

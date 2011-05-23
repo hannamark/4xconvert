@@ -93,10 +93,6 @@ import gov.nih.nci.pa.util.ISOUtil;
  * Convert StudyResourcing from domain to DTO.
  *
  * @author Naveen Amiruddin
- * @since 09/09/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
  */
 public class StudyResourcingConverter extends AbstractConverter<StudyResourcingDTO, StudyResourcing> {
 
@@ -152,6 +148,19 @@ public class StudyResourcingConverter extends AbstractConverter<StudyResourcingD
             studyResourcing.setSummary4ReportedResourceIndicator(
                     studyResourcingDTO.getSummary4ReportedResourceIndicator().getValue());
         }
+        convertTypeAndFundingMechanismToDomain(studyResourcingDTO, studyResourcing);
+        convertNihNciCodesToDomain(studyResourcingDTO, studyResourcing);
+        if (studyResourcingDTO.getSerialNumber() != null) {
+            studyResourcing.setSerialNumber(studyResourcingDTO.getSerialNumber().getValue());
+        }
+        studyResourcing.setActiveIndicator(BlConverter.convertToBoolean(studyResourcingDTO.getActiveIndicator()));
+        if (ISOUtil.isBlNull(studyResourcingDTO.getActiveIndicator())) {
+            studyResourcing.setActiveIndicator(Boolean.TRUE);
+        }
+    }
+
+    private void convertTypeAndFundingMechanismToDomain(StudyResourcingDTO studyResourcingDTO,
+            StudyResourcing studyResourcing) {
         if (studyResourcingDTO.getTypeCode() != null) {
             studyResourcing.setTypeCode(SummaryFourFundingCategoryCode.getByCode(
                     studyResourcingDTO.getTypeCode().getCode()));
@@ -160,19 +169,15 @@ public class StudyResourcingConverter extends AbstractConverter<StudyResourcingD
             studyResourcing.setFundingMechanismCode(CdConverter.convertCdToString(
                     studyResourcingDTO.getFundingMechanismCode()));
         }
+    }
+
+    private void convertNihNciCodesToDomain(StudyResourcingDTO studyResourcingDTO, StudyResourcing studyResourcing) {
         if (studyResourcingDTO.getNciDivisionProgramCode() != null) {
             studyResourcing.setNciDivisionProgramCode(
                     NciDivisionProgramCode.getByCode(studyResourcingDTO.getNciDivisionProgramCode().getCode()));
         }
         if (studyResourcingDTO.getNihInstitutionCode() != null) {
             studyResourcing.setNihInstituteCode(studyResourcingDTO.getNihInstitutionCode().getCode());
-        }
-        if (studyResourcingDTO.getSerialNumber() != null) {
-            studyResourcing.setSerialNumber(studyResourcingDTO.getSerialNumber().getValue());
-        }
-        studyResourcing.setActiveIndicator(BlConverter.convertToBoolean(studyResourcingDTO.getActiveIndicator()));
-        if (ISOUtil.isBlNull(studyResourcingDTO.getActiveIndicator())) {
-            studyResourcing.setActiveIndicator(Boolean.TRUE);
         }
     }
 }

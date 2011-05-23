@@ -101,6 +101,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+
 /**
  * Convert StudySite domain to DTO.
  *
@@ -176,6 +178,30 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
         if (dto.getIdentifier() != null) {
             bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         }
+        convertRoleIIsToDomain(dto, bo);
+        if (dto.getStatusCode() == null) {
+            bo.setStatusCode(FunctionalRoleStatusCode.PENDING);
+        } else {
+            bo.setStatusCode(FunctionalRoleStatusCode.getByCode(dto.getStatusCode().getCode()));
+        }
+        bo.setRoleCode(StudyContactRoleCode.getByCode(CdConverter.convertCdToString(dto.getRoleCode())));
+
+        List<String> retList = null;
+        if (dto.getTelecomAddresses() != null) {
+            retList = DSetConverter.convertDSetToList(dto.getTelecomAddresses(), "EMAIL");
+            if (CollectionUtils.isNotEmpty(retList)) {
+                bo.setEmail(retList.get(0).toString());
+            }
+            retList = DSetConverter.convertDSetToList(dto.getTelecomAddresses(), "PHONE");
+            if (CollectionUtils.isNotEmpty(retList)) {
+                bo.setPhone(retList.get(0).toString());
+            }
+        }
+        bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        bo.setStatusDateRangeHigh(null);
+    }
+
+    private void convertRoleIIsToDomain(StudyContactDTO dto, StudyContact bo) throws PAException {
         if (!ISOUtil.isIiNull(dto.getHealthCareProviderIi())) {
             HealthCareProvider hfBo = new HealthCareProvider();
             hfBo.setId(getPaIdentifier(dto.getHealthCareProviderIi()));
@@ -191,26 +217,6 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
             orgContact.setId(getPaIdentifier(dto.getOrganizationalContactIi()));
             bo.setOrganizationalContact(orgContact);
         }
-        if (dto.getStatusCode() == null) {
-            bo.setStatusCode(FunctionalRoleStatusCode.PENDING);
-        } else {
-            bo.setStatusCode(FunctionalRoleStatusCode.getByCode(dto.getStatusCode().getCode()));
-        }
-        bo.setRoleCode(StudyContactRoleCode.getByCode(CdConverter.convertCdToString(dto.getRoleCode())));
-
-        List<String> retList = null;
-        if (dto.getTelecomAddresses() != null) {
-            retList = DSetConverter.convertDSetToList(dto.getTelecomAddresses(), "EMAIL");
-            if (retList != null && !retList.isEmpty()) {
-                bo.setEmail(retList.get(0).toString());
-            }
-            retList = DSetConverter.convertDSetToList(dto.getTelecomAddresses(), "PHONE");
-            if (retList != null && !retList.isEmpty()) {
-                bo.setPhone(retList.get(0).toString());
-            }
-        }
-        bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
-        bo.setStatusDateRangeHigh(null);
     }
 
 }

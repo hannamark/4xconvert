@@ -30,7 +30,7 @@
     <property name="commons.coverage.reports" value="${pa.report.dir}/commons/coverage-reports"/>
     <property name="commons.coverage.line" value="48"/>
     <property name="commons.coverage.branch" value="37"/>
-    <property name="commons.pmd.maxerrors" value="64"/>
+    <property name="commons.pmd.maxerrors" value="35"/>
     <property name="commons.reporting.outputDirectory" value="${pa.report.dir}/commons/site"/>
     <property name="commons.jar" value="${commons.build.finalName}.jar"/>
     <property name="commons-test.jar" value="${commons.build.finalName}-test.jar"/>

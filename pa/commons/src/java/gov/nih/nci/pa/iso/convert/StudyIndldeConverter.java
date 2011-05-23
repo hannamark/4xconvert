@@ -143,16 +143,23 @@ public class StudyIndldeConverter extends AbstractConverter<StudyIndldeDTO, Stud
         if (siDTO.getIdentifier() != null) {
             si.setId(IiConverter.convertToLong(siDTO.getIdentifier()));
         }
-        if (siDTO.getExpandedAccessStatusCode() != null) {
-            si.setExpandedAccessStatusCode(
-                    ExpandedAccessStatusCode.getByCode(siDTO.getExpandedAccessStatusCode().getCode()));
-        }
-        if (siDTO.getExpandedAccessIndicator() != null) {
-            si.setExpandedAccessIndicator(siDTO.getExpandedAccessIndicator().getValue());
-        }
+        convertExpandedAccessToDomain(siDTO, si);
         if (siDTO.getGrantorCode() != null) {
             si.setGrantorCode(GrantorCode.getByCode(siDTO.getGrantorCode().getCode()));
         }
+        convertHolderTypeToDomain(siDTO, si);
+        if (siDTO.getIndldeNumber() != null) {
+            si.setIndldeNumber(siDTO.getIndldeNumber().getValue());
+        }
+        if (siDTO.getIndldeTypeCode() != null) {
+            si.setIndldeTypeCode(IndldeTypeCode.getByCode(siDTO.getIndldeTypeCode().getCode()));
+        }
+        if (!ISOUtil.isBlNull(siDTO.getExemptIndicator())) {
+            si.setExemptIndicator(BlConverter.convertToBoolean(siDTO.getExemptIndicator()));
+        }
+    }
+
+    private void convertHolderTypeToDomain(StudyIndldeDTO siDTO, StudyIndlde si) {
         if (siDTO.getHolderTypeCode() != null && siDTO.getHolderTypeCode().getCode().equals("NIH")) {
             si.setNihInstHolderCode(NihInstituteCode.getByCode(siDTO.getNihInstHolderCode().getCode()));
         }
@@ -162,14 +169,15 @@ public class StudyIndldeConverter extends AbstractConverter<StudyIndldeDTO, Stud
         if (siDTO.getHolderTypeCode() != null) {
             si.setHolderTypeCode(HolderTypeCode.getByCode(siDTO.getHolderTypeCode().getCode()));
         }
-        if (siDTO.getIndldeNumber() != null) {
-            si.setIndldeNumber(siDTO.getIndldeNumber().getValue());
+    }
+
+    private void convertExpandedAccessToDomain(StudyIndldeDTO siDTO, StudyIndlde si) {
+        if (siDTO.getExpandedAccessStatusCode() != null) {
+            si.setExpandedAccessStatusCode(
+                    ExpandedAccessStatusCode.getByCode(siDTO.getExpandedAccessStatusCode().getCode()));
         }
-        if (siDTO.getIndldeTypeCode() != null) {
-            si.setIndldeTypeCode(IndldeTypeCode.getByCode(siDTO.getIndldeTypeCode().getCode()));
-        }
-        if (!ISOUtil.isBlNull(siDTO.getExemptIndicator())) {
-            si.setExemptIndicator(BlConverter.convertToBoolean(siDTO.getExemptIndicator()));
+        if (siDTO.getExpandedAccessIndicator() != null) {
+            si.setExpandedAccessIndicator(siDTO.getExpandedAccessIndicator().getValue());
         }
     }
 }

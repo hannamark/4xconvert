@@ -164,6 +164,13 @@ public class PlannedSubstanceAdministrationConverter
         if (!ISOUtil.isCdNull(psaDTO.getDoseFrequencyCode())) {
             psa.setDoseFrequencyCode(CdConverter.convertCdToString(psaDTO.getDoseFrequencyCode()));
         }
+        convertOtherInfo(psaDTO, psa);
+        convertDose(psaDTO, psa);
+        convertDoseDuration(psaDTO, psa);
+        convertDoseTotal(psaDTO, psa);
+    }
+
+    private void convertOtherInfo(PlannedSubstanceAdministrationDTO psaDTO, PlannedSubstanceAdministration psa) {
         if (!ISOUtil.isCdNull(psaDTO.getRouteOfAdministrationCode())) {
             psa.setRouteOfAdministrationCode(CdConverter.convertCdToString(psaDTO.getRouteOfAdministrationCode()));
         }
@@ -173,6 +180,9 @@ public class PlannedSubstanceAdministrationConverter
         if (!ISOUtil.isCdNull(psaDTO.getTargetSiteCode())) {
             psa.setTargetSiteCode(CdConverter.convertCdToString(psaDTO.getTargetSiteCode()));
         }
+    }
+
+    private void convertDose(PlannedSubstanceAdministrationDTO psaDTO, PlannedSubstanceAdministration psa) {
         if (psaDTO.getDose() != null) {
             if (!ISOUtil.isIvlLowNull(psaDTO.getDose())) {
                 psa.setDoseMinValue(psaDTO.getDose().getLow().getValue());
@@ -187,6 +197,20 @@ public class PlannedSubstanceAdministrationConverter
                 psa.setDoseMaxUnit(psaDTO.getDose().getHigh().getUnit());
             }
         }
+    }
+
+    private void convertDoseDuration(PlannedSubstanceAdministrationDTO psaDTO, PlannedSubstanceAdministration psa) {
+        if (psaDTO.getDoseDuration() != null) {
+            if (!ISOUtil.isPqValueNull(psaDTO.getDoseDuration())) {
+                psa.setDoseDurationValue(psaDTO.getDoseDuration().getValue());
+            }
+            if (!ISOUtil.isPqUnitNull(psaDTO.getDoseDuration())) {
+                psa.setDoseDurationUnit(psaDTO.getDoseDuration().getUnit());
+            }
+        }
+    }
+
+    private void convertDoseTotal(PlannedSubstanceAdministrationDTO psaDTO, PlannedSubstanceAdministration psa) {
         if (psaDTO.getDoseTotal() != null) {
             if (!ISOUtil.isIvlLowNull(psaDTO.getDoseTotal())) {
                 psa.setDoseTotalMinValue(psaDTO.getDoseTotal().getLow().getValue());
@@ -199,14 +223,6 @@ public class PlannedSubstanceAdministrationConverter
             }
             if (!ISOUtil.isIvlUnitNull(psaDTO.getDoseTotal())) {
                 psa.setDoseTotalMaxUnit(psaDTO.getDoseTotal().getHigh().getUnit());
-            }
-        }
-        if (psaDTO.getDoseDuration() != null) {
-            if (!ISOUtil.isPqValueNull(psaDTO.getDoseDuration())) {
-                psa.setDoseDurationValue(psaDTO.getDoseDuration().getValue());
-            }
-            if (!ISOUtil.isPqUnitNull(psaDTO.getDoseDuration())) {
-                psa.setDoseDurationUnit(psaDTO.getDoseDuration().getUnit());
             }
         }
     }

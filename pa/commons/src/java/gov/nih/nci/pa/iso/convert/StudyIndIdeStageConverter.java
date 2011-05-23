@@ -70,6 +70,25 @@ public class StudyIndIdeStageConverter extends AbstractConverter<StudyIndIdeStag
         spBo.setId(IiConverter.convertToLong(studyIndIdeStageDTO.getStudyProtocolStageIi()));
         studyIndIdeStage.setDateLastUpdated(new Date());
         studyIndIdeStage.setStudyProtocolStage(spBo);
+        convertExpandedAccessToDomain(studyIndIdeStageDTO, studyIndIdeStage);
+        if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getGrantorCode())) {
+            studyIndIdeStage.setGrantorCode(GrantorCode.getByCode(studyIndIdeStageDTO.getGrantorCode().getCode()));
+        }
+        convertHolderTypeToDomain(studyIndIdeStageDTO, studyIndIdeStage);
+        if (!ISOUtil.isStNull(studyIndIdeStageDTO.getIndldeNumber())) {
+            studyIndIdeStage.setIndIdeNumber(studyIndIdeStageDTO.getIndldeNumber().getValue());
+        }
+        if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getIndldeTypeCode())) {
+            studyIndIdeStage.setIndldeTypeCode(IndldeTypeCode.getByCode(
+                    studyIndIdeStageDTO.getIndldeTypeCode().getCode()));
+        }
+        if (!ISOUtil.isBlNull(studyIndIdeStageDTO.getExemptIndicator())) {
+            studyIndIdeStage.setExemptIndicator(studyIndIdeStageDTO.getExemptIndicator().getValue());
+        }
+    }
+
+    private void convertExpandedAccessToDomain(StudyIndIdeStageDTO studyIndIdeStageDTO,
+            StudyIndIdeStage studyIndIdeStage) {
         if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getExpandedAccessStatusCode())) {
             studyIndIdeStage.setExpandedAccessStatusCode(
                     ExpandedAccessStatusCode.getByCode(studyIndIdeStageDTO.getExpandedAccessStatusCode().getCode()));
@@ -77,9 +96,9 @@ public class StudyIndIdeStageConverter extends AbstractConverter<StudyIndIdeStag
         if (!ISOUtil.isBlNull(studyIndIdeStageDTO.getExpandedAccessIndicator())) {
             studyIndIdeStage.setExpandedAccessIndicator(studyIndIdeStageDTO.getExpandedAccessIndicator().getValue());
         }
-        if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getGrantorCode())) {
-            studyIndIdeStage.setGrantorCode(GrantorCode.getByCode(studyIndIdeStageDTO.getGrantorCode().getCode()));
-        }
+    }
+
+    private void convertHolderTypeToDomain(StudyIndIdeStageDTO studyIndIdeStageDTO, StudyIndIdeStage studyIndIdeStage) {
         if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getHolderTypeCode())
                 && studyIndIdeStageDTO.getHolderTypeCode().getCode().equals("NIH")) {
             studyIndIdeStage.setNihInstHolderCode(NihInstituteCode.getByCode(
@@ -93,16 +112,6 @@ public class StudyIndIdeStageConverter extends AbstractConverter<StudyIndIdeStag
         if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getHolderTypeCode())) {
             studyIndIdeStage.setHolderTypeCode(HolderTypeCode.getByCode(
                     studyIndIdeStageDTO.getHolderTypeCode().getCode()));
-        }
-        if (!ISOUtil.isStNull(studyIndIdeStageDTO.getIndldeNumber())) {
-            studyIndIdeStage.setIndIdeNumber(studyIndIdeStageDTO.getIndldeNumber().getValue());
-        }
-        if (!ISOUtil.isCdNull(studyIndIdeStageDTO.getIndldeTypeCode())) {
-            studyIndIdeStage.setIndldeTypeCode(IndldeTypeCode.getByCode(
-                    studyIndIdeStageDTO.getIndldeTypeCode().getCode()));
-        }
-        if (!ISOUtil.isBlNull(studyIndIdeStageDTO.getExemptIndicator())) {
-            studyIndIdeStage.setExemptIndicator(studyIndIdeStageDTO.getExemptIndicator().getValue());
         }
     }
 }
