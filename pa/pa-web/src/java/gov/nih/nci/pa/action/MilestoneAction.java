@@ -103,10 +103,8 @@ import gov.nih.nci.pa.util.PaRegistry;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpSession;
@@ -114,7 +112,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.struts2.ServletActionContext;
-import gov.nih.nci.pa.enums.SubmissionTypeCode;
 /**
 * @author Hugh Reinhart
 * @since 1/16/2009
@@ -140,35 +137,12 @@ public final class MilestoneAction extends AbstractListEditAction {
 
     private List<String> computeAllowedMilestones() {
         HttpSession session = ServletActionContext.getRequest().getSession();
-        StudyProtocolQueryDTO sqpDTO = (StudyProtocolQueryDTO) session.getAttribute(Constants.TRIAL_SUMMARY);
-        boolean suAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SU_ABSTRACTOR));
         boolean adminAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_ADMIN_ABSTRACTOR));
         boolean scAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR));
-        Set<MilestoneCode> milestones = EnumSet.allOf(MilestoneCode.class);
-        milestones.remove(MilestoneCode.READY_FOR_TSR);
-        milestones.remove(MilestoneCode.SUBMISSION_REJECTED);
-        checkAdminMilestones(milestones, adminAbs, suAbs);
-        checkScientificMilestones(milestones, scAbs, suAbs);
-        checkSuperUserMilestones(milestones, suAbs, sqpDTO);
-        return MilestoneCode.getCodes(milestones);
-    }
-
-    private void checkAdminMilestones(Set<MilestoneCode> milestones, boolean adminAbs, boolean suAbs) {
-        if (!adminAbs && !suAbs) {
-            milestones.removeAll(MilestoneCode.ADMIN_SEQ);
-        }
-    }
-
-    private void checkScientificMilestones(Set<MilestoneCode> milestones, boolean scAbs, boolean suAbs) {
-        if (!scAbs && !suAbs) {
-            milestones.removeAll(MilestoneCode.SCIENTIFIC_SEQ);
-        }
-    }
-
-    private void checkSuperUserMilestones(Set<MilestoneCode> milestones, boolean suAbs, StudyProtocolQueryDTO sqpDTO) {
-        if (!suAbs || sqpDTO.getSubmissionTypeCode() != SubmissionTypeCode.O) {
-            milestones.remove(MilestoneCode.LATE_REJECTION_DATE);
-        }
+        boolean suAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SU_ABSTRACTOR));
+        StudyProtocolQueryDTO spqDTO = (StudyProtocolQueryDTO) session.getAttribute(Constants.TRIAL_SUMMARY);
+        MilestoneAccessHelper accessHelper = new MilestoneAccessHelper(adminAbs, scAbs, suAbs, spqDTO);
+        return accessHelper.getAllowedMilestones();
     }
 
     /**

@@ -23,7 +23,8 @@ import java.util.Map;
  * @author Vrushali
  *
  */
-public class MockStudyMilestoneService extends MockAbstractBaseIsoService <StudyMilestoneDTO> implements StudyMilestoneServicelocal {
+public class MockStudyMilestoneService extends MockAbstractBaseIsoService<StudyMilestoneDTO> implements
+        StudyMilestoneServicelocal {
     static List<StudyMilestoneDTO> mileList;
     static {
         mileList = new ArrayList<StudyMilestoneDTO>();
@@ -32,34 +33,35 @@ public class MockStudyMilestoneService extends MockAbstractBaseIsoService <Study
         dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.ADMINISTRATIVE_QC_START));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi("1"));
         dto.setMilestoneDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("06/19/2009")));
+        dto.setCreationDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("06/19/2009")));
         mileList.add(dto);
     }
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Ii)
+
+    /**
+     * {@inheritDoc}
      */
     public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
         return null;
 
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#getByStudyProtocol(gov.nih.nci.iso21090.Ii)
+    /**
+     * {@inheritDoc}
      */
     public List<StudyMilestoneDTO> getByStudyProtocol(Ii ii) throws PAException {
         List<StudyMilestoneDTO> returnList = new ArrayList<StudyMilestoneDTO>();
-        for(StudyMilestoneDTO dto : mileList){
-            if(dto.getStudyProtocolIdentifier().getExtension().equals(ii.getExtension())){
+        for (StudyMilestoneDTO dto : mileList) {
+            if (dto.getStudyProtocolIdentifier().getExtension().equals(ii.getExtension())) {
                 returnList.add(dto);
             }
         }
         return returnList;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.iso21090.Ii)
+    /**
+     * {@inheritDoc}
      */
-    public StudyMilestoneDTO getCurrentByStudyProtocol(Ii studyProtocolIi)
-            throws PAException {
+    public StudyMilestoneDTO getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
         return null;
     }
 
@@ -68,7 +70,7 @@ public class MockStudyMilestoneService extends MockAbstractBaseIsoService <Study
      */
     @Override
     public StudyMilestoneDTO create(StudyMilestoneDTO dto) throws PAException {
-        if(dto.getStudyProtocolIdentifier().getExtension().equals("9")) {
+        if (dto.getStudyProtocolIdentifier().getExtension().equals("9")) {
             throw new PAException("test");
         }
         return dto;
@@ -98,8 +100,8 @@ public class MockStudyMilestoneService extends MockAbstractBaseIsoService <Study
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#update(java.lang.Object)
+    /**
+     * {@inheritDoc}
      */
     public List<StudyMilestoneDTO> search(StudyMilestoneDTO dto, LimitOffset pagingParams) throws PAException,
             TooManyResultsException {

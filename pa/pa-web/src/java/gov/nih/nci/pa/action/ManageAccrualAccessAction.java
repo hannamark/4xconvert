@@ -88,8 +88,8 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceBean;
+import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.LabelValueBean;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
@@ -306,7 +306,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
                 LabelValueBean lvBean = new LabelValueBean();
                 lvBean.setId(usr.getId());
                 lvBean.setName(StudySiteAccrualAccessServiceBean.getFullName(usr) + " - "
-                            + PAUtil.getGridIdentityUsername(loginId));
+                            + CsmUserUtil.getGridIdentityUsername(loginId));
                 lvBeanList.add(lvBean);
             }
         }
@@ -342,7 +342,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
             webDTO.setPhoneNumber(ru.getPhone());
 
             User csmUser = CSMUserService.getInstance().getCSMUserById(ru.getCsmUserId());
-            webDTO.setUserName(PAUtil.getGridIdentityUsername(csmUser.getLoginName()));
+            webDTO.setUserName(CsmUserUtil.getGridIdentityUsername(csmUser.getLoginName()));
         } catch (PAException e) {
             LOG.error("Error retrieving registry user with id " + webDTO.getRegistryUserId() + ".");
         }

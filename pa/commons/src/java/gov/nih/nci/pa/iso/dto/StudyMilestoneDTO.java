@@ -91,11 +91,14 @@ import gov.nih.nci.iso21090.Ts;
  * copyright holder, NCI.
  */
 public class StudyMilestoneDTO extends StudyDTO {
-private static final long serialVersionUID = 2371680558974772324L;
-    //    private static final long serialVersionUID = 1234599890L;
+
+    private static final long serialVersionUID = -7023853086537640597L;
+    
     private St commentText;
     private Cd milestoneCode;
     private Ts milestoneDate;
+    private St creator;
+    private Ts creationDate;
     
     /**
      * @return the commentText
@@ -103,34 +106,67 @@ private static final long serialVersionUID = 2371680558974772324L;
     public St getCommentText() {
         return commentText;
     }
+
     /**
      * @param commentText the commentText to set
      */
     public void setCommentText(St commentText) {
         this.commentText = commentText;
     }
+
     /**
      * @return the milestoneCode
      */
     public Cd getMilestoneCode() {
         return milestoneCode;
     }
+
     /**
      * @param milestoneCode the milestoneCode to set
      */
     public void setMilestoneCode(Cd milestoneCode) {
         this.milestoneCode = milestoneCode;
     }
+
     /**
      * @return the milestoneDate
      */
     public Ts getMilestoneDate() {
         return milestoneDate;
     }
+
     /**
      * @param milestoneDate the milestoneDate to set
      */
     public void setMilestoneDate(Ts milestoneDate) {
         this.milestoneDate = milestoneDate;
+    }
+
+    /**
+     * @return the creator
+     */
+    public St getCreator() {
+        return creator;
+    }
+
+    /**
+     * @param creator the creator to set
+     */
+    public void setCreator(St creator) {
+        this.creator = creator;
+    }
+
+    /**
+     * @return the creationDate
+     */
+    public Ts getCreationDate() {
+        return creationDate;
+    }
+
+    /**
+     * @param creationDate the creationDate to set
+     */
+    public void setCreationDate(Ts creationDate) {
+        this.creationDate = creationDate;
     }
 }

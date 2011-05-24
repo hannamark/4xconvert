@@ -92,16 +92,20 @@ import org.apache.commons.lang.StringUtils;
 * @since 1/16/2009
 */
 public class MilestoneWebDTO {
+    
     private String milestone;
     private String date;
     private String comment;
+    private String creator;
+    private String creationDate;
 
     /**
-     *
+     * Default contructor.
      */
     public MilestoneWebDTO() {
         super();
     }
+
     /**
      * @param isoDto iso dto
      */
@@ -109,41 +113,78 @@ public class MilestoneWebDTO {
         milestone = CdConverter.convertCdToString(isoDto.getMilestoneCode());
         date = PAUtil.normalizeDateStringWithTime(TsConverter.convertToTimestamp(isoDto.getMilestoneDate()).toString());
         comment = StConverter.convertToString(isoDto.getCommentText());
+        creator = StConverter.convertToString(isoDto.getCreator());
+        creationDate = PAUtil.normalizeDateStringWithTime(TsConverter.convertToTimestamp(isoDto.getCreationDate())
+            .toString());
     }
+
     /**
      * @return the milestone
      */
     public String getMilestone() {
         return milestone;
     }
+
     /**
      * @param milestone the milestone to set
      */
     public void setMilestone(String milestone) {
         this.milestone = milestone;
     }
+
     /**
      * @return the date
      */
     public String getDate() {
         return date;
     }
+
     /**
      * @param date the date to set
      */
     public void setDate(String date) {
         this.date = PAUtil.normalizeDateStringWithTime(date);
     }
+
     /**
      * @return the comment
      */
     public String getComment() {
         return comment;
     }
+
     /**
      * @param comment the comment to set
      */
     public void setComment(String comment) {
         this.comment = StringUtils.left(comment, PAAttributeMaxLen.LONG_TEXT_LENGTH);
+    }
+
+    /**
+     * @return the creator
+     */
+    public String getCreator() {
+        return creator;
+    }
+
+    /**
+     * @param creator the creator to set
+     */
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    /**
+     * @return the creationDate
+     */
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    /**
+     * @param creationDate the creationDate to set
+     */
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
     }
 }

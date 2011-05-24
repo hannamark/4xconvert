@@ -24,14 +24,18 @@
         <div class="box">
             <pa:sucessMessage />
             <s:if test="hasActionErrors()">
-                <div class="error_msg"><s:actionerror /></div>
+                <div class="error_msg">
+                    <s:actionerror />
+                </div>
             </s:if>
             <s:form name="milestoneForm">
                 <pa:studyUniqueToken/>
                 <s:hidden name="selectedRowIdentifier"/>
                 <s:if test="%{amendmentMap.size > 1}">
                     <div>
-                        <span class="label"><label for="submissionNumber"><fmt:message key="milestone.submissionNumber"/></label></span>
+                        <span class="label">
+                            <label for="submissionNumber"><fmt:message key="milestone.submissionNumber"/></label>
+                        </span>
                         <s:select id="submissionNumber" list="amendmentMap" listValue="value.submissionNumber" 
                                   name="submissionNumber" onchange="handleChange();" value="submissionNumber"/>
                     </div>
@@ -47,6 +51,8 @@
                                 <display:column escapeXml="true" property="milestone" sortable="false" titleKey="milestone.milestone" />
                                 <display:column escapeXml="true" property="date" sortable="false" titleKey="milestone.date" />
                                 <display:column escapeXml="true" property="comment" sortable="false" titleKey="milestone.comment" />
+                                <display:column escapeXml="true" property="creator" sortable="false" titleKey="milestone.creator" />
++                               <display:column escapeXml="true" property="creationDate" sortable="false" titleKey="milestone.creationDate" />
                             </display:table>
                         </td>
                     </tr>

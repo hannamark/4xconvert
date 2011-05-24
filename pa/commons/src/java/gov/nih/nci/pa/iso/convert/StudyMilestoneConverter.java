@@ -87,6 +87,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.CsmUserUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 /**
  * @author Hugh Reinhart
@@ -98,14 +100,18 @@ public class StudyMilestoneConverter extends AbstractConverter<StudyMilestoneDTO
      * {@inheritDoc}
      */
     @Override
-    public StudyMilestoneDTO convertFromDomainToDto(StudyMilestone bo)
-            throws PAException {
+    public StudyMilestoneDTO convertFromDomainToDto(StudyMilestone bo) throws PAException {
         StudyMilestoneDTO dto = new StudyMilestoneDTO();
         dto.setCommentText(StConverter.convertToSt(bo.getCommentText()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setMilestoneCode(CdConverter.convertToCd(bo.getMilestoneCode()));
         dto.setMilestoneDate(TsConverter.convertToTs(bo.getMilestoneDate()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
+        User user = bo.getUserLastCreated();
+        if (user != null) {
+            dto.setCreator(StConverter.convertToSt(CsmUserUtil.getDisplayUsername(user)));
+        }
+        dto.setCreationDate(TsConverter.convertToTs(bo.getDateLastCreated()));
         return dto;
     }
 

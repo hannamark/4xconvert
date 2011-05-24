@@ -738,21 +738,4 @@ public class PAUtilTest {
         assertTrue(PAUtil.checkAssignedIdentifierExists(spDto));
     }
 
-    @Test
-    public void testGetGridIdentityUsername() {
-        String gridIdentity = "/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/CN=abstractor";
-        assertEquals("abstractor", PAUtil.getGridIdentityUsername(gridIdentity));
-
-        gridIdentity = "/O=caBIG/OU=caGrid/OU=Stage LOA1/OU=Dorian/CN=abstractor";
-        assertEquals("abstractor", PAUtil.getGridIdentityUsername(gridIdentity));
-
-        gridIdentity = "/O=SomeString/OU=Dorian/CN=abstractor";
-        assertEquals("abstractor", PAUtil.getGridIdentityUsername(gridIdentity));
-
-        gridIdentity = "/O=cdskjfjfdskfjdsU=Dorian/CN=abstractor";
-        assertEquals("abstractor", PAUtil.getGridIdentityUsername(gridIdentity));
-
-        gridIdentity = "/O=caBIG/OU=caGrid/OU=Training/OU=Dorian/cn=abstractor";
-        assertEquals(gridIdentity, PAUtil.getGridIdentityUsername(gridIdentity));
-    }
 }

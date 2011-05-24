@@ -85,7 +85,7 @@ import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.CsmUserUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -553,7 +553,7 @@ public class StudyProtocolQueryDTO implements Serializable {
      */
     public void setUserLastCreated(String userLastCreated) {
         this.userLastCreated = userLastCreated;
-        this.userLastCreatedUsername = PAUtil.getGridIdentityUsername(userLastCreated);
+        this.userLastCreatedUsername = CsmUserUtil.getGridIdentityUsername(userLastCreated);
     }
 
     /**
@@ -670,7 +670,7 @@ public class StudyProtocolQueryDTO implements Serializable {
      */
     public void setStudyAdminCheckoutBy(String studyAdminCheckoutBy) {
         this.studyAdminCheckoutBy = studyAdminCheckoutBy;
-        this.studyAdminCheckoutByUsername = PAUtil.getGridIdentityUsername(studyAdminCheckoutBy);
+        this.studyAdminCheckoutByUsername = CsmUserUtil.getGridIdentityUsername(studyAdminCheckoutBy);
     }
 
     /**
@@ -706,7 +706,7 @@ public class StudyProtocolQueryDTO implements Serializable {
      */
     public void setStudyScientificCheckoutBy(String studyScientificCheckoutBy) {
         this.studyScientificCheckoutBy = studyScientificCheckoutBy;
-        this.studyScientificCheckoutByUsername = PAUtil.getGridIdentityUsername(studyScientificCheckoutBy);
+        this.studyScientificCheckoutByUsername = CsmUserUtil.getGridIdentityUsername(studyScientificCheckoutBy);
     }
 
     /**
