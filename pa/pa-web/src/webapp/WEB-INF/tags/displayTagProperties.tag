@@ -4,7 +4,7 @@
 
 <display:setProperty name="basic.empty.showtable" value="false" />
 <display:setProperty name="paging.banner.no_items_found">
-    <div class="pagingtop"><span class="pagebanner">No {0} foundededede.</span> 
+    <div class="pagingtop"><span class="pagebanner">No {0} found.</span> 
 </display:setProperty>
 <display:setProperty name="paging.banner.one_item_found">
     <div class="pagingtop"><span class="pagebanner">One {0} found.</span>

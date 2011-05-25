@@ -45,6 +45,7 @@ import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
+import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
@@ -535,6 +536,13 @@ public class MockPaRegistryServiceLocator implements ServiceLocator  {
      * {@inheritDoc}
      */
     public PlannedMarkerServiceLocal getPlannedMarkerService() {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public AuditTrailServiceLocal getAuditTrailService() {
         return null;
     }
 }

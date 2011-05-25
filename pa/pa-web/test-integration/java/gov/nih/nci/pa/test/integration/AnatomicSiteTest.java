@@ -110,7 +110,7 @@ public class AnatomicSiteTest extends AbstractPaSeleniumTest {
         clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
 
         verifyTrialSelected(nciTrialId);
-        checkOutTrial();
+        checkOutTrialAsScientificAbstractor();
         acceptTrial();
         verifyTrialAccepted();
 

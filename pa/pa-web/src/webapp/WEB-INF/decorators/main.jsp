@@ -7,6 +7,7 @@
 <%@taglib prefix="page" uri="http://www.opensymphony.com/sitemesh/page" %>
 <%@taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <title><decorator:title default="Protocol Abstraction (PA)"/></title>
@@ -24,6 +25,7 @@
                 }
             }
         </script>
+        <fmt:setBundle basename="AuditTrailResources" var="auditTrailResources" scope="session"/>
         <!-- Version: ${initParam["appTagVersion"]}, revision: ${initParam["appTagRevision"]} -->
         <decorator:head/>
     </head>

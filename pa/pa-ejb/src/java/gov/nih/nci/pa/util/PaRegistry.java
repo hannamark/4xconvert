@@ -111,6 +111,7 @@ import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
+import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
@@ -564,5 +565,12 @@ public final class PaRegistry {
      */
     public static PlannedMarkerServiceLocal getPlannedMarkerService() {
         return getInstance().getServiceLocator().getPlannedMarkerService();
+    }
+
+    /**
+     * @return the audit trail service
+     */
+    public static AuditTrailServiceLocal getAuditTrailService() {
+        return getInstance().getServiceLocator().getAuditTrailService();
     }
 }

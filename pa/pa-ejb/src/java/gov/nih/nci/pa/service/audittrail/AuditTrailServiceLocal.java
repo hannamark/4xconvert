@@ -80,62 +80,14 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.service;
+package gov.nih.nci.pa.service.audittrail;
 
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.ejb.Local;
 
 /**
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
- *
  */
-public class MockPlannedMarkerService extends MockAbstractBaseIsoService<PlannedMarkerDTO>
-    implements PlannedMarkerServiceLocal {
+@Local
+public interface AuditTrailServiceLocal extends AuditTrailService {
 
-    /**
-     * {@inheritDoc}
-     */
-    public List<PlannedMarkerDTO> getPlannedMarkers(Ii ii) throws PAException {
-        return new ArrayList<PlannedMarkerDTO>();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public PlannedMarkerDTO getPlannedMarker(Ii ii) throws PAException {
-        PlannedMarkerDTO dto = new PlannedMarkerDTO();
-        dto.setIdentifier(ii);
-        return dto;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PlannedMarkerDTO get(Ii ii) throws PAException {
-        PlannedMarkerDTO dto = new PlannedMarkerDTO();
-        dto.setIdentifier(ii);
-        return dto;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public List<PlannedMarkerDTO> getByStudyProtocol(Ii ii) throws PAException {
-        return new ArrayList<PlannedMarkerDTO>();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
-        return new HashMap<Ii, Ii>();
-    }
 }

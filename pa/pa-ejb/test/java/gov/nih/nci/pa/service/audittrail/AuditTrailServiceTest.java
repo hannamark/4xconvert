@@ -80,49 +80,102 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.test.integration;
+package gov.nih.nci.pa.service.audittrail;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.service.StudySiteServiceBean;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.TestSchema;
+
+import java.util.List;
+
+import org.apache.axis.utils.StringUtils;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
+import com.fiveamsolutions.nci.commons.audit.AuditType;
 
 /**
- * Selenium test for testing prevention of returning error when trying to
- * manipulate two trials in the same browser session.
- *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ *
  */
-public class DuplicateTrialEditTest extends AbstractPaSeleniumTest {
+public class AuditTrailServiceTest extends AbstractHibernateTestCase {
+    private AuditTrailService auditHistoryService = new AuditTrailServiceBean();
+    private StudySiteServiceLocal studySiteService = new StudySiteServiceBean();
 
-    public void testEditPrevention() throws Exception {
-        loginAsAdminAbstractor();
-        verifyTrialSearchPage();
-        selenium.type("id=officialTitle", "Duplicate");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("2 items found"));
-        String nciTrialId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]/a");
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
-
-        verifyTrialSelected(nciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-
-        selenium.openWindow("/pa", "duplicate");
-        selenium.waitForPopUp("duplicate", "5000");
-        selenium.selectWindow("duplicate");
-        verifyTrialSearchPage();
-        selenium.type("id=officialTitle", "Duplicate");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("2 items found"));
-        String otherNciTrialId = selenium.getText("xpath=//table[@id='row']//tr[2]//td[1]/a");
-        clickAndWait("xpath=//table[@id='row']//tr[2]//td[1]/a");
-        verifyTrialSelected(otherNciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-
-        selenium.selectWindow("null");
-        verifyTrialSelected(nciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-        clickAndWait("link=Admin Check Out");
-        selenium.getConfirmation();
-        assertTrue(selenium.isTextPresent("You are attempting to edit two trials at once. This is not a supported action. "
-                + "Please reselect the trial you wish to edit and refrain from working on multiple trials at once. Thank You."));
-
+    @Before
+    public void init() throws Exception {
+        TestSchema.primeData();
     }
 
+    @Test
+    public void getAuditTrail() throws Exception {
+        List<AuditLogDetail> auditTrail = auditHistoryService.getAuditTrail(StudySite.class,
+                IiConverter.convertToIi(0L));
+        assertTrue(auditTrail.isEmpty());
+
+        Ii identifier = IiConverter.convertToIi(TestSchema.studySiteIds.get(0));
+        auditTrail = auditHistoryService.getAuditTrail(StudySite.class, identifier);
+        assertFalse(auditTrail.isEmpty());
+        assertEquals(6, auditTrail.size());
+        for (AuditLogDetail detail : auditTrail) {
+            assertEquals(detail.getRecord().getType(), AuditType.INSERT);
+            assertTrue(StringUtils.isEmpty(detail.getOldValue()));
+            assertNotNull(detail.getNewValue());
+        }
+    }
+
+    @Test
+    public void getAuditTrailByFields() throws Exception {
+        Ii identifier = IiConverter.convertToIi(TestSchema.studySiteIds.get(0));
+        List<AuditLogDetail> auditDetails = auditHistoryService.getAuditTrailByFields(StudySite.class,
+                identifier, "foo");
+        assertTrue(auditDetails.isEmpty());
+
+        auditDetails = auditHistoryService.getAuditTrailByFields(StudySite.class, identifier, "foo", "bar");
+        assertTrue(auditDetails.isEmpty());
+
+        auditDetails = auditHistoryService.getAuditTrailByFields(StudySite.class, identifier, "targetAccrualNumber");
+        assertTrue(auditDetails.isEmpty());
+
+        StudySiteDTO studySiteDTO = studySiteService.get(identifier);
+
+        studySiteDTO.setTargetAccrualNumber(IntConverter.convertToInt(100));
+        studySiteDTO = studySiteService.update(studySiteDTO);
+
+        getCurrentSession().flush();
+
+        auditDetails = auditHistoryService.getAuditTrailByFields(StudySite.class, identifier, "targetAccrualNumber");
+        assertFalse(auditDetails.isEmpty());
+        assertEquals("Incorrect number of audit log details found.", 1, auditDetails.size());
+
+        AuditLogDetail detail = auditDetails.get(0);
+        assertEquals(AuditType.UPDATE, detail.getRecord().getType());
+        assertEquals("targetAccrualNumber", detail.getAttribute());
+        assertTrue(StringUtils.isEmpty(detail.getOldValue()));
+        assertEquals("100", detail.getNewValue());
+    }
+
+    @Test
+    public void getAuditTrailByStudyProtocol() {
+        Ii studyProtocolIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
+        List<AuditLogDetail> auditTrail = auditHistoryService.getAuditTrailByStudyProtocol(StudySite.class, studyProtocolIi);
+        assertFalse(auditTrail.isEmpty());
+        assertEquals(12, auditTrail.size());
+        for (AuditLogDetail detail : auditTrail) {
+            assertEquals(detail.getRecord().getType(), AuditType.INSERT);
+            assertTrue(StringUtils.isEmpty(detail.getOldValue()));
+            assertNotNull(detail.getNewValue());
+        }
+    }
 }

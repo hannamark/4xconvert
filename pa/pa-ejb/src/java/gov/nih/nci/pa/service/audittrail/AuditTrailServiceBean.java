@@ -80,62 +80,100 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.registry.service;
+package gov.nih.nci.pa.service.audittrail;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Query;
+import org.hibernate.mapping.PersistentClass;
+
+import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 
 /**
- * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ * Implementation of the audit history service.
  *
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class MockPlannedMarkerService extends MockAbstractBaseIsoService<PlannedMarkerDTO>
-    implements PlannedMarkerServiceLocal {
+@Stateless
+@Interceptors(PaHibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+public class AuditTrailServiceBean implements AuditTrailServiceLocal {
+    private static final String UNCHECKED = "unchecked";
 
     /**
      * {@inheritDoc}
      */
-    public List<PlannedMarkerDTO> getPlannedMarkers(Ii ii) throws PAException {
-        return new ArrayList<PlannedMarkerDTO>();
+    @SuppressWarnings(UNCHECKED)
+    public <T extends Auditable> List<AuditLogDetail> getAuditTrail(Class<T> clazz, Ii identifier) {
+        StringBuffer hql = new StringBuffer();
+        hql.append("from ").append(AuditLogDetail.class.getName())
+            .append(" ald where ald.record.entityName = :entityName and ald.record.entityId = :entityId");
+        Query query = PaHibernateUtil.getCurrentSession().createQuery(hql.toString());
+        query.setParameter("entityName", getEntityName(clazz));
+        query.setParameter("entityId", IiConverter.convertToLong(identifier));
+        return query.list();
     }
 
     /**
      * {@inheritDoc}
      */
-    public PlannedMarkerDTO getPlannedMarker(Ii ii) throws PAException {
-        PlannedMarkerDTO dto = new PlannedMarkerDTO();
-        dto.setIdentifier(ii);
-        return dto;
+    @SuppressWarnings(UNCHECKED)
+    public <T extends Auditable> List<AuditLogDetail> getAuditTrailByFields(Class<T> clazz, Ii identifier,
+            String... fieldNames) {
+        StringBuffer hql = new StringBuffer();
+        hql.append("from ").append(AuditLogDetail.class.getName())
+            .append(" ald where ald.record.entityName = :entityName and ald.record.entityId = :entityId and "
+                    + " ald.attribute in (:attributes)");
+        Query query = PaHibernateUtil.getCurrentSession().createQuery(hql.toString());
+        query.setParameter("entityName", getEntityName(clazz));
+        query.setParameter("entityId", IiConverter.convertToLong(identifier));
+        query.setParameterList("attributes", fieldNames);
+        return query.list();
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public PlannedMarkerDTO get(Ii ii) throws PAException {
-        PlannedMarkerDTO dto = new PlannedMarkerDTO();
-        dto.setIdentifier(ii);
-        return dto;
+    @SuppressWarnings(UNCHECKED)
+    public <T> List<AuditLogDetail> getAuditTrailByStudyProtocol(Class<T> clazz, Ii studyProtocolIi) {
+        Collection<Long> entityIds = getRelatedIdentifiers(clazz, studyProtocolIi);
+        List<AuditLogDetail> results = new ArrayList<AuditLogDetail>();
+        if (CollectionUtils.isNotEmpty(entityIds)) {
+            StringBuffer hql = new StringBuffer();
+            hql.append("from ").append(AuditLogDetail.class.getName())
+                .append(" ald where ald.record.entityName = :entityName and ald.record.entityId in (:entityIds)");
+            Query query = PaHibernateUtil.getCurrentSession().createQuery(hql.toString());
+            query.setParameter("entityName", getEntityName(clazz));
+            query.setParameterList("entityIds", entityIds);
+            results.addAll(query.list());
+        }
+        return results;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public List<PlannedMarkerDTO> getByStudyProtocol(Ii ii) throws PAException {
-        return new ArrayList<PlannedMarkerDTO>();
+    private <T> String getEntityName(Class<T> clazz) {
+        PersistentClass pc = PaHibernateUtil.getHibernateHelper().getConfiguration().getClassMapping(clazz.getName());
+        return pc.getTable().getName();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
-        return new HashMap<Ii, Ii>();
+    @SuppressWarnings(UNCHECKED)
+    private <T> Collection<Long> getRelatedIdentifiers(Class<T> clazz, Ii studyProtocolIi) {
+        String hql = "select id from " + clazz.getName() + " where studyProtocol.id = :studyProtocolId";
+        Query query = PaHibernateUtil.getCurrentSession().createQuery(hql);
+        query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
+        return query.list();
     }
 }

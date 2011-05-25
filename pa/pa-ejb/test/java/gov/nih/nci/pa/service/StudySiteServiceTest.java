@@ -250,15 +250,15 @@ public class StudySiteServiceTest extends AbstractHibernateTestCase {
     @Test
     public void testCascadeRoleStatusForHcf() throws PAException {
         Ii ii = new Ii();
-        ii.setExtension("abc");
+        ii.setExtension("1");
         ii.setIdentifierName(IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME);
         Cd roleStatusCode = CdConverter.convertStringToCd("Nullified");
 
         remoteEjb.cascadeRoleStatus(ii, roleStatusCode);
 
         StudySiteDTO ssdto = remoteEjb.get(siteIi);
-        // verify Id is still abc
-        assertEquals("abc", ssdto.getHealthcareFacilityIi().getExtension());
+        // verify Id is still 1
+        assertEquals("1", ssdto.getHealthcareFacilityIi().getExtension());
         // verify site status is changed to Nullified
         assertEquals("Nullified", ssdto.getStatusCode().getCode());
     }

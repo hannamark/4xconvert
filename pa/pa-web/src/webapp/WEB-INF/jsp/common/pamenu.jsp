@@ -77,6 +77,14 @@
                     </c:choose>
                      <li><a href="#" onclick="generateTSRWord();" >View TSR</a></li>
                      <li><a href="assignOwnershipview.action">Assign Ownership</a></li>
+                    <c:choose>
+                        <c:when test="${requestScope.topic == 'auditTrail'}">
+                            <li><a href="auditTrail.action" class="selected">Audit Trail</a></li>
+                        </c:when>
+                        <c:otherwise>
+                            <li><a href="auditTrail.action">Audit Trail</a></li>
+                        </c:otherwise>
+                    </c:choose>
                 </ul>
             </li>
             <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'

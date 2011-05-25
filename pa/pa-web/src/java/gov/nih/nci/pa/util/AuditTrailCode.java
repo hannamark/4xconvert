@@ -80,49 +80,84 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.test.integration;
+package gov.nih.nci.pa.util;
 
+import gov.nih.nci.pa.domain.PlannedMarker;
+import gov.nih.nci.pa.domain.StudyResourcing;
+
+import java.util.Arrays;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.apache.commons.beanutils.BeanComparator;
+
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 
 /**
- * Selenium test for testing prevention of returning error when trying to
- * manipulate two trials in the same browser session.
+ * Enum to specific which class to retrieve audit trail information for.
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class DuplicateTrialEditTest extends AbstractPaSeleniumTest {
+public enum AuditTrailCode {
+    /**
+     * NCI Specific Information.
+     */
+    NCI_SPECIFIC_INFORMATION("NCI Specific Information", StudyResourcing.class),
 
-    public void testEditPrevention() throws Exception {
-        loginAsAdminAbstractor();
-        verifyTrialSearchPage();
-        selenium.type("id=officialTitle", "Duplicate");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("2 items found"));
-        String nciTrialId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]/a");
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
+    /**
+     * Planned Markers.
+     */
+    MARKERS("Markers", PlannedMarker.class);
 
-        verifyTrialSelected(nciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
+    private String name;
+    private Class<? extends Auditable> clazz;
 
-        selenium.openWindow("/pa", "duplicate");
-        selenium.waitForPopUp("duplicate", "5000");
-        selenium.selectWindow("duplicate");
-        verifyTrialSearchPage();
-        selenium.type("id=officialTitle", "Duplicate");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("2 items found"));
-        String otherNciTrialId = selenium.getText("xpath=//table[@id='row']//tr[2]//td[1]/a");
-        clickAndWait("xpath=//table[@id='row']//tr[2]//td[1]/a");
-        verifyTrialSelected(otherNciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-
-        selenium.selectWindow("null");
-        verifyTrialSelected(nciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-        clickAndWait("link=Admin Check Out");
-        selenium.getConfirmation();
-        assertTrue(selenium.isTextPresent("You are attempting to edit two trials at once. This is not a supported action. "
-                + "Please reselect the trial you wish to edit and refrain from working on multiple trials at once. Thank You."));
-
+    /**
+     * Constructor for the Audit trail code.
+     * @param name
+     * @param clazz
+     */
+    private AuditTrailCode(String name, Class<? extends Auditable> clazz) {
+        this.name = name;
+        this.clazz = clazz;
     }
 
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the class
+     */
+    public Class<? extends Auditable> getClazz() {
+        return clazz;
+    }
+
+    /**
+     * @param clazz the class to set
+     */
+    public void setClazz(Class<? extends Auditable> clazz) {
+        this.clazz = clazz;
+    }
+
+    /**
+     * Gets the list of enums, sorted by name.
+     * @return the sorted set
+     */
+    @SuppressWarnings("unchecked")
+    public static Set<AuditTrailCode> getSortedValues() {
+        Set<AuditTrailCode> codes = new TreeSet<AuditTrailCode>(new BeanComparator("name"));
+        codes.addAll(Arrays.asList(values()));
+        return codes;
+    }
 }

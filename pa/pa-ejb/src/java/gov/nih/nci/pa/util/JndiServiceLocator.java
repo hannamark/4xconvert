@@ -113,6 +113,7 @@ import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
+import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
@@ -523,5 +524,12 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public PlannedMarkerServiceLocal getPlannedMarkerService() {
         return (PlannedMarkerServiceLocal) JNDIUtil.lookupPa("/pa/PlannedMarkerServiceBean/local");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public AuditTrailServiceLocal getAuditTrailService() {
+        return (AuditTrailServiceLocal) JNDIUtil.lookupPa("/pa/AuditTrailServiceBean/local");
     }
 }

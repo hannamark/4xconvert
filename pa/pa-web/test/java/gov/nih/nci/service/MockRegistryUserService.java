@@ -47,6 +47,8 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
             throw new PAException("test");
         }
         RegistryUser regUser = new RegistryUser();
+        regUser.setFirstName("Test");
+        regUser.setLastName("User");
         regUser.setCity("city");
         regUser.setCountry("country");
         regUser.setCsmUserId(1L);

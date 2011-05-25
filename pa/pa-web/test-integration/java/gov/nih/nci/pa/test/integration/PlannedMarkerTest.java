@@ -111,7 +111,7 @@ public class PlannedMarkerTest extends AbstractPaSeleniumTest {
         String nciTrialId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]/a");
         clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
         verifyTrialSelected(nciTrialId);
-        checkOutTrial();
+        checkOutTrialAsScientificAbstractor();
         acceptTrial();
         verifyTrialAccepted();
 

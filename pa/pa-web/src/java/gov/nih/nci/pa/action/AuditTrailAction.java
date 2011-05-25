@@ -80,49 +80,117 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.test.integration;
+package gov.nih.nci.pa.action;
 
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.audittrail.AuditTrailService;
+import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
+import gov.nih.nci.pa.util.AuditTrailCode;
+import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PaRegistry;
+
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.apache.commons.beanutils.BeanComparator;
+import org.apache.struts2.ServletActionContext;
+
+import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
+import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 
 /**
- * Selenium test for testing prevention of returning error when trying to
- * manipulate two trials in the same browser session.
+ * Action for handling various audit history actions.
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class DuplicateTrialEditTest extends AbstractPaSeleniumTest {
+public class AuditTrailAction  extends ActionSupport implements Preparable {
+    private static final long serialVersionUID = 1L;
+    private AuditTrailCode auditTrailCode;
+    private Set<AuditLogDetail> auditTrail;
+    private AuditTrailServiceLocal auditTrailService;
 
-    public void testEditPrevention() throws Exception {
-        loginAsAdminAbstractor();
-        verifyTrialSearchPage();
-        selenium.type("id=officialTitle", "Duplicate");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("2 items found"));
-        String nciTrialId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]/a");
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
-
-        verifyTrialSelected(nciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-
-        selenium.openWindow("/pa", "duplicate");
-        selenium.waitForPopUp("duplicate", "5000");
-        selenium.selectWindow("duplicate");
-        verifyTrialSearchPage();
-        selenium.type("id=officialTitle", "Duplicate");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("2 items found"));
-        String otherNciTrialId = selenium.getText("xpath=//table[@id='row']//tr[2]//td[1]/a");
-        clickAndWait("xpath=//table[@id='row']//tr[2]//td[1]/a");
-        verifyTrialSelected(otherNciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-
-        selenium.selectWindow("null");
-        verifyTrialSelected(nciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-        clickAndWait("link=Admin Check Out");
-        selenium.getConfirmation();
-        assertTrue(selenium.isTextPresent("You are attempting to edit two trials at once. This is not a supported action. "
-                + "Please reselect the trial you wish to edit and refrain from working on multiple trials at once. Thank You."));
-
+    /**
+     * {@inheritDoc}
+     */
+    public void prepare() {
+        auditTrailService  = PaRegistry.getAuditTrailService();
     }
 
+    /**
+     * Retrieves the audit trail for the given object, in the order in which they were created.
+     * @return success
+     * @throws PAException on error
+     */
+    @SuppressWarnings("unchecked")
+    public String view() throws PAException {
+        Ii studyProtocolIi =
+            (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
+        setAuditTrail(new TreeSet<AuditLogDetail>(new BeanComparator("id")));
+        if (getAuditTrailCode() == AuditTrailCode.NCI_SPECIFIC_INFORMATION) {
+            loadNciSpecificInformation(studyProtocolIi);
+        } else if (getAuditTrailCode() != null) {
+            List<AuditLogDetail> results =
+                getAuditTrailService().getAuditTrailByStudyProtocol(getAuditTrailCode().getClazz(), studyProtocolIi);
+            getAuditTrail().addAll(results);
+        }
+        return SUCCESS;
+    }
+
+    /**
+     * Loads the audit trail for NCI specific information. NCI specific information is split between the study
+     * protocol object itself and in the study resourcing object.
+     */
+    private void loadNciSpecificInformation(Ii studyProtocolIi) throws PAException {
+        StudyResourcingDTO nciSpecificInfo =
+            PaRegistry.getStudyResourcingService().getSummary4ReportedResourcing(studyProtocolIi);
+
+        List<AuditLogDetail> studyContactDetails =
+            getAuditTrailService().getAuditTrail(getAuditTrailCode().getClazz(), nciSpecificInfo.getIdentifier());
+
+        List<AuditLogDetail> spDetails = getAuditTrailService().getAuditTrailByFields(StudyProtocol.class,
+                studyProtocolIi, "programCodeText", "accrualReportingMethodCode");
+
+        getAuditTrail().addAll(studyContactDetails);
+        getAuditTrail().addAll(spDetails);
+    }
+
+    /**
+     * @param auditTrail the auditTrail to set
+     */
+    public void setAuditTrail(Set<AuditLogDetail> auditTrail) {
+        this.auditTrail = auditTrail;
+    }
+
+    /**
+     * @return the auditTrailCode
+     */
+    public AuditTrailCode getAuditTrailCode() {
+        return auditTrailCode;
+    }
+
+    /**
+     * @param auditTrailCode the auditTrailCode to set
+     */
+    public void setAuditTrailCode(AuditTrailCode auditTrailCode) {
+        this.auditTrailCode = auditTrailCode;
+    }
+
+    /**
+     * @return the auditTrail
+     */
+    public Set<AuditLogDetail> getAuditTrail() {
+        return auditTrail;
+    }
+
+    /**
+     * @return the auditTrailService
+     */
+    public AuditTrailService getAuditTrailService() {
+        return auditTrailService;
+    }
 }

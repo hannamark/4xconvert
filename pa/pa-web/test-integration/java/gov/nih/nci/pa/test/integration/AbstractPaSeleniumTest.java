@@ -195,6 +195,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         assertTrue(selenium.isElementPresent("link=Manage Accrual Access"));
         assertTrue(selenium.isElementPresent("link=View TSR"));
         assertTrue(selenium.isElementPresent("link=Assign Ownership"));
+        assertTrue(selenium.isElementPresent("link=Audit Trail"));
         assertTrue(selenium.isTextPresent("Validation"));
         assertTrue(selenium.isElementPresent("link=Trial Related Documents"));
         assertTrue(selenium.isElementPresent("link=Trial Status"));
@@ -205,31 +206,59 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
     }
 
     /**
-     * Checks a trial out. Assumes that the trial has already been selected.
+     * Checks a trial out as a scientific abstractor. Assumes that the trial has already been selected.
      */
-    protected void checkOutTrial() {
+    protected void checkOutTrialAsScientificAbstractor() {
         assertTrue(selenium.isElementPresent("link=Trial Identification"));
         clickAndWait("link=Trial Identification");
-        assertTrue(selenium.isElementPresent("link=Check Out"));
-        assertFalse(selenium.isElementPresent("link=Check In"));
-        clickAndWait("link=Check Out");
+        assertTrue(selenium.isElementPresent("link=Scientific Check Out"));
+        assertFalse(selenium.isElementPresent("link=Scientific Check In"));
+        clickAndWait("link=Scientific Check Out");
         selenium.getConfirmation();
-        assertTrue(selenium.isElementPresent("link=Check In"));
-        assertFalse(selenium.isElementPresent("link=Check Out"));
+        assertTrue(selenium.isElementPresent("link=Scientific Check In"));
+        assertFalse(selenium.isElementPresent("link=Scientific Check Out"));
     }
 
     /**
      * Checks a trial out. Assumes that the trial has already been selected.
      */
-    protected void checkInTrial() {
+    protected void checkInTrialAsScientificAbstractor() {
         assertTrue(selenium.isElementPresent("link=Trial Identification"));
         clickAndWait("link=Trial Identification");
-        assertFalse(selenium.isElementPresent("link=Check Out"));
-        assertTrue(selenium.isElementPresent("link=Check In"));
+        assertFalse(selenium.isElementPresent("link=Scientific Check Out"));
+        assertTrue(selenium.isElementPresent("link=ScientificCheck In"));
+        clickAndWait("link=Scientific Check In");
+        selenium.getConfirmation();
+        assertTrue(selenium.isElementPresent("link=Scientific Check Out"));
+        assertFalse(selenium.isElementPresent("link=Scientific Check In"));
+    }
+
+    /**
+     * Checks a trial out as a admin abstractor. Assumes that the trial has already been selected.
+     */
+    protected void checkOutTrialAsAdminAbstractor() {
+        assertTrue(selenium.isElementPresent("link=Trial Identification"));
+        clickAndWait("link=Trial Identification");
+        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
+        assertFalse(selenium.isElementPresent("link=Admin Check In"));
+        clickAndWait("link=Admin Check Out");
+        selenium.getConfirmation();
+        assertTrue(selenium.isElementPresent("link=Admin Check In"));
+        assertFalse(selenium.isElementPresent("link=Admin Check Out"));
+    }
+
+    /**
+     * Checks a trial out as an admin abstractor. Assumes that the trial has already been selected.
+     */
+    protected void checkInTrialAsAdminAbstractor() {
+        assertTrue(selenium.isElementPresent("link=Trial Identification"));
+        clickAndWait("link=Trial Identification");
+        assertFalse(selenium.isElementPresent("link=Admin Check Out"));
+        assertTrue(selenium.isElementPresent("link=Admin Check In"));
         clickAndWait("link=Check In");
         selenium.getConfirmation();
-        assertTrue(selenium.isElementPresent("link=Check Out"));
-        assertFalse(selenium.isElementPresent("link=Check In"));
+        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
+        assertFalse(selenium.isElementPresent("link=Admin Check In"));
     }
 
     /**
@@ -255,6 +284,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         assertTrue(selenium.isElementPresent("link=Manage Accrual Access"));
         assertTrue(selenium.isElementPresent("link=View TSR"));
         assertTrue(selenium.isElementPresent("link=Assign Ownership"));
+        assertTrue(selenium.isElementPresent("link=Audit Trail"));
 
         assertTrue(selenium.isTextPresent("Administrative Data"));
         assertTrue(selenium.isElementPresent("link=General Trial Details"));

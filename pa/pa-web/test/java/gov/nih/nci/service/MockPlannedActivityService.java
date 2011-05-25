@@ -81,6 +81,7 @@ package gov.nih.nci.service;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Pq;
+import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
@@ -121,7 +122,10 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService<Plann
         PlannedActivity pa = new PlannedActivity();
         pa.setId(seq++);
         pa.setCategoryCode(ActivityCategoryCode.INTERVENTION);
-        pa.setIntervention(MockInterventionService.list.get(0));
+
+        Intervention intervention = new Intervention();
+        intervention.setId(1L);
+        pa.setIntervention(intervention);
         pa.setLeadProductIndicator(true);
         pa.setStudyProtocol(MockStudyProtocolService.list.get(0));
         list.add(pa);

@@ -80,49 +80,58 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.test.integration;
+package gov.nih.nci.pa.decorator;
 
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.CsmUserUtil;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.security.authorization.domainobjects.User;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.log4j.Logger;
+import org.displaytag.decorator.TableDecorator;
+
+import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
 
 /**
- * Selenium test for testing prevention of returning error when trying to
- * manipulate two trials in the same browser session.
+ * Decorator for the audit trail results.
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class DuplicateTrialEditTest extends AbstractPaSeleniumTest {
+public class AuditTrailTagDecorator extends TableDecorator {
+    private static final Logger LOG = Logger.getLogger(AuditTrailTagDecorator.class);
+    private final FastDateFormat fdf = FastDateFormat.getInstance("MM/dd/yyyy kk:mm:ss");
 
-    public void testEditPrevention() throws Exception {
-        loginAsAdminAbstractor();
-        verifyTrialSearchPage();
-        selenium.type("id=officialTitle", "Duplicate");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("2 items found"));
-        String nciTrialId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]/a");
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
-
-        verifyTrialSelected(nciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-
-        selenium.openWindow("/pa", "duplicate");
-        selenium.waitForPopUp("duplicate", "5000");
-        selenium.selectWindow("duplicate");
-        verifyTrialSearchPage();
-        selenium.type("id=officialTitle", "Duplicate");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("2 items found"));
-        String otherNciTrialId = selenium.getText("xpath=//table[@id='row']//tr[2]//td[1]/a");
-        clickAndWait("xpath=//table[@id='row']//tr[2]//td[1]/a");
-        verifyTrialSelected(otherNciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-
-        selenium.selectWindow("null");
-        verifyTrialSelected(nciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-        clickAndWait("link=Admin Check Out");
-        selenium.getConfirmation();
-        assertTrue(selenium.isTextPresent("You are attempting to edit two trials at once. This is not a supported action. "
-                + "Please reselect the trial you wish to edit and refrain from working on multiple trials at once. Thank You."));
-
+    /**
+     * Gets the user's name in lastname, firstname format.
+     * @return the user's name
+     */
+    public String getUserName() {
+        AuditLogDetail row = (AuditLogDetail) this.getCurrentRowObject();
+        String name = null;
+        try {
+            RegistryUser regUser = PaRegistry.getRegistryUserService().getUser(row.getRecord().getUsername());
+            if (!StringUtils.isEmpty(regUser.getFirstName()) && !StringUtils.isEmpty(regUser.getFirstName())) {
+                name = regUser.getLastName() + ", " + regUser.getFirstName();
+            } else {
+                User user = CSMUserService.getInstance().getCSMUser(row.getRecord().getUsername());
+                name = CsmUserUtil.getDisplayUsername(user);
+            }
+        } catch (PAException e) {
+            LOG.error("Error retrieving user.", e);
+        }
+        return name;
     }
 
+    /**
+     * Gets the properly formated change date.
+     * @return the formatted date
+     */
+    public String getChangeDate() {
+        AuditLogDetail row = (AuditLogDetail) this.getCurrentRowObject();
+        return fdf.format(row.getRecord().getCreatedDate());
+    }
 }

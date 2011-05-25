@@ -932,7 +932,7 @@ public class TestSchema {
         ClinicalResearchStaff crs = new ClinicalResearchStaff();
         crs.setOrganization(o);
         crs.setPerson(p);
-        crs.setIdentifier("abc");
+        crs.setIdentifier("1");
         crs.setStatusCode(StructuralRoleStatusCode.PENDING);
         return crs;
     }
@@ -952,7 +952,7 @@ public class TestSchema {
     public static HealthCareFacility createHealthCareFacilityObj(Organization o) {
         HealthCareFacility hc = new HealthCareFacility();
         hc.setOrganization(o);
-        hc.setIdentifier("abc");
+        hc.setIdentifier("1");
         hc.setStatusCode(StructuralRoleStatusCode.PENDING);
         return hc;
     }
@@ -961,7 +961,7 @@ public class TestSchema {
         HealthCareProvider hc = new HealthCareProvider();
         hc.setOrganization(o);
         hc.setPerson(p);
-        hc.setIdentifier("abc");
+        hc.setIdentifier("1");
         hc.setStatusCode(StructuralRoleStatusCode.PENDING);
         return hc;
     }
@@ -969,7 +969,7 @@ public class TestSchema {
     public static OrganizationalContact createOrganizationalContactObj(Organization o, Person p) {
         OrganizationalContact oc = new OrganizationalContact();
         oc.setOrganization(o);
-        oc.setIdentifier("abc");
+        oc.setIdentifier("1");
         oc.setPerson(p);
         oc.setStatusCode(StructuralRoleStatusCode.PENDING);
         return oc;
@@ -986,7 +986,7 @@ public class TestSchema {
         create.setUserLastUpdated(user);
         java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setDateLastUpdated(now);
-        create.setIdentifier("abc");
+        create.setIdentifier("1");
         create.setStatusCode(EntityStatusCode.PENDING);
         return create;
 

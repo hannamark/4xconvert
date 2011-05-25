@@ -80,49 +80,47 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.test.integration;
+package gov.nih.nci.pa.decorator;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.pa.action.AbstractPaActionTest;
+
+import java.util.Date;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
+import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
+import com.fiveamsolutions.nci.commons.audit.AuditType;
 
 /**
- * Selenium test for testing prevention of returning error when trying to
- * manipulate two trials in the same browser session.
- *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ *
  */
-public class DuplicateTrialEditTest extends AbstractPaSeleniumTest {
+public class AuditTrailTagDecoratorTest extends AbstractPaActionTest {
 
-    public void testEditPrevention() throws Exception {
-        loginAsAdminAbstractor();
-        verifyTrialSearchPage();
-        selenium.type("id=officialTitle", "Duplicate");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("2 items found"));
-        String nciTrialId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]/a");
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
+    private AuditTrailTagDecorator decorator;
+    private AuditLogDetail detail;
 
-        verifyTrialSelected(nciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
+    @Before
+    public void setUp() {
+        decorator = new AuditTrailTagDecorator();
 
-        selenium.openWindow("/pa", "duplicate");
-        selenium.waitForPopUp("duplicate", "5000");
-        selenium.selectWindow("duplicate");
-        verifyTrialSearchPage();
-        selenium.type("id=officialTitle", "Duplicate");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("2 items found"));
-        String otherNciTrialId = selenium.getText("xpath=//table[@id='row']//tr[2]//td[1]/a");
-        clickAndWait("xpath=//table[@id='row']//tr[2]//td[1]/a");
-        verifyTrialSelected(otherNciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-
-        selenium.selectWindow("null");
-        verifyTrialSelected(nciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-        clickAndWait("link=Admin Check Out");
-        selenium.getConfirmation();
-        assertTrue(selenium.isTextPresent("You are attempting to edit two trials at once. This is not a supported action. "
-                + "Please reselect the trial you wish to edit and refrain from working on multiple trials at once. Thank You."));
-
+        AuditLogRecord record = new AuditLogRecord(AuditType.INSERT, "STUDY_PROTOCOL", 1L, "testuser", new Date());
+        detail = new AuditLogDetail(record, "programCodeText", "", "newValue");
+        decorator.initRow(detail, 1, 1);
     }
 
+    @Test
+    public void getUserName() {
+        assertNotNull(decorator.getUserName());
+        assertEquals("User, Test", decorator.getUserName());
+    }
+
+    @Test
+    public void getChangeDate() {
+        assertNotNull(decorator.getChangeDate());
+    }
 }

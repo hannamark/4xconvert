@@ -80,49 +80,50 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.test.integration;
+package gov.nih.nci.pa.service.audittrail;
 
+import gov.nih.nci.iso21090.Ii;
+
+import java.util.List;
+
+import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 
 /**
- * Selenium test for testing prevention of returning error when trying to
- * manipulate two trials in the same browser session.
+ * Interface for retrieving object's audit history.
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class DuplicateTrialEditTest extends AbstractPaSeleniumTest {
+public interface AuditTrailService {
 
-    public void testEditPrevention() throws Exception {
-        loginAsAdminAbstractor();
-        verifyTrialSearchPage();
-        selenium.type("id=officialTitle", "Duplicate");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("2 items found"));
-        String nciTrialId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]/a");
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
+    /**
+     * Retrieves a list of audit log details for the given class and object id.
+     * @param <T> the definition for acceptable classes
+     * @param clazz the class
+     * @param identifier the identifier of the class to retrieve the audit trail for
+     * @return the audit log details for the given parameters
+     */
+    <T extends Auditable> List<AuditLogDetail> getAuditTrail(Class<T> clazz, Ii identifier);
 
-        verifyTrialSelected(nciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
+    /**
+     * Retrieves a list of audit log details for the given fields of a given class with the given id.
+     * @param <T> the definition for acceptable classes
+     * @param clazz the class
+     * @param identifier the identifier of the the class to retrieve the object for
+     * @param fieldNames the field names to retrieve the history for
+     * @return the audit log details for the given parameters
+     */
+    <T extends Auditable> List<AuditLogDetail> getAuditTrailByFields(Class<T> clazz, Ii identifier,
+            String... fieldNames);
 
-        selenium.openWindow("/pa", "duplicate");
-        selenium.waitForPopUp("duplicate", "5000");
-        selenium.selectWindow("duplicate");
-        verifyTrialSearchPage();
-        selenium.type("id=officialTitle", "Duplicate");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("2 items found"));
-        String otherNciTrialId = selenium.getText("xpath=//table[@id='row']//tr[2]//td[1]/a");
-        clickAndWait("xpath=//table[@id='row']//tr[2]//td[1]/a");
-        verifyTrialSelected(otherNciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-
-        selenium.selectWindow("null");
-        verifyTrialSelected(nciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-        clickAndWait("link=Admin Check Out");
-        selenium.getConfirmation();
-        assertTrue(selenium.isTextPresent("You are attempting to edit two trials at once. This is not a supported action. "
-                + "Please reselect the trial you wish to edit and refrain from working on multiple trials at once. Thank You."));
-
-    }
+    /**
+     * Retrieves a list of audit log details for all of the objects of the given class associated with the given
+     * study protocol.
+     * @param <T> the definition for acceptable classes
+     * @param clazz the class
+     * @param studyProtocolIi the study protocol to get the related objects for
+     * @return the audit log details for the given parameters
+     */
+    <T> List<AuditLogDetail> getAuditTrailByStudyProtocol(Class<T> clazz, Ii studyProtocolIi);
 
 }

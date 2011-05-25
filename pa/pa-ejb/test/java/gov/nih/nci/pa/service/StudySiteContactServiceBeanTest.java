@@ -141,15 +141,15 @@ public class StudySiteContactServiceBeanTest extends AbstractHibernateTestCase {
     @Test
     public void testCascadeRoleStatusForHcp() throws PAException {
         Ii ii = new Ii();
-        ii.setExtension("abc");
+        ii.setExtension("1");
         ii.setIdentifierName(IiConverter.HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
         Cd roleStatusCode = CdConverter.convertStringToCd("Nullified");
 
         remoteEjb.cascadeRoleStatus(ii, roleStatusCode);
 
         StudySiteContactDTO sscdto = remoteEjb.get(studySiteId);
-        // verify Id is still abc
-        assertEquals("abc", sscdto.getHealthCareProviderIi().getExtension());
+        // verify Id is still 1
+        assertEquals("1", sscdto.getHealthCareProviderIi().getExtension());
         // verify site status is changed to Nullified
         assertEquals("Nullified", sscdto.getStatusCode().getCode());
     }
@@ -157,15 +157,15 @@ public class StudySiteContactServiceBeanTest extends AbstractHibernateTestCase {
     @Test
     public void testCascadeRoleStatusForCrs() throws PAException {
         Ii ii = new Ii();
-        ii.setExtension("abc");
+        ii.setExtension("1");
         ii.setIdentifierName(IiConverter.CLINICAL_RESEARCH_STAFF_IDENTIFIER_NAME);
         Cd roleStatusCode = CdConverter.convertStringToCd("Nullified");
 
         remoteEjb.cascadeRoleStatus(ii, roleStatusCode);
 
         StudySiteContactDTO sscdto = remoteEjb.get(studySiteId);
-        // verify Id is still abc
-        assertEquals("abc", sscdto.getClinicalResearchStaffIi().getExtension());
+        // verify Id is still 1
+        assertEquals("1", sscdto.getClinicalResearchStaffIi().getExtension());
         // verify site status is changed to Nullified
         assertEquals("Nullified", sscdto.getStatusCode().getCode());
     }
@@ -192,7 +192,7 @@ public class StudySiteContactServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(dto.getStudyProtocolIdentifier(), pid);
 
         Ii ii = new Ii();
-        ii.setExtension("abc");
+        ii.setExtension("1");
         ii.setIdentifierName(IiConverter.ORGANIZATIONAL_CONTACT_IDENTIFIER_NAME);
         Cd roleStatusCode = CdConverter.convertStringToCd("Nullified");
 
@@ -201,8 +201,8 @@ public class StudySiteContactServiceBeanTest extends AbstractHibernateTestCase {
         remoteEjb.cascadeRoleStatus(ii, roleStatusCode);
 
         StudySiteContactDTO sscdto = remoteEjb.get(result.getIdentifier());
-        // verify Id is still abc
-        assertEquals("abc", sscdto.getOrganizationalContactIi().getExtension());
+        // verify Id is still 1
+        assertEquals("1", sscdto.getOrganizationalContactIi().getExtension());
         // verify site status is changed to Nullified
         assertEquals("Nullified", sscdto.getStatusCode().getCode());
     }

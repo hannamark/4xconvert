@@ -80,49 +80,50 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.test.integration;
+package gov.nih.nci.pa.action;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.pa.util.AuditTrailCode;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
+import com.opensymphony.xwork2.Action;
 
 /**
- * Selenium test for testing prevention of returning error when trying to
- * manipulate two trials in the same browser session.
+ * Test cases for audit trail actions.
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class DuplicateTrialEditTest extends AbstractPaSeleniumTest {
+public class AuditTrailActionTest extends AbstractPaActionTest {
+    private AuditTrailAction auditTrailAction;
 
-    public void testEditPrevention() throws Exception {
-        loginAsAdminAbstractor();
-        verifyTrialSearchPage();
-        selenium.type("id=officialTitle", "Duplicate");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("2 items found"));
-        String nciTrialId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]/a");
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
-
-        verifyTrialSelected(nciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-
-        selenium.openWindow("/pa", "duplicate");
-        selenium.waitForPopUp("duplicate", "5000");
-        selenium.selectWindow("duplicate");
-        verifyTrialSearchPage();
-        selenium.type("id=officialTitle", "Duplicate");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("2 items found"));
-        String otherNciTrialId = selenium.getText("xpath=//table[@id='row']//tr[2]//td[1]/a");
-        clickAndWait("xpath=//table[@id='row']//tr[2]//td[1]/a");
-        verifyTrialSelected(otherNciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-
-        selenium.selectWindow("null");
-        verifyTrialSelected(nciTrialId);
-        assertTrue(selenium.isElementPresent("link=Admin Check Out"));
-        clickAndWait("link=Admin Check Out");
-        selenium.getConfirmation();
-        assertTrue(selenium.isTextPresent("You are attempting to edit two trials at once. This is not a supported action. "
-                + "Please reselect the trial you wish to edit and refrain from working on multiple trials at once. Thank You."));
-
+    @Before
+    public void setUp() throws Exception {
+        auditTrailAction = new AuditTrailAction();
+        auditTrailAction.prepare();
     }
 
+    @Test
+    public void view() throws Exception {
+        auditTrailAction.setAuditTrailCode(AuditTrailCode.MARKERS);
+        assertEquals(Action.SUCCESS, auditTrailAction.view());
+        assertNotNull(auditTrailAction.getAuditTrail());
+        assertEquals(1, auditTrailAction.getAuditTrail().size());
+        AuditLogDetail detail = auditTrailAction.getAuditTrail().iterator().next();
+        assertEquals("PLANNED_MARKER", detail.getRecord().getEntityName());
+        assertEquals("name", detail.getAttribute());
+        assertEquals("name", detail.getNewValue());
+
+        auditTrailAction.setAuditTrailCode(AuditTrailCode.NCI_SPECIFIC_INFORMATION);
+        assertEquals(Action.SUCCESS, auditTrailAction.view());
+        assertNotNull(auditTrailAction.getAuditTrail());
+        assertEquals(1, auditTrailAction.getAuditTrail().size());
+        detail = auditTrailAction.getAuditTrail().iterator().next();
+        assertEquals("STUDY_RESOURCING", detail.getRecord().getEntityName());
+        assertEquals("programCodeText", detail.getAttribute());
+        assertEquals("programCode", detail.getNewValue());
+    }
 }

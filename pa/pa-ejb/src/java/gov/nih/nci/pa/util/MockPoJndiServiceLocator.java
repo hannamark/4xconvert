@@ -89,6 +89,7 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.EnOn;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
@@ -262,6 +263,8 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
         try {
             when(poOrgSvc.getOrganization(any(Ii.class))).thenReturn(orgDto);
             when(poOrgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenReturn(Arrays.asList(orgDto));
+            when(poOrgSvc.search(any(OrganizationDTO.class), any(EnOn.class), any(LimitOffset.class)))
+                .thenReturn(Arrays.asList(orgDto));
             when(poOrgSvc.validate(any(OrganizationDTO.class))).thenReturn(new HashMap<String, String[]>());
         } catch (Exception e) {
             LOG.error(ERROR_MSG, e);
