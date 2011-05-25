@@ -160,7 +160,8 @@ public class PDQTrialLoaderPreprocessor {
     }
 
     /**
-     * replaces the lead org ID.
+     * replaces the lead org ID with the first secondary ID. 
+     * Add the org_study_Id as a secondary ID.
      * @param document jdom document
      */
     private void changeLeadOrgId(Document document) {
@@ -178,7 +179,7 @@ public class PDQTrialLoaderPreprocessor {
     }
     
     /**
-     * replaces the max age.
+     * replaces the max age from 120 to 999. 
      * @param document jdom document.
      */
     private void changeMaxAge(Document document) {
@@ -191,7 +192,7 @@ public class PDQTrialLoaderPreprocessor {
     }
     
     /**
-     * replaces the sponsor.
+     * replaces the sponsor to CTEP or DCP based on trial ID. 
      * @param document jdom document
      */
     private void replaceSponsor(Document document) {
