@@ -160,7 +160,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(PaHibernateSessionInterceptor.class)
 @SecurityDomain("pa")
-@RolesAllowed({CLIENT_ROLE, ADMIN_ABSTRACTOR_ROLE, SUBMITTER_ROLE})
+@RolesAllowed({CLIENT_ROLE, ADMIN_ABSTRACTOR_ROLE, SUBMITTER_ROLE })
 @SuppressWarnings("PMD.AvoidRethrowingException") //Suppressed to catch and throw PAException to avoid re-wrapping.
 public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
 implements ParticipatingSiteServiceLocal {
