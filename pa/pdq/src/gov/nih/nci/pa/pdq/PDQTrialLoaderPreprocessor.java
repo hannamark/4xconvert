@@ -102,20 +102,20 @@ import org.apache.commons.lang.StringUtils;
  * @author ludetc
  *
  */
-public class PDQReplaceSponsor {
+public class PDQTrialLoaderPreprocessor {
     
     private static String srcFileDir;
     private static String destFileDir;
     
     public static void main(String[] args) {
         if (args.length != 2) {
-            System.out.println("Usage: PDQReplaceSponsor <sourceFileDirectory> <destFileDirectory>");
+            System.out.println("Usage: PDQTrialLoaderPreprocessor <sourceFileDirectory> <destFileDirectory>");
             System.exit(0);
         }
         srcFileDir = args[0];
         destFileDir = args[1];
         
-        PDQReplaceSponsor instance = new PDQReplaceSponsor();
+        PDQTrialLoaderPreprocessor instance = new PDQTrialLoaderPreprocessor();
         
         final File dir = new File(srcFileDir);
 
@@ -137,10 +137,64 @@ public class PDQReplaceSponsor {
         }        
     }
     
+    /** 
+     * Runs all pre-processing for a file. 
+     * @param xmlFile file to run.
+     * @throws JDOMException jdom exception.
+     * @throws IOException io exception.
+     */
     public void process(String xmlFile) throws JDOMException, IOException {
         SAXBuilder builder = new SAXBuilder();
         Document document = builder.build(srcFileDir + "/" + xmlFile);
         
+        replaceSponsor(document);
+        changeLeadOrgId(document);
+        changeMaxAge(document);
+        
+        FileOutputStream fos = new FileOutputStream(destFileDir + "/" + xmlFile);
+        XMLOutputter outputter = new XMLOutputter();
+        OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+        String output = outputter.outputString(document);
+        osw.write(output);
+        osw.close();
+    }
+
+    /**
+     * replaces the lead org ID.
+     * @param document jdom document
+     */
+    private void changeLeadOrgId(Document document) {
+        Element idInfo = document.getRootElement().getChild("id_info");
+        
+        Element secId = idInfo.getChild("secondary_id");
+        String studyId = idInfo.getChild("org_study_id").getText();
+                
+        idInfo.getChild("org_study_id").setText(secId.getText());
+       
+        Element newId = new Element("secondary_id");
+        newId.setText(studyId);
+
+        idInfo.addContent(newId);
+    }
+    
+    /**
+     * replaces the max age.
+     * @param document jdom document.
+     */
+    private void changeMaxAge(Document document) {
+        Element maxAge = document.getRootElement().getChild("eligibility").getChild("maximum_age");
+        
+        if("120".equals(maxAge.getText())) {
+            maxAge.setText("999");
+        }
+        
+    }
+    
+    /**
+     * replaces the sponsor.
+     * @param document jdom document
+     */
+    private void replaceSponsor(Document document) {
         String ctepId = document.getRootElement().getAttribute("ctep-id").getValue();
         String dcpId = document.getRootElement().getAttribute("dcp-id").getValue();
         
@@ -154,14 +208,7 @@ public class PDQReplaceSponsor {
             toBe = "Cancer Therapy Evaluation Program";
         }
         
-        agency.setText(toBe);
-        
-        FileOutputStream fos = new FileOutputStream(destFileDir + "/" + xmlFile);
-        XMLOutputter outputter = new XMLOutputter();
-        OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-        String output = outputter.outputString(document);
-        osw.write(output);
-        osw.close();
+        agency.setText(toBe);        
     }
-
+    
 }

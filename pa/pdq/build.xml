@@ -102,8 +102,8 @@
         </java>
     </target>
 
-    <target name="replaceSponsor" depends="jar">
-        <java fork="true" classname="gov.nih.nci.pa.pdq.PDQReplaceSponsor" dir="${basedir}">
+    <target name="trialLoaderPreprocess" depends="jar">
+        <java fork="true" classname="gov.nih.nci.pa.pdq.PDQTrialLoaderPreprocessor" dir="${basedir}">
             <classpath>
                 <path refid="classpath"/>
                 <path location="${basedir}/target/pdq.jar"/>
