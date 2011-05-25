@@ -82,19 +82,24 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 import gov.nih.nci.po.data.dao.FamilyUtilDao;
 import gov.nih.nci.po.util.PoHibernateUtil;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
 
@@ -212,6 +217,23 @@ public class FamilyOrganizationRelationshipServiceBean extends AbstractAdminServ
         return new FamilyUtilDao().getActiveStartDate(PoHibernateUtil.getCurrentSession(), familyId, orgId);
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    public Map<Long, Family> getFamilies(Set<Long> familyOrgRelationshipIds) {
+        Map<Long, Family> retMap = new HashMap<Long, Family>();
+        if (CollectionUtils.isEmpty(familyOrgRelationshipIds)) {
+            return retMap;
+        }
+        
+        for (FamilyOrganizationRelationship relationship : this.getByIds(familyOrgRelationshipIds
+                .toArray(new Long[familyOrgRelationshipIds.size()]))) {
+            retMap.put(relationship.getId(), relationship.getFamily());
+        }
+        return retMap;
+    }
+    
     /**
      * @param orgRelService OrganizationRelationshipServiceLocal
      */

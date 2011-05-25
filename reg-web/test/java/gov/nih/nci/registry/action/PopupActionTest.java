@@ -111,8 +111,35 @@ public class PopupActionTest extends AbstractRegWebTest {
     }
 
     @Test
+    public void testDisplayOrgListDisplayTagWithCountryEmpty(){
+        popUpAction = new PopupAction();
+        popUpAction.setOrgName("OrgName");
+        popUpAction.setCityName("rock");
+        popUpAction.setStateName("md");
+        popUpAction.setZipCode("342");
+        assertEquals("orgs", popUpAction.displayOrgListDisplayTag());
+        assertEquals(1,popUpAction.getActionErrors().size());
+        assertTrue(popUpAction.getActionErrors().contains("Please select a country"));
+    }
+
+    @Test
+    public void testDisplayOrgListDisplayTagException(){
+        popUpAction = new PopupAction();
+        assertEquals("orgs", popUpAction.displayOrgListDisplayTag());
+    }
+    
+    @Test
     public void testDisplayOrgListDisplayTag(){
         popUpAction = new PopupAction();
+        popUpAction.setOrgName("OrgName");
+        popUpAction.setCountryName("USA");
+        assertEquals("orgs", popUpAction.displayOrgListDisplayTag());
+    }
+
+    @Test
+    public void testDisplayOrgListDisplayTagFamily(){
+        popUpAction = new PopupAction();
+        popUpAction.setFamilyName("FamilyName");
         popUpAction.setOrgName("OrgName");
         popUpAction.setCountryName("USA");
         assertEquals("orgs", popUpAction.displayOrgListDisplayTag());
@@ -172,6 +199,15 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction.setCountryName("aaa");
         assertEquals("create_org_response", popUpAction.createOrganization());
         assertTrue(popUpAction.getActionErrors().contains("Organization is a required field"));
+    }
+
+    @Test
+    public void testCreateOrgWithEmptyStAddress() throws PAException{
+        popUpAction = new PopupAction();
+        popUpAction.setOrgName("aaa");
+        popUpAction.setOrgStAddress("aaa");
+        assertEquals("create_org_response", popUpAction.createOrganization());
+        assertTrue(popUpAction.getActionErrors().contains("Country is a required field"));
     }
 
     @Test
@@ -331,6 +367,16 @@ public class PopupActionTest extends AbstractRegWebTest {
     }
 
     @Test
+    public void testCreatePersonInvalidEmail() throws PAException{
+        popUpAction = new PopupAction();
+        popUpAction.setFirstName("FirstName");
+        popUpAction.setLastName("lastName");
+        popUpAction.setEmail("not valid");
+        assertEquals("create_pers_response", popUpAction.createPerson());
+        assertTrue(popUpAction.getActionErrors().contains("Email address is invalid"));
+    }
+
+    @Test
     public void testCreatePerson_USA() throws PAException{
         popUpAction = new PopupAction();
         popUpAction.setFirstName("FirstName");
@@ -456,5 +502,9 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction.prepare();
         assertNotNull(ServletActionContext.getRequest().getSession().getAttribute("countrylist"));
 
+    }
+    @Test
+    public void testDisplayPasswordReset() {
+        assertEquals("displayPasswordReset", new PopupAction().displayPasswordReset());
     }
 }

@@ -271,9 +271,6 @@ public class IdConverter extends AbstractXSnapshotConverter<Long> {
         if (value == null) {
             iso.setNullFlavor(NullFlavor.NI);
         } else {
-            // todo https://jira.5amsolutions.com/browse/PO-411
-//            iso.setRoot("UID.for.nci.entity");
-//            iso.setIdentifierName("NCI entity identifier");
             iso.setExtension(value.toString());
             iso.setDisplayable(true);
             iso.setScope(IdentifierScope.OBJ);

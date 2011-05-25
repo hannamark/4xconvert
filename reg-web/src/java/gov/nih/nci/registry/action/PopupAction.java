@@ -81,6 +81,7 @@ package gov.nih.nci.registry.action;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.AddressPartType;
+import gov.nih.nci.iso21090.Adxp;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.EnPn;
 import gov.nih.nci.iso21090.EntityNamePartType;
@@ -105,18 +106,23 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
@@ -127,6 +133,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Harsha
  */
 public class PopupAction extends ActionSupport implements Preparable {
+    private static final long serialVersionUID = -4295358782987888548L;
     private static final String FAILURE_MSG_ATTR = "failureMessage";
     private static final String ORGS_RESULT = "orgs";
     private List<Country> countryList = new ArrayList<Country>();
@@ -236,7 +243,7 @@ public class PopupAction extends ActionSupport implements Preparable {
     private String populatePersons(boolean pagination) throws PAException {
         final HttpServletRequest request = ServletActionContext.getRequest();
         try {
-            if (isPersonCriterionSet()) {
+            if (isPersonCriterionEmpty()) {
                 String message = "Please enter at least one search criteria";
                 persons = null;
                 addActionError(message);
@@ -251,7 +258,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             personDTO.setCity(city);
             personDTO.setState(state);
             PersonDTO p = new PersonDTO();
-            //
+
             if (email != null && email.length() > 0) {
                 DSet<Tel> list = new DSet<Tel>();
                 list.setItem(new HashSet<Tel>());
@@ -294,7 +301,7 @@ public class PopupAction extends ActionSupport implements Preparable {
         return pagination ? "persons" : SUCCESS;
     }
 
-    private boolean isPersonCriterionSet() {
+    private boolean isPersonCriterionEmpty() {
         return StringUtils.isEmpty(firstName)  && StringUtils.isEmpty(lastName)  && StringUtils.isEmpty(email)
                 && StringUtils.isEmpty(ctepId) && StringUtils.isEmpty(city) && StringUtils.isEmpty(zip)
                 && StringUtils.isEmpty(state) && StringUtils.isEmpty(country);
@@ -309,7 +316,7 @@ public class PopupAction extends ActionSupport implements Preparable {
 
     private String populateOrgs(boolean pagination) {
         try {
-            if (isOrgCriterionSet()) {
+            if (isOrgCriterionEmpty()) {
                 String message = "Please enter at least one search criteria";
                 orgs = null;
                 addActionError(message);
@@ -332,30 +339,9 @@ public class PopupAction extends ActionSupport implements Preparable {
                 orgSearchCriteria.setOrgZip(zipCode);
                 orgSearchCriteria.setOrgState(stateName);
             }
-            OrganizationDTO criteria = new OrganizationDTO();
-            if (ctepid != null && ctepid.length() > 0) {
-                IdentifiedOrganizationDTO identifiedOrganizationDTO = new IdentifiedOrganizationDTO();
-                identifiedOrganizationDTO.setAssignedId(IiConverter.convertToIdentifiedOrgEntityIi(ctepid));
-                List<IdentifiedOrganizationDTO> identifiedOrgs = PoRegistry
-                        .getIdentifiedOrganizationEntityService().search(identifiedOrganizationDTO);
-                if (CollectionUtils.isNotEmpty(identifiedOrgs)) {
-                    criteria.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
-                }
-            } else {
-                criteria.setName(EnOnConverter.convertToEnOn(orgName));
-                criteria.setPostalAddress(AddressConverterUtil.create(
-                        null, null, cityName, stateName, zipCode, countryName));
-            }
-            List<OrganizationDTO> callConvert = new ArrayList<OrganizationDTO>();
-            if (criteria.getIdentifier() != null
-                    || criteria.getName() != null
-                    || criteria.getPostalAddress() != null
-                    || StringUtils.isNotEmpty(familyName)) {
-                LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
-                callConvert = PoRegistry.getOrganizationEntityService().search(criteria,
-                        EnOnConverter.convertToEnOn(familyName), limit);
-            }
-            convertPoOrganizationDTO(callConvert);
+            List<OrganizationDTO> orgSearchResults = performOrgSearch();
+            Map<Ii, FamilyDTO> familyMap =  getFamilyDTOs(orgSearchResults);
+            convertPoOrganizationDTO(orgSearchResults, familyMap);
             return pagination ? ORGS_RESULT : SUCCESS;
         } catch (Exception e) {
             orgs = null;
@@ -364,7 +350,47 @@ public class PopupAction extends ActionSupport implements Preparable {
         }
     }
 
-    private boolean isOrgCriterionSet() {
+    private List<OrganizationDTO> performOrgSearch() throws TooManyResultsException {
+        List<OrganizationDTO> orgSearchResults = new ArrayList<OrganizationDTO>();
+        OrganizationDTO criteria = new OrganizationDTO();
+        if (ctepid != null && ctepid.length() > 0) {
+            IdentifiedOrganizationDTO identifiedOrganizationDTO = new IdentifiedOrganizationDTO();
+            identifiedOrganizationDTO.setAssignedId(IiConverter.convertToIdentifiedOrgEntityIi(ctepid));
+            List<IdentifiedOrganizationDTO> identifiedOrgs = PoRegistry
+                    .getIdentifiedOrganizationEntityService().search(identifiedOrganizationDTO);
+            if (CollectionUtils.isNotEmpty(identifiedOrgs)) {
+                criteria.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
+            }
+        } else {
+            criteria.setName(EnOnConverter.convertToEnOn(orgName));
+            criteria.setPostalAddress(AddressConverterUtil.create(
+                    null, null, cityName, stateName, zipCode, countryName));
+        }
+        if (criteria.getIdentifier() != null
+                || criteria.getName() != null
+                || criteria.getPostalAddress() != null
+                || StringUtils.isNotEmpty(familyName)) {
+            LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+            orgSearchResults = PoRegistry.getOrganizationEntityService().search(criteria,
+                    EnOnConverter.convertToEnOn(familyName), limit);
+        }
+        return orgSearchResults;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<Ii, FamilyDTO> getFamilyDTOs(List<OrganizationDTO> orgList) {
+        if (CollectionUtils.isEmpty(orgList)) {
+            return null;
+        }
+        Set<Ii> famOrgRelIiList = new HashSet<Ii>();
+        for (OrganizationDTO dto : orgList) {
+            famOrgRelIiList.addAll(dto.getFamilyOrganizationRelationships().getItem());
+        }
+        return PoRegistry.getFamilyService().getFamilies(famOrgRelIiList);
+    }
+
+    
+    private boolean isOrgCriterionEmpty() {
         return StringUtils.isEmpty(orgName) && StringUtils.isEmpty(countryName) && StringUtils.isEmpty(cityName)
                 && StringUtils.isEmpty(zipCode)  && StringUtils.isEmpty(ctepid) 
                 && StringUtils.isEmpty(familyName);
@@ -477,7 +503,7 @@ public class PopupAction extends ActionSupport implements Preparable {
             Ii id = PoRegistry.getOrganizationEntityService().createOrganization(orgDto);
             List<OrganizationDTO> callConvert = new ArrayList<OrganizationDTO>();
             callConvert.add(PoRegistry.getOrganizationEntityService().getOrganization(id));
-            convertPoOrganizationDTO(callConvert);
+            convertPoOrganizationDTO(callConvert, null);
         } catch (NullifiedEntityException e) {
             handleError(e.getMessage());
         } catch (URISyntaxException e) {
@@ -550,7 +576,6 @@ public class PopupAction extends ActionSupport implements Preparable {
             return PERS_CREATE_RESPONSE;
         }
 
-        //
         PersonDTO dto = new PersonDTO();
         dto.setName(new EnPn());
         Enxp part = new Enxp(EntityNamePartType.GIV);
@@ -622,34 +647,49 @@ public class PopupAction extends ActionSupport implements Preparable {
         return returnString;
     }
 
-    private void convertPoOrganizationDTO(List<OrganizationDTO> poOrgDtos) {
+    @SuppressWarnings("unchecked")
+    private void convertPoOrganizationDTO(List<OrganizationDTO> poOrgDtos, Map<Ii, FamilyDTO> familyMap) {
         SearchOrgResultDisplay displayElement = null;
-        for (int i = 0; i < poOrgDtos.size(); i++) {
+        for (OrganizationDTO poOrgDto : poOrgDtos) {
             displayElement = new SearchOrgResultDisplay();
-            displayElement.setId(poOrgDtos.get(i).getIdentifier().getExtension().toString());
-            displayElement.setName(poOrgDtos.get(i).getName().getPart().get(0).getValue());
+            displayElement.setId(poOrgDto.getIdentifier().getExtension().toString());
+            displayElement.setName(poOrgDto.getName().getPart().get(0).getValue());
             //
-            int partSize = poOrgDtos.get(i).getPostalAddress().getPart().size();
             AddressPartType type = null;
-            for (int k = 0; k < partSize; k++) {
-                type = poOrgDtos.get(i).getPostalAddress().getPart().get(k).getType();
+            for (Adxp part : poOrgDto.getPostalAddress().getPart()) {
+                type = part.getType();
                 if (type.name().equals("CNT")) {
-                    displayElement.setCountry(getCountryNameUsingCode(poOrgDtos.get(i).getPostalAddress().getPart()
-                            .get(k).getCode()));
+                    displayElement.setCountry(getCountryNameUsingCode(part.getCode()));
                 }
                 if (type.name().equals("ZIP")) {
-                    displayElement.setZip(poOrgDtos.get(i).getPostalAddress().getPart().get(k).getValue());
+                    displayElement.setZip(part.getValue());
                 }
                 if (type.name().equals("CTY")) {
-                    displayElement.setCity(poOrgDtos.get(i).getPostalAddress().getPart().get(k).getValue());
+                    displayElement.setCity(part.getValue());
                 }
                 if (type.name().equals("STA")) {
-                    displayElement.setState(poOrgDtos.get(i).getPostalAddress().getPart().get(k).getValue());
+                    displayElement.setState(part.getValue());
                 }
+            }
+            if (MapUtils.isNotEmpty(familyMap)) {
+                displayElement.setFamilies(getFamilies(poOrgDto.getFamilyOrganizationRelationships(), familyMap));
             }
             orgs.add(displayElement);
         }
     }
+    
+    private Map<Long, String> getFamilies(DSet<Ii> familyOrganizationRelationships, Map<Ii, FamilyDTO> familyMap) {
+        Map<Long, String> retMap = new HashMap<Long, String>();
+        Set<Ii> famOrgIis = familyOrganizationRelationships.getItem();
+        for (Ii ii : famOrgIis) {
+            FamilyDTO dto = familyMap.get(ii);
+            retMap
+                    .put(IiConverter.convertToLong(dto.getIdentifier()), EnOnConverter.convertEnOnToString(dto
+                            .getName()));
+        }
+        return retMap;
+    }
+
     /**
      * @return the countryList
      */

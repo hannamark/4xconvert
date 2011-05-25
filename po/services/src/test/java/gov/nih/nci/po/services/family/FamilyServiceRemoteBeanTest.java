@@ -119,7 +119,11 @@ import gov.nih.nci.services.family.FamilyServiceRemoteBean;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.jms.JMSException;
 
@@ -129,16 +133,18 @@ import org.junit.Test;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
+
 /**
  * @author mshestopalov
- *
+ * 
  */
 public class FamilyServiceRemoteBeanTest extends AbstractServiceBeanTest {
-    
+
     private FamilyServiceRemote remote;
-    
     private Date oldDate;
-    
+    private List<FamilyOrganizationRelationship> famOrgRelList = new ArrayList<FamilyOrganizationRelationship>();
+    private Long id = 1l;
+
     /**
      * setup the service.
      */
@@ -152,8 +158,12 @@ public class FamilyServiceRemoteBeanTest extends AbstractServiceBeanTest {
         Family fam3 = createFamily("FamilyName3", oldDate);
         Organization org1 = createOrg("OrgName1");
         Organization org2 = createOrg("OrgName2");
-        FamilyOrganizationRelationship famOrgRel1 = createFamOrgRel(fam1, org1, oldDate, FamilyFunctionalType.ORGANIZATIONAL); 
-        FamilyOrganizationRelationship famOrgRel2 = createFamOrgRel(fam1, org2, oldDate, FamilyFunctionalType.CONTRACTUAL); 
+        FamilyOrganizationRelationship famOrgRel1 = createFamOrgRel(fam1, org1, oldDate,
+                FamilyFunctionalType.ORGANIZATIONAL);
+        FamilyOrganizationRelationship famOrgRel2 = createFamOrgRel(fam1, org2, oldDate,
+                FamilyFunctionalType.CONTRACTUAL);
+        FamilyOrganizationRelationship famOrgRel3 = createFamOrgRel(fam2, org2, oldDate,
+                FamilyFunctionalType.CONTRACTUAL);
         FamilyServiceLocal localFam = mock(FamilyServiceLocal.class);
         FamilyOrganizationRelationshipServiceLocal localFamOrgRel = mock(FamilyOrganizationRelationshipServiceLocal.class);
         FamilyServiceRemoteBean famBean = EjbTestHelper.getFamilyServiceRemoteBean();
@@ -164,75 +174,93 @@ public class FamilyServiceRemoteBeanTest extends AbstractServiceBeanTest {
         famList.add(fam2);
         famList.add(fam3);
         when(localFam.search(any(SearchCriteria.class), any(PageSortParams.class))).thenReturn(famList);
-        List<FamilyOrganizationRelationship> famOrgRelList = new ArrayList<FamilyOrganizationRelationship>();
         famOrgRelList.add(famOrgRel1);
         famOrgRelList.add(famOrgRel2);
-        when(localFamOrgRel.getActiveRelationships(anyLong())).thenReturn(famOrgRelList);    
+        when(localFamOrgRel.getActiveRelationships(anyLong())).thenReturn(famOrgRelList);
+        Map<Long, Family> famMap = new HashMap<Long, Family>();
+        famMap.put(famOrgRel1.getId(), fam1);
+        famMap.put(famOrgRel3.getId(), fam2);
+        when(localFamOrgRel.getFamilies(any(Set.class))).thenReturn(famMap);
         remote = famBean;
-   }
-    
-   private Family createFamily(String name, Date date) {
-       Family family = new Family();
-       family.setId(1L);
-       family.setName(name);
-       family.setStartDate(date);
-       family.setStatusCode(FamilyStatus.ACTIVE);
-       return family;
-   }
-   
-   private Organization createOrg(String name) {
-       Country country = new Country("testorg", "996", "IJ", "IJI");
-       Organization org = new Organization();
-       org.setName(name);
-       Address mailingAddress = new Address("test", "test", "test", "test", country);
-       org.setPostalAddress(mailingAddress);
-       org.setStatusCode(EntityStatus.NULLIFIED);
-       org.getEmail().add(new Email("foo@example.com"));
-       org.getUrl().add(new URL("http://example.com"));
-       return org;
-   }
-  
-   private FamilyOrganizationRelationship createFamOrgRel(Family fam, Organization org, Date date, FamilyFunctionalType ft) {
-       FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
-       famOrgRel.setOrganization(org);
-       famOrgRel.setFamily(fam);
-       famOrgRel.setFunctionalType(ft);
-       famOrgRel.setStartDate(date);
-       return famOrgRel;
-   }
-   
-   @Test
-   public void testGetFamilyById() {
-       PoHibernateUtil.getCurrentSession().beginTransaction();
-       Family savedFam = createFamily("FamilyName", oldDate);
-      
-       Ii famIi = new Ii();
-       famIi.setRoot(IdConverter.FAMILY_ROOT);
-       famIi.setExtension(savedFam.getId().toString());
-       FamilyDTO freshDto = remote.getFamily(famIi);
-       assertEquals("FamilyName1", (new EnConverter<EnOn>()).convertToString(freshDto.getName()));
-   }
-    
-   @Test
-   public void testSearchForFamilyByName() throws EntityValidationException, TooManyResultsException {
-       FamilyDTO exampleDto = new FamilyDTO();
-       exampleDto.setName(StringConverter.convertToEnOn("Family"));
-       LimitOffset page = new LimitOffset(100, 0);
-       List<FamilyDTO> famDtoList = remote.search(exampleDto, page);
-       assertEquals(2, famDtoList.size());
-       assertEquals("FamilyName2", (new EnConverter<EnOn>()).convertToString(famDtoList.get(0).getName()));
-       assertEquals("FamilyName3", (new EnConverter<EnOn>()).convertToString(famDtoList.get(1).getName()));
-       
-   }
-   
-   @Test
-   public void testGetFamilyRelOrgByFamily() throws EntityValidationException, TooManyResultsException, JMSException { 
-       List<FamilyOrganizationRelationshipDTO> famOrgRelDtoList = remote.getActiveRelationships(1L);
-       assertEquals(2, famOrgRelDtoList.size());
-       assertEquals(FamilyFunctionalType.ORGANIZATIONAL, FamilyFunctionalTypeConverter.convertToTypeEnum(
-               famOrgRelDtoList.get(0).getFunctionalType()));
-       assertEquals(FamilyFunctionalType.CONTRACTUAL, FamilyFunctionalTypeConverter.convertToTypeEnum(
-               famOrgRelDtoList.get(1).getFunctionalType()));     
-   }
+    }
 
+    private Family createFamily(String name, Date date) {
+        Family family = new Family();
+        family.setId(id++);
+        family.setName(name);
+        family.setStartDate(date);
+        family.setStatusCode(FamilyStatus.ACTIVE);
+        return family;
+    }
+
+    private Organization createOrg(String name) {
+        Country country = new Country("testorg", "996", "IJ", "IJI");
+        Organization org = new Organization();
+        org.setName(name);
+        Address mailingAddress = new Address("test", "test", "test", "test", country);
+        org.setPostalAddress(mailingAddress);
+        org.setStatusCode(EntityStatus.NULLIFIED);
+        org.getEmail().add(new Email("foo@example.com"));
+        org.getUrl().add(new URL("http://example.com"));
+        return org;
+    }
+
+    private FamilyOrganizationRelationship createFamOrgRel(Family fam, Organization org, Date date,
+            FamilyFunctionalType ft) {
+        FamilyOrganizationRelationship famOrgRel = new FamilyOrganizationRelationship();
+        famOrgRel.setId(id++);
+        famOrgRel.setOrganization(org);
+        famOrgRel.setFamily(fam);
+        famOrgRel.setFunctionalType(ft);
+        famOrgRel.setStartDate(date);
+        return famOrgRel;
+    }
+
+    @Test
+    public void testGetFamilyById() {
+        PoHibernateUtil.getCurrentSession().beginTransaction();
+        Family savedFam = createFamily("FamilyName", oldDate);
+
+        Ii famIi = new Ii();
+        famIi.setRoot(IdConverter.FAMILY_ROOT);
+        famIi.setExtension(savedFam.getId().toString());
+        FamilyDTO freshDto = remote.getFamily(famIi);
+        assertEquals("FamilyName1", (new EnConverter<EnOn>()).convertToString(freshDto.getName()));
+    }
+
+    @Test
+    public void testSearchForFamilyByName() throws EntityValidationException, TooManyResultsException {
+        FamilyDTO exampleDto = new FamilyDTO();
+        exampleDto.setName(StringConverter.convertToEnOn("Family"));
+        LimitOffset page = new LimitOffset(100, 0);
+        List<FamilyDTO> famDtoList = remote.search(exampleDto, page);
+        assertEquals(2, famDtoList.size());
+        assertEquals("FamilyName2", (new EnConverter<EnOn>()).convertToString(famDtoList.get(0).getName()));
+        assertEquals("FamilyName3", (new EnConverter<EnOn>()).convertToString(famDtoList.get(1).getName()));
+
+    }
+
+    @Test
+    public void testGetFamilyRelOrgByFamily() throws EntityValidationException, TooManyResultsException, JMSException {
+        List<FamilyOrganizationRelationshipDTO> famOrgRelDtoList = remote.getActiveRelationships(1L);
+        assertEquals(2, famOrgRelDtoList.size());
+        assertEquals(FamilyFunctionalType.ORGANIZATIONAL, FamilyFunctionalTypeConverter
+                .convertToTypeEnum(famOrgRelDtoList.get(0).getFunctionalType()));
+        assertEquals(FamilyFunctionalType.CONTRACTUAL, FamilyFunctionalTypeConverter.convertToTypeEnum(famOrgRelDtoList
+                .get(1).getFunctionalType()));
+    }
+
+    @Test
+    public void testGetFamiliesByFamOrgRelIiSet() throws EntityValidationException, JMSException {
+        Set<Ii> iiSet = new HashSet<Ii>();
+        for (FamilyOrganizationRelationship rel : famOrgRelList) {
+            iiSet.add(new IdConverter.FamilyOrganizationRelationshipIdConverter().convertToIi(rel.getId()));
+        }
+        
+        Map<Ii, FamilyDTO> retMap = remote.getFamilies(iiSet);
+        assertEquals(2, retMap.size());
+        for (Ii ii : retMap.keySet()) {
+            assertEquals(IdConverter.FAMILY_ORG_REL_ROOT, ii.getRoot());
+        }
+    }
 }

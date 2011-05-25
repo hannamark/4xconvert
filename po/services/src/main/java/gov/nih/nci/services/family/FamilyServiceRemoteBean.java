@@ -97,7 +97,11 @@ import gov.nih.nci.po.util.PoXsnapshotHelper;
 import gov.nih.nci.services.Utils;
 import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
 
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -198,6 +202,26 @@ public class FamilyServiceRemoteBean implements FamilyServiceRemote {
         return (FamilyDTO) PoXsnapshotHelper.createSnapshot(fam);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @RolesAllowed({DEFAULT_ROLE_ALLOWED_CLIENT })
+    public Map<Ii, FamilyDTO> getFamilies(Set<Ii> familyOrgRelationshipIis) {
+        Map<Long, Family> localMap = famOrgRelService.getFamilies(getFamOrgRelIds(familyOrgRelationshipIis));
+        Map<Ii, FamilyDTO> retMap = new LinkedHashMap<Ii, FamilyDTO>();
+        for (Ii familyOrgRelationshipIi : familyOrgRelationshipIis) {
+            Long extension = IiConverter.convertToLong(familyOrgRelationshipIi);
+            retMap.put(familyOrgRelationshipIi, (FamilyDTO) PoXsnapshotHelper.createSnapshot(localMap.get(extension)));
+        }
+        return retMap;
+    }
     
-
+    private Set<Long> getFamOrgRelIds(Set<Ii> familyOrganizationRelationships) {
+        Set<Long> famOrgRelIdList = new HashSet<Long>();
+        for (Ii ii : familyOrganizationRelationships) {
+            famOrgRelIdList.add(IiConverter.convertToLong(ii));
+        }
+        return famOrgRelIdList;
+    }
 }

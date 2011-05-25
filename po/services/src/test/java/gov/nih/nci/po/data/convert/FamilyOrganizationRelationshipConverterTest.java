@@ -80,56 +80,66 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.services.family;
+package gov.nih.nci.po.data.convert;
 
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
+import gov.nih.nci.po.data.bo.Family;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
+import gov.nih.nci.po.service.AbstractHibernateTestCase;
+import gov.nih.nci.po.util.FamilyOrganizationRelationshipFamilyComparator;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.HashSet;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-import javax.ejb.Remote;
+import org.junit.Test;
+
 
 /**
- * @author mshestopalov
+ * @author moweis
  *
  */
-@Remote
-public interface FamilyServiceRemote {
+public class FamilyOrganizationRelationshipConverterTest extends AbstractHibernateTestCase {
     
-    /**
-     * Search for a list of families using an example family dto.
-     * @see #search(FamilyDTO) for general search behavior
-     * @see LimitOffset#LimitOffset(int, int) for special notes related to behavior
-     * @param family criteria used to find matching family
-     * @param pagination the settings for control pagination of results
-     * @return list of matching family
-     * @throws TooManyResultsException when the system's limit is exceeded
-     */
-    List<FamilyDTO> search(FamilyDTO family, LimitOffset pagination) 
-        throws TooManyResultsException;
-    
-    /**
-     * Get family by identifier.
-     * @param ii identifier.
-     * @return family dto.
-     */
-    FamilyDTO getFamily(Ii ii);
-    
-    /**
-     * Get all active relationships for family.
-     * @param familyId id.
-     * @return list of matching family organization relationships
-     */
-     List<FamilyOrganizationRelationshipDTO> getActiveRelationships(Long familyId);
+    @Test(expected = UnsupportedOperationException.class)
+    public void testUnsupportedTypeSortedSet() {
+        new FamilyOrganizationRelationshipConverter.SortedSetConverter().convert(String.class, null);
+    }
 
-     /**
-      * Get family for each family organization relationship.
-      * @param familyOrgRelationshipIis list of family organization relationship ids.
-      * @return map of families for each family organization relationship ii.
-      */
-      Map<Ii, FamilyDTO> getFamilies(Set<Ii> familyOrgRelationshipIis);
+    @Test(expected = UnsupportedOperationException.class)
+    public void testUnsupportedTypeDSet() {
+        new FamilyOrganizationRelationshipConverter.DSetConverter().convert(String.class, null);
+    }
+
+    @Test
+    public void testDSetConverter() {
+        FamilyOrganizationRelationshipConverter.DSetConverter converter = new FamilyOrganizationRelationshipConverter.DSetConverter();
+        DSet<Ii> dSet = new DSet<Ii>();
+        for (int i=1 ; i<5 ; i++) {
+            dSet.setItem(new HashSet<Ii>());
+            dSet.getItem().add(new IdConverter.FamilyOrganizationRelationshipIdConverter().convertToIi((long) i));
+        }
+        SortedSet<FamilyOrganizationRelationship> retSet = converter.convert(SortedSet.class, dSet);
+        assertEquals(dSet.getItem().size(), retSet.size());
+    }
+    
+    @Test
+    public void testSortedSetConverter() {
+        FamilyOrganizationRelationshipConverter.SortedSetConverter converter = new FamilyOrganizationRelationshipConverter.SortedSetConverter();
+        SortedSet<FamilyOrganizationRelationship> sortedSet = new TreeSet<FamilyOrganizationRelationship>(new FamilyOrganizationRelationshipFamilyComparator());
+        for (int i=1 ; i<5 ; i++) {
+            FamilyOrganizationRelationship relationship = new FamilyOrganizationRelationship();
+            relationship.setId((long) i);
+            Family family = new Family();
+            family.setName("name" + i);
+            family.setId((long) i + 100);
+            relationship.setFamily(family);
+            sortedSet.add(relationship);
+        }
+        DSet<Ii> retSet = converter.convert(DSet.class, sortedSet);
+        assertEquals(sortedSet.size(), retSet.getItem().size());
+    }
+    
 }

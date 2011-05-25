@@ -133,9 +133,7 @@ public class PersistentObjectConverter extends AbstractXSnapshotConverter<Persis
      * @param iso the ii
      */
     protected void initIiRootAndIdentifierName(Ii iso) {
-        // todo https://jira.5amsolutions.com/browse/PO-411
-        // iso.setRoot("UID.for.nci.entity");
-        // iso.setIdentifierName("NCI entity identifier");
+        // empty
     }
 
     /**

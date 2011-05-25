@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.dto;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * DTO class for displaying organizations as a list.
@@ -105,6 +106,7 @@ public class PaOrganizationDTO implements Serializable {
     private String primarycontact;
     private String status;
     private String programCode;
+    private Map<Long, String> families;
 
     /**
      * @return the programCode
@@ -342,5 +344,19 @@ public class PaOrganizationDTO implements Serializable {
      */
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    /**
+     * @return the families
+     */
+    public Map<Long, String> getFamilies() {
+        return families;
+    }
+    
+    /**
+     * @param families the families to set
+     */
+    public void setFamilies(Map<Long, String> families) {
+        this.families = families;
     }
 }

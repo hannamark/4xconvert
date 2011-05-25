@@ -222,7 +222,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         }
         clickAndWaitAjax("link=Search");
         waitForElementById("row", 30);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/a");
         waitForPageToLoad();
 
         //Select Principal Investigator
@@ -248,7 +248,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         waitForElementById("search_organization_btn", 15);
         clickAndWaitAjax("link=Search");
         waitForElementById("row", 15);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/a");
         waitForPageToLoad();
 
         selenium.selectFrame("relative=up");
@@ -261,7 +261,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         waitForElementById("search_organization_btn", 15);
         clickAndWaitAjax("link=Search");
         waitForElementById("row", 15);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/a");
         waitForPageToLoad();
 
         //Trial Status Information
@@ -327,7 +327,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         }
         clickAndWaitAjax("link=Search");
         waitForElementById("row", 15);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/a");
         waitForPageToLoad();
 
         //Select Principal Investigator
@@ -353,7 +353,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         waitForElementById("search_organization_btn", 15);
         clickAndWaitAjax("link=Search");
         waitForElementById("row", 25);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/a");
         waitForPageToLoad();
 
         selenium.selectFrame("relative=up");
@@ -366,7 +366,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         waitForElementById("search_organization_btn", 15);
         clickAndWaitAjax("link=Search");
         waitForElementById("row", 15);
-        selenium.click("//table[@id='row']/tbody/tr[1]/td[7]/a");
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/a");
         waitForPageToLoad();
 
         //Trial Status Information

@@ -82,10 +82,13 @@
  */
 package gov.nih.nci.po.service;
 
+import gov.nih.nci.po.data.bo.Family;
 import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
@@ -168,4 +171,11 @@ public interface FamilyOrganizationRelationshipServiceLocal
      * @return earliest allowable end date
      */
     Date getEarliestAllowableEndDate(Long familyOrgRelId);
+    
+    /**
+     * Returns map of a family for each family organization relationship id.
+     * @param familyOrgRelationshipIds list of family organization relationship ids.
+     * @return map of families for each family organization relationship id.
+     */
+     Map<Long, Family> getFamilies(Set<Long> familyOrgRelationshipIds);
 }

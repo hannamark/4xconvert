@@ -461,6 +461,11 @@ public class Organization extends AbstractOrganization
 
     /**
      * @return the familyOrganizationRelationships
+     * @xsnapshot.property match="iso" type="gov.nih.nci.iso21090.DSet"
+     *                     snapshot-transformer=
+     *                      "gov.nih.nci.po.data.convert.FamilyOrganizationRelationshipConverter$SortedSetConverter"
+     *                     model-transformer=
+     *                      "gov.nih.nci.po.data.convert.FamilyOrganizationRelationshipConverter$DSetConverter"
      */
     @OneToMany(mappedBy = "organization")
     @Searchable(nested = true)

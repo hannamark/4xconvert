@@ -1,6 +1,7 @@
 package gov.nih.nci.registry.action;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Display helper class.
@@ -9,9 +10,6 @@ import java.io.Serializable;
  *
  */
 public class SearchOrgResultDisplay implements Serializable {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private String name;
     private String city;
@@ -19,6 +17,8 @@ public class SearchOrgResultDisplay implements Serializable {
     private String country;
     private String zip;
     private String id;
+    private Map<Long, String> families;
+    
     /**
      * @return the name
      */
@@ -90,5 +90,17 @@ public class SearchOrgResultDisplay implements Serializable {
      */
     public void setId(String id) {
         this.id = id;
+    }
+    /**
+     * @return the families
+     */
+    public Map<Long, String> getFamilies() {
+        return families;
+    }
+    /**
+     * @param families the families to set
+     */
+    public void setFamilies(Map<Long, String> families) {
+        this.families = families;
     }
 }

@@ -81,7 +81,7 @@
                     </td>
                     <td>
                         <s:select id="orgCountrySearch" name="orgSearchCriteria.orgCountry" list="countryList"  
-                                  listKey="alpha3" listValue="name" value="defaultCountrydsds" cssStyle="width:206px" />
+                                  listKey="alpha3" listValue="name" headerKey="USA" headerValue="United States" cssStyle="width:206px" />
                     </td>        
                 </tr>
                 <tr>

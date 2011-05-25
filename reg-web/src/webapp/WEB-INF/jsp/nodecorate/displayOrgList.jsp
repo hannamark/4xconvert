@@ -7,6 +7,11 @@
         <display:setProperty name="basic.msg.empty_list" value="No Organizations found. Please verify search criteria and/or broaden your search by removing one or more search criteria." />
         <display:column title="PO-ID" property="id"  sortable="true"  headerClass="sortable"  headerScope="col"/>
         <display:column escapeXml="true" title="Organization Name" property="name"  sortable="true"  headerClass="sortable"  headerScope="col"/>
+        <display:column escapeXml="false" title="Family Name" sortable="false">
+            <c:forEach items="${row.families}" var="family">
+                <c:out value="${family.value}"/><br/>
+            </c:forEach>
+        </display:column>
         <display:column escapeXml="true" title="City" property="city"  sortable="true"  headerClass="sortable"  headerScope="col"/>
         <display:column escapeXml="true" title="State" property="state"  sortable="true"  headerClass="sortable"  headerScope="col"/>
         <display:column escapeXml="true" title="Country" property="country"  sortable="true"  headerClass="sortable"  headerScope="col"/>

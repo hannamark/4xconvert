@@ -80,56 +80,76 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.services.family;
+package gov.nih.nci.po.data.convert;
 
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.services.correlation.FamilyOrganizationRelationshipDTO;
+import gov.nih.nci.po.data.bo.FamilyOrganizationRelationship;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.HashSet;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
-import javax.ejb.Remote;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
- * @author mshestopalov
- *
+ * Converts between SortedSet of FamilyOrganziationRelatioships and DSet of Iis. 
+ * @author moweis
  */
-@Remote
-public interface FamilyServiceRemote {
-    
-    /**
-     * Search for a list of families using an example family dto.
-     * @see #search(FamilyDTO) for general search behavior
-     * @see LimitOffset#LimitOffset(int, int) for special notes related to behavior
-     * @param family criteria used to find matching family
-     * @param pagination the settings for control pagination of results
-     * @return list of matching family
-     * @throws TooManyResultsException when the system's limit is exceeded
-     */
-    List<FamilyDTO> search(FamilyDTO family, LimitOffset pagination) 
-        throws TooManyResultsException;
-    
-    /**
-     * Get family by identifier.
-     * @param ii identifier.
-     * @return family dto.
-     */
-    FamilyDTO getFamily(Ii ii);
-    
-    /**
-     * Get all active relationships for family.
-     * @param familyId id.
-     * @return list of matching family organization relationships
-     */
-     List<FamilyOrganizationRelationshipDTO> getActiveRelationships(Long familyId);
+public class FamilyOrganizationRelationshipConverter {
 
-     /**
-      * Get family for each family organization relationship.
-      * @param familyOrgRelationshipIis list of family organization relationship ids.
-      * @return map of families for each family organization relationship ii.
-      */
-      Map<Ii, FamilyDTO> getFamilies(Set<Ii> familyOrgRelationshipIis);
+    /**
+     * Convert {@link SortedSet} of {@link FamilyOrganizationRelationship} into {@link DSet} of {@link Ii}s.
+     */
+    public static class SortedSetConverter extends
+            AbstractXSnapshotConverter<SortedSet<FamilyOrganizationRelationship>> {
+        /**
+         * {@inheritDoc}
+         */
+        @SuppressWarnings("unchecked")
+        @Override
+        public <TO> TO convert(Class<TO> returnClass, SortedSet<FamilyOrganizationRelationship> value) {
+            if (returnClass != DSet.class) {
+                throw new UnsupportedOperationException(returnClass.getName());
+            }
+            
+            DSet<Ii> iis = new DSet<Ii>();
+            iis.setItem(new HashSet<Ii>());
+
+            if (CollectionUtils.isEmpty(value)) {
+                return (TO) iis;
+            }
+            for (FamilyOrganizationRelationship relationship : value) {
+                iis.getItem().add(
+                        new IdConverter.FamilyOrganizationRelationshipIdConverter().convertToIi(relationship.getId()));
+            }
+
+            return (TO) iis;
+        }
+    }
+    
+    /**
+     * Convert {@link DSet} of {@link Ii}s into {@link SortedSet} of {@link FamilyOrganizationRelationship}.
+     */
+    public static class DSetConverter extends AbstractXSnapshotConverter<DSet<Ii>> {
+        /**
+         * {@inheritDoc}
+         */
+        @SuppressWarnings("unchecked")
+        @Override
+        public <TO> TO convert(Class<TO> returnClass, DSet<Ii> value) {
+            if (returnClass != SortedSet.class) {
+                throw new UnsupportedOperationException(returnClass.getName());
+            }
+            
+            SortedSet<FamilyOrganizationRelationship> relationships = new TreeSet<FamilyOrganizationRelationship>();
+            if (value == null || value.getItem() == null) {
+                return (TO) relationships;
+            }
+            for (Ii ad : value.getItem()) {
+                relationships.add(IiConverter.convertToFamilyOrgRel(ad));
+            }
+            return (TO) relationships;
+        }
+    }
 }

@@ -171,7 +171,7 @@ public class IiConverterTest extends AbstractHibernateTestCase {
         famOrgRelTest.setUpData();
         Family fam = famOrgRelTest.createFamily();
         Organization org = famOrgRelTest.createOrg();
-        long famId = famOrgRelTest.createFamOrgRel(fam, org);
+        long famId = famOrgRelTest.createFamOrgRel(fam, org).getId();
         IiConverter converter = new IiConverter();
 
         FamilyOrganizationRelationship famOrgRel = converter.convert(FamilyOrganizationRelationship.class, null);

@@ -90,6 +90,7 @@ import gov.nih.nci.po.data.bo.Organization;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -227,5 +228,12 @@ public class MockFamilyOrganizationRelationshipService implements FamilyOrganiza
      */
     public Date getLatestAllowableStartDate(Long familyOrgRelId) {
         return new Date();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Map<Long, Family> getFamilies(Set<Long> familyOrgRelationshipIds) {
+        return new HashMap<Long, Family>();
     }
 }

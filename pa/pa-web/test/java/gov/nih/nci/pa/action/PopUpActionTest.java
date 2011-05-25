@@ -6,10 +6,12 @@ package gov.nih.nci.pa.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -50,7 +52,7 @@ public class PopUpActionTest extends AbstractPaActionTest {
     public void testLookuporgs() {
         assertEquals("orgs", popUpAction.lookuporgs());
         assertEquals(1, popUpAction.getCountryList().size());
-        assertNull(popUpAction.getOrgs());
+        assertTrue(CollectionUtils.isEmpty(popUpAction.getOrgs()));
     }
 
     /**
@@ -60,8 +62,8 @@ public class PopUpActionTest extends AbstractPaActionTest {
     public void testLookuppersons() {
         assertEquals("persons", popUpAction.lookuppersons());
         assertEquals(1, popUpAction.getCountryList().size());
-        assertNull(popUpAction.getOrgs());
-        assertNull(popUpAction.getPersons());
+        assertTrue(CollectionUtils.isEmpty(popUpAction.getOrgs()));
+        assertTrue(CollectionUtils.isEmpty(popUpAction.getPersons()));
     }
     @Test
     public void testdisplaycontactPersonsList() {

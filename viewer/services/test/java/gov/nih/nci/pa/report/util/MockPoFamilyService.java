@@ -84,6 +84,8 @@ package gov.nih.nci.pa.report.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
@@ -175,6 +177,13 @@ public class MockPoFamilyService implements FamilyServiceRemote {
             }
         }
         return returnList;
+    }
+
+    /** 
+     * {@inheritDoc}
+     */
+    public Map<Ii, FamilyDTO> getFamilies(Set<Ii> arg0) {
+        return null;
     }
 
 }

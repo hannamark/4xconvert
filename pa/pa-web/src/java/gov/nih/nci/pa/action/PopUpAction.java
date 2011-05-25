@@ -80,23 +80,31 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.family.FamilyDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -155,7 +163,7 @@ public class PopUpAction extends ActionSupport {
     public String lookuporgs() {
         try {
             getCountriesList();
-            orgs = null;
+            orgs.clear();
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
             return ERROR;
@@ -232,7 +240,7 @@ public class PopUpAction extends ActionSupport {
     public String lookuppersons() {
         try {
             getCountriesList();
-            orgs = null;
+            orgs.clear();
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
             return ERROR;
@@ -288,31 +296,65 @@ public class PopUpAction extends ActionSupport {
             getCountriesList();
             if (isOrgSearchCriteriaSet()) {
                 String message = "Please enter at least one search criteria";
-                orgs = null;
+                orgs.clear();
                 ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
                 return retvalue;
             }
-            // Set the values; so paging will retain them
-            orgSearchCriteria.setName(getOrgName());
-            orgSearchCriteria.setFamilyName(getFamilyName());
-            orgSearchCriteria.setCity(cityName);
-            orgSearchCriteria.setCountry(countryName);
-            orgSearchCriteria.setZip(zipCode);
-            orgSearchCriteria.setState(stateName);
-            OrganizationDTO criteria = new OrganizationDTO();
-            criteria.setName(EnOnConverter.convertToEnOn(getOrgName()));
-            criteria.setPostalAddress(AddressConverterUtil.create(null, null, cityName,
-                                                                            stateName, zipCode, countryName));
-            LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
-            List<OrganizationDTO> orgList = PoRegistry.getOrganizationEntityService().search(criteria,
-                    EnOnConverter.convertToEnOn(getFamilyName()), limit);
-            for (OrganizationDTO dto : orgList) {
-                orgs.add(PADomainUtils.convertPoOrganizationDTO(dto, countryList));
-            }
+            List<OrganizationDTO> orgList = performOrgSearch();            
+            Map<Ii, FamilyDTO> familyMap = getFamilyDTOs(orgList);
+            convertToWebDTO(orgList, familyMap);
             return retvalue;
         } catch (Exception e) {
             return retvalue;
         }
+    }
+
+    @SuppressWarnings("unchecked")    
+    private void convertToWebDTO(List<OrganizationDTO> orgList, Map<Ii, FamilyDTO> familyMap) throws PAException {
+        for (OrganizationDTO dto : orgList) {
+            PaOrganizationDTO paDTO = PADomainUtils.convertPoOrganizationDTO(dto, countryList);
+            paDTO.setFamilies(getFamilies(dto.getFamilyOrganizationRelationships(), familyMap));
+            orgs.add(paDTO);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<Ii, FamilyDTO> getFamilyDTOs(List<OrganizationDTO> orgList) {
+        Set<Ii> famOrgRelIiList = new HashSet<Ii>();
+        for (OrganizationDTO dto : orgList) {
+            famOrgRelIiList.addAll(dto.getFamilyOrganizationRelationships().getItem());
+        }
+        return PoRegistry.getFamilyService().getFamilies(famOrgRelIiList);
+    }
+
+    private List<OrganizationDTO> performOrgSearch() throws TooManyResultsException {
+        // Set the values; so paging will retain them
+        orgSearchCriteria.setName(getOrgName());
+        orgSearchCriteria.setFamilyName(getFamilyName());
+        orgSearchCriteria.setCity(cityName);
+        orgSearchCriteria.setCountry(countryName);
+        orgSearchCriteria.setZip(zipCode);
+        orgSearchCriteria.setState(stateName);
+        OrganizationDTO criteria = new OrganizationDTO();
+        criteria.setName(EnOnConverter.convertToEnOn(getOrgName()));
+        criteria.setPostalAddress(AddressConverterUtil.create(null, null, cityName,
+                                                                        stateName, zipCode, countryName));
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+        List<OrganizationDTO> orgList = PoRegistry.getOrganizationEntityService().search(criteria,
+                EnOnConverter.convertToEnOn(getFamilyName()), limit);
+        return orgList;
+    }
+
+    private Map<Long, String> getFamilies(DSet<Ii> familyOrganizationRelationships, Map<Ii, FamilyDTO> familyMap) {
+        Map<Long, String> retMap = new HashMap<Long, String>();
+        Set<Ii> famOrgIis = familyOrganizationRelationships.getItem();
+        for (Ii ii : famOrgIis) {
+            FamilyDTO dto = familyMap.get(ii);
+            retMap
+                    .put(IiConverter.convertToLong(dto.getIdentifier()), EnOnConverter.convertEnOnToString(dto
+                            .getName()));
+        }
+        return retMap;
     }
 
     private boolean isOrgSearchCriteriaSet() {
