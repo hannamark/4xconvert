@@ -123,4 +123,14 @@ public class AuditTrailTagDecoratorTest extends AbstractPaActionTest {
     public void getChangeDate() {
         assertNotNull(decorator.getChangeDate());
     }
+
+    @Test
+    public void getFormattedOldValue() {
+
+    }
+
+    @Test
+    public void getFormattedNewValue() {
+
+    }
 }

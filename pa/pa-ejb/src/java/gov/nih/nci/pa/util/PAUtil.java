@@ -160,7 +160,7 @@ public class PAUtil {
     private static final Map<String, String> ROOT_TO_NULLIFIED_ERROR_MAP = new HashMap<String, String>();
     private static final String UTF_8 = "UTF-8";
     private static final String TEMP_DOC_LOCATION = "temp_docs";
-    
+
 
     static {
         ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.HEALTH_CARE_FACILITY_ROOT, PAExceptionConstants.NULLIFIED_HCF);
@@ -393,7 +393,7 @@ public class PAUtil {
      * @param inDate string to be normalized
      * @return Date
      */
-    private static Date dateStringToDateTime(String inDate) {
+    public static Date dateStringToDateTime(String inDate) {
         if (inDate == null) {
             return null;
         }

@@ -96,9 +96,12 @@ import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.axis.utils.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -112,20 +115,52 @@ import com.fiveamsolutions.nci.commons.audit.AuditType;
 public class AuditTrailServiceTest extends AbstractHibernateTestCase {
     private AuditTrailService auditHistoryService = new AuditTrailServiceBean();
     private StudySiteServiceLocal studySiteService = new StudySiteServiceBean();
+    private Date startDate;
+    private Date endDate;
 
     @Before
     public void init() throws Exception {
         TestSchema.primeData();
+        startDate = DateUtils.truncate(new Date(), Calendar.DATE);
+        endDate = new Date(startDate.getTime());
     }
 
     @Test
     public void getAuditTrail() throws Exception {
         List<AuditLogDetail> auditTrail = auditHistoryService.getAuditTrail(StudySite.class,
-                IiConverter.convertToIi(0L));
+                IiConverter.convertToIi(0L), startDate, endDate);
         assertTrue(auditTrail.isEmpty());
 
         Ii identifier = IiConverter.convertToIi(TestSchema.studySiteIds.get(0));
-        auditTrail = auditHistoryService.getAuditTrail(StudySite.class, identifier);
+        auditTrail = auditHistoryService.getAuditTrail(StudySite.class, identifier, startDate, endDate);
+        assertFalse(auditTrail.isEmpty());
+        assertEquals(6, auditTrail.size());
+        for (AuditLogDetail detail : auditTrail) {
+            assertEquals(detail.getRecord().getType(), AuditType.INSERT);
+            assertTrue(StringUtils.isEmpty(detail.getOldValue()));
+            assertNotNull(detail.getNewValue());
+        }
+
+        auditTrail = auditHistoryService.getAuditTrail(StudySite.class, identifier, null, endDate);
+        assertFalse(auditTrail.isEmpty());
+        assertEquals(6, auditTrail.size());
+        for (AuditLogDetail detail : auditTrail) {
+            assertEquals(detail.getRecord().getType(), AuditType.INSERT);
+            assertTrue(StringUtils.isEmpty(detail.getOldValue()));
+            assertNotNull(detail.getNewValue());
+        }
+
+
+        auditTrail = auditHistoryService.getAuditTrail(StudySite.class, identifier, startDate, null);
+        assertFalse(auditTrail.isEmpty());
+        assertEquals(6, auditTrail.size());
+        for (AuditLogDetail detail : auditTrail) {
+            assertEquals(detail.getRecord().getType(), AuditType.INSERT);
+            assertTrue(StringUtils.isEmpty(detail.getOldValue()));
+            assertNotNull(detail.getNewValue());
+        }
+
+        auditTrail = auditHistoryService.getAuditTrail(StudySite.class, identifier, null, null);
         assertFalse(auditTrail.isEmpty());
         assertEquals(6, auditTrail.size());
         for (AuditLogDetail detail : auditTrail) {
@@ -139,13 +174,15 @@ public class AuditTrailServiceTest extends AbstractHibernateTestCase {
     public void getAuditTrailByFields() throws Exception {
         Ii identifier = IiConverter.convertToIi(TestSchema.studySiteIds.get(0));
         List<AuditLogDetail> auditDetails = auditHistoryService.getAuditTrailByFields(StudySite.class,
-                identifier, "foo");
+                identifier, startDate, endDate, "foo");
         assertTrue(auditDetails.isEmpty());
 
-        auditDetails = auditHistoryService.getAuditTrailByFields(StudySite.class, identifier, "foo", "bar");
+        auditDetails = auditHistoryService.getAuditTrailByFields(StudySite.class, identifier, startDate, endDate,
+                "foo", "bar");
         assertTrue(auditDetails.isEmpty());
 
-        auditDetails = auditHistoryService.getAuditTrailByFields(StudySite.class, identifier, "targetAccrualNumber");
+        auditDetails = auditHistoryService.getAuditTrailByFields(StudySite.class, identifier, startDate, endDate,
+                "targetAccrualNumber");
         assertTrue(auditDetails.isEmpty());
 
         StudySiteDTO studySiteDTO = studySiteService.get(identifier);
@@ -155,7 +192,8 @@ public class AuditTrailServiceTest extends AbstractHibernateTestCase {
 
         getCurrentSession().flush();
 
-        auditDetails = auditHistoryService.getAuditTrailByFields(StudySite.class, identifier, "targetAccrualNumber");
+        auditDetails = auditHistoryService.getAuditTrailByFields(StudySite.class, identifier, startDate, endDate,
+                "targetAccrualNumber");
         assertFalse(auditDetails.isEmpty());
         assertEquals("Incorrect number of audit log details found.", 1, auditDetails.size());
 
@@ -164,12 +202,55 @@ public class AuditTrailServiceTest extends AbstractHibernateTestCase {
         assertEquals("targetAccrualNumber", detail.getAttribute());
         assertTrue(StringUtils.isEmpty(detail.getOldValue()));
         assertEquals("100", detail.getNewValue());
+
+        auditDetails = auditHistoryService.getAuditTrailByFields(StudySite.class, identifier, null, endDate,
+            "targetAccrualNumber");
+        assertFalse(auditDetails.isEmpty());
+        assertEquals("Incorrect number of audit log details found.", 1, auditDetails.size());
+
+        auditDetails = auditHistoryService.getAuditTrailByFields(StudySite.class, identifier, startDate, null,
+            "targetAccrualNumber");
+        assertFalse(auditDetails.isEmpty());
+        assertEquals("Incorrect number of audit log details found.", 1, auditDetails.size());
+
+        auditDetails = auditHistoryService.getAuditTrailByFields(StudySite.class, identifier, null, null,
+            "targetAccrualNumber");
+        assertFalse(auditDetails.isEmpty());
+        assertEquals("Incorrect number of audit log details found.", 1, auditDetails.size());
     }
 
     @Test
     public void getAuditTrailByStudyProtocol() {
         Ii studyProtocolIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
-        List<AuditLogDetail> auditTrail = auditHistoryService.getAuditTrailByStudyProtocol(StudySite.class, studyProtocolIi);
+        List<AuditLogDetail> auditTrail = auditHistoryService.getAuditTrailByStudyProtocol(StudySite.class,
+                studyProtocolIi, startDate, endDate);
+        assertFalse(auditTrail.isEmpty());
+        assertEquals(12, auditTrail.size());
+        for (AuditLogDetail detail : auditTrail) {
+            assertEquals(detail.getRecord().getType(), AuditType.INSERT);
+            assertTrue(StringUtils.isEmpty(detail.getOldValue()));
+            assertNotNull(detail.getNewValue());
+        }
+
+        auditTrail = auditHistoryService.getAuditTrailByStudyProtocol(StudySite.class, studyProtocolIi, null, endDate);
+        assertFalse(auditTrail.isEmpty());
+        assertEquals(12, auditTrail.size());
+        for (AuditLogDetail detail : auditTrail) {
+            assertEquals(detail.getRecord().getType(), AuditType.INSERT);
+            assertTrue(StringUtils.isEmpty(detail.getOldValue()));
+            assertNotNull(detail.getNewValue());
+        }
+
+        auditTrail = auditHistoryService.getAuditTrailByStudyProtocol(StudySite.class, studyProtocolIi, startDate, null);
+        assertFalse(auditTrail.isEmpty());
+        assertEquals(12, auditTrail.size());
+        for (AuditLogDetail detail : auditTrail) {
+            assertEquals(detail.getRecord().getType(), AuditType.INSERT);
+            assertTrue(StringUtils.isEmpty(detail.getOldValue()));
+            assertNotNull(detail.getNewValue());
+        }
+
+        auditTrail = auditHistoryService.getAuditTrailByStudyProtocol(StudySite.class, studyProtocolIi, null, null);
         assertFalse(auditTrail.isEmpty());
         assertEquals(12, auditTrail.size());
         for (AuditLogDetail detail : auditTrail) {

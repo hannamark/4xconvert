@@ -88,7 +88,9 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -97,6 +99,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Query;
 import org.hibernate.mapping.PersistentClass;
 
@@ -113,18 +116,24 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class AuditTrailServiceBean implements AuditTrailServiceLocal {
     private static final String UNCHECKED = "unchecked";
+    private static final List<String> EXCLUDED_FIELDS = Arrays.asList("dateLastUpdated", "dateLastCreated");
 
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings(UNCHECKED)
-    public <T extends Auditable> List<AuditLogDetail> getAuditTrail(Class<T> clazz, Ii identifier) {
+    public <T extends Auditable> List<AuditLogDetail> getAuditTrail(Class<T> clazz, Ii identifier, Date startDate,
+            Date endDate) {
         StringBuffer hql = new StringBuffer();
         hql.append("from ").append(AuditLogDetail.class.getName())
-            .append(" ald where ald.record.entityName = :entityName and ald.record.entityId = :entityId");
+            .append(" ald where ald.record.entityName = :entityName and ald.record.entityId = :entityId"
+                    + " and ald.attribute not in (:excludedAttributes)");
+        hql.append(generateDateClause(startDate, endDate));
         Query query = PaHibernateUtil.getCurrentSession().createQuery(hql.toString());
         query.setParameter("entityName", getEntityName(clazz));
         query.setParameter("entityId", IiConverter.convertToLong(identifier));
+        query.setParameterList("excludedAttributes", EXCLUDED_FIELDS);
+        populateDateParameters(startDate, endDate, query);
         return query.list();
     }
 
@@ -133,15 +142,19 @@ public class AuditTrailServiceBean implements AuditTrailServiceLocal {
      */
     @SuppressWarnings(UNCHECKED)
     public <T extends Auditable> List<AuditLogDetail> getAuditTrailByFields(Class<T> clazz, Ii identifier,
-            String... fieldNames) {
+            Date startDate, Date endDate, String... fieldNames) {
         StringBuffer hql = new StringBuffer();
         hql.append("from ").append(AuditLogDetail.class.getName())
             .append(" ald where ald.record.entityName = :entityName and ald.record.entityId = :entityId and "
-                    + " ald.attribute in (:attributes)");
+                    + " ald.attribute in (:attributes) and ald.attribute not in (:excludedAttributes)");
+        hql.append(generateDateClause(startDate, endDate));
+
         Query query = PaHibernateUtil.getCurrentSession().createQuery(hql.toString());
         query.setParameter("entityName", getEntityName(clazz));
         query.setParameter("entityId", IiConverter.convertToLong(identifier));
         query.setParameterList("attributes", fieldNames);
+        query.setParameterList("excludedAttributes", EXCLUDED_FIELDS);
+        populateDateParameters(startDate, endDate, query);
         return query.list();
     }
 
@@ -149,16 +162,21 @@ public class AuditTrailServiceBean implements AuditTrailServiceLocal {
      * {@inheritDoc}
      */
     @SuppressWarnings(UNCHECKED)
-    public <T> List<AuditLogDetail> getAuditTrailByStudyProtocol(Class<T> clazz, Ii studyProtocolIi) {
+    public <T> List<AuditLogDetail> getAuditTrailByStudyProtocol(Class<T> clazz, Ii studyProtocolIi, Date startDate,
+            Date endDate) {
         Collection<Long> entityIds = getRelatedIdentifiers(clazz, studyProtocolIi);
         List<AuditLogDetail> results = new ArrayList<AuditLogDetail>();
         if (CollectionUtils.isNotEmpty(entityIds)) {
             StringBuffer hql = new StringBuffer();
             hql.append("from ").append(AuditLogDetail.class.getName())
-                .append(" ald where ald.record.entityName = :entityName and ald.record.entityId in (:entityIds)");
+                .append(" ald where ald.record.entityName = :entityName and ald.record.entityId in (:entityIds)"
+                        + " and ald.attribute not in (:excludedAttributes)");
+            hql.append(generateDateClause(startDate, endDate));
             Query query = PaHibernateUtil.getCurrentSession().createQuery(hql.toString());
             query.setParameter("entityName", getEntityName(clazz));
             query.setParameterList("entityIds", entityIds);
+            query.setParameterList("excludedAttributes", EXCLUDED_FIELDS);
+            populateDateParameters(startDate, endDate, query);
             results.addAll(query.list());
         }
         return results;
@@ -175,5 +193,31 @@ public class AuditTrailServiceBean implements AuditTrailServiceLocal {
         Query query = PaHibernateUtil.getCurrentSession().createQuery(hql);
         query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
         return query.list();
+    }
+
+    /**
+     * Generates the needed date clause for queries.
+     * @param startDate the start date
+     * @param endDate the end date
+     * @return the clause appropriate for the given dates
+     */
+    private String generateDateClause(Date startDate, Date endDate) {
+        StringBuffer clause = new StringBuffer();
+        if (startDate != null) {
+            clause.append(" and ald.record.createdDate >= :startDate");
+        }
+        if (endDate != null) {
+            clause.append(" and ald.record.createdDate < :endDate");
+        }
+        return clause.toString();
+    }
+
+    private void populateDateParameters(Date startDate, Date endDate, Query query) {
+        if (startDate != null) {
+            query.setParameter("startDate", startDate);
+        }
+        if (endDate != null) {
+            query.setParameter("endDate", DateUtils.addDays(endDate, 1));
+        }
     }
 }

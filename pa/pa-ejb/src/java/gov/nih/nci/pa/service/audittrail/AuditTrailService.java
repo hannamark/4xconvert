@@ -84,6 +84,7 @@ package gov.nih.nci.pa.service.audittrail;
 
 import gov.nih.nci.iso21090.Ii;
 
+import java.util.Date;
 import java.util.List;
 
 import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
@@ -91,6 +92,10 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
 
 /**
  * Interface for retrieving object's audit history.
+ *
+ * All of the below start/end dates are start date inclusive, end date exclusive.
+ *
+ * I.E >= startDate, < endDate
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
@@ -101,20 +106,25 @@ public interface AuditTrailService {
      * @param <T> the definition for acceptable classes
      * @param clazz the class
      * @param identifier the identifier of the class to retrieve the audit trail for
+     * @param startDate the inclusive start date to filter by
+     * @param endDate the exclusive end date to filter by
      * @return the audit log details for the given parameters
      */
-    <T extends Auditable> List<AuditLogDetail> getAuditTrail(Class<T> clazz, Ii identifier);
+    <T extends Auditable> List<AuditLogDetail> getAuditTrail(Class<T> clazz, Ii identifier, Date startDate,
+            Date endDate);
 
     /**
      * Retrieves a list of audit log details for the given fields of a given class with the given id.
      * @param <T> the definition for acceptable classes
      * @param clazz the class
      * @param identifier the identifier of the the class to retrieve the object for
+     * @param startDate the inclusive start date to filter by
+     * @param endDate the exclusive end date to filter by
      * @param fieldNames the field names to retrieve the history for
      * @return the audit log details for the given parameters
      */
-    <T extends Auditable> List<AuditLogDetail> getAuditTrailByFields(Class<T> clazz, Ii identifier,
-            String... fieldNames);
+    <T extends Auditable> List<AuditLogDetail> getAuditTrailByFields(Class<T> clazz, Ii identifier, Date startDate,
+            Date endDate, String... fieldNames);
 
     /**
      * Retrieves a list of audit log details for all of the objects of the given class associated with the given
@@ -122,8 +132,11 @@ public interface AuditTrailService {
      * @param <T> the definition for acceptable classes
      * @param clazz the class
      * @param studyProtocolIi the study protocol to get the related objects for
+     * @param startDate the inclusive start date to filter by
+     * @param endDate the exclusive end date to filter by
      * @return the audit log details for the given parameters
      */
-    <T> List<AuditLogDetail> getAuditTrailByStudyProtocol(Class<T> clazz, Ii studyProtocolIi);
+    <T> List<AuditLogDetail> getAuditTrailByStudyProtocol(Class<T> clazz, Ii studyProtocolIi, Date startDate,
+            Date endDate);
 
 }

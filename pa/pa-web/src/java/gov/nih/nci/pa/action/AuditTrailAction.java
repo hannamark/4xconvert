@@ -90,13 +90,19 @@ import gov.nih.nci.pa.service.audittrail.AuditTrailService;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.util.AuditTrailCode;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.struts2.ServletActionContext;
 
 import com.fiveamsolutions.nci.commons.audit.AuditLogDetail;
@@ -110,15 +116,25 @@ import com.opensymphony.xwork2.Preparable;
  */
 public class AuditTrailAction  extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1L;
+    private static final int DEFAULT_AUDIT_PERIOD = -30;
     private AuditTrailCode auditTrailCode;
     private Set<AuditLogDetail> auditTrail;
     private AuditTrailServiceLocal auditTrailService;
+
+    private String startDate;
+    private String endDate;
 
     /**
      * {@inheritDoc}
      */
     public void prepare() {
         auditTrailService  = PaRegistry.getAuditTrailService();
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+
+        Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+        Date thirtyDaysAgo = DateUtils.addDays(today, DEFAULT_AUDIT_PERIOD);
+        setStartDate(PAUtil.normalizeDateString(sdf.format(thirtyDaysAgo)));
+        setEndDate(PAUtil.normalizeDateString(sdf.format(today)));
     }
 
     /**
@@ -128,6 +144,10 @@ public class AuditTrailAction  extends ActionSupport implements Preparable {
      */
     @SuppressWarnings("unchecked")
     public String view() throws PAException {
+        validateDateFilters();
+        if (hasActionErrors() || hasFieldErrors()) {
+            return SUCCESS;
+        }
         Ii studyProtocolIi =
             (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
         setAuditTrail(new TreeSet<AuditLogDetail>(new BeanComparator("id")));
@@ -135,7 +155,8 @@ public class AuditTrailAction  extends ActionSupport implements Preparable {
             loadNciSpecificInformation(studyProtocolIi);
         } else if (getAuditTrailCode() != null) {
             List<AuditLogDetail> results =
-                getAuditTrailService().getAuditTrailByStudyProtocol(getAuditTrailCode().getClazz(), studyProtocolIi);
+                getAuditTrailService().getAuditTrailByStudyProtocol(getAuditTrailCode().getClazz(), studyProtocolIi,
+                        PAUtil.dateStringToDateTime(startDate), PAUtil.dateStringToDateTime(endDate));
             getAuditTrail().addAll(results);
         }
         return SUCCESS;
@@ -150,13 +171,36 @@ public class AuditTrailAction  extends ActionSupport implements Preparable {
             PaRegistry.getStudyResourcingService().getSummary4ReportedResourcing(studyProtocolIi);
 
         List<AuditLogDetail> studyContactDetails =
-            getAuditTrailService().getAuditTrail(getAuditTrailCode().getClazz(), nciSpecificInfo.getIdentifier());
+            getAuditTrailService().getAuditTrail(getAuditTrailCode().getClazz(), nciSpecificInfo.getIdentifier(),
+                    PAUtil.dateStringToDateTime(startDate), PAUtil.dateStringToDateTime(endDate));
 
         List<AuditLogDetail> spDetails = getAuditTrailService().getAuditTrailByFields(StudyProtocol.class,
-                studyProtocolIi, "programCodeText", "accrualReportingMethodCode");
+                studyProtocolIi, PAUtil.dateStringToDateTime(startDate), PAUtil.dateStringToDateTime(endDate),
+                "programCodeText", "accrualReportingMethodCode");
 
         getAuditTrail().addAll(studyContactDetails);
         getAuditTrail().addAll(spDetails);
+    }
+
+
+    /**
+     * Validates date input.
+     */
+    private void validateDateFilters() {
+        Date start = PAUtil.dateStringToDateTime(startDate);
+        Date end = PAUtil.dateStringToDateTime(endDate);
+        if (startDate != null && start == null) {
+            addFieldError("startDate", getText("error.auditTrail.startDate"));
+        }
+        if (endDate != null && end == null) {
+            addFieldError("endDate", getText("error.auditTrail.endDate"));
+        }
+        validateDateOrder(start, end);
+    }
+    private void validateDateOrder(Date start, Date end) {
+        if (start != null && end != null && start.after(end)) {
+            addActionError(getText("error.auditTrail.orderedDate"));
+        }
     }
 
     /**
@@ -192,5 +236,33 @@ public class AuditTrailAction  extends ActionSupport implements Preparable {
      */
     public AuditTrailService getAuditTrailService() {
         return auditTrailService;
+    }
+
+    /**
+     * @return the startDate
+     */
+    public String getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * @param startDate the startDate to set
+     */
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * @return the endDate
+     */
+    public String getEndDate() {
+        return endDate;
+    }
+
+    /**
+     * @param endDate the endDate to set
+     */
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 }

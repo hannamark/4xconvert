@@ -765,8 +765,10 @@ public class MockServiceLocator implements ServiceLocator {
 
         AuditTrailServiceLocal svc = mock(AuditTrailServiceLocal.class);
 
-        when(svc.getAuditTrail(eq(StudyResourcing.class), any(Ii.class))).thenReturn(Arrays.asList(nciDetail));
-        when(svc.getAuditTrailByStudyProtocol(eq(PlannedMarker.class), any(Ii.class))).thenReturn(Arrays.asList(markerDetail));
+        when(svc.getAuditTrail(eq(StudyResourcing.class), any(Ii.class), any(Date.class), any(Date.class)))
+            .thenReturn(Arrays.asList(nciDetail));
+        when(svc.getAuditTrailByStudyProtocol(eq(PlannedMarker.class), any(Ii.class), any(Date.class), any(Date.class)))
+            .thenReturn(Arrays.asList(markerDetail));
         return svc;
     }
 
