@@ -411,7 +411,6 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
             if (PAUtil.isStNull(outDTO.getTimeFrame())) {
                 outDTO.setTimeFrame(StConverter.convertToSt("Not Provided"));
             }
-            outDTO.setDescription(outDTO.getName());
             try {
                 PaRegistry.getStudyOutcomeMeasurService().create(outDTO);
             } catch (PAException e) {

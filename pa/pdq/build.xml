@@ -5,99 +5,92 @@
 <!-- ====================================================================== -->
 
 <project name="pdq" default="run" basedir=".">
-    <property name="software.dir" value="${basedir}/../.."/>
-    <property name="lib.dir" value="${basedir}/../../target/pa/lib"/>
-    <property file="${basedir}/build.properties"/>
-    <property name="pa.checkstyle.url" value="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml"/>
-    <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
-    <property name="pa.resourceDir" value="${software.dir}/pa/resources"/>
-    <property name="pa.pmd" value="${pa.resourceDir}/paPmd.xml"/>
+    <property name="software.dir" value="${basedir}/../.." />
+    <property name="lib.dir" value="${basedir}/../../target/pa/lib" />
+    <property file="${basedir}/build.properties" />
+    <property name="pa.checkstyle.url" value="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml" />
+    <property name="pa.report.dir" value="${software.dir}/target/pa/reports" />
+    <property name="pa.resourceDir" value="${software.dir}/pa/resources" />
+    <property name="pa.pmd" value="${pa.resourceDir}/paPmd.xml" />
 
-    <mkdir dir="${pa.report.dir}/pdq"/>
+    <mkdir dir="${pa.report.dir}/pdq" />
 
     <property name="test-checkstyle.jar.dir" location="${lib.dir}/pa-ejb/test-checkstyle" />
     <path id="test-checkstyle.classpath">
         <fileset dir="${test-checkstyle.jar.dir}">
-            <include name="*.jar"/>
+            <include name="*.jar" />
         </fileset>
     </path>
 
     <property name="test-pmd.jar.dir" location="${lib.dir}/pa-ejb/test-pmd" />
     <path id="test-pmd.classpath">
         <fileset dir="${test-pmd.jar.dir}">
-            <include name="*.jar"/>
+            <include name="*.jar" />
         </fileset>
     </path>
-    
+
     <path id="classpath">
-        <fileset dir="${basedir}/lib"/>
-        <fileset dir="${basedir}" includes="build.properties"/>
+        <fileset dir="${basedir}/lib" />
+        <fileset dir="${basedir}" includes="build.properties" />
     </path>
 
     <target name="clean">
-        <delete dir="${basedir}/target"/>
-        <delete dir="${pa.report.dir}/pdq"/>
+        <delete dir="${basedir}/target" />
+        <delete dir="${pa.report.dir}/pdq" />
     </target>
 
     <!-- ====================================================================== -->
     <!-- Run checkstyle                                                         -->
     <!-- ====================================================================== -->
     <target name="test-checkstyle">
-        <taskdef resource="checkstyletask.properties" classpathref="test-checkstyle.classpath"/>
+        <taskdef resource="checkstyletask.properties" classpathref="test-checkstyle.classpath" />
         <checkstyle configurl="${pa.checkstyle.url}" failOnViolation="true">
             <classpath>
-                <pathelement location="${pa-ejb.build.outputDir}"/>
-                <path refid="classpath"/>
+                <pathelement location="${pa-ejb.build.outputDir}" />
+                <path refid="classpath" />
             </classpath>
             <fileset dir="src" includes="**/*.java" />
-            <formatter type="plain"/>
-            <formatter type="plain" toFile="${pa.report.dir}/pdq/checkstyle.txt"/>
-            <formatter type="xml"   toFile="${pa.report.dir}/pdq/checkstyle.xml"/>
+            <formatter type="plain" />
+            <formatter type="plain" toFile="${pa.report.dir}/pdq/checkstyle.txt" />
+            <formatter type="xml" toFile="${pa.report.dir}/pdq/checkstyle.xml" />
         </checkstyle>
     </target>
-    
+
     <!-- ====================================================================== -->
     <!-- Run PMD                                                                -->
     <!-- ====================================================================== -->
     <target name="test-pmd">
-        <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask"/>
+        <taskdef name="pmd" classpathref="test-pmd.classpath" classname="net.sourceforge.pmd.ant.PMDTask" />
         <pmd shortFilenames="true" failOnRuleViolation="true" rulesetfiles="${pa.pmd}" maxruleviolations="455">
-            <formatter type="text" toConsole="true"/>
-            <formatter type="text" toFile="${pa.report.dir}/pdq/pmd.txt"/>
-            <formatter type="xml"  toFile="${pa.report.dir}/pdq/pmd.xml"/>
-            <formatter type="html" toFile="${pa.report.dir}/pdq/pmd.html"/>
+            <formatter type="text" toConsole="true" />
+            <formatter type="text" toFile="${pa.report.dir}/pdq/pmd.txt" />
+            <formatter type="xml" toFile="${pa.report.dir}/pdq/pmd.xml" />
+            <formatter type="html" toFile="${pa.report.dir}/pdq/pmd.html" />
             <fileset dir="src">
-                <include name="**/*.java"/>
+                <include name="**/*.java" />
             </fileset>
-         </pmd>
+        </pmd>
     </target>
-    
+
     <target name="compile" depends="clean">
-        <mkdir dir="${basedir}/target/classes"/>
-        <javac srcdir="${basedir}/src" debug="true" destdir="${basedir}/target/classes" classpathref="classpath"/>
-        <copy file="${basedir}/lib/log4j.properties"
-              tofile="${basedir}/target/classes/log4j.properties"
-              overwrite="true">
+        <mkdir dir="${basedir}/target/classes" />
+        <javac srcdir="${basedir}/src" debug="true" destdir="${basedir}/target/classes" classpathref="classpath" />
+        <copy file="${basedir}/lib/log4j.properties" tofile="${basedir}/target/classes/log4j.properties" overwrite="true">
         </copy>
-        <copy file="${basedir}/build.properties"
-              tofile="${basedir}/target/classes/build.properties"
-              overwrite="true">
+        <copy file="${basedir}/build.properties" tofile="${basedir}/target/classes/build.properties" overwrite="true">
         </copy>
-        <replaceregexp file="${basedir}/target/classes/build.properties"
-                       match="\\"
-                       replace="/"
-                       flags="g"/>
+        <replaceregexp file="${basedir}/target/classes/build.properties" match="\\" replace="/" flags="g" />
     </target>
 
     <target name="jar" depends="compile">
-        <jar destfile="${basedir}/target/pdq.jar" basedir="${basedir}/target/classes"/>
+        <jar destfile="${basedir}/target/pdq.jar" basedir="${basedir}/target/classes" />
     </target>
 
     <target name="run" depends="jar">
         <java fork="true" classname="gov.nih.nci.pa.pdq.Loader" dir="${basedir}">
             <classpath>
-                <path refid="classpath"/>
-                <path location="${basedir}/target/pdq.jar"/>
+                <path refid="classpath" />
+                <path location="${basedir}/target/pdq.jar" />
             </classpath>
         </java>
     </target>
@@ -105,20 +98,30 @@
     <target name="trialLoaderPreprocess" depends="jar">
         <java fork="true" classname="gov.nih.nci.pa.pdq.PDQTrialLoaderPreprocessor" dir="${basedir}">
             <classpath>
-                <path refid="classpath"/>
-                <path location="${basedir}/target/pdq.jar"/>
+                <path refid="classpath" />
+                <path location="${basedir}/target/pdq.jar" />
             </classpath>
-            <arg value="${pdqReplaceSponsor.srcDir}"/>
-            <arg value="${pdqReplaceSponsor.destDir}"/>
+            <arg value="${pdqReplaceSponsor.srcDir}" />
+            <arg value="${pdqReplaceSponsor.destDir}" />
         </java>
     </target>
 
     <target name="run-trial-loader" depends="jar">
         <java fork="true" classname="gov.nih.nci.pa.pdq.PDQTrialLoader" dir="${basedir}">
             <classpath>
-                <path refid="classpath"/>
-                <path location="${basedir}/target/pdq.jar"/>
+                <path refid="classpath" />
+                <path location="${basedir}/target/pdq.jar" />
             </classpath>
+        </java>
+    </target>
+
+    <target name="run-outcome-wiper" depends="jar">
+        <java fork="true" classname="gov.nih.nci.pa.pdq.jdbc.PDQOutcomeDescriptionWiper" dir="${basedir}">
+            <classpath>
+                <path refid="classpath" />
+                <path location="${basedir}/target/pdq.jar" />
+            </classpath>
+            <arg value="${outcomeWiper.nctNumberFile}" />
         </java>
     </target>
 </project>

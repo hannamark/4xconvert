@@ -113,24 +113,34 @@ public class PDQProperties {
         }
     }
 
+    public String getJdbcDriver() {
+        return getProperty("jdbc.driver");
+    }
+
     public String getDatabaseUrl() {
         return getProperty("database.url");
     }
+
     public String getDatabaseUsername() {
         return getProperty("database.username");
     }
+
     public String getDatabasePassword() {
         return getProperty("database.password");
     }
+
     public String getTrialDataDir() {
         return getProperty("trial.data.dir");
     }
+
     public String getTrialLoaderUsername() {
         return getProperty("trial.loader.username");
     }
+
     public String getPaServer() {
         return getProperty("pa.server");
     }
+
     public String getPaPort() {
         return getProperty("pa.port");
     }
