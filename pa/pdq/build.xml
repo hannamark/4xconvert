@@ -116,12 +116,13 @@
     </target>
 
     <target name="run-outcome-wiper" depends="jar">
-        <java fork="true" classname="gov.nih.nci.pa.pdq.jdbc.PDQOutcomeDescriptionWiper" dir="${basedir}">
+        <java fork="true" classname="gov.nih.nci.pa.pdq.sql.PDQOutcomeDescriptionWiper" dir="${basedir}">
             <classpath>
                 <path refid="classpath" />
                 <path location="${basedir}/target/pdq.jar" />
             </classpath>
             <arg value="${outcomeWiper.nctNumberFile}" />
+            <arg value="${outcomeWiper.sqlScript}" />
         </java>
     </target>
 </project>

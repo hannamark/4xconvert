@@ -7,3 +7,4 @@ pdqReplaceSponsor.srcDir =
 pdqReplaceSponsor.destDir = 
 
 outcomeWiper.nctNumberFile =
+outcomeWiper.sqlScript =

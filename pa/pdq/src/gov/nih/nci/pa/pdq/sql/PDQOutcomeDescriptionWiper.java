@@ -80,46 +80,45 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.pdq.jdbc;
+package gov.nih.nci.pa.pdq.sql;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Database cleanup for PO-3628.
+ * Script generator for database cleanup for PO-3628.
  * 
  * @author Michael Visee
  */
 public class PDQOutcomeDescriptionWiper {
-    
     private static final String QUERY = "UPDATE STUDY_OUTCOME_MEASURE SET DESCRIPTION = NULL "
             + "WHERE STUDY_PROTOCOL_IDENTIFIER IN (SELECT SS.STUDY_PROTOCOL_IDENTIFIER "
             + "FROM STUDY_SITE SS, RESEARCH_ORGANIZATION RO, ORGANIZATION ORG "
-            + "WHERE SS.LOCAL_SP_INDENTIFIER = ? AND SS.RESEARCH_ORGANIZATION_IDENTIFIER = RO.IDENTIFIER AND "
-            + "RO.ORGANIZATION_IDENTIFIER = ORG.IDENTIFIER AND ORG.NAME = 'ClinicalTrials.gov')";
-    
+            + "WHERE SS.LOCAL_SP_INDENTIFIER = ':?' AND SS.RESEARCH_ORGANIZATION_IDENTIFIER = RO.IDENTIFIER AND "
+            + "RO.ORGANIZATION_IDENTIFIER = ORG.IDENTIFIER AND ORG.NAME = 'ClinicalTrials.gov');\n";
+
     public static void main(String[] args) {
-        if (args.length != 1) {
-            System.out.println("Usage: PDQOutcomeDescriptionWiper <NCT number file path>");
+        if (args.length != 2) {
+            System.out.println("Usage: PDQOutcomeDescriptionWiper <NCT number file path> <SQL output file>");
             System.exit(0);
         }
         try {
             List<String> numbers = loadNCTNumbers(args[0]);
             if (!numbers.isEmpty()) {
-                wipeOutomeDescriptons(numbers);
+                writeSqlFile(args[1], numbers);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     private static List<String> loadNCTNumbers(String fileName) throws IOException {
         List<String> numbers = new ArrayList<String>();
         BufferedReader reader = new BufferedReader(new FileReader(fileName));
@@ -134,34 +133,12 @@ public class PDQOutcomeDescriptionWiper {
         return numbers;
     }
 
-    private static void wipeOutomeDescriptons(List<String> numbers) throws Exception {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        boolean rollback = true;
-        try {
-            conn = JdbcHelper.connect();
-            stmt = conn.prepareStatement(QUERY);
-            int batchSize = 0;
-            for (String number : numbers) {
-                stmt.setString(1, number);
-                stmt.addBatch();
-                batchSize++;
-                if (batchSize == 100) {
-                    stmt.executeBatch();
-                    batchSize = 0;
-                }
-            }
-            if (batchSize > 0) {
-                stmt.executeBatch();
-            }
-            stmt.close();
-            stmt = null;
-            conn.commit();
-            rollback = false;
-        } finally {
-            JdbcHelper.cleanStatementClose(stmt);
-            JdbcHelper.cleanRollback(conn, rollback);
-            JdbcHelper.disconnect(conn);
+    private static void writeSqlFile(String fileName, List<String> numbers) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+        writer.write("\n-- Cleanup script for PO-3628\n\n");
+        for (String number : numbers) {
+            writer.write(QUERY.replace(":?", number));
         }
+        writer.close();
     }
 }
