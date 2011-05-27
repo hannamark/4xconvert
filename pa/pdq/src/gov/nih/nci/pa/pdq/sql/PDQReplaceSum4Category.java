@@ -93,12 +93,14 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Script generator for database cleanup for PO-3628.
+ * Script generator for database cleanup for PO-3632.
+ * Replaces summary 4 type from Institutional to National for a set of trials identified by NCT numbers.
  * 
  * @author Michael Visee
  */
-public class PDQOutcomeDescriptionWiper {
-    private static final String QUERY = "UPDATE STUDY_OUTCOME_MEASURE SET DESCRIPTION = NULL "
+public class PDQReplaceSum4Category {
+    
+    private static final String QUERY = "UPDATE STUDY_RESOURCING SET TYPE_CODE = 'NATIONAL' "
             + "WHERE STUDY_PROTOCOL_IDENTIFIER IN (SELECT SS.STUDY_PROTOCOL_IDENTIFIER "
             + "FROM STUDY_SITE SS, RESEARCH_ORGANIZATION RO, ORGANIZATION ORG "
             + "WHERE SS.LOCAL_SP_INDENTIFIER = ':?' AND SS.RESEARCH_ORGANIZATION_IDENTIFIER = RO.IDENTIFIER AND "
@@ -106,7 +108,7 @@ public class PDQOutcomeDescriptionWiper {
 
     public static void main(String[] args) {
         if (args.length != 2) {
-            System.out.println("Usage: PDQOutcomeDescriptionWiper <NCT number file path> <SQL output file>");
+            System.out.println("Usage: PDQReplaceSum4Category <NCT number file path> <SQL output file>");
             System.exit(0);
         }
         try {
@@ -135,7 +137,7 @@ public class PDQOutcomeDescriptionWiper {
 
     private static void writeSqlFile(String fileName, List<String> numbers) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-        writer.write("\n-- Cleanup script for PO-3628\n\n");
+        writer.write("\n-- Cleanup script for PO-3632\n\n");
         for (String number : numbers) {
             writer.write(QUERY.replace(":?", number));
         }

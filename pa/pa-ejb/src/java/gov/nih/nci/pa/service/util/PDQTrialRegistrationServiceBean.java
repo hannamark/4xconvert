@@ -404,7 +404,7 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
      */
     private StudyResourcingDTO getSummary4StudyResourcingDTO() {
         StudyResourcingDTO resourcingDTO = new StudyResourcingDTO();
-        resourcingDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.INSTITUTIONAL));
+        resourcingDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode.NATIONAL));
         return resourcingDTO;
     }
 

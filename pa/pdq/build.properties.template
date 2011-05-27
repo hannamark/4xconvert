@@ -6,5 +6,5 @@ database.password=pauser
 pdqReplaceSponsor.srcDir =
 pdqReplaceSponsor.destDir = 
 
-outcomeWiper.nctNumberFile =
-outcomeWiper.sqlScript =
+issueScriptGenerator.inputDir =
+issueScriptGenerator.sqlScriptDir =

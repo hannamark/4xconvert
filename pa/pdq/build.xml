@@ -34,6 +34,8 @@
         <fileset dir="${basedir}" includes="build.properties" />
     </path>
 
+    <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="classpath"/>
+
     <target name="clean">
         <delete dir="${basedir}/target" />
         <delete dir="${pa.report.dir}/pdq" />
@@ -115,14 +117,30 @@
         </java>
     </target>
 
-    <target name="run-outcome-wiper" depends="jar">
-        <java fork="true" classname="gov.nih.nci.pa.pdq.sql.PDQOutcomeDescriptionWiper" dir="${basedir}">
+    <target name="run-issue-script" depends="jar" description="run a script generator. The generator property is required as the issue property. ex: ant run-issue-script -Dissue=3628">
+        <java fork="true" classname="gov.nih.nci.pa.pdq.sql.${generator}" dir="${basedir}">
             <classpath>
                 <path refid="classpath" />
                 <path location="${basedir}/target/pdq.jar" />
             </classpath>
-            <arg value="${outcomeWiper.nctNumberFile}" />
-            <arg value="${outcomeWiper.sqlScript}" />
+            <arg value="${issueScriptGenerator.inputDir}/${generator}.txt" />
+            <arg value="${issueScriptGenerator.sqlScriptDir}${generator}.sql" />
         </java>
+    </target>
+
+    <target name="run-all-scripts" depends="jar" description="Run all issue script generators">
+        <for list="PDQRemoveOutcomeDescription,PDQReplaceSum4Category" param="generator">
+            <sequential>
+                <echo message="Run script generator @{generator}"/>
+                <java fork="true" classname="gov.nih.nci.pa.pdq.sql.@{generator}" dir="${basedir}">
+                    <classpath>
+                        <path refid="classpath" />
+                        <path location="${basedir}/target/pdq.jar" />
+                    </classpath>
+                    <arg value="${issueScriptGenerator.inputDir}/@{generator}.txt" />
+                    <arg value="${issueScriptGenerator.sqlScriptDir}/@{generator}.sql" />
+                </java>
+            </sequential>
+        </for>
     </target>
 </project>
