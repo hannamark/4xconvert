@@ -84,6 +84,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.PlannedMarker;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyResourcing;
@@ -328,7 +329,25 @@ public class MockServiceLocator implements ServiceLocator {
      * @return null
      */
     public PAOrganizationServiceRemote getPAOrganizationService() {
-        return null;
+        PAOrganizationServiceRemote svc = mock(PAOrganizationServiceRemote.class);
+        try {
+            when(svc.getOrganizationByIndetifers(any(Organization.class))).thenAnswer(new Answer<Organization>() {
+                public Organization answer(InvocationOnMock invocation) throws Throwable {
+                    Object[] args = invocation.getArguments();
+                    Organization org = (Organization) args[0];
+                    Organization result = new Organization();
+                    if (org.getId().equals(1L)) {
+                        result.setName("Organization #1");
+                    } else if (org.getId().equals(2L)) {
+                        result.setName("Organization #2");
+                    }
+                    return result;
+                }
+            });
+        } catch (PAException e) {
+            //Unreachable
+        }
+        return svc;
     }
 
     /**

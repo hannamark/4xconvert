@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.decorator;
 
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -133,5 +134,45 @@ public class AuditTrailTagDecorator extends TableDecorator {
     public String getChangeDate() {
         AuditLogDetail row = (AuditLogDetail) this.getCurrentRowObject();
         return fdf.format(row.getRecord().getCreatedDate());
+    }
+
+    /**
+     * Returns the name of related objects instead of just the identifier.
+     * @return the name of the related object or the value itself it it is not a id
+     */
+    public String getFormattedOldValue() {
+        AuditLogDetail row = (AuditLogDetail) this.getCurrentRowObject();
+        String value = row.getOldValue();
+        if (StringUtils.equals(row.getAttribute(), "organizationIdentifier") && StringUtils.isNotEmpty(value)) {
+            try {
+                Organization org = new Organization();
+                org.setId(Long.valueOf(value));
+                Organization result = PaRegistry.getPAOrganizationService().getOrganizationByIndetifers(org);
+                value = result.getName();
+            } catch (PAException e) {
+                LOG.error("Error retrieving organization name for org with id " + value, e);
+            }
+        }
+        return value;
+    }
+
+    /**
+     * Returns the name of related objects instead of just the identifier.
+     * @return the name of the related object or the value itself it it is not a id
+     */
+    public String getFormattedNewValue() {
+        AuditLogDetail row = (AuditLogDetail) this.getCurrentRowObject();
+        String value = row.getNewValue();
+        if (StringUtils.equals(row.getAttribute(), "organizationIdentifier") && StringUtils.isNotEmpty(value)) {
+            try {
+                Organization org = new Organization();
+                org.setId(Long.valueOf(value));
+                Organization result = PaRegistry.getPAOrganizationService().getOrganizationByIndetifers(org);
+                value = result.getName();
+            } catch (PAException e) {
+                LOG.error("Error retrieving organization name for org with id " + value, e);
+            }
+        }
+        return value;
     }
 }

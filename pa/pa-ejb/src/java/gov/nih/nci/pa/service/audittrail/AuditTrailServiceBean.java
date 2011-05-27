@@ -116,7 +116,8 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class AuditTrailServiceBean implements AuditTrailServiceLocal {
     private static final String UNCHECKED = "unchecked";
-    private static final List<String> EXCLUDED_FIELDS = Arrays.asList("dateLastUpdated", "dateLastCreated");
+    private static final List<String> EXCLUDED_FIELDS = Arrays.asList("dateLastUpdated", "dateLastCreated",
+            "studyProtocol");
 
     /**
      * {@inheritDoc}

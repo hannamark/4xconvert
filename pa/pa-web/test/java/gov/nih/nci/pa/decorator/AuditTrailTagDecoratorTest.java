@@ -126,11 +126,19 @@ public class AuditTrailTagDecoratorTest extends AbstractPaActionTest {
 
     @Test
     public void getFormattedOldValue() {
-
+        AuditLogRecord record = new AuditLogRecord(AuditType.INSERT, "STUDY_RESOURCING", 1L, "testuser", new Date());
+        detail = new AuditLogDetail(record, "organizationIdentifier", "1", "2");
+        decorator.initRow(detail, 1, 1);
+        assertNotNull(decorator.getFormattedOldValue());
+        assertEquals("Organization #1", decorator.getFormattedOldValue());
     }
 
     @Test
     public void getFormattedNewValue() {
-
+        AuditLogRecord record = new AuditLogRecord(AuditType.INSERT, "STUDY_RESOURCING", 1L, "testuser", new Date());
+        detail = new AuditLogDetail(record, "organizationIdentifier", "1", "2");
+        decorator.initRow(detail, 1, 1);
+        assertNotNull(decorator.getFormattedNewValue());
+        assertEquals("Organization #2", decorator.getFormattedNewValue());
     }
 }

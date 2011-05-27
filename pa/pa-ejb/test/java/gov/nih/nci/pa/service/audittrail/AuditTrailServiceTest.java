@@ -134,7 +134,7 @@ public class AuditTrailServiceTest extends AbstractHibernateTestCase {
         Ii identifier = IiConverter.convertToIi(TestSchema.studySiteIds.get(0));
         auditTrail = auditHistoryService.getAuditTrail(StudySite.class, identifier, startDate, endDate);
         assertFalse(auditTrail.isEmpty());
-        assertEquals(6, auditTrail.size());
+        assertEquals(5, auditTrail.size());
         for (AuditLogDetail detail : auditTrail) {
             assertEquals(detail.getRecord().getType(), AuditType.INSERT);
             assertTrue(StringUtils.isEmpty(detail.getOldValue()));
@@ -143,17 +143,16 @@ public class AuditTrailServiceTest extends AbstractHibernateTestCase {
 
         auditTrail = auditHistoryService.getAuditTrail(StudySite.class, identifier, null, endDate);
         assertFalse(auditTrail.isEmpty());
-        assertEquals(6, auditTrail.size());
+        assertEquals(5, auditTrail.size());
         for (AuditLogDetail detail : auditTrail) {
             assertEquals(detail.getRecord().getType(), AuditType.INSERT);
             assertTrue(StringUtils.isEmpty(detail.getOldValue()));
             assertNotNull(detail.getNewValue());
         }
 
-
         auditTrail = auditHistoryService.getAuditTrail(StudySite.class, identifier, startDate, null);
         assertFalse(auditTrail.isEmpty());
-        assertEquals(6, auditTrail.size());
+        assertEquals(5, auditTrail.size());
         for (AuditLogDetail detail : auditTrail) {
             assertEquals(detail.getRecord().getType(), AuditType.INSERT);
             assertTrue(StringUtils.isEmpty(detail.getOldValue()));
@@ -162,7 +161,7 @@ public class AuditTrailServiceTest extends AbstractHibernateTestCase {
 
         auditTrail = auditHistoryService.getAuditTrail(StudySite.class, identifier, null, null);
         assertFalse(auditTrail.isEmpty());
-        assertEquals(6, auditTrail.size());
+        assertEquals(5, auditTrail.size());
         for (AuditLogDetail detail : auditTrail) {
             assertEquals(detail.getRecord().getType(), AuditType.INSERT);
             assertTrue(StringUtils.isEmpty(detail.getOldValue()));
@@ -225,7 +224,7 @@ public class AuditTrailServiceTest extends AbstractHibernateTestCase {
         List<AuditLogDetail> auditTrail = auditHistoryService.getAuditTrailByStudyProtocol(StudySite.class,
                 studyProtocolIi, startDate, endDate);
         assertFalse(auditTrail.isEmpty());
-        assertEquals(12, auditTrail.size());
+        assertEquals(10, auditTrail.size());
         for (AuditLogDetail detail : auditTrail) {
             assertEquals(detail.getRecord().getType(), AuditType.INSERT);
             assertTrue(StringUtils.isEmpty(detail.getOldValue()));
@@ -234,7 +233,7 @@ public class AuditTrailServiceTest extends AbstractHibernateTestCase {
 
         auditTrail = auditHistoryService.getAuditTrailByStudyProtocol(StudySite.class, studyProtocolIi, null, endDate);
         assertFalse(auditTrail.isEmpty());
-        assertEquals(12, auditTrail.size());
+        assertEquals(10, auditTrail.size());
         for (AuditLogDetail detail : auditTrail) {
             assertEquals(detail.getRecord().getType(), AuditType.INSERT);
             assertTrue(StringUtils.isEmpty(detail.getOldValue()));
@@ -243,7 +242,7 @@ public class AuditTrailServiceTest extends AbstractHibernateTestCase {
 
         auditTrail = auditHistoryService.getAuditTrailByStudyProtocol(StudySite.class, studyProtocolIi, startDate, null);
         assertFalse(auditTrail.isEmpty());
-        assertEquals(12, auditTrail.size());
+        assertEquals(10, auditTrail.size());
         for (AuditLogDetail detail : auditTrail) {
             assertEquals(detail.getRecord().getType(), AuditType.INSERT);
             assertTrue(StringUtils.isEmpty(detail.getOldValue()));
@@ -252,7 +251,7 @@ public class AuditTrailServiceTest extends AbstractHibernateTestCase {
 
         auditTrail = auditHistoryService.getAuditTrailByStudyProtocol(StudySite.class, studyProtocolIi, null, null);
         assertFalse(auditTrail.isEmpty());
-        assertEquals(12, auditTrail.size());
+        assertEquals(10, auditTrail.size());
         for (AuditLogDetail detail : auditTrail) {
             assertEquals(detail.getRecord().getType(), AuditType.INSERT);
             assertTrue(StringUtils.isEmpty(detail.getOldValue()));

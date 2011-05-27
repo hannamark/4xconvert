@@ -93,8 +93,8 @@
                     <display:column escapeXml="true" titleKey="auditTrail.dataElement" sortable="true" headerClass="sortable" >
                         <fmt:message key="auditTrail.${row.attribute}" bundle="${auditTrailResources}"/>
                     </display:column>
-                    <display:column property="oldValue" escapeXml="true" titleKey="auditTrail.oldValue" sortable="true" headerClass="sortable" />
-                    <display:column property="newValue" escapeXml="true" titleKey="auditTrail.newValue" sortable="true" headerClass="sortable" />
+                    <display:column property="formattedOldValue" escapeXml="true" titleKey="auditTrail.oldValue" sortable="true" headerClass="sortable" />
+                    <display:column property="formattedNewValue" escapeXml="true" titleKey="auditTrail.newValue" sortable="true" headerClass="sortable" />
                     <display:column property="record.type" escapeXml="true" titleKey="auditTrail.changeType" sortable="true" headerClass="sortable" />
                 </display:table>
             </c:if>
