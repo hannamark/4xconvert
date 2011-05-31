@@ -260,6 +260,9 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
         orgDto.setName(EnOnConverter.convertToEnOn("some org name"));
         orgDto.setTelecomAddress(getTelAdd());
         orgDto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
+        DSet famOrgRel = new DSet();
+        famOrgRel.setItem(new HashSet());
+        orgDto.setFamilyOrganizationRelationships(famOrgRel);
         try {
             when(poOrgSvc.getOrganization(any(Ii.class))).thenReturn(orgDto);
             when(poOrgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenReturn(Arrays.asList(orgDto));
