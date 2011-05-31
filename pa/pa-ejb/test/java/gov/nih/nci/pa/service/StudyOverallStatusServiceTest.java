@@ -143,14 +143,9 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
             // expected behavior
         }
 
-        // Following tests assume current status is ACTIVE, ACTIVE can transition
-        // to CLOSED_TO_ACCRUAL, and ACTIVE cannot transition to COMPLETE.
-        assertTrue(StudyStatusCode.ACTIVE.getCode().equals(dto.getStatusCode().getCode()));
-        assertTrue(StudyStatusCode.ACTIVE.canTransitionTo(StudyStatusCode.CLOSED_TO_ACCRUAL));
-        assertFalse(StudyStatusCode.ACTIVE.canTransitionTo(StudyStatusCode.COMPLETE));
         try {
             dto.setIdentifier(IiConverter.convertToIi((Long) null));
-            dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.COMPLETE));
+            dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.APPROVED));
             dto.setStudyProtocolIdentifier(spIi);
             bean.create(dto);
             fail("StudyOverallStatus transitions must follow business rules.");

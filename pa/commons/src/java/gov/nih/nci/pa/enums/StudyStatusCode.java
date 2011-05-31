@@ -85,8 +85,8 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -104,189 +104,171 @@ public enum StudyStatusCode implements CodedEnum<String> {
     /**
      * In Review.
      */
-     IN_REVIEW("In Review") ,
-     /**
-      * In Review.
-      */
-     DISAPPROVED("Disapproved") ,
-     /**
-      * Approved.
-      */
-     APPROVED("Approved") ,
-     /**
-      * Active.
-      */
-     ACTIVE("Active") ,
-     /**
-      * Closed to Accrual.
-      */
-     CLOSED_TO_ACCRUAL("Closed to Accrual") ,
-     /**
-      * Closed To Accrual And Intervention.
-      */
-     CLOSED_TO_ACCRUAL_AND_INTERVENTION("Closed to Accrual and Intervention") ,
-     /**
-      * Temporarily Closed To Accrual.
-      */
-     TEMPORARILY_CLOSED_TO_ACCRUAL("Temporarily Closed to Accrual") ,
-     /**
-      * Temporarily Closed To Accrual and Intervention.
-      */
-     TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION("Temporarily Closed to Accrual and Intervention") ,
-     /**
-      * Withdrawn.
-      */
-     WITHDRAWN("Withdrawn") ,
-     /**
-      * Administratively Complete.
-      */
-     ADMINISTRATIVELY_COMPLETE("Administratively Complete") ,
-     /**
-      * Complete.
-      */
-     COMPLETE("Complete");
+    IN_REVIEW("In Review"),
+    /**
+     * In Review.
+     */
+    DISAPPROVED("Disapproved"),
+    /**
+     * Approved.
+     */
+    APPROVED("Approved"),
+    /**
+     * Active.
+     */
+    ACTIVE("Active"),
+    /**
+     * Enrolling by Invitation.
+     */
+    ENROLLING_BY_INVITATION("Enrolling by Invitation"),
+    /**
+     * Closed to Accrual.
+     */
+    CLOSED_TO_ACCRUAL("Closed to Accrual"),
+    /**
+     * Closed To Accrual And Intervention.
+     */
+    CLOSED_TO_ACCRUAL_AND_INTERVENTION("Closed to Accrual and Intervention"),
+    /**
+     * Temporarily Closed To Accrual.
+     */
+    TEMPORARILY_CLOSED_TO_ACCRUAL("Temporarily Closed to Accrual"),
+    /**
+     * Temporarily Closed To Accrual and Intervention.
+     */
+    TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION("Temporarily Closed to Accrual and Intervention"),
+    /**
+     * Withdrawn.
+     */
+    WITHDRAWN("Withdrawn"),
+    /**
+     * Administratively Complete.
+     */
+    ADMINISTRATIVELY_COMPLETE("Administratively Complete"),
+    /**
+     * Complete.
+     */
+    COMPLETE("Complete");
 
-     private String code;
+    private String code;
 
-     /**
-      * Constructor for TrialStatusCode.
-      * @param code
-      */
+    /**
+     * Constructor for TrialStatusCode.
+     * @param code
+     */
 
-     private StudyStatusCode(String code) {
-         this.code = code;
-         register(this);
-     }
+    private StudyStatusCode(String code) {
+        this.code = code;
+        register(this);
+    }
 
-     /**
-      * @return code coded value of enum
-      */
-     public String getCode() {
-         return code;
-     }
+    /**
+     * @return code coded value of enum
+     */
+    public String getCode() {
+        return code;
+    }
 
+    /**
+     *@return String DisplayName
+     */
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
 
-     /**
-      *@return String DisplayName
-      */
-     public String getDisplayName() {
-         return sentenceCasedName(this);
-     }
+    /**
+     * @return String display name
+     */
+    public String getName() {
+        return name();
+    }
 
-     /**
-      * @return String display name
-      */
-     public String getName() {
-         return name();
-     }
+    /**
+     * @param code code
+     * @return TrialStatusCode
+     */
+    public static StudyStatusCode getByCode(String code) {
+        return getByClassAndCode(StudyStatusCode.class, code);
+    }
 
+    /**
+     * construct a array of display names for Study Status coded Enum.
+     * @return String[] display names for StudyStatusCode
+     */
+    public static String[] getDisplayNames() {
+        StudyStatusCode[] studyStatusCodes = StudyStatusCode.values();
+        String[] codedNames = new String[studyStatusCodes.length];
+        for (int i = 0; i < studyStatusCodes.length; i++) {
+            codedNames[i] = studyStatusCodes[i].getCode();
+        }
+        return codedNames;
+    }
 
-     /**
-      * @param code code
-      * @return TrialStatusCode
-      */
-     public static StudyStatusCode getByCode(String code) {
-         return getByClassAndCode(StudyStatusCode.class, code);
-     }
+    private static final Map<StudyStatusCode, Set<StudyStatusCode>> TRANSITIONS;
 
-     /**
-      * construct a array of display names for Study Status coded Enum.
-      * @return String[] display names for StudyStatusCode
-      */
-     public static String[]  getDisplayNames() {
-         StudyStatusCode[] studyStatusCodes = StudyStatusCode.values();
-         String[] codedNames = new String[studyStatusCodes.length];
-         for (int i = 0; i < studyStatusCodes.length; i++) {
-             codedNames[i] = studyStatusCodes[i].getCode();
-         }
-         return codedNames;
-     }
+    static {
+        Map<StudyStatusCode, Set<StudyStatusCode>> tmp = new HashMap<StudyStatusCode, Set<StudyStatusCode>>();
 
-     private static final Map<StudyStatusCode, Set<StudyStatusCode>> TRANSITIONS;
+        Set<StudyStatusCode> tmpSet = EnumSet.of(APPROVED, DISAPPROVED, ACTIVE, ENROLLING_BY_INVITATION);
+        tmp.put(IN_REVIEW, Collections.unmodifiableSet(tmpSet));
 
-     static {
-         Map<StudyStatusCode, Set<StudyStatusCode>> tmp = new HashMap<StudyStatusCode, Set<StudyStatusCode>>();
+        Set<StudyStatusCode> emptySet = Collections.emptySet();
+        tmp.put(DISAPPROVED, emptySet);
 
-         Set<StudyStatusCode> tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(APPROVED);
-         tmpSet.add(DISAPPROVED);
-         tmpSet.add(ACTIVE);
-         tmp.put(IN_REVIEW, Collections.unmodifiableSet(tmpSet));
+        tmpSet = EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION, WITHDRAWN);
+        tmp.put(APPROVED, Collections.unmodifiableSet(tmpSet));
 
-         tmpSet = new HashSet<StudyStatusCode>();
-         tmp.put(DISAPPROVED, Collections.unmodifiableSet(tmpSet));
+        tmp.put(WITHDRAWN, emptySet);
 
-         tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(ACTIVE);
-         tmpSet.add(WITHDRAWN);
-         tmp.put(APPROVED, Collections.unmodifiableSet(tmpSet));
+        tmpSet = EnumSet.of(TEMPORARILY_CLOSED_TO_ACCRUAL, TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
+                            ADMINISTRATIVELY_COMPLETE, CLOSED_TO_ACCRUAL, CLOSED_TO_ACCRUAL_AND_INTERVENTION, COMPLETE);
+        tmp.put(ACTIVE, Collections.unmodifiableSet(tmpSet));
+        tmp.put(ENROLLING_BY_INVITATION, Collections.unmodifiableSet(tmpSet));
 
-         tmpSet = new HashSet<StudyStatusCode>();
-         tmp.put(WITHDRAWN, Collections.unmodifiableSet(tmpSet));
+        tmpSet = EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION, TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
+                            ADMINISTRATIVELY_COMPLETE);
+        tmp.put(TEMPORARILY_CLOSED_TO_ACCRUAL, Collections.unmodifiableSet(tmpSet));
 
-         tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(TEMPORARILY_CLOSED_TO_ACCRUAL);
-         tmpSet.add(TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
-         tmpSet.add(ADMINISTRATIVELY_COMPLETE);
-         tmpSet.add(CLOSED_TO_ACCRUAL);
-         tmpSet.add(CLOSED_TO_ACCRUAL_AND_INTERVENTION);
-         tmp.put(ACTIVE, Collections.unmodifiableSet(tmpSet));
+        tmpSet = EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION, ADMINISTRATIVELY_COMPLETE);
+        tmp.put(TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION, Collections.unmodifiableSet(tmpSet));
 
-         tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(ACTIVE);
-         tmpSet.add(TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
-         tmpSet.add(ADMINISTRATIVELY_COMPLETE);
-         tmp.put(TEMPORARILY_CLOSED_TO_ACCRUAL, Collections.unmodifiableSet(tmpSet));
+        tmp.put(ADMINISTRATIVELY_COMPLETE, emptySet);
 
-         tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(ACTIVE);
-         tmpSet.add(ADMINISTRATIVELY_COMPLETE);
-         tmp.put(TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION, Collections.unmodifiableSet(tmpSet));
+        tmpSet = EnumSet.of(CLOSED_TO_ACCRUAL_AND_INTERVENTION, ADMINISTRATIVELY_COMPLETE);
+        tmp.put(CLOSED_TO_ACCRUAL, Collections.unmodifiableSet(tmpSet));
 
-         tmpSet = new HashSet<StudyStatusCode>();
-         tmp.put(ADMINISTRATIVELY_COMPLETE, Collections.unmodifiableSet(tmpSet));
+        tmpSet = EnumSet.of(ADMINISTRATIVELY_COMPLETE, COMPLETE);
+        tmp.put(CLOSED_TO_ACCRUAL_AND_INTERVENTION, Collections.unmodifiableSet(tmpSet));
 
-         tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(CLOSED_TO_ACCRUAL_AND_INTERVENTION);
-         tmpSet.add(ADMINISTRATIVELY_COMPLETE);
-         tmp.put(CLOSED_TO_ACCRUAL, Collections.unmodifiableSet(tmpSet));
+        tmp.put(COMPLETE, emptySet);
 
-         tmpSet = new HashSet<StudyStatusCode>();
-         tmpSet.add(ADMINISTRATIVELY_COMPLETE);
-         tmpSet.add(COMPLETE);
-         tmp.put(CLOSED_TO_ACCRUAL_AND_INTERVENTION, Collections.unmodifiableSet(tmpSet));
+        TRANSITIONS = Collections.unmodifiableMap(tmp);
+    }
 
-         tmpSet = new HashSet<StudyStatusCode>();
-         tmp.put(COMPLETE, Collections.unmodifiableSet(tmpSet));
+    /**
+     * Helper method that indicates whether a transition to the new entity status is allowed.
+     * 
+     * @param newStatus transition to status
+     * @return whether the transition is allowed
+     */
+    public boolean canTransitionTo(StudyStatusCode newStatus) {
+        return TRANSITIONS.get(this).contains(newStatus);
+    }
 
+    /**
+     * construct a array of display names for Study Status coded Enum for amend.
+     * @return String[] display names for StudyStatusCode
+     */
+    public static String[] getDisplayNamesForAmend() {
+        List<String> list = new ArrayList<String>(Arrays.asList(getDisplayNames()));
+        list.remove("Disapproved");
+        return list.toArray(new String[list.size()]);
+    }
 
-         TRANSITIONS = Collections.unmodifiableMap(tmp);
-     }
-
-     /**
-      * Helper method that indicates whether a transition to the new entity status
-      * is allowed.
-      *
-      * @param newStatus transition to status
-      * @return whether the transition is allowed
-      */
-     public boolean canTransitionTo(StudyStatusCode newStatus) {
-         return TRANSITIONS.get(this).contains(newStatus);
-     }
-     /**
-      * construct a array of display names for Study Status coded Enum for amend.
-      * @return String[] display names for StudyStatusCode
-      */
-     public static String[]  getDisplayNamesForAmend() {
-         List<String> list = new ArrayList<String>(Arrays.asList(getDisplayNames()));
-         list.remove("Disapproved");
-         return list.toArray(new String[list.size()]);
-     }
-
-     /**
-      * {@inheritDoc}
-      */
-     public String getNameByCode(String str) {
-         return getByCode(str).name();
-     }
+    /**
+     * {@inheritDoc}
+     */
+    public String getNameByCode(String str) {
+        return getByCode(str).name();
+    }
 }
