@@ -114,8 +114,10 @@ public class MilestoneWebDTO {
         date = PAUtil.normalizeDateStringWithTime(TsConverter.convertToTimestamp(isoDto.getMilestoneDate()).toString());
         comment = StConverter.convertToString(isoDto.getCommentText());
         creator = StConverter.convertToString(isoDto.getCreator());
-        creationDate = PAUtil.normalizeDateStringWithTime(TsConverter.convertToTimestamp(isoDto.getCreationDate())
-            .toString());
+        if (isoDto.getCreationDate() != null) {
+            creationDate = PAUtil.normalizeDateStringWithTime(TsConverter.convertToTimestamp(isoDto.getCreationDate())
+                .toString());
+        }
     }
 
     /**

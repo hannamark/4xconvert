@@ -52,7 +52,7 @@
                                 <display:column escapeXml="true" property="date" sortable="false" titleKey="milestone.date" />
                                 <display:column escapeXml="true" property="comment" sortable="false" titleKey="milestone.comment" />
                                 <display:column escapeXml="true" property="creator" sortable="false" titleKey="milestone.creator" />
-+                               <display:column escapeXml="true" property="creationDate" sortable="false" titleKey="milestone.creationDate" />
+                                <display:column escapeXml="true" property="creationDate" sortable="false" titleKey="milestone.creationDate" />
                             </display:table>
                         </td>
                     </tr>

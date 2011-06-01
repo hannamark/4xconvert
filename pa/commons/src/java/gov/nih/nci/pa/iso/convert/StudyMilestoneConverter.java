@@ -103,7 +103,7 @@ public class StudyMilestoneConverter extends AbstractConverter<StudyMilestoneDTO
     public StudyMilestoneDTO convertFromDomainToDto(StudyMilestone bo) throws PAException {
         StudyMilestoneDTO dto = new StudyMilestoneDTO();
         dto.setCommentText(StConverter.convertToSt(bo.getCommentText()));
-        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setIdentifier(IiConverter.convertToStudyMilestoneIi(bo.getId()));
         dto.setMilestoneCode(CdConverter.convertToCd(bo.getMilestoneCode()));
         dto.setMilestoneDate(TsConverter.convertToTs(bo.getMilestoneDate()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
@@ -111,7 +111,9 @@ public class StudyMilestoneConverter extends AbstractConverter<StudyMilestoneDTO
         if (user != null) {
             dto.setCreator(StConverter.convertToSt(CsmUserUtil.getDisplayUsername(user)));
         }
-        dto.setCreationDate(TsConverter.convertToTs(bo.getDateLastCreated()));
+        if (bo.getDateLastCreated() != null) {
+            dto.setCreationDate(TsConverter.convertToTs(bo.getDateLastCreated()));
+        }
         return dto;
     }
 
