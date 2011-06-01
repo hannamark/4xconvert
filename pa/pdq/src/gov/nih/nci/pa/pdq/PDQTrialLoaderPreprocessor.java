@@ -89,6 +89,8 @@ import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.io.FilenameFilter;
 
+import java.util.List;
+
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -96,7 +98,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 
 import org.apache.commons.lang.StringUtils;
-
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * @author ludetc
@@ -106,6 +108,8 @@ public class PDQTrialLoaderPreprocessor {
     
     private static String srcFileDir;
     private static String destFileDir;
+    
+    private static String DEFAULT_ARM = "Arm I";
     
     public static void main(String[] args) {
         if (args.length != 2) {
@@ -150,6 +154,7 @@ public class PDQTrialLoaderPreprocessor {
         replaceSponsor(document);
         changeLeadOrgId(document);
         changeMaxAge(document);
+        addDefaultArm(document);
         
         FileOutputStream fos = new FileOutputStream(destFileDir + "/" + xmlFile);
         XMLOutputter outputter = new XMLOutputter();
@@ -210,6 +215,29 @@ public class PDQTrialLoaderPreprocessor {
         }
         
         agency.setText(toBe);        
+    }
+    
+    /**
+     * Adds a default arm, called "Arm I", and link it to all Interventions. 
+     */
+    private void addDefaultArm(Document document) {
+        List<Element> armGroups = document.getRootElement().getChildren("arm_group");
+
+        if (CollectionUtils.isEmpty(armGroups)) {
+            Element group = new Element("arm_group");
+            Element label = new Element("arm_group_label");
+            label.setText(DEFAULT_ARM);
+            group.addContent(label);
+            document.getRootElement().addContent(group);
+
+            List<Element> interventions = document.getRootElement().getChildren("intervention");
+
+            for (Element intervention : interventions) {
+                Element labelLink = new Element("arm_group_label");
+                labelLink.setText(DEFAULT_ARM);
+                intervention.addContent(labelLink);
+            }
+        }        
     }
     
 }
