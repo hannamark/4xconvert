@@ -82,37 +82,57 @@
  */
 package gov.nih.nci.pa.pdq.sql;
 
-import java.io.BufferedReader;
+import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+
 import java.io.BufferedWriter;
-import java.io.FileReader;
+import java.io.File;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 
 /**
- * Script generator for database cleanup for PO-3632.
- * Replaces summary 4 type from Institutional to National for a set of trials identified by NCT numbers.
- * 
+ * Script generator for database cleanup for PO-3660.
+ * Replaces the recruitment status based on the trial status.
  * @author Michael Visee
  */
-public class PDQReplaceSum4Category {
+public class PDQReplaceRecruitmentStatus {
+    private static final String QUERY = "UPDATE STUDY_SITE_ACCRUAL_STATUS SET STATUS_CODE = ':1' "
+        + "WHERE STUDY_SITE_IDENTIFIER IN (SELECT SS.IDENTIFIER "
+        + "FROM STUDY_OVERALL_STATUS SOS, STUDY_SITE SS, RESEARCH_ORGANIZATION RO, ORGANIZATION ORG "
+        + "WHERE SOS.STATUS_CODE = ':2' AND SOS.STUDY_PROTOCOL_IDENTIFIER = SS.STUDY_PROTOCOL_IDENTIFIER AND "
+        + "SS.LOCAL_SP_INDENTIFIER = ':3' AND SS.RESEARCH_ORGANIZATION_IDENTIFIER = RO.IDENTIFIER AND "
+        + "RO.ORGANIZATION_IDENTIFIER = ORG.IDENTIFIER AND ORG.NAME = 'ClinicalTrials.gov');\n";
     
-    private static final String QUERY = "UPDATE STUDY_RESOURCING SET TYPE_CODE = 'NATIONAL' "
-            + "WHERE STUDY_PROTOCOL_IDENTIFIER IN (SELECT SS.STUDY_PROTOCOL_IDENTIFIER "
-            + "FROM STUDY_SITE SS, RESEARCH_ORGANIZATION RO, ORGANIZATION ORG "
-            + "WHERE SS.LOCAL_SP_INDENTIFIER = ':?' AND SS.RESEARCH_ORGANIZATION_IDENTIFIER = RO.IDENTIFIER AND "
-            + "RO.ORGANIZATION_IDENTIFIER = ORG.IDENTIFIER AND ORG.NAME = 'ClinicalTrials.gov');\n";
-
+    private static final Map<String, String> UPDATES = loadUpdatesMap();
+    
+    private static Map<String, String> loadUpdatesMap() {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("ENROLLING_BY_INVITATION", "ENROLLING_BY_INVITATION");
+        map.put("CLOSED_TO_ACCRUAL", "ACTIVE_NOT_RECRUITING");
+        map.put("CLOSED_TO_ACCRUAL_AND_INTERVENTION", "ACTIVE_NOT_RECRUITING");
+        map.put("ADMINISTRATIVELY_COMPLETE", "TERMINATED_RECRUITING");
+        map.put("COMPLETE", "COMPLETED");
+        return map;
+    }
+    
     public static void main(String[] args) {
-        if (args.length < 2) {
-            System.out.println("Usage: PDQReplaceSum4Category <NCT number file path> <SQL output file>");
+        if (args.length != 3) {
+            System.out.println("Usage: PDQReplaceRecruitmentStatus <Dummy NCT number file path> <SQL output file> <xml input folder>");
             System.exit(0);
         }
         try {
-            List<String> numbers = loadNCTNumbers(args[0]);
+            List<String> numbers = loadNCTNumbers(new File(args[2]));
             if (!numbers.isEmpty()) {
                 writeSqlFile(args[1], numbers);
             }
@@ -120,26 +140,52 @@ public class PDQReplaceSum4Category {
             e.printStackTrace();
         }
     }
-
-    private static List<String> loadNCTNumbers(String fileName) throws IOException {
+    
+    private static List<String> loadNCTNumbers(File path) throws IOException, JDOMException {
         List<String> numbers = new ArrayList<String>();
-        BufferedReader reader = new BufferedReader(new FileReader(fileName));
-        String line = reader.readLine();
-        while (line != null) {
-            if (StringUtils.isNotBlank(line)) {
-                numbers.add(StringUtils.trim(line));
+        String[] xmlFiles = path.list(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".xml");
             }
-            line = reader.readLine();
+        });
+        for (String xmlFile : xmlFiles) {
+            String nctNumber = getNCTNumber(new File(path, xmlFile));
+            if (nctNumber != null) {
+                numbers.add(nctNumber);
+            }
         }
-        reader.close();
         return numbers;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static String getNCTNumber(File xmlFile) throws JDOMException, IOException {
+        SAXBuilder builder = new SAXBuilder();
+        Document document = builder.build(xmlFile);
+        Element clinicalStudy = document.getRootElement();
+        String nctNumber = clinicalStudy.getAttributeValue("nct-id");
+        if (StringUtils.isEmpty(nctNumber)) {
+            return null;
+        }
+        List<Element> locations = clinicalStudy.getChildren("location");
+        for (Element location : locations) {
+            Element facilityElmt = location.getChild("facility");
+            String ctepId = facilityElmt.getAttributeValue("ctep-id");
+            if (StringUtils.isNotEmpty(ctepId)) {
+                return null;
+            }
+        }
+        return nctNumber;
     }
 
     private static void writeSqlFile(String fileName, List<String> numbers) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-        writer.write("\n-- Cleanup script for PO-3632\n\n");
+        writer.write("\n-- Cleanup script for PO-3660\n\n");
         for (String number : numbers) {
-            writer.write(QUERY.replace(":?", number));
+            for (Map.Entry<String, String> entry : UPDATES.entrySet()) {
+                String query = QUERY.replace(":1", entry.getValue()).replace(":2", entry.getKey())
+                    .replace(":3", number);
+                writer.write(query);
+            }
         }
         writer.close();
     }

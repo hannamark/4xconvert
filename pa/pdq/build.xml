@@ -129,7 +129,7 @@
     </target>
 
     <target name="run-all-scripts" depends="jar" description="Run all issue script generators">
-        <for list="PDQRemoveOutcomeDescription,PDQReplaceSum4Category" param="generator">
+        <for list="PDQRemoveOutcomeDescription,PDQReplaceSum4Category,PDQReplaceRecruitmentStatus" param="generator">
             <sequential>
                 <echo message="Run script generator @{generator}"/>
                 <java fork="true" classname="gov.nih.nci.pa.pdq.sql.@{generator}" dir="${basedir}">
@@ -139,6 +139,7 @@
                     </classpath>
                     <arg value="${issueScriptGenerator.inputDir}/@{generator}.txt" />
                     <arg value="${issueScriptGenerator.sqlScriptDir}/@{generator}.sql" />
+                    <arg value="${issueScriptGenerator.inputDir}/@{generator}" />
                 </java>
             </sequential>
         </for>

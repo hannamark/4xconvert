@@ -122,6 +122,8 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
@@ -135,6 +137,7 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -195,28 +198,25 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
         DOUBLE_BLIND_DEFAULT_ROLES.add(CdConverter.convertToCd(BlindingRoleCode.INVESTIGATOR));
     }
 
-    private static final Map<String, String> DEFAULT_LOCATION_STATUS_MAP = new HashMap<String, String>();
-    static {
-        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.IN_REVIEW.getCode(),
-                RecruitmentStatusCode.NOT_YET_RECRUITING.getCode());
-        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.DISAPPROVED.getCode(),
-                RecruitmentStatusCode.WITHDRAWN.getCode());
-        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.APPROVED.getCode(),
-                RecruitmentStatusCode.ACTIVE_NOT_RECRUITING.getCode());
-        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.ACTIVE.getCode(), RecruitmentStatusCode.RECRUITING.getCode());
-        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.CLOSED_TO_ACCRUAL.getCode(),
-                RecruitmentStatusCode.TERMINATED_RECRUITING.getCode());
-        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode(),
-                RecruitmentStatusCode.TERMINATED_RECRUITING.getCode());
-        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode(),
-                RecruitmentStatusCode.SUSPENDED_RECRUITING.getCode());
-        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode(),
-                RecruitmentStatusCode.SUSPENDED_RECRUITING.getCode());
-        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.WITHDRAWN.getCode(), RecruitmentStatusCode.WITHDRAWN.getCode());
-        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode(),
-                RecruitmentStatusCode.COMPLETED.getCode());
-        DEFAULT_LOCATION_STATUS_MAP.put(StudyStatusCode.COMPLETE.getCode(),
-                RecruitmentStatusCode.TERMINATED_RECRUITING.getCode());
+    private static final Map<StudyStatusCode, RecruitmentStatusCode> DEFAULT_LOCATION_STATUS_MAP = 
+        initDefaultLocationStatusMap();
+
+    private static Map<StudyStatusCode, RecruitmentStatusCode> initDefaultLocationStatusMap() {
+        Map<StudyStatusCode, RecruitmentStatusCode> map = new HashMap<StudyStatusCode, RecruitmentStatusCode>();
+        map.put(StudyStatusCode.IN_REVIEW, RecruitmentStatusCode.NOT_YET_RECRUITING);
+        map.put(StudyStatusCode.DISAPPROVED, RecruitmentStatusCode.WITHDRAWN);
+        map.put(StudyStatusCode.APPROVED, RecruitmentStatusCode.ACTIVE_NOT_RECRUITING);
+        map.put(StudyStatusCode.ACTIVE, RecruitmentStatusCode.RECRUITING);
+        map.put(StudyStatusCode.ENROLLING_BY_INVITATION, RecruitmentStatusCode.ENROLLING_BY_INVITATION);
+        map.put(StudyStatusCode.CLOSED_TO_ACCRUAL, RecruitmentStatusCode.ACTIVE_NOT_RECRUITING);
+        map.put(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION, RecruitmentStatusCode.ACTIVE_NOT_RECRUITING);
+        map.put(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL, RecruitmentStatusCode.SUSPENDED_RECRUITING);
+        map.put(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
+                RecruitmentStatusCode.SUSPENDED_RECRUITING);
+        map.put(StudyStatusCode.WITHDRAWN, RecruitmentStatusCode.WITHDRAWN);
+        map.put(StudyStatusCode.ADMINISTRATIVELY_COMPLETE, RecruitmentStatusCode.TERMINATED_RECRUITING);
+        map.put(StudyStatusCode.COMPLETE, RecruitmentStatusCode.COMPLETED);
+        return Collections.unmodifiableMap(map);
     }
 
     /**
@@ -303,25 +303,24 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
         try {
             StudySiteDTO criteria = new StudySiteDTO();
             criteria.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-            //There should only be one lead org associated with a study.
-            List<StudySiteDTO> leadOrgs =
-                PaRegistry.getStudySiteService().getByStudyProtocol(studyProtocolIi, criteria);
+            // There should only be one lead org associated with a study.
+            StudySiteServiceLocal siteService = PaRegistry.getStudySiteService();
+            List<StudySiteDTO> leadOrgs = siteService.getByStudyProtocol(studyProtocolIi, criteria);
             StudySiteDTO leadOrg = leadOrgs.get(0);
-            StudyOverallStatusDTO overallStatus =
-                PaRegistry.getStudyOverallStatusService().getCurrentByStudyProtocol(studyProtocolIi);
-
-            String recruitingStatus = DEFAULT_LOCATION_STATUS_MAP.get(overallStatus.getStatusCode().getCode());
+            StudyOverallStatusServiceLocal sosService = PaRegistry.getStudyOverallStatusService();
+            StudyOverallStatusDTO overallStatus = sosService.getCurrentByStudyProtocol(studyProtocolIi);
 
             StudySiteAccrualStatusDTO accrualStatus = new StudySiteAccrualStatusDTO();
             accrualStatus.setStatusDate(overallStatus.getStatusDate());
-            accrualStatus.setStatusCode(CdConverter.convertStringToCd(recruitingStatus));
+            StudyStatusCode studyStatusCode = StudyStatusCode.getByCode(overallStatus.getStatusCode().getCode());
+            accrualStatus.setStatusCode(CdConverter.convertToCd(DEFAULT_LOCATION_STATUS_MAP.get(studyStatusCode)));
 
             StudySiteDTO studySiteDTO = new StudySiteDTO();
             studySiteDTO.setStudyProtocolIdentifier(studyProtocolIi);
             studySiteDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
             studySiteDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
-            studySiteDTO.setStatusDateRange(
-                    IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
+            Timestamp now = new Timestamp(new Date().getTime());
+            studySiteDTO.setStatusDateRange(IvlConverter.convertTs().convertToIvl(now, null));
 
             OrganizationDTO org = new OrganizationDTO();
             org.setIdentifier(corrUtils.getPoOrgIiFromPaRoIi(leadOrg.getResearchOrganizationIi()));
