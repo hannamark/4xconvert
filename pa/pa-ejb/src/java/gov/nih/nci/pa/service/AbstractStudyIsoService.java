@@ -122,27 +122,18 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
         if (PAUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; null found.  ");
         }
-
-        Session  session = PaHibernateUtil.getCurrentSession();
-        List<BO> queryList = new ArrayList<BO>();
-
-        Query query = null;
-
+        Session session = PaHibernateUtil.getCurrentSession();
+        // Flush the session in order to get all the results not written to the db yet
+        session.flush();
         // step 1: form the hql
-        String hql = "select alias "
-            + "from " + getTypeArgument().getName() + " alias "
-            + "join alias.studyProtocol sp "
-            + "where sp.id = :studyProtocolId "
-            + "order by alias.id ";
-
+        String hql = "select alias from " + getTypeArgument().getName()
+                + " alias join alias.studyProtocol sp where sp.id = :studyProtocolId order by alias.id ";
         // step 2: construct query object
-        query = session.createQuery(hql);
+        Query query = session.createQuery(hql);
         query.setParameter("studyProtocolId", IiConverter.convertToLong(ii));
-
         // step 3: query the result
-        queryList = query.list();
         List<DTO> resultList = new ArrayList<DTO>();
-        for (BO bo : queryList) {
+        for (BO bo : (List<BO>) query.list()) {
             resultList.add(convertFromDomainToDto(bo));
         }
         return resultList;
