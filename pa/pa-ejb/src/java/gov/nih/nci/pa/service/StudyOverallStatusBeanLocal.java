@@ -86,7 +86,6 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.interceptor.ProprietaryTrialInterceptor;
-import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
@@ -103,8 +102,10 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
@@ -173,11 +174,11 @@ public class StudyOverallStatusBeanLocal extends
         validateStatusCodeAndDate(oldCode, newCode, oldDate, newDate);
         validateReasonText(dto);
 
-        StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
-        StudyOverallStatus bo = statusConverter.convertFromDtoToDomain(dto);
+        StudyOverallStatus bo = convertFromDtoToDomain(dto);
 
         //Create intermediate status if we're transitioning directly from In-Review to Active or from Active to
-        //Closed to Accrual and Intervention
+        //Closed to Accrual and Intervention or Active to Completed or Temporarily Closed to Accrual to
+        //Administratively Complete
         createIntermediateStudyOverallStatus(oldStatus, dto);
 
         // update
@@ -186,7 +187,7 @@ public class StudyOverallStatusBeanLocal extends
         if (srs != null) {
             session.saveOrUpdate(srs);
         }
-        return Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(bo);
+        return convertFromDomainToDto(bo);
     }
 
     /**
@@ -201,30 +202,49 @@ public class StudyOverallStatusBeanLocal extends
         if (oldStatus == null || newStatus == null) {
             return;
         }
+        StudyStatusCode oldStudyStatusCode = StudyStatusCode.getByCode(oldStatus.getStatusCode().getCode());
+        StudyStatusCode newStudyStatusCode = StudyStatusCode.getByCode(newStatus.getStatusCode().getCode());
+        List<StudyOverallStatus> intermediateStatuses = new ArrayList<StudyOverallStatus>();
 
-        StudyOverallStatus intermediateStatus = null;
-        StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
         Session session = PaHibernateUtil.getCurrentSession();
-        if (StringUtils.equals(oldStatus.getStatusCode().getCode(), StudyStatusCode.IN_REVIEW.getCode())
-                && StringUtils.equals(newStatus.getStatusCode().getCode(), StudyStatusCode.ACTIVE.getCode())) {
+        if (oldStudyStatusCode == StudyStatusCode.IN_REVIEW && newStudyStatusCode == StudyStatusCode.ACTIVE) {
             //Creating missing approved status here.
-            intermediateStatus = statusConverter.convertFromDtoToDomain(newStatus);
-            intermediateStatus.setStatusCode(StudyStatusCode.APPROVED);
-        } else if (StringUtils.equals(oldStatus.getStatusCode().getCode(), StudyStatusCode.ACTIVE.getCode())
-                && StringUtils.equals(newStatus.getStatusCode().getCode(),
-                        StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode())) {
+            StudyOverallStatus approved = convertFromDtoToDomain(newStatus);
+            approved.setStatusCode(StudyStatusCode.APPROVED);
+            approved.setSystemCreated(Boolean.TRUE);
+            intermediateStatuses.add(approved);
+        } else if (oldStudyStatusCode ==  StudyStatusCode.ACTIVE
+                && newStudyStatusCode == StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION) {
             //Creating missing closed to accrual status here.
-            intermediateStatus = statusConverter.convertFromDtoToDomain(newStatus);
-            intermediateStatus.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL);
+            StudyOverallStatus closedToAccrual = convertFromDtoToDomain(newStatus);
+            closedToAccrual.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL);
+            closedToAccrual.setSystemCreated(Boolean.TRUE);
+            intermediateStatuses.add(closedToAccrual);
+        } else if (oldStudyStatusCode == StudyStatusCode.ACTIVE && newStudyStatusCode == StudyStatusCode.COMPLETE) {
+            //Create missing closed to accrual and closed to accrual & intervention
+            StudyOverallStatus closedToAccrual = convertFromDtoToDomain(newStatus);
+            closedToAccrual.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL);
+            closedToAccrual.setSystemCreated(Boolean.TRUE);
+            intermediateStatuses.add(closedToAccrual);
+            StudyOverallStatus closedToAccrualAndIntervention = convertFromDtoToDomain(newStatus);
+            closedToAccrualAndIntervention.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+            closedToAccrualAndIntervention.setSystemCreated(Boolean.TRUE);
+            intermediateStatuses.add(closedToAccrualAndIntervention);
+        } else if (oldStudyStatusCode == StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL
+                && newStudyStatusCode == StudyStatusCode.ADMINISTRATIVELY_COMPLETE) {
+            //Create missing temporarily closed to accrual and intervention
+            StudyOverallStatus tempClosedToAccrualAndIntervention = convertFromDtoToDomain(newStatus);
+            tempClosedToAccrualAndIntervention.setStatusCode(
+                    StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+            tempClosedToAccrualAndIntervention.setSystemCreated(Boolean.TRUE);
+            intermediateStatuses.add(tempClosedToAccrualAndIntervention);
         }
-
-        if (intermediateStatus != null) {
-           session.saveOrUpdate(intermediateStatus);
-        }
-
-        StudyRecruitmentStatus srs = StudyRecruitmentStatusBeanLocal.create(intermediateStatus);
-        if (srs != null) {
-            session.saveOrUpdate(srs);
+        for (StudyOverallStatus status : intermediateStatuses) {
+            session.saveOrUpdate(status);
+            StudyRecruitmentStatus srs = StudyRecruitmentStatusBeanLocal.create(status);
+            if (srs != null) {
+                session.saveOrUpdate(srs);
+            }
         }
     }
 
@@ -261,9 +281,6 @@ public class StudyOverallStatusBeanLocal extends
     @Override
     @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public StudyOverallStatusDTO update(StudyOverallStatusDTO dto) throws PAException {
-        StudyOverallStatusDTO resultDto = null;
-        Session session = null;
-
         StudyStatusCode newCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode());
         Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
         if (newCode == null) {
@@ -278,13 +295,7 @@ public class StudyOverallStatusBeanLocal extends
             throw new PAException("Study status Cannot be updated.  ");
         }
         validateReasonText(dto);
-
-        session = PaHibernateUtil.getCurrentSession();
-        StudyOverallStatus bo = Converters.get(StudyOverallStatusConverter.class).convertFromDtoToDomain(dto);
-
-        session.update(bo);
-        resultDto = Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(bo);
-        return resultDto;
+        return update(dto);
     }
 
     /**

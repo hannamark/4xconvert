@@ -374,7 +374,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         otherCriteria.setLeadOrganizationId(leadOrgId.toString());
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 1, results.size());
-        
+
         createStudyProtocol("12", false, Boolean.FALSE, false, false, false, false, true);
         otherCriteria = new StudyProtocolQueryCriteria();
         otherCriteria.setSumm4FundingSourceId(leadOrgId);
@@ -575,7 +575,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         sos2.setStudyProtocol(sp);
         TestSchema.addUpdObject(sos2);
         sp.getStudyOverallStatuses().add(sos2);
-        
+
         // add Summ4 Fund Sponsor and Type
         StudyResourcing stdRes = new StudyResourcing();
         stdRes.setSummary4ReportedResourceIndicator(true);
@@ -585,7 +585,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         stdRes.setStudyProtocol(sp);
         TestSchema.addUpdObject(stdRes);
         sp.getStudyResourcings().add(stdRes);
-        
+
         //add Disease/Condition
         StudyDisease stdDes = new StudyDisease();
         PDQDisease dis01 = TestSchema.createPdqDisease("Toe Cancer");
@@ -595,7 +595,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         stdDes.setStudyProtocol(sp);
         TestSchema.addUpdObject(stdDes);
         sp.getStudyDiseases().add(stdDes);
-        
+
         //add PlannedActivity - Intervention
         Intervention inv = new Intervention();
         inv.setName("Chocolate Bar");
@@ -615,7 +615,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         pa.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT.getCode());
         TestSchema.addUpdObject(pa);
         sp.getPlannedActivities().add(pa);
-         
+
         DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
         dws.setStudyProtocol(sp);
         dws.setStatusCode(DocumentWorkflowStatusCode.VERIFICATION_PENDING);

@@ -360,7 +360,9 @@
                 <path refid="common.package.classpath"/>
             </classpath>
             <batchtest todir="${pa-web.test.reports}">
-                <fileset dir="${pa-web.build.integrationTestDir.0}" />
+                <fileset dir="${pa-web.build.integrationTestDir.0}">
+                    <include name="**/AllSeleniumTests.java"/>
+                </fileset>
             </batchtest>
          </junit>
     </target>

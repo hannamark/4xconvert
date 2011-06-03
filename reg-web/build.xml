@@ -253,7 +253,9 @@
                 <path refid="common.package.classpath"/>
             </classpath>
             <batchtest todir="${reg-web.test.reports}">
-                <fileset dir="${reg-web.build.integrationTestDir.0}"/>
+                <fileset dir="${reg-web.build.integrationTestDir.0}">
+                    <include name="**/AllSeleniumTests.java"/>
+                </fileset>
             </batchtest>
          </junit>
     </target>

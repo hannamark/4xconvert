@@ -78,25 +78,29 @@
 */
 package gov.nih.nci.pa.iso.dto;
 
+import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.iso.util.BlConverter;
 
 /**
  * StudyOverallStatusDTO for transferring StudyOverallStatus object .
  * @author Hugh Reinhart
  * @since 07/22/2008
- 
+
  * copyright NCI 2007.  All rights reserved.
  * This code may not be used without the express written permission of the copyright holder, NCI.
  */
 public class StudyOverallStatusDTO extends StudyDTO {
     private static final long serialVersionUID = 1234562452L;
-    
+
     private Cd statusCode;
     private Ts statusDate;
     private St reasonText;
-    
+    //Defaulting to false for convenience.
+    private Bl systemCreated = BlConverter.convertToBl(Boolean.FALSE);
+
     /**
      * @return the statusCode
      */
@@ -132,5 +136,19 @@ public class StudyOverallStatusDTO extends StudyDTO {
      */
     public void setReasonText(St reasonText) {
         this.reasonText = reasonText;
+    }
+
+    /**
+     * @return the systemCreated
+     */
+    public Bl getSystemCreated() {
+        return systemCreated;
+    }
+
+    /**
+     * @param systemCreated the systemCreated to set
+     */
+    public void setSystemCreated(Bl systemCreated) {
+        this.systemCreated = systemCreated;
     }
 }

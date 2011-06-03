@@ -42,7 +42,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
@@ -57,7 +56,7 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 public class StudyMilestoneBeanLocal
     extends AbstractCurrentStudyIsoService<StudyMilestoneDTO, StudyMilestone, StudyMilestoneConverter>
     implements StudyMilestoneServicelocal {
-    
+
     @EJB
     private StudyOnholdServiceLocal studyOnholdService;
     @EJB
@@ -131,7 +130,7 @@ public class StudyMilestoneBeanLocal
         checkAbstractionsRules(dto, newCode);
         return dto;
     }
-    
+
     private void checkRequiredDataRules(StudyMilestoneDTO dto) throws PAException {
         if (PAUtil.isCdNull(dto.getMilestoneCode())) {
             throw new PAException("Milestone code is required.");
@@ -180,13 +179,11 @@ public class StudyMilestoneBeanLocal
     private void checkInboxRules(StudyMilestoneDTO dto, MilestoneCode newCode) throws PAException {
         if (!newCode.isAllowedIfInBox()) {
             List<StudyInboxDTO> listInboxDTO = studyInboxService.getByStudyProtocol(dto.getStudyProtocolIdentifier());
-            if (CollectionUtils.isNotEmpty(listInboxDTO)) {
-                for (StudyInboxDTO inboxDto : listInboxDTO) {
-                    String strCloseDate = IvlConverter.convertTs().convertHighToString(inboxDto.getInboxDateRange());
-                    if (StringUtils.isEmpty(strCloseDate)) {
-                        String msg = "The milestone \"{0}\" cannot be recorded if there is an active In box record.";
-                        throw new PAException(MessageFormat.format(msg, newCode.getCode()));
-                    }
+            for (StudyInboxDTO inboxDto : listInboxDTO) {
+                String strCloseDate = IvlConverter.convertTs().convertHighToString(inboxDto.getInboxDateRange());
+                if (StringUtils.isEmpty(strCloseDate)) {
+                    String msg = "The milestone \"{0}\" cannot be recorded if there is an active In box record.";
+                    throw new PAException(MessageFormat.format(msg, newCode.getCode()));
                 }
             }
         }
@@ -247,7 +244,7 @@ public class StudyMilestoneBeanLocal
             }
         }
     }
-    
+
     private boolean hasAnyAbstractionErrors(List<AbstractionCompletionDTO> errorList) {
         for (AbstractionCompletionDTO absDto : errorList) {
             if (absDto.getErrorType().equalsIgnoreCase("error")) {
@@ -285,7 +282,7 @@ public class StudyMilestoneBeanLocal
             break;
         }
     }
-    
+
     /**
      * Check the milestones in the processing and QC branches.
      * @param milestones The list of all existing milestones
@@ -330,7 +327,7 @@ public class StudyMilestoneBeanLocal
         String msg = "\"{0}\" can not be reached at this stage.";
         throw new PAException(MessageFormat.format(msg, milestone.getCode()));
     }
-    
+
     private void checkPrerequisite(List<MilestoneCode> milestones, MilestoneCode milestone,
             List<MilestoneCode> stopSearchMilestones, MilestoneCode preRequisite) throws PAException {
         for (int i = milestones.size() - 1; i >= 0; i--) {
@@ -464,7 +461,7 @@ public class StudyMilestoneBeanLocal
         }
         return false;
     }
-    
+
     private void createReadyForTSRMilestone(StudyMilestoneDTO dto) throws PAException {
         List<StudyMilestoneDTO> existingDtoList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
         List<MilestoneCode> mileStones = getExistingMilestones(existingDtoList);
@@ -487,7 +484,7 @@ public class StudyMilestoneBeanLocal
             case SCIENTIFIC_READY_FOR_QC:
             case SCIENTIFIC_QC_START:
                 break;
-            default: return;    
+            default: return;
             }
             if (admin && scientific) {
                 StudyMilestoneDTO readyForTSR = new StudyMilestoneDTO();
@@ -497,7 +494,7 @@ public class StudyMilestoneBeanLocal
                 create(readyForTSR);
                 return;
             }
-        }    
+        }
     }
 
     private void sendTSREmail(StudyMilestoneDTO workDto) throws PAException {

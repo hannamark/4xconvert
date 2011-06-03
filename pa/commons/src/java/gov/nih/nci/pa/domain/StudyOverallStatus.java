@@ -92,6 +92,7 @@ import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
+import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
  * Describes the comprehensive state of the study.
@@ -109,6 +110,7 @@ public class StudyOverallStatus extends AbstractStudyEntity implements Auditable
     private String commentText;
     private StudyStatusCode statusCode;
     private Timestamp statusDate;
+    private Boolean systemCreated = Boolean.FALSE;
 
 
     /**
@@ -120,6 +122,7 @@ public class StudyOverallStatus extends AbstractStudyEntity implements Auditable
     public String getCommentText() {
         return commentText;
     }
+
     /**
      *
      * @param commentText comment text
@@ -127,15 +130,18 @@ public class StudyOverallStatus extends AbstractStudyEntity implements Auditable
     public void setCommentText(String commentText) {
         this.commentText = commentText;
     }
+
     /**
      * @return statusCode
      */
     @Column(name = "STATUS_CODE")
     @Enumerated(EnumType.STRING)
     @NotNull
+    @Searchable
     public StudyStatusCode getStatusCode() {
         return statusCode;
     }
+
     /**
      *
      * @param statusCode status code
@@ -143,6 +149,7 @@ public class StudyOverallStatus extends AbstractStudyEntity implements Auditable
     public void setStatusCode(StudyStatusCode statusCode) {
        this.statusCode = statusCode;
     }
+
     /**
      *
      * @return statusDate
@@ -152,11 +159,29 @@ public class StudyOverallStatus extends AbstractStudyEntity implements Auditable
     public Timestamp  getStatusDate() {
         return statusDate;
     }
+
     /**
      *
      * @param statusDate status Date
      */
     public void setStatusDate(Timestamp statusDate) {
         this.statusDate = statusDate;
+    }
+
+    /**
+     * Whether the study overall status is an intermediate status that was created automatically by the system.
+     * @return the systemCreated
+     */
+    @Column(name = "SYSTEM_CREATED", updatable = false)
+    @NotNull
+    public Boolean isSystemCreated() {
+        return systemCreated;
+    }
+
+    /**
+     * @param systemCreated the systemCreated to set
+     */
+    public void setSystemCreated(Boolean systemCreated) {
+        this.systemCreated = systemCreated;
     }
 }

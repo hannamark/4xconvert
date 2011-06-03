@@ -124,21 +124,6 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
                    selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
         int nciId2 = getSeqNumFromNciId(getNciIdViaSearch("Test Summ 4 Anatomic Site Trial created by Selenium."));
         assertEquals(nciId2, nciId1 + 1);
-        // try to register a trial with the a new lead org trial ID (and title) and succeed
-        registerTrial("Test Assign Ownership Trial created by Selenium.", "LEAD-ORG3");
-        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
-
-        registerTrial("Test Prevent Duplicate Trial #1 created by Selenium.", "LEAD-ORG4");
-        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
-
-        registerTrial("Test Prevent Duplicate Trial #2 created by Selenium.", "LEAD-ORG5");
-        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
-        assertTrue("No success message found",
-                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
     }
 
     /**

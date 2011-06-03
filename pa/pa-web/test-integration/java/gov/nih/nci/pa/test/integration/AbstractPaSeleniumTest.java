@@ -85,6 +85,7 @@ package gov.nih.nci.pa.test.integration;
 import gov.nih.nci.coppa.test.integration.AbstractSeleneseTestCase;
 import gov.nih.nci.pa.test.integration.util.TestProperties;
 
+import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.Ignore;
 
 /**
@@ -94,6 +95,7 @@ import org.junit.Ignore;
  */
 @Ignore
 public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
+    protected static final FastDateFormat MONTH_DAY_YEAR_FMT = FastDateFormat.getInstance("MM/dd/yyyy");
 
     @Override
     public void setUp() throws Exception {
@@ -313,6 +315,37 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         assertTrue(selenium.isElementPresent("link=Abstraction Validation"));
     }
 
+    /**
+     * Searches for, checks out, select and accepts the trial with the given title. Title must be unique among
+     * available trials
+     * @param trialTitle the trial title to search for
+     * @param adminAbstractor whether or not to check out the trial as an admin abstractor
+     * @param scientificAbstractor whether or not to check out the trial as scientific abstractor
+     */
+    protected void searchSelectAndAcceptTrial(String trialTitle, boolean adminAbstractor,
+            boolean scientificAbstractor) {
+        verifyTrialSearchPage();
+
+        selenium.type("id=officialTitle", trialTitle);
+        clickAndWait("link=Search");
+        assertTrue(selenium.isTextPresent("One item found"));
+        assertTrue(selenium.isElementPresent("id=row"));
+        assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]"));
+        assertFalse(selenium.isElementPresent("xpath=//table[@id='row']//tr[2]"));
+        assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]//td[1]/a"));
+        String nciTrialId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]/a");
+        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
+
+        verifyTrialSelected(nciTrialId);
+        if (adminAbstractor) {
+            checkOutTrialAsAdminAbstractor();
+        }
+        if (scientificAbstractor) {
+            checkOutTrialAsScientificAbstractor();
+        }
+        acceptTrial();
+        verifyTrialAccepted();
+    }
 
     public void loginAsAbstractor() {
         login("abstractor-ci", "Coppa#12345");

@@ -557,7 +557,7 @@ public class TestSchema {
         scheckout.setCheckOutType(CheckOutType.ADMINISTRATIVE);
         scheckout.setUserIdentifier("Abstractor");
         addUpdObject(scheckout);
-        
+
         scheckout = new StudyCheckout();
         scheckout.setStudyProtocol(sp);
         scheckout.setCheckOutType(CheckOutType.SCIENTIFIC);

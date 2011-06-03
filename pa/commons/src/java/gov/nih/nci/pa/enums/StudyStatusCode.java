@@ -226,15 +226,16 @@ public enum StudyStatusCode implements CodedEnum<String> {
         tmp.put(ENROLLING_BY_INVITATION, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION, TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
-                            ADMINISTRATIVELY_COMPLETE);
+                            ADMINISTRATIVELY_COMPLETE, CLOSED_TO_ACCRUAL, CLOSED_TO_ACCRUAL_AND_INTERVENTION);
         tmp.put(TEMPORARILY_CLOSED_TO_ACCRUAL, Collections.unmodifiableSet(tmpSet));
 
-        tmpSet = EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION, ADMINISTRATIVELY_COMPLETE);
+        tmpSet = EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION, ADMINISTRATIVELY_COMPLETE, CLOSED_TO_ACCRUAL,
+                CLOSED_TO_ACCRUAL_AND_INTERVENTION);
         tmp.put(TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION, Collections.unmodifiableSet(tmpSet));
 
         tmp.put(ADMINISTRATIVELY_COMPLETE, emptySet);
 
-        tmpSet = EnumSet.of(CLOSED_TO_ACCRUAL_AND_INTERVENTION, ADMINISTRATIVELY_COMPLETE);
+        tmpSet = EnumSet.of(CLOSED_TO_ACCRUAL_AND_INTERVENTION);
         tmp.put(CLOSED_TO_ACCRUAL, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = EnumSet.of(ADMINISTRATIVELY_COMPLETE, COMPLETE);
@@ -247,7 +248,7 @@ public enum StudyStatusCode implements CodedEnum<String> {
 
     /**
      * Helper method that indicates whether a transition to the new entity status is allowed.
-     * 
+     *
      * @param newStatus transition to status
      * @return whether the transition is allowed
      */

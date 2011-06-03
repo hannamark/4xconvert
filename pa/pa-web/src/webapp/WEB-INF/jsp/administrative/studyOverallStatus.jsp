@@ -116,8 +116,8 @@
                                         </s:label>
                                         <span class="required">*</span>
                                     </td>
-                                    <td colspan="2" class="value"><s:textfield name="statusDate"
-                                        maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                                    <td colspan="2" class="value">
+                                        <s:textfield name="statusDate" id="statusDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                                         <a href="javascript:showCal('Cal1')">
                                             <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
                                         </a>
@@ -147,12 +147,12 @@
                                         </s:label>
                                         <span class="required">*</span>
                                     </td>
-                                    <td  colspan="2" class="value"><s:textfield name="startDate"
-                                         maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                                    <td  colspan="2" class="value">
+                                        <s:textfield name="startDate" id="startDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                                         <a href="javascript:showCal('Cal2')">
                                             <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
                                         </a> 
-                                        <s:radio name="startDateType" list="dateTypeList" />
+                                        <s:radio name="startDateType" id="startDateType" list="dateTypeList" />
                                     </td>
                                 </tr>
                                 <tr>
@@ -162,12 +162,12 @@
                                         </s:label>
                                         <span class="required">*</span>
                                     </td>
-                                    <td  colspan="2" class="value"><s:textfield name="completionDate"
-                                         maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                                    <td  colspan="2" class="value">
+                                        <s:textfield name="completionDate" id="completionDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                                         <a href="javascript:showCal('Cal3')">
                                             <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
                                         </a> 
-                                        <s:radio name="completionDateType" list="dateTypeList" />
+                                        <s:radio name="completionDateType" id="completionDateType" list="dateTypeList" />
                                     </td>
                                 </tr>
                             </table>

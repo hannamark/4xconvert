@@ -26,7 +26,7 @@
     <property name="pa-ejb.build.testResourceDir.0" value="${pa.dir}/pa-ejb/test/resources"/>
     <property name="pa-ejb.test.reports" value="${pa.report.dir}/pa-ejb/test-reports"/>
     <property name="pa-ejb.coverage.reports" value="${pa.report.dir}/pa-ejb/coverage-reports"/>
-    <property name="pa-ejb.coverage.line" value="67"/>
+    <property name="pa-ejb.coverage.line" value="68"/>
     <property name="pa-ejb.coverage.branch" value="52"/>
     <property name="pa-ejb.pmd.maxerrors" value="414"/>
     <property name="pa-ejb.reporting.outputDirectory" value="${pa.report.dir}/pa-ejb/site"/>

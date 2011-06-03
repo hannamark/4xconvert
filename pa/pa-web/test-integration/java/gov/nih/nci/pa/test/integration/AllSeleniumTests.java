@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The reg-web
+ * source code form and machine readable, binary, object code form. The pa
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This reg-web Software License (the License) is between NCI and You. You (or
+ * This pa Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the reg-web Software to (i) use, install, access, operate,
+ * its rights in the pa Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the reg-web Software; (ii) distribute and
- * have distributed to and by third parties the reg-web Software and any
+ * and prepare derivative works of the pa Software; (ii) distribute and
+ * have distributed to and by third parties the pa Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,59 +80,21 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.registry.test.integration;
+package gov.nih.nci.pa.test.integration;
 
-import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
- * Tests trial search in Registry, as well as search-related functionality.
- * @author Steve Lustbader
+ *
+ * Class to control the order that selenium tests are run in.
+ *
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class TrialSearchTest  extends AbstractRegistrySeleniumTest {
-
-    /**
-     * Tests exporting search results to CSV/Excel.
-     */
-    @Test
-    public void testExportSearchResults() {
-        loginAsAbstractor();
-        isLoggedIn();
-        handleDisclaimer(true);
-
-        clickAndWait("searchTrialsMenuOption");
-        waitForElementById("searchMyTrialsBtn", 5);
-        waitForElementById("searchAllTrialsBtn", 5);
-
-        // search my trials, verify export links
-        clickAndWait("searchMyTrialsBtn");
-        assertTrue("Wrong search results returned", selenium.isTextPresent("2 items found"));
-        assertTrue("Missing export to CSV link", selenium.isElementPresent("link=CSV"));
-        assertTrue("Missing export to Excel link", selenium.isElementPresent("link=Excel"));
-
-        // verify no export links when no results found
-        selenium.type("officialTitle", "no trials with this title");
-        clickAndWait("searchMyTrialsBtn");
-        assertFalse("CSV link shouldn't be shown with no results", selenium.isElementPresent("link=CSV"));
-        assertFalse("Excel link shouldn't be shown with no results", selenium.isElementPresent("link=Excel"));
-
-        // search all trials, verify export links
-        selenium.type("officialTitle", "selenium");
-        clickAndWait("searchAllTrialsBtn");
-        assertTrue("Wrong search results returned", selenium.isTextPresent("2 items found"));
-
-        assertTrue("Missing export to CSV link", selenium.isElementPresent("link=CSV"));
-        assertTrue("Missing export to Excel link", selenium.isElementPresent("link=Excel"));
-
-        // search all trials, verify export links
-        selenium.type("officialTitle", "");
-        clickAndWait("searchSavedDraftsBtn");
-        assertTrue("Wrong search results returned", selenium.isTextPresent("One item found"));
-        assertTrue("Missing export to CSV link", selenium.isElementPresent("link=CSV"));
-        assertTrue("Missing export to Excel link", selenium.isElementPresent("link=Excel"));
-
-        // TODO: actually download and verify the files.  Unfortunately, Selenium doesn't support this right now,
-        // but since this functionality comes from displaytag, we can assume it works.  It would be good to verify
-        // the file contents, though (eg, no html was exported, etc).
-    }
+@RunWith(Suite.class)
+@SuiteClasses(value = {LoginTest.class, AnatomicSiteTest.class, PlannedMarkerTest.class, StudyOwnershipTest.class,
+        DuplicateTrialEditTest.class, LookupWithApostropheTest.class, TrialStatusTest.class})
+public class AllSeleniumTests {
 
 }

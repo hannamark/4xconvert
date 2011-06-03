@@ -86,12 +86,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
+
 /**
  * @author hreinhart
  *
  */
 public class StudyStatusCodeTest {
-    
+
     @Test
     public void testGetDisplayNamesForAmend() {
         Set<StudyStatusCode> statuses = EnumSet.complementOf(EnumSet.of(StudyStatusCode.DISAPPROVED));

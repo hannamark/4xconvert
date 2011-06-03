@@ -118,6 +118,8 @@ your old data.
 - Shutdown the pa jboss instance with: ant stop-jboss-server
 - Alternately, you can run ant test-integration if you want to automatic the initialization of the db, starting of jboss,
   running of the tests and stopping the jboss instance.
+- Tests run the order they are declared in AllSeleniumTests.java. If you need to add a new test, make sure you add
+  it there or it will no be run automatically.
 
 Logging into applications:
 --------------------------

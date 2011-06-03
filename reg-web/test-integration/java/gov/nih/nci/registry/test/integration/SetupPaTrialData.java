@@ -85,54 +85,60 @@ package gov.nih.nci.registry.test.integration;
 import org.junit.Test;
 
 /**
- * Tests trial search in Registry, as well as search-related functionality.
- * @author Steve Lustbader
+ * Selenium class for setting up trails needed in PA.
+ *
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ *
  */
-public class TrialSearchTest  extends AbstractRegistrySeleniumTest {
+public class SetupPaTrialData extends AbstractRegistrySeleniumTest {
 
-    /**
-     * Tests exporting search results to CSV/Excel.
-     */
     @Test
-    public void testExportSearchResults() {
+    public void testRegisterAssignOwnershipTrial() throws Exception {
         loginAsAbstractor();
-        isLoggedIn();
         handleDisclaimer(true);
-
-        clickAndWait("searchTrialsMenuOption");
-        waitForElementById("searchMyTrialsBtn", 5);
-        waitForElementById("searchAllTrialsBtn", 5);
-
-        // search my trials, verify export links
-        clickAndWait("searchMyTrialsBtn");
-        assertTrue("Wrong search results returned", selenium.isTextPresent("2 items found"));
-        assertTrue("Missing export to CSV link", selenium.isElementPresent("link=CSV"));
-        assertTrue("Missing export to Excel link", selenium.isElementPresent("link=Excel"));
-
-        // verify no export links when no results found
-        selenium.type("officialTitle", "no trials with this title");
-        clickAndWait("searchMyTrialsBtn");
-        assertFalse("CSV link shouldn't be shown with no results", selenium.isElementPresent("link=CSV"));
-        assertFalse("Excel link shouldn't be shown with no results", selenium.isElementPresent("link=Excel"));
-
-        // search all trials, verify export links
-        selenium.type("officialTitle", "selenium");
-        clickAndWait("searchAllTrialsBtn");
-        assertTrue("Wrong search results returned", selenium.isTextPresent("2 items found"));
-
-        assertTrue("Missing export to CSV link", selenium.isElementPresent("link=CSV"));
-        assertTrue("Missing export to Excel link", selenium.isElementPresent("link=Excel"));
-
-        // search all trials, verify export links
-        selenium.type("officialTitle", "");
-        clickAndWait("searchSavedDraftsBtn");
-        assertTrue("Wrong search results returned", selenium.isTextPresent("One item found"));
-        assertTrue("Missing export to CSV link", selenium.isElementPresent("link=CSV"));
-        assertTrue("Missing export to Excel link", selenium.isElementPresent("link=Excel"));
-
-        // TODO: actually download and verify the files.  Unfortunately, Selenium doesn't support this right now,
-        // but since this functionality comes from displaytag, we can assume it works.  It would be good to verify
-        // the file contents, though (eg, no html was exported, etc).
+        registerTrial("Test Assign Ownership Trial created by Selenium.", "LEAD-ORG3");
+        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
+        assertTrue("No success message found",
+                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
     }
 
+    @Test
+    public void testRegisterDuplicateTrial() throws Exception {
+        loginAsAbstractor();
+        handleDisclaimer(true);
+        registerTrial("Test Prevent Duplicate Trial #1 created by Selenium.", "LEAD-ORG4");
+        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
+        assertTrue("No success message found",
+                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
+
+        registerTrial("Test Prevent Duplicate Trial #2 created by Selenium.", "LEAD-ORG5");
+        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
+        assertTrue("No success message found",
+                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
+    }
+
+    @Test
+    public void testRegisterStatusTransitionTrials() throws Exception {
+        loginAsAbstractor();
+        handleDisclaimer(true);
+        registerTrial("Test Trial Status Trial created by Selenium.", "LEAD-ORG6");
+        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
+        assertTrue("No success message found",
+                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
+
+        registerTrial("Test Trial Status Trial #2 created by Selenium.", "LEAD-ORG7");
+        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
+        assertTrue("No success message found",
+                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
+
+        registerTrial("Test Trial Status Trial #3 created by Selenium.", "LEAD-ORG8");
+        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
+        assertTrue("No success message found",
+                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
+
+        registerTrial("Test Trial Status Trial #4 created by Selenium.", "LEAD-ORG9");
+        assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
+        assertTrue("No success message found",
+                   selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
+    }
 }
