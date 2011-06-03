@@ -92,10 +92,10 @@ import org.junit.Test;
  *
  */
 public class StudyStatusCodeTest {
-
+    
     @Test
     public void testGetDisplayNamesForAmend() {
-        Set<StudyStatusCode> statuses = EnumSet.complementOf(EnumSet.of(StudyStatusCode.DISAPPROVED));
+        Set<StudyStatusCode> statuses = EnumSet.allOf(StudyStatusCode.class);
         Set<String> codes = new HashSet<String>();
         for (StudyStatusCode status : statuses) {
             codes.add(status.getCode());

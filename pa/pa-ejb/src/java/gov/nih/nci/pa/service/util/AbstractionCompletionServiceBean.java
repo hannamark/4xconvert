@@ -840,13 +840,13 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                                 + "is only valid for the current trial status \'In-Review\'."));
 
             }
-            if (StudyStatusCode.DISAPPROVED.getCode().equalsIgnoreCase(sos.getStatusCode().getCode())
+            if (StudyStatusCode.WITHDRAWN.getCode().equalsIgnoreCase(sos.getStatusCode().getCode())
                     && !studySite.getReviewBoardApprovalStatusCode().getCode()
                             .equals(ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.getCode())) {
                 abstractionWarnList.add(createError("Warning",
                         "Select Human Subject Safety under Regulatory Information",
                         "Data inconsistency: \'Submitted, denied\' value (Review Board Approval Status) is "
-                                + "only valid for the current trial status \'Disapproved\'."));
+                                + "only valid for the current trial status \'WithDrawn\'."));
             }
         }
 

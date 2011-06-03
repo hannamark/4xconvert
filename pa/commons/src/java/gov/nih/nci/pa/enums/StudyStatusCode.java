@@ -82,12 +82,9 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -105,10 +102,6 @@ public enum StudyStatusCode implements CodedEnum<String> {
      * In Review.
      */
     IN_REVIEW("In Review"),
-    /**
-     * In Review.
-     */
-    DISAPPROVED("Disapproved"),
     /**
      * Approved.
      */
@@ -209,15 +202,13 @@ public enum StudyStatusCode implements CodedEnum<String> {
     static {
         Map<StudyStatusCode, Set<StudyStatusCode>> tmp = new HashMap<StudyStatusCode, Set<StudyStatusCode>>();
 
-        Set<StudyStatusCode> tmpSet = EnumSet.of(APPROVED, DISAPPROVED, ACTIVE, ENROLLING_BY_INVITATION);
+        Set<StudyStatusCode> tmpSet = EnumSet.of(APPROVED, ACTIVE, ENROLLING_BY_INVITATION, WITHDRAWN);
         tmp.put(IN_REVIEW, Collections.unmodifiableSet(tmpSet));
-
-        Set<StudyStatusCode> emptySet = Collections.emptySet();
-        tmp.put(DISAPPROVED, emptySet);
 
         tmpSet = EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION, WITHDRAWN);
         tmp.put(APPROVED, Collections.unmodifiableSet(tmpSet));
-
+        
+        Set<StudyStatusCode> emptySet = Collections.emptySet();
         tmp.put(WITHDRAWN, emptySet);
 
         tmpSet = EnumSet.of(TEMPORARILY_CLOSED_TO_ACCRUAL, TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
@@ -230,7 +221,7 @@ public enum StudyStatusCode implements CodedEnum<String> {
         tmp.put(TEMPORARILY_CLOSED_TO_ACCRUAL, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION, ADMINISTRATIVELY_COMPLETE, CLOSED_TO_ACCRUAL,
-                CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+                            CLOSED_TO_ACCRUAL_AND_INTERVENTION);
         tmp.put(TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION, Collections.unmodifiableSet(tmpSet));
 
         tmp.put(ADMINISTRATIVELY_COMPLETE, emptySet);
@@ -248,7 +239,7 @@ public enum StudyStatusCode implements CodedEnum<String> {
 
     /**
      * Helper method that indicates whether a transition to the new entity status is allowed.
-     *
+     * 
      * @param newStatus transition to status
      * @return whether the transition is allowed
      */
@@ -261,9 +252,7 @@ public enum StudyStatusCode implements CodedEnum<String> {
      * @return String[] display names for StudyStatusCode
      */
     public static String[] getDisplayNamesForAmend() {
-        List<String> list = new ArrayList<String>(Arrays.asList(getDisplayNames()));
-        list.remove("Disapproved");
-        return list.toArray(new String[list.size()]);
+        return getDisplayNames();
     }
 
     /**

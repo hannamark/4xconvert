@@ -1885,8 +1885,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
                         + " Abstraction Verified No Response or  "
                         + " Abstraction Verified No Response can be Updated.");
             }
-            if (statusDTO.getStatusCode().getCode().equals(StudyStatusCode.DISAPPROVED.getCode())
-                    || statusDTO.getStatusCode().getCode().equals(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode())
+            if (statusDTO.getStatusCode().getCode().equals(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode())
                     || statusDTO.getStatusCode().getCode().equals(StudyStatusCode.WITHDRAWN.getCode())
                     || statusDTO.getStatusCode().getCode().equals(StudyStatusCode.COMPLETE.getCode())) {
                 errorMsg.append(operation).append(

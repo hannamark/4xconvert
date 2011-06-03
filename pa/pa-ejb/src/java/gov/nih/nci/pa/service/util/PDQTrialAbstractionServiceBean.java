@@ -204,7 +204,6 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
     private static Map<StudyStatusCode, RecruitmentStatusCode> initDefaultLocationStatusMap() {
         Map<StudyStatusCode, RecruitmentStatusCode> map = new HashMap<StudyStatusCode, RecruitmentStatusCode>();
         map.put(StudyStatusCode.IN_REVIEW, RecruitmentStatusCode.NOT_YET_RECRUITING);
-        map.put(StudyStatusCode.DISAPPROVED, RecruitmentStatusCode.WITHDRAWN);
         map.put(StudyStatusCode.APPROVED, RecruitmentStatusCode.ACTIVE_NOT_RECRUITING);
         map.put(StudyStatusCode.ACTIVE, RecruitmentStatusCode.RECRUITING);
         map.put(StudyStatusCode.ENROLLING_BY_INVITATION, RecruitmentStatusCode.ENROLLING_BY_INVITATION);

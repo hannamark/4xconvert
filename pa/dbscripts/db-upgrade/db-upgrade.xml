@@ -698,4 +698,8 @@
         <comment>Modifying trial statuses to allow for additional state transitions.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.5/PO-3583.sql"/>
      </changeSet>
+     <changeSet id="PO-3606" author="mvisee">
+        <comment>Allow parallel check-outs</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.5/PO-3606.sql"/>
+     </changeSet>
 </databaseChangeLog>

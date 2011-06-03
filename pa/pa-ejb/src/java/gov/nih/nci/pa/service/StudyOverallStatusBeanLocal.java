@@ -506,8 +506,7 @@ public class StudyOverallStatusBeanLocal extends
         //Trial Start Date must have 'actual' type for any other Current Trial Status value besides 'Approved'.
         if (StudyStatusCode.APPROVED.getCode().equals(statusCode)
                 || StudyStatusCode.IN_REVIEW.getCode().equals(statusCode)
-                || StudyStatusCode.WITHDRAWN.getCode().equals(statusCode)
-                || StudyStatusCode.DISAPPROVED.getCode().equals(statusCode)) {
+                || StudyStatusCode.WITHDRAWN.getCode().equals(statusCode)) {
             if (!studyStartDateType.equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
                 errors.append("If Current Trial Status is " + statusCode + ", Trial Start Date must be Anticipated.\n");
             }

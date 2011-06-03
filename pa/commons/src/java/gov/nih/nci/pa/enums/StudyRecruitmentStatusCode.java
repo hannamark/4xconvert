@@ -117,7 +117,6 @@ public enum StudyRecruitmentStatusCode implements CodedEnum<String> {
         new HashMap<StudyStatusCode, StudyRecruitmentStatusCode>();
     static {
         STATUS_TO_RECRUITMENT_STATUS.put(StudyStatusCode.IN_REVIEW, StudyRecruitmentStatusCode.NOT_YET_RECRUITING);
-        STATUS_TO_RECRUITMENT_STATUS.put(StudyStatusCode.DISAPPROVED, StudyRecruitmentStatusCode.NOT_YET_RECRUITING);
         STATUS_TO_RECRUITMENT_STATUS.put(StudyStatusCode.APPROVED, StudyRecruitmentStatusCode.NOT_YET_RECRUITING);
         STATUS_TO_RECRUITMENT_STATUS.put(StudyStatusCode.ACTIVE, StudyRecruitmentStatusCode.RECRUITING_ACTIVE);
         STATUS_TO_RECRUITMENT_STATUS.put(StudyStatusCode.CLOSED_TO_ACCRUAL, StudyRecruitmentStatusCode.NOT_RECRUITING);
