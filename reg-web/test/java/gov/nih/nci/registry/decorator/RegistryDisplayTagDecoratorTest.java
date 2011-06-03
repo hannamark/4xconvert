@@ -89,13 +89,6 @@ public class RegistryDisplayTagDecoratorTest {
 
         dto = new StudyProtocolQueryDTO();
         dto.setUserLastCreated("userLastCreated");
-        dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
-        dto.setStudyStatusCode(StudyStatusCode.DISAPPROVED);
-        decorator.initRow(dto, currentViewIndex, currentListIndex);
-        assertEquals("", decorator.getAmend());
-
-        dto = new StudyProtocolQueryDTO();
-        dto.setUserLastCreated("userLastCreated");
         dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
         dto.setStudyStatusCode(StudyStatusCode.WITHDRAWN);
         decorator.initRow(dto, currentViewIndex, currentListIndex);

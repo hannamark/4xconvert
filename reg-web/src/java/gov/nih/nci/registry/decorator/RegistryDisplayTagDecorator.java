@@ -130,8 +130,7 @@ public class RegistryDisplayTagDecorator extends TableDecorator {
     }
 
     private boolean isAmendStatus(StudyStatusCode statusCode) {
-        return !(StudyStatusCode.DISAPPROVED.equals(statusCode)
-                || StudyStatusCode.WITHDRAWN.equals(statusCode)
+        return !(StudyStatusCode.WITHDRAWN.equals(statusCode)
                 || StudyStatusCode.COMPLETE.equals(statusCode)
                 || StudyStatusCode.ADMINISTRATIVELY_COMPLETE.equals(statusCode));
     }

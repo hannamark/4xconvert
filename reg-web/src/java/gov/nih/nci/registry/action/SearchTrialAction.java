@@ -160,7 +160,6 @@ public class SearchTrialAction extends ActionSupport {
     private final TrialUtil trialUtil = new TrialUtil();
     private static final Set<StudyStatusCode> UPDATEABLE_STATUS = new HashSet<StudyStatusCode>();
     static {
-        UPDATEABLE_STATUS.add(StudyStatusCode.DISAPPROVED);
         UPDATEABLE_STATUS.add(StudyStatusCode.WITHDRAWN);
         UPDATEABLE_STATUS.add(StudyStatusCode.COMPLETE);
         UPDATEABLE_STATUS.add(StudyStatusCode.ADMINISTRATIVELY_COMPLETE);
