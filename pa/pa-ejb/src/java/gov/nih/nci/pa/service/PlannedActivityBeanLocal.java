@@ -516,16 +516,9 @@ public class PlannedActivityBeanLocal extends
         Session session = null;
         session = PaHibernateUtil.getCurrentSession();
         PlannedSubstanceAdministrationConverter converter = new PlannedSubstanceAdministrationConverter();
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
-            bo = converter.convertFromDtoToDomain(dto);
-        } else {
-            bo = (PlannedSubstanceAdministration) session.load(PlannedSubstanceAdministration.class,
-                                                               IiConverter.convertToLong(dto.getIdentifier()));
-
-            PlannedSubstanceAdministration delta = converter.convertFromDtoToDomain(dto);
-            bo = delta;
+        bo = converter.convertFromDtoToDomain(dto);
+        if (PAUtil.isIiNotNull(dto.getIdentifier())) {
             bo.setDateLastUpdated(new Date());
-            session.evict(bo);
         }
 
         session.saveOrUpdate(bo);
@@ -613,17 +606,24 @@ public class PlannedActivityBeanLocal extends
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Ii getDuplicateIi(PlannedActivityDTO dto) throws PAException {
-        InterventionDTO iDto = interventionSrv.get(dto.getInterventionIdentifier());
-        String interventionName = iDto.getName().getValue();
-
-        List<PlannedActivityDTO> paList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
-        for (PlannedActivityDTO padto : paList) {
-            Ii duplicateIi = comparePlannedActivities(dto, interventionName, padto);
-            if (duplicateIi != null) {
-                return duplicateIi;
+        try {
+            InterventionDTO iDto = interventionSrv.get(dto.getInterventionIdentifier());
+            String interventionName = iDto.getName().getValue();
+            
+            List<PlannedActivityDTO> paList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+            for (PlannedActivityDTO padto : paList) {
+                Ii duplicateIi = comparePlannedActivities(dto, interventionName, padto);
+                if (duplicateIi != null) {
+                    return duplicateIi;
+                }
             }
-        }
-        return null;
+            return null;
+        } finally {
+            // loading of the objects into the session to check for duplicates
+            // causes a non unique hibernate exception to occur when updating.   
+            PaHibernateUtil.getCurrentSession().flush();
+            PaHibernateUtil.getCurrentSession().clear();     
+        }       
     }
 
     private Ii comparePlannedActivities(PlannedActivityDTO dto, String interventionName, PlannedActivityDTO padto)
