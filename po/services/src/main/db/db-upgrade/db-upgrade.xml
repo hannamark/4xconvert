@@ -148,10 +148,12 @@
        <comment>PO-3203: Synchronized family schema and hibernate annotations.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.4/PO-3203.sql"/>
     </changeSet>
-    <!-- Removed until PO-3671 is resolved 
     <changeSet id="PO-3579" author="oweisms">
        <comment>PO-3579: Nullify PO records of CTEP internal ids.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.5/PO-3579.sql"/>
     </changeSet>
-    -->
+    <changeSet id="PO-3672" author="oweisms">
+       <comment>PO-3672: Update CTEP Person root.</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.5/PO-3672.sql"/>
+    </changeSet>
 </databaseChangeLog>

@@ -130,7 +130,7 @@ public class CtepPersonImporter extends CtepEntityImporter {
     /**
      * The root value of the ctep ii's that reference the friendly user known identifier of the person in ctep's system.
      */
-    public static final String CTEP_PERSON_ROOT = "Cancer Therapy Evaluation Program Person Other Identifier";
+    public static final String CTEP_PERSON_ROOT = "2.16.840.1.113883.3.26.6.1";
 
     private static final Logger LOG = Logger.getLogger(CtepPersonImporter.class);
     private static final String LOG_SEP = " : ";
@@ -174,13 +174,15 @@ public class CtepPersonImporter extends CtepEntityImporter {
         try {
             // get org from ctep and convert to local data model
             PersonDTO ctepPersonDto = getCtepPersonService().getPersonById(ctepPersonId);
-            printPersonDataToDebugLog(ctepPersonDto);
+            printPersonDataToLog(ctepPersonDto);
+            comparePersonIi(ctepPersonId, ctepPersonDto.getIdentifier());
             Person ctepPerson = convertToLocalPerson(ctepPersonDto);
             // search for org based on the ctep provided ii
             IdentifiedPerson identifiedPerson = searchForPreviousRecord(ctepPersonId);
             if (identifiedPerson == null) {
                 return createCtepPerson(ctepPerson, ctepPersonId);
             }
+            comparePersonIi(ctepPersonId, identifiedPerson.getAssignedIdentifier());
             return updateCtepPerson(ctepPerson, identifiedPerson);
         } catch (CTEPEntException e) {
             // importing an object that is does not exist remotely, so inactivate it if we have it locally.
@@ -194,6 +196,16 @@ public class CtepPersonImporter extends CtepEntityImporter {
         }
     }
 
+    private void comparePersonIi(Ii originalIi, Ii newIi) throws JMSException {
+        if (originalIi == null || newIi == null) {
+            throw new JMSException("Person import aborted, null CTEP Id found: " + originalIi + " or " + newIi);
+        } else if (!originalIi.getExtension().equals(newIi.getExtension())
+                || !originalIi.getRoot().equals(newIi.getRoot())) {
+            throw new JMSException("Person import aborted, mismatch in CTEP Ids: (" + originalIi.getRoot() + ", "
+                    + originalIi.getExtension() + ") and (" + newIi.getRoot() + ", " + newIi.getExtension() + ")");
+        }
+    }
+
     /**
      * @return IdentifiedOrganizationServiceLocal bean
      */
@@ -201,25 +213,23 @@ public class CtepPersonImporter extends CtepEntityImporter {
         return identifiedPersonService;
     }
 
-    private void printPersonDataToDebugLog(PersonDTO perDto) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Person ii.extension: " + perDto.getIdentifier().getExtension());
-            LOG.debug("Person ii.root: " + perDto.getIdentifier().getRoot());
-            LOG.debug("Person status: " + perDto.getStatusCode().getCode());
-            LOG.debug("Person name:");
-            for (Enxp xp : perDto.getName().getPart()) {
-                LOG.debug("\t" + xp.getType() + LOG_SEP + xp.getValue());
-            }
+    private void printPersonDataToLog(PersonDTO perDto) {
+        LOG.info("Person ii.extension: " + perDto.getIdentifier().getExtension());
+        LOG.info("Person ii.root: " + perDto.getIdentifier().getRoot());
+        LOG.info("Person status: " + perDto.getStatusCode().getCode());
+        LOG.info("Person name:");
+        for (Enxp xp : perDto.getName().getPart()) {
+            LOG.info("\t" + xp.getType() + LOG_SEP + xp.getValue());
+        }
 
-            LOG.debug("Person address:");
-            for (Adxp axp : perDto.getPostalAddress().getPart()) {
-                LOG.debug("\t" + axp.getType() + LOG_SEP + axp.getValue() + LOG_SEP + axp.getCode());
-            }
+        LOG.info("Person address:");
+        for (Adxp axp : perDto.getPostalAddress().getPart()) {
+            LOG.info("\t" + axp.getType() + LOG_SEP + axp.getValue() + LOG_SEP + axp.getCode());
+        }
 
-            LOG.debug("Telecom Addresses:");
-            for (Tel obj : perDto.getTelecomAddress().getItem()) {
-                LOG.debug("\t" + obj.getValue());
-            }
+        LOG.info("Telecom Addresses:");
+        for (Tel obj : perDto.getTelecomAddress().getItem()) {
+            LOG.info("\t" + obj.getValue());
         }
     }
 
@@ -253,14 +263,14 @@ public class CtepPersonImporter extends CtepEntityImporter {
         // create records for all health care provider records
         HealthCareProviderDTO hcp = getHcpFromCtep(ctepId);
         if (hcp != null) {
-            printHcpDataToDebugLog(hcp);
+            printHcpDataToLog(hcp);
             createHcp(hcp, ctepPerson);
         }
 
         // create records for all clinical research staff records.
         ClinicalResearchStaffDTO crs = getCrsFromCtep(ctepId);
         if (crs != null) {
-            printCrsDataToDebugLog(crs);
+            printCrsDataToLog(crs);
             createCrs(crs, ctepPerson);
         }
         return ctepPerson;
@@ -485,62 +495,58 @@ public class CtepPersonImporter extends CtepEntityImporter {
     }
 
     @SuppressWarnings("unchecked")
-    private void printHcpDataToDebugLog(HealthCareProviderDTO hcp) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("  ** HCP Data ** \n");
-            LOG.debug("hcp identifiers: ");
-            for (Ii ii : hcp.getIdentifier().getItem()) {
-                LOG.debug("\t hcp.id.identifierName: " + ii.getIdentifierName());
-                LOG.debug("\t hcp.id.extension: " + ii.getExtension());
-                LOG.debug("\t hcp.id.root: " + ii.getRoot());
-            }
-            LOG.debug("\t hcp.player.extension: " + hcp.getPlayerIdentifier().getExtension());
-            LOG.debug("\t hcp.player.root: " + hcp.getPlayerIdentifier().getRoot());
-            LOG.debug("\t hcp.scoper.extension: " + hcp.getScoperIdentifier().getExtension());
-            LOG.debug("\t hcp.scoper.root: " + hcp.getScoperIdentifier().getRoot());
-            LOG.debug("\t hcp.certLicText: " + hcp.getCertificateLicenseText());
-            LOG.debug("\t hcp.status: " + hcp.getStatus().getCode());
-            LOG.debug("HCP addresses:");
-            printAddresses(hcp.getPostalAddress());
-            LOG.debug("HCP Telecom Addresses:");
-            printTels(hcp.getTelecomAddress());
+    private void printHcpDataToLog(HealthCareProviderDTO hcp) {
+        LOG.info("  ** HCP Data ** \n");
+        LOG.info("hcp identifiers: ");
+        for (Ii ii : hcp.getIdentifier().getItem()) {
+            LOG.info("\t hcp.id.identifierName: " + ii.getIdentifierName());
+            LOG.info("\t hcp.id.extension: " + ii.getExtension());
+            LOG.info("\t hcp.id.root: " + ii.getRoot());
         }
+        LOG.info("\t hcp.player.extension: " + hcp.getPlayerIdentifier().getExtension());
+        LOG.info("\t hcp.player.root: " + hcp.getPlayerIdentifier().getRoot());
+        LOG.info("\t hcp.scoper.extension: " + hcp.getScoperIdentifier().getExtension());
+        LOG.info("\t hcp.scoper.root: " + hcp.getScoperIdentifier().getRoot());
+        LOG.info("\t hcp.certLicText: " + hcp.getCertificateLicenseText());
+        LOG.info("\t hcp.status: " + hcp.getStatus().getCode());
+        LOG.info("HCP addresses:");
+        printAddresses(hcp.getPostalAddress());
+        LOG.info("HCP Telecom Addresses:");
+        printTels(hcp.getTelecomAddress());
     }
 
     @SuppressWarnings("unchecked")
-    private void printCrsDataToDebugLog(ClinicalResearchStaffDTO crs) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("  ** CRS Data ** \n");
-            LOG.debug("crs identifiers: ");
-            for (Ii ii : crs.getIdentifier().getItem()) {
-                LOG.debug("\t crs.id.identifierName: " + ii.getIdentifierName());
-                LOG.debug("\t crs.id.extension: " + ii.getExtension());
-                LOG.debug("\t crs.id.root: " + ii.getRoot());
-            }
-            LOG.debug("\t crs.player.extension: " + crs.getPlayerIdentifier().getExtension());
-            LOG.debug("\t crs.player.root: " + crs.getPlayerIdentifier().getRoot());
-            LOG.debug("\t crs.scoper.extension: " + crs.getScoperIdentifier().getExtension());
-            LOG.debug("\t crs.scoper.root: " + crs.getScoperIdentifier().getRoot());
-            LOG.debug("\t crs.status: " + crs.getStatus().getCode());
-            LOG.debug("crs addresses:");
-            printAddresses(crs.getPostalAddress());
-            LOG.debug("crs Telecom Addresses:");
-            printTels(crs.getTelecomAddress());
+    private void printCrsDataToLog(ClinicalResearchStaffDTO crs) {
+        LOG.info("  ** CRS Data ** \n");
+        LOG.info("crs identifiers: ");
+        for (Ii ii : crs.getIdentifier().getItem()) {
+            LOG.info("\t crs.id.identifierName: " + ii.getIdentifierName());
+            LOG.info("\t crs.id.extension: " + ii.getExtension());
+            LOG.info("\t crs.id.root: " + ii.getRoot());
         }
+        LOG.info("\t crs.player.extension: " + crs.getPlayerIdentifier().getExtension());
+        LOG.info("\t crs.player.root: " + crs.getPlayerIdentifier().getRoot());
+        LOG.info("\t crs.scoper.extension: " + crs.getScoperIdentifier().getExtension());
+        LOG.info("\t crs.scoper.root: " + crs.getScoperIdentifier().getRoot());
+        LOG.info("\t crs.status: " + crs.getStatus().getCode());
+        LOG.info("crs addresses:");
+        printAddresses(crs.getPostalAddress());
+        LOG.info("crs Telecom Addresses:");
+        printTels(crs.getTelecomAddress());
     }
 
     private void printAddresses(DSet<Ad> ads) {
         for (Ad ad : ads.getItem()) {
-            LOG.debug("\t Address\n");
+            LOG.info("\t Address\n");
             for (Adxp axp : ad.getPart()) {
-                LOG.debug("\t" + axp.getType() + LOG_SEP + axp.getValue() + LOG_SEP + axp.getCode());
+                LOG.info("\t" + axp.getType() + LOG_SEP + axp.getValue() + LOG_SEP + axp.getCode());
             }
         }
     }
 
     private void printTels(DSet<Tel> tels) {
         for (Tel obj : tels.getItem()) {
-            LOG.debug("\t" + obj.getValue());
+            LOG.info("\t" + obj.getValue());
         }
     }
 }

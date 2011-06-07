@@ -67,9 +67,11 @@
     <!-- Limit categories -->
     <!-- ================ -->
 
-    <!-- Limit the org.apache category to INFO as its DEBUG is verbose -->
     <category name="gov.nih.nci.po">
       <priority value="${log.level.po}"/>
+    </category>
+    <category name="gov.nih.nci.po.service.external">
+       <priority value="INFO"/>
     </category>
     <category name="com.fiveamsolutions.nci.commons">
       <priority value="${log.level.nci-commons}"/>

@@ -85,14 +85,19 @@ package gov.nih.nci.coppa.po.grid.services;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.coppa.po.IdentifiedPerson;
 import gov.nih.nci.coppa.po.OrganizationalContact;
 import gov.nih.nci.coppa.po.StringMap;
+import gov.nih.nci.coppa.po.grid.dto.transform.po.IdentifiedPersonTransformerTest;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationalContactTransformerTest;
-import gov.nih.nci.coppa.po.grid.services.stubs.InvokeCorrelationServiceStub;
+import gov.nih.nci.coppa.po.grid.remote.Utils;
+import gov.nih.nci.coppa.po.grid.services.stubs.IdentifiedPersonInvokeCorrelationServiceStub;
+import gov.nih.nci.coppa.po.grid.services.stubs.OrganizationalContactInvokeCorrelationServiceStub;
 import gov.nih.nci.iso21090.extensions.Cd;
 import gov.nih.nci.iso21090.extensions.Id;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.PoDto;
+import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 import java.rmi.RemoteException;
@@ -119,7 +124,7 @@ public class GenericCorrelationGridServiceTest {
         @Override
         protected CorrelationService<OrganizationalContactDTO> getService() {
             super.getService();
-            return new InvokeCorrelationServiceStub<OrganizationalContactDTO>(OrganizationalContactDTO.class);
+            return new OrganizationalContactInvokeCorrelationServiceStub<OrganizationalContactDTO>(OrganizationalContactDTO.class);
         }
         
     }
@@ -174,7 +179,7 @@ public class GenericCorrelationGridServiceTest {
             //NOOP
         }
         impl.update(xml);
-        assertTrue(InvokeCorrelationServiceStub.update_flag);
+        assertTrue(OrganizationalContactInvokeCorrelationServiceStub.update_flag);
         
         try {
             impl.updateStatus(null, new Cd());
@@ -182,7 +187,7 @@ public class GenericCorrelationGridServiceTest {
             //NOOP
         }
         impl.updateStatus(ocId, new Cd());
-        assertTrue(InvokeCorrelationServiceStub.update_status_flag);
+        assertTrue(OrganizationalContactInvokeCorrelationServiceStub.update_status_flag);
         
         try {
             impl.validate(null);
@@ -199,6 +204,51 @@ public class GenericCorrelationGridServiceTest {
         assertEquals("is", sm.getEntry().get(0).getValue().get(1));
         assertEquals("an", sm.getEntry().get(0).getValue().get(2));
         assertEquals("array", sm.getEntry().get(0).getValue().get(3));
+    }
+
+    private class IdentifiedPersonGridServiceStub<DTO extends PoDto, XML extends Object> extends
+            GenericCorrelationGridServiceImpl<IdentifiedPersonDTO, IdentifiedPerson> {
+
+        /**
+         * @param xmlType
+         * @param dtoType
+         */
+        public IdentifiedPersonGridServiceStub(Class<IdentifiedPerson> xmlType, Class<IdentifiedPersonDTO> dtoType) {
+            super(xmlType, dtoType);
+        }
+
+        @Override
+        protected CorrelationService<IdentifiedPersonDTO> getService() {
+            super.getService();
+            return new IdentifiedPersonInvokeCorrelationServiceStub<IdentifiedPersonDTO>(IdentifiedPersonDTO.class);
+        }
+
+    }
+
+    @Test
+    public void testCTEPPersonLegacySearch() throws RemoteException {
+        IdentifiedPersonGridServiceStub<IdentifiedPersonDTO, IdentifiedPerson> impl = new IdentifiedPersonGridServiceStub<IdentifiedPersonDTO, IdentifiedPerson>(
+                IdentifiedPerson.class, IdentifiedPersonDTO.class);
+
+        IdentifiedPerson xml = new IdentifiedPersonTransformerTest().makeXmlSimple();
+        xml.getAssignedId().setRoot(Utils.LEGACY_CTEP_PERSON_ROOT);
+        IdentifiedPerson[] ips = impl.search(xml);
+        for (IdentifiedPerson ip : ips) {
+            assertEquals(Utils.LEGACY_CTEP_PERSON_ROOT, ip.getAssignedId().getRoot());
+        }
+    }
+    
+    @Test
+    public void testCTEPPersonNewSearch() throws RemoteException {
+        IdentifiedPersonGridServiceStub<IdentifiedPersonDTO, IdentifiedPerson> impl = new IdentifiedPersonGridServiceStub<IdentifiedPersonDTO, IdentifiedPerson>(
+                IdentifiedPerson.class, IdentifiedPersonDTO.class);
+
+        IdentifiedPerson xml = new IdentifiedPersonTransformerTest().makeXmlSimple();
+        xml.getAssignedId().setRoot(Utils.CTEP_PERSON_ROOT);
+        IdentifiedPerson[] ips = impl.search(xml);
+        for (IdentifiedPerson ip : ips) {
+            assertEquals(Utils.CTEP_PERSON_ROOT, ip.getAssignedId().getRoot());
+        }
     }
     
     private void verifyXmlObjs(OrganizationalContact[] ocObjs) {

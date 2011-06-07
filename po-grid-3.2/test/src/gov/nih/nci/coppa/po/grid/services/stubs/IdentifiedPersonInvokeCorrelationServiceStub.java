@@ -82,7 +82,7 @@
  */
 package gov.nih.nci.coppa.po.grid.services.stubs;
 
-import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationalContactTransformerTest;
+import gov.nih.nci.coppa.po.grid.dto.transform.po.IdentifiedPersonTransformerTest;
 import gov.nih.nci.coppa.po.grid.remote.InvokeCorrelationService;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
@@ -100,14 +100,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author mshestopalov
+ * @author oweisms
  *
  * @param <DTO> correlation DTO type
  */
-public class InvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorrelationService<DTO> {
+public class IdentifiedPersonInvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorrelationService<DTO> {
 
-    public static final String ORG_CONTACT_ROOT_VALUE = Constants.NCI_OID + ".4.8";
-    public static final String ORG_CONTACT_IDENT_VALUE = "OrganizationalContactal contact identifier";
+    public static final String IDENTIFIED_PERSON_ROOT_VALUE = Constants.NCI_OID + ".4.8";
+    public static final String IDENTIFIED_PERSON_IDENT_VALUE = "IdentifiedPerson contact identifier";
     public static final String EXT_VALUE = "111";
     
     public static boolean update_flag = false;
@@ -115,7 +115,7 @@ public class InvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorre
     /**
      * @param type
      */
-    public InvokeCorrelationServiceStub(Class<DTO> type) {
+    public IdentifiedPersonInvokeCorrelationServiceStub(Class<DTO> type) {
         super(type);
     }
     
@@ -129,8 +129,8 @@ public class InvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorre
                 throw new Exception("test for exception throwing.");
             }
             Ii result = new Ii();
-            result.setRoot(ORG_CONTACT_ROOT_VALUE);
-            result.setIdentifierName(ORG_CONTACT_IDENT_VALUE);
+            result.setRoot(IDENTIFIED_PERSON_ROOT_VALUE);
+            result.setIdentifierName(IDENTIFIED_PERSON_IDENT_VALUE);
             result.setExtension(EXT_VALUE);
             return result;
         } catch (Exception e) {
@@ -142,12 +142,13 @@ public class InvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorre
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public DTO getCorrelation(Ii id) throws NullifiedRoleException {
         try {
             if (id == null) {
                 throw new Exception("test for exception throwing.");
             }
-            DTO result = (DTO) new OrganizationalContactTransformerTest().makeDtoSimple();
+            DTO result = (DTO) new IdentifiedPersonTransformerTest().makeDtoSimple();
             return result;
         }  catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
@@ -158,14 +159,15 @@ public class InvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorre
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public List<DTO> getCorrelations(Ii[] ids) throws NullifiedRoleException {
         try {
             if (ids == null) {
                 throw new Exception("test for exception throwing.");
             }
             List<DTO> results = new ArrayList<DTO>();
-            results.add((DTO) new OrganizationalContactTransformerTest().makeDtoSimple());
-            results.add((DTO) new OrganizationalContactTransformerTest().makeDtoSimple());
+            results.add((DTO) new IdentifiedPersonTransformerTest().makeDtoSimple());
+            results.add((DTO) new IdentifiedPersonTransformerTest().makeDtoSimple());
             return results;
         
         } catch (Exception e) {
@@ -177,14 +179,15 @@ public class InvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorre
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public List<DTO> getCorrelationsByPlayerIds(Ii[] pids) throws NullifiedRoleException {
         try {
             if (pids == null) {
                 throw new Exception("test for exception throwing.");
             }
             List<DTO> results = new ArrayList<DTO>();
-            results.add((DTO) new OrganizationalContactTransformerTest().makeDtoSimple());
-            results.add((DTO) new OrganizationalContactTransformerTest().makeDtoSimple());
+            results.add((DTO) new IdentifiedPersonTransformerTest().makeDtoSimple());
+            results.add((DTO) new IdentifiedPersonTransformerTest().makeDtoSimple());
             return results;
         
         } catch (Exception e) {
@@ -196,14 +199,15 @@ public class InvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorre
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public List<DTO> search(DTO dto) {
         try {
             if (dto == null) {
                 throw new Exception("test for exception throwing.");
             }
             List<DTO> results = new ArrayList<DTO>();
-            results.add((DTO) new OrganizationalContactTransformerTest().makeDtoSimple());
-            results.add((DTO) new OrganizationalContactTransformerTest().makeDtoSimple());
+            results.add((DTO) new IdentifiedPersonTransformerTest().makeDtoSimple());
+            results.add((DTO) new IdentifiedPersonTransformerTest().makeDtoSimple());
             return results;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
@@ -254,14 +258,15 @@ public class InvokeCorrelationServiceStub<DTO extends PoDto> extends InvokeCorre
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("unchecked")
     public List<DTO> search(DTO dto, LimitOffset page) throws TooManyResultsException {
         try {
             if (dto == null) {
                 throw new Exception("test for exception throwing.");
             }
             List<DTO> results = new ArrayList<DTO>();
-            results.add((DTO) new OrganizationalContactTransformerTest().makeDtoSimple());
-            results.add((DTO) new OrganizationalContactTransformerTest().makeDtoSimple());
+            results.add((DTO) new IdentifiedPersonTransformerTest().makeDtoSimple());
+            results.add((DTO) new IdentifiedPersonTransformerTest().makeDtoSimple());
             return results;
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);

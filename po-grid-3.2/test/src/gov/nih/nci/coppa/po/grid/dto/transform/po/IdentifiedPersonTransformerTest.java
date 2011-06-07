@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.po.grid.dto.transform.po;
 
 import static org.junit.Assert.assertEquals;
 import gov.nih.nci.coppa.po.IdentifiedPerson;
+import gov.nih.nci.coppa.po.grid.remote.Utils;
 import gov.nih.nci.iso21090.Constants;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
@@ -39,11 +40,6 @@ public class IdentifiedPersonTransformerTest extends
     public static final String PLAYER_NAME = "player name";
 
     /**
-     * Assigned ID root.
-     */
-    public static final String ASSIGNED_ID_ROOT = "1.2.3";
-
-    /**
      * Assigned ID name.
      */
     public static final String ASSIGNED_ID_NAME = "Assigned Id name";
@@ -60,7 +56,7 @@ public class IdentifiedPersonTransformerTest extends
         player.setExtension("346");
 
         Ii assignedId = new Ii();
-        assignedId.setRoot(ASSIGNED_ID_ROOT);
+        assignedId.setRoot(Utils.CTEP_PERSON_ROOT);
         assignedId.setIdentifierName(ASSIGNED_ID_NAME);
         assignedId.setExtension("456");
 
@@ -86,7 +82,7 @@ public class IdentifiedPersonTransformerTest extends
         player.setExtension("346");
 
         II assignedId = new II();
-        assignedId.setRoot(ASSIGNED_ID_ROOT);
+        assignedId.setRoot(Utils.CTEP_PERSON_ROOT);
         assignedId.setIdentifierName(ASSIGNED_ID_NAME);
         assignedId.setExtension("456");
 

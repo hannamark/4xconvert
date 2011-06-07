@@ -2,6 +2,7 @@ package gov.nih.nci.coppa.po.grid.services;
 
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Id;
+import gov.nih.nci.coppa.po.IdentifiedPerson;
 import gov.nih.nci.coppa.po.StringMap;
 import gov.nih.nci.coppa.po.grid.dto.transform.TransformerRegistry;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.StringMapTransformer;
@@ -19,6 +20,7 @@ import gov.nih.nci.iso21090.grid.dto.transform.iso.IdArrayTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformer;
 import gov.nih.nci.services.CorrelationService;
 import gov.nih.nci.services.PoDto;
+import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 
 import java.lang.reflect.Array;
 import java.rmi.RemoteException;
@@ -81,9 +83,11 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
     public Id create(XML object) throws RemoteException {
         try {
             DTO dto = (DTO) getTransformer().toDto(object);
+            if (dto instanceof IdentifiedPersonDTO) {
+                Utils.handleLegacyCTEPPersonRoot(((IdentifiedPersonDTO) dto).getAssignedId());
+            }
             Ii ii = getService().createCorrelation(dto);
-            Id id = TransformUtils.convertToOldId(IdTransformer.INSTANCE.toXml(ii));
-            return id;
+            return TransformUtils.convertToOldId(IdTransformer.INSTANCE.toXml(ii));
         } catch (Exception e) {
             throw FaultUtil.reThrowRemote(e);
         }
@@ -97,8 +101,7 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
         try {
             Ii iiIso = IITransformer.INSTANCE.toDto(id);
             DTO dto = getService().getCorrelation(iiIso);
-            XML result = (XML) getTransformer().toXml(dto);
-            return result;
+            return (XML) getTransformer().toXml(dto);
         } catch (Exception e) {
             throw FaultUtil.reThrowRemote(e);
         }
@@ -117,8 +120,7 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
                 XML xml = (XML) getTransformer().toXml(dto);
                 results.add(xml);
             }
-            XML[] array = results.toArray((XML[]) Array.newInstance(getXMLType(), results.size()));
-            return array;
+            return results.toArray((XML[]) Array.newInstance(getXMLType(), results.size()));
         } catch (Exception e) {
             throw FaultUtil.reThrowRemote(e);
         }
@@ -162,6 +164,9 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
     public void update(XML object) throws RemoteException {
         try {
             DTO dto = (DTO) getTransformer().toDto(object);
+            if (dto instanceof IdentifiedPersonDTO) {
+                Utils.handleLegacyCTEPPersonRoot(((IdentifiedPersonDTO) dto).getAssignedId());
+            }
             getService().updateCorrelation(dto);
         } catch (Exception e) {
             throw FaultUtil.reThrowRemote(e);
@@ -189,6 +194,9 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
     public StringMap validate(XML object) throws RemoteException {
         try {
             DTO dto = (DTO) getTransformer().toDto(object);
+            if (dto instanceof IdentifiedPersonDTO) {
+                Utils.handleLegacyCTEPPersonRoot(((IdentifiedPersonDTO) dto).getAssignedId());
+            }
             Map<String, String[]> map = getService().validate(dto);
             StringMap stringMap = StringMapTransformer.INSTANCE.toXml(map);
             return stringMap;
@@ -205,6 +213,10 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
         try {
             gov.nih.nci.coppa.services.LimitOffset limitOffsetDTO = LimitOffsetTransformer.INSTANCE.toDto(pageParams);
             DTO dto = (DTO) getTransformer().toDto(criteria);
+            boolean isLegacyCTEPPersonRoot = false;
+            if (dto instanceof IdentifiedPersonDTO) {
+                isLegacyCTEPPersonRoot = Utils.handleLegacyCTEPPersonRoot(((IdentifiedPersonDTO) dto).getAssignedId());
+            }
             List<DTO> dtoResults = getService().search(dto, limitOffsetDTO);
             if (dtoResults == null) {
                 return null;
@@ -213,6 +225,9 @@ public class GenericCorrelationGridServiceImpl<DTO extends PoDto, XML extends Ob
             int i = 0;
             for (DTO dtoResult : dtoResults) {
                 XML xmlResult = (XML) getTransformer().toXml(dtoResult);
+                if (isLegacyCTEPPersonRoot && xmlResult instanceof IdentifiedPerson) {
+                    Utils.handleLegacyCTEPPersonRoot(((IdentifiedPerson) xmlResult).getAssignedId());
+                }
                 xmlResults[i++] = xmlResult;
             }
             return xmlResults;

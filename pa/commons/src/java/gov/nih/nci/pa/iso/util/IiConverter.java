@@ -299,11 +299,11 @@ public class IiConverter {
     public static final String QUALIFIED_ENTITY_ROOT = "UID.for.nci.role.qualifiedentity";
 
     /** The CTEP Person ii root value. */
-    public static final String CTEP_PERSON_IDENTIFIER_ROOT =
-                                    "Cancer Therapy Evaluation Program Person Other Identifier";
+    public static final String CTEP_PERSON_IDENTIFIER_ROOT = "2.16.840.1.113883.3.26.6.1";
+
     /** The CTEP Organization ii root value. */
-    public static final String CTEP_ORG_IDENTIFIER_ROOT =
-                                    "2.16.840.1.113883.3.26.6.2";
+    public static final String CTEP_ORG_IDENTIFIER_ROOT = "2.16.840.1.113883.3.26.6.2";
+    
     /** The Constant STUDY_CONTACT_IDENTIFIER_NAME. */
     public static final String STUDY_CONTACT_IDENTIFIER_NAME = "Study Contact identifier";
 

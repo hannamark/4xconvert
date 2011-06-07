@@ -247,25 +247,23 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     }
 
     private void printOrgDataToDebugLog(OrganizationDTO dto) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("*** Importing ctep org ***");
-            LOG.debug("org.ii.root: " + dto.getIdentifier().getRoot());
-            LOG.debug("org.ii.extension: " + dto.getIdentifier().getExtension());
-            LOG.debug("org.status: " + dto.getStatusCode().getCode());
-            for (Enxp xp : dto.getName().getPart()) {
-                LOG.debug("org.name.value: " + xp.getValue());
-            }
-            for (Adxp adxp : dto.getPostalAddress().getPart()) {
-                LOG.debug("org.postalAddress.part.type: " + adxp.getType());
-                LOG.debug("org.postalAddress.part.value: " + adxp.getValue());
-                LOG.debug("org.postalAddress.part.code: " + adxp.getCode());
-            }
-            if (dto.getTelecomAddress() == null) {
-                LOG.debug("org.telecomAddress: null");
-            } else {
-                for (Tel tel : dto.getTelecomAddress().getItem()) {
-                    LOG.debug("org.telecomAddress.item.value: " + tel.getValue());
-                }
+        LOG.info("*** Importing ctep org ***");
+        LOG.info("org.ii.root: " + dto.getIdentifier().getRoot());
+        LOG.info("org.ii.extension: " + dto.getIdentifier().getExtension());
+        LOG.info("org.status: " + dto.getStatusCode().getCode());
+        for (Enxp xp : dto.getName().getPart()) {
+            LOG.info("org.name.value: " + xp.getValue());
+        }
+        for (Adxp adxp : dto.getPostalAddress().getPart()) {
+            LOG.info("org.postalAddress.part.type: " + adxp.getType());
+            LOG.info("org.postalAddress.part.value: " + adxp.getValue());
+            LOG.info("org.postalAddress.part.code: " + adxp.getCode());
+        }
+        if (dto.getTelecomAddress() == null) {
+            LOG.info("org.telecomAddress: null");
+        } else {
+            for (Tel tel : dto.getTelecomAddress().getItem()) {
+                LOG.info("org.telecomAddress.item.value: " + tel.getValue());
             }
         }
     }
@@ -613,9 +611,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     }
 
     private void printHcf(HealthCareFacilityDTO hcfDto) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(CtepUtils.toString(hcfDto));
-        }
+        LOG.info(CtepUtils.toString(hcfDto));
     }
 
     private ResearchOrganization getCtepResearchOrganization(Ii ctepOrgId) {
@@ -635,9 +631,7 @@ public class CtepOrganizationImporter extends CtepEntityImporter {
     }
 
     private void print(ResearchOrganizationDTO roDto) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(CtepUtils.toString(roDto));
-        }
+        LOG.info(CtepUtils.toString(roDto));
     }
 
     /**

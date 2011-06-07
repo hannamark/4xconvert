@@ -1,0 +1,1 @@
+update identifiedperson set assigned_identifier_root = '2.16.840.1.113883.3.26.6.1' where assigned_identifier_root = 'Cancer Therapy Evaluation Program Person Other Identifier';

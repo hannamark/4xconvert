@@ -83,6 +83,9 @@
 package gov.nih.nci.coppa.po.grid.remote;
 
 import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.iso21090.Ii;
+
+import org.iso._21090.II;
 
 /**
  * Utility class or all server-side services.
@@ -100,4 +103,37 @@ public final class Utils {
      * Used to represent the default paging limit and offset for all backwards-compatible GRID search methods.
      */
     public static final LimitOffset DEFAULT_PAGING = new LimitOffset(501, 0);
+    
+    /**
+     * The root value of the ctep ii that reference the friendly user known identifier of the person in ctep's system.
+     */
+    public static final String CTEP_PERSON_ROOT = "2.16.840.1.113883.3.26.6.1";
+    
+    /**
+     * Legacy root value of the ctep person ii.
+     */
+    public static final String LEGACY_CTEP_PERSON_ROOT = "Cancer Therapy Evaluation Program Person Other Identifier";
+    
+    /**
+     * Convert's legacy CTEP Person Root to new CTEP Person Root (if applicable).
+     * @param identifier identifier
+     * @return returns true if conversion performed.
+     */
+    public static boolean handleLegacyCTEPPersonRoot(Ii identifier) {
+        if (identifier != null && LEGACY_CTEP_PERSON_ROOT.equals(identifier.getRoot())) {
+            identifier.setRoot(CTEP_PERSON_ROOT);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Out-bound conversion of legacy new CTEP Person Root to CTEP Person Root (if previously converted).
+     * @param identifier identifier
+     */
+    public static void handleLegacyCTEPPersonRoot(II identifier) {
+        if (identifier != null && CTEP_PERSON_ROOT.equals(identifier.getRoot())) {
+            identifier.setRoot(LEGACY_CTEP_PERSON_ROOT);
+        }
+    }
 }
