@@ -8,7 +8,10 @@
     var $j = jQuery.noConflict();
 </script>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/prototype.js"/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value="/scripts/helpPrint.js"/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value="/scripts/help.js"/>"></script>
+<script type="text/javascript" language="javascript">
+    Help.url = '<c:out value="${initParam['helpUrl']}"/>';
+</script>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/scriptaculous/scriptaculous.js"/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/scriptaculous/effects.js"/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/scriptaculous/builder.js"/>"></script>
@@ -22,6 +25,6 @@
     var contextPath = "<%=request.getContextPath()%>";
 </script>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/submodal/common.js"/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value="/scripts/submodal/submodal.js"/>"></script>        
+<script type="text/javascript" language="javascript" src="<c:url value="/scripts/submodal/submodal.js"/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/po.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/ajaxHelper.js'/>"></script>

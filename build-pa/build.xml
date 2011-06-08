@@ -1314,7 +1314,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Wrapper target to call download ivy projects for static analysis tools.  The ivy:retrieves are done separately to ensure that there is on library conflicts among the static analysis tools.  The retrieved files are written to separate directories because the conf names are defined uniquely in projectroot/software/static-analysis:ivy-bda-testing.xml. -->
 
     <!-- Wrapper test target, call appropriate test for sub-projects -->
-    <target name="test:all" description="Runs test target for all sub-projects"
+    <target name="test:all" description="Runs dynamic test target for all sub-projects"
         depends="
         test:pa-commons,
         test:pa-ejb,
