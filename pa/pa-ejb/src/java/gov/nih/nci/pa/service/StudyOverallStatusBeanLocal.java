@@ -265,7 +265,7 @@ public class StudyOverallStatusBeanLocal extends
             throw new PAException("Study status date must be set.");
         }
         if (oldCode != null && !oldCode.canTransitionTo(newCode)) {
-            throw new PAException("Illegal study status transition from " + oldCode.getCode() + " to "
+            throw new PAException("Invalid study status transition from " + oldCode.getCode() + " to "
                     + newCode.getCode() + ".");
         }
         if (oldDate != null && newDate.before(oldDate)) {
@@ -404,7 +404,7 @@ public class StudyOverallStatusBeanLocal extends
         String newCompletionDateType = studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode();
 
         if (oldStatusCode != null && !oldStatusCode.canTransitionTo(newCode)) {
-            errMsg.append("Illegal study status transition from '" + oldStatusCode.getCode()
+            errMsg.append("Invalid study status transition from '" + oldStatusCode.getCode()
                     + "' to '" + newCode.getCode() + "'.  ");
         }
         if (!PAUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode())

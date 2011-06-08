@@ -516,7 +516,7 @@ public class StudyMilestoneBeanLocal
         if (dwStatus.canTransitionTo(newCode)) {
             canTransition = true;
         } else {
-            throw new PAException("Illegal DocumentWorkflow status transition from '" + dwStatus.getCode()
+            throw new PAException("Invalid DocumentWorkflow status transition from '" + dwStatus.getCode()
                     + "' to '" + newCode.getCode() + "'.  ");
         }
         return canTransition;

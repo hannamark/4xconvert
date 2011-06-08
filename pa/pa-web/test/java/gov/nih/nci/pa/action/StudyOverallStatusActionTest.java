@@ -161,7 +161,7 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
     public void testTransitionValidationsOccurFirst() throws Exception {
         testAction.execute();
         
-        // illegal transition plus date error
+        // Invalid transition plus date error
         testAction.setCurrentTrialStatus(StudyStatusCode.APPROVED.getCode());
         testAction.setStatusDate("3/1/2008");
         testAction.setCompletionDate("3/1/2008");
@@ -169,6 +169,6 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         testAction.update();
         assertTrue(testAction.hasActionErrors());
         String errs = testAction.getActionErrors().toString();
-        assertTrue(errs.contains("Illegal study status transition"));
+        assertTrue(errs.contains("Invalid study status transition"));
      }
 }

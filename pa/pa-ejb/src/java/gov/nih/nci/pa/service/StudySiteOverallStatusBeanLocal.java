@@ -158,7 +158,7 @@ public class StudySiteOverallStatusBeanLocal extends AbstractBaseSearchBean<Stud
         }
         if ((oldCode != null) && isTrialStatusOrDateChanged(dto, dto.getStudySiteIdentifier())
                 && !oldCode.canTransitionTo(newCode)) {
-            sb.append("Illegal site status transition from " + oldCode.getCode() + " to " + newCode.getCode() + ".  ");
+            sb.append("Invalid site status transition from " + oldCode.getCode() + " to " + newCode.getCode() + ".  ");
         }
         if ((oldDate != null) && newDate.before(oldDate)) {
             sb.append("New current site status date should be bigger/same as old date.  ");

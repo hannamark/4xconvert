@@ -205,7 +205,7 @@ public class MockStudyOverallStatusService   extends MockAbstractBaseIsoService 
     public void validate(StudyOverallStatusDTO statusDto,
             StudyProtocolDTO studyProtocolDTO) throws PAException {
         if(StudyStatusCode.APPROVED.getCode().equals(statusDto.getStatusCode().getCode())) {
-            throw new PAException("Illegal study status transition");
+            throw new PAException("Invalid study status transition");
         }
     }
 
