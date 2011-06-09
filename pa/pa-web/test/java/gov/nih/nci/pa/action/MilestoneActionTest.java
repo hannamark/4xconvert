@@ -4,9 +4,9 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.pa.dto.MilestoneWebDTO;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -74,6 +74,9 @@ public class MilestoneActionTest extends AbstractPaActionTest {
         action.setSpIi(IiConverter.convertToIi("9"));
         String result = action.add();
         assertEquals("Wrong result from add action", "edit", result);
+        assertNotNull(action.getAllowedMilestones());
+        assertFalse(action.getAllowedMilestones().isEmpty());
+        assertNotNull(action.getMilestone());
     }
 
     @Test
@@ -87,7 +90,7 @@ public class MilestoneActionTest extends AbstractPaActionTest {
         String result = action.add();
         assertEquals("Wrong result from add action", "list", result);
     }
-    
+
     private void setUpAmendmentSearch() {
         action.setStudyProtocolSvc(new MockStudyProtocolService() {
             @Override

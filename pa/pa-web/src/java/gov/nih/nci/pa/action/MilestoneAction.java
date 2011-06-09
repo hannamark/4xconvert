@@ -159,7 +159,7 @@ public final class MilestoneAction extends AbstractListEditAction {
             milestoneList.add(new MilestoneWebDTO(sm));
         }
     }
-    
+
     private void loadAmendmentMap() throws PAException {
         Ii studyProtocolIi = getSpIi();
         StudyProtocolDTO spDTO = getStudyProtocolSvc().getStudyProtocol(studyProtocolIi);
@@ -203,14 +203,10 @@ public final class MilestoneAction extends AbstractListEditAction {
         try {
             getStudyMilestoneSvc().create(dto);
             // update the trial summary session bean
-            StudyProtocolQueryDTO  studyProtocolQueryDTO = getProtocolQuerySvc().
-                    getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(getSpIi()));
+            StudyProtocolQueryDTO studyProtocolQueryDTO =
+                getProtocolQuerySvc().getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(getSpIi()));
             ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
-            if (MilestoneCode.SUBMISSION_ACCEPTED.getCode().equalsIgnoreCase(
-                    milestone.getMilestone())) {
-                /*PAServiceUtils paServiceUtil = new PAServiceUtils();
-                paServiceUtil.createMilestone(spIi, MilestoneCode.READY_FOR_PDQ_ABSTRACTION, null);*/
-
+            if (MilestoneCode.SUBMISSION_ACCEPTED.getCode().equalsIgnoreCase(milestone.getMilestone())) {
                 StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(getSpIi());
                 Integer sn = IntConverter.convertToInteger(spDTO.getSubmissionNumber());
                 if (sn > 1) {
@@ -225,7 +221,7 @@ public final class MilestoneAction extends AbstractListEditAction {
             }
         } catch (PAException e) {
             addActionError(e.getMessage());
-            return AR_EDIT;
+            return super.create();
         }
 
         return super.add();
@@ -286,14 +282,14 @@ public final class MilestoneAction extends AbstractListEditAction {
     public void setSubmissionNumber(Integer submissionNumber) {
         this.submissionNumber = submissionNumber;
     }
-    
+
     /**
      * @return the addAllowed
      */
     public boolean isAddAllowed() {
         return addAllowed;
     }
-    
+
     /**
      * @param addAllowed the addAllowed to set
      */
