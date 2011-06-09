@@ -62,6 +62,12 @@
             <include name="*.jar"/>
         </fileset>
     </path>
+    
+    <path id="pa-ejb.package.test.classpath">
+            <fileset dir="${pa.dir}/pa-ejb/target">
+                <include name="*-test.jar"/>
+            </fileset>
+        </path>
 
     <property name="compile.jar.dir" location="${lib.dir}/pa-web/compile" />
     <path id="compile.classpath">
@@ -261,6 +267,7 @@
                 <path refid="compile.classpath"/>
                 <path refid="ejb.package.classpath"/>
                 <path refid="common.package.classpath"/>
+                <path refid="pa-ejb.package.test.classpath"/>
             </classpath>
         </javac>
         <copy todir="${pa-web.build.testOutputDir}">
@@ -496,6 +503,7 @@
             <classpath refid="compile.classpath"/>
             <classpath refid="ejb.package.classpath"/>
             <classpath refid="common.package.classpath"/>
+            <classpath refid="pa-ejb.package.test.classpath"/>
             <test if="test" name="${test}" haltonerror="false" haltonfailure="false"></test>
             <batchtest todir="${pa-web.test.reports}" fork="yes" unless="test">
                 <fileset dir="${pa-web.build.testDir.0}">

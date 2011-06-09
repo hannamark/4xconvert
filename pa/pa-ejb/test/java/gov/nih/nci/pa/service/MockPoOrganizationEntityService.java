@@ -1,13 +1,16 @@
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.EnOn;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
-import gov.nih.nci.coppa.services.LimitOffset;
-import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PAConstants;
@@ -18,47 +21,53 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 /**
  * @author Vrushali
- * 
+ *
  */
-public class MockPoOrganizationEntityService implements OrganizationEntityServiceRemote {
+@SuppressWarnings("unchecked")
+public class MockPoOrganizationEntityService implements
+        OrganizationEntityServiceRemote {
+    final private static Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
+    private final static Map<String, String[]> familyOrgMap;
 
-    final private Map<Ii, Ii> nullifiedEntities = new HashMap<Ii, Ii>();
-
-    private final List<OrganizationDTO> orgDtoList;
-    private final Map<String, String[]> familyOrgMap;
-
-
-    public MockPoOrganizationEntityService() {
+    static List<OrganizationDTO> orgDtoList;
+    static {
         orgDtoList = new ArrayList<OrganizationDTO>();
-  
-        orgDtoList.add(basicOrgDto("abc"));
+        OrganizationDTO dto = basicOrgDto("abc");
+        List<String> phones = new ArrayList<String>();
+        phones.add("7037071111");
+        phones.add("7037071112");
+        phones.add("7037071113");
+        DSet<Tel> master = new DSet<Tel>();
+        dto.setTelecomAddress(DSetConverter.convertListToDSet(phones, "PHONE",master));
+        orgDtoList.add(dto);
+        
         orgDtoList.add(basicOrgDto("abc1"));
         orgDtoList.add(basicOrgDto("1"));
         orgDtoList.add(basicOrgDto("584"));
-
         orgDtoList.add(basicOrgDto("22"));
         familyOrgMap = new HashMap<String, String[]>();
         familyOrgMap.put("family1", new String[] {"22", "1"});
         familyOrgMap.put("family2", new String[] {"abc"});
-        
         OrganizationDTO orgDto = basicOrgDto("2");
         orgDto.setStatusCode(CdConverter.convertStringToCd("NULLIFIED"));  
         orgDto.setName(EnOnConverter.convertToEnOn("IsNullified"));
         orgDtoList.add(orgDto);
         
         nullifiedEntities.put(IiConverter.convertToPoOrganizationIi("2"), IiConverter.convertToPoOrganizationIi("22"));
+        
     }
-
     /**
      * {@inheritDoc}
      */
-    public Ii createOrganization(OrganizationDTO arg0) throws EntityValidationException {
-        return IiConverter.convertToPoOrganizationIi("1");
+    public Ii createOrganization(OrganizationDTO arg0)
+            throws EntityValidationException {
+        return IiConverter.convertToIi("1");
     }
 
     /**
@@ -84,22 +93,32 @@ public class MockPoOrganizationEntityService implements OrganizationEntityServic
      * {@inheritDoc}
      */
     @Deprecated
-    public List<OrganizationDTO> search(OrganizationDTO arg0) {
+    public List<OrganizationDTO> search(OrganizationDTO orgDto) {
         List<OrganizationDTO> matchingDtosList = new ArrayList<OrganizationDTO>();
-        String inputName = EnOnConverter.convertEnOnToString(arg0.getName());
-        for (OrganizationDTO dto : orgDtoList) {
-            String dtoName = EnOnConverter.convertEnOnToString(dto.getName());
-            if (dtoName.equals(inputName)) {
-                matchingDtosList.add(dto);
+        if (orgDto.getIdentifier() != null) {
+            for (OrganizationDTO dto:orgDtoList){
+                if (dto.getIdentifier().getExtension().equals(orgDto.getIdentifier().getExtension())){
+                    matchingDtosList.add(dto);
+                }
             }
         }
-        return matchingDtosList;
+        if (orgDto.getName()!= null) {
+            String inputName = EnOnConverter.convertEnOnToString(orgDto.getName());
+            for (OrganizationDTO dto:orgDtoList){
+                String dtoName = EnOnConverter.convertEnOnToString(dto.getName());
+                if (dtoName .equals(inputName)){
+                    matchingDtosList.add(dto);
+                }
+            }
+        }
+        return matchingDtosList ;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void updateOrganization(OrganizationDTO arg0) throws EntityValidationException {
+    public void updateOrganization(OrganizationDTO arg0)
+            throws EntityValidationException {
         // TODO Auto-generated method stub
 
     }
@@ -107,7 +126,8 @@ public class MockPoOrganizationEntityService implements OrganizationEntityServic
     /**
      * {@inheritDoc}
      */
-    public void updateOrganizationStatus(Ii arg0, Cd arg1) throws EntityValidationException {
+    public void updateOrganizationStatus(Ii arg0, Cd arg1)
+            throws EntityValidationException {
         // TODO Auto-generated method stub
 
     }
@@ -120,37 +140,46 @@ public class MockPoOrganizationEntityService implements OrganizationEntityServic
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public List<OrganizationDTO> search(OrganizationDTO arg0, LimitOffset arg1) throws TooManyResultsException {
-        List<OrganizationDTO> matchingDtosList = new ArrayList<OrganizationDTO>();
-        String inputName = EnOnConverter.convertEnOnToString(arg0.getName());
-        for (OrganizationDTO dto : orgDtoList) {
-            String dtoName = EnOnConverter.convertEnOnToString(dto.getName());
-            if (dtoName.equals(inputName)) {
-                matchingDtosList.add(dto);
+    public List<OrganizationDTO> search(OrganizationDTO orgDto, LimitOffset lmOff)
+            throws TooManyResultsException {
+    	List<OrganizationDTO> matchingDtosList = new ArrayList<OrganizationDTO>();
+        if (orgDto.getIdentifier() != null) {
+            for (OrganizationDTO dto:orgDtoList){
+                if (dto.getIdentifier().getExtension().equals(orgDto.getIdentifier().getExtension())){
+                    matchingDtosList.add(dto);
+                }
             }
         }
-
-        int fromIndex = (arg1.getOffset() < 0 ? 0 : arg1.getOffset());
-        int toIndex = Math.min(fromIndex + arg1.getLimit(), matchingDtosList.size());
-
-        try {
-            matchingDtosList = matchingDtosList.subList(fromIndex, toIndex);
-        } catch (IndexOutOfBoundsException e) { // fromIndex > toIndex
-            matchingDtosList.clear(); // return empty list
+        if (orgDto.getName()!= null ) {
+            String inputName = EnOnConverter.convertEnOnToString(orgDto.getName());
+            for (OrganizationDTO dto:orgDtoList){
+                String dtoName = EnOnConverter.convertEnOnToString(dto.getName());
+                if (dtoName .equals(inputName)){
+                    matchingDtosList.add(dto);
+                }
+            }
         }
-
+        
+        int fromIndex = (lmOff.getOffset() < 0 ? 0 : lmOff.getOffset());
+        int toIndex = Math.min(fromIndex + lmOff.getLimit(), matchingDtosList.size());
+        
+        try {
+        	matchingDtosList = matchingDtosList.subList(fromIndex, toIndex);
+        } catch (IndexOutOfBoundsException e) { // fromIndex > toIndex
+        	matchingDtosList.clear();  // return empty list
+        }
+        
         if (matchingDtosList.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new TooManyResultsException(PAConstants.MAX_SEARCH_RESULTS);
         }
-
-        return matchingDtosList;
+        
+        return matchingDtosList ;
     }
 
-    private OrganizationDTO basicOrgDto(String id) {
+    private static OrganizationDTO basicOrgDto(String id) {
         OrganizationDTO orgDto = new OrganizationDTO();
+        orgDto.setFamilyOrganizationRelationships(new DSet<Ii>());
+        orgDto.getFamilyOrganizationRelationships().setItem(new HashSet<Ii>());
         orgDto.setIdentifier(IiConverter.convertToPoOrganizationIi(id));
         orgDto.setName(EnOnConverter.convertToEnOn("OrgName"));
         orgDto.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
@@ -164,18 +193,7 @@ public class MockPoOrganizationEntityService implements OrganizationEntityServic
      */
     public List<OrganizationDTO> search(OrganizationDTO arg0, EnOn arg1, LimitOffset arg2)
             throws TooManyResultsException {
-        List<OrganizationDTO> matchingDtosList = new ArrayList<OrganizationDTO>();
-        String[] orgIds = familyOrgMap.get(EnOnConverter.convertEnOnToString(arg1));
-        if( orgIds != null ) {
-            for (String orgId : orgIds) {
-                for (OrganizationDTO dto : orgDtoList) {
-                    if (dto.getIdentifier().getExtension().equals(orgId)) {
-                        matchingDtosList.add(dto);
-                    }
-                }
-            }
-        }
-        return matchingDtosList;
+        return search(arg0, arg2);
     }
-    
+
 }

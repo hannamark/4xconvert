@@ -6,6 +6,7 @@ package gov.nih.nci.registry.service;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.EnOn;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
@@ -18,6 +19,7 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +33,8 @@ public class MockOrganizationEntityService implements
     static {
         orgDtoList = new ArrayList<OrganizationDTO>();
         OrganizationDTO dto = new OrganizationDTO();
+        dto.setFamilyOrganizationRelationships(new DSet<Ii>());
+        dto.getFamilyOrganizationRelationships().setItem(new HashSet<Ii>());
         dto.setIdentifier(IiConverter.convertToIi("1"));
         dto.setName(EnOnConverter.convertToEnOn("OrgName"));
         dto.setStatusCode(CdConverter.convertStringToCd("code"));

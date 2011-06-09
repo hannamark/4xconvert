@@ -85,6 +85,7 @@ package gov.nih.nci.pa.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Tel;
@@ -116,6 +117,7 @@ public class PADomainUtilsTest {
     @Before
     public void setUp() throws Exception {
         PaRegistry.getInstance().setServiceLocator(new MockPaRegistryServiceLocator());
+        PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
     }
     @Test
     public void testgetCountryNameUsingAlpha3Code() throws Exception{
@@ -201,5 +203,30 @@ public class PADomainUtilsTest {
         poPerson.setPostalAddress(address);
         return poPerson;
     }
+    
+    @Test
+    public void testOrgSearchByAddressNameCtepId() throws TooManyResultsException {
+        PaOrganizationDTO orgSearchCriteria = new PaOrganizationDTO();
+        orgSearchCriteria.setName("unknown org name");
+        List<OrganizationDTO> orgList = PADomainUtils.orgSearchByNameAddressCtepId(orgSearchCriteria);
+        assertEquals(0, orgList.size());
+        orgSearchCriteria.setName("OrgName");
+        orgList = PADomainUtils.orgSearchByNameAddressCtepId(orgSearchCriteria);
+        assertEquals(5, orgList.size());
+        orgSearchCriteria.setName(null);
+        orgSearchCriteria.setCtepId("CTEP ID");
+        orgList = PADomainUtils.orgSearchByNameAddressCtepId(orgSearchCriteria);
+        assertEquals(1, orgList.size());
+        orgSearchCriteria.setName("OrgName");
+        orgSearchCriteria.setCtepId("CTEP ID");
+        orgList = PADomainUtils.orgSearchByNameAddressCtepId(orgSearchCriteria);
+        assertEquals(1, orgList.size());
+        orgSearchCriteria.setName("unknown org name");
+        orgSearchCriteria.setCtepId("CTEP ID");
+        orgList = PADomainUtils.orgSearchByNameAddressCtepId(orgSearchCriteria);
+        assertEquals(1, orgList.size());
+    }
+    
+    
 
 }

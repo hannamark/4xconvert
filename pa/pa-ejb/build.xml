@@ -33,7 +33,7 @@
     <property name="pa-ejb.jar" value="${pa-ejb.build.finalName}.jar"/>
     <property name="pa-ejb.build.coberturaOutputDir" value="${pa-ejb.build.dir}/generated-classes"/>
     <property name="pa-ejb.build.javadoc" value="${pa-ejb.build.dir}/javadoc"/>
-
+    <property name="pa-ejb-test.jar" value="${pa-ejb.build.finalName}-test.jar"/>
     <property name="lib.dir" value="${software.dir}/target/pa/lib"/>
     <property name="common.dir" value="${software.dir}/build-pa/common"/>
     <property name="ivy.file" value="ivy-2.0.0.jar" />
@@ -413,6 +413,14 @@
              basedir="${pa-ejb.build.outputDir}"/>
     </target>
 
+    <target name="jar-test" depends="compile-tests">
+                <jar jarfile="${pa-ejb.build.dir}/${pa-ejb-test.jar}"
+                     compress="true"
+                     index="false"
+                     basedir="${pa-ejb.build.testOutputDir}"
+                     />
+    </target>
+    
     <target name="jar-client">
         <jar jarfile="${pa-ejb.build.dir}/pa-ejb-client.jar"
              compress="true"
@@ -441,7 +449,7 @@
     <target name="package-notest" depends="ivy-get,compile,jar"
             description="Package the application.  Do not run tests."/>
 
-    <target name="package" depends="ivy-get,compile,test-all,jar,jar-client"
+    <target name="package" depends="ivy-get,compile,test-all,jar,jar-test,jar-client"
             description="Package the application"/>
 
     <target name="package-client" depends="package-notest-noivy,jar-client"

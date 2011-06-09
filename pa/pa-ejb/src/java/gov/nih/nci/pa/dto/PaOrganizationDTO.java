@@ -87,6 +87,8 @@ import java.util.Map;
  * @author Hugh Reinhart, Harsha
  * @since 09/24/2008
  */
+//need all these fields
+@SuppressWarnings("PMD.TooManyFields")
 public class PaOrganizationDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private String id;
@@ -106,6 +108,7 @@ public class PaOrganizationDTO implements Serializable {
     private String primarycontact;
     private String status;
     private String programCode;
+    private String ctepId;
     private Map<Long, String> families;
 
     /**
@@ -358,5 +361,19 @@ public class PaOrganizationDTO implements Serializable {
      */
     public void setFamilies(Map<Long, String> families) {
         this.families = families;
+    }
+
+    /**
+     * @param ctepId the ctepId to set
+     */
+    public void setCtepId(String ctepId) {
+        this.ctepId = ctepId;
+    }
+
+    /**
+     * @return the ctepId
+     */
+    public String getCtepId() {
+        return ctepId;
     }
 }

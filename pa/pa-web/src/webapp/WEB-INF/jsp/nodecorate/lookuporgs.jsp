@@ -26,7 +26,8 @@
                     countryName: $('orgCountrySearch').value,
                     cityName: $('orgCitySearch').value,
                     zipCode: $('orgZipSearch').value,
-                    stateName: $('orgStateSearch').value
+                    stateName: $('orgStateSearch').value,
+                    ctepId: $('orgCtepIdSearch').value
                 };
                 var div = $('getOrgs');          
                 div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';
@@ -42,6 +43,7 @@
                 $("orgStateSearch").value = '';
                 $("orgCountrySearch").value = 'USA';
                 $("orgZipSearch").value = '';
+                $('orgCtepIdSearch').value = '';
             }
             
         </script>
@@ -96,6 +98,14 @@
                     </td>
                      <td>
                          <s:textfield id="orgZipSearch" name="orgSearchCriteria.zip" maxlength="75" size="20"/>
+                    </td>    
+                </tr>
+                <tr>
+                     <td scope="row" class="label">
+                        <label for="state"><fmt:message key="popUpOrg.ctepId"/></label>
+                    </td>
+                    <td colspan="3">
+                         <s:textfield id="orgCtepIdSearch" name="orgSearchCriteria.ctepId" maxlength="75" size="20"/>
                     </td>    
                 </tr>
             </table>

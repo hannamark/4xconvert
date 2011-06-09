@@ -106,6 +106,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
@@ -117,6 +118,8 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Harsha
  *
  */
+//need all these fields and methods
+@SuppressWarnings({"PMD.TooManyFields", "PMD.TooManyMethods" })
 public class PopUpAction extends ActionSupport {
     private static final long serialVersionUID = 4960297232842560635L;
     private List<Country> countryList = new ArrayList<Country>();
@@ -134,6 +137,7 @@ public class PopUpAction extends ActionSupport {
     private String telephone;
     private String orgName;
     private String familyName;
+    private String ctepId;
     
     /**
      *
@@ -305,7 +309,7 @@ public class PopUpAction extends ActionSupport {
             convertToWebDTO(orgList, familyMap);
             return retvalue;
         } catch (Exception e) {
-            return retvalue;
+            return ERROR;
         }
     }
 
@@ -322,7 +326,9 @@ public class PopUpAction extends ActionSupport {
     private Map<Ii, FamilyDTO> getFamilyDTOs(List<OrganizationDTO> orgList) {
         Set<Ii> famOrgRelIiList = new HashSet<Ii>();
         for (OrganizationDTO dto : orgList) {
-            famOrgRelIiList.addAll(dto.getFamilyOrganizationRelationships().getItem());
+            if (CollectionUtils.isNotEmpty(dto.getFamilyOrganizationRelationships().getItem())) {
+                famOrgRelIiList.addAll(dto.getFamilyOrganizationRelationships().getItem());
+            }
         }
         return PoRegistry.getFamilyService().getFamilies(famOrgRelIiList);
     }
@@ -335,14 +341,8 @@ public class PopUpAction extends ActionSupport {
         orgSearchCriteria.setCountry(countryName);
         orgSearchCriteria.setZip(zipCode);
         orgSearchCriteria.setState(stateName);
-        OrganizationDTO criteria = new OrganizationDTO();
-        criteria.setName(EnOnConverter.convertToEnOn(getOrgName()));
-        criteria.setPostalAddress(AddressConverterUtil.create(null, null, cityName,
-                                                                        stateName, zipCode, countryName));
-        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
-        List<OrganizationDTO> orgList = PoRegistry.getOrganizationEntityService().search(criteria,
-                EnOnConverter.convertToEnOn(getFamilyName()), limit);
-        return orgList;
+        orgSearchCriteria.setCtepId(ctepId);
+        return PADomainUtils.orgSearchByNameAddressCtepId(orgSearchCriteria);
     }
 
     private Map<Long, String> getFamilies(DSet<Ii> familyOrganizationRelationships, Map<Ii, FamilyDTO> familyMap) {
@@ -359,7 +359,7 @@ public class PopUpAction extends ActionSupport {
 
     private boolean isOrgSearchCriteriaSet() {
         return StringUtils.isBlank(orgName) && StringUtils.isBlank(familyName) && StringUtils.isBlank(countryName)
-                && StringUtils.isBlank(cityName) && StringUtils.isBlank(zipCode);
+                && StringUtils.isBlank(cityName) && StringUtils.isBlank(zipCode) && StringUtils.isBlank(ctepId);
     }
 
     private String processDisplayPersons(String retvalue) {
@@ -560,5 +560,19 @@ public class PopUpAction extends ActionSupport {
      */
     public String getFamilyName() {
         return familyName;
+    }
+
+    /**
+     * @param ctepId the ctepId to set
+     */
+    public void setCtepId(String ctepId) {
+        this.ctepId = ctepId;
+    }
+
+    /**
+     * @return the ctepId
+     */
+    public String getCtepId() {
+        return ctepId;
     }
 }

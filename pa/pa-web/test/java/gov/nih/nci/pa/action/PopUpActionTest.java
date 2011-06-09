@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import gov.nih.nci.pa.domain.Country;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +27,12 @@ public class PopUpActionTest extends AbstractPaActionTest {
     @Before
     public void setUp(){
         popUpAction = new PopUpAction();
-        List<String> countryList = new ArrayList <String>();
-        countryList.add("USA");
+        List<Country> countryList = new ArrayList <Country>();
+        Country usa = new Country();
+        usa.setName("United States");
+        usa.setAlpha2("US");
+        usa.setAlpha3("USA");
+        countryList.add(usa);
         getSession().setAttribute("countrylist",countryList);
     }
 
@@ -122,8 +127,17 @@ public class PopUpActionTest extends AbstractPaActionTest {
         popUpAction.setStateName("TX");
         assertEquals("success", popUpAction.displayOrgList());
         assertNotNull(popUpAction.getOrgs());
-        assertEquals(0, popUpAction.getOrgs().size());
+        assertEquals(5, popUpAction.getOrgs().size());
     }
+    
+    @Test
+    public void testdisplayOrgListByCtepId() {
+        popUpAction.setCtepId("CTEP ID");
+        assertEquals("success", popUpAction.displayOrgList());
+        assertNotNull(popUpAction.getOrgs());
+        assertEquals(1, popUpAction.getOrgs().size());
+    }
+    
     @Test
     public void testdisplayOrgListDisplayTag() {
         popUpAction.setOrgName("OrgName");
@@ -133,6 +147,6 @@ public class PopUpActionTest extends AbstractPaActionTest {
         popUpAction.setStateName("TX");
         assertEquals("orgs", popUpAction.displayOrgListDisplayTag());
         assertNotNull(popUpAction.getOrgs());
-        assertEquals(0, popUpAction.getOrgs().size());
+        assertEquals(5, popUpAction.getOrgs().size());
     }
 }

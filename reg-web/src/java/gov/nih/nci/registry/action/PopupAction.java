@@ -91,6 +91,7 @@ import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelUrl;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -103,7 +104,6 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.family.FamilyDTO;
@@ -351,30 +351,15 @@ public class PopupAction extends ActionSupport implements Preparable {
     }
 
     private List<OrganizationDTO> performOrgSearch() throws TooManyResultsException {
-        List<OrganizationDTO> orgSearchResults = new ArrayList<OrganizationDTO>();
-        OrganizationDTO criteria = new OrganizationDTO();
-        if (ctepid != null && ctepid.length() > 0) {
-            IdentifiedOrganizationDTO identifiedOrganizationDTO = new IdentifiedOrganizationDTO();
-            identifiedOrganizationDTO.setAssignedId(IiConverter.convertToIdentifiedOrgEntityIi(ctepid));
-            List<IdentifiedOrganizationDTO> identifiedOrgs = PoRegistry
-                    .getIdentifiedOrganizationEntityService().search(identifiedOrganizationDTO);
-            if (CollectionUtils.isNotEmpty(identifiedOrgs)) {
-                criteria.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
-            }
-        } else {
-            criteria.setName(EnOnConverter.convertToEnOn(orgName));
-            criteria.setPostalAddress(AddressConverterUtil.create(
-                    null, null, cityName, stateName, zipCode, countryName));
-        }
-        if (criteria.getIdentifier() != null
-                || criteria.getName() != null
-                || criteria.getPostalAddress() != null
-                || StringUtils.isNotEmpty(familyName)) {
-            LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
-            orgSearchResults = PoRegistry.getOrganizationEntityService().search(criteria,
-                    EnOnConverter.convertToEnOn(familyName), limit);
-        }
-        return orgSearchResults;
+        PaOrganizationDTO criteria = new PaOrganizationDTO(); 
+        criteria.setName(orgName);
+        criteria.setFamilyName(familyName);
+        criteria.setCity(cityName);
+        criteria.setCountry(countryName);
+        criteria.setZip(zipCode);
+        criteria.setState(stateName);
+        criteria.setCtepId(ctepId);
+        return PADomainUtils.orgSearchByNameAddressCtepId(criteria);
     }
 
     @SuppressWarnings("unchecked")

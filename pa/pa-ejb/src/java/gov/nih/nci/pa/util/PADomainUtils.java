@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.AddressPartType;
 import gov.nih.nci.iso21090.Adxp;
 import gov.nih.nci.iso21090.DSet;
@@ -101,8 +103,11 @@ import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.util.AddressConverterUtil;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -219,7 +224,7 @@ public class PADomainUtils {
         displayElement = new PaOrganizationDTO();
         displayElement.setId(poOrgDto.getIdentifier().getExtension().toString());
         displayElement.setName(poOrgDto.getName().getPart().get(0).getValue());
-        //
+        
         List<Adxp> addressList = poOrgDto.getPostalAddress().getPart();
         Iterator<Adxp> addressIte = addressList.iterator();
         while (addressIte.hasNext()) {
@@ -431,5 +436,48 @@ public class PADomainUtils {
         ro.setOrganization(org);
         return ro;
     }
+    
+    /**
+     * Search PO organizations by name, address or ctep id.
+     * @param orgSearchCriteria criteria
+     * @return PO org list.
+     * @throws TooManyResultsException when too many exceptions.
+     */ 
+    public static List<OrganizationDTO> orgSearchByNameAddressCtepId(PaOrganizationDTO orgSearchCriteria) 
+            throws TooManyResultsException {
+        
+        OrganizationDTO criteria = new OrganizationDTO();
+        if (StringUtils.isNotBlank(orgSearchCriteria.getCtepId())) {
+            IdentifiedOrganizationDTO identifiedOrganizationDTO = new IdentifiedOrganizationDTO();
+            identifiedOrganizationDTO.setAssignedId(IiConverter
+                    .convertToIdentifiedOrgEntityIi(orgSearchCriteria.getCtepId()));
+            List<IdentifiedOrganizationDTO> identifiedOrgs = PoRegistry
+                    .getIdentifiedOrganizationEntityService().search(identifiedOrganizationDTO);
+            if (CollectionUtils.isNotEmpty(identifiedOrgs)) {
+                criteria.setIdentifier(identifiedOrgs.get(0).getPlayerIdentifier());
+            }
+        } else {
+            criteria.setName(EnOnConverter.convertToEnOn(orgSearchCriteria.getName()));
+            criteria.setPostalAddress(AddressConverterUtil.create(
+                    null, null, orgSearchCriteria.getCity(), orgSearchCriteria.getState(), 
+                        orgSearchCriteria.getZip(), orgSearchCriteria.getCountry()));
+        }
+        return searchOrgEntityByCriteria(criteria, orgSearchCriteria);
+    }
+    
+    private static List<OrganizationDTO> searchOrgEntityByCriteria(OrganizationDTO criteria, 
+            PaOrganizationDTO orgSearchCriteria) throws TooManyResultsException {
+        List<OrganizationDTO> orgSearchResults = new ArrayList<OrganizationDTO>();
+        if (criteria.getIdentifier() != null
+                || criteria.getName() != null
+                || criteria.getPostalAddress() != null
+                || StringUtils.isNotEmpty(orgSearchCriteria.getFamilyName())) {
+            LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+            orgSearchResults = PoRegistry.getOrganizationEntityService().search(criteria,
+                    EnOnConverter.convertToEnOn(orgSearchCriteria.getFamilyName()), limit);
+        }
+        return orgSearchResults;
+    }
+    
 
 }

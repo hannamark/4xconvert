@@ -477,6 +477,19 @@ public class PopupActionTest extends AbstractRegWebTest {
         popUpAction.setCtepid("2");
         assertEquals("orgs", popUpAction.displayOrgListDisplayTag());
      }
+    
+    @Test
+    public void testDisplayOrgList2() throws PAException{
+        popUpAction = new PopupAction();
+        popUpAction.setOrgName("OrgName");
+        popUpAction.setEmail("em@mail.com");
+        popUpAction.setCountryName("USA");
+        assertEquals("success", popUpAction.displayOrgList());
+        assertNotNull(popUpAction.getOrgs());
+        popUpAction.setCtepId("1");
+        assertEquals("success", popUpAction.displayOrgList());
+        assertEquals(2, popUpAction.getOrgs().size());
+     }
 
     @Test
     public void testPrepare() throws Exception{
