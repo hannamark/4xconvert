@@ -12,7 +12,7 @@ import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
@@ -130,7 +130,7 @@ public class StudyMilestoneTasksServiceBeanTest extends AbstractHibernateTestCas
         abstractionBean.setStudyDiseaseService(mock(StudyDiseaseServiceLocal.class));
         StudyRecruitmentStatusServiceLocal mockStudyRecruitBean = mock(StudyRecruitmentStatusServiceLocal.class);
         StudyRecruitmentStatusDTO recruitDto = new StudyRecruitmentStatusDTO();
-        recruitDto.setStatusCode(CdConverter.convertToCd(StudyRecruitmentStatusCode.NOT_YET_RECRUITING));
+        recruitDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.IN_REVIEW));
         when(mockStudyRecruitBean.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(recruitDto);
         when(mockStudyRecruitBean.getByStudyProtocol(any(Ii.class))).thenReturn(Arrays.asList(recruitDto));
         abstractionBean.setStudyRecruitmentStatusServiceLocal(mockStudyRecruitBean);

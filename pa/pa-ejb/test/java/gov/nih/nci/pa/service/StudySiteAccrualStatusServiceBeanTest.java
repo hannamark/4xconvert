@@ -132,7 +132,7 @@ public class StudySiteAccrualStatusServiceBeanTest extends AbstractHibernateTest
   @Test
   public void create() throws Exception {
     StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
-    dto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING));
+    dto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.CLOSED_TO_ACCRUAL));
     dto.setStatusDate(TsConverter.convertToTs(new java.sql.Timestamp((new java.util.Date()).getTime())));
     dto.setStudySiteIi(studySiteId);
     remoteEjb.createStudySiteAccrualStatus(dto);

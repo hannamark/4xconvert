@@ -702,4 +702,8 @@
         <comment>Allow parallel check-outs</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.5/PO-3606.sql"/>
      </changeSet>
+     <changeSet id="PO-3591" author="aevansel">
+        <comment>Migrating trial and participating site recruiting status from the old values to the new values.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.5/PO-3591.sql" splitStatements="false"/>
+     </changeSet>
 </databaseChangeLog>

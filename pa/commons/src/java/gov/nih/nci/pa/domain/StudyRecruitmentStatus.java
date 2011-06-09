@@ -78,7 +78,7 @@
 */
 package gov.nih.nci.pa.domain;
 
-import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 
 import java.sql.Timestamp;
 
@@ -101,7 +101,7 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
 public class StudyRecruitmentStatus extends AbstractStudyEntity implements Auditable {
     private static final long serialVersionUID = 1234568364L;
 
-    private StudyRecruitmentStatusCode statusCode;
+    private RecruitmentStatusCode statusCode;
     private Timestamp statusDate;
 
     /**
@@ -109,14 +109,14 @@ public class StudyRecruitmentStatus extends AbstractStudyEntity implements Audit
      */
     @Column(name = "STATUS_CODE")
     @Enumerated(EnumType.STRING)
-    public StudyRecruitmentStatusCode getStatusCode() {
+    public RecruitmentStatusCode getStatusCode() {
         return statusCode;
     }
     /**
      *
      * @param statusCode status code
      */
-    public void setStatusCode(StudyRecruitmentStatusCode statusCode) {
+    public void setStatusCode(RecruitmentStatusCode statusCode) {
        this.statusCode = statusCode;
     }
 

@@ -205,6 +205,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
 
     private String statusCode;
     private List<StudyOverallStatusWebDTO> overallStatusList;
+
     /**
      * @see com.opensymphony.xwork2.Preparable#prepare()
      * @throws PAException on error
@@ -1611,24 +1612,23 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     }
 
     private void enforcePartialRulesForProp4(String strDateOpenedForAccrual, String strDateClosedForAccrual) {
-
-
-            if (StringUtils.isNotEmpty(recStatus)) {
-                if (RecruitmentStatusCode.WITHDRAWN.getCode().equalsIgnoreCase(recStatus)
-                        || RecruitmentStatusCode.NOT_YET_RECRUITING.getCode().equalsIgnoreCase(recStatus)) {
-                    if (StringUtils.isNotEmpty(dateOpenedForAccrual)) {
-                        addFieldError(strDateOpenedForAccrual, "Date Opened for Acrual must be null for " + recStatus);
-                    }
-                }  else if (StringUtils.isEmpty(dateOpenedForAccrual)) {
-                    addFieldError(strDateOpenedForAccrual, "Date Opened for Acrual must be not null for " + recStatus);
+        if (StringUtils.isNotEmpty(recStatus)) {
+            RecruitmentStatusCode recruitmentStatus = RecruitmentStatusCode.getByCode(recStatus);
+            if (RecruitmentStatusCode.getNonRecruitingStatuses().contains(recruitmentStatus)) {
+                if (StringUtils.isNotEmpty(dateOpenedForAccrual)) {
+                    addFieldError(strDateOpenedForAccrual, "Date Opened for Acrual must be null for " + recStatus);
                 }
-                if ((RecruitmentStatusCode.TERMINATED_RECRUITING.getCode().equalsIgnoreCase(recStatus)
-                        || RecruitmentStatusCode.COMPLETED.getCode().equalsIgnoreCase(recStatus))
-                        && StringUtils.isEmpty(dateClosedForAccrual)) {
-                    addFieldError(strDateClosedForAccrual, "Date Closed for Acrual must not be null for " + recStatus);
-                }
+            }  else if (StringUtils.isEmpty(dateOpenedForAccrual)) {
+                addFieldError(strDateOpenedForAccrual, "Date Opened for Acrual must be not null for " + recStatus);
             }
+            if ((RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equalsIgnoreCase(recStatus)
+                    || RecruitmentStatusCode.COMPLETED.getCode().equalsIgnoreCase(recStatus))
+                    && StringUtils.isEmpty(dateClosedForAccrual)) {
+                addFieldError(strDateClosedForAccrual, "Date Closed for Acrual must not be null for " + recStatus);
+            }
+        }
     }
+
     /**
      * @return result
      */

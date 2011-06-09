@@ -84,24 +84,38 @@ package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteContactDTO;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.ParticipatingSiteServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Wrapper class for invoking the ParticipatingSiteServiceRemote remote EJB.
- * 
+ *
  * @author mshestopalov
  */
 
 public class InvokeParticipatingSiteEjb implements ParticipatingSiteServiceRemote {
+
+    private static final Map<String, RecruitmentStatusCode> RECRUITMENT_CONVERSION_MAP =
+        new HashMap<String, RecruitmentStatusCode>();
+    static {
+        RECRUITMENT_CONVERSION_MAP.put("Not yet recruiting", RecruitmentStatusCode.IN_REVIEW);
+        RECRUITMENT_CONVERSION_MAP.put("Recruiting", RecruitmentStatusCode.ACTIVE);
+        RECRUITMENT_CONVERSION_MAP.put("Active, not recruiting", RecruitmentStatusCode.CLOSED_TO_ACCRUAL);
+        RECRUITMENT_CONVERSION_MAP.put("Suspended", RecruitmentStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL);
+        RECRUITMENT_CONVERSION_MAP.put("Terminated", RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE);
+    }
 
     /**
      * {@inheritDoc}
@@ -111,7 +125,7 @@ public class InvokeParticipatingSiteEjb implements ParticipatingSiteServiceRemot
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
         try {
             return GridSecurityJNDIServiceLocator.newInstance().getParticipatingSiteService()
-                    .createStudySiteParticipant(studySiteDTO, currentStatusDTO, orgDTO, hcfDTO,
+                    .createStudySiteParticipant(studySiteDTO, transformStatus(currentStatusDTO), orgDTO, hcfDTO,
                             participatingSiteContactDTOList);
         } catch (PAException pae) {
             throw pae;
@@ -128,7 +142,7 @@ public class InvokeParticipatingSiteEjb implements ParticipatingSiteServiceRemot
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
         try {
             return GridSecurityJNDIServiceLocator.newInstance().getParticipatingSiteService()
-                    .createStudySiteParticipant(studySiteDTO, currentStatusDTO, poHcfIi,
+                    .createStudySiteParticipant(studySiteDTO, transformStatus(currentStatusDTO), poHcfIi,
                             participatingSiteContactDTOList);
         } catch (PAException pae) {
             throw pae;
@@ -145,7 +159,8 @@ public class InvokeParticipatingSiteEjb implements ParticipatingSiteServiceRemot
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
         try {
             return GridSecurityJNDIServiceLocator.newInstance().getParticipatingSiteService()
-                    .updateStudySiteParticipant(studySiteDTO, currentStatusDTO, participatingSiteContactDTOList);
+                    .updateStudySiteParticipant(studySiteDTO, transformStatus(currentStatusDTO),
+                            participatingSiteContactDTOList);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {
@@ -165,5 +180,23 @@ public class InvokeParticipatingSiteEjb implements ParticipatingSiteServiceRemot
         } catch (Exception e) {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
+    }
+
+    private StudySiteAccrualStatusDTO transformStatus(StudySiteAccrualStatusDTO currentStatusDTO) {
+        if (currentStatusDTO == null) {
+            return currentStatusDTO;
+        }
+        StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
+        dto.setIdentifier(currentStatusDTO.getIdentifier());
+        dto.setStudySiteIi(currentStatusDTO.getStudySiteIi());
+        dto.setStatusDate(currentStatusDTO.getStatusDate());
+        dto.setStatusCode(currentStatusDTO.getStatusCode());
+
+        RecruitmentStatusCode status =
+            RECRUITMENT_CONVERSION_MAP.get(CdConverter.convertCdToString(currentStatusDTO.getStatusCode()));
+        if (status != null) {
+            dto.setStatusCode(CdConverter.convertToCd(status));
+        }
+        return dto;
     }
 }

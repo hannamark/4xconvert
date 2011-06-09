@@ -138,8 +138,24 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         assertTrue(act.getFieldErrors().containsKey("editOrg.name"));
 
         // enter recruitment information and save
-        act.setRecStatus(RecruitmentStatusCode.NOT_YET_RECRUITING.getCode());
+        act.setRecStatus(RecruitmentStatusCode.IN_REVIEW.getCode());
         act.setRecStatusDate(PAUtil.today());
+        ar = act.facilitySave();
+        assertEquals(Action.ERROR, ar);
+        assertTrue(act.hasFieldErrors());
+        assertFalse(act.getFieldErrors().containsKey("recStatus"));
+        assertFalse(act.getFieldErrors().containsKey("recStatusDate"));
+        assertTrue(act.getFieldErrors().containsKey("editOrg.name"));
+
+        act.setRecStatus(RecruitmentStatusCode.APPROVED.getCode());
+        ar = act.facilitySave();
+        assertEquals(Action.ERROR, ar);
+        assertTrue(act.hasFieldErrors());
+        assertFalse(act.getFieldErrors().containsKey("recStatus"));
+        assertFalse(act.getFieldErrors().containsKey("recStatusDate"));
+        assertTrue(act.getFieldErrors().containsKey("editOrg.name"));
+
+        act.setRecStatus(RecruitmentStatusCode.WITHDRAWN.getCode());
         ar = act.facilitySave();
         assertEquals(Action.ERROR, ar);
         assertTrue(act.hasFieldErrors());

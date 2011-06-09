@@ -238,7 +238,7 @@ public class TrialRegistrationHelperTest {
              .thenReturn(false);
 
         StudySiteAccrualStatusDTO acSiteDto = new StudySiteAccrualStatusDTO();
-        acSiteDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING));
+        acSiteDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.CLOSED_TO_ACCRUAL));
         acSiteDto.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         when(studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(any(Ii.class))).thenReturn(acSiteDto);
         ssasList.clear();

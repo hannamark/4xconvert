@@ -150,6 +150,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -192,6 +193,9 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
     private static final Logger LOG = Logger.getLogger(CTGovXmlGeneratorServiceBean.class);
     private static final String YYYYMMDD = "yyyy-MM-dd";
     private static final String YYYYMM = "yyyy-MM";
+    private static final Set<StudyStatusCode> STOPPED_STATUSES = EnumSet.of(StudyStatusCode.WITHDRAWN,
+            StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL,
+            StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
 
     static {
         createCtGovValues();
@@ -363,10 +367,7 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
             }
 
             StudyStatusCode overStatusCode = StudyStatusCode.getByCode(sosDTO.getStatusCode().getCode());
-
-            if (StudyStatusCode.WITHDRAWN.equals(overStatusCode)
-                    || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.equals(overStatusCode)
-                    || StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.equals(overStatusCode)) {
+            if (STOPPED_STATUSES.contains(overStatusCode)) {
                 XmlGenHelper.appendElement(root,
                         XmlGenHelper.createElementWithTextblock("why_stopped",
                                 StringUtils.substring(StConverter.convertToString(sosDTO

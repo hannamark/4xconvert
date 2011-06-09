@@ -4,14 +4,12 @@ import gov.nih.nci.coppa.services.grid.util.XMLUnmarshaller;
 import gov.nih.nci.coppa.services.pa.faults.PAFault;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.ClinicalResearchStaffManagementTransformer;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.HealthCareFacilityManagementTransformer;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.OrganizationManagementTransformer;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.PersonManagementTransformer;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.StudySiteAccrualStatusManagementTransformer;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.StudySiteContactManagementTransformer;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.transformers.management.StudySiteManagementTransformer;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.ClinicalResearchStaff;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.OrganizationalContact;
-import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.PersonRole;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.PersonType;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudyProtocol;
 import gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management.StudySite;
@@ -26,7 +24,6 @@ import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.ADTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.BLTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformer;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
@@ -43,7 +40,6 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
-import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
 import java.io.UnsupportedEncodingException;
@@ -118,7 +114,7 @@ public class StudySiteParticipationServiceSimpleClient {
 
     private static StudySite getSiteHelper() throws DtoTransformException,
         PAFault, RemoteException, URISyntaxException, UnsupportedEncodingException {
-     // create study protocol
+        // create study protocol
         II studyProtocolIi = new II();
         studyProtocolIi.setExtension("CTEP1234");
         studyProtocolIi.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
@@ -132,7 +128,7 @@ public class StudySiteParticipationServiceSimpleClient {
         studySiteDTO.setProgramCodeText(StConverter.convertToSt("ANY TEXT"));
 
         StudySiteAccrualStatusDTO currentStatus = new StudySiteAccrualStatusDTO();
-        currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.RECRUITING.getCode()));
+        currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.IN_REVIEW.getCode()));
         currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime()
                 - Long.valueOf("300000000"))));
         StudySiteAccrualStatus ssasXml = StudySiteAccrualStatusManagementTransformer.INSTANCE.toXml(currentStatus);
@@ -316,7 +312,7 @@ public class StudySiteParticipationServiceSimpleClient {
         StudySite ssXml = StudySiteManagementTransformer.INSTANCE.toXml(studySiteDTO);
 
         StudySiteAccrualStatusDTO currentStatus = new StudySiteAccrualStatusDTO();
-        currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.RECRUITING.getCode()));
+        currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.ACTIVE.getCode()));
         currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime()
                 - Long.valueOf("300000000"))));
 
@@ -378,7 +374,7 @@ private static void changePITest(StudySiteParticipationServiceClient client) thr
 
 
             StudySiteAccrualStatusDTO currentStatus = new StudySiteAccrualStatusDTO();
-            currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.SUSPENDED_RECRUITING.getCode()));
+            currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode()));
             currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() -
                                                                               Long.valueOf("300000000"))));
             StudySiteAccrualStatus ssasXml =
@@ -462,7 +458,7 @@ private static void changePIUsingCTEPIDTest(StudySiteParticipationServiceClient 
 
 
             StudySiteAccrualStatusDTO currentStatus = new StudySiteAccrualStatusDTO();
-            currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.SUSPENDED_RECRUITING.getCode()));
+            currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode()));
             currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime() -
                                                                               Long.valueOf("300000000"))));
             StudySiteAccrualStatus ssasXml =

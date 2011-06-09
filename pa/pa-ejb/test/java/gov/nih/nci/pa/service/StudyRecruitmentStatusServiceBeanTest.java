@@ -82,7 +82,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
-import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
@@ -104,7 +104,7 @@ public class StudyRecruitmentStatusServiceBeanTest extends AbstractHibernateTest
 
         StudyRecruitmentStatus bo = new StudyRecruitmentStatus();
         bo.setStudyProtocol(sp);
-        bo.setStatusCode(StudyRecruitmentStatusCode.RECRUITING_ACTIVE);
+        bo.setStatusCode(RecruitmentStatusCode.ACTIVE);
         bo.setStatusDate(new java.sql.Timestamp((new java.util.Date()).getTime()));
         TestSchema.addUpdObject(bo);
         assertNotNull(bo.getId());

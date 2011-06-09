@@ -17,9 +17,9 @@ import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
@@ -244,7 +244,7 @@ public abstract class AbstractRegWebTest {
         trialDTO.setSummaryFourOrgIdentifier("1");
         trialDTO.setNctIdentifier("nctIdentifier");
 
-        trialDTO.setSiteStatusCode("Not yet recruiting");
+        trialDTO.setSiteStatusCode("In Review");
         trialDTO.setSiteStatusDate("12/09/2009");
         trialDTO.setSiteOrganizationIdentifier("siteOrganizationIdentifier");
         trialDTO.setSiteOrganizationName("siteOrganizationName");

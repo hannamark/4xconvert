@@ -324,6 +324,19 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
      */
     protected void searchSelectAndAcceptTrial(String trialTitle, boolean adminAbstractor,
             boolean scientificAbstractor) {
+        String nciTrialId = searchAndSelectTrial(trialTitle);
+        verifyTrialSelected(nciTrialId);
+        if (adminAbstractor) {
+            checkOutTrialAsAdminAbstractor();
+        }
+        if (scientificAbstractor) {
+            checkOutTrialAsScientificAbstractor();
+        }
+        acceptTrial();
+        verifyTrialAccepted();
+    }
+
+    protected String searchAndSelectTrial(String trialTitle) {
         verifyTrialSearchPage();
 
         selenium.type("id=officialTitle", trialTitle);
@@ -335,16 +348,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]//td[1]/a"));
         String nciTrialId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]/a");
         clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
-
-        verifyTrialSelected(nciTrialId);
-        if (adminAbstractor) {
-            checkOutTrialAsAdminAbstractor();
-        }
-        if (scientificAbstractor) {
-            checkOutTrialAsScientificAbstractor();
-        }
-        acceptTrial();
-        verifyTrialAccepted();
+        return nciTrialId;
     }
 
     public void loginAsAbstractor() {

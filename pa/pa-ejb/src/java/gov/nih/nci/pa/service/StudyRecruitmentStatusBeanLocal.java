@@ -6,7 +6,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
-import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.convert.StudyRecruitmentStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -37,9 +37,9 @@ public class StudyRecruitmentStatusBeanLocal extends
      */
     public static StudyRecruitmentStatus create(StudyOverallStatus bo) {
         // automatically update StudyRecruitmentStatus for applicable overall status code's
-        if ((bo != null) && (StudyRecruitmentStatusCode.getByStudyStatusCode(bo.getStatusCode()) != null)) {
+        if (bo != null && bo.getStatusCode() != null) {
             StudyRecruitmentStatus srsBo = new StudyRecruitmentStatus();
-            srsBo.setStatusCode(StudyRecruitmentStatusCode.getByStudyStatusCode(bo.getStatusCode()));
+            srsBo.setStatusCode(RecruitmentStatusCode.getByCode(bo.getStatusCode().getCode()));
             srsBo.setStatusDate(bo.getStatusDate());
             srsBo.setStudyProtocol(bo.getStudyProtocol());
             return srsBo;

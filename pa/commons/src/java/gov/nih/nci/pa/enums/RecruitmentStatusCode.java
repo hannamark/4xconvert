@@ -82,6 +82,9 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 
 /**
  * Enumeration  for Recruitment Status codes.
@@ -93,26 +96,35 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * copyright holder, NCI.
  */
 public enum RecruitmentStatusCode implements CodedEnum<String> {
-
-    /** Not yet recruiting. */
-    NOT_YET_RECRUITING("Not yet recruiting", false),
-    /** Recruiting. */
-    RECRUITING("Recruiting", true),
+    /** In Review. */
+    IN_REVIEW("In Review", false),
+    /** Approved. */
+    APPROVED("Approved", false),
+    /** Active. */
+    ACTIVE("Active", true),
     /** Enrolling by invitation. */
-    ENROLLING_BY_INVITATION("Enrolling by invitation", true),
-    /** Active , not recruiting. */
-    ACTIVE_NOT_RECRUITING("Active, not recruiting", true),
-    /** Completed. */
-    COMPLETED("Completed", true),
-    /** Suspended :  recruiting. */
-    SUSPENDED_RECRUITING("Suspended", true),
-    /** Terminated :  recruiting. */
-    TERMINATED_RECRUITING("Terminated", true),
+    ENROLLING_BY_INVITATION("Enrolling by Invitation", true),
+    /** Closed to Accrual. */
+    CLOSED_TO_ACCRUAL("Closed to Accrual", true),
+    /** Closed to Accrual and Intervention. */
+    CLOSED_TO_ACCRUAL_AND_INTERVENTION("Closed to Accrual and Intervention", true),
+    /** Temporarily Closed to Accrual. */
+    TEMPORARILY_CLOSED_TO_ACCRUAL("Temporarily Closed to Accrual", true),
+    /** Temporarily Closed to Accrual and Intervention. */
+    TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION("Temporarily Closed to Accrual and Intervention", true),
     /** Withdrawn. */
-    WITHDRAWN("Withdrawn", false);
+    WITHDRAWN("Withdrawn", false),
+    /** Administratively Complete. */
+    ADMINISTRATIVELY_COMPLETE("Administratively Complete", true),
+    /** Completed. */
+    COMPLETED("Completed", true);
 
     private String code;
     private boolean eligibleForAccrual;
+
+    private static final Set<RecruitmentStatusCode> RECRUITING_STATUSES = EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION);
+    private static final Set<RecruitmentStatusCode> NON_RECRUITING_STATUSES =
+        EnumSet.of(RecruitmentStatusCode.WITHDRAWN, RecruitmentStatusCode.IN_REVIEW, RecruitmentStatusCode.APPROVED);
 
     /**
      *
@@ -165,12 +177,26 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
     }
 
     /**
+     * @return the set of recruiting status
+     */
+    public static Set<RecruitmentStatusCode> getRecruitingStatuses() {
+        return RECRUITING_STATUSES;
+    }
+
+    /**
+     * @return the set of non recruiting statuses
+     */
+    public static Set<RecruitmentStatusCode> getNonRecruitingStatuses() {
+        return NON_RECRUITING_STATUSES;
+    }
+
+    /**
      * @return the eligibleForAccrual
      */
     public boolean isEligibleForAccrual() {
         return eligibleForAccrual;
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -82,20 +82,107 @@
  */
 package gov.nih.nci.pa.test.integration;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.util.Date;
+
+import org.junit.Test;
 
 /**
- *
- * Class to control the order that selenium tests are run in.
+ * Tests creation/editing/deleting of participating sites.
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-@RunWith(Suite.class)
-@SuiteClasses(value = {LoginTest.class, AnatomicSiteTest.class, PlannedMarkerTest.class, StudyOwnershipTest.class,
-        DuplicateTrialEditTest.class, LookupWithApostropheTest.class, TrialStatusTest.class,
-        ParticipatingSiteTest.class})
-public class AllSeleniumTests {
+public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
+    private String today = MONTH_DAY_YEAR_FMT.format(new Date());
 
+    /**
+     * Creates participating sites.
+     */
+    @Test
+    public void testCreateParticipatingSite() {
+        loginAsAdminAbstractor();
+        searchAndSelectTrial("Test Trial created by Selenium.");
+        checkOutTrialAsAdminAbstractor();
+        verifyTrialAccepted();
+
+        clickAndWait("link=Participating Sites");
+        assertTrue(selenium.isTextPresent("Nothing found to display"));
+        clickAndWait("link=Add");
+
+
+        clickAndWaitAjax("link=Look Up");
+        waitForElementById("popupFrame", 15);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("poOrganizations_", 15);
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/a");
+        waitForPageToLoad();
+        selenium.selectFrame("relative=up");
+
+        clickAndWait("link=Save");
+        assertTrue(selenium.isTextPresent("Please select a status"));
+        assertTrue(selenium.isTextPresent("Please choose a status date"));
+
+        selenium.type("id=siteLocalTrialIdentifier", "SITE-1");
+        selenium.type("id=recStatusDate", today);
+        selenium.select("id=recStatus", "label=In Review");
+        selenium.type("id=programCode", "SELENIUM");
+        selenium.type("id=targetAccrualNumber", "100");
+        clickAndWait("link=Save");
+        assertTrue(selenium.isTextPresent("Record Created"));
+
+        selenium.click("link=Investigators");
+        assertTrue(selenium.isElementPresent("id=investigators"));
+        clickAndWaitAjax("link=Add");
+        waitForElementById("popupFrame", 15);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("poOrganizations", 15);
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        clickAndWaitAjax("//table[@id='row']/tbody/tr[1]/td[8]/a");
+        selenium.selectFrame("relative=up");
+        assertTrue(selenium.isTextPresent("One item found"));
+
+        selenium.click("link=Contact");
+        assertTrue(selenium.isElementPresent("id=contacts"));
+        clickAndWaitAjax("link=Look Up Generic Contact");
+        waitForElementById("popupFrame", 15);
+        selenium.selectFrame("popupFrame");
+        waitForElementById("titles", 15);
+        selenium.type("id=search_title", "title");
+        clickAndWaitAjax("link=Search");
+        waitForElementById("row", 15);
+        clickAndWaitAjax("//table[@id='row']/tbody/tr[1]/td[5]/a");
+        selenium.selectFrame("relative=up");
+        clickAndWaitAjax("link=Save");
+        assertFalse(selenium.isTextPresent("Please enter either an email address or phone number"));
+    }
+
+    @Test
+    public void testStatusChange() {
+        loginAsAdminAbstractor();
+        searchAndSelectTrial("Test Trial created by Selenium.");
+
+        clickAndWait("link=Participating Sites");
+        assertTrue(selenium.isTextPresent("One item found"));
+        selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/a");
+        waitForPageToLoad();
+
+        changeStatus("Approved");
+        changeStatus("Active");
+        changeStatus("Enrolling by Invitation");
+        changeStatus("Closed to Accrual");
+        changeStatus("Closed to Accrual and Intervention");
+        changeStatus("Temporarily Closed to Accrual");
+        changeStatus("Temporarily Closed to Accrual and Intervention");
+        changeStatus("Withdrawn");
+        changeStatus("Administratively Complete");
+        changeStatus("Completed");
+    }
+
+    private void changeStatus(String statusLabel) {
+        selenium.select("id=recStatus", "label=" + statusLabel);
+        clickAndWaitAjax("link=Save");
+        assertTrue(selenium.isTextPresent("Record Updated"));
+    }
 }

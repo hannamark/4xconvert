@@ -95,7 +95,6 @@ import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -853,10 +852,12 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         // spList Empty => No Study Oversight Committee.
         // Display warning if Study is recruiting && reviewBoardindicator is false =>
         // Board Approval Status = Submission Not Required.
-        if (spList.isEmpty()
-                && BooleanUtils.isFalse(reviewBoardIndicator)
-                && studyRecruitmentStatusServiceLocal.getCurrentByStudyProtocol(spDto.getIdentifier()).getStatusCode()
-                        .getCode().equals(StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode())) {
+        StudyRecruitmentStatusDTO studyRecruitmentStatusDto =
+            studyRecruitmentStatusServiceLocal.getCurrentByStudyProtocol(spDto.getIdentifier());
+        RecruitmentStatusCode recruitmentStatusCode =
+            RecruitmentStatusCode.getByCode(studyRecruitmentStatusDto.getStatusCode().getCode());
+        if (spList.isEmpty() && BooleanUtils.isFalse(reviewBoardIndicator)
+                && RecruitmentStatusCode.getRecruitingStatuses().contains(recruitmentStatusCode)) {
             abstractionWarnList.add(createError("Warning", "Select a different review board status",
                     "Data inconsistency. Review Board Approval Status cannot be 'Not required'"
                             + " for an interventional study that is recruiting patients"));
@@ -872,7 +873,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         // check recruitment status
         StudyRecruitmentStatusDTO recruitmentStatusDto =
                 studyRecruitmentStatusServiceLocal.getCurrentByStudyProtocol(studyProtocolIi);
-
+        RecruitmentStatusCode studyRecruitmentStatus =
+            RecruitmentStatusCode.getByCode(recruitmentStatusDto.getStatusCode().getCode());
         boolean studySiteRecruiting = false;
 
         for (StudySiteDTO spartDto : spList) {
@@ -889,39 +891,36 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     lastestStudySiteAccrualStatusDTO = studySiteAccuralStatus;
                 }
             }
-
-            if (lastestStudySiteAccrualStatusDTO != null
-                    && StringUtils.equalsIgnoreCase(RecruitmentStatusCode.RECRUITING.getCode(),
-                            lastestStudySiteAccrualStatusDTO.getStatusCode().getCode())) {
+            RecruitmentStatusCode accrualStatus = lastestStudySiteAccrualStatusDTO != null
+                ? RecruitmentStatusCode.getByCode(lastestStudySiteAccrualStatusDTO.getStatusCode().getCode()) : null;
+            if (RecruitmentStatusCode.getRecruitingStatuses().contains(accrualStatus)) {
                 studySiteRecruiting = true;
             }
         }
 
-        if (StringUtils.equalsIgnoreCase(StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode(), recruitmentStatusDto
-                .getStatusCode().getCode())
-                && !studySiteRecruiting) {
+        if (RecruitmentStatusCode.getRecruitingStatuses().contains(studyRecruitmentStatus) && !studySiteRecruiting) {
+            String errorMsg =  "Data inconsistency: At least one location needs to be recruiting if the overall "
+                + "recruitment status is '%s'";
             abstractionList.add(createError("Error", "Select Participating Sites from Administrative Data menu.",
-                    "Data inconsistency: At least one location needs to be recruiting if the overall "
-                            + "recruitment status is 'Recruiting'"));
+                    String.format(errorMsg, studyRecruitmentStatus.getCode())));
         }
 
-        if (StringUtils.equalsIgnoreCase(StudyRecruitmentStatusCode.NOT_YET_RECRUITING.getCode(), recruitmentStatusDto
-                .getStatusCode().getCode())
-                && studySiteRecruiting) {
+        if ((studyRecruitmentStatus == RecruitmentStatusCode.IN_REVIEW
+                || studyRecruitmentStatus == RecruitmentStatusCode.APPROVED) && studySiteRecruiting) {
+            String errorMsg =
+                "Data inconsistency. No site can recruit patients if overall study recruitment status is '%s'";
             abstractionWarnList.add(createError("Warning", "Select Participating Sites from Administrative Data menu.",
-                    "Data inconsistency. No site can recruit patients if overall study recruitment status "
-                            + " is 'Not yet recruiting'"));
+                    String.format(errorMsg, studyRecruitmentStatus.getCode())));
         }
 
         StudyProtocolDTO studyProtocolDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
+        String errorMsg = "Data inconsistency. Study Start Date cannot be in the past for the study that is %s";
         if ((studyProtocolDTO.getStartDate().getValue().getTime() > System.currentTimeMillis())
-                && (recruitmentStatusDto.getStatusCode().getCode().equals(RecruitmentStatusCode.NOT_YET_RECRUITING
-                        .getCode()))) {
+                && (studyRecruitmentStatus == RecruitmentStatusCode.IN_REVIEW
+                        || studyRecruitmentStatus ==  RecruitmentStatusCode.APPROVED)) {
             abstractionWarnList.add(createError("Warning", "Select recruitment status date",
-                    "Data inconsistency. Study Start Date cannot be in the past for"
-                            + " the study that is Not yet recruiting’"));
+                    String.format(errorMsg, studyRecruitmentStatus.getDisplayName())));
         }
-
     }
 
     private void enforceTreatingSite(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList)

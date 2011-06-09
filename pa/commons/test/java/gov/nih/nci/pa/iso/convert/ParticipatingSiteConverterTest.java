@@ -136,19 +136,19 @@ public class ParticipatingSiteConverterTest extends
         Date twoDaysAgo = DateUtils.addDays(today, -2);
 
         StudySiteAccrualStatus ssaStatus = new StudySiteAccrualStatus();
-        ssaStatus.setStatusCode(RecruitmentStatusCode.SUSPENDED_RECRUITING);
+        ssaStatus.setStatusCode(RecruitmentStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL);
         ssaStatus.setStatusDate(new Timestamp(today.getTime()));
         ssaStatus.setStudySite(studySite);
         studySite.getStudySiteAccrualStatuses().add(ssaStatus);
 
         StudySiteAccrualStatus ssaStatus2 = new StudySiteAccrualStatus();
-        ssaStatus2.setStatusCode(RecruitmentStatusCode.RECRUITING);
+        ssaStatus2.setStatusCode(RecruitmentStatusCode.ACTIVE);
         ssaStatus2.setStatusDate(new Timestamp(yesterday.getTime()));
         ssaStatus2.setStudySite(studySite);
         studySite.getStudySiteAccrualStatuses().add(ssaStatus2);
 
         StudySiteAccrualStatus ssaStatus3 = new StudySiteAccrualStatus();
-        ssaStatus3.setStatusCode(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING);
+        ssaStatus3.setStatusCode(RecruitmentStatusCode.CLOSED_TO_ACCRUAL);
         ssaStatus3.setStatusDate(new Timestamp(twoDaysAgo.getTime()));
         ssaStatus3.setStudySite(studySite);
         studySite.getStudySiteAccrualStatuses().add(ssaStatus3);
@@ -199,7 +199,7 @@ public class ParticipatingSiteConverterTest extends
         }
 
         StudySiteAccrualStatusDTO ssasDto = new StudySiteAccrualStatusDTO();
-        ssasDto.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.SUSPENDED_RECRUITING.getCode()));
+        ssasDto.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode()));
         ssasDto.setStatusDate(TsConverter.convertToTs(today));
 
         return dto;
@@ -262,7 +262,7 @@ public class ParticipatingSiteConverterTest extends
         assertEquals(today, dto.getAccrualDateRange().getHigh().getValue());
         assertEquals(today, dto.getAccrualDateRange().getLow().getValue());
         assertFalse(dto.getStudySiteContacts().isEmpty());
-        assertEquals(RecruitmentStatusCode.SUSPENDED_RECRUITING.getCode(), dto.getStudySiteAccrualStatus()
+        assertEquals(RecruitmentStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode(), dto.getStudySiteAccrualStatus()
             .getStatusCode().getCode());
         assertEquals(today, dto.getStudySiteAccrualStatus().getStatusDate().getValue());
     }

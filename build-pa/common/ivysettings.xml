@@ -22,7 +22,7 @@
                 <artifact pattern="${nci.cagrid.ivy.repo}/repository-1.3/[organisation]/[module]/[revision]/[artifact].[ext]" />
             </url>
             <!-- As a last resort, use the jboss maven repo. It contains some jars that aren't in our mirror, namely the lastest version of mockrunner. -->
-            <ibiblio name="jboss-maven-repo" m2compatible="true" root=" http://repository.jboss.org/maven2/" changingPattern=".*SNAPSHOT" />
+            <ibiblio name="jboss-maven-repo" m2compatible="true" root="https://repository.jboss.org/nexus/content/groups/public/" changingPattern=".*SNAPSHOT" />
         </chain>
     </resolvers>
 </ivysettings>

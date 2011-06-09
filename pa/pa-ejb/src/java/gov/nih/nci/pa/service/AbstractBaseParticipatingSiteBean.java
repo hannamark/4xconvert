@@ -117,15 +117,13 @@ public abstract class AbstractBaseParticipatingSiteBean extends AbstractBasePart
 
     private void enforceBusinessRecruitmentRules1ForProprietary(boolean openDateAvail,
             StudySiteAccrualStatusDTO currentStatus) throws PAException {
-
-        if (RecruitmentStatusCode.WITHDRAWN.getCode().equalsIgnoreCase(currentStatus.getStatusCode().getCode())
-                || RecruitmentStatusCode.NOT_YET_RECRUITING.getCode()
-                .equalsIgnoreCase(currentStatus.getStatusCode().getCode())) {
+        RecruitmentStatusCode status = RecruitmentStatusCode.getByCode(currentStatus.getStatusCode().getCode());
+        if (RecruitmentStatusCode.getNonRecruitingStatuses().contains(status)) {
             if (openDateAvail) {
                 throw new PAException("Date Opened for Accrual must be null for "
                         + currentStatus.getStatusCode().getCode());
             }
-        }  else if (!openDateAvail) {
+        } else if (!openDateAvail) {
             throw new PAException("Date Opened for Accrual must be not null for "
                     + currentStatus.getStatusCode().getCode());
         }
@@ -134,7 +132,7 @@ public abstract class AbstractBaseParticipatingSiteBean extends AbstractBasePart
     private void enforceBusinessRecruitmentRules2ForProprietary(boolean closedDateAvail,
             StudySiteAccrualStatusDTO currentStatus) throws PAException {
 
-        if ((RecruitmentStatusCode.TERMINATED_RECRUITING.getCode()
+        if ((RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE.getCode()
                 .equalsIgnoreCase(currentStatus.getStatusCode().getCode())
                 || RecruitmentStatusCode.COMPLETED.getCode()
                 .equalsIgnoreCase(currentStatus.getStatusCode().getCode()))

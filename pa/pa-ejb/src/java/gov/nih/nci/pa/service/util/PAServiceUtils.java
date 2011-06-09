@@ -105,7 +105,6 @@ import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
@@ -920,11 +919,11 @@ public class PAServiceUtils {
     public void enforceRecruitmentStatus(StudyProtocolDTO studyProtocolDTO,
             List<StudySiteAccrualStatusDTO> participatingSites, StudyRecruitmentStatusDTO recruitmentStatusDto)
             throws PAException {
+        RecruitmentStatusCode studyRecruitmentStatus =
+            RecruitmentStatusCode.getByCode(recruitmentStatusDto.getStatusCode().getCode());
         StringBuffer errorMsg = new StringBuffer();
         if (CollectionUtils.isNotEmpty(participatingSites)
-                && StudyRecruitmentStatusCode.RECRUITING_ACTIVE.getCode().equalsIgnoreCase(recruitmentStatusDto
-                                                                                               .getStatusCode()
-                                                                                               .getCode())) {
+                && RecruitmentStatusCode.getRecruitingStatuses().contains(studyRecruitmentStatus)) {
             boolean recruiting = false;
             StudySiteAccrualStatusDTO latestDTO = null;
             List<StudySiteAccrualStatusDTO> participatingSitesOld = null;
@@ -936,17 +935,12 @@ public class PAServiceUtils {
                             + " does not exit");
                 }
                 Long latestId = IiConverter.convertToLong(studySiteAccuralStatus.getIdentifier());
+                RecruitmentStatusCode recruimentStatus =
+                    RecruitmentStatusCode.getByCode(studySiteAccuralStatus.getStatusCode().getCode());
                 // base condition if one of the newly changed status is recruiting ;then break
-                if (latestId == null) {
-                    if (RecruitmentStatusCode.RECRUITING.getCode().equalsIgnoreCase(studySiteAccuralStatus
-                                                                                        .getStatusCode().getCode())) {
-                        recruiting = true;
-                        break;
-                    } else if (!RecruitmentStatusCode.RECRUITING.getCode().equalsIgnoreCase(studySiteAccuralStatus
-                                                                                                .getStatusCode()
-                                                                                                .getCode())) {
-                        continue;
-                    }
+                if (latestId == null && RecruitmentStatusCode.getRecruitingStatuses().contains(recruimentStatus)) {
+                    recruiting = true;
+                    break;
                 } else {
                     participatingSitesOld = new ArrayList<StudySiteAccrualStatusDTO>();
                     participatingSitesOld.add(studySiteAccuralStatus);
@@ -960,9 +954,9 @@ public class PAServiceUtils {
                     }
                 });
                 latestDTO = participatingSitesOld.get(participatingSitesOld.size() - 1);
-                if (latestDTO != null
-                        && RecruitmentStatusCode.RECRUITING.getCode().equalsIgnoreCase(latestDTO.getStatusCode()
-                                                                                           .getCode())) {
+                RecruitmentStatusCode recruimentStatus = latestDTO == null ? null
+                        : RecruitmentStatusCode.getByCode(latestDTO.getStatusCode().getCode());
+                if (RecruitmentStatusCode.getRecruitingStatuses().contains(recruimentStatus)) {
                     recruiting = true;
                 }
                 if (!recruiting) {
@@ -1332,19 +1326,20 @@ public class PAServiceUtils {
                          + " than Date Opened for Accrual.");
               }
               if (!PAUtil.isCdNull(studySiteAccrualStatusDTO.getStatusCode())) {
+                  RecruitmentStatusCode recruitmentStatus =
+                      RecruitmentStatusCode.getByCode(studySiteAccrualStatusDTO.getStatusCode().getCode());
                   String recStatus = CdConverter.convertCdToString(studySiteAccrualStatusDTO.getStatusCode());
-                  if (RecruitmentStatusCode.WITHDRAWN.getCode().equalsIgnoreCase(recStatus)
-                          || RecruitmentStatusCode.NOT_YET_RECRUITING.getCode().equalsIgnoreCase(recStatus)) {
+                  if (RecruitmentStatusCode.getNonRecruitingStatuses().contains(recruitmentStatus)) {
                       if (dateOpenedForAccrual != null) {
-                          errorMsg.append("Date Opened for Acrual must be null for ").append(recStatus);
+                          errorMsg.append("Date Opened for Accrual must be null for ").append(recStatus);
                       }
-                  }  else if (dateOpenedForAccrual == null) {
-                      errorMsg.append("Date Opened for Acrual must be a valid date for ").append(recStatus);
+                  } else if (dateOpenedForAccrual == null) {
+                      errorMsg.append("Date Opened for Accrual must be a valid date for ").append(recStatus);
                   }
-                  if ((RecruitmentStatusCode.TERMINATED_RECRUITING.getCode().equalsIgnoreCase(recStatus)
+                  if ((RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE.getCode().equalsIgnoreCase(recStatus)
                           || RecruitmentStatusCode.COMPLETED.getCode().equalsIgnoreCase(recStatus))
                           && dateClosedForAccrual == null) {
-                         errorMsg.append("Date Closed for Acrual must be a valid date for ").append(recStatus);
+                         errorMsg.append("Date Closed for Accrual must be a valid date for ").append(recStatus);
                   }
               }
 

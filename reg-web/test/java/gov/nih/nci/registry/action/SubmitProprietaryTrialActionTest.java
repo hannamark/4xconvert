@@ -148,20 +148,20 @@ public class SubmitProprietaryTrialActionTest extends AbstractRegWebTest {
     @Test
     public void testReviewSiteRecStatus() throws Exception{
         action.setTrialDTO(getMockProprietaryTrialDTO());
-        action.getTrialDTO().setSiteStatusCode("Recruiting");
+        action.getTrialDTO().setSiteStatusCode("Active");
         assertEquals("error", action.review());
-        assertTrue(action.getActionErrors().contains("Date Opened for Acrual must be a valid date for Recruiting"));
+        assertTrue(action.getActionErrors().contains("Date Opened for Accrual must be a valid date for Active"));
         action.setTrialDTO(getMockProprietaryTrialDTO());
-        action.getTrialDTO().setSiteStatusCode("Recruiting");
+        action.getTrialDTO().setSiteStatusCode("Active");
         action.getTrialDTO().setDateOpenedforAccrual("12/09/2009");
         assertEquals("review", action.review());
         action.setTrialDTO(getMockProprietaryTrialDTO());
-        action.getTrialDTO().setSiteStatusCode("Terminated");
+        action.getTrialDTO().setSiteStatusCode("Administratively Complete");
         action.getTrialDTO().setDateOpenedforAccrual("11/09/2009");
         action.getTrialDTO().setDateClosedforAccrual("12/09/2009");
         assertEquals("review", action.review());
         action.setTrialDTO(getMockProprietaryTrialDTO());
-        action.getTrialDTO().setSiteStatusCode("Terminated");
+        action.getTrialDTO().setSiteStatusCode("Administratively Complete");
         action.getTrialDTO().setDateOpenedforAccrual("11/09/2009");
         action.getTrialDTO().setDateClosedforAccrual("10/09/2009");
         assertEquals("error", action.review());

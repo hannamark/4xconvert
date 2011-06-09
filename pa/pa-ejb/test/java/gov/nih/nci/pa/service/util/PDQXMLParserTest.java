@@ -192,7 +192,7 @@ public class PDQXMLParserTest {
         for (OrganizationDTO locOrg : location.keySet()) {
             orgNames.add(EnOnConverter.convertEnOnToString(locOrg.getName()));
             for (StudySiteAccrualStatusDTO recrutingStatus : location.get(locOrg).keySet()) {
-                assertEquals(RecruitmentStatusCode.RECRUITING.getCode(), recrutingStatus.getStatusCode().getCode());
+                assertEquals(RecruitmentStatusCode.ACTIVE.getCode(), recrutingStatus.getStatusCode().getCode());
             }
         }
         assertTrue(CollectionUtils.isEqualCollection(locOrgNames, orgNames));

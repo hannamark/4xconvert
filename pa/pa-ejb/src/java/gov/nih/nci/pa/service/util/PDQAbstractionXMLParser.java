@@ -11,12 +11,14 @@ import gov.nih.nci.pa.enums.ArmTypeCode;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.ArmDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -29,6 +31,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PhoneUtil;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -69,6 +72,18 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
     private String healthyVolunteers;
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
     private final CorrelationUtils corrUtils = new CorrelationUtils();
+
+    private static final Map<String, RecruitmentStatusCode> RECRUITMENT_STATUS_MAP =
+        new HashMap<String, RecruitmentStatusCode>();
+    static {
+        RECRUITMENT_STATUS_MAP.put("WITHDRAWN", RecruitmentStatusCode.WITHDRAWN);
+        RECRUITMENT_STATUS_MAP.put("RECRUITING", RecruitmentStatusCode.ACTIVE);
+        RECRUITMENT_STATUS_MAP.put("ENROLLING BY INVITATION", RecruitmentStatusCode.ENROLLING_BY_INVITATION);
+        RECRUITMENT_STATUS_MAP.put("SUSPENDED", RecruitmentStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL);
+        RECRUITMENT_STATUS_MAP.put("ACTIVE, NOT RECRUITING", RecruitmentStatusCode.CLOSED_TO_ACCRUAL);
+        RECRUITMENT_STATUS_MAP.put("TERMINATED", RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE);
+        RECRUITMENT_STATUS_MAP.put("COMPLETED", RecruitmentStatusCode.COMPLETED);
+    }
 
     /**
      * {@inheritDoc}
@@ -135,8 +150,8 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
             orgDTO.setPostalAddress(AddressConverterUtil.create(null, null, city, state, zip, countryName));
             // read Status
             StudySiteAccrualStatusDTO siteStatus = new StudySiteAccrualStatusDTO();
-            siteStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.getByCode(getText(locationElmt,
-                                                                                                     "status"))));
+            RecruitmentStatusCode recruitmentStatus = transformRecruitmentStatus(getText(locationElmt, "status"));
+            siteStatus.setStatusCode(CdConverter.convertToCd(recruitmentStatus));
             siteStatus.setStatusDate(recrutingStatusDate);
             // read contact
             Map<StudySiteAccrualStatusDTO, Map<PoDto, String>> contactMap =
@@ -144,6 +159,27 @@ public class PDQAbstractionXMLParser extends AbstractPDQXmlParser {
             contactMap.put(siteStatus, readContact(locationElmt, countryName));
             getLocationsMap().put(orgDTO, contactMap);
         }
+    }
+
+    /**
+     * Transforms the recruitment status from the old values to the new, status status aligned values.
+     * @param recruitmentStatus
+     * @return the trial's recruitment status code
+     * @throws PAException on error
+     */
+    private RecruitmentStatusCode transformRecruitmentStatus(String recruitmentStatus) throws PAException {
+        RecruitmentStatusCode result = RECRUITMENT_STATUS_MAP.get(StringUtils.upperCase(recruitmentStatus));
+        if (StringUtils.equalsIgnoreCase(recruitmentStatus, "NOT YET RECRUITING")) {
+            StudyOverallStatusDTO studyStatus =
+                PaRegistry.getStudyOverallStatusService().getCurrentByStudyProtocol(getIspDTO().getIdentifier());
+            StudyStatusCode statusCode = StudyStatusCode.getByCode(studyStatus.getStatusCode().getCode());
+            if (statusCode == StudyStatusCode.IN_REVIEW) {
+                result = RecruitmentStatusCode.IN_REVIEW;
+            } else {
+                result = RecruitmentStatusCode.APPROVED;
+            }
+        }
+        return result;
     }
 
     private void logPartSiteLoadError(String ctepId, Element facilityElmt) {

@@ -159,10 +159,10 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     private static final int CTEP_IDX = 18;
     private static final int HCFORG_IDX = 19;
     private static final int ROORG_IDX = 20;
-    private static final String SP_PROP_TRIAL_CLAUSE 
+    private static final String SP_PROP_TRIAL_CLAUSE
         = "WHEN sp.proprietary_trial_indicator = FALSE AND ss.functional_code = '";
-    
-    
+
+
     /** Db returned value for Epidemiologic/Other/Outcome. */
     public static final String EPIDEM_OUTCOME = "Epidemiologic/Other/Outcome";
     /** Db returned value for Agent/Device. */
@@ -171,7 +171,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     public static final String OTHER_INTERVENTION = "Other Intervention";
     /** Db returned value for Ancillary/Correlative. */
     public static final String ANCILLARY_CORRELATIVE = "Ancillary/Correlative";
-    
+
     /**
      * @return the studyProtocolService
      */
@@ -184,32 +184,32 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
         this.studyProtocolService = studyProtocolService;
     }
-      
+
     /**
      * Query for pulling summ4 data.
      * @param criteria dto.
      * @return results.
      */
     @SuppressWarnings("PMD.ExcessiveMethodLength")
-    protected StringBuffer generateSqlQuery(Summ4RepCriteriaDto criteria) {            
+    protected StringBuffer generateSqlQuery(Summ4RepCriteriaDto criteria) {
         StringBuffer sql = new StringBuffer(
         "select distinct "
         + "trial_list.Sponsor, "
         + "trial_list.Proto_Id, "
         + "trial_list.Pi, "
-        + "trial_list.program_code, " 
+        + "trial_list.program_code, "
         + "trial_list.open_date, "
         + "trial_list.closed_date, "
         + "trial_list.phase, "
         + "trial_list.type, "
         + "trial_list.tittle, "
         + "trial_list.target, "
-        + "(select count(sub1.patient_identifier) from study_subject sub1 " 
-        + "inner join performed_activity AS perAct ON perAct.study_subject_identifier = sub1.identifier " 
+        + "(select count(sub1.patient_identifier) from study_subject sub1 "
+        + "inner join performed_activity AS perAct ON perAct.study_subject_identifier = sub1.identifier "
         + "AND perAct.study_protocol_identifier = sub1.study_protocol_identifier "
         + "where sub1.study_site_identifier = trial_list.Study_Site_id "
         + "and sub1.study_protocol_identifier = trial_list.trial_id "
-        + "and sub1.status_code <> 'PENDING' "); 
+        + "and sub1.status_code <> 'PENDING' ");
         sql.append(dateRangeSql(criteria, "perAct.registration_date"));
         String accrualCenterToDate = ") as accrual_center_12m, "
             + "(select count(sub1.patient_identifier) from study_subject sub1  "
@@ -219,13 +219,13 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
             + "and sub1.study_protocol_identifier = trial_list.trial_id "
             + "and sub1.status_code <> 'PENDING'  "
             + "and perAct.registration_date <= now() "
-            + ") as accrual_center_todate, "; 
+            + ") as accrual_center_todate, ";
         sql.append(accrualCenterToDate
         + "trial_list.sort_category, "
         + "trial_list.sort_sub_category, "
         + "trial_list.trial_id, "
         + "trial_list.NciIdentifier, "
-        + "(select org_lo.name from study_site ss_lo, research_organization ro_lo, organization org_lo " 
+        + "(select org_lo.name from study_site ss_lo, research_organization ro_lo, organization org_lo "
         + "where ss_lo.research_organization_identifier = ro_lo.identifier "
         + "AND ro_lo.organization_identifier = org_lo.identifier "
         + "AND ss_lo.functional_code = '" + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName()
@@ -234,7 +234,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "(select ss_nct.local_sp_indentifier from study_site ss_nct, research_organization ro_nct, "
         + "organization org_nct where ss_nct.research_organization_identifier = ro_nct.identifier "
         + "AND ro_nct.organization_identifier = org_nct.identifier "
-        + "AND ss_nct.functional_code = '" + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getName() 
+        + "AND ss_nct.functional_code = '" + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getName()
         + "' AND ss_nct.study_protocol_identifier = trial_list.trial_id "
         + "AND org_nct.name = 'ClinicalTrials.gov' "
         + ") as nct_identifier, "
@@ -256,31 +256,32 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "ss.local_sp_indentifier as Proto_Id, "
         + "ss.functional_code as Func_Code, "
         + "CASE WHEN sp.study_protocol_type='InterventionalStudyProtocol' THEN hcp_p.last_name||', '||hcp_p.first_name "
-        + "WHEN sp.study_protocol_type='ObservationalStudyProtocol' " 
+        + "WHEN sp.study_protocol_type='ObservationalStudyProtocol' "
         + "THEN crs_p.last_name||', '||crs_p.first_name END as Pi, "
         + "sp.program_code_text as program_code,  "
         + "CASE  "
-        + "WHEN sp.proprietary_trial_indicator = TRUE AND ss.functional_code = '" 
+        + "WHEN sp.proprietary_trial_indicator = TRUE AND ss.functional_code = '"
         + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName()
-        + "' THEN null WHEN sp.proprietary_trial_indicator = TRUE AND ss.functional_code = '" 
+        + "' THEN null WHEN sp.proprietary_trial_indicator = TRUE AND ss.functional_code = '"
         + StudySiteFunctionalCode.TREATING_SITE.getName() + "' THEN ss.accrual_date_range_low "
         + SP_PROP_TRIAL_CLAUSE
         + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "' THEN sp.start_date "
         + SP_PROP_TRIAL_CLAUSE
-        + StudySiteFunctionalCode.TREATING_SITE.getName() + "' and " 
-        + "ssAs.status_code = '" + RecruitmentStatusCode.RECRUITING.getName() + "' THEN ssAs.status_date "
+        + StudySiteFunctionalCode.TREATING_SITE.getName() + "' and "
+        + "(ssAs.status_code = '" + RecruitmentStatusCode.ACTIVE.getName() + "' or ssAs.status_code = '"
+        + RecruitmentStatusCode.ENROLLING_BY_INVITATION.getName() + "')  THEN ssAs.status_date "
         + "END as open_date, "
         + "CASE WHEN sp.proprietary_trial_indicator = TRUE AND ss.functional_code = '"
         + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "' THEN null "
         + "WHEN sp.proprietary_trial_indicator = TRUE AND ss.functional_code = '"
-        + StudySiteFunctionalCode.TREATING_SITE.getName() + "' THEN " 
+        + StudySiteFunctionalCode.TREATING_SITE.getName() + "' THEN "
         + "ss.accrual_date_range_high "
         + SP_PROP_TRIAL_CLAUSE
-        + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "' AND " 
+        + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "' AND "
         + "ssOv.status_code = '" + StudyStatusCode.CLOSED_TO_ACCRUAL.getName() + "' THEN ssOv.status_date "
         + SP_PROP_TRIAL_CLAUSE
-        + StudySiteFunctionalCode.TREATING_SITE.getName() + "' AND " 
-        + "ssAs.status_code = '" + RecruitmentStatusCode.ACTIVE_NOT_RECRUITING.getName() + "' THEN ssAs.status_date "
+        + StudySiteFunctionalCode.TREATING_SITE.getName() + "' AND "
+        + "ssAs.status_code = '" + RecruitmentStatusCode.CLOSED_TO_ACCRUAL.getName() + "' THEN ssAs.status_date "
         + "END as closed_date, "
         + "sp.phase_code as phase, "
         + "sp.primary_purpose_code as type, "
@@ -288,9 +289,9 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "sp.max_target_accrual_num as target, "
         + "CASE WHEN sindide.indlde_type_code = 'IDE' OR sindide.indlde_type_code = 'IND' THEN :AGENT_DEVICE  "
         + "WHEN plnAct.category_code = 'INTERVENTION' THEN :OTHER_INTERVENTION  "
-        + "WHEN sp.primary_purpose_code = 'EPIDEMIOLOGIC' OR sp.primary_purpose_code = 'OTHER' OR " 
+        + "WHEN sp.primary_purpose_code = 'EPIDEMIOLOGIC' OR sp.primary_purpose_code = 'OTHER' OR "
         + "sp.primary_purpose_code = 'OUTCOME' THEN :EPIDEM_OTHER_OUTCOME "
-        + "WHEN sp.primary_purpose_code = 'ANCILLARY' OR sp.primary_purpose_code = 'CORRELATIVE' " 
+        + "WHEN sp.primary_purpose_code = 'ANCILLARY' OR sp.primary_purpose_code = 'CORRELATIVE' "
         + "THEN :ANCILLARY_CORRELATIVE "
         + "END as sort_category, "
         + "sr.type_code as sort_sub_category, "
@@ -313,18 +314,18 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "left JOIN person AS hcp_p ON hcp.person_identifier = hcp_p.identifier "
         + "left JOIN study_site_overall_status AS ssOv ON ssOv.study_site_identifier = ss.identifier "
         + "left join study_site_accrual_status ssAs ON ssAs.study_site_identifier = ss.identifier "
-        + "left join organization as sponsor_org ON sponsor_org.identifier = " 
+        + "left join organization as sponsor_org ON sponsor_org.identifier = "
         + "CAST(sr.organization_identifier AS INTEGER)  "
         + "left join study_indlde AS sindide ON sp.identifier = sindide.study_protocol_identifier "
         + "left join planned_activity AS plnAct ON sp.identifier = plnAct.study_protocol_identifier "
         + "left join study_site AS ss2 ON ss2.functional_code = '"
-        + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "' and " 
+        + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "' and "
         + "ss2.identifier = ss.identifier  "
         + "where sp.status_code = '" + StudyStatusCode.ACTIVE.getName() + "'  "
         + "and sm.milestone_code = '" + MilestoneCode.READY_FOR_TSR.getName() + "' "
-        + "and dws.status_code in ('" + DocumentWorkflowStatusCode.ABSTRACTED.getName() 
-        + "',' " + DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getName() + "'," 
-        + "'" + DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getName() 
+        + "and dws.status_code in ('" + DocumentWorkflowStatusCode.ABSTRACTED.getName()
+        + "',' " + DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getName() + "',"
+        + "'" + DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getName()
         + "','" + DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED.getName() + "') "
         + "and sr.summ_4_rept_indicator = TRUE "
         + "and ss.functional_code in ('" + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "', '"
@@ -336,10 +337,10 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "where "
         + "trial_list.Pi is not null "
         + "and sort_category is not null "
-        + "order by sort_category, sort_sub_category, pi"); 
+        + "order by sort_category, sort_sub_category, pi");
         return sql;
     }
-    
+
     private String generateOrgClause(Summ4RepCriteriaDto criteria) {
         int size = criteria.getOrgNames().size();
         StringBuffer orgNameClause = new StringBuffer("and (");
@@ -375,7 +376,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
             query = session.createSQLQuery(sql.toString());
             setDateRangeParameters(criteria, query);
             setNameParameters(criteria, query);
-            
+
             @SuppressWarnings(UNCHECKED)
             List<Object[]> queryList = query
                 .list();
@@ -390,7 +391,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         for (int i = 0; i < criteria.getOrgNames().size(); i++) {
             query.setString("ORG_NAME" + i, StConverter.convertToString(criteria.getOrgNames().get(i)));
         }
-       
+
         query.setString("EPIDEM_OTHER_OUTCOME", EPIDEM_OUTCOME);
         query.setString("AGENT_DEVICE", AGENT_DEVICE);
         query.setString("OTHER_INTERVENTION", OTHER_INTERVENTION);
@@ -410,7 +411,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
             rdto.setPhase(StConverter.convertToSt((String) q[PHS_IDX]));
             rdto.setType(StConverter.convertToSt((String) q[TYP_IDX]));
             rdto.setTitle(StConverter.convertToSt((String) q[TTL_IDX]));
-            
+
             rdto.setTarget(IntConverter.convertToInt(convertToInteger(q[TRG_IDX])));
             rdto.setAccrualCenter12m(IntConverter.convertToInt(convertToInteger(q[AC12_IDX])));
             rdto.setAccrualCenterToDate(IntConverter.convertToInt(convertToInteger(q[ACTD_IDX])));
@@ -420,15 +421,15 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
             rdto.setLeadOrgName(StConverter.convertToSt((String) q[LEAD_ORG_IDX]));
             rdto.setNctIdentifier(StConverter.convertToSt((String) q[NCT_IDX]));
             rdto.setCtepIdentifier(StConverter.convertToSt((String) q[CTEP_IDX]));
-            
+
             Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(((BigInteger) q[TRIAL_IDX]).longValue());
             StudyProtocolDTO spDTO = studyProtocolService
             .getStudyProtocol(studyProtocolIi);
             rdto.setAnatomicSiteCodes(spDTO.getSummary4AnatomicSites());
-            
-            
+
+
             // Either HCF Org Name is set or RO Org Name, but not both.
-            // if func_code = lead_org then, then ro org name is set, 
+            // if func_code = lead_org then, then ro org name is set,
             // else if func_code = treating site, then hcf org name is set
             String orgMember = (StringUtils.isBlank((String) q[HCFORG_IDX]) ? (String) q[ROORG_IDX]
                     : (String) q[HCFORG_IDX]);
@@ -437,7 +438,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         }
         return rList;
     }
-    
+
     private Integer convertToInteger(Object obj) {
         Integer returnVal = null;
         if (obj != null) {
@@ -449,21 +450,21 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     /**
      * {@inheritDoc}
      */
-    public List<String> searchPoOrgNames(String partial, int maxLimit) throws PAException, 
+    public List<String> searchPoOrgNames(String partial, int maxLimit) throws PAException,
         TooManyResultsException {
-        
+
         List<String> returnVal = new ArrayList<String>();
         LimitOffset limit = new LimitOffset(maxLimit, 0);
-        
+
         OrganizationDTO criteria = new OrganizationDTO();
         criteria.setName(EnOnConverter.convertToEnOn(partial));
-        
-        List<OrganizationDTO> orgList = 
+
+        List<OrganizationDTO> orgList =
             PoRegistry.getOrganizationEntityService().search(criteria, limit);
         for (OrganizationDTO item : orgList) {
             returnVal.add(EnOnConverter.convertEnOnToString(item.getName()));
         }
-        
+
         return returnVal;
     }
 
@@ -501,13 +502,13 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
                     functionalRelationship = CdConverter.convertCdToString(relationshipDTO.getFunctionalType());
                 }
             }
-            String orgName = EnOnConverter.convertEnOnToString(dto.getName()); 
+            String orgName = EnOnConverter.convertEnOnToString(dto.getName());
             returnMap
                     .put(orgName, functionalRelationship);
         }
         return returnMap;
     }
-    
+
     /**
      * @param protocolQueryService the protocolQueryService to set
      */

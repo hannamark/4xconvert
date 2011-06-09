@@ -198,22 +198,23 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
         DOUBLE_BLIND_DEFAULT_ROLES.add(CdConverter.convertToCd(BlindingRoleCode.INVESTIGATOR));
     }
 
-    private static final Map<StudyStatusCode, RecruitmentStatusCode> DEFAULT_LOCATION_STATUS_MAP = 
+    private static final Map<StudyStatusCode, RecruitmentStatusCode> DEFAULT_LOCATION_STATUS_MAP =
         initDefaultLocationStatusMap();
 
     private static Map<StudyStatusCode, RecruitmentStatusCode> initDefaultLocationStatusMap() {
         Map<StudyStatusCode, RecruitmentStatusCode> map = new HashMap<StudyStatusCode, RecruitmentStatusCode>();
-        map.put(StudyStatusCode.IN_REVIEW, RecruitmentStatusCode.NOT_YET_RECRUITING);
-        map.put(StudyStatusCode.APPROVED, RecruitmentStatusCode.ACTIVE_NOT_RECRUITING);
-        map.put(StudyStatusCode.ACTIVE, RecruitmentStatusCode.RECRUITING);
+        map.put(StudyStatusCode.IN_REVIEW, RecruitmentStatusCode.IN_REVIEW);
+        map.put(StudyStatusCode.APPROVED, RecruitmentStatusCode.APPROVED);
+        map.put(StudyStatusCode.ACTIVE, RecruitmentStatusCode.ACTIVE);
         map.put(StudyStatusCode.ENROLLING_BY_INVITATION, RecruitmentStatusCode.ENROLLING_BY_INVITATION);
-        map.put(StudyStatusCode.CLOSED_TO_ACCRUAL, RecruitmentStatusCode.ACTIVE_NOT_RECRUITING);
-        map.put(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION, RecruitmentStatusCode.ACTIVE_NOT_RECRUITING);
-        map.put(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL, RecruitmentStatusCode.SUSPENDED_RECRUITING);
+        map.put(StudyStatusCode.CLOSED_TO_ACCRUAL, RecruitmentStatusCode.CLOSED_TO_ACCRUAL);
+        map.put(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION,
+                RecruitmentStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+        map.put(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL, RecruitmentStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL);
         map.put(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
-                RecruitmentStatusCode.SUSPENDED_RECRUITING);
+                RecruitmentStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION);
         map.put(StudyStatusCode.WITHDRAWN, RecruitmentStatusCode.WITHDRAWN);
-        map.put(StudyStatusCode.ADMINISTRATIVELY_COMPLETE, RecruitmentStatusCode.TERMINATED_RECRUITING);
+        map.put(StudyStatusCode.ADMINISTRATIVELY_COMPLETE, RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE);
         map.put(StudyStatusCode.COMPLETE, RecruitmentStatusCode.COMPLETED);
         return Collections.unmodifiableMap(map);
     }

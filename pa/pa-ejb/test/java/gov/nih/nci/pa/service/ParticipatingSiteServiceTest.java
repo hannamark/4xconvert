@@ -209,7 +209,7 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
 
     private StudySiteAccrualStatusDTO getStatusDTO() {
         StudySiteAccrualStatusDTO currentStatus = new StudySiteAccrualStatusDTO();
-        currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.RECRUITING.getCode()));
+        currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.ACTIVE.getCode()));
 
         currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime()
                 - Long.valueOf("300000000"))));
@@ -251,7 +251,7 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
 
         StudySiteAccrualStatusDTO freshAccStatus = studySiteAccrualStatusService
             .getCurrentStudySiteAccrualStatusByStudySite(dto.getIdentifier());
-        assertEquals(RecruitmentStatusCode.RECRUITING.getCode(), freshAccStatus.getStatusCode().getCode());
+        assertEquals(RecruitmentStatusCode.ACTIVE.getCode(), freshAccStatus.getStatusCode().getCode());
 
         List<StudySiteContactDTO> contList = studySiteContactService.getByStudySite(dto.getIdentifier());
         assertEquals(1, contList.size());
@@ -338,7 +338,7 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
 
         StudySiteAccrualStatusDTO freshAccStatus = studySiteAccrualStatusService
             .getCurrentStudySiteAccrualStatusByStudySite(dto.getIdentifier());
-        assertEquals(RecruitmentStatusCode.RECRUITING.getCode(), freshAccStatus.getStatusCode().getCode());
+        assertEquals(RecruitmentStatusCode.ACTIVE.getCode(), freshAccStatus.getStatusCode().getCode());
 
         contList = studySiteContactService.getByStudySite(dto.getIdentifier());
         // 1 princ, 1 sub, 1 prim

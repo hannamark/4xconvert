@@ -80,7 +80,7 @@ package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
-import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -92,7 +92,7 @@ import java.util.Date;
 
 /**
  * Convert StudyRecruitmentStatus domain to DTO.
- * 
+ *
  * @author Hugh Reinhart
  * @since 09/02/2008 copyright NCI 2008. All rights reserved. This code may not be used without the express written
  *        permission of the copyright holder, NCI.
@@ -140,7 +140,7 @@ public class StudyRecruitmentStatusConverter extends
             bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         }
         bo.setDateLastUpdated(new Date());
-        bo.setStatusCode(StudyRecruitmentStatusCode.getByCode(dto.getStatusCode().getCode()));
+        bo.setStatusCode(RecruitmentStatusCode.getByCode(dto.getStatusCode().getCode()));
         bo.setStatusDate(TsConverter.convertToTimestamp(dto.getStatusDate()));
         bo.setStudyProtocol(spBo);
     }

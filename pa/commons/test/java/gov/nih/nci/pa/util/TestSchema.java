@@ -159,7 +159,6 @@ import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -495,7 +494,7 @@ public class TestSchema {
         addUpdObject(sc);
 
         StudySiteAccrualStatus ssas = new StudySiteAccrualStatus();
-        ssas.setStatusCode(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING);
+        ssas.setStatusCode(RecruitmentStatusCode.CLOSED_TO_ACCRUAL);
         ssas.setStatusDate(new java.sql.Timestamp(new java.util.Date().getTime()));
         ssas.setStudySite(sPart);
         addUpdObject(ssas);
@@ -785,7 +784,7 @@ public class TestSchema {
         StudyRecruitmentStatus create = new StudyRecruitmentStatus();
         Timestamp now = new Timestamp(new Date().getTime());
         create.setStudyProtocol(sp);
-        create.setStatusCode(StudyRecruitmentStatusCode.RECRUITING_ACTIVE);
+        create.setStatusCode(RecruitmentStatusCode.ACTIVE);
         create.setStatusDate(now);
         create.setUserLastUpdated(getUser());
         create.setDateLastUpdated(now);

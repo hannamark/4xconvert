@@ -114,6 +114,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.File;
@@ -555,7 +556,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                 .append(protocolId).append("is not an Active study.\n");   
         } else if (!hasAccrualAccess(sp.getIdentifier())) {
             errMsg.append(key).append(appendLineNumber(lineNumber))
-            .append(PAUtil.getGridIdentityUsername(CaseSensitiveUsernameHolder.getUser()))
+            .append(CsmUserUtil.getGridIdentityUsername(CaseSensitiveUsernameHolder.getUser()))
             .append(" does not have accrual access to the study protocol with the identifier ").append(protocolId);
         }
     }

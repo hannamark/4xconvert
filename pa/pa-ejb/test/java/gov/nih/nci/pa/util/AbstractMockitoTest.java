@@ -119,10 +119,10 @@ import gov.nih.nci.pa.enums.AssayPurposeCode;
 import gov.nih.nci.pa.enums.AssayTypeCode;
 import gov.nih.nci.pa.enums.AssayUseCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
-import gov.nih.nci.pa.enums.StudyRecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -345,7 +345,7 @@ public class AbstractMockitoTest {
        studyOverallStatusDto.setStatusDate(TsConverter.convertToTs(new Timestamp(0)));
 
        studyRecruitmentStatusDto = new StudyRecruitmentStatusDTO();
-       studyRecruitmentStatusDto.setStatusCode(CdConverter.convertToCd(StudyRecruitmentStatusCode.COMPLETED));
+       studyRecruitmentStatusDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.COMPLETED));
 
        setupIspDto();
 

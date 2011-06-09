@@ -109,7 +109,7 @@ public class StudySiteAccrualStatusConverterTest extends
     public StudySiteAccrualStatus makeBo() {
         StudySiteAccrualStatus bo = new StudySiteAccrualStatus();
         bo.setId(ID);
-        bo.setStatusCode(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING);
+        bo.setStatusCode(RecruitmentStatusCode.CLOSED_TO_ACCRUAL);
         bo.setStatusDate(new java.sql.Timestamp(now.getTime()));
         bo.setStudySite(getStudySite());
         return bo;
@@ -121,7 +121,7 @@ public class StudySiteAccrualStatusConverterTest extends
     @Override
     public StudySiteAccrualStatusDTO makeDto() {
         StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
-        dto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING));
+        dto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.CLOSED_TO_ACCRUAL));
         dto.setStatusDate(TsConverter.convertToTs(new Timestamp(now.getTime())));
         dto.setStudySiteIi(IiConverter.convertToIi(STUDY_SITE_ID));
         return dto;
@@ -133,7 +133,7 @@ public class StudySiteAccrualStatusConverterTest extends
     @Override
     public void verifyBo(StudySiteAccrualStatus bo) {
         assertNull(bo.getId());
-        assertEquals(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING, bo.getStatusCode());
+        assertEquals(RecruitmentStatusCode.CLOSED_TO_ACCRUAL, bo.getStatusCode());
         assertEquals(now, bo.getStatusDate());
         assertEquals(STUDY_SITE_ID, bo.getStudySite().getId());
     }
@@ -144,7 +144,7 @@ public class StudySiteAccrualStatusConverterTest extends
     @Override
     public void verifyBoUpdate(StudySiteAccrualStatus bo) {
         assertEquals(ID, bo.getId());
-        assertEquals(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING, bo.getStatusCode());
+        assertEquals(RecruitmentStatusCode.CLOSED_TO_ACCRUAL, bo.getStatusCode());
         assertEquals(now, bo.getStatusDate());
         assertEquals(STUDY_SITE_ID, bo.getStudySite().getId());
     }
@@ -155,7 +155,7 @@ public class StudySiteAccrualStatusConverterTest extends
     @Override
     public void verifyDto(StudySiteAccrualStatusDTO dto) {
         assertEquals(ID, IiConverter.convertToLong(dto.getIdentifier()));
-        assertEquals(RecruitmentStatusCode.ACTIVE_NOT_RECRUITING.getCode(), dto.getStatusCode().getCode());
+        assertEquals(RecruitmentStatusCode.CLOSED_TO_ACCRUAL.getCode(), dto.getStatusCode().getCode());
         assertEquals(now, dto.getStatusDate().getValue());
         assertEquals(STUDY_SITE_ID, IiConverter.convertToLong(dto.getStudySiteIi()));
         assertEquals("2.16.840.1.113883.3.26.4.5.4", dto.getIdentifier().getRoot());

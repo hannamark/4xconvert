@@ -147,7 +147,7 @@ public class StudySiteParticipationServiceClient extends StudySiteParticipationS
         StudySite ssXml = StudySiteManagementTransformer.INSTANCE.toXml(studySiteDTO);
 
         StudySiteAccrualStatusDTO currentStatus = new StudySiteAccrualStatusDTO();
-        currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.RECRUITING.getCode()));
+        currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.ACTIVE.getCode()));
         currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime()
                 - Long.valueOf("300000000"))));
 
@@ -211,7 +211,7 @@ public class StudySiteParticipationServiceClient extends StudySiteParticipationS
         StudySite ssXml = StudySiteManagementTransformer.INSTANCE.toXml(studySiteDTO);
 
         StudySiteAccrualStatusDTO currentStatus = new StudySiteAccrualStatusDTO();
-        currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.RECRUITING.getCode()));
+        currentStatus.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.ACTIVE.getCode()));
         currentStatus.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime()
                 - Long.valueOf("300000000"))));
 
