@@ -17,8 +17,8 @@
     <body>
         <h1><fmt:message key="auditTrail.title"/></h1>
         <c:set var="topic" scope="request" value="auditTrail"/>
-        <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />        
-        
+        <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
+
         <div class="box">
             <table class="form">
                 <s:form action="auditTrailview.action" id="auditTrailForm">
@@ -47,7 +47,7 @@
                             <a href="javascript:showCal('Cal1')">
                                 <img src="<c:url value='/images/ico_calendar.gif'/>" alt="Select Date" class="calendaricon" />
                             </a>
-                            <span class="formErrorMsg"> 
+                            <span class="formErrorMsg">
                                 <s:fielderror>
                                     <s:param>startDate</s:param>
                                 </s:fielderror>
@@ -65,7 +65,7 @@
                             <a href="javascript:showCal('Cal2')">
                                 <img src="<c:url value='/images/ico_calendar.gif'/>" alt="Select Date" class="calendaricon" />
                             </a>
-                            <span class="formErrorMsg"> 
+                            <span class="formErrorMsg">
                                 <s:fielderror>
                                     <s:param>endDate</s:param>
                                 </s:fielderror>
@@ -88,8 +88,8 @@
                 <display:table class="data" id="row" name="auditTrail" export="true" sort="list"  pagesize="20" requestURI="auditTrailview.action"
                     decorator="gov.nih.nci.pa.decorator.AuditTrailTagDecorator">
                     <pa:displayTagProperties/>
-                    <display:column property="changeDate" escapeXml="true" titleKey="auditTrail.changeDate" sortable="true" headerClass="sortable" group="2" />
-                    <display:column property="userName" escapeXml="true" titleKey="auditTrail.userName" sortable="true" headerClass="sortable" group="2"/>
+                    <display:column property="changeDate" escapeXml="true" titleKey="auditTrail.changeDate" sortable="true" headerClass="sortable" group="1" />
+                    <display:column property="userName" escapeXml="true" titleKey="auditTrail.userName" sortable="true" headerClass="sortable" group="2" />
                     <display:column escapeXml="true" titleKey="auditTrail.dataElement" sortable="true" headerClass="sortable" >
                         <fmt:message key="auditTrail.${row.attribute}" bundle="${auditTrailResources}"/>
                     </display:column>

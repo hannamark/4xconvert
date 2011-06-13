@@ -84,10 +84,17 @@ package gov.nih.nci.pa.decorator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.action.AbstractPaActionTest;
+import gov.nih.nci.pa.service.CSMUserUtil;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.Date;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -96,27 +103,63 @@ import com.fiveamsolutions.nci.commons.audit.AuditLogRecord;
 import com.fiveamsolutions.nci.commons.audit.AuditType;
 
 /**
+ * Tests the audit trail displaytag decorator.
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  *
  */
 public class AuditTrailTagDecoratorTest extends AbstractPaActionTest {
 
     private AuditTrailTagDecorator decorator;
-    private AuditLogDetail detail;
+    private CSMUserUtil oldCSMUserUtil;
+
+    @Before
+    public void setUpCsmService() throws PAException {
+        oldCSMUserUtil = CSMUserService.getRegistryUserService();
+        CSMUserUtil mockCsmUtil = mock(CSMUserUtil.class);
+        CSMUserService.setRegistryUserService(mockCsmUtil);
+        User abstractor = new User();
+        abstractor.setFirstName("Test");
+        abstractor.setLastName("Abstractor");
+        abstractor.setLoginName("nullRegistryUser");
+        when(mockCsmUtil.getCSMUser("nullRegistryUser")).thenReturn(abstractor);
+    }
 
     @Before
     public void setUp() {
         decorator = new AuditTrailTagDecorator();
 
         AuditLogRecord record = new AuditLogRecord(AuditType.INSERT, "STUDY_PROTOCOL", 1L, "testuser", new Date());
-        detail = new AuditLogDetail(record, "programCodeText", "", "newValue");
+        AuditLogDetail detail = new AuditLogDetail(record, "programCodeText", "", "newValue");
         decorator.initRow(detail, 1, 1);
     }
 
+    @After
+    public void cleanUpCsmService() {
+        CSMUserService.setRegistryUserService(oldCSMUserUtil);
+    }
+
+    /**
+     * Test the getUserName method, when the user has a RegistryUser record (eg, a submitter).
+     */
     @Test
-    public void getUserName() {
+    public void getUserNameForRegistryUser() {
         assertNotNull(decorator.getUserName());
         assertEquals("User, Test", decorator.getUserName());
+    }
+
+    /**
+     * Test the getUserName method, when the user is an abstractor, not a submitter, so the user will not have a
+     * RegistryUser record.
+     */
+    @Test
+    public void getUserNameForAbstractor() throws PAException {
+
+        AuditLogRecord record = new AuditLogRecord(AuditType.INSERT, "STUDY_PROTOCOL", 1L, "nullRegistryUser", new Date());
+        AuditLogDetail detail = new AuditLogDetail(record, "programCodeText", "", "newValue");
+
+        decorator.initRow(detail, 1, 1);
+        assertNotNull(decorator.getUserName());
+        assertEquals("Abstractor, Test", decorator.getUserName());
     }
 
     @Test
@@ -127,7 +170,7 @@ public class AuditTrailTagDecoratorTest extends AbstractPaActionTest {
     @Test
     public void getFormattedOldValue() {
         AuditLogRecord record = new AuditLogRecord(AuditType.INSERT, "STUDY_RESOURCING", 1L, "testuser", new Date());
-        detail = new AuditLogDetail(record, "organizationIdentifier", "1", "2");
+        AuditLogDetail detail = new AuditLogDetail(record, "organizationIdentifier", "1", "2");
         decorator.initRow(detail, 1, 1);
         assertNotNull(decorator.getFormattedOldValue());
         assertEquals("Organization #1", decorator.getFormattedOldValue());
@@ -136,7 +179,7 @@ public class AuditTrailTagDecoratorTest extends AbstractPaActionTest {
     @Test
     public void getFormattedNewValue() {
         AuditLogRecord record = new AuditLogRecord(AuditType.INSERT, "STUDY_RESOURCING", 1L, "testuser", new Date());
-        detail = new AuditLogDetail(record, "organizationIdentifier", "1", "2");
+        AuditLogDetail detail = new AuditLogDetail(record, "organizationIdentifier", "1", "2");
         decorator.initRow(detail, 1, 1);
         assertNotNull(decorator.getFormattedNewValue());
         assertEquals("Organization #2", decorator.getFormattedNewValue());

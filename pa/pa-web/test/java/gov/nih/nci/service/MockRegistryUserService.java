@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author Vrushali
  *
@@ -31,21 +33,25 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         usrList.add(usr);
 
     }
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#createUser(gov.nih.nci.pa.domain.RegistryUser)
+
+    /**
+     * {@inheritDoc}
      */
     public RegistryUser createUser(RegistryUser user) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#getUser(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
     public RegistryUser getUser(String loginName) throws PAException {
-        if(loginName != null && loginName.equals("exceptionName")){
+        if (StringUtils.equals(loginName, "exceptionName")) {
             throw new PAException("test");
         }
+        if (StringUtils.equals(loginName, "nullRegistryUser")) {
+            return null;
+        }
+
         RegistryUser regUser = new RegistryUser();
         regUser.setFirstName("Test");
         regUser.setLastName("User");
@@ -61,100 +67,88 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         return regUser;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#updateUser(gov.nih.nci.pa.domain.RegistryUser)
+    /**
+     * {@inheritDoc}
      */
     public RegistryUser updateUser(RegistryUser user) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#getUserByUserOrgType(gov.nih.nci.pa.enums.UserOrgType)
+    /**
+     * {@inheritDoc}
      */
-    public List<RegistryUser> getUserByUserOrgType(UserOrgType userType)
-            throws PAException {
+    public List<RegistryUser> getUserByUserOrgType(UserOrgType userType) throws PAException {
         List<RegistryUser> userTypeList = new ArrayList<RegistryUser>();
-        for (RegistryUser regUser: usrList) {
-            if(regUser.getAffiliatedOrgUserType().equals(userType)) {
+        for (RegistryUser regUser : usrList) {
+            if (regUser.getAffiliatedOrgUserType().equals(userType)) {
                 userTypeList.add(regUser);
             }
         }
         return userTypeList;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#getUserById(java.lang.Long)
+    /**
+     * {@inheritDoc}
      */
     public RegistryUser getUserById(Long userId) throws PAException {
-        for (RegistryUser regUser: usrList) {
-            if (userId != null && userId ==4) {
+        for (RegistryUser regUser : usrList) {
+            if (userId != null && userId == 4) {
                 throw new PAException("test");
             }
-            if(regUser.getId().equals(userId)) {
+            if (regUser.getId().equals(userId)) {
                 return regUser;
             }
         }
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#search(gov.nih.nci.pa.domain.RegistryUser)
+    /**
+     * {@inheritDoc}
      */
     public List<RegistryUser> search(RegistryUser regUser) throws PAException {
-        // TODO Auto-generated method stub
         return new ArrayList<RegistryUser>();
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserService#hasTrialAccess(java.lang.String, java.lang.Long)
+    /**
+     * {@inheritDoc}
      */
     public boolean hasTrialAccess(String loginName, Long studyProtocolId) throws PAException {
-        // TODO Auto-generated method stub
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserService#hasTrialAccess(gov.nih.nci.pa.domain.RegistryUser, java.lang.Long)
+    /**
+     * {@inheritDoc}
      */
-    public boolean hasTrialAccess(RegistryUser user, Long studyProtocolId)
-            throws PAException {
-        // TODO Auto-generated method stub
+    public boolean hasTrialAccess(RegistryUser user, Long studyProtocolId) throws PAException {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserService#assignOwnership(java.lang.Long, java.lang.Long)
+    /**
+     * {@inheritDoc}
      */
-    public void assignOwnership(Long userId, Long studyProtocolId)
-            throws PAException {
-        // TODO Auto-generated method stub
+    public void assignOwnership(Long userId, Long studyProtocolId) throws PAException {
 
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserService#removeOwnership(java.lang.Long, java.lang.Long)
+    /**
+     * {@inheritDoc}
      */
-    public void removeOwnership(Long userId, Long studyProtocolId)
-            throws PAException {
-        // TODO Auto-generated method stub
+    public void removeOwnership(Long userId, Long studyProtocolId) throws PAException {
 
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserService#isTrialOwner(java.lang.Long, java.lang.Long)
+    /**
+     * {@inheritDoc}
      */
     public boolean isTrialOwner(Long userId, Long studyProtocolId) throws PAException {
-        // TODO Auto-generated method stub
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserService#searchTrialOwnership(gov.nih.nci.pa.util.DisplayTrialOwnershipInformation, java.lang.Long)
+    /**
+     * {@inheritDoc}
      */
     public List<DisplayTrialOwnershipInformation> searchTrialOwnership(
             DisplayTrialOwnershipInformation trialOwnershipInfo, Long affiliatedOrgId) throws PAException {
-        // TODO Auto-generated method stub
         return new ArrayList<DisplayTrialOwnershipInformation>();
     }
 
@@ -169,7 +163,6 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
      * {@inheritDoc}
      */
     public List<String> getTrialOwnerNames(Long studyProtocolId) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -177,7 +170,6 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
      * {@inheritDoc}
      */
     public Set<RegistryUser> getAllTrialOwners(Long studyProtocolId) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 

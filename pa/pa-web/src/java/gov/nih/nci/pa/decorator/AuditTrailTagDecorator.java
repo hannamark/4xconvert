@@ -107,7 +107,7 @@ public class AuditTrailTagDecorator extends TableDecorator {
     private final FastDateFormat fdf = FastDateFormat.getInstance("MM/dd/yyyy kk:mm:ss");
 
     /**
-     * Gets the user's name in lastname, firstname format.
+     * Gets the user's name in "lastname, firstname" format.
      * @return the user's name
      */
     public String getUserName() {
@@ -115,7 +115,8 @@ public class AuditTrailTagDecorator extends TableDecorator {
         String name = null;
         try {
             RegistryUser regUser = PaRegistry.getRegistryUserService().getUser(row.getRecord().getUsername());
-            if (!StringUtils.isEmpty(regUser.getFirstName()) && !StringUtils.isEmpty(regUser.getFirstName())) {
+            if (regUser != null && StringUtils.isNotBlank(regUser.getFirstName())
+                    && StringUtils.isNotBlank(regUser.getLastName())) {
                 name = regUser.getLastName() + ", " + regUser.getFirstName();
             } else {
                 User user = CSMUserService.getInstance().getCSMUser(row.getRecord().getUsername());
