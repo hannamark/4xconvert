@@ -1003,7 +1003,7 @@ public class AbstractMockitoTest {
         when(spSvc.getStudyProtocol((Ii)anyObject())).thenReturn(spDto);
         when(spSvc.getInterventionalStudyProtocol((Ii)anyObject())).thenReturn(interventionalSPDto);
         when(spSvc.getObservationalStudyProtocol(any(Ii.class))).thenReturn(observationalSPDto);
-        when(spSvc.getCollaborativeTrials()).thenReturn(Arrays.asList(spDto));
+        when(spSvc.getAbstractedCollaborativeTrials()).thenReturn(Arrays.asList(spDto));
     }
 
     public PoServiceLocator getPoSvcLoc() {

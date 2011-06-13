@@ -28,8 +28,8 @@
     <property name="commons.build.testResourceDir.0" value="${commons.dir}/test/resources"/>
     <property name="commons.test.reports" value="${pa.report.dir}/commons/test-reports"/>
     <property name="commons.coverage.reports" value="${pa.report.dir}/commons/coverage-reports"/>
-    <property name="commons.coverage.line" value="50"/>
-    <property name="commons.coverage.branch" value="37"/>
+    <property name="commons.coverage.line" value="51"/>
+    <property name="commons.coverage.branch" value="38"/>
     <property name="commons.pmd.maxerrors" value="35"/>
     <property name="commons.reporting.outputDirectory" value="${pa.report.dir}/commons/site"/>
     <property name="commons.jar" value="${commons.build.finalName}.jar"/>

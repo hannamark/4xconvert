@@ -1381,6 +1381,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="test.schema.showsql" value="false"/>
             <property name="test.java.naming.provider" value="localhost"/>
             <property name="doc.upload.filepath.loc" value="${application.base.path}/${doc.upload.filepath.relative.dir}"/>
+            <property name="pdq.upload.filepath.loc" value="${application.base.path}/${doc.upload.filepath.relative.dir}/${pdq.upload.filepath.relative.dir}"/>
         </ant>
     </target>
     <target name="test:accrual" depends="init" unless="exclude.accrual">

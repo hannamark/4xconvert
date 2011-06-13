@@ -157,8 +157,10 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
         File zipArchive = new File(tempZipFilePath);
         //Delete the temporary archive if it exists
         FileUtils.deleteQuietly(zipArchive);
-        //Then get all collaborative trials and generate the xml for it, adding it as an entry in the zip archive.
-        List<StudyProtocolDTO> collaborativeTrials = PaRegistry.getStudyProtocolService().getCollaborativeTrials();
+        //Then get all abstracted collaborative trials and generate the xml for it, adding it as an entry in the
+        //zip archive.
+        List<StudyProtocolDTO> collaborativeTrials =
+            PaRegistry.getStudyProtocolService().getAbstractedCollaborativeTrials();
         ZipOutputStream zipOutput = null;
         try {
             zipOutput = new ZipOutputStream(new BufferedOutputStream(FileUtils.openOutputStream(zipArchive)));

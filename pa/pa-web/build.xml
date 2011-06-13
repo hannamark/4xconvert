@@ -29,7 +29,7 @@
     <property name="pa-web.coverage.reports" value="${pa.report.dir}/pa-web/coverage-reports"/>
     <property name="pa-web.coverage.line" value="61"/>
     <property name="pa-web.coverage.branch" value="47"/>
-    <property name="pa-web.pmd.maxerrors" value="137"/>
+    <property name="pa-web.pmd.maxerrors" value="136"/>
     <property name="pa-web.reporting.outputDirectory" value="${pa.report.dir}/pa-web/site"/>
     <property name="pa-web.war" value="${pa-web.build.finalName}.war"/>
     <property name="pa-web.build.coberturaOutputDir" value="${pa-web.build.dir}/generated-classes"/>

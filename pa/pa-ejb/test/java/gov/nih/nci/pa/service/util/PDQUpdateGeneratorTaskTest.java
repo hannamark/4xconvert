@@ -82,14 +82,25 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 
+import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Date;
 import java.util.Locale;
+import java.util.zip.ZipInputStream;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -120,8 +131,8 @@ public class PDQUpdateGeneratorTaskTest extends AbstractMockitoTest {
      */
     @After
     public void tearDown() throws Exception {
-        //File pdqDirectory = new File(PaEarPropertyReader.getPDQUploadPath());
-        //FileUtils.cleanDirectory(pdqDirectory);
+        File pdqDirectory = new File(PaEarPropertyReader.getPDQUploadPath());
+        FileUtils.cleanDirectory(pdqDirectory);
     }
 
 
@@ -131,8 +142,7 @@ public class PDQUpdateGeneratorTaskTest extends AbstractMockitoTest {
      */
     @Test
     public void performTaskTest() throws PAException, IOException {
-        //Uncomment the below test once PO-2824 is resolved.
-        /*taskBean.performTask();
+        taskBean.performTask();
 
         File pdqDirectory = new File(PaEarPropertyReader.getPDQUploadPath());
 
@@ -149,6 +159,6 @@ public class PDQUpdateGeneratorTaskTest extends AbstractMockitoTest {
         assertNull(pdqFile.getNextEntry());
 
         //Delete the zip file.
-        FileUtils.deleteQuietly(pdqZipFile);*/
+        FileUtils.deleteQuietly(pdqZipFile);
     }
 }

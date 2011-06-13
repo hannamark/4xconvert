@@ -123,7 +123,7 @@ public interface StudyProtocolService {
      * not a starts-with search.
      * @param ii Primary DB ID or NCI assigned identifier, DCP Identifier, CTEP identifier or NCT identifier
      * of the study protocol to get. The ID must uniquely identify a study protocol.
-     * @return the study protocol with the given ii. Will return null if there are no matches or multiple matches with 
+     * @return the study protocol with the given ii. Will return null if there are no matches or multiple matches with
      * the given Ii
      */
     StudyProtocolDTO loadStudyProtocol(Ii ii);
@@ -207,11 +207,12 @@ public interface StudyProtocolService {
         throws PAException, TooManyResultsException;
 
     /**
-     * This method returns all collaborative trials in the system (ie, those sponsored by the DCP and CTEP orgs).
-     * @return the list of all collaborative trials
+     * This method returns all collaborative trials in the system (ie, those sponsored by the DCP and CTEP orgs) that
+     * are abstracted.
+     * @return the list of all abstracted collaborative trials
      * @throws PAException on error
      */
-    List<StudyProtocolDTO> getCollaborativeTrials() throws PAException;
+    List<StudyProtocolDTO> getAbstractedCollaborativeTrials() throws PAException;
 
     /**
      * validates all the attributes of study protocol.

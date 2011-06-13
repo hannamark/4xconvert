@@ -311,7 +311,7 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
     /**
      * {@inheritDoc}
      */
-    public List<StudyProtocolDTO> getCollaborativeTrials() throws PAException {
+    public List<StudyProtocolDTO> getAbstractedCollaborativeTrials() throws PAException {
         return new ArrayList<StudyProtocolDTO>();
     }
 }

@@ -332,7 +332,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
     @Test
     public void search() throws Exception {
-        createStudyProtocols(6, null, null);
+        createStudyProtocols(6, null, null, false);
 
         StudyProtocolDTO criteria = new StudyProtocolDTO();
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
@@ -373,17 +373,20 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
 
     @Test
-    public void getCollaborativeTrials() throws Exception {
-        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, null);
-        List<StudyProtocolDTO> results = remoteEjb.getCollaborativeTrials();
+    public void getAbstractedCollaborativeTrials() throws Exception {
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, null, true);
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, null, false);
+        List<StudyProtocolDTO> results = remoteEjb.getAbstractedCollaborativeTrials();
         assertEquals(1, results.size());
 
-        createStudyProtocols(1, PAConstants.CTEP_ORG_NAME, null);
-        results = remoteEjb.getCollaborativeTrials();
+        createStudyProtocols(1, PAConstants.CTEP_ORG_NAME, null, true);
+        createStudyProtocols(1, PAConstants.CTEP_ORG_NAME, null, false);
+        results = remoteEjb.getAbstractedCollaborativeTrials();
         assertEquals(2, results.size());
 
-        createStudyProtocols(1, null, null);
-        results = remoteEjb.getCollaborativeTrials();
+        createStudyProtocols(1, null, null, true);
+        createStudyProtocols(1, null, null, false);
+        results = remoteEjb.getAbstractedCollaborativeTrials();
         assertEquals(2, results.size());
 
     }
@@ -482,9 +485,9 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
     @Test
     public void testGetStudyProtocol() throws Exception {
-        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "DCP-1");
-        createStudyProtocols(1, PAConstants.CTGOV_ORG_NAME, "NCT-1");
-        createStudyProtocols(1, PAConstants.CTEP_ORG_NAME, "CTEP-1");
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "DCP-1", false);
+        createStudyProtocols(1, PAConstants.CTGOV_ORG_NAME, "NCT-1", false);
+        createStudyProtocols(1, PAConstants.CTEP_ORG_NAME, "CTEP-1", false);
 
         Ii ii = new Ii();
         ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
@@ -538,8 +541,9 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
      * @param count the number of study protocols to create
      * @param sponsorName the name of the sponsor
      * @param identifierAssignerId the id of the identifier assigner
+     * @param abstracted whether the trial should be abstracted
      */
-    private void createStudyProtocols(int count, String sponsorName, String identifierAssignerId) {
+    private void createStudyProtocols(int count, String sponsorName, String identifierAssignerId, boolean abstracted) {
         for (int i = 1; i <= count; i++) {
             InterventionalStudyProtocol sp = new InterventionalStudyProtocol();
             sp = (InterventionalStudyProtocol) TestSchema.createStudyProtocolObj(sp);
@@ -579,6 +583,15 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
             dws.setCommentText("Accepted");
             dws.setUserLastUpdated(sp.getUserLastUpdated());
             TestSchema.addUpdObject(dws);
+
+            if (abstracted) {
+                dws = new DocumentWorkflowStatus();
+                dws.setStudyProtocol(sp);
+                dws.setStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
+                dws.setCommentText("Abstracted");
+                dws.setUserLastUpdated(sp.getUserLastUpdated());
+                TestSchema.addUpdObject(dws);
+            }
 
             AnatomicSite as1 = TestSchema.createAnatomicSiteObj("Lung");
             TestSchema.addUpdObject(as1);

@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.service.search;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 
@@ -102,6 +103,7 @@ import com.fiveamsolutions.nci.commons.search.SearchableUtils;
 public class StudyProtocolBeanSearchCriteria extends AnnotatedBeanSearchCriteria<StudyProtocol> {
 
     private final Set<Ii> secondaryIds;
+    private final Set<DocumentWorkflowStatus> processingStatuses;
 
     /**
      * Default constructor.
@@ -110,6 +112,7 @@ public class StudyProtocolBeanSearchCriteria extends AnnotatedBeanSearchCriteria
     public StudyProtocolBeanSearchCriteria(StudyProtocol o) {
         super(o);
         this.secondaryIds = o.getOtherIdentifiers();
+        this.processingStatuses = o.getDocumentWorkflowStatuses();
     }
 
     @Override
@@ -124,7 +127,7 @@ public class StudyProtocolBeanSearchCriteria extends AnnotatedBeanSearchCriteria
     public Query getQuery(String orderByProperty, boolean isCountOnly) {
         return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty,
                 " LEFT OUTER JOIN obj.documentWorkflowStatuses as dws", getSession(),
-                new StudyProtocolHelper(this.secondaryIds));
+                new StudyProtocolHelper(this.secondaryIds, this.processingStatuses));
     }
 
     /**
@@ -134,7 +137,7 @@ public class StudyProtocolBeanSearchCriteria extends AnnotatedBeanSearchCriteria
     public Query getQuery(String orderByProperty, String leftJoinClause, boolean isCountOnly) {
         return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty,
                 leftJoinClause + " LEFT OUTER JOIN obj.documentWorkflowStatuses as dws", getSession(),
-                new StudyProtocolHelper(this.secondaryIds));
+                new StudyProtocolHelper(this.secondaryIds, this.processingStatuses));
     }
 
     /**
@@ -142,21 +145,32 @@ public class StudyProtocolBeanSearchCriteria extends AnnotatedBeanSearchCriteria
      */
     private static class StudyProtocolHelper implements SearchableUtils.AfterIterationHelper {
         private final Set<Ii> secondaryIds;
+        private final Set<DocumentWorkflowStatus> processingStatuses;
         private static final String DWS_NAME_PARAM = "documentWorkflowStatusCodeParam";
 
-        public StudyProtocolHelper(Set<Ii> secondaryIds) {
+        public StudyProtocolHelper(Set<Ii> secondaryIds, Set<DocumentWorkflowStatus> processingStatuses) {
             this.secondaryIds = secondaryIds;
+            this.processingStatuses = processingStatuses;
         }
+
         /**
          * {@inheritDoc}
          */
         public void afterIteration(Object obj, boolean isCountOnly, StringBuffer whereClause,
                 Map<String, Object> params) {
             String operator = determineOperator(whereClause);
-            whereClause.append(String.format(" %s dws.statusCode != :%s and (dws.id in (select max(id) from "
-                    + "%s.documentWorkflowStatuses) or dws.id is null)", operator, DWS_NAME_PARAM,
-                    SearchableUtils.ROOT_OBJ_ALIAS));
-            params.put(DWS_NAME_PARAM, DocumentWorkflowStatusCode.REJECTED);
+            if (CollectionUtils.isNotEmpty(processingStatuses)) {
+                DocumentWorkflowStatusCode dws = processingStatuses.iterator().next().getStatusCode();
+                whereClause.append(String.format(" %s dws.statusCode = :%s ", operator, DWS_NAME_PARAM));
+                whereClause.append(String.format(" and dws.id = (select max(id) from %s.documentWorkflowStatuses)",
+                        SearchableUtils.ROOT_OBJ_ALIAS));
+                params.put(DWS_NAME_PARAM, dws);
+            } else {
+                whereClause.append(String.format(" %s dws.statusCode != :%s and (dws.id in (select max(id) from "
+                        + "%s.documentWorkflowStatuses) or dws.id is null)", operator, DWS_NAME_PARAM,
+                        SearchableUtils.ROOT_OBJ_ALIAS));
+                params.put(DWS_NAME_PARAM, DocumentWorkflowStatusCode.REJECTED);
+            }
 
             if (CollectionUtils.isNotEmpty(secondaryIds)) {
                 Iterator<Ii> ids = secondaryIds.iterator();

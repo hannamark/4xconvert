@@ -140,7 +140,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
       <property name="application.url" value="${jboss.application.url}"/>
       <property name="register.mail.body.url" value="${jboss.application.external.url}/${register.mail.body.url.action}"/>
       <property name="doc.upload.filepath.loc" value="${application.base.path}/${doc.upload.filepath.relative.dir}"/>
-      <property name="pdq.upload.filepath.loc" value="${doc.upload.filepath.loc}/${pdq.upload.filepath.relative.dir}"/>
+      <property name="pdq.upload.filepath.loc" value="${application.base.path}/${doc.upload.filepath.relative.dir}/${pdq.upload.filepath.relative.dir}"/>
       <property name="accrual.batch.upload.filepath.loc" value="${application.base.path}/${accrual.batch.upload.filepath.relative.dir}"/>
       <property name="tooltips.filepath.loc" value="${application.base.path}/${tooltips.filepath.relative.dir}"/>
       <available file="${jboss.home}/server/${jboss.server.name}/conf/jboss-service.xml" property="jboss.exists"/>

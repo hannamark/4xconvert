@@ -8,14 +8,21 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
+import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
+import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -86,7 +93,6 @@ import gov.nih.nci.registry.service.MockOrganizationCorrelationService;
 import gov.nih.nci.registry.service.MockPAOrganizationService;
 import gov.nih.nci.registry.service.MockProtocolQueryService;
 import gov.nih.nci.registry.service.MockRegistryUserService;
-import gov.nih.nci.registry.service.MockStudyProtocolService;
 import gov.nih.nci.registry.service.MockStudyProtocolStageService;
 import gov.nih.nci.registry.service.MockStudyResourcingService;
 import gov.nih.nci.registry.service.MockStudySiteAccrualStatusService;
@@ -108,7 +114,6 @@ import org.mockito.stubbing.Answer;
 
 public class RegistrationMockServiceLocator implements ServiceLocator {
 
-    private final StudyProtocolServiceLocal studyProtocolService = new MockStudyProtocolService();
     private final ProtocolQueryServiceLocal protocolQueryService = new MockProtocolQueryService();
     private final LookUpTableServiceRemote lookUpTableService = new MockLookUpTableService();
     private final TrialRegistrationServiceLocal  trialRegistrationService = new MockTrialRegistrationService();
@@ -293,7 +298,57 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     public StudyProtocolServiceLocal getStudyProtocolService() {
-        return studyProtocolService;
+        final StudyProtocol sp = new InterventionalStudyProtocol();
+        sp.setId(1L);
+        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        sp.setStartDate(PAUtil.dateStringToTimestamp("01/20/2008"));
+        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("01/20/2010"));
+        sp.setOfficialTitle("officialTitle");
+
+
+        final InterventionalStudyProtocol isp = new InterventionalStudyProtocol();
+        isp.setId(1L);
+        isp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        isp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
+        isp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        isp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("4/15/2010"));
+        isp.setOfficialTitle("officialTitle");
+
+        StudyProtocolServiceLocal svc = mock(StudyProtocolServiceLocal.class);
+        try {
+            when(svc.getStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
+                public StudyProtocolDTO answer(InvocationOnMock invocation) throws Throwable {
+                    StudyProtocolDTO dto = null;
+                    Object[] args = invocation.getArguments();
+                    Ii ii = (Ii) args[0];
+                    if (sp.getId().equals(IiConverter.convertToLong(ii))) {
+                        dto = StudyProtocolConverter.convertFromDomainToDTO(sp);
+                    } else if (IiConverter.convertToLong(ii).equals(3L)) {
+                        dto = StudyProtocolConverter.convertFromDomainToDTO(isp);
+                        dto.setIdentifier(IiConverter.convertToIi(3L));
+                    }
+                    return dto;
+                }
+            });
+            when(svc.createInterventionalStudyProtocol(any(InterventionalStudyProtocolDTO.class)))
+                .thenReturn(IiConverter.convertToIi(2L));
+            when(svc.getInterventionalStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
+                public InterventionalStudyProtocolDTO answer(InvocationOnMock invocation) throws Throwable {
+                    InterventionalStudyProtocolDTO dto = null;
+                    Object[] args = invocation.getArguments();
+                    Ii ii = (Ii) args[0];
+                    if (IiConverter.convertToLong(ii).equals(1L)) {
+                        dto = InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
+                    }
+                    return dto;
+                }
+            });
+            when(svc.getAbstractedCollaborativeTrials()).thenReturn(new ArrayList<StudyProtocolDTO>());
+        } catch (PAException e) {
+            //Unreachable
+        }
+        return svc;
     }
 
     /**

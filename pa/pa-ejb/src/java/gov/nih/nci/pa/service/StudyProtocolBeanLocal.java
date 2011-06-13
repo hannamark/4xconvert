@@ -113,6 +113,7 @@ import gov.nih.nci.pa.domain.Submission;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.AnatomicSiteConverter;
@@ -607,7 +608,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     /**
      * {@inheritDoc}
      */
-    public List<StudyProtocolDTO> getCollaborativeTrials() throws PAException {
+    public List<StudyProtocolDTO> getAbstractedCollaborativeTrials() throws PAException {
         List<StudyProtocol> collaborativeTrials = new ArrayList<StudyProtocol>();
         //Get all DCP trials
         StudyProtocolBeanSearchCriteria crit =
@@ -630,6 +631,9 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         ro.setOrganization(org);
         ss.setResearchOrganization(ro);
         sp.getStudySites().add(ss);
+        DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
+        dws.setStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
+        sp.getDocumentWorkflowStatuses().add(dws);
         return sp;
     }
 
