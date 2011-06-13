@@ -155,6 +155,7 @@ public class PDQTrialLoaderPreprocessor {
         changeLeadOrgId(document);
         changeMaxAge(document);
         addDefaultArm(document);
+        replaceStartDateType(document);
         
         FileOutputStream fos = new FileOutputStream(destFileDir + "/" + xmlFile);
         XMLOutputter outputter = new XMLOutputter();
@@ -240,4 +241,15 @@ public class PDQTrialLoaderPreprocessor {
         }        
     }
     
+    /**
+     * Replaces the start date type of 'Projected' with 'Anticipated'.
+     * @param document jdom document
+     */
+    private void replaceStartDateType(Document document) {
+        Element startDate = document.getRootElement().getChild("start_date");
+        String startDateType = startDate.getAttributeValue("date_type");
+        if (StringUtils.equals("Projected", startDateType)) {
+            startDate.setAttribute("date_type", "Anticipated");
+        }
+    }
 }
