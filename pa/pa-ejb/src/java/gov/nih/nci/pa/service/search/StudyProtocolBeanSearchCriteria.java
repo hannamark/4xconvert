@@ -83,7 +83,6 @@
 package gov.nih.nci.pa.service.search;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 
@@ -103,16 +102,17 @@ import com.fiveamsolutions.nci.commons.search.SearchableUtils;
 public class StudyProtocolBeanSearchCriteria extends AnnotatedBeanSearchCriteria<StudyProtocol> {
 
     private final Set<Ii> secondaryIds;
-    private final Set<DocumentWorkflowStatus> processingStatuses;
+    private final DocumentWorkflowStatusCode processingStatus;
 
     /**
      * Default constructor.
      * @param o the example
+     * @param processingStatus the processing status of the study, if any
      */
-    public StudyProtocolBeanSearchCriteria(StudyProtocol o) {
+    public StudyProtocolBeanSearchCriteria(StudyProtocol o, DocumentWorkflowStatusCode processingStatus) {
         super(o);
         this.secondaryIds = o.getOtherIdentifiers();
-        this.processingStatuses = o.getDocumentWorkflowStatuses();
+        this.processingStatus = processingStatus;
     }
 
     @Override
@@ -127,7 +127,7 @@ public class StudyProtocolBeanSearchCriteria extends AnnotatedBeanSearchCriteria
     public Query getQuery(String orderByProperty, boolean isCountOnly) {
         return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty,
                 " LEFT OUTER JOIN obj.documentWorkflowStatuses as dws", getSession(),
-                new StudyProtocolHelper(this.secondaryIds, this.processingStatuses));
+                new StudyProtocolHelper(this.secondaryIds, this.processingStatus));
     }
 
     /**
@@ -137,7 +137,7 @@ public class StudyProtocolBeanSearchCriteria extends AnnotatedBeanSearchCriteria
     public Query getQuery(String orderByProperty, String leftJoinClause, boolean isCountOnly) {
         return SearchableUtils.getQueryBySearchableFields(getCriteria(), isCountOnly, orderByProperty,
                 leftJoinClause + " LEFT OUTER JOIN obj.documentWorkflowStatuses as dws", getSession(),
-                new StudyProtocolHelper(this.secondaryIds, this.processingStatuses));
+                new StudyProtocolHelper(this.secondaryIds, this.processingStatus));
     }
 
     /**
@@ -145,12 +145,13 @@ public class StudyProtocolBeanSearchCriteria extends AnnotatedBeanSearchCriteria
      */
     private static class StudyProtocolHelper implements SearchableUtils.AfterIterationHelper {
         private final Set<Ii> secondaryIds;
-        private final Set<DocumentWorkflowStatus> processingStatuses;
+        private final DocumentWorkflowStatusCode processingStatus;
+
         private static final String DWS_NAME_PARAM = "documentWorkflowStatusCodeParam";
 
-        public StudyProtocolHelper(Set<Ii> secondaryIds, Set<DocumentWorkflowStatus> processingStatuses) {
+        public StudyProtocolHelper(Set<Ii> secondaryIds, DocumentWorkflowStatusCode processingStatus) {
             this.secondaryIds = secondaryIds;
-            this.processingStatuses = processingStatuses;
+            this.processingStatus = processingStatus;
         }
 
         /**
@@ -159,12 +160,11 @@ public class StudyProtocolBeanSearchCriteria extends AnnotatedBeanSearchCriteria
         public void afterIteration(Object obj, boolean isCountOnly, StringBuffer whereClause,
                 Map<String, Object> params) {
             String operator = determineOperator(whereClause);
-            if (CollectionUtils.isNotEmpty(processingStatuses)) {
-                DocumentWorkflowStatusCode dws = processingStatuses.iterator().next().getStatusCode();
+            if (processingStatus != null) {
                 whereClause.append(String.format(" %s dws.statusCode = :%s ", operator, DWS_NAME_PARAM));
                 whereClause.append(String.format(" and dws.id = (select max(id) from %s.documentWorkflowStatuses)",
                         SearchableUtils.ROOT_OBJ_ALIAS));
-                params.put(DWS_NAME_PARAM, dws);
+                params.put(DWS_NAME_PARAM, processingStatus);
             } else {
                 whereClause.append(String.format(" %s dws.statusCode != :%s and (dws.id in (select max(id) from "
                         + "%s.documentWorkflowStatuses) or dws.id is null)", operator, DWS_NAME_PARAM,

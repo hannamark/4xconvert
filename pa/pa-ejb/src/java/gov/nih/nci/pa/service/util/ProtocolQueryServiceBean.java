@@ -696,7 +696,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
 
         sp.getStudySites().add(ss);
 
-        StudyProtocolBeanSearchCriteria crit = new StudyProtocolBeanSearchCriteria(sp);
+        StudyProtocolBeanSearchCriteria crit = new StudyProtocolBeanSearchCriteria(sp, null);
         return search(crit);
     }
 

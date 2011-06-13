@@ -600,7 +600,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
         PageSortParams<StudyProtocol> params = new PageSortParams<StudyProtocol>(maxLimit, pagingParams.getOffset(),
                 StudyProtocolSortCriterion.STUDY_PROTOCOL_ID, false);
-        StudyProtocolBeanSearchCriteria crit = new StudyProtocolBeanSearchCriteria(criteria);
+        StudyProtocolBeanSearchCriteria crit = new StudyProtocolBeanSearchCriteria(criteria, null);
         List<StudyProtocol> results = search(crit, params);
         return convertFromDomainToDTO(results);
     }
@@ -612,11 +612,13 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         List<StudyProtocol> collaborativeTrials = new ArrayList<StudyProtocol>();
         //Get all DCP trials
         StudyProtocolBeanSearchCriteria crit =
-            new StudyProtocolBeanSearchCriteria(getCollaborativeTrialCriteria(PAConstants.DCP_ORG_NAME));
+            new StudyProtocolBeanSearchCriteria(getCollaborativeTrialCriteria(PAConstants.DCP_ORG_NAME),
+                    DocumentWorkflowStatusCode.ABSTRACTED);
         collaborativeTrials.addAll(search(crit));
         //Then get all CTEP trials
         crit =
-            new StudyProtocolBeanSearchCriteria(getCollaborativeTrialCriteria(PAConstants.CTEP_ORG_NAME));
+            new StudyProtocolBeanSearchCriteria(getCollaborativeTrialCriteria(PAConstants.CTEP_ORG_NAME),
+                    DocumentWorkflowStatusCode.ABSTRACTED);
         collaborativeTrials.addAll(search(crit));
         return convertFromDomainToDTO(collaborativeTrials);
     }
@@ -631,9 +633,6 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         ro.setOrganization(org);
         ss.setResearchOrganization(ro);
         sp.getStudySites().add(ss);
-        DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
-        dws.setStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
-        sp.getDocumentWorkflowStatuses().add(dws);
         return sp;
     }
 
