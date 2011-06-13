@@ -166,7 +166,7 @@ public class PDQTrialLoaderPreprocessor {
     }
 
     /**
-     * replaces the lead org ID with the first secondary ID. 
+     * replaces the lead org ID with the first secondary ID, removing the first secondary ID.
      * Add the org_study_Id as a secondary ID.
      * @param document jdom document
      */
@@ -177,11 +177,13 @@ public class PDQTrialLoaderPreprocessor {
         String studyId = idInfo.getChild("org_study_id").getText();
                 
         idInfo.getChild("org_study_id").setText(secId.getText());
-       
+        idInfo.removeChild("secondary_id");
+        
         Element newId = new Element("secondary_id");
         newId.setText(studyId);
 
         idInfo.addContent(newId);
+        
     }
     
     /**
@@ -219,7 +221,7 @@ public class PDQTrialLoaderPreprocessor {
     }
     
     /**
-     * Adds a default arm, called "Arm I", and link it to all Interventions. 
+     * Adds a default arm, called "Arm I", link it to all Interventions and update number_of_arms to have the value 1.
      */
     private void addDefaultArm(Document document) {
         List<Element> armGroups = document.getRootElement().getChildren("arm_group");
@@ -238,6 +240,10 @@ public class PDQTrialLoaderPreprocessor {
                 labelLink.setText(DEFAULT_ARM);
                 intervention.addContent(labelLink);
             }
+            //Default number_of_arms to 1
+            Element numberOfArms = document.getRootElement().getChild("study_design").getChild("interventional_design")
+                .getChild("number_of_arms");
+            numberOfArms.setText("1");
         }        
     }
     
