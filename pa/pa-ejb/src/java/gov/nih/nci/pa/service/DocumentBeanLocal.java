@@ -95,6 +95,8 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.pa.service.search.DocumentSortCriterion;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -115,6 +117,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
+
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
 /**
  * @author asharma
@@ -140,7 +144,10 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         criteria.setStudyProtocol(sp);
         criteria.setActiveIndicator(Boolean.TRUE);
 
-        List<Document> results = search(new AnnotatedBeanSearchCriteria<Document>(criteria));
+        PageSortParams<Document> params =
+            new PageSortParams<Document>(PAConstants.MAX_SEARCH_RESULTS, 0, DocumentSortCriterion.DOCUMENT_ID, false);
+
+        List<Document> results = search(new AnnotatedBeanSearchCriteria<Document>(criteria), params);
         return convertFromDomainToDTOs(results);
     }
 

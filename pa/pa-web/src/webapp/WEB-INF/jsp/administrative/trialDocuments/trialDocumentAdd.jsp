@@ -63,18 +63,13 @@ BubbleTips.activateTipOn("dfn");
     				<s:set name="typeCodeValues" value="@gov.nih.nci.pa.enums.DocumentTypeCode@getDocTypeCodes()" />
                     <td class="value">
     					<s:if test="page.equals('Edit')">
-                      		<s:select headerKey="" headerValue="" 
-                           		name="trialDocumentWebDTO.typeCode" 
-                           		list="#typeCodeValues"  
-                           		cssStyle="width:206px" disabled="true"/>   
-                           		
+                      		<s:select headerKey="" headerValue="" name="trialDocumentWebDTO.typeCode" id="typeCode"
+                           		list="#typeCodeValues" cssStyle="width:206px" disabled="true"/>   
                            		<s:hidden name="trialDocumentWebDTO.typeCode" />              
     					</s:if>
     					<s:else>
-                    		<s:select headerKey="" headerValue="" 
-                        		name="trialDocumentWebDTO.typeCode" 
-                           		list="#typeCodeValues"  
-                           		cssStyle="width:206px"/>                    
+                    		<s:select headerKey="" headerValue="" name="trialDocumentWebDTO.typeCode" id="typeCode"
+                           		list="#typeCodeValues" cssStyle="width:206px"/>                    
                            	<span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>trialDocumentWebDTO.typeCode</s:param>
@@ -90,7 +85,7 @@ BubbleTips.activateTipOn("dfn");
                      </label>
                     </td>
                     <td class="value">
-                        <s:file name="upload" cssStyle="width:270px"/>
+                        <s:file name="upload" id="fileUpload" cssStyle="width:270px"/>
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>trialDocumentWebDTO.uploadFileName</s:param>

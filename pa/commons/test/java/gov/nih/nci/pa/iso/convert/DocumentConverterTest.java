@@ -82,13 +82,25 @@ import static org.junit.Assert.assertEquals;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
+import org.junit.Test;
+
 public class DocumentConverterTest extends AbstractConverterTest<DocumentConverter, DocumentDTO, Document> {
 
     private static final Long ID = 123L;
+
+
+    @Test
+    public void testDomainConvertUpdate() throws Exception {
+        verifyDto(getConverter().convertFromDomainToDto(makeBo()));
+        DocumentDTO dto = makeDto();
+        getConverter().convertFromDomainToDto(makeBo(), dto);
+        verifyDto(dto);
+    }
 
     /**
      * {@inheritDoc}
@@ -100,6 +112,8 @@ public class DocumentConverterTest extends AbstractConverterTest<DocumentConvert
         bo.setTypeCode(DocumentTypeCode.PROTOCOL_DOCUMENT);
         bo.setFileName("Protocol_Document.doc");
         bo.setStudyProtocol(getStudyProtocol());
+        bo.setActiveIndicator(Boolean.FALSE);
+        bo.setInactiveCommentText("Inactive Comment");
         return bo;
     }
 
@@ -113,6 +127,8 @@ public class DocumentConverterTest extends AbstractConverterTest<DocumentConvert
         dto.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
         dto.setFileName(StConverter.convertToSt("IRB_Approval_Document.doc"));
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(STUDY_PROTOCOL_ID));
+        dto.setActiveIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        dto.setInactiveCommentText(StConverter.convertToSt("Inactive Comment"));
         return dto;
     }
 
@@ -125,6 +141,8 @@ public class DocumentConverterTest extends AbstractConverterTest<DocumentConvert
         assertEquals(DocumentTypeCode.IRB_APPROVAL_DOCUMENT, bo.getTypeCode());
         assertEquals("IRB_Approval_Document.doc", bo.getFileName());
         assertEquals(STUDY_PROTOCOL_ID, bo.getStudyProtocol().getId());
+        assertEquals(Boolean.FALSE, bo.getActiveIndicator());
+        assertEquals("Inactive Comment", bo.getInactiveCommentText());
     }
 
     /**
@@ -137,5 +155,7 @@ public class DocumentConverterTest extends AbstractConverterTest<DocumentConvert
         assertEquals("Protocol_Document.doc", dto.getFileName().getValue());
         assertEquals(STUDY_PROTOCOL_ID, IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
         assertEquals("2.16.840.1.113883.3.26.4.3.8", dto.getIdentifier().getRoot());
+        assertEquals(Boolean.FALSE, dto.getActiveIndicator().getValue());
+        assertEquals("Inactive Comment", dto.getInactiveCommentText().getValue());
     }
 }

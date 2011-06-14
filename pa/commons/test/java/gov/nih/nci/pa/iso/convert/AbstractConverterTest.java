@@ -143,6 +143,10 @@ public abstract class AbstractConverterTest<C extends AbstractConverter<DTO, BO>
         return ru;
     }
 
+    protected C getConverter() {
+        return converter;
+    }
+
     @Before
     public void initConverter() throws Exception {
         converter = converterClass.newInstance();
@@ -186,7 +190,7 @@ public abstract class AbstractConverterTest<C extends AbstractConverter<DTO, BO>
             verifyBo(bo);
         }
     }
-    
+
     @Test
     public void testDtoConvertUpdate() throws Exception {
         verifyBo(converter.convertFromDtoToDomain(makeDto()));

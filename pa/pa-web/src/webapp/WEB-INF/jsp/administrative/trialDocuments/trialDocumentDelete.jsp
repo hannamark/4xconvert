@@ -48,7 +48,7 @@ input_box=confirm("Click OK to save changes or Cancel to Abort.");
                         </label>
                      </td>                     
                     <td class="value">
-                        <s:textarea name="trialDocumentWebDTO.inactiveCommentText" rows="4" cssStyle="width:206px"/>
+                        <s:textarea name="trialDocumentWebDTO.inactiveCommentText" id="inactiveComment" rows="4" cssStyle="width:206px"/>
                         <span class="formErrorMsg"> 
                                 <s:fielderror>
                                 <s:param>trialDocumentWebDTO.inactiveCommentText</s:param>

@@ -82,20 +82,108 @@
  */
 package gov.nih.nci.pa.test.integration;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import java.io.File;
+import java.net.URISyntaxException;
+
+import org.junit.Test;
 
 /**
- *
- * Class to control the order that selenium tests are run in.
+ * Tests adding, editing and deleting trial documents.
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-@RunWith(Suite.class)
-@SuiteClasses(value = {LoginTest.class, AnatomicSiteTest.class, PlannedMarkerTest.class, StudyOwnershipTest.class,
-        DuplicateTrialEditTest.class, LookupWithApostropheTest.class, TrialStatusTest.class,
-        ParticipatingSiteTest.class, TrialRelatedDocumentTest.class})
-public class AllSeleniumTests {
+public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
+    private static final String TRIAL_DOCUMENT = "TrialDocument.doc";
 
+    @Test
+    public void testListDocuments() {
+        loginAsAdminAbstractor();
+        searchAndSelectTrial("Test Trial created by Selenium.");
+
+        clickAndWait("link=Trial Related Documents");
+        assertTrue(selenium.isTextPresent("2 items found"));
+        assertTrue(selenium.isElementPresent("link=Add"));
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[3]/a"));
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[2]/td[3]/a"));
+        assertFalse(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[4]/a"));
+        assertFalse(selenium.isElementPresent("//table[@id='row']/tbody/tr[2]/td[4]/a"));
+    }
+
+    @Test
+    public void testAddDocument() throws URISyntaxException {
+        loginAsAdminAbstractor();
+        searchAndSelectTrial("Test Trial created by Selenium.");
+
+        clickAndWait("link=Trial Related Documents");
+        assertTrue(selenium.isTextPresent("2 items found"));
+        assertTrue(selenium.isElementPresent("link=Add"));
+        clickAndWait("link=Add");
+
+        clickAndWait("link=Save");
+        selenium.getConfirmation();
+
+        assertTrue(selenium.isTextPresent("Document Type Code must be Entered"));
+        assertTrue(selenium.isTextPresent("FileName must be Entered"));
+
+        String trialDocPath = (new File(ClassLoader.getSystemResource(TRIAL_DOCUMENT).toURI()).toString());
+        selenium.select("id=typeCode", "label=Protocol Highlighted Document");
+        selenium.type("id=fileUpload", trialDocPath);
+        clickAndWait("link=Save");
+        selenium.getConfirmation();
+        assertTrue(selenium.isTextPresent("Record Created"));
+
+
+        assertTrue(selenium.isTextPresent("3 items found"));
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[3]/a"));
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[2]/td[3]/a"));
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[3]/td[3]/a"));
+        assertFalse(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[4]/a"));
+        assertFalse(selenium.isElementPresent("//table[@id='row']/tbody/tr[2]/td[4]/a"));
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[3]/td[4]/a"));
+    }
+
+    @Test
+    public void testEditDocument() throws URISyntaxException {
+        loginAsAdminAbstractor();
+        searchAndSelectTrial("Test Trial created by Selenium.");
+
+        clickAndWait("link=Trial Related Documents");
+        assertTrue(selenium.isTextPresent("3 items found"));
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[3]/a"));
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[2]/td[3]/a"));
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[3]/td[3]/a"));
+        assertFalse(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[4]/a"));
+        assertFalse(selenium.isElementPresent("//table[@id='row']/tbody/tr[2]/td[4]/a"));
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[3]/td[4]/a"));
+
+        clickAndWait("xpath=//table[@id='row']/tbody/tr[3]/td[3]/a");
+        String trialDocPath = (new File(ClassLoader.getSystemResource(TRIAL_DOCUMENT).toURI()).toString());
+        selenium.type("id=fileUpload", trialDocPath);
+        clickAndWait("link=Save");
+        selenium.getConfirmation();
+        assertTrue(selenium.isTextPresent("Record Updated"));
+        assertTrue(selenium.isTextPresent("3 items found"));
+    }
+
+    @Test
+    public void testDeleteDocument() {
+        loginAsAdminAbstractor();
+        searchAndSelectTrial("Test Trial created by Selenium.");
+
+        clickAndWait("link=Trial Related Documents");
+        assertTrue(selenium.isTextPresent("3 items found"));
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[3]/a"));
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[2]/td[3]/a"));
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[3]/td[3]/a"));
+        assertFalse(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[4]/a"));
+        assertFalse(selenium.isElementPresent("//table[@id='row']/tbody/tr[2]/td[4]/a"));
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[3]/td[4]/a"));
+
+        clickAndWait("xpath=//table[@id='row']/tbody/tr[3]/td[4]/a");
+        selenium.type("inactiveComment", "inactive");
+        clickAndWait("link=Done");
+        selenium.getConfirmation();
+        assertTrue(selenium.isTextPresent("Record Deleted"));
+        assertTrue(selenium.isTextPresent("2 items found"));
+    }
 }

@@ -80,22 +80,43 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.test.integration;
+package gov.nih.nci.pa.service.search;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import gov.nih.nci.pa.domain.Document;
+
+import com.fiveamsolutions.nci.commons.data.search.SortCriterion;
 
 /**
- *
- * Class to control the order that selenium tests are run in.
- *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-@RunWith(Suite.class)
-@SuiteClasses(value = {LoginTest.class, AnatomicSiteTest.class, PlannedMarkerTest.class, StudyOwnershipTest.class,
-        DuplicateTrialEditTest.class, LookupWithApostropheTest.class, TrialStatusTest.class,
-        ParticipatingSiteTest.class, TrialRelatedDocumentTest.class})
-public class AllSeleniumTests {
+public enum DocumentSortCriterion implements SortCriterion<Document> {
+
+    /**
+     * Sort by document id.
+     */
+    DOCUMENT_ID("id", null);
+
+
+    private final String orderField;
+    private final String leftJoinField;
+
+    private DocumentSortCriterion(String orderField, String leftJoinField) {
+        this.orderField = orderField;
+        this.leftJoinField = leftJoinField;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getOrderField() {
+        return this.orderField;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getLeftJoinField() {
+        return leftJoinField;
+    }
 
 }

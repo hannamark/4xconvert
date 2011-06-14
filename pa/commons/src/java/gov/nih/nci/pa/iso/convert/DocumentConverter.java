@@ -83,11 +83,12 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.util.ISOUtil;
 
 /**
  * Convert Document from domain to DTO.
- * 
+ *
  * @author Kalpana Guthikonda
  * @since 09/30/2008
  */
@@ -99,9 +100,7 @@ public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Do
     @Override
     public DocumentDTO convertFromDomainToDto(Document doc) {
         DocumentDTO docDTO = new DocumentDTO();
-        super.convertFromDomainToDto(doc, docDTO);
-        docDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(doc.getStudyProtocol().getId()));
-        docDTO.setActiveIndicator(BlConverter.convertToBl(doc.getActiveIndicator()));
+        convertFromDomainToDto(doc, docDTO);
         return docDTO;
     }
 
@@ -111,17 +110,36 @@ public class DocumentConverter extends AbstractDocumentConverter<DocumentDTO, Do
     @Override
     public Document convertFromDtoToDomain(DocumentDTO docDTO) {
         Document doc = new Document();
-        super.convertFromDtoToDomain(docDTO, doc);
-
-        StudyProtocol spBo = new StudyProtocol();
-        spBo.setId(IiConverter.convertToLong(docDTO.getStudyProtocolIdentifier()));
-
-        doc.setActiveIndicator(BlConverter.convertToBoolean(docDTO.getActiveIndicator()));
-        doc.setStudyProtocol(spBo);
-        if (ISOUtil.isBlNull(docDTO.getActiveIndicator())) {
-            doc.setActiveIndicator(Boolean.TRUE);
-        }
+        convertFromDtoToDomain(docDTO, doc);
         return doc;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDomainToDto(Document doc, DocumentDTO docDTO) {
+        super.convertFromDomainToDto(doc, docDTO);
+        docDTO.setActiveIndicator(BlConverter.convertToBl(doc.getActiveIndicator()));
+        docDTO.setInactiveCommentText(StConverter.convertToSt(doc.getInactiveCommentText()));
+        docDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(doc.getStudyProtocol().getId()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void convertFromDtoToDomain(DocumentDTO docDTO, Document doc) {
+        super.convertFromDtoToDomain(docDTO, doc);
+        doc.setActiveIndicator(BlConverter.convertToBoolean(docDTO.getActiveIndicator()));
+        doc.setInactiveCommentText(StConverter.convertToString(docDTO.getInactiveCommentText()));
+
+        StudyProtocol spBo = new StudyProtocol();
+        spBo.setId(IiConverter.convertToLong(docDTO.getStudyProtocolIdentifier()));
+        doc.setStudyProtocol(spBo);
+
+        if (ISOUtil.isBlNull(docDTO.getActiveIndicator())) {
+            doc.setActiveIndicator(Boolean.TRUE);
+        }
+    }
 }
