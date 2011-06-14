@@ -187,21 +187,22 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             LOG.error(" studyProtocol Identifier cannot be null ");
             throw new PAException(" studyProtocol Identifier cannot be null ");
         }
+
+        Session session = PaHibernateUtil.getCurrentSession();
+        // PO-3608. Session needs to be cleared, or else, when calling save first,
+        // an incomplete object is returned.
+        session.flush();
+        session.clear();
+
         StudyProtocolQueryCriteria spqc = new StudyProtocolQueryCriteria();
         spqc.setStudyProtocolId(studyProtocolId);
         List<StudyProtocol> queryList = getStudyProtocolQueryResults(spqc);
         if (queryList == null) {
-            // this will never happen is real scenario, as a practice throw
-            // exception
-            LOG.error(" Study protcol was not found for id " + studyProtocolId);
-            throw new PAException(" Study protcol was not found for id " + studyProtocolId);
+            throw new PAException(" Study protocol was not found for id " + studyProtocolId);
         }
         List<StudyProtocolQueryDTO> trialSummaries = convertToStudyProtocolDTO(queryList, null, false);
 
         if (trialSummaries == null || trialSummaries.size() <= 0) {
-            // this will never happen is real scenario, as a practice throw
-            // exception
-            LOG.error(" Could not be converted to DTO for id " + studyProtocolId);
             throw new PAException(" Could not be converted to DTO for id " + studyProtocolId);
         }
         return trialSummaries.get(0);
