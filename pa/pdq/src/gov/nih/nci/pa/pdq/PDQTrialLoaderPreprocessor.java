@@ -241,9 +241,12 @@ public class PDQTrialLoaderPreprocessor {
                 intervention.addContent(labelLink);
             }
             //Default number_of_arms to 1
-            Element numberOfArms = document.getRootElement().getChild("study_design").getChild("interventional_design")
-                .getChild("number_of_arms");
-            numberOfArms.setText("1");
+            Element studyDesign = document.getRootElement().getChild("study_design");
+            if ("interventional".equals(studyDesign.getChild("study_type").getText())) {
+                Element numberOfArms = studyDesign.getChild("interventional_design")
+                    .getChild("number_of_arms");
+                numberOfArms.setText("1");
+            }
         }        
     }
     
@@ -253,9 +256,11 @@ public class PDQTrialLoaderPreprocessor {
      */
     private void replaceStartDateType(Document document) {
         Element startDate = document.getRootElement().getChild("start_date");
-        String startDateType = startDate.getAttributeValue("date_type");
-        if (StringUtils.equals("Projected", startDateType)) {
-            startDate.setAttribute("date_type", "Anticipated");
+        if (startDate != null) {
+            String startDateType = startDate.getAttributeValue("date_type");
+            if (StringUtils.equals("Projected", startDateType)) {
+                startDate.setAttribute("date_type", "Anticipated");
+            }
         }
     }
 }
