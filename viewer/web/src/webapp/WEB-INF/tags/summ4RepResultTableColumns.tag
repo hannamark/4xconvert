@@ -7,12 +7,17 @@
 <display:setProperty name="export.excel" value="true" />
 <viewer:displayTagProperties/>
 <display:column titleKey="report.result.sponsor" property="sponsor"/>
-<display:column titleKey="report.result.cancerSite">
+<display:column titleKey="report.result.cancerSite" media="html">
     <ol>
         <c:forEach var="anatomicSiteVal" items="${table_uid.anatomicSites}">
             <li>${anatomicSiteVal}</li>
         </c:forEach>
     </ol>
+</display:column>
+<display:column titleKey="report.result.cancerSite" media="excel">
+        <c:forEach var="anatomicSiteVal" items="${table_uid.anatomicSites}" varStatus="status">
+            ${anatomicSiteVal}<c:if test="${!status.last}">,</c:if>
+        </c:forEach>
 </display:column>
 <display:column titleKey="report.result.nciIdentifier" property="nciIdentifier"/>
 <display:column titleKey="report.result.nctIdentifier" property="nctIdentifier"/>

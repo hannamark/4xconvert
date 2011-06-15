@@ -222,7 +222,7 @@ function loadDiv(intid, disName) {
             <del class="btnwrapper">
                 <ul class="btnrow">
                     <li>
-                            <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Search</span></span></s:a>
+                            <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Run Report</span></span></s:a>
                             <s:a href="#" cssClass="btn" onclick="resetValues();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
                         </li>
                 </ul>
