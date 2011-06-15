@@ -82,20 +82,72 @@
  */
 package gov.nih.nci.pa.test.integration;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.Test;
 
 /**
- *
- * Class to control the order that selenium tests are run in.
+ * Tests listing, adding, editing and deleting arms.
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-@RunWith(Suite.class)
-@SuiteClasses(value = {LoginTest.class, AnatomicSiteTest.class, PlannedMarkerTest.class, StudyOwnershipTest.class,
-        DuplicateTrialEditTest.class, LookupWithApostropheTest.class, TrialStatusTest.class,
-        ParticipatingSiteTest.class, TrialRelatedDocumentTest.class, ArmTest.class})
-public class AllSeleniumTests {
+public class ArmTest extends AbstractPaSeleniumTest {
 
+    @Test
+    public void testListArms() {
+        loginAsScientificAbstractor();
+        searchAndSelectTrial("Test Trial created by Selenium.");
+        clickAndWait("link=Arms");
+        assertTrue(selenium.isTextPresent("Nothing found to display."));
+        assertTrue(selenium.isElementPresent("link=Add"));
+    }
+
+    @Test
+    public void testAddArm() {
+        loginAsScientificAbstractor();
+        searchAndSelectTrial("Test Trial created by Selenium.");
+        clickAndWait("link=Arms");
+        assertTrue(selenium.isTextPresent("Nothing found to display."));
+        assertTrue(selenium.isElementPresent("link=Add"));
+
+        clickAndWait("link=Add");
+        selenium.type("armName", "ARM I");
+        selenium.select("id=armType", "label=Experimental");
+        selenium.type("armDescription", "Arm Description");
+        clickAndWait("link=Save");
+        assertTrue(selenium.isTextPresent("Record Created"));
+        assertTrue(selenium.isTextPresent("One item found"));
+    }
+
+    @Test
+    public void testEditArm() {
+        loginAsScientificAbstractor();
+        searchAndSelectTrial("Test Trial created by Selenium.");
+        clickAndWait("link=Arms");
+        assertTrue(selenium.isTextPresent("One item found"));
+
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[5]/a"));
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[6]/a"));
+
+        clickAndWait("xpath=//table[@id='row']/tbody/tr[1]/td[5]/a");
+        selenium.select("id=armType", "label=Other");
+        clickAndWait("link=Save");
+        selenium.getConfirmation();
+        assertTrue(selenium.isTextPresent("Record Updated"));
+        assertTrue(selenium.isTextPresent("One item found"));
+    }
+
+    @Test
+    public void testDeleteArm() {
+        loginAsScientificAbstractor();
+        searchAndSelectTrial("Test Trial created by Selenium.");
+        clickAndWait("link=Arms");
+        assertTrue(selenium.isTextPresent("One item found"));
+
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[5]/a"));
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[6]/a"));
+
+        clickAndWait("xpath=//table[@id='row']/tbody/tr[1]/td[6]/a");
+        selenium.getConfirmation();
+        assertTrue(selenium.isTextPresent("Record Deleted"));
+        assertTrue(selenium.isTextPresent("Nothing found to display."));
+    }
 }

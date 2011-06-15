@@ -70,7 +70,7 @@ function handleCreateGroup(){
                 <s:if test="%{currentAction == 'listArm'}"><display:column escapeXml="true" property="type" sortable="true" titleKey="arms.type" headerClass="sortable"/></s:if>
                 <display:column escapeXml="true" property="description" sortable="true" titleKey="arms.description" headerClass="sortable" />
                 <display:column escapeXml="true" property="interventions" titleKey="arms.interventions"/>
-                <pa:adminAbstractorDisplayWhenCheckedOut>
+                <pa:scientificAbstractorDisplayWhenCheckedOut>
                     <display:column titleKey="arms.edit" headerClass="centered" class="action">
                         <s:if test="%{currentAction == 'listArm'}">
                             <s:a href="#" onclick="handleEditArm(%{#attr.row.identifier})">
@@ -88,7 +88,7 @@ function handleCreateGroup(){
                             <img src="<c:url value='/images/ico_delete.gif'/>" alt="Delete" width="16" height="16" />
                         </s:a>
                     </display:column>
-                </pa:adminAbstractorDisplayWhenCheckedOut>
+                </pa:scientificAbstractorDisplayWhenCheckedOut>
             </display:table>
             </td>
         </tr>

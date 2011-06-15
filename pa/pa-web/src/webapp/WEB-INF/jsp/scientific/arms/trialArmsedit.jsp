@@ -74,7 +74,7 @@
                 <tr>
                     <td class="label"><s:label for="armName">Label:</s:label><span class="required">*</span></td>
                     <td class="value">
-                        <s:textfield name="armName" maxlength="62" size="62" cssStyle="width:280px;float:left"/>
+                        <s:textfield name="armName" id="armName" maxlength="62" size="62" cssStyle="width:280px;float:left"/>
                     </td>
                 </tr>
                 <s:if test="%{(currentAction == 'editArm')||(currentAction == 'editNewArm')}">
@@ -82,8 +82,7 @@
                     <tr>
                         <td class="label"><s:label for="armType">Type:</s:label><span class="required">*</span></td>
                         <td class="value">
-                        <s:select onchange="statusChange()" headerKey=""
-                            headerValue="--Select--" name="armType" list="#armTypeValues" />
+                        <s:select onchange="statusChange()" headerKey="" headerValue="--Select--" name="armType" id="armType" list="#armTypeValues" />
                             <span class="formErrorMsg">
                                 <s:fielderror>
                                 <s:param>armType</s:param>
@@ -95,7 +94,7 @@
                 <tr>
                     <td class="label"><s:label for="armDescription">Arm Description:</s:label></td>
                     <td class="value">
-                        <s:textarea name="armDescription" rows="20" cssStyle="width:280px;float:left"/>
+                        <s:textarea name="armDescription" id="armDescription" rows="20" cssStyle="width:280px;float:left"/>
                         <span class="formErrorMsg">
                                 <s:fielderror>
                                 <s:param>armDescription</s:param>
