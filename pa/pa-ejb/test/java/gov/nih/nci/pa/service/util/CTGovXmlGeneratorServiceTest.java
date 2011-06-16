@@ -90,7 +90,9 @@ import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelUrl;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -98,9 +100,13 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
@@ -109,6 +115,7 @@ import gov.nih.nci.services.entity.NullifiedEntityException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -191,6 +198,48 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
     public void testSosByCurrentIsNull() throws PAException {
         when(studyOverallStatusSvc.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(null);
         assertFalse(getBean().generateCTGovXml(spId).contains("<overall_status>"));
+    }
+
+    @Test
+    public void testSosByCurrent() throws PAException {
+        StudyOverallStatusDTO overallStatus = new StudyOverallStatusDTO();
+        overallStatus.setStatusCode(CdConverter.convertToCd(StudyStatusCode.ACTIVE));
+        when(studyOverallStatusSvc.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(overallStatus);
+
+        StudyRecruitmentStatusDTO recruitmentStatus = new StudyRecruitmentStatusDTO();
+        recruitmentStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.IN_REVIEW));
+        when(studyRecruitmentStatusSvc.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(recruitmentStatus);
+        assertTrue(getBean().generateCTGovXml(spId).contains("<overall_status>Not yet recruiting</overall_status>"));
+
+        recruitmentStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.APPROVED));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<overall_status>Not yet recruiting</overall_status>"));
+
+        recruitmentStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.WITHDRAWN));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<overall_status>Withdrawn</overall_status>"));
+
+        recruitmentStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ACTIVE));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<overall_status>Recruiting</overall_status>"));
+
+        recruitmentStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ENROLLING_BY_INVITATION));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<overall_status>Enrolling by Invitation</overall_status>"));
+
+        recruitmentStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.CLOSED_TO_ACCRUAL));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<overall_status>Active, not recruiting</overall_status>"));
+
+        recruitmentStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<overall_status>Active, not recruiting</overall_status>"));
+
+        recruitmentStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<overall_status>Suspended</overall_status>"));
+
+        recruitmentStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<overall_status>Suspended</overall_status>"));
+
+        recruitmentStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.COMPLETED));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<overall_status>Completed</overall_status>"));
+
+        recruitmentStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<overall_status>Terminated</overall_status>"));
     }
 
     @Test
@@ -627,5 +676,55 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
         when(orgSvc.getOrganizationByStudySite(anyLong(), any(StudySiteFunctionalCode.class)))
            .thenReturn(new ArrayList<Organization>());
         assertFalse(getBean().generateCTGovXml(spId).contains("<collaborator>"));
+    }
+
+    @Test
+    public void testLocations() throws PAException {
+        StudySiteDTO studySiteDto = new StudySiteDTO();
+        studySiteDto.setReviewBoardApprovalStatusCode(CdConverter
+                .convertStringToCd(ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getCode()));
+        studySiteDto.setHealthcareFacilityIi(IiConverter.convertToPoHealthCareFacilityIi("1"));
+        studySiteDto.setResearchOrganizationIi(IiConverter.convertToPoResearchOrganizationIi("1"));
+        studySiteDto.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.ACTIVE));
+        studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+        studySiteDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("SITE_1"));
+        when(studySiteSvc.getByStudyProtocol(any(Ii.class), any(StudySiteDTO.class))).thenReturn(Arrays.asList(studySiteDto));
+
+        StudySiteAccrualStatusDTO accrualStatus = new StudySiteAccrualStatusDTO();
+        accrualStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.IN_REVIEW));
+
+        when(studySiteAccrualStatusSvc.getCurrentStudySiteAccrualStatusByStudySite(any(Ii.class))).thenReturn(accrualStatus);
+
+        assertTrue(getBean().generateCTGovXml(spId).contains("<status>Not yet recruiting</status>"));
+
+        accrualStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.APPROVED));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<status>Not yet recruiting</status>"));
+
+        accrualStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.WITHDRAWN));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<status>Withdrawn</status>"));
+
+        accrualStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ACTIVE));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<status>Recruiting</status>"));
+
+        accrualStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ENROLLING_BY_INVITATION));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<status>Enrolling by Invitation</status>"));
+
+        accrualStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.CLOSED_TO_ACCRUAL));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<status>Active, not recruiting</status>"));
+
+        accrualStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<status>Active, not recruiting</status>"));
+
+        accrualStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<status>Suspended</status>"));
+
+        accrualStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<status>Suspended</status>"));
+
+        accrualStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.COMPLETED));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<status>Completed</status>"));
+
+        accrualStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE));
+        assertTrue(getBean().generateCTGovXml(spId).contains("<status>Terminated</status>"));
     }
 }

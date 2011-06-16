@@ -86,6 +86,7 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DesignConfigurationCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import gov.nih.nci.pa.enums.StudyClassificationCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
@@ -536,6 +537,17 @@ public class AbstractCTGovXmlGeneratorServiceBean {
         nvMap.put(StudyClassificationCode.PHARMACOKINETICS_OR_DYNAMICS.getCode(), "Pharmacokinetics/dynamics Study");
         nvMap.put(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.getCode(), "Principal Investigator");
         nvMap.put(AllocationCode.NA.getCode(), XmlGenHelper.NA);
+        nvMap.put(RecruitmentStatusCode.IN_REVIEW.getCode(), "Not yet recruiting");
+        nvMap.put(RecruitmentStatusCode.APPROVED.getCode(), "Not yet recruiting");
+        nvMap.put(RecruitmentStatusCode.WITHDRAWN.getCode(), "Withdrawn");
+        nvMap.put(RecruitmentStatusCode.ACTIVE.getCode(), "Recruiting");
+        nvMap.put(RecruitmentStatusCode.ENROLLING_BY_INVITATION.getCode(), "Enrolling by Invitation");
+        nvMap.put(RecruitmentStatusCode.CLOSED_TO_ACCRUAL.getCode(), "Active, not recruiting");
+        nvMap.put(RecruitmentStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode(), "Active, not recruiting");
+        nvMap.put(RecruitmentStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode(), "Suspended");
+        nvMap.put(RecruitmentStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode(), "Suspended");
+        nvMap.put(RecruitmentStatusCode.COMPLETED.getCode(), "Completed");
+        nvMap.put(RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE.getCode(), "Terminated");
         setNv(Collections.unmodifiableMap(nvMap));
     }
 

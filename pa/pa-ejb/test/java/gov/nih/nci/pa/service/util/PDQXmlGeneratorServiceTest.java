@@ -143,7 +143,7 @@ public class PDQXmlGeneratorServiceTest extends CTGovXmlGeneratorServiceTest {
 
         when(studyContactSvc.getByStudyProtocol(any(Ii.class),
                 argThat(new CentralContactMatcher()))).thenReturn(new ArrayList<StudyContactDTO>());
-        
+
         FileChannel fc = new FileInputStream(new File(new URI(this.getClass().getClassLoader().getResource(
                 "PDQExpectedGeneratedXML.xml").toString()))).getChannel();
         String expectedPdqXml = Charset.defaultCharset().decode(fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size())).toString();
@@ -164,7 +164,7 @@ public class PDQXmlGeneratorServiceTest extends CTGovXmlGeneratorServiceTest {
         studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
 //        studySiteDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("LEAD_ORG_1"));
         ssList.add(studySiteDto);
-        
+
         when(studySiteSvc.getByStudyProtocol(any(Ii.class),
                 argThat(new StudySiteWrongFCMatcher()))).thenReturn(new ArrayList<StudySiteDTO>());
         when(studySiteSvc.getByStudyProtocol(any(Ii.class), argThat(new StudySiteMatcher()))).thenReturn(ssList);
@@ -175,7 +175,7 @@ public class PDQXmlGeneratorServiceTest extends CTGovXmlGeneratorServiceTest {
 
         when(studyContactSvc.getByStudyProtocol(any(Ii.class),
                 argThat(new CentralContactMatcher()))).thenReturn(new ArrayList<StudyContactDTO>());
-        
+
         FileChannel fc = new FileInputStream(new File(new URI(this.getClass().getClassLoader().getResource(
                 "PDQExpectedGeneratedXML_invalid.xml").toString()))).getChannel();
         String expectedPdqXml = Charset.defaultCharset().decode(fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size())).toString();
@@ -328,4 +328,9 @@ public class PDQXmlGeneratorServiceTest extends CTGovXmlGeneratorServiceTest {
         assertTrue(results.contains("<ctep_id>ctep org id</ctep_id>"));
     }
 
+    @Override
+    @Test
+    public void testSosByCurrent() throws PAException {
+        //nop
+    }
 }
