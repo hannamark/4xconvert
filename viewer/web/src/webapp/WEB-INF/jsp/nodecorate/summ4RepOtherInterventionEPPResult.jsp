@@ -14,14 +14,12 @@
 <table width="100%">
     <tr>               
     <td colspan="2">
-    <c:if test = "${not empty sessionScope.otherInterventionMap[eppStr]}">                     
         <ajax:displayTag id="summ4SearchResultsotherInterventionListExternallyPeerReviewed" tableClass="data">
         <display:table class="data" pagesize="20" uid="otherIntEPRRow" name="${sessionScope.otherInterventionMap[eppStr]}" 
             requestURI="${otherIntEPPSortUrl}" export="true">
             <viewer:summ4RepResultTableColumns table_uid="${otherIntEPRRow}"/>
         </display:table>
         </ajax:displayTag>
-    </c:if>
     </td>
     </tr>
 </table>

@@ -11,7 +11,6 @@
     <tr>               
     <td colspan="2">
 <!-- main content begins-->
-    <c:if test = "${not empty sessionScope.epidemiologicOutcomeList}">
         <c:url value="/ctro/ajax/refreshEpidemResultsSumm4Rep.action" var="epidemSortUrl"/>
         <ajax:displayTag id="summ4SearchResultsepidemiologicOutcomeList" tableClass="data">
         <display:table class="data" pagesize="20" uid="epidemRow" name="${sessionScope.epidemiologicOutcomeList}" 
@@ -19,7 +18,6 @@
             <viewer:summ4RepResultTableColumns table_uid="${epidemRow}"/>
         </display:table>
         </ajax:displayTag>
-    </c:if>
     </td>
     </tr>
 </table>

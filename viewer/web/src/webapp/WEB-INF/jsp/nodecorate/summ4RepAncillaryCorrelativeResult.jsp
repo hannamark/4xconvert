@@ -11,7 +11,6 @@
     <tr>               
     <td colspan="2">
 <!-- main content begins-->
-    <c:if test = "${not empty sessionScope.ancillaryCorrelativeList}">
         <c:url value="/ctro/ajax/refreshAncCorResultsSumm4Rep.action" var="ancCorSortUrl"/>
         <ajax:displayTag id="summ4SearchResultsancillaryCorrelativeList" tableClass="data">
         <display:table class="data" pagesize="20" uid="ancCorRow" name="${sessionScope.ancillaryCorrelativeList}" 
@@ -19,7 +18,6 @@
             <viewer:summ4RepResultTableColumns table_uid="${ancCorRow}"/>
         </display:table>
         </ajax:displayTag>
-    </c:if>
     </td>
     </tr>
 </table>

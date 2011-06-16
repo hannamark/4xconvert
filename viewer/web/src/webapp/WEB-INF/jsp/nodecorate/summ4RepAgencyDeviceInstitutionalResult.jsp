@@ -14,14 +14,12 @@
 <table width="100%">
     <tr>               
     <td colspan="2">
-    <c:if test = "${not empty sessionScope.agentDeviceMap[institutionalStr]}">   
         <ajax:displayTag id="summ4SearchResultsagentDeviceListInstitutional" tableClass="data">
         <display:table class="data" pagesize="20" uid="agentDeviceInstRow" name="${sessionScope.agentDeviceMap[institutionalStr]}" 
             requestURI="${agencyDeviceInstitutionalSortUrl}" export="true">                         
             <viewer:summ4RepResultTableColumns table_uid="${agentDeviceInstRow}"/>
         </display:table>
         </ajax:displayTag>
-    </c:if>
     </td>
     </tr>
 </table>             
