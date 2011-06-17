@@ -120,6 +120,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -235,7 +236,7 @@ public class SearchTrialAction extends ActionSupport {
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
-            ServletActionContext.getRequest().setAttribute("failureMessage" , e.getMessage());
+            ServletActionContext.getRequest().setAttribute("failureMessage", e.getMessage());
             return ERROR;
         }
     }
@@ -262,9 +263,9 @@ public class SearchTrialAction extends ActionSupport {
             }
 
             if (statusCode != null && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)
-                        && queryDto.isSearcherTrialOwner() && !UPDATEABLE_STATUS.contains(statusCode)) {
+                    && queryDto.isSearcherTrialOwner() && !UPDATEABLE_STATUS.contains(statusCode)) {
                 queryDto.setUpdate("Update");
-            } else  {
+            } else {
                 queryDto.setUpdate("");
             }
 
@@ -393,16 +394,16 @@ public class SearchTrialAction extends ActionSupport {
         } else if (trialDTO.getTrialType().equals("ObservationalStudyProtocol")) {
            trialDTO.setTrialType("Observational");
         }
-        ServletActionContext.getRequest().setAttribute("trialDTO", trialDTO);
+        final HttpServletRequest request = ServletActionContext.getRequest();
+        request.setAttribute("trialDTO", trialDTO);
         getReponsibleParty(trialDTO, maskFields);
-        if (!maskFields && !(trialDTO.getFundingDtos().isEmpty())) {
-            // put an entry in the session and store TrialFunding
-             ServletActionContext.getRequest().setAttribute(Constants.TRIAL_FUNDING_LIST,
-                      trialDTO.getFundingDtos());
-        }
-        if (!maskFields && !(trialDTO.getIndIdeDtos().isEmpty())) {
-            // put an entry in the session and store TrialFunding
-            ServletActionContext.getRequest().setAttribute(Constants.STUDY_INDIDE, trialDTO.getIndIdeDtos());
+        if (!maskFields) {
+            if (!trialDTO.getFundingDtos().isEmpty()) {
+                request.setAttribute(Constants.TRIAL_FUNDING_LIST, trialDTO.getFundingDtos());
+            }
+            if (!trialDTO.getIndIdeDtos().isEmpty()) {
+                request.setAttribute(Constants.STUDY_INDIDE, trialDTO.getIndIdeDtos());
+            }
         }
     }
 

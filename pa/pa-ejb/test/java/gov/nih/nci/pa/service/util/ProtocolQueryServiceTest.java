@@ -1,81 +1,85 @@
-/*
-* caBIG Open Source Software License
-*
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Protocol  Abstraction (PA) Application
-* was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
-* includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
-*
-* This caBIG Software License (the License) is between caBIG  Participant  and  You.  You (or Your) shall  mean a
-* person or an entity, and all other entities that control, are  controlled by,  or  are under common  control  with the
-* entity.  Control for purposes of this definition means
-*
-* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract
-* or otherwise,or
-*
-* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or
-*
-* (iii) beneficial ownership of such entity.
-* License.  Provided that You agree to the conditions described below, caBIG Participant  grants  You a  non-exclusive,
-* worldwide, perpetual, fully-paid-up, no-charge, irrevocable,  transferable  and royalty-free  right and license in its
-* rights in the caBIG Software, including any copyright or patent rights therein, to
-*
-* (i) use,install, disclose, access, operate,  execute, reproduce,  copy, modify, translate,  market,  publicly display,
-* publicly perform, and prepare derivative works of the caBIG Software in any manner and for any  purpose,  and to have
-* or permit others to do so;
-*
-* (ii) make, have made, use, practice, sell, and offer  for sale,  import, and/or  otherwise  dispose of caBIG Software
-* (or portions thereof);
-*
-* (iii) distribute and have distributed  to  and by third   parties the   caBIG  Software  and any   modifications  and
-* derivative works thereof; and (iv) sublicense the  foregoing rights  set  out in (i), (ii) and (iii) to third parties,
-* including the right to license such rights to further third parties. For sake of clarity,and not by way of limitation,
-* caBIG Participant shall have no right of accounting or right of payment from You or Your sub licensees for the rights
-* granted under this License.   This  License  is  granted  at no  charge  to You. Your downloading, copying, modifying,
-* displaying, distributing or use of caBIG Software constitutes acceptance  of  all of the terms and conditions of this
-* Agreement.  If You do not agree to such terms and conditions,  You have no right to download,  copy,  modify, display,
-* distribute or use the caBIG Software.
-*
-* 1.  Your redistributions of the source code for the caBIG Software must retain the above copyright notice, this  list
-* of conditions and the disclaimer and limitation of liability of Article 6 below.   Your redistributions in object code
-* form must reproduce the above copyright notice,  this list of  conditions  and the  disclaimer  of  Article  6  in the
-* documentation and/or other materials provided with the distribution, if any.
-*
-* 2.  Your end-user documentation included with the redistribution, if any,  must include the  following acknowledgment:
-* This product includes software developed by ScenPro, Inc.   If  You  do not include such end-user documentation, You
-* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally
-* appear.
-*
-* 3.  You may not use the names ScenPro, Inc., The National Cancer Institute, NCI, Cancer Bioinformatics Grid or
-* caBIG to endorse or promote products derived from this caBIG Software.  This License does not authorize You to use
-* any trademarks, service marks, trade names, logos or product names of either caBIG Participant, NCI or caBIG, except
-* as required to comply with the terms of this License.
-*
-* 4.  For sake of clarity, and not by way of limitation, You  may incorporate this caBIG Software into Your proprietary
-* programs and into any third party proprietary programs.  However, if You incorporate the  caBIG Software  into  third
-* party proprietary programs,  You agree  that You are  solely responsible  for obtaining any permission from such third
-* parties required to incorporate the caBIG Software  into such third party proprietary programs and for informing Your
-* sub licensees, including without limitation Your end-users, of their obligation  to  secure  any  required permissions
-* from such third parties before incorporating the caBIG Software into such third party proprietary  software programs.
-* In the event that You fail to obtain such permissions,  You  agree  to  indemnify  caBIG  Participant  for any claims
-* against caBIG Participant by such third parties, except to the extent prohibited by law,  resulting from Your failure
-* to obtain such permissions.
-*
-* 5.  For sake of clarity, and not by way of limitation, You may add Your own copyright statement  to Your modifications
-* and to the derivative works, and You may provide  additional  or  different  license  terms  and  conditions  in  Your
-* sublicenses of modifications of the caBIG  Software,  or  any  derivative  works  of  the caBIG Software as a whole,
-* provided Your use, reproduction,  and  distribution  of the Work otherwise complies with the conditions stated in this
-* License.
-*
-* 6.  THIS caBIG SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES  ( INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN
-* NO EVENT SHALL THE ScenPro, Inc. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-* OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT  LIMITED  TO,  PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES; LOSS OF USE,
-* DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
-* IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
-*/
+/**
+ * The software subject to this notice and license includes both human readable
+ * source code form and machine readable, binary, object code form. The pa
+ * Software was developed in conjunction with the National Cancer Institute
+ * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
+ * government employees are authors, any rights in such works shall be subject
+ * to Title 17 of the United States Code, section 105.
+ *
+ * This pa Software License (the License) is between NCI and You. You (or
+ * Your) shall mean a person or an entity, and all other entities that control,
+ * are controlled by, or are under common control with the entity. Control for
+ * purposes of this definition means (i) the direct or indirect power to cause
+ * the direction or management of such entity, whether by contract or otherwise,
+ * or (ii) ownership of fifty percent (50%) or more of the outstanding shares,
+ * or (iii) beneficial ownership of such entity.
+ *
+ * This License is granted provided that You agree to the conditions described
+ * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
+ * no-charge, irrevocable, transferable and royalty-free right and license in
+ * its rights in the pa Software to (i) use, install, access, operate,
+ * execute, copy, modify, translate, market, publicly display, publicly perform,
+ * and prepare derivative works of the pa Software; (ii) distribute and
+ * have distributed to and by third parties the pa Software and any
+ * modifications and derivative works thereof; and (iii) sublicense the
+ * foregoing rights set out in (i) and (ii) to third parties, including the
+ * right to license such rights to further third parties. For sake of clarity,
+ * and not by way of limitation, NCI shall have no right of accounting or right
+ * of payment from You or Your sub-licensees for the rights granted under this
+ * License. This License is granted at no charge to You.
+ *
+ * Your redistributions of the source code for the Software must retain the
+ * above copyright notice, this list of conditions and the disclaimer and
+ * limitation of liability of Article 6, below. Your redistributions in object
+ * code form must reproduce the above copyright notice, this list of conditions
+ * and the disclaimer of Article 6 in the documentation and/or other materials
+ * provided with the distribution, if any.
+ *
+ * Your end-user documentation included with the redistribution, if any, must
+ * include the following acknowledgment: This product includes software
+ * developed by 5AM and the National Cancer Institute. If You do not include
+ * such end-user documentation, You shall include this acknowledgment in the
+ * Software itself, wherever such third-party acknowledgments normally appear.
+ *
+ * You may not use the names "The National Cancer Institute", "NCI", or "5AM"
+ * to endorse or promote products derived from this Software. This License does
+ * not authorize You to use any trademarks, service marks, trade names, logos or
+ * product names of either NCI or 5AM, except as required to comply with the
+ * terms of this License.
+ *
+ * For sake of clarity, and not by way of limitation, You may incorporate this
+ * Software into Your proprietary programs and into any third party proprietary
+ * programs. However, if You incorporate the Software into third party
+ * proprietary programs, You agree that You are solely responsible for obtaining
+ * any permission from such third parties required to incorporate the Software
+ * into such third party proprietary programs and for informing Your
+ * sub-licensees, including without limitation Your end-users, of their
+ * obligation to secure any required permissions from such third parties before
+ * incorporating the Software into such third party proprietary software
+ * programs. In the event that You fail to obtain such permissions, You agree
+ * to indemnify NCI for any claims against NCI by such third parties, except to
+ * the extent prohibited by law, resulting from Your failure to obtain such
+ * permissions.
+ *
+ * For sake of clarity, and not by way of limitation, You may add Your own
+ * copyright statement to Your modifications and to the derivative works, and
+ * You may provide additional or different license terms and conditions in Your
+ * sublicenses of modifications of the Software, or any derivative works of the
+ * Software as a whole, provided Your use, reproduction, and distribution of the
+ * Work otherwise complies with the conditions stated in this License.
+ *
+ * THIS SOFTWARE IS PROVIDED "AS IS," AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * (INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+ * NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE NATIONAL CANCER INSTITUTE, 5AM SOLUTIONS, INC. OR THEIR
+ * AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
@@ -135,7 +139,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  *
@@ -143,6 +149,9 @@ import org.junit.Test;
  *
  */
 public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     private final ProtocolQueryServiceBean bean = new ProtocolQueryServiceBean();
     private final ProtocolQueryServiceLocal localEjb = bean;
     private Long spId = null;
@@ -158,133 +167,162 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
     }
 
     @Test
+    public void testEmptyCriteria() throws Exception {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("At least one criteria is required.");
+
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        localEjb.getStudyProtocolByCriteria(criteria);
+    }
+
+    @Test
     public void getStudyProtocolByCriteriaTest() throws Exception {
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
         criteria.setNciIdentifier("nci");
         List<StudyProtocolQueryDTO> results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
-
         assertEquals("Title does not match.", results.get(0).getOfficialTitle(), "Cancer for kids");
-        assertEquals("NCI Identifier does not match." , results.get(0).getNciIdentifier(), "NCI-2009-00001");
+        assertEquals("NCI Identifier does not match.", results.get(0).getNciIdentifier(), "NCI-2009-00001");
+        criteria.setNciIdentifier(null);
 
         criteria.setStudyStatusCode("In Review");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertTrue(results.isEmpty());
+        criteria.setStudyStatusCode(null);
 
         criteria.setStudyStatusCode("Active");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
         assertEquals(StudyStatusCode.ACTIVE, results.get(0).getStudyStatusCode());
+        criteria.setStudyStatusCode(null);
 
         criteria.setDocumentWorkflowStatusCode("Verification Pending");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertTrue(results.isEmpty());
+        criteria.setDocumentWorkflowStatusCode(null);
 
         criteria.setDocumentWorkflowStatusCode("Accepted");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertFalse(results.isEmpty());
         assertEquals(DocumentWorkflowStatusCode.ACCEPTED, results.get(0).getDocumentWorkflowStatusCode());
+        criteria.setDocumentWorkflowStatusCode(null);
 
         criteria.setLeadOrganizationTrialIdentifier("Local1");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
         assertEquals("Local1", results.get(0).getLocalStudyProtocolIdentifier());
+        criteria.setLeadOrganizationTrialIdentifier(null);
 
         criteria.setOfficialTitle("Cancer");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
         assertEquals("Cancer for kids", results.get(0).getOfficialTitle());
+        criteria.setOfficialTitle(null);
 
         criteria.setPhaseCode("I");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
         assertEquals(PhaseCode.I, results.get(0).getPhaseCode());
+        criteria.setPhaseCode(null);
 
         criteria.setPhaseAdditionalQualifierCode("Pilot");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
         assertEquals(PhaseAdditionalQualifierCode.PILOT, results.get(0).getPhaseAdditionalQualifier());
+        criteria.setPhaseAdditionalQualifierCode(null);
 
         criteria.setPrimaryPurposeCode("Basic Science");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
+        criteria.setPrimaryPurposeCode(null);
 
         criteria.setNctNumber("NCT-1");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
-
         criteria.setNctNumber(null);
+
         criteria.setCtepIdentifier("CTEP-1");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
-
         criteria.setCtepIdentifier(null);
+
         criteria.setDcpIdentifier("DCP-1");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
+        criteria.setDcpIdentifier(null);
 
         criteria.setSubmissionType("O");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
+        criteria.setSubmissionType(null);
 
         criteria.setStudyMilestone("Submission Received Date");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertTrue(results.isEmpty());
+        criteria.setStudyMilestone(null);
 
         criteria.setStudyMilestone("Submission Acceptance Date");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
         assertEquals(MilestoneCode.SUBMISSION_ACCEPTED, results.get(0).getStudyMilsetone());
+        criteria.setStudyMilestone(null);
+
         criteria.setLeadOrganizationId("123");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertTrue(results.isEmpty());
+        criteria.setLeadOrganizationId(null);
 
-        criteria.setDcpIdentifier(null);
         criteria.setLeadOrganizationId(leadOrgId.toString());
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
         assertEquals(leadOrgId, results.get(0).getLeadOrganizationId());
+        criteria.setLeadOrganizationId(null);
 
         criteria.setPrincipalInvestigatorId("123");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertTrue(results.isEmpty());
+        criteria.setPrincipalInvestigatorId(null);
 
         criteria.setPrincipalInvestigatorId(principalInvestigator.toString());
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
+        criteria.setPrincipalInvestigatorId(null);
 
-        criteria.setNciIdentifier(null);
         criteria.setOtherIdentifier("OTHER-2");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertTrue(results.isEmpty());
+        criteria.setOtherIdentifier(null);
 
         criteria.setOtherIdentifier("OTHER-1");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
         assertTrue(results.get(0).getOtherIdentifiers().contains("OTHER-1"));
+        criteria.setOtherIdentifier(null);
 
+        criteria.setOtherIdentifier("OTHER-1");
         criteria.setInBoxProcessing(Boolean.TRUE);
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
         assertNotNull(results.get(0).getStudyInboxId());
         assertNotNull(results.get(0).getUpdatedComments());
         assertNotNull(results.get(0).getUpdatedDate());
+        criteria.setInBoxProcessing(null);
 
         createStudyProtocol("2", true, Boolean.FALSE, false, false, false, false, false);
         StudyProtocolQueryCriteria otherCriteria = new StudyProtocolQueryCriteria();
         otherCriteria.setNciIdentifier("NCI");
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
-        assertEquals("Size does not match.",2 , results.size());
+        assertEquals("Size does not match.", 2, results.size());
 
         otherCriteria.setExcludeRejectProtocol(Boolean.FALSE);
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
-        assertEquals("Size does not match.",2 , results.size());
+        assertEquals("Size does not match.", 2, results.size());
 
         otherCriteria.setNciIdentifier(null);
         otherCriteria.setOfficialTitle("Cancer");
         otherCriteria.setExcludeRejectProtocol(Boolean.TRUE);
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
-        assertEquals("Size does not match.",1, results.size());
+        assertEquals("Size does not match.", 1, results.size());
         assertFalse(DocumentWorkflowStatusCode.REJECTED == results.get(0).getDocumentWorkflowStatusCode());
 
         createStudyProtocol("3", false, Boolean.TRUE, false, false, false, false, false);
@@ -324,7 +362,6 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         otherCriteria.setMyTrialsOnly(Boolean.TRUE);
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 1, results.size());
-
 
         createStudyProtocol("7", false, Boolean.FALSE, true, false, false, false, false);
 
@@ -411,8 +448,8 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
     public void getTrialSummaryByStudyProtocolIdTest() throws Exception {
         StudyProtocolQueryDTO data = localEjb.getTrialSummaryByStudyProtocolId(spId);
         assertNotNull(data);
-        assertEquals("Title does not match  " , data.getOfficialTitle(), "Cancer for kids");
-        assertEquals("NCI Identifier does not match  " , data.getNciIdentifier(), "NCI-2009-00001");
+        assertEquals("Title does not match  ", data.getOfficialTitle(), "Cancer for kids");
+        assertEquals("NCI Identifier does not match  ", data.getNciIdentifier(), "NCI-2009-00001");
     }
 
     @Test
@@ -425,16 +462,15 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         assertEquals(1, results.size());
     }
 
-    @Test(expected=PAException.class)
+    @Test(expected = PAException.class)
     public void nullParameter1() throws Exception {
         localEjb.getTrialSummaryByStudyProtocolId(null);
     }
 
-    @Test(expected=PAException.class)
+    @Test(expected = PAException.class)
     public void nullParameter2() throws Exception {
         localEjb.getTrialSummaryByStudyProtocolId(Long.valueOf(1000));
     }
-
 
     private StudyProtocol createStudyProtocol(String orgId, boolean createRejected, Boolean isPropTrial,
             boolean onHold, boolean adminCheckout, boolean scientificCheckout, boolean amendment, boolean update) {
@@ -586,7 +622,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(stdRes);
         sp.getStudyResourcings().add(stdRes);
 
-        //add Disease/Condition
+        // add Disease/Condition
         StudyDisease stdDes = new StudyDisease();
         PDQDisease dis01 = TestSchema.createPdqDisease("Toe Cancer");
         TestSchema.addUpdObject(dis01);
@@ -596,7 +632,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(stdDes);
         sp.getStudyDiseases().add(stdDes);
 
-        //add PlannedActivity - Intervention
+        // add PlannedActivity - Intervention
         Intervention inv = new Intervention();
         inv.setName("Chocolate Bar");
         inv.setDescriptionText("Oral intervention to improve morale");
