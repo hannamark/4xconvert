@@ -97,7 +97,7 @@
         </java>
     </target>
 
-    <target name="trialLoaderPreprocess" depends="jar">
+    <target name="trialLoaderPreprocess" depends="jar" description="Run Pre-processing for PDQ Upload">
         <java fork="true" classname="gov.nih.nci.pa.pdq.PDQTrialLoaderPreprocessor" dir="${basedir}">
             <classpath>
                 <path refid="classpath" />
@@ -105,15 +105,6 @@
             </classpath>
             <arg value="${pdqReplaceSponsor.srcDir}" />
             <arg value="${pdqReplaceSponsor.destDir}" />
-        </java>
-    </target>
-
-    <target name="run-trial-loader" depends="jar">
-        <java fork="true" classname="gov.nih.nci.pa.pdq.PDQTrialLoader" dir="${basedir}">
-            <classpath>
-                <path refid="classpath" />
-                <path location="${basedir}/target/pdq.jar" />
-            </classpath>
         </java>
     </target>
 
