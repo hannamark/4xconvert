@@ -147,6 +147,7 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TrialRegistrationHelper;
 import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.services.EntityDto;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -1235,10 +1236,10 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             errorMsg.append(CdConverter.convertCdToString(summary4StudyResourcingDTO.getTypeCode())).append(
                     " is not valid Summary Four Funding Category Code");
         }
-        errorMsg.append(validatePoObjects(leadOrganizationDTO, "Lead Organization "));
-        errorMsg.append(validatePoObjects(studySiteOrganizationDTO, "Study Site Organization "));
-        errorMsg.append(validatePoObjects(summary4OrganizationDTO, "Summary 4 Organization "));
-        errorMsg.append(validatePoObjects(studySiteInvestigatorDTO, "Study Site Investigator "));
+        errorMsg.append(validatePoObjects(leadOrganizationDTO, "Lead Organization ", false));
+        errorMsg.append(validatePoObjects(studySiteOrganizationDTO, "Study Site Organization ", false));
+        errorMsg.append(validatePoObjects(summary4OrganizationDTO, "Summary 4 Organization ", false));
+        errorMsg.append(validatePoObjects(studySiteInvestigatorDTO, "Study Site Investigator ", false));
 
         return errorMsg.toString();
     }
@@ -1894,19 +1895,20 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             }
         }
         if (CREATE.equalsIgnoreCase(operation) || AMENDMENT.equalsIgnoreCase(operation)) {
+            errorMsg.append(getPAServiceUtils().checkDocumentListForValidFileTypes(documentDTOs));
             if (!getPAServiceUtils().isDocumentInList(documentDTOs, DocumentTypeCode.PROTOCOL_DOCUMENT)) {
                 errorMsg.append("Protocol Document is required.\n");
             }
             if (!getPAServiceUtils().isDocumentInList(documentDTOs, DocumentTypeCode.IRB_APPROVAL_DOCUMENT)) {
                 errorMsg.append("IRB Approval Document is required.\n");
             }
-            errorMsg.append(validatePoObjects(leadOrganizationDTO, "Lead Organization "));
+            errorMsg.append(validatePoObjects(leadOrganizationDTO, "Lead Organization ", true));
             // if ctGovXMLreq is true
             if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-                errorMsg.append(validatePoObjects(sponsorOrganizationDTO, "Sponsor Organization "));
+                errorMsg.append(validatePoObjects(sponsorOrganizationDTO, "Sponsor Organization ", true));
             }
-            errorMsg.append(validatePoObjects(summary4organizationDTO, "Summary 4 Organization "));
-            errorMsg.append(validatePoObjects(piPersonDTO, "Principal Investigator "));
+            errorMsg.append(validatePoObjects(summary4organizationDTO, "Summary 4 Organization ", false));
+            errorMsg.append(validatePoObjects(piPersonDTO, "Principal Investigator ", false));
         }
         if (UPDATE.equalsIgnoreCase(operation) && documentDTOs != null && !documentDTOs.isEmpty()) {
             for (DocumentDTO docDto : documentDTOs) {
@@ -1916,7 +1918,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
                     errorMsg.append("Document id " + docDto.getIdentifier().getExtension() + " does not exits.");
                 }
             }
-            errorMsg.append(validatePoObjects(summary4organizationDTO, "Summary 4 Organization "));
+            errorMsg.append(validatePoObjects(summary4organizationDTO, "Summary 4 Organization ", false));
         }
         if (AMENDMENT.equalsIgnoreCase(operation)
                 && !getPAServiceUtils().isDocumentInList(documentDTOs, DocumentTypeCode.CHANGE_MEMO_DOCUMENT)) {
@@ -1937,10 +1939,15 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         }
     }
 
-    private <TYPE extends PoDto> String validatePoObjects(TYPE poDTO, String fieldName) {
+    private <TYPE extends PoDto> String validatePoObjects(TYPE poDTO, String fieldName, boolean iiRequired) {
         String strNewLine = ".\n";
         StringBuffer errorMsg = new StringBuffer();
-
+        
+        if (iiRequired && PAUtil.isIiNull(((EntityDto) poDTO).getIdentifier())) {
+            errorMsg.append("Error getting ").append(fieldName)
+                .append(" from PO. Identifier is required ").append(strNewLine);
+        }
+        
         if (poDTO instanceof OrganizationDTO && PAUtil.isIiNotNull(((OrganizationDTO) poDTO).getIdentifier())) {
             if (!getPAServiceUtils().isIiExistInPO(((OrganizationDTO) poDTO).getIdentifier())) {
                 errorMsg.append("Error getting ").append(fieldName).append(" from PO for id = ").append(

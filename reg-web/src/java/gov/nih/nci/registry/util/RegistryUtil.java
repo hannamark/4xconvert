@@ -18,7 +18,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,38 +33,6 @@ public class RegistryUtil {
     private static final String VALIDATION_EXCEPTION_STRING = "Validation Exception";
     private static final String PA_EXCEPTION_STRING = "gov.nih.nci.pa.service.PAException:";
     private static final Logger LOG = Logger.getLogger(RegistryUtil.class);
-
-    /**
-     * check if the uploaded file type is valid.
-     * @param fileName filename
-     * @return boolean
-     */
-    public static boolean isValidFileType(String fileName) {
-        boolean isValidFileType = false;
-        try {
-            String allowedUploadFileTypes = PaRegistry
-                            .getLookUpTableService().getPropertyValue(
-                                            "allowed.uploadfile.types");
-            if (allowedUploadFileTypes != null) {
-                int pos = fileName.lastIndexOf('.');
-                String uploadedFileType = fileName.substring(pos + 1, fileName
-                        .length());
-                StringTokenizer st = new StringTokenizer(
-                        allowedUploadFileTypes, ",");
-                while (st.hasMoreTokens()) {
-                    String allowedFileType = st.nextToken();
-                    if (allowedFileType.equalsIgnoreCase(uploadedFileType)) {
-                        isValidFileType = true;
-                        break;
-                    }
-                }
-            }
-        } catch (PAException pae) {
-            LOG.error("Error occured while retrieving allowed file types from database " + pae.getMessage());
-        }
-        return isValidFileType;
-
-    }
 
     /**
      * check if the email address is valid.
@@ -121,24 +88,6 @@ public class RegistryUtil {
             }
         }
         return isValidPhoneNumber;
-   }
-
-   /**
-    * validates the upload file type against the passed file type.
-    * @param fileName filename
-    * @param allowedFileType allowedFileType
-    * @return boolean
-    */
-   public static boolean isValidFileType(String fileName, String allowedFileType) {
-       boolean isValidFileType = false;
-       int pos = fileName.lastIndexOf('.');
-       String uploadedFileType = fileName.substring(pos + 1, fileName.length());
-       if (uploadedFileType != null
-               && allowedFileType.equalsIgnoreCase(uploadedFileType)) {
-           isValidFileType = true;
-       }
-       return isValidFileType;
-
    }
 
    /**

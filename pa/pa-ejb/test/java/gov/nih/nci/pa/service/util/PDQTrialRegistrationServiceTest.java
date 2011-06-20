@@ -186,7 +186,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
     private final URL testUpdateXMLUrl = this.getClass().getResource("/sample-pdq-update.xml");
     private final Map<Ii, OrganizationDTO> mockOrgs = new HashMap<Ii, OrganizationDTO>();
     private final PersonDTO mockPerson = new PersonDTO();
-
+    
     @Before
     public void setUp() throws Exception {
         setupOrgCorrelationSvcMock();
@@ -296,6 +296,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         when(paSvcLoc.getOutcomeMeasureService()).thenReturn(new StudyOutcomeMeasureBeanLocal());
         when(paSvcLoc.getTSRReportGeneratorService()).thenReturn(new TSRReportGeneratorServiceBean());
         when(paSvcLoc.getDocumentService()).thenReturn(new DocumentServiceBean());
+        when(paSvcLoc.getLookUpTableService()).thenReturn(new MockLookUpTableServiceBean());
 
         List<StudyProtocolQueryDTO> queryResults = new ArrayList<StudyProtocolQueryDTO>();
         StudyProtocolQueryDTO result = new StudyProtocolQueryDTO();

@@ -89,6 +89,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -126,6 +127,7 @@ public class TrialValidator {
     private static String anticipatedString = "Anticipated";
     private static final Logger LOG = Logger.getLogger(TrialValidator.class);
     private static final Set<String> TRIAL_STATUS_REQ_SET = new HashSet<String>();
+    private static PAServiceUtils paServiceUtils = new PAServiceUtils();
     static {
         TRIAL_STATUS_REQ_SET.add(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode());
         TRIAL_STATUS_REQ_SET.add(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode());
@@ -150,8 +152,8 @@ public class TrialValidator {
             if (!file.exists()) {
                 addFieldError.put(errorField, getText("error.submit.invalidDocument"));
             }
-            if (!RegistryUtil.isValidFileType(fileName)) {
-                addFieldError.put(errorField, getText("error.submit.invalidFileType"));
+            if (!paServiceUtils.isValidFileType(fileName)) {
+                    addFieldError.put(errorField, getText("error.submit.invalidFileType"));
             }
         }
         return addFieldError;

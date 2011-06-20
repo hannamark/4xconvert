@@ -1302,4 +1302,5 @@ public class PAUtil {
     public static boolean isPhaseCodeNA(String phaseCode) {
         return StringUtils.equalsIgnoreCase(phaseCode, PhaseCode.NA.getCode());
     }
+
 }

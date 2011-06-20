@@ -83,14 +83,22 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
+import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -109,13 +117,16 @@ import org.junit.Test;
 public class PaServiceUtilsTest {
 
     private PoServiceLocator poSvcLoc;
+    private ServiceLocator paSvcLoc;
     private IdentifiedOrganizationCorrelationServiceRemote identifierOrganizationSvc;
     private final PAServiceUtils paServiceUtil = new PAServiceUtils();
 
     @Before
     public void setup() throws PAException, NullifiedEntityException, TooManyResultsException {
+        paSvcLoc = mock(ServiceLocator.class);
         poSvcLoc = mock(PoServiceLocator.class);
         PoRegistry.getInstance().setPoServiceLocator(poSvcLoc);
+        PaRegistry.getInstance().setServiceLocator(paSvcLoc);
         identifierOrganizationSvc = mock(IdentifiedOrganizationCorrelationServiceRemote.class);
         when(poSvcLoc.getIdentifiedOrganizationEntityService()).thenReturn(identifierOrganizationSvc);
         List<IdentifiedOrganizationDTO> identifiedOrgs = new ArrayList<IdentifiedOrganizationDTO>();
@@ -124,12 +135,33 @@ public class PaServiceUtilsTest {
         identOrgDto.setScoperIdentifier(IiConverter.convertToPoOrganizationIi("scoper ext"));
         identifiedOrgs.add(identOrgDto);
         when(identifierOrganizationSvc.search(any(IdentifiedOrganizationDTO.class))).thenReturn(identifiedOrgs);
+        when(paSvcLoc.getLookUpTableService()).thenReturn(new MockLookUpTableServiceBean());
     }
 
     @Test
     public void testGetOrganizationByCtepId() {
         OrganizationDTO orgDto = paServiceUtil.getOrganizationByCtepId("some ctep id");
         assertEquals(orgDto.getIdentifier().getExtension(), "player ext");
+    }
+    
+    @Test
+    public void testbadFileTypeCheck() {
+        DocumentDTO doc1 = new DocumentDTO();
+        doc1.setFileName(StConverter.convertToSt("badFile1.xml"));
+        doc1.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
+        List<DocumentDTO> docs = new ArrayList<DocumentDTO>();
+        docs.add(doc1);
+        assertTrue(paServiceUtil.checkDocumentListForValidFileTypes(docs).contains("badFile1.xml"));
+        doc1.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.OTHER));
+        assertFalse(paServiceUtil.checkDocumentListForValidFileTypes(docs).contains("badFile1.xml"));
+        doc1.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.TSR));
+        doc1.setFileName(StConverter.convertToSt("badFile1.xml"));
+        assertTrue(paServiceUtil.checkDocumentListForValidFileTypes(docs).contains("badFile1.xml"));
+        doc1.setFileName(StConverter.convertToSt("goodFile2.rtf"));
+        assertEquals("", paServiceUtil.checkDocumentListForValidFileTypes(docs));
+        doc1.setFileName(StConverter.convertToSt("goodFile1.doc"));
+        doc1.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
+        assertEquals("", paServiceUtil.checkDocumentListForValidFileTypes(docs));
     }
 
 }

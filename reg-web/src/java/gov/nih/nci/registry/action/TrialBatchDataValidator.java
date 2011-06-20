@@ -13,6 +13,7 @@ import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.OrganizationBatchDTO;
@@ -23,7 +24,6 @@ import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.enums.TrialStatusCode;
 import gov.nih.nci.registry.enums.TrialStatusReasonCode;
 import gov.nih.nci.registry.util.BatchConstants;
-import gov.nih.nci.registry.util.RegistryUtil;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class TrialBatchDataValidator {
     private static final int TRIAL_TITLE_MAX_LENGTH = 4000;
     private static final int AUS_STATE_CODE_LEN = 3;
     private static final String DELEMITOR = ";";
-
+    private final PAServiceUtils paServiceUtils = new PAServiceUtils();
     /**
      *
      * validate the submit trial form elements.
@@ -325,32 +325,28 @@ public class TrialBatchDataValidator {
     private StringBuffer validateBatchDocuments(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
         if (StringUtils.isNotEmpty(batchDto.getProtcolDocumentFileName())
-                && !RegistryUtil.isValidFileType((batchDto.getProtcolDocumentFileName()))) {
+                && !paServiceUtils.isValidFileType(batchDto.getProtcolDocumentFileName())) {
                 fieldErr.append("Protocol Document - File type is not allowed.\n");
         }
         if (StringUtils.isNotEmpty(batchDto.getIrbApprovalDocumentFileName())
-                && !RegistryUtil.isValidFileType(batchDto.getIrbApprovalDocumentFileName())) {
+                && !paServiceUtils.isValidFileType(batchDto.getIrbApprovalDocumentFileName())) {
                 fieldErr.append("IRB Approval Document - File type is not allowed. \n");
         }
         if (StringUtils.isNotEmpty(batchDto.getParticipatinSiteDocumentFileName())
-                && !RegistryUtil.isValidFileType(batchDto.getParticipatinSiteDocumentFileName())) {
+                && !paServiceUtils.isValidFileType(batchDto.getParticipatinSiteDocumentFileName())) {
                 fieldErr.append("Participating Site Document - File type is not allowed. \n");
         }
         if (StringUtils.isNotEmpty(batchDto.getInformedConsentDocumentFileName())
-                && !RegistryUtil.isValidFileType(batchDto.getInformedConsentDocumentFileName())) {
+                && !paServiceUtils.isValidFileType(batchDto.getInformedConsentDocumentFileName())) {
                 fieldErr.append("Informed Consent Document - File type is not allowed. \n");
-        }
-        if (StringUtils.isNotEmpty(batchDto.getOtherTrialRelDocumentFileName())
-                && !RegistryUtil.isValidFileType(batchDto.getOtherTrialRelDocumentFileName())) {
-               fieldErr.append("Other Trial Related Document - File type is not allowed. \n");
         }
         //for amendments
         if (StringUtils.isNotEmpty(batchDto.getProtocolHighlightDocFileName())
-                && !RegistryUtil.isValidFileType(batchDto.getProtocolHighlightDocFileName())) {
+                && !paServiceUtils.isValidFileType(batchDto.getProtocolHighlightDocFileName())) {
                 fieldErr.append("Protocol Highlight Document - File type is not allowed. \n");
         }
         if (StringUtils.isNotEmpty(batchDto.getChangeRequestDocFileName())
-                && !RegistryUtil.isValidFileType(batchDto.getChangeRequestDocFileName())) {
+                && !paServiceUtils.isValidFileType(batchDto.getChangeRequestDocFileName())) {
                fieldErr.append("Change Request Document - File type is not allowed. \n");
         }
      return fieldErr;

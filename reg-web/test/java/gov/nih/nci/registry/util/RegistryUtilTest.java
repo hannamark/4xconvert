@@ -22,12 +22,6 @@ public class RegistryUtilTest extends AbstractRegWebTest {
         assertFalse(RegistryUtil.isValidPhoneNumber(null));
         assertFalse(RegistryUtil.isValidPhoneNumber("min"));
     }
-    @Test
-    public void testIsValidFileType() {
-        assertTrue(RegistryUtil.isValidFileType("fileName.doc","doc"));
-        assertFalse(RegistryUtil.isValidFileType("fileName.doc","txt"));
-        assertFalse(RegistryUtil.isValidFileType("fileName.doc",""));
-    }
 
     @Test
     public void testGenerateMail() {

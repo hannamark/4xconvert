@@ -178,11 +178,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
@@ -193,12 +195,11 @@ import org.hibernate.Session;
  */
 @SuppressWarnings("unchecked")
 public class PAServiceUtils {
-
+    private static final Logger LOG = Logger.getLogger(PAServiceUtils.class);
    /**
      *
      */
     private static final String ERR_MSG = "Found more than 1 record for a protocol id = %s for a given status %s";
-
     /**
      * ORGANIZATION_IDENTIFIER_IS_NULL.
      */
@@ -223,7 +224,6 @@ public class PAServiceUtils {
      * The size of the counter portion of the NCI ID.
      */
     protected static final int NCI_ID_SIZE = 5;
-
     /**
      * Executes an sql.
      * @param sql sql to be executed
@@ -233,7 +233,6 @@ public class PAServiceUtils {
         Session session = PaHibernateUtil.getCurrentSession();
         return session.createSQLQuery(sql).executeUpdate();
     }
-
     /**
      * Executes an list of sql.
      * @param sqls list of sqls
@@ -274,9 +273,7 @@ public class PAServiceUtils {
         executeCopy(PaRegistry.getPlannedMarkerService(), fromStudyProtocolIi, toIi);
         addNciIdentifierToTrial(toIi);
         return toIi;
-
     }
-
     /**
      * Method to add an nci identifier to a study protocol.
      * @param spIi trial ii
@@ -302,7 +299,6 @@ public class PAServiceUtils {
           }
         session.save(sp);
     }
-
     /**
      * Generate a unique nci id.
      * @param session the session
@@ -325,11 +321,9 @@ public class PAServiceUtils {
 
         return nciIdentifier.toString();
     }
-
     private void executeCopy(StudyPaService sp, Ii from, Ii to) throws PAException {
         sp.copy(from, to);
     }
-
     /**
      * an utility method to create or update.
      * @param <T> the dto
@@ -355,8 +349,6 @@ public class PAServiceUtils {
         }
         return results;
     }
-
-
     /**
      *
      * @param <TYPE> any type extending StudyPaService
@@ -403,7 +395,6 @@ public class PAServiceUtils {
             throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());
         }
     }
-
     /**
      * removes the sponsor contact.
      * @param studyProtocolIi studyPorotocol Ii
@@ -456,7 +447,6 @@ public class PAServiceUtils {
         }
 
     }
-
     /**
      *
      * @param studyProtocolIi study protocol ii
@@ -479,8 +469,6 @@ public class PAServiceUtils {
         }
 
     }
-
-
     private void createPIAsResponsibleParty(Ii studyProtocolIi, OrganizationDTO leadOrganizationDto,
             PersonDTO principalInvestigatorDto, StudyContactDTO studyContactDTO) throws PAException {
 
@@ -819,7 +807,6 @@ public class PAServiceUtils {
             }
         }
     }
-
     /**
      * @param ind indDTO
      * @param toCompare indDTO
@@ -833,7 +820,6 @@ public class PAServiceUtils {
         boolean sameGrantor = StringUtils.equals(toCompare.getGrantorCode().getCode(), ind.getGrantorCode().getCode());
         return sameType && sameNumber && sameGrantor;
     }
-
     /**
      *
      * @param studyResourcingDTOs list of
@@ -857,7 +843,6 @@ public class PAServiceUtils {
             }
         }
     }
-
     /**
      * @param sp
      * @return
@@ -875,9 +860,7 @@ public class PAServiceUtils {
             }
         }
     }
-
     /**
-     *
      * @param grantDto grant DTO
      * @param grantToCompare grant DTO
      * @return isGrantDup
@@ -893,7 +876,6 @@ public class PAServiceUtils {
                         grantDto.getSerialNumber().getValue());
         return sameFundingMech && sameNih && sameNci && sameSerial;
     }
-
     /**
      *
      * @param identifier nci Identifier
@@ -906,7 +888,6 @@ public class PAServiceUtils {
         Integer maxValue = (Integer) session.createQuery(query).list().get(0);
         return (maxValue == null ? 1 : maxValue + 1);
     }
-
     /**
      * Enforce recruitment status.
      *
@@ -966,8 +947,6 @@ public class PAServiceUtils {
             }
         }
     }
-
-
     /**
      * Enforce regulatory info.
      *
@@ -1023,7 +1002,7 @@ public class PAServiceUtils {
         if (errMsg.length() > 1) {
             throw new PAException(errMsg.toString());
         }
-  }
+    }
     /**
      * @param studyIndldeDTOs ind
      * @return true if least one non-exempt IND/IDE exists
@@ -1040,7 +1019,6 @@ public class PAServiceUtils {
         }
         return isNonExemptInds;
     }
-
     /**
      *
      * @param studyProtocolIi Ii
@@ -1073,7 +1051,74 @@ public class PAServiceUtils {
             }
         }
      return retValue;
+    }   
+    /**
+     * Check that all documents coming in are of a valid field type.
+     * @param documentDTOs doc list
+     * @return list of errors.
+     */
+    public String checkDocumentListForValidFileTypes(List<DocumentDTO> documentDTOs) {
+        StringBuilder sBuilder = new StringBuilder();
+        for (DocumentDTO doc : documentDTOs) {
+            String filename = StConverter.convertToString(doc.getFileName());
+            if (DocumentTypeCode.getByCode(CdConverter.convertCdToString(doc.getTypeCode()))
+                    .equals(DocumentTypeCode.TSR)) {
+                if (!isValidFileType(filename, "doc,pdf,html,rtf")) {
+                        sBuilder.append("TSR Document ").append(filename).append(" has an invalid file type.\n");
+                }
+            } else 
+            
+            if (!DocumentTypeCode.getByCode(CdConverter.convertCdToString(doc.getTypeCode()))
+                    .equals(DocumentTypeCode.OTHER)
+                 && !isValidFileType(filename)) {
+                sBuilder.append("Document ").append(filename).append(" has an invalid file type.\n");
+            } 
+        }
+        return sBuilder.toString();
     }
+    /**
+     * check if the uploaded file type is valid.
+     * @param fileName filename
+     * @return boolean validation
+     */
+    public boolean isValidFileType(String fileName) {
+        return isValidFileType(fileName, null);
+    }
+    /**
+     * check if the uploaded file type is valid.
+     * @param fileName filename
+     * @param allowedFileTypes user requested types.
+     * @return boolean validation
+     */
+    public boolean isValidFileType(String fileName, String allowedFileTypes) {
+        boolean isValidFileType = false;
+        String allowedUploadFileTypes = null;
+        if (StringUtils.isBlank(allowedFileTypes)) {
+            try {
+                allowedUploadFileTypes = PaRegistry
+                    .getLookUpTableService().getPropertyValue("allowed.uploadfile.types");
+            } catch (PAException e) {
+                LOG.error("Document file types could not be validated because there was an error "
+                        + "retrieving allowed types from the database", e);
+            }
+        } else {
+            allowedUploadFileTypes = allowedFileTypes;
+        }
+        
+        if (allowedUploadFileTypes != null) {
+            int pos = fileName.lastIndexOf('.');
+            String uploadedFileType = fileName.substring(pos + 1, fileName.length());
+            StringTokenizer st = new StringTokenizer(allowedUploadFileTypes, ",");
+            while (st.hasMoreTokens()) {
+                String allowedFileType = st.nextToken();
+                if (allowedFileType.equalsIgnoreCase(uploadedFileType)) {
+                    isValidFileType = true;
+                    break;
+                }
+            }
+        }
+        return isValidFileType;
+    }    
     /**
      *
      * @param poIi po  Ii
@@ -1282,7 +1327,6 @@ public class PAServiceUtils {
         }
         return retEntity;
     }
-
     /**
      * @param studySiteAccrualStatusDTO accrualdto
      * @param studySiteDTO site dto
@@ -1346,7 +1390,6 @@ public class PAServiceUtils {
           }
         return errorMsg.toString();
       }
-
     /**
      *
      * @param <TYPE> type
@@ -1375,7 +1418,6 @@ public class PAServiceUtils {
         }
         throw new PAException(" Unknown identifier for " + correlationIi.getIdentifierName());
     }
-
     /**
      * @param <T> any class extends {@link StructuralRole}
      * @param isoIi iso identitifier
@@ -1383,7 +1425,6 @@ public class PAServiceUtils {
      * @throws PAException on error
      */
     public <T extends StructuralRole> T getStructuralRole(Ii isoIi) throws PAException {
-
         StringBuffer hql = new StringBuffer("select role from ");
         if (IiConverter.HEALTH_CARE_FACILITY_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
             hql.append("HealthCareFacility role where role.id = '" + isoIi.getExtension() + "'");
@@ -1409,7 +1450,6 @@ public class PAServiceUtils {
 
         return sr;
     }
-
     /**
      *
      * @param correlationIi Ii
@@ -1444,7 +1484,6 @@ public class PAServiceUtils {
         }
         return poCorrelationDto;
     }
-
     /**
      *
      * @param isoIi iso Identifier
@@ -1466,7 +1505,6 @@ public class PAServiceUtils {
         }
         return org;
     }
-
     /**
     *
     * @param isoIi iso Identifier
@@ -1491,7 +1529,6 @@ public class PAServiceUtils {
        }
        return per;
    }
-
     /**
      *
      * @param <T> type
@@ -1524,7 +1561,6 @@ public class PAServiceUtils {
         }
         return (T) dupSR;
     }
-
     /**
      * @param nullifiedIi ii
      * @return ii
@@ -1551,7 +1587,6 @@ public class PAServiceUtils {
         }
         return dupSRIi;
     }
-
     /**
      *
      * @param <T> type
@@ -1571,7 +1606,6 @@ public class PAServiceUtils {
         }
         return srDTO;
     }
-
     /**
      * @param studyProtocolIi ii
      * @param identifierType type
@@ -1598,7 +1632,6 @@ public class PAServiceUtils {
         }
         return retIdentifier;
     }
-
       /**
        * Create or update of Identifiers.
        * @param identifierDTO study site identifier
@@ -1658,7 +1691,6 @@ public class PAServiceUtils {
         newSiteDTOS.add(identifierDTO);
         createOrUpdate(newSiteDTOS, IiConverter.convertToStudySiteIi(null), identifierDTO.getStudyProtocolIdentifier());
     }
-
     /**
      * Gets the country name of the entity (organization of person).
      * @param entityIi The entityIi
@@ -1678,7 +1710,6 @@ public class PAServiceUtils {
         }
         return countryName;
     }
-
     /**
      * @param orgDTO
      */
@@ -1694,7 +1725,6 @@ public class PAServiceUtils {
         }
         return countryName;
     }
-
     /**
      * Validates and format the phonenumber for the given scoper and adresses.
      * @param scoperIi The scoper Ii
@@ -1712,7 +1742,6 @@ public class PAServiceUtils {
         }
         DSetConverter.replacePhones(addresses, formattedNumbers);
     }
-
     /**
      * @param entityIi Ii
      * @return poEntity
@@ -1728,7 +1757,6 @@ public class PAServiceUtils {
         }
         return poOrg;
     }
-
     /**
      * @param entityIi Ii
      * @return personDto
@@ -1744,7 +1772,6 @@ public class PAServiceUtils {
         }
         return poPerson;
     }
-
     /**
      * @param entityIi ii
      * @return name
@@ -1756,7 +1783,6 @@ public class PAServiceUtils {
         }
         return EnOnConverter.convertEnOnToString(orgDto.getName());
     }
-
       /**
        * @param poOrgId orgId
        * @return ii
@@ -1777,7 +1803,6 @@ public class PAServiceUtils {
           }
           return null;
       }
-
       /**
        * Get Ii of duplicate person.
        * @param poPerId poPerId
@@ -1799,7 +1824,6 @@ public class PAServiceUtils {
           }
           return null;
       }
-
       /**Gets the Person by giving ctepId.
        * @param ctepId id
        * @return person
@@ -1900,7 +1924,6 @@ public class PAServiceUtils {
           }
           return crsDTO;
       }
-
       /**
        * This method give the HealthCareProviderDTO for given Po OrgID.
        * @param trialType trialType
@@ -1936,7 +1959,6 @@ public class PAServiceUtils {
           }
           return hcpDTO;
       }
-
       private <T extends AbstractPersonRoleDTO> List<T> filterByScoper(List<T> correlationsByPlayerIds,
               String scoperId) {
           List<T> filteredList = new ArrayList<T>();

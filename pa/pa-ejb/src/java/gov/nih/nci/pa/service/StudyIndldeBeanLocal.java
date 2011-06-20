@@ -14,6 +14,7 @@ import gov.nih.nci.pa.interceptor.ProprietaryTrialInterceptor;
 import gov.nih.nci.pa.iso.convert.StudyIndldeConverter;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
@@ -28,6 +29,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author asharma
  *
@@ -37,7 +40,7 @@ import javax.interceptor.Interceptors;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO, StudyIndlde, StudyIndldeConverter>
         implements StudyIndldeServiceLocal {
-   private static final int IND_FIELD_COUNT = 5;
+   private static final int IND_FIELD_COUNT = 6;
    private static final String VALIDATION_EXCEPTION = "Validation Exception ";
    private PAServiceUtils paServiceUtils = new PAServiceUtils();
 
@@ -98,6 +101,22 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
             enforceNoDuplicate(studyIndldeDTO);
         }
     }
+    
+    private boolean isIdeGrantorValid(StudyIndldeDTO studyIndldeDTO) {
+        return !(!PAUtil.isCdNull(studyIndldeDTO.getIndldeTypeCode())
+            && IndldeTypeCode.IDE.getCode().equals(studyIndldeDTO.getIndldeTypeCode().getCode())
+            && !PAUtil.isCdNull(studyIndldeDTO.getGrantorCode())
+            && !GrantorCode.CDRH.getCode().equals(studyIndldeDTO.getGrantorCode().getCode()));
+         
+    }
+    
+    private boolean isIndGrantorValid(StudyIndldeDTO studyIndldeDTO) {
+        return !(!PAUtil.isCdNull(studyIndldeDTO.getIndldeTypeCode())
+                && IndldeTypeCode.IND.getCode().equals(studyIndldeDTO.getIndldeTypeCode().getCode())
+                && !PAUtil.isCdNull(studyIndldeDTO.getGrantorCode())
+                && !GrantorCode.CBER.getCode().equals(studyIndldeDTO.getGrantorCode().getCode())
+                && !GrantorCode.CDER.getCode().equals(studyIndldeDTO.getGrantorCode().getCode()));  
+        }
 
      /**
       * @param studyIndldeDTO
@@ -110,9 +129,11 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
         } else {
         if (!PAUtil.isBlNull(studyIndldeDTO.getExpandedAccessIndicator())
             && BlConverter.convertToBool(studyIndldeDTO.getExpandedAccessIndicator())
-            && PAUtil.isCdNull(studyIndldeDTO.getExpandedAccessStatusCode())) {
+            && (PAUtil.isCdNull(studyIndldeDTO.getExpandedAccessStatusCode())
+            || StringUtils.isBlank(CdConverter.convertCdToString(studyIndldeDTO.getExpandedAccessStatusCode())))) {
            errorMsg.append("Expanded Access Status value is required.\n");
         }
+      
         if (!PAUtil.isCdNull(studyIndldeDTO.getHolderTypeCode())
             && HolderTypeCode.NIH.getCode().equalsIgnoreCase(studyIndldeDTO.getHolderTypeCode().getCode())
             && PAUtil.isCdNull(studyIndldeDTO.getNihInstHolderCode())) {
@@ -137,11 +158,11 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
              && null == GrantorCode.getByCode(studyIndldeDTO.getGrantorCode().getCode())) {
              errorMsg.append("Please enter valid value for IND/IDE Grantor.\n");
         }
-        if (!PAUtil.isCdNull(studyIndldeDTO.getIndldeTypeCode())
-            && IndldeTypeCode.IDE.getCode().equals(studyIndldeDTO.getIndldeTypeCode().getCode())
-            && !PAUtil.isCdNull(studyIndldeDTO.getGrantorCode())
-            && !GrantorCode.CDRH.getCode().equals(studyIndldeDTO.getGrantorCode().getCode())) {
+        if (!isIdeGrantorValid(studyIndldeDTO)) {
               errorMsg.append("IDE Grantor can have only CDRH value.\n");
+        }
+        if (!isIndGrantorValid(studyIndldeDTO)) {
+                  errorMsg.append("IND Grantor must have either CBER or CDER value.\n");
         }
         if (!PAUtil.isCdNull(studyIndldeDTO.getExpandedAccessStatusCode())
             && null == ExpandedAccessStatusCode.getByCode(studyIndldeDTO.getExpandedAccessStatusCode().getCode())) {
@@ -165,26 +186,34 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
       }
 
       private boolean isIndIdeContainsAllInfo(StudyIndldeDTO dto) {
-        int nullCount = 0;
-        if (PAUtil.isCdNull(dto.getIndldeTypeCode())) {
-          nullCount += 1;
-        }
+        int nullCount = checkIndIdeCodes(dto);
         if (PAUtil.isStNull(dto.getIndldeNumber())) {
-          nullCount += 1;
-        }
-        if (PAUtil.isCdNull(dto.getGrantorCode())) {
-          nullCount += 1;
-        }
-        if (PAUtil.isCdNull(dto.getHolderTypeCode())) {
           nullCount += 1;
         }
         if (PAUtil.isBlNull(dto.getExpandedAccessIndicator())) {
           nullCount += 1;
+        }
+        if (PAUtil.isBlNull(dto.getExemptIndicator())) {
+            nullCount += 1;
         }
         if (nullCount == 0 || nullCount == IND_FIELD_COUNT) {
           return true;
         }
         return false;
      }
+      
+     private int checkIndIdeCodes(StudyIndldeDTO dto) {
+          int nullCount = 0;
+          if (PAUtil.isCdNull(dto.getIndldeTypeCode())) {
+            nullCount += 1;
+          }
+          if (PAUtil.isCdNull(dto.getGrantorCode())) {
+            nullCount += 1;
+          }
+          if (PAUtil.isCdNull(dto.getHolderTypeCode())) {
+            nullCount += 1;
+          }
+          return nullCount;
+       }
 
 }

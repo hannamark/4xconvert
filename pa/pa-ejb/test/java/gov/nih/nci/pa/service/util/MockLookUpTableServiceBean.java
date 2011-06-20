@@ -90,6 +90,8 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
             return "New CDE Request";
         else if (name.equals("CDE_REQUEST_TO_EMAIL_TEXT"))
             return "Please create the new CDE. Thanks, CTRO";
+        else if (name.equals("allowed.uploadfile.types"))
+            return "doc,pdf,xls,wpd,docx,docm,xlsx,xlsm,xlsb";
         else
             return value;
     }

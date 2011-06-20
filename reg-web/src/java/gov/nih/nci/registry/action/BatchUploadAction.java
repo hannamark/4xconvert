@@ -79,6 +79,7 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.registry.util.BatchConstants;
 import gov.nih.nci.registry.util.Constants;
@@ -115,7 +116,7 @@ public class BatchUploadAction extends ActionSupport implements ServletResponseA
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = Logger.getLogger(BatchUploadAction.class);
-
+    private final PAServiceUtils paServiceUtil = new PAServiceUtils();
     private File trialData;
     private String trialDataFileName;
     private String trialDataContentType;
@@ -340,7 +341,7 @@ public class BatchUploadAction extends ActionSupport implements ServletResponseA
             if (!trialData.exists()) {
                 addFieldError("trialDataFileName", getText("error.batch.invalidDocument"));
             }
-            if (!RegistryUtil.isValidFileType(trialDataFileName, "xls")) {
+            if (!paServiceUtil.isValidFileType(trialDataFileName, "xls")) {
                 addFieldError("trialDataFileName", getText("error.batch.trialDataFileName.invalidFileType"));
             }
         }
@@ -355,7 +356,7 @@ public class BatchUploadAction extends ActionSupport implements ServletResponseA
             if (!docZip.exists()) {
                 addFieldError("docZipFileName", getText("error.batch.invalidDocument"));
             }
-            if (!RegistryUtil.isValidFileType(docZipFileName, "zip")) {
+            if (!paServiceUtil.isValidFileType(docZipFileName, "zip")) {
                 addFieldError("docZipFileName", getText("error.batch.docZipFileName.invalidFileType"));
             }
         }

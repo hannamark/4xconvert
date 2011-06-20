@@ -161,6 +161,7 @@ public class StudyIndldeServiceBeanTest extends AbstractHibernateTestCase {
         dto.setIndldeTypeCode(CdConverter.convertToCd(IndldeTypeCode.IND));
         dto.setGrantorCode(CdConverter.convertToCd(GrantorCode.CDER));
         dto.setIndldeNumber(StConverter.convertToSt("123456"));
+        dto.setExemptIndicator(BlConverter.convertToBl(false));
         StudyIndldeDTO dto2 = null;
         dto2 = new StudyIndldeDTO();
         dto2 = remoteEjb.create(dto);
@@ -189,6 +190,7 @@ public class StudyIndldeServiceBeanTest extends AbstractHibernateTestCase {
         dto.setIndldeTypeCode(CdConverter.convertToCd(IndldeTypeCode.IND));
         dto.setGrantorCode(CdConverter.convertToCd(GrantorCode.CDER));
         dto.setIndldeNumber(StConverter.convertToSt("123456"));
+        dto.setExemptIndicator(BlConverter.convertToBl(false));
         try {
             remoteEjb.validate(dto);
         } catch (PAException e) {
@@ -219,10 +221,76 @@ public class StudyIndldeServiceBeanTest extends AbstractHibernateTestCase {
         dto.setIndldeTypeCode(CdConverter.convertToCd(IndldeTypeCode.IND));
         dto.setGrantorCode(CdConverter.convertToCd(GrantorCode.CDER));
         dto.setIndldeNumber(StConverter.convertToSt("123456"));
+        dto.setExemptIndicator(BlConverter.convertToBl(false));
         try {
             remoteEjb.validate(dto);
         } catch (PAException e) {
             assertNull(e.getMessage());
+        }
+        dto = new StudyIndldeDTO();
+        dto.setIdentifier(IiConverter.convertToIi((Long) null));
+        dto.setExpandedAccessStatusCode(CdConverter.convertToCd(ExpandedAccessStatusCode.AVAILABLE));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi((Long) null));
+        dto.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        dto.setHolderTypeCode(CdConverter.convertToCd(HolderTypeCode.NIH));
+        dto.setNihInstHolderCode(CdConverter.convertToCd(NihInstituteCode.NCRR));
+        dto.setIndldeTypeCode(CdConverter.convertToCd(IndldeTypeCode.IND));
+        dto.setGrantorCode(CdConverter.convertToCd(GrantorCode.CDRH));
+        dto.setIndldeNumber(StConverter.convertToSt("123456"));
+        dto.setExemptIndicator(BlConverter.convertToBl(false));
+        try {
+            remoteEjb.validate(dto);
+        } catch (PAException e) {
+            assertEquals("Validation Exception  IND Grantor must have either CBER or CDER value.\n", e.getMessage());
+        }
+        dto = new StudyIndldeDTO();
+        dto.setIdentifier(IiConverter.convertToIi((Long) null));
+        dto.setExpandedAccessStatusCode(CdConverter.convertStringToCd(""));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi((Long) null));
+        dto.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        dto.setHolderTypeCode(CdConverter.convertToCd(HolderTypeCode.NIH));
+        dto.setNihInstHolderCode(CdConverter.convertToCd(NihInstituteCode.NCRR));
+        dto.setIndldeTypeCode(CdConverter.convertToCd(IndldeTypeCode.IND));
+        dto.setGrantorCode(CdConverter.convertToCd(GrantorCode.CBER));
+        dto.setIndldeNumber(StConverter.convertToSt("123456"));
+        dto.setExemptIndicator(BlConverter.convertToBl(false));
+        try {
+            remoteEjb.validate(dto);
+        } catch (PAException e) {
+            assertEquals("Validation Exception  Expanded Access Status value is required.\n", e.getMessage());
+        }
+        dto = new StudyIndldeDTO();
+        dto.setIdentifier(IiConverter.convertToIi((Long) null));
+        dto.setExpandedAccessStatusCode(CdConverter.convertToCd(ExpandedAccessStatusCode.AVAILABLE));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi((Long) null));
+        dto.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        dto.setHolderTypeCode(CdConverter.convertToCd(HolderTypeCode.NIH));
+        dto.setNihInstHolderCode(CdConverter.convertToCd(NihInstituteCode.NCRR));
+        dto.setIndldeTypeCode(CdConverter.convertToCd(IndldeTypeCode.IDE));
+        dto.setGrantorCode(CdConverter.convertToCd(GrantorCode.CDER));
+        dto.setIndldeNumber(StConverter.convertToSt("123456"));
+        dto.setExemptIndicator(BlConverter.convertToBl(false));
+        try {
+            remoteEjb.validate(dto);
+        } catch (PAException e) {
+            assertEquals("Validation Exception  IDE Grantor can have only CDRH value.\n", e.getMessage());
+        }
+        dto = new StudyIndldeDTO();
+        dto.setIdentifier(IiConverter.convertToIi((Long) null));
+        dto.setExpandedAccessStatusCode(CdConverter.convertToCd(ExpandedAccessStatusCode.AVAILABLE));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToIi((Long) null));
+        dto.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        dto.setHolderTypeCode(CdConverter.convertToCd(HolderTypeCode.NCI));
+        dto.setNihInstHolderCode(CdConverter.convertToCd(NihInstituteCode.NCRR));
+        dto.setIndldeTypeCode(CdConverter.convertToCd(IndldeTypeCode.IDE));
+        dto.setGrantorCode(CdConverter.convertToCd(GrantorCode.CDRH));
+        dto.setIndldeNumber(StConverter.convertToSt("123456"));
+        dto.setExemptIndicator(BlConverter.convertToBl(false));
+        dto.setNciDivProgHolderCode(CdConverter.convertStringToCd("random string"));
+        try {
+            remoteEjb.validate(dto);
+        } catch (PAException e) {
+            assertEquals("Validation Exception  Please enter valid value for IND/IDE NCI Division /Program.\n", e.getMessage());
         }
     }
 }

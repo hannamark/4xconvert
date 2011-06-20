@@ -90,6 +90,7 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -103,9 +104,11 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.MockLookUpTableServiceBean;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserBeanLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
@@ -177,6 +180,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         PaRegistry.getInstance().setServiceLocator(paSvcLoc);
         documentWrkService = mock (DocumentWorkflowStatusServiceLocal.class);
         when (paSvcLoc.getDocumentWorkflowStatusService()).thenReturn(documentWrkService);
+        when (paSvcLoc.getLookUpTableService()).thenReturn(new MockLookUpTableServiceBean());
         StudyProtocolServiceLocal studyProtocolSvc = mock(StudyProtocolServiceLocal.class);
         when(paSvcLoc.getStudyProtocolService()).thenReturn(studyProtocolSvc);
         when (documentWrkService.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(new DocumentWorkflowStatusDTO());
@@ -206,6 +210,10 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<DocumentDTO> documentDTOs = documentService.getDocumentsByStudyProtocol(spIi);
+        DocumentDTO badFileTypeDoc = new DocumentDTO();
+        badFileTypeDoc.setFileName(StConverter.convertToSt("badfile.xml"));
+        badFileTypeDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
+        documentDTOs.add(badFileTypeDoc);
         OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
         leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
         PersonDTO principalInvestigatorDTO  = new PersonDTO();
@@ -222,7 +230,9 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
                 null, null, null, null, null, null, BlConverter.convertToBl(Boolean.FALSE));
             fail();
         } catch (PAException e) {
-            assertTrue(StringUtils.contains(e.getMessage(),"Validation Exception "));
+            assertTrue(StringUtils.contains(e.getMessage(),"Validation Exception Submitter is required."));
+            assertTrue(StringUtils.contains(e.getMessage(),"Validation Exception Anticipated Primary Completion Date must be in future.")); 
+            assertTrue(StringUtils.contains(e.getMessage(),"Document badfile.xml has an invalid file type.")); 
         }
     }
     @Test
