@@ -329,11 +329,14 @@ public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implemen
     }
 
     private void validate(String generatedXml) throws ParserConfigurationException, SAXException, IOException {
-        DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        DocumentBuilder parser = dbf.newDocumentBuilder();
+
 
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         Schema schemaXSD = schemaFactory.newSchema(this.getClass().getClassLoader().getResource(PDQ_XSD_FILE));
-        
+
         Document document = parser.parse(new InputSource(new StringReader(generatedXml)));
         schemaXSD.newValidator().validate(new DOMSource(document));
     }

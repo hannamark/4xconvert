@@ -197,7 +197,7 @@ public class PAServiceUtils {
    /**
      *
      */
-    private static final String ERR_MSG = "Found more than 1 record for a protocol id = %d for a given status %s";
+    private static final String ERR_MSG = "Found more than 1 record for a protocol id = %s for a given status %s";
 
     /**
      * ORGANIZATION_IDENTIFIER_IS_NULL.
