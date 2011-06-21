@@ -347,14 +347,14 @@ public class TrialRegistrationHelper {
         StringBuffer sb = new StringBuffer();
         String summ4Category = null;
         // validate of null objects
-        sb.append(summary4organizationDTO == null ? "Summary Four Organization DTO cannot be null , " : "");
+        sb.append(summary4organizationDTO == null ? "Summary Four Organization DTO cannot be null, " : "");
         if (summary4studyResourcingDTO != null) {
             summ4Category = CdConverter.convertCdToString(summary4studyResourcingDTO.getTypeCode());
         } else {
-            sb.append("Summary Four Study Resourcing DTO cannot be null , ");
+            sb.append("Summary Four Study Resourcing DTO cannot be null, ");
         }
         if (StringUtils.isEmpty(summ4Category)) {
-            sb.append("Summary 4 Sponsor Category cannot be null , ");
+            sb.append("Summary 4 Sponsor Category cannot be null, ");
         } else {
             validateSponsorType(spDTO, sb, summ4Category);
         }
@@ -479,10 +479,10 @@ public class TrialRegistrationHelper {
             StudySiteContactDTO studySiteContactDTO) throws PAException {
         StringBuffer sb = new StringBuffer();
         if (studyContactDTO != null && studySiteContactDTO != null) {
-            sb.append("One of StudyContact or StudySiteContact has to be used ,");
+            sb.append("Only one of StudyContact or StudySiteContact can be used, ");
         }
         if (studyContactDTO == null && studySiteContactDTO == null) {
-            sb.append("Only one of StudyContact or StudySiteContact can be used ,");
+            sb.append("One of StudyContact or StudySiteContact has to be used, ");
         }
         return sb.toString();
     }

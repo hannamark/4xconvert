@@ -385,8 +385,8 @@ public class TrialRegistrationHelperTest {
             helper.enforceSummaryFourSponsorAndCategory(spDTO, null, null);
             fail();
         }catch (PAException e) {
-            assertEquals("Validation Exception Summary Four Organization DTO cannot be null , "
-                + "Summary Four Study Resourcing DTO cannot be null , Summary 4 Sponsor Category cannot be null , "
+            assertEquals("Validation Exception Summary Four Organization DTO cannot be null, "
+                + "Summary Four Study Resourcing DTO cannot be null, Summary 4 Sponsor Category cannot be null, "
                     , e.getMessage());
         }
         StudyResourcingDTO sum4Cat = new StudyResourcingDTO();
@@ -394,7 +394,7 @@ public class TrialRegistrationHelperTest {
             helper.enforceSummaryFourSponsorAndCategory(spDTO, new OrganizationDTO(), sum4Cat);
             fail();
         }catch (PAException e) {
-            assertEquals("Validation Exception Summary 4 Sponsor Category cannot be null , " , e.getMessage());
+            assertEquals("Validation Exception Summary 4 Sponsor Category cannot be null, " , e.getMessage());
         }
         spDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.TRUE));
         sum4Cat.setTypeCode(CdConverter.convertStringToCd("some Code"));
@@ -435,12 +435,8 @@ public class TrialRegistrationHelperTest {
         }
     }
     
-    @Test
-    public void testEnforcePiAnfRespPartyContacts() throws URISyntaxException, PAException {
-        StudyProtocolDTO spDTO = new StudyProtocolDTO();
-        spDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(true));
-        StudyContactDTO scDto = new StudyContactDTO();
-        
+    private StudyContactDTO createFullStudyContact() throws URISyntaxException {
+        StudyContactDTO scDto = new StudyContactDTO();      
         Tel email = new Tel();
         email.setValue(new URI("mailto:example@example.com"));
         Tel phone = new Tel();
@@ -449,24 +445,59 @@ public class TrialRegistrationHelperTest {
         scDto.getTelecomAddresses().setItem(new HashSet<Tel>());
         scDto.getTelecomAddresses().getItem().add(email);
         scDto.getTelecomAddresses().getItem().add(phone);
-      
-        thrown.expect(PAException.class);
-        thrown.expectMessage("Validation Exception Telecom information must be provided for Responsible Party StudySiteContact,");
-        helper.enforceBusinessRulesForStudyContact(spDTO, scDto, null, true, true);
-       
-        StudySiteContactDTO sscDto = new StudySiteContactDTO();
-        thrown.expectMessage("Validation Exception One of StudyContact or StudySiteContact has to be used ,StudySiteContact Email cannot be null, StudySiteContact Phone cannot be null, ");
-        helper.enforceBusinessRulesForStudyContact(spDTO, scDto, sscDto, true, true);
-        
+        return scDto;
+    }
+    
+    private StudySiteContactDTO createFullStudySiteContact() throws URISyntaxException {
+        StudySiteContactDTO sscDto = new StudySiteContactDTO();      
+        Tel email = new Tel();
+        email.setValue(new URI("mailto:example@example.com"));
+        Tel phone = new Tel();
+        phone.setValue(new URI("tel:123-456-7890"));
         sscDto.setTelecomAddresses(new DSet<Tel>());
         sscDto.getTelecomAddresses().setItem(new HashSet<Tel>());
         sscDto.getTelecomAddresses().getItem().add(email);
         sscDto.getTelecomAddresses().getItem().add(phone);
-        scDto.getTelecomAddresses().getItem().clear();
-        
-        thrown.expectMessage("Validation Exception One of StudyContact or StudySiteContact has to be used ,StudyContact Email cannot be null, StudyContact Phone cannot be null, ");
+        return sscDto;
+    }
+    
+    @Test
+    public void testEnforcePiAnfRespPartyContacts1() throws PAException, URISyntaxException {
+        StudyProtocolDTO spDTO = new StudyProtocolDTO();
+        spDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(true));
+        StudyContactDTO scDto = createFullStudyContact();
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Validation Exception Telecom information must be provided for Responsible Party StudySiteContact,");
+        helper.enforceBusinessRulesForStudyContact(spDTO, scDto, null, true, true);
+    }
+    
+    @Test
+    public void testEnforcePiAnfRespPartyContacts2() throws PAException, URISyntaxException {
+        StudyProtocolDTO spDTO = new StudyProtocolDTO();
+        spDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(true));
+        StudyContactDTO scDto = createFullStudyContact();
+        StudySiteContactDTO sscDto = new StudySiteContactDTO();
+        thrown.expectMessage("Validation Exception Only one of StudyContact or StudySiteContact can be used, StudySiteContact Email cannot be null, StudySiteContact Phone cannot be null, ");
         helper.enforceBusinessRulesForStudyContact(spDTO, scDto, sscDto, true, true);
-     
+    }
+    
+    @Test
+    public void testEnforcePiAnfRespPartyContacts3() throws URISyntaxException, PAException {
+        StudyProtocolDTO spDTO = new StudyProtocolDTO();
+        spDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(true));
+        StudyContactDTO scDto = null;
+        StudySiteContactDTO sscDto = null;
+        
+        thrown.expectMessage("Validation Exception One of StudyContact or StudySiteContact has to be used, ");
+        helper.enforceBusinessRulesForStudyContact(spDTO, scDto, sscDto, true, true);
+    }
+    
+    @Test
+    public void testEnforcePiAnfRespPartyContacts4() throws URISyntaxException, PAException {
+        StudyProtocolDTO spDTO = new StudyProtocolDTO();
+        spDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(true));
+        StudyContactDTO scDto = new StudyContactDTO();
+        StudySiteContactDTO sscDto = createFullStudySiteContact();
         thrown.expectMessage("Validation Exception Telecom information must be provided for Principal Investigator StudyContact,");
         helper.enforceBusinessRulesForStudyContact(spDTO, null, sscDto, true, true);
         
