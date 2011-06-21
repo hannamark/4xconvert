@@ -83,18 +83,23 @@
 
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
@@ -136,6 +141,18 @@ public class TrialRegistrationHelper {
             + "and Date was updated.";
     private static final String IND_IDE_UPDATED = "Ind Ide was updated.";
     private static final String GRANT_INFORMATION_UPDATED = "Grant information was updated.";
+    /**
+     * Validation exception start text.
+     */
+    public static final String VALIDATION_EXCEPTION = "Validation Exception ";
+    /**
+     * Email validation.
+     */
+    private static final String EMAIL_NOT_NULL = "Email cannot be null, ";
+    /**
+     * Phone validation.
+     */
+    private static final String PHONE_NOT_NULL = "Phone cannot be null, ";
 
     /**
      * @param docWrkFlowStatusService document workflow status service
@@ -369,6 +386,122 @@ public class TrialRegistrationHelper {
      */
     private boolean isSum4IndustrialSponsorType(String summ4Category) {
         return  StringUtils.equalsIgnoreCase(summ4Category, SummaryFourFundingCategoryCode.INDUSTRIAL.getCode());
+    }
+    /**
+     * Check basic contact info as well as study contacts for PI role and site contacts for Resp Party role.
+     * @param studyProtocolDTO trial
+     * @param studyContactDTO  study contact
+     * @param studySiteContactDTO site contact
+     * @param piExists does PI exist
+     * @param respPartyExists does resp Party exist
+     * @throws PAException when error.
+     */
+    public static void enforceBusinessRulesForStudyContact(StudyProtocolDTO studyProtocolDTO,
+            StudyContactDTO studyContactDTO, StudySiteContactDTO studySiteContactDTO, 
+            boolean piExists, boolean respPartyExists) throws PAException {
+        enforceBusinessRulesForStudyContact(studyProtocolDTO, studyContactDTO, studySiteContactDTO);
+        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+            checkTelecomReqsForPiAndRespParty(studyContactDTO, studySiteContactDTO, piExists, respPartyExists);
+        }
+    }
+    
+    private static void checkTelecomReqsForPiAndRespParty(StudyContactDTO studyContactDTO, 
+            StudySiteContactDTO studySiteContactDTO, 
+            boolean piExists, boolean respPartyExists) throws PAException {
+        StringBuffer sb = new StringBuffer();
+        sb.append(checkTelecomReqsForPi(studyContactDTO, piExists));
+        sb.append(checkTelecomReqsForRespParty(studySiteContactDTO, respPartyExists));
+        if (sb.length() > 0) {
+            throw new PAException(VALIDATION_EXCEPTION + sb.toString());
+        }
+    }
+    
+    private static String checkTelecomReqsForRespParty(StudySiteContactDTO studySiteContactDTO, 
+           boolean respPartyExists) {
+        StringBuffer sb = new StringBuffer();
+        if (respPartyExists && (studySiteContactDTO == null 
+                || studySiteContactDTO.getTelecomAddresses() == null
+                || CollectionUtils.isEmpty(studySiteContactDTO.getTelecomAddresses().getItem()))) {
+            sb.append("Telecom information must be provided for Responsible Party StudySiteContact,");
+        }
+        return sb.toString();
+    }
+    
+    private static String checkTelecomReqsForPi(StudyContactDTO studyContactDTO, boolean piExists) {
+        StringBuffer sb = new StringBuffer();
+        if (piExists && (studyContactDTO == null 
+                || studyContactDTO.getTelecomAddresses() == null
+                    || CollectionUtils.isEmpty(studyContactDTO.getTelecomAddresses().getItem()))) {
+            sb.append("Telecom information must be provided for Principal Investigator StudyContact,");
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Validation for basic StudyContact business rules.
+     * @param studyProtocolDTO trial
+     * @param studyContactDTO contact
+     * @param studySiteContactDTO site contact
+     * @throws PAException when error.
+     */
+    public static void enforceBusinessRulesForStudyContact(StudyProtocolDTO studyProtocolDTO,
+            StudyContactDTO studyContactDTO, StudySiteContactDTO studySiteContactDTO) throws PAException {
+        StringBuffer sb = new StringBuffer();
+        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+            sb.append(checkStudyContactEmptyTelecom(studyContactDTO, studySiteContactDTO));
+            if (sb.length() > 0) {
+                throw new PAException(VALIDATION_EXCEPTION + sb.toString());
+            }
+        }
+    }
+    
+    private static String checkStudyContactEmptyTelecom(StudyContactDTO studyContactDTO, 
+            StudySiteContactDTO studySiteContactDTO) throws PAException {
+        StringBuffer sb = new StringBuffer();
+        sb.append(checkStudyOrStudySiteContactTelecom(studyContactDTO, studySiteContactDTO));
+        sb.append(isAddressSet(studyContactDTO, studySiteContactDTO));
+        return sb.toString();
+    }
+    
+    private static String isAddressSet(StudyContactDTO studyContactDTO, 
+            StudySiteContactDTO studySiteContactDTO) throws PAException {
+        StringBuffer sb = new StringBuffer();
+        if (studyContactDTO != null) {
+            sb.append(checkTelecomAddress(studyContactDTO.getTelecomAddresses(), "StudyContact"));
+        }
+        if (studySiteContactDTO != null) {
+            sb.append(checkTelecomAddress(studySiteContactDTO.getTelecomAddresses(), "StudySiteContact"));
+        }
+        return sb.toString();
+    }
+    
+    private static String checkStudyOrStudySiteContactTelecom(StudyContactDTO studyContactDTO, 
+            StudySiteContactDTO studySiteContactDTO) throws PAException {
+        StringBuffer sb = new StringBuffer();
+        if (studyContactDTO != null && studySiteContactDTO != null) {
+            sb.append("One of StudyContact or StudySiteContact has to be used ,");
+        }
+        if (studyContactDTO == null && studySiteContactDTO == null) {
+            sb.append("Only one of StudyContact or StudySiteContact can be used ,");
+        }
+        return sb.toString();
+    }
+    /**
+     * Check for email and phone in a telecom address.
+     * @param telecomAddress set of telecom info.
+     * @param contactType contact type.
+     * @throws PAException when error.
+     * @return error string.
+     */
+    public static String checkTelecomAddress(DSet<Tel> telecomAddress, String contactType) throws PAException {
+        StringBuffer sb = new StringBuffer();
+        if (DSetConverter.getFirstElement(telecomAddress, PAConstants.EMAIL) == null) {
+            sb.append(contactType).append(' ').append(EMAIL_NOT_NULL);
+        }
+        if (DSetConverter.getFirstElement(telecomAddress, PAConstants.PHONE) == null) {
+            sb.append(contactType).append(' ').append(PHONE_NOT_NULL);
+        }
+        return sb.toString();
     }
 
 }

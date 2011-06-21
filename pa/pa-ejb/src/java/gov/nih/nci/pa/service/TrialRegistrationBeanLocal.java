@@ -79,11 +79,9 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Bl;
-import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.St;
-import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -122,7 +120,6 @@ import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -214,8 +211,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     private static final String REJECTION = "Reject";
     private static final String PROTOCOL_ID_NULL = "Study Protocol Identifier is null";
     private static final String NO_PROTOCOL_FOUND = "No Study Protocol found for = ";
-    private static final String EMAIL_NOT_NULL = "Email cannot be null, ";
-    private static final String PHONE_NOT_NULL = "Phone cannot be null, ";
     private static final String SQL_APPEND = " AND FUNCTIONAL_CODE IN ";
     private static final String VALIDATION_EXCEPTION = "Validation Exception ";
     private TrialRegistrationHelper trialRegistrationHelper = null;
@@ -647,15 +642,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
 
     }
 
-    private void checkTelecomAddress(DSet<Tel> telecomAddress) throws PAException {
-        StringBuffer sb = new StringBuffer();
-        sb.append(DSetConverter.getFirstElement(telecomAddress, PAConstants.EMAIL) == null ? EMAIL_NOT_NULL : "");
-        sb.append(DSetConverter.getFirstElement(telecomAddress, PAConstants.PHONE) == null ? PHONE_NOT_NULL : "");
-        if (sb.length() > 0) {
-            throw new PAException(VALIDATION_EXCEPTION + sb.toString());
-        }
-    }
-
     private void createInboxProcessingComments(StudyProtocolDTO studyProtocolDTO)
             throws PAException {
         String inboxProcessingComments = null;
@@ -880,7 +866,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
                 studyIndldeDTOs);
         enforceBusinessRules(studyProtocolDTO, overallStatusDTO, documentDTOs, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, studyContactDTO, studySiteContactDTO,
-                leadOrganizationSiteIdentifierDTO);
+                leadOrganizationSiteIdentifierDTO, responsiblePartyContactIi);
         validateSummary4Information(studyProtocolDTO, summary4organizationDTO, summary4studyResourcingDTO);
         getPAServiceUtils().enforceRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs
                 , regulatoryInfoBean);
@@ -1099,7 +1085,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     private void enforceBusinessRules(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO)
+            StudySiteContactDTO studySiteContactDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO, 
+            Ii responsiblePartyContactIi)
     throws PAException {
         // CHECKSTYLE:ON
         StringBuffer sb = new StringBuffer();
@@ -1144,7 +1131,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         if (sb.length() > 0) {
             throw new PAException(VALIDATION_EXCEPTION + sb.toString());
         }
-        enforceBusinessRulesForStudyContact(studyProtocolDTO, studyContactDTO, studySiteContactDTO);
+        TrialRegistrationHelper.enforceBusinessRulesForStudyContact(studyProtocolDTO, 
+                studyContactDTO, studySiteContactDTO, PAUtil.isIiNotNull(principalInvestigatorDTO.getIdentifier()), 
+                PAUtil.isIiNotNull(responsiblePartyContactIi));
 
     }
     /**
@@ -1244,28 +1233,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         return errorMsg.toString();
     }
 
-    private void enforceBusinessRulesForStudyContact(StudyProtocolDTO studyProtocolDTO,
-            StudyContactDTO studyContactDTO, StudySiteContactDTO studySiteContactDTO) throws PAException {
-        StringBuffer sb = new StringBuffer();
-        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-            if (studyContactDTO != null && studySiteContactDTO != null) {
-                sb.append("Either StudyContactDTO or studySiteContactDTO should be null ,");
-            }
-            if (studyContactDTO == null && studySiteContactDTO == null) {
-                sb.append("Either StudyContactDTO or studySiteContactDTO should not be null ,");
-            }
-            if (studyContactDTO != null) {
-                checkTelecomAddress(studyContactDTO.getTelecomAddresses());
-            }
-            if (studySiteContactDTO != null) {
-                checkTelecomAddress(studySiteContactDTO.getTelecomAddresses());
-            }
-            if (sb.length() > 0) {
-                throw new PAException(VALIDATION_EXCEPTION + sb.toString());
-            }
-        }
-    }
-
     // CHECKSTYLE:OFF More than 7 Parameters
     private void enforceBusinessRulesForUpdate(StudyProtocolDTO studyProtocolDTO,
             StudyOverallStatusDTO overallStatusDTO, StudyContactDTO studyContactDTO,
@@ -1307,7 +1274,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         if (sb.length() > 0) {
             throw new PAException(VALIDATION_EXCEPTION + sb.toString());
         }
-        enforceBusinessRulesForStudyContact(studyProtocolDTO, studyContactDTO, studySiteContactDTO);
+        TrialRegistrationHelper.enforceBusinessRulesForStudyContact(studyProtocolDTO, 
+                studyContactDTO, studySiteContactDTO);
         getPAServiceUtils().enforceNoDuplicateIndIde(studyIndldeDTOs, studyProtocolDTO);
         getPAServiceUtils().enforceNoDuplicateGrants(studyResourcingDTOs);
         getPAServiceUtils().enforceRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs

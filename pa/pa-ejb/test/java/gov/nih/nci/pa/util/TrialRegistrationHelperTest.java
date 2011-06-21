@@ -89,7 +89,9 @@ import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
@@ -100,11 +102,13 @@ import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -120,13 +124,18 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  * @author ludetc
@@ -159,6 +168,8 @@ public class TrialRegistrationHelperTest {
             + "and Date was updated.";
     private static final String IND_IDE_UPDATED = "Ind Ide was updated.";
     private static final String GRANT_INFORMATION_UPDATED = "Grant information was updated.";
+    
+    @Rule public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setup() throws PAException {
@@ -422,6 +433,43 @@ public class TrialRegistrationHelperTest {
         } catch (PAException e) {
             //will never reach here.
         }
+    }
+    
+    @Test
+    public void testEnforcePiAnfRespPartyContacts() throws URISyntaxException, PAException {
+        StudyProtocolDTO spDTO = new StudyProtocolDTO();
+        spDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(true));
+        StudyContactDTO scDto = new StudyContactDTO();
+        
+        Tel email = new Tel();
+        email.setValue(new URI("mailto:example@example.com"));
+        Tel phone = new Tel();
+        phone.setValue(new URI("tel:123-456-7890"));
+        scDto.setTelecomAddresses(new DSet<Tel>());
+        scDto.getTelecomAddresses().setItem(new HashSet<Tel>());
+        scDto.getTelecomAddresses().getItem().add(email);
+        scDto.getTelecomAddresses().getItem().add(phone);
+      
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Validation Exception Telecom information must be provided for Responsible Party StudySiteContact,");
+        helper.enforceBusinessRulesForStudyContact(spDTO, scDto, null, true, true);
+       
+        StudySiteContactDTO sscDto = new StudySiteContactDTO();
+        thrown.expectMessage("Validation Exception One of StudyContact or StudySiteContact has to be used ,StudySiteContact Email cannot be null, StudySiteContact Phone cannot be null, ");
+        helper.enforceBusinessRulesForStudyContact(spDTO, scDto, sscDto, true, true);
+        
+        sscDto.setTelecomAddresses(new DSet<Tel>());
+        sscDto.getTelecomAddresses().setItem(new HashSet<Tel>());
+        sscDto.getTelecomAddresses().getItem().add(email);
+        sscDto.getTelecomAddresses().getItem().add(phone);
+        scDto.getTelecomAddresses().getItem().clear();
+        
+        thrown.expectMessage("Validation Exception One of StudyContact or StudySiteContact has to be used ,StudyContact Email cannot be null, StudyContact Phone cannot be null, ");
+        helper.enforceBusinessRulesForStudyContact(spDTO, scDto, sscDto, true, true);
+     
+        thrown.expectMessage("Validation Exception Telecom information must be provided for Principal Investigator StudyContact,");
+        helper.enforceBusinessRulesForStudyContact(spDTO, null, sscDto, true, true);
+        
     }
 
 }
