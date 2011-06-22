@@ -168,20 +168,8 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
      */
     @Test
     public void testIntermediateStudyOverallStatusCreation() throws Exception {
+        InterventionalStudyProtocol sp = createStudyProtocol();
         StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
-        InterventionalStudyProtocol sp = new InterventionalStudyProtocol();
-        sp = (InterventionalStudyProtocol) TestSchema.createStudyProtocolObj(sp);
-        sp = TestSchema.createInterventionalStudyProtocolObj(sp);
-        TestSchema.addUpdObject(sp);
-        Ii spId = IiConverter.convertToStudyProtocolIi(sp.getId());
-
-        DocumentWorkflowStatus docWorkflow = TestSchema.createDocumentWorkflowStatus(sp);
-        TestSchema.addUpdObject(docWorkflow);
-
-        StudyOverallStatus inReview = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
-        inReview.setStatusCode(StudyStatusCode.IN_REVIEW);
-        bean.create(statusConverter.convertFromDomainToDto(inReview));
-        assertEquals(bean.getByStudyProtocol(spId).size(), 1);
 
         StudyOverallStatus active = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
         active.setStatusCode(StudyStatusCode.ACTIVE);
@@ -220,26 +208,119 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
     }
 
     /**
+     * Tests the creation of the intermediate study overall status when moving from In Review to Enrolling by 
+     * Invitation.
+     * @throws Exception
+     */
+    @Test
+    public void testIntermediateStatusFromReviewToEnrollingByInvitation() throws Exception {
+        InterventionalStudyProtocol sp = createStudyProtocol();
+        StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
+
+        StudyOverallStatus enrollingByInvitation = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        enrollingByInvitation.setStatusCode(StudyStatusCode.ENROLLING_BY_INVITATION);
+        bean.create(statusConverter.convertFromDomainToDto(enrollingByInvitation));
+
+        StudyOverallStatus criteria = new StudyOverallStatus();
+        criteria.setStatusCode(StudyStatusCode.APPROVED);
+        criteria.setStudyProtocol(new StudyProtocol());
+        criteria.getStudyProtocol().setId(sp.getId());
+
+        List<StudyOverallStatus> results =  bean.search(new AnnotatedBeanSearchCriteria<StudyOverallStatus>(criteria));
+        assertEquals(1, results.size());
+
+        StudyOverallStatus approved = results.get(0);
+        assertTrue(approved.isSystemCreated());
+        assertEquals("Approved and Enrolling By Invitation should have the same status date", enrollingByInvitation.getStatusDate(),
+                approved.getStatusDate());
+    }
+
+    /**
+     * Tests the creation of the intermediate study overall status when moving from Enrolling by Invitation to
+     * Closed to Accrual & Intervention.
+     * @throws Exception
+     */
+    @Test
+    public void testIntermediateStatusFromEnrollingByInvitationToClosedToAccrualAndIntervention() throws Exception {
+        InterventionalStudyProtocol sp = createStudyProtocol();
+        StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
+
+        StudyOverallStatus enrollingByInvitation = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        enrollingByInvitation.setStatusCode(StudyStatusCode.ENROLLING_BY_INVITATION);
+        bean.create(statusConverter.convertFromDomainToDto(enrollingByInvitation));
+
+        StudyOverallStatus closeToAandI = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        closeToAandI.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+        bean.create(statusConverter.convertFromDomainToDto(closeToAandI));
+        
+        StudyOverallStatus criteria = new StudyOverallStatus();
+        criteria.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL);
+        criteria.setStudyProtocol(new StudyProtocol());
+        criteria.getStudyProtocol().setId(sp.getId());
+
+        List<StudyOverallStatus> results =  bean.search(new AnnotatedBeanSearchCriteria<StudyOverallStatus>(criteria));
+        assertEquals(1, results.size());
+
+        StudyOverallStatus systemCreated = results.get(0);
+        assertTrue(systemCreated.isSystemCreated());
+        assertEquals("Closed To Accrual and Closed to Accrual and Intervention should have the same status date",
+                closeToAandI.getStatusDate(), systemCreated.getStatusDate());
+    }
+
+    /**
+     * Tests the creation of the intermediate study overall status when moving from Enrolling by Invitation to
+     * Completed.
+     * @throws Exception
+     */
+    @Test
+    public void testIntermediateStatusFromEnrollingByInvitationToCompleted() throws Exception {
+        InterventionalStudyProtocol sp = createStudyProtocol();
+        StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
+
+        StudyOverallStatus enrollingByInvitation = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        enrollingByInvitation.setStatusCode(StudyStatusCode.ENROLLING_BY_INVITATION);
+        bean.create(statusConverter.convertFromDomainToDto(enrollingByInvitation));
+
+        StudyOverallStatus completed = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        completed.setStatusCode(StudyStatusCode.COMPLETE);
+        bean.create(statusConverter.convertFromDomainToDto(completed));
+        
+        StudyOverallStatus criteria = new StudyOverallStatus();
+        criteria.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL);
+        criteria.setStudyProtocol(new StudyProtocol());
+        criteria.getStudyProtocol().setId(sp.getId());
+
+        List<StudyOverallStatus> results =  bean.search(new AnnotatedBeanSearchCriteria<StudyOverallStatus>(criteria));
+        assertEquals(1, results.size());
+
+        StudyOverallStatus systemCreated = results.get(0);
+        assertTrue(systemCreated.isSystemCreated());
+        assertEquals("Closed To Accrual and Completed should have the same status date",
+                completed.getStatusDate(), systemCreated.getStatusDate());
+        
+        criteria = new StudyOverallStatus();
+        criteria.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+        criteria.setStudyProtocol(new StudyProtocol());
+        criteria.getStudyProtocol().setId(sp.getId());
+
+        results =  bean.search(new AnnotatedBeanSearchCriteria<StudyOverallStatus>(criteria));
+        assertEquals(1, results.size());
+
+        systemCreated = results.get(0);
+        assertTrue(systemCreated.isSystemCreated());
+        assertEquals("Closed To Accrual and Completed should have the same status date",
+                completed.getStatusDate(), systemCreated.getStatusDate());
+    }
+
+    /**
      * Tests the creation of the intermediate study overall status when moving from Temporarily closed to Accrual
      * to Administratively Complete.
      * @throws Exception
      */
     @Test
     public void testTemporaryAccrualIntermediateStatusCreation() throws Exception {
+        InterventionalStudyProtocol sp = createStudyProtocol();
         StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
-        InterventionalStudyProtocol sp = new InterventionalStudyProtocol();
-        sp = (InterventionalStudyProtocol) TestSchema.createStudyProtocolObj(sp);
-        sp = TestSchema.createInterventionalStudyProtocolObj(sp);
-        TestSchema.addUpdObject(sp);
-        Ii spId = IiConverter.convertToStudyProtocolIi(sp.getId());
-
-        DocumentWorkflowStatus docWorkflow = TestSchema.createDocumentWorkflowStatus(sp);
-        TestSchema.addUpdObject(docWorkflow);
-
-        StudyOverallStatus inReview = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
-        inReview.setStatusCode(StudyStatusCode.IN_REVIEW);
-        bean.create(statusConverter.convertFromDomainToDto(inReview));
-        assertEquals(bean.getByStudyProtocol(spId).size(), 1);
 
         StudyOverallStatus active = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
         active.setStatusCode(StudyStatusCode.ACTIVE);
@@ -278,21 +359,9 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
      */
     @Test
     public void testClosedAccrualIntermediateStatusCreation() throws Exception {
+        InterventionalStudyProtocol sp = createStudyProtocol();
         StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
-        InterventionalStudyProtocol sp = new InterventionalStudyProtocol();
-        sp = (InterventionalStudyProtocol) TestSchema.createStudyProtocolObj(sp);
-        sp = TestSchema.createInterventionalStudyProtocolObj(sp);
-        TestSchema.addUpdObject(sp);
-        Ii spId = IiConverter.convertToStudyProtocolIi(sp.getId());
-
-        DocumentWorkflowStatus docWorkflow = TestSchema.createDocumentWorkflowStatus(sp);
-        TestSchema.addUpdObject(docWorkflow);
-
-        StudyOverallStatus inReview = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
-        inReview.setStatusCode(StudyStatusCode.IN_REVIEW);
-        bean.create(statusConverter.convertFromDomainToDto(inReview));
-        assertEquals(bean.getByStudyProtocol(spId).size(), 1);
-
+        
         StudyOverallStatus active = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
         active.setStatusCode(StudyStatusCode.ACTIVE);
         bean.create(statusConverter.convertFromDomainToDto(active));
@@ -328,6 +397,24 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         assertTrue(closedToAccrualAndIntervention.isSystemCreated());
         assertEquals("Complete and Closed to Accrual & Intervention should have the same status date",
                 complete.getStatusDate(), closedToAccrualAndIntervention.getStatusDate());
+    }
+
+    private InterventionalStudyProtocol createStudyProtocol() throws PAException {
+        InterventionalStudyProtocol sp = new InterventionalStudyProtocol();
+        sp = (InterventionalStudyProtocol) TestSchema.createStudyProtocolObj(sp);
+        sp = TestSchema.createInterventionalStudyProtocolObj(sp);
+        TestSchema.addUpdObject(sp);
+
+        DocumentWorkflowStatus docWorkflow = TestSchema.createDocumentWorkflowStatus(sp);
+        TestSchema.addUpdObject(docWorkflow);
+        
+        Ii spId = IiConverter.convertToStudyProtocolIi(sp.getId());
+        StudyOverallStatus inReview = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        inReview.setStatusCode(StudyStatusCode.IN_REVIEW);
+        bean.create(Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(inReview));
+        assertEquals(bean.getByStudyProtocol(spId).size(), 1);
+        
+        return sp;
     }
 
     @Test
