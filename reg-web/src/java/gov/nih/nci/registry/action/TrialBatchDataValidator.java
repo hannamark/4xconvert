@@ -21,7 +21,6 @@ import gov.nih.nci.registry.dto.PersonBatchDTO;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
-import gov.nih.nci.registry.enums.TrialStatusCode;
 import gov.nih.nci.registry.enums.TrialStatusReasonCode;
 import gov.nih.nci.registry.util.BatchConstants;
 
@@ -97,7 +96,7 @@ public class TrialBatchDataValidator {
             } else if (batchDto.getTitle().length() > TRIAL_TITLE_MAX_LENGTH) {
                 fieldErr.append("Trial Title must be 4000 characters max");
             }
-            if (null == TrialStatusCode.getByCode(batchDto.getCurrentTrialStatus())) {
+            if (null == StudyStatusCode.getByCode(batchDto.getCurrentTrialStatus())) {
                 fieldErr.append("Please enter valid value for Current Trial Status");
             }
         }
@@ -174,7 +173,7 @@ public class TrialBatchDataValidator {
             if (batchDto.isCtGovXmlIndicator()) {
                 fieldErr.append(validateSponsorContactInfo(batchDto));
             }
-            if (TrialStatusCode.getByCode(batchDto.getCurrentTrialStatus()) == null
+            if (StudyStatusCode.getByCode(batchDto.getCurrentTrialStatus()) == null
                     && !StudyStatusCode.WITHDRAWN.getCode().equalsIgnoreCase(batchDto.getCurrentTrialStatus())) {
                 fieldErr.append("Please enter valid value for Current Trial Status");
             }

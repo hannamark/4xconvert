@@ -4,6 +4,7 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 import gov.nih.nci.pa.enums.CodedEnum;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 /**
  *
  * @author Vrushali
@@ -75,10 +76,10 @@ public enum  TrialStatusReasonCode implements CodedEnum<String> {
           * @return String[] display names for StudyStatusCode
           */
          public static String[]  getDisplayNames() {
-             TrialStatusCode[] trialStatusCodes = TrialStatusCode.values();
-             String[] codedNames = new String[trialStatusCodes.length];
-             for (int i = 0; i < trialStatusCodes.length; i++) {
-                 codedNames[i] = trialStatusCodes[i].getCode();
+             StudyStatusCode[] statusCodes = StudyStatusCode.values();
+             String[] codedNames = new String[statusCodes.length];
+             for (int i = 0; i < statusCodes.length; i++) {
+                 codedNames[i] = statusCodes[i].getCode();
              }
              return codedNames;
          }

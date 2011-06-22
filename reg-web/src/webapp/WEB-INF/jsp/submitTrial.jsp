@@ -632,7 +632,7 @@
                                     <label for="submitTrial_overallStatusWebDTO_statusCode"> <fmt:message key="submit.trial.currentTrialStatus"/><span class="required">*</span></label>
                                 </reg-web:displayTooltip>
                             </td>
-                            <s:set name="statusCodeValues" value="@gov.nih.nci.registry.enums.TrialStatusCode@getDisplayNames()" />
+                            <s:set name="statusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
                             <td>
                                 <s:select headerKey="" headerValue="--Select--" name="trialDTO.statusCode" list="#statusCodeValues"
                                     value="trialDTO.statusCode" cssStyle="width:206px" onchange="displayTrialStatusDefinition('submitTrial_trialDTO_statusCode');" />

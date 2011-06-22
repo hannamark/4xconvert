@@ -95,7 +95,6 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
-import gov.nih.nci.registry.enums.TrialStatusCode;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
 
@@ -576,7 +575,7 @@ public class TrialValidator {
     private void enforceRuleForStatusCompletedAndCompletionDate(TrialDTO trialDto, Map<String, String> addFieldError) {
         if (isNotEmpty(trialDto.getStatusCode(), trialDto.getStatusDate())
             && isNotEmpty(trialDto.getCompletionDate(), trialDto.getCompletionDateType())
-            && TrialStatusCode.COMPLETE.getCode().equals(trialDto.getStatusCode())
+            && StudyStatusCode.COMPLETE.getCode().equals(trialDto.getStatusCode())
             && !trialDto.getCompletionDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
                 addFieldError.put(TRIAL_COMPLETION_DATE, getText("error.submit.invalidCompletionDate"));
         }
@@ -596,7 +595,7 @@ public class TrialValidator {
        String startDateFieldName) {
         if (isNotEmpty(trialDto.getStatusCode(), trialDto.getStatusDate())
             && isNotEmpty(trialDto.getStartDate(), trialDto.getStartDateType())
-            && TrialStatusCode.ACTIVE.getCode().equals(trialDto.getStatusCode())) {
+            && StudyStatusCode.ACTIVE.getCode().equals(trialDto.getStatusCode())) {
               Timestamp statusDate = PAUtil.dateStringToTimestamp(trialDto.getStatusDate());
               Timestamp trialStartDate = PAUtil.dateStringToTimestamp(trialDto.getStartDate());
               if (trialStartDate.after(statusDate) || !trialDto.getStartDateType().equals(
@@ -659,8 +658,8 @@ public class TrialValidator {
     private void enforceRuleForStatusApproved(TrialDTO trialDto, Map<String, String> addFieldError) {
         if (StringUtils.isNotEmpty(trialDto.getStatusCode()) && StringUtils.isNotEmpty(trialDto.getStartDateType())) {
             Set<String> statusCode = new HashSet<String>();
-            statusCode.add(TrialStatusCode.APPROVED.getCode());
-            statusCode.add(TrialStatusCode.IN_REVIEW.getCode());
+            statusCode.add(StudyStatusCode.APPROVED.getCode());
+            statusCode.add(StudyStatusCode.IN_REVIEW.getCode());
             statusCode.add(StudyStatusCode.WITHDRAWN.getCode());
             if (statusCode.contains(trialDto.getStatusCode())) {
                 if (!trialDto.getStartDateType().equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
@@ -682,8 +681,8 @@ public class TrialValidator {
      */
     private void enforceRuleForStatusCompletedAndCompletionType(TrialDTO trialDto, Map<String, String> addFieldError) {
         Set<String> statusCode = new HashSet<String>();
-        statusCode.add(TrialStatusCode.COMPLETE.getCode());
-        statusCode.add(TrialStatusCode.ADMINISTRATIVELY_COMPLETE.getCode());
+        statusCode.add(StudyStatusCode.COMPLETE.getCode());
+        statusCode.add(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode());
           if (statusCode.contains(trialDto.getStatusCode())) {
                 if (!trialDto.getCompletionDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
                    addFieldError.put("trialDTO.completionDateType", getText("error.submit.invalidCompletionDateType"));
