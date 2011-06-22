@@ -262,6 +262,7 @@ public class TestSchema {
         sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         sp.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
         sp.setStatusCode(ActStatusCode.ACTIVE);
         Set<Ii> studySecondaryIdentifiers = new HashSet<Ii>();
@@ -734,6 +735,7 @@ public class TestSchema {
         sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         sp.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
         Set<Ii> studySecondaryIdentifiers = new HashSet<Ii>();
         Ii spSecId = new Ii();
@@ -1103,6 +1105,7 @@ public class TestSchema {
         isp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         isp.setPrimaryCompletionDate(now);
         isp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        isp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
         isp.setAllocationCode(AllocationCode.NA);
         isp.setBlindingRoleCodeCaregiver(BlindingRoleCode.CAREGIVER);
         isp.setBlindingRoleCodeSubject(BlindingRoleCode.SUBJECT);

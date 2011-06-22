@@ -105,6 +105,8 @@ import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
@@ -141,7 +143,9 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
@@ -151,6 +155,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  */
 public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
+    @Rule public ExpectedException thrown = ExpectedException.none();
     private final StudyProtocolBeanLocal bean = new StudyProtocolBeanLocal();
     private final StudyProtocolServiceLocal remoteEjb = bean;
     @Before
@@ -534,6 +539,74 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(ii.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
         assertTrue(StringUtils.isNotEmpty(ii.getIdentifierName()));
     }
+    
+    @Test
+    public void primaryPurposeCodeTest1() throws Exception {
+        InterventionalStudyProtocolDTO ispDTO =
+            StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        ispDTO.setPrimaryPurposeCode(null);
+        thrown.expect(PAException.class);
+        remoteEjb.createInterventionalStudyProtocol(ispDTO);
+        thrown.expectMessage("Primary Purpose Code must be set.");
+    }
+    
+    @Test
+    public void primaryPurposeCodeTest2() throws Exception {
+        InterventionalStudyProtocolDTO ispDTO =
+            StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        ispDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd("wrong code"));
+        thrown.expect(PAException.class);
+        remoteEjb.createInterventionalStudyProtocol(ispDTO);
+        thrown.expectMessage("Invalid Primary Purpose Code.");
+    }
+    
+    @Test
+    public void primaryPurposeCodeOtherTest1() throws Exception {
+        InterventionalStudyProtocolDTO ispDTO =
+            StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        ispDTO.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.OTHER));
+        ispDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(PrimaryPurposeAdditionalQualifierCode.ANCILLARY));
+        ispDTO.setPrimaryPurposeOtherText(null);
+        thrown.expect(PAException.class);
+        remoteEjb.createInterventionalStudyProtocol(ispDTO);
+        thrown.expectMessage("Primary Purpose Other Text is required when Primary Purpose Code is Other.");
+    }
+    
+    @Test
+    public void primaryPurposeCodeOtherTest2() throws Exception {
+        InterventionalStudyProtocolDTO ispDTO =
+            StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        ispDTO.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.OTHER));
+        ispDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(PrimaryPurposeAdditionalQualifierCode.ANCILLARY));
+        ispDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(""));
+        thrown.expect(PAException.class);
+        remoteEjb.createInterventionalStudyProtocol(ispDTO);
+        thrown.expectMessage("Primary Purpose Other Text is required when Primary Purpose Code is Other.");
+    }
+    
+    @Test
+    public void primaryPurposeCodeOtherAddCodeTest1() throws Exception {
+        InterventionalStudyProtocolDTO ispDTO =
+            StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        ispDTO.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.OTHER));
+        ispDTO.setPrimaryPurposeOtherText(StConverter.convertToSt("other"));
+        ispDTO.setPrimaryPurposeAdditionalQualifierCode(null);
+        thrown.expect(PAException.class);
+        remoteEjb.createInterventionalStudyProtocol(ispDTO);
+        thrown.expectMessage("Valid Primary Purpose Additional Qualifier Code is required when Primary Purpose Code is Other.");
+    }
+    
+    @Test
+    public void primaryPurposeCodeOtherAddCodeTest2() throws Exception {
+        InterventionalStudyProtocolDTO ispDTO =
+            StudyProtocolServiceBeanTest.createInterventionalStudyProtocolDTOObj();
+        ispDTO.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.OTHER));
+        ispDTO.setPrimaryPurposeOtherText(StConverter.convertToSt("other"));
+        ispDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertStringToCd("wrong code"));
+        thrown.expect(PAException.class);
+        remoteEjb.createInterventionalStudyProtocol(ispDTO);
+        thrown.expectMessage("Valid Primary Purpose Additional Qualifier Code is required when Primary Purpose Code is Other.");
+    }
 
 
     /**
@@ -683,6 +756,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         ispDTO.setStartDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ACTUAL.getCode()));
         ispDTO.setPrimaryCompletionDate(TsConverter.convertToTs(now));
         ispDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertStringToCd(ActualAnticipatedTypeCode.ACTUAL.getCode()));
+        ispDTO.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.BASIC_SCIENCE));
         ispDTO.setPhaseCode(CdConverter.convertStringToCd(PhaseCode.I.getCode()));
         ispDTO.setStatusCode(CdConverter.convertStringToCd(ActStatusCode.ACTIVE.getCode()));
         ispDTO.setAmendmentReasonCode(CdConverter.convertStringToCd(AmendmentReasonCode.BOTH.getCode()));

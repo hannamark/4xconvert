@@ -477,6 +477,7 @@ public class TrialRegistrationHelperTest {
         spDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(true));
         StudyContactDTO scDto = createFullStudyContact();
         StudySiteContactDTO sscDto = new StudySiteContactDTO();
+        thrown.expect(PAException.class);
         thrown.expectMessage("Validation Exception Only one of StudyContact or StudySiteContact can be used, StudySiteContact Email cannot be null, StudySiteContact Phone cannot be null, ");
         helper.enforceBusinessRulesForStudyContact(spDTO, scDto, sscDto, true, true);
     }
@@ -487,7 +488,7 @@ public class TrialRegistrationHelperTest {
         spDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(true));
         StudyContactDTO scDto = null;
         StudySiteContactDTO sscDto = null;
-        
+        thrown.expect(PAException.class);
         thrown.expectMessage("Validation Exception One of StudyContact or StudySiteContact has to be used, ");
         helper.enforceBusinessRulesForStudyContact(spDTO, scDto, sscDto, true, true);
     }
@@ -498,9 +499,9 @@ public class TrialRegistrationHelperTest {
         spDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(true));
         StudyContactDTO scDto = new StudyContactDTO();
         StudySiteContactDTO sscDto = createFullStudySiteContact();
+        thrown.expect(PAException.class);
         thrown.expectMessage("Validation Exception Telecom information must be provided for Principal Investigator StudyContact,");
         helper.enforceBusinessRulesForStudyContact(spDTO, null, sscDto, true, true);
-        
     }
 
 }

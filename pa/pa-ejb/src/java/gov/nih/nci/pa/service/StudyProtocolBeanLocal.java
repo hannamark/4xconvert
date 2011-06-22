@@ -115,6 +115,8 @@ import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.AnatomicSiteConverter;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
@@ -467,6 +469,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         if (dateRulesApply) {
             enForceDateRules(studyProtocolDTO);
         }
+        enForcePrimaryPurposeRules(studyProtocolDTO);
         if (isCorrelationRuleRequired(studyProtocolDTO)) {
             List<StudyIndldeDTO> list = getStudyIndldeService().getByStudyProtocol(studyProtocolDTO.getIdentifier());
             if (getPaServiceUtils().containsNonExemptInds(list)) {
@@ -536,7 +539,32 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             throw new PAException("Primary completion date must be >= start date.");
         }
     }
-
+    
+    private void enForcePrimaryPurposeRules(StudyProtocolDTO studyProtocolDTO) throws PAException {     
+        if (studyProtocolDTO.getPrimaryPurposeCode() == null) {
+            throw new PAException("Primary Purpose Code must be set.");
+        } else if (PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(
+                studyProtocolDTO.getPrimaryPurposeCode())) == null) {
+            throw new PAException("Invalid Primary Purpose Code.");
+        } else {
+            enForcePrimaryPurposeOtherRules(studyProtocolDTO);
+        }
+    }
+    
+    private void enForcePrimaryPurposeOtherRules(StudyProtocolDTO studyProtocolDTO) throws PAException {    
+        if (PrimaryPurposeCode.OTHER.equals(PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(
+                studyProtocolDTO.getPrimaryPurposeCode())))
+                && StringUtils.isBlank(StConverter.convertToString(studyProtocolDTO.getPrimaryPurposeOtherText()))) {
+            throw new PAException("Primary Purpose Other Text is required when Primary Purpose Code is Other.");
+        } else if (PrimaryPurposeCode.OTHER.equals(PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(
+                studyProtocolDTO.getPrimaryPurposeCode())))
+                && PrimaryPurposeAdditionalQualifierCode.getByCode(CdConverter.convertCdToString(
+                        studyProtocolDTO.getPrimaryPurposeAdditionalQualifierCode())) == null) {
+            throw new PAException(
+                    "Valid Primary Purpose Additional Qualifier Code is required when Primary Purpose Code is Other.");
+        }
+    }
+   
     private void setDefaultValues(StudyProtocol sp, StudyProtocolDTO spDTO, String operation) {
         if (sp.getStatusCode() == null) {
             sp.setStatusCode(ActStatusCode.ACTIVE);
