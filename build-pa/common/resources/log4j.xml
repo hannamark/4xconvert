@@ -179,6 +179,20 @@
       <priority value="@LOG_LEVEL@"/>
    </category>
 
+   <!-- Set the logging level for PDQ Loader classes -->
+   <category name="gov.nih.nci.pa.action.PDQTrialLoadAction">
+      <priority value="INFO"/>
+   </category>
+   <category name="gov.nih.nci.pa.service.util.AbstractPDQTrialServiceHelper">
+      <priority value="INFO"/>
+   </category>
+   <category name="gov.nih.nci.pa.service.util.AbstractPDQXmlParser">
+      <priority value="INFO"/>
+   </category>
+   <category name="gov.nih.nci.pa.service.util.PDQEligibilityCriteriaParser">
+      <priority value="INFO"/>
+   </category>
+
    <!-- Limit the org.apache category to INFO as its DEBUG is verbose -->
    <category name="org.apache">
       <priority value="INFO"/>
