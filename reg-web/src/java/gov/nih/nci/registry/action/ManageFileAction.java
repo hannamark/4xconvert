@@ -221,7 +221,7 @@ public class ManageFileAction extends ActionSupport {
     private void validateIrbApprovalDoc(TrialValidator validator, HttpSession session, Map<String, String> err)
         throws IOException {
         Map<String, String> errors = new HashMap<String, String>();
-        List<String> fromPages = Arrays.asList("amendTrial", "submitTrial", "updateTrial");
+        List<String> fromPages = Arrays.asList("amendTrial", "submitTrial");
         if (session.getAttribute(IRBAPPROVALDOC) == null && fromPages.contains(pageFrom)) {
             errors = validator.validateDocument(irbApprovalFileName, irbApproval, "trialDTO.irbApprovalFileName",
             "error.submit.irbApproval");
