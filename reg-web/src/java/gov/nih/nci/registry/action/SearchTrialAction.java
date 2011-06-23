@@ -110,8 +110,7 @@ import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -420,26 +419,18 @@ public class SearchTrialAction extends ActionSupport {
      */
     public String viewDoc() {
         try {
-            Ii studyProtocolIi =
-                (Ii) ServletActionContext.getRequest().getSession().getAttribute("spidfromviewresults");
-            StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-            String nciId = PAUtil.getAssignedIdentifierExtension(spDTO);
             DocumentDTO docDTO = PaRegistry.getDocumentService().get(IiConverter.convertToIi(identifier));
-            String documentPath = PAUtil.getDocumentFilePath(identifier,
-                    StConverter.convertToString(docDTO.getFileName()), nciId);
-
-            File downloadFile = new File(documentPath);
-            FileInputStream inputStream = new FileInputStream(downloadFile);
 
             HttpServletResponse servletResponse = ServletActionContext.getResponse();
-            servletResponse.setContentType("application/x-unknown");
+            servletResponse.setContentType("application/octet-stream");
+            servletResponse.setContentLength(docDTO.getText().getData().length);
             servletResponse.setHeader("Cache-Control", "cache");
             servletResponse.setHeader("Pragma", "cache");
-            servletResponse.setHeader("Content-Disposition", "attachment; filename=" + downloadFile.getName());
-            servletResponse.setContentLength(inputStream.available());
+            servletResponse.setHeader("Content-Disposition", "attachment; filename=" + docDTO.getFileName().getValue());
 
+            ByteArrayInputStream bis = new ByteArrayInputStream(docDTO.getText().getData());
             ServletOutputStream out = servletResponse.getOutputStream();
-            IOUtils.copy(inputStream, out);
+            IOUtils.copy(bis, out);
             out.flush();
             out.close();
         } catch (IOException err) {

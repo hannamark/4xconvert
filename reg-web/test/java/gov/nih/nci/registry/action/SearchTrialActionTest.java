@@ -14,7 +14,6 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.MockCSMUserService;
@@ -30,6 +29,7 @@ import org.junit.Test;
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpServletResponse;
 import com.mockrunner.mock.web.MockHttpSession;
+import com.opensymphony.xwork2.Action;
 
 /**
  * @author Vrushali
@@ -198,10 +198,9 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
     }
 
     @Test
-    public void testViewDoc() {
+    public void testViewDoc() throws Exception {
         action.setIdentifier(1L);
-        ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", IiConverter.convertToIi("1"));
-        assertEquals("error", action.viewDoc());
+        assertEquals(Action.NONE, action.viewDoc());
     }
 
     @Test
