@@ -2,6 +2,10 @@ package gov.nih.nci.po.service.external;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.coppa.services.PersonService;
 import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.IdentifierScope;
 import gov.nih.nci.iso21090.Ii;
@@ -34,10 +38,10 @@ import java.util.List;
 import javax.jms.JMSException;
 import javax.naming.Context;
 
-import org.hibernate.validator.InvalidStateException;
-import org.hibernate.validator.InvalidValue;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import com.fiveamsolutions.nci.commons.search.SearchCriteria;
 
@@ -50,6 +54,8 @@ public class CtepPersonImporterTest extends AbstractServiceBeanTest {
     private CtepPersonImporter importer;
     private HealthCareProviderServiceBean hcpSvc;
 
+    @Rule public ExpectedException thrown = ExpectedException.none();
+    
     @Before
     public void setup() throws Exception {
         ipSvc = EjbTestHelper.getIdentifiedPersonServiceBean();
@@ -125,8 +131,7 @@ public class CtepPersonImporterTest extends AbstractServiceBeanTest {
     }
     
     @Test
-    public void testPersonImport()
-    throws Exception, JMSException, EntityValidationException {
+    public void testPersonImport() throws Exception, JMSException, EntityValidationException {
         // create Person and IdentifiedPerson via Import
         CTEPPersonServiceStub service = CTEPPerServiceStubBuilder.INSTANCE.buildCreateBaseStub();
         importer.setCtepPersonService(service);
@@ -162,4 +167,31 @@ public class CtepPersonImporterTest extends AbstractServiceBeanTest {
         assertEquals(1, hcpList.size());    
     }
     
+    @Test
+    public void testInvalidPersonImportReturnNullPersonId() throws Exception, JMSException, EntityValidationException {
+        CTEPPersonServiceStub stubPersonService = CTEPPerServiceStubBuilder.INSTANCE.buildCreateBaseStub();
+        PersonService service = mock(PersonService.class);
+        PersonDTO personDTO = mock(PersonDTO.class);
+        when(personDTO.getIdentifier()).thenReturn(null);
+        when(service.getPersonById(any(Ii.class))).thenReturn(personDTO);
+        importer.setCtepPersonService(service);
+        PersonDTO per = stubPersonService.getPer();
+        thrown.expect(JMSException.class);
+        thrown.expectMessage("Person import aborted, null CTEP Id found");
+        importer.importPerson(per.getIdentifier());
+    }
+    
+    @Test
+    public void testInvalidPersonImportReturnIncorrectPersonId() throws Exception, JMSException, EntityValidationException {
+        CTEPPersonServiceStub stubPersonService = CTEPPerServiceStubBuilder.INSTANCE.buildCreateBaseStub();
+        PersonService service = mock(PersonService.class);
+        PersonDTO personDTO = mock(PersonDTO.class);
+        when(personDTO.getIdentifier()).thenReturn(new Ii());
+        when(service.getPersonById(any(Ii.class))).thenReturn(personDTO);
+        importer.setCtepPersonService(service);
+        PersonDTO per = stubPersonService.getPer();
+        thrown.expect(JMSException.class);
+        thrown.expectMessage("Person import aborted, mismatch in CTEP Ids");
+        importer.importPerson(per.getIdentifier());
+    }
 }

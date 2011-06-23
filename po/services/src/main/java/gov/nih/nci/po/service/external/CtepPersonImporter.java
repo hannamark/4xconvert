@@ -174,8 +174,8 @@ public class CtepPersonImporter extends CtepEntityImporter {
         try {
             // get org from ctep and convert to local data model
             PersonDTO ctepPersonDto = getCtepPersonService().getPersonById(ctepPersonId);
-            printPersonDataToLog(ctepPersonDto);
             comparePersonIi(ctepPersonId, ctepPersonDto.getIdentifier());
+            printPersonDataToLog(ctepPersonDto);
             Person ctepPerson = convertToLocalPerson(ctepPersonDto);
             // search for org based on the ctep provided ii
             IdentifiedPerson identifiedPerson = searchForPreviousRecord(ctepPersonId);
@@ -255,21 +255,23 @@ public class CtepPersonImporter extends CtepEntityImporter {
         return identifiedPeople.get(0);
     }
 
-    private Person createCtepPerson(Person ctepPerson, Ii ctepId) throws JMSException, EntityValidationException {
+    private Person createCtepPerson(Person ctepPerson, Ii ctepPersonId) throws JMSException, EntityValidationException {
         // create the local entity record
         this.personService.curate(ctepPerson);
-        createIdentifiedPerson(ctepPerson, ctepId);
+        createIdentifiedPerson(ctepPerson, ctepPersonId);
 
         // create records for all health care provider records
-        HealthCareProviderDTO hcp = getHcpFromCtep(ctepId);
+        HealthCareProviderDTO hcp = getHcpFromCtep(ctepPersonId);
         if (hcp != null) {
+            comparePersonIi(ctepPersonId, hcp.getPlayerIdentifier());
             printHcpDataToLog(hcp);
             createHcp(hcp, ctepPerson);
         }
 
         // create records for all clinical research staff records.
-        ClinicalResearchStaffDTO crs = getCrsFromCtep(ctepId);
+        ClinicalResearchStaffDTO crs = getCrsFromCtep(ctepPersonId);
         if (crs != null) {
+            comparePersonIi(ctepPersonId, crs.getPlayerIdentifier());
             printCrsDataToLog(crs);
             createCrs(crs, ctepPerson);
         }
@@ -305,12 +307,14 @@ public class CtepPersonImporter extends CtepEntityImporter {
         // update the hcp role
         HealthCareProviderDTO hcpDto = getHcpFromCtep(identifiedPerson.getAssignedIdentifier());
         if (hcpDto != null) {
+            comparePersonIi(identifiedPerson.getAssignedIdentifier(), hcpDto.getPlayerIdentifier());
             updateHcpRoles(p, hcpDto);
         }
 
         // update the crs role
         ClinicalResearchStaffDTO crsDto = getCrsFromCtep(identifiedPerson.getAssignedIdentifier());
         if (crsDto != null) {
+            comparePersonIi(identifiedPerson.getAssignedIdentifier(), crsDto.getPlayerIdentifier());
             updateCrsRoles(p, crsDto);
         }
 
