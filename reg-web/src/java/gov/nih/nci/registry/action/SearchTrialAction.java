@@ -143,56 +143,17 @@ public class SearchTrialAction extends ActionSupport {
     private Long studyProtocolId = null;
     private String trialAction;
     private Long identifier = null;
-
-    /**
-     * @return the identifier
-     */
-    public Long getIdentifier() {
-        return identifier;
-    }
-
-    /**
-     * @param identifier the identifier to set
-     */
-    public void setIdentifier(Long identifier) {
-        this.identifier = identifier;
-    }
-
-    private final TrialUtil trialUtil = new TrialUtil();
+    private TrialUtil trialUtils = new TrialUtil();
     private static final Set<StudyStatusCode> UPDATEABLE_STATUS = new HashSet<StudyStatusCode>();
+    private static final Set<String> EXECUTE_ACTIONS = new HashSet<String>();
     static {
         UPDATEABLE_STATUS.add(StudyStatusCode.WITHDRAWN);
         UPDATEABLE_STATUS.add(StudyStatusCode.COMPLETE);
         UPDATEABLE_STATUS.add(StudyStatusCode.ADMINISTRATIVELY_COMPLETE);
-    }
 
-    private String usercreated;
-    /**
-     * @return the usercreated
-     */
-    public String getUsercreated() {
-        return usercreated;
-    }
-
-    /**
-     * @param usercreated the usercreated to set
-     */
-    public void setUsercreated(String usercreated) {
-        this.usercreated = usercreated;
-    }
-
-    /**
-     * @return the trialAction
-     */
-    public String getTrialAction() {
-        return trialAction;
-    }
-
-    /**
-     * @param trialAction the trialAction to set
-     */
-    public void setTrialAction(String trialAction) {
-        this.trialAction = trialAction;
+        EXECUTE_ACTIONS.add("SUBMIT");
+        EXECUTE_ACTIONS.add("AMEND");
+        EXECUTE_ACTIONS.add("UPDATE");
     }
 
     /**
@@ -200,15 +161,13 @@ public class SearchTrialAction extends ActionSupport {
      */
     @Override
     public String execute() {
-        if (StringUtils.isNotEmpty(trialAction) && (trialAction.equalsIgnoreCase("submit")
-                || trialAction.equalsIgnoreCase("amend") || trialAction.equalsIgnoreCase("update"))) {
+        if (EXECUTE_ACTIONS.contains(StringUtils.upperCase(trialAction))) {
             String pId = (String) ServletActionContext.getRequest().getSession().getAttribute("protocolId");
             studyProtocolId = Long.valueOf(pId);
             getCriteria().setMyTrialsOnly(true);
             return view();
         }
         return SUCCESS;
-
     }
 
     /**
@@ -370,7 +329,7 @@ public class SearchTrialAction extends ActionSupport {
 
     private void loadPropTrial(Ii studyProtocolIi) throws PAException, NullifiedRoleException {
         ProprietaryTrialDTO trialDTO = new ProprietaryTrialDTO();
-        trialUtil.getProprietaryTrialDTOFromDb(studyProtocolIi, trialDTO);
+        trialUtils.getProprietaryTrialDTOFromDb(studyProtocolIi, trialDTO);
         ServletActionContext.getRequest().setAttribute("leadOrganizationName",
                 trialDTO.getLeadOrganizationName());
         ServletActionContext.getRequest().setAttribute("leadOrgTrialIdentifier",
@@ -388,7 +347,7 @@ public class SearchTrialAction extends ActionSupport {
 
     private void loadNonPropTrial(Ii studyProtocolIi, boolean maskFields) throws PAException, NullifiedRoleException {
         TrialDTO trialDTO = new TrialDTO();
-        trialUtil.getTrialDTOFromDb(studyProtocolIi, trialDTO);
+        trialUtils.getTrialDTOFromDb(studyProtocolIi, trialDTO);
         if (trialDTO.getTrialType().equals("InterventionalStudyProtocol")) {
            trialDTO.setTrialType("Interventional");
         } else if (trialDTO.getTrialType().equals("ObservationalStudyProtocol")) {
@@ -426,14 +385,12 @@ public class SearchTrialAction extends ActionSupport {
      * @return res
      */
     public String view() {
-        boolean maskFields = false;
         try {
             // remove the session variables stored during a previous view if any
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_SUMMARY);
             Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
-            if (usercreated != null && !usercreated.equals(ServletActionContext.getRequest().getRemoteUser())) {
-                maskFields = true;
-            }
+            boolean maskFields = !PaRegistry.getRegistryUserService().hasTrialAccess(UsernameHolder.getUser(),
+                    studyProtocolId);
             StudyProtocolDTO protocolDTO = loadTrial(studyProtocolIi, maskFields);
             queryTrialDocsAndSetAttributes(studyProtocolIi, protocolDTO, maskFields);
             LOG.info("Trial retrieved: " + StConverter.convertToString(protocolDTO.getOfficialTitle()));
@@ -447,13 +404,13 @@ public class SearchTrialAction extends ActionSupport {
         }
     }
 
-    private void queryTrialDocsAndSetAttributes(Ii studyProtocolIi,
-            StudyProtocolDTO protocolDTO, boolean maskFields) throws PAException {
+    private void queryTrialDocsAndSetAttributes(Ii studyProtocolIi, StudyProtocolDTO protocolDTO,
+            boolean maskFields) throws PAException {
         ServletActionContext.getRequest().setAttribute(Constants.TRIAL_SUMMARY, protocolDTO);
         // query the trial documents
-        List<DocumentDTO> documentISOList = PaRegistry.getDocumentService()
-                .getDocumentsByStudyProtocol(studyProtocolIi);
-        if (!maskFields && !(documentISOList.isEmpty())) {
+        List<DocumentDTO> documentISOList =
+            PaRegistry.getDocumentService().getDocumentsByStudyProtocol(studyProtocolIi);
+        if (!maskFields && !documentISOList.isEmpty()) {
             ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
         }
     }
@@ -581,7 +538,7 @@ public class SearchTrialAction extends ActionSupport {
         }
         BaseTrialDTO trialDTO = new BaseTrialDTO();
         try {
-            trialDTO =  trialUtil.getTrialDTOForPartiallySumbissionById(studyProtocolId.toString());
+            trialDTO =  trialUtils.getTrialDTOForPartiallySumbissionById(studyProtocolId.toString());
             if (trialDTO instanceof TrialDTO) {
                 if (StringUtils.isNotEmpty(((TrialDTO) trialDTO).getSelectedRegAuth())) {
                     String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
@@ -622,12 +579,12 @@ public class SearchTrialAction extends ActionSupport {
             spQueryDTO.setLeadOrganizationId(IiConverter.convertToLong(
                 studyProtocolStageDTO.getLeadOrganizationIdentifier()));
             if (PAUtil.isIiNotNull(studyProtocolStageDTO.getLeadOrganizationIdentifier())) {
-                spQueryDTO.setLeadOrganizationName(trialUtil.getOrgName(
+                spQueryDTO.setLeadOrganizationName(trialUtils.getOrgName(
                       studyProtocolStageDTO.getLeadOrganizationIdentifier()));
             }
             spQueryDTO.setPiId(IiConverter.convertToLong(studyProtocolStageDTO.getPiIdentifier()));
             if (PAUtil.isIiNotNull(studyProtocolStageDTO.getPiIdentifier())) {
-                spQueryDTO.setPiFullName(trialUtil.getPersonName(studyProtocolStageDTO.getPiIdentifier()));
+                spQueryDTO.setPiFullName(trialUtils.getPersonName(studyProtocolStageDTO.getPiIdentifier()));
             }
             spQueryDTO.setStudyStatusCode(StudyStatusCode.getByCode(CdConverter.convertCdToString(
                 studyProtocolStageDTO.getTrialStatusCode())));
@@ -680,4 +637,45 @@ public class SearchTrialAction extends ActionSupport {
         return errorExist;
      }
 
+    /**
+     * @return the identifier
+     */
+    public Long getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(Long identifier) {
+        this.identifier = identifier;
+    }
+
+    /**
+     * @return the trialAction
+     */
+    public String getTrialAction() {
+        return trialAction;
+    }
+
+    /**
+     * @param trialAction the trialAction to set
+     */
+    public void setTrialAction(String trialAction) {
+        this.trialAction = trialAction;
+    }
+
+    /**
+     * @return the trialUtils
+     */
+    public TrialUtil getTrialUtils() {
+        return trialUtils;
+    }
+
+    /**
+     * @param trialUtils the trialUtils to set
+     */
+    public void setTrialUtils(TrialUtil trialUtils) {
+        this.trialUtils = trialUtils;
+    }
 }

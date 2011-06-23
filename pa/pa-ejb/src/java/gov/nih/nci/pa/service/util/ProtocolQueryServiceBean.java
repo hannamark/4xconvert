@@ -123,6 +123,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.search.StudyProtocolBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyProtocolOptions;
 import gov.nih.nci.pa.service.search.StudyProtocolQueryBeanSearchCriteria;
+import gov.nih.nci.pa.service.search.StudyProtocolSortCriterion;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
@@ -147,6 +148,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 
 /**
@@ -703,7 +705,10 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         sp.getStudySites().add(ss);
 
         StudyProtocolBeanSearchCriteria crit = new StudyProtocolBeanSearchCriteria(sp, null);
-        return search(crit);
+
+        PageSortParams<StudyProtocol> params = new PageSortParams<StudyProtocol>(PAConstants.MAX_SEARCH_RESULTS, 0,
+                StudyProtocolSortCriterion.STUDY_PROTOCOL_ID, false);
+        return search(crit, params);
     }
 
     /**

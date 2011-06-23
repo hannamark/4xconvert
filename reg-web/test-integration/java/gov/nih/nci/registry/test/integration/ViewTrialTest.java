@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The pa
+ * source code form and machine readable, binary, object code form. The reg-web
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This pa Software License (the License) is between NCI and You. You (or
+ * This reg-web Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the pa Software to (i) use, install, access, operate,
+ * its rights in the reg-web Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the pa Software; (ii) distribute and
- * have distributed to and by third parties the pa Software and any
+ * and prepare derivative works of the reg-web Software; (ii) distribute and
+ * have distributed to and by third parties the reg-web Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -82,19 +82,58 @@
  */
 package gov.nih.nci.registry.test.integration;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.junit.Test;
 
 /**
  *
- * Class to control the order that selenium tests are run in.
+ * Makes sure that trial view page is shown correctly for the person who has submitted the trial and the person
+ * who is assigned as an owner of the trial.
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-@RunWith(Suite.class)
-@SuiteClasses(value = {LoginTest.class, RegisterTrialTest.class, TrialSearchTest.class, SetupPaTrialData.class,
-        ViewTrialTest.class})
-public class AllSeleniumTests {
+public class ViewTrialTest extends AbstractRegistrySeleniumTest {
 
+    @Test
+    public void testAssignOwnership() {
+        loginAsAbstractor();
+        handleDisclaimer(true);
+        clickAndWait("id=manageTrialOwnershipMenuOption");
+        selenium.click("id=chk2");
+        selenium.click("//table[@id='studyProtocolRow']/tbody/tr[1]/td[3]/input");
+
+        clickAndWait("link=Assign Ownership");
+        assertTrue(selenium.isTextPresent("Trial ownerships successfully assigned."));
+    }
+
+    @Test
+    public void testViewTrialAsSubmitter() {
+        loginAsAbstractor();
+        handleDisclaimer(true);
+        verifyTrialView();
+    }
+
+    @Test
+    public void testViewTrialAsOwner() {
+        loginAsSubmitter();
+        handleDisclaimer(true);
+        verifyTrialView();
+    }
+
+    private void verifyTrialView() {
+        clickAndWait("searchTrialsMenuOption");
+        waitForElementById("searchMyTrialsBtn", 5);
+        waitForElementById("searchAllTrialsBtn", 5);
+        selenium.type("officialTitle", "Test Trial created by Selenium.");
+        clickAndWait("searchMyTrialsBtn");
+
+        assertTrue("Wrong search results returned", selenium.isTextPresent("One item found"));
+
+        clickAndWait("xpath=//table[@id='row']/tbody/tr[1]/td[1]/a");
+        assertTrue(selenium.isTextPresent("Regulatory Information"));
+        assertTrue(selenium.isTextPresent("Trial Related Documents"));
+        assertTrue(selenium.isTextPresent("Protocol Document"));
+        assertTrue(selenium.isTextPresent("IRB Approval Document"));
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[1]/td[2]/a"));
+        assertTrue(selenium.isElementPresent("//table[@id='row']/tbody/tr[2]/td[2]/a"));
+    }
 }

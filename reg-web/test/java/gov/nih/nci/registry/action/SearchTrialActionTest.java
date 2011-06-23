@@ -5,13 +5,21 @@ package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.registry.dto.SearchProtocolCriteria;
+import gov.nih.nci.registry.util.TrialUtil;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,55 +37,71 @@ import com.mockrunner.mock.web.MockHttpSession;
  */
 public class SearchTrialActionTest extends AbstractRegWebTest {
     private SearchTrialAction action;
-    //private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
+
     @Before
-    public void setup(){
+    public void setup() throws Exception {
+        Organization org = new Organization();
+        org.setIdentifier("1");
+        org.setCity("city");
+        org.setCountryName("countryName");
+        org.setName("name");
+        org.setPostalCode("postalCode");
+
+        Person person = new Person();
+        person.setIdentifier("1");
+        person.setFirstName("firstName");
+        person.setLastName("lastName");
+
+        PAContactDTO contactDTO = new PAContactDTO();
+        contactDTO.setFullName("Contact User");
+
+        CorrelationUtilsRemote correlationUtils = mock(CorrelationUtilsRemote.class);
+        when(correlationUtils.getPAOrganizationByIi(any(Ii.class))).thenReturn(org);
+        when(correlationUtils.getPAPersonByIi(any(Ii.class))).thenReturn(person);
+        when(correlationUtils.getContactByPAOrganizationalContactId(any(Long.class))).thenReturn(contactDTO);
+
         action = new SearchTrialAction();
+        TrialUtil trialUtils = new TrialUtil();
+        trialUtils.setCorrelationUtils(correlationUtils);
+        action.setTrialUtils(trialUtils);
+
+        MockHttpSession session = new MockHttpSession();
+
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteUser("firstName");
+        request.setSession(session);
+
         ServletActionContext.setRequest(request);
-        CSMUserService.getInstance();
+
+        HttpServletResponse response = new MockHttpServletResponse();
+        ServletActionContext.setResponse(response);
+
         CSMUserService.setRegistryUserService(new MockCSMUserService());
     }
 
     @Test
     public void testRecordsProperty(){
-        action = new SearchTrialAction();
         assertTrue(action.getRecords().isEmpty());
     }
-    @Test
-    public void testCriteriaProperty(){
-        action = new SearchTrialAction();
-        assertNotNull(action.getCriteria());
-        action.setCriteria(null);
-        assertNull(action.getCriteria());
-    }
-    @Test
-    public void testStudyProtocolIdProperty(){
-        action = new SearchTrialAction();
-        assertNull(action.getStudyProtocolId());
-        action.setStudyProtocolId(1L);
-        assertNotNull(action.getStudyProtocolId());
-    }
+
     @Test
     public void testShowCriteria(){
-        action = new SearchTrialAction();
-        assertEquals("criteria",action.showCriteria());
+        assertEquals("criteria", action.showCriteria());
     }
+
     @Test
     public void testQueryErr(){
-        action = new SearchTrialAction();
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("abc");
         criteria.setIdentifierType("");
         criteria.setOfficialTitle("");
         criteria.setOrganizationType("avs");
         action.setCriteria(criteria );
-        assertEquals("error",action.query());
+        assertEquals("error", action.query());
     }
+
     @Test
     public void testQuery(){
-        action = new SearchTrialAction();
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("");
         criteria.setIdentifierType("");
@@ -91,7 +115,6 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
 
     @Test
     public void testQueryWithException() {
-        action = new SearchTrialAction();
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("");
         criteria.setIdentifierType("");
@@ -103,7 +126,6 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
 
     @Test
     public void testQueryNCIType() {
-        action = new SearchTrialAction();
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("a");
         criteria.setIdentifierType("NCI");
@@ -117,7 +139,6 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
 
     @Test
     public void testQueryNCTType() {
-        action = new SearchTrialAction();
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("nct");
         criteria.setIdentifierType("NCT");
@@ -131,7 +152,6 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
 
     @Test
     public void testQueryLeadOrgType() {
-        action = new SearchTrialAction();
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("lead");
         criteria.setIdentifierType("Lead Organization");
@@ -145,7 +165,6 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
 
     @Test
     public void testQueryPI() {
-        action = new SearchTrialAction();
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setPrincipalInvestigatorId("1");
         action.setCriteria(criteria);
@@ -154,142 +173,69 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
 
     @Test
     public void testExecute() {
-        action = new SearchTrialAction();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpSession session = new MockHttpSession();
-        action = new SearchTrialAction();
-        request = new MockHttpServletRequest();
-        session = new MockHttpSession();
-        session.setAttribute("protocolId", "1");
-        request.setSession(session);
-        action.setTrialAction("submit");
-        ServletActionContext.setRequest(request);
-        // primeData();
-        try {
-            action.execute();
-        } catch (Exception e) {
-
-        }
-        request = new MockHttpServletRequest();
-        session = new MockHttpSession();
-        session.setAttribute("protocolId", "1");
-        action.setTrialAction("amend");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
-        try {
-            assertEquals("success", action.execute());
-        } catch (Exception e) {
-
-        }
-        request = new MockHttpServletRequest();
-        session = new MockHttpSession();
-        session.setAttribute("protocolId", "1");
         action.setTrialAction("");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
-        try {
-            assertEquals("success", action.execute());
-        } catch (Exception e) {
+        assertEquals("success", action.execute());
 
-        }
-
-        request = new MockHttpServletRequest();
-        session = new MockHttpSession();
-        session.setAttribute("protocolId", "1");
         action.setTrialAction("view");
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
-        try {
-            assertEquals("success", action.execute());
-        } catch (Exception e) {
+        assertEquals("success", action.execute());
 
-        }
+        ServletActionContext.getRequest().getSession().setAttribute("protocolId", "1");
+        action.setTrialAction("submit");
+        assertEquals("view", action.execute());
+
+        action.setTrialAction("amend");
+        assertEquals("view", action.execute());
+
+        action.setTrialAction("update");
+        assertEquals("view", action.execute());
+
     }
 
     @Test
     public void testView() {
-        action = new SearchTrialAction();
         action.setStudyProtocolId(1L);
-        try {
-            action.view();
-        } catch (Exception e) {
-
-        }
-    }
-
-    @Test
-    public void testViewUsercreated() {
-        action = new SearchTrialAction();
-        action.setStudyProtocolId(1L);
-        action.setUsercreated("1");
-        try {
-            action.view();
-        } catch (Exception e) {
-
-        }
+        assertEquals("view", action.view());
     }
 
     @Test
     public void testViewDoc() {
-        action = new SearchTrialAction();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpSession session = new MockHttpSession();
         action.setIdentifier(1L);
-        session.setAttribute("spidfromviewresults", IiConverter.convertToIi("1"));
-        request.setSession(session);
-        ServletActionContext.setRequest(request);
-        HttpServletResponse response = new MockHttpServletResponse();
-        ServletActionContext.setResponse(response);
-        action.viewDoc();
+        ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", IiConverter.convertToIi("1"));
+        assertEquals("error", action.viewDoc());
     }
 
     @Test
     public void testGetMyPartiallySavedTrial() {
-        action = new SearchTrialAction();
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setOfficialTitle("officialTitle");
         action.setCriteria(criteria);
-        action.setUsercreated("1");
         assertEquals("success", action.getMyPartiallySavedTrial());
 
-        action = new SearchTrialAction();
         criteria = new SearchProtocolCriteria();
         criteria.setOfficialTitle("ThrowException");
         action.setCriteria(criteria);
-        action.setUsercreated("1");
         assertEquals("success", action.getMyPartiallySavedTrial());
         assertNotNull(action.getActionErrors());
     }
 
     @Test
     public void testPartiallySubmittedView() {
-        action = new SearchTrialAction();
+        assertEquals("error", action.partiallySubmittedView());
+
         action.setStudyProtocolId(1L);
         assertEquals("partialView", action.partiallySubmittedView());
-
-        action = new SearchTrialAction();
-        assertEquals("error", action.partiallySubmittedView());
     }
 
     @Test
     public void testSendXmlEmail() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpSession session = new MockHttpSession();
-        action = new SearchTrialAction();
-        request = new MockHttpServletRequest();
-        session = new MockHttpSession();
         StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
         queryCriteria.setNciIdentifier("NCI-2009-00001");
-        session.setAttribute("studySearchCriteria", queryCriteria);
-        request.setSession(session);
-        request.setRemoteUser("firstName");
-        ServletActionContext.setRequest(request);
+        ServletActionContext.getRequest().getSession().setAttribute("studySearchCriteria", queryCriteria);
         assertEquals("success", action.sendXml());
     }
 
     @Test
     public void testMyTrialsOnly() {
-        action = new SearchTrialAction();
         SearchProtocolCriteria criteria = new SearchProtocolCriteria();
         criteria.setIdentifier("");
         criteria.setIdentifierType("");
@@ -297,9 +243,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         criteria.setOfficialTitle("");
         criteria.setOrganizationType("");
         action.setCriteria(criteria);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRemoteUser("userLastCreated");
-        ServletActionContext.setRequest(request);
+
         assertEquals("success", action.query());
         assertTrue(action.getRecords().size() >= 1);
     }

@@ -204,6 +204,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         try {
             when(svc.getDistinctCountryNames()).thenReturn(new ArrayList<CountryRegAuthorityDTO>());
             when(svc.getRegulatoryAuthorityNameId(any(Long.class))).thenReturn(new ArrayList<RegulatoryAuthOrgDTO>());
+            when(svc.getRegulatoryAuthorityInfo(any(Long.class))).thenReturn(Arrays.asList(1L, 2L));
         } catch (PAException e) {
             //Unreachable
         }
@@ -356,8 +357,11 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
      */
     public StudyRegulatoryAuthorityServiceLocal getStudyRegulatoryAuthorityService() {
         StudyRegulatoryAuthorityServiceLocal svc = mock(StudyRegulatoryAuthorityServiceLocal.class);
+        StudyRegulatoryAuthorityDTO dto = new StudyRegulatoryAuthorityDTO();
+        dto.setIdentifier(IiConverter.convertToIi(1L));
+        dto.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(1L));
         try {
-            when(svc.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(new StudyRegulatoryAuthorityDTO());
+            when(svc.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(dto);
         } catch (PAException e) {
             //Unreachable
         }

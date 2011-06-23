@@ -15,7 +15,7 @@
             <display:setProperty name="export.csv.filename" value="resultsSavedDraftSearch.csv"/>
             <display:setProperty name="export.csv.include_header" value="true"/>
             <display:column class="title" title="Temp Trial Identifier" sortable="true" headerScope="col" scope="row" media="html">
-                <a href="#" onclick="viewPartialProtocol('${row.studyProtocolId}','${row.userLastCreated}');"><c:out value="${row.studyProtocolId}"/></a>
+                <a href="#" onclick="viewPartialProtocol('${row.studyProtocolId}');"><c:out value="${row.studyProtocolId}"/></a>
             </display:column>
             <display:column class="title" title="Temp Trial Identifier" sortable="true" headerScope="col" scope="row" media="excel csv xml">
                 <c:out value="${row.studyProtocolId}"/>
@@ -52,7 +52,7 @@
             <display:setProperty name="export.csv.filename" value="resultsTrialSearch.csv"/>
             <display:setProperty name="export.csv.include_header" value="true"/>
             <display:column class="title" title="NCI Trial Identifier" sortable="true" headerScope="col" scope="row" media="html">
-                <a href="#" onclick="viewProtocol('${row.studyProtocolId}','${row.userLastCreated}');"><c:out value="${row.nciIdentifier}"/></a>
+                <a href="#" onclick="viewProtocol('${row.studyProtocolId}');"><c:out value="${row.nciIdentifier}"/></a>
             </display:column>
             <display:column class="title" title="NCI Trial Identifier" headerScope="col" scope="row" media="excel csv xml">
                 <c:out value="${row.nciIdentifier}"/>

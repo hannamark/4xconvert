@@ -36,6 +36,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyRegulatoryAuthorityServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAConstants;
@@ -67,11 +68,14 @@ import org.apache.struts2.ServletActionContext;
  */
 public class TrialUtil extends TrialConvertUtils {
 
+    private CorrelationUtilsRemote correlationUtils;
+
     /**
      * Default constructor.
      */
     public TrialUtil() {
         super();
+        correlationUtils = new CorrelationUtils();
     }
 
     /**
@@ -167,8 +171,7 @@ public class TrialUtil extends TrialConvertUtils {
                 trialDTO.setResponsiblePartyType(SPONSOR);
                 spart = spDtos.get(0);
                 dset = spart.getTelecomAddresses();
-                CorrelationUtils cUtils = new CorrelationUtils();
-                PAContactDTO paDto = cUtils.getContactByPAOrganizationalContactId((Long.valueOf(spart
+                PAContactDTO paDto = getCorrelationUtils().getContactByPAOrganizationalContactId((Long.valueOf(spart
                     .getOrganizationalContactIi().getExtension())));
                 if (paDto.getFullName() != null) {
                     trialDTO.setResponsiblePersonName(paDto.getFullName());
@@ -216,7 +219,7 @@ public class TrialUtil extends TrialConvertUtils {
             .getByStudyProtocol(studyProtocolIi, spart);
         if (spDtos != null && !spDtos.isEmpty()) {
             spart = spDtos.get(0);
-            Organization o = new CorrelationUtils().getPAOrganizationByIi(spart.getResearchOrganizationIi());
+            Organization o = getCorrelationUtils().getPAOrganizationByIi(spart.getResearchOrganizationIi());
             trialDTO.setSponsorName(o.getName());
             trialDTO.setSponsorIdentifier(o.getIdentifier());
         }
@@ -248,8 +251,7 @@ public class TrialUtil extends TrialConvertUtils {
         }
         if (srDTO.getOrganizationIdentifier() != null
                 && StringUtils.isNotEmpty(srDTO.getOrganizationIdentifier().getExtension())) {
-            CorrelationUtils cUtils = new CorrelationUtils();
-            Organization o = cUtils.getPAOrganizationByIi(srDTO.getOrganizationIdentifier());
+            Organization o = getCorrelationUtils().getPAOrganizationByIi(srDTO.getOrganizationIdentifier());
             trialDTO.setSummaryFourOrgIdentifier(o.getIdentifier());
             trialDTO.setSummaryFourOrgName(o.getName());
         }
@@ -310,13 +312,11 @@ public class TrialUtil extends TrialConvertUtils {
        StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
        StudyProtocolQueryDTO spqDto = PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
                                                Long.valueOf(studyProtocolIi.getExtension()));
-       CorrelationUtils cUtils = new CorrelationUtils();
        copy(spDTO, trialDTO);
        copy(spqDto, trialDTO);
-       copyLO(cUtils.getPAOrganizationByIi(
+       copyLO(getCorrelationUtils().getPAOrganizationByIi(
                IiConverter.convertToPaOrganizationIi(spqDto.getLeadOrganizationId())), trialDTO);
-       //
-       copyPI(cUtils.getPAPersonByIi(IiConverter.convertToPaPersonIi(spqDto.getPiId())), trialDTO);
+       copyPI(getCorrelationUtils().getPAPersonByIi(IiConverter.convertToPaPersonIi(spqDto.getPiId())), trialDTO);
        copyResponsibleParty(studyProtocolIi, trialDTO);
        copySponsor(studyProtocolIi, trialDTO);
        copyNctNummber(studyProtocolIi, trialDTO);
@@ -378,8 +378,7 @@ public class TrialUtil extends TrialConvertUtils {
        List<StudySiteDTO> spList = PaRegistry.getStudySiteService()
                                                .getByStudyProtocol(studyProtocolIi, criteriaList);
        for (StudySiteDTO sp : spList) {
-           CorrelationUtils cUtils = new CorrelationUtils();
-           Organization orgBo = cUtils.getPAOrganizationByIi(sp.getResearchOrganizationIi());
+           Organization orgBo = getCorrelationUtils().getPAOrganizationByIi(sp.getResearchOrganizationIi());
            PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();
            orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
            orgWebDTO.setName(orgBo.getName());
@@ -399,7 +398,6 @@ public class TrialUtil extends TrialConvertUtils {
     * @throws PAException the PA exception
     */
    private void copyParticipatingSites(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
-       CorrelationUtils cUtils = new CorrelationUtils();
        List<PaOrganizationDTO> participatingSitesList = new ArrayList<PaOrganizationDTO>();
        StudySiteDTO srDTO = new StudySiteDTO();
        srDTO.setFunctionalCode(CdConverter.convertStringToCd(StudySiteFunctionalCode.TREATING_SITE
@@ -409,7 +407,7 @@ public class TrialUtil extends TrialConvertUtils {
        for (StudySiteDTO sp : spList) {
            StudySiteAccrualStatusDTO ssas = PaRegistry.getStudySiteAccrualStatusService()
                                               .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
-           Organization orgBo = cUtils.getPAOrganizationByIi(sp.getHealthcareFacilityIi());
+           Organization orgBo = getCorrelationUtils().getPAOrganizationByIi(sp.getHealthcareFacilityIi());
            PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();
            orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
            orgWebDTO.setName(orgBo.getName());
@@ -437,8 +435,6 @@ public class TrialUtil extends TrialConvertUtils {
     * @throws PAException the PA exception
     */
    public void copyParticipatingSites(Ii studyProtocolIi, ProprietaryTrialDTO trialDTO) throws PAException {
-
-       CorrelationUtils cUtils = new CorrelationUtils();
        List<SubmittedOrganizationDTO> organizationList = new ArrayList<SubmittedOrganizationDTO>();
        StudySiteDTO srDTO = new StudySiteDTO();
        srDTO.setFunctionalCode(CdConverter.convertStringToCd(StudySiteFunctionalCode.TREATING_SITE.getCode()));
@@ -446,7 +442,7 @@ public class TrialUtil extends TrialConvertUtils {
        for (StudySiteDTO sp : spList) {
            StudySiteAccrualStatusDTO ssas = PaRegistry.getStudySiteAccrualStatusService()
                                .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
-           Organization orgBo = cUtils.getPAOrganizationByIi(sp.getHealthcareFacilityIi());
+           Organization orgBo = getCorrelationUtils().getPAOrganizationByIi(sp.getHealthcareFacilityIi());
            SubmittedOrganizationDTO orgWebDTO = new SubmittedOrganizationDTO(sp, ssas, orgBo);
            List<PaPersonDTO> principalInvresults = PaRegistry.getPAHealthCareProviderService()
                        .getPersonsByStudySiteId(Long.valueOf(sp.getIdentifier().getExtension().toString()),
@@ -728,8 +724,7 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setIdentifier(spDTO.getIdentifier().getExtension());
         trialDTO.setStudyProtocolId(spqDto.getStudyProtocolId().toString());
         trialDTO.setLeadOrgTrialIdentifier(spqDto.getLocalStudyProtocolIdentifier());
-        CorrelationUtils cUtils = new CorrelationUtils();
-        copyLO(cUtils.getPAOrganizationByIi(
+        copyLO(getCorrelationUtils().getPAOrganizationByIi(
                 IiConverter.convertToPaOrganizationIi(spqDto.getLeadOrganizationId())), trialDTO);
         copyNctNummber(studyProtocolIi, trialDTO);
         copySummaryFour(PaRegistry.getStudyResourcingService().
@@ -776,4 +771,18 @@ public class TrialUtil extends TrialConvertUtils {
            }
        }
    }
+
+    /**
+     * @return the correlationUtils
+     */
+    public CorrelationUtilsRemote getCorrelationUtils() {
+        return correlationUtils;
+    }
+
+    /**
+     * @param correlationUtils the correlationUtils to set
+     */
+    public void setCorrelationUtils(CorrelationUtilsRemote correlationUtils) {
+        this.correlationUtils = correlationUtils;
+    }
 }

@@ -46,8 +46,8 @@
         document.forms[0].action="searchTrialgetMyPartiallySavedTrial.action";
         document.forms[0].submit();
     }
-    function viewProtocol(pId,user) {
-        document.forms[0].action="searchTrialview.action?studyProtocolId="+pId+"&usercreated="+user;
+    function viewProtocol(pId) {
+        document.forms[0].action="searchTrialview.action?studyProtocolId="+pId;
         document.forms[0].submit();
     }
     function displayOrg(){
@@ -64,7 +64,7 @@
             }
     }
     function viewPartialProtocol(pId,user) {
-        document.forms[0].action="searchTrialpartiallySubmittedView.action?studyProtocolId="+pId+"&usercreated="+user;
+        document.forms[0].action="searchTrialpartiallySubmittedView.action?studyProtocolId="+pId;
         document.forms[0].submit();
     }
    function deletePartialProtocol() {
