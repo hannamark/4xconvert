@@ -111,6 +111,9 @@ public class PDQTrialLoaderPreprocessor {
     
     private static String DEFAULT_ARM = "Arm I";
     
+    private static String DEFAULT_FUTURE_DATE = "2100-01-01";
+    private static String DEFAULT_PAST_DATE = "1900-01-01";
+    
     public static void main(String[] args) {
         if (args.length != 2) {
             System.out.println("Usage: PDQTrialLoaderPreprocessor <sourceFileDirectory> <destFileDirectory>");
@@ -155,7 +158,14 @@ public class PDQTrialLoaderPreprocessor {
         changeLeadOrgId(document);
         changeMaxAge(document);
         addDefaultArm(document);
+
+        // Do following 3 in this order.
+        defaultStartDate(document);        
         replaceStartDateType(document);
+        replaceAnticipatedDate(document);
+        
+        // call last. Trials will no longer be observational after this. 
+        prependObservational(document);
         
         FileOutputStream fos = new FileOutputStream(destFileDir + "/" + xmlFile);
         XMLOutputter outputter = new XMLOutputter();
@@ -164,7 +174,79 @@ public class PDQTrialLoaderPreprocessor {
         osw.write(output);
         osw.close();
     }
-
+    
+    private void replaceAnticipatedDate(Document document) {
+        Element startDate = document.getRootElement().getChild("start_date");
+        if (startDate != null && "Anticipated".equalsIgnoreCase(startDate.getAttribute("date_type").getValue())) {
+            startDate.setText(DEFAULT_FUTURE_DATE);
+        }
+    }
+    
+    /**
+     * for obs. trials, default the start date based on overall status.
+     * If Overall Status = Not Yet Recruiting
+     * Then add an element for Start Date as 
+     * date_type="Anticipated" start_date=2100-01-01
+     * If Overall Status = Recruiting/No Longer Recruiting (Closed)
+     * date_type="Actual" start_date=1900-01-01
+     * @param document
+     */
+    private void defaultStartDate(Document document) {
+        Element studyDesign = document.getRootElement().getChild("study_design");
+        if ("observational".equals(studyDesign.getChild("study_type").getText())) {
+            Element startDate = document.getRootElement().getChild("start_date");
+            Element overallStatus = document.getRootElement().getChild("overall_status");
+            if (startDate == null 
+                    || (StringUtils.isBlank(startDate.getAttribute("date_type").getValue()) 
+                            && StringUtils.isBlank(startDate.getText()))) {
+                
+                startDate = new Element("startDate");
+                
+                if ("Not Yet Recruiting".equalsIgnoreCase(overallStatus.getText())) {
+                    document.getRootElement().removeChild("start_date");
+                    startDate.setAttribute("date_type", "Anticipated");  
+                    startDate.setText(DEFAULT_FUTURE_DATE);
+                    document.getRootElement().addContent(startDate);
+                } else if ("Recruiting".equalsIgnoreCase(overallStatus.getText())
+                        || "No longer recruiting".equalsIgnoreCase(overallStatus.getText())) {
+                    document.getRootElement().removeChild("start_date");
+                    startDate.setAttribute("date_type", "Actual");
+                    startDate.setText(DEFAULT_PAST_DATE);
+                    document.getRootElement().addContent(startDate);
+                }
+            }
+            
+            if ("Active, not recruiting".equalsIgnoreCase(overallStatus.getText())) {
+                if (startDate != null 
+                        && startDate.getAttribute("date_type") != null
+                        && StringUtils.equals("Actual", startDate.getAttribute("date_type").getValue())) {
+                    startDate.setText(DEFAULT_FUTURE_DATE);
+                    startDate.getAttribute("date_type").setValue("Anticipated");
+                    document.getRootElement().getChild("primary_compl_date").setText(DEFAULT_FUTURE_DATE);
+                    document.getRootElement().getChild("primary_compl_date_type").setText("Anticipated");
+                }
+            }
+            
+        }
+    }
+    
+    /**
+     * Condition: Study Type is Observational  <br>
+     * Action: a. Prefix Official Title with "Observational - " <br>
+     *         b. Change the Study Type = Interventional
+     * @param document
+     */
+    private void prependObservational(Document document) {
+        Element studyDesign = document.getRootElement().getChild("study_design");
+        if ("observational".equals(studyDesign.getChild("study_type").getText())) {
+            Element offTitle = document.getRootElement().getChild("official_title");
+            offTitle.setText("Observational - " + offTitle.getText());
+            studyDesign.getChild("study_type").setText("interventional");
+        }
+    }
+    
+    
+    
     /**
      * replaces the lead org ID with the first secondary ID, removing the first secondary ID.
      * Add the org_study_Id as a secondary ID.
