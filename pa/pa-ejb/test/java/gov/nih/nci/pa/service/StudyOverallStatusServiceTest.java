@@ -93,6 +93,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -509,6 +510,24 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         }
         dto.setReasonText(StConverter.convertToSt(RandomStringUtils.random(2000)));
         bean.create(dto);
+    }
+    
+    @Test
+    public void validateWithBadStatusCode() throws Exception {
+        TestSchema.addAbstractedWorkflowStatus(IiConverter.convertToLong(spIi));
+        StudyProtocolDTO spDto = PaRegistry.getStudyProtocolService()
+            .getStudyProtocol(spIi);
+        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter.convertStringToCd("bad status code"));
+        dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/1999")));
+        dto.setReasonText(StConverter.convertToSt(RandomStringUtils.random(2001)));
+        dto.setStudyProtocolIdentifier(spIi);
+        dto.setIdentifier(null);
+        try {
+             bean.validate(dto, spDto);
+        } catch(PAException e) {
+            assertTrue(e.getMessage().startsWith("Validation Exception Invalid new study status: 'bad status code'."));
+        }
     }
 
     public static StudyOverallStatus createStudyOverallStatusobj(StudyProtocol sp) {

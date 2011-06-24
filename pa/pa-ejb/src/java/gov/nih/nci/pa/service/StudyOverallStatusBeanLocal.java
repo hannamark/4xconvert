@@ -398,7 +398,9 @@ public class StudyOverallStatusBeanLocal extends
         String newStartDateType = studyProtocolDTO.getStartDateTypeCode().getCode();
         String newCompletionDateType = studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode();
 
-        if (oldStatusCode != null && !oldStatusCode.canTransitionTo(newCode)) {
+        if (newCode == null) {
+            errMsg.append("Invalid new study status: '" + statusDto.getStatusCode().getCode() + "'. ");
+        } else if (oldStatusCode != null && !oldStatusCode.canTransitionTo(newCode)) {
             errMsg.append("Invalid study status transition from '" + oldStatusCode.getCode()
                     + "' to '" + newCode.getCode() + "'.  ");
         }
