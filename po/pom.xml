@@ -466,6 +466,12 @@
             <artifactId>cobertura</artifactId>
             <version>1.9</version>
             <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>asm</groupId>
+                    <artifactId>asm</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Testing only jars -->
         <dependency>
