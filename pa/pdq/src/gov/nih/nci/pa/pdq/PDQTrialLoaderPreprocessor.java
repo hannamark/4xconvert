@@ -200,7 +200,7 @@ public class PDQTrialLoaderPreprocessor {
                     || (StringUtils.isBlank(startDate.getAttribute("date_type").getValue()) 
                             && StringUtils.isBlank(startDate.getText()))) {
                 
-                startDate = new Element("startDate");
+                startDate = new Element("start_date");
                 
                 if ("Not Yet Recruiting".equalsIgnoreCase(overallStatus.getText())) {
                     document.getRootElement().removeChild("start_date");
