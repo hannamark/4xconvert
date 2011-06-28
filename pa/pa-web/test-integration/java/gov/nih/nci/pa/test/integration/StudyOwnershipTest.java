@@ -91,12 +91,12 @@ import org.junit.Test;
 public class StudyOwnershipTest extends AbstractPaSeleniumTest {
 
     /**
-     * Tests add/deleting summary 4 anatomic sites.
+     * Tests adding and removing ownership.
      *
      * @throws Exception on error
      */
     @Test
-    public void testAnatomicSite() throws Exception {
+    public void testAddRemoveOwnership() throws Exception {
         loginAsAdminAbstractor();
         verifyTrialSearchPage();
         selenium.type("id=officialTitle", "Test Assign Ownership Trial created by Selenium.");

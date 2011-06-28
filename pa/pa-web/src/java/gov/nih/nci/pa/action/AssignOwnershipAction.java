@@ -211,7 +211,7 @@ public class AssignOwnershipAction extends ActionSupport {
                 for (RegistryUser rUsr : regUserList) {
                     owner = new TrialOwner();
                     owner.setRegUser(rUsr);
-                    owner.setOwner(PaRegistry.getRegistryUserService().hasTrialAccess(rUsr,
+                    owner.setOwner(PaRegistry.getRegistryUserService().isTrialOwner(rUsr.getId(),
                             Long.parseLong(spIi.getExtension())));
                     users.add(owner);
                 }
