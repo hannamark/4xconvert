@@ -206,13 +206,13 @@ public class StudyOverallStatusBeanLocal extends
         StudyStatusCode newStudyStatusCode = StudyStatusCode.getByCode(newStatus.getStatusCode().getCode());
         List<StudyOverallStatus> intermediateStatuses = new ArrayList<StudyOverallStatus>();
 
-        if (oldStudyStatusCode == StudyStatusCode.IN_REVIEW && (newStudyStatusCode == StudyStatusCode.ACTIVE 
+        if (oldStudyStatusCode == StudyStatusCode.IN_REVIEW && (newStudyStatusCode == StudyStatusCode.ACTIVE
                         || newStudyStatusCode == StudyStatusCode.ENROLLING_BY_INVITATION)) {
             intermediateStatuses.add(getSystemStudyOverallStatus(newStatus, StudyStatusCode.APPROVED));
         } else if (oldStudyStatusCode ==  StudyStatusCode.ACTIVE
                 && newStudyStatusCode == StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION) {
             intermediateStatuses.add(getSystemStudyOverallStatus(newStatus, StudyStatusCode.CLOSED_TO_ACCRUAL));
-        } else if ((oldStudyStatusCode == StudyStatusCode.ACTIVE 
+        } else if ((oldStudyStatusCode == StudyStatusCode.ACTIVE
                     || oldStudyStatusCode == StudyStatusCode.ENROLLING_BY_INVITATION)
                 && newStudyStatusCode == StudyStatusCode.COMPLETE) {
             intermediateStatuses.add(getSystemStudyOverallStatus(newStatus, StudyStatusCode.CLOSED_TO_ACCRUAL));
@@ -316,8 +316,9 @@ public class StudyOverallStatusBeanLocal extends
         StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         boolean statusOrDateChanged = true;
         //original submission
-        if (!PAUtil.isCdNull(dwsDTO.getStatusCode()) && DocumentWorkflowStatusCode.SUBMITTED.getCode().
-                equalsIgnoreCase(dwsDTO.getStatusCode().getCode())
+        DocumentWorkflowStatusCode currentDwfStatus =
+            DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dwsDTO.getStatusCode()));
+        if (DocumentWorkflowStatusCode.SUBMITTED == currentDwfStatus
                 && IntConverter.convertToInteger(spDTO.getSubmissionNumber()) == 1) {
             statusOrDateChanged = false;
         }
@@ -343,15 +344,18 @@ public class StudyOverallStatusBeanLocal extends
      * @param studyProtocolDTO protocolDto
      * @throws PAException e
      */
-    public void validate(StudyOverallStatusDTO statusDto,
-            StudyProtocolDTO studyProtocolDTO) throws PAException {
+    public void validate(StudyOverallStatusDTO statusDto, StudyProtocolDTO studyProtocolDTO) throws PAException {
         StringBuffer errorMsg = new StringBuffer();
-        if (!PAUtil.isIiNull(studyProtocolDTO.getIdentifier())
-                && isTrialStatusOrDateChanged(statusDto, studyProtocolDTO.getIdentifier())) {
-            errorMsg.append(enforceBusniessRuleForUpdate(statusDto, studyProtocolDTO));
+        if (statusDto == null) {
+            errorMsg.append("Study Overall Status cannot be null. ");
+        } else {
+            if (!PAUtil.isIiNull(studyProtocolDTO.getIdentifier())
+                    && isTrialStatusOrDateChanged(statusDto, studyProtocolDTO.getIdentifier())) {
+                errorMsg.append(enforceBusniessRuleForUpdate(statusDto, studyProtocolDTO));
+            }
+            errorMsg.append(validateTrialDates(studyProtocolDTO, statusDto));
+            validateReasonText(statusDto);
         }
-        errorMsg.append(validateTrialDates(studyProtocolDTO, statusDto));
-        validateReasonText(statusDto);
         if (errorMsg.length() > 0) {
             throw new PAValidationException("Validation Exception " + errorMsg);
         }

@@ -27,8 +27,8 @@
     <property name="pa-ejb.test.reports" value="${pa.report.dir}/pa-ejb/test-reports"/>
     <property name="pa-ejb.coverage.reports" value="${pa.report.dir}/pa-ejb/coverage-reports"/>
     <property name="pa-ejb.coverage.line" value="68"/>
-    <property name="pa-ejb.coverage.branch" value="52"/>
-    <property name="pa-ejb.pmd.maxerrors" value="413"/>
+    <property name="pa-ejb.coverage.branch" value="54"/>
+    <property name="pa-ejb.pmd.maxerrors" value="412"/>
     <property name="pa-ejb.reporting.outputDirectory" value="${pa.report.dir}/pa-ejb/site"/>
     <property name="pa-ejb.jar" value="${pa-ejb.build.finalName}.jar"/>
     <property name="pa-ejb.build.coberturaOutputDir" value="${pa-ejb.build.dir}/generated-classes"/>

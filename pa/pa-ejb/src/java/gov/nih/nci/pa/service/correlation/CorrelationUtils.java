@@ -139,7 +139,8 @@ import org.hibernate.criterion.Example;
 @SuppressWarnings("unchecked")
 public class CorrelationUtils implements CorrelationUtilsRemote {
     private static final Logger LOG = Logger.getLogger(CorrelationUtils.class);
-    private gov.nih.nci.pa.util.CorrelationUtils commonsCorrelationUtils = new gov.nih.nci.pa.util.CorrelationUtils();
+    private final gov.nih.nci.pa.util.CorrelationUtils commonsCorrelationUtils =
+        new gov.nih.nci.pa.util.CorrelationUtils();
 
     /**
      * @param poOrganizationalContactId id

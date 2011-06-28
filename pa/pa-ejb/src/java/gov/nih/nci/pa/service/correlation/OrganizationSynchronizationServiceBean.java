@@ -134,8 +134,8 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 public class OrganizationSynchronizationServiceBean implements OrganizationSynchronizationServiceRemote {
 
     private static final Logger LOG = Logger.getLogger(OrganizationSynchronizationServiceBean.class);
-    private CorrelationUtils cUtils = new CorrelationUtils();
-    private gov.nih.nci.pa.util.CorrelationUtils commonsCorrUtils = new gov.nih.nci.pa.util.CorrelationUtils();
+    private final CorrelationUtils cUtils = new CorrelationUtils();
+    private final gov.nih.nci.pa.util.CorrelationUtils commonsCorrUtils = new gov.nih.nci.pa.util.CorrelationUtils();
     private static PAServiceUtils paServiceUtil = new PAServiceUtils();
 
 

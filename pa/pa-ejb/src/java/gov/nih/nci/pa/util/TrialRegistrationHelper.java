@@ -107,6 +107,7 @@ import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -397,16 +398,46 @@ public class TrialRegistrationHelper {
      * @throws PAException when error.
      */
     public static void enforceBusinessRulesForStudyContact(StudyProtocolDTO studyProtocolDTO,
-            StudyContactDTO studyContactDTO, StudySiteContactDTO studySiteContactDTO, 
+            StudyContactDTO studyContactDTO, StudySiteContactDTO studySiteContactDTO,
             boolean piExists, boolean respPartyExists) throws PAException {
         enforceBusinessRulesForStudyContact(studyProtocolDTO, studyContactDTO, studySiteContactDTO);
         if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
             checkTelecomReqsForPiAndRespParty(studyContactDTO, studySiteContactDTO, piExists, respPartyExists);
         }
     }
-    
-    private static void checkTelecomReqsForPiAndRespParty(StudyContactDTO studyContactDTO, 
-            StudySiteContactDTO studySiteContactDTO, 
+
+    /**
+     * Validates the study protocol making sure needed fields are set.
+     * @param studyProtocolDTO the study protocol to validate
+     * @throws PAException upon validation error
+     */
+    public static void validateStudyProtocol(StudyProtocolDTO studyProtocolDTO) throws PAException {
+        StringBuffer sb = new StringBuffer();
+        if (studyProtocolDTO == null) {
+            throw new PAValidationException("Study Protocol cannot be null.");
+        }
+        if (PAUtil.isTsNull(studyProtocolDTO.getStartDate())) {
+            sb.append("Study Protocol start date cannot be null.\n");
+        }
+        if (PAUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode())) {
+            sb.append("Study Protocol start date type code cannot be null.\n");
+        }
+        if (PAUtil.isTsNull(studyProtocolDTO.getPrimaryCompletionDate())) {
+            sb.append("Study Protocol primary completion date cannot be null.\n");
+        }
+        if (PAUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())) {
+            sb.append("Study Protocol primary completion date type code cannot be null.\n");
+        }
+        if (PAUtil.isBlNull(studyProtocolDTO.getCtgovXmlRequiredIndicator())) {
+            sb.append("Study Protocol Ct.gov XML indicator cannot be null.");
+        }
+        if (sb.length() > 0) {
+            throw new PAException(VALIDATION_EXCEPTION + sb.toString());
+        }
+    }
+
+    private static void checkTelecomReqsForPiAndRespParty(StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studySiteContactDTO,
             boolean piExists, boolean respPartyExists) throws PAException {
         StringBuffer sb = new StringBuffer();
         sb.append(checkTelecomReqsForPi(studyContactDTO, piExists));
@@ -415,28 +446,28 @@ public class TrialRegistrationHelper {
             throw new PAException(VALIDATION_EXCEPTION + sb.toString());
         }
     }
-    
-    private static String checkTelecomReqsForRespParty(StudySiteContactDTO studySiteContactDTO, 
+
+    private static String checkTelecomReqsForRespParty(StudySiteContactDTO studySiteContactDTO,
            boolean respPartyExists) {
         StringBuffer sb = new StringBuffer();
-        if (respPartyExists && (studySiteContactDTO == null 
+        if (respPartyExists && (studySiteContactDTO == null
                 || studySiteContactDTO.getTelecomAddresses() == null
                 || CollectionUtils.isEmpty(studySiteContactDTO.getTelecomAddresses().getItem()))) {
             sb.append("Telecom information must be provided for Responsible Party StudySiteContact,");
         }
         return sb.toString();
     }
-    
+
     private static String checkTelecomReqsForPi(StudyContactDTO studyContactDTO, boolean piExists) {
         StringBuffer sb = new StringBuffer();
-        if (piExists && (studyContactDTO == null 
+        if (piExists && (studyContactDTO == null
                 || studyContactDTO.getTelecomAddresses() == null
                     || CollectionUtils.isEmpty(studyContactDTO.getTelecomAddresses().getItem()))) {
             sb.append("Telecom information must be provided for Principal Investigator StudyContact,");
         }
         return sb.toString();
     }
-    
+
     /**
      * Validation for basic StudyContact business rules.
      * @param studyProtocolDTO trial
@@ -454,16 +485,16 @@ public class TrialRegistrationHelper {
             }
         }
     }
-    
-    private static String checkStudyContactEmptyTelecom(StudyContactDTO studyContactDTO, 
+
+    private static String checkStudyContactEmptyTelecom(StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO) throws PAException {
         StringBuffer sb = new StringBuffer();
         sb.append(checkStudyOrStudySiteContactTelecom(studyContactDTO, studySiteContactDTO));
         sb.append(isAddressSet(studyContactDTO, studySiteContactDTO));
         return sb.toString();
     }
-    
-    private static String isAddressSet(StudyContactDTO studyContactDTO, 
+
+    private static String isAddressSet(StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO) throws PAException {
         StringBuffer sb = new StringBuffer();
         if (studyContactDTO != null) {
@@ -474,8 +505,8 @@ public class TrialRegistrationHelper {
         }
         return sb.toString();
     }
-    
-    private static String checkStudyOrStudySiteContactTelecom(StudyContactDTO studyContactDTO, 
+
+    private static String checkStudyOrStudySiteContactTelecom(StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO) throws PAException {
         StringBuffer sb = new StringBuffer();
         if (studyContactDTO != null && studySiteContactDTO != null) {
@@ -503,5 +534,4 @@ public class TrialRegistrationHelper {
         }
         return sb.toString();
     }
-
 }

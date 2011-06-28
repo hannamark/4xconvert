@@ -88,6 +88,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ad;
+import gov.nih.nci.iso21090.Any;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.EnOn;
 import gov.nih.nci.iso21090.Ii;
@@ -260,8 +261,8 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
         orgDto.setName(EnOnConverter.convertToEnOn("some org name"));
         orgDto.setTelecomAddress(getTelAdd());
         orgDto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
-        DSet famOrgRel = new DSet();
-        famOrgRel.setItem(new HashSet());
+        DSet<Any> famOrgRel = new DSet<Any>();
+        famOrgRel.setItem(new HashSet<Any>());
         orgDto.setFamilyOrganizationRelationships(famOrgRel);
         try {
             when(poOrgSvc.getOrganization(any(Ii.class))).thenReturn(orgDto);

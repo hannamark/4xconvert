@@ -149,7 +149,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         assertTrue(StudyStatusCode.ACTIVE.getCode().equals(dto.getStatusCode().getCode()));
         dto.setIdentifier(IiConverter.convertToIi((Long) null));
         dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.CLOSED_TO_ACCRUAL));
-        dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("2/2/2009")));
+        dto.setStatusDate(TsConverter.convertToTs(TestSchema.TOMMORROW));
         dto.setStudyProtocolIdentifier(spIi);
         bean.create(dto);
 
@@ -209,7 +209,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
     }
 
     /**
-     * Tests the creation of the intermediate study overall status when moving from In Review to Enrolling by 
+     * Tests the creation of the intermediate study overall status when moving from In Review to Enrolling by
      * Invitation.
      * @throws Exception
      */
@@ -253,7 +253,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         StudyOverallStatus closeToAandI = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
         closeToAandI.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION);
         bean.create(statusConverter.convertFromDomainToDto(closeToAandI));
-        
+
         StudyOverallStatus criteria = new StudyOverallStatus();
         criteria.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL);
         criteria.setStudyProtocol(new StudyProtocol());
@@ -285,7 +285,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         StudyOverallStatus completed = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
         completed.setStatusCode(StudyStatusCode.COMPLETE);
         bean.create(statusConverter.convertFromDomainToDto(completed));
-        
+
         StudyOverallStatus criteria = new StudyOverallStatus();
         criteria.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL);
         criteria.setStudyProtocol(new StudyProtocol());
@@ -298,7 +298,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         assertTrue(systemCreated.isSystemCreated());
         assertEquals("Closed To Accrual and Completed should have the same status date",
                 completed.getStatusDate(), systemCreated.getStatusDate());
-        
+
         criteria = new StudyOverallStatus();
         criteria.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION);
         criteria.setStudyProtocol(new StudyProtocol());
@@ -362,7 +362,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
     public void testClosedAccrualIntermediateStatusCreation() throws Exception {
         InterventionalStudyProtocol sp = createStudyProtocol();
         StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
-        
+
         StudyOverallStatus active = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
         active.setStatusCode(StudyStatusCode.ACTIVE);
         bean.create(statusConverter.convertFromDomainToDto(active));
@@ -408,13 +408,13 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
 
         DocumentWorkflowStatus docWorkflow = TestSchema.createDocumentWorkflowStatus(sp);
         TestSchema.addUpdObject(docWorkflow);
-        
+
         Ii spId = IiConverter.convertToStudyProtocolIi(sp.getId());
         StudyOverallStatus inReview = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
         inReview.setStatusCode(StudyStatusCode.IN_REVIEW);
         bean.create(Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(inReview));
         assertEquals(bean.getByStudyProtocol(spId).size(), 1);
-        
+
         return sp;
     }
 

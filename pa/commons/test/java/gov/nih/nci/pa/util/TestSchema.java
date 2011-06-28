@@ -121,6 +121,7 @@ import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
+import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualStatus;
 import gov.nih.nci.pa.domain.StudySiteContact;
@@ -162,6 +163,7 @@ import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.enums.TissueCollectionMethodCode;
 import gov.nih.nci.pa.enums.TissueSpecimenTypeCode;
 import gov.nih.nci.pa.enums.UnitsCode;
@@ -179,6 +181,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
@@ -189,6 +192,10 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  *
  */
 public class TestSchema {
+    public static final Timestamp TODAY = new Timestamp(new Date().getTime());
+    public static final Timestamp YESTERDAY = new Timestamp(DateUtils.addDays(new Date(), -1).getTime());
+    public static final Timestamp TOMMORROW = new Timestamp(DateUtils.addDays(new Date(), 1).getTime());
+    public static final Timestamp ONE_YEAR_FROM_TODAY = new Timestamp(DateUtils.addYears(new Date(), 1).getTime());
     public static List<Long> studyProtocolIds;
     public static List<Long> studySiteIds;
     public static List<Long> studySiteContactIds;
@@ -258,13 +265,22 @@ public class TestSchema {
 
         StudyProtocol sp = new InterventionalStudyProtocol();
         sp.setOfficialTitle("cancer for THOLA");
-        sp.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));
+        sp.setStartDate(TODAY);
         sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        sp.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
+        sp.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
         sp.setStatusCode(ActStatusCode.ACTIVE);
+        sp.setPhaseCode(PhaseCode.I);
+        sp.setFdaRegulatedIndicator(Boolean.TRUE);
+        sp.setSection801Indicator(Boolean.TRUE);
+        sp.setDelayedpostingIndicator(Boolean.TRUE);
+
+        RegistryUser ru = getRegistryUser();
+        sp.setUserLastCreated(ru.getUserLastCreated());
+        sp.setUserLastUpdated(ru.getUserLastUpdated());
+
         Set<Ii> studySecondaryIdentifiers = new HashSet<Ii>();
         Ii spSecId = new Ii();
         spSecId.setExtension("NCI-2009-00001");
@@ -280,17 +296,19 @@ public class TestSchema {
 
         StudyOverallStatus sos = new StudyOverallStatus();
         sos.setStatusCode(StudyStatusCode.APPROVED);
-        sos.setStatusDate(ISOUtil.dateStringToTimestamp("8/1/2008"));
+        sos.setStatusDate(YESTERDAY);
         sos.setStudyProtocol(sp);
         addUpdObject(sos);
         sos = new StudyOverallStatus();
         sos.setStatusCode(StudyStatusCode.ACTIVE);
-        sos.setStatusDate(ISOUtil.dateStringToTimestamp("8/15/2008"));
+        sos.setStatusDate(TODAY);
         sos.setStudyProtocol(sp);
         addUpdObject(sos);
 
         Organization org = TestSchema.createOrganizationObj();
         addUpdObject(org);
+
+
 
         HealthCareFacility hfc = TestSchema.createHealthCareFacilityObj(org);
         addUpdObject(hfc);
@@ -349,11 +367,18 @@ public class TestSchema {
         addUpdObject(sPart2);
         studySiteIds.add(sPart2.getId());
 
+        StudyResourcing summary4Resourcing = new StudyResourcing();
+        summary4Resourcing.setSummary4ReportedResourceIndicator(Boolean.TRUE);
+        summary4Resourcing.setOrganizationIdentifier("1");
+        summary4Resourcing.setTypeCode(SummaryFourFundingCategoryCode.INSTITUTIONAL);
+        summary4Resourcing.setStudyProtocol(sp);
+        addUpdObject(summary4Resourcing);
+
         Country country = new Country();
-        country.setAlpha2("ZZ");
-        country.setAlpha3("ZZZ");
-        country.setName("Zanzibar");
-        country.setNumeric("67");
+        country.setAlpha2("US");
+        country.setAlpha3("USA");
+        country.setName("United States");
+        country.setNumeric("840");
         addUpdObject(country);
         countries.add(country);
 
@@ -477,7 +502,7 @@ public class TestSchema {
         armIds.add(arm.getId());
 
         RegulatoryAuthority ra = new RegulatoryAuthority();
-        ra.setAuthorityName("AuthorityName");
+        ra.setAuthorityName("Food and Drug Administration");
         ra.setCountry(country);
         addUpdObject(ra);
 
@@ -492,11 +517,13 @@ public class TestSchema {
         sc.setRoleCode(StudyContactRoleCode.SCIENTIFIC_LEADERSHIP);
         sc.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         sc.setClinicalResearchStaff(crs);
+        sc.setEmail("study-contact@example.com");
+        sc.setPhone("123-456-7890");
         addUpdObject(sc);
 
         StudySiteAccrualStatus ssas = new StudySiteAccrualStatus();
         ssas.setStatusCode(RecruitmentStatusCode.CLOSED_TO_ACCRUAL);
-        ssas.setStatusDate(new java.sql.Timestamp(new java.util.Date().getTime()));
+        ssas.setStatusDate(TODAY);
         ssas.setStudySite(sPart);
         addUpdObject(ssas);
 
@@ -731,9 +758,9 @@ public class TestSchema {
     public static Ii createAmendStudyProtocol() {
         StudyProtocol sp = new InterventionalStudyProtocol();
         sp.setOfficialTitle("cancer for THOLA");
-        sp.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));
+        sp.setStartDate(TODAY);
         sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        sp.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
+        sp.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
@@ -746,7 +773,7 @@ public class TestSchema {
         sp.setProprietaryTrialIndicator(Boolean.FALSE);
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
         sp.setSubmissionNumber(2);
-        sp.setAmendmentDate(new Timestamp(new Date().getTime()));
+        sp.setAmendmentDate(TODAY);
         TestSchema.addUpdObject(sp);
         sp.setId(sp.getId());
         return IiConverter.convertToStudyProtocolIi(sp.getId());
@@ -784,12 +811,11 @@ public class TestSchema {
 
     public static StudyRecruitmentStatus createStudyRecruitmentStatus(StudyProtocol sp) {
         StudyRecruitmentStatus create = new StudyRecruitmentStatus();
-        Timestamp now = new Timestamp(new Date().getTime());
         create.setStudyProtocol(sp);
         create.setStatusCode(RecruitmentStatusCode.ACTIVE);
-        create.setStatusDate(now);
+        create.setStatusDate(TODAY);
         create.setUserLastUpdated(getUser());
-        create.setDateLastUpdated(now);
+        create.setDateLastUpdated(TODAY);
         return create;
     }
 
@@ -797,7 +823,7 @@ public class TestSchema {
         StudyMilestone result = new StudyMilestone();
         result.setCommentText(comment);
         result.setMilestoneCode(MilestoneCode.TRIAL_SUMMARY_SENT);
-        result.setMilestoneDate(new Timestamp(new Date().getTime()));
+        result.setMilestoneDate(TODAY);
         result.setStudyProtocol(studyProtocol);
         return result;
     }
@@ -805,7 +831,7 @@ public class TestSchema {
     private static StudyMilestone createTrialSummarySentStudyMilestoneObj(StudyProtocol studyProtocol) {
         StudyMilestone result = new StudyMilestone();
         result.setMilestoneCode(MilestoneCode.TRIAL_SUMMARY_SENT);
-        result.setMilestoneDate(new Timestamp(new Date().getTime()));
+        result.setMilestoneDate(TODAY);
         result.setStudyProtocol(studyProtocol);
         return result;
     }
@@ -825,9 +851,9 @@ public class TestSchema {
         create.setStudyProtocol(studyProtocol);
         create.setDisease(disease);
         create.setUserLastCreated(getUser());
-        create.setDateLastCreated(new Timestamp(new Date().getTime()));
+        create.setDateLastCreated(TODAY);
         create.setUserLastUpdated(getUser());
-        create.setDateLastUpdated(new Timestamp(new Date().getTime()));
+        create.setDateLastUpdated(TODAY);
         return create;
     }
 
@@ -839,9 +865,9 @@ public class TestSchema {
         create.setDisplayName("menuDisplayName");
         create.setPreferredName(preferredName);
         create.setUserLastCreated(getUser());
-        create.setDateLastCreated(new Timestamp(new Date().getTime()));
+        create.setDateLastCreated(TODAY);
         create.setUserLastUpdated(getUser());
-        create.setDateLastUpdated(new Timestamp(new Date().getTime()));
+        create.setDateLastUpdated(TODAY);
         return create;
     }
 
@@ -856,8 +882,7 @@ public class TestSchema {
         sc.setPostalCode("20111");
         sc.setUserLastUpdated(getUser());
         sc.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
-        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
-        sc.setDateLastUpdated(now);
+        sc.setDateLastUpdated(TODAY);
         sc.setStudyProtocol(sp);
         sc.setRoleCode(StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR);
         sc.setHealthCareProvider(hc);
@@ -870,8 +895,7 @@ public class TestSchema {
         ra.setAuthorityName("BWI reg body");
         ra.setCountry(c);
         ra.setUserLastUpdated(getUser());
-        Timestamp now = new Timestamp(new Date().getTime());
-        ra.setDateLastUpdated(now);
+        ra.setDateLastUpdated(TODAY);
         return ra;
     }
 
@@ -882,11 +906,11 @@ public class TestSchema {
         create.setNtTermIdentifier("ntTermIdentifier");
         create.setPreferredName(preferredName);
         create.setStatusCode(ActiveInactivePendingCode.ACTIVE);
-        create.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        create.setStatusDateRangeLow(TODAY);
         create.setUserLastCreated(getUser());
-        create.setDateLastCreated(new Timestamp(new Date().getTime()));
+        create.setDateLastCreated(TODAY);
         create.setUserLastUpdated(getUser());
-        create.setDateLastUpdated(new Timestamp(new Date().getTime()));
+        create.setDateLastUpdated(TODAY);
         return create;
     }
 
@@ -896,11 +920,11 @@ public class TestSchema {
         create.setParentDisease(parentDisease);
         create.setParentDiseaseCode("parentDiseaseCode");
         create.setStatusCode(ActiveInactiveCode.ACTIVE);
-        create.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        create.setStatusDateRangeLow(TODAY);
         create.setUserLastCreated(getUser());
-        create.setDateLastCreated(new Timestamp(new Date().getTime()));
+        create.setDateLastCreated(TODAY);
         create.setUserLastUpdated(getUser());
-        create.setDateLastUpdated(new Timestamp(new Date().getTime()));
+        create.setDateLastUpdated(TODAY);
         return create;
     }
 
@@ -909,11 +933,11 @@ public class TestSchema {
         create.setAlternateName(alternateName);
         create.setDisease(disease);
         create.setStatusCode(ActiveInactiveCode.ACTIVE);
-        create.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        create.setStatusDateRangeLow(TODAY);
         create.setUserLastCreated(getUser());
-        create.setDateLastCreated(new Timestamp(new Date().getTime()));
+        create.setDateLastCreated(TODAY);
         create.setUserLastUpdated(getUser());
-        create.setDateLastUpdated(new Timestamp(new Date().getTime()));
+        create.setDateLastUpdated(TODAY);
         return create;
     }
 
@@ -923,9 +947,9 @@ public class TestSchema {
         create.setDisplayName("displayName");
         create.setCodingSystem("Summary 4 Anatomic Sites");
         create.setUserLastCreated(getUser());
-        create.setDateLastCreated(new Timestamp(new Date().getTime()));
+        create.setDateLastCreated(TODAY);
         create.setUserLastUpdated(getUser());
-        create.setDateLastUpdated(new Timestamp(new Date().getTime()));
+        create.setDateLastUpdated(TODAY);
         return create;
     }
 
@@ -940,13 +964,12 @@ public class TestSchema {
 
     public static DocumentWorkflowStatus createDocumentWorkflowStatus(StudyProtocol sp) {
         DocumentWorkflowStatus create = new DocumentWorkflowStatus();
-        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
         create.setStudyProtocol(sp);
         create.setStatusCode(DocumentWorkflowStatusCode.ACCEPTED);
-        create.setStatusDateRangeLow(now);
+        create.setStatusDateRangeLow(TODAY);
         create.setCommentText("Common Text");
         create.setUserLastUpdated(getUser());
-        create.setDateLastUpdated(now);
+        create.setDateLastUpdated(TODAY);
         return create;
     }
 
@@ -985,8 +1008,7 @@ public class TestSchema {
         create.setName("Mayo University");
         create.setIdentifier("P001");
         create.setUserLastUpdated(user);
-        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
-        create.setDateLastUpdated(now);
+        create.setDateLastUpdated(TODAY);
         create.setIdentifier("1");
         create.setStatusCode(EntityStatusCode.PENDING);
         return create;
@@ -1010,7 +1032,6 @@ public class TestSchema {
     }
 
     public static StudyProtocol createStudyProtocolObj(StudyProtocol sp) {
-        Timestamp now = new Timestamp(new Date().getTime());
         final User user = getUser();
         PaHibernateUtil.getCurrentSession().flush();
 
@@ -1039,23 +1060,23 @@ public class TestSchema {
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
         sp.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.ANCILLARY);
         sp.setPrimaryPurposeOtherText("primaryPurposeOtherText");
-        sp.setPrimaryCompletionDate(now);
+        sp.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
         sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         sp.setPublicDescription("publicDescription");
         sp.setPublicTitle("publicTitle");
-        sp.setRecordVerificationDate(now);
+        sp.setRecordVerificationDate(TODAY);
         sp.setScientificDescription("scientificDescription");
         sp.setSection801Indicator(Boolean.TRUE);
-        sp.setStartDate(now);
+        sp.setStartDate(TODAY);
         sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
-        sp.setDateLastUpdated(new Timestamp(new Date().getTime()));
+        sp.setDateLastUpdated(TODAY);
         sp.setUserLastUpdated(user);
-        sp.setDateLastCreated(now);
+        sp.setDateLastCreated(TODAY);
         sp.setUserLastUpdated(user);
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setAmendmentReasonCode(AmendmentReasonCode.BOTH);
-        sp.setStatusDate(now);
-        sp.setAmendmentDate(now);
+        sp.setStatusDate(TODAY);
+        sp.setAmendmentDate(TODAY);
         sp.setAmendmentNumber("amendmentNumber");
         sp.setSubmissionNumber(2);
         sp.setProprietaryTrialIndicator(Boolean.FALSE);
@@ -1099,11 +1120,9 @@ public class TestSchema {
     }
 
     public static InterventionalStudyProtocol createInterventionalStudyProtocolObj(InterventionalStudyProtocol isp) {
-
-        Timestamp now = new Timestamp((new Date()).getTime());
-        isp.setStartDate(now);
+        isp.setStartDate(TODAY);
         isp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        isp.setPrimaryCompletionDate(now);
+        isp.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
         isp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         isp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
         isp.setAllocationCode(AllocationCode.NA);
@@ -1124,25 +1143,26 @@ public class TestSchema {
         create.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
         create.setLocalStudyProtocolIdentifier("Ecog1");
         create.setUserLastUpdated(getUser());
-        java.sql.Timestamp now = new java.sql.Timestamp((new java.util.Date()).getTime());
-        create.setDateLastUpdated(now);
+        create.setDateLastUpdated(TODAY);
         create.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
-        create.setStatusDateRangeLow(now);
+        create.setStatusDateRangeLow(TODAY);
         create.setStudyProtocol(sp);
         create.setHealthCareFacility(hcf);
         return create;
     }
 
 
-        public static RegistryUser getRegistryUser() {
-            User user = getUser();
-            RegistryUser ru = new RegistryUser();
-            ru.setFirstName("Test");
-            ru.setLastName("User");
-            ru.setEmailAddress("test@example.com");
-            ru.setPhone("123-456-7890");
-            ru.setCsmUserId(user.getUserId());
-            TestSchema.addUpdObject(ru);
-            return ru;
-        }
+    public static RegistryUser getRegistryUser() {
+        User user = getUser();
+        RegistryUser ru = new RegistryUser();
+        ru.setFirstName("Test");
+        ru.setLastName("User");
+        ru.setEmailAddress("test@example.com");
+        ru.setPhone("123-456-7890");
+        ru.setCsmUserId(user.getUserId());
+        ru.setUserLastCreated(user);
+        ru.setUserLastUpdated(user);
+        TestSchema.addUpdObject(ru);
+        return ru;
+    }
 }

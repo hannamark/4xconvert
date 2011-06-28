@@ -142,6 +142,7 @@ import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PhoneUtil;
@@ -171,6 +172,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -182,6 +184,7 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -196,33 +199,18 @@ import org.hibernate.Session;
 @SuppressWarnings("unchecked")
 public class PAServiceUtils {
     private static final Logger LOG = Logger.getLogger(PAServiceUtils.class);
-   /**
-     *
-     */
     private static final String ERR_MSG = "Found more than 1 record for a protocol id = %s for a given status %s";
-    /**
-     * ORGANIZATION_IDENTIFIER_IS_NULL.
-     */
+    /**ORGANIZATION_IDENTIFIER_IS_NULL.*/
     public static final String ORGANIZATION_IDENTIFIER_IS_NULL = "Organization Identifier is null";
-    /**
-     * PRINCIPAL_INVESTIGATOR_NULLIFIED.
-     */
+    /**PRINCIPAL_INVESTIGATOR_NULLIFIED.*/
     public static final String PRINCIPAL_INVESTIGATOR = "Principal Investigator: ";
-    /**
-     * SPONSOR_NULLIFIED.
-     */
+    /** SPONSOR_NULLIFIED.*/
     public static final String SPONSOR = "Sponsor: ";
-    /**
-     * SPONSOR_NULLIFIED.
-     */
+    /**SPONSOR_NULLIFIED.*/
     public static final String RESP_PARTY = "Responsible Party: ";
-    /**
-     * LEAD_ORGANIZATION_NULLIFIED.
-     */
+    /**LEAD_ORGANIZATION_NULLIFIED.*/
     public static final String LEAD_ORGANIZATION_NULLIFIED = "The Lead Organization has been nullified";
-    /**
-     * The size of the counter portion of the NCI ID.
-     */
+    /**The size of the counter portion of the NCI ID.*/
     protected static final int NCI_ID_SIZE = 5;
     /**
      * Executes an sql.
@@ -417,7 +405,6 @@ public class PAServiceUtils {
             if (CollectionUtils.isNotEmpty(spDtos)) {
                 PaRegistry.getStudySiteService().delete(spDtos.get(0).getIdentifier());
             }
-
         }
     }
     /**
@@ -445,7 +432,6 @@ public class PAServiceUtils {
         if (CollectionUtils.isNotEmpty(sraDtos)) {
             PaRegistry.getStudyRegulatoryAuthorityService().delete(sraDtos.get(0).getIdentifier());
         }
-
     }
     /**
      *
@@ -467,17 +453,13 @@ public class PAServiceUtils {
             createSponsorAsPrimaryContact(studyProtocolIi, sponsorOrganizationDTO, responsiblePartyContactIi,
                                           studySiteContactDTO);
         }
-
     }
     private void createPIAsResponsibleParty(Ii studyProtocolIi, OrganizationDTO leadOrganizationDto,
             PersonDTO principalInvestigatorDto, StudyContactDTO studyContactDTO) throws PAException {
-
         DSet<Tel> dset = studyContactDTO.getTelecomAddresses();
-
         new PARelationServiceBean().createPIAsResponsiblePartyRelations(
                 leadOrganizationDto.getIdentifier().getExtension(),
-                principalInvestigatorDto.getIdentifier().getExtension(),
-                IiConverter.convertToLong(studyProtocolIi),
+                principalInvestigatorDto.getIdentifier().getExtension(), IiConverter.convertToLong(studyProtocolIi),
                 DSetConverter.convertDSetToList(dset, PAConstants.EMAIL).get(0),
                 DSetConverter.convertDSetToList(dset, PAConstants.PHONE).get(0));
     }
@@ -1044,14 +1026,15 @@ public class PAServiceUtils {
      */
     public boolean isDocumentInList(List<DocumentDTO> documentDTOs, DocumentTypeCode docTypeCode) {
         boolean retValue = false;
-        for (DocumentDTO doc : documentDTOs) {
-            if (docTypeCode.getCode().equals(
-                        CdConverter.convertCdToString(doc.getTypeCode()))) {
-                retValue = true;
+        if (CollectionUtils.isNotEmpty(documentDTOs)) {
+            for (DocumentDTO doc : documentDTOs) {
+                if (docTypeCode.getCode().equals(CdConverter.convertCdToString(doc.getTypeCode()))) {
+                    retValue = true;
+                }
             }
         }
-     return retValue;
-    }   
+        return retValue;
+    }
     /**
      * Check that all documents coming in are of a valid field type.
      * @param documentDTOs doc list
@@ -1059,20 +1042,17 @@ public class PAServiceUtils {
      */
     public String checkDocumentListForValidFileTypes(List<DocumentDTO> documentDTOs) {
         StringBuilder sBuilder = new StringBuilder();
-        for (DocumentDTO doc : documentDTOs) {
-            String filename = StConverter.convertToString(doc.getFileName());
-            if (DocumentTypeCode.getByCode(CdConverter.convertCdToString(doc.getTypeCode()))
-                    .equals(DocumentTypeCode.TSR)) {
-                if (!isValidFileType(filename, "doc,pdf,html,rtf")) {
-                        sBuilder.append("TSR Document ").append(filename).append(" has an invalid file type.\n");
+        if (CollectionUtils.isNotEmpty(documentDTOs)) {
+            for (DocumentDTO doc : documentDTOs) {
+                String filename = StConverter.convertToString(doc.getFileName());
+                DocumentTypeCode docType = DocumentTypeCode.getByCode(CdConverter.convertCdToString(doc.getTypeCode()));
+                if (docType == DocumentTypeCode.TSR && !isValidFileType(filename, "doc,pdf,html,rtf")) {
+                    sBuilder.append("TSR Document ").append(filename).append(" has an invalid file type.\n");
+                } else if (docType != DocumentTypeCode.OTHER && docType != DocumentTypeCode.TSR
+                        && !isValidFileType(filename)) {
+                    sBuilder.append("Document ").append(filename).append(" has an invalid file type.\n");
                 }
-            } else 
-            
-            if (!DocumentTypeCode.getByCode(CdConverter.convertCdToString(doc.getTypeCode()))
-                    .equals(DocumentTypeCode.OTHER)
-                 && !isValidFileType(filename)) {
-                sBuilder.append("Document ").append(filename).append(" has an invalid file type.\n");
-            } 
+            }
         }
         return sBuilder.toString();
     }
@@ -1104,7 +1084,7 @@ public class PAServiceUtils {
         } else {
             allowedUploadFileTypes = allowedFileTypes;
         }
-        
+
         if (allowedUploadFileTypes != null) {
             int pos = fileName.lastIndexOf('.');
             String uploadedFileType = fileName.substring(pos + 1, fileName.length());
@@ -1118,7 +1098,7 @@ public class PAServiceUtils {
             }
         }
         return isValidFileType;
-    }    
+    }
     /**
      *
      * @param poIi po  Ii
@@ -1751,7 +1731,6 @@ public class PAServiceUtils {
         try {
             poOrg = PoRegistry.getOrganizationEntityService()
                               .getOrganization(IiConverter.convertToPoOrganizationIi(entityIi.getExtension()));
-
         } catch (NullifiedEntityException e) {
             poOrg = null;
         }
@@ -1766,7 +1745,6 @@ public class PAServiceUtils {
         try {
             poPerson = PoRegistry.getPersonEntityService()
                                  .getPerson(IiConverter.convertToPoPersonIi(entityIi.getExtension()));
-
         } catch (NullifiedEntityException e) {
             poPerson = null;
         }
@@ -1992,5 +1970,30 @@ public class PAServiceUtils {
                   }
               }
           }
+      }
+
+      /**
+       * Moves trial documents from one trial with an assigned identifier (i.e NCI-2011-00001) to another trial with
+       * another assigned identifier(i.e. NCI-2011-00001).
+       * @param destinationId the assigned id of the trial that will be the final location for the trial documents
+       * @param sourceId the assigned id of the trial for the newly created documents that need to be moved
+       * @throws PAException on error
+       * @throws IOException on file manipulation error
+       */
+      public void handleUpdatedTrialDocuments(Ii destinationId, Ii sourceId) throws PAException, IOException {
+          String docPath = PaEarPropertyReader.getDocUploadPath();
+          File sourceDir  = new File(docPath + File.separator + sourceId.getExtension());
+          File destination  = new File(docPath + File.separator + destinationId.getExtension());
+
+          //First clean out the destination directory.
+          FileUtils.cleanDirectory(destination);
+
+          //Then move the files to the destination directory.
+          Collection<File> filesToMove = FileUtils.listFiles(sourceDir, FileFilterUtils.trueFileFilter(), null);
+          for (File file : filesToMove) {
+              FileUtils.moveFileToDirectory(file, destination, false);
+          }
+          //Finally delete the now empty source directory.
+          FileUtils.deleteQuietly(sourceDir);
       }
 }

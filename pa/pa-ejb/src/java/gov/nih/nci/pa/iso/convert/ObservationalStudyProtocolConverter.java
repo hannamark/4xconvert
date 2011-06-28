@@ -116,41 +116,29 @@ public class ObservationalStudyProtocolConverter extends StudyProtocolConverter 
         ospDTO.setStudyPopulationDescription(StConverter.convertToSt(osp.getStudyPopulationDescription()));
         return ospDTO;
     }
+
     /**
      *
      * @param ospDTO ObservationalStudyProtocolDTO
      * @return ObservationalStudyProtocol ObservationalStudyProtocol
      * @throws PAException when error.
      */
-    public static ObservationalStudyProtocol convertFromDTOToDomain(ObservationalStudyProtocolDTO ospDTO) 
+    public static ObservationalStudyProtocol convertFromDTOToDomain(ObservationalStudyProtocolDTO ospDTO)
     throws PAException {
         ObservationalStudyProtocol osp =  (ObservationalStudyProtocol) StudyProtocolConverter.convertFromDTOToDomain(
                 ospDTO , new ObservationalStudyProtocol());
-
         osp.setBiospecimenDescription(StConverter.convertToString(ospDTO.getBiospecimenDescription()));
-        if (ospDTO.getBiospecimenRetentionCode() != null) {
-            osp.setBiospecimenRetentionCode(BiospecimenRetentionCode.getByCode(
-                    ospDTO.getBiospecimenRetentionCode().getCode()));
-        }
-        if (ospDTO.getNumberOfGroups() != null) {
-            osp.setNumberOfGroups(ospDTO.getNumberOfGroups().getValue());
-        }
-        if (ospDTO.getSamplingMethodCode() != null) {
-            osp.setSamplingMethodCode(SamplingMethodCode.getByCode(ospDTO.getSamplingMethodCode().getCode()));
-        }
-        if (ospDTO.getStudyModelCode() != null) {
-            osp.setStudyModelCode(StudyModelCode.getByCode(ospDTO.getStudyModelCode().getCode()));
-        }
+        osp.setBiospecimenRetentionCode(BiospecimenRetentionCode.getByCode(
+                CdConverter.convertCdToString(ospDTO.getBiospecimenRetentionCode())));
+        osp.setNumberOfGroups(IntConverter.convertToInteger(ospDTO.getNumberOfGroups()));
+        osp.setSamplingMethodCode(SamplingMethodCode.getByCode(
+                CdConverter.convertCdToString(ospDTO.getSamplingMethodCode())));
+        osp.setStudyModelCode(StudyModelCode.getByCode(CdConverter.convertCdToString(ospDTO.getStudyModelCode())));
         osp.setStudyModelOtherText(StConverter.convertToString(ospDTO.getStudyModelOtherText()));
-        if (ospDTO.getTimePerspectiveCode() != null) {
-            osp.setTimePerspectiveCode(TimePerspectiveCode.getByCode(ospDTO.getTimePerspectiveCode().getCode()));
-        }
-        if (ospDTO.getTimePerspectiveOtherText() != null) {
-            osp.setTimePerspectiveOtherText(StConverter.convertToString(ospDTO.getTimePerspectiveOtherText()));
-        }
-        if (ospDTO.getStudyPopulationDescription() != null) {
-          osp.setStudyPopulationDescription(StConverter.convertToString(ospDTO.getStudyPopulationDescription()));
-        }
+        osp.setTimePerspectiveCode(TimePerspectiveCode.getByCode(
+                CdConverter.convertCdToString(ospDTO.getTimePerspectiveCode())));
+        osp.setTimePerspectiveOtherText(StConverter.convertToString(ospDTO.getTimePerspectiveOtherText()));
+        osp.setStudyPopulationDescription(StConverter.convertToString(ospDTO.getStudyPopulationDescription()));
         return osp;
     }
 }

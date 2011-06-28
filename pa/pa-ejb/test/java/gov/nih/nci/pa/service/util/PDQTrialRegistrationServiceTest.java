@@ -186,7 +186,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
     private final URL testUpdateXMLUrl = this.getClass().getResource("/sample-pdq-update.xml");
     private final Map<Ii, OrganizationDTO> mockOrgs = new HashMap<Ii, OrganizationDTO>();
     private final PersonDTO mockPerson = new PersonDTO();
-    
+
     @Before
     public void setUp() throws Exception {
         setupOrgCorrelationSvcMock();
@@ -312,6 +312,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         when(protocolQuerySvc.getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))
             .thenReturn(new ArrayList<StudyProtocolQueryDTO>()).thenReturn(queryResults);
         bean.setProtocolQueryService(protocolQuerySvc);
+        bean.setPaServiceUtils(new MockPAServiceUtils());
     }
 
     private void setupPoSvc() throws NullifiedEntityException, PAException, TooManyResultsException {
