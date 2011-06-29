@@ -94,7 +94,7 @@
                                                 </td>
                                                 <td class="value">
                                                     <s:textfield name="milestone.date" id="date" maxlength="30" size="30" cssStyle="width:170px;float:left" readonly="true"/>
-                                                    <a href="javascript:NewCal('date','mmddyyyy',true,24)">
+                                                    <a href="javascript:NewCal('date','mmddyyyy',false,24)">
                                                         <img src="<%=request.getContextPath()%>/images/cal.gif" alt="select date" class="calendaricon" />
                                                     </a>
                                                 </td> 

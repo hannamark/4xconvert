@@ -111,6 +111,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.struts2.ServletActionContext;
 /**
 * @author Hugh Reinhart
@@ -183,7 +184,7 @@ public final class MilestoneAction extends AbstractListEditAction {
         }
         setAmendmentMap(spMap);
     }
-
+    
     /**
      * @return action result
      * @throws PAException exception
@@ -194,7 +195,7 @@ public final class MilestoneAction extends AbstractListEditAction {
         String date = ServletActionContext.getRequest().getParameter("date");
         dto.setCommentText(StConverter.convertToSt(milestone.getComment()));
         dto.setMilestoneCode(CdConverter.convertStringToCd(milestone.getMilestone()));
-        if (PAUtil.today().equals(date)) {
+        if (DateUtils.isSameDay(new Date(), PAUtil.dateStringToDateTime(date))) {
             dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
         } else {
             dto.setMilestoneDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(date)));
@@ -310,4 +311,5 @@ public final class MilestoneAction extends AbstractListEditAction {
     public void setAllowedMilestones(List<String> allowedMilestones) {
         this.allowedMilestones = allowedMilestones;
     }
+
 }

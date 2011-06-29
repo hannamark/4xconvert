@@ -271,6 +271,7 @@ public class ISOUtil {
                     new ValidDateFormat("yyyy-MM-dd HH:mm:ss"),
                     new ValidDateFormat("yyyy-MM-dd"),
                     new ValidDateFormat("yyyy/MM/dd"),
+                    new ValidDateFormat("MM-dd-yyyy"),
                     new ValidDateFormat("MM-dd-yyyy HH:mm:ss")
             };
         }

@@ -7,20 +7,30 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.pa.dto.MilestoneWebDTO;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.convert.StudyProtocolConverter;
+import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
 import gov.nih.nci.service.MockStudyProtocolService;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * @author Vrushali
@@ -28,9 +38,10 @@ import org.junit.Test;
  */
 public class MilestoneActionTest extends AbstractPaActionTest {
     MilestoneAction action;
-
+    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+    
     @Before
-    public void prepare() throws PAException {
+    public void prepare() throws PAException {    
         action = new MilestoneAction();
         action.prepare();
     }
@@ -68,7 +79,7 @@ public class MilestoneActionTest extends AbstractPaActionTest {
     public void testAddThrowsEx() throws PAException {
         MilestoneWebDTO webDTO = new MilestoneWebDTO();
         webDTO.setComment("comment");
-        webDTO.setDate("06/18/2009");
+        getRequest().setupAddParameter("date", "06/18/2009");
         webDTO.setMilestone(MilestoneCode.ADMINISTRATIVE_QC_START.getDisplayName());
         action.setMilestone(webDTO);
         action.setSpIi(IiConverter.convertToIi("9"));
@@ -83,14 +94,41 @@ public class MilestoneActionTest extends AbstractPaActionTest {
     public void testAdd() throws PAException {
         MilestoneWebDTO webDTO = new MilestoneWebDTO();
         webDTO.setComment("comment");
-        webDTO.setDate("06/19/2009");
+        getRequest().setupAddParameter("date", "06-19-2009");
         webDTO.setMilestone(MilestoneCode.ADMINISTRATIVE_QC_START.getDisplayName());
         action.setMilestone(webDTO);
         setUpAmendmentSearch();
         String result = action.add();
         assertEquals("Wrong result from add action", "list", result);
     }
-
+    
+    @Test
+    public void testDateCheckPastDate() throws PAException {
+        MilestoneWebDTO webDTO = new MilestoneWebDTO();
+        webDTO.setComment("comment");
+        getRequest().setupAddParameter("date", "06-19-2009");
+        webDTO.setMilestone(MilestoneCode.ADMINISTRATIVE_QC_START.getDisplayName());
+        action.setMilestone(webDTO);
+        setUpDateCheckForTodayOnMilestone();
+        setUpAmendmentSearch();
+        action.add();
+        assertEquals("date does not match", action.getActionErrors().iterator().next());       
+    }
+    
+    @Test
+    public void testDateCheckCurrentDate() throws PAException {
+        String clientDate = sdf.format(new Timestamp((new Date()).getTime() + 2000000));
+        MilestoneWebDTO webDTO = new MilestoneWebDTO();
+        webDTO.setComment("comment");
+        getRequest().setupAddParameter("date", clientDate);
+        webDTO.setMilestone(MilestoneCode.ADMINISTRATIVE_QC_START.getDisplayName());
+        action.setMilestone(webDTO);
+        setUpDateCheckForTodayOnMilestone();
+        setUpAmendmentSearch();
+        String result = action.add();
+        assertEquals("Wrong result from add action", "list", result);       
+    }
+    
     private void setUpAmendmentSearch() {
         action.setStudyProtocolSvc(new MockStudyProtocolService() {
             @Override
@@ -101,5 +139,20 @@ public class MilestoneActionTest extends AbstractPaActionTest {
             }
         });
         action.setSpIi(IiConverter.convertToStudyProtocolIi(1L));
+    }
+    
+    private void setUpDateCheckForTodayOnMilestone() throws PAException {
+        StudyMilestoneServicelocal svcMil = mock(StudyMilestoneServicelocal.class);
+        action.setStudyMilestoneSvc(svcMil);
+        when(svcMil.create(any(StudyMilestoneDTO.class))).thenAnswer(new Answer<StudyMilestoneDTO>() {
+            public StudyMilestoneDTO answer(InvocationOnMock invocation) throws Throwable {
+                Object args[] = invocation.getArguments();
+                StudyMilestoneDTO smDto = (StudyMilestoneDTO) args[0];
+                if (!sdf.format(new Date()).equals(sdf.format(smDto.getMilestoneDate().getValue()))) {
+                    throw new PAException("date does not match");
+                }
+                return smDto;
+            }
+          });
     }
 }
