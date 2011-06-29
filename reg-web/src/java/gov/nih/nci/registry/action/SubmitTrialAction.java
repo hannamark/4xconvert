@@ -156,7 +156,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             return REDIRECT_TO_SEARCH;
         }
         trialDTO = new TrialDTO();
-        trialDTO.setResponsiblePartyType("pi");
+        trialDTO.setResponsiblePartyType("PI");
         trialDTO.setTrialType("Interventional");
         trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
         TrialValidator.removeSessionAttributes();
@@ -206,7 +206,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO, null);
             Ii responsiblePartyContactIi = null;
             if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-                if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
+                if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("PI")) {
                     studyContactDTO = util.convertToStudyContactDTO(trialDTO);
                 } else {
                    studySiteContactDTO = util.convertToStudySiteContactDTO(trialDTO);

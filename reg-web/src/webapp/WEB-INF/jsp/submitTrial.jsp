@@ -142,7 +142,7 @@
             }
                 
             function manageRespPartyLookUp() {
-                if ($('trialDTO.responsiblePartyTypepi').checked == true) {
+                if ($('trialDTO.responsiblePartyTypePI').checked == true) {
                     $('rpcid').style.display='none';
                     $('rpgcid').style.display='none';
                     $('trialDTO.responsiblePersonName').value = '';

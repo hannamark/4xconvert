@@ -254,7 +254,7 @@ public class TrialValidator {
        addErrors(trialDto.getResponsiblePartyType(), "ResponsiblePartyNotSelected", "error.submit.ResponsibleParty",
             fieldErrorMap);
        addErrors(trialDto.getSponsorIdentifier(), "trialDTO.sponsorIdentifier", "error.submit.sponsor", fieldErrorMap);
-       if (!(trialDto.getResponsiblePartyType().equals("pi"))) {
+       if (!(trialDto.getResponsiblePartyType().equalsIgnoreCase("PI"))) {
               addErrors(trialDto.getResponsiblePersonIdentifier(), "ResponsiblePartyNotSelected",
               "error.submit.sponsorResponsibleParty", fieldErrorMap);
        }

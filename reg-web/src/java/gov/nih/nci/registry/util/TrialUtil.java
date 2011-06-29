@@ -158,7 +158,7 @@ public class TrialUtil extends TrialConvertUtils {
         List<StudyContactDTO> scDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
         DSet<Tel> dset = null;
         if (CollectionUtils.isNotEmpty(scDtos)) {
-            trialDTO.setResponsiblePartyType("pi");
+            trialDTO.setResponsiblePartyType("PI");
             scDto = scDtos.get(0);
             dset = scDto.getTelecomAddresses();
         } else {
