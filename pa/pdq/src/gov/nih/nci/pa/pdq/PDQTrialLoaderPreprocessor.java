@@ -90,9 +90,12 @@ import java.io.IOException;
 import java.io.FilenameFilter;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.Attribute;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
@@ -113,6 +116,22 @@ public class PDQTrialLoaderPreprocessor {
     
     private static String DEFAULT_FUTURE_DATE = "2100-01-01";
     private static String DEFAULT_PAST_DATE = "1900-01-01";
+    
+    private static Map<String, String> COOP_GROUP_MAP = new HashMap<String, String>();
+    static {
+        COOP_GROUP_MAP.put("ACOSOG", "American College of Surgeons Oncology Trials Group");
+        COOP_GROUP_MAP.put("CALGB", "Cancer and Leukemia Group B");
+        COOP_GROUP_MAP.put("ECOG", "Eastern Cooperative Oncology Group");
+        COOP_GROUP_MAP.put("GOG", "Gynecologic Oncology Group");
+        COOP_GROUP_MAP.put("NCIC", "National Cancer Institute of Canada Clinical Trials Group");
+        COOP_GROUP_MAP.put("NCCTG", "North Central Cancer Treatment Group");
+        COOP_GROUP_MAP.put("NSABP", "National Surgical Adjuvant Breast and Bowel Project");
+        COOP_GROUP_MAP.put("RTOG", "Radiation Therapy Oncology Group");
+        COOP_GROUP_MAP.put("SWOG", "Southwest Oncology Group");
+        COOP_GROUP_MAP.put("COG", "Children's Oncology Group");
+        COOP_GROUP_MAP.put("ACRIN", "American College of Radiology Imaging Network");
+        COOP_GROUP_MAP.put("EORTC", "European Organisation for Research and Treatment of Cancer");
+    }
     
     public static void main(String[] args) {
         if (args.length != 2) {
@@ -167,12 +186,36 @@ public class PDQTrialLoaderPreprocessor {
         // call last. Trials will no longer be observational after this. 
         prependObservational(document);
         
+        removePartSites(document);
+        
         FileOutputStream fos = new FileOutputStream(destFileDir + "/" + xmlFile);
         XMLOutputter outputter = new XMLOutputter();
         OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
         String output = outputter.outputString(document);
         osw.write(output);
         osw.close();
+    }
+    
+    /**
+     * PO-3778. Remove all part sites but the first for cooperative group trials.
+     * @param document
+     */
+    private void removePartSites(Document document) {
+        Element leadOrg = document.getRootElement().getChild("lead_org");
+        Attribute ctepId = leadOrg.getAttribute("ctep-id");
+        boolean removeSites = false;
+        if (ctepId != null && StringUtils.isNotEmpty(ctepId.getValue())) {
+            removeSites = COOP_GROUP_MAP.keySet().contains(ctepId.getValue()); 
+        } else {
+            removeSites = COOP_GROUP_MAP.values().contains(leadOrg.getText().trim());
+        }
+        
+        if (removeSites) {
+            List<Element> locations = document.getRootElement().getChildren("location");
+            while(locations.size() > 1) {
+                locations.remove(locations.size() - 1);
+            }
+        } 
     }
     
     private void replaceAnticipatedDate(Document document) {
