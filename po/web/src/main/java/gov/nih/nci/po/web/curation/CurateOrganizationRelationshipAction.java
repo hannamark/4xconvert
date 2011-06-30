@@ -137,7 +137,6 @@ public class CurateOrganizationRelationshipAction extends ActionSupport implemen
     @Override
     public String input() {
         setOrgRelationship(PoRegistry.getOrganizationRelationshipService().getById(getOrgRelationship().getId()));
-        getOrgRelationship().setEndDate(new Date());
         setRootKey(PoHttpSessionUtil.addAttribute(getOrgRelationship()));
 
         getNewOrgRelationship().setStartDate(new Date());

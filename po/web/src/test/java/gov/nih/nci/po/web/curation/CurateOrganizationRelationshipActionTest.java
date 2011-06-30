@@ -157,6 +157,7 @@ public class CurateOrganizationRelationshipActionTest extends AbstractPoTest {
 
         action.setOrgRelationship(orgRelationship);
         assertEquals("input", action.input());
+        assertNull(action.getOrgRelationship().getEndDate());
 
     }
 

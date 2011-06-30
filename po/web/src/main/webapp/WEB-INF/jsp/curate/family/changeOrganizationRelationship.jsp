@@ -70,7 +70,8 @@
                                     <po:inputRowElement>
                                         <po:field labelKey="organizationRelationship.popup.endDate" fieldRequired="true">
                                             <sj:datepicker readonly="true" required="true" name="orgRelationship.endDate" id="orgRelationship.endDate" 
-                                                displayFormat="mm/dd/yy" labelposition="left" minDate="orgRelationship.startDate" maxDate="new Date()"/>
+                                                displayFormat="mm/dd/yy" labelposition="left" minDate="orgRelationship.startDate" maxDate="new Date()"
+                                                value="today"/>
                                         </po:field>
                                         <s:fielderror>
                                             <s:param>orgRelationship.endDate</s:param>
