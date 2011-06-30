@@ -129,6 +129,8 @@ public abstract class AbstractTsrReportGenerator {
     private static final float FLOAT_POINT_5 = 0.5f;
     private static final float FLOAT_1 = 1.0f;
     private static final float FLOAT_100 = 100.0f;
+    private static final String PERC_100 = "100%";
+    
     private static final String SPACE = " ";
     private static final String HYPHEN = "-";
 
@@ -946,7 +948,11 @@ public abstract class AbstractTsrReportGenerator {
     private Cell getItemValueCell(String itemValueText, int colspan) throws BadElementException {
         Font itemValueFont = FontFactory.getFont(FontFactory.HELVETICA, Font.DEFAULTSIZE, Font.NORMAL, Color.BLACK);
         Cell cell = new Cell(new Phrase(StringUtils.replace(itemValueText, "\r\n", "\n"), itemValueFont));
-        cell.setWidth(FLOAT_100);
+        if (StringUtils.length(itemValueText) <= FLOAT_100) {
+            cell.setWidth(FLOAT_100 * new Float(StringUtils.length(itemValueText)).floatValue());   
+        } else {
+            cell.setWidth(PERC_100);
+        }
         cell.setVerticalAlignment(Element.ALIGN_JUSTIFIED);
         if (colspan > 1) {
             cell.setColspan(colspan);
