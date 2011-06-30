@@ -308,8 +308,6 @@ public class TestSchema {
         Organization org = TestSchema.createOrganizationObj();
         addUpdObject(org);
 
-
-
         HealthCareFacility hfc = TestSchema.createHealthCareFacilityObj(org);
         addUpdObject(hfc);
         healthCareFacilityIds.add(hfc.getId());
@@ -1006,13 +1004,11 @@ public class TestSchema {
     public static Organization createOrganizationObj(User user) {
         Organization create = new Organization();
         create.setName("Mayo University");
-        create.setIdentifier("P001");
         create.setUserLastUpdated(user);
         create.setDateLastUpdated(TODAY);
         create.setIdentifier("1");
         create.setStatusCode(EntityStatusCode.PENDING);
         return create;
-
     }
 
     public static Person createPersonObj() {

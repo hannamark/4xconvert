@@ -78,22 +78,25 @@ public class MockLookUpTableServiceBean implements LookUpTableServiceRemote {
      */
     public String getPropertyValue(String name) throws PAException {
         String value = "";
-        if (name.equals("tsr.subject"))
+        if (name.equals("tsr.subject")) {
             return "NCI Clinical Trials Reporting Program (CTRP) Trial Summary Report and ClinicalTrials.gov Registration File";
-        else if (name.equals("CADSR_CS_ID"))
+        } else if (name.equals("CADSR_CS_ID")) {
             return "2960572";
-        else if (name.equals("CADSR_CS_VERSION"))
+        } else if (name.equals("CADSR_CS_VERSION")) {
             return "1";
-        else if (name.equals("CDE_REQUEST_TO_EMAIL"))
+        } else if (name.equals("CDE_REQUEST_TO_EMAIL")) {
             return "asharma@scenpro.com";
-        else if (name.equals("CDE_REQUEST_TO_EMAIL_SUBJECT"))
+        } else if (name.equals("CDE_REQUEST_TO_EMAIL_SUBJECT")) {
             return "New CDE Request";
-        else if (name.equals("CDE_REQUEST_TO_EMAIL_TEXT"))
+        } else if (name.equals("CDE_REQUEST_TO_EMAIL_TEXT")) {
             return "Please create the new CDE. Thanks, CTRO";
-        else if (name.equals("allowed.uploadfile.types"))
+        } else if (name.equals("allowed.uploadfile.types")) {
             return "doc,pdf,xls,wpd,docx,docm,xlsx,xlsm,xlsb";
-        else
+        } else if (name.equals("fromaddress")) {
+            return "ncictro@mail.nih.gov";
+        } else {
             return value;
+        }
     }
 
     /**

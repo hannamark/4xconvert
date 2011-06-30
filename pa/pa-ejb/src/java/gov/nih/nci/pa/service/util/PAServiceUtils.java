@@ -136,7 +136,7 @@ import gov.nih.nci.pa.service.StudyPaService;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
-import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
@@ -553,7 +553,7 @@ public class PAServiceUtils {
      * @throws PAException on error
      */
     public void manageSponsor(Ii studyProtocolIi, OrganizationDTO sponsorDto) throws PAException {
-        OrganizationCorrelationServiceBean ocsr = new OrganizationCorrelationServiceBean();
+        OrganizationCorrelationServiceRemote ocsr = PaRegistry.getOrganizationCorrelationService();
         String orgPoIdentifier = sponsorDto.getIdentifier().getExtension();
         if (orgPoIdentifier == null) {
             throw new PAException(ORGANIZATION_IDENTIFIER_IS_NULL);

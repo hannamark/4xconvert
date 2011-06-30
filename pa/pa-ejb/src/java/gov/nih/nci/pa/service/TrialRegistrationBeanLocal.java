@@ -141,6 +141,7 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TrialRegistrationHelper;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -890,8 +891,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
                 && (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty())) {
             studyProtocolDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.TRUE));
             studyProtocolDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.FALSE));
-
-            // size of ind/ide > 0
         }
         studyProtocolDTO.setIdentifier(null);
         studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt("1"));
@@ -1905,6 +1904,12 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         }
         if (AMENDMENT.equalsIgnoreCase(operation) && PAUtil.isTsNull(studyProtocolDTO.getAmendmentDate())) {
             errorMsg.append("Amendment Date is required.  ");
+        }
+        if (AMENDMENT.equalsIgnoreCase(operation)
+                && !studyInboxServiceLocal.getOpenInboxEntries(studyProtocolDTO.getIdentifier()).isEmpty()) {
+            String ctroAddress = PaRegistry.getLookUpTableService().getPropertyValue("fromaddress");
+            errorMsg.append("A trial with unaccepted updates cannot be amended. Please contact the CTRO at ")
+                .append(ctroAddress).append(" to have your trial's updates accepted.");
         }
         if (errorMsg.length() > 0) {
             throw new PAException(VALIDATION_EXCEPTION + errorMsg);

@@ -78,6 +78,7 @@
  */
 package gov.nih.nci.pa.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -89,11 +90,12 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.domain.PAProperties;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
-import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
@@ -113,6 +115,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.MockLookUpTableServiceBean;
@@ -121,9 +124,11 @@ import gov.nih.nci.pa.service.util.MockRegistryUserServiceBean;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegulatoryInformationBean;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
@@ -142,6 +147,7 @@ import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
+import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -154,39 +160,48 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     private final TrialRegistrationBeanLocal bean = new TrialRegistrationBeanLocal();
-    StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
-    StudyOverallStatusServiceLocal studyOverallStatusService = new StudyOverallStatusBeanLocal();
-    StudyIndldeServiceLocal studyIndldeService  = new StudyIndldeBeanLocal();
-    StudyResourcingServiceLocal studyResourcingService = new StudyResourcingBeanLocal();
-    DocumentServiceLocal documentService = new DocumentBeanLocal();
-    StudyDiseaseServiceLocal studyDiseaseService = new StudyDiseaseBeanLocal();
-    ArmServiceLocal armService = new ArmBeanLocal();
-    PlannedActivityServiceLocal plannedActivityService = new PlannedActivityBeanLocal();
-    StratumGroupServiceLocal subGroupsService = new StratumGroupBeanLocal();
-    StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
-    StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
-    StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
-    StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = new StudyOutcomeMeasureBeanLocal();
-    StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityBeanLocal();
+    private StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
+    private StudyOverallStatusServiceLocal studyOverallStatusService = new StudyOverallStatusBeanLocal();
+    private StudyIndldeServiceLocal studyIndldeService  = new StudyIndldeBeanLocal();
+    private StudyResourcingServiceLocal studyResourcingService = new StudyResourcingBeanLocal();
+    private DocumentServiceLocal documentService = new DocumentBeanLocal();
+    private StudyDiseaseServiceLocal studyDiseaseService = new StudyDiseaseBeanLocal();
+    private ArmServiceLocal armService = new ArmBeanLocal();
+    private PlannedActivityServiceLocal plannedActivityService = new PlannedActivityBeanLocal();
+    private StratumGroupServiceLocal subGroupsService = new StratumGroupBeanLocal();
+    private StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
+    private StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
+    private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
+    private StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = new StudyOutcomeMeasureBeanLocal();
+    private StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityBeanLocal();
     private StudyContactServiceLocal studyContactSvc = new StudyContactBeanLocal();
     private RegulatoryInformationServiceRemote regulatoryInfoSvc = new RegulatoryInformationBean();
     private ServiceLocator paSvcLoc;
-    private DocumentWorkflowStatusServiceLocal documentWrkService;
+    private DocumentWorkflowStatusServiceLocal documentWrkService = new DocumentWorkflowStatusBeanLocal();
     private PoServiceLocator poSvcLoc;
     private OrganizationEntityServiceRemote poOrgSvc;
     private PersonEntityServiceRemote poPersonSvc;
 
     private Ii spIi;
 
+    private PAServiceUtils paServiceUtils = new MockPAServiceUtils();
+
     @Before
     public void init() throws Exception {
         TestSchema.primeData();
+        PAProperties prop = new PAProperties();
+        prop.setName("fromaddress");
+        prop.setValue("ncictro@mail.nih.gov");
+        TestSchema.addUpdObject(prop);
+
         bean.setStudyProtocolService(studyProtocolService);
         bean.setStudyOverallStatusService(studyOverallStatusService);
         bean.setStudyIndldeService(studyIndldeService);
@@ -202,40 +217,75 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         bean.setStudyOutcomeMeasureService(studyOutcomeMeasureService);
         bean.setStudyRegulatoryAuthorityService(studyRegulatoryAuthorityService);
         bean.setRegulatoryInfoBean(regulatoryInfoSvc);
+        bean.setDocWrkFlowStatusService(documentWrkService);
         bean.setUserServiceLocal(new MockRegistryUserServiceBean());
         bean.setPaServiceUtils(new MockPAServiceUtils());
+
         CSMUserService.setRegistryUserService(new MockCSMUserService());
+
         spIi = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
         paSvcLoc = mock (ServiceLocator.class);
         PaRegistry.getInstance().setServiceLocator(paSvcLoc);
-        documentWrkService = mock (DocumentWorkflowStatusServiceLocal.class);
+
         when (paSvcLoc.getDocumentWorkflowStatusService()).thenReturn(documentWrkService);
         when (paSvcLoc.getLookUpTableService()).thenReturn(new MockLookUpTableServiceBean());
-        StudyProtocolServiceLocal studyProtocolSvc = mock(StudyProtocolServiceLocal.class);
-        when(paSvcLoc.getStudyProtocolService()).thenReturn(studyProtocolSvc);
-        when (documentWrkService.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(new DocumentWorkflowStatusDTO());
-        StudySiteServiceLocal studySiteSrv = mock (StudySiteServiceLocal.class);
+
+        StudySiteServiceLocal studySiteSrv = mock(StudySiteServiceLocal.class);
         when(paSvcLoc.getStudySiteService()).thenReturn(studySiteSrv);
         StudySiteDTO studySiteDTO = new StudySiteDTO();
-        studySiteDTO.setResearchOrganizationIi(IiConverter.convertToPoResearchOrganizationIi("1"));
+        studySiteDTO.setResearchOrganizationIi(IiConverter.convertToPoResearchOrganizationIi("abc"));
         when(studySiteSrv.search(any(StudySiteDTO.class), any(LimitOffset.class))).thenReturn(
                 Arrays.asList(studySiteDTO));
+
         OrganizationCorrelationServiceRemote ocsr = mock(OrganizationCorrelationServiceRemote.class);
-        when(ocsr.getPoResearchOrganizationByEntityIdentifier(any(Ii.class))).thenReturn(IiConverter.convertToPoResearchOrganizationIi("1"));
-        when(ocsr.createResearchOrganizationCorrelations(any(String.class))).thenReturn(1L);
+        when(ocsr.getPoResearchOrganizationByEntityIdentifier(any(Ii.class))).thenAnswer(new Answer<Ii>() {
+            public Ii answer(InvocationOnMock invocation) throws Throwable {
+                Ii ii = (Ii) invocation.getArguments()[0];
+                return IiConverter.convertToPoResearchOrganizationIi(ii.getExtension());
+            }
+        });
         when(paSvcLoc.getOrganizationCorrelationService()).thenReturn(ocsr);
 
         MailManagerServiceLocal mailSvc = mock(MailManagerServiceLocal.class);
-
+        StudyInboxServiceLocal studyInboxSvc = new StudyInboxServiceBean();
         StudyMilestoneServiceBean studyMilestoneSvc = new StudyMilestoneServiceBean();
+        AbstractionCompletionServiceRemote abstractionCompletionSvc = mock(AbstractionCompletionServiceRemote.class);
+        StudyOnholdServiceLocal studyOnholdSvc = new StudyOnholdBeanLocal();
+        StudyRelationshipBeanLocal studyRelationshipSvc = new StudyRelationshipBeanLocal();
+        TSRReportGeneratorServiceRemote tsrReportSvc = mock(TSRReportGeneratorServiceRemote.class);
+        ByteArrayOutputStream rtfResults = new ByteArrayOutputStream();
+        rtfResults.write("RTF Report".getBytes());
+        when(tsrReportSvc.generateHtmlTsrReport(any(Ii.class))).thenReturn(rtfResults);
+        when(tsrReportSvc.generatePdfTsrReport(any(Ii.class))).thenReturn(rtfResults);
+        when(tsrReportSvc.generateRtfTsrReport(any(Ii.class))).thenReturn(rtfResults);
+
         studyMilestoneSvc.setStudyProtocolService(studyProtocolService);
+        studyMilestoneSvc.setStudyInboxService(studyInboxSvc);
+        studyMilestoneSvc.setStudyOnholdService(studyOnholdSvc);
+        studyMilestoneSvc.setAbstractionCompletionService(abstractionCompletionSvc);
         when(paSvcLoc.getStudyMilestoneService()).thenReturn(studyMilestoneSvc);
         when(paSvcLoc.getStudyIndldeService()).thenReturn(studyIndldeService);
         when(paSvcLoc.getDocumentService()).thenReturn(documentService);
         when(paSvcLoc.getStudyContactService()).thenReturn(studyContactSvc);
         when(paSvcLoc.getStudyRegulatoryAuthorityService()).thenReturn(studyRegulatoryAuthorityService);
+        when(paSvcLoc.getStudyProtocolService()).thenReturn(studyProtocolService);
+        when(paSvcLoc.getStudyDiseaseService()).thenReturn(new StudyDiseaseServiceBean());
+        when(paSvcLoc.getStudyObjectiveService()).thenReturn(new StudyObjectiveBeanLocal());
+        when(paSvcLoc.getStratumGroupService()).thenReturn(new StratumGroupBeanLocal());
+        when(paSvcLoc.getStudyResoucringService()).thenReturn(studyResourcingService);
+        when(paSvcLoc.getStudyOnholdService()).thenReturn(studyOnholdSvc);
+        when(paSvcLoc.getStudyOverallStatusService()).thenReturn(studyOverallStatusService);
+        when(paSvcLoc.getStudyRecruitmentStatusService()).thenReturn(new StudyRecruitmentStatusBeanLocal());
+        when(paSvcLoc.getArmService()).thenReturn(armService);
+        when(paSvcLoc.getOutcomeMeasureService()).thenReturn(studyOutcomeMeasureService);
+        when(paSvcLoc.getPlannedMarkerService()).thenReturn(new PlannedMarkerServiceBean());
         bean.setOcsr(ocsr);
         bean.setMailManagerSerivceLocal(mailSvc);
+        bean.setStudyMilestoneService(studyMilestoneSvc);
+        bean.setStudyInboxServiceLocal(studyInboxSvc);
+        bean.setTsrReportService(tsrReportSvc);
+        bean.setStudyRelationshipService(studyRelationshipSvc);
+        bean.setAbstractionCompletionService(abstractionCompletionSvc);
         setupPoSvc();
     }
 
@@ -252,16 +302,13 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
 
         ResearchOrganizationDTO roDTO = new ResearchOrganizationDTO();
         roDTO.setPlayerIdentifier(IiConverter.convertToIi(1L));
+        roDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoClinicalResearchStaffIi("1")));
+
         ClinicalResearchStaffDTO crsDTO = new ClinicalResearchStaffDTO();
         crsDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoClinicalResearchStaffIi("1")));
-        when(poSvcLoc.getOrganizationEntityService()).thenReturn(poOrgSvc);
-        when(poSvcLoc.getPersonEntityService()).thenReturn(poPersonSvc);
-        when(poSvcLoc.getResearchOrganizationCorrelationService()).thenReturn(roCorrelationSvc);
-        when(poSvcLoc.getClinicalResearchStaffCorrelationService()).thenReturn(crsSvc);
-        when(poSvcLoc.getHealthCareProviderCorrelationService()).thenReturn(hcpSvc);
 
         OrganizationDTO org = new OrganizationDTO();
-        org.setIdentifier(IiConverter.convertToIi(1L));
+        org.setIdentifier(IiConverter.convertToPoOrganizationIi("1"));
         org.setName(EnOnConverter.convertToEnOn("Org Name"));
         org.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
         org.setPostalAddress(AddressConverterUtil.create("2115 Executive Blvd.", "", "Rockville", "MD", "27852", "USA"));
@@ -270,55 +317,46 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         hcpDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoHealtcareProviderIi("1")));
         hcpDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
 
+        PersonDTO person = new PersonDTO();
+        person.setIdentifier(IiConverter.convertToPoPersonIi("1"));
+
         when(poOrgSvc.getOrganization(any(Ii.class))).thenReturn(org);
-        when(poPersonSvc.getPerson(any(Ii.class))).thenReturn(new PersonDTO());
+        when(poPersonSvc.getPerson(any(Ii.class))).thenReturn(person);
         when(roCorrelationSvc.getCorrelation(any(Ii.class))).thenReturn(roDTO);
         when(crsSvc.getCorrelation(any(Ii.class))).thenReturn(crsDTO);
         when(hcpSvc.getCorrelation(any(Ii.class))).thenReturn(hcpDTO);
+
+        when(poSvcLoc.getOrganizationEntityService()).thenReturn(poOrgSvc);
+        when(poSvcLoc.getPersonEntityService()).thenReturn(poPersonSvc);
+        when(poSvcLoc.getResearchOrganizationCorrelationService()).thenReturn(roCorrelationSvc);
+        when(poSvcLoc.getClinicalResearchStaffCorrelationService()).thenReturn(crsSvc);
+        when(poSvcLoc.getHealthCareProviderCorrelationService()).thenReturn(hcpSvc);
     }
 
     @Test
     public void createInterventionalStudyProtocolTest() throws Exception {
-        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
 
-        DocumentDTO icDoc = new DocumentDTO();
-        icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
-        icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
-        icDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
-
-        DocumentDTO protocolDoc = new DocumentDTO();
-        protocolDoc.setFileName(StConverter.convertToSt("Protocol.doc"));
-        protocolDoc.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-        protocolDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
-
-        DocumentDTO irbDoc = new DocumentDTO();
-        irbDoc.setFileName(StConverter.convertToSt("IRB.doc"));
-        irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
-        irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
-
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
+        OrganizationDTO summary4Org = new OrganizationDTO();
 
         StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
 
         Ii ii = bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                studyResourcingDTOs, Arrays.asList(icDoc, protocolDoc, irbDoc), leadOrganizationDTO,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
@@ -327,36 +365,18 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
 
     @Test
     public void nullSiteIdentifiers() throws Exception {
-        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<StudySiteDTO> siteIdentifiers = null;
+        List<DocumentDTO> documents = getStudyDocuments();
 
-        DocumentDTO icDoc = new DocumentDTO();
-        icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
-        icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
-        icDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
-
-        DocumentDTO protocolDoc = new DocumentDTO();
-        protocolDoc.setFileName(StConverter.convertToSt("Protocol.doc"));
-        protocolDoc.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-        protocolDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
-
-        DocumentDTO irbDoc = new DocumentDTO();
-        irbDoc.setFileName(StConverter.convertToSt("IRB.doc"));
-        irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
-        irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
-
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
@@ -366,7 +386,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         regAuthority.setIdentifier(null);
 
         Ii ii = bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                studyResourcingDTOs, Arrays.asList(icDoc, protocolDoc, irbDoc), leadOrganizationDTO,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
@@ -378,45 +398,27 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         thrown.expect(PAException.class);
         thrown.expectMessage("Study Overall Status cannot be null.");
 
-        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         StudyOverallStatusDTO overallStatusDTO = null;
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
 
-        DocumentDTO icDoc = new DocumentDTO();
-        icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
-        icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
-        icDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
-
-        DocumentDTO protocolDoc = new DocumentDTO();
-        protocolDoc.setFileName(StConverter.convertToSt("Protocol.doc"));
-        protocolDoc.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-        protocolDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
-
-        DocumentDTO irbDoc = new DocumentDTO();
-        irbDoc.setFileName(StConverter.convertToSt("IRB.doc"));
-        irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
-        irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
-
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
-        OrganizationDTO summary4Org = new  OrganizationDTO();
+        OrganizationDTO summary4Org = new OrganizationDTO();
         summary4Org.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
 
         StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
         StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
         regAuthority.setIdentifier(null);
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                studyResourcingDTOs, Arrays.asList(icDoc, protocolDoc, irbDoc), leadOrganizationDTO,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
@@ -427,7 +429,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         thrown.expect(PAException.class);
         thrown.expectMessage("Protocol Document is required.");
 
-        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
@@ -435,14 +437,10 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
         List<DocumentDTO> documents = null;
 
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
@@ -464,35 +462,18 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         thrown.expect(PAException.class);
         thrown.expectMessage("Lead Organization cannot be null.");
 
-        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
-
-        DocumentDTO icDoc = new DocumentDTO();
-        icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
-        icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
-        icDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
-
-        DocumentDTO protocolDoc = new DocumentDTO();
-        protocolDoc.setFileName(StConverter.convertToSt("Protocol.doc"));
-        protocolDoc.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-        protocolDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
-
-        DocumentDTO irbDoc = new DocumentDTO();
-        irbDoc.setFileName(StConverter.convertToSt("IRB.doc"));
-        irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
-        irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
+        List<DocumentDTO> documents = getStudyDocuments();
 
         OrganizationDTO leadOrganizationDTO = null;
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
@@ -503,7 +484,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                studyResourcingDTOs, Arrays.asList(icDoc, protocolDoc, irbDoc), leadOrganizationDTO,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
@@ -514,35 +495,18 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         thrown.expect(PAException.class);
         thrown.expectMessage("Principal Investigator cannot be null.");
 
-        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
 
-        DocumentDTO icDoc = new DocumentDTO();
-        icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
-        icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
-        icDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
-
-        DocumentDTO protocolDoc = new DocumentDTO();
-        protocolDoc.setFileName(StConverter.convertToSt("Protocol.doc"));
-        protocolDoc.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-        protocolDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
-
-        DocumentDTO irbDoc = new DocumentDTO();
-        irbDoc.setFileName(StConverter.convertToSt("IRB.doc"));
-        irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
-        irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
-
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
         PersonDTO principalInvestigatorDTO  = null;
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
@@ -553,7 +517,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                studyResourcingDTOs, Arrays.asList(icDoc, protocolDoc, irbDoc), leadOrganizationDTO,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
@@ -564,35 +528,18 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         thrown.expect(PAException.class);
         thrown.expectMessage("Sponsor Organization cannot be null.");
 
-        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
 
-        DocumentDTO icDoc = new DocumentDTO();
-        icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
-        icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
-        icDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
-
-        DocumentDTO protocolDoc = new DocumentDTO();
-        protocolDoc.setFileName(StConverter.convertToSt("Protocol.doc"));
-        protocolDoc.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-        protocolDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
-
-        DocumentDTO irbDoc = new DocumentDTO();
-        irbDoc.setFileName(StConverter.convertToSt("IRB.doc"));
-        irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
-        irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
-
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
         OrganizationDTO sponsorOrganizationDTO = null;
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
@@ -603,7 +550,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                studyResourcingDTOs, Arrays.asList(icDoc, protocolDoc, irbDoc), leadOrganizationDTO,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
@@ -614,36 +561,17 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         thrown.expect(PAException.class);
         thrown.expectMessage("Identifier DTO cannot be null");
 
-        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
 
-        DocumentDTO icDoc = new DocumentDTO();
-        icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
-        icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
-        icDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
-
-        DocumentDTO protocolDoc = new DocumentDTO();
-        protocolDoc.setFileName(StConverter.convertToSt("Protocol.doc"));
-        protocolDoc.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-        protocolDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
-
-        DocumentDTO irbDoc = new DocumentDTO();
-        irbDoc.setFileName(StConverter.convertToSt("IRB.doc"));
-        irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
-        irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
-
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = null;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
@@ -653,7 +581,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                studyResourcingDTOs, Arrays.asList(icDoc, protocolDoc, irbDoc), leadOrganizationDTO,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
@@ -664,36 +592,18 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         thrown.expect(PAException.class);
         thrown.expectMessage("One of StudyContact or StudySiteContact has to be used");
 
-        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
 
-        DocumentDTO icDoc = new DocumentDTO();
-        icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
-        icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
-        icDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
-
-        DocumentDTO protocolDoc = new DocumentDTO();
-        protocolDoc.setFileName(StConverter.convertToSt("Protocol.doc"));
-        protocolDoc.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-        protocolDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
-
-        DocumentDTO irbDoc = new DocumentDTO();
-        irbDoc.setFileName(StConverter.convertToSt("IRB.doc"));
-        irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
-        irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
-
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = null;
         OrganizationDTO summary4Org = new  OrganizationDTO();
@@ -703,7 +613,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                studyResourcingDTOs, Arrays.asList(icDoc, protocolDoc, irbDoc), leadOrganizationDTO,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
@@ -714,36 +624,18 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         thrown.expect(PAException.class);
         thrown.expectMessage("Summary 4 Organization cannot be null.");
 
-        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
 
-        DocumentDTO icDoc = new DocumentDTO();
-        icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
-        icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
-        icDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
-
-        DocumentDTO protocolDoc = new DocumentDTO();
-        protocolDoc.setFileName(StConverter.convertToSt("Protocol.doc"));
-        protocolDoc.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-        protocolDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
-
-        DocumentDTO irbDoc = new DocumentDTO();
-        irbDoc.setFileName(StConverter.convertToSt("IRB.doc"));
-        irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
-        irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
-
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = null;
@@ -753,7 +645,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                studyResourcingDTOs, Arrays.asList(icDoc, protocolDoc, irbDoc), leadOrganizationDTO,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
@@ -764,36 +656,18 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         thrown.expect(PAException.class);
         thrown.expectMessage("Summary Four Study Resourcing DTO cannot be null");
 
-        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
 
-        DocumentDTO icDoc = new DocumentDTO();
-        icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
-        icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
-        icDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
-
-        DocumentDTO protocolDoc = new DocumentDTO();
-        protocolDoc.setFileName(StConverter.convertToSt("Protocol.doc"));
-        protocolDoc.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-        protocolDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
-
-        DocumentDTO irbDoc = new DocumentDTO();
-        irbDoc.setFileName(StConverter.convertToSt("IRB.doc"));
-        irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
-        irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
-
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
@@ -803,7 +677,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                studyResourcingDTOs, Arrays.asList(icDoc, protocolDoc, irbDoc), leadOrganizationDTO,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
@@ -814,36 +688,18 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         thrown.expect(PAException.class);
         thrown.expectMessage("Regulatory Information fields must be Entered.");
 
-        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
 
-        DocumentDTO icDoc = new DocumentDTO();
-        icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
-        icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
-        icDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
-
-        DocumentDTO protocolDoc = new DocumentDTO();
-        protocolDoc.setFileName(StConverter.convertToSt("Protocol.doc"));
-        protocolDoc.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-        protocolDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
-
-        DocumentDTO irbDoc = new DocumentDTO();
-        irbDoc.setFileName(StConverter.convertToSt("IRB.doc"));
-        irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
-        irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
-
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
@@ -852,7 +708,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudyRegulatoryAuthorityDTO regAuthority = null;
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                studyResourcingDTOs, Arrays.asList(icDoc, protocolDoc, irbDoc), leadOrganizationDTO,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
@@ -869,30 +725,12 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
 
-        DocumentDTO icDoc = new DocumentDTO();
-        icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
-        icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
-        icDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
-
-        DocumentDTO protocolDoc = new DocumentDTO();
-        protocolDoc.setFileName(StConverter.convertToSt("Protocol.doc"));
-        protocolDoc.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-        protocolDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
-
-        DocumentDTO irbDoc = new DocumentDTO();
-        irbDoc.setFileName(StConverter.convertToSt("IRB.doc"));
-        irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
-        irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
-
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
@@ -902,7 +740,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                studyResourcingDTOs, Arrays.asList(icDoc, protocolDoc, irbDoc), leadOrganizationDTO,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
@@ -913,37 +751,19 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         thrown.expect(PAException.class);
         thrown.expectMessage("Study Protocol start date cannot be null.");
 
-        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         studyProtocolDTO.setStartDate(null);
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
 
-        DocumentDTO icDoc = new DocumentDTO();
-        icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
-        icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
-        icDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
-
-        DocumentDTO protocolDoc = new DocumentDTO();
-        protocolDoc.setFileName(StConverter.convertToSt("Protocol.doc"));
-        protocolDoc.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-        protocolDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
-
-        DocumentDTO irbDoc = new DocumentDTO();
-        irbDoc.setFileName(StConverter.convertToSt("IRB.doc"));
-        irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
-        irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
-
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
@@ -953,7 +773,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                studyResourcingDTOs, Arrays.asList(icDoc, protocolDoc, irbDoc), leadOrganizationDTO,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
@@ -964,37 +784,19 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         thrown.expect(PAException.class);
         thrown.expectMessage("Study Protocol start date type code cannot be null.");
 
-        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         studyProtocolDTO.setStartDateTypeCode(null);
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
 
-        DocumentDTO icDoc = new DocumentDTO();
-        icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
-        icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
-        icDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
-
-        DocumentDTO protocolDoc = new DocumentDTO();
-        protocolDoc.setFileName(StConverter.convertToSt("Protocol.doc"));
-        protocolDoc.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-        protocolDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
-
-        DocumentDTO irbDoc = new DocumentDTO();
-        irbDoc.setFileName(StConverter.convertToSt("IRB.doc"));
-        irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
-        irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
-
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
@@ -1004,7 +806,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                studyResourcingDTOs, Arrays.asList(icDoc, protocolDoc, irbDoc), leadOrganizationDTO,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
@@ -1015,37 +817,19 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         thrown.expect(PAException.class);
         thrown.expectMessage("Study Protocol primary completion date cannot be null.");
 
-        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         studyProtocolDTO.setPrimaryCompletionDate(null);
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
 
-        DocumentDTO icDoc = new DocumentDTO();
-        icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
-        icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
-        icDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
-
-        DocumentDTO protocolDoc = new DocumentDTO();
-        protocolDoc.setFileName(StConverter.convertToSt("Protocol.doc"));
-        protocolDoc.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-        protocolDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
-
-        DocumentDTO irbDoc = new DocumentDTO();
-        irbDoc.setFileName(StConverter.convertToSt("IRB.doc"));
-        irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
-        irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
-
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
@@ -1055,7 +839,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                studyResourcingDTOs, Arrays.asList(icDoc, protocolDoc, irbDoc), leadOrganizationDTO,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
@@ -1066,37 +850,19 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         thrown.expect(PAException.class);
         thrown.expectMessage("Study Protocol primary completion date type code cannot be null.");
 
-        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         studyProtocolDTO.setPrimaryCompletionDateTypeCode(null);
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
 
-        DocumentDTO icDoc = new DocumentDTO();
-        icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
-        icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
-        icDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
-
-        DocumentDTO protocolDoc = new DocumentDTO();
-        protocolDoc.setFileName(StConverter.convertToSt("Protocol.doc"));
-        protocolDoc.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-        protocolDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
-
-        DocumentDTO irbDoc = new DocumentDTO();
-        irbDoc.setFileName(StConverter.convertToSt("IRB.doc"));
-        irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
-        irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
-
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
@@ -1106,7 +872,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                studyResourcingDTOs, Arrays.asList(icDoc, protocolDoc, irbDoc), leadOrganizationDTO,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
@@ -1117,37 +883,19 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         thrown.expect(PAException.class);
         thrown.expectMessage("Study Protocol Ct.gov XML indicator cannot be null.");
 
-        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         studyProtocolDTO.setCtgovXmlRequiredIndicator(null);
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
         List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
 
-        DocumentDTO icDoc = new DocumentDTO();
-        icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
-        icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
-        icDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
-
-        DocumentDTO protocolDoc = new DocumentDTO();
-        protocolDoc.setFileName(StConverter.convertToSt("Protocol.doc"));
-        protocolDoc.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-        protocolDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
-
-        DocumentDTO irbDoc = new DocumentDTO();
-        irbDoc.setFileName(StConverter.convertToSt("IRB.doc"));
-        irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
-        irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
-
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
@@ -1157,7 +905,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         regAuthority.setIdentifier(null);
 
         bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                studyResourcingDTOs, Arrays.asList(icDoc, protocolDoc, irbDoc), leadOrganizationDTO,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
@@ -1166,6 +914,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
     @Test
     public void createInterventionalStudyProtocolValidationTest() throws Exception {
         StudyProtocolDTO studyProtocolDTO = studyProtocolService.getStudyProtocol(spIi);
+        studyProtocolDTO.setIdentifier(null);
         studyProtocolDTO.setUserLastCreated(null);
         studyProtocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(DateUtils.addYears(new Date(), -1)));
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
@@ -1176,14 +925,10 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         badFileTypeDoc.setFileName(StConverter.convertToSt("badfile.xml"));
         badFileTypeDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
         documentDTOs.add(badFileTypeDoc);
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
         StudySiteDTO leadOrganizationSiteIdentifierDTO  = studySiteService.getByStudyProtocol(spIi, spDto).get(0) ;
         try {
             bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
@@ -1200,25 +945,199 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
 
     @Test
     public void updateTest() throws Exception {
-        StudyProtocolDTO studyProtocolDTO = studyProtocolService.getStudyProtocol(spIi);
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
+        studyProtocolDTO.setIdentifier(null);
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
+        overallStatusDTO.setIdentifier(null);
         List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
         List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
-        List<DocumentDTO> documentDTOs = documentService.getDocumentsByStudyProtocol(spIi);
-        OrganizationDTO leadOrganizationDTO = new  OrganizationDTO();
-        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
-        PersonDTO principalInvestigatorDTO  = new PersonDTO();
-        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
-        OrganizationDTO sponsorOrganizationDTO = new  OrganizationDTO();
-        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
-        StudySiteDTO spDto = new StudySiteDTO();
-        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-        try {
-            bean.update(studyProtocolDTO, overallStatusDTO, null, studyIndldeDTOs, studyResourcingDTOs, documentDTOs,
-                    null, null, null, null, null, null, null, null, null, BlConverter.convertToBl(Boolean.FALSE));
-            fail();
-        } catch (PAException e) {
-        }
+        List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
+
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
+        StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
+        OrganizationDTO summary4Org = new  OrganizationDTO();
+
+        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
+        regAuthority.setIdentifier(null);
+
+        Ii ii = bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
+                principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
+                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+        assertFalse(PAUtil.isIiNull(ii));
+
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+
+        //Accept the Trial.
+        new PAServiceUtils().createMilestone(ii, MilestoneCode.SUBMISSION_ACCEPTED, StConverter.convertToSt("Accepted"));
+
+        studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(ii);
+        overallStatusDTO.setIdentifier(null);
+        studyIndldeDTOs = studyIndldeService.getByStudyProtocol(ii);
+        studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(ii);
+        regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(ii);
+        List<DocumentDTO> documentDTOs = new ArrayList<DocumentDTO>();
+
+        bean.update(studyProtocolDTO, overallStatusDTO, null, studyIndldeDTOs, studyResourcingDTOs, documentDTOs,
+                studyContactDTO, null, summary4Org, summary4StudyResourcing, null, regAuthority, null, null, null,
+                BlConverter.convertToBl(Boolean.FALSE));
+    }
+
+    @Test
+    public void amendTrialTest() throws Exception {
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
+        overallStatusDTO.setIdentifier(null);
+        List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
+        List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
+        List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
+
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
+        StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
+        OrganizationDTO summary4Org = new  OrganizationDTO();
+
+        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
+        regAuthority.setIdentifier(null);
+
+        Ii ii = bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
+                principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
+                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+        assertFalse(PAUtil.isIiNull(ii));
+
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+
+        //Accept and Abstract the Trial.
+        paServiceUtils.createMilestone(ii, MilestoneCode.SUBMISSION_ACCEPTED, StConverter.convertToSt("Accepted"));
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_READY_FOR_QC, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_QC_START, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_QC_COMPLETE, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_READY_FOR_QC, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_START, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_COMPLETE, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.READY_FOR_TSR, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.INITIAL_ABSTRACTION_VERIFY, null);
+        studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(TestSchema.TODAY));
+        overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(ii);
+        overallStatusDTO.setIdentifier(null);
+        studyIndldeDTOs = studyIndldeService.getByStudyProtocol(ii);
+        studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(ii);
+        regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(ii);
+
+        DocumentDTO changeDoc = new DocumentDTO();
+        changeDoc.setFileName(StConverter.convertToSt("Change Memo.doc"));
+        changeDoc.setText(EdConverter.convertToEd("Change Memo".getBytes()));
+        changeDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.CHANGE_MEMO_DOCUMENT));
+        Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+                Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
+                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+        assertFalse(PAUtil.isIiNull(amendedSpIi));
+        assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
+    }
+
+    @Test
+    public void unacceptedUpdateThenAmendTest() throws Exception {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("A trial with unaccepted updates cannot be amended. Please contact the CTRO at "
+                + "ncictro@mail.nih.gov to have your trial's updates accepted.");
+
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
+        overallStatusDTO.setIdentifier(null);
+        List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
+        List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
+        List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
+
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
+        StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
+        OrganizationDTO summary4Org = new  OrganizationDTO();
+
+        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
+        regAuthority.setIdentifier(null);
+
+        Ii ii = bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
+                principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
+                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+        assertFalse(PAUtil.isIiNull(ii));
+
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+
+        //Accept and Abstract the Trial.
+        paServiceUtils.createMilestone(ii, MilestoneCode.SUBMISSION_ACCEPTED, StConverter.convertToSt("Accepted"));
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_READY_FOR_QC, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_QC_START, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_QC_COMPLETE, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_READY_FOR_QC, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_START, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_COMPLETE, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.READY_FOR_TSR, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.INITIAL_ABSTRACTION_VERIFY, null);
+        studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        studyProtocolDTO.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.PREVENTION));
+        overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(ii);
+        overallStatusDTO.setIdentifier(null);
+        studyIndldeDTOs = studyIndldeService.getByStudyProtocol(ii);
+        studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(ii);
+        regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(ii);
+
+        DocumentDTO psDoc = new DocumentDTO();
+        psDoc.setFileName(StConverter.convertToSt("Participating Site Document.doc"));
+        psDoc.setText(EdConverter.convertToEd("Participating Site Document".getBytes()));
+        psDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PARTICIPATING_SITES));
+        bean.update(studyProtocolDTO, overallStatusDTO, null, studyIndldeDTOs, studyResourcingDTOs,
+                Arrays.asList(psDoc), studyContactDTO, null, summary4Org, summary4StudyResourcing, null, regAuthority,
+                null, null, null, BlConverter.convertToBl(Boolean.FALSE));
+
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+
+        studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(TestSchema.TODAY));
+        DocumentDTO changeDoc = new DocumentDTO();
+        changeDoc.setFileName(StConverter.convertToSt("Change Memo.doc"));
+        changeDoc.setText(EdConverter.convertToEd("Change Memo".getBytes()));
+        changeDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.CHANGE_MEMO_DOCUMENT));
+        Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+                Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
+                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+        assertFalse(PAUtil.isIiNull(amendedSpIi));
+        assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
     }
 
     @Test
@@ -1241,5 +1160,53 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         inboxList.add(inboxDto);
         bean.setPaServiceUtils(mock(PAServiceUtils.class));
         bean.sendTSRXML(spIi, CdConverter.convertToCd(MilestoneCode.TRIAL_SUMMARY_SENT),inboxList);
+    }
+
+    private InterventionalStudyProtocolDTO getInterventionalStudyProtocol() throws PAException {
+        InterventionalStudyProtocolDTO studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(spIi);
+        studyProtocolDTO.setIdentifier(null);
+        return studyProtocolDTO;
+    }
+
+    private OrganizationDTO getLeadOrg() {
+        OrganizationDTO leadOrganizationDTO = new OrganizationDTO();
+        leadOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("abc"));
+        return leadOrganizationDTO;
+    }
+
+    private OrganizationDTO getSponsorOrg() {
+        OrganizationDTO sponsorOrganizationDTO = new OrganizationDTO();
+        sponsorOrganizationDTO.setIdentifier(IiConverter.convertToPoOrganizationIi("111"));
+        return sponsorOrganizationDTO;
+    }
+
+    private PersonDTO getPI() {
+        PersonDTO principalInvestigatorDTO  = new PersonDTO();
+        principalInvestigatorDTO.setIdentifier(IiConverter.convertToPoPersonIi("abc"));
+        return principalInvestigatorDTO;
+    }
+
+    private StudySiteDTO getStudySite() {
+        StudySiteDTO spDto = new StudySiteDTO();
+        spDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        return spDto;
+    }
+
+    private List<DocumentDTO> getStudyDocuments() {
+        DocumentDTO icDoc = new DocumentDTO();
+        icDoc.setFileName(StConverter.convertToSt("InformedConsent.doc"));
+        icDoc.setText(EdConverter.convertToEd("Informed Consent".getBytes()));
+        icDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT));
+
+        DocumentDTO protocolDoc = new DocumentDTO();
+        protocolDoc.setFileName(StConverter.convertToSt("Protocol.doc"));
+        protocolDoc.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
+        protocolDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
+
+        DocumentDTO irbDoc = new DocumentDTO();
+        irbDoc.setFileName(StConverter.convertToSt("IRB.doc"));
+        irbDoc.setText(EdConverter.convertToEd("IRB Approval".getBytes()));
+        irbDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT));
+        return Arrays.asList(icDoc, protocolDoc, irbDoc);
     }
 }

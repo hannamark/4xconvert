@@ -154,6 +154,7 @@
             <result name="error">/WEB-INF/jsp/amendTrial.jsp</result>
             <result name="edit">/WEB-INF/jsp/amendTrial.jsp</result>
             <result name="review">/WEB-INF/jsp/reviewTrial.jsp</result>
+            <result name="unamendable">/WEB-INF/jsp/unamendableTrial.jsp</result>
             <result name="redirect_to_search" type="redirectAction">
                 <param name="actionName">searchTrial.action</param>
                 <param name="parse">true</param>

@@ -115,6 +115,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -160,6 +161,14 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
         TrialValidator.removeSessionAttributes();
         try {
             Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
+            //Trials that have open updates cannot be amended.
+            if (CollectionUtils.isNotEmpty(PaRegistry.getStudyInboxService().getOpenInboxEntries(studyProtocolIi))) {
+                StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+                String ctroAddress = PaRegistry.getLookUpTableService().getPropertyValue("fromaddress");
+                addActionError(getText("error.amend.openUpdates",
+                        new String[] {PAUtil.getAssignedIdentifierExtension(spDTO), ctroAddress}));
+                return "unamendable";
+            }
             TrialUtil util = new TrialUtil();
             trialDTO = new TrialDTO();
             util.getTrialDTOFromDb(studyProtocolIi, trialDTO);
