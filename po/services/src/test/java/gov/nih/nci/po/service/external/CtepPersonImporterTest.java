@@ -143,7 +143,6 @@ public class CtepPersonImporterTest extends AbstractServiceBeanTest {
         assertNotNull(importedPer);
         assertNotNull(service.getPerId());
         IdentifiedPerson ip = getByCtepPersonId(service.getPerId());
-        System.out.println(ip.getId());
         assertNotNull(ip);
         assertNotNull(ip.getPlayer());
         assertEquals(IdentifierReliability.VRF, ip.getAssignedIdentifier().getReliability());
