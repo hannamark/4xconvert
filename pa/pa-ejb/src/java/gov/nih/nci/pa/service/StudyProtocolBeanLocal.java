@@ -145,6 +145,7 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -539,8 +540,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             throw new PAException("Primary completion date must be >= start date.");
         }
     }
-    
-    private void enForcePrimaryPurposeRules(StudyProtocolDTO studyProtocolDTO) throws PAException {     
+
+    private void enForcePrimaryPurposeRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
         if (studyProtocolDTO.getPrimaryPurposeCode() == null) {
             throw new PAException("Primary Purpose Code must be set.");
         } else if (PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(
@@ -550,8 +551,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             enForcePrimaryPurposeOtherRules(studyProtocolDTO);
         }
     }
-    
-    private void enForcePrimaryPurposeOtherRules(StudyProtocolDTO studyProtocolDTO) throws PAException {    
+
+    private void enForcePrimaryPurposeOtherRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
         if (PrimaryPurposeCode.OTHER.equals(PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(
                 studyProtocolDTO.getPrimaryPurposeCode())))
                 && StringUtils.isBlank(StConverter.convertToString(studyProtocolDTO.getPrimaryPurposeOtherText()))) {
@@ -564,7 +565,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                     "Valid Primary Purpose Additional Qualifier Code is required when Primary Purpose Code is Other.");
         }
     }
-   
+
     private void setDefaultValues(StudyProtocol sp, StudyProtocolDTO spDTO, String operation) {
         if (sp.getStatusCode() == null) {
             sp.setStatusCode(ActStatusCode.ACTIVE);
@@ -628,7 +629,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
         PageSortParams<StudyProtocol> params = new PageSortParams<StudyProtocol>(maxLimit, pagingParams.getOffset(),
                 StudyProtocolSortCriterion.STUDY_PROTOCOL_ID, false);
-        StudyProtocolBeanSearchCriteria crit = new StudyProtocolBeanSearchCriteria(criteria, null);
+        StudyProtocolBeanSearchCriteria crit = new StudyProtocolBeanSearchCriteria(criteria);
         List<StudyProtocol> results = search(crit, params);
         return convertFromDomainToDTO(results);
     }
@@ -638,15 +639,15 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      */
     public List<StudyProtocolDTO> getAbstractedCollaborativeTrials() throws PAException {
         List<StudyProtocol> collaborativeTrials = new ArrayList<StudyProtocol>();
+        List<DocumentWorkflowStatusCode> statuses =
+            Arrays.asList(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE,
+                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
         //Get all DCP trials
         StudyProtocolBeanSearchCriteria crit =
-            new StudyProtocolBeanSearchCriteria(getCollaborativeTrialCriteria(PAConstants.DCP_ORG_NAME),
-                    DocumentWorkflowStatusCode.ABSTRACTED);
+            new StudyProtocolBeanSearchCriteria(getCollaborativeTrialCriteria(PAConstants.DCP_ORG_NAME), statuses);
         collaborativeTrials.addAll(search(crit));
         //Then get all CTEP trials
-        crit =
-            new StudyProtocolBeanSearchCriteria(getCollaborativeTrialCriteria(PAConstants.CTEP_ORG_NAME),
-                    DocumentWorkflowStatusCode.ABSTRACTED);
+        crit = new StudyProtocolBeanSearchCriteria(getCollaborativeTrialCriteria(PAConstants.CTEP_ORG_NAME), statuses);
         collaborativeTrials.addAll(search(crit));
         return convertFromDomainToDTO(collaborativeTrials);
     }

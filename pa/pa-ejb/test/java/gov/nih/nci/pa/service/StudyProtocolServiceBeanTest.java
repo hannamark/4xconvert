@@ -539,7 +539,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         assertEquals(ii.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
         assertTrue(StringUtils.isNotEmpty(ii.getIdentifierName()));
     }
-    
+
     @Test
     public void primaryPurposeCodeTest1() throws Exception {
         InterventionalStudyProtocolDTO ispDTO =
@@ -549,7 +549,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
         thrown.expectMessage("Primary Purpose Code must be set.");
     }
-    
+
     @Test
     public void primaryPurposeCodeTest2() throws Exception {
         InterventionalStudyProtocolDTO ispDTO =
@@ -559,7 +559,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
         thrown.expectMessage("Invalid Primary Purpose Code.");
     }
-    
+
     @Test
     public void primaryPurposeCodeOtherTest1() throws Exception {
         InterventionalStudyProtocolDTO ispDTO =
@@ -571,7 +571,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
         thrown.expectMessage("Primary Purpose Other Text is required when Primary Purpose Code is Other.");
     }
-    
+
     @Test
     public void primaryPurposeCodeOtherTest2() throws Exception {
         InterventionalStudyProtocolDTO ispDTO =
@@ -583,7 +583,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
         thrown.expectMessage("Primary Purpose Other Text is required when Primary Purpose Code is Other.");
     }
-    
+
     @Test
     public void primaryPurposeCodeOtherAddCodeTest1() throws Exception {
         InterventionalStudyProtocolDTO ispDTO =
@@ -595,7 +595,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         remoteEjb.createInterventionalStudyProtocol(ispDTO);
         thrown.expectMessage("Valid Primary Purpose Additional Qualifier Code is required when Primary Purpose Code is Other.");
     }
-    
+
     @Test
     public void primaryPurposeCodeOtherAddCodeTest2() throws Exception {
         InterventionalStudyProtocolDTO ispDTO =
@@ -660,7 +660,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
             if (abstracted) {
                 dws = new DocumentWorkflowStatus();
                 dws.setStudyProtocol(sp);
-                dws.setStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
+                dws.setStatusCode(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE);
                 dws.setCommentText("Abstracted");
                 dws.setUserLastUpdated(sp.getUserLastUpdated());
                 TestSchema.addUpdObject(dws);

@@ -208,7 +208,7 @@ public interface StudyProtocolService {
 
     /**
      * This method returns all collaborative trials in the system (ie, those sponsored by the DCP and CTEP orgs) that
-     * are abstracted.
+     * have the document workflow status of ABSTRACTION_VERIFIED_RESPONSE orABSTRACTION_VERIFIED_NORESPONSE.
      * @return the list of all abstracted collaborative trials
      * @throws PAException on error
      */
