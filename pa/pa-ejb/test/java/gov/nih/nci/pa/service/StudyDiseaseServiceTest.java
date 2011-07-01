@@ -115,7 +115,7 @@ public class StudyDiseaseServiceTest extends AbstractHibernateTestCase {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
         TestSchema.primeData();
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
-        dIi = IiConverter.convertToStudyDiseaseIi(TestSchema.pdqDiseaseIds.get(1));
+        dIi = IiConverter.convertToStudyDiseaseIi(TestSchema.pdqDiseaseIds.get(2));
     }
 
     private void compareDataAttributes(StudyDisease bo1, StudyDisease bo2) {
@@ -155,6 +155,18 @@ public class StudyDiseaseServiceTest extends AbstractHibernateTestCase {
             assertEquals("Redundancy error:  this trial already includes the selected disease.  ",
                     e.getMessage());
         }
+    }
+    
+    @Test(expected=PAException.class)
+    public void updateWithSameIdTest() throws Exception {
+        List<StudyDiseaseDTO> dtoList = bean.getByStudyProtocol(spIi);
+        assertTrue(dtoList.size() > 0);
+        StudyDiseaseDTO dto1 = dtoList.get(0);
+        StudyDiseaseDTO dto2 = dtoList.get(1);
+        StudyDisease bo1 = bean.convertFromDtoToDomain(dto1);
+        StudyDisease bo2 = bean.convertFromDtoToDomain(dto2);
+        bo1.setDisease(bo2.getDisease());
+        remote.update(bean.convertFromDomainToDto(bo1));
     }
 
     @Test

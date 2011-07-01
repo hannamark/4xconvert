@@ -563,6 +563,8 @@ public class TestSchema {
 
         StudyDisease studyDisease = TestSchema.createStudyDiseaseObj(sp, dis01);
         addUpdObject(studyDisease);
+        StudyDisease studyDisease2 = TestSchema.createStudyDiseaseObj(sp, dis02);
+        addUpdObject(studyDisease2);
 
         StudyMilestone studyMilestone = createStudyMilestoneObj("comment 01", sp);
         addUpdObject(studyMilestone);

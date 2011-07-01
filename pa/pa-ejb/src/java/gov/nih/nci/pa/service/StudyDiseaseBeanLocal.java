@@ -18,6 +18,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author asharma
  *
@@ -32,15 +34,15 @@ public class StudyDiseaseBeanLocal extends
     private StudyDiseaseDTO businessRules(StudyDiseaseDTO dto) throws PAException {
         boolean isNew = PAUtil.isIiNull(dto.getIdentifier());
         // no duplicate diseases in a study
-        if (isNew) {
-            long newDiseaseId = IiConverter.convertToLong(dto.getDiseaseIdentifier());
-            List<StudyDiseaseDTO> sdList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
-            for (StudyDiseaseDTO sd : sdList) {
-                if (newDiseaseId == IiConverter.convertToLong(sd.getDiseaseIdentifier())) {
+        long newDiseaseId = IiConverter.convertToLong(dto.getDiseaseIdentifier());
+        List<StudyDiseaseDTO> sdList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+        for (StudyDiseaseDTO sd : sdList) {
+            if (newDiseaseId == IiConverter.convertToLong(sd.getDiseaseIdentifier())
+            && (isNew || !StringUtils.equals(dto.getIdentifier().getExtension(), sd.getIdentifier().getExtension()))) {
                     throw new PAException("Redundancy error:  this trial already includes the selected disease.  ");
-                }
             }
-        }
+         }
+        
         return dto;
     }
 
