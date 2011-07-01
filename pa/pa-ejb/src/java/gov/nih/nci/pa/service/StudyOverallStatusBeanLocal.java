@@ -290,7 +290,7 @@ public class StudyOverallStatusBeanLocal extends
             throw new PAException("Study status Cannot be updated.  ");
         }
         validateReasonText(dto);
-        return update(dto);
+        return super.update(dto);
     }
 
     /**

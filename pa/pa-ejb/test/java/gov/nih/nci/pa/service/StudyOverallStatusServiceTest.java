@@ -99,7 +99,9 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
@@ -124,6 +126,8 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
 
     @Before
     public void setUp() throws Exception {
+        CSMUserService.setRegistryUserService(new MockCSMUserService());
+
         ServiceLocator paSvcLoc = mock(ServiceLocator.class);
         PaRegistry.getInstance().setServiceLocator(paSvcLoc);
         when(paSvcLoc.getDocumentWorkflowStatusService()).thenReturn(new DocumentWorkflowStatusBeanLocal());
@@ -134,7 +138,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void updateTest() throws Exception {
+    public void create() throws Exception {
         TestSchema.addAbstractedWorkflowStatus(IiConverter.convertToLong(spIi));
 
         StudyOverallStatusDTO dto = bean.getCurrentByStudyProtocol(spIi);
@@ -159,7 +163,22 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         assertEquals(TsConverter.convertToTimestamp(result.getStatusDate()),
                      TsConverter.convertToTimestamp(dto.getStatusDate()));
         assertEquals(IiConverter.convertToLong(spIi), IiConverter.convertToLong(result.getStudyProtocolIdentifier()));
+    }
 
+    @Test
+    public void update() throws Exception {
+        StudyOverallStatusDTO currentStatus = bean.getCurrentByStudyProtocol(spIi);
+        currentStatus.setStatusCode(CdConverter.convertToCd(StudyStatusCode.IN_REVIEW));
+        currentStatus.setReasonText(StConverter.convertToSt("Trial submitted with incorrect overall status."));
+        currentStatus.setStatusDate(TsConverter.convertToTs(TestSchema.TODAY));
+
+        StudyOverallStatusDTO updatedStatus = bean.update(currentStatus);
+        assertEquals(CdConverter.convertCdToString(currentStatus.getStatusCode()),
+                CdConverter.convertCdToString(updatedStatus.getStatusCode()));
+        assertEquals(StConverter.convertToString(currentStatus.getReasonText()),
+                StConverter.convertToString(updatedStatus.getReasonText()));
+        assertEquals(TsConverter.convertToTimestamp(currentStatus.getStatusDate()),
+                TsConverter.convertToTimestamp(updatedStatus.getStatusDate()));
     }
 
     /**
@@ -511,7 +530,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         dto.setReasonText(StConverter.convertToSt(RandomStringUtils.random(2000)));
         bean.create(dto);
     }
-    
+
     @Test
     public void validateWithBadStatusCode() throws Exception {
         TestSchema.addAbstractedWorkflowStatus(IiConverter.convertToLong(spIi));
