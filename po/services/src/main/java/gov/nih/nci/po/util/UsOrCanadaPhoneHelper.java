@@ -102,7 +102,7 @@ import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 public class UsOrCanadaPhoneHelper {
 
     private static final String PHONE_FORMAT_ERROR_MESSAGE =
-        "US and Canadian phone, fax, and tty numbers must match ###-###-####(x#*).";
+        "US and Canadian phone, fax, and tty numbers must match ###-###-####x#*.";
 
     /**
      * @return the phoneFormatErrorMessage

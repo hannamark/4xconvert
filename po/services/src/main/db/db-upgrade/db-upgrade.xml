@@ -156,4 +156,8 @@
        <comment>PO-3672: Update CTEP Person root.</comment>
        <sqlFile path="${db-upgrade.run.dir}/postgresql/3.5/PO-3672.sql"/>
     </changeSet>
+    <changeSet id="PO-3509" author="oweisms">
+       <comment>PO-3509: Fix bad po phone/fax numbers.</comment>
+       <sqlFile path="${db-upgrade.run.dir}/postgresql/3.5/PO-3509.sql"/>
+    </changeSet>
 </databaseChangeLog>
