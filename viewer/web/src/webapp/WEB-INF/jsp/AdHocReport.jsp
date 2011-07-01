@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <%@ include file="/WEB-INF/jsp/common/includejs.jsp" %>
-<c:set var="topic" scope="request" value="run_ad_hoc"/> 
+<c:set var="topic" scope="request" value="run_adhoc"/> 
 <c:url value="/ctro/popupDis.action" var="lookupUrl" />
 <head>
 <title><fmt:message key="adHoc.header" /></title>
