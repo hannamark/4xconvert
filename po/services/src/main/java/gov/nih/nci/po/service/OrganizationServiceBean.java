@@ -100,6 +100,7 @@ import gov.nih.nci.po.data.bo.ScopedRole;
 import gov.nih.nci.po.util.MergeOrganizationHelper;
 import gov.nih.nci.po.util.MergeOrganizationHelperImpl;
 import gov.nih.nci.po.util.PoHibernateUtil;
+import gov.nih.nci.po.util.UsOrCanadaPhoneHelper;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -282,6 +283,17 @@ public class OrganizationServiceBean extends AbstractCuratableEntityServiceBean<
         GenericStructrualRoleServiceLocal serviceForRole = getServiceForRole(correlation.getClass());
         // validate()'s behavior ensures that all keys are unique
         Map<String, String[]> correlationErrorMsgs = serviceForRole.validate(correlation);
+
+        //Checks if any of the validation errors are due to bad phone data. (PO-3509).
+        if (MapUtils.isNotEmpty(correlationErrorMsgs)) {
+            for (String key : correlationErrorMsgs.keySet()) {
+                for (String error : correlationErrorMsgs.get(key)) {
+                    if (UsOrCanadaPhoneHelper.getPhoneFormatErrorMessage().equals(error)) {
+                        throw new CurateEntityValidationException(correlationErrorMsgs);
+                    }
+                }
+            }
+        }
         return MapUtils.isNotEmpty(correlationErrorMsgs);
     }
 

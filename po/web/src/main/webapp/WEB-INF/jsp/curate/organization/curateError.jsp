@@ -6,7 +6,11 @@
 <body>
 
 <p>
-An error occurred when merging this Organization's associated correlations into the selected duplicate of Organization. Please examine correlations associated to both the Organization and the duplicate of Organization and resolve any conflicts.
+An error occurred when auto-merging this Organization's associated correlations into the selected duplicate of Organization. Please examine correlations associated to both the Organization and the duplicate of Organization and resolve any conflicts.
+</p>
+
+<p>
+This typically indicates malformed phone, fax, and/or tty numbers in the associated correlations.  <s:property value="@gov.nih.nci.po.util.UsOrCanadaPhoneHelper@getPhoneFormatErrorMessage()" />
 </p>
 
 <div id="page" style="margin-top:10px;">
