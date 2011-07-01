@@ -5,29 +5,45 @@
   </i>
   <i t="Getting Started" l="2">
     <i t="About the CTRP Viewer" l="3" />
-    <i t="Creating CTRP Viewer Accounts" l="4">
-      <i t="Creating New CTRP Viewer Accounts" l="5" />
-      <i t="Creating New CTRP Viewer Accounts Using caGrid or NCI Credentials" l="6" />
+    <i t="What’s New in This Release" l="4" />
+    <i t="Creating CTRP Viewer Accounts" l="5">
+      <i t="Creating New CTRP Viewer Accounts" l="6" />
+      <i t="Creating New CTRP Viewer Accounts Using caGrid or NCI Credentials" l="7" />
     </i>
-    <i t="Logging In to the CTRP Viewer" l="7" />
+    <i t="Logging In to the CTRP Viewer" l="8" />
   </i>
-  <i t="CTRO Reporting" l="8">
-    <i t="About CTRO Reporting" l="9" />
-    <i t="Running CTRO Reports" l="10">
-      <i t="Running Summary of Submission Reports" l="11" />
-      <i t="Running Trial Processing Reports" l="12" />
-      <i t="Running Portfolio Average Milestone Reports" l="13" />
-      <i t="Running Trials Submitted by Date Reports" l="14" />
-      <i t="Running Trials Submitted by Institution Reports" l="15" />
-      <i t="Running Current Milestone Reports" l="16" />
-      <i t="Running Summary 4 Type Reports" l="17" />
+  <i t="CTRO Reporting" l="9">
+    <i t="About CTRO Reporting" l="10" />
+    <i t="Running CTRO Reports" l="11">
+      <i t="Running Summary of Submission Reports" l="12" />
+      <i t="Running Trial Processing Reports" l="13" />
+      <i t="Running Portfolio Average Milestone Reports" l="14" />
+      <i t="Running Trials Submitted by Date Reports" l="15" />
+      <i t="Running Trials Submitted by Institution Reports" l="16" />
+      <i t="Running Current Milestone Reports" l="17" />
+      <i t="Running Summary 4 Type Reports" l="18" />
+      <i t="Running Ad Hoc Reports" l="19">
+        <i t="Accessing Trial Summary Reports" l="20" />
+      </i>
     </i>
-    <i t="Exporting Report Data" l="18" />
+    <i t="Exporting Report Data" l="21" />
   </i>
-  <i t="Managing Your Account" l="19">
-    <i t="Managing Your User Account Profile" l="20" />
-    <i t="Changing Your Password" l="21" />
-    <i t="Resetting Your Account" l="22" />
+  <i t="Managing Your Account" l="22">
+    <i t="Managing Your User Account Profile" l="23" />
+    <i t="Changing Your Password" l="24" />
+    <i t="Resetting Your Account" l="25" />
   </i>
-  <i t="Application Support" l="23" />
+  <i t="Ad Hoc Report Criteria Values" l="26">
+    <i t="Primary Purpose Values" l="27" />
+    <i t="Trial Phase Values" l="28" />
+    <i t="Trial Identifier Types" l="29" />
+    <i t="Processing Statuses" l="30" />
+    <i t="Intervention Types" l="31" />
+    <i t="Trial Statuses" l="32" />
+    <i t="Trial Categories" l="33" />
+    <i t="Summary 4 Funding Category" l="34" />
+    <i t="Milestones" l="35" />
+  </i>
+  <i t="Looking up Diseases/Conditions" l="36" />
+  <i t="Application Support" l="37" />
 </WebWorksHelpTOC>

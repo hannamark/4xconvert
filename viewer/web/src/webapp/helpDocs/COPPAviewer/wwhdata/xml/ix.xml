@@ -3,18 +3,58 @@
   <g t="A" o="002">
     <i t="accounts">
       <i t="creating">
-        <j l="5" />
         <j l="6" />
+        <j l="7" />
       </i>
       <i t="creating, by type">
-        <j l="4#1095878" />
+        <j l="5#1095878" />
       </i>
       <i t="managing">
-        <j l="20#1089511" />
-        <j l="20#1077965" />
+        <j l="23#1089511" />
+        <j l="23#1077965" />
       </i>
       <i t="resetting">
-        <j l="22" />
+        <j l="25" />
+      </i>
+    </i>
+    <i t="Ad Hoc Report valid values">
+      <i t="for Intervention Types">
+        <j l="31" />
+      </i>
+      <i t="for Milestones">
+        <j l="35" />
+      </i>
+      <i t="for Primary Purpose">
+        <j l="27" />
+      </i>
+      <i t="for Processing Statuses">
+        <j l="30" />
+      </i>
+      <i t="for Summary 4 Funding Category">
+        <j l="34" />
+      </i>
+      <i t="for Trial Categories">
+        <j l="33" />
+      </i>
+      <i t="for Trial Identifer Types">
+        <j l="29" />
+      </i>
+      <i t="for Trial Phase Values">
+        <j l="28" />
+      </i>
+      <i t="for Trial Statuses">
+        <j l="32" />
+      </i>
+    </i>
+    <i t="Ad Hoc Reports">
+      <i t="running">
+        <j l="19" />
+      </i>
+      <i t="search criteria values">
+        <j l="26" />
+      </i>
+      <i t="statistics provided">
+        <j l="10#1152161" />
       </i>
     </i>
   </g>
@@ -27,35 +67,54 @@
     </i>
   </g>
   <g t="C" o="002">
+    <i t="conditions, looking up">
+      <j l="36#1244160" />
+    </i>
     <i t="CTRP Viewer">
       <i t="creating accounts in">
-        <j l="5" />
         <j l="6" />
+        <j l="7" />
       </i>
       <i t="logging in to">
-        <j l="7" />
+        <j l="8" />
       </i>
     </i>
     <i t="Current Milestone Reports">
       <i t="running">
-        <j l="16" />
+        <j l="17" />
       </i>
       <i t="statistics provided">
-        <j l="9#1140718" />
+        <j l="10#1140718" />
       </i>
     </i>
   </g>
   <g t="D" o="002">
     <i t="dates, defaults for">
-      <j l="10#1134588" />
+      <j l="11#1134588" />
+    </i>
+    <i t="disease and condition criteria">
+      <j l="36#1244160" />
+    </i>
+    <i t="disease names, looking up">
+      <j l="36#1244160" />
+    </i>
+  </g>
+  <g t="E" o="002">
+    <i t="Excel file, exporting report data to">
+      <j l="21" />
     </i>
   </g>
   <g t="L" o="002">
     <i t="logging in to CTRP Viewer">
-      <j l="7" />
+      <j l="8" />
     </i>
     <i t="login account management">
-      <j l="20#1089511" />
+      <j l="23#1089511" />
+    </i>
+  </g>
+  <g t="M" o="002">
+    <i t="milestone values">
+      <j l="19#1152997" />
     </i>
   </g>
   <g t="O" o="002">
@@ -74,58 +133,70 @@
   <g t="P" o="002">
     <i t="passwords">
       <i t="changing">
-        <j l="21#1089064" />
+        <j l="24#1089064" />
       </i>
       <i t="resetting">
-        <j l="22#1088333" />
+        <j l="25#1088333" />
       </i>
     </i>
     <i t="Portfolio Average Milestone Reports">
       <i t="running">
-        <j l="13" />
+        <j l="14" />
       </i>
       <i t="statistics provided">
-        <j l="9#1140684" />
+        <j l="10#1140684" />
       </i>
     </i>
+    <i t="primary purpose values">
+      <j l="19#1152922" />
+    </i>
+    <i t="principal investigators">
+      <j l="19#1152948" />
+    </i>
+    <i t="processing status values">
+      <j l="19#1152960" />
+    </i>
     <i t="profile management">
-      <j l="20#1089511" />
+      <j l="23#1089511" />
     </i>
   </g>
   <g t="R" o="002">
     <i t="registering new users">
-      <j l="6#1096063" />
+      <j l="7#1096063" />
     </i>
     <i t="Registration">
       <j l="1" />
     </i>
     <i t="registration, user account">
-      <j l="6#1096063" />
+      <j l="7#1096063" />
     </i>
     <i t="reports">
+      <i t="exporting">
+        <j l="21" />
+      </i>
       <i t="running, main steps for">
-        <j l="10" />
+        <j l="11" />
       </i>
       <i t="types of">
-        <j l="9#1140661" />
+        <j l="10#1140661" />
       </i>
     </i>
   </g>
   <g t="S" o="002">
     <i t="Summary 4 Type Reports">
       <i t="running">
-        <j l="17" />
+        <j l="18" />
       </i>
       <i t="statistics provided">
-        <j l="9#1145082" />
+        <j l="10#1145082" />
       </i>
     </i>
     <i t="Summary of Submission Reports">
       <i t="running">
-        <j l="11" />
+        <j l="12" />
       </i>
       <i t="statistics provided">
-        <j l="9#1140665" />
+        <j l="10#1140665" />
       </i>
     </i>
     <i t="supported browsers">
@@ -133,39 +204,57 @@
     </i>
   </g>
   <g t="T" o="002">
+    <i t="trial identifiers">
+      <j l="29#1234001" />
+    </i>
+    <i t="trial phase values">
+      <j l="19#1152930" />
+    </i>
     <i t="Trial Processing Reports">
       <i t="running">
-        <j l="12" />
+        <j l="13" />
       </i>
       <i t="statistics provided">
-        <j l="9#1140675" />
+        <j l="10#1140675" />
+      </i>
+    </i>
+    <i t="trial status values">
+      <j l="19#1153133" />
+    </i>
+    <i t="Trial Summary Reports">
+      <i t="accessing">
+        <j l="20" />
+      </i>
+      <i t="association with trial statuses">
+        <j l="30#1238080" />
       </i>
     </i>
     <i t="Trials Submitted by Date Reports">
       <i t="running">
-        <j l="14" />
+        <j l="15" />
       </i>
       <i t="statistics provided">
-        <j l="9#1140696" />
+        <j l="10#1140696" />
       </i>
     </i>
     <i t="Trials Submitted by Institution Reports">
       <i t="running">
-        <j l="15" />
+        <j l="16" />
       </i>
       <i t="statistics provided">
-        <j l="9#1140708" />
+        <j l="10#1140708" />
       </i>
     </i>
+    <i t="TSR. see Trial Summary Reports" />
   </g>
   <g t="U" o="002">
     <i t="user accounts">
       <i t="managing">
-        <j l="20#1089511" />
+        <j l="23#1089511" />
       </i>
       <i t="registering">
-        <j l="5" />
         <j l="6" />
+        <j l="7" />
       </i>
     </i>
     <i t="Using online help">
