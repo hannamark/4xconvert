@@ -84,17 +84,17 @@
 package gov.nih.nci.pa.report.service;
 
 import static org.junit.Assert.assertEquals;
-
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
-import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.criteria.Summ4RepCriteriaDto;
@@ -238,7 +238,8 @@ public class Summ4RepTest
             + "and 'Agent/Device' = :AGENT_DEVICE "
             + "and 'Other Intervention' = :OTHER_INTERVENTION "
             + "and 'Epidemiologic/Other/Outcome' = :EPIDEM_OTHER_OUTCOME "
-            + "and 'Ancillary/Correlative' = :ANCILLARY_CORRELATIVE");
+            + "and 'Ancillary/Correlative' = :ANCILLARY_CORRELATIVE "
+            + "and '" + IiConverter.STUDY_PROTOCOL_ROOT+ "' = :NCI_II_ROOT");
             return sql;
         }
     }
