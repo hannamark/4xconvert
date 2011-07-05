@@ -302,6 +302,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "inner JOIN study_milestone AS sm ON sp.identifier = sm.study_protocol_identifier  "
         + "inner JOIN study_resourcing AS sr ON sp.identifier = sr.study_protocol_identifier  "
         + "inner JOIN study_otheridentifiers sOi ON sp.identifier = sOi.study_protocol_id "
+        + "AND sOi.root = :NCI_II_ROOT "
         + "inner JOIN study_site AS ss ON sp.identifier = ss.study_protocol_identifier "
         + "left JOIN research_organization AS ro ON ss.research_organization_identifier = ro.identifier "
         + "left JOIN organization AS ro_org ON ro.organization_identifier = ro_org.identifier "
@@ -396,6 +397,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         query.setString("AGENT_DEVICE", AGENT_DEVICE);
         query.setString("OTHER_INTERVENTION", OTHER_INTERVENTION);
         query.setString("ANCILLARY_CORRELATIVE", ANCILLARY_CORRELATIVE);
+        query.setString("NCI_II_ROOT", IiConverter.STUDY_PROTOCOL_ROOT);
     }
 
     private List<Summ4RepResultDto> getResultList(List<Object[]> queryList) throws PAException {
