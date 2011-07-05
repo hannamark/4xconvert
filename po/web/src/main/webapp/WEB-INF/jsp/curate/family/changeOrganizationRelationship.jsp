@@ -19,7 +19,7 @@
                 var options = {
                     onComplete: function(transport) {
                                     if ($('passedValidation').value != 'false') {
-                                        window.top.reloadOrgRelationships(new IdValue('${newOrgRelationship.family.id}', '${newOrgRelationship.family.name}'));
+                                        window.top.reloadFamilyOrgRelationship();
                                     } else {
                                         bindListeners();
                                     }

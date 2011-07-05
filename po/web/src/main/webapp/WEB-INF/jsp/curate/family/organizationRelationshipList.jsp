@@ -1,6 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <div class="box_outer">
-    <po:successMessages/>
     <div class="box">
         <h2><fmt:message key="organizationRelationship.list.title"/></h2>
         <ajax:displayTag id="organizationRelationships" tableClass="data">

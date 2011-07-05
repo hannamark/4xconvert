@@ -14,34 +14,7 @@
                 var url = '${loadOrgUrl}' + '&selectedOrgId=' + returnValue.id;
                 loadDiv(url, 'famOrgRelationshipOrgInfo', true, null, false);
             }
-
-            function reloadOrgRelationships(returnValue) {
-                window.top.hidePopWin(true);
-                <c:url value="/protected/ajax/family/organization/relationship/loadOrgRelationships.action" var="loadOrgRelationshipUrl"/>
-                var params = {
-                    'familyOrgRelationship.family.id': returnValue.id,
-                    rootKey: '${rootKey}'
-                };
-                var div = $('org_relationships');
-                div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="<c:url value='/images/loading.gif'/>"&nbsp;Loading...</div>';
-                var aj = callAjaxPost(div, '${loadOrgRelationshipUrl}', params);
-            }
-
-            function removeOrgRelationship(id) {
-                 <c:url value="/protected/popup/organization/relationship/create/remove.action" var="removeUrl"/>
-                 <s:text name="organizationRelationship.confirmationMessage" var="confirmationMessage"/>
-                 var confirmation = confirm('${confirmationMessage}');
-                 if (confirmation) {
-                     var params = { 'orgRelationship.id': id};
-                     var options = {
-                         onComplete: function(transport) {
-                                         reloadOrgRelationships(new IdValue('${familyOrgRelationship.family.id}', ''));
-                                     }
-                      };
-                      var aj = callAjaxPost(null, '${removeUrl}', params, options);
-                 }
-            }
-
+    
             function confirmThenSubmit() {
                 var confirmation = ${isCreate} ||
                     $('familyOrgRelationshipForm.familyOrgRelationship.endDate').value.match(/^\s*$/) ||
@@ -51,6 +24,7 @@
                 }
             }
         </script>
+        <%@include file="familyOrganizationRelationshipCommon.jsp"%>
     </head>
     <body>
         <po:successMessages/>

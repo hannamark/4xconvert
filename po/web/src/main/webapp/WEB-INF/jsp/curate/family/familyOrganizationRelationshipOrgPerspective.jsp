@@ -6,39 +6,16 @@
         <c:url value="/protected/selector/family/list.action" var="searchUrl"/>
         <title><fmt:message key="familyOrgRelationship.details.title"/></title>
         <script type="text/javascript" language="javascript">
-        function familySelectionCallback(returnValue) {
-            <c:url value="/protected/ajax/organization/family/relationship/loadFamilyInfo.action" var="loadFamilyUrl">
-               <c:param name="rootKey" value="${rootKey}"/>
-            </c:url>
-            $('selectedFamilyId').value = returnValue.id;
-            var url = '${loadFamilyUrl}' + '&selectedFamilyId=' + returnValue.id;
-            loadDiv(url, 'famOrgRelationshipFamilyInfo', true, null, false);
-        }
-
-        function reloadOrgRelationships(returnValue) {
-            window.top.hidePopWin(true);
-            <c:url value="/protected/ajax/organization/family/relationship/loadOrgRelationships.action" var="loadOrgRelationshipUrl"/>
-            var params = { rootKey: '${rootKey}' };
-            var div = $('org_relationships');
-            div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="<c:url value='/images/loading.gif'/>"&nbsp;Loading...</div>';
-            var aj = callAjaxPost(div, '${loadOrgRelationshipUrl}', params);
-        }
-
-        function removeOrgRelationship(id) {
-            <c:url value="/protected/popup/organization/relationship/create/remove.action" var="removeUrl"/>
-            <s:text name="organizationRelationship.confirmationMessage" var="confirmationMessage"/>
-            var confirmation = confirm('${confirmationMessage}');
-            if (confirmation) {
-                var params = { 'orgRelationship.id': id };
-                var options = {
-                    onComplete: function(transport) {
-                                    reloadOrgRelationships(new IdValue('${familyOrgRelationship.organization.id}', ''));
-                                }
-                };
-                var aj = callAjaxPost(null, '${removeUrl}', params, options);
+            function familySelectionCallback(returnValue) {
+                <c:url value="/protected/ajax/organization/family/relationship/loadFamilyInfo.action" var="loadFamilyUrl">
+                   <c:param name="rootKey" value="${rootKey}"/>
+                </c:url>
+                $('selectedFamilyId').value = returnValue.id;
+                var url = '${loadFamilyUrl}' + '&selectedFamilyId=' + returnValue.id;
+                loadDiv(url, 'famOrgRelationshipFamilyInfo', true, null, false);
             }
-        }
         </script>
+        <%@include file="familyOrganizationRelationshipCommon.jsp"%>
     </head>
     <body>
         <po:successMessages/>
