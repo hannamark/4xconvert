@@ -1253,7 +1253,8 @@ public class TrialConvertUtils {
            } else {
                webDto.setExpandedAccess("No");
            }
-         }
+       }
+       webDto.setExemptIndicator(BlConverter.convertToBoolean(isoDto.getExemptIndicator()));
        webDto.setGrantor(CdConverter.convertCdToString(isoDto.getGrantorCode()));
        webDto.setHolderType(CdConverter.convertCdToString(isoDto.getHolderTypeCode()));
        if (!PAUtil.isCdNull(isoDto.getNihInstHolderCode())) {
