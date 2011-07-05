@@ -13,7 +13,7 @@
                     <label for="updateTrial_resppartysponsor"> <fmt:message key="update.trial.responsibleParty"/><span class="required">*</span></label>
                 </td>
                 <td>
-                <s:radio name="trialDTO.responsiblePartyType" id="trialDTO.responsiblePartyType" list="#{'pi':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
+                <s:radio name="trialDTO.responsiblePartyType" id="trialDTO.responsiblePartyType" list="#{'PI':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
                 </td>
          </tr>
          <s:if test="trialDTO.responsiblePartyType == 'sponsor'">
