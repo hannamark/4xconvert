@@ -190,6 +190,7 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -1114,10 +1115,14 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         int cnt = 1;
         StringBuffer interventionAltName = new StringBuffer();
         List<InterventionAlternateNameDTO> interventionNames = new ArrayList<InterventionAlternateNameDTO>();
-        String[] nameTypeCodes = new String[] {PAConstants.SYNONYM, PAConstants.ABBREVIATION, PAConstants.US_BRAND_NAME,
-                PAConstants.FOREIGN_BRAND_NAME, PAConstants.CODE_NAME};
+        //The below values are all being converted to upper-case because the values in the intervention alternate
+        //name are not set via the constants but rather set via the pdq scripts.
+        List<String> nameTypeCodes = Arrays.asList(StringUtils.upperCase(PAConstants.SYNONYM),
+                StringUtils.upperCase(PAConstants.ABBREVIATION), StringUtils.upperCase(PAConstants.US_BRAND_NAME),
+                StringUtils.upperCase(PAConstants.FOREIGN_BRAND_NAME), StringUtils.upperCase(PAConstants.CODE_NAME));
+
         for (InterventionAlternateNameDTO ian : ianList) {
-            if (ArrayUtils.contains(nameTypeCodes, ian.getNameTypeCode().getValue())) {
+            if (nameTypeCodes.contains(StringUtils.upperCase(ian.getNameTypeCode().getValue()))) {
                 interventionNames.add(ian);
                 if (cnt++ > PAAttributeMaxLen.LEN_5) {
                     break;

@@ -190,8 +190,8 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
             throw new PAException(II_CAN_NOT_BE_NULL);
         }
         List<StudyFundingStageDTO> resultList = new ArrayList<StudyFundingStageDTO>();
-        StringBuffer hql = new StringBuffer("select spart from ");
-        hql.append(" StudyFundingStage spart join spart.studyProtocolStage spro where spro.id = :studyProtocolId");
+        String hql = "select spart from StudyFundingStage spart join spart.studyProtocolStage spro where spro.id = "
+            + " :studyProtocolId";
         List<? extends AbstractEntity> queryList = getResultList(studyProtocolStageIi, hql);
         for (AbstractEntity bo : queryList) {
             resultList.add(StudyFundingStageConverter.convertFromDomainToDTO((StudyFundingStage) bo));
@@ -209,8 +209,8 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
         if (PAUtil.isIiNull(studyProtocolStageIi)) {
             throw new PAException(II_CAN_NOT_BE_NULL);
         }
-        StringBuffer hql = new StringBuffer("select spart from ");
-        hql.append(" StudyIndIdeStage spart join spart.studyProtocolStage spro where spro.id = :studyProtocolId");
+        String hql = "select spart StudyIndIdeStage spart join spart.studyProtocolStage spro where spro.id = "
+            + " :studyProtocolId";
         List<StudyIndIdeStage> queryList = (List<StudyIndIdeStage>) getResultList(studyProtocolStageIi, hql);
         return new StudyIndIdeStageConverter().convertFromDomainToDtos(queryList);
     }
@@ -432,8 +432,8 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
         }
         List<DocumentDTO> resultList = new ArrayList<DocumentDTO>();
 
-        StringBuffer hql = new StringBuffer("select doc from ");
-        hql.append(" StudyDocumentStage doc join doc.studyProtocolStage spro where spro.id = :studyProtocolId");
+        String hql = "select doc from StudyDocumentStage doc join doc.studyProtocolStage spro where spro.id = "
+            +  ":studyProtocolId";
         List<? extends AbstractEntity> queryList = getResultList(studyProtocolStageIi, hql);
         for (AbstractEntity bo : queryList) {
             DocumentDTO docDTO = new StudyDocumentStageConverter().convertFromDomainToDto((StudyDocumentStage) bo);
@@ -472,9 +472,9 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
      * @return
      */
     @SuppressWarnings("unchecked")
-    private List<? extends AbstractEntity> getResultList(Ii studyProtocolStageIi, StringBuffer hql) {
+    private List<? extends AbstractEntity> getResultList(Ii studyProtocolStageIi, String hql) {
         Session session = PaHibernateUtil.getCurrentSession();
-        Query query = session.createQuery(hql.toString());
+        Query query = session.createQuery(hql);
         query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolStageIi));
         return query.list();
     }
