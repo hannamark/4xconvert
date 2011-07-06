@@ -670,6 +670,14 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
         org.setName(null);
         assertFalse(getBean().generateCTGovXml(spId).contains("<lead_sponsor>"));
     }
+    
+    @Test
+    public void testMiddleNameNullCheck() throws PAException {
+        person.setMiddleName(null);
+        assertFalse(getBean().generateCTGovXml(spId).contains("<middle_name>"));
+        person.setMiddleName("Test");
+        assertTrue(getBean().generateCTGovXml(spId).contains("<middle_name>T.</middle_name>"));
+    }
 
     @Test
     public void testOrgBySsEmpty() throws PAException {
@@ -696,7 +704,7 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
         when(studySiteAccrualStatusSvc.getCurrentStudySiteAccrualStatusByStudySite(any(Ii.class))).thenReturn(accrualStatus);
 
         assertTrue(getBean().generateCTGovXml(spId).contains("<status>Not yet recruiting</status>"));
-
+        
         accrualStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.APPROVED));
         assertTrue(getBean().generateCTGovXml(spId).contains("<status>Not yet recruiting</status>"));
 

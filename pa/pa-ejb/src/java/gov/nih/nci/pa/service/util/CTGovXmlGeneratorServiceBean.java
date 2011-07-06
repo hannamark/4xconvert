@@ -1423,9 +1423,8 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
             Element investigator = doc.createElement("investigator");
             XmlGenHelper.appendElement(investigator,
                     XmlGenHelper.createElementWithTextblock(XmlGenHelper.FIRST_NAME, p.getFirstName(), doc));
-            XmlGenHelper.appendElement(investigator,
-                    XmlGenHelper.createElementWithTextblock("middle_name", StringUtils.substring(p.getMiddleName(), 0,
-                    PAAttributeMaxLen.LEN_1) + ".", doc));
+            addMiddleName(investigator, StringUtils.substring(p.getMiddleName(), 0,
+                    PAAttributeMaxLen.LEN_1), doc);
             XmlGenHelper.appendElement(investigator,
                     XmlGenHelper.createElementWithTextblock(XmlGenHelper.LAST_NAME, p.getLastName(), doc));
             XmlGenHelper.appendElement(investigator,
@@ -1433,6 +1432,13 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
             if (investigator.hasChildNodes()) {
                 XmlGenHelper.appendElement(location, investigator);
             }
+        }
+    }
+    
+    private void addMiddleName(Element contact, String middleName, Document doc) {
+        if (StringUtils.isNotBlank(middleName)) {
+            XmlGenHelper.appendElement(contact,
+                    XmlGenHelper.createElementWithTextblock("middle_name", middleName + "." , doc));
         }
     }
 
@@ -1457,9 +1463,8 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
                 Person p = getCorUtils().getPAPersonByIi(sscDTO.getClinicalResearchStaffIi());
                 XmlGenHelper.appendElement(contact,
                         XmlGenHelper.createElementWithTextblock(XmlGenHelper.FIRST_NAME, p.getFirstName(), doc));
-                XmlGenHelper.appendElement(contact,
-                        XmlGenHelper.createElementWithTextblock("middle_name", StringUtils.substring(
-                                p.getMiddleName(), 0, PAAttributeMaxLen.LEN_1) + "." , doc));
+                addMiddleName(contact, StringUtils.substring(
+                        p.getMiddleName(), 0, PAAttributeMaxLen.LEN_1), doc);
                 XmlGenHelper.appendElement(contact,
                         XmlGenHelper.createElementWithTextblock(XmlGenHelper.LAST_NAME, p.getLastName(), doc));
             } else if (sscDTO.getOrganizationalContactIi() != null) {
