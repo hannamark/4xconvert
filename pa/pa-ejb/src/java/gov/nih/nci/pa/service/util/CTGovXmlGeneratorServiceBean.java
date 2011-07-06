@@ -1423,8 +1423,7 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
             Element investigator = doc.createElement("investigator");
             XmlGenHelper.appendElement(investigator,
                     XmlGenHelper.createElementWithTextblock(XmlGenHelper.FIRST_NAME, p.getFirstName(), doc));
-            addMiddleName(investigator, StringUtils.substring(p.getMiddleName(), 0,
-                    PAAttributeMaxLen.LEN_1), doc);
+            addMiddleName(investigator, p.getMiddleName(), doc);
             XmlGenHelper.appendElement(investigator,
                     XmlGenHelper.createElementWithTextblock(XmlGenHelper.LAST_NAME, p.getLastName(), doc));
             XmlGenHelper.appendElement(investigator,
@@ -1435,7 +1434,8 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
         }
     }
     
-    private void addMiddleName(Element contact, String middleName, Document doc) {
+    private void addMiddleName(Element contact, String name, Document doc) {
+        String middleName = StringUtils.substring(name, 0, PAAttributeMaxLen.LEN_1);
         if (StringUtils.isNotBlank(middleName)) {
             XmlGenHelper.appendElement(contact,
                     XmlGenHelper.createElementWithTextblock("middle_name", middleName + "." , doc));
@@ -1463,8 +1463,7 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
                 Person p = getCorUtils().getPAPersonByIi(sscDTO.getClinicalResearchStaffIi());
                 XmlGenHelper.appendElement(contact,
                         XmlGenHelper.createElementWithTextblock(XmlGenHelper.FIRST_NAME, p.getFirstName(), doc));
-                addMiddleName(contact, StringUtils.substring(
-                        p.getMiddleName(), 0, PAAttributeMaxLen.LEN_1), doc);
+                addMiddleName(contact, p.getMiddleName(), doc);
                 XmlGenHelper.appendElement(contact,
                         XmlGenHelper.createElementWithTextblock(XmlGenHelper.LAST_NAME, p.getLastName(), doc));
             } else if (sscDTO.getOrganizationalContactIi() != null) {

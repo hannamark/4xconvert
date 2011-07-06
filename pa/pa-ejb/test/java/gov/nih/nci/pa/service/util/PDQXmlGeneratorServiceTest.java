@@ -333,4 +333,14 @@ public class PDQXmlGeneratorServiceTest extends CTGovXmlGeneratorServiceTest {
     public void testSosByCurrent() throws PAException {
         //nop
     }
+    
+    @Test
+    @Override
+    public void testMiddleNameNullCheck() throws PAException {
+        person.setMiddleName(null);
+        assertFalse(getBean().generateCTGovXml(spId).contains("<middle_initial>"));
+        assertFalse(getBean().generateCTGovXml(spId).contains("</middle_initial>"));
+        person.setMiddleName("Test");
+        assertTrue(getBean().generateCTGovXml(spId).contains("<middle_initial>T</middle_initial>"));
+    }
 }
