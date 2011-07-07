@@ -26,7 +26,7 @@ function handleAction(){
         <p> Register multiple trials in the NCI Clinical Trials Reporting Program by uploading the Trial Data file and the Zip file that contains trial documents.
          <br>&nbsp;Note the following requirements:
          <br> &nbsp;&nbsp; 1) This form can only be used for submitting complete trials.
-         <br> &nbsp;&nbsp; 2) Trial data in the attached files must conform to the specifications in the CTRP Registry Complete Batch Upload Template that is valid for the current release, found <a href="http://www.cancer.gov/ncictrp/page11">here</a>.
+         <br> &nbsp;&nbsp; 2) Trial data in the attached files must conform to the specifications in the CTRP Registry Complete Batch Upload Template that is valid for the current release, found <a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/resources">here</a>.
          <br> &nbsp;&nbsp; 3) All fields are mandatory.
          </p>
         <table class="form"> 
