@@ -1135,8 +1135,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             throw new PAException(VALIDATION_EXCEPTION + sb.toString());
         }
         TrialRegistrationHelper.enforceBusinessRulesForStudyContact(studyProtocolDTO,
-                studyContactDTO, studySiteContactDTO, PAUtil.isIiNotNull(principalInvestigatorDTO.getIdentifier()),
-                PAUtil.isIiNotNull(responsiblePartyContactIi));
+                studyContactDTO, studySiteContactDTO, PAUtil.isIiNotNull(responsiblePartyContactIi));
 
     }
     /**

@@ -393,16 +393,15 @@ public class TrialRegistrationHelper {
      * @param studyProtocolDTO trial
      * @param studyContactDTO  study contact
      * @param studySiteContactDTO site contact
-     * @param piExists does PI exist
      * @param respPartyExists does resp Party exist
      * @throws PAException when error.
      */
     public static void enforceBusinessRulesForStudyContact(StudyProtocolDTO studyProtocolDTO,
             StudyContactDTO studyContactDTO, StudySiteContactDTO studySiteContactDTO,
-            boolean piExists, boolean respPartyExists) throws PAException {
+            boolean respPartyExists) throws PAException {
         enforceBusinessRulesForStudyContact(studyProtocolDTO, studyContactDTO, studySiteContactDTO);
         if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-            checkTelecomReqsForPiAndRespParty(studyContactDTO, studySiteContactDTO, piExists, respPartyExists);
+            checkTelecomReqsForPiAndRespParty(studyContactDTO, studySiteContactDTO, respPartyExists);
         }
     }
 
@@ -437,10 +436,9 @@ public class TrialRegistrationHelper {
     }
 
     private static void checkTelecomReqsForPiAndRespParty(StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO,
-            boolean piExists, boolean respPartyExists) throws PAException {
+            StudySiteContactDTO studySiteContactDTO, boolean respPartyExists) throws PAException {
         StringBuffer sb = new StringBuffer();
-        sb.append(checkTelecomReqsForPi(studyContactDTO, piExists));
+        sb.append(checkTelecomReqsForPi(studyContactDTO, !respPartyExists));
         sb.append(checkTelecomReqsForRespParty(studySiteContactDTO, respPartyExists));
         if (sb.length() > 0) {
             throw new PAException(VALIDATION_EXCEPTION + sb.toString());

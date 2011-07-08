@@ -23,8 +23,8 @@ import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.GrantorCode;
 import gov.nih.nci.pa.enums.HolderTypeCode;
 import gov.nih.nci.pa.enums.IndldeTypeCode;
-import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -90,13 +90,13 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         System.out.println("Running the Grid Service Client");
         // change this as per your db
         organizationIi.setRoot("2.16.840.1.113883.3.26.4.2");
-        organizationIi.setExtension("501");
+        organizationIi.setExtension("120748");
         organizationIi.setIdentifierName("NCI organization entity identifier");
         nctResearchOrganizationIi.setRoot("2.16.840.1.113883.3.26.4.4.5");
-        nctResearchOrganizationIi.setExtension("1");
+        nctResearchOrganizationIi.setExtension("139141");
         nctResearchOrganizationIi.setIdentifierName("NCI Research Organization identifier");
         personIi.setRoot("2.16.840.1.113883.3.26.4.1");
-        personIi.setExtension("1");
+        personIi.setExtension("269650");
         personIi.setIdentifierName("NCI person entity identifier");
 
         try{
@@ -107,7 +107,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
               // place client calls here if you want to use this main as a
               // test....
               System.out.println("creating a protocol");
-              Id ispId = createCompleteInterventionalStudyProtocol(client);
+              createCompleteInterventionalStudyProtocol(client);
               //System.out.println("updating a protocol");
               //updateInterventionalStudyProtocol(client, ispId);
               //System.out.println("amending a protocol");
@@ -140,8 +140,12 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyProtocol.setStartDate(pastDate);
         studyProtocol.setStartDateTypeCode(ISOUtils.buildCD("Actual"));
         studyProtocol.setStatusDate(pastDate);
+        studyProtocol.setPrimaryPurposeCode(ISOUtils.buildCD("Other"));
+        studyProtocol.setPrimaryPurposeOtherText(ISOUtils.buildST("ssss"));
+        studyProtocol.setPrimaryPurposeAdditionalQualifierCode(ISOUtils.buildCD("Other"));
         studyProtocol.setPrimaryCompletionDate(futureDate);
         studyProtocol.setPrimaryCompletionDateTypeCode(ISOUtils.buildCD("Anticipated"));
+        
         studyProtocol.setOfficialTitle(dummyString);
         studyProtocol.setProgramCodeText(ISOUtils.buildST("PROGRAM CODE"));
 
@@ -150,7 +154,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyProtocol.setPhaseCode(phase);
         studyProtocol.setUserLastCreated(ISOUtils.buildST("aevansel@5amsolutions.com"));
         studyProtocol.setFdaRegulatedIndicator(ISOUtils.buildBL(false));
-        studyProtocol.setCtgovXmlRequiredIndicator(ISOUtils.buildBL(false));
+        studyProtocol.setCtgovXmlRequiredIndicator(ISOUtils.buildBL(true));
         StudyOverallStatus studyOverallStatus = new StudyOverallStatus();
         studyOverallStatus.setStatusDate(pastDate);
         CD studyOverallStatusCode = new CD();
@@ -164,9 +168,9 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         ST number = new ST();
         number.setValue("1");
         CD grantorCode = new CD();
-        grantorCode.setCode(GrantorCode.CDER.getCode());
+        grantorCode.setCode(GrantorCode.CBER.getCode());
         CD holderType = new CD();
-        holderType.setCode(HolderTypeCode.ORGANIZATION.getCode());
+        holderType.setCode(HolderTypeCode.NCI.getCode());
 
         studyIndIde[0] = new StudyIndlde();
         studyIndIde[0].setIndldeTypeCode(indIdeType);
@@ -175,6 +179,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyIndIde[0].setHolderTypeCode(holderType);
         studyIndIde[0].setExpandedAccessIndicator(ISOUtils.buildBL(false));
         studyIndIde[0].setExemptIndicator(ISOUtils.buildBL(true));
+        studyIndIde[0].setNciDivProgHolderCode(ISOUtils.buildCD("CCR"));
 
         StudyResourcing[] studyResourcing = new StudyResourcing[1];
         CD fundMech = new CD();
@@ -184,7 +189,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         ST serial = new ST();
         serial.setValue("023099");
         CD nciDivCode = new CD();
-        nciDivCode.setCode(NciDivisionProgramCode.CTEP.getCode());
+        nciDivCode.setCode("garbage");
 
         studyResourcing[0] = new StudyResourcing();
         studyResourcing[0].setFundingMechanismCode(fundMech);
@@ -235,16 +240,24 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
 
         StudySite[] nctIdentifierSiteIdentifiers = new StudySite[] {nctSite};
 
-        StudyContact studyContact = new StudyContact();
+        StudyContact studyContact = null;/*new StudyContact();
         TELEmail email = new TELEmail();
         email.setValue("mailto:example@example.com");
         TELPhone phone = new TELPhone();
         phone.setValue("tel:123-456-7890");
         studyContact.setTelecomAddresses(new DSETTEL());
         studyContact.getTelecomAddresses().getItem().add(email);
-        studyContact.getTelecomAddresses().getItem().add(phone);
-
-        StudySiteContact studySiteContact = null;
+        studyContact.getTelecomAddresses().getItem().add(phone); 
+*/
+        StudySiteContact studySiteContact = new StudySiteContact();
+        TELEmail email = new TELEmail();
+        email.setValue("mailto:example@example.com");
+        TELPhone phone = new TELPhone();
+        phone.setValue("tel:123-456-7890");
+        studySiteContact.setTelecomAddresses(new DSETTEL());
+        studySiteContact.getTelecomAddresses().getItem().add(email);
+        studySiteContact.getTelecomAddresses().getItem().add(phone);
+    
         Organization summaryForOrganization = new Organization();
         summaryForOrganization.setIdentifier(organizationIi);
         StudyResourcing summaryForStudyResourcing = new StudyResourcing();
@@ -252,7 +265,10 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         typeCode.setCode(SummaryFourFundingCategoryCode.INSTITUTIONAL.getCode());
         summaryForStudyResourcing.setTypeCode(typeCode);
         Id responsiblePartyContact = new Id();
-
+        responsiblePartyContact.setExtension(personIi.getExtension());
+        responsiblePartyContact.setRoot(personIi.getRoot());
+        responsiblePartyContact.setIdentifierName(personIi.getIdentifierName());
+        
         StudyRegulatoryAuthority studyRegulatoryAuthority = new StudyRegulatoryAuthority();
         RegulatoryAuthorityServiceClient regAuthClient =
             new RegulatoryAuthorityServiceClient("https://localhost:39743/wsrf/services/cagrid/RegulatoryAuthorityService");
@@ -358,16 +374,16 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         TS pastDate = new TS();
         pastDate.setValue("20100922090000.0000-0500");
         TS futureDate = new TS();
-        futureDate.setValue("20100922090000.0000-0500");
+        futureDate.setValue("20110922090000.0000-0500");
         TS amendmentDate = new TS();
-        amendmentDate.setValue("20101005090000.0000-0500");
+        amendmentDate.setValue("20111005090000.0000-0500");
         ST dummyString = new ST();
         dummyString.setValue("dummyString");
 
         II studyProtocolII = new II();
         studyProtocolII.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
         studyProtocolII.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        studyProtocolII.setExtension("108005");
+        studyProtocolII.setExtension("57415061");
         InterventionalStudyProtocol studyProtocol = new InterventionalStudyProtocol();
         studyProtocol.setIdentifier(studyProtocolII);
         studyProtocol.setStartDate(pastDate);
@@ -375,6 +391,7 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyProtocol.setStatusDate(pastDate);
         studyProtocol.setPrimaryCompletionDate(futureDate);
         studyProtocol.setPrimaryCompletionDateTypeCode(ISOUtils.buildCD("Anticipated"));
+        studyProtocol.setPrimaryPurposeCode(ISOUtils.buildCD(PrimaryPurposeCode.TREATMENT.getCode()));
         studyProtocol.setOfficialTitle(dummyString);
         studyProtocol.setAmendmentDate(amendmentDate);
 
@@ -385,10 +402,19 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
         studyProtocol.setPhaseCode(phase);
         studyProtocol.setUserLastCreated(ISOUtils.buildST("aevansel@5amsolutions.com"));
 
+        /*
+        <tri:studyOverallStatus>
+        <pa:StudyOverallStatus>
+        <pa:statusCode code="ABSTRACTION_VERIFIED_RESPONSE" valueSet="Active"/>
+        <pa:statusDate value="20110325000000.0000-0400"/>
+        </pa:StudyOverallStatus>
+        </tri:studyOverallStatus>
+        */
+        
         StudyOverallStatus studyOverallStatus = new StudyOverallStatus();
         studyOverallStatus.setStatusDate(pastDate);
         CD studyOverallStatusCode = new CD();
-        studyOverallStatusCode.setCode(StudyStatusCode.CLOSED_TO_ACCRUAL.getCode());
+        studyOverallStatusCode.setCode("ABSTRACTION_VERIFIED_RESPONSE");
         studyOverallStatus.setStatusCode(studyOverallStatusCode);
 
         StudyIndlde[] studyIndlde = new StudyIndlde[0];

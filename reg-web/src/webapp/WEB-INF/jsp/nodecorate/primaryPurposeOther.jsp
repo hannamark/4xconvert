@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <tr>
+<s:hidden id="trialDTO.primaryPurposeAdditionalQualifierCode" name="trialDTO.primaryPurposeAdditionalQualifierCode"/>
                 <td  scope="row" class="label">
                     <reg-web:displayTooltip tooltip="tooltip.primary_purpose">
                         <label for="submitTrial_protocolWebDTO_trialPurpose"><fmt:message key="submit.trial.purpose"/><span class="required">*</span></label>
@@ -39,9 +40,11 @@ function displayPrimaryPurposeOtherCode(){
     if ($('trialDTO.primaryPurposeCode').value == 'Other') {
         $('purposeOtherTextDiv').show();
         document.getElementById('trialDTO.primaryPurposeOtherText').disabled = false;
+        document.getElementById('trialDTO.primaryPurposeAdditionalQualifierCode').value = 'Other';
     } else {
         $('purposeOtherTextDiv').hide();
         document.getElementById('trialDTO.primaryPurposeOtherText').disabled = true;
+        document.getElementById('trialDTO.primaryPurposeAdditionalQualifierCode').value = null;
     }
 }
 </SCRIPT>

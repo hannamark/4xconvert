@@ -169,8 +169,11 @@ public abstract class AbstractTrialRegistrationBean {
         returnStudyProtocolDTO.setPrimaryPurposeCode(studyProtocolDTO.getPrimaryPurposeCode());
         if (PAUtil.isPrimaryPurposeCodeOther(CdConverter.convertCdToString(studyProtocolDTO.getPrimaryPurposeCode()))) {
             returnStudyProtocolDTO.setPrimaryPurposeOtherText(studyProtocolDTO.getPrimaryPurposeOtherText());
+            returnStudyProtocolDTO.setPrimaryPurposeAdditionalQualifierCode(studyProtocolDTO
+                    .getPrimaryPurposeAdditionalQualifierCode());
         } else {
             returnStudyProtocolDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(null));
+            returnStudyProtocolDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(null));
         }
     }
 

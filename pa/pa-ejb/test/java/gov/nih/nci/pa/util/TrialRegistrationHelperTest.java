@@ -468,7 +468,7 @@ public class TrialRegistrationHelperTest {
         StudyContactDTO scDto = createFullStudyContact();
         thrown.expect(PAException.class);
         thrown.expectMessage("Validation Exception Telecom information must be provided for Responsible Party StudySiteContact,");
-        helper.enforceBusinessRulesForStudyContact(spDTO, scDto, null, true, true);
+        helper.enforceBusinessRulesForStudyContact(spDTO, scDto, null, true);
     }
     
     @Test
@@ -479,7 +479,7 @@ public class TrialRegistrationHelperTest {
         StudySiteContactDTO sscDto = new StudySiteContactDTO();
         thrown.expect(PAException.class);
         thrown.expectMessage("Validation Exception Only one of StudyContact or StudySiteContact can be used, StudySiteContact Email cannot be null, StudySiteContact Phone cannot be null, ");
-        helper.enforceBusinessRulesForStudyContact(spDTO, scDto, sscDto, true, true);
+        helper.enforceBusinessRulesForStudyContact(spDTO, scDto, sscDto, true);
     }
     
     @Test
@@ -490,18 +490,17 @@ public class TrialRegistrationHelperTest {
         StudySiteContactDTO sscDto = null;
         thrown.expect(PAException.class);
         thrown.expectMessage("Validation Exception One of StudyContact or StudySiteContact has to be used, ");
-        helper.enforceBusinessRulesForStudyContact(spDTO, scDto, sscDto, true, true);
+        helper.enforceBusinessRulesForStudyContact(spDTO, scDto, sscDto, true);
     }
     
     @Test
     public void testEnforcePiAnfRespPartyContacts4() throws URISyntaxException, PAException {
         StudyProtocolDTO spDTO = new StudyProtocolDTO();
         spDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(true));
-        StudyContactDTO scDto = new StudyContactDTO();
         StudySiteContactDTO sscDto = createFullStudySiteContact();
         thrown.expect(PAException.class);
         thrown.expectMessage("Validation Exception Telecom information must be provided for Principal Investigator StudyContact,");
-        helper.enforceBusinessRulesForStudyContact(spDTO, null, sscDto, true, true);
+        helper.enforceBusinessRulesForStudyContact(spDTO, null, sscDto, false);
     }
 
 }
