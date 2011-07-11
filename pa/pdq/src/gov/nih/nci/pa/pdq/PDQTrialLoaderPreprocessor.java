@@ -183,6 +183,8 @@ public class PDQTrialLoaderPreprocessor {
         replaceStartDateType(document);
         replaceAnticipatedDate(document);
         
+        addMissingPrimaryPurposeCode(document);
+        
         // call last. Trials will no longer be observational after this. 
         prependObservational(document);
         
@@ -194,6 +196,39 @@ public class PDQTrialLoaderPreprocessor {
         String output = outputter.outputString(document);
         osw.write(output);
         osw.close();
+    }
+    
+    
+    /**
+     * PO-3818. Add primary purpose code (i.e. interventional_subtype) if missing.
+     * @param document
+     */
+    private void addMissingPrimaryPurposeCode(Document document) {
+        Element studyDesign = document.getRootElement().getChild("study_design");
+        Element interventionalDesign = studyDesign.getChild("interventional_design");        
+        if (interventionalDesign == null) {
+            addInterventionalDesignAndSubtype(studyDesign);
+        } else if (interventionalDesign.getChild("interventional_subtype") == null) {
+            addInterventionalSubtype(interventionalDesign);
+        } else if (StringUtils.isBlank(interventionalDesign.getChild("interventional_subtype").getText())) {
+            addInterventionalSubtypeText(interventionalDesign.getChild("interventional_subtype"));
+        }
+    }
+
+    private void addInterventionalDesignAndSubtype(Element studyDesign) {
+        Element interventionalDesign = new Element("interventional_design");
+        addInterventionalSubtype(interventionalDesign);
+        studyDesign.addContent(interventionalDesign);
+    }
+
+    private void addInterventionalSubtype(Element interventionalDesign) {
+        Element interventionalSubtype = new Element("interventional_subtype");
+        addInterventionalSubtypeText(interventionalSubtype);
+        interventionalDesign.addContent(interventionalSubtype);
+    }
+    
+    private void addInterventionalSubtypeText(Element interventionalSubtype) {
+        interventionalSubtype.setText("Treatment");
     }
     
     /**
