@@ -1,23 +1,12 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib uri="/struts-tags" prefix="s" %>
-<%@ taglib uri="http://displaytag.sf.net" prefix="display"%> 
-<%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator" %>
-<%@ taglib uri="http://www.opensymphony.com/sitemesh/page" prefix="page" %>
-<%@ taglib uri="http://ajaxtags.org/tags/ajax" prefix="ajax" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="viewer" %>
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+
 <table width="100%">
     <tr>               
-    <td colspan="2">
-<!-- main content begins-->
-        <c:url value="/ctro/ajax/refreshAncCorResultsSumm4Rep.action" var="ancCorSortUrl"/>
-        <ajax:displayTag id="summ4SearchResultsancillaryCorrelativeList" tableClass="data">
-        <display:table class="data" pagesize="20" uid="ancCorRow" name="${sessionScope.ancillaryCorrelativeList}" 
-            requestURI="${ancCorSortUrl}" export="true">
-            <viewer:summ4RepResultTableColumns table_uid="${ancCorRow}"/>
-        </display:table>
-        </ajax:displayTag>
-    </td>
+        <td colspan="2">
+            <c:url value="/ctro/ajax/refreshAncCorResultsSumm4Rep.action" var="ancCorSortUrl"/>
+            <ajax:displayTag id="summ4SearchResultsancillaryCorrelativeList" tableClass="data">
+                <viewer:summ4RepResultTable name="${sessionScope.ancillaryCorrelativeList}" requestURI="${ancCorSortUrl}" uid="ancCorRow"/>
+            </ajax:displayTag>
+        </td>
     </tr>
 </table>
