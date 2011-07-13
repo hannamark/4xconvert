@@ -117,6 +117,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.log4j.Logger;
 
 /**
  * Implemention of task to generate, compress and store pdq update xml files.
@@ -131,6 +132,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
     private final SimpleDateFormat time = new SimpleDateFormat("-HH-mm-ss", Locale.US);
     private static final String ZIP_ARCHIVE_NAME = "CTRP-TRIALS-";
     private static final int MAX_FILE_AGE = -30;
+    private static final Logger LOG = Logger.getLogger(PDQUpdateGeneratorTaskServiceBean.class);
 
     @EJB
     private PDQXmlGeneratorServiceRemote xmlGeneratorService;
@@ -150,6 +152,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
         }
         //Name of the file will be CTRP-TRIALS-YYYY-MM-DD-T-HH-mm-ss.zip
         Date now = new Date();
+        LOG.info("PDQ trial exporter started.");
         String zipFilePath = folderPath + File.separator + ZIP_ARCHIVE_NAME + date.format(now) +  "-T"
         + time.format(now) + ".zip";
         //Using the temp path to ensure locking is correctly working.
@@ -161,6 +164,11 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
         //zip archive.
         List<StudyProtocolDTO> collaborativeTrials =
             PaRegistry.getStudyProtocolService().getAbstractedCollaborativeTrials();
+        generateZipFile(zipArchive, collaborativeTrials, zipFilePath, folderPath);
+    }
+    
+    private void generateZipFile(File zipArchive, List<StudyProtocolDTO> collaborativeTrials, String zipFilePath,
+            String folderPath) throws PAException {
         ZipOutputStream zipOutput = null;
         try {
             zipOutput = new ZipOutputStream(new BufferedOutputStream(FileUtils.openOutputStream(zipArchive)));
@@ -182,6 +190,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
             lock.release();
             //Finally move the generic file to the more specific path.
             FileUtils.moveFile(zipArchive, new File(zipFilePath));
+            LOG.info("PDQ trial exporter processed " + collaborativeTrials.size() + " trials");
         } catch (IOException e) {
             throw new PAException("Error attempting to create PDQ XML Archive.", e);
         } finally {

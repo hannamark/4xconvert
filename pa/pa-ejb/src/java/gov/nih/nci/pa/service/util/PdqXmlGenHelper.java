@@ -429,7 +429,7 @@ public class PdqXmlGenHelper {
      * @return BigDecimal
      */
     protected static BigDecimal getMinAge(Ivl<Pq> pq) {
-        if (pq.getHigh() != null) {
+        if (pq.getLow() != null) {
             return pq.getLow().getValue();
         }
         return BigDecimal.ZERO;
@@ -441,7 +441,7 @@ public class PdqXmlGenHelper {
      * @return string
      */
     protected static String getMinUnit(Ivl<Pq> pq) {
-        if (pq.getHigh() != null) {
+        if (pq.getLow() != null) {
             return pq.getLow().getUnit();
         }
         return "";
