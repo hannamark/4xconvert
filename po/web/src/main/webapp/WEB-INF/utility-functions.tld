@@ -24,4 +24,12 @@
         <function-signature>java.lang.String abbreviate(java.lang.String, int)</function-signature>
         <example>'${func:abbreviate(string, maxWidth)}'</example>
     </function>
+    
+    <function>
+        <description>Concatenates Strings using a separator</description>
+        <name>join</name>
+        <function-class>org.apache.commons.lang.StringUtils</function-class>
+        <function-signature>java.lang.String join(java.util.Collection, java.lang.String)</function-signature>
+        <example>'${func:join(stringCollection, separator)}'</example>
+    </function>
 </taglib>
