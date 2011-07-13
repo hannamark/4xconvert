@@ -76,6 +76,8 @@
 */
 package gov.nih.nci.pa.report.dto.result;
 
+import java.util.Arrays;
+
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.St;
@@ -93,23 +95,32 @@ import gov.nih.nci.pa.iso.util.StConverter;
  */
 public class AverageMilestoneResultDto {
 
+    private static final int DAY1_INDEX = 0;
+    private static final int DAY2_INDEX = 1;
+    private static final int DAY3_INDEX = 2;
+    private static final int DAY4_INDEX = 3;
+    private static final int DAY5_INDEX = 4;
+    private static final int DAY6_INDEX = 5;
+    private static final int DAY7_INDEX = 6;
+    private static final int DAY8_INDEX = 7;
+    private static final int DAY9_INDEX = 8;
+    private static final int DAY10_INDEX = 9;
+    private static final int NUM_OF_DAYS = 10;
     private Cd milestoneCode = CdConverter.convertToCd(null);
     private Int order = IntConverter.convertToInt((Integer) null);
-    private Int day01 = IntConverter.convertToInt((Integer) null);
-    private Int day02 = IntConverter.convertToInt((Integer) null);
-    private Int day03 = IntConverter.convertToInt((Integer) null);
-    private Int day04 = IntConverter.convertToInt((Integer) null);
-    private Int day05 = IntConverter.convertToInt((Integer) null);
-    private Int day06 = IntConverter.convertToInt((Integer) null);
-    private Int day07 = IntConverter.convertToInt((Integer) null);
-    private Int day08 = IntConverter.convertToInt((Integer) null);
-    private Int day09 = IntConverter.convertToInt((Integer) null);
-    private Int day10 = IntConverter.convertToInt((Integer) null);
+    private Int[] days = new Int[NUM_OF_DAYS]; 
     private Int gtTenDays = IntConverter.convertToInt((Integer) null);
     private St average = StConverter.convertToSt(null);
     private St low = StConverter.convertToSt(null);
     private St high = StConverter.convertToSt(null);
 
+    /**
+     * Default constructor.
+     */
+    public AverageMilestoneResultDto() {
+        Arrays.fill(days, IntConverter.convertToInt((Integer) null));
+    }
+    
     /**
      * @return the milestoneCode
      */
@@ -138,121 +149,121 @@ public class AverageMilestoneResultDto {
      * @return the day01
      */
     public Int getDay01() {
-        return day01;
+        return days[DAY1_INDEX];
     }
     /**
      * @param day01 the day01 to set
      */
     public void setDay01(Int day01) {
-        this.day01 = day01;
+        this.days[DAY1_INDEX] = day01;
     }
     /**
      * @return the day02
      */
     public Int getDay02() {
-        return day02;
+        return days[DAY2_INDEX];
     }
     /**
      * @param day02 the day02 to set
      */
     public void setDay02(Int day02) {
-        this.day02 = day02;
+        this.days[DAY2_INDEX] = day02;
     }
     /**
      * @return the day03
      */
     public Int getDay03() {
-        return day03;
+        return days[DAY3_INDEX];
     }
     /**
      * @param day03 the day03 to set
      */
     public void setDay03(Int day03) {
-        this.day03 = day03;
+        this.days[DAY3_INDEX] = day03;
     }
     /**
      * @return the day04
      */
     public Int getDay04() {
-        return day04;
+        return days[DAY4_INDEX];
     }
     /**
      * @param day04 the day04 to set
      */
     public void setDay04(Int day04) {
-        this.day04 = day04;
+        this.days[DAY4_INDEX] = day04;
     }
     /**
      * @return the day05
      */
     public Int getDay05() {
-        return day05;
+        return days[DAY5_INDEX];
     }
     /**
      * @param day05 the day05 to set
      */
     public void setDay05(Int day05) {
-        this.day05 = day05;
+        this.days[DAY5_INDEX] = day05;
     }
     /**
      * @return the day06
      */
     public Int getDay06() {
-        return day06;
+        return days[DAY6_INDEX];
     }
     /**
      * @param day06 the day06 to set
      */
     public void setDay06(Int day06) {
-        this.day06 = day06;
+        this.days[DAY6_INDEX] = day06;
     }
     /**
      * @return the day07
      */
     public Int getDay07() {
-        return day07;
+        return days[DAY7_INDEX];
     }
     /**
      * @param day07 the day07 to set
      */
     public void setDay07(Int day07) {
-        this.day07 = day07;
+        this.days[DAY7_INDEX] = day07;
     }
     /**
      * @return the day08
      */
     public Int getDay08() {
-        return day08;
+        return days[DAY8_INDEX];
     }
     /**
      * @param day08 the day08 to set
      */
     public void setDay08(Int day08) {
-        this.day08 = day08;
+        this.days[DAY8_INDEX] = day08;
     }
     /**
      * @return the day09
      */
     public Int getDay09() {
-        return day09;
+        return days[DAY9_INDEX];
     }
     /**
      * @param day09 the day09 to set
      */
     public void setDay09(Int day09) {
-        this.day09 = day09;
+        this.days[DAY9_INDEX] = day09;
     }
     /**
      * @return the day10
      */
     public Int getDay10() {
-        return day10;
+        return days[DAY10_INDEX];
     }
     /**
      * @param day10 the day10 to set
      */
     public void setDay10(Int day10) {
-        this.day10 = day10;
+        this.days[DAY10_INDEX] = day10;
     }
     /**
      * @return the gtTenDays

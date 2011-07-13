@@ -1,5 +1,4 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
-<%@ include file="/WEB-INF/jsp/common/includejs.jsp" %>
 <c:set var="topic" scope="request" value="run_summ4_types"/> 
 <head>
 <title><fmt:message key="summ4Rep.header" /></title>
