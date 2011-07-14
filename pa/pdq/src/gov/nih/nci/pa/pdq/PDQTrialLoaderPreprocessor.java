@@ -89,6 +89,7 @@ import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.io.FilenameFilter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -101,6 +102,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -184,6 +186,7 @@ public class PDQTrialLoaderPreprocessor {
         replaceAnticipatedDate(document);
         
         addMissingPrimaryPurposeCode(document);
+        capitalizeWordsInPrimaryPurposeCode(document);
         
         // call last. Trials will no longer be observational after this. 
         prependObservational(document);
@@ -231,6 +234,17 @@ public class PDQTrialLoaderPreprocessor {
         interventionalSubtype.setText("Treatment");
     }
     
+    /**
+     * PO-3849. Capitalize first letter of each word in primary purpose codes (i.e. interventional_subtype).
+     * @param document
+     */
+    private void capitalizeWordsInPrimaryPurposeCode(Document document) {
+        Element studyDesign = document.getRootElement().getChild("study_design");
+        Element interventionalDesign = studyDesign.getChild("interventional_design");
+        Element primaryPurposeCode = interventionalDesign.getChild("interventional_subtype");
+        primaryPurposeCode.setText(WordUtils.capitalize(primaryPurposeCode.getText()));
+    }
+
     /**
      * PO-3778. Remove all part sites but the first for cooperative group trials.
      * @param document
