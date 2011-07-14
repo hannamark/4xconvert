@@ -185,8 +185,7 @@ public class PDQTrialLoaderPreprocessor {
         replaceStartDateType(document);
         replaceAnticipatedDate(document);
         
-        addMissingPrimaryPurposeCode(document);
-        capitalizeWordsInPrimaryPurposeCode(document);
+        processPrimaryPurposeCode(document);
         
         // call last. Trials will no longer be observational after this. 
         prependObservational(document);
@@ -201,13 +200,19 @@ public class PDQTrialLoaderPreprocessor {
         osw.close();
     }
     
-    
+    private void processPrimaryPurposeCode(Document document) {
+        Element studyDesign = document.getRootElement().getChild("study_design");
+        addMissingPrimaryPurposeCode(studyDesign);
+        replaceInvalidPrimaryPurposeCode(studyDesign);
+        capitalizeWordsInPrimaryPurposeCode(studyDesign);
+    }
+
+
     /**
      * PO-3818. Add primary purpose code (i.e. interventional_subtype) if missing.
-     * @param document
+     * @param studyDesign study_design element
      */
-    private void addMissingPrimaryPurposeCode(Document document) {
-        Element studyDesign = document.getRootElement().getChild("study_design");
+    private void addMissingPrimaryPurposeCode(Element studyDesign) {
         Element interventionalDesign = studyDesign.getChild("interventional_design");        
         if (interventionalDesign == null) {
             addInterventionalDesignAndSubtype(studyDesign);
@@ -235,11 +240,22 @@ public class PDQTrialLoaderPreprocessor {
     }
     
     /**
-     * PO-3849. Capitalize first letter of each word in primary purpose codes (i.e. interventional_subtype).
-     * @param document
+     * PO-3854. Replace invalid primary purpose codes (i.e. interventional_subtype) with valid codes.
+     * @param studyDesign study_design element
      */
-    private void capitalizeWordsInPrimaryPurposeCode(Document document) {
-        Element studyDesign = document.getRootElement().getChild("study_design");
+    private void replaceInvalidPrimaryPurposeCode(Element studyDesign) {
+        Element interventionalDesign = studyDesign.getChild("interventional_design");
+        Element primaryPurposeCode = interventionalDesign.getChild("interventional_subtype");
+        if ("Educational/Counseling/Training".equalsIgnoreCase(primaryPurposeCode.getText())) {
+            primaryPurposeCode.setText("Supportive Care");
+        }
+    }
+    
+    /**
+     * PO-3849. Capitalize first letter of each word in primary purpose codes (i.e. interventional_subtype).
+     * @param studyDesign study_design element
+     */
+    private void capitalizeWordsInPrimaryPurposeCode(Element studyDesign) {
         Element interventionalDesign = studyDesign.getChild("interventional_design");
         Element primaryPurposeCode = interventionalDesign.getChild("interventional_subtype");
         primaryPurposeCode.setText(WordUtils.capitalize(primaryPurposeCode.getText()));
