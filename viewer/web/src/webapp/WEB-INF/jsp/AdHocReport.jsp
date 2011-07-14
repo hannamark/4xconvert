@@ -2,51 +2,58 @@
 <c:set var="topic" scope="request" value="run_adhoc"/> 
 <c:url value="/ctro/popupDis.action" var="lookupUrl" />
 <head>
-<title><fmt:message key="adHoc.header" /></title>
-<s:head />
-<link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all" />
-<link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all" />
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
-<script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
-<script type="text/javascript">
-function handleAction(){
-    document.forms[0].action="resultsAdHocReport.action";
-    document.forms[0].submit();
-}
-
-function resetValues(){
-    document.getElementById("officialTitle").value="";
-    document.getElementById("leadOrganizationId").value="";
-    document.getElementById("identifierType").value="";
-    document.getElementById("identifier").value="";
-    document.getElementById("principalInvestigatorId").value="";
-    document.getElementById("phaseCode").value="";
-    document.getElementById("primaryPurpose").value="";
-    document.getElementById("studyStatusCode").value="";
-    document.getElementById("documentWorkflowStatusCode").value="";
-    document.getElementById("studyMilestone").value="";
-    document.getElementById("submissionType").value="";
-    document.getElementById("trialCategory").value="";
-    document.getElementById("criteria_diseaseCondition").value="";
-    document.getElementById("diseaseName").value="";
-    document.getElementById("summ4Sponsor").value="";
-    document.getElementById("interventionType").value="";
-    document.getElementById("summ4FundingSourceTypeCode").value="";
-}
-
-function lookup() {
-    showPopup('${lookupUrl}', '', 'Disease');
-}
-
-function loadDiv(intid, disName) {
-    var url = '/viewer/ctro/ajaxptpDiseasedisplay.action';
-    var params = {diseaseName: disName, 'criteria.diseaseConditionId': intid};
-    var div = document.getElementById('loadDetails');   
-    div.innerHTML = '<div align="left"><img  src="<c:url value="/images/loading.gif"/>"/>&nbsp;Loading...</div>';
-    var aj = callAjaxPost(div, url, params);
-}
-</script>
+    <title><fmt:message key="adHoc.header" /></title>
+    <s:head />
+    <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all" />
+    <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all" />
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+    <script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+    <script type="text/javascript">
+        function handleAction(){
+            document.forms[0].action="resultsAdHocReport.action";
+            document.forms[0].submit();
+        }
+        
+        function resetValues(){
+            document.getElementById("officialTitle").value="";
+            document.getElementById("leadOrganizationId").value="";
+            document.getElementById("identifierType").value="";
+            document.getElementById("identifier").value="";
+            document.getElementById("principalInvestigatorId").value="";
+            document.getElementById("phaseCode").value="";
+            document.getElementById("primaryPurpose").value="";
+            document.getElementById("studyStatusCode").value="";
+            document.getElementById("documentWorkflowStatusCode").value="";
+            document.getElementById("studyMilestone").value="";
+            document.getElementById("submissionType").value="";
+            document.getElementById("trialCategory").value="";
+            document.getElementById("criteria_diseaseCondition").value="";
+            document.getElementById("diseaseName").value="";
+            document.getElementById("summ4Sponsor").value="";
+            document.getElementById("interventionType").value="";
+            document.getElementById("summ4FundingSourceTypeCode").value="";
+        }
+        
+        function lookup() {
+            showPopup('${lookupUrl}', '', 'Disease');
+        }
+        
+        function loadDiv(intid, disName) {
+            var url = '/viewer/ctro/ajaxptpDiseasedisplay.action';
+            var params = {diseaseName: disName, 'criteria.diseaseConditionId': intid};
+            var div = document.getElementById('loadDetails');   
+            div.innerHTML = '<div align="left"><img  src="<c:url value="/images/loading.gif"/>"/>&nbsp;Loading...</div>';
+            var aj = callAjaxPost(div, url, params);
+        }
+        
+        function generateTSR(Id) {
+            var url = "/viewer/ctro/ajax/resultsAdHocReportviewTSR.action?studyProtocolId="+Id;
+            document.sForm.target = "TSR";
+            document.sForm.action = url;
+            document.sForm.submit();
+        }
+    </script>
 </head>
 <body>
 <!-- main content begins-->
@@ -228,60 +235,53 @@ function loadDiv(intid, disName) {
             </del>
 
         </div>
- <s:if test="%{resultList != null}">
+        <s:if test="%{resultList != null}">
             <table width="100%">
-            <tr>
-                <td colspan="2">
-                    <h2><fmt:message key="adHoc.header"/></h2>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <fmt:message key="report.header.user"/>
-                    <viewer:displayUser />
-                </td>
-            </tr>
-            <tr><td><br/></td></tr>
-            <tr>
-            <td colspan="2">
-        <display:table class="data" sort="list" pagesize="10" id="row"
-        name="sessionScope.displayTagList" requestURI="resultsAdHocReport.action" export="true">
-        <display:setProperty name="export.excel" value="true" />
-        <viewer:displayTagProperties/>
-        <display:column escapeXml="false" titleKey="studyProtocol.documentWorkflowStatusDate" property="documentWorkflowStatusDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
-        <display:column escapeXml="true" titleKey="studyProtocol.nciIdentifier" property="nciIdentifier" sortable="true" headerClass="sortable"/>
-        <display:column escapeXml="true" titleKey="studyProtocol.officialTitle" maxLength= "200" property="officialTitle" sortable="true" headerClass="sortable"/>
-        <display:column escapeXml="true" titleKey="studyProtocol.leadOrganization" maxLength= "200" property="leadOrganizationName" sortable="true" headerClass="sortable"/>
-        <display:column escapeXml="true" titleKey="studyProtocol.leadOrgID" maxLength= "200" property="leadOrganizationId" sortable="true" headerClass="sortable"/>
-        <display:column escapeXml="true" titleKey="studyProtocol.principalInvestigator" maxLength= "200" property="piFullName" sortable="true" headerClass="sortable"/>
-        <display:column escapeXml="true" titleKey="studyProtocol.trialType" maxLength= "200" property="primaryPurpose" sortable="true" headerClass="sortable"/>
-        <display:column escapeXml="true" titleKey="studyProtocol.diseaseCondition" maxLength= "200" property="diseaseNames" sortable="true" headerClass="sortable"/>
-        <display:column escapeXml="true" titleKey="studyProtocol.interventionType" maxLength= "200" property="interventionTypes" sortable="true" headerClass="sortable"/>
-        <display:column escapeXml="true" titleKey="studyProtocol.milestone" property="studyMilsetone.code" sortable="true" headerClass="sortable"/>
-        <display:column escapeXml="false" titleKey="studyProtocol.milestoneDate" property="studyMilestoneDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>   
-        <display:column escapeXml="true" titleKey="studyProtocol.documentWorkflowStatus" property="documentWorkflowStatusCode.code" sortable="true" headerClass="sortable"/>
-        <display:column escapeXml="true" titleKey="studyProtocol.submissionType" property="studyTypeCode.code"  headerClass="sortable"/>  
-        <display:column escapeXml="true" titleKey="studyProtocol.studyPhase" property="phaseCode.code"  headerClass="sortable"/>  
-        <display:column escapeXml="true" titleKey="studyProtocol.summ4FundingSourceTypeCode" property="summ4FundingSrcCategory"  headerClass="sortable"/>  
-        <display:column escapeXml="true" titleKey="studyProtocol.studyStatusResult" property="studyStatusCode.code"  headerClass="sortable"/>  
-        <display:column titleKey="studyProtocol.viewTSR" media="html">
-            <c:if test="${row.viewTSR}">
-                <s:a href='#' onclick='generateTSR(%{#attr.row.studyProtocolId});'> View TSR</s:a>
-            </c:if>
-        </display:column>
-    </display:table>
-   </td>
-            </tr>
+                <tr>
+                    <td colspan="2">
+                        <h2><fmt:message key="adHoc.header"/></h2>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <fmt:message key="report.header.user"/>
+                        <viewer:displayUser />
+                    </td>
+                </tr>
+                <tr>
+                    <td><br/></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <display:table class="data" sort="list" pagesize="10" id="row" name="sessionScope.displayTagList" 
+                                       requestURI="resultsAdHocReport.action" export="true">
+                            <display:setProperty name="export.excel" value="true" />
+                            <viewer:displayTagProperties/>
+                            <display:column escapeXml="false" titleKey="studyProtocol.documentWorkflowStatusDate" property="documentWorkflowStatusDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
+                            <display:column escapeXml="true" titleKey="studyProtocol.nciIdentifier" property="nciIdentifier" sortable="true" headerClass="sortable"/>
+                            <display:column escapeXml="true" titleKey="studyProtocol.officialTitle" maxLength= "200" property="officialTitle" sortable="true" headerClass="sortable"/>
+                            <display:column escapeXml="true" titleKey="studyProtocol.leadOrganization" maxLength= "200" property="leadOrganizationName" sortable="true" headerClass="sortable"/>
+                            <display:column escapeXml="true" titleKey="studyProtocol.leadOrgID" maxLength= "200" property="leadOrganizationId" sortable="true" headerClass="sortable"/>
+                            <display:column escapeXml="true" titleKey="studyProtocol.principalInvestigator" maxLength= "200" property="piFullName" sortable="true" headerClass="sortable"/>
+                            <display:column escapeXml="true" titleKey="studyProtocol.trialType" maxLength= "200" property="primaryPurpose" sortable="true" headerClass="sortable"/>
+                            <display:column escapeXml="true" titleKey="studyProtocol.diseaseCondition" maxLength= "200" property="diseaseNames" sortable="true" headerClass="sortable"/>
+                            <display:column escapeXml="true" titleKey="studyProtocol.interventionType" maxLength= "200" property="interventionTypes" sortable="true" headerClass="sortable"/>
+                            <display:column escapeXml="true" titleKey="studyProtocol.milestone" property="studyMilsetone.code" sortable="true" headerClass="sortable"/>
+                            <display:column escapeXml="false" titleKey="studyProtocol.milestoneDate" property="studyMilestoneDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>   
+                            <display:column escapeXml="true" titleKey="studyProtocol.documentWorkflowStatus" property="documentWorkflowStatusCode.code" sortable="true" headerClass="sortable"/>
+                            <display:column escapeXml="true" titleKey="studyProtocol.submissionType" property="submissionTypeCode.code"  headerClass="sortable"/>  
+                            <display:column escapeXml="true" titleKey="studyProtocol.studyPhase" property="phaseCode.code"  headerClass="sortable"/>  
+                            <display:column escapeXml="true" titleKey="studyProtocol.summ4FundingSourceTypeCode" property="summ4FundingSrcCategory"  headerClass="sortable"/>  
+                            <display:column escapeXml="true" titleKey="studyProtocol.studyStatusResult" property="studyStatusCode.code"  headerClass="sortable"/>  
+                            <display:column titleKey="studyProtocol.viewTSR" media="html">
+                                <c:if test="${row.viewTSR}">
+                                    <s:a href='#' onclick='generateTSR(%{#attr.row.studyProtocolId});'> View TSR</s:a>
+                                </c:if>
+                            </display:column>
+                        </display:table>
+                    </td>
+                </tr>
             </table>
         </s:if>
     </s:form>
- <SCRIPT LANGUAGE="JavaScript" type="text/javascript">
-function generateTSR(Id) {
-    var url = "/viewer/ctro/ajax/resultsAdHocReportviewTSR.action?studyProtocolId="+Id;
-    document.sForm.target = "TSR";
-    document.sForm.action = url;
-    document.sForm.submit();
-
-}
-</script>
 </body>
