@@ -152,7 +152,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
         if (StringUtils.isEmpty(sum4FundingCatCode)) {
             setTrialAction("");
             ServletActionContext.getRequest().setAttribute(
-                    "failureMessage" , "Summary 4 Funding Sponsor Type is required to continue onto registration.");
+                    "failureMessage" , getText("error.register.summary4FundingSponsorType"));
             return REDIRECT_TO_SEARCH;
         }
         trialDTO = new TrialDTO();
@@ -268,7 +268,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
     private void validateForm() throws IOException {
         TrialValidator validator = new TrialValidator();
         Map<String, String> err = new HashMap<String, String>();
-        err = validator.validateTrialDTO(trialDTO);
+        err = validator.validateTrial(trialDTO);
         addErrors(err);
         validateDocuments();
     }
@@ -366,9 +366,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             clearErrorsAndMessages();
             validateForm();
             if (hasFieldErrors()) {
-                ServletActionContext.getRequest().setAttribute("failureMessage",
-                                                               "The form has errors and could not be submitted, "
-                                                                       + "please check the fields highlighted below");
+                ServletActionContext.getRequest().setAttribute("failureMessage", getText("error.fieldErrors"));
                 TrialValidator.addSessionAttributes(trialDTO);
                 trialUtil.populateRegulatoryList(trialDTO);
                 return ERROR;

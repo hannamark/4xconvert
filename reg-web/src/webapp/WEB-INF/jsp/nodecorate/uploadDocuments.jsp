@@ -264,7 +264,7 @@
         </tr>
         <tr>
             <td scope="row" class="label"><label for="submitTrial_otherDocument"><fmt:message
-                key="amend.trial.changeMemo" /> <span class="required">*</span> </label></td>
+                key="amend.trial.changeMemo" /> <span class="required">**</span> </label></td>
             <td class="value"><s:if test="%{#session.changeMemoDoc.typeCode.equals('Change Memo Document')}">
                 <s:property value="%{#session.changeMemoDoc.fileName}" />
                 <input type="button" value="Remove"
@@ -278,7 +278,7 @@
         </tr>
         <tr>
             <td scope="row" class="label"><label for="submitTrial_otherDocument"><fmt:message
-                key="amend.trial.protocolHighlight" /></label></td>
+                key="amend.trial.protocolHighlight" /> <span class="required">**</span> </label></td>
             <td class="value"><s:if
                 test="%{#session.protocolHighlightDoc.typeCode.equals('Protocol Highlighted Document')}">
                 <s:property value="%{#session.protocolHighlightDoc.fileName}" />
@@ -334,6 +334,9 @@
                     <s:param>trialDTO.informedConsentDocumentFileName</s:param>
                 </s:fielderror> </span>
             </s:else></td>
+        </tr>
+        <tr>
+            <td colspan="2"><span class="required">**</span> <fmt:message key="error.submit.changeMemoOrProtocolHighlight"/></td>
         </tr>
     </table>
     </div>

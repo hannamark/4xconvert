@@ -1891,8 +1891,10 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             errorMsg.append(validatePoObjects(summary4organizationDTO, "Summary 4 Organization ", false));
         }
         if (AMENDMENT.equalsIgnoreCase(operation)
-                && !getPAServiceUtils().isDocumentInList(documentDTOs, DocumentTypeCode.CHANGE_MEMO_DOCUMENT)) {
-            errorMsg.append("Change Memo Document is required.\n");
+                && (!getPAServiceUtils().isDocumentInList(documentDTOs, DocumentTypeCode.CHANGE_MEMO_DOCUMENT) 
+                        && !getPAServiceUtils()
+                        .isDocumentInList(documentDTOs, DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT))) {
+            errorMsg.append("At least one is required: Change Memo Document or Protocol Highlighted Document.");
         }
         // if ctGovXMLreq is true - then perform the validation.
         if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()

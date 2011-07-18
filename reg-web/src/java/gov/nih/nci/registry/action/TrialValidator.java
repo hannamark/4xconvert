@@ -89,7 +89,6 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -98,7 +97,6 @@ import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
 
-import java.io.File;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
@@ -126,81 +124,66 @@ public class TrialValidator {
     private static String anticipatedString = "Anticipated";
     private static final Logger LOG = Logger.getLogger(TrialValidator.class);
     private static final Set<String> TRIAL_STATUS_REQ_SET = new HashSet<String>();
-    private static PAServiceUtils paServiceUtils = new PAServiceUtils();
     static {
         TRIAL_STATUS_REQ_SET.add(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode());
         TRIAL_STATUS_REQ_SET.add(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode());
         TRIAL_STATUS_REQ_SET.add(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode());
         TRIAL_STATUS_REQ_SET.add(StudyStatusCode.WITHDRAWN.getCode());
     }
-    /**
-     *
-     * @param fileName name
-     * @param file file
-     * @param errorField err
-     * @param errorMsg errmsg
-     * @return map
-     */
-    public static Map<String, String> validateDocument(String fileName,
-            File file, String errorField, String errorMsg) {
-        Map<String, String> addFieldError = new HashMap<String, String>();
-        if (StringUtils.isNotEmpty(errorMsg) && StringUtils.isEmpty(fileName)) {
-            addFieldError.put(errorField, getText(errorMsg));
-        }
-        if (StringUtils.isNotEmpty(fileName)) {
-            if (!file.exists()) {
-                addFieldError.put(errorField, getText("error.submit.invalidDocument"));
-            }
-            if (!paServiceUtils.isValidFileType(fileName)) {
-                    addFieldError.put(errorField, getText("error.submit.invalidFileType"));
-            }
-        }
-        return addFieldError;
-    }
 
-    private static String getText(String errorMsg) {
-        return ResourceBundle.getBundle("ApplicationResources").getString(errorMsg);
+    /**
+     * @param messageKey key of message to look up
+     * @return message
+     */
+    protected static String getText(String messageKey) {
+        return ResourceBundle.getBundle("ApplicationResources").getString(messageKey);
     }
     /**
      *
      * @param trialDto dto
      * @return map
      */
-    public Map<String, String> validateTrialDTO(TrialDTO trialDto) {
+    public Map<String, String> validateTrial(TrialDTO trialDto) {
         Map<String, String> addFieldError = new HashMap<String, String>();
-        InvalidValue[] invalidValues = null;
-        ClassValidator<TrialDTO> classValidator = new ClassValidator(trialDto.getClass());
-                invalidValues = classValidator.getInvalidValues(trialDto);
-                for (int i = 0; i < invalidValues.length; i++) {
-                    addFieldError.put("trialDTO." + invalidValues[i].getPropertyName(),
-                            getText(invalidValues[i].getMessage().trim()));
-        }
-        if (PAUtil.isPrimaryPurposeOtherCodeReq(trialDto.getPrimaryPurposeCode(),
-                trialDto.getPrimaryPurposeAdditionalQualifierCode())) {
-                addFieldError.put("trialDTO.primaryPurposeAdditionalQualifierCode",
-                   getText("error.submit.otherPurposeCode"));
-        }
-        //validate Purpose when Selected value is OTHER
-        if (PAUtil.isPrimaryPurposeOtherTextReq(trialDto.getPrimaryPurposeCode(),
-               trialDto.getPrimaryPurposeAdditionalQualifierCode(), trialDto.getPrimaryPurposeOtherText())) {
-              addFieldError.put("trialDTO.primaryPurposeOtherText", getText("error.submit.otherPurposeText"));
-        }
+        validateTrialDTO(trialDto, addFieldError);
+        validatePrimaryPurposeAdditionalQualifier(trialDto, addFieldError);
+        validatePrimaryPurposeOtherText(trialDto, addFieldError);
         validateDateAndFormat(trialDto, addFieldError);
+        validateStudyStatusReason(trialDto, addFieldError);
+        validateXMLReqElement(trialDto, addFieldError);
+        validateSummaryFourInfo(trialDto, addFieldError);
+        return addFieldError;
+    }
+    private void validateStudyStatusReason(TrialDTO trialDto, Map<String, String> addFieldError) {
         if (StringUtils.isNotEmpty(trialDto.getStatusCode())
               && TRIAL_STATUS_REQ_SET.contains(trialDto.getStatusCode())) {
               addErrors(trialDto.getReason(), "trialDTO.reason", "error.submit.trialStatusReason", addFieldError);
         }
         if (StringUtils.length(trialDto.getReason()) > PAAttributeMaxLen.LEN_2000) {
-           addFieldError.put("trialDTO.reason", getText("error.reason.maxLength"));
-        }
-        validateXMLReqElement(trialDto, addFieldError);
-        validateSummaryFourInfo(trialDto, addFieldError);
-        return addFieldError;
+            addFieldError.put("trialDTO.reason", getText("error.reason.maxLength"));
+         }
     }
-    /**
-     * @param trialDto
-     * @param addFieldError
-     */
+    private void validatePrimaryPurposeOtherText(TrialDTO trialDto, Map<String, String> addFieldError) {
+        if (PAUtil.isPrimaryPurposeOtherTextReq(trialDto.getPrimaryPurposeCode(),
+               trialDto.getPrimaryPurposeAdditionalQualifierCode(), trialDto.getPrimaryPurposeOtherText())) {
+              addFieldError.put("trialDTO.primaryPurposeOtherText", getText("error.submit.otherPurposeText"));
+        }
+    }
+    private void validatePrimaryPurposeAdditionalQualifier(TrialDTO trialDto, Map<String, String> addFieldError) {
+        if (PAUtil.isPrimaryPurposeOtherCodeReq(trialDto.getPrimaryPurposeCode(),
+                trialDto.getPrimaryPurposeAdditionalQualifierCode())) {
+                addFieldError.put("trialDTO.primaryPurposeAdditionalQualifierCode",
+                   getText("error.submit.otherPurposeCode"));
+        }
+    }
+    private void validateTrialDTO(TrialDTO trialDto, Map<String, String> addFieldError) {
+        InvalidValue[] invalidValues = new ClassValidator(trialDto.getClass()).getInvalidValues(trialDto);
+        
+        for (int i = 0; i < invalidValues.length; i++) {
+            addFieldError.put("trialDTO." + invalidValues[i].getPropertyName(), getText(invalidValues[i].getMessage()
+                    .trim()));
+        }
+    }
     private void validateDateAndFormat(TrialDTO trialDto, Map<String, String> addFieldError) {
         String err = getText("error.submit.invalidDate");      // validate date and its format
         addErrorForDate(trialDto.getStatusDate(), "trialDTO.statusDate", err, addFieldError);
@@ -212,18 +195,18 @@ public class TrialValidator {
                 addFieldError.putAll(validateTrialDates(trialDto));
             }
     }
-   private boolean isValidDateAndCodeOrType(String code, String strDate) {
+
+    private boolean isValidDateAndCodeOrType(String code, String strDate) {
         return StringUtils.isNotEmpty(code) && RegistryUtil.isValidDate(strDate);
-   }
-   private void addErrorForDate(String fieldValue, String fieldName, String errMsg, Map<String, String> fieldErrorMap) {
-       if (!RegistryUtil.isValidDate(fieldValue)) {
+    }
+
+    private void addErrorForDate(String fieldValue, String fieldName, String errMsg, 
+            Map<String, String> fieldErrorMap) {
+        if (!RegistryUtil.isValidDate(fieldValue)) {
             fieldErrorMap.put(fieldName, errMsg);
-       }
-   }
-    /**
-     * @param trialDto
-     * @param addFieldError
-     */
+        }
+    }
+
     private void validateSummaryFourInfo(TrialDTO trialDto, Map<String, String> addFieldError) {
         if (!StringUtils.isEmpty(trialDto.getSummaryFourFundingCategoryCode())
              && StringUtils.isEmpty(trialDto.getSummaryFourOrgIdentifier())) {
@@ -234,10 +217,6 @@ public class TrialValidator {
             addFieldError.put("trialDTO.summaryFourFundingCategoryCode", "Select the Summary 4 Funding Sponsor Type");
         }
     }
-    /**
-     * @param trialDto
-     * @param fieldErrorMap
-     */
     private void validateXMLReqElement(TrialDTO trialDto, Map<String, String> fieldErrorMap) {
        if (trialDto.isXmlRequired()) {
            validateRespPartyInfo(trialDto, fieldErrorMap);
@@ -246,10 +225,6 @@ public class TrialValidator {
            addErrors(trialDto.getLst(), "trialDTO.lst", "error.oversight.countryName", fieldErrorMap);
         }
     }
-    /**
-     * @param trialDto
-     * @param fieldErrorMap
-     */
     private void validateRespPartyInfo(TrialDTO trialDto, Map<String, String> fieldErrorMap) {
        addErrors(trialDto.getResponsiblePartyType(), "ResponsiblePartyNotSelected", "error.submit.ResponsibleParty",
             fieldErrorMap);
@@ -318,10 +293,6 @@ public class TrialValidator {
         }
         return addActionError;
     }
-    /**
-     * @param trialDto
-     * @param addActionError
-     */
     private void validateCompletionDateType(TrialDTO trialDto, StudyStatusCode newCode,
           Collection<String> addActionError) {
        if (!(StudyStatusCode.COMPLETE == newCode || StudyStatusCode.ADMINISTRATIVELY_COMPLETE == newCode)
@@ -330,11 +301,6 @@ public class TrialValidator {
                   + "not 'Complete' or 'Administratively Complete'.");
        }
     }
-    /**
-     * @param trialDto
-     * @param addActionError
-     * @param newCode
-     */
     private void validateStartDateType(TrialDTO trialDto, Collection<String> addActionError, StudyStatusCode newCode) {
         if (!StudyStatusCode.APPROVED.getCode().equals(newCode.getCode()) && !StudyStatusCode.WITHDRAWN.getCode()
          .equals(newCode.getCode()) && trialDto.getStartDateType().equals(anticipatedString)) {
@@ -342,12 +308,6 @@ public class TrialValidator {
                   + "'Approved' or 'Withdrawn'.");
         }
     }
-    /**
-     * @param trialDto
-     * @param addActionError
-     * @param newCode
-     * @throws PAException
-     */
     private void validateStudyStatusForCompleteOrAdminComplete(TrialDTO trialDto, Collection<String> addActionError,
             StudyStatusCode newCode) throws PAException {
         if (StudyStatusCode.COMPLETE == newCode || StudyStatusCode.ADMINISTRATIVELY_COMPLETE == newCode) {
@@ -364,14 +324,6 @@ public class TrialValidator {
             }
         }
     }
-    /**
-     *
-     * @param trialDto
-     * @param addActionError
-     * @param newCode
-     * @param newStatusTimestamp
-     * @param oldStatusCode
-     */
     private void validateStudyStatusApprovedToActiveOrWithdrawn(TrialDTO trialDto, Collection<String> addActionError,
             StudyStatusCode newCode, Timestamp newStatusTimestamp, StudyStatusCode oldStatusCode) {
         if (StringUtils.equalsIgnoreCase(StudyStatusCode.APPROVED.getCode(), oldStatusCode.getCode())) {
@@ -382,12 +334,6 @@ public class TrialValidator {
             }
         }
     }
-    /**
-     * @param trialDto
-     * @param addActionError
-     * @param newCode
-     * @param newStatusTimestamp
-     */
     private void valiateTransitionToActiveStatus(TrialDTO trialDto, Collection<String> addActionError,
          StudyStatusCode newCode, Timestamp newStatusTimestamp) {
          if (StudyStatusCode.ACTIVE.equals(newCode)) {
@@ -401,12 +347,6 @@ public class TrialValidator {
              }
          }
     }
-    /**
-     *
-     * @param id id
-     * @return dto
-     * @throws PAException ex
-     */
     private StudyOverallStatusWebDTO getStatusDTO(String id) throws PAException {
         StudyOverallStatusWebDTO webDTO = new StudyOverallStatusWebDTO();
         StudyOverallStatusDTO sos = PaRegistry.getStudyOverallStatusService()
@@ -499,7 +439,6 @@ public class TrialValidator {
     }
 
     /**
-     *
      * @param tDTO dto
      */
     public static void addSessionAttributesForUpdate(TrialDTO tDTO) {
@@ -531,7 +470,6 @@ public class TrialValidator {
     }
     /**
      * validate the submit trial dates.
-     * @param trialDto dto
      */
     private Map<String, String> validateTrialDates(TrialDTO trialDto) {
         Map<String, String> addFieldError = new HashMap<String, String>();
@@ -554,8 +492,6 @@ public class TrialValidator {
     }
     /**
      * Constraint/Rule: 18 Current Trial Status Date must be current or past.
-     * @param trialDto
-     * @param addFieldError
      */
     private void enforceRuleStatusDate(TrialDTO trialDto, Map<String, String> addFieldError) {
         if (StringUtils.isNotEmpty(trialDto.getStatusDate())) {
@@ -569,8 +505,6 @@ public class TrialValidator {
     /**
      * Constraint/Rule: 23 If Current Trial Status is 'Completed', Primary Completion Date must be the
        same as Current Trial Status Date and have 'actual' type.
-     * @param trialDto
-     * @param addFieldError
      */
     private void enforceRuleForStatusCompletedAndCompletionDate(TrialDTO trialDto, Map<String, String> addFieldError) {
         if (isNotEmpty(trialDto.getStatusCode(), trialDto.getStatusDate())
@@ -587,9 +521,6 @@ public class TrialValidator {
      * Constraint/Rule:  21 If Current Trial Status is 'Active', Trial Start Date must be the same as
      * Current Trial Status Date and have 'actual' type.
      * pa2.0 release adding Trial Start date is smaller or same Current Trial Status Date.
-     * @param trialDto
-     * @param addFieldError
-     * @param startDateFieldName
      */
     private void enforceRuleForStatusActive(TrialDTO trialDto, Map<String, String> addFieldError,
        String startDateFieldName) {
@@ -607,9 +538,6 @@ public class TrialValidator {
     /**
      * Constraint/Rule: 19 Trial Start Date must be current/past if 'actual' trial start date type
      * is selected and must be future if 'anticipated' trial start date type is selected.
-     * @param trialDto
-     * @param addFieldError
-     * @param startDateFieldName
      */
     private void enforceRuleForStartDate(TrialDTO trialDto, Map<String, String> addFieldError,
          String startDateFieldName) {
@@ -631,8 +559,6 @@ public class TrialValidator {
      * Constraint/Rule: 20 Primary Completion Date must be current/past if 'actual'
      * primary completion date type is selected and must be future if 'anticipated'
      * trial primary completion date type is selected.
-     * @param trialDto
-     * @param addFieldError
      */
     private void enforceRuleForCompletionDate(TrialDTO trialDto, Map<String, String> addFieldError) {
          if (trialDto.getCompletionDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
@@ -652,8 +578,6 @@ public class TrialValidator {
     /**
      * Constraint/Rule: 22 If Current Trial Status is 'Approved', Trial Start Date must have 'anticipated' type.
      * Trial Start Date must have 'actual' type for any other Current Trial Status value besides 'Approved'.
-     * @param trialDto
-     * @param addFieldError
      */
     private void enforceRuleForStatusApproved(TrialDTO trialDto, Map<String, String> addFieldError) {
         if (StringUtils.isNotEmpty(trialDto.getStatusCode()) && StringUtils.isNotEmpty(trialDto.getStartDateType())) {
@@ -676,8 +600,6 @@ public class TrialValidator {
      * Constraint/Rule: 24 If Current Trial Status is 'Completed' or 'Administratively Completed',
      * Primary Completion Date must have 'actual' type. Primary Completion Date must have 'anticipated' type
      * for any other Current Trial Status value besides 'Completed' or 'Administratively Completed'.
-     * @param trialDto
-     * @param addFieldError
      */
     private void enforceRuleForStatusCompletedAndCompletionType(TrialDTO trialDto, Map<String, String> addFieldError) {
         Set<String> statusCode = new HashSet<String>();
@@ -697,9 +619,6 @@ public class TrialValidator {
     }
     /**
      * Constraint/Rule:25 Trial Start Date must be same/smaller than Primary Completion Date.
-     * @param trialDto
-     * @param addFieldError
-     * @param startDateFieldName
      */
     private void enforceRuleForStartDateAndCopletionDate(TrialDTO trialDto, Map<String, String> addFieldError,
        String startDateFieldName) {

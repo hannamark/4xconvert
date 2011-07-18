@@ -40,8 +40,6 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction = new AmendmentTrialAction();
         trialAction.setStudyProtocolId("1");
         trialAction.view();
-        //primeData();
-        //assertEquals("success",trialAction.view());
     }
 
     @Test
@@ -53,7 +51,6 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         request.setSession(sess);
         ServletActionContext.setRequest(request);
         trialAction.view();
-        //assertEquals("success",trialAction.view());
     }
     @Test
     public void testEdit() throws Exception {
@@ -65,7 +62,6 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         ServletActionContext.setRequest(request);
         assertEquals("edit", trialAction.edit());
     }
-
     @Test
     public void testReview() throws Exception{
         trialAction = new AmendmentTrialAction();
@@ -74,7 +70,6 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         File f = new File(fileUrl.toURI());
 
         trialAction.setProtocolDoc(f);
-
         trialAction.setIrbApproval(f);
         trialAction.setChangeMemoDoc(f);
 
@@ -83,8 +78,95 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction.setChangeMemoDocFileName(FILE_NAME);
         trialAction.setPageFrom("amendTrial");
         assertEquals("review", trialAction.review());
+    }
+    @Test
+    public void testReviewMissingProtocolDoc() throws Exception{
+        trialAction = new AmendmentTrialAction();
+        trialAction.setTrialDTO(getMockTrialDTO());
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
+        File f = new File(fileUrl.toURI());
 
+        trialAction.setProtocolDoc(f);
+        trialAction.setIrbApproval(f);
+        trialAction.setChangeMemoDoc(f);
 
+        trialAction.setIrbApprovalFileName(FILE_NAME);
+        trialAction.setChangeMemoDocFileName(FILE_NAME);
+        trialAction.setPageFrom("amendTrial");
+        assertEquals("error", trialAction.review());
+        assertEquals("Protocol Document is required", trialAction.getFieldErrors().get("trialDTO.protocolDocFileName").get(0));
+    }
+    @Test
+    public void testReviewMissingIRBDoc() throws Exception{
+        trialAction = new AmendmentTrialAction();
+        trialAction.setTrialDTO(getMockTrialDTO());
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
+        File f = new File(fileUrl.toURI());
+
+        trialAction.setProtocolDoc(f);
+        trialAction.setIrbApproval(f);
+        trialAction.setChangeMemoDoc(f);
+
+        trialAction.setProtocolDocFileName(FILE_NAME);
+        trialAction.setChangeMemoDocFileName(FILE_NAME);
+        trialAction.setPageFrom("amendTrial");
+        
+        assertEquals("error", trialAction.review());
+        assertEquals("IRB Approval Document is required", trialAction.getFieldErrors().get("trialDTO.irbApprovalFileName").get(0));
+    }
+    @Test
+    public void testReviewMissingChangeMemoAndProtocolHighlightedDoc() throws Exception{
+        trialAction = new AmendmentTrialAction();
+        trialAction.setTrialDTO(getMockTrialDTO());
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
+        File f = new File(fileUrl.toURI());
+
+        trialAction.setProtocolDoc(f);
+        trialAction.setIrbApproval(f);
+
+        trialAction.setProtocolDocFileName(FILE_NAME);
+        trialAction.setIrbApprovalFileName(FILE_NAME);
+        trialAction.setPageFrom("amendTrial");
+        
+        assertEquals("error", trialAction.review());
+        assertEquals("At least one is required: Change Memo Document or Protocol Highlighted Document", trialAction
+                .getFieldErrors().get("trialDTO.changeMemoDocFileName").get(0));
+        assertEquals("At least one is required: Change Memo Document or Protocol Highlighted Document", trialAction
+                .getFieldErrors().get("trialDTO.protocolHighlightDocumentFileName").get(0));
+    }
+    @Test
+    public void testReviewMissingChangeMemoDocument() throws Exception{
+        trialAction = new AmendmentTrialAction();
+        trialAction.setTrialDTO(getMockTrialDTO());
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
+        File f = new File(fileUrl.toURI());
+
+        trialAction.setProtocolDoc(f);
+        trialAction.setIrbApproval(f);
+        trialAction.setProtocolHighlightDocument(f);
+
+        trialAction.setProtocolDocFileName(FILE_NAME);
+        trialAction.setIrbApprovalFileName(FILE_NAME);
+        trialAction.setProtocolHighlightDocumentFileName(FILE_NAME);
+        trialAction.setPageFrom("amendTrial");
+        assertEquals("review", trialAction.review());
+    }
+    @Test
+    public void testReviewMissingProtocolHighlightDocument() throws Exception{
+        trialAction = new AmendmentTrialAction();
+        trialAction.setTrialDTO(getMockTrialDTO());
+        URL fileUrl = ClassLoader.getSystemClassLoader().getResource(FILE_NAME);
+        File f = new File(fileUrl.toURI());
+
+        trialAction.setProtocolDoc(f);
+        trialAction.setIrbApproval(f);
+        trialAction.setChangeMemoDoc(f);
+
+        trialAction.setProtocolDocFileName(FILE_NAME);
+        trialAction.setIrbApprovalFileName(FILE_NAME);
+        trialAction.setChangeMemoDocFileName(FILE_NAME);
+        trialAction.setPageFrom("amendTrial");
+        assertEquals("review", trialAction.review());
     }
     @Test
     public void testReviewWithAllDoc() throws Exception{

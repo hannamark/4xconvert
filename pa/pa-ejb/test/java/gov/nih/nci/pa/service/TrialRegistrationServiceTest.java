@@ -993,7 +993,61 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void amendTrialTest() throws Exception {
+    public void amendTrialTestWithChangeMemoDoc() throws Exception {
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
+        overallStatusDTO.setIdentifier(null);
+        List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
+        List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
+        List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
+
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
+        StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
+        OrganizationDTO summary4Org = new  OrganizationDTO();
+
+        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
+        regAuthority.setIdentifier(null);
+
+        Ii ii = bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
+                principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
+                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+        assertFalse(PAUtil.isIiNull(ii));
+
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+
+        createMilestones(ii);
+        studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(ii);
+        overallStatusDTO.setIdentifier(null);
+        studyIndldeDTOs = studyIndldeService.getByStudyProtocol(ii);
+        studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(ii);
+        regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(ii);
+        studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(TestSchema.TODAY));
+
+        DocumentDTO changeDoc = new DocumentDTO();
+        changeDoc.setFileName(StConverter.convertToSt("Change Memo.doc"));
+        changeDoc.setText(EdConverter.convertToEd("Change Memo".getBytes()));
+        changeDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.CHANGE_MEMO_DOCUMENT));
+        Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+                Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
+                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+        assertFalse(PAUtil.isIiNull(amendedSpIi));
+        assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
+    }
+
+
+    @Test
+    public void amendTrialTestWithProtocolHighlightedDoc() throws Exception {
         InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
         StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         overallStatusDTO.setIdentifier(null);
@@ -1025,37 +1079,75 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         PaHibernateUtil.getCurrentSession().clear();
 
         //Accept and Abstract the Trial.
-        paServiceUtils.createMilestone(ii, MilestoneCode.SUBMISSION_ACCEPTED, StConverter.convertToSt("Accepted"));
-        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_READY_FOR_QC, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_QC_START, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_QC_COMPLETE, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_READY_FOR_QC, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_START, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_COMPLETE, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.READY_FOR_TSR, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.INITIAL_ABSTRACTION_VERIFY, null);
+        createMilestones(ii);
         studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
-        studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(TestSchema.TODAY));
         overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(ii);
         overallStatusDTO.setIdentifier(null);
         studyIndldeDTOs = studyIndldeService.getByStudyProtocol(ii);
         studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(ii);
         regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(ii);
+        studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(TestSchema.TODAY));
 
         DocumentDTO changeDoc = new DocumentDTO();
-        changeDoc.setFileName(StConverter.convertToSt("Change Memo.doc"));
-        changeDoc.setText(EdConverter.convertToEd("Change Memo".getBytes()));
-        changeDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.CHANGE_MEMO_DOCUMENT));
+        changeDoc.setFileName(StConverter.convertToSt("ProtocolHighlightedDocument.doc"));
+        changeDoc.setText(EdConverter.convertToEd("ProtocolHighlightedDocument".getBytes()));
+        changeDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT));
         Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                 Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
                 sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
                 summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
         assertFalse(PAUtil.isIiNull(amendedSpIi));
         assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
+    }
+
+    @Test
+    public void amendTrialTestMissingConditionallyRequiredDocs() throws Exception {
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
+        overallStatusDTO.setIdentifier(null);
+        List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
+        List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
+        List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
+
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
+        StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
+        OrganizationDTO summary4Org = new  OrganizationDTO();
+
+        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
+        regAuthority.setIdentifier(null);
+
+        Ii ii = bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
+                principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
+                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+        assertFalse(PAUtil.isIiNull(ii));
+
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+
+        createMilestones(ii);
+        studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(ii);
+        overallStatusDTO.setIdentifier(null);
+        studyIndldeDTOs = studyIndldeService.getByStudyProtocol(ii);
+        studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(ii);
+        regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(ii);
+        studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(TestSchema.TODAY));
+
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Validation Exception At least one is required: Change Memo Document or Protocol Highlighted Document.");
+
+        bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+                Arrays.asList(documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
+                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
     }
 
     @Test
@@ -1094,27 +1186,14 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
 
-        //Accept and Abstract the Trial.
-        paServiceUtils.createMilestone(ii, MilestoneCode.SUBMISSION_ACCEPTED, StConverter.convertToSt("Accepted"));
-        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_READY_FOR_QC, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_QC_START, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_QC_COMPLETE, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_READY_FOR_QC, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_START, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_COMPLETE, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.READY_FOR_TSR, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.INITIAL_ABSTRACTION_VERIFY, null);
+        createMilestones(ii);
         studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
-        studyProtocolDTO.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.PREVENTION));
         overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(ii);
         overallStatusDTO.setIdentifier(null);
         studyIndldeDTOs = studyIndldeService.getByStudyProtocol(ii);
         studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(ii);
         regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(ii);
+        studyProtocolDTO.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.PREVENTION));
 
         DocumentDTO psDoc = new DocumentDTO();
         psDoc.setFileName(StConverter.convertToSt("Participating Site Document.doc"));
@@ -1138,6 +1217,22 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
                 summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
         assertFalse(PAUtil.isIiNull(amendedSpIi));
         assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
+    }
+
+    private void createMilestones(Ii ii) throws PAException {
+        paServiceUtils.createMilestone(ii, MilestoneCode.SUBMISSION_ACCEPTED, StConverter.convertToSt("Accepted"));
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_READY_FOR_QC, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_QC_START, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_QC_COMPLETE, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_READY_FOR_QC, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_START, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_COMPLETE, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.READY_FOR_TSR, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.INITIAL_ABSTRACTION_VERIFY, null);
     }
 
     @Test

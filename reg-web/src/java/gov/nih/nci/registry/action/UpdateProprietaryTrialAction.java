@@ -283,9 +283,8 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
         checkSummary4Funding();
         checkNctAndDoc(session);
         validateDocuments();
-        TrialValidator validator = new TrialValidator();
-        validateProtocolDocUpdate(session, validator);
-        validateOtherDocUpdate(session, validator);
+        validateProtocolDocUpdate();
+        validateOtherDocUpdate();
         checkSubmittingOrgRules();
     }
 

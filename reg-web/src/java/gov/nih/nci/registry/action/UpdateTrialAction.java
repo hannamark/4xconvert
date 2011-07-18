@@ -680,7 +680,7 @@ public class UpdateTrialAction extends ManageFileAction implements ServletRespon
     private void enforceBusinessRules() throws PAException, IOException {
         TrialValidator validator = new TrialValidator();
         Map<String, String> err = new HashMap<String, String>();
-        err = validator.validateTrialDTO(trialDTO);
+        err = validator.validateTrial(trialDTO);
         addErrors(err);
         validateStatusAndDate(validator);
         validateCollaborators();

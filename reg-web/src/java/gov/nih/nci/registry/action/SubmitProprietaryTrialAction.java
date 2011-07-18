@@ -167,17 +167,16 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
                 && !StringUtils.isEmpty(trialDTO.getSummaryFourOrgIdentifier())) {
             addFieldError("trialDTO.summaryFourFundingCategoryCode", "Select the Summary 4 Funding Sponsor Type");
         }
-        TrialValidator validator = new TrialValidator();
         Map<String, String> errMap = new HashMap<String, String>();
         try {
-            validateProtocolDoc(session, errMap);
+            errMap = validateProtocolDoc();
         } catch (IOException e) {
             addActionError("There was an unexpected problem uploading your documents.");
         }
         if (StringUtils.isNotEmpty(getOtherDocumentFileName())
                 && session.getAttribute(DocumentTypeCode.OTHER.getShortName()) == null) {
             errMap = new HashMap<String, String>();
-            errMap = validator.validateDocument(getOtherDocumentFileName(), getOtherDocument(),
+            errMap = DocumentValidator.validateDocument(getOtherDocumentFileName(), getOtherDocument(), false,
                                                 "trialDTO.otherDocumentFileName", "");
             addErrors(errMap);
         }

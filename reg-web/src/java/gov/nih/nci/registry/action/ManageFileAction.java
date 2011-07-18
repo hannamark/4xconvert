@@ -79,6 +79,7 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.registry.dto.DocumentDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.util.TrialUtil;
@@ -104,61 +105,38 @@ import com.opensymphony.xwork2.ActionSupport;
  * The Class ManageFileAction.
  *
  * @author Kalpana Guthikonda
- * @since April 23 2010
  */
 public class ManageFileAction extends ActionSupport {
 
     private static final long serialVersionUID = 1L;
+    private static final String SUBMIT_TRIAL_PAGE = "submitTrial";
+    private static final String AMEND_TRIAL_PAGE = "amendTrial";
 
+    private final DocumentDTO protocolDocument = new DocumentDTO(DocumentTypeCode.PROTOCOL_DOCUMENT, Arrays.asList(
+            AMEND_TRIAL_PAGE, SUBMIT_TRIAL_PAGE), true, "trialDTO.protocolDocFileName");
+    private final DocumentDTO irbApprovalDocument = new DocumentDTO(DocumentTypeCode.IRB_APPROVAL_DOCUMENT,
+            Arrays.asList(AMEND_TRIAL_PAGE, SUBMIT_TRIAL_PAGE), true, "trialDTO.irbApprovalFileName");
+    private final DocumentDTO participatingSitesDocument = new DocumentDTO(DocumentTypeCode.PARTICIPATING_SITES, false,
+            "trialDTO.participatingSitesFileName");
+    private final DocumentDTO informedConsentDocument = new DocumentDTO(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT,
+            false, "trialDTO.informedConsentDocumentFileName");
+    private final DocumentDTO otherDocument = new DocumentDTO(DocumentTypeCode.OTHER, false,
+            "trialDTO.otherDocumentFileName");
+    private final DocumentDTO protocolHighlightDocument = new DocumentDTO(
+            DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT, Arrays.asList(AMEND_TRIAL_PAGE), true,
+            "trialDTO.protocolHighlightDocumentFileName");
+    private final DocumentDTO changeMemoDocument = new DocumentDTO(DocumentTypeCode.CHANGE_MEMO_DOCUMENT,
+            Arrays.asList(AMEND_TRIAL_PAGE), true, "trialDTO.changeMemoDocFileName");
     private String pageFrom;
-    private File protocolDoc;
-    private String protocolDocFileName;
-    private File irbApproval;
-    private String irbApprovalFileName;
-    private File participatingSites;
-    private String participatingSitesFileName;
-    private File informedConsentDocument;
-    private String informedConsentDocumentFileName;
-    private File otherDocument;
-    private String otherDocumentFileName;
-    private File protocolHighlightDocument;
-    private String protocolHighlightDocumentFileName;
-    private File changeMemoDoc;
-    private String changeMemoDocFileName;
-
-    private static final String PROTOCOLDOC = DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName();
-    private static final String IRBAPPROVALDOC = DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getShortName();
-    private static final String PARTICIPATINGSITESDOC = DocumentTypeCode.PARTICIPATING_SITES.getShortName();
-    private static final String INFORMEDCONSENTDOC = DocumentTypeCode.INFORMED_CONSENT_DOCUMENT.getShortName();
-    private static final String CHANGEMEMODOC = DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getShortName();
-    private static final String PROTOCOLHIGHDOC = DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getShortName();
-    private static final String OTHERDOC = DocumentTypeCode.OTHER.getShortName();
     private String typeCode;
 
     /**
-     * @return the typeCode
-     */
-    public String getTypeCode() {
-        return typeCode;
-    }
-
-    private final TrialUtil trialUtils = new TrialUtil();
-
-    /**
-     * @param typeCode the typeCode to set
-     */
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
-    }
-
-    /**
-     * Delete document.
+     * Remove document from session.
      *
      * @return the string
      */
     public String deleteDocument() {
-        ServletActionContext.getRequest().getSession()
-                            .removeAttribute(DocumentTypeCode.getByCode(typeCode).getShortName());
+        getSession().removeAttribute(DocumentTypeCode.getByCode(typeCode).getShortName());
         return SUCCESS;
     }
 
@@ -180,145 +158,76 @@ public class ManageFileAction extends ActionSupport {
      * @throws IOException on document error
      */
     public void validateDocuments() throws IOException {
-        TrialValidator validator = new TrialValidator();
-        HttpSession session = ServletActionContext.getRequest().getSession();
         Map<String, String> documentValidationErrors = new HashMap<String, String>();
 
-        validateProtocolDoc(session, documentValidationErrors);
-        validateIrbApprovalDoc(validator, session, documentValidationErrors);
-        validateParticipatingSiteDoc(validator, session, documentValidationErrors);
-        validateInformedConsentDoc(validator, session, documentValidationErrors);
-        validateOtherDoc(validator, session, documentValidationErrors);
-        validateProtocolHighlightDoc(validator, session, documentValidationErrors);
-        validateChangeMemoDoc(validator, session, documentValidationErrors);
+        documentValidationErrors.putAll(validateDocument(protocolDocument, protocolDocument.isRequired(),
+                "error.submit.protocolDocument"));
+        documentValidationErrors.putAll(validateDocument(irbApprovalDocument, irbApprovalDocument.isRequired(),
+                "error.submit.irbApproval"));
+        documentValidationErrors.putAll(validateDocument(participatingSitesDocument,
+                participatingSitesDocument.isRequired(), ""));
+        documentValidationErrors.putAll(validateDocument(informedConsentDocument, informedConsentDocument.isRequired(),
+                ""));
+        documentValidationErrors.putAll(validateDocument(otherDocument, otherDocument.isRequired(), ""));
+        documentValidationErrors.putAll(validateDocument(protocolHighlightDocument,
+                isDocumentMissing(changeMemoDocument), "error.submit.changeMemoOrProtocolHighlight"));
+        documentValidationErrors.putAll(validateDocument(changeMemoDocument,
+                isDocumentMissing(protocolHighlightDocument), "error.submit.changeMemoOrProtocolHighlight"));
         addErrors(documentValidationErrors);
+    }
+
+    private HttpSession getSession() {
+        return ServletActionContext.getRequest().getSession();
+    }
+    
+    private boolean isDocumentMissing(DocumentDTO document) {
+        return StringUtils.isEmpty(document.getFileName()) && !isDocumentInSession(document);
+    }
+    
+    private Map<String, String> validateDocument(DocumentDTO document, boolean isRequired, String errorMessageKey)
+            throws IOException {
+        Map<String, String> errors = new HashMap<String, String>();
+        if (needsValidation(document)) {
+            errors = DocumentValidator.validateDocument(document, isRequired, errorMessageKey);
+        }
+        if (errors.isEmpty()) {
+            storeInSessionIfNecessary(document);
+        }
+        return errors;
     }
 
     /**
      * Validates the protocol document format, and store in session.
-     * @param session http session
-     * @param err map to add errors to
+     * @return map of validation errors
      * @throws IOException if the file can't be accessed.
      */
-    protected void validateProtocolDoc(HttpSession session, Map<String, String> err)
+    protected Map<String, String> validateProtocolDoc()
         throws IOException {
-        Map<String, String> errors = new HashMap<String, String>();
-        List<String> fromPages = Arrays.asList("amendTrial", "submitTrial");
-        if (session.getAttribute(PROTOCOLDOC) == null && fromPages.contains(pageFrom)) {
-            errors = TrialValidator.validateDocument(protocolDocFileName, protocolDoc,
-                    "trialDTO.protocolDocFileName", "error.submit.protocolDocument");
-            err.putAll(errors);
-        }
-
-        if (errors.isEmpty() && StringUtils.isNotEmpty(getProtocolDocFileName())
-                && session.getAttribute(PROTOCOLDOC) == null) {
-            TrialDocumentWebDTO document = trialUtils.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode(),
-                    protocolDocFileName, protocolDoc);
-            session.setAttribute(PROTOCOLDOC, document);
-        }
+        return validateDocument(protocolDocument, protocolDocument.isRequired(), "error.submit.protocolDocument");
+    }
+    
+    private boolean needsValidation(DocumentDTO document) {
+        return !isDocumentInSession(document)
+                && (document.getFromPages().isEmpty() || document.getFromPages().contains(pageFrom));
+    }
+    private boolean isDocumentInSession(DocumentDTO document) {
+        return getSession().getAttribute(document.getSessionAttributeName()) != null;
     }
 
-    private void validateIrbApprovalDoc(TrialValidator validator, HttpSession session, Map<String, String> err)
-        throws IOException {
-        Map<String, String> errors = new HashMap<String, String>();
-        List<String> fromPages = Arrays.asList("amendTrial", "submitTrial");
-        if (session.getAttribute(IRBAPPROVALDOC) == null && fromPages.contains(pageFrom)) {
-            errors = validator.validateDocument(irbApprovalFileName, irbApproval, "trialDTO.irbApprovalFileName",
-            "error.submit.irbApproval");
-            err.putAll(errors);
-        }
-
-        if (errors.isEmpty() && StringUtils.isNotEmpty(getIrbApprovalFileName())
-                && session.getAttribute(IRBAPPROVALDOC) == null) {
-            TrialDocumentWebDTO webDto =
-                trialUtils.convertToDocumentDTO(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode(), irbApprovalFileName,
-                        irbApproval);
-            session.setAttribute(IRBAPPROVALDOC, webDto);
+    private void storeInSessionIfNecessary(DocumentDTO document) throws IOException {
+        if (checkWhetherToAddDocumentToSession(document)) {
+            addDocumentToSession(document);
         }
     }
-
-    private void validateProtocolHighlightDoc(TrialValidator validator, HttpSession session,
-            Map<String, String> documentValidationErrors) throws IOException {
-        Map<String, String> errors = new HashMap<String, String>();
-        if (session.getAttribute(PROTOCOLHIGHDOC) == null) {
-            errors = validator.validateDocument(protocolHighlightDocumentFileName, protocolHighlightDocument,
-                    "trialDTO.protocolHighlightDocumentFileName", "");
-            documentValidationErrors.putAll(errors);
-        }
-        if (errors.isEmpty() && StringUtils.isNotEmpty(getProtocolHighlightDocumentFileName())
-                && session.getAttribute(PROTOCOLHIGHDOC) == null) {
-            TrialDocumentWebDTO webDto =
-                trialUtils.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getCode(),
-                        protocolHighlightDocumentFileName, protocolHighlightDocument);
-            session.setAttribute(PROTOCOLHIGHDOC, webDto);
-        }
+    private boolean checkWhetherToAddDocumentToSession(DocumentDTO document) {
+        return StringUtils.isNotEmpty(document.getFileName())
+                && !isDocumentInSession(document);
     }
 
-    private void validateOtherDoc(TrialValidator validator, HttpSession session,
-            Map<String, String> documentValidationErrors) throws IOException {
-        Map<String, String> errors = new HashMap<String, String>();
-        if (session.getAttribute(OTHERDOC) == null) {
-            errors = validator.validateDocument(otherDocumentFileName, otherDocument,
-                    "trialDTO.otherDocumentFileName", "");
-            documentValidationErrors.putAll(errors);
-        }
-        if (errors.isEmpty() && StringUtils.isNotEmpty(getOtherDocumentFileName())
-                && session.getAttribute(OTHERDOC) == null) {
-            TrialDocumentWebDTO webDto = trialUtils.convertToDocumentDTO(DocumentTypeCode.OTHER.getCode(),
-                    otherDocumentFileName, otherDocument);
-            session.setAttribute(OTHERDOC, webDto);
-        }
-    }
-
-    private void validateInformedConsentDoc(TrialValidator validator, HttpSession session,
-            Map<String, String> documentValidationErrors) throws IOException {
-        Map<String, String> errors = new HashMap<String, String>();
-        if (session.getAttribute(INFORMEDCONSENTDOC) == null) {
-            errors = validator.validateDocument(informedConsentDocumentFileName, informedConsentDocument,
-                    "trialDTO.informedConsentDocumentFileName", "");
-            documentValidationErrors.putAll(errors);
-        }
-        if (errors.isEmpty() && StringUtils.isNotEmpty(getInformedConsentDocumentFileName())
-                && session.getAttribute(INFORMEDCONSENTDOC) == null) {
-            TrialDocumentWebDTO webDto =
-                trialUtils.convertToDocumentDTO(DocumentTypeCode.INFORMED_CONSENT_DOCUMENT.getCode(),
-                    informedConsentDocumentFileName, informedConsentDocument);
-            session.setAttribute(INFORMEDCONSENTDOC, webDto);
-        }
-    }
-
-    private void validateParticipatingSiteDoc(TrialValidator validator, HttpSession session,
-            Map<String, String> documentValidationErrors) throws IOException {
-        Map<String, String> errors = new HashMap<String, String>();
-        if (session.getAttribute(PARTICIPATINGSITESDOC) == null) {
-            errors = validator.validateDocument(participatingSitesFileName, participatingSites,
-                    "trialDTO.participatingSitesFileName", "");
-            documentValidationErrors.putAll(errors);
-        }
-
-        if (errors.isEmpty() && StringUtils.isNotEmpty(getParticipatingSitesFileName())
-                && session.getAttribute(PARTICIPATINGSITESDOC) == null) {
-            TrialDocumentWebDTO webDto = trialUtils.convertToDocumentDTO(DocumentTypeCode.PARTICIPATING_SITES.getCode(),
-                    participatingSitesFileName, participatingSites);
-            session.setAttribute(PARTICIPATINGSITESDOC, webDto);
-        }
-    }
-
-    private void validateChangeMemoDoc(TrialValidator validator, HttpSession session, Map<String, String> err)
-        throws IOException {
-        Map<String, String> errors = new HashMap<String, String>();
-        if (session.getAttribute(CHANGEMEMODOC) == null && "amendTrial".equals(pageFrom)) {
-            errors = validator.validateDocument(changeMemoDocFileName, changeMemoDoc,
-                    "trialDTO.changeMemoDocFileName", "error.submit.changeMemo");
-            err.putAll(errors);
-        }
-        if (errors.isEmpty() && StringUtils.isNotEmpty(getChangeMemoDocFileName())
-                && session.getAttribute(CHANGEMEMODOC) == null) {
-            TrialDocumentWebDTO webDto =
-                trialUtils.convertToDocumentDTO(DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getCode(), changeMemoDocFileName,
-                        changeMemoDoc);
-            session.setAttribute(CHANGEMEMODOC, webDto);
-        }
+    private void addDocumentToSession(DocumentDTO document) throws IOException {
+        TrialDocumentWebDTO webDto = new TrialUtil().convertToDocumentDTO(document.getDocumentCode(),
+                document.getFileName(), document.getFile());
+        getSession().setAttribute(document.getSessionAttributeName(), webDto);
     }
 
     /**
@@ -329,10 +238,7 @@ public class ManageFileAction extends ActionSupport {
     public void setDocumentsInSession(TrialDTO trialDTO) {
         if (trialDTO != null && trialDTO.getDocDtos() != null && !trialDTO.getDocDtos().isEmpty()) {
             for (TrialDocumentWebDTO webDto : trialDTO.getDocDtos()) {
-                ServletActionContext.getRequest()
-                                    .getSession()
-                                    .setAttribute(DocumentTypeCode.getByCode(webDto.getTypeCode()).getShortName(),
-                                                  webDto);
+                getSession().setAttribute(DocumentTypeCode.getByCode(webDto.getTypeCode()).getShortName(), webDto);
             }
         }
     }
@@ -342,24 +248,14 @@ public class ManageFileAction extends ActionSupport {
      * @return a list of all uploaded trial documents
      */
     public List<TrialDocumentWebDTO> getTrialDocuments() {
-        final HttpSession session = ServletActionContext.getRequest().getSession();
-        TrialDocumentWebDTO protocolDocument = (TrialDocumentWebDTO) session.getAttribute(PROTOCOLDOC);
-        TrialDocumentWebDTO irbApprovalDocument = (TrialDocumentWebDTO) session.getAttribute(IRBAPPROVALDOC);
-        TrialDocumentWebDTO informedConsentDoc = (TrialDocumentWebDTO) session.getAttribute(INFORMEDCONSENTDOC);
-        TrialDocumentWebDTO participatingSitesDocument =
-            (TrialDocumentWebDTO) session.getAttribute(PARTICIPATINGSITESDOC);
-        TrialDocumentWebDTO otherDoc = (TrialDocumentWebDTO) session.getAttribute(OTHERDOC);
-        TrialDocumentWebDTO changeMemoDocument = (TrialDocumentWebDTO) session.getAttribute(CHANGEMEMODOC);
-        TrialDocumentWebDTO protocolHighlightDoc = (TrialDocumentWebDTO) session.getAttribute(PROTOCOLHIGHDOC);
-
         List<TrialDocumentWebDTO> documents = new ArrayList<TrialDocumentWebDTO>();
-        documents.add(protocolDocument);
-        documents.add(irbApprovalDocument);
-        documents.add(informedConsentDoc);
-        documents.add(participatingSitesDocument);
-        documents.add(otherDoc);
-        documents.add(changeMemoDocument);
-        documents.add(protocolHighlightDoc);
+        documents.add(getDocumentFromSession(protocolDocument));
+        documents.add(getDocumentFromSession(irbApprovalDocument));
+        documents.add(getDocumentFromSession(informedConsentDocument));
+        documents.add(getDocumentFromSession(participatingSitesDocument));
+        documents.add(getDocumentFromSession(otherDocument));
+        documents.add(getDocumentFromSession(changeMemoDocument));
+        documents.add(getDocumentFromSession(protocolHighlightDocument));
 
         Set<TrialDocumentWebDTO> set = new HashSet<TrialDocumentWebDTO>(documents);
         set.remove(null);
@@ -368,259 +264,234 @@ public class ManageFileAction extends ActionSupport {
         return documents;
     }
 
+    private TrialDocumentWebDTO getDocumentFromSession(DocumentDTO document) {
+        return (TrialDocumentWebDTO) getSession().getAttribute(document.getSessionAttributeName());
+    }
+
     /**
      * Validate other document for updates.
-     * @param session the session
-     * @param validator the validator
      * @throws IOException on document conversion error
      */
-    public void validateOtherDocUpdate(HttpSession session, TrialValidator validator) throws IOException {
+    public void validateOtherDocUpdate() throws IOException {
         Map<String, String> errMap = new HashMap<String, String>();
-        if (StringUtils.isNotEmpty(otherDocumentFileName)
-                && session.getAttribute(DocumentTypeCode.OTHER.getShortName()) == null) {
-            errMap = new HashMap<String, String>();
-            errMap = validator.validateDocument(otherDocumentFileName, otherDocument, "trialDTO.otherDocumentFileName",
-                                                "");
+        if (StringUtils.isNotEmpty(otherDocument.getFileName())
+                && !isDocumentInSession(otherDocument)) {
+            errMap = DocumentValidator.validateDocument(otherDocument.getFileName(), otherDocument.getFile(), false,
+                    "trialDTO.otherDocumentFileName", "");
             addErrors(errMap);
         }
-        if (errMap.isEmpty() && StringUtils.isNotEmpty(getOtherDocumentFileName())
-                && session.getAttribute(OTHERDOC) == null) {
-            TrialDocumentWebDTO webDto = trialUtils.convertToDocumentDTO(DocumentTypeCode.OTHER.getCode(),
-                    otherDocumentFileName, otherDocument);
-            session.setAttribute(OTHERDOC, webDto);
+        if (errMap.isEmpty()) {
+            storeInSessionIfNecessary(otherDocument);
         }
     }
 
     /**
      * Validate protocol document for updates.
-     * @param session the session
-     * @param validator the validator
      * @throws IOException on document conversion error
      */
-    public void validateProtocolDocUpdate(HttpSession session, TrialValidator validator) throws IOException {
+    public void validateProtocolDocUpdate() throws IOException {
         Map<String, String> errMap = new HashMap<String, String>();
-        if (StringUtils.isNotEmpty(protocolDocFileName)
-                && session.getAttribute(DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName()) == null) {
-            errMap = new HashMap<String, String>();
-            errMap = validator.validateDocument(protocolDocFileName, protocolDoc, "trialDTO.protocolDocFileName", "");
+        if (StringUtils.isNotEmpty(protocolDocument.getFileName())
+                && !isDocumentInSession(protocolDocument)) {
+            errMap = DocumentValidator.validateDocument(protocolDocument.getFileName(), protocolDocument.getFile(),
+                    false, "trialDTO.protocolDocFileName", "");
             addErrors(errMap);
         }
-
-        if (errMap.isEmpty() && StringUtils.isNotEmpty(getProtocolDocFileName())
-                && session.getAttribute(PROTOCOLDOC) == null) {
-            TrialDocumentWebDTO document = trialUtils.convertToDocumentDTO(DocumentTypeCode.PROTOCOL_DOCUMENT.getCode(),
-                    protocolDocFileName, protocolDoc);
-            session.setAttribute(PROTOCOLHIGHDOC, document);
+        if (errMap.isEmpty()) {
+            storeInSessionIfNecessary(protocolDocument);
         }
-    }
-
-    /**
-     * @return pageFrom
-     */
-    public String getPageFrom() {
-        return pageFrom;
-    }
-
-    /**
-     * @param pageFrom pageFrom to set
-     */
-    public void setPageFrom(String pageFrom) {
-        this.pageFrom = pageFrom;
     }
 
     /**
      * @return protocolDoc
      */
     public File getProtocolDoc() {
-        return protocolDoc;
+        return protocolDocument.getFile();
     }
-
     /**
      * @param protocolDoc protocolDoc
      */
     public void setProtocolDoc(File protocolDoc) {
-        this.protocolDoc = protocolDoc;
+        this.protocolDocument.setFile(protocolDoc);
     }
-
     /**
      * @return protocolDocFileName
      */
     public String getProtocolDocFileName() {
-        return protocolDocFileName;
+        return protocolDocument.getFileName();
     }
-
     /**
      * @param protocolDocFileName protocolDocFileName
      */
     public void setProtocolDocFileName(String protocolDocFileName) {
-        this.protocolDocFileName = protocolDocFileName;
+        this.protocolDocument.setFileName(protocolDocFileName);
     }
-
     /**
      * @return irbApproval
      */
     public File getIrbApproval() {
-        return irbApproval;
+        return irbApprovalDocument.getFile();
     }
-
     /**
      * @param irbApproval irbApproval
      */
     public void setIrbApproval(File irbApproval) {
-        this.irbApproval = irbApproval;
+        this.irbApprovalDocument.setFile(irbApproval);
     }
-
     /**
      * @return irbApprovalFileName
      */
     public String getIrbApprovalFileName() {
-        return irbApprovalFileName;
+        return irbApprovalDocument.getFileName();
     }
-
     /**
      * @param irbApprovalFileName irbApprovalFileName
      */
     public void setIrbApprovalFileName(String irbApprovalFileName) {
-        this.irbApprovalFileName = irbApprovalFileName;
+        this.irbApprovalDocument.setFileName(irbApprovalFileName);
     }
-
     /**
      * @return the informedConsentDocument
      */
     public File getInformedConsentDocument() {
-        return informedConsentDocument;
+        return informedConsentDocument.getFile();
     }
-
     /**
      * @param informedConsentDocument the informedConsentDocument to set
      */
     public void setInformedConsentDocument(File informedConsentDocument) {
-        this.informedConsentDocument = informedConsentDocument;
+        this.informedConsentDocument.setFile(informedConsentDocument);
     }
-
     /**
      * @return the informedConsentDocumentFileName
      */
     public String getInformedConsentDocumentFileName() {
-        return informedConsentDocumentFileName;
+        return informedConsentDocument.getFileName();
     }
-
     /**
      * @param informedConsentDocumentFileName the informedConsentDocumentFileName to set
      */
     public void setInformedConsentDocumentFileName(String informedConsentDocumentFileName) {
-        this.informedConsentDocumentFileName = informedConsentDocumentFileName;
+        this.informedConsentDocument.setFileName(informedConsentDocumentFileName);
     }
-
     /**
      * @return the otherDocument
      */
     public File getOtherDocument() {
-        return otherDocument;
+        return otherDocument.getFile();
     }
-
     /**
      * @param otherDocument the otherDocument to set
      */
     public void setOtherDocument(File otherDocument) {
-        this.otherDocument = otherDocument;
+        this.otherDocument.setFile(otherDocument);
     }
-
     /**
      * @return the otherDocumentFileName
      */
     public String getOtherDocumentFileName() {
-        return otherDocumentFileName;
+        return otherDocument.getFileName();
     }
-
     /**
      * @param otherDocumentFileName the otherDocumentFileName to set
      */
     public void setOtherDocumentFileName(String otherDocumentFileName) {
-        this.otherDocumentFileName = otherDocumentFileName;
+        this.otherDocument.setFileName(otherDocumentFileName);
     }
-
     /**
      * @return the participatingSites
      */
     public File getParticipatingSites() {
-        return participatingSites;
+        return participatingSitesDocument.getFile();
     }
-
     /**
      * @param participatingSites the participatingSites to set
      */
     public void setParticipatingSites(File participatingSites) {
-        this.participatingSites = participatingSites;
+        this.participatingSitesDocument.setFile(participatingSites);
     }
-
     /**
      * @return the participatingSitesFileName
      */
     public String getParticipatingSitesFileName() {
-        return participatingSitesFileName;
+        return participatingSitesDocument.getFileName();
     }
-
     /**
      * @param participatingSitesFileName the participatingSitesFileName to set
      */
     public void setParticipatingSitesFileName(String participatingSitesFileName) {
-        this.participatingSitesFileName = participatingSitesFileName;
+        this.participatingSitesDocument.setFileName(participatingSitesFileName);
     }
-
     /**
      * @return the protocolHighlightDocument
      */
     public File getProtocolHighlightDocument() {
-        return protocolHighlightDocument;
+        return protocolHighlightDocument.getFile();
     }
-
     /**
      * @param protocolHighlightDocument the protocolHighlightDocument to set
      */
     public void setProtocolHighlightDocument(File protocolHighlightDocument) {
-        this.protocolHighlightDocument = protocolHighlightDocument;
+        this.protocolHighlightDocument.setFile(protocolHighlightDocument);
     }
-
     /**
      * @return the protocolHighlightDocumentFileName
      */
     public String getProtocolHighlightDocumentFileName() {
-        return protocolHighlightDocumentFileName;
+        return protocolHighlightDocument.getFileName();
     }
-
     /**
      * @param protocolHighlightDocumentFileName the protocolHighlightDocumentFileName to set
      */
     public void setProtocolHighlightDocumentFileName(String protocolHighlightDocumentFileName) {
-        this.protocolHighlightDocumentFileName = protocolHighlightDocumentFileName;
+        this.protocolHighlightDocument.setFileName(protocolHighlightDocumentFileName);
     }
-
     /**
      * @return the changeMemoDoc
      */
     public File getChangeMemoDoc() {
-        return changeMemoDoc;
+        return changeMemoDocument.getFile();
     }
-
     /**
      * @param changeMemoDoc the changeMemoDoc to set
      */
     public void setChangeMemoDoc(File changeMemoDoc) {
-        this.changeMemoDoc = changeMemoDoc;
+        this.changeMemoDocument.setFile(changeMemoDoc);
     }
-
     /**
      * @return the changeMemoDocFileName
      */
     public String getChangeMemoDocFileName() {
-        return changeMemoDocFileName;
+        return changeMemoDocument.getFileName();
     }
-
     /**
      * @param changeMemoDocFileName the changeMemoDocFileName to set
      */
     public void setChangeMemoDocFileName(String changeMemoDocFileName) {
-        this.changeMemoDocFileName = changeMemoDocFileName;
+        this.changeMemoDocument.setFileName(changeMemoDocFileName);
+    }
+    /**
+     * @return the typeCode
+     */
+    public String getTypeCode() {
+        return typeCode;
+    }
+    /**
+     * @param typeCode the typeCode to set
+     */
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
+    }
+    /**
+     * @return pageFrom
+     */
+    public String getPageFrom() {
+        return pageFrom;
+    }
+    /**
+     * @param pageFrom pageFrom to set
+     */
+    public void setPageFrom(String pageFrom) {
+        this.pageFrom = pageFrom;
     }
 }

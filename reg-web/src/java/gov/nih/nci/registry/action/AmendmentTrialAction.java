@@ -408,7 +408,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
         }
         TrialValidator validator = new TrialValidator();
         Map<String, String> err = new HashMap<String, String>();
-        err = validator.validateTrialDTO(trialDTO);
+        err = validator.validateTrial(trialDTO);
         addErrors(err);
         // validate trial status and dates specific for amendment
         if (StringUtils.isNotBlank(trialDTO.getStatusCode()) && RegistryUtil.isValidDate(trialDTO.getStatusDate())

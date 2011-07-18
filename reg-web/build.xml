@@ -30,7 +30,7 @@
     <property name="reg-web.coverage.reports" value="${pa.report.dir}/reg-web/coverage-reports"/>
     <property name="reg-web.coverage.line" value="80"/>
     <property name="reg-web.coverage.branch" value="64"/>
-    <property name="reg-web.pmd.maxerrors" value="201"/>
+    <property name="reg-web.pmd.maxerrors" value="198"/>
     <property name="reg-web.reporting.outputDirectory" value="${pa.report.dir}/reg-web/site"/>
     <property name="reg-web.war" value="${reg-web.build.finalName}.war"/>
     <property name="reg-web.build.coberturaOutputDir" value="${reg-web.build.dir}/generated-classes"/>
