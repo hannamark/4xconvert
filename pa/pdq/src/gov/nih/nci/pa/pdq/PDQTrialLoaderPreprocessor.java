@@ -91,8 +91,7 @@ import java.io.FilenameFilter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -119,20 +118,21 @@ public class PDQTrialLoaderPreprocessor {
     private static String DEFAULT_FUTURE_DATE = "2100-01-01";
     private static String DEFAULT_PAST_DATE = "1900-01-01";
     
-    private static Map<String, String> COOP_GROUP_MAP = new HashMap<String, String>();
+    private static List<String> COOP_GROUP_LIST = new ArrayList<String>();
     static {
-        COOP_GROUP_MAP.put("ACOSOG", "American College of Surgeons Oncology Trials Group");
-        COOP_GROUP_MAP.put("CALGB", "Cancer and Leukemia Group B");
-        COOP_GROUP_MAP.put("ECOG", "Eastern Cooperative Oncology Group");
-        COOP_GROUP_MAP.put("GOG", "Gynecologic Oncology Group");
-        COOP_GROUP_MAP.put("NCIC", "National Cancer Institute of Canada Clinical Trials Group");
-        COOP_GROUP_MAP.put("NCCTG", "North Central Cancer Treatment Group");
-        COOP_GROUP_MAP.put("NSABP", "National Surgical Adjuvant Breast and Bowel Project");
-        COOP_GROUP_MAP.put("RTOG", "Radiation Therapy Oncology Group");
-        COOP_GROUP_MAP.put("SWOG", "Southwest Oncology Group");
-        COOP_GROUP_MAP.put("COG", "Children's Oncology Group");
-        COOP_GROUP_MAP.put("ACRIN", "American College of Radiology Imaging Network");
-        COOP_GROUP_MAP.put("EORTC", "European Organisation for Research and Treatment of Cancer");
+        COOP_GROUP_LIST.add("american college of surgeons oncology trials group");
+        COOP_GROUP_LIST.add("american college of surgeons oncology group");
+        COOP_GROUP_LIST.add("cancer and leukemia group b");
+        COOP_GROUP_LIST.add("eastern cooperative oncology group");
+        COOP_GROUP_LIST.add("gynecologic oncology group");
+        COOP_GROUP_LIST.add("national cancer institute of canada clinical trials group");
+        COOP_GROUP_LIST.add("north central cancer treatment group");
+        COOP_GROUP_LIST.add("national surgical adjuvant breast and bowel project");
+        COOP_GROUP_LIST.add("radiation therapy oncology group");
+        COOP_GROUP_LIST.add("southwest oncology group");
+        COOP_GROUP_LIST.add("children's oncology group");
+        COOP_GROUP_LIST.add("american college of radiology imaging network");
+        COOP_GROUP_LIST.add("european organisation for research and treatment of cancer");
     }
     
     public static void main(String[] args) {
@@ -267,15 +267,8 @@ public class PDQTrialLoaderPreprocessor {
      */
     private void removePartSites(Document document) {
         Element leadOrg = document.getRootElement().getChild("lead_org");
-        Attribute ctepId = leadOrg.getAttribute("ctep-id");
-        boolean removeSites = false;
-        if (ctepId != null && StringUtils.isNotEmpty(ctepId.getValue())) {
-            removeSites = COOP_GROUP_MAP.keySet().contains(ctepId.getValue()); 
-        } else {
-            removeSites = COOP_GROUP_MAP.values().contains(leadOrg.getText().trim());
-        }
         
-        if (removeSites) {
+        if (COOP_GROUP_LIST.contains(leadOrg.getText().trim().toLowerCase())) {
             List<Element> locations = document.getRootElement().getChildren("location");
             while(locations.size() > 1) {
                 locations.remove(locations.size() - 1);
