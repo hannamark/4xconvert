@@ -80,7 +80,6 @@
 package gov.nih.nci.accrual.accweb.action;
 
 import gov.nih.nci.accrual.accweb.util.AccrualConstants;
-import gov.nih.nci.accrual.accweb.util.WebUtil;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
@@ -330,19 +329,19 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
      * @return submission label
      */
     public String getSubmissionLabel() {
-        return WebUtil.getStr(getSubmission().getLabel());
+        return StConverter.convertToString(getSubmission().getLabel());
     }
     /**
      * @return submission description
      */
     public String getSubmissionDescription() {
-        return WebUtil.getStr(getSubmission().getDescription());
+        return StConverter.convertToString(getSubmission().getDescription());
     }
     /**
      * @return submission cut off date as a string
      */
     public String getSubmissionCutOffDate() {
-        return WebUtil.getStr(getSubmission().getCutOffDate());
+        return TsConverter.convertToString(getSubmission().getCutOffDate());
     }
     /**
      * @return submission status as a string
@@ -354,25 +353,25 @@ public class AccrualSubmissionsAction extends AbstractListEditAccrualAction<Subm
      * @return user who created
      */
     public String getSubmissionCreateUser() {
-        return WebUtil.getStr(getSubmission().getCreateUser());
+        return StConverter.convertToString(getSubmission().getCreateUser());
     }
     /**
      * @return submission creation date as a string
      */
     public String getSubmissionCreatedDate() {
-        return WebUtil.getStr(IvlConverter.convertTs().convertLowToString(getSubmission().getStatusDateRange()));
+        return IvlConverter.convertTs().convertLowToString(getSubmission().getStatusDateRange());
     }
     /**
      * @return user who submitted
      */
     public String getSubmissionSubmitUser() {
-        return WebUtil.getStr(getSubmission().getSubmitUser());
+        return StConverter.convertToString(getSubmission().getSubmitUser());
     }
     /**
      * @return submission date as a string
      */
     public String getSubmissionSubmittedDate() {
-        return WebUtil.getStr(IvlConverter.convertTs().convertHighToString(getSubmission().getStatusDateRange()));
+        return IvlConverter.convertTs().convertHighToString(getSubmission().getStatusDateRange());
     }
     
     /**

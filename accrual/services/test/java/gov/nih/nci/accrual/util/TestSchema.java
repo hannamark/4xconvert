@@ -107,6 +107,7 @@ import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -283,7 +284,26 @@ public class TestSchema {
         sp.setProprietaryTrialIndicator(false);
         addUpdObject(sp);
         studyProtocols.add(sp);
+        
+        sp = new StudyProtocol();
+        sp.setOfficialTitle("Sample Preventative Study");
+        sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2009"));
+        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2010"));
+        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+        sp.setPrimaryPurposeCode(PrimaryPurposeCode.PREVENTION);
+        studySecondaryIdentifiers =  new HashSet<Ii>();
+        assignedId = IiConverter.convertToAssignedIdentifierIi("NCI-2009-00003");
+        studySecondaryIdentifiers.add(assignedId);
 
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
+        sp.setStatusCode(ActStatusCode.ACTIVE);
+        sp.setSubmissionNumber(Integer.valueOf(1));
+        sp.setProprietaryTrialIndicator(false);
+        addUpdObject(sp);
+        studyProtocols.add(sp);
+        
         // StudyOverallStatus
         StudyOverallStatus sos = new StudyOverallStatus();
         sos.setStatusCode(StudyStatusCode.APPROVED);

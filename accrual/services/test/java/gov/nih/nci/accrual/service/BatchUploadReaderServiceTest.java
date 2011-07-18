@@ -114,6 +114,7 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
@@ -154,6 +155,7 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
     private Ii abbreviatedIi;
     private Ii completeIi;
     private Ii inactiveIi;
+    private Ii preventionIi;
     private ServiceLocatorPaInterface paSvcLocator;
     private CountryService countryService = new CountryBean();
     private CdusBatchUploadReaderBean readerService;
@@ -166,8 +168,9 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         AccrualCsmUtil.setCsmUtil(new MockCsmUtil());
         TestSchema.primeData();
         abbreviatedIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId());
-        inactiveIi = IiConverter.convertToStudyContactIi(TestSchema.studyProtocols.get(1).getId());
+        inactiveIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(1).getId());
         completeIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(2).getId());
+        preventionIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(3).getId());
 
         mailService = mock(MailManagerServiceRemote.class);
         readerService = new CdusBatchUploadReaderBean();
@@ -197,6 +200,10 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
                 } else if (StringUtils.equals(ii.getExtension(), "NCI-2010-00003")) {
                     dto.setIdentifier(completeIi);
                     dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
+                } else if (StringUtils.equals(ii.getExtension(), "NCI-2009-00003")) {
+                    dto.setIdentifier(preventionIi);
+                    dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
+                    dto.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.PREVENTION));
                 } else {
                     dto = null;
                 }
@@ -257,7 +264,7 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         PoRegistry.getInstance().setPoServiceLocator(poServiceLoc);
 
         IdentifiedOrganizationCorrelationServiceRemote identifiedOrgCorrelationSvc
-            = mock(IdentifiedOrganizationCorrelationServiceRemote.class);
+        = mock(IdentifiedOrganizationCorrelationServiceRemote.class);
         when(identifiedOrgCorrelationSvc.search(any(IdentifiedOrganizationDTO.class))).thenAnswer(new Answer<List<IdentifiedOrganizationDTO>>() {
             public List<IdentifiedOrganizationDTO> answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
@@ -313,21 +320,9 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
     }
 
     @Test
-    public void testReading() throws URISyntaxException, PAException {
+    public void completeBatchValidation() throws URISyntaxException, PAException {
         File file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
         List<BatchValidationResults> results = readerService.validateBatchData(file);
-        readerService.sendValidationErrorEmail(results);
-        assertEquals(1, results.size());
-        assertFalse(results.get(0).isPassedValidation());
-        assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString()));
-        assertTrue(StringUtils.isNotEmpty(results.get(0).getMailTo()));
-        assertTrue(results.get(0).getValidatedLines().isEmpty());
-        verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
-        mailService = mock(MailManagerServiceRemote.class);
-        when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
-
-        file = new File(this.getClass().getResource("/CDUS_Abbreviated-modified.txt").toURI());
-        results = readerService.validateBatchData(file);
         readerService.sendValidationErrorEmail(results);
         assertEquals(1, results.size());
         assertFalse(results.get(0).isPassedValidation());
@@ -347,11 +342,12 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         assertTrue(StringUtils.isNotEmpty(results.get(0).getMailTo()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
         verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
-        mailService = mock(MailManagerServiceRemote.class);
-        when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
+    }
 
-        file = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
-        results = readerService.validateBatchData(file);
+    @Test
+    public void abbreviatedBatchValidation() throws URISyntaxException, PAException {
+        File file = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
+        List<BatchValidationResults> results = readerService.validateBatchData(file);
         readerService.sendValidationErrorEmail(results);
         assertEquals(1, results.size());
         assertTrue(results.get(0).isPassedValidation());
@@ -359,12 +355,27 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         assertTrue(StringUtils.isNotEmpty(results.get(0).getMailTo()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
         verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
-        mailService = mock(MailManagerServiceRemote.class);
-        when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
+    }
 
-        file = new File(this.getClass().getResource("/CDUS.zip").toURI());
-        List<BatchValidationResults> validationResults = readerService.validateBatchData(file);
+    @Test
+    public void abbreviatedPreventionBatchValidation() throws URISyntaxException, PAException {
+        File file = new File(this.getClass().getResource("/cdus-abbreviated-prevention-study.txt").toURI());
+        List<BatchValidationResults> results = readerService.validateBatchData(file);
         readerService.sendValidationErrorEmail(results);
+        assertEquals(1, results.size());
+        assertTrue(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
+        assertTrue(StringUtils.isNotEmpty(results.get(0).getMailTo()));
+        assertFalse(results.get(0).getValidatedLines().isEmpty());
+        verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+    }
+
+
+    @Test
+    public void archiveBatchValidation() throws URISyntaxException, PAException {
+        File file = new File(this.getClass().getResource("/CDUS.zip").toURI());
+        List<BatchValidationResults> validationResults = readerService.validateBatchData(file);
+        readerService.sendValidationErrorEmail(validationResults);
         assertEquals(2, validationResults.size());
         for (BatchValidationResults result : validationResults) {
             assertTrue(result.isPassedValidation());
@@ -392,27 +403,12 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
     }
 
     @Test
-    public void testPerformBatchImport() throws Exception {
-        assertEquals(2, submissionService.getByStudyProtocol(abbreviatedIi).size());
-        assertEquals(2, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
-
-        File file = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
-        List<BatchImportResults> importResults = readerService.importBatchData(file);
-        readerService.sendConfirmationEmail(importResults);
-        assertEquals(1, importResults.size());
-        assertEquals(72, importResults.get(0).getTotalImports());
-        assertEquals("CDUS_Abbreviated.txt", importResults.get(0).getFileName());
-        assertEquals(3, submissionService.getByStudyProtocol(abbreviatedIi).size());
-        assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
-        verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
-        mailService = mock(MailManagerServiceRemote.class);
-        when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
-
+    public void performCompleteBatchImport() throws Exception {
         assertEquals(0, submissionService.getByStudyProtocol(completeIi).size());
         assertEquals(0, studySubjectService.getByStudyProtocol(completeIi).size());
 
-        file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
-        importResults = readerService.importBatchData(file);
+        File file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
+        List<BatchImportResults> importResults = readerService.importBatchData(file);
         readerService.sendConfirmationEmail(importResults);
         assertEquals(1, importResults.size());
         assertEquals(24, importResults.get(0).getTotalImports());
@@ -428,8 +424,39 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         readerService.sendConfirmationEmail(importResults);
         assertEquals(0, importResults.size());
         verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
-        mailService = mock(MailManagerServiceRemote.class);
-        when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
+    }
+
+    @Test
+    public void performAbbreviatedBatchImport() throws Exception {
+        assertEquals(2, submissionService.getByStudyProtocol(abbreviatedIi).size());
+        assertEquals(2, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
+
+        File file = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
+        List<BatchImportResults> importResults = readerService.importBatchData(file);
+        readerService.sendConfirmationEmail(importResults);
+        assertEquals(1, importResults.size());
+        assertEquals(72, importResults.get(0).getTotalImports());
+        assertEquals("CDUS_Abbreviated.txt", importResults.get(0).getFileName());
+        assertEquals(3, submissionService.getByStudyProtocol(abbreviatedIi).size());
+        assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
+        verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+    }
+
+
+    @Test
+    public void performAbbreviatedPreventionBatchImport() throws Exception {
+        assertEquals(0, submissionService.getByStudyProtocol(preventionIi).size());
+        assertEquals(0, studySubjectService.getByStudyProtocol(preventionIi).size());
+
+        File file = new File(this.getClass().getResource("/cdus-abbreviated-prevention-study.txt").toURI());
+        List<BatchImportResults> importResults = readerService.importBatchData(file);
+        readerService.sendConfirmationEmail(importResults);
+        assertEquals(1, importResults.size());
+        assertEquals(72, importResults.get(0).getTotalImports());
+        assertEquals("cdus-abbreviated-prevention-study.txt", importResults.get(0).getFileName());
+        assertEquals(1, submissionService.getByStudyProtocol(preventionIi).size());
+        assertEquals(72, studySubjectService.getByStudyProtocol(preventionIi).size());
+        verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
     }
 
     @Test
@@ -454,7 +481,5 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         assertEquals(1, submissionService.getByStudyProtocol(completeIi).size());
         assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
         verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
-        mailService = mock(MailManagerServiceRemote.class);
-        when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
     }
 }

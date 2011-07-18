@@ -196,17 +196,17 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
 
     @Test
     public void submissionLabelPropertyTest() {
-        assertNotNull(action.getSubmissionLabel());
+        assertNull(action.getSubmissionLabel());
     }
 
     @Test
     public void submissionDescriptionPropertyTest() {
-        assertNotNull(action.getSubmissionDescription());
+        assertNull(action.getSubmissionDescription());
     }
 
     @Test
     public void submissionCutOffDatePropertyTest() {
-        assertNotNull(action.getSubmissionCutOffDate());
+        assertNull(action.getSubmissionCutOffDate());
     }
 
     @Test
@@ -216,21 +216,21 @@ public class AccrualSubmissionsActionTest extends AbstractAccrualActionTest {
 
     @Test
     public void submissionCreateUserPropertyTest() {
-        assertNotNull(action.getSubmissionCreateUser());
+        assertNull(action.getSubmissionCreateUser());
     }
 
     @Test
     public void submissionCreatedDatePropertyTest() {
-        assertNotNull(action.getSubmissionCreatedDate());
+        assertNull(action.getSubmissionCreatedDate());
     }
 
     @Test
     public void submissionSubmitUserPropertyTest() {
-        assertNotNull(action.getSubmissionSubmitUser());
+        assertNull(action.getSubmissionSubmitUser());
     }
 
     @Test
     public void submissionSubmittedDatePropertyTest() {
-        assertNotNull(action.getSubmissionSubmittedDate());
+        assertNull(action.getSubmissionSubmittedDate());
     }
 }

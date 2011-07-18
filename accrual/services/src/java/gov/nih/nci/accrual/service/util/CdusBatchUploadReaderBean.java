@@ -430,8 +430,10 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         }
 
         String medraCode = line[PATIENT_DISEASE_INDEX];
-        SDCDiseaseDTO disease = PaServiceLocator.getInstance().getDiseaseService().getByCode(medraCode);
-        studySubject.setDiseaseIdentifier(disease.getIdentifier());
+        if (StringUtils.isNotEmpty(medraCode)) {
+            SDCDiseaseDTO disease = PaServiceLocator.getInstance().getDiseaseService().getByCode(medraCode);
+            studySubject.setDiseaseIdentifier(disease.getIdentifier());
+        }
 
         studySubject.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
         studySubject.setStatusDateRange(
@@ -459,7 +461,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         }
         validateProtocolNumber(key, values, errMsg, lineNumber, expectedProtocolId);
         validatePatientID(key, values, errMsg, lineNumber);
-        validatePatientsMandatoryData(key, values, errMsg, lineNumber);
+        validatePatientsMandatoryData(key, values, errMsg, lineNumber, getStudyProtocol(expectedProtocolId));
         validateRegInstCode(key, values, errMsg, lineNumber);
         validatePatientRaceData(key, values, errMsg, lineNumber);
         validateAccuralCount(key, values, errMsg, lineNumber);
@@ -549,8 +551,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     private void validateProtocolStatus(String key, StringBuffer errMsg, long lineNumber, String protocolId) {
         StudyProtocolDTO sp = getStudyProtocol(protocolId);
         if (sp == null) {
-            errMsg.append(key).append(appendLineNumber(lineNumber))
-                .append(" is not a valid NCI or CTEP/DCP identifier.\n");
+            errMsg.append(key).append(appendLineNumber(lineNumber)).append(protocolId)
+            .append(" is not a valid NCI or CTEP/DCP identifier.\n");
         } else if (!StringUtils.equalsIgnoreCase(sp.getStatusCode().getCode(), ActStatusCode.ACTIVE.getCode())) {
             errMsg.append(key).append(appendLineNumber(lineNumber)).append(" with the identifier ")
                 .append(protocolId).append("is not an Active study.\n");   

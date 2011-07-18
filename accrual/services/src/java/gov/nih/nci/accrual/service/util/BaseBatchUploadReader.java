@@ -89,8 +89,10 @@ import gov.nih.nci.accrual.service.SubmissionServiceLocal;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -205,9 +207,10 @@ public class BaseBatchUploadReader {
      * @param values values
      * @param errMsg if any
      * @param lineNumber line Number
+     * @param sp study protocol
      */
     protected void validatePatientsMandatoryData(String key, List<String> values, StringBuffer errMsg,
-            long lineNumber) {
+            long lineNumber, StudyProtocolDTO sp) {
         if (StringUtils.equalsIgnoreCase("PATIENTS", key)) {
             isPatientIdUnique(getPatientId(values), errMsg, lineNumber);
             String pBirthDate = StringUtils.trim(values.get(PATIENT_BRITH_DATE_INDEX));
@@ -221,7 +224,7 @@ public class BaseBatchUploadReader {
             validateGender(values, errMsg, lineNumber);
             validateEthnicity(values, errMsg, lineNumber);
             validateDateOfEntry(values, errMsg, lineNumber);
-            validateDiseaseCode(values, errMsg, lineNumber);
+            validateDiseaseCode(values, errMsg, lineNumber, sp);
         }
     }
     /**
@@ -294,14 +297,20 @@ public class BaseBatchUploadReader {
     }
     
     /**
-     * Validates that the patient disease is provided and valid.
+     * Validates that the patient disease is provided and valid. If a study has the primary purpose 'Prevention', 
+     * the Meddra Disease code is not required.
      * @param values 
      * @param errMsg
      * @param lineNumber
+     * @param sp study protocol
      */
-    private void validateDiseaseCode(List<String> values, StringBuffer errMsg, long lineNumber) {
+    private void validateDiseaseCode(List<String> values, StringBuffer errMsg, long lineNumber, StudyProtocolDTO sp) {
+        PrimaryPurposeCode purpose = null;
+        if (sp != null) {
+            purpose = PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(sp.getPrimaryPurposeCode()));
+        }
         String meddraCode = StringUtils.trim(values.get(PATIENT_DISEASE_INDEX));
-        if (StringUtils.isEmpty(meddraCode)) {
+        if (StringUtils.isEmpty(meddraCode) && purpose != PrimaryPurposeCode.PREVENTION) {
             errMsg.append("Patient Disease Meddra Code is missing for patient ID ").append(getPatientId(values))
             .append(appendLineNumber(lineNumber)).append('\n');
         } else if (StringUtils.isNotEmpty(meddraCode) && getDisease(meddraCode, errMsg) == null) {
