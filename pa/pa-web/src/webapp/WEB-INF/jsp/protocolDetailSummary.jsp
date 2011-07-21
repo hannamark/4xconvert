@@ -53,7 +53,7 @@
 		</c:if>
 		<div class="row">
 			<span class="label">Trial Submitter:</span>
-			<span class="value"><a href="javascript:displaySubmitter();"><c:out value="${sessionScope.trialSummary.userLastCreatedUsername }"/></a></span>
+			<span class="value"><a href="javascript:displaySubmitter();"><c:out value="${sessionScope.trialSummary.lastCreated.userLastCreatedUsername }"/></a></span>
 		</div>
 	    <c:if test="${sessionScope.trialSummary.amendmentDate != null}">
             <div class="row">
@@ -73,16 +73,16 @@
 			<span class="label"><fmt:message key="studyProtocol.documentWorkflowStatus"/>:</span>
 			<span class="value"><c:out value="${sessionScope.trialSummary.documentWorkflowStatusCode.code }"/></span>
 		</div>
-	    <c:if test="${sessionScope.trialSummary.studyAdminCheckoutBy != null}">
+	    <c:if test="${sessionScope.trialSummary.adminCheckout.checkoutBy != null}">
             <div class="row">
                 <span class="label"><fmt:message key="studyProtocol.adminCheckOutBy"/>:</span>
-                <span class="value"><c:out value="${sessionScope.trialSummary.studyAdminCheckoutByUsername }"/></span>
+                <span class="value"><c:out value="${sessionScope.trialSummary.adminCheckout.checkoutByUsername }"/></span>
             </div>
         </c:if>
-        <c:if test="${sessionScope.trialSummary.studyScientificCheckoutBy != null}">
+        <c:if test="${sessionScope.trialSummary.scientificCheckout.checkoutBy != null}">
             <div class="row">
                 <span class="label"><fmt:message key="studyProtocol.scientificCheckOutBy"/>:</span>
-                <span class="value"><c:out value="${sessionScope.trialSummary.studyScientificCheckoutByUsername }"/></span>
+                <span class="value"><c:out value="${sessionScope.trialSummary.scientificCheckout.checkoutByUsername }"/></span>
             </div>
         </c:if>
 	</div>

@@ -42,7 +42,7 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
         spQueryDTO.setPiId(2L);
         spQueryDTO.setProprietaryTrial(false);
         spQueryDTO.setCtgovXmlRequiredIndicator(true);
-        spQueryDTO.setUserLastCreated("TestUser@test.com");
+        spQueryDTO.getLastCreated().setUserLastCreated("TestUser@test.com");
         spQueryDTO.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
         spQueryDTO.setSearcherTrialOwner(true);
         list.add(spQueryDTO);

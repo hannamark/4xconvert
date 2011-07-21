@@ -7,8 +7,18 @@
         <display:column escapeXml="true" class="title" titleKey="studyProtocol.nciIdentifier" property="nciIdentifier"
             href="studyProtocolview.action" paramId="studyProtocolId" paramProperty="studyProtocolId" sortable="true" headerClass="sortable"/>
         <display:column escapeXml="true" titleKey="studyProtocol.officialTitle" maxLength= "200" property="officialTitle" sortable="true" headerClass="sortable"/>
-        <display:column escapeXml="true" titleKey="studyProtocol.milestone" property="studyMilsetone.code" sortable="true" headerClass="sortable"/>
-        <display:column escapeXml="false" titleKey="studyProtocol.milestoneDate" property="studyMilestoneDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
+        <display:column escapeXml="true" titleKey="studyProtocol.milestone" sortable="true" headerClass="sortable">
+            <c:out value="${row.milestones.studyMilestone.milestone.code}" />
+            <fmt:formatDate value="${row.milestones.studyMilestone.milestoneDate}" pattern="MM/dd/yyyy"/>
+        </display:column>
+        <display:column escapeXml="true" titleKey="studyProtocol.adminMilestone" sortable="true" headerClass="sortable">
+            <c:out value="${row.milestones.adminMilestone.milestone.code}" />
+            <fmt:formatDate value="${row.milestones.adminMilestone.milestoneDate}" pattern="MM/dd/yyyy"/>
+        </display:column>
+        <display:column escapeXml="true" titleKey="studyProtocol.scientificMilestone" sortable="true" headerClass="sortable">
+            <c:out value="${row.milestones.scientificMilestone.milestone.code}" />
+            <fmt:formatDate value="${row.milestones.scientificMilestone.milestoneDate}" pattern="MM/dd/yyyy"/>
+        </display:column>
         <display:column escapeXml="true" titleKey="studyProtocol.documentWorkflowStatus" property="documentWorkflowStatusCode.code" sortable="true" headerClass="sortable"/>
         <display:column escapeXml="false" titleKey="studyProtocol.documentWorkflowStatusDate" property="documentWorkflowStatusDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
         <display:column escapeXml="false" titleKey="studyProtocol.recordVerificationDate" property="recordVerificationDate"  format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
@@ -16,13 +26,13 @@
         <display:column escapeXml="true" titleKey="studyProtocol.studyOnholdDates" property="offHoldDates" headerClass="sortable"/>
         <display:column escapeXml="true" titleKey="studyProtocol.submissionType" property="submissionTypeCode"  headerClass="sortable"/>
         <display:column titleKey="studyProtocol.adminCheckOutBy"  sortable="true" headerClass="sortable" >
-        	<s:if test="%{#attr.row.studyAdminCheckoutByUsername != null}">
-        		<c:out value="${row.studyAdminCheckoutByUsername}"/>
+        	<s:if test="%{#attr.row.adminCheckout.checkoutByUsername != null}">
+        		<c:out value="${row.adminCheckout.checkoutByUsername}"/>
         	</s:if>
         </display:column>
         <display:column titleKey="studyProtocol.scientificCheckOutBy"  sortable="true" headerClass="sortable" >
-            <s:if test="%{#attr.row.studyScientificCheckoutByUsername != null}">
-                <c:out value="${row.studyScientificCheckoutByUsername}"/>
+            <s:if test="%{#attr.row.scientificCheckout.checkoutByUsername != null}">
+                <c:out value="${row.scientificCheckout.checkoutByUsername}"/>
             </s:if>
         </display:column>
         <c:if test="${sessionScope.isAbstractor || sessionScope.isSuAbstractor}">
@@ -31,11 +41,11 @@
         </c:if>
         <c:if test="${sessionScope.isSuAbstractor}">
             <display:column class="title" title="Super User Action" sortable="true" headerClass="sortable">
-            	<s:if test="%{#attr.row.studyAdminCheckoutBy != null}">
+            	<s:if test="%{#attr.row.adminCheckout.checkoutBy != null}">
                     <s:url id="url" action="studyProtocoladminCheckIn"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
             		<s:a href="%{url}">Check-In (Admin)</s:a><br/>
                 </s:if>
-                <s:if test="%{#attr.row.studyScientificCheckoutBy != null}">
+                <s:if test="%{#attr.row.studyScientific.checkoutBy != null}">
                     <s:url id="url" action="studyProtocolscientificCheckIn"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
                     <s:a href="%{url}">Check-In (Scientific)</s:a><br/>
                 </s:if>

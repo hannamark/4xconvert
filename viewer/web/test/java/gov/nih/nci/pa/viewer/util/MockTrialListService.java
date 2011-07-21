@@ -100,8 +100,8 @@ public class MockTrialListService extends MockService implements TrialListLocal 
         dto.setDwsDate(TsConverter.convertToTs(TEST_TS));
         dto.setLeadOrg(StConverter.convertToSt(TEST_STR));
         dto.setLeadOrgTrialIdentifier(StConverter.convertToSt(TEST_STR));
-        dto.setMilestone(CdConverter.convertStringToCd(TEST_MILESTONE));
-        dto.setMilestoneDate(TsConverter.convertToTs(TEST_TS));
+        dto.getMilestoneResult().setMilestone(CdConverter.convertStringToCd(TEST_MILESTONE));
+        dto.getMilestoneResult().setMilestoneDate(TsConverter.convertToTs(TEST_TS));
         dto.setSubmissionNumber(IntConverter.convertToInt(TEST_INT));
         dto.setSubmitterOrg(StConverter.convertToSt(TEST_STR));
         rList.add(dto);

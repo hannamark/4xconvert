@@ -30,7 +30,7 @@ public class DisplayInfoActionTest extends AbstractPaActionTest {
         action.setCorrelationUtils(new MockCorrelationUtils());
         StudyProtocolQueryDTO ts = new StudyProtocolQueryDTO();
         ts.setStudyProtocolId(1L);
-        ts.setUserLastCreated("userName");
+        ts.getLastCreated().setUserLastCreated("userName");
         HttpSession sess = new MockHttpSession();
         sess.setAttribute(Constants.TRIAL_SUMMARY, ts);
      }
@@ -53,7 +53,7 @@ public class DisplayInfoActionTest extends AbstractPaActionTest {
     public void testQueryException() {
         StudyProtocolQueryDTO ts = new StudyProtocolQueryDTO();
         ts.setStudyProtocolId(1L);
-        ts.setUserLastCreated("exceptionName");
+        ts.getLastCreated().setUserLastCreated("exceptionName");
         HttpSession sess = new MockHttpSession();
         sess.setAttribute(Constants.TRIAL_SUMMARY, ts);
         assertEquals("success",action.query());

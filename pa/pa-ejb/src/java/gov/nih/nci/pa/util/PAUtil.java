@@ -92,14 +92,19 @@ import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.dto.MilestonesDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.UnitsCode;
+import gov.nih.nci.pa.iso.convert.StudyMilestoneConverter;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
@@ -132,6 +137,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -947,6 +953,58 @@ public class PAUtil {
         }
         return strPhone;
     }
+    
+    private static boolean isMaxUnitInDaysAndMinUnitValid(String minUnit, String maxUnit) {
+        return maxUnit.equalsIgnoreCase(UnitsCode.DAYS.getCode())
+                && !(minUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()));
+    }
+    
+    private static boolean isMaxUnitInHoursAndMinUnitValid(String minUnit, String maxUnit) {
+        return maxUnit.equalsIgnoreCase(UnitsCode.HOURS.getCode())
+                && !(minUnit.equalsIgnoreCase(UnitsCode.DAYS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()));
+    }
+    
+    private static boolean isMaxUnitInMinutesAndMinUnitValid(String minUnit, String maxUnit) {
+        return maxUnit.equalsIgnoreCase(UnitsCode.MINUTES.getCode())
+                && !(minUnit.equalsIgnoreCase(UnitsCode.HOURS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.DAYS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()));
+    }
+    
+    private static boolean isMaxUnitInWeeksAndMinUnitValid(String minUnit, String maxUnit) {
+        return maxUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode())
+                && !(minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
+                || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()));
+    }
+    
+    private static boolean isMaxUnitInMonthsAndMinUnitValid(String minUnit, String maxUnit) {
+        return maxUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
+        && !minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode());
+    }
+    
+    private static boolean checkMaxUnitSameOrLess(String minUnit, String maxUnit) {
+        boolean isSameOrLess = false;
+        if (isMaxUnitInMonthsAndMinUnitValid(minUnit, maxUnit)) {
+            isSameOrLess = true;
+        } else if (isMaxUnitInWeeksAndMinUnitValid(minUnit, maxUnit)) {
+            isSameOrLess = true;
+        } else if (isMaxUnitInDaysAndMinUnitValid(minUnit, maxUnit)) {
+            isSameOrLess = true;
+        } else if (isMaxUnitInHoursAndMinUnitValid(minUnit, maxUnit)) {
+            isSameOrLess = true;
+        } else if (isMaxUnitInMinutesAndMinUnitValid(minUnit, maxUnit)) {
+            isSameOrLess = true;
+        }
+        return isSameOrLess;
+    }
+    
     /**
      *
      * @param minUnit min
@@ -954,39 +1012,16 @@ public class PAUtil {
      * @return true
      */
     public static boolean isUnitLessOrSame(String minUnit, String maxUnit) {
-        boolean isSameorLess = false;
+        boolean isSameOrLess = false;
         if (minUnit.equalsIgnoreCase(maxUnit)) {
-            isSameorLess = true;
+            isSameOrLess = true;
         }
         if (maxUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode())) {
-            isSameorLess = true;
-        } else if (maxUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
-                && !minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode())) {
-            isSameorLess = true;
-        } else if (maxUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode())
-                && !(minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
-                || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()))) {
-            isSameorLess = true;
-        } else if (maxUnit.equalsIgnoreCase(UnitsCode.DAYS.getCode())
-                && !(minUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode())
-                || minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
-                || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()))) {
-            isSameorLess = true;
-        } else if (maxUnit.equalsIgnoreCase(UnitsCode.HOURS.getCode())
-                && !(minUnit.equalsIgnoreCase(UnitsCode.DAYS.getCode())
-                || minUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode())
-                || minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
-                || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()))) {
-            isSameorLess = true;
-        } else if (maxUnit.equalsIgnoreCase(UnitsCode.MINUTES.getCode())
-                && !(minUnit.equalsIgnoreCase(UnitsCode.HOURS.getCode())
-                || minUnit.equalsIgnoreCase(UnitsCode.DAYS.getCode())
-                || minUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode())
-                || minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
-                || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()))) {
-            isSameorLess = true;
+            isSameOrLess = true;
+        } else {
+            isSameOrLess = checkMaxUnitSameOrLess(minUnit, maxUnit);
         }
-        return isSameorLess;
+        return isSameOrLess;
     }
     /**
      * @param age age
@@ -1302,5 +1337,70 @@ public class PAUtil {
     public static boolean isPhaseCodeNA(String phaseCode) {
         return StringUtils.equalsIgnoreCase(phaseCode, PhaseCode.NA.getCode());
     }
+   
+    /**
+     * Convert a list of trial milestone dtos to latest admin, scientific, and general.
+     * @param milestoneDto dto to load
+     * @param studyMilestonesDtos dtos to order and translate.
+     * @throws PAException if error.
+     */
+    public static void convertMilestoneDtosToDTO(MilestonesDTO milestoneDto, 
+            List<StudyMilestoneDTO> studyMilestonesDtos) throws PAException {
+        Set<StudyMilestone> studyMilestones = new TreeSet<StudyMilestone>(new LastCreatedComparator());
+        StudyMilestoneConverter smConv = new StudyMilestoneConverter();
+        for (StudyMilestoneDTO smDto : studyMilestonesDtos) {
+            studyMilestones.add(smConv.convertFromDtoToDomain(smDto));
+        }
+        convertMilestonesCopyToDTO(milestoneDto, studyMilestones);
+    }
+    
+    /**
+     * Convert a list of trial milestones into latest admin, scientific, and general.
+     * A copy of the set is used to maintain the original set members in the trial domain object.
+     * @param milestonesDto dto to load 
+     * @param studyMilestones list of trial milestones
+     */
+    public static void convertMilestonesToDTO(MilestonesDTO milestonesDto, 
+            Set<StudyMilestone> studyMilestones) {   
+        Set<StudyMilestone> copy = new TreeSet<StudyMilestone>(new LastCreatedComparator());
+        copy.addAll(studyMilestones);
+        convertMilestonesCopyToDTO(milestonesDto, copy);
+    }
+    
+    private static void convertMilestonesCopyToDTO(MilestonesDTO milestonesDto, 
+            Set<StudyMilestone> studyMilestones) {      
+        if (studyMilestones.isEmpty()) {
+            return;
+        }
+        StudyMilestone studyMilestone = studyMilestones.iterator().next();
+        if (isNotAdminOrScientificMilestone(studyMilestone.getMilestoneCode())) {
+            milestonesDto.getStudyMilestone().setMilestone(studyMilestone.getMilestoneCode());
+            milestonesDto.getStudyMilestone().setMilestoneDate(studyMilestone.getMilestoneDate());
+            return;
+        } else if (isAdminMilestone(milestonesDto.getAdminMilestone().getMilestone(), 
+                studyMilestone.getMilestoneCode())) {
+            milestonesDto.getAdminMilestone().setMilestone(studyMilestone.getMilestoneCode());
+            milestonesDto.getAdminMilestone().setMilestoneDate(studyMilestone.getMilestoneDate());
+        } else if (isScientificMilestone(milestonesDto.getScientificMilestone().getMilestone(),
+                studyMilestone.getMilestoneCode())) {
+            milestonesDto.getScientificMilestone().setMilestone(studyMilestone.getMilestoneCode());
+            milestonesDto.getScientificMilestone().setMilestoneDate(studyMilestone.getMilestoneDate());
+        } 
+        studyMilestones.remove(studyMilestone);
+        convertMilestonesCopyToDTO(milestonesDto, studyMilestones);
+    }
+    
+    private static boolean isAdminMilestone(MilestoneCode currentCode, MilestoneCode input) {
+        return currentCode == null && MilestoneCode.ADMIN_SEQ.contains(input);
+    }
+    
+    private static boolean isScientificMilestone(MilestoneCode currentCode, MilestoneCode input) {
+        return currentCode == null && MilestoneCode.SCIENTIFIC_SEQ.contains(input);
+    }
+    
+    private static boolean isNotAdminOrScientificMilestone(MilestoneCode input) {
+        return !MilestoneCode.ADMIN_SEQ.contains(input) && !MilestoneCode.SCIENTIFIC_SEQ.contains(input);
+    }
+
 
 }

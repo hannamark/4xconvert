@@ -77,9 +77,20 @@
 package gov.nih.nci.pa.report.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
 import gov.nih.nci.pa.report.dto.criteria.InstitutionCriteriaDto;
 import gov.nih.nci.pa.report.dto.criteria.SubmissionTypeCriteriaDto;
@@ -88,7 +99,12 @@ import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.report.util.ReportUtil;
 import gov.nih.nci.pa.report.util.TestSchema;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
+import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -99,9 +115,24 @@ import org.junit.Test;
 public class TrialListTest
         extends AbstractReportBeanTest<AbstractStandardCriteriaDto, TrialListResultDto, TrialListReportBean> {
 
+    private StudyMilestoneServicelocal smSvc;
+    
     @Before
     public void setUp() throws Exception {
         bean = new TrialListReportBean();
+        ServiceLocator paSvcLoc = mock(ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(paSvcLoc);
+        smSvc = mock(StudyMilestoneServicelocal.class);
+        when(paSvcLoc.getStudyMilestoneService()).thenReturn(smSvc);
+        List<StudyMilestoneDTO> smDtos = new ArrayList<StudyMilestoneDTO>();
+        StudyMilestoneDTO smDto = new StudyMilestoneDTO();
+        smDto.setCommentText(StConverter.convertToSt("test data"));
+        smDto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.SUBMISSION_RECEIVED));
+        smDto.setMilestoneDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2000")));
+        smDtos.add(smDto);
+        when(smSvc.getByStudyProtocol(any(Ii.class))).thenReturn(smDtos);
+        when(smSvc.search(any(StudyMilestoneDTO.class), any(LimitOffset.class))).thenReturn(smDtos);
+        
      }
 
     @Override
@@ -133,5 +164,45 @@ public class TrialListTest
         crit.setInstitutions(ReportUtil.convertToDSet(tempSet));
         List<TrialListResultDto> resultList = bean.get(crit);
         assertEquals(1, resultList.size());
+        assertEquals(MilestoneCode.SUBMISSION_RECEIVED.getCode(), 
+                resultList.get(0).getMilestoneResult().getMilestone().getCode());
+        assertNull(resultList.get(0).getMilestoneResult().getAdminMilestone().getCode());
+        assertNull(resultList.get(0).getMilestoneResult().getScientificMilestone().getCode());
+        assertEquals("NCI-2009-00001", resultList.get(0).getAssignedIdentifier().getValue());
+        assertEquals("01/01/2009", TsConverter.convertToString(resultList.get(0).getDateLastCreated()));
+        assertNull(TsConverter.convertToString(resultList.get(0).getDwsDate()));
+        assertEquals("ACCEPTED", resultList.get(0).getDws().getCode());
+        assertEquals("Duke", resultList.get(0).getLeadOrg().getValue());
+        assertEquals("local sp id", resultList.get(0).getLeadOrgTrialIdentifier().getValue());
+        assertEquals(1, resultList.get(0).getSubmissionNumber().getValue().intValue());
+        assertEquals("testOrganization", resultList.get(0).getSubmitterOrg().getValue());
+    }
+    
+    @Test(expected = PAException.class)
+    public void getTestInstitutionCriteriaWithTooManyResults() throws Exception {
+        when(smSvc.search(any(StudyMilestoneDTO.class), any(LimitOffset.class)))
+            .thenThrow(new TooManyResultsException(bean.MAX_MILESTONE_RESULT_LIMIT));
+        InstitutionCriteriaDto crit = new InstitutionCriteriaDto();
+        crit.setCtep(BlConverter.convertToBl(true));
+        crit.setTimeInterval(IvlConverter.convertTs().convertToIvl("1/1/2000", "6/1/2009"));
+        crit.setSubmissionType(CdConverter.convertStringToCd(SubmissionTypeCode.ORIGINAL.name()));
+        Set<String> tempSet = new HashSet<String>();
+        tempSet.add(TestSchema.user.get(0).getOrganization());
+        crit.setInstitutions(ReportUtil.convertToDSet(tempSet));
+        bean.get(crit);
+    }
+    
+    @Test
+    public void getTestInstitutionCriteriaNoAmendResults() throws Exception {
+        when(smSvc.search(any(StudyMilestoneDTO.class), any(LimitOffset.class)))
+            .thenThrow(new TooManyResultsException(bean.MAX_MILESTONE_RESULT_LIMIT));
+        InstitutionCriteriaDto crit = new InstitutionCriteriaDto();
+        crit.setCtep(BlConverter.convertToBl(true));
+        crit.setTimeInterval(IvlConverter.convertTs().convertToIvl("1/1/2000", "6/1/2009"));
+        crit.setSubmissionType(CdConverter.convertStringToCd(SubmissionTypeCode.AMENDMENT.name()));
+        Set<String> tempSet = new HashSet<String>();
+        tempSet.add(TestSchema.user.get(0).getOrganization());
+        crit.setInstitutions(ReportUtil.convertToDSet(tempSet));
+        assertEquals(0, bean.get(crit).size());
     }
 }

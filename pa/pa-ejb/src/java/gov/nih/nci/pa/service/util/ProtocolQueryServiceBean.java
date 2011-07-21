@@ -213,7 +213,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         }
         return trialSummaries.get(0);
     }
-
+    
     /**
      * Converts Study protocols objects to dtos.
      * @param protocolQueryResult the resulting study protocols
@@ -235,8 +235,6 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 DocumentWorkflowStatus documentWorkflowStatus = studyProtocol.getDocumentWorkflowStatuses().isEmpty()
                         ? null : studyProtocol.getDocumentWorkflowStatuses().iterator().next();
 
-                StudyMilestone studyMilestone = studyProtocol.getStudyMilestones().isEmpty() ? null
-                        : studyProtocol.getStudyMilestones().iterator().next();
                 // get studyOverallStatus
                 StudyOverallStatus studyOverallStatus = studyProtocol.getStudyOverallStatuses().isEmpty() ? null
                         : studyProtocol.getStudyOverallStatuses().iterator().next();
@@ -275,12 +273,13 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 studyProtocolDto.setPhaseCode(studyProtocol.getPhaseCode());
                 studyProtocolDto.setPhaseAdditionalQualifier(studyProtocol.getPhaseAdditionalQualifierCode());
                 if (studyProtocol.getUserLastCreated() != null) {
-                    studyProtocolDto.setUserLastCreated(studyProtocol.getUserLastCreated().getLoginName());
+                    studyProtocolDto.getLastCreated().setUserLastCreated(
+                            studyProtocol.getUserLastCreated().getLoginName());
                 }
                 if (studyProtocol.getPrimaryPurposeCode() != null) {
                     studyProtocolDto.setPrimaryPurpose(studyProtocol.getPrimaryPurposeCode().getCode());
                 }
-                studyProtocolDto.setDateLastCreated(studyProtocol.getDateLastCreated());
+                studyProtocolDto.getLastCreated().setDateLastCreated(studyProtocol.getDateLastCreated());
                 studyProtocolDto.setSumm4FundingSrcCategory(studyResourcing != null
                         && studyResourcing.getTypeCode() != null ? studyResourcing.getTypeCode().getCode() : null);
                 if (studyInbox != null && studyInbox.getCloseDate() == null) {
@@ -301,10 +300,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 studyProtocolDto.setRecordVerificationDate(studyProtocol.getRecordVerificationDate());
                 studyProtocolDto.setCtgovXmlRequiredIndicator(
                         BooleanUtils.toBoolean(studyProtocol.getCtgovXmlRequiredIndicator()));
-                if (studyMilestone != null) {
-                    studyProtocolDto.setStudyMilsetone(studyMilestone.getMilestoneCode());
-                    studyProtocolDto.setStudyMilestoneDate(studyMilestone.getMilestoneDate());
-                }
+                PAUtil.convertMilestonesToDTO(studyProtocolDto.getMilestones(), 
+                        studyProtocol.getStudyMilestones());     
                 if (studyOverallStatus != null) {
                     studyProtocolDto.setStudyStatusCode(studyOverallStatus.getStatusCode());
                     studyProtocolDto.setStudyStatusDate(studyOverallStatus.getStatusDate());
@@ -329,12 +326,12 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                     for (StudyCheckout studyCheckout : studyProtocol.getStudyCheckout()) {
                         switch (studyCheckout.getCheckOutType()) {
                         case ADMINISTRATIVE:
-                            studyProtocolDto.setStudyAdminCheckoutBy(studyCheckout.getUserIdentifier());
-                            studyProtocolDto.setStudyAdminCheckoutId(studyCheckout.getId());
+                            studyProtocolDto.getAdminCheckout().setCheckoutBy(studyCheckout.getUserIdentifier());
+                            studyProtocolDto.getAdminCheckout().setCheckoutId(studyCheckout.getId());
                             break;
                         case SCIENTIFIC:
-                            studyProtocolDto.setStudyScientificCheckoutBy(studyCheckout.getUserIdentifier());
-                            studyProtocolDto.setStudyScientificCheckoutId(studyCheckout.getId());
+                            studyProtocolDto.getScientificCheckout().setCheckoutBy(studyCheckout.getUserIdentifier());
+                            studyProtocolDto.getScientificCheckout().setCheckoutId(studyCheckout.getId());
                             break;
                         default:
                             break;

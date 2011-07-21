@@ -148,8 +148,20 @@ function handleReset(){
                 <display:column titleKey="report.result.dateLastCreated" property="dateLastCreated"/>
                 <display:column titleKey="report.result.dws" property="dws"/>
                 <display:column titleKey="report.result.dwsDate" property="dwsDate"/>
-                <display:column titleKey="report.result.milestone" property="milestone"/>
-                <display:column titleKey="report.result.milestoneDate" property="milestoneDate"/>
+                <display:column escapeXml="true" titleKey="report.result.milestone" sortable="true" headerClass="sortable">
+                    <s:if test="%{#attr.row.adminMilestone == null && #attr.row.scientificMilestone == null}">
+                        <c:out value="${row.milestone}" />
+                        <c:out value="${row.milestoneDate}"/>
+                    </s:if>
+                </display:column>
+                <display:column escapeXml="true" titleKey="report.result.adminMilestone" sortable="true" headerClass="sortable">
+                    <c:out value="${row.adminMilestone}" />
+                    <c:out value="${row.adminMilestoneDate}"/>
+                </display:column>
+                <display:column escapeXml="true" titleKey="report.result.scientificMilestone" sortable="true" headerClass="sortable">
+                    <c:out value="${row.scientificMilestone}" />
+                    <c:out value="${row.scientificMilestoneDate}"/>
+                </display:column>
             </display:table>
             </td>
             </tr>

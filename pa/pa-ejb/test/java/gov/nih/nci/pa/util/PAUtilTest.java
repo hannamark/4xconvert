@@ -18,8 +18,11 @@ import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.dto.MilestonesDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -41,6 +44,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.junit.Test;
 
@@ -737,5 +741,90 @@ public class PAUtilTest {
         spDto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(iiSet));
         assertTrue(PAUtil.checkAssignedIdentifierExists(spDto));
     }
+    
+    private StudyMilestone createUnboundStudyMilestone(MilestoneCode msCode, long id) {
+        StudyMilestone sm = new StudyMilestone();
+        sm.setMilestoneCode(msCode);
+        sm.setMilestoneDate(new Timestamp((new Date()).getTime()));
+        sm.setDateLastCreated(sm.getMilestoneDate());
+        sm.setId(id);
+        return sm;
+    }
 
+    @Test
+    public void testMilestoneSortingSciNoAdm() {
+        MilestonesDTO msDto = new MilestonesDTO();
+        Set<StudyMilestone> studyMilestones = new TreeSet<StudyMilestone>(new LastCreatedComparator());
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SUBMISSION_RECEIVED, studyMilestones.size()));
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SUBMISSION_ACCEPTED, studyMilestones.size())); 
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, 
+                studyMilestones.size()));
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, 
+                studyMilestones.size()));
+        PAUtil.convertMilestonesToDTO(msDto, studyMilestones);
+        assertEquals(MilestoneCode.SUBMISSION_ACCEPTED, msDto.getStudyMilestone().getMilestone());
+        assertNull(msDto.getAdminMilestone().getMilestone());
+        assertEquals(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, 
+                msDto.getScientificMilestone().getMilestone());
+    }
+    
+    @Test
+    public void testMilestoneSortingAdmNoSci() {
+        MilestonesDTO msDto = new MilestonesDTO();
+        Set<StudyMilestone> studyMilestones = new TreeSet<StudyMilestone>(new LastCreatedComparator());
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SUBMISSION_RECEIVED, studyMilestones.size()));
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SUBMISSION_ACCEPTED, studyMilestones.size())); 
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, 
+                studyMilestones.size()));
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, 
+                studyMilestones.size()));
+        PAUtil.convertMilestonesToDTO(msDto, studyMilestones);
+        assertEquals(MilestoneCode.SUBMISSION_ACCEPTED, msDto.getStudyMilestone().getMilestone());
+        assertEquals(msDto.getAdminMilestone().getMilestone(), MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE);
+        assertNull(msDto.getScientificMilestone().getMilestone());
+    }
+    
+    @Test
+    public void testMilestoneSortingSciAndAdm() {
+        MilestonesDTO msDto = new MilestonesDTO();
+        Set<StudyMilestone> studyMilestones = new TreeSet<StudyMilestone>(new LastCreatedComparator());
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SUBMISSION_RECEIVED, studyMilestones.size()));
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SUBMISSION_ACCEPTED, studyMilestones.size()));
+        PAUtil.convertMilestonesToDTO(msDto, studyMilestones);
+        assertEquals(MilestoneCode.SUBMISSION_ACCEPTED, msDto.getStudyMilestone().getMilestone());
+        assertNull(msDto.getAdminMilestone().getMilestone());
+        assertNull(msDto.getScientificMilestone().getMilestone());
+        msDto = new MilestonesDTO();
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, 
+                studyMilestones.size()));
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, 
+                studyMilestones.size()));
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, 
+                studyMilestones.size()));
+        PAUtil.convertMilestonesToDTO(msDto, studyMilestones);
+        assertEquals(MilestoneCode.SUBMISSION_ACCEPTED, msDto.getStudyMilestone().getMilestone());
+        assertEquals(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, msDto.getAdminMilestone().getMilestone());
+        assertEquals(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, msDto.getScientificMilestone().getMilestone());
+        msDto = new MilestonesDTO();
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_READY_FOR_QC, 
+                studyMilestones.size()));
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_QC_START, 
+                studyMilestones.size()));
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE, 
+                studyMilestones.size()));
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, 
+                studyMilestones.size()));
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_READY_FOR_QC, 
+                studyMilestones.size()));
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_QC_START, 
+                studyMilestones.size()));
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_QC_COMPLETE, 
+                studyMilestones.size()));
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.INITIAL_ABSTRACTION_VERIFY, 
+                studyMilestones.size()));
+        PAUtil.convertMilestonesToDTO(msDto, studyMilestones);
+        assertEquals(MilestoneCode.INITIAL_ABSTRACTION_VERIFY, msDto.getStudyMilestone().getMilestone());
+        assertNull(msDto.getAdminMilestone().getMilestone());
+        assertNull(msDto.getScientificMilestone().getMilestone());
+    }
 }

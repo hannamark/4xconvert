@@ -100,17 +100,7 @@ public class PlannedMarkerTest extends AbstractPaSeleniumTest {
     @Test
     public void testPlannedMarkers() throws Exception {
         loginAsScientificAbstractor();
-        verifyTrialSearchPage();
-        selenium.type("id=officialTitle", "Test Trial created by Selenium.");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("One item found"));
-        assertTrue(selenium.isElementPresent("id=row"));
-        assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]"));
-        assertFalse(selenium.isElementPresent("xpath=//table[@id='row']//tr[2]"));
-        assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]//td[1]/a"));
-        String nciTrialId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]/a");
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
-        verifyTrialSelected(nciTrialId);
+        searchAndSelectTrial("Test Trial created by Selenium.");
         checkOutTrialAsScientificAbstractor();
         acceptTrial();
         verifyTrialAccepted();

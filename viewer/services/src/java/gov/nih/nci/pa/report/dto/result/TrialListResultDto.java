@@ -80,10 +80,6 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IntConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 
 /**
  * @author Hugh Reinhart
@@ -91,16 +87,16 @@ import gov.nih.nci.pa.iso.util.TsConverter;
  */
 public class TrialListResultDto {
 
-    private St assignedIdentifier = StConverter.convertToSt(null);
-    private Int submissionNumber = IntConverter.convertToInt((Integer) null);
-    private St submitterOrg = StConverter.convertToSt(null);
-    private St leadOrgTrialIdentifier = StConverter.convertToSt(null);
-    private St leadOrg = StConverter.convertToSt(null);
-    private Ts dateLastCreated = TsConverter.convertToTs(null);
-    private Cd dws = CdConverter.convertToCd(null);
-    private Ts dwsDate = TsConverter.convertToTs(null);
-    private Cd milestone = CdConverter.convertToCd(null);
-    private Ts milestoneDate = TsConverter.convertToTs(null);
+    private St assignedIdentifier = new St();
+    private Int submissionNumber = new Int();
+    private St submitterOrg = new St();
+    private St leadOrgTrialIdentifier = new St();
+    private St leadOrg = new St();
+    private Ts dateLastCreated = new Ts();;
+    private Cd dws = new Cd();
+    private Ts dwsDate = new Ts();
+    private MilestoneResultDto milestoneResult = new MilestoneResultDto();
+    
 
     /**
      * @return the assignedIdentifier
@@ -199,27 +195,15 @@ public class TrialListResultDto {
         this.dwsDate = dwsDate;
     }
     /**
-     * @return the milestone
+     * @param milestoneResult the milestoneResult to set
      */
-    public Cd getMilestone() {
-        return milestone;
+    public void setMilestoneResult(MilestoneResultDto milestoneResult) {
+        this.milestoneResult = milestoneResult;
     }
     /**
-     * @param milestone the milestone to set
+     * @return the milestoneResult
      */
-    public void setMilestone(Cd milestone) {
-        this.milestone = milestone;
-    }
-    /**
-     * @return the milestoneDate
-     */
-    public Ts getMilestoneDate() {
-        return milestoneDate;
-    }
-    /**
-     * @param milestoneDate the milestoneDate to set
-     */
-    public void setMilestoneDate(Ts milestoneDate) {
-        this.milestoneDate = milestoneDate;
+    public MilestoneResultDto getMilestoneResult() {
+        return milestoneResult;
     }
 }

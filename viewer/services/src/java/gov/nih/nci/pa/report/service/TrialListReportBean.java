@@ -76,7 +76,11 @@
 */
 package gov.nih.nci.pa.report.service;
 
+import gov.nih.nci.coppa.services.LimitOffset;
+import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.pa.dto.MilestonesDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -91,8 +95,10 @@ import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
 import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.report.util.ReportUtil;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -123,16 +129,15 @@ public class TrialListReportBean extends AbstractStandardReportBean<AbstractStan
 
     /** The value indicating results should not be filtered by organization. */
     public static final String ALL_ORGANIZATIONS_KEY = "1";
-
+    /** Max limit for number of milestones for single trial. **/
+    public static final int MAX_MILESTONE_RESULT_LIMIT = 30;
     private static final int IDENT_IDX = 0;
     private static final int SUBMISSION_NUM_IDX = 1;
     private static final int SUBMITTER_IDX = 2;
     private static final int SUB_DATE_IDX = 3;
     private static final int DWS_IDX = 4;
     private static final int DWS_DATE_IDX = 5;
-    private static final int MS_IDX = 6;
-    private static final int MS_DATE_IDX = 7;
-    private static final int SP_KEY_IDX = 8;
+    private static final int SP_KEY_IDX = 6;
 
     /**
      * {@inheritDoc}
@@ -153,16 +158,13 @@ public class TrialListReportBean extends AbstractStandardReportBean<AbstractStan
             SQLQuery query = null;
             String sqlStart =
                     "SELECT oi.extension, sp.submission_number, cm.organization, sp.date_last_created "
-                    + "    , dws.status_code, dws.status_date_range_low "
-                    + "    , sm.milestone_code, sm.milestone_date, sp.identifier "
+                    + "    , dws.status_code, dws.status_date_range_low, sp.identifier "
                     + "FROM study_protocol AS sp "
                     + "LEFT OUTER JOIN study_otheridentifiers as oi ON sp.identifier = oi.study_protocol_id "
                     + "INNER JOIN document_workflow_status AS dws ON sp.identifier = dws.study_protocol_identifier "
-                    + "INNER JOIN study_milestone AS sm ON sp.identifier = sm.study_protocol_identifier "
                     + "LEFT OUTER JOIN csm_user AS cm ON sp.user_last_created_id = cm.user_id "
                     + "WHERE dws.identifier in ( select max(identifier) from document_workflow_status "
-                    + " group by study_protocol_identifier )  AND sm.identifier in  ( select max(identifier)"
-                    + " from study_milestone group by study_protocol_identifier ) ";
+                    + " group by study_protocol_identifier ) ";
             StringBuffer sql = new StringBuffer(sqlStart);
             sql.append("  AND (oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' "
                     + "   and oi.identifier_name = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "')");
@@ -239,15 +241,46 @@ public class TrialListReportBean extends AbstractStandardReportBean<AbstractStan
             rdto.setDateLastCreated(TsConverter.convertToTs((Timestamp) q[SUB_DATE_IDX]));
             rdto.setDws(CdConverter.convertStringToCd((String) q[DWS_IDX]));
             rdto.setDwsDate(TsConverter.convertToTs((Timestamp) q[DWS_DATE_IDX]));
-            LeadOrgInfo loi = getLeadOrganization((BigInteger) q[SP_KEY_IDX]);
+            BigInteger bi = (BigInteger) q[SP_KEY_IDX];
+            LeadOrgInfo loi = getLeadOrganization(bi);
             rdto.setLeadOrg(StConverter.convertToSt(loi.getName()));
             rdto.setLeadOrgTrialIdentifier(StConverter.convertToSt(loi.getLocalSpIdentifier()));
-            rdto.setMilestone(CdConverter.convertStringToCd((String) q[MS_IDX]));
-            rdto.setMilestoneDate(TsConverter.convertToTs((Timestamp) q[MS_DATE_IDX]));
             rdto.setSubmissionNumber(IntConverter.convertToInt((Integer) q[SUBMISSION_NUM_IDX]));
             rdto.setSubmitterOrg(StConverter.convertToSt((String) q[SUBMITTER_IDX]));
+            LimitOffset limit = new LimitOffset(MAX_MILESTONE_RESULT_LIMIT, 0);
+            StudyMilestoneDTO exampleSmDto = new StudyMilestoneDTO();
+            exampleSmDto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bi.longValue()));
+            List<StudyMilestoneDTO> smDtos;
+            try {
+                smDtos = PaRegistry.getStudyMilestoneService().search(exampleSmDto, limit);
+            } catch (TooManyResultsException e) {
+                throw new PAException(e);
+            }
+            MilestonesDTO milestoneDto = new MilestonesDTO();
+            PAUtil.convertMilestoneDtosToDTO(milestoneDto, smDtos);
+            loadMilestones(rdto, milestoneDto);
             rList.add(rdto);
         }
         return rList;
+    }
+    
+    private void loadMilestones(TrialListResultDto rdto, MilestonesDTO milestoneDto) {
+        rdto.getMilestoneResult().setMilestone(CdConverter
+                .convertStringToCd(milestoneDto.getStudyMilestone() == null ? null 
+                : milestoneDto.getStudyMilestone().getMilestone().getCode()));
+        rdto.getMilestoneResult().setMilestoneDate(TsConverter.convertToTs(milestoneDto
+                .getStudyMilestone().getMilestoneDate()));
+        rdto.getMilestoneResult().setAdminMilestone(CdConverter.convertStringToCd(milestoneDto.getAdminMilestone()
+                .getMilestone() == null ? null 
+                : milestoneDto.getAdminMilestone().getMilestone().getCode()));
+        rdto.getMilestoneResult().setAdminMilestoneDate(TsConverter.convertToTs(milestoneDto
+                .getAdminMilestone().getMilestoneDate()));
+        rdto.getMilestoneResult().setScientificMilestone(CdConverter
+                .convertStringToCd(milestoneDto
+                .getScientificMilestone().getMilestone() == null ? null : milestoneDto
+                .getScientificMilestone().getMilestone().getCode()));
+        rdto.getMilestoneResult().setScientificMilestoneDate(TsConverter
+                .convertToTs(milestoneDto
+                .getScientificMilestone().getMilestoneDate()));       
     }
 }

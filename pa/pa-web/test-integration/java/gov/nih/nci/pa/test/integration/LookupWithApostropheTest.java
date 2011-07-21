@@ -14,14 +14,7 @@ public class LookupWithApostropheTest extends AbstractPaSeleniumTest {
     public void leadOrganizationLookup() throws Exception {
         loginAsAdminAbstractor();
         verifyTrialSearchPage();
-        selenium.type("id=officialTitle", "Test Summ 4 Anatomic Site Trial created by Selenium.");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("One item found"));
-        assertTrue(selenium.isElementPresent("id=row"));
-        assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]"));
-        assertFalse(selenium.isElementPresent("xpath=//table[@id='row']//tr[2]"));
-        assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]//td[1]/a"));
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
+        searchAndSelectTrial("Test Summ 4 Anatomic Site Trial created by Selenium.");
         clickAndWait("link=General Trial Details");
         clickAndWaitAjax("link=Look Up Org");
         waitForElementById("popupFrame", 60);

@@ -1,3 +1,4 @@
+package gov.nih.nci.pa.report.test.integration;
 /**
  * The software subject to this notice and license includes both human readable
  * source code form and machine readable, binary, object code form. The pa
@@ -80,63 +81,27 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.test.integration;
 
+
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
-/**
- * @author mshestopalov
- *
- */
-public class AnatomicSiteTest extends AbstractPaSeleniumTest {
+
+public class TrialsByInstitutionReportSeleniumTest extends AbstractViewerSeleniumTest {
 
     /**
-     * Tests add/deleting summary 4 anatomic sites.
-     *
-     * @throws Exception on error
+     * Tests TrialsByInstitution milestones.
      */
     @Test
-    public void testAnatomicSite() throws Exception {
-        loginAsScientificAbstractor();
-        verifyTrialSearchPage();
-        searchAndSelectTrial("Test Summ 4 Anatomic Site Trial created by Selenium.");
-        checkOutTrialAsScientificAbstractor();
-        acceptTrial();
-        verifyTrialAccepted();
-
-        clickAndWait("link=Summary 4 Anatomic Site");
-        assertTrue(selenium.isElementPresent("link=Add"));
-        clickAndWait("link=Add");
-
-        assertTrue(selenium.isElementPresent("id=anatomicSite_code"));
-        assertTrue(selenium.isElementPresent("link=Save"));
-        selenium.select("id=anatomicSite_code", "label=anus");
-        clickAndWait("link=Save");
-
-        assertTrue(selenium.isTextPresent("Record Created"));
-        assertTrue(selenium.isTextPresent("One item found."));
-
-        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]"), "anus");
-
-        //Test prevention of duplicate creation
-        assertTrue(selenium.isElementPresent("link=Add"));
-        clickAndWait("link=Add");
-        waitForElementById("anatomicSitecreate", 20);
-
-        assertTrue(selenium.isElementPresent("id=anatomicSite_code"));
-        assertTrue(selenium.isElementPresent("link=Save"));
-        selenium.select("id=anatomicSite_code", "label=anus");
-        clickAndWait("link=Save");
-        assertTrue(selenium.isTextPresent("Record Created"));
-        assertTrue(selenium.isTextPresent("One item found."));
-
-        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]"), "anus");
-
-        // test delete.
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[2]//a");
-        selenium.getConfirmation();
-        assertTrue(selenium.isTextPresent("Record Deleted"));
-        assertFalse(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]"));
-        assertTrue(selenium.isTextPresent("Nothing found to display."));
+    public void testTrialsByInstitutionMilesones() {
+        loginAsAbstractor();
+        disclaimer(true);
+        clickAndWait("link=Trials Submitted by Institution");
+        assertTrue(selenium.isTextPresent("Trials Submitted by Institution"));
+        clickAndWait("link=Run report");
+        assertTrue(selenium.isTextPresent("12 items found, displaying all items.1"));
+        assertTrue(StringUtils.isBlank(selenium.getText("xpath=//table[@id='row']//tr[8]//td[9]").trim()));
+        assertTrue(selenium.getText("xpath=//table[@id='row']//tr[8]//td[10]").contains("Administrative Processing Start Date"));
+        assertTrue(selenium.getText("xpath=//table[@id='row']//tr[8]//td[11]").contains("Scientific Processing Start Date"));
     }
 }

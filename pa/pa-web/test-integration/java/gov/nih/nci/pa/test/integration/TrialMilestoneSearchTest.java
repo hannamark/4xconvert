@@ -82,61 +82,93 @@
  */
 package gov.nih.nci.pa.test.integration;
 
+import java.util.Date;
+
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 /**
- * @author mshestopalov
+ * Tests for trial milestone search.
  *
+ * @author Max Shestopalov <mshestopalov@5amsolutions.com>
  */
-public class AnatomicSiteTest extends AbstractPaSeleniumTest {
+public class TrialMilestoneSearchTest extends AbstractPaSeleniumTest {
+    private final String today = MONTH_DAY_YEAR_FMT.format(new Date());
 
     /**
-     * Tests add/deleting summary 4 anatomic sites.
-     *
-     * @throws Exception on error
+     * Tests admin milestone search.
      */
     @Test
-    public void testAnatomicSite() throws Exception {
-        loginAsScientificAbstractor();
-        verifyTrialSearchPage();
-        searchAndSelectTrial("Test Summ 4 Anatomic Site Trial created by Selenium.");
-        checkOutTrialAsScientificAbstractor();
-        acceptTrial();
-        verifyTrialAccepted();
-
-        clickAndWait("link=Summary 4 Anatomic Site");
-        assertTrue(selenium.isElementPresent("link=Add"));
-        clickAndWait("link=Add");
-
-        assertTrue(selenium.isElementPresent("id=anatomicSite_code"));
-        assertTrue(selenium.isElementPresent("link=Save"));
-        selenium.select("id=anatomicSite_code", "label=anus");
-        clickAndWait("link=Save");
-
-        assertTrue(selenium.isTextPresent("Record Created"));
-        assertTrue(selenium.isTextPresent("One item found."));
-
-        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]"), "anus");
-
-        //Test prevention of duplicate creation
-        assertTrue(selenium.isElementPresent("link=Add"));
-        clickAndWait("link=Add");
-        waitForElementById("anatomicSitecreate", 20);
-
-        assertTrue(selenium.isElementPresent("id=anatomicSite_code"));
-        assertTrue(selenium.isElementPresent("link=Save"));
-        selenium.select("id=anatomicSite_code", "label=anus");
-        clickAndWait("link=Save");
-        assertTrue(selenium.isTextPresent("Record Created"));
-        assertTrue(selenium.isTextPresent("One item found."));
-
-        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]"), "anus");
-
-        // test delete.
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[2]//a");
-        selenium.getConfirmation();
-        assertTrue(selenium.isTextPresent("Record Deleted"));
-        assertFalse(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]"));
-        assertTrue(selenium.isTextPresent("Nothing found to display."));
+    public void testAdminMilestoneSearch() {
+        loginAsAdminAbstractor();
+        searchAndSelectTrialWithMilestoneCheck(
+                "Test Trial Status Trial created by Selenium.", "Submission Acceptance Date", "", "");
+        if (!selenium.isTextPresent("Checked-Out (Admin) By: admin-ci")) {
+            checkOutTrialAsAdminAbstractor();
+        }
+        clickAndWait("link=Trial Milestones");
+        addMilestone("Administrative Processing Start Date", null);
+        clickAndWait("link=Trial Search");
+        searchAndSelectTrialWithMilestoneCheck(
+                "Test Trial Status Trial created by Selenium.", "Submission Acceptance Date", 
+                "Administrative Processing Start Date", "");
     }
+
+    @Test
+    public void testScientificTrialStatusTransitions() {
+        loginAsScientificAbstractor();
+        searchAndSelectTrialWithMilestoneCheck(
+                "Test Trial Status Trial #2 created by Selenium.", "Submission Acceptance Date", "", "");
+        if (!selenium.isTextPresent("Checked-Out (Scientific) By: scientific-ci")) {
+            checkOutTrialAsScientificAbstractor();
+        }
+        clickAndWait("link=Trial Milestones");
+        addMilestone("Scientific Processing Start Date", null);
+        clickAndWait("link=Trial Search");
+        searchAndSelectTrialWithMilestoneCheck(
+                "Test Trial Status Trial #2 created by Selenium.", "Submission Acceptance Date", 
+                "", "Scientific Processing Start Date");
+    }
+    
+    @Test
+    public void testAdminAndScientificTrialStatusTransitions() {
+        loginAsAdminAbstractor();
+        searchAndSelectTrialWithMilestoneCheck(
+                "Test Trial Status Trial #3 created by Selenium.", "Submission Acceptance Date", "", "");
+        if (!selenium.isTextPresent("Checked-Out (Admin) By: admin-ci")) {
+            checkOutTrialAsAdminAbstractor();
+        }
+        clickAndWait("link=Trial Milestones");
+        addMilestone("Administrative Processing Start Date", null);
+        logoutUser();
+        loginAsScientificAbstractor();
+        searchAndSelectTrialWithMilestoneCheck(
+                "Test Trial Status Trial #3 created by Selenium.", "Submission Acceptance Date", 
+                "Administrative Processing Start Date", "");
+        if (!selenium.isTextPresent("Checked-Out (Scientific) By: scientific-ci")) {
+            checkOutTrialAsScientificAbstractor();
+        }
+        clickAndWait("link=Trial Milestones");
+        addMilestone("Scientific Processing Start Date", null);
+        clickAndWait("link=Trial Search");
+        searchAndSelectTrialWithMilestoneCheck(
+                "Test Trial Status Trial #3 created by Selenium.", "Submission Acceptance Date", 
+                "Administrative Processing Start Date", "Scientific Processing Start Date");       
+    }
+    
+    private void addMilestone(String milestone, String comment) {
+        clickAndWait("link=Add");
+        selenium.select("id=milestonecreate_milestone_milestone", "label=" + milestone);
+
+        selenium.click("id=date");
+        selenium.type("id=date", today);
+        
+        if (StringUtils.isNotEmpty(comment)) {
+            selenium.type("id=milestonecreate_milestone_comment", comment);
+        }
+        clickAndWait("link=Save");
+        selenium.getConfirmation();
+        assertTrue(selenium.isTextPresent("Record Created"));
+    }
+
 }

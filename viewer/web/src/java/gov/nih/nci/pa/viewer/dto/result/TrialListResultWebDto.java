@@ -77,7 +77,6 @@
 package gov.nih.nci.pa.viewer.dto.result;
 
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -114,6 +113,10 @@ public final class TrialListResultWebDto {
     private String dwsDate;
     private String milestone;
     private String milestoneDate;
+    private String adminMilestone;
+    private String adminMilestoneDate;
+    private String scientificMilestone;
+    private String scientificMilestoneDate;
 
     /**
      * Static method for generating a list of web dto's from a list of service dto's.
@@ -205,8 +208,13 @@ public final class TrialListResultWebDto {
         dateLastCreated = TsConverter.convertToString(dto.getDateLastCreated());
         dws = DocumentWorkflowStatusCode.valueOf(CdConverter.convertCdToString(dto.getDws())).getCode();
         dwsDate = TsConverter.convertToString(dto.getDwsDate());
-        milestone = MilestoneCode.valueOf(CdConverter.convertCdToString(dto.getMilestone())).getCode();
-        milestoneDate = TsConverter.convertToString(dto.getMilestoneDate());
+        milestone = CdConverter.convertCdToString(dto.getMilestoneResult().getMilestone());
+        milestoneDate = TsConverter.convertToString(dto.getMilestoneResult().getMilestoneDate());
+        adminMilestone = CdConverter.convertCdToString(dto.getMilestoneResult().getAdminMilestone());
+        adminMilestoneDate = TsConverter.convertToString(dto.getMilestoneResult().getAdminMilestoneDate());
+        scientificMilestone = CdConverter.convertCdToString(dto.getMilestoneResult().getScientificMilestone());
+        scientificMilestoneDate = TsConverter.convertToString(dto.getMilestoneResult().getScientificMilestoneDate());
+        
     }
 
     /**
@@ -328,5 +336,61 @@ public final class TrialListResultWebDto {
      */
     public void setMilestoneDate(String milestoneDate) {
         this.milestoneDate = milestoneDate;
+    }
+
+    /**
+     * @param adminMilestone the adminMilestone to set
+     */
+    public void setAdminMilestone(String adminMilestone) {
+        this.adminMilestone = adminMilestone;
+    }
+
+    /**
+     * @return the adminMilestone
+     */
+    public String getAdminMilestone() {
+        return adminMilestone;
+    }
+
+    /**
+     * @param adminMilestoneDate the adminMilestoneDate to set
+     */
+    public void setAdminMilestoneDate(String adminMilestoneDate) {
+        this.adminMilestoneDate = adminMilestoneDate;
+    }
+
+    /**
+     * @return the adminMilestoneDate
+     */
+    public String getAdminMilestoneDate() {
+        return adminMilestoneDate;
+    }
+
+    /**
+     * @param scientificMilestone the scientificMilestone to set
+     */
+    public void setScientificMilestone(String scientificMilestone) {
+        this.scientificMilestone = scientificMilestone;
+    }
+
+    /**
+     * @return the scientificMilestone
+     */
+    public String getScientificMilestone() {
+        return scientificMilestone;
+    }
+
+    /**
+     * @param scientificMilestoneDate the scientificMilestoneDate to set
+     */
+    public void setScientificMilestoneDate(String scientificMilestoneDate) {
+        this.scientificMilestoneDate = scientificMilestoneDate;
+    }
+
+    /**
+     * @return the scientificMilestoneDate
+     */
+    public String getScientificMilestoneDate() {
+        return scientificMilestoneDate;
     }
 }

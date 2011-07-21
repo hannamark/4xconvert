@@ -227,7 +227,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             body = body.replace(CURRENT_DATE, getFormatedCurrentDate());
             body = body.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
             body = body.replace(TRIAL_TITLE, spDTO.getOfficialTitle().toString());
-            body = body.replace(RECEIPT_DATE, getFormatedDate(spDTO.getDateLastCreated()));
+            body = body.replace(RECEIPT_DATE, getFormatedDate(spDTO.getLastCreated().getDateLastCreated()));
             body = body.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
             body = body.replace("${fileName}", TSR + spDTO.getNciIdentifier() + EXTENSION_RTF);
             if (!spDTO.isProprietaryTrial()) {
@@ -474,7 +474,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         submissionMailBody = submissionMailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER,
                                                         spDTO.getLocalStudyProtocolIdentifier());
         submissionMailBody = submissionMailBody.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
-        RegistryUser user = registryUserService.getUser(spDTO.getUserLastCreated());
+        RegistryUser user = registryUserService.getUser(spDTO.getLastCreated().getUserLastCreated());
         mailSubject = mailSubject.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
         mailSubject = mailSubject.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
 
@@ -483,7 +483,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             submissionMailBody = submissionMailBody.replace(OWNER_NAME, regUserName);
             sendMailWithAttachment(user.getEmailAddress(), mailSubject, submissionMailBody, null);
         } else {
-            LOG.error("Registry User does not exist: " + spDTO.getUserLastCreated());
+            LOG.error("Registry User does not exist: " + spDTO.getLastCreated().getUserLastCreated());
         }
     }
 
@@ -508,7 +508,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         mailBody = mailBody.replace(AMENDMENT_DATE, getFormatedDate(spDTO.getAmendmentDate()));
         mailBody = mailBody.replace("${reasonForRejection}", rejectReason);
         mailBody = mailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
-        mailBody = mailBody.replace(RECEIPT_DATE, getFormatedDate(spDTO.getDateLastCreated()));
+        mailBody = mailBody.replace(RECEIPT_DATE, getFormatedDate(spDTO.getLastCreated().getDateLastCreated()));
 
         String mailSubject = lookUpTableService.getPropertyValue("trial.amend.reject.subject");
         sendEmail(spDTO, mailBody, null, mailSubject);
@@ -533,7 +533,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         String body = lookUpTableService.getPropertyValue("rejection.body");
         body = body.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
         body = body.replace("${reasoncode}", commentText);
-        body = body.replace(RECEIPT_DATE, getFormatedDate(spDTO.getDateLastCreated()));
+        body = body.replace(RECEIPT_DATE, getFormatedDate(spDTO.getLastCreated().getDateLastCreated()));
         body = body.replace(CURRENT_DATE, getFormatedCurrentDate());
         body = body.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
         body = body.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
@@ -729,7 +729,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             body = body.replace(CURRENT_DATE, getFormatedCurrentDate());
             body = body.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier().toString());
             body = body.replace(TRIAL_TITLE, spDTO.getOfficialTitle().toString());
-            body = body.replace(RECEIPT_DATE, getFormatedDate(spDTO.getDateLastCreated()));
+            body = body.replace(RECEIPT_DATE, getFormatedDate(spDTO.getLastCreated().getDateLastCreated()));
             body = body.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier().toString());
             body = body.replace("${fileName}", spDTO.getNciIdentifier().toString() + ".xml");
             body = body.replace(OWNER_NAME, fullName);

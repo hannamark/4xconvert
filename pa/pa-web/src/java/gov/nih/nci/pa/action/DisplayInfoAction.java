@@ -123,7 +123,7 @@ public class DisplayInfoAction extends ActionSupport implements Preparable {
         try {
             StudyProtocolQueryDTO studyProtocolQueryDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest()
                     .getSession().getAttribute(Constants.TRIAL_SUMMARY);
-            String user = studyProtocolQueryDTO.getUserLastCreated();
+            String user = studyProtocolQueryDTO.getLastCreated().getUserLastCreated();
             RegistryUser userInfo = PaRegistry.getRegistryUserService().getUser(user);
             persWebDTO.setFirstName(userInfo.getFirstName());
             persWebDTO.setLastName(userInfo.getLastName());

@@ -318,8 +318,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     }
 
     private void setAdminCheckoutCommands(StudyProtocolQueryDTO spqDTO, boolean suAbs) {
-        if (spqDTO.getStudyAdminCheckoutBy() != null) {
-            if (spqDTO.getStudyAdminCheckoutBy().equalsIgnoreCase(UsernameHolder.getUser()) || suAbs) {
+        if (spqDTO.getAdminCheckout().getCheckoutBy() != null) {
+            if (spqDTO.getAdminCheckout().getCheckoutBy().equalsIgnoreCase(UsernameHolder.getUser()) || suAbs) {
                 checkoutCommands.add("adminCheckIn");
             }
         } else {
@@ -332,8 +332,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     }
 
     private void setScientificCheckoutCommands(StudyProtocolQueryDTO spqDTO, boolean suAbs) {
-        if (spqDTO.getStudyScientificCheckoutBy() != null) {
-            if (spqDTO.getStudyScientificCheckoutBy().equalsIgnoreCase(UsernameHolder.getUser()) || suAbs) {
+        if (spqDTO.getScientificCheckout().getCheckoutBy() != null) {
+            if (spqDTO.getScientificCheckout().getCheckoutBy().equalsIgnoreCase(UsernameHolder.getUser()) || suAbs) {
                 checkoutCommands.add("scientificCheckIn");
             }
         } else {
@@ -406,7 +406,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             ProtocolQueryServiceLocal protocolQueryService = PaRegistry.getProtocolQueryService();
             StudyProtocolQueryDTO spqDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(studyProtocolId);
             boolean canCheckOut = (checkOutType == CheckOutType.ADMINISTRATIVE)
-                    ? spqDTO.getStudyAdminCheckoutBy() == null : spqDTO.getStudyScientificCheckoutBy() == null;
+                    ? spqDTO.getAdminCheckout().getCheckoutBy() == null : spqDTO
+                            .getScientificCheckout().getCheckoutBy() == null;
             if (canCheckOut) {
                 StudyCheckoutDTO scoDTO = new StudyCheckoutDTO();
                 scoDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(spqDTO.getStudyProtocolId()));
@@ -444,8 +445,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         try {
             ProtocolQueryServiceLocal protocolQueryService = PaRegistry.getProtocolQueryService();
             StudyProtocolQueryDTO spqDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(studyProtocolId);
-            Long checkoutId = (checkOutType == CheckOutType.ADMINISTRATIVE) ? spqDTO.getStudyAdminCheckoutId()
-                    : spqDTO.getStudyScientificCheckoutId();
+            Long checkoutId = (checkOutType == CheckOutType.ADMINISTRATIVE) ? spqDTO.getAdminCheckout().getCheckoutId()
+                    : spqDTO.getScientificCheckout().getCheckoutId();
             if (checkoutId != null) {
                 PaRegistry.getStudyCheckoutService().delete(IiConverter.convertToIi(checkoutId));
                 String msg = getText("studyProtocol.trial.checkIn." + checkOutType.name());

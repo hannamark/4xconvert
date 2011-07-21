@@ -99,18 +99,7 @@ public class StudyOwnershipTest extends AbstractPaSeleniumTest {
     public void testAddRemoveOwnership() throws Exception {
         loginAsAdminAbstractor();
         verifyTrialSearchPage();
-        selenium.type("id=officialTitle", "Test Assign Ownership Trial created by Selenium.");
-        clickAndWait("link=Search");
-        assertTrue(selenium.isTextPresent("One item found"));
-        assertTrue(selenium.isElementPresent("id=row"));
-        assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]"));
-        assertFalse(selenium.isElementPresent("xpath=//table[@id='row']//tr[2]"));
-        assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]//td[1]/a"));
-        String nciTrialId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]/a");
-        clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
-
-        verifyTrialSelected(nciTrialId);
-
+        searchAndSelectTrial("Test Assign Ownership Trial created by Selenium.");
         clickAndWait("link=Assign Ownership");
         assertTrue(selenium.isElementPresent("link=Search"));
         clickAndWait("link=Search");

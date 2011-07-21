@@ -336,7 +336,8 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         verifyTrialAccepted();
     }
 
-    protected String searchAndSelectTrial(String trialTitle) {
+    protected String searchAndSelectTrialWithMilestoneCheck(String trialTitle, String currMilestone, 
+            String adminMilestone, String scientificMilestone) {
         verifyTrialSearchPage();
 
         selenium.type("id=officialTitle", trialTitle);
@@ -347,8 +348,15 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         assertFalse(selenium.isElementPresent("xpath=//table[@id='row']//tr[2]"));
         assertTrue(selenium.isElementPresent("xpath=//table[@id='row']//tr[1]//td[1]/a"));
         String nciTrialId = selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]/a");
+        assertTrue(selenium.getText("xpath=//table[@id='row']//tr[1]//td[3]").contains(currMilestone));
+        assertTrue(selenium.getText("xpath=//table[@id='row']//tr[1]//td[4]").contains(adminMilestone));
+        assertTrue(selenium.getText("xpath=//table[@id='row']//tr[1]//td[5]").contains(scientificMilestone));
         clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
         return nciTrialId;
+    }
+    
+    protected String searchAndSelectTrial(String trialTitle) {
+        return searchAndSelectTrialWithMilestoneCheck(trialTitle, "", "", "");
     }
 
     public void loginAsAbstractor() {

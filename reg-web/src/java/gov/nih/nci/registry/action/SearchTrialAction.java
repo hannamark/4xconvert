@@ -580,7 +580,8 @@ public class SearchTrialAction extends ActionSupport {
             spQueryDTO.setStudyStatusCode(StudyStatusCode.getByCode(CdConverter.convertCdToString(
                 studyProtocolStageDTO.getTrialStatusCode())));
             spQueryDTO.setStudyStatusDate(TsConverter.convertToTimestamp(studyProtocolStageDTO.getTrialStatusDate()));
-            spQueryDTO.setUserLastCreated(StConverter.convertToString(studyProtocolStageDTO.getUserLastCreated()));
+            spQueryDTO.getLastCreated().setUserLastCreated(StConverter
+                    .convertToString(studyProtocolStageDTO.getUserLastCreated()));
             if (!PAUtil.isBlNull(studyProtocolStageDTO.getProprietaryTrialIndicator())
                     && BlConverter.convertToBoolean(studyProtocolStageDTO.getProprietaryTrialIndicator())) {
                 spQueryDTO.setProprietaryTrial(true);

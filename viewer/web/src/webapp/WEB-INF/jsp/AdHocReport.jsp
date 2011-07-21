@@ -266,8 +266,20 @@
                             <display:column escapeXml="true" titleKey="studyProtocol.trialType" maxLength= "200" property="primaryPurpose" sortable="true" headerClass="sortable"/>
                             <display:column escapeXml="true" titleKey="studyProtocol.diseaseCondition" maxLength= "200" property="diseaseNames" sortable="true" headerClass="sortable"/>
                             <display:column escapeXml="true" titleKey="studyProtocol.interventionType" maxLength= "200" property="interventionTypes" sortable="true" headerClass="sortable"/>
-                            <display:column escapeXml="true" titleKey="studyProtocol.milestone" property="studyMilsetone.code" sortable="true" headerClass="sortable"/>
-                            <display:column escapeXml="false" titleKey="studyProtocol.milestoneDate" property="studyMilestoneDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>   
+                            <display:column escapeXml="true" titleKey="studyProtocol.milestone" sortable="true" headerClass="sortable">
+                                <s:if test="%{#attr.row.milestones.adminMilestone.milestone == null && #attr.row.milestones.scientificMilestone.milestone == null}">
+                                    <c:out value="${row.milestones.studyMilestone.milestone.code}" />
+                                    <fmt:formatDate value="${row.milestones.studyMilestone.milestoneDate}" pattern="MM/dd/yyyy"/>
+                                </s:if>
+                            </display:column>
+                            <display:column escapeXml="true" titleKey="studyProtocol.adminMilestone" sortable="true" headerClass="sortable">
+                                <c:out value="${row.milestones.adminMilestone.milestone.code}" />
+                                <fmt:formatDate value="${row.milestones.adminMilestone.milestoneDate}" pattern="MM/dd/yyyy"/>
+                            </display:column>
+                            <display:column escapeXml="true" titleKey="studyProtocol.scientificMilestone" sortable="true" headerClass="sortable">
+                                <c:out value="${row.milestones.scientificMilestone.milestone.code}" />
+                                <fmt:formatDate value="${row.milestones.scientificMilestone.milestoneDate}" pattern="MM/dd/yyyy"/>
+                            </display:column>
                             <display:column escapeXml="true" titleKey="studyProtocol.documentWorkflowStatus" property="documentWorkflowStatusCode.code" sortable="true" headerClass="sortable"/>
                             <display:column escapeXml="true" titleKey="studyProtocol.submissionType" property="submissionTypeCode.code"  headerClass="sortable"/>  
                             <display:column escapeXml="true" titleKey="studyProtocol.studyPhase" property="phaseCode.code"  headerClass="sortable"/>  
