@@ -1,5 +1,5 @@
 ALTER TABLE auditlogdetail 
- ALTER oldvalue type VARCHAR(32000);
+ ALTER oldvalue type VARCHAR;
 
 ALTER TABLE auditlogdetail 
- ALTER newvalue type VARCHAR(32000);
+ ALTER newvalue type VARCHAR;
