@@ -11,7 +11,7 @@
         <log.level.nci-commons>DEBUG</log.level.nci-commons>
         <log.level.po>DEBUG</log.level.po>
         <nci-commons.version>1.2.22</nci-commons.version>
-        <compileSource>1.5</compileSource>
+        <compileSource>1.6</compileSource>
         <generatedStubsSrcDir>target/generated-sources/stubs</generatedStubsSrcDir>
         <cobertura.check.haltOnFailure>true</cobertura.check.haltOnFailure>
         <maven-compiler-plugin.version>2.0.2</maven-compiler-plugin.version>

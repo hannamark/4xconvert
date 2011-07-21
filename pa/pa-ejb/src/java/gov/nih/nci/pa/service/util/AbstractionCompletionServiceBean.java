@@ -277,8 +277,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 if (ispDTO.getNumberOfInterventionGroups().getValue() != null) {
                     List<ArmDTO> aList = armService.getByStudyProtocol(studyProtocolIi);
                     if (aList.size() != ispDTO.getNumberOfInterventionGroups().getValue()) {
-                        abstractionList.add(createError("Error",
-                                "Select Arm from Interventional Trial Design under Scientific" + " Data menu.",
+                        abstractionList.add(createError(
+                               "Select Arm from Interventional Trial Design under Scientific Data menu.",
                                 "Number of interventional trial arm records must be the same"
                                         + " as Number of Arms assigned in Interventional Trial Design."));
                     }
@@ -291,8 +291,8 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 if (ospDTO.getNumberOfGroups().getValue() != null) {
                     List<ArmDTO> aList = armService.getByStudyProtocol(studyProtocolIi);
                     if (aList.size() != ospDTO.getNumberOfGroups().getValue()) {
-                        abstractionList.add(createError("Error",
-                                "Select Groups from Observational Trial Design under Scientific " + "Data menu.",
+                        abstractionList.add(createError(
+                                "Select Groups from Observational Trial Design under Scientific Data menu.",
                                 "Number of Observational study group records must be the same"
                                         + " as Number of Groups assigned in Observational Study Design."));
                     }
@@ -329,13 +329,13 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             String rssUserCN = PaEarPropertyReader.getRssUser()
                 .substring(PaEarPropertyReader.getRssUser().lastIndexOf("=") + 1);
             if (regUser == null) {
-                abstractionList.add(createError("Warning", "Could not find "
+                abstractionList.add(createWarning("Could not find "
                         + rssUserCN + " user in registered users ",
                         "Contact Support to register that user."));
                 LOG.error("User : " + PaEarPropertyReader.getRssUser() + " must exist for "
                         + " proper validation of Collaborative trials");
             } else if (!registryUserSvc.isTrialOwner(regUser.getId(), Long.valueOf(spIi.getExtension()))) {
-                abstractionList.add(createError("Error", "Must assign " + rssUserCN
+                abstractionList.add(createError("Must assign " + rssUserCN
                         + " as an owner to a CTEP or DCP trial "
                         + "to allow the RSS system to submit participating sites data",
                 "Select Assign Ownership from the Trial Overview menu"));
@@ -376,18 +376,13 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         enforceDisease(studyProtocolDTO, abstractionList);
         enforceSummary4OrgNullification(studyProtocolIi, abstractionWarnList);
         enforcePlannedMarkerStatus(studyProtocolIi, abstractionWarnList);
-        // check duplicate for IND
-        /*
-         * List<StudyIndldeDTO> siList = studyIndldeService.getByStudyProtocol(studyProtocolIi); if
-         * (!(siList.isEmpty())) { checkDuplicateINDIDE(siList, abstractionList); }
-         */
         enforceStudySiteRuleForProprietary(abstractionList, studyProtocolIi);
         if (studyProtocolDTO.getPhaseCode().getCode() == null) {
-            abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+            abstractionList.add(createError("Select General Trial Details from Administrative Data menu.",
                     "Trial Phase must be Entered"));
         }
         if (studyProtocolDTO.getPrimaryPurposeCode().getCode() == null) {
-            abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+            abstractionList.add(createError("Select General Trial Details from Administrative Data menu.",
                     "Primary Purpose must be Entered"));
         }
         List<DocumentDTO> isoList = documentServiceLocal.getDocumentsByStudyProtocol(studyProtocolIi);
@@ -410,7 +405,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         List<StudySiteDTO> studySites = paServiceUtils.getStudySite(nctDto, true);
         StudySiteDTO studySite = PAUtil.getFirstObj(studySites);
         if (protocolDoc == null && studySite == null) {
-            abstractionList.add(createError("Error", "Select Trial Related Documents from Administrative Data menu. "
+            abstractionList.add(createError("Select Trial Related Documents from Administrative Data menu. "
                     + " or Select General Trial Details from Administrative Data menu.",
                     "Either one of NCT number or Proprietary Template document is mandatory"));
         }
@@ -427,7 +422,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         srDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
         List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolIi, srDTO);
         if (spList == null || spList.isEmpty()) {
-            abstractionList.add(createError("Error", "Select Participating Sites from " + " Administrative Data menu.",
+            abstractionList.add(createError("Select Participating Sites from Administrative Data menu.",
                     "No Participating Sites exists for the trial."));
             return;
         }
@@ -446,20 +441,20 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             Organization orgBo = getPoOrg(spartDto);
             if (!piFound) {
                 // Error Message ID Does Not Match Participating Site PO ID#
-                abstractionList.add(createError("Error", "Select Participating Sites from Administrative Data menu.",
+                abstractionList.add(createError("Select Participating Sites from Administrative Data menu.",
                         "Participating site # " + orgBo.getIdentifier() + " Must have an Investigator"));
 
             }
             // No investigator duplicates must exist on the same treating site for the same trial.
             if (piFound && hasDuplicate(getPIForTreatingSite(spContactDtos))) {
-                abstractionList.add(createError("Error", "Select Participating Sites from "
+                abstractionList.add(createError("Select Participating Sites from "
                         + " Administrative Data menu.", "Treating site can not have duplicate investigator."));
                 break;
             }
         }
         // No participating site duplicates playing same role must exist on the same trial
         if (hasDuplicate(getTreatingSiteOrg(spList))) {
-            abstractionList.add(createError("Error", "Select Participating Sites from " + " Administrative Data menu.",
+            abstractionList.add(createError("Select Participating Sites from Administrative Data menu.",
                     "Trial can not have dupicate Treating Site."));
         }
     }
@@ -478,7 +473,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     if (StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.getCode().equalsIgnoreCase(
                             studyContactDTO.getRoleCode().getCode())) {
 
-                        abstractionWarnList.add(createError("Warning",
+                        abstractionWarnList.add(createWarning(
                                 "Select General Trial Details from Administrative Data menu.",
                                 "Principal Investigator status has been set to nullified, "
                                         + "Please select another Principal Investigator"));
@@ -486,7 +481,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     if (StudyContactRoleCode.CENTRAL_CONTACT.getCode().equalsIgnoreCase(
                             studyContactDTO.getRoleCode().getCode())) {
 
-                        abstractionWarnList.add(createError("Warning",
+                        abstractionWarnList.add(createWarning(
                                 "Select General Trial Details from Administrative Data menu.",
                                 "Central Contact status has been set to nullified, "
                                         + "Please select another Central contact"));
@@ -494,7 +489,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     if (StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR.getCode().equalsIgnoreCase(
                             studyContactDTO.getRoleCode().getCode())) {
 
-                        abstractionWarnList.add(createError("Warning",
+                        abstractionWarnList.add(createWarning(
                                 "Select General Trial Details from Administrative Data menu.",
                                 "Responsible Party Study Principal Investigator status has been set to nullified, "
                                         + "Please select another Responsible Party Study Principal Investigator"));
@@ -520,30 +515,26 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     if (StudySiteFunctionalCode.FUNDING_SOURCE.getCode().equalsIgnoreCase(
                             studySiteDTO.getFunctionalCode().getCode())) {
 
-                        abstractionWarnList.add(createError("Warning",
-                                "Select Collaborators from Administrative Data menu.",
+                        abstractionWarnList.add(createWarning("Select Collaborators from Administrative Data menu.",
                                 "Funding Source status has been set to nullified, "
                                         + "Please select another Funding Source"));
                     }
                     if (StudySiteFunctionalCode.AGENT_SOURCE.getCode().equalsIgnoreCase(
                             studySiteDTO.getFunctionalCode().getCode())) {
 
-                        abstractionWarnList.add(createError("Warning",
-                                "Select Collaborators from Administrative Data menu.",
+                        abstractionWarnList.add(createWarning("Select Collaborators from Administrative Data menu.",
                                 "Agent Source status has been set to nullified, "
                                         + "Please select another Agent Source"));
                     }
                     if (StudySiteFunctionalCode.LABORATORY.getCode().equalsIgnoreCase(
                             studySiteDTO.getFunctionalCode().getCode())) {
-
-                        abstractionWarnList.add(createError("Warning",
-                                "Select Collaborators from Administrative Data menu.",
+                        abstractionWarnList.add(createWarning("Select Collaborators from Administrative Data menu.",
                                 "Laboratory status has been set to nullified, " + "Please select another Laboratory"));
                     }
                     if (StudySiteFunctionalCode.LEAD_ORGANIZATION.getCode().equalsIgnoreCase(
                             studySiteDTO.getFunctionalCode().getCode())) {
 
-                        abstractionWarnList.add(createError("Warning",
+                        abstractionWarnList.add(createWarning(
                                 "Select General Trial Details from Administrative Data menu.",
                                 "Lead Organization status has been set to nullified, "
                                         + "Please select another Lead Organization"));
@@ -551,7 +542,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     if (StudySiteFunctionalCode.RESPONSIBLE_PARTY_SPONSOR.getCode().equalsIgnoreCase(
                             studySiteDTO.getFunctionalCode().getCode())) {
 
-                        abstractionWarnList.add(createError("Warning",
+                        abstractionWarnList.add(createWarning(
                                 "Select General Trial Details from Administrative Data menu.",
                                 "Responsible Party Sponsor status has been set to nullified, "
                                         + "Please select another Responsible Party Sponsor"));
@@ -559,14 +550,14 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     if (StudySiteFunctionalCode.SPONSOR.getCode().equalsIgnoreCase(
                             studySiteDTO.getFunctionalCode().getCode())) {
 
-                        abstractionWarnList.add(createError("Warning",
+                        abstractionWarnList.add(createWarning(
                                 "Select General Trial Details from Administrative Data menu.",
                                 "Sponsor status has been set to nullified, " + "Please select another Sponsor"));
                     }
                     if (StudySiteFunctionalCode.TREATING_SITE.getCode().equalsIgnoreCase(
                             studySiteDTO.getFunctionalCode().getCode())) {
 
-                        abstractionWarnList.add(createError("Warning",
+                        abstractionWarnList.add(createWarning(
                                 "Select Participating Sites from Administrative Data menu.",
                                 "Participating Site status has been set to nullified, "
                                         + "Please select another Participating Site"));
@@ -574,7 +565,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     if (StudySiteFunctionalCode.STUDY_OVERSIGHT_COMMITTEE.getCode().equalsIgnoreCase(
                             studySiteDTO.getFunctionalCode().getCode())) {
 
-                        abstractionWarnList.add(createError("Warning", "Select Human Subject Safety under Regulatory"
+                        abstractionWarnList.add(createWarning("Select Human Subject Safety under Regulatory"
                                 + " Information from Administrative Data menu.",
                                 "Board status has been set to nullified, " + "Please select another Board"));
                     }
@@ -599,7 +590,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equalsIgnoreCase(
                             studySiteContactDTO.getRoleCode().getCode())) {
 
-                        abstractionWarnList.add(createError("Warning",
+                        abstractionWarnList.add(createWarning(
                                 "Select Contact tab under Participating Sites from Administrative Data menu.",
                                 "Primary Contact status has been set to nullified, "
                                         + "Please select another Primary Contact"));
@@ -608,7 +599,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     if (StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode().equalsIgnoreCase(
                             studySiteContactDTO.getRoleCode().getCode())) {
 
-                        abstractionWarnList.add(createError("Warning",
+                        abstractionWarnList.add(createWarning(
                                 "Select Investigators tab under Participating sites from Administrative Data menu.",
                                 "Investigator status has been set to nullified, "
                                         + "Please select another Investigator"));
@@ -617,15 +608,14 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     if (StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT.getCode().equalsIgnoreCase(
                             studySiteContactDTO.getRoleCode().getCode())) {
 
-                        abstractionList.add(createError("Error",
-                                "Select General Trial Details from Administrative Data menu.",
+                        abstractionList.add(createError("Select General Trial Details from Administrative Data menu.",
                                 "Responsible Party Sponsor Contact status has been set to nullified, "
                                         + "Please select another Responsible Party Sponsor Contact"));
                     }
                     if (StudySiteContactRoleCode.SUB_INVESTIGATOR.getCode().equalsIgnoreCase(
                             studySiteContactDTO.getRoleCode().getCode())) {
 
-                        abstractionWarnList.add(createError("Warning",
+                        abstractionWarnList.add(createWarning(
                                 "Select Investigators tab under Participating sites from Administrative Data menu.",
                                 "Sub Investigator status has been set to nullified, "
                                         + "Please select another Sub Investigator"));
@@ -648,7 +638,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             }
         }
         if (CollectionUtils.isEmpty(sdDtos)) {
-            abstractionList.add(createError("Error", "Select Disease/Condition from Scientific Data Menu",
+            abstractionList.add(createError("Select Disease/Condition from Scientific Data Menu",
             "A trial must have at least one disease/condition"));
         }
         // not a proprietary trial and the studyprotocol is set to ctgov = true
@@ -657,7 +647,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 .convertToBoolean(studyProtocolDTO.getProprietaryTrialIndicator()))
                 && (!PAUtil.isBlNull(studyProtocolDTO.getCtgovXmlRequiredIndicator()) && BlConverter
                         .convertToBoolean(studyProtocolDTO.getCtgovXmlRequiredIndicator())) && !ctgovxmlIndicator) {
-            abstractionList.add(createError("Error", "Select Disease/Condition from Scientific Data Menu",
+            abstractionList.add(createError("Select Disease/Condition from Scientific Data Menu",
                     "Abstraction cannot be valid if trial has no diseases with ctgov xml indicator = 'yes'"));
         }
     }
@@ -678,7 +668,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                                  .equalsIgnoreCase(srList.get(i).getNciDivisionProgramCode().getCode().toString())
                         && srList.get(j).getSerialNumber().getValue().toString()
                                  .equalsIgnoreCase(srList.get(i).getSerialNumber().getValue().toString())) {
-                    abstractionList.add(createError("Error", "Select Trial Funding from Administrative Data menu.",
+                    abstractionList.add(createError("Select Trial Funding from Administrative Data menu.",
                                                     "Trial should not have Duplicate grants."));
                     if (i != srList.size()) {
                         j++;
@@ -690,20 +680,20 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
     private void enforceArmGroup(Ii studyProtocolIi, StudyProtocolDTO studyProtocolDTO,
             List<AbstractionCompletionDTO> abstractionList) throws PAException {
-        List<ArmDTO> dtos = armService.getByStudyProtocol(studyProtocolIi); // PoPaServiceBeanLookup.getArmService()
+        List<ArmDTO> dtos = armService.getByStudyProtocol(studyProtocolIi);
         if (dtos.isEmpty()) {
             if (studyProtocolDTO.getStudyProtocolType().getValue().equalsIgnoreCase("InterventionalStudyProtocol")) {
-                abstractionList.add(createError("Error", "Select Arm from Interventional Trial Design "
+                abstractionList.add(createError("Select Arm from Interventional Trial Design "
                         + "under Scientific Data menu.", "No Arm exists for the trial."));
             } else if (studyProtocolDTO.getStudyProtocolType().getValue()
                     .equalsIgnoreCase("ObservationalStudyProtocol")) {
-                abstractionList.add(createError("Error", "Select Groups from Observational Trial Design "
+                abstractionList.add(createError("Select Groups from Observational Trial Design "
                         + "under Scientific Data menu.", "No Groups exists for the trial."));
             }
         } else {
             for (ArmDTO dto : dtos) {
                 if (PAUtil.isGreaterThan(dto.getName(), PAAttributeMaxLen.ARM_NAME)) {
-                    abstractionList.add(createError("Error", "Select Arm/Group under Scientific Data menu.", dto
+                    abstractionList.add(createError("Select Arm/Group under Scientific Data menu.", dto
                             .getName().getValue() + "  must not be more than 62 characters  "));
                 }
             }
@@ -715,7 +705,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         StudyOverallStatusDTO sos =
                 studyOverallStatusService.getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
         if (sos == null) {
-            abstractionList.add(createError("Error", "Select Trial Status from Administrative Data menu.",
+            abstractionList.add(createError("Select Trial Status from Administrative Data menu.",
                     "No Trial Status exists for the trial."));
         }
         if (studyProtocolDTO.getStartDate().getValue() == null
@@ -723,7 +713,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 && studyProtocolDTO.getPrimaryCompletionDate().getValue() == null
                 && studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode() == null) {
 
-            abstractionList.add(createError("Error", "Select Trial Status from Administrative Data menu.",
+            abstractionList.add(createError("Select Trial Status from Administrative Data menu.",
                     "StartDate/StartDateType and PrimaryCompletionDate/PrimaryCompletionDateType must be Entered."));
         }
     }
@@ -734,11 +724,6 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         Boolean ctGovIndicator = BlConverter.convertToBoolean(studyProtocolDto.getCtgovXmlRequiredIndicator());
         if (!(siList.isEmpty()) &&  BooleanUtils.isTrue(ctGovIndicator)) {
             checkDuplicateINDIDE(siList, abstractionList);
-            /*
-             * if (!BlConverter.covertToBool(studyProtocolDto.getFdaRegulatedIndicator())) {
-             * abstractionList.add(createError("Error", "Select Regulatory Information from Administrative Data menu.",
-             * "FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records.")); }
-             */
             // if IND is is there for Trial Oversight Authority Country =USA
             // then Trial Oversight Authority Organization Name shld be FDA if not throw err
             // get the country and check if its usa if so then check if Org name is FDA if not throw err
@@ -748,23 +733,16 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 if (sraFromDatabaseDTO != null) {
                     Long sraId = Long.valueOf(sraFromDatabaseDTO.getRegulatoryAuthorityIdentifier().getExtension());
                     RegulatoryAuthority regAuth = regulatoryInfoBean.get(sraId);
-                    /*
-                     * if (regAuth.getCountry().getAlpha3().equals("USA") &&
-                     * !regAuth.getAuthorityName().equalsIgnoreCase("Food and Drug Administration")) {
-                     * abstractionList.add(createError("Error", "Select Regulatory under Regulatory Information" +
-                     * " from Administrative Data menu.", "For IND protocols, Oversight Authorities " +
-                     * " must include United States: Food and Drug Administration.")); }
-                     */
                     if (!(regAuth.getCountry().getAlpha3().equals("USA") && regAuth.getAuthorityName().equalsIgnoreCase(
                             "Food and Drug Administration"))) {
-                        abstractionList.add(createError("Error", "Select Regulatory under Regulatory Information"
+                        abstractionList.add(createError("Select Regulatory under Regulatory Information"
                                 + " from Administrative Data menu.", "For IND protocols, Oversight Authorities "
                                 + " must include United States: Food and Drug Administration."));
                     }
                 }
             }
-        } // if
-    } // method
+        }
+    }
 
     private void checkDuplicateINDIDE(List<StudyIndldeDTO> siList, List<AbstractionCompletionDTO> abstractionList) {
         for (int i = 0; i < siList.size(); i++) {
@@ -778,13 +756,13 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                              .equalsIgnoreCase(siList.get(i).getIndldeNumber().getValue().toString())
                     && siList.get(j).getIndldeTypeCode().getCode().toString()
                              .equalsIgnoreCase(siList.get(i).getIndldeTypeCode().getCode().toString())) {
-                abstractionList.add(createError("Error", "Select Trial IND/IDE under Regulatory Information"
+                abstractionList.add(createError("Select Trial IND/IDE under Regulatory Information"
                         + " from Administrative Data menu.", "Trial IND/IDE should not have Duplicate values."));
                 if (i != siList.size()) {
                     j++;
                 }
-            } // if
-        } // for
+            }
+        }
     }
 
     private void enforceRegulatoryInfo(Ii studyProtocolIi, List<AbstractionCompletionDTO> abstractionList)
@@ -797,7 +775,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             sraDTO = sraDTOList.get(0);
         }
         if (sraDTO == null) {
-            abstractionList.add(createError("Error", "Select Regulatory under Regulatory Information"
+            abstractionList.add(createError("Select Regulatory under Regulatory Information"
                     + " from Administrative Data menu.", "Regulatory Information fields must be Entered."));
         }
         // Display error in abstraction validation if section 801 indicator = yes,
@@ -806,7 +784,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         if (YES.equalsIgnoreCase(convertBLToString(spDTO.getSection801Indicator()))
                 && YES.equalsIgnoreCase(convertBLToString(spDTO.getDelayedpostingIndicator()))
                 && !isDeviceFound(studyProtocolIi)) {
-            abstractionList.add(createError("Error", "Select Regulatory under Regulatory Information"
+            abstractionList.add(createError("Select Regulatory under Regulatory Information"
                     + " from Administrative Data menu.", "Delay posting indicator can only be set to \'yes\' "
                     + " if study includes at least one intervention with type \'device\'."));
         }
@@ -819,7 +797,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         Boolean reviewBoardIndicator = spDto.getReviewBoardApprovalRequiredIndicator().getValue();
 
         if (reviewBoardIndicator == null) {
-            abstractionList.add(createError("Error", "Select Human Subject Safety under Regulatory Information"
+            abstractionList.add(createError("Select Human Subject Safety under Regulatory Information"
                     + " from Administrative Data menu.",
                     "Review Board Approval Status is missing, Please complete Human Subject Review information."));
         }
@@ -833,7 +811,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             if (StudyStatusCode.IN_REVIEW.getCode().equalsIgnoreCase(sos.getStatusCode().getCode())
                     && !studySite.getReviewBoardApprovalStatusCode().getCode()
                             .equals(ReviewBoardApprovalStatusCode.SUBMITTED_PENDING.getCode())) {
-                abstractionWarnList.add(createError("Warning",
+                abstractionWarnList.add(createWarning(
                         "Select Human Subject Safety under Regulatory Information",
                         "Data inconsistency: \'Submitted, pending\' value (Review Board Approval Status) "
                                 + "is only valid for the current trial status \'In-Review\'."));
@@ -842,7 +820,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             if (StudyStatusCode.WITHDRAWN.getCode().equalsIgnoreCase(sos.getStatusCode().getCode())
                     && !studySite.getReviewBoardApprovalStatusCode().getCode()
                             .equals(ReviewBoardApprovalStatusCode.SUBMITTED_DENIED.getCode())) {
-                abstractionWarnList.add(createError("Warning",
+                abstractionWarnList.add(createWarning(
                         "Select Human Subject Safety under Regulatory Information",
                         "Data inconsistency: \'Submitted, denied\' value (Review Board Approval Status) is "
                                 + "only valid for the current trial status \'WithDrawn\'."));
@@ -858,7 +836,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             RecruitmentStatusCode.getByCode(studyRecruitmentStatusDto.getStatusCode().getCode());
         if (spList.isEmpty() && BooleanUtils.isFalse(reviewBoardIndicator)
                 && RecruitmentStatusCode.getRecruitingStatuses().contains(recruitmentStatusCode)) {
-            abstractionWarnList.add(createError("Warning", "Select a different review board status",
+            abstractionWarnList.add(createWarning("Select a different review board status",
                     "Data inconsistency. Review Board Approval Status cannot be 'Not required'"
                             + " for an interventional study that is recruiting patients"));
         }
@@ -901,7 +879,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         if (RecruitmentStatusCode.getRecruitingStatuses().contains(studyRecruitmentStatus) && !studySiteRecruiting) {
             String errorMsg =  "Data inconsistency: At least one location needs to be recruiting if the overall "
                 + "recruitment status is '%s'";
-            abstractionList.add(createError("Error", "Select Participating Sites from Administrative Data menu.",
+            abstractionList.add(createError("Select Participating Sites from Administrative Data menu.",
                     String.format(errorMsg, studyRecruitmentStatus.getCode())));
         }
 
@@ -909,7 +887,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 || studyRecruitmentStatus == RecruitmentStatusCode.APPROVED) && studySiteRecruiting) {
             String errorMsg =
                 "Data inconsistency. No site can recruit patients if overall study recruitment status is '%s'";
-            abstractionWarnList.add(createError("Warning", "Select Participating Sites from Administrative Data menu.",
+            abstractionWarnList.add(createWarning("Select Participating Sites from Administrative Data menu.",
                     String.format(errorMsg, studyRecruitmentStatus.getCode())));
         }
 
@@ -918,7 +896,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         if ((studyProtocolDTO.getStartDate().getValue().getTime() > System.currentTimeMillis())
                 && (studyRecruitmentStatus == RecruitmentStatusCode.IN_REVIEW
                         || studyRecruitmentStatus ==  RecruitmentStatusCode.APPROVED)) {
-            abstractionWarnList.add(createError("Warning", "Select recruitment status date",
+            abstractionWarnList.add(createWarning("Select recruitment status date",
                     String.format(errorMsg, studyRecruitmentStatus.getDisplayName())));
         }
     }
@@ -929,7 +907,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         srDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
         List<StudySiteDTO> spList = studySiteService.getByStudyProtocol(studyProtocolIi, srDTO);
         if (spList == null || spList.isEmpty()) {
-            abstractionList.add(createError("Error", "Select Participating Sites from " + " Administrative Data menu.",
+            abstractionList.add(createError("Select Participating Sites from Administrative Data menu.",
                     "No Participating Sites exists for the trial."));
             return;
         }
@@ -955,19 +933,19 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             Organization orgBo = getPoOrg(spartDto);
             if (!piFound) {
                 // Error Message ID Does Not Match Participating Site PO ID#
-                abstractionList.add(createError("Error", "Select Participating Sites from Administrative Data menu.",
+                abstractionList.add(createError("Select Participating Sites from Administrative Data menu.",
                         "Participating site # " + orgBo.getIdentifier() + " Must have an Investigator"));
 
             }
             // No investigator duplicates must exist on the same treating site for the same trial.
             if (piFound && hasDuplicate(getPIForTreatingSite(spContactDtos))) {
-                abstractionList.add(createError("Error", "Select Participating Sites from "
+                abstractionList.add(createError("Select Participating Sites from "
                         + " Administrative Data menu.", "Treating site can not have duplicate investigator."));
                 break;
             }
             // abstraction validation rule for participating site contact and central contact
             if (!contactFound && !centralContactDefined) {
-                abstractionList.add(createError("Error", "Select"
+                abstractionList.add(createError("Select"
                         + " General Trial Details screen to complete Central Contact or Participating Sites screen to"
                         + " complete Participating Site Contact information.", "Participating Site Contact"
                         + " or Central Contact information is mandatory. Complete Central Contact"
@@ -977,7 +955,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
         // No participating site duplicates playing same role must exist on the same trial
         if (hasDuplicate(getTreatingSiteOrg(spList))) {
-            abstractionList.add(createError("Error", "Select Participating Sites from " + " Administrative Data menu.",
+            abstractionList.add(createError("Select Participating Sites from Administrative Data menu.",
                     "Trial can not have dupicate Treating Site."));
         }
 
@@ -1014,7 +992,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             newspList.add(spdto.getFunctionalCode().getCode() + spdto.getResearchOrganizationIi().getExtension());
         }
         if (hasDuplicate(newspList)) {
-            abstractionList.add(createError("Error", "Select Collaborators from " + " Administrative Data menu.",
+            abstractionList.add(createError("Select Collaborators from Administrative Data menu.",
                     "Trial can not have a duplicate collaborator playing the same role."));
         }
     }
@@ -1077,7 +1055,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 // validation rules for inactive interventions
                 InterventionDTO iDto = interventionSvc.get(pa.getInterventionIdentifier());
                 if (ActiveInactiveCode.INACTIVE.getCode().equalsIgnoreCase(iDto.getStatusCode().getCode())) {
-                    abstractionWarnList.add(createError("Warning", "Select Interventions from Scientific Data menu.",
+                    abstractionWarnList.add(createWarning("Select Interventions from Scientific Data menu.",
                             "Intervention '" + iDto.getName().getValue() + "' status has been set to inactive"
                                     + ", Please select another Intervention."));
                 }
@@ -1085,7 +1063,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             }
         }
         if (!interventionsList) {
-            abstractionList.add(createError("Error", "Select Interventions from Scientific Data menu.",
+            abstractionList.add(createError("Select Interventions from Scientific Data menu.",
                     "No Interventions exists for the trial."));
         }
     }
@@ -1101,7 +1079,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             }
         }
         if (!isPrimayFound) {
-            abstractionList.add(createError("Error", "Select Outcome Measure from  "
+            abstractionList.add(createError("Select Outcome Measure from  "
                     + "Interventional/Observational under Scientific Data menu.",
                     "Trial must include at least one PRIMARY outcome measure."));
         }
@@ -1110,26 +1088,26 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     private void enforceGeneralTrailDetails(StudyProtocolDTO studyProtocolDTO,
             List<AbstractionCompletionDTO> abstractionList) {
         if (!PAUtil.checkAssignedIdentifierExists(studyProtocolDTO)) {
-            abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+            abstractionList.add(createError("Select General Trial Details from Administrative Data menu.",
                     "NCI Trial Identifier must be Entered"));
         }
         if (studyProtocolDTO.getOfficialTitle().getValue() == null) {
-            abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+            abstractionList.add(createError("Select General Trial Details from Administrative Data menu.",
                     "Official Title must be Entered"));
         } else if (PAUtil.isGreaterThan(studyProtocolDTO.getOfficialTitle(), PAAttributeMaxLen.LEN_600)) {
-            abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+            abstractionList.add(createError("Select General Trial Details from Administrative Data menu.",
                     "Official Title cannot be more than 600 chracters "));
         }
         if (PAUtil.isGreaterThan(studyProtocolDTO.getAcronym(), PAAttributeMaxLen.ACRONYM)) {
-            abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+            abstractionList.add(createError("Select General Trial Details from Administrative Data menu.",
                     "Acronym must not be more than 14 characters "));
         }
         if (PAUtil.isGreaterThan(studyProtocolDTO.getScientificDescription(), PAAttributeMaxLen.LEN_32000)) {
-            abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+            abstractionList.add(createError("Select General Trial Details from Administrative Data menu.",
                     "Detailed Description must not be more than 32000 characters "));
         }
         if (PAUtil.isGreaterThan(studyProtocolDTO.getKeywordText(), PAAttributeMaxLen.KEYWORD)) {
-            abstractionList.add(createError("Error", "Select General Trial Details from Administrative Data menu.",
+            abstractionList.add(createError("Select General Trial Details from Administrative Data menu.",
                     "Keywords must not be more than 160 characters "));
         }
     }
@@ -1137,18 +1115,18 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     private void enforceTrialDescriptionDetails(StudyProtocolDTO studyProtocolDTO,
             List<AbstractionCompletionDTO> abstractionList) {
         if (studyProtocolDTO.getPublicTitle().getValue() == null) {
-            abstractionList.add(createError("Error", "Select Trial Description from Scientific Data menu.",
+            abstractionList.add(createError("Select Trial Description from Scientific Data menu.",
                     "Brief Title must be Entered"));
         } else if (!PAUtil.isWithinRange(studyProtocolDTO.getPublicTitle(), PAAttributeMaxLen.LEN_18,
                 PAAttributeMaxLen.LEN_300)) {
-            abstractionList.add(createError("Error", "Select Trial Description from Scientific Data menu.",
+            abstractionList.add(createError("Select Trial Description from Scientific Data menu.",
                     "Brief Title must be between 18 and 300 characters "));
         }
         if (studyProtocolDTO.getPublicDescription().getValue() == null) {
-            abstractionList.add(createError("Error", "Select Trial Description from Scientific Data menu.",
+            abstractionList.add(createError("Select Trial Description from Scientific Data menu.",
                     "Brief Summary must be Entered"));
         } else if (PAUtil.isGreaterThan(studyProtocolDTO.getPublicDescription(), PAAttributeMaxLen.LEN_5000)) {
-            abstractionList.add(createError("Error", "Select Trial Description from Scientific Data menu.",
+            abstractionList.add(createError("Select Trial Description from Scientific Data menu.",
                     "Brief Summary must not be more than 5000 characters "));
         }
 
@@ -1157,18 +1135,18 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     private void enforceNCISpecificInfo(StudyProtocolDTO studyProtocolDTO,
             List<AbstractionCompletionDTO> abstractionList) {
         if (studyProtocolDTO.getAccrualReportingMethodCode().getCode() == null) {
-            abstractionList.add(createError("Error", "Select NCI Specific Information from Administrative Data menu.",
+            abstractionList.add(createError("Select NCI Specific Information from Administrative Data menu.",
                     "Reporting Data Set Method must be Entered"));
         }
     }
 
     private void enforceDocument(String protocolDoc, String irbDoc, List<AbstractionCompletionDTO> abstractionList) {
         if (protocolDoc == null) {
-            abstractionList.add(createError("Error", "Select Trial Related Documents from Administrative Data menu.",
+            abstractionList.add(createError("Select Trial Related Documents from Administrative Data menu.",
                     "Protocol_Document is required"));
         }
         if (irbDoc == null) {
-            abstractionList.add(createError("Error", "Select Trial Related Documents from Administrative Data menu.",
+            abstractionList.add(createError("Select Trial Related Documents from Administrative Data menu.",
                     "IRB_Approval_Document is required"));
         }
     }
@@ -1177,35 +1155,35 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             List<AbstractionCompletionDTO> abstractionList) {
         if (ospDTO.getStudyModelCode().getCode() == null) {
             abstractionList
-                .add(createError("Error", SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG, "Study Model must be Entered"));
+                .add(createError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG, "Study Model must be Entered"));
         }
         if (ospDTO.getStudyModelCode().getCode() != null
                 && ospDTO.getStudyModelCode().getCode().equalsIgnoreCase("Other")
                 && ospDTO.getStudyModelOtherText() == null) {
-            abstractionList.add(createError("Error", SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
+            abstractionList.add(createError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
                                             "Study Model Comment must be Entered"));
         }
 
         if (ospDTO.getTimePerspectiveCode().getCode() == null) {
-            abstractionList.add(createError("Error", SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
+            abstractionList.add(createError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
                                             "Time Perspective must be Entered"));
         }
         if (ospDTO.getTimePerspectiveCode().getCode() != null
                 && ospDTO.getTimePerspectiveCode().getCode().equalsIgnoreCase("Other")
                 && ospDTO.getTimePerspectiveOtherText() == null) {
-            abstractionList.add(createError("Error", SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
+            abstractionList.add(createError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
                                             "Time Perspective Comment must be Entered"));
         }
         if (ospDTO.getBiospecimenRetentionCode().getCode() == null) {
-            abstractionList.add(createError("Error", SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
+            abstractionList.add(createError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
                                             "Bio-specimen Retention must be Entered"));
         }
         if (ospDTO.getNumberOfGroups().getValue() == null) {
-            abstractionList.add(createError("Error", SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
+            abstractionList.add(createError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
                                             "Number of Groups/Cohorts must be Entered"));
         }
         if (ospDTO.getTargetAccrualNumber().getLow().getValue() == null) {
-            abstractionList.add(createError("Error", SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
+            abstractionList.add(createError(SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG,
                                             "Target Enrollment must be Entered"));
         }
     }
@@ -1213,32 +1191,31 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     private void enforceInterventional(InterventionalStudyProtocolDTO ispDTO,
             List<AbstractionCompletionDTO> abstractionList) {
         if (ispDTO.getPrimaryPurposeCode().getCode() == null) {
-            abstractionList.add(createError("Error", SELECT_INT_TRIAL_DESIGN_DETAILS_MSG,
+            abstractionList.add(createError(SELECT_INT_TRIAL_DESIGN_DETAILS_MSG,
                                             "Primary Purpose must be Entered"));
         }
 
         if (ispDTO.getPhaseCode().getCode() == null) {
             abstractionList
-                .add(createError("Error", SELECT_INT_TRIAL_DESIGN_DETAILS_MSG, "Trial Phase must be Entered"));
+                .add(createError(SELECT_INT_TRIAL_DESIGN_DETAILS_MSG, "Trial Phase must be Entered"));
         }
         if (ispDTO.getDesignConfigurationCode().getCode() == null) {
-            abstractionList.add(createError("Error", SELECT_INT_TRIAL_DESIGN_DETAILS_MSG,
+            abstractionList.add(createError(SELECT_INT_TRIAL_DESIGN_DETAILS_MSG,
                                             "Intervention Model must be Entered"));
         }
         if (ispDTO.getNumberOfInterventionGroups().getValue() == null) {
-            abstractionList.add(createError("Error", SELECT_INT_TRIAL_DESIGN_DETAILS_MSG,
+            abstractionList.add(createError(SELECT_INT_TRIAL_DESIGN_DETAILS_MSG,
                                             "Number of Arms must be Entered"));
         }
         if (ispDTO.getBlindingSchemaCode().getCode() == null) {
-            abstractionList.add(createError("Error", SELECT_INT_TRIAL_DESIGN_DETAILS_MSG, "Masking must be Entered"));
+            abstractionList.add(createError(SELECT_INT_TRIAL_DESIGN_DETAILS_MSG, "Masking must be Entered"));
         }
         if (ispDTO.getAllocationCode().getCode() == null) {
             abstractionList
-                .add(createError("Error", SELECT_INT_TRIAL_DESIGN_DETAILS_MSG, "Allocation must be Entered"));
+                .add(createError(SELECT_INT_TRIAL_DESIGN_DETAILS_MSG, "Allocation must be Entered"));
         }
         if (ispDTO.getTargetAccrualNumber().getLow().getValue() == null) {
-            abstractionList.add(createError("Error", SELECT_INT_TRIAL_DESIGN_DETAILS_MSG,
-                                            "Target Enrollment must be Entered"));
+            abstractionList.add(createError(SELECT_INT_TRIAL_DESIGN_DETAILS_MSG, "Target Enrollment must be Entered"));
         }
     }
 
@@ -1251,7 +1228,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 List<ArmDTO> armDtos = armService.getByPlannedActivity(pa.getIdentifier());
 
                 if (armDtos == null || armDtos.isEmpty()) {
-                    abstractionList.add(createError("Error",
+                    abstractionList.add(createError(
                             "Select Arm from Scientific Data menu and associated Intervention.", "Every intervention "
                                     + "in interventional trial must be associated with at least"
                                     + " one arm in interventional trial"));
@@ -1261,13 +1238,13 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 }
             }
         }
-        List<ArmDTO> arms = armService.getByStudyProtocol(studyProtocolIi); // PoPaServiceBeanLookup.getArmService()
+        List<ArmDTO> arms = armService.getByStudyProtocol(studyProtocolIi);
         for (ArmDTO armDTO : arms) {
             if (ArmTypeCode.NO_INTERVENTION.getCode().equals(armDTO.getTypeCode().getCode())) {
                 continue;
             }
             if (!intervention.containsKey(armDTO.getName().getValue())) {
-                abstractionList.add(createError("Error",
+                abstractionList.add(createError(
                         "Select Arm from Scientific Data menu and associated Interventional.", "Arm "
                                 + armDTO.getName().getValue() + " does not have any Intervention associated"));
 
@@ -1281,7 +1258,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                 plannedActivityService.getPlannedEligibilityCriterionByStudyProtocol(studyProtocolIi);
 
         if (paECs == null || paECs.isEmpty()) {
-            abstractionList.add(createError("Error",
+            abstractionList.add(createError(
                     "Select Eligibilty Criteria from specific Interventional/Observational"
                             + " under Scientific Data menu.", " Does not have any Eligibilty Criteria"));
             return;
@@ -1293,7 +1270,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             }
         } // for loop
         if (!otherCriteriaExist) {
-            abstractionList.add(createError("Error",
+            abstractionList.add(createError(
                     "Select Eligibilty Criteria from specific Interventional/Observational under Scientific "
                             + "Data menu and Add Other Criteria.", " Minimum one Other criteria must be added "));
 
@@ -1314,13 +1291,11 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         for (StudySiteDTO dto : dtos) {
             if (PAUtil.isGreaterThan(dto.getLocalStudyProtocolIdentifier(), PAAttributeMaxLen.LEN_30)) {
                 if (StudySiteFunctionalCode.LEAD_ORGANIZATION.getCode().equals(dto.getFunctionalCode().getCode())) {
-                    abstractionList.add(createError("Error",
-                            "Select General Trial Details from Administrative Data menu.",
+                    abstractionList.add(createError("Select General Trial Details from Administrative Data menu.",
                             "Lead Organization Trial Identifier  cannot be more than 30 characters"));
                 } else if (StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getCode().equals(
                         dto.getFunctionalCode().getCode())) {
-                    abstractionList.add(createError("Error",
-                            "Select General Trial Details from Administrative Data menu.",
+                    abstractionList.add(createError("Select General Trial Details from Administrative Data menu.",
                             "NCT Number cannot be more than 30 characters"));
                 }
 
@@ -1343,8 +1318,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             Organization org = correlationUtils.getPAOrganizationByIi(IiConverter.convertToPaOrganizationIi(
                     paOrgId));
             if (org != null && EntityStatusCode.NULLIFIED.getCode().equals(org.getStatusCode().getCode())) {
-                abstractionWarnList.add(createError("Warning",
-                        "Select NCI Specific Information from Administrative Data menu.",
+                abstractionWarnList.add(createWarning("Select NCI Specific Information from Administrative Data menu.",
                         " Summary 4 Funding Sponsor  status has been set to nullified, "
                                 + "Please select another Summary 4 Funding Sponsor"));
             }
@@ -1363,7 +1337,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             for (PlannedMarkerDTO marker : plannedMarkers) {
                 if (ActiveInactivePendingCode.getByCode(marker.getStatusCode().getCode())
                         == ActiveInactivePendingCode.PENDING) {
-                    abstractionWarningList.add(createError("Warning",
+                    abstractionWarningList.add(createWarning(
                             "At least one pending biomarker exists on the trial.", "Use Marker menu-option."));
                     break;
                 }
@@ -1371,9 +1345,17 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
 
     }
 
-    private AbstractionCompletionDTO createError(String errorType, String comment, String errorDescription) {
+    private AbstractionCompletionDTO createError(String comment, String errorDescription) {
         AbstractionCompletionDTO acDto = new AbstractionCompletionDTO();
-        acDto.setErrorType(errorType);
+        acDto.setErrorType("Error");
+        acDto.setComment(comment);
+        acDto.setErrorDescription(errorDescription);
+        return acDto;
+    }
+
+    private AbstractionCompletionDTO createWarning(String comment, String errorDescription) {
+        AbstractionCompletionDTO acDto = new AbstractionCompletionDTO();
+        acDto.setErrorType("Warning");
         acDto.setComment(comment);
         acDto.setErrorDescription(errorDescription);
         return acDto;

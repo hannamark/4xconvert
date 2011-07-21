@@ -1433,7 +1433,7 @@ public class CTGovXmlGeneratorServiceBean extends AbstractCTGovXmlGeneratorServi
             }
         }
     }
-    
+
     private void addMiddleName(Element contact, String name, Document doc) {
         String middleName = StringUtils.substring(name, 0, PAAttributeMaxLen.LEN_1);
         if (StringUtils.isNotBlank(middleName)) {

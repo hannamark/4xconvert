@@ -1,6 +1,6 @@
 To set up development environment:
 
-    - Check out COPPA project from svn (http://gforge.nci.nih.gov/svnroot/coppa/trunk).
+    - Check out COPPA project from svn (https://ncisvn.nci.nih.gov/svn/coppa/trunk/).
     - Install latest Postgres.
     - Install PA application suite (see code/pa/readme.txt for instructions).
     - Install JBoss 4.0.5 using jems installer w/support for ejb3.
