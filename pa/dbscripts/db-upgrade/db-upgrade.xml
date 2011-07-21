@@ -710,4 +710,8 @@
         <comment>Fix typo in Amendment.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.5/PO-3739.sql"/>
      </changeSet>
+     <changeSet id="PO-3879" author="ludetc">
+        <comment>Audit Log no longer as limited number of chars.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.5/PO-3879.sql"/>
+     </changeSet>
 </databaseChangeLog>
