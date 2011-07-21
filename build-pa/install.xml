@@ -83,7 +83,12 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <property name="grid.resource.dir.src" value="${basedir}/${grid.dist.relative.dir}" />
     <property name="resource.file.jboss-globus-lib" value="jboss-globus-libs-cagrid1_1.zip" />
     <property name="resource.file.jboss-globus-war" value="jboss-globus-wsrf-war-cagrid1_1.zip" />
-
+    
+    <property name="pa-grid-3.4.dir.dist" value="${basedir}/${pa-grid-3.4.dist.relative.dir}" />
+    <property name="pa-grid-3.4.dir.src" value="${basedir}/${pa-grid-3.4.dist.relative.dir}" />
+    <property name="pa-grid-3.4.dir.target" value="wsrf.war" />
+    <property name="pa-grid-3.4.introduce.skeleton.service.name" value="PAServices"/>
+    
     <property name="pa-grid-3.3.dir.dist" value="${basedir}/${pa-grid-3.3.dist.relative.dir}" />
     <property name="pa-grid-3.3.dir.src" value="${basedir}/${pa-grid-3.3.dist.relative.dir}" />
     <property name="pa-grid-3.3.dir.target" value="wsrf.war" />
@@ -93,11 +98,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <property name="pa-grid-3.2.dir.src" value="${basedir}/${pa-grid-3.2.dist.relative.dir}" />
     <property name="pa-grid-3.2.dir.target" value="wsrf.war" />
     <property name="pa-grid-3.2.introduce.skeleton.service.name" value="PAServices"/>
-
-    <property name="pa-grid-3.1.dir.dist" value="${basedir}/${pa-grid-3.1.dist.relative.dir}" />
-    <property name="pa-grid-3.1.dir.src" value="${basedir}/${pa-grid-3.1.dist.relative.dir}" />
-    <property name="pa-grid-3.1.dir.target" value="wsrf.war" />
-    <property name="pa-grid-3.1.introduce.skeleton.service.name" value="PAServices"/>
 
     <!-- Paths -->
     <path id="bda-utils.classpath">
@@ -115,9 +115,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     <!-- Includes-->
     <import file="${bda-utils.dir}/bda-build-utils-${bda.version}.xml" />
     <import file="install-paear.xml"/>
+    <import file="install-pagrid-3.4.xml"/>
     <import file="install-pagrid-3.3.xml"/>
     <import file="install-pagrid-3.2.xml"/>
-    <import file="install-pagrid-3.1.xml"/>
 
     <macrodef name="configure-grid-log4j">
         <attribute name="log.level" default="INFO"/>
@@ -147,7 +147,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
     </target>
 
     <!-- Clean up destination directory -->
-    <target name="install:common:clean" description="Removes all files from the local filesystem" depends="install:pa-ear-jboss:clean, install:pa-grid-3.3-jboss:clean, install:pa-grid-3.2-jboss:clean, install:pa-grid-3.1-jboss:clean"/>
+    <target name="install:common:clean" description="Removes all files from the local filesystem" depends="install:pa-ear-jboss:clean, install:pa-grid-3.3-jboss:clean, install:pa-grid-3.2-jboss:clean, install:pa-grid-3.4-jboss:clean"/>
 
     <target name="common:init:pre">
         <!-- Set application.base.path based on platform -->
@@ -363,37 +363,37 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         install:pa-ear-jboss:init,
         install:pa-grid-3.3-jboss:init,
         install:pa-grid-3.2-jboss:init,
-        install:pa-grid-3.1-jboss:init,
+        install:pa-grid-3.4-jboss:init,
         common:pa-ear-jboss:init,
         common:pa-grid-3.3-jboss:init,
         common:pa-grid-3.2-jboss:init,
-        common:pa-grid-3.1-jboss:init,
+        common:pa-grid-3.4-jboss:init,
         common:init,
         install:common:validation:pre-install,
         install:pa-ear-jboss:validation:pre-install,
         install:pa-grid-3.3-jboss:validation:pre-install,
         install:pa-grid-3.2-jboss:validation:pre-install,
-        install:pa-grid-3.1-jboss:validation:pre-install,
+        install:pa-grid-3.4-jboss:validation:pre-install,
         install:database:validation:pre-install,
         install:pa-ear-jboss:stop,
         install:pa-grid-3.3-jboss:stop,
         install:pa-grid-3.2-jboss:stop,
-        install:pa-grid-3.1-jboss:stop,
+        install:pa-grid-3.4-jboss:stop,
         install:pa-ear-jboss:validation:pre-install:ports,
         install:pa-grid-3.3-jboss:validation:pre-install:ports,
         install:pa-grid-3.2-jboss:validation:pre-install:ports,
-        install:pa-grid-3.1-jboss:validation:pre-install:ports,
+        install:pa-grid-3.4-jboss:validation:pre-install:ports,
         install:common:clean,
         install:database,
         install:pa-ear-jboss,
         install:pa-grid-3.3-jboss,
         install:pa-grid-3.2-jboss,
-        install:pa-grid-3.1-jboss,
+        install:pa-grid-3.4-jboss,
         install:common:post,
         install:pa-ear-jboss:start,
         install:pa-grid-3.3-jboss:start,
         install:pa-grid-3.2-jboss:start,
-        install:pa-grid-3.1-jboss:start,
+        install:pa-grid-3.4-jboss:start,
         install:common:validation:post-install
         ">
     </target>
@@ -407,38 +407,38 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         common:pa-ear-jboss:init,
         common:pa-grid-3.3-jboss:init,
         common:pa-grid-3.2-jboss:init,
-        common:pa-grid-3.1-jboss:init,
+        common:pa-grid-3.4-jboss:init,
         common:init,
         install:pa-ear-jboss:init,
         install:pa-grid-3.3-jboss:init,
         install:pa-grid-3.2-jboss:init,
-        install:pa-grid-3.1-jboss:init,
+        install:pa-grid-3.4-jboss:init,
         install:common:validation:pre-install,
         install:pa-ear-jboss:validation:pre-install,
         install:pa-grid-3.3-jboss:validation:pre-install,
         install:pa-grid-3.2-jboss:validation:pre-install,
-        install:pa-grid-3.1-jboss:validation:pre-install,
+        install:pa-grid-3.4-jboss:validation:pre-install,
         install:database:validation:pre-install,
         install:pa-ear-jboss:stop,
         install:pa-grid-3.3-jboss:stop,
         install:pa-grid-3.2-jboss:stop,
-        install:pa-grid-3.1-jboss:stop,
+        install:pa-grid-3.4-jboss:stop,
         install:pa-ear-jboss:validation:pre-install:ports,
         install:pa-grid-3.3-jboss:validation:pre-install:ports,
         install:pa-grid-3.2-jboss:validation:pre-install:ports,
-        install:pa-grid-3.1-jboss:validation:pre-install:ports,
+        install:pa-grid-3.4-jboss:validation:pre-install:ports,
         install:common:clean,
         upgrade:database,
         upgrade-dac:pa-ear-jboss,
         upgrade-dac:pa-grid-3.3-jboss,
         upgrade-dac:pa-grid-3.2-jboss,
-        upgrade-dac:pa-grid-3.1-jboss,
+        upgrade-dac:pa-grid-3.4-jboss,
         upgrade:common:post,
         install:common:post,
         install:pa-ear-jboss:start,
         install:pa-grid-3.3-jboss:start,
         install:pa-grid-3.2-jboss:start,
-        install:pa-grid-3.1-jboss:start,
+        install:pa-grid-3.4-jboss:start,
         install:common:validation:post-install
         ">
     </target>
@@ -449,37 +449,37 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         common:pa-ear-jboss:init,
         common:pa-grid-3.3-jboss:init,
         common:pa-grid-3.2-jboss:init,
-        common:pa-grid-3.1-jboss:init,
+        common:pa-grid-3.4-jboss:init,
         common:init,
         install:pa-ear-jboss:init,
         install:pa-grid-3.3-jboss:init,
         install:pa-grid-3.2-jboss:init,
-        install:pa-grid-3.1-jboss:init,
+        install:pa-grid-3.4-jboss:init,
         install:common:validation:pre-install,
         install:pa-ear-jboss:validation:pre-install,
         install:pa-grid-3.3-jboss:validation:pre-install,
         install:pa-grid-3.2-jboss:validation:pre-install,
-        install:pa-grid-3.1-jboss:validation:pre-install,
+        install:pa-grid-3.4-jboss:validation:pre-install,
         install:database:validation:pre-install,
         install:pa-ear-jboss:stop,
         install:pa-grid-3.3-jboss:stop,
         install:pa-grid-3.2-jboss:stop,
-        install:pa-grid-3.1-jboss:stop,
+        install:pa-grid-3.4-jboss:stop,
         install:pa-ear-jboss:validation:pre-install:ports,
         install:pa-grid-3.3-jboss:validation:pre-install:ports,
         install:pa-grid-3.2-jboss:validation:pre-install:ports,
-        install:pa-grid-3.1-jboss:validation:pre-install:ports,
+        install:pa-grid-3.4-jboss:validation:pre-install:ports,
         upgrade:database,
         upgrade-cm:pa-ear-jboss,
         upgrade-cm:pa-grid-3.3-jboss,
         upgrade-cm:pa-grid-3.2-jboss,
-        upgrade-cm:pa-grid-3.1-jboss,
+        upgrade-cm:pa-grid-3.4-jboss,
         upgrade:common:post,
         install:common:post,
         install:pa-ear-jboss:start,
         install:pa-grid-3.3-jboss:start,
         install:pa-grid-3.2-jboss:start,
-        install:pa-grid-3.1-jboss:start,
+        install:pa-grid-3.4-jboss:start,
         install:common:validation:post-install
         ">
     </target>
@@ -490,37 +490,37 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         common:pa-ear-jboss:init,
         common:pa-grid-3.3-jboss:init,
         common:pa-grid-3.2-jboss:init,
-        common:pa-grid-3.1-jboss:init,
+        common:pa-grid-3.4-jboss:init,
         common:init,
         install:pa-ear-jboss:init,
         install:pa-grid-3.3-jboss:init,
         install:pa-grid-3.2-jboss:init,
-        install:pa-grid-3.1-jboss:init,
+        install:pa-grid-3.4-jboss:init,
         install:common:validation:pre-install,
         install:pa-ear-jboss:validation:pre-install,
         install:pa-grid-3.3-jboss:validation:pre-install,
         install:pa-grid-3.2-jboss:validation:pre-install,
-        install:pa-grid-3.1-jboss:validation:pre-install,
+        install:pa-grid-3.4-jboss:validation:pre-install,
         install:database:validation:pre-install,
         install:pa-ear-jboss:stop,
         install:pa-grid-3.3-jboss:stop,
         install:pa-grid-3.2-jboss:stop,
-        install:pa-grid-3.1-jboss:stop,
+        install:pa-grid-3.4-jboss:stop,
         install:pa-ear-jboss:validation:pre-install:ports,
         install:pa-grid-3.3-jboss:validation:pre-install:ports,
         install:pa-grid-3.2-jboss:validation:pre-install:ports,
-        install:pa-grid-3.1-jboss:validation:pre-install:ports,
+        install:pa-grid-3.4-jboss:validation:pre-install:ports,
         upgrade:database,
         upgrade-ncm:pa-ear-jboss,
         upgrade-ncm:pa-grid-3.3-jboss,
         upgrade-ncm:pa-grid-3.2-jboss,
-        upgrade-ncm:pa-grid-3.1-jboss,
+        upgrade-ncm:pa-grid-3.4-jboss,
         upgrade:common:post,
         install:common:post,
         install:pa-ear-jboss:start,
         install:pa-grid-3.3-jboss:start,
         install:pa-grid-3.2-jboss:start,
-        install:pa-grid-3.1-jboss:start,
+        install:pa-grid-3.4-jboss:start,
         install:common:validation:post-install
         ">
     </target>
@@ -556,9 +556,9 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
         <database-rollback/>
     </target>
 
-    <target name="install:common:post" depends="install:pa-ear-jboss:post,install:pa-grid-3.3-jboss:post,install:pa-grid-3.2-jboss:post,install:pa-grid-3.1-jboss:post"/>
+    <target name="install:common:post" depends="install:pa-ear-jboss:post,install:pa-grid-3.3-jboss:post,install:pa-grid-3.2-jboss:post,install:pa-grid-3.4-jboss:post"/>
 
-    <target name="upgrade:common:init" depends="upgrade:pa-ear-jboss:init,upgrade:pa-grid-3.3-jboss:init,upgrade:pa-grid-3.2-jboss:init,upgrade:pa-grid-3.1-jboss:init" >
+    <target name="upgrade:common:init" depends="upgrade:pa-ear-jboss:init,upgrade:pa-grid-3.3-jboss:init,upgrade:pa-grid-3.2-jboss:init,upgrade:pa-grid-3.4-jboss:init" >
     </target>
 
     <target name="upgrade:database:init"
@@ -611,7 +611,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             />
     </target>
 
-    <target name="upgrade:common:post" depends="upgrade:pa-ear-jboss:post,upgrade:pa-grid-3.3-jboss:post,upgrade:pa-grid-3.2-jboss:post,upgrade:pa-grid-3.1-jboss:post">
+    <target name="upgrade:common:post" depends="upgrade:pa-ear-jboss:post,upgrade:pa-grid-3.3-jboss:post,upgrade:pa-grid-3.2-jboss:post,upgrade:pa-grid-3.4-jboss:post">
     </target>
 
     <macrodef name="jboss-configure-cgmm">
