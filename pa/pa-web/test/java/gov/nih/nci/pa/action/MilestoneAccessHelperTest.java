@@ -154,8 +154,7 @@ public class MilestoneAccessHelperTest {
         this.scientific = scientific;
         this.superuser = superuser;
         this.submissionType = submissionType;
-        Set<MilestoneCode> milestones = EnumSet.allOf(MilestoneCode.class);
-        milestones.remove(MilestoneCode.READY_FOR_TSR);
+        Set<MilestoneCode> milestones = EnumSet.allOf(MilestoneCode.class);        
         milestones.remove(MilestoneCode.SUBMISSION_REJECTED);
         if (!adminResult) {
             milestones.removeAll(MilestoneCode.ADMIN_SEQ);

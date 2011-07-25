@@ -127,7 +127,7 @@ public class StudyMilestoneBeanLocal
         checkUniquenessRules(newCode, existingDtoList);
         checkMilestoneSpecificRules(newCode, existingDtoList);
         checkDocumentWorkflowStatusRules(dto, newCode);
-        checkAbstractionsRules(dto, newCode);
+        checkAbstractionsRules(dto, newCode);        
         return dto;
     }
 
@@ -253,6 +253,13 @@ public class StudyMilestoneBeanLocal
         }
         return false;
     }
+    
+    private void checkReadyForTSRMilestone(List<MilestoneCode> milestones) throws PAException {  
+            if (!canCreateReadyForTSRMilestone(milestones)) {
+                String msg = "\"{0}\" can not be created at this stage.";
+                throw new PAException(MessageFormat.format(msg, MilestoneCode.READY_FOR_TSR.getCode()));            
+        }
+    }
 
     private void checkMilestoneSpecificRules(MilestoneCode newCode, List<StudyMilestoneDTO> existingDtoList)
             throws PAException {
@@ -278,6 +285,11 @@ public class StudyMilestoneBeanLocal
         case LATE_REJECTION_DATE:
             checkPrerequisite(milestones, newCode, new ArrayList<MilestoneCode>(), MilestoneCode.SUBMISSION_ACCEPTED);
             break;
+            
+        case READY_FOR_TSR:
+            checkReadyForTSRMilestone(milestones);
+            break;
+            
         default:
             break;
         }
@@ -332,7 +344,7 @@ public class StudyMilestoneBeanLocal
             List<MilestoneCode> stopSearchMilestones, MilestoneCode preRequisite) throws PAException {
         for (int i = milestones.size() - 1; i >= 0; i--) {
             MilestoneCode current = milestones.get(i);
-            if (current == preRequisite) {
+            if (current.equals(preRequisite)) {
                 return;
             }
             if (stopSearchMilestones.contains(current)) {
@@ -465,6 +477,16 @@ public class StudyMilestoneBeanLocal
     private void createReadyForTSRMilestone(StudyMilestoneDTO dto) throws PAException {
         List<StudyMilestoneDTO> existingDtoList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
         List<MilestoneCode> mileStones = getExistingMilestones(existingDtoList);
+        if (canCreateReadyForTSRMilestone(mileStones)) {
+            StudyMilestoneDTO readyForTSR = new StudyMilestoneDTO();
+            readyForTSR.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.READY_FOR_TSR));
+            readyForTSR.setMilestoneDate(dto.getMilestoneDate());
+            readyForTSR.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
+            create(readyForTSR);            
+        }
+    }
+    
+    private boolean canCreateReadyForTSRMilestone(List<MilestoneCode> mileStones) {
         boolean admin = false;
         boolean scientific = false;
         for (int i = mileStones.size() - 1; i >= 0; i--) {
@@ -484,18 +506,16 @@ public class StudyMilestoneBeanLocal
             case SCIENTIFIC_READY_FOR_QC:
             case SCIENTIFIC_QC_START:
                 break;
-            default: return;
+            default:
+                return false;
             }
             if (admin && scientific) {
-                StudyMilestoneDTO readyForTSR = new StudyMilestoneDTO();
-                readyForTSR.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.READY_FOR_TSR));
-                readyForTSR.setMilestoneDate(dto.getMilestoneDate());
-                readyForTSR.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
-                create(readyForTSR);
-                return;
+                return true;
             }
         }
+        return false;
     }
+    
 
     private void sendTSREmail(StudyMilestoneDTO workDto) throws PAException {
         MilestoneCode milestoneCode = MilestoneCode.getByCode(

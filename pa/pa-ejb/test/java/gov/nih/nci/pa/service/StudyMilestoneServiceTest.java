@@ -311,6 +311,14 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         dto.setStudyProtocolIdentifier(spAmendIi);
         checkMilestoneFailure(dto, "Late Rejection Date is applicable to Original Submission.");
     }
+    
+    @Test
+    public void checkReadyForTSRMilestone() throws Exception {
+        StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.READY_FOR_TSR);       
+        checkMilestoneFailure(dto, "\"Ready for Trial Summary Report Date\" can not be created at this stage.");
+    }
+    
+    
 
     @Test
     public void checkOnHoldRules() throws Exception {
@@ -631,7 +639,8 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_START));
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
         checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE, canNotReachMsg);
-    }
+    }   
+    
 
     @Test
     public void checkDocumentWorkflowStatusRules() throws Exception {
@@ -652,13 +661,17 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
 
     @Test
     public void checkAbstractionsRules() throws Exception {
-        DocumentWorkflowStatusDTO dwfDto = getDocWrkStatusDTO();
-        dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ACCEPTED));
+        StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_SENT);
+        DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
+        dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTED));
+        dwfDto.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
         dws.create(dwfDto);
+
         bean.setValidateAbstractions(true);
         bean.setAbstractionCompletionService(null);
+
         String msg = "Error injecting reference to AbstractionCompletionService.";
-        checkMilestoneFailure(MilestoneCode.READY_FOR_TSR, msg);
+        checkMilestoneFailure(dto, msg);
     }
     
     @Test

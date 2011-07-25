@@ -120,8 +120,7 @@ public class MilestoneAccessHelper {
      * @return The list of allowed milestone codes.
      */
     public List<String> getAllowedMilestones() {
-        Set<MilestoneCode> milestones = EnumSet.allOf(MilestoneCode.class);
-        milestones.remove(MilestoneCode.READY_FOR_TSR);
+        Set<MilestoneCode> milestones = EnumSet.allOf(MilestoneCode.class);        
         milestones.remove(MilestoneCode.SUBMISSION_REJECTED);
         checkAdminMilestones(milestones);
         checkScientificMilestones(milestones);
