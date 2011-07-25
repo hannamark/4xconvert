@@ -41,10 +41,8 @@ public class TrialDTO extends BaseTrialDTO {
     private String programCodeText;
     private String responsibleGenericContactName;
 
-    // required for updating a trial
     private List<PaOrganizationDTO> collaborators;
     private List<PaOrganizationDTO> participatingSites;
-    // private RegulatoryAuthorityWebDTO regulatoryAuthority;
     private List<CountryRegAuthorityDTO> countryList = new ArrayList<CountryRegAuthorityDTO>();
     private List<RegulatoryAuthOrgDTO> regIdAuthOrgList = new ArrayList<RegulatoryAuthOrgDTO>();
     private List<TrialIndIdeDTO> indIdeUpdateDtos;
@@ -76,7 +74,6 @@ public class TrialDTO extends BaseTrialDTO {
         super();
         collaborators = new ArrayList<PaOrganizationDTO>();
         participatingSites = new ArrayList<PaOrganizationDTO>();
-        // regulatoryAuthority = new RegulatoryAuthorityWebDTO();
         indIdeUpdateDtos = new ArrayList<TrialIndIdeDTO>();
         fundingAddDtos = new ArrayList<TrialFundingWebDTO>();
         indIdeAddDtos = new ArrayList<TrialIndIdeDTO>();
@@ -144,7 +141,6 @@ public class TrialDTO extends BaseTrialDTO {
     /**
      * @return the sponsorIdentifier
      */
-    // @NotEmpty (message = "error.submit.sponsor") -- removed - do validation in the action
     public String getSponsorIdentifier() {
         return sponsorIdentifier;
     }
@@ -159,7 +155,6 @@ public class TrialDTO extends BaseTrialDTO {
     /**
      * @return the responsiblePartyType
      */
-    // @NotEmpty (message = "error.submit.ResponsibelParty")-- removed - do validation in the action
     public String getResponsiblePartyType() {
         return responsiblePartyType;
     }
@@ -202,9 +197,6 @@ public class TrialDTO extends BaseTrialDTO {
     /**
      * @return the contactPhone
      */
-    // @NotEmpty (message = "error.submit.contactPhone")-- removed - do validation in the action
-    // @org.hibernate.validator.Pattern(regex = "^([\\w\\s\\-\\.\\+\\(\\)])*$",
-    // message = "error.register.invalidPhoneNumber")
     public String getContactPhone() {
         return contactPhone;
     }
@@ -219,8 +211,6 @@ public class TrialDTO extends BaseTrialDTO {
     /**
      * @return the contactEmail
      */
-    // @NotEmpty (message = "error.submit.contactEmail")-- removed - do validation in the action
-    // @org.hibernate.validator.Email (message = "error.submit.invalidContactEmailAddress")
     public String getContactEmail() {
         return contactEmail;
     }

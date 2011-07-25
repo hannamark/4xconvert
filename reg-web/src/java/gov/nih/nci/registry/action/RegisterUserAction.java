@@ -43,9 +43,6 @@ import com.opensymphony.xwork2.ActionSupport;
  *
  */
 public class RegisterUserAction extends ActionSupport {
-    /**
-     *
-     */
     private static final String RETYPE_PW_FIELD = "registryUserWebDTO.retypePassword";
     private static final long serialVersionUID = 1L;
     private static final Logger LOG  = Logger.getLogger(RegisterUserAction.class);
@@ -127,9 +124,8 @@ public class RegisterUserAction extends ActionSupport {
         String decodedEmailAddress = null;
 
         // decode only if the value is not null, since user can select my account link
-        EncoderDecoder encoderDecoder = new gov.nih.nci.registry.util.EncoderDecoder();
         if (emailAddress != null) {
-            decodedEmailAddress =  encoderDecoder.decodeString(emailAddress);
+            decodedEmailAddress =  new EncoderDecoder().decodeString(emailAddress);
             setEmailAddress(decodedEmailAddress);
         }
 
@@ -204,7 +200,7 @@ public class RegisterUserAction extends ActionSupport {
      * @return String
      */
     public String updateAccount() {
-        String redirectPage =  null;
+        String redirectPage = null;
         // first validate the form fields before creating user
         validateForm(true, registryUserWebDTO.getId() != null);
         if (hasFieldErrors()) {
@@ -271,27 +267,9 @@ public class RegisterUserAction extends ActionSupport {
             }
         }
 
-        // check if it's  update action
         if (isExistingUser) {
-            String loginName =  ServletActionContext.getRequest().getRemoteUser();
-            if (loginName != null) {
-                redirectPage = "myAccount";
-            } else {
-                userAction =  "reset";
-                redirectPage = Constants.REDIRECT_TO_LOGIN;
-            }
             try {
-                if (isChangingGridPassword(registryUserWebDTO.getOldPassword(), registryUserWebDTO.getPassword())
-                        && registryUserWebDTO.isPasswordEditingAllowed()) {
-                    // updating the grid password programmatically
-                    PaRegistry.getGridAccountService().changePassword(registryUserWebDTO.getDisplayUsername(),
-                            registryUserWebDTO.getOldPassword(), registryUserWebDTO.getPassword());
-                }
-                // first update the CSM user
-                CSMUserService.getInstance().updateCSMUser(registryUser, registryUserWebDTO.getUsername(),
-                        null);
-                //now update the RegistryUser
-                PaRegistry.getRegistryUserService().updateUser(registryUser);
+                redirectPage = updateExistingUser(registryUser);
             } catch (PAInvalidPasswordException e) {
                 addFieldError("registryUserWebDTO.oldPassword", getText("error.register.invalidPassword"));
                 return Constants.MY_ACCOUNT_ERROR;
@@ -300,45 +278,8 @@ public class RegisterUserAction extends ActionSupport {
                 return Constants.APPLICATION_ERROR;
             }
         } else { //create user
-            registryUser.setId(null);
-            // first create the CSM user
-            userAction = "create";
-            redirectPage = Constants.REDIRECT_TO_LOGIN;
             try {
-                GridAccountServiceRemote gridService = PaRegistry.getGridAccountService();
-                CSMUserUtil csmUserService = CSMUserService.getInstance();
-                //First create the grid account if one doesn't already
-                if (!registryUserWebDTO.isHasExistingGridAccount()) {
-                    String results = gridService.createGridAccount(registryUser, registryUserWebDTO.getUsername(),
-                            registryUserWebDTO.getPassword());
-                    LOG.debug("Grid User Creation Results: " + results);
-                }
-
-                //Check if IDP URL was previously set, if not, then this is a creation
-                //of a new Grid Account and should use the default GRID_URL (Dorian)
-                String idpURL = (String) ServletActionContext.getRequest().getSession()
-                            .getAttribute("selectedIdentityProvider");
-                idpURL = (idpURL == null) ? GridAccountServiceBean.GRID_URL : idpURL;
-
-                //Then the csm user account being sure to retrieve the long form grid username
-                String username = gridService.getFullyQualifiedUsername(registryUserWebDTO.getUsername(),
-                        registryUserWebDTO.getPassword(), idpURL);
-                User csmUser = csmUserService.getCSMUser(username);
-
-                //Only create a new csm account if one doesn't already exist otherwise just add the user to the proper
-                //group.
-                if (csmUser == null) {
-                    csmUser = csmUserService.createCSMUser(registryUser, username, null);
-                } else {
-                    csmUserService.assignUserToGroup(csmUser.getLoginName(),
-                            PaEarPropertyReader.getCSMSubmitterGroup());
-                }
-                registryUser.setCsmUserId(csmUser.getUserId());
-
-                //Then add the user to the correct grid grouper group.
-                gridService.addGridUserToGroup(username, GridAccountServiceBean.GRIDGROUPER_SUBMITTER_GROUP);
-                //now create the RegistryUser
-                registryUser =  PaRegistry.getRegistryUserService().createUser(registryUser);
+                redirectPage = createUser(registryUser);
             } catch (Exception e) {
                 LOG.error("error while creating user info", e);
                 return Constants.APPLICATION_ERROR;
@@ -350,7 +291,73 @@ public class RegisterUserAction extends ActionSupport {
                     "Your account was successfully updated");
         }
 
-        //redirect to the appropriate page
+        return redirectPage;
+    }
+
+    private String updateExistingUser(RegistryUser registryUser) throws PAException {
+        String redirectPage;
+        String loginName =  ServletActionContext.getRequest().getRemoteUser();
+        if (loginName != null) {
+            redirectPage = "myAccount";
+        } else {
+            userAction =  "reset";
+            redirectPage = Constants.REDIRECT_TO_LOGIN;
+        }
+        if (isChangingGridPassword(registryUserWebDTO.getOldPassword(), registryUserWebDTO.getPassword())
+                && registryUserWebDTO.isPasswordEditingAllowed()) {
+            // updating the grid password programmatically
+            PaRegistry.getGridAccountService().changePassword(registryUserWebDTO.getDisplayUsername(),
+                    registryUserWebDTO.getOldPassword(), registryUserWebDTO.getPassword());
+        }
+        // first update the CSM user
+        CSMUserService.getInstance().updateCSMUser(registryUser, registryUserWebDTO.getUsername(), null);
+        //now update the RegistryUser
+        PaRegistry.getRegistryUserService().updateUser(registryUser);
+        return redirectPage;
+    }
+
+    private String createUser(RegistryUser registryUser) throws PAException {
+        String redirectPage;
+        registryUser.setId(null);
+        // first create the CSM user
+        userAction = "create";
+        redirectPage = Constants.REDIRECT_TO_LOGIN;
+            GridAccountServiceRemote gridService = PaRegistry.getGridAccountService();
+            CSMUserUtil csmUserService = CSMUserService.getInstance();
+            //First create the grid account if one doesn't already
+            if (!registryUserWebDTO.isHasExistingGridAccount()) {
+                String results = gridService.createGridAccount(registryUser, registryUserWebDTO.getUsername(),
+                        registryUserWebDTO.getPassword());
+                LOG.debug("Grid User Creation Results: " + results);
+            }
+
+            //Check if IDP URL was previously set, if not, then this is a creation
+            //of a new Grid Account and should use the default GRID_URL (Dorian)
+            String idpURL = (String) ServletActionContext.getRequest().getSession()
+                    .getAttribute("selectedIdentityProvider");
+            if (idpURL == null) {
+                idpURL = GridAccountServiceBean.GRID_URL;
+            }
+
+            //Then the csm user account being sure to retrieve the long form grid username
+            String username = gridService.getFullyQualifiedUsername(registryUserWebDTO.getUsername(),
+                    registryUserWebDTO.getPassword(), idpURL);
+            User csmUser = csmUserService.getCSMUser(username);
+
+            //Only create a new csm account if one doesn't already exist otherwise just add the user to the proper
+            //group.
+            if (csmUser == null) {
+                csmUser = csmUserService.createCSMUser(registryUser, username, null);
+            } else {
+                csmUserService
+                        .assignUserToGroup(csmUser.getLoginName(), PaEarPropertyReader.getCSMSubmitterGroup());
+            }
+            registryUser.setCsmUserId(csmUser.getUserId());
+
+            //Then add the user to the correct grid grouper group.
+            gridService.addGridUserToGroup(username, GridAccountServiceBean.GRIDGROUPER_SUBMITTER_GROUP);
+            //now create the RegistryUser
+            PaRegistry.getRegistryUserService().createUser(registryUser);
         return redirectPage;
     }
 
@@ -399,9 +406,6 @@ public class RegisterUserAction extends ActionSupport {
         return Constants.MY_ACCOUNT;
     }
 
-    /**
-     * validate the  form elements.
-     */
     private void validateForm(boolean isMyAccountPage, boolean isAccountEdit)  {
         Map<String, String> addFieldError = new HashMap<String, String>();
         InvalidValue[] invalidValues = null;

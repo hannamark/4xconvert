@@ -96,6 +96,7 @@ import gov.nih.nci.registry.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
+import gov.nih.nci.registry.util.TrialUtil;
 
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -375,7 +376,7 @@ public class TrialValidator {
         ServletActionContext.getRequest().getSession().removeAttribute("Sponsorselected");
         ServletActionContext.getRequest().getSession().removeAttribute("PoResponsibleContact");
         ServletActionContext.getRequest().getSession().removeAttribute("PoSummary4Sponsor");
-        ServletActionContext.getRequest().getSession().removeAttribute("trialDTO");
+        ServletActionContext.getRequest().getSession().removeAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
         ServletActionContext.getRequest().getSession().removeAttribute("spidfromviewresults");
         ServletActionContext.getRequest().getSession().removeAttribute("indIdeUpdateList");
         ServletActionContext.getRequest().getSession().removeAttribute("collaboratorsList");
@@ -479,7 +480,7 @@ public class TrialValidator {
             enforceRuleForStartDate(trialDto, addFieldError, startDateFieldName);
         }
         if (isNotEmpty(trialDto.getCompletionDate(), trialDto.getCompletionDateType())) {
-                enforceRuleForCompletionDate(trialDto, addFieldError);
+            enforceRuleForCompletionDate(trialDto, addFieldError);
         }
         enforceRuleForStatusActive(trialDto, addFieldError, startDateFieldName);
         enforceRuleForStatusApproved(trialDto, addFieldError);

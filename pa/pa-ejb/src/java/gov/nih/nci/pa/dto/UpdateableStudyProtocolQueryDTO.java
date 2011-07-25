@@ -99,6 +99,7 @@ public class UpdateableStudyProtocolQueryDTO extends BaseStudyProtocolQueryDTO {
     private String update;
     private String updatedComments;
     private Date updatedDate;
+    private String statusChangeLinkText;
     private LastCreatedDTO lastCreated = new LastCreatedDTO();
     
     
@@ -241,5 +242,19 @@ public class UpdateableStudyProtocolQueryDTO extends BaseStudyProtocolQueryDTO {
      */
     public LastCreatedDTO getLastCreated() {
         return lastCreated;
+    }
+
+    /**
+     * @param statusChangeLinkText the statusChangeLinkText to set
+     */
+    public void setStatusChangeLinkText(String statusChangeLinkText) {
+        this.statusChangeLinkText = statusChangeLinkText;
+    }
+
+    /**
+     * @return the statusChangeLinkText
+     */
+    public String getStatusChangeLinkText() {
+        return statusChangeLinkText;
     }
 }

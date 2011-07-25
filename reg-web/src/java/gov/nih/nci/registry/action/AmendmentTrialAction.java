@@ -109,9 +109,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -135,7 +133,6 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
     private TrialDTO trialDTO;
     private String trialAction = null;
     private String studyProtocolId = null;
-    private static String sessionTrialDTO = "trialDTO";
     private final TrialUtil trialUtil = new TrialUtil();
 
     /**
@@ -173,7 +170,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
             trialDTO = new TrialDTO();
             util.getTrialDTOFromDb(studyProtocolIi, trialDTO);
             TrialValidator.addSessionAttributes(trialDTO);
-            ServletActionContext.getRequest().getSession().setAttribute(sessionTrialDTO, trialDTO);
+            ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
             setPageFrom("amendTrial");
             LOG.info("Trial retrieved: " + trialDTO.getOfficialTitle());
         } catch (Exception e) {
@@ -244,7 +241,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
             return ERROR;
         }
         TrialValidator.removeSessionAttributes();
-        ServletActionContext.getRequest().getSession().setAttribute(sessionTrialDTO, trialDTO);
+        ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
         LOG.info("Calling the review page...");
         return "review";
     }
@@ -290,7 +287,8 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
      * @return s
      */
     public String edit() {
-        trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);
+        trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession()
+                .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
         trialUtil.populateRegulatoryList(trialDTO);
         TrialValidator.addSessionAttributes(trialDTO);
         setDocumentsInSession(trialDTO);
@@ -302,7 +300,8 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
      * @return s
      */
     public String amend() {
-        trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);
+        trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession()
+                .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
         if (trialDTO == null) {
             return ERROR;
         }
@@ -398,32 +397,46 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
         if (StringUtils.isBlank(trialDTO.getAmendmentDate())) {
             addFieldError("trialDTO.amendmentDate", getText("error.submit.amendmentDate"));
         }
-        if (!RegistryUtil.isValidDate(trialDTO.getAmendmentDate())) {
-            addFieldError("trialDTO.amendmentDate", getText("error.submit.invalidDate"));
-        } else {
+        if (RegistryUtil.isValidDate(trialDTO.getAmendmentDate())) {
             Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
             if (currentTimeStamp.before(PAUtil.dateStringToTimestamp(trialDTO.getAmendmentDate()))) {
                 addFieldError("trialDTO.amendmentDate", getText("error.submit.invalidAmendDate"));
             }
+        } else {
+            addFieldError("trialDTO.amendmentDate", getText("error.submit.invalidDate"));
         }
         TrialValidator validator = new TrialValidator();
-        Map<String, String> err = new HashMap<String, String>();
-        err = validator.validateTrial(trialDTO);
-        addErrors(err);
+        addErrors(validator.validateTrial(trialDTO));
         // validate trial status and dates specific for amendment
-        if (StringUtils.isNotBlank(trialDTO.getStatusCode()) && RegistryUtil.isValidDate(trialDTO.getStatusDate())
-                && RegistryUtil.isValidDate(trialDTO.getCompletionDate())
-                && RegistryUtil.isValidDate(trialDTO.getStartDate())
-                && validator.isTrialStatusOrDateChanged(trialDTO)) {
-            Collection<String> errDate = validator.enforceBusinessRulesForDates(trialDTO);
-            if (!errDate.isEmpty()) {
-                for (String msg : errDate) {
-                    addActionError(msg);
-                }
-            }
-        }
+        validateStatusAndDate();
         // validate the docs
         validateDocuments();
+    }
+    
+    private void validateStatusAndDate() throws PAException {
+        if (doStatusDatesRequireBusinessRuleValidation()) {
+            findStatusDateBusinessRulesErrors();
+        }
+        validateStatusCode();
+    }
+
+    private boolean doStatusDatesRequireBusinessRuleValidation() throws PAException {
+        return StringUtils.isNotBlank(trialDTO.getStatusCode()) && RegistryUtil.isValidDate(trialDTO.getStatusDate())
+                && RegistryUtil.isValidDate(trialDTO.getCompletionDate())
+                && RegistryUtil.isValidDate(trialDTO.getStartDate())
+                && new TrialValidator().isTrialStatusOrDateChanged(trialDTO);
+    }
+
+    private void findStatusDateBusinessRulesErrors() throws PAException {
+        Collection<String> errDate = new TrialValidator().enforceBusinessRulesForDates(trialDTO);
+        if (!errDate.isEmpty()) {
+            for (String msg : errDate) {
+                addActionError(msg);
+            }
+        }
+    }
+
+    private void validateStatusCode() {
         // Only allow completing amendment submission of the pre-IRB approved study is the
         // current trial status 'In-Review' is replaced with 'Approved'.
         if (StringUtils.isNotBlank(trialDTO.getStatusCode())
@@ -432,7 +445,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
                     + " current trial status 'In-Review' with 'Approved'");
         }
     }
-
+    
     /**
      * @return the trialAction
      */

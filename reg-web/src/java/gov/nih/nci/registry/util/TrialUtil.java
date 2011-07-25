@@ -69,6 +69,10 @@ import org.apache.struts2.ServletActionContext;
 public class TrialUtil extends TrialConvertUtils {
 
     private CorrelationUtilsRemote correlationUtils;
+    /**
+     * Session Attribute of Trial DTO.
+     */
+    public static final String SESSION_TRIAL_ATTRIBUTE = "trialDTO";
 
     /**
      * Default constructor.
@@ -500,6 +504,23 @@ public class TrialUtil extends TrialConvertUtils {
         }
     }
 
+    
+
+    /**
+     * Copy Status data from the source to the destination Trial.
+     * @param copyTo the destination Trial to be updated
+     * @param copyFrom the source Trial
+     */
+    public void copyStatusInformation(TrialDTO copyTo, TrialDTO copyFrom) {
+        copyTo.setStatusCode(copyFrom.getStatusCode());
+        copyTo.setStatusDate(copyFrom.getStatusDate());
+        copyTo.setStartDate(copyFrom.getStartDate());
+        copyTo.setStartDateType(copyFrom.getStartDateType());
+        copyTo.setCompletionDate(copyFrom.getCompletionDate());
+        copyTo.setCompletionDateType(copyFrom.getCompletionDateType());
+        copyTo.setReason(copyFrom.getReason());
+    }
+    
    /**
     * updates the studyprocol dto with the trail details and status information.
     * @param trialDTO TrialDTO
@@ -628,17 +649,7 @@ public class TrialUtil extends TrialConvertUtils {
      */
     @SuppressWarnings("unchecked")
     public BaseTrialDTO saveDraft(BaseTrialDTO trialDTO) throws PAException {
-        StringBuffer errMsg =  new StringBuffer();
-         //lead org local id and lead org is mandatory
-        if (StringUtils.isEmpty(trialDTO.getLeadOrgTrialIdentifier())) {
-            errMsg.append("Lead Organization Trial Identifier is required.");
-        }
-        if (StringUtils.isEmpty(trialDTO.getLeadOrganizationIdentifier())) {
-            errMsg.append("Lead Organization is required.");
-        }
-        if (errMsg.length() > 1) {
-            throw new PAException(errMsg.toString());
-        }
+        validateLeadOrganization(trialDTO);
 
         Ii tempStudyProtocolIi = null;
         List<TrialFundingWebDTO> grantList = (List<TrialFundingWebDTO>) ServletActionContext.getRequest()
@@ -652,7 +663,6 @@ public class TrialUtil extends TrialConvertUtils {
                 fundingDTOS.add(convertToStudyFundingStage(fundingDto));
             }
         }
-        //inds
         if (CollectionUtils.isNotEmpty(indList)) {
             for (TrialIndIdeDTO indDto : indList) {
                 indDTOS.add(convertToStudyIndIdeStage(indDto));
@@ -682,6 +692,19 @@ public class TrialUtil extends TrialConvertUtils {
        }
        trialDTO.setStudyProtocolId(tempStudyProtocolIi.getExtension());
         return trialDTO;
+    }
+
+    private void validateLeadOrganization(BaseTrialDTO trialDTO) throws PAException {
+        StringBuffer errMsg =  new StringBuffer();
+        if (StringUtils.isEmpty(trialDTO.getLeadOrgTrialIdentifier())) {
+            errMsg.append("Lead Organization Trial Identifier is required.");
+        }
+        if (StringUtils.isEmpty(trialDTO.getLeadOrganizationIdentifier())) {
+            errMsg.append("Lead Organization is required.");
+        }
+        if (errMsg.length() > 1) {
+            throw new PAException(errMsg.toString());
+        }
     }
 
     /**

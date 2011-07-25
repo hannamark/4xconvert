@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
@@ -33,19 +32,6 @@ import com.mockrunner.mock.web.MockHttpSession;
  */
 public class UpdateTrialActionTest extends AbstractRegWebTest {
     private final UpdateTrialAction action = new UpdateTrialAction();
-    //private static CtrpHibernateHelper testHelper = new TestHibernateHelper();
-    @Before
-    public void setup() {
-      /*  HibernateUtil.testHelper = testHelper;
-        Session session = HibernateUtil.getCurrentSession();
-        session.clear();*/
-    }
-    @Test
-    public void testServletResponseProperty(){
-        assertNull(action.getServletResponse());
-        action.setServletResponse(null);
-        assertNull(action.getServletResponse());
-    }
     @Test
     public void testTrialActionProperty(){
        assertNull(action.getTrialAction());
@@ -210,7 +196,6 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         request.setupAddParameter("studyProtocolId", "1");
         request.setSession(session);
         ServletActionContext.setRequest(request);
-        //primeData();
         action.view();
     }
     @Test

@@ -132,7 +132,6 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
 
     private static final Logger LOG = Logger.getLogger(UpdateProprietaryTrialAction.class);
     private static final long serialVersionUID = 1L;
-    private static final String SESSION_TRIAL_DTO = "trialDTO";
     private HttpServletResponse servletResponse;
     private ProprietaryTrialDTO trialDTO;
     private final TrialUtil  util = new TrialUtil();
@@ -153,7 +152,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
             util.getProprietaryTrialDTOFromDb(studyProtocolIi, trialDTO);
             setDocumentsInSession();
 
-            ServletActionContext.getRequest().getSession().setAttribute("trialDTO", trialDTO);
+            ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
             setPageFrom("updateProprietaryTrial");
             LOG.debug("Trial retrieved: " + trialDTO.getOfficialTitle());
         } catch (Exception e) {
@@ -188,7 +187,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
         ServletActionContext.getRequest().getSession().removeAttribute(
                 DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName());
         ServletActionContext.getRequest().getSession().removeAttribute(DocumentTypeCode.OTHER.getShortName());
-        ServletActionContext.getRequest().getSession().setAttribute(SESSION_TRIAL_DTO, trialDTO);
+        ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
         return "review";
     }
 
@@ -206,7 +205,8 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
      * @return s
      */
     public String edit() {
-        trialDTO = (ProprietaryTrialDTO) ServletActionContext.getRequest().getSession().getAttribute("trialDTO");
+        trialDTO = (ProprietaryTrialDTO) ServletActionContext.getRequest().getSession()
+                .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
         setDocumentsInSession();
         try {
             trialUtil.copyParticipatingSites(IiConverter.convertToStudyProtocolIi(
@@ -225,7 +225,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
      */
     public String update() {
         trialDTO  = (ProprietaryTrialDTO) ServletActionContext.getRequest().getSession().
-            getAttribute(SESSION_TRIAL_DTO);
+            getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
         if (trialDTO == null) {
             return ERROR;
         }

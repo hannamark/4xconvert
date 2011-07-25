@@ -55,7 +55,6 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 @SuppressWarnings("unchecked")
 public class SubmitProprietaryTrialAction extends ManageFileAction implements
         ServletResponseAware {
-    private static final String SESSION_TRIAL_DTO = "trialDTO";
     /**
      *
      */
@@ -130,7 +129,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
         ServletActionContext.getRequest().getSession().removeAttribute(
                 DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName());
         ServletActionContext.getRequest().getSession().removeAttribute(DocumentTypeCode.OTHER.getShortName());
-        ServletActionContext.getRequest().getSession().setAttribute(SESSION_TRIAL_DTO, trialDTO);
+        ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
         return "review";
     }
 
@@ -224,7 +223,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
      */
     public String edit() {
         trialDTO  = (ProprietaryTrialDTO) ServletActionContext.getRequest().
-            getSession().getAttribute(SESSION_TRIAL_DTO);
+            getSession().getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
         setDocumentsInSession();
         return "edit";
     }
@@ -234,7 +233,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
      */
     public String create() {
         trialDTO  = (ProprietaryTrialDTO) ServletActionContext.getRequest().getSession().
-            getAttribute(SESSION_TRIAL_DTO);
+            getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
         if (trialDTO == null) {
             return ERROR;
         }
@@ -269,7 +268,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
             StudyProtocolDTO protocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(
                     studyProtocolIi);
             TrialValidator.removeSessionAttributes();
-            ServletActionContext.getRequest().setAttribute(SESSION_TRIAL_DTO, trialDTO);
+            ServletActionContext.getRequest().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
             ServletActionContext.getRequest().setAttribute("protocolId",
                     PAUtil.getAssignedIdentifier(protocolDTO).getExtension());
             if (StringUtils.isNotEmpty(trialDTO.getStudyProtocolId())) {
@@ -354,7 +353,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
             trialDTO = (ProprietaryTrialDTO) util.saveDraft(trialDTO);
             ServletActionContext.getRequest().setAttribute("protocolId", trialDTO.getStudyProtocolId());
             ServletActionContext.getRequest().setAttribute("partialSubmission", "submit");
-            ServletActionContext.getRequest().setAttribute("trialDTO", trialDTO);
+            ServletActionContext.getRequest().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
         } catch (PAException e) {
             LOG.error(e.getLocalizedMessage());
             addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));

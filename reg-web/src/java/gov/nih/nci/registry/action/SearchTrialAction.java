@@ -1,81 +1,85 @@
-/***
-* caBIG Open Source Software License
-*
-* Copyright Notice.  Copyright 2008, ScenPro, Inc,  (caBIG Participant).   The Clinical Trials Protocol Application
-* was created with NCI funding and is part of  the caBIG initiative. The  software subject to  this notice  and license
-* includes both  human readable source code form and machine readable, binary, object code form (the caBIG Software).
-*
-* This caBIG Software License (the License) is between caBIG  Participant  and  You.  You (or Your) shall  mean a
-* person or an entity, and all other entities that control, are  controlled by,  or  are under common  control  with the
-* entity.  Control for purposes of this definition means
-*
-* (i) the direct or indirect power to cause the direction or management of such entity,whether by contract
-* or otherwise,or
-*
-* (ii) ownership of fifty percent (50%) or more of the outstanding shares, or
-*
-* (iii) beneficial ownership of such entity.
-* License.  Provided that You agree to the conditions described below, caBIG Participant  grants  You a  non-exclusive,
-* worldwide, perpetual, fully-paid-up, no-charge, irrevocable,  transferable  and royalty-free  right and license in its
-* rights in the caBIG Software, including any copyright or patent rights therein, to
-*
-* (i) use,install, disclose, access, operate,  execute, reproduce,  copy, modify, translate,  market,  publicly display,
-* publicly perform, and prepare derivative works of the caBIG Software in any manner and for any  purpose,  and to have
-* or permit others to do so;
-*
-* (ii) make, have made, use, practice, sell, and offer  for sale,  import, and/or  otherwise  dispose of caBIG Software
-* (or portions thereof);
-*
-* (iii) distribute and have distributed  to  and by third   parties the   caBIG  Software  and any   modifications  and
-* derivative works thereof; and (iv) sublicense the  foregoing rights  set  out in (i), (ii) and (iii) to third parties,
-* including the right to license such rights to further third parties. For sake of clarity,and not by way of limitation,
-* caBIG Participant shall have no right of accounting or right of payment from You or Your sub licensees for the rights
-* granted under this License.   This  License  is  granted  at no  charge  to You. Your downloading, copying, modifying,
-* displaying, distributing or use of caBIG Software constitutes acceptance  of  all of the terms and conditions of this
-* Agreement.  If You do not agree to such terms and conditions,  You have no right to download,  copy,  modify, display,
-* distribute or use the caBIG Software.
-*
-* 1.  Your redistributions of the source code for the caBIG Software must retain the above copyright notice, this  list
-* of conditions and the disclaimer and limitation of liability of Article 6 below.   Your redistributions in object code
-* form must reproduce the above copyright notice,  this list of  conditions  and the  disclaimer  of  Article  6  in the
-* documentation and/or other materials provided with the distribution, if any.
-*
-* 2.  Your end-user documentation included with the redistribution, if any,  must include the  following acknowledgment:
-* This product includes software developed by ScenPro, Inc.   If  You  do not include such end-user documentation, You
-* shall include this acknowledgment in the caBIG Software itself, wherever such third-party acknowledgments normally
-* appear.
-*
-* 3.  You may not use the names ScenPro, Inc., The National Cancer Institute, NCI, Cancer Bioinformatics Grid or
-* caBIG to endorse or promote products derived from this caBIG Software.  This License does not authorize You to use
-* any trademarks, service marks, trade names, logos or product names of either caBIG Participant, NCI or caBIG, except
-* as required to comply with the terms of this License.
-*
-* 4.  For sake of clarity, and not by way of limitation, You  may incorporate this caBIG Software into Your proprietary
-* programs and into any third party proprietary programs.  However, if You incorporate the  caBIG Software  into  third
-* party proprietary programs,  You agree  that You are  solely responsible  for obtaining any permission from such third
-* parties required to incorporate the caBIG Software  into such third party proprietary programs and for informing Your
-* sub licensees, including without limitation Your end-users, of their obligation  to  secure  any  required permissions
-* from such third parties before incorporating the caBIG Software into such third party proprietary  software programs.
-* In the event that You fail to obtain such permissions,  You  agree  to  indemnify  caBIG  Participant  for any claims
-* against caBIG Participant by such third parties, except to the extent prohibited by law,  resulting from Your failure
-* to obtain such permissions.
-*
-* 5.  For sake of clarity, and not by way of limitation, You may add Your own copyright statement  to Your modifications
-* and to the derivative works, and You may provide  additional  or  different  license  terms  and  conditions  in  Your
-* sublicenses of modifications of the caBIG  Software,  or  any  derivative  works  of  the caBIG Software as a whole,
-* provided Your use, reproduction,  and  distribution  of the Work otherwise complies with the conditions stated in this
-* License.
-*
-* 6.  THIS caBIG SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES  ( INCLUDING, BUT NOT LIMITED TO,
-* THE IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED.  IN
-* NO EVENT SHALL THE ScenPro, Inc. OR ITS AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-* OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT  LIMITED  TO,  PROCUREMENT OF SUBSTITUTE GOODS  OR SERVICES; LOSS OF USE,
-* DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-* LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
-* IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
-*/
+/**
+ * The software subject to this notice and license includes both human readable
+ * source code form and machine readable, binary, object code form. The reg-web
+ * Software was developed in conjunction with the National Cancer Institute
+ * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
+ * government employees are authors, any rights in such works shall be subject
+ * to Title 17 of the United States Code, section 105.
+ *
+ * This reg-web Software License (the License) is between NCI and You. You (or
+ * Your) shall mean a person or an entity, and all other entities that control,
+ * are controlled by, or are under common control with the entity. Control for
+ * purposes of this definition means (i) the direct or indirect power to cause
+ * the direction or management of such entity, whether by contract or otherwise,
+ * or (ii) ownership of fifty percent (50%) or more of the outstanding shares,
+ * or (iii) beneficial ownership of such entity.
+ *
+ * This License is granted provided that You agree to the conditions described
+ * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
+ * no-charge, irrevocable, transferable and royalty-free right and license in
+ * its rights in the reg-web Software to (i) use, install, access, operate,
+ * execute, copy, modify, translate, market, publicly display, publicly perform,
+ * and prepare derivative works of the reg-web Software; (ii) distribute and
+ * have distributed to and by third parties the reg-web Software and any
+ * modifications and derivative works thereof; and (iii) sublicense the
+ * foregoing rights set out in (i) and (ii) to third parties, including the
+ * right to license such rights to further third parties. For sake of clarity,
+ * and not by way of limitation, NCI shall have no right of accounting or right
+ * of payment from You or Your sub-licensees for the rights granted under this
+ * License. This License is granted at no charge to You.
+ *
+ * Your redistributions of the source code for the Software must retain the
+ * above copyright notice, this list of conditions and the disclaimer and
+ * limitation of liability of Article 6, below. Your redistributions in object
+ * code form must reproduce the above copyright notice, this list of conditions
+ * and the disclaimer of Article 6 in the documentation and/or other materials
+ * provided with the distribution, if any.
+ *
+ * Your end-user documentation included with the redistribution, if any, must
+ * include the following acknowledgment: This product includes software
+ * developed by 5AM and the National Cancer Institute. If You do not include
+ * such end-user documentation, You shall include this acknowledgment in the
+ * Software itself, wherever such third-party acknowledgments normally appear.
+ *
+ * You may not use the names "The National Cancer Institute", "NCI", or "5AM"
+ * to endorse or promote products derived from this Software. This License does
+ * not authorize You to use any trademarks, service marks, trade names, logos or
+ * product names of either NCI or 5AM, except as required to comply with the
+ * terms of this License.
+ *
+ * For sake of clarity, and not by way of limitation, You may incorporate this
+ * Software into Your proprietary programs and into any third party proprietary
+ * programs. However, if You incorporate the Software into third party
+ * proprietary programs, You agree that You are solely responsible for obtaining
+ * any permission from such third parties required to incorporate the Software
+ * into such third party proprietary programs and for informing Your
+ * sub-licensees, including without limitation Your end-users, of their
+ * obligation to secure any required permissions from such third parties before
+ * incorporating the Software into such third party proprietary software
+ * programs. In the event that You fail to obtain such permissions, You agree
+ * to indemnify NCI for any claims against NCI by such third parties, except to
+ * the extent prohibited by law, resulting from Your failure to obtain such
+ * permissions.
+ *
+ * For sake of clarity, and not by way of limitation, You may add Your own
+ * copyright statement to Your modifications and to the derivative works, and
+ * You may provide additional or different license terms and conditions in Your
+ * sublicenses of modifications of the Software, or any derivative works of the
+ * Software as a whole, provided Your use, reproduction, and distribution of the
+ * Work otherwise complies with the conditions stated in this License.
+ *
+ * THIS SOFTWARE IS PROVIDED "AS IS," AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ * (INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+ * NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED. IN NO
+ * EVENT SHALL THE NATIONAL CANCER INSTITUTE, 5AM SOLUTIONS, INC. OR THEIR
+ * AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.coppa.services.LimitOffset;
@@ -131,9 +135,9 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
- *
+ * 
  * @author Bala Nair
- *
+ * 
  */
 public class SearchTrialAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
@@ -186,8 +190,8 @@ public class SearchTrialAction extends ActionSupport {
             if (hasFieldErrors()) {
                 return ERROR;
             }
-            List<StudyProtocolQueryDTO> studyProtocolList =
-                PaRegistry.getProtocolQueryService().getStudyProtocolByCriteria(convertToStudyProtocolQueryCriteria());
+            List<StudyProtocolQueryDTO> studyProtocolList = PaRegistry.getProtocolQueryService()
+                    .getStudyProtocolByCriteria(convertToStudyProtocolQueryCriteria());
             records.addAll(studyProtocolList);
             checkToShowSendXml();
             checkToShowUpdate();
@@ -202,11 +206,11 @@ public class SearchTrialAction extends ActionSupport {
     private void checkToShowSendXml() throws PAException {
         for (StudyProtocolQueryDTO queryDto : records) {
             String dwfs = queryDto.getDocumentWorkflowStatusCode().getCode();
-            List<String> abstractedCodes =
-                Arrays.asList(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode(),
-                        DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode());
+            List<String> abstractedCodes = Arrays.asList(
+                    DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode(),
+                    DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode());
             if (!queryDto.isProprietaryTrial() && abstractedCodes.contains(dwfs)
-                        && queryDto.getCtgovXmlRequiredIndicator() && queryDto.isSearcherTrialOwner()) {
+                    && queryDto.getCtgovXmlRequiredIndicator() && queryDto.isSearcherTrialOwner()) {
                 queryDto.setShowSendXml(true);
             }
         }
@@ -216,22 +220,27 @@ public class SearchTrialAction extends ActionSupport {
         for (StudyProtocolQueryDTO queryDto : records) {
             DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
             StudyStatusCode statusCode = queryDto.getStudyStatusCode();
-            if (dwfs == null || statusCode == null) {
-                queryDto.setUpdate("");
-            }
 
-            if (statusCode != null && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)
-                    && queryDto.isSearcherTrialOwner() && !UPDATEABLE_STATUS.contains(statusCode)) {
-                queryDto.setUpdate("Update");
-            } else {
-                queryDto.setUpdate("");
-            }
+            queryDto.setUpdate("");
+            queryDto.setStatusChangeLinkText("");
 
-            if (queryDto.isProprietaryTrial() && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)
-                    && queryDto.isSearcherTrialOwner()) {
-                queryDto.setUpdate("Update");
+            if (isUpdateableNonProperietaryTrial(queryDto, dwfs, statusCode)
+                    || isUpdateableProprietaryTrial(queryDto, dwfs)) {
+                queryDto.setUpdate(getText("search.trial.update"));
+                queryDto.setStatusChangeLinkText(getText("search.trial.statusChange"));
             }
         }
+    }
+
+    private boolean isUpdateableProprietaryTrial(StudyProtocolQueryDTO queryDto, DocumentWorkflowStatusCode dwfs) {
+        return dwfs != null && queryDto.isProprietaryTrial()
+                && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs) && queryDto.isSearcherTrialOwner();
+    }
+
+    private boolean isUpdateableNonProperietaryTrial(StudyProtocolQueryDTO queryDto, DocumentWorkflowStatusCode dwfs,
+            StudyStatusCode statusCode) {
+        return dwfs != null && statusCode != null && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)
+                && queryDto.isSearcherTrialOwner() && !UPDATEABLE_STATUS.contains(statusCode);
     }
 
     /**
@@ -245,49 +254,44 @@ public class SearchTrialAction extends ActionSupport {
         queryCriteria.setPhaseCode(criteria.getPhaseCode());
         queryCriteria.setPrimaryPurposeCode(criteria.getPrimaryPurposeCode());
         queryCriteria.setPhaseAdditionalQualifierCode(criteria.getPhaseAdditionalQualifierCode());
-        if (StringUtils.isNotEmpty(criteria.getIdentifierType())
-                 && StringUtils.isNotEmpty(criteria.getIdentifier())) {
-            if (criteria.getIdentifierType().equals(Constants.IDENTIFIER_TYPE_NCI)) {
-                queryCriteria.setNciIdentifier(criteria.getIdentifier());
-            } else if (criteria.getIdentifierType().equals(
-                        Constants.IDENTIFIER_TYPE_LEAD_ORG)) {
-                queryCriteria.setLeadOrganizationTrialIdentifier(criteria.getIdentifier());
-            } else if (criteria.getIdentifierType().equals(
-                        Constants.IDENTIFIER_TYPE_NCT)) {
-                queryCriteria.setNctNumber(criteria.getIdentifier());
-            } else if (criteria.getIdentifierType().equals(
-                    Constants.IDENTIFIER_TYPE_OTHER_IDENTIFIER)) {
-                queryCriteria.setOtherIdentifier(criteria.getIdentifier());
-            }
+        if (StringUtils.isNotEmpty(criteria.getIdentifierType()) && StringUtils.isNotEmpty(criteria.getIdentifier())) {
+            convertIdentifierType(queryCriteria);
         }
         if (StringUtils.isNotEmpty(criteria.getOrganizationId())) {
             queryCriteria.setLeadOrganizationId(criteria.getOrganizationId().toString());
         }
-        if (criteria.getParticipatingSiteId() != null
-                && criteria.getParticipatingSiteId().trim().length() > 0) {
+        if (StringUtils.isNotBlank(criteria.getParticipatingSiteId())) {
             queryCriteria.setParticipatingSiteId(criteria.getParticipatingSiteId().toString());
         }
         queryCriteria.setOrganizationType(criteria.getOrganizationType());
-        if (criteria.isMyTrialsOnly()) {
-            queryCriteria.setMyTrialsOnly(Boolean.TRUE);
-        } else {
-            queryCriteria.setMyTrialsOnly(Boolean.FALSE);
-        }
+        queryCriteria.setMyTrialsOnly(criteria.isMyTrialsOnly());
         queryCriteria.setUserLastCreated(UsernameHolder.getUser());
         // exclude rejected protocols during search
         queryCriteria.setExcludeRejectProtocol(Boolean.TRUE);
         if (StringUtils.isNotEmpty(criteria.getPrincipalInvestigatorId())) {
             queryCriteria.setPrincipalInvestigatorId(criteria.getPrincipalInvestigatorId());
         }
-        String loginName =  ServletActionContext.getRequest().getRemoteUser();
+        String loginName = ServletActionContext.getRequest().getRemoteUser();
         RegistryUser loggedInUser = PaRegistry.getRegistryUserService().getUser(loginName);
         queryCriteria.setUserId(loggedInUser.getId());
 
         return queryCriteria;
     }
 
+    private void convertIdentifierType(StudyProtocolQueryCriteria queryCriteria) {
+        if (Constants.IDENTIFIER_TYPE_NCI.equals(criteria.getIdentifierType())) {
+            queryCriteria.setNciIdentifier(criteria.getIdentifier());
+        } else if (Constants.IDENTIFIER_TYPE_LEAD_ORG.equals(criteria.getIdentifierType())) {
+            queryCriteria.setLeadOrganizationTrialIdentifier(criteria.getIdentifier());
+        } else if (Constants.IDENTIFIER_TYPE_NCT.equals(criteria.getIdentifierType())) {
+            queryCriteria.setNctNumber(criteria.getIdentifier());
+        } else if (Constants.IDENTIFIER_TYPE_OTHER_IDENTIFIER.equals(criteria.getIdentifierType())) {
+            queryCriteria.setOtherIdentifier(criteria.getIdentifier());
+        }
+    }
+
     /**
-     *
+     * 
      * @return records
      */
     public List<StudyProtocolQueryDTO> getRecords() {
@@ -295,7 +299,7 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
-     *
+     * 
      * @return SearchProtocolCriteria SearchProtocolCriteria
      */
     public SearchProtocolCriteria getCriteria() {
@@ -303,7 +307,7 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
-     *
+     * 
      * @param criteria SearchProtocolCriteria
      */
     public void setCriteria(SearchProtocolCriteria criteria) {
@@ -311,7 +315,7 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
-     *
+     * 
      * @return studyProtocolId
      */
     public Long getStudyProtocolId() {
@@ -319,7 +323,7 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
-     *
+     * 
      * @param studyProtocolId studyProtocolId
      */
     public void setStudyProtocolId(Long studyProtocolId) {
@@ -329,31 +333,26 @@ public class SearchTrialAction extends ActionSupport {
     private void loadPropTrial(Ii studyProtocolIi) throws PAException, NullifiedRoleException {
         ProprietaryTrialDTO trialDTO = new ProprietaryTrialDTO();
         trialUtils.getProprietaryTrialDTOFromDb(studyProtocolIi, trialDTO);
-        ServletActionContext.getRequest().setAttribute("leadOrganizationName",
-                trialDTO.getLeadOrganizationName());
-        ServletActionContext.getRequest().setAttribute("leadOrgTrialIdentifier",
-                trialDTO.getLeadOrgTrialIdentifier());
+        ServletActionContext.getRequest().setAttribute("leadOrganizationName", trialDTO.getLeadOrganizationName());
+        ServletActionContext.getRequest().setAttribute("leadOrgTrialIdentifier", trialDTO.getLeadOrgTrialIdentifier());
         ServletActionContext.getRequest().setAttribute("nctIdentifier", trialDTO.getNctIdentifier());
-        ServletActionContext.getRequest().setAttribute("assignedIdentifier",
-                trialDTO.getAssignedIdentifier());
-        ServletActionContext.getRequest().setAttribute("summaryFourOrgName",
-                trialDTO.getSummaryFourOrgName());
+        ServletActionContext.getRequest().setAttribute("assignedIdentifier", trialDTO.getAssignedIdentifier());
+        ServletActionContext.getRequest().setAttribute("summaryFourOrgName", trialDTO.getSummaryFourOrgName());
         ServletActionContext.getRequest().setAttribute("summaryFourFundingCategoryCode",
                 trialDTO.getSummaryFourFundingCategoryCode());
-        ServletActionContext.getRequest().setAttribute("participatingSitesList",
-                trialDTO.getParticipatingSitesList());
+        ServletActionContext.getRequest().setAttribute("participatingSitesList", trialDTO.getParticipatingSitesList());
     }
 
     private void loadNonPropTrial(Ii studyProtocolIi, boolean maskFields) throws PAException, NullifiedRoleException {
         TrialDTO trialDTO = new TrialDTO();
         trialUtils.getTrialDTOFromDb(studyProtocolIi, trialDTO);
         if (trialDTO.getTrialType().equals("InterventionalStudyProtocol")) {
-           trialDTO.setTrialType("Interventional");
+            trialDTO.setTrialType("Interventional");
         } else if (trialDTO.getTrialType().equals("ObservationalStudyProtocol")) {
-           trialDTO.setTrialType("Observational");
+            trialDTO.setTrialType("Observational");
         }
         final HttpServletRequest request = ServletActionContext.getRequest();
-        request.setAttribute("trialDTO", trialDTO);
+        request.setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
         getReponsibleParty(trialDTO, maskFields);
         if (!maskFields) {
             if (!trialDTO.getFundingDtos().isEmpty()) {
@@ -365,8 +364,8 @@ public class SearchTrialAction extends ActionSupport {
         }
     }
 
-    private StudyProtocolDTO loadTrial(Ii studyProtocolIi, boolean maskFields)
-        throws PAException, NullifiedRoleException {
+    private StudyProtocolDTO loadTrial(Ii studyProtocolIi, boolean maskFields) throws PAException,
+            NullifiedRoleException {
         ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
         StudyProtocolDTO protocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         if (!PAUtil.isBlNull(protocolDTO.getProprietaryTrialIndicator())
@@ -403,12 +402,12 @@ public class SearchTrialAction extends ActionSupport {
         }
     }
 
-    private void queryTrialDocsAndSetAttributes(Ii studyProtocolIi, StudyProtocolDTO protocolDTO,
-            boolean maskFields) throws PAException {
+    private void queryTrialDocsAndSetAttributes(Ii studyProtocolIi, StudyProtocolDTO protocolDTO, boolean maskFields)
+            throws PAException {
         ServletActionContext.getRequest().setAttribute(Constants.TRIAL_SUMMARY, protocolDTO);
         // query the trial documents
-        List<DocumentDTO> documentISOList =
-            PaRegistry.getDocumentService().getDocumentsByStudyProtocol(studyProtocolIi);
+        List<DocumentDTO> documentISOList = PaRegistry.getDocumentService()
+                .getDocumentsByStudyProtocol(studyProtocolIi);
         if (!maskFields && !documentISOList.isEmpty()) {
             ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
         }
@@ -466,8 +465,8 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     private void validateOrganizationType() {
-        if (StringUtils.isNotEmpty(criteria.getOrganizationType()) && (criteria.getOrganizationId() == null
-                && criteria.getParticipatingSiteId() == null)) {
+        if (StringUtils.isNotEmpty(criteria.getOrganizationType())
+                && (criteria.getOrganizationId() == null && criteria.getParticipatingSiteId() == null)) {
             addFieldError("criteria.organizationId", getText("error.search.organization"));
 
         }
@@ -493,7 +492,7 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
-     *
+     * 
      * @return st
      */
     public String getMyPartiallySavedTrial() {
@@ -502,11 +501,11 @@ public class SearchTrialAction extends ActionSupport {
         criteriaSpDTO.setOfficialTitle(StConverter.convertToSt(criteria.getOfficialTitle()));
         criteriaSpDTO.setPhaseCode(CdConverter.convertStringToCd(criteria.getPhaseCode()));
         criteriaSpDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(criteria.getPrimaryPurposeCode()));
-        criteriaSpDTO.setPhaseAdditionalQualifierCode(CdConverter.convertStringToCd(
-                criteria.getPhaseAdditionalQualifierCode()));
-        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
+        criteriaSpDTO.setPhaseAdditionalQualifierCode(CdConverter.convertStringToCd(criteria
+                .getPhaseAdditionalQualifierCode()));
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         try {
-            List<StudyProtocolStageDTO> spStageDTOs =  PaRegistry.getStudyProtocolStageService().search(criteriaSpDTO,
+            List<StudyProtocolStageDTO> spStageDTOs = PaRegistry.getStudyProtocolStageService().search(criteriaSpDTO,
                     limit);
             records = convertToSpQueryDTO(spStageDTOs);
         } catch (PAException e) {
@@ -518,8 +517,9 @@ public class SearchTrialAction extends ActionSupport {
         ServletActionContext.getRequest().setAttribute("partialSubmission", "yes");
         return SUCCESS;
     }
+
     /**
-     *
+     * 
      * @return view
      */
     public String partiallySubmittedView() {
@@ -527,30 +527,38 @@ public class SearchTrialAction extends ActionSupport {
             addActionError("study protocol id cannot null.");
             return ERROR;
         }
-        BaseTrialDTO trialDTO = new BaseTrialDTO();
         try {
-            trialDTO =  trialUtils.getTrialDTOForPartiallySumbissionById(studyProtocolId.toString());
-            if (trialDTO instanceof TrialDTO) {
-                if (StringUtils.isNotEmpty(((TrialDTO) trialDTO).getSelectedRegAuth())) {
-                    String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
-                            ((TrialDTO) trialDTO).getSelectedRegAuth()), "RegulatoryAuthority");
-                    ((TrialDTO) trialDTO).setTrialOversgtAuthOrgName(orgName);
-                }
-                if (StringUtils.isNotEmpty(((TrialDTO) trialDTO).getLst())) {
-                    String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
-                            Long.valueOf(((TrialDTO) trialDTO).getLst()), "Country");
-                    ((TrialDTO) trialDTO).setTrialOversgtAuthCountryName(countryName);
-                }
+            BaseTrialDTO baseTrialDTO = trialUtils.getTrialDTOForPartiallySumbissionById(studyProtocolId.toString());
+            if (baseTrialDTO instanceof TrialDTO) {
+                setTrialOversightOrgIfAppropriate((TrialDTO) baseTrialDTO);
+                setTrialOversightCountryIfAppropriate((TrialDTO) baseTrialDTO);
             }
-            ServletActionContext.getRequest().setAttribute("trialDTO", trialDTO);
+            ServletActionContext.getRequest().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, baseTrialDTO);
             ServletActionContext.getRequest().setAttribute("partialSubmission", "search");
         } catch (PAException e) {
             addActionError(e.getMessage());
         } catch (NullifiedRoleException e) {
             addActionError(e.getMessage());
         }
-     return "partialView";
+        return "partialView";
     }
+
+    private void setTrialOversightCountryIfAppropriate(TrialDTO trialDTO) throws PAException {
+        if (StringUtils.isNotEmpty(trialDTO.getLst())) {
+            String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
+                    Long.valueOf(trialDTO.getLst()), "Country");
+            trialDTO.setTrialOversgtAuthCountryName(countryName);
+        }
+    }
+
+    private void setTrialOversightOrgIfAppropriate(TrialDTO trialDTO) throws PAException {
+        if (StringUtils.isNotEmpty(trialDTO.getSelectedRegAuth())) {
+            String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
+                    Long.valueOf(trialDTO.getSelectedRegAuth()), "RegulatoryAuthority");
+            trialDTO.setTrialOversgtAuthOrgName(orgName);
+        }
+    }
+
     private List<StudyProtocolQueryDTO> convertToSpQueryDTO(List<StudyProtocolStageDTO> spStageDTOs) {
         StudyProtocolQueryDTO spQueryDTO;
         List<StudyProtocolQueryDTO> returnList = new ArrayList<StudyProtocolQueryDTO>();
@@ -558,30 +566,29 @@ public class SearchTrialAction extends ActionSupport {
             spQueryDTO = new StudyProtocolQueryDTO();
             spQueryDTO.setStudyProtocolId(IiConverter.convertToLong(studyProtocolStageDTO.getIdentifier()));
             spQueryDTO.setOfficialTitle(StConverter.convertToString(studyProtocolStageDTO.getOfficialTitle()));
-            spQueryDTO.setPhaseCode(PhaseCode.getByCode(CdConverter.convertCdToString(
-                studyProtocolStageDTO.getPhaseCode())));
-            spQueryDTO.setPrimaryPurpose(CdConverter.convertCdToString(
-                studyProtocolStageDTO.getPrimaryPurposeCode()));
-            spQueryDTO.setPrimaryPurposeOtherText(CdConverter.convertCdToString(
-                studyProtocolStageDTO.getPrimaryPurposeAdditionalQualifierCode()));
-            spQueryDTO.setLocalStudyProtocolIdentifier(StConverter.convertToString(
-                studyProtocolStageDTO.getLocalProtocolIdentifier()));
+            spQueryDTO.setPhaseCode(PhaseCode.getByCode(CdConverter.convertCdToString(studyProtocolStageDTO
+                    .getPhaseCode())));
+            spQueryDTO.setPrimaryPurpose(CdConverter.convertCdToString(studyProtocolStageDTO.getPrimaryPurposeCode()));
+            spQueryDTO.setPrimaryPurposeOtherText(CdConverter.convertCdToString(studyProtocolStageDTO
+                    .getPrimaryPurposeAdditionalQualifierCode()));
+            spQueryDTO.setLocalStudyProtocolIdentifier(StConverter.convertToString(studyProtocolStageDTO
+                    .getLocalProtocolIdentifier()));
 
-            spQueryDTO.setLeadOrganizationId(IiConverter.convertToLong(
-                studyProtocolStageDTO.getLeadOrganizationIdentifier()));
+            spQueryDTO.setLeadOrganizationId(IiConverter.convertToLong(studyProtocolStageDTO
+                    .getLeadOrganizationIdentifier()));
             if (PAUtil.isIiNotNull(studyProtocolStageDTO.getLeadOrganizationIdentifier())) {
-                spQueryDTO.setLeadOrganizationName(trialUtils.getOrgName(
-                      studyProtocolStageDTO.getLeadOrganizationIdentifier()));
+                spQueryDTO.setLeadOrganizationName(trialUtils.getOrgName(studyProtocolStageDTO
+                        .getLeadOrganizationIdentifier()));
             }
             spQueryDTO.setPiId(IiConverter.convertToLong(studyProtocolStageDTO.getPiIdentifier()));
             if (PAUtil.isIiNotNull(studyProtocolStageDTO.getPiIdentifier())) {
                 spQueryDTO.setPiFullName(trialUtils.getPersonName(studyProtocolStageDTO.getPiIdentifier()));
             }
-            spQueryDTO.setStudyStatusCode(StudyStatusCode.getByCode(CdConverter.convertCdToString(
-                studyProtocolStageDTO.getTrialStatusCode())));
+            spQueryDTO.setStudyStatusCode(StudyStatusCode.getByCode(CdConverter.convertCdToString(studyProtocolStageDTO
+                    .getTrialStatusCode())));
             spQueryDTO.setStudyStatusDate(TsConverter.convertToTimestamp(studyProtocolStageDTO.getTrialStatusDate()));
-            spQueryDTO.getLastCreated().setUserLastCreated(StConverter
-                    .convertToString(studyProtocolStageDTO.getUserLastCreated()));
+            spQueryDTO.getLastCreated().setUserLastCreated(
+                    StConverter.convertToString(studyProtocolStageDTO.getUserLastCreated()));
             if (!PAUtil.isBlNull(studyProtocolStageDTO.getProprietaryTrialIndicator())
                     && BlConverter.convertToBoolean(studyProtocolStageDTO.getProprietaryTrialIndicator())) {
                 spQueryDTO.setProprietaryTrial(true);
@@ -595,7 +602,7 @@ public class SearchTrialAction extends ActionSupport {
 
     /**
      * Send xml.
-     *
+     * 
      * @return the string
      */
     public String sendXml() {
@@ -605,29 +612,30 @@ public class SearchTrialAction extends ActionSupport {
         String fullName = regUserWebDto.getFirstName() + " " + regUserWebDto.getLastName();
         String emailAddress = regUserWebDto.getEmailAddress();
         try {
-             List<AbstractionCompletionDTO> errorList = PaRegistry.getAbstractionCompletionService()
-                     .validateAbstractionCompletion(studyProtocolIi);
-             if (CollectionUtils.isEmpty(errorList) || !hasAnyAbstractionErrors(errorList)) {
+            List<AbstractionCompletionDTO> errorList = PaRegistry.getAbstractionCompletionService()
+                    .validateAbstractionCompletion(studyProtocolIi);
+            if (CollectionUtils.isEmpty(errorList) || !hasAnyAbstractionErrors(errorList)) {
                 PaRegistry.getMailManagerService().sendXMLAndTSREmail(fullName, emailAddress, studyProtocolIi);
-             } else {
-                  ServletActionContext.getRequest().setAttribute("failureMessage" ,
-                         "As Abstraction is not valid, sending letter is disabled .");
-             }
+            } else {
+                ServletActionContext.getRequest().setAttribute("failureMessage",
+                        "As Abstraction is not valid, sending letter is disabled .");
+            }
         } catch (PAException e) {
-             addActionError("Exception while sending XML email:" + e.getMessage());
+            addActionError("Exception while sending XML email:" + e.getMessage());
         }
         return query();
     }
+
     private boolean hasAnyAbstractionErrors(List<AbstractionCompletionDTO> errorList) {
         boolean errorExist = false;
-         for (AbstractionCompletionDTO  absDto : errorList) {
+        for (AbstractionCompletionDTO absDto : errorList) {
             if (absDto.getErrorType().equalsIgnoreCase("error")) {
                 errorExist = true;
                 break;
             }
-         }
+        }
         return errorExist;
-     }
+    }
 
     /**
      * @return the identifier

@@ -138,7 +138,6 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
     private Long id = null;
     private HttpServletResponse servletResponse;
     private String trialAction = "submit";
-    private static String sessionTrialDTO = "trialDTO";
     private TrialDTO trialDTO;
     private final TrialUtil  trialUtil = new TrialUtil();
     private String sum4FundingCatCode;
@@ -174,7 +173,8 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
      */
     public String create() {
         try {
-            trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);
+            trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession()
+                    .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
             if (trialDTO == null) {
                return ERROR;
             }
@@ -403,7 +403,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             return ERROR;
         }
         TrialValidator.removeSessionAttributes();
-        ServletActionContext.getRequest().getSession().setAttribute("trialDTO", trialDTO);
+        ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
         return "review";
     }
 
@@ -421,7 +421,8 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
      * @return s
      */
     public String edit() {
-        trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession().getAttribute(sessionTrialDTO);
+        trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession()
+                .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
         TrialValidator.addSessionAttributes(trialDTO);
         trialUtil.populateRegulatoryList(trialDTO);
         setDocumentsInSession(trialDTO);
@@ -470,7 +471,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             trialDTO = (TrialDTO) trialUtil.saveDraft(trialDTO);
             ServletActionContext.getRequest().setAttribute("protocolId", trialDTO.getStudyProtocolId());
             ServletActionContext.getRequest().setAttribute("partialSubmission", "submit");
-            ServletActionContext.getRequest().setAttribute("trialDTO", trialDTO);
+            ServletActionContext.getRequest().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
         } catch (PAException e) {
             LOG.error(e.getMessage());

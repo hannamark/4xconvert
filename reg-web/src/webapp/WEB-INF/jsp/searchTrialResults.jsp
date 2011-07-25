@@ -76,6 +76,16 @@
              </display:column>
              <display:column titleKey="search.trial.amend" href="amendTrialview.action" property="amend" paramId="studyProtocolId" paramProperty="studyProtocolId"
                              sortable="false" headerClass="sortable" media="html"/>
+             <display:column titleKey="search.trial.statusChange" sortable="false" headerClass="sortable" media="html">
+                <s:if test="%{#attr.row.proprietaryTrial}">
+                    <s:url id="updateTrialStatusUrl" action="updateTrialStatuspopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+                    <a href="#" onclick="showPopup('${updateTrialStatusUrl}', '', 'Update Trial Status');"><s:property value="%{#attr.row.statusChangeLinkText}" /></a>
+                </s:if>
+                <s:else>
+                    <s:url id="updateTrialStatusUrl" action="updateTrialStatuspopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+                    <a href="#" onclick="showPopup('${updateTrialStatusUrl}', '', 'Update Trial Status');"><s:property value="%{#attr.row.statusChangeLinkText}" /></a>
+                </s:else>
+             </display:column>
              <display:column class="title" title="Action" sortable="false" headerScope="col" scope="row" media="html">
                  <s:if test="%{#attr.row.showSendXml.booleanValue() == true}">
                      <a href="#" onclick="sendXml('${row.studyProtocolId}');">Send XML/TSR</a>
