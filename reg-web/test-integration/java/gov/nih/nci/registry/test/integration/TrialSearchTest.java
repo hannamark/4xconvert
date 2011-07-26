@@ -95,9 +95,7 @@ public class TrialSearchTest  extends AbstractRegistrySeleniumTest {
      */
     @Test
     public void testExportSearchResults() {
-        loginAsAbstractor();
-        isLoggedIn();
-        handleDisclaimer(true);
+        loginAndAcceptDisclaimer();
 
         clickAndWait("searchTrialsMenuOption");
         waitForElementById("searchMyTrialsBtn", 5);

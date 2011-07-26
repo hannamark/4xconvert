@@ -94,8 +94,7 @@ public class SetupPaTrialData extends AbstractRegistrySeleniumTest {
 
     @Test
     public void testRegisterAssignOwnershipTrial() throws Exception {
-        loginAsAbstractor();
-        handleDisclaimer(true);
+        loginAndAcceptDisclaimer();
         registerTrial("Test Assign Ownership Trial created by Selenium.", "LEAD-ORG3");
         assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
         assertTrue("No success message found",
@@ -104,8 +103,7 @@ public class SetupPaTrialData extends AbstractRegistrySeleniumTest {
 
     @Test
     public void testRegisterDuplicateTrial() throws Exception {
-        loginAsAbstractor();
-        handleDisclaimer(true);
+        loginAndAcceptDisclaimer();
         registerTrial("Test Prevent Duplicate Trial #1 created by Selenium.", "LEAD-ORG4");
         assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
         assertTrue("No success message found",
@@ -119,8 +117,7 @@ public class SetupPaTrialData extends AbstractRegistrySeleniumTest {
 
     @Test
     public void testRegisterStatusTransitionTrials() throws Exception {
-        loginAsAbstractor();
-        handleDisclaimer(true);
+        loginAndAcceptDisclaimer();
         registerTrial("Test Trial Status Trial created by Selenium.", "LEAD-ORG6");
         assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
         assertTrue("No success message found",

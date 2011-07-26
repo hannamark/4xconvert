@@ -142,10 +142,15 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
     public void loginAsSubmitter() {
         login("submitter-ci", "Coppa#12345");
     }
-
+    
     public void verifyDisclaimer() {
         loginAsAbstractor();
         handleDisclaimer(false);
+        loginAsAbstractor();
+        handleDisclaimer(true);
+    }
+
+    public void loginAndAcceptDisclaimer() {
         loginAsAbstractor();
         handleDisclaimer(true);
     }

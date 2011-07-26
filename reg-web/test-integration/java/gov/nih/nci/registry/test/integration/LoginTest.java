@@ -97,7 +97,7 @@ public class LoginTest extends AbstractRegistrySeleniumTest {
      */
     @Test
     public void testLogin() throws Exception {
-        loginAsAbstractor();
+        loginAndAcceptDisclaimer();
         isLoggedIn();
     }
 }

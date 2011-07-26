@@ -98,9 +98,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
      */
     @Test
     public void testRegisterTrial() throws Exception {
-        loginAsAbstractor();
-        isLoggedIn();
-        handleDisclaimer(true);
+        loginAndAcceptDisclaimer();
         // register a trial
         registerTrial("Test Trial created by Selenium.", "LEAD-ORG");
         assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
@@ -132,9 +130,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
      */
     @Test
     public void testSaveDraftTrial() throws Exception {
-        loginAsAbstractor();
-        isLoggedIn();
-        handleDisclaimer(true);
+        loginAndAcceptDisclaimer();
         // register a trial
         registerDraftTrial("Test Trial Draft created by Selenium.", "LEAD-ORG");
         assertTrue("No success message found",
@@ -147,9 +143,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
      */
     @Ignore("Assumes po is up and running. Needs to be fixed.")
     public void lookupOrganization() throws Exception {
-        loginAsAbstractor();
-        isLoggedIn();
-        handleDisclaimer(true);
+        loginAndAcceptDisclaimer();
         clickAndWaitAjax("registerTrialMenuOption");
         selenium.selectFrame("popupFrame");
         waitForElementById("summaryFourFundingCategoryCode", 60);
@@ -191,9 +185,7 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
      */
     @Ignore("Assumes po is up and running. Needs to be fixed.")
     public void lookupPerson() throws Exception {
-        loginAsAbstractor();
-        isLoggedIn();
-        handleDisclaimer(true);
+        loginAndAcceptDisclaimer();
         clickAndWaitAjax("registerTrialMenuOption");
         selenium.selectFrame("popupFrame");
         waitForElementById("summaryFourFundingCategoryCode", 60);

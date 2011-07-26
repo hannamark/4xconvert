@@ -95,8 +95,7 @@ public class ViewTrialTest extends AbstractRegistrySeleniumTest {
 
     @Test
     public void testAssignOwnership() {
-        loginAsAbstractor();
-        handleDisclaimer(true);
+        loginAndAcceptDisclaimer();
         clickAndWait("id=manageTrialOwnershipMenuOption");
         selenium.click("id=chk2");
         selenium.click("//table[@id='studyProtocolRow']/tbody/tr[1]/td[3]/input");
@@ -107,15 +106,13 @@ public class ViewTrialTest extends AbstractRegistrySeleniumTest {
 
     @Test
     public void testViewTrialAsSubmitter() {
-        loginAsAbstractor();
-        handleDisclaimer(true);
+        loginAndAcceptDisclaimer();
         verifyTrialView();
     }
 
     @Test
     public void testViewTrialAsOwner() {
-        loginAsSubmitter();
-        handleDisclaimer(true);
+        loginAndAcceptDisclaimer();
         verifyTrialView();
     }
 
