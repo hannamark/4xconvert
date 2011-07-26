@@ -41,7 +41,9 @@
     <s:form name="updateTrialStatusForm" id="updateTrialStatusForm" action="updateTrialStatuspopupupdate">
         <s:hidden name="trialDTO.identifier"/>
         <s:hidden name="studyProtocolId"/>
-        <%@ include file="/WEB-INF/jsp/nodecorate/trialStatus.jsp" %>
+        <table class="form">
+            <%@ include file="/WEB-INF/jsp/nodecorate/trialStatus.jsp" %>
+        </table>    
         <div class="actionsrow">
             <del class="btnwrapper">
                 <ul class="btnrow">

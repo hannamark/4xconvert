@@ -85,6 +85,8 @@ import gov.nih.nci.registry.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -93,7 +95,6 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Anu Sharma
  *
  */
-@SuppressWarnings("unchecked")
 public class ManageOtherIdentifiersAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
     private int uuid;
@@ -127,27 +128,31 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
     }
 
     /**
-     *
+     * 
      * @return s
      */
+    @SuppressWarnings("unchecked")
     public String addOtherIdentifier() {
-        List<Ii> sessionList =
-                (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(
-                        Constants.SECONDARY_IDENTIFIERS_LIST);
-        Ii sp;
-        if (sessionList != null) {
-            sp = IiConverter.convertToOtherIdentifierIi(otherIdentifier);
-            sessionList.add(sp);
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST,
-                    sessionList);
-        } else {
-            List<Ii> tempList = new ArrayList<Ii>();
-            sp = IiConverter.convertToOtherIdentifierIi(otherIdentifier);
-            tempList.add(sp);
-            ServletActionContext.getRequest().getSession().setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST, tempList);
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        List<Ii> sessionList = (List<Ii>) session.getAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
+        if (sessionList == null) {
+            sessionList = new ArrayList<Ii>();
+            session.setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST, sessionList);
         }
-
+        Ii sp = IiConverter.convertToOtherIdentifierIi(otherIdentifier);
+        sessionList.add(sp);
         return "display_otherIdentifiers";
+    }
+    
+    /**
+     * Deletes an other identifier from the secondary identifiers list in the session.
+     */
+    @SuppressWarnings("unchecked")
+    void deleteOid() {
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        List<Ii> sessionList = (List<Ii>) session.getAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
+        sessionList.remove(uuid - 1);
+        session.setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST, sessionList);
     }
 
     /**
@@ -155,12 +160,7 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
      * @return result
      */
     public String deleteOtherIdentifier() {
-        List<Ii> sessionList =
-                (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(
-                        Constants.SECONDARY_IDENTIFIERS_LIST);
-        sessionList.remove(uuid - 1);
-
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST, sessionList);
+        deleteOid();
         return "display_otherIdentifiers";
     }
 
@@ -169,13 +169,8 @@ public class ManageOtherIdentifiersAction extends ActionSupport {
      * @return result
      */
     public String deleteOtherIdentifierUpdate() {
-        List<Ii> sessionList =
-                (List<Ii>) ServletActionContext.getRequest().getSession().getAttribute(
-                        Constants.SECONDARY_IDENTIFIERS_LIST);
-        sessionList.remove(uuid - 1);
-
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.SECONDARY_IDENTIFIERS_LIST, sessionList);
-        return "display_otherIdentifiersUpdate";
+        deleteOid();
+        return "display_otherIdentifiers_update";
     }
 
     /**

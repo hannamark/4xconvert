@@ -63,7 +63,7 @@ public class ManageOtherIdentifiersActionTest extends AbstractRegWebTest{
         sess.setAttribute("secondaryIdentifiersList", sessionList);
         request.setSession(sess);
         ServletActionContext.setRequest(request);
-        assertEquals("display_otherIdentifiersUpdate", action.deleteOtherIdentifierUpdate());
+        assertEquals("display_otherIdentifiers_update", action.deleteOtherIdentifierUpdate());
     }
     
     @Test

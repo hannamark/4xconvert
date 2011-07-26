@@ -4,6 +4,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+<c:set var="updateMode" value="${false}" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <title><fmt:message key="amend.trial.page.title"/></title>
@@ -141,7 +142,7 @@
             }
             
             function manageRespPartyLookUp(){
-                if ($('trialDTO.responsiblePartyTypepi').checked == true) {
+                if ($('trialDTO.responsiblePartyTypePI').checked == true) {
                     $('rpcid').style.display='none';
                     $('rpgcid').style.display='none';
                     $('trialDTO.responsiblePersonName').value = '';
@@ -414,95 +415,11 @@
                             </span>
                         </td>
                     </tr>
-                    <%@ include file="/WEB-INF/jsp/nodecorate/trialIdentifiers.jsp" %>
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="Identifier">
-                                <fmt:message key="view.trial.identifier"/>
-                            </label>
-                        </td>
-                        <td class="value">
-                            <s:property value="trialDTO.assignedIdentifier"/>
-                        </td>
-                    </tr>
-                    <c:if test="${trialDTO.ctepIdentifier != null }">
-                        <tr>
-                            <td scope="row" class="label">
-                                <label for="updateTrial_CTEPNumber"> <fmt:message key="submit.trial.ctepIdentifier"/></label>
-                            </td>
-                            <td>
-                                <s:textfield name="trialDTO.ctepIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
-                            </td>
-                        </tr>
-                    </c:if>
-                    <c:if test="${trialDTO.dcpIdentifier!= null}">
-                        <tr>
-                            <td scope="row" class="label">
-                                <label for="updateTrial_CTEPNumber"> <fmt:message key="submit.trial.dcpIdentifier"/></label>
-                            </td>
-                            <td>
-                                <s:textfield name="trialDTO.dcpIdentifier"  maxlength="200" size="100"  cssStyle="width:200px" />
-                            </td>
-                        </tr>
-                    </c:if>
-                    <%@ include file="/WEB-INF/jsp/nodecorate/showOtherIds.jsp" %>
-                    <tr>
-                        <td colspan="2" class="space">&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <th colspan="2"><fmt:message key="submit.trial.trialDetails"/></th>
-                    </tr>
-                    <tr>
-                        <td colspan="2" class="space">&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="submitTrial_protocolWebDTO_trialTitle"> <fmt:message key="submit.trial.title"/><span class="required">*</span></label>
-                        </td>
-                        <td>
-                            <s:textarea name="trialDTO.officialTitle"  cols="75" rows="4" />
-                            <span class="info">Max 4000 characters</span>
-                            <span class="formErrorMsg">
-                                <s:fielderror>
-                                    <s:param>trialDTO.officialTitle</s:param>
-                                </s:fielderror>
-                            </span>
-                        </td>
-                    </tr>
-                    <%@ include file="/WEB-INF/jsp/nodecorate/phasePurpose.jsp" %>
-                    <tr>
-                        <td colspan="2" class="space">&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <th colspan="2"><fmt:message key="submit.trial.leadOrgInvestigator"/></th>
-                    </tr>
-                    <tr>
-                        <td colspan="2" class="space">&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="submitTrial_selectedLeadOrg_name_part_0__value"><fmt:message key="submit.trial.leadOrganization"/><span class="required">*</span></label>
-                        </td>
-                        <td class="value">
-                            <div id="loadOrgField">
-                                <%@ include file="/WEB-INF/jsp/nodecorate/trialLeadOrganization.jsp" %>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- include po person jsp -->
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="submitTrial_poLeadPiFullName"><fmt:message key="submit.trial.principalInvestigator"/><span class="required">*</span></label>
-                        </td>
-                        <td class="value">
-                            <div id="loadPersField">
-                                <%@ include file="/WEB-INF/jsp/nodecorate/trialLeadPrincipalInvestigator.jsp" %>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" class="space">&nbsp;</td>
-                    </tr>
+                    
+                    <%@ include file="/WEB-INF/jsp/nodecorate/amendIdentifiersSection.jsp" %>
+                    <%@ include file="/WEB-INF/jsp/nodecorate/trialOtherIdsSection.jsp" %>
+                    <%@ include file="/WEB-INF/jsp/nodecorate/amendDetailsSection.jsp" %>
+                    <%@ include file="/WEB-INF/jsp/nodecorate/amendLeadOrganizationSection.jsp" %>
                     <tr>
                         <td colspan="2" class="space">
                             <s:if test="%{trialDTO.xmlRequired == true}">

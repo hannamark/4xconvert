@@ -705,4 +705,36 @@ public class TrialDTO extends BaseTrialDTO {
     public void setSecondaryIdentifierAddList(List<Ii> secondaryIdentifierAddList) {
         this.secondaryIdentifierAddList = secondaryIdentifierAddList;
     }
+    
+    /**
+     * Returns the regulatory authority country.
+     * @return the regulatory authority country.
+     */
+    public CountryRegAuthorityDTO getRegAuthorityCountry() {
+        if (lst != null) {
+            Long id = Long.valueOf(lst);
+            for (CountryRegAuthorityDTO country : countryList) {
+                if (country.getId().equals(id)) {
+                    return country;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the selected authority organization.
+     * @return the selected authority organization.
+     */
+    public RegulatoryAuthOrgDTO getRegAuthorityOrg() {
+        if (selectedRegAuth != null) {
+            Long id = Long.valueOf(selectedRegAuth);
+            for (RegulatoryAuthOrgDTO org : regIdAuthOrgList) {
+                if (org.getId().equals(id)) {
+                    return org;
+                }
+            }
+        }
+        return null;
+    }
 }
