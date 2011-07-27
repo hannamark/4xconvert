@@ -162,7 +162,6 @@ public class PDQXmlGeneratorServiceTest extends CTGovXmlGeneratorServiceTest {
         studySiteDto.setResearchOrganizationIi(IiConverter.convertToPoResearchOrganizationIi("1"));
         studySiteDto.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.SUSPENDED));
         studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
-//        studySiteDto.setLocalStudyProtocolIdentifier(StConverter.convertToSt("LEAD_ORG_1"));
         ssList.add(studySiteDto);
 
         when(studySiteSvc.getByStudyProtocol(any(Ii.class),

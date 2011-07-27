@@ -976,7 +976,6 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
 
-        //Accept the Trial.
         new PAServiceUtils().createMilestone(ii, MilestoneCode.SUBMISSION_ACCEPTED, StConverter.convertToSt("Accepted"));
 
         studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
@@ -1078,7 +1077,6 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
 
-        //Accept and Abstract the Trial.
         createMilestones(ii);
         studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
         overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(ii);
@@ -1098,6 +1096,135 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
                 summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
         assertFalse(PAUtil.isIiNull(amendedSpIi));
         assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
+    }
+    @Test
+    public void amendTrialTestWithDeletedOtherIdentifiers() throws Exception {
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
+        Ii newSecondaryIdentifier = new Ii();
+        newSecondaryIdentifier.setExtension("Temp");
+        studyProtocolDTO.getSecondaryIdentifiers().getItem().add(newSecondaryIdentifier);
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
+        overallStatusDTO.setIdentifier(null);
+        List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
+        List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
+        List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
+
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
+        StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
+        OrganizationDTO summary4Org = new  OrganizationDTO();
+
+        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
+        regAuthority.setIdentifier(null);
+
+        Ii ii = bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
+                principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
+                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+        assertFalse(PAUtil.isIiNull(ii));
+
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+
+        studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(ii);
+        studyIndldeDTOs = studyIndldeService.getByStudyProtocol(ii);
+        studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(ii);
+        regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(ii);
+        createMilestones(ii);
+        
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+        
+        overallStatusDTO.setIdentifier(null);
+        studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(TestSchema.TODAY));
+
+        DocumentDTO changeDoc = new DocumentDTO();
+        changeDoc.setFileName(StConverter.convertToSt("ProtocolHighlightedDocument.doc"));
+        changeDoc.setText(EdConverter.convertToEd("ProtocolHighlightedDocument".getBytes()));
+        changeDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT));
+        
+        studyProtocolDTO.getSecondaryIdentifiers();
+        studyProtocolDTO.getSecondaryIdentifiers().getItem().clear();
+
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Validation Exception Other identifiers cannot be modified or deleted as part of an amendment.");
+        
+        bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+                Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
+                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+    }
+
+    @Test
+    public void amendTrialTestWithAddingOtherIdentifiers() throws Exception {
+        InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
+        StudyOverallStatusDTO overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
+        overallStatusDTO.setIdentifier(null);
+        List<StudyIndldeDTO> studyIndldeDTOs = studyIndldeService.getByStudyProtocol(spIi);
+        List<StudyResourcingDTO> studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(spIi);
+        List<StudySiteDTO> siteIdentifiers = new ArrayList<StudySiteDTO>();
+        List<DocumentDTO> documents = getStudyDocuments();
+
+        OrganizationDTO leadOrganizationDTO = getLeadOrg();
+        PersonDTO principalInvestigatorDTO  = getPI();
+        OrganizationDTO sponsorOrganizationDTO = getSponsorOrg();
+        StudySiteDTO spDto = getStudySite();
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = studySiteService.getByStudyProtocol(spIi, spDto).get(0);
+        StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
+        OrganizationDTO summary4Org = new  OrganizationDTO();
+
+        StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
+        StudyRegulatoryAuthorityDTO regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spIi);
+        regAuthority.setIdentifier(null);
+
+        Ii ii = bean.createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                studyResourcingDTOs, documents, leadOrganizationDTO,
+                principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
+                siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
+                null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+        assertFalse(PAUtil.isIiNull(ii));
+
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+
+        studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(ii);
+        studyIndldeDTOs = studyIndldeService.getByStudyProtocol(ii);
+        studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(ii);
+        regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(ii);
+
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+
+        createMilestones(ii);
+        overallStatusDTO.setIdentifier(null);
+        studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(TestSchema.TODAY));
+        studyProtocolDTO.getSecondaryIdentifiers();
+
+        DocumentDTO changeDoc = new DocumentDTO();
+        changeDoc.setFileName(StConverter.convertToSt("ProtocolHighlightedDocument.doc"));
+        changeDoc.setText(EdConverter.convertToEd("ProtocolHighlightedDocument".getBytes()));
+        changeDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT));
+        
+        Ii newSecondaryIdentifier = new Ii();
+        newSecondaryIdentifier.setExtension("Temp");
+        studyProtocolDTO.getSecondaryIdentifiers().getItem().add(newSecondaryIdentifier);
+        
+        Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+                Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
+                summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
+        assertFalse(PAUtil.isIiNull(amendedSpIi));
+        assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
+        studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
+        assertEquals(2, studyProtocolDTO.getSecondaryIdentifiers().getItem().size());
     }
 
     @Test

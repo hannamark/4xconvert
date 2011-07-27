@@ -664,7 +664,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
      * An action plan and execution of a pre-clinical or clinical study including all activities to test a particular
      * hypothesis that is the basis of the study regarding the effectiveness of a particular treatment, drug, device,
      * procedure, or care plan. This includes prevention, observational, therapeutic, and other types of studies that
-     * involve subjects.:{@link URL}.
+     * involve subjects.
      * @param studyProtocolDTO StudyProtocolDTO
      * @param overallStatusDTO OverallStatusDTO
      * @param studyIndldeDTOs list of Study Ind/ides
@@ -1863,6 +1863,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
                         " to a Trial with Current Trial Status as Disapproved or"
                                 + " Withdrawn or Complete or Administratively Complete is not allowed.\n");
             }
+            if (wereOtherIdentifiersRemoved(studyProtocolDTO)) {
+                errorMsg.append("Other identifiers cannot be modified or deleted as part of an amendment.");
+            }
         }
         if (CREATE.equalsIgnoreCase(operation) || AMENDMENT.equalsIgnoreCase(operation)) {
             errorMsg.append(getPAServiceUtils().checkDocumentListForValidFileTypes(documentDTOs));
@@ -1917,6 +1920,12 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         }
     }
 
+    private boolean wereOtherIdentifiersRemoved(StudyProtocolDTO newDTO) throws PAException {
+        StudyProtocolDTO savedDTO = studyProtocolService.getInterventionalStudyProtocol(newDTO
+                .getIdentifier());
+        return !CollectionUtils.isSubCollection(savedDTO.getSecondaryIdentifiers().getItem(), newDTO
+                .getSecondaryIdentifiers().getItem());
+    }
     private <TYPE extends PoDto> String validatePoObjects(TYPE poDTO, String fieldName, boolean iiRequired) {
         String strNewLine = ".\n";
         StringBuffer errorMsg = new StringBuffer();

@@ -14,7 +14,7 @@
              </td>
               <td>
                 <s:textfield name="trialDTO.secondaryIdentifierList[%{#sstats.index}].extension" value="%{extension}" size="100" 
-                             cssClass="%{#attr.updateMode ? 'readonly' : ''}" cssStyle="width:200px" readonly="%{#attr.updateMode}"/>
+                             cssClass="%{#attr.updateOrAmendMode ? 'readonly' : ''}" cssStyle="width:200px" readonly="%{#attr.updateOrAmendMode}"/>
              </td>
         </s:if>     
     </tr>
