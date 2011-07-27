@@ -17,10 +17,10 @@
         <java>jboss-service.xml</java>
     </module>
     <module>
-        <java>pa-ejb-client-3.5-alpha4.jar</java>
+        <java>pa-ejb-client-3.6-alpha2.jar</java>
     </module>
     <module>
-        <java>pa-commons-3.5-alpha6.jar</java>
+        <java>pa-commons-3.6-alpha2.jar</java>
     </module>
     <module>
         <java>commons-collections-3.2.1.jar</java>

@@ -22,14 +22,6 @@
                 <c:choose>
                     <c:when test="${sessionScope.studyProtocolIi != null}">
                         <c:choose>
-                            <c:when test="${(requestScope.topic == 'accrual_submissions') || (requestScope.topic == 'accrual_submitting') || (requestScope.topic == 'accrual_reviewing')}">
-                                <li><a href="accrualSubmissions.action" class="selected">Submissions</a></li> 
-                            </c:when>
-                            <c:otherwise>
-                                <li><a href="accrualSubmissions.action" >Submissions</a></li>
-                            </c:otherwise>
-                        </c:choose>
-                        <c:choose>
                             <c:when test="${(requestScope.topic == 'subjects_intro') || (requestScope.topic == 'subjects_adding') || (requestScope.topic == 'subjects_update')}">
                                 <li><a href="patients.action" class="selected">Study Subject Search</a></li> 
                             </c:when>

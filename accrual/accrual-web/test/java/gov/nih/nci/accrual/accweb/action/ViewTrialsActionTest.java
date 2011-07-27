@@ -96,7 +96,7 @@ import com.opensymphony.xwork2.ActionSupport;
 
 public class ViewTrialsActionTest extends AbstractAccrualActionTest {
 
-    ViewTrialsAction action;
+    private ViewTrialsAction action;
     private SearchTrialCriteriaDto criteria;
 
     @Before
@@ -111,8 +111,8 @@ public class ViewTrialsActionTest extends AbstractAccrualActionTest {
     @Override
     @Test
     public void executeTest() throws Exception {
-        Boolean disclaimerFlag = (Boolean) ServletActionContext.getRequest().getSession().
-            getAttribute("disclaimerAccepted");
+        Boolean disclaimerFlag = 
+            (Boolean) ServletActionContext.getRequest().getSession().getAttribute("disclaimerAccepted");
         assertNotNull(disclaimerFlag);
         assertTrue(disclaimerFlag);
         assertEquals(ActionSupport.SUCCESS, action.execute());

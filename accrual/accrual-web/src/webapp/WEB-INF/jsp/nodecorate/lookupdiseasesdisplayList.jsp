@@ -1,8 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <accrual:failureMessage/>
 <c:if test="${disWebList != null}">
-<display:table class="data" decorator="gov.nih.nci.accrual.accweb.decorator.SubmissionDecorator" sort="list" uid="row"
-    name="disWebList" export="false">
+<display:table class="data" sort="list" uid="row" name="disWebList" export="false">
     <display:column escapeXml="true" title="Name" property="preferredName"  headerClass="sortable"/>
     <display:column title="Code" property="code"  headerClass="sortable"/>
     <display:column escapeXml="true" title="Menu Display Name" property="displayName"  headerClass="sortable"/>

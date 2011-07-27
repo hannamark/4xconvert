@@ -109,7 +109,6 @@ import gov.nih.nci.pa.domain.StudyRelationship;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySubject;
-import gov.nih.nci.pa.domain.Submission;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
@@ -400,7 +399,6 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             hqls.add(delete + StudyOnhold.class.getName() + whereClause);
             hqls.add(delete + StudySubject.class.getName() + whereClause);
             hqls.add(delete + PerformedActivity.class.getName() + whereClause);
-            hqls.add(delete + Submission.class.getName() + whereClause);
             hqls.add(delete + StudyInbox.class.getName() + whereClause);
             hqls.add(delete + StudyCheckout.class.getName() + whereClause);
             hqls.add(delete + StudyIndlde.class.getName() + whereClause);

@@ -93,12 +93,6 @@
             <result>/WEB-INF/jsp/searchTrials.jsp</result>
         </action>
 
-        <action name="accrualSubmissions*" class="gov.nih.nci.accrual.accweb.action.AccrualSubmissionsAction" method="{1}">
-            <result>/WEB-INF/jsp/listAccrualSubmissions.jsp</result>
-            <result name="showNewSubmission">/WEB-INF/jsp/newAccrualSubmission.jsp</result>
-            <result name="viewSubmissionDetails">/WEB-INF/jsp/viewAccrualSubmissionDetails.jsp</result>
-        </action>
-
         <action name="patients*" class="gov.nih.nci.accrual.accweb.action.PatientAction" method="{1}">
             <result>/WEB-INF/jsp/searchPatients.jsp</result>
             <result name="detail">/WEB-INF/jsp/searchPatientsDetail.jsp</result>

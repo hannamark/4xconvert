@@ -41,11 +41,6 @@ function handleDelete(rowId){
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
 <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1><fmt:message key="patient.search.title"/></h1>
- <%
-
-    Boolean submissionOpened = (Boolean)session.getAttribute(gov.nih.nci.accrual.accweb.util.AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED);
-
- %>
   <s:form name="listForm">
     <s:hidden name="selectedRowIdentifier"/>
 
@@ -105,14 +100,7 @@ function handleDelete(rowId){
            <ul class="btnrow">
             <li>
             <s:a href="#" cssClass="btn" onclick="handleSearch()"><span class="btn_img"><span class="search">Search</span></span></s:a>
-            <%
-            if(submissionOpened.booleanValue()){
-
-            %>
-
             <s:a href="#" cssClass="btn" onclick="handleCreate()"><span class="btn_img"><span class="add">Add New Study Subject</span></span></s:a>
-
-            <%} %>
             </li>
            </ul>
         </del>
@@ -134,22 +122,14 @@ function handleDelete(rowId){
        <display:column escapeXml="true" titleKey="patient.organizationName" property="organizationName" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="subject.statusCode" property="statusCode" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="patient.update" headerClass="centered" class="action">
-           <%
-            if(submissionOpened.booleanValue()){
-            %>
             <s:a href="#" onclick="handleUpdate(%{#attr.row.identifier})">
                 <img src="<%=request.getContextPath()%>/images/ico_edit.gif" alt="Update" width="16" height="16" />
             </s:a>
-             <%} %>
        </display:column>
        <display:column titleKey="patient.delete" headerClass="centered" class="action">
-           <%
-            if(submissionOpened.booleanValue()){
-            %>
            <s:a href="#" onclick="handleDelete(%{#attr.row.identifier})">
                <img src="<%=request.getContextPath()%>/images/ico_delete.gif" alt="Delete" width="16" height="16" />
            </s:a>
-            <%} %>
        </display:column>
    </display:table>
 </body>

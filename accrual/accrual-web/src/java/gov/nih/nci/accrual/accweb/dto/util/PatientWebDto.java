@@ -235,7 +235,7 @@ public class PatientWebDto {
             birthDate = AccrualUtil.tsToYearMonthString(pIsoDto.getBirthDate());
             countryIdentifier = IiConverter.convertToLong(pIsoDto.getCountryIdentifier());
             for (Country c : listOfCountries) {
-                if (countryIdentifier != null && countryIdentifier.equals(c.getId())) {
+                if (c.getId().equals(countryIdentifier)) {
                     countryName = c.getName();
                 }
             }

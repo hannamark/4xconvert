@@ -81,7 +81,6 @@ package gov.nih.nci.accrual.util;
 import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.POPatientService;
@@ -165,13 +164,6 @@ public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
      */
     public StudySubjectService getStudySubjectService() {
         return serviceLocator.getStudySubjectService();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public SubmissionService getSubmissionService() {
-        return serviceLocator.getSubmissionService();
     }
 
     /**

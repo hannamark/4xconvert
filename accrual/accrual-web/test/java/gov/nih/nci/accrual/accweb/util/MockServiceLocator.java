@@ -80,7 +80,6 @@ import static org.mockito.Mockito.mock;
 import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.POPatientService;
@@ -95,7 +94,6 @@ import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
 public class MockServiceLocator implements ServiceLocatorAccInterface {
     private final SearchTrialService searchTrial = new MockSearchTrialBean();
     private final SearchStudySiteService searchStudySite = new MockSearchStudySiteBean();
-    private final SubmissionService submissionService = new MockSubmissionBean();
     private final CountryService countryService = new MockCountryBean();
     private final StudySubjectService studySubjectService = new MockStudySubjectBean();
     private final PatientService patientService = new MockPatientBean();
@@ -133,12 +131,6 @@ public class MockServiceLocator implements ServiceLocatorAccInterface {
      */
     public StudySubjectService getStudySubjectService() {
         return studySubjectService;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public SubmissionService getSubmissionService() {
-        return submissionService;
     }
     /**
      * {@inheritDoc}

@@ -181,7 +181,6 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     private List<StudyOnhold> studyOnholds = new ArrayList<StudyOnhold>();
     private List<StudySubject> studySubjects = new ArrayList<StudySubject>();
     private List<PerformedActivity> performedActivities = new ArrayList<PerformedActivity>();
-    private List<Submission> submissions = new ArrayList<Submission>();
     private Set<StudyInbox> studyInbox = new TreeSet<StudyInbox>(new StudyInboxComparator());
     private Set<StudyCheckout> studyCheckout = new TreeSet<StudyCheckout>(new LastCreatedComparator());
 
@@ -737,23 +736,6 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     public void setPerformedActivities(
             List<PerformedActivity> performedActivities) {
         this.performedActivities = performedActivities;
-    }
-
-    /**
-     * @return the submissions
-     */
-    @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    public List<Submission> getSubmissions() {
-        return submissions;
-    }
-
-    /**
-     * @param submissions
-     *            the submissions to set
-     */
-    public void setSubmissions(List<Submission> submissions) {
-        this.submissions = submissions;
     }
 
     /**

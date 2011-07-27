@@ -84,7 +84,6 @@ package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
-import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.enums.CDUSPatientEthnicityCode;
@@ -95,11 +94,8 @@ import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Ivl;
-import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
@@ -109,7 +105,6 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -160,7 +155,6 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     private static final int LINE_IDENTIFIER_INDEX = 0;
     private static final int COLLECTION_EMAIL_INDEX = 9;
     private static final int COLLECTION_PROTOCOL_INDEX = 0;
-    private static final int STUDY_CUTOFF_DATE_INDEX = 3;
     private static final int PATIENT_ID_INDEX = 2;
     private static final int PATIENT_ZIP_INDEX = 3;
     private static final int PATIENT_COUNTRY_CODE_INDEX = 4;
@@ -298,20 +292,10 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         importResults.setFileName(results.getFileName());
         List<String[]> lines = results.getValidatedLines();
         String[] studyLine = BatchUploadUtils.getStudyLine(lines);
-        Integer totalNumberOfAccruals = BatchUploadUtils.getTotalNumberOfAccruals(lines);
-
-        //1. Load trial.
+        
         String studyProtocolId = studyLine[1];
         StudyProtocolDTO spDto = getStudyProtocol(studyProtocolId);
 
-        //2. Create submission
-        String cutoff = studyLine[STUDY_CUTOFF_DATE_INDEX];
-        String label = "Batch Accrual Submission for Study Protocol " + PAUtil.getAssignedIdentifierExtension(spDto) 
-            + " on " + cutoff;
-        Date cutoffDate = BatchUploadUtils.getDate(cutoff);
-        createSubmission(label, cutoffDate, spDto.getIdentifier(), totalNumberOfAccruals);
-        
-        //3. Create study subjects
         int count = createStudySubjects(lines, spDto);
         importResults.setTotalImports(count);
         return importResults;
@@ -352,42 +336,6 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             count++;
         }
         return count;
-    }
-
-    /**
-     * Handles creation of the submission for this batch import.  Will close previous submissions and set any pending
-     * study subjects active.
-     */
-    private void createSubmission(String label, Date cutoffDate, Ii studyProtocolIi, Integer totalAccruals) 
-    throws RemoteException, PAException {
-        SubmissionDto oldSubmission = getSubmissionService().getOpenSubmission(studyProtocolIi);
-        if (oldSubmission != null) {
-            oldSubmission.setStatusCode(CdConverter.convertToCd(AccrualSubmissionStatusCode.SUBMITTED));
-            Ivl<Ts> ivl = oldSubmission.getStatusDateRange();
-            ivl.setHigh(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-            oldSubmission.setStatusDateRange(ivl);
-            getSubmissionService().update(oldSubmission);
-
-            List<StudySubjectDto> subjects = getStudySubjectService().getByStudyProtocol(studyProtocolIi);
-            for (StudySubjectDto subject : subjects) {
-                if (StringUtils.equalsIgnoreCase(FunctionalRoleStatusCode.PENDING.getCode(), 
-                        CdConverter.convertCdToString(subject.getStatusCode()))) {
-                    subject.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
-                    subject.setStatusDateRange(
-                            IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
-                    getStudySubjectService().update(subject);
-                }
-            }
-        }
-        SubmissionDto submission = new SubmissionDto();
-        submission.setLabel(StConverter.convertToSt(label));
-        submission.setCutOffDate(TsConverter.convertToTs(new Timestamp(cutoffDate.getTime())));
-        submission.setDescription(StConverter.convertToSt(label));
-        submission.setStudyProtocolIdentifier(studyProtocolIi);
-        submission.setTotalNumberOfAccruals(IntConverter.convertToInt(totalAccruals));
-        submission.setStatusCode(CdConverter.convertToCd(AccrualSubmissionStatusCode.OPENED));
-        submission.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
-        getSubmissionService().create(submission);   
     }
 
     private PatientDto parsePatient(String[] line, List<String> races, Ii orgIi) throws PAException {

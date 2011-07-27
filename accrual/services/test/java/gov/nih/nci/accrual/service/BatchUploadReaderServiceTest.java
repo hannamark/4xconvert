@@ -159,7 +159,6 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
     private ServiceLocatorPaInterface paSvcLocator;
     private CountryService countryService = new CountryBean();
     private CdusBatchUploadReaderBean readerService;
-    private SubmissionServiceLocal submissionService = new SubmissionBean();
     private StudySubjectServiceLocal studySubjectService = new StudySubjectBean();
     private MailManagerServiceRemote mailService;
 
@@ -176,7 +175,6 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         readerService = new CdusBatchUploadReaderBean();
         readerService.setCountryService(countryService);
         readerService.setStudySubjectService(studySubjectService);
-        readerService.setSubmissionService(submissionService);
         readerService.setPerformedActivityService(new PerformedActivityBean());
 
 
@@ -404,7 +402,6 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
 
     @Test
     public void performCompleteBatchImport() throws Exception {
-        assertEquals(0, submissionService.getByStudyProtocol(completeIi).size());
         assertEquals(0, studySubjectService.getByStudyProtocol(completeIi).size());
 
         File file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
@@ -413,7 +410,6 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         assertEquals(1, importResults.size());
         assertEquals(24, importResults.get(0).getTotalImports());
         assertEquals("CDUS_Complete.txt", importResults.get(0).getFileName());
-        assertEquals(1, submissionService.getByStudyProtocol(completeIi).size());
         assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
         verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
         mailService = mock(MailManagerServiceRemote.class);
@@ -428,7 +424,6 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
 
     @Test
     public void performAbbreviatedBatchImport() throws Exception {
-        assertEquals(2, submissionService.getByStudyProtocol(abbreviatedIi).size());
         assertEquals(2, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
 
         File file = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
@@ -437,7 +432,6 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         assertEquals(1, importResults.size());
         assertEquals(72, importResults.get(0).getTotalImports());
         assertEquals("CDUS_Abbreviated.txt", importResults.get(0).getFileName());
-        assertEquals(3, submissionService.getByStudyProtocol(abbreviatedIi).size());
         assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
         verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
     }
@@ -445,7 +439,6 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
 
     @Test
     public void performAbbreviatedPreventionBatchImport() throws Exception {
-        assertEquals(0, submissionService.getByStudyProtocol(preventionIi).size());
         assertEquals(0, studySubjectService.getByStudyProtocol(preventionIi).size());
 
         File file = new File(this.getClass().getResource("/cdus-abbreviated-prevention-study.txt").toURI());
@@ -454,7 +447,6 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         assertEquals(1, importResults.size());
         assertEquals(72, importResults.get(0).getTotalImports());
         assertEquals("cdus-abbreviated-prevention-study.txt", importResults.get(0).getFileName());
-        assertEquals(1, submissionService.getByStudyProtocol(preventionIi).size());
         assertEquals(72, studySubjectService.getByStudyProtocol(preventionIi).size());
         verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
     }
@@ -463,9 +455,7 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
     public void testPerformImportOfArchive() throws Exception {
         File file = new File(this.getClass().getResource("/CDUS.zip").toURI());
 
-        assertEquals(2, submissionService.getByStudyProtocol(abbreviatedIi).size());
         assertEquals(2, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
-        assertEquals(0, submissionService.getByStudyProtocol(completeIi).size());
         assertEquals(0, studySubjectService.getByStudyProtocol(completeIi).size());
 
         List<BatchImportResults> importResults = readerService.importBatchData(file);
@@ -473,12 +463,10 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         assertEquals(2, importResults.size());
         assertEquals(72, importResults.get(0).getTotalImports());
         assertEquals("CDUS_Abbreviated.txt", importResults.get(0).getFileName());
-        assertEquals(3, submissionService.getByStudyProtocol(abbreviatedIi).size());
         assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
 
         assertEquals(24, importResults.get(1).getTotalImports());
         assertEquals("CDUS_Complete.txt", importResults.get(1).getFileName());
-        assertEquals(1, submissionService.getByStudyProtocol(completeIi).size());
         assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
         verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
     }

@@ -94,9 +94,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySubject;
-import gov.nih.nci.pa.domain.Submission;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
-import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -132,7 +130,6 @@ import org.hibernate.Session;
 public class TestSchema {
     public static List<SDCDisease> diseases;
     public static List<StudyProtocol> studyProtocols;
-    public static List<Submission> submissions;
     public static List<StudySite> studySites;
     public static List<StudyDisease> studyDiseases;
     public static List<Patient> patients;
@@ -169,7 +166,6 @@ public class TestSchema {
         diseases = new ArrayList<SDCDisease>();
         studyProtocols = new ArrayList<StudyProtocol>();
         studyOverallStatuses = new ArrayList<StudyOverallStatus>();
-        submissions = new ArrayList<Submission>();
         studySites = new ArrayList<StudySite>();
         patients = new ArrayList<Patient>();
         studySubjects = new ArrayList<StudySubject>();
@@ -328,29 +324,6 @@ public class TestSchema {
         disease.setCtepSubCategory("sub-category");
         addUpdObject(disease);
         diseases.add(disease);
-
-        // Submission
-        Submission sub = new Submission();
-        sub.setCutOffDate(PAUtil.dateStringToTimestamp("6/3/2009"));
-        sub.setDescription("description");
-        sub.setLabel("label");
-        sub.setStatusCode(AccrualSubmissionStatusCode.SUBMITTED);
-        sub.setStatusDateRangeHigh(null);
-        sub.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("7/15/2009"));
-        sub.setStudyProtocol(studyProtocols.get(0));
-        addUpdObject(sub);
-        submissions.add(sub);
-
-        sub = new Submission();
-        sub.setCutOffDate(PAUtil.dateStringToTimestamp("12/31/2012"));
-        sub.setDescription("description");
-        sub.setLabel("label");
-        sub.setStatusCode(AccrualSubmissionStatusCode.OPENED);
-        sub.setStatusDateRangeHigh(null);
-        sub.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("7/15/2010"));
-        sub.setStudyProtocol(studyProtocols.get(0));
-        addUpdObject(sub);
-        submissions.add(sub);
 
         // StudySite
         StudySite ss = new StudySite();

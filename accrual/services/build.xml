@@ -11,7 +11,8 @@
     <property name="resource.dir" value="${basedir}/../resources"/>
     <property name="pmdFile" value="${resource.dir}/accrualPmd.xml"/>
     <property name="checkstyle.url" value="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml"/>
-
+    <property name="java.major.version" value="1.6"/>
+    
     <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
     <property name="services.report.dir" value="${software.dir}/target/accrual/reports/services"/>
     <property name="services.build.dir" value="${basedir}/target"/>
@@ -148,10 +149,10 @@
                debug="true"
                optimize="false"
                deprecation="true"
-               target="1.5"
+               target="${java.major.version}"
                verbose="false"
                fork="false"
-               source="1.5">
+               source="${java.major.version}">
             <src>
                 <pathelement location="${services.build.srcDir}"/>
             </src>
@@ -195,10 +196,10 @@
                debug="true"
                optimize="false"
                deprecation="true"
-               target="1.5"
+               target="${java.major.version}"
                verbose="false"
                fork="false"
-               source="1.5">
+               source="${java.major.version}">
             <src>
                 <pathelement location="${services.build.testSrcDir}"/>
             </src>

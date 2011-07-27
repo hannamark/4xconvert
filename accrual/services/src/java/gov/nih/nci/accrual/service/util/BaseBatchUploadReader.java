@@ -85,7 +85,6 @@ package gov.nih.nci.accrual.service.util;
 import gov.nih.nci.accrual.service.PatientServiceLocal;
 import gov.nih.nci.accrual.service.PerformedActivityServiceLocal;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
-import gov.nih.nci.accrual.service.SubmissionServiceLocal;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.iso21090.Ii;
@@ -163,8 +162,6 @@ public class BaseBatchUploadReader {
     private static final int PATIENT_DISEASE_INDEX = 20;
     
     private List<String> patientsIdList = new ArrayList<String>();
-    @EJB 
-    private SubmissionServiceLocal submissionService;
     @EJB
     private StudySubjectServiceLocal studySubjectService;
     @EJB
@@ -443,20 +440,6 @@ public class BaseBatchUploadReader {
      */
     public void setPatientsIdList(List<String> patientsIdList) {
         this.patientsIdList = patientsIdList;
-    }
-    
-    /**
-     * @return the submissionService
-     */
-    public SubmissionServiceLocal getSubmissionService() {
-        return submissionService;
-    }
-    
-    /**
-     * @param submissionService the submissionService to set
-     */
-    public void setSubmissionService(SubmissionServiceLocal submissionService) {
-        this.submissionService = submissionService;
     }
     
     /**

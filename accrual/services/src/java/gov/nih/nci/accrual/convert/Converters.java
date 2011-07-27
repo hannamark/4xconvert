@@ -98,7 +98,6 @@ public class Converters {
         CONVERTERS_MAP.put(PerformedSubjectMilestoneConverter.class,  new PerformedSubjectMilestoneConverter());
         CONVERTERS_MAP.put(StudySubjectConverter.class, new StudySubjectConverter());
         CONVERTERS_MAP.put(PatientConverter.class, new PatientConverter());
-        CONVERTERS_MAP.put(SubmissionConverter.class, new SubmissionConverter());
         CONVERTERS_MAP.put(PerformedActivityConverter.class, new PerformedActivityConverter());
     }
 

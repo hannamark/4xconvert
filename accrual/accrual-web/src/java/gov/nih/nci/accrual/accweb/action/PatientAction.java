@@ -84,6 +84,7 @@ import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
@@ -113,22 +114,42 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
-/**
- * @author Hugh Reinhart
- * @since Sep 21, 2009
- */
-public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> {
+import com.opensymphony.xwork2.Preparable;
 
+/**
+ * Patient actions.
+ * @author Hugh Reinhart
+ */
+public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> implements Preparable {
     private static final long serialVersionUID = -6820189447703204634L;
     private static String deletedStatusCode = FunctionalRoleStatusCode.TERMINATED.getCode();
     private static List<Country> listOfCountries = null;
     private static Long unitedStatesId = null;
     private Long organizationId;
+    private Long studyProtocolId;
 
     private SearchPatientsCriteriaWebDto criteria;
     private List<SearchStudySiteResultWebDto> listOfStudySites = null;
     private PatientWebDto patient;
     private EligibleGenderCode genderCriterion;
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() {
+        super.prepare();
+        try {
+            if (getStudyProtocolId() != null) {
+                setSpIi(IiConverter.convertToStudyProtocolIi(getStudyProtocolId()));
+                SearchTrialResultDto trialSummary = getSearchTrialSvc().getTrialSummaryByStudyProtocolIi(getSpIi());
+                // put an entry in the session
+                ServletActionContext.getRequest().getSession().setAttribute("trialSummary", trialSummary);
+            }
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -165,10 +186,8 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
                 }
             }
             if (patient != null) {
-                Set<String> raceCodes = removeUnderTabs(patient.getRaceCode());
-                patient.setRaceCode(raceCodes);
-                String ethniccd = removeUnderTabs(patient.getEthnicCode());
-                patient.setEthnicCode(ethniccd);
+                patient.setRaceCode(removeUnderTabs(patient.getRaceCode()));
+                patient.setEthnicCode(removeUnderTabs(patient.getEthnicCode()));
             }
             if (patient == null) {
                 addActionError("Error retrieving study subject info.");
@@ -429,9 +448,11 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
                 RegistryUser ru = PaServiceLocator.getInstance().getRegistryUserService().getUser(
                         CaseSensitiveUsernameHolder.getUser());
                 Ii ruIi = IiConverter.convertToIi(ru.getId());
-                List<SearchStudySiteResultDto> isoStudySiteList =
-                    getSearchStudySiteSvc().search(getSpIi(), ruIi);
-                listOfStudySites = SearchStudySiteResultWebDto.getWebList(isoStudySiteList);
+                List<SearchStudySiteResultDto> isoStudySiteList = getSearchStudySiteSvc().search(getSpIi(), ruIi);
+                listOfStudySites = new ArrayList<SearchStudySiteResultWebDto>();
+                for (SearchStudySiteResultDto iso : isoStudySiteList) {
+                    listOfStudySites.add(new SearchStudySiteResultWebDto(iso));
+                }
             } catch (PAException e) {
                 LOG.error("Error loading study sites.", e);
             }
@@ -442,17 +463,15 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
     private EligibleGenderCode getGenderCriterion() {
         if (genderCriterion == null) {
             genderCriterion = EligibleGenderCode.BOTH;
-            List<PlannedEligibilityCriterionDTO> pecList;
             try {
-                pecList = getPlannedActivitySvc().getPlannedEligibilityCriterionByStudyProtocol(getSpIi());
-                if (!pecList.isEmpty()) {
+                List<PlannedEligibilityCriterionDTO> pecList = 
+                    getPlannedActivitySvc().getPlannedEligibilityCriterionByStudyProtocol(getSpIi());
                 for (PlannedEligibilityCriterionDTO pec : pecList) {
                     if (PaServiceLocator.ELIG_CRITERION_NAME_GENDER.equals(
                             StConverter.convertToString(pec.getCriterionName()))) {
                         genderCriterion = EligibleGenderCode.getByCode(
                                 CdConverter.convertCdToString(pec.getEligibleGenderCode()));
                     }
-                }
                 }
             } catch (Exception e) {
                 genderCriterion = EligibleGenderCode.BOTH;
@@ -503,15 +522,6 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
             validateNoPatientDuplicates();
             validateUnitedStatesRules();
             validateEligibilityCriteria();
-            if (StringUtils.isNotEmpty(patient.getRegistrationDate())) {
-                Timestamp registrationDate = PAUtil
-                        .dateStringToTimestamp(patient.getRegistrationDate());
-                if (registrationDate.after(getCutOffDate())) {
-                    addActionError("Registration date must not be after the cut off date for the current submission ("
-                            + PAUtil.normalizeDateString(getCutOffDate()
-                                    .toString()) + ").");
-                }
-            }
             if (StringUtils.isEmpty(patient.getRegistrationDate())) {
                 addActionError("Registration Date is required.");
             }
@@ -543,7 +553,9 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
 
     private void validateUnitedStatesRules() {
         if (unitedStatesId.equals(patient.getCountryIdentifier())) {
-            addActionErrorIfEmpty(patient.getZip(), "Zip code is mandatory if country is United States.");
+            if (StringUtils.isEmpty(patient.getZip())) {
+                addActionError("Zip code is mandatory if country is United States.");
+            }
         } else {
             if (StringUtils.isNotEmpty(patient.getZip())) {
                 addActionError("Zip code should only be entered if country is United States.");
@@ -579,7 +591,21 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
     /**
      * @param unitedStatesId the unitedStatesId to set
      */
-    static void setUnitedStatesId(Long unitedStatesId) {
+    public void setUnitedStatesId(Long unitedStatesId) {
         PatientAction.unitedStatesId = unitedStatesId;
+    }
+
+    /**
+     * @return the studyProtocolId
+     */
+    public Long getStudyProtocolId() {
+        return studyProtocolId;
+    }
+
+    /**
+     * @param studyProtocolId the studyProtocolId to set
+     */
+    public void setStudyProtocolId(Long studyProtocolId) {
+        this.studyProtocolId = studyProtocolId;
     }
 }

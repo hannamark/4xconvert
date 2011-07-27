@@ -11,7 +11,8 @@
     <property name="resource.dir" value="${basedir}/../resources"/>
     <property name="pmdFile" value="${resource.dir}/accrualPmd.xml"/>
     <property name="checkstyle.url" value="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml"/>
-
+    <property name="java.major.version" value="1.6"/>
+    
     <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
     <property name="web.report.dir" value="${software.dir}/target/accrual/reports/accrual-web"/>
     <property name="web.build.finalName" value="accrual"/>
@@ -148,7 +149,7 @@
         <fail unless="jboss.deploy.dir" message="Property jboss.deploy.dir not set.  Check build.properties file."/>
         <mkdir dir="${web.build.outputDir}"/>
         <javac destdir="${web.build.outputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
-               target="1.5" verbose="false" fork="false" source="1.5">
+               target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}">
             <src>
                 <pathelement location="${web.build.srcDir}"/>
             </src>
@@ -189,7 +190,7 @@
     <target name="compile-tests" depends="compile,ivy-test,configure-tests" description="Compile the test code">
         <mkdir dir="${web.build.testOutputDir}"/>
         <javac destdir="${web.build.testOutputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
-               target="1.5" verbose="false" fork="false" source="1.5">
+               target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}">
             <src>
                 <pathelement location="${web.build.testSrcDir}"/>
                 <pathelement location="${web.build.integrationTestSrcDir}"/>

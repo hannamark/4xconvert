@@ -15,7 +15,8 @@
 
     <property name="pa.pmd" value="${pa.resourceDir}/paRegPmd.xml"/>
     <property name="pa.checkstyle.url" value="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml"/>
-
+    <property name="java.major.version" value="1.6"/>
+    
     <property name="reg-web.build.finalName" value="reg-web"/>
     <property name="reg-web.build.dir" value="${software.dir}/reg-web/target"/>
     <property name="reg-web.build.outputDir" value="${reg-web.build.dir}/classes"/>
@@ -167,7 +168,7 @@
         <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
         <mkdir dir="${reg-web.build.outputDir}"/>
         <javac destdir="${reg-web.build.outputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
-               target="1.5" verbose="false" fork="false" source="1.5">
+               target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}">
             <src>
                 <pathelement location="${reg-web.build.srcDir.0}"/>
             </src>
@@ -219,7 +220,7 @@
     <target name="compile-tests" depends="compile,configure-tests" description="Compile the test code">
         <mkdir dir="${reg-web.build.testOutputDir}"/>
         <javac destdir="${reg-web.build.testOutputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
-               target="1.5" verbose="false" fork="false" source="1.5">
+               target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}">
             <src>
                 <pathelement location="${reg-web.build.testDir.0}"/>
                 <pathelement location="${reg-web.build.integrationTestDir.0}"/>

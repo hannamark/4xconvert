@@ -94,7 +94,6 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
-import gov.nih.nci.pa.enums.AccrualSubmissionStatusCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
@@ -168,7 +167,7 @@ public class TrialRegistrationHelperTest {
             + "and Date was updated.";
     private static final String IND_IDE_UPDATED = "Ind Ide was updated.";
     private static final String GRANT_INFORMATION_UPDATED = "Grant information was updated.";
-    
+
     @Rule public ExpectedException thrown = ExpectedException.none();
 
     @Before
@@ -194,7 +193,7 @@ public class TrialRegistrationHelperTest {
         spDto.setPrimaryPurposeCode(CdConverter.convertStringToCd(PrimaryPurposeCode.DIAGNOSTIC.getCode()));
 
         StudySiteAccrualStatusDTO ssasDto = new StudySiteAccrualStatusDTO();
-        ssasDto.setStatusCode(CdConverter.convertStringToCd(AccrualSubmissionStatusCode.OPENED.getCode()));
+        ssasDto.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.ACTIVE.getCode()));
         ssasDto.setStatusDate(new Ts());
         ssasList.add(ssasDto);
 
@@ -434,9 +433,9 @@ public class TrialRegistrationHelperTest {
             //will never reach here.
         }
     }
-    
+
     private StudyContactDTO createFullStudyContact() throws URISyntaxException {
-        StudyContactDTO scDto = new StudyContactDTO();      
+        StudyContactDTO scDto = new StudyContactDTO();
         Tel email = new Tel();
         email.setValue(new URI("mailto:example@example.com"));
         Tel phone = new Tel();
@@ -447,9 +446,9 @@ public class TrialRegistrationHelperTest {
         scDto.getTelecomAddresses().getItem().add(phone);
         return scDto;
     }
-    
+
     private StudySiteContactDTO createFullStudySiteContact() throws URISyntaxException {
-        StudySiteContactDTO sscDto = new StudySiteContactDTO();      
+        StudySiteContactDTO sscDto = new StudySiteContactDTO();
         Tel email = new Tel();
         email.setValue(new URI("mailto:example@example.com"));
         Tel phone = new Tel();
@@ -460,7 +459,7 @@ public class TrialRegistrationHelperTest {
         sscDto.getTelecomAddresses().getItem().add(phone);
         return sscDto;
     }
-    
+
     @Test
     public void testEnforcePiAnfRespPartyContacts1() throws PAException, URISyntaxException {
         StudyProtocolDTO spDTO = new StudyProtocolDTO();
@@ -470,7 +469,7 @@ public class TrialRegistrationHelperTest {
         thrown.expectMessage("Validation Exception Telecom information must be provided for Responsible Party StudySiteContact,");
         helper.enforceBusinessRulesForStudyContact(spDTO, scDto, null, true);
     }
-    
+
     @Test
     public void testEnforcePiAnfRespPartyContacts2() throws PAException, URISyntaxException {
         StudyProtocolDTO spDTO = new StudyProtocolDTO();
@@ -481,7 +480,7 @@ public class TrialRegistrationHelperTest {
         thrown.expectMessage("Validation Exception Only one of StudyContact or StudySiteContact can be used, StudySiteContact Email cannot be null, StudySiteContact Phone cannot be null, ");
         helper.enforceBusinessRulesForStudyContact(spDTO, scDto, sscDto, true);
     }
-    
+
     @Test
     public void testEnforcePiAnfRespPartyContacts3() throws URISyntaxException, PAException {
         StudyProtocolDTO spDTO = new StudyProtocolDTO();
@@ -492,7 +491,7 @@ public class TrialRegistrationHelperTest {
         thrown.expectMessage("Validation Exception One of StudyContact or StudySiteContact has to be used, ");
         helper.enforceBusinessRulesForStudyContact(spDTO, scDto, sscDto, true);
     }
-    
+
     @Test
     public void testEnforcePiAnfRespPartyContacts4() throws URISyntaxException, PAException {
         StudyProtocolDTO spDTO = new StudyProtocolDTO();

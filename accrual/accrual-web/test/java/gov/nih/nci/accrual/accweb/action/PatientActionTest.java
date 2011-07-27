@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.accweb.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.accweb.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.accweb.dto.util.SearchPatientsCriteriaWebDto;
@@ -90,11 +91,8 @@ import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
-import gov.nih.nci.pa.iso.util.IiConverter;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -104,6 +102,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
+import com.mockrunner.mock.web.MockHttpSession;
+import com.mockrunner.mock.web.MockServletContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
@@ -120,15 +120,33 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Before
     public void initAction() throws Exception {
         action = new PatientAction();
+        action.setStudyProtocolId(1L);
+        action.setUnitedStatesId(1L);
         action.prepare();
-        action.setSpIi(IiConverter.convertToStudyProtocolIi(1L));
         criteria = new SearchPatientsCriteriaWebDto();
         patient = new PatientWebDto();
         listOfPatients = new ArrayList<PatientWebDto>();
         listOfStudySites = new ArrayList<SearchStudySiteResultWebDto>();
-        setCutOffDate(new Timestamp(new Date().getTime()));
     }
-
+    
+    @Test
+    public void prepare() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setSession(new MockHttpSession());
+        request.setRemoteUser(TEST_USER);
+        ServletActionContext.setServletContext(new MockServletContext());
+        ServletActionContext.setRequest(request);
+        
+        action = new PatientAction();
+        action.setUnitedStatesId(1L);        
+        action.setStudyProtocolId(null);
+        action.prepare();
+        assertNull(ServletActionContext.getRequest().getSession().getAttribute("trialSummary"));
+        action.setStudyProtocolId(1L);
+        action.prepare();
+        assertNotNull(ServletActionContext.getRequest().getSession().getAttribute("trialSummary"));
+    }
+    
     @Override
     @Test
     public void executeTest() {
@@ -182,7 +200,6 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setStudySiteId(Long.valueOf("01"));
         patient.setDiseaseIdentifier(Long.valueOf("1"));
         patient.setRegistrationDate("12/10/2009");
-        PatientAction.setUnitedStatesId(1L);
         action.setPatient(patient);
         assertEquals(ActionSupport.SUCCESS, action.add());
     }
@@ -205,7 +222,6 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setStudySubjectId(1L);
         patient.setPatientId(1L);
         patient.setRegistrationDate("12/10/2009");
-        PatientAction.setUnitedStatesId(1L);
         action.setPatient(patient);
         assertEquals("success", action.edit());
         assertNotNull(action.getPatient());
@@ -228,7 +244,6 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setStudySubjectId(1L);
         patient.setZip("12345");
         patient.setPaymentMethodCode("paymentMethodCode");
-        PatientAction.setUnitedStatesId(1L);
         action.setPatient(patient);
         assertEquals("detail", action.add());
     }
@@ -252,5 +267,24 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         criteria.setStatusCode(ActStatusCode.ACTIVE.getCode());
         action.setCriteria(criteria);
         assertEquals(ActionSupport.SUCCESS, action.execute());
+    }
+    
+    @Test
+    public void birthAfterRegistrationDate() throws Exception {
+        patient.setCountryIdentifier(Long.valueOf(101));
+        patient.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC.getCode());
+        patient.setGenderCode(PatientGenderCode.FEMALE.getCode());
+        Set<String> raceCode = new HashSet<String>();
+        raceCode.add(PatientRaceCode.WHITE.getName());
+        patient.setRaceCode(raceCode);
+        patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
+        patient.setAssignedIdentifier("PO PATIENT ID 01");
+        patient.setStudySiteId(Long.valueOf("01"));
+        patient.setDiseaseIdentifier(Long.valueOf("1"));
+        patient.setRegistrationDate("1/1/2011");
+        patient.setBirthDate("2/1/2011");
+        action.setPatient(patient);
+        assertEquals("detail", action.add());
+        assertTrue(action.hasActionErrors());
     }
 }

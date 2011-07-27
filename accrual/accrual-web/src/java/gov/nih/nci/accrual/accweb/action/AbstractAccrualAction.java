@@ -77,11 +77,9 @@
 package gov.nih.nci.accrual.accweb.action;
 
 import gov.nih.nci.accrual.accweb.util.AccrualConstants;
-import gov.nih.nci.accrual.dto.SubmissionDto;
 import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.SubmissionService;
 import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
@@ -93,16 +91,9 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
-import gov.nih.nci.pa.util.PAUtil;
-
-import java.rmi.RemoteException;
-import java.security.GeneralSecurityException;
-import java.sql.Timestamp;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -119,7 +110,6 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
 
     private SearchTrialService searchTrialSvc;
     private SearchStudySiteService searchStudySiteSvc;
-    private SubmissionService submissionSvc;
     private StudySubjectService studySubjectSvc;
     private PatientService patientSvc;
     private PerformedActivityService performedActivitySvc;
@@ -134,7 +124,6 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     public void prepare() {
         searchTrialSvc = AccrualServiceLocator.getInstance().getSearchTrialService();
         searchStudySiteSvc = AccrualServiceLocator.getInstance().getSearchStudySiteService();
-        submissionSvc = AccrualServiceLocator.getInstance().getSubmissionService();
         studySubjectSvc = AccrualServiceLocator.getInstance().getStudySubjectService();
         patientSvc = AccrualServiceLocator.getInstance().getPatientService();
         performedActivitySvc = AccrualServiceLocator.getInstance().getPerformedActivityService();
@@ -170,60 +159,29 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     }
     
     /**
-     * @return cutoff date for current submission
-     */
-    public Timestamp getCutOffDate() {
-        return (Timestamp) ServletActionContext.getRequest().getSession().getAttribute(
-                AccrualConstants.SESSION_ATTR_SUBMISSION_CUTOFF_DATE);
-    }
-    /**
      * @param spIi the spIi to set
-     * @param spIi
-     * @throws GeneralSecurityException authorization exception
-     * @throws RemoteException exception
      * @throws PAException on error
      */
-    public void setSpIi(Ii spIi) throws GeneralSecurityException, RemoteException, PAException {
-        if (PAUtil.isIiNull(spIi)) {
-            ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_SPII, null);
+    public void setSpIi(Ii spIi) throws PAException {
+        RegistryUser ru = 
+            PaServiceLocator.getInstance().getRegistryUserService().getUser(CaseSensitiveUsernameHolder.getUser());
+        Ii ruIi = IiConverter.convertToIi(ru.getId());
+        if (BlConverter.convertToBool(searchTrialSvc.isAuthorized(spIi, ruIi))) {
+            ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_SPII, spIi);
         } else {
-            RegistryUser ru = 
-                PaServiceLocator.getInstance().getRegistryUserService().getUser(CaseSensitiveUsernameHolder.getUser());
-            Ii ruIi = IiConverter.convertToIi(ru.getId());
-            if (BlConverter.convertToBool(searchTrialSvc.isAuthorized(spIi, ruIi))) {
-                ServletActionContext.getRequest().getSession().setAttribute(AccrualConstants.SESSION_ATTR_SPII, spIi);
-
-                List<SubmissionDto> listOfSubmissions = submissionSvc.getByStudyProtocol(spIi);
-                Boolean isOpen = false;
-                Timestamp cutOffDate = null;
-                for (SubmissionDto sDto : listOfSubmissions) {
-                    if (sDto.getStatusCode().getCode().equalsIgnoreCase("Opened")) {
-                      isOpen = true;
-                      cutOffDate = TsConverter.convertToTimestamp(sDto.getCutOffDate());
-                    }
-                }
-                ServletActionContext.getRequest().getSession().
-                        setAttribute(AccrualConstants.SESSION_ATTR_IS_SUBMISSION_OPENED, isOpen);
-                ServletActionContext.getRequest().getSession().
-                        setAttribute(AccrualConstants.SESSION_ATTR_SUBMISSION_CUTOFF_DATE, cutOffDate);
-            } else {
-                throw new GeneralSecurityException("Authorization exception in AbstractAccrualAction.setSpIi().");
-            }
+            throw new PAException("User does not have permissions to view the selected trial.");
         }
     }
+    
     /**
      * @param value object being tested
      * @param errorMsg action error message to put on stack if object is empty
      */
     public void addActionErrorIfEmpty(Object value, String errorMsg) {
-        if (value instanceof String) {
-            if (StringUtils.isEmpty((String) value)) {
-                addActionError(errorMsg);
-            }
-        } else {
-            if (value == null) {
-                addActionError(errorMsg);
-            }
+        if (value instanceof String && StringUtils.isEmpty((String) value)) {
+            addActionError(errorMsg);
+        } else if (value == null) {
+            addActionError(errorMsg);
         }
     }
 
@@ -239,13 +197,6 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      */
     public SearchStudySiteService getSearchStudySiteSvc() {
         return searchStudySiteSvc;
-    }
-
-    /**
-     * @return the submissionSvc
-     */
-    public SubmissionService getSubmissionSvc() {
-        return submissionSvc;
     }
 
     /**

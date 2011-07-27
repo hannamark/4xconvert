@@ -13,7 +13,8 @@
 
     <property name="pa.pmd" value="${pa.resourceDir}/paPmd.xml"/>
     <property name="pa.checkstyle.url" value="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml"/>
-
+    <property name="java.major.version" value="1.6"/>
+    
     <property name="pa-ejb.build.dir" value="${pa.dir}/pa-ejb/target"/>
 
     <property name="pa-web.build.finalName" value="pa-web"/>
@@ -170,10 +171,10 @@
                debug="true"
                optimize="false"
                deprecation="true"
-               target="1.5"
+               target="${java.major.version}"
                verbose="false"
                fork="false"
-               source="1.5">
+               source="${java.major.version}">
             <src>
                 <pathelement location="${pa-web.build.srcDir.0}"/>
             </src>
@@ -254,7 +255,7 @@
     <target name="compile-tests" depends="compile,configure-tests,create-artifacts" description="Compile the test code">
         <mkdir dir="${pa-web.build.testOutputDir}"/>
         <javac destdir="${pa-web.build.testOutputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
-               target="1.5" verbose="false" fork="false" source="1.5">
+               target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}">
             <src>
                 <pathelement location="${pa-web.build.testDir.0}"/>
                 <pathelement location="${pa-web.build.integrationTestDir.0}"/>
