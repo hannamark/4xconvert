@@ -779,7 +779,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
                     + " from Administrative Data menu.", "Regulatory Information fields must be Entered."));
         }
         // Display error in abstraction validation if section 801 indicator = yes,
-        // delayed posting indicator is yes and trial does not include Intervention with type ‘Device’
+        // delayed posting indicator is yes and trial does not include Intervention with type Device
         StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
         if (YES.equalsIgnoreCase(convertBLToString(spDTO.getSection801Indicator()))
                 && YES.equalsIgnoreCase(convertBLToString(spDTO.getDelayedpostingIndicator()))
