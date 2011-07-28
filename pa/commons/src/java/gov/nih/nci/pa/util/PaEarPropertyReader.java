@@ -81,6 +81,8 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.pa.service.PAException;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -110,6 +112,9 @@ public class PaEarPropertyReader {
     private static final String INVALID_DIRECTORY_ERROR_MSG = " is not a valid directory.";
     private static final String PA_HELP_URL = "wikiHelp.baseUrl.pa";
     private static final String REGISTRY_HELP_URL = "wikiHelp.baseUrl.registry";
+    private static final String ERROR_CODES_LOC = "error.codes.location";
+
+    private static final String NO_VALUE = "does not have a value in paear.properties";
 
     static {
         try {
@@ -121,21 +126,14 @@ public class PaEarPropertyReader {
         }
     }
 
+
     /**
     *
     * @return tooltip folder path
     * @throws PAException e
     */
     public static String getTooltipsPath() throws PAException {
-      String tooltipsFolderPath = PROPS.getProperty(TOOLTIPS_PATH);
-      if (tooltipsFolderPath == null) {
-          throw new PAException("tooltips.path does not have value in paear.properties");
-      }
-      File f = new File(tooltipsFolderPath);
-      if (!f.isDirectory()) {
-          throw new PAException(tooltipsFolderPath + INVALID_DIRECTORY_ERROR_MSG);
-      }
-      return tooltipsFolderPath;
+      return getDirPropTemplate(TOOLTIPS_PATH);
     }
 
     /**
@@ -144,15 +142,7 @@ public class PaEarPropertyReader {
      * @throws PAException e
      */
     public static String getDocUploadPath() throws PAException {
-        String folderPath = PROPS.getProperty(DOC_UPLOAD_PATH);
-        if (folderPath == null) {
-            throw new PAException("doc.upload.path does not have value in paear.properties");
-        }
-        File f = new File(folderPath);
-        if (!f.isDirectory()) {
-            throw new PAException(folderPath + INVALID_DIRECTORY_ERROR_MSG);
-        }
-        return folderPath;
+        return getDirPropTemplate(DOC_UPLOAD_PATH);
     }
 
     /**
@@ -161,13 +151,18 @@ public class PaEarPropertyReader {
      * @throws PAException e
      */
    public static String getPDQUploadPath() throws PAException {
-       String folderPath = PROPS.getProperty(PDQ_UPLOAD_PATH);
+       return getDirPropTemplate(PDQ_UPLOAD_PATH);
+   }
+
+   private static String getDirPropTemplate(String propName) throws PAException {
+       String folderPath = PROPS.getProperty(propName);
        if (folderPath == null) {
-           throw new PAException("pdq.upload.path does not have value in paear.properties");
+           throw new PAException(ErrorCode.PA_SYS_001, propName
+                   + NO_VALUE);
        }
        File f = new File(folderPath);
        if (!f.isDirectory()) {
-           throw new PAException(folderPath + INVALID_DIRECTORY_ERROR_MSG);
+           throw new PAException(ErrorCode.PA_SYS_001, folderPath + INVALID_DIRECTORY_ERROR_MSG);
        }
        return folderPath;
    }
@@ -178,15 +173,7 @@ public class PaEarPropertyReader {
      * @throws PAException e
      */
     public static String getBatchUploadPath() throws PAException {
-        String folderPath = PROPS.getProperty(BATCH_UPLOAD_PATH);
-        if (folderPath == null) {
-            throw new PAException("batch.upload.path does not have value in paear.properties");
-        }
-        File f = new File(folderPath);
-        if (!f.isDirectory()) {
-            throw new PAException(folderPath + INVALID_DIRECTORY_ERROR_MSG);
-        }
-        return folderPath;
+        return getDirPropTemplate(BATCH_UPLOAD_PATH);
     }
 
     /**
@@ -194,32 +181,16 @@ public class PaEarPropertyReader {
      * @throws PAException e
      */
     public static String getAccrualBatchUploadPath() throws PAException {
-        String folderPath = PROPS.getProperty(ACCRUAL_BATCH_UPLOAD_PATH);
-        if (folderPath == null) {
-            throw new PAException("accrual.batch.upload.path does not have value in paear.properties");
-        }
-        File f = new File(folderPath);
-        if (!f.isDirectory()) {
-            throw new PAException(folderPath + INVALID_DIRECTORY_ERROR_MSG);
-        }
-        return folderPath;
+        return getDirPropTemplate(ACCRUAL_BATCH_UPLOAD_PATH);
     }
 
     /**
      *
-     * @return String for the server name
+     * @return String for the server info (server:port)
      * @throws PAException on error
      */
     public static String getLookUpServerInfo() throws PAException {
-        String server = PROPS.getProperty(PO_SERVER_NAME);
-        if (server == null) {
-            throw new PAException("'server' does not have value in paear.properties");
-        }
-        String port = PROPS.getProperty(PO_SERVER_PORT);
-        if (port == null) {
-            throw new PAException("'port' does not have value in paear.properties");
-        }
-        return server + ":" + port;
+        return getPropTemplate(PO_SERVER_NAME) + ":" + getPropTemplate(PO_SERVER_PORT);
     }
 
     /**
@@ -228,11 +199,7 @@ public class PaEarPropertyReader {
      * @throws PAException on error
      */
     public static String getCSMSubmitterGroup() throws PAException {
-        String submitterGroupName = PROPS.getProperty(CSM_SUBMITTER_GROUP);
-        if (submitterGroupName == null) {
-            throw new PAException("'submitterGroupName' does not have value in paear.properties");
-        }
-        return submitterGroupName;
+        return getPropTemplate(CSM_SUBMITTER_GROUP);
     }
 
     /**
@@ -240,11 +207,7 @@ public class PaEarPropertyReader {
      * @throws PAException on error
      */
     public static String getAllowedUploadFileTypes() throws PAException {
-        String allowedFileTypes = PROPS.getProperty(ALLOWED_UPLOAD_FILE_TYPES);
-        if (allowedFileTypes == null) {
-            throw new PAException("'allowedUploadFileTypes' does not have value in paear.properties ");
-        }
-        return allowedFileTypes;
+        return getPropTemplate(ALLOWED_UPLOAD_FILE_TYPES);
     }
 
     /**
@@ -253,11 +216,7 @@ public class PaEarPropertyReader {
      * @throws PAException if the property is missing
      */
     public static String getRssUser() throws PAException {
-        String user = PROPS.getProperty(CTEP_RSS_USER);
-        if (user == null) {
-            throw new PAException(CTEP_RSS_USER + " does not have value in paear.properties ");
-        }
-        return user;
+        return getPropTemplate(CTEP_RSS_USER);
     }
 
     /**
@@ -266,11 +225,7 @@ public class PaEarPropertyReader {
      * @throws PAException if the property is missing
      */
     public static String getPaHelpUrl() throws PAException {
-        String url = PROPS.getProperty(PA_HELP_URL);
-        if (url == null) {
-            throw new PAException(PA_HELP_URL + " does not have value in paear.properties ");
-        }
-        return url;
+        return getPropTemplate(PA_HELP_URL);
     }
 
     /**
@@ -279,11 +234,26 @@ public class PaEarPropertyReader {
      * @throws PAException if the property is missing
      */
     public static String getRegistryHelpUrl() throws PAException {
-        String url = PROPS.getProperty(REGISTRY_HELP_URL);
+        return getPropTemplate(REGISTRY_HELP_URL);
+    }
+
+    /**
+     * Returns the URI for the error code documentation.
+     * @return the URI.
+     *
+     */
+    public static URI getErrorCodeLocation() {
+        String url = PROPS.getProperty(ERROR_CODES_LOC);
         if (url == null) {
-            throw new PAException(REGISTRY_HELP_URL + " does not have value in paear.properties ");
+            LOG.error(ERROR_CODES_LOC + NO_VALUE);
+        } else {
+            try {
+                return new URI(url);
+            } catch (URISyntaxException e) {
+                LOG.error(ERROR_CODES_LOC + NO_VALUE);
+            }
         }
-        return url;
+        return null;
     }
 
     /**
@@ -291,6 +261,15 @@ public class PaEarPropertyReader {
      */
     public static Properties getProperties() {
         return PROPS;
+    }
+
+    private static String getPropTemplate(String propName) throws PAException {
+        String value = PROPS.getProperty(propName);
+        if (value == null) {
+            throw new PAException(ErrorCode.PA_SYS_001,
+                    propName + NO_VALUE);
+        }
+        return value;
     }
 
 }

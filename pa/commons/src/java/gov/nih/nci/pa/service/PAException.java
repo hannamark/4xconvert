@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.pa.util.ErrorCode;
+
 import javax.ejb.ApplicationException;
 
 import org.apache.log4j.Logger;
@@ -92,6 +94,8 @@ public class PAException extends Exception {
 
     private static final long serialVersionUID = -412014421822871391L;
     private static final Logger LOG = Logger.getLogger(PAException.class);
+
+    private ErrorCode errorCode = ErrorCode.PA_GENERAL;
 
     /**
      * no argument constructor.
@@ -120,6 +124,29 @@ public class PAException extends Exception {
     }
 
     /**
+     * String and Throwable constructor.
+     * @param errorCode ErrorCode for interpretation
+     * @param message message
+     * @param t t
+     */
+    public PAException(ErrorCode errorCode, String message, Throwable t) {
+        super(message, t);
+        this.errorCode = errorCode;
+        LOG.error(errorCode + " - " + message, t);
+    }
+
+    /**
+     * String and Throwable constructor.
+     * @param errorCode ErrorCode for interpretation
+     * @param message message
+     */
+    public PAException(ErrorCode errorCode, String message) {
+        super(message);
+        this.errorCode = errorCode;
+        LOG.error(errorCode + " - " + message);
+    }
+
+    /**
      *
      * @param t t
      */
@@ -127,5 +154,14 @@ public class PAException extends Exception {
         super(t);
         LOG.error(t);
     }
+
+    /**
+     * @return the errorCode, or null if none is provided.
+     */
+    public ErrorCode getErrorCode() {
+        return errorCode;
+    }
+
+
 }
 
