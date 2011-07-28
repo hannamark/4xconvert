@@ -13,6 +13,7 @@
     <property name="pmdFile" value="${resourceDir}/viewerPmd.xml"/>
     <property name="checkstyle.url" value="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml"/>
     <property name="java.major.version" value="1.6"/>
+    <property name="java.encoding" value="utf-8"/>
     
     <property name="lib.dir" value="${software.dir}/target/pa/lib/viewer/services"/>
     <property name="reportDir" value="${pa.report.dir}/viewer/services"/>
@@ -128,15 +129,8 @@
     <target name="compile" description="Compiles the subproject">
         <fail unless="jboss.deploy.directory" message="Property jboss.deploy.directory not set.  Check build.properties file."/>
         <mkdir dir="${viewer.build.outputDir}"/>
-        <javac destdir="${viewer.build.outputDir}"
-               nowarn="false"
-               debug="true"
-               optimize="false"
-               deprecation="true"
-               target="${java.major.version}"
-               verbose="false"
-               fork="false"
-               source="${java.major.version}">
+        <javac destdir="${viewer.build.outputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
+               target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}" encoding="${java.encoding}">
             <src>
                 <pathelement location="${viewer.build.srcDir.0}"/>
             </src>
@@ -160,15 +154,9 @@
       depends="compile"
       description="Compile the test code">
         <mkdir dir="${viewer.build.testOutputDir}"/>
-        <javac destdir="${viewer.build.testOutputDir}"
-               nowarn="false"
-               debug="true"
-               optimize="false"
-               deprecation="true"
-               target="1.5"
-               verbose="false"
-               fork="false"
-               source="1.5">
+        <javac destdir="${viewer.build.testOutputDir}" nowarn="false" debug="true" optimize="false"
+               deprecation="true" target="${java.major.version}" verbose="false" fork="false"
+               source="${java.major.version}" encoding="${java.encoding}">
             <src>
                 <pathelement location="${viewer.build.testDir.0}"/>
             </src>

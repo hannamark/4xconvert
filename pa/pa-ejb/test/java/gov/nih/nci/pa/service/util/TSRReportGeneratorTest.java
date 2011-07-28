@@ -185,8 +185,8 @@ public class TSRReportGeneratorTest {
     private void setupDataForTsrGenerationTest(AbstractTsrReportGenerator tsrReportGenerator) throws Exception {
         // Trial Identification Data
         TSRReportTrialIdentification trialIdentification = new TSRReportTrialIdentification();
-        trialIdentification.setTrialCategory("Proprietary. UnitŽ de Fabrication et Contr™les Hospitaliers");
-        trialIdentification.setNciIdentifier("NCI-2010-00001. This is unnecessary. To see if this spans correctly across \n multiple lines.\n Special Characters: ± ¨ ª >= <= = ³ ²  ­ ");
+        trialIdentification.setTrialCategory("Proprietary. Unit\u00E9 de Fabrication et Contr\u00F4les Hospitaliers");
+        trialIdentification.setNciIdentifier("NCI-2010-00001. This is unnecessary. To see if this spans correctly across \n multiple lines.\n Special Characters: \u00B1 \u00AE \u2122 >= <= = \u2265 \u2264 \u2260");
         trialIdentification.setLeadOrgIdentifier("5AM_NCI");
         trialIdentification.setNctNumber("12345");
         trialIdentification.setDcpIdentifier("5678");

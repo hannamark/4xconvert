@@ -12,6 +12,7 @@
     <property name="pmdFile" value="${resource.dir}/accrualPmd.xml"/>
     <property name="checkstyle.url" value="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml"/>
     <property name="java.major.version" value="1.6"/>
+    <property name="java.encoding" value="utf-8"/>
     
     <property name="lib.dir" value="${software.dir}/target/accrual/lib"/>
     <property name="services.report.dir" value="${software.dir}/target/accrual/reports/services"/>
@@ -144,15 +145,8 @@
 
     <target name="compile" depends="pre-clean, get-domain" description="Compiles the subproject">
         <mkdir dir="${services.build.outputDir}"/>
-        <javac destdir="${services.build.outputDir}"
-               nowarn="false"
-               debug="true"
-               optimize="false"
-               deprecation="true"
-               target="${java.major.version}"
-               verbose="false"
-               fork="false"
-               source="${java.major.version}">
+        <javac destdir="${services.build.outputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
+               target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}" encoding="${java.encoding}">
             <src>
                 <pathelement location="${services.build.srcDir}"/>
             </src>
@@ -191,15 +185,9 @@
 
     <target name="compile-tests" depends="compile" description="Compile the test code">
         <mkdir dir="${services.build.testOutputDir}"/>
-        <javac destdir="${services.build.testOutputDir}"
-               nowarn="false"
-               debug="true"
-               optimize="false"
-               deprecation="true"
-               target="${java.major.version}"
-               verbose="false"
-               fork="false"
-               source="${java.major.version}">
+        <javac destdir="${services.build.testOutputDir}" nowarn="false" debug="true" optimize="false"
+               deprecation="true" target="${java.major.version}" verbose="false" fork="false"
+               source="${java.major.version}" encoding="${java.encoding}">
             <src>
                 <pathelement location="${services.build.testSrcDir}"/>
             </src>

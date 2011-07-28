@@ -16,6 +16,7 @@
     <property name="pa.pmd" value="${pa.resourceDir}/paPmd.xml"/>
     <property name="pa.checkstyle.url" value="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml"/>
     <property name="java.major.version" value="1.6"/>
+    <property name="java.encoding" value="utf-8"/>
     
     <property name="jboss.server.jndi.port" value="1099" />
 
@@ -151,7 +152,7 @@
         <mkdir dir="${commons.build.testOutputDir}"/>
 
         <javac destdir="${commons.build.outputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
-               target="${java.major.version}" source="${java.major.version}" verbose="false" fork="false" encoding="Cp1252">
+               target="${java.major.version}" source="${java.major.version}" verbose="false" fork="false" encoding="${java.encoding}">
             <src>
                 <pathelement location="${commons.build.srcDir.0}"/>
             </src>
@@ -194,7 +195,7 @@
 
     <target name="compile-tests" depends="compile, configure-tests" description="Compile the test code">
         <mkdir dir="${commons.build.testOutputDir}"/>
-        <javac destdir="${commons.build.testOutputDir}" nowarn="false" debug="true" optimize="false"
+        <javac destdir="${commons.build.testOutputDir}" nowarn="false" debug="true" optimize="false" encoding="${java.encoding}"
                deprecation="true" target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}">
             <src>
                 <pathelement location="${commons.build.testDir.0}"/>

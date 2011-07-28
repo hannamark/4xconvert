@@ -16,6 +16,7 @@
 
     <property name="jboss.server.jndi.port" value="1099" />
     <property name="java.major.version" value="1.6"/>
+    <property name="java.encoding" value="utf-8"/>
 
     <property name="pa-ejb.build.finalName" value="pa-ejb"/>
     <property name="pa-ejb.build.dir" value="${pa.dir}/pa-ejb/target"/>
@@ -198,15 +199,8 @@
 
     <target name="compile" depends="configure-main" description="Compile the code">
         <mkdir dir="${pa-ejb.build.outputDir}"/>
-        <javac destdir="${pa-ejb.build.outputDir}"
-               nowarn="false"
-               debug="true"
-               optimize="false"
-               deprecation="true"
-               target="${java.major.version}"
-               verbose="false"
-               fork="false"
-               source="${java.major.version}">
+        <javac destdir="${pa-ejb.build.outputDir}" nowarn="false" debug="true" optimize="false" deprecation="true"
+               target="${java.major.version}" verbose="false" fork="false" source="${java.major.version}" encoding="${java.encoding}">
             <src>
                 <pathelement location="${pa-ejb.build.srcDir.0}"/>
             </src>
@@ -227,27 +221,14 @@
     </target>
 
     <!-- ====================================================================== -->
-    <!-- Configure test compilation target                                      -->
-    <!-- ====================================================================== -->
-
-    <!-- <target name="configure-tests">
-        <copy file="${pa.resourceDir}/test.properties.pa-ejb"
-              tofile="${pa-ejb.build.testResourceDir.0}/test.properties"
-              overwrite="true">
-            <filterset>
-                <filter token="test.schema.showsql" value="${test.schema.showsql}"/>
-            </filterset>
-        </copy>
-    </target> -->
-
-    <!-- ====================================================================== -->
     <!-- Test-compilation target                                                -->
     <!-- ====================================================================== -->
 
     <target name="compile-tests" depends="compile" description="Compile the test code">
         <mkdir dir="${pa-ejb.build.testOutputDir}"/>
         <javac destdir="${pa-ejb.build.testOutputDir}" nowarn="false" debug="true" optimize="false"
-               deprecation="true" source="${java.major.version}" target="${java.major.version}" verbose="false" fork="false">
+            deprecation="true" source="${java.major.version}" target="${java.major.version}" verbose="false" 
+            fork="false" encoding="${java.encoding}">
             <src>
                 <pathelement location="${pa-ejb.build.testDir.0}"/>
             </src>
