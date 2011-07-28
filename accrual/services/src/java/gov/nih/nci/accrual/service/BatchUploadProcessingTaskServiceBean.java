@@ -87,8 +87,8 @@ import gov.nih.nci.accrual.service.util.BatchValidationResults;
 import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.io.File;
 import java.rmi.RemoteException;
