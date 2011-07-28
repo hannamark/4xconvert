@@ -148,7 +148,15 @@
             </xs:complexContent>
         </xs:complexType>
     </xs:element>
-
+    
+    <xs:element name="Ed">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="ISO:ED" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+  
     <xs:element name="Disease">
         <xs:complexType>
             <xs:complexContent>

@@ -114,8 +114,8 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceBean;
-import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceBeanLocal;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceBean;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceBean;
@@ -147,7 +147,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     MailManagerBeanLocal bean = new MailManagerBeanLocal();
     ProtocolQueryServiceLocal protocolQrySrv = new ProtocolQueryServiceBean();
     RegistryUserServiceLocal registryUserSrv = new RegistryUserServiceBean();
-    CTGovXmlGeneratorServiceRemote ctGovXmlSrv = new CTGovXmlGeneratorServiceBean ();
+    CTGovXmlGeneratorServiceLocal ctGovXmlSrv = new CTGovXmlGeneratorServiceBeanLocal();
     TSRReportGeneratorServiceRemote tsrReptSrv = new TSRReportGeneratorServiceBean();
     LookUpTableServiceRemote lookUpTableSrv = new LookUpTableServiceBean();
     DocumentWorkflowStatusServiceLocal docWrkStatSrv = new DocumentWorkflowStatusServiceBean();
@@ -235,7 +235,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(docWrkNonProp);
         nonPropTrial.getDocumentWorkflowStatuses().add(docWrkNonProp);
         TestSchema.addUpdObject(nonPropTrial);
-        
+
         // Prop Trial
         StudyProtocol propTrial = createProprietaryStudyProtocolObj();
         propTrial.getStudyOwners().add(owner1);
@@ -265,7 +265,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(docWrk);
         propTrial.getDocumentWorkflowStatuses().add(docWrk);
         TestSchema.addUpdObject(propTrial);
-        
+
         RegistryUser registryUser = new RegistryUser();
         registryUser.setFirstName("firstName");
         registryUser.setLastName("lastName");

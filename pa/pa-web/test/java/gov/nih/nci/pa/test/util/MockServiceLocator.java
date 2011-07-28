@@ -152,7 +152,7 @@ import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
-import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -485,8 +485,8 @@ public class MockServiceLocator implements ServiceLocator {
         return studyIndIdeService;
     }
 
-    public CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService() {
-        CTGovXmlGeneratorServiceRemote svc = mock(CTGovXmlGeneratorServiceRemote.class);
+    public CTGovXmlGeneratorServiceLocal getCTGovXmlGeneratorService() {
+        CTGovXmlGeneratorServiceLocal svc = mock(CTGovXmlGeneratorServiceLocal.class);
         try {
             when(svc.generateCTGovXml(any(Ii.class))).thenReturn("Test XML");
         } catch (PAException e) {

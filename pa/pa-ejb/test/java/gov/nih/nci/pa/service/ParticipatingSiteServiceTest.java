@@ -9,18 +9,9 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
-import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
-import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
-import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
-import gov.nih.nci.pa.enums.ActStatusCode;
-import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
@@ -37,15 +28,12 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
-import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.MockPaRegistryServiceLocator;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
-import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
@@ -61,9 +49,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -97,51 +83,6 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
         rBean.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
         rBean.setOcsr(ocsr);
         remoteBean = rBean;
-    }
-
-    private Ii prepareStudyProtocol(String nciId, boolean isPropTrial) throws PAException {
-        Session session = PaHibernateUtil.getCurrentSession();
-
-        User user = new User();
-        user.setLoginName("Abstractor: " + new Date());
-        user.setFirstName("Joe");
-        user.setLastName("Smith");
-        user.setUpdateDate(new Date());
-        session.saveOrUpdate(user);
-
-        StudyProtocol sp = new InterventionalStudyProtocol();
-        sp.setOfficialTitle("cacncer for THOLA");
-        sp.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        sp.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
-        sp.setPrimaryPurposeCode(PrimaryPurposeCode.TREATMENT);
-        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
-        Set<Ii> studySecondaryIdentifiers = new HashSet<Ii>();
-        Ii spSecId = new Ii();
-        spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
-        spSecId.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-        spSecId.setExtension(nciId);
-        studySecondaryIdentifiers.add(spSecId);
-        sp.setOtherIdentifiers(studySecondaryIdentifiers);
-        sp.setSubmissionNumber(Integer.valueOf(1));
-        sp.setProprietaryTrialIndicator(isPropTrial);
-        sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
-        sp.setStatusCode(ActStatusCode.ACTIVE);
-
-        session.saveOrUpdate(sp);
-
-        Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(sp.getId());
-        StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
-        assertEquals(spDTO.getOfficialTitle().getValue(), "cacncer for THOLA");
-
-        DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
-        dws.setStatusCode(DocumentWorkflowStatusCode.SUBMITTED);
-        dws.setStudyProtocol(sp);
-
-        session.saveOrUpdate(dws);
-
-        return spSecId;
     }
 
     private OrganizationDTO getOrg1() {
@@ -234,8 +175,9 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
 
     @Test
     public void createAndUpdateSiteForPropTrialTest() throws Exception {
-
-        Ii spSecId = prepareStudyProtocol("NCI-2010-00088", true);
+        StudyProtocolTestHelper.prepareStudyProtocol(studyProtocolService, "NCI-2010-00088", "CTEP_ID",
+        		"DCP_ID", "NCT_ID", true);
+        Ii spSecId = IiConverter.convertToAssignedIdentifierIi("NCI-2010-00088");
         OrganizationDTO org = getOrg1();
         PersonDTO person = getPerson1();
         StudySiteDTO studySiteDTO = getBasicStudySiteDTO(spSecId);
@@ -309,8 +251,9 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
 
     @Test
     public void createAndUpdateSiteForNonPropTrialTest() throws Exception {
-
-        Ii spSecId = prepareStudyProtocol("NCI-2010-00099", false);
+        StudyProtocolTestHelper.prepareStudyProtocol(studyProtocolService, "NCI-2010-00099", "CTEP_ID",
+                "DCP_ID", "NCT_ID", false);
+        Ii spSecId = IiConverter.convertToAssignedIdentifierIi("NCI-2010-00099");
         OrganizationDTO org = getOrg1();
         PersonDTO person = getPerson1();
         PersonDTO person2 = getPerson2();
@@ -423,7 +366,9 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
      */
     @Test
     public void testGenericContactValidation() throws Exception {
-        Ii spSecId = prepareStudyProtocol("NCI-2010-00100", false);
+        StudyProtocolTestHelper.prepareStudyProtocol(studyProtocolService, "NCI-2010-00100", "CTEP_ID",
+                "DCP_ID", "NCT_ID", false);
+        Ii spSecId = IiConverter.convertToAssignedIdentifierIi("NCI-2010-00100");
         OrganizationDTO org = getOrg1();
         PersonDTO person = getPerson1();
         PersonDTO person2 = getPerson2();

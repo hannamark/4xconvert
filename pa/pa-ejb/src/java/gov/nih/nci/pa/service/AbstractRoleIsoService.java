@@ -94,8 +94,8 @@ import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -162,13 +162,12 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
      * @return list StudySiteDTO
      * @throws PAException on error
      */
-    @SuppressWarnings("unchecked")
     public List<DTO> getByStudyProtocol(Ii studyProtocolIi, List<DTO> dtos) throws PAException {
         if (PAUtil.isIiNull(studyProtocolIi)) {
             throw new PAException("Cannot call getByStudyProtocol method with a null identifier.");
         }
         StringBuffer criteria = new StringBuffer();
-        Session session = PaHibernateUtil.getCurrentSession();
+
         StringBuffer hql = new StringBuffer("select spart from ");
         hql.append(getTypeArgument().getName());
         hql.append(" spart join spart.studyProtocol spro where spro.id = :studyProtocolId");
@@ -208,6 +207,12 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
         }
         hql.append(" order by spart.id ");
 
+        return runQuery(studyProtocolIi, hql);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<DTO> runQuery(Ii studyProtocolIi, StringBuffer hql) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
         Query query = session.createQuery(hql.toString());
         query.setParameter("studyProtocolId", IiConverter.convertToLong(studyProtocolIi));
         List<BO> queryList = query.list();

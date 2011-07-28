@@ -78,111 +78,24 @@
 */
 package gov.nih.nci.pa.service.util;
 
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.ABSTRACTOR_ROLE;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
-import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
-import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
-import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.ErrorCode;
-import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
-import javax.annotation.Resource;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
-import org.jboss.annotation.security.SecurityDomain;
+import javax.ejb.Local;
 
 /**
-* service bean for generating ct.gov.xml.
-*/
-@Stateless
-@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@SecurityDomain("pa")
-@RolesAllowed({CLIENT_ROLE, ABSTRACTOR_ROLE, SUBMITTER_ROLE })
-public class CTGovXmlGeneratorServiceBean extends CTGovXmlGeneratorServiceBeanLocal
-    implements CTGovXmlGeneratorServiceRemote {
-
-    //TODO need to figure out how to throw the error code PRSXML001 when "The user is not an authorized CTRP user"
-    //TODO since this happens in role validation.
-
-    @Resource
-    private SessionContext ejbContext;
+ * Local interface for ct gov xml service.
+ * @author mshestopalov
+ *
+ */
+@Local
+public interface CTGovXmlGeneratorServiceLocal {
 
     /**
-     * Getter for ejb context.
-     * @return ejb context.
+     * @param studyProtocolIi Ii of studyprotocol
+     * @return String xml string
+     * @throws PAException on error
      */
-    protected SessionContext getEjbContext() {
-        return ejbContext;
-    }
+    String generateCTGovXml(Ii studyProtocolIi) throws PAException;
 
-    private StudyProtocolDTO assertValidStudyProtocol(Ii studyProtocolIi) throws PAException {
-        StudyProtocolDTO spDTO = null;
-        boolean badTrialId = false;
-        try {
-            spDTO = getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-            if (spDTO == null || PAUtil.isIiNull(spDTO.getIdentifier())) {
-                badTrialId = true;
-            }
-        } catch (PAException paEx) {
-            badTrialId = true;
-        }
-
-        if (badTrialId) {
-            throw new PAException(ErrorCode.PA_DATA_001, "The NCI trial ID provided is invalid");
-        }
-        return spDTO;
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Ed getCTGovXml(Ii studyProtocolIi) throws PAException {
-        try {
-            StudyProtocolDTO spDTO = assertValidStudyProtocol(studyProtocolIi);
-            PAUtil.checkUserIsTrialOwnerOrAbstractor(getEjbContext(), spDTO);
-        } catch (PAException userValidationException) {
-            if (userValidationException.getMessage().contains("is not a trial owner for trial id")) {
-                throw new PAException(ErrorCode.PA_USER_002, userValidationException.getMessage(),
-                        userValidationException);
-            } else {
-                throw userValidationException;
-            }
-        }
-        enforceAbstractionRules(studyProtocolIi);
-        Ed ed = new Ed();
-        try {
-            ed.setValue(generateCTGovXml(studyProtocolIi));
-        } catch (PAException xmlGenError) {
-            throw new PAException(ErrorCode.PA_XML_001, xmlGenError.getMessage(), xmlGenError);
-        }
-        return ed;
-    }
-
-    private void enforceAbstractionRules(Ii studyProtocolIi) throws PAException {
-        DocumentWorkflowStatusDTO dto = getDocumentWorkflowStatusService()
-        .getCurrentByStudyProtocol(studyProtocolIi);
-        DocumentWorkflowStatusCode processingStatus = DocumentWorkflowStatusCode.getByCode(
-                CdConverter.convertCdToString(dto.getStatusCode()));
-        if (DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE != processingStatus
-                && DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE != processingStatus) {
-            throw new PAException(ErrorCode.PA_DATA_002,
-                    "The study protocol has not been abstracted and verified (i.e., "
-                    + "it is not in the \"Abstraction Verified Response\" or \"Abstraction Verified No Response\""
-                    + " status), so the XML file cannot be generated.");
-        }
-    }
 }

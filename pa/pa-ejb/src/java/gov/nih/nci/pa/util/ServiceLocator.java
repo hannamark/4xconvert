@@ -116,7 +116,7 @@ import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
 import gov.nih.nci.pa.service.audittrail.AuditTrailServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
-import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.GridAccountServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
@@ -272,7 +272,7 @@ public interface ServiceLocator {
     /**
      * @return CTGovXmlGeneratorService
      */
-    CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService();
+    CTGovXmlGeneratorServiceLocal getCTGovXmlGeneratorService();
 
     /**
      * @return PDQXmlGeneratorService

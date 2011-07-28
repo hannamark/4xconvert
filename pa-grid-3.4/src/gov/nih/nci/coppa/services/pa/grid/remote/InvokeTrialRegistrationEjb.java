@@ -84,6 +84,7 @@ package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -98,6 +99,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -109,12 +111,13 @@ import java.util.List;
  * @author Steve Lustbader
  */
 
-public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemote {
+public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemote, CTGovXmlGeneratorServiceRemote {
 
     /**
      * {@inheritDoc}
      */
     // CHECKSTYLE:OFF
+    @Override
     public Ii amend(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             List<StudyIndldeDTO> studyIndldeDTOs, List<StudyResourcingDTO> studyResourcingDTOs,
             List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
@@ -142,6 +145,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
      * {@inheritDoc}
      */
     // CHECKSTYLE:OFF
+    @Override
     public Ii createAbbreviatedInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
             StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, List<DocumentDTO> documentDTOs,
             OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
@@ -167,6 +171,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
      * {@inheritDoc}
      */
     // CHECKSTYLE:OFF
+    @Override
     public Ii createCompleteInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
             StudyOverallStatusDTO overallStatusDTO, List<StudyIndldeDTO> studyIndldeDTOs,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
@@ -195,6 +200,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
     /**
      * {@inheritDoc}
      */
+    @Override
     public void reject(Ii studyProtocolIi, St rejectionReason) throws PAException {
         throw new UnsupportedOperationException("reject not allowed");
     }
@@ -203,6 +209,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
      * {@inheritDoc}
      */
     // CHECKSTYLE:OFF
+    @Override
     public void update(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             List<StudySiteDTO> studyIdentifierDTOs, List<StudyIndldeDTO> studyIndldeDTOs,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
@@ -218,6 +225,22 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
                     studyContactDTO, studyParticipationContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
                     responsiblePartyContactIi, studyRegAuthDTO, collaboratorDTOs, studySiteAccrualStatusDTOs,
                     studySiteDTOs, isBatch);
+        } catch (PAException pae) {
+            throw pae;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Ed getCTGovXml(Ii studyProtocolIi) throws PAException {
+        try {
+            return GridSecurityJNDIServiceLocator.newInstance()
+                .getCTGovXmlGeneratorService().getCTGovXml(studyProtocolIi);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {

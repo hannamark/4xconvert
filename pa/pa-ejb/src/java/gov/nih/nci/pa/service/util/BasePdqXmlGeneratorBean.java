@@ -121,7 +121,7 @@ import org.w3c.dom.Element;
  * @author mshestopalov
  *
  */
-public class BasePdqXmlGeneratorBean extends CTGovXmlGeneratorServiceBean {
+public class BasePdqXmlGeneratorBean extends CTGovXmlGeneratorServiceBeanLocal {
 
     /**
      * {@inheritDoc}

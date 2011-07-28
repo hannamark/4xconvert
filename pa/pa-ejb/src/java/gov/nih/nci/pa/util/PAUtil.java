@@ -78,6 +78,8 @@
 */
 package gov.nih.nci.pa.util;
 
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
@@ -92,6 +94,7 @@ import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.dto.MilestonesDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -113,9 +116,12 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter.JavaPq;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PAExceptionConstants;
+import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.ISOUtil.ValidDateFormat;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -142,10 +148,14 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.ejb.SessionContext;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  * This is a selection of utilities, useful for PA. This set of utilities is safe to use in the grid services. Do
@@ -953,14 +963,14 @@ public class PAUtil {
         }
         return strPhone;
     }
-    
+
     private static boolean isMaxUnitInDaysAndMinUnitValid(String minUnit, String maxUnit) {
         return maxUnit.equalsIgnoreCase(UnitsCode.DAYS.getCode())
                 && !(minUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode())
                 || minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
                 || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()));
     }
-    
+
     private static boolean isMaxUnitInHoursAndMinUnitValid(String minUnit, String maxUnit) {
         return maxUnit.equalsIgnoreCase(UnitsCode.HOURS.getCode())
                 && !(minUnit.equalsIgnoreCase(UnitsCode.DAYS.getCode())
@@ -968,7 +978,7 @@ public class PAUtil {
                 || minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
                 || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()));
     }
-    
+
     private static boolean isMaxUnitInMinutesAndMinUnitValid(String minUnit, String maxUnit) {
         return maxUnit.equalsIgnoreCase(UnitsCode.MINUTES.getCode())
                 && !(minUnit.equalsIgnoreCase(UnitsCode.HOURS.getCode())
@@ -977,18 +987,18 @@ public class PAUtil {
                 || minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
                 || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()));
     }
-    
+
     private static boolean isMaxUnitInWeeksAndMinUnitValid(String minUnit, String maxUnit) {
         return maxUnit.equalsIgnoreCase(UnitsCode.WEEKS.getCode())
                 && !(minUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
                 || minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode()));
     }
-    
+
     private static boolean isMaxUnitInMonthsAndMinUnitValid(String minUnit, String maxUnit) {
         return maxUnit.equalsIgnoreCase(UnitsCode.MONTHS.getCode())
         && !minUnit.equalsIgnoreCase(UnitsCode.YEARS.getCode());
     }
-    
+
     private static boolean checkMaxUnitSameOrLess(String minUnit, String maxUnit) {
         boolean isSameOrLess = false;
         if (isMaxUnitInMonthsAndMinUnitValid(minUnit, maxUnit)) {
@@ -1004,7 +1014,7 @@ public class PAUtil {
         }
         return isSameOrLess;
     }
-    
+
     /**
      *
      * @param minUnit min
@@ -1337,14 +1347,14 @@ public class PAUtil {
     public static boolean isPhaseCodeNA(String phaseCode) {
         return StringUtils.equalsIgnoreCase(phaseCode, PhaseCode.NA.getCode());
     }
-   
+
     /**
      * Convert a list of trial milestone dtos to latest admin, scientific, and general.
      * @param milestoneDto dto to load
      * @param studyMilestonesDtos dtos to order and translate.
      * @throws PAException if error.
      */
-    public static void convertMilestoneDtosToDTO(MilestonesDTO milestoneDto, 
+    public static void convertMilestoneDtosToDTO(MilestonesDTO milestoneDto,
             List<StudyMilestoneDTO> studyMilestonesDtos) throws PAException {
         Set<StudyMilestone> studyMilestones = new TreeSet<StudyMilestone>(new LastCreatedComparator());
         StudyMilestoneConverter smConv = new StudyMilestoneConverter();
@@ -1353,22 +1363,22 @@ public class PAUtil {
         }
         convertMilestonesCopyToDTO(milestoneDto, studyMilestones);
     }
-    
+
     /**
      * Convert a list of trial milestones into latest admin, scientific, and general.
      * A copy of the set is used to maintain the original set members in the trial domain object.
-     * @param milestonesDto dto to load 
+     * @param milestonesDto dto to load
      * @param studyMilestones list of trial milestones
      */
-    public static void convertMilestonesToDTO(MilestonesDTO milestonesDto, 
-            Set<StudyMilestone> studyMilestones) {   
+    public static void convertMilestonesToDTO(MilestonesDTO milestonesDto,
+            Set<StudyMilestone> studyMilestones) {
         Set<StudyMilestone> copy = new TreeSet<StudyMilestone>(new LastCreatedComparator());
         copy.addAll(studyMilestones);
         convertMilestonesCopyToDTO(milestonesDto, copy);
     }
-    
-    private static void convertMilestonesCopyToDTO(MilestonesDTO milestonesDto, 
-            Set<StudyMilestone> studyMilestones) {      
+
+    private static void convertMilestonesCopyToDTO(MilestonesDTO milestonesDto,
+            Set<StudyMilestone> studyMilestones) {
         if (studyMilestones.isEmpty()) {
             return;
         }
@@ -1377,7 +1387,7 @@ public class PAUtil {
             milestonesDto.getStudyMilestone().setMilestone(studyMilestone.getMilestoneCode());
             milestonesDto.getStudyMilestone().setMilestoneDate(studyMilestone.getMilestoneDate());
             return;
-        } else if (isAdminMilestone(milestonesDto.getAdminMilestone().getMilestone(), 
+        } else if (isAdminMilestone(milestonesDto.getAdminMilestone().getMilestone(),
                 studyMilestone.getMilestoneCode())) {
             milestonesDto.getAdminMilestone().setMilestone(studyMilestone.getMilestoneCode());
             milestonesDto.getAdminMilestone().setMilestoneDate(studyMilestone.getMilestoneDate());
@@ -1385,22 +1395,42 @@ public class PAUtil {
                 studyMilestone.getMilestoneCode())) {
             milestonesDto.getScientificMilestone().setMilestone(studyMilestone.getMilestoneCode());
             milestonesDto.getScientificMilestone().setMilestoneDate(studyMilestone.getMilestoneDate());
-        } 
+        }
         studyMilestones.remove(studyMilestone);
         convertMilestonesCopyToDTO(milestonesDto, studyMilestones);
     }
-    
+
     private static boolean isAdminMilestone(MilestoneCode currentCode, MilestoneCode input) {
         return currentCode == null && MilestoneCode.ADMIN_SEQ.contains(input);
     }
-    
+
     private static boolean isScientificMilestone(MilestoneCode currentCode, MilestoneCode input) {
         return currentCode == null && MilestoneCode.SCIENTIFIC_SEQ.contains(input);
     }
-    
+
     private static boolean isNotAdminOrScientificMilestone(MilestoneCode input) {
         return !MilestoneCode.ADMIN_SEQ.contains(input) && !MilestoneCode.SCIENTIFIC_SEQ.contains(input);
     }
 
+    /**
+     * Check that the user is a trial owner or abstractor.
+     * @param ejbContext ejb context
+     * @param spDTO trial dto
+     * @throws PAException on error
+     */
+    public static void checkUserIsTrialOwnerOrAbstractor(SessionContext ejbContext, StudyProtocolDTO spDTO)
+        throws PAException {
+        if (ejbContext.isCallerInRole(ADMIN_ABSTRACTOR_ROLE) || ejbContext.isCallerInRole(CLIENT_ROLE)) {
+            return;
+        }
+        CSMUserUtil userService = CSMUserService.getInstance();
+        User user = userService.getCSMUser(UsernameHolder.getUser());
 
+        RegistryUser userId = PaRegistry.getRegistryUserService().getUser(user.getLoginName());
+        if (!PaRegistry.getRegistryUserService().isTrialOwner(userId.getId(),
+                Long.valueOf(spDTO.getIdentifier().getExtension()))) {
+            throw new PAException("User " + user.getLoginName() + " is not a trial owner for trial id "
+                    + Long.valueOf(spDTO.getIdentifier().getExtension()));
+        }
+    }
 }

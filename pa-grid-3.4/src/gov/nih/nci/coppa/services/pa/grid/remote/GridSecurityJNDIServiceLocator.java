@@ -132,6 +132,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceRemote;
 import gov.nih.nci.pa.service.StudySiteContactServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.TrialRegistrationServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -470,5 +471,12 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
      */
     public ParticipatingSiteServiceRemote getParticipatingSiteService() throws NamingException {
         return (ParticipatingSiteServiceRemote) lookup("/pa/ParticipatingSiteServiceBean/remote");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public CTGovXmlGeneratorServiceRemote getCTGovXmlGeneratorService() throws NamingException {
+        return (CTGovXmlGeneratorServiceRemote) lookup("/pa/CTGovXmlGeneratorServiceBean/remote");
     }
 }

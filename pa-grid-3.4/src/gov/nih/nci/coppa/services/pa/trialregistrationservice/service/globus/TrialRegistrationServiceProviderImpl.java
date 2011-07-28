@@ -50,4 +50,10 @@ public class TrialRegistrationServiceProviderImpl{
     return boxedResult;
   }
 
+    public gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.GetCtGovXmlResponse getCtGovXml(gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.GetCtGovXmlRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.GetCtGovXmlResponse boxedResult = new gov.nih.nci.coppa.services.pa.trialregistrationservice.stubs.GetCtGovXmlResponse();
+    boxedResult.setEd(impl.getCtGovXml(params.getStudyProtocolId().getId()));
+    return boxedResult;
+  }
+
 }

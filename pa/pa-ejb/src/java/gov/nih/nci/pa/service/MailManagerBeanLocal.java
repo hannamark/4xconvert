@@ -95,7 +95,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
@@ -186,7 +186,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     @EJB
     private RegistryUserServiceLocal registryUserService;
     @EJB
-    private CTGovXmlGeneratorServiceRemote ctGovXmlGeneratorService;
+    private CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorService;
     @EJB
     private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
     @EJB
@@ -846,7 +846,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     /**
      * @param ctGovXmlGeneratorService the ctGovXmlGeneratorService to set
      */
-    public void setCtGovXmlGeneratorService(CTGovXmlGeneratorServiceRemote ctGovXmlGeneratorService) {
+    public void setCtGovXmlGeneratorService(CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorService) {
         this.ctGovXmlGeneratorService = ctGovXmlGeneratorService;
     }
 

@@ -80,86 +80,103 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.util;
+package gov.nih.nci.pa.service;
 
-import java.net.URI;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
+import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
+import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.EntityStatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.PADomainUtils;
+import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.hibernate.Session;
 
 /**
- * Error codes are intended to report some kind of issue that the end user can act upon.
- * Error codes are described here: https://wiki.nci.nih.gov/x/eALTAg
- * <br>
- * When adding new error codes, please follow this
- * naming scheme for error codes: <br>
- * PA_<category>_<num> <br>
- * For example: PA_USER_001 or PA_DATA_002, etc. <br>
- * Possible categories are : <br>
- * common, system, security, data validation, etc.. <br>
- * @author ludetc
+ * @author mshestopalov
  *
  */
-public enum ErrorCode {
+public class StudyProtocolTestHelper {
 
-    /**
-     * See Wiki doc for more details.
-     */
-    PA_GENERAL("Unknown or unspecified error code"),
+    public static Ii prepareStudyProtocol(StudyProtocolServiceLocal spSvcLocal, String nciId,
+            String ctepId, String dcpId, String nctId, boolean propTrial) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
 
-    /**
-     * See Wiki doc for more details.
-     */
-    PA_SYS_001("A unrecoverable system error has occured."),
+        User user = new User();
+        user.setLoginName("Abstractor: " + new Date());
+        user.setFirstName("Joe");
+        user.setLastName("Smith");
+        user.setUpdateDate(new Date());
+        session.saveOrUpdate(user);
 
-    /**
-     * See Wiki doc for more details.
-     */
-    PA_USER_001("The user is not an authorized CTRP user"),
+        StudyProtocol sp = new InterventionalStudyProtocol();
+        sp.setOfficialTitle("cacncer for THOLA");
+        sp.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));
+        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        sp.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
+        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setPrimaryPurposeCode(PrimaryPurposeCode.TREATMENT);
+        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+        Set<Ii> studySecondaryIdentifiers = new HashSet<Ii>();
 
-    /**
-     * See Wiki doc for more details.
-     */
-    PA_DATA_001("The NCI trial ID provided is invalid"),
-    /**
-     * See Wiki doc for more details.
-     */
-    PA_USER_002("The user is not an owner of the study protocol"),
+        Ii spNciId = new Ii();
+        spNciId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        spNciId.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
+        spNciId.setExtension(nciId);
+        studySecondaryIdentifiers.add(spNciId);
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
+        sp.setSubmissionNumber(Integer.valueOf(1));
+        sp.setProprietaryTrialIndicator(propTrial);
+        sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
+        sp.setStatusCode(ActStatusCode.ACTIVE);
+        session.saveOrUpdate(sp);
 
-    /**
-     * See Wiki doc for more details.
-     */
-    PA_DATA_002("The study protocol has not been abstracted and verified "
-            + "(i.e., it is not in the \"Abstraction Verified Response\" "
-            + "or \"Abstraction Verified No Response\" status), so the XML file cannot be generated."),
+        DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
+        dws.setStatusCode(DocumentWorkflowStatusCode.SUBMITTED);
+        dws.setStudyProtocol(sp);
+        session.saveOrUpdate(dws);
 
-    /**
-     * See Wiki doc for more details.
-     */
-    PA_XML_001("PRSXML005: The generation of the XML file failed");
-
-    private final String description;
-
-    /**
-     * Constructor.
-     * @param shortDescription A short description providing a hint of the error.
-     * @param longDescription A more detailed description providing explanation and / or required steps.
-     */
-    ErrorCode(String description) {
-        this.description = description;
+        prepareTrialIds(session, sp, ctepId, dcpId, nctId);
+        return IiConverter.convertToStudyProtocolIi(sp.getId());
     }
 
-    /**
-     * The description provides a succinct description of the error code received.
-     * @return the  description
-     */
-    public String getDescription() {
-        return description;
+    private static void prepareIdentifierSite(Session session, StudyProtocol sp, String orgName, String id) {
+        StudySite ss = new StudySite();
+        ss.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+        ss.setLocalStudyProtocolIdentifier(id);
+        ResearchOrganization ro = PADomainUtils.createROExampleObjectByOrgName(orgName);
+        ro.setIdentifier("1");
+        ro.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        ro.getOrganization().setStatusCode(EntityStatusCode.ACTIVE);
+        session.saveOrUpdate(ro.getOrganization());
+        session.saveOrUpdate(ro);
+        ss.setResearchOrganization(ro);
+        ss.setStudyProtocol(sp);
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        session.saveOrUpdate(ss);
     }
 
-    /**
-     * This is the location where error code documentation can be found.
-     * @return the location.
-     */
-    public static URI getErrorCodeLocation() {
-        return PaEarPropertyReader.getErrorCodeLocation();
+    private static void prepareTrialIds(Session session, StudyProtocol sp, String ctepId, String dcpId, String nctId) {
+        prepareIdentifierSite(session, sp, PAConstants.CTEP_ORG_NAME, ctepId);
+        prepareIdentifierSite(session, sp, PAConstants.DCP_ORG_NAME, dcpId);
+        prepareIdentifierSite(session, sp, PAConstants.CTGOV_ORG_NAME, nctId);
     }
-
 }

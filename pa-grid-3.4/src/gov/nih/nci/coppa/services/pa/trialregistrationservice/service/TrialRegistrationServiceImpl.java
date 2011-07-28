@@ -3,6 +3,7 @@ package gov.nih.nci.coppa.services.pa.trialregistrationservice.service;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.OrganizationTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.PersonTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.DocumentTransformer;
+import gov.nih.nci.coppa.services.pa.grid.dto.pa.EdTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.InterventionalStudyProtocolTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyContactTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyIndldeTransformer;
@@ -18,6 +19,7 @@ import gov.nih.nci.coppa.services.pa.studyprotocolservice.service.StudyProtocolS
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.EDTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IdTransformer;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -204,6 +206,17 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
                           studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4organizationDTO,
                           summary4studyResourcingDTO, isBatch);
           return IdTransformer.INSTANCE.toXml(ii);
+      } catch (Exception e) {
+          logger.error(e.getMessage(), e);
+          throw FaultUtil.reThrowRemote(e);
+      }
+  }
+
+  public gov.nih.nci.coppa.services.pa.Ed getCtGovXml(gov.nih.nci.iso21090.extensions.Id studyProtocolId) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+
+     try {
+          Ii iiDto = IITransformer.INSTANCE.toDto(studyProtocolId);
+          return EdTransformer.INSTANCE.toXml(EDTransformer.INSTANCE.toXml(service.getCTGovXml(iiDto)));
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
           throw FaultUtil.reThrowRemote(e);

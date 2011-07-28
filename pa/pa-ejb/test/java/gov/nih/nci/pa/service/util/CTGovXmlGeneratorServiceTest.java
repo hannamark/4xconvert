@@ -125,9 +125,9 @@ import org.junit.Test;
 
 public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
 
-    private final CTGovXmlGeneratorServiceBean bean = new CTGovXmlGeneratorServiceBean();
+    private final CTGovXmlGeneratorServiceBeanLocal bean = new CTGovXmlGeneratorServiceBeanLocal();
 
-    public CTGovXmlGeneratorServiceBean getBean() {
+    public CTGovXmlGeneratorServiceBeanLocal getBean() {
         return bean;
     }
 
@@ -670,7 +670,7 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
         org.setName(null);
         assertFalse(getBean().generateCTGovXml(spId).contains("<lead_sponsor>"));
     }
-    
+
     @Test
     public void testMiddleNameNullCheck() throws PAException {
         person.setMiddleName(null);
@@ -704,7 +704,7 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
         when(studySiteAccrualStatusSvc.getCurrentStudySiteAccrualStatusByStudySite(any(Ii.class))).thenReturn(accrualStatus);
 
         assertTrue(getBean().generateCTGovXml(spId).contains("<status>Not yet recruiting</status>"));
-        
+
         accrualStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.APPROVED));
         assertTrue(getBean().generateCTGovXml(spId).contains("<status>Not yet recruiting</status>"));
 

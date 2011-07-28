@@ -94,7 +94,6 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -112,7 +111,6 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
-import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -120,7 +118,6 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
-import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.correlation.AbstractPersonRoleDTO;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -150,8 +147,6 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.jboss.annotation.security.SecurityDomain;
 
-import com.fiveamsolutions.nci.commons.util.UsernameHolder;
-
 /**
  * @author mshestopalov
  *
@@ -166,24 +161,6 @@ public class ParticipatingSiteBeanLocal extends AbstractParticipatingSitesBean
 implements ParticipatingSiteServiceLocal {
     @Resource
     private SessionContext ejbContext;
-
-    private void checkValidUser(Ii studyProtocolIi) throws PAException {
-        if (this.ejbContext.isCallerInRole(ADMIN_ABSTRACTOR_ROLE) || this.ejbContext.isCallerInRole(CLIENT_ROLE)) {
-            return;
-        }
-        CSMUserUtil userService = CSMUserService.getInstance();
-        User user = userService.getCSMUser(UsernameHolder.getUser());
-        StudyProtocolDTO spDTO = getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-        if (spDTO == null || PAUtil.isIiNull(spDTO.getIdentifier())) {
-            throw new PAException("Trial id " + studyProtocolIi.getExtension() + " does not exist.");
-        }
-        RegistryUser userId = PaRegistry.getRegistryUserService().getUser(user.getLoginName());
-        if (!PaRegistry.getRegistryUserService().isTrialOwner(userId.getId(),
-                Long.valueOf(spDTO.getIdentifier().getExtension()))) {
-            throw new PAException("User " + user.getLoginName() + "is not a trial owner for trial id "
-                    + Long.valueOf(spDTO.getIdentifier().getExtension()));
-        }
-    }
 
     /**
      * {@inheritDoc}
@@ -451,7 +428,12 @@ implements ParticipatingSiteServiceLocal {
     public ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO, OrganizationDTO orgDTO, HealthCareFacilityDTO hcfDTO,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
-        checkValidUser(studySiteDTO.getStudyProtocolIdentifier());
+        StudyProtocolDTO spDTO = getStudyProtocolService().getStudyProtocol(studySiteDTO.getStudyProtocolIdentifier());
+        if (spDTO == null || PAUtil.isIiNull(spDTO.getIdentifier())) {
+            throw new PAException("Trial id " + studySiteDTO.getStudyProtocolIdentifier().getExtension()
+                    + " does not exist.");
+        }
+        PAUtil.checkUserIsTrialOwnerOrAbstractor(ejbContext, spDTO);
         ParticipatingSiteDTO participatingSiteDTO =
             this.createStudySiteParticipant(studySiteDTO, currentStatusDTO,
                 orgDTO, hcfDTO);
@@ -465,7 +447,12 @@ implements ParticipatingSiteServiceLocal {
     public ParticipatingSiteDTO createStudySiteParticipant(StudySiteDTO studySiteDTO,
             StudySiteAccrualStatusDTO currentStatusDTO, Ii poHcfIi,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
-        checkValidUser(studySiteDTO.getStudyProtocolIdentifier());
+        StudyProtocolDTO spDTO = getStudyProtocolService().getStudyProtocol(studySiteDTO.getStudyProtocolIdentifier());
+        if (spDTO == null || PAUtil.isIiNull(spDTO.getIdentifier())) {
+            throw new PAException("Trial id " + studySiteDTO.getStudyProtocolIdentifier().getExtension()
+                    + " does not exist.");
+        }
+        PAUtil.checkUserIsTrialOwnerOrAbstractor(ejbContext, spDTO);
         ParticipatingSiteDTO participatingSiteDTO =
             this.createStudySiteParticipant(studySiteDTO, currentStatusDTO,
                 poHcfIi);
@@ -480,7 +467,12 @@ implements ParticipatingSiteServiceLocal {
             StudySiteAccrualStatusDTO currentStatusDTO,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
         StudySiteDTO currentSite = getStudySiteDTO(studySiteDTO.getIdentifier());
-        checkValidUser(currentSite.getStudyProtocolIdentifier());
+        StudyProtocolDTO spDTO = getStudyProtocolService().getStudyProtocol(currentSite.getStudyProtocolIdentifier());
+        if (spDTO == null || PAUtil.isIiNull(spDTO.getIdentifier())) {
+            throw new PAException("Trial id " + currentSite.getStudyProtocolIdentifier().getExtension()
+                    + " does not exist.");
+        }
+        PAUtil.checkUserIsTrialOwnerOrAbstractor(ejbContext, spDTO);
         ParticipatingSiteDTO participatingSiteDTO =
             this.updateStudySiteParticipant(studySiteDTO, currentStatusDTO);
         updateStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);

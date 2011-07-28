@@ -82,84 +82,24 @@
  */
 package gov.nih.nci.pa.util;
 
-import java.net.URI;
+import static org.junit.Assert.assertEquals;
+import gov.nih.nci.pa.service.PAException;
 
+import org.apache.commons.lang.StringUtils;
 /**
- * Error codes are intended to report some kind of issue that the end user can act upon.
- * Error codes are described here: https://wiki.nci.nih.gov/x/eALTAg
- * <br>
- * When adding new error codes, please follow this
- * naming scheme for error codes: <br>
- * PA_<category>_<num> <br>
- * For example: PA_USER_001 or PA_DATA_002, etc. <br>
- * Possible categories are : <br>
- * common, system, security, data validation, etc.. <br>
- * @author ludetc
+ * @author mshestopalov
  *
  */
-public enum ErrorCode {
+public class PAExceptionAssertHelper {
 
-    /**
-     * See Wiki doc for more details.
-     */
-    PA_GENERAL("Unknown or unspecified error code"),
-
-    /**
-     * See Wiki doc for more details.
-     */
-    PA_SYS_001("A unrecoverable system error has occured."),
-
-    /**
-     * See Wiki doc for more details.
-     */
-    PA_USER_001("The user is not an authorized CTRP user"),
-
-    /**
-     * See Wiki doc for more details.
-     */
-    PA_DATA_001("The NCI trial ID provided is invalid"),
-    /**
-     * See Wiki doc for more details.
-     */
-    PA_USER_002("The user is not an owner of the study protocol"),
-
-    /**
-     * See Wiki doc for more details.
-     */
-    PA_DATA_002("The study protocol has not been abstracted and verified "
-            + "(i.e., it is not in the \"Abstraction Verified Response\" "
-            + "or \"Abstraction Verified No Response\" status), so the XML file cannot be generated."),
-
-    /**
-     * See Wiki doc for more details.
-     */
-    PA_XML_001("PRSXML005: The generation of the XML file failed");
-
-    private final String description;
-
-    /**
-     * Constructor.
-     * @param shortDescription A short description providing a hint of the error.
-     * @param longDescription A more detailed description providing explanation and / or required steps.
-     */
-    ErrorCode(String description) {
-        this.description = description;
+    public static void assertErrorCode(PAException paE, ErrorCode expected, String messageExpected) {
+        assertErrorCode(paE, expected);
+        if (StringUtils.isNotEmpty(messageExpected)) {
+            assertEquals(messageExpected, paE.getMessage());
+        }
     }
 
-    /**
-     * The description provides a succinct description of the error code received.
-     * @return the  description
-     */
-    public String getDescription() {
-        return description;
+    public static void assertErrorCode(PAException paE, ErrorCode expected) {
+        assertEquals(expected, paE.getErrorCode());
     }
-
-    /**
-     * This is the location where error code documentation can be found.
-     * @return the location.
-     */
-    public static URI getErrorCodeLocation() {
-        return PaEarPropertyReader.getErrorCodeLocation();
-    }
-
 }
