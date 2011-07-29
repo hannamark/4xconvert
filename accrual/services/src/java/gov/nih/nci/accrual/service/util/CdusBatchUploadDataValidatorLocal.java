@@ -82,99 +82,29 @@
  */
 package gov.nih.nci.accrual.service.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.lang.time.FastDateFormat;
-import org.junit.Before;
-import org.junit.Test;
-
-import au.com.bytecode.opencsv.CSVReader;
+import javax.ejb.Local;
 
 /**
- * Tests for batch upload utils.
- * 
- * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ * @author Igor Merenko
  */
-public class BatchUploadUtilsTest {
-    private List<String[]> batchFile = new ArrayList<String[]>();
-    private List<String[]> someFile = new ArrayList<String[]>();
-    
-    @Before
-    public void setUp() throws Exception {
-        File abbreviatedBatchFile = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
-        batchFile = new CSVReader(new FileReader(abbreviatedBatchFile)).readAll();
-        String[] someStrings = {"1", "2", "3", "4"};
-        someFile.add(someStrings);
-    }
-    
-    @Test
-    public void testDOBConversion() {
-        Date today = DateUtils.truncate(new Date(), Calendar.MONTH);
-        String dob = FastDateFormat.getInstance("yyyyMM").format(today);
-        assertEquals(today, BatchUploadUtils.getPatientDOB(dob));
-        assertNull(BatchUploadUtils.getPatientDOB(""));
-        assertNull(BatchUploadUtils.getPatientDOB("abcd"));
-    }
-    
-    @Test
-    public void testGetDate() { 
-        String dateStr = "19850420";
-        Date date = BatchUploadUtils.getDate(dateStr);
-        Date expectedDate = new Date();        
-        expectedDate = DateUtils.setYears(expectedDate, 1985);
-        expectedDate = DateUtils.setMonths(expectedDate, 3);
-        expectedDate = DateUtils.setDays(expectedDate,  20);
-        expectedDate = DateUtils.setHours(expectedDate,  0);
-        expectedDate = DateUtils.setMinutes(expectedDate, 0);
-        expectedDate = DateUtils.setSeconds(expectedDate, 0);
-        expectedDate = DateUtils.setMilliseconds(expectedDate, 0);
-        
-        assertEquals(expectedDate, date);
-    }
-    
-    @Test
-    public void testGetStudyLine() {
-        String[] results = BatchUploadUtils.getStudyLine(batchFile);
-        assertFalse(ArrayUtils.isEmpty(results));
-    }
-    
-    @Test
-    public void testGetStudyLineNull() {        
-        String[] results = BatchUploadUtils.getStudyLine(someFile);
-        assertTrue(ArrayUtils.isEmpty(results));
-    }
-    
-    @Test
-    public void testGetTotalNumberOfAccruals() {
-        Integer totalNumberOfAccruals = BatchUploadUtils.getTotalNumberOfAccruals(batchFile);
-        assertNull(totalNumberOfAccruals);
-    }    
-    
-    
-    @Test
-    public void testGetPatientInfo() {
-        List<String[]> patients = BatchUploadUtils.getPatientInfo(batchFile);
-        assertFalse(patients.isEmpty());
-        assertEquals(72, patients.size());
-    }
-    
-    @Test
-    public void testGetPatientRaceInfo() {
-        Map<String, List<String>> raceMap = BatchUploadUtils.getPatientRaceInfo(batchFile);
-        assertFalse(raceMap.isEmpty());
-        assertEquals(72, raceMap.size());
-    }
+@Local
+public interface CdusBatchUploadDataValidatorLocal {
+
+    /**
+     * Validates a single batch file, returning the results.
+     * @param file the file to validate
+     * @return the validation results
+     */
+    BatchValidationResults validateSingleBatchData(File file);
+
+    /**
+     * Validates all the files in an zip file.
+     * @param archiveFile the zip file
+     * @return a list of all validation results
+     */
+    List<BatchValidationResults> validateArchiveBatchData(File archiveFile);
+
 }

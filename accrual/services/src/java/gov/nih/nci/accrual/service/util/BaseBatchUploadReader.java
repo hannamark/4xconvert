@@ -88,10 +88,8 @@ import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -104,14 +102,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.ejb.EJB;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.validator.routines.DateValidator;
 import org.apache.log4j.Logger;
 
 /**
@@ -124,7 +120,7 @@ public class BaseBatchUploadReader {
     private static final int COLLECTION_ELEMENT_SIZE = 10;
     private static final int PATIENTS_ELEMENT_SIZE = 23;
     private static final int PATIENT_RACES_ELEMENT_SIZE = 3;
-    private static final int ACCRUAL_COUNT_ELEMENT_SIZE = 2;
+    private static final int ACCRUAL_COUNT_ELEMENT_SIZE = 2;    
     /**
      * List of elements.
      */
@@ -135,33 +131,67 @@ public class BaseBatchUploadReader {
         LIST_OF_ELEMENT.put("PATIENT_RACES", PATIENT_RACES_ELEMENT_SIZE);
         LIST_OF_ELEMENT.put("ACCRUAL_COUNT", ACCRUAL_COUNT_ELEMENT_SIZE);
     }
-    private static final int PATIENT_BRITH_DATE_INDEX = 4;
-    private static final int PATIENT_GENDER_CODE_INDEX = 5;
-    private static final int PATIENT_ETHNICITY_INDEX = 6;
-    private static final int PATIENT_DATE_OF_ENTRY_INDEX = 8;
     
-    private static final List<String> PATIENT_GENDER = new ArrayList<String>();
+    /**
+     * patient birthday date index.
+     */
+    protected static final int PATIENT_BRITH_DATE_INDEX = 4;
+    /**
+     * patient gender code index.
+     */
+    protected static final int PATIENT_GENDER_CODE_INDEX = 5;
+    /**
+     * patient ethnicity index.
+     */
+    protected static final int PATIENT_ETHNICITY_INDEX = 6;
+    /**
+     * patient date of entry index.
+     */
+    protected static final int PATIENT_DATE_OF_ENTRY_INDEX = 8;
+    
+    /**
+     * patient gender.
+     */
+    protected static final List<String> PATIENT_GENDER = new ArrayList<String>();
     static {
         PATIENT_GENDER.addAll(Arrays.asList("1", "2", "9"));
     }
-    private static final List<String> PATIENT_ETHNICITY = new ArrayList<String>();
+    /**
+     * patient ethnicity.
+     */
+    protected static final List<String> PATIENT_ETHNICITY = new ArrayList<String>();
     static {
         PATIENT_ETHNICITY.addAll(Arrays.asList("1", "2", "8", "9"));
     }
-    private static final int PATIENT_RACE_CODE_INDEX = 2;
-    private static final List<String> PATIENT_RACE_CODE = new ArrayList<String>();
-    private static final int ACCURAL_COUNT_INDEX = 1;
+    /**
+     * patient race code index.
+     */
+    protected static final int PATIENT_RACE_CODE_INDEX = 2;
+    /**
+     * patient race code.
+     */
+    protected static final List<String> PATIENT_RACE_CODE = new ArrayList<String>();
+    /**
+     * accrual count index.
+     */
+    protected static final int ACCURAL_COUNT_INDEX = 1;
     static {
         PATIENT_RACE_CODE.addAll(Arrays.asList("01", "03", "04", "05", "06", "98", "99"));
     }
+    
     private static final int PATIENT_ID_INDEX = 1;
-    private static final List<String> KEY_WITH_PATIENTS_IDS = new ArrayList<String>();
+    /**
+     * key with patients ids.
+     */
+    protected static final List<String> KEY_WITH_PATIENTS_IDS = new ArrayList<String>();
     static {
         KEY_WITH_PATIENTS_IDS.addAll(Arrays.asList("PATIENTS", "PATIENT_RACES"));
     }
-    private static final int PATIENT_DISEASE_INDEX = 20;
+    /**
+     * patient disease index.
+     */
+    protected static final int PATIENT_DISEASE_INDEX = 20;
     
-    private List<String> patientsIdList = new ArrayList<String>();
     @EJB
     private StudySubjectServiceLocal studySubjectService;
     @EJB
@@ -175,169 +205,7 @@ public class BaseBatchUploadReader {
     @EJB
     private SearchTrialService searchTrialService;
 
-    /**
-     * 
-     * @param key key
-     * @param values values
-     * @param errMsg if any
-     * @param lineNumber line Number 
-     */
-    protected void validateAccuralCount(String key, List<String> values, StringBuffer errMsg, long lineNumber) {
-        if (StringUtils.equalsIgnoreCase("ACCRUAL_COUNT", key)) {
-            String accrualCOunt = StringUtils.trim(values.get(ACCURAL_COUNT_INDEX));
-            if (StringUtils.isEmpty(accrualCOunt)) {
-                errMsg.append("Accrual count is missing.").append(appendLineNumber(lineNumber));
-            }
-        }
-    }
-    /**
-     * 
-     * @param lineNumber line Number
-     * @return string
-     */
-    protected String appendLineNumber(long lineNumber) {
-        return " at line " + lineNumber + " ";
-    }
-    /**
-     * 
-     * @param key key
-     * @param values values
-     * @param errMsg if any
-     * @param lineNumber line Number
-     * @param sp study protocol
-     */
-    protected void validatePatientsMandatoryData(String key, List<String> values, StringBuffer errMsg,
-            long lineNumber, StudyProtocolDTO sp) {
-        if (StringUtils.equalsIgnoreCase("PATIENTS", key)) {
-            isPatientIdUnique(getPatientId(values), errMsg, lineNumber);
-            String pBirthDate = StringUtils.trim(values.get(PATIENT_BRITH_DATE_INDEX));
-            if (StringUtils.isEmpty(pBirthDate)) {
-                errMsg.append("Patient birth date is missing for patient ID ").append(getPatientId(values))
-                .append(appendLineNumber(lineNumber)).append('\n');
-            } else if (!new DateValidator().isValid(pBirthDate, "yyyyMM", Locale.getDefault())) {
-                errMsg.append("Patient birth date must be in YYYYMM format for patient ID ").append(getPatientId(
-                        values)).append(appendLineNumber(lineNumber)).append('\n');
-            }
-            validateGender(values, errMsg, lineNumber);
-            validateEthnicity(values, errMsg, lineNumber);
-            validateDateOfEntry(values, errMsg, lineNumber);
-            validateDiseaseCode(values, errMsg, lineNumber, sp);
-        }
-    }
-    /**
-     * 
-     * @param key key
-     * @param values values
-     * @param errMsg if any
-     * @param lineNumber line Number
-     */
-    protected void validatePatientRaceData(String key, List<String> values, StringBuffer errMsg, long lineNumber) {
-        if (StringUtils.equalsIgnoreCase("PATIENT_RACES", key)) {
-            String pRaceCode = StringUtils.trim(values.get(PATIENT_RACE_CODE_INDEX));
-            if (StringUtils.isEmpty(pRaceCode)) {
-                errMsg.append("Patient race code is missing for patient ID ").append(getPatientId(values))
-                .append(appendLineNumber(lineNumber)).append('\n');
-            } else if (!PATIENT_RACE_CODE.contains(pRaceCode.trim())) {
-                errMsg.append("Patient race code is not valid for patient ID ").append(getPatientId(values))
-                .append(appendLineNumber(lineNumber)).append('\n');
-            }
-            
-        }
-    }
-    /**
-     * 
-     * @param values values
-     * @param errMsg if any
-     * @param lineNumber line Number
-     */
-    protected void validateDateOfEntry(List<String> values, StringBuffer errMsg, long lineNumber) {
-        String dateOfEntry = StringUtils.trim(values.get(PATIENT_DATE_OF_ENTRY_INDEX));
-        if (StringUtils.isEmpty(dateOfEntry)) {
-            errMsg.append("Patient date of entry is missing for patient ID ").append(getPatientId(values))
-            .append(appendLineNumber(lineNumber)).append('\n');
-        } else if (!new DateValidator().isValid(dateOfEntry, "yyyyMMdd", Locale.getDefault())) {
-            errMsg.append("Patient date of entry must be in YYYYMMDD format for patient ID ")
-            .append(getPatientId(values)).append(appendLineNumber(lineNumber)).append('\n');
-        }
-    }
-    /**
-     * 
-     * @param values values
-     * @param errMsg if any
-     * @param lineNumber line Number
-     */
-    protected void validateEthnicity(List<String> values, StringBuffer errMsg, long lineNumber) {
-        String ethnicity = StringUtils.trim(values.get(PATIENT_ETHNICITY_INDEX));
-        if (StringUtils.isEmpty(ethnicity)) {
-            errMsg.append("Patient ethnicity is missing for patient ID ").append(getPatientId(values))
-                .append(appendLineNumber(lineNumber)).append('\n');
-        } else if (!PATIENT_ETHNICITY.contains(ethnicity.trim())) {
-            errMsg.append("Please enter valid patient ethnicity for patient ID ").append(getPatientId(values))
-                .append(appendLineNumber(lineNumber)).append('\n');
-        }
-    }
-    /**
-     * 
-     * @param values values
-     * @param errMsg if any
-     * @param lineNumber line Number 
-     */
-    private void validateGender(List<String> values, StringBuffer errMsg, long lineNumber) {
-        String genderCode = StringUtils.trim(values.get(PATIENT_GENDER_CODE_INDEX));
-        if (StringUtils.isEmpty(genderCode)) {
-            errMsg.append("Patient gender is missing for patient ID ").append(getPatientId(values))
-                .append(appendLineNumber(lineNumber)).append('\n');
-        } else if (!PATIENT_GENDER.contains(genderCode.trim())) {
-            errMsg.append("Must be a valid patient gender for patient ID ").append(getPatientId(values))
-                .append(appendLineNumber(lineNumber)).append('\n');
-        }
-    }
     
-    /**
-     * Validates that the patient disease is provided and valid. If a study has the primary purpose 'Prevention', 
-     * the Meddra Disease code is not required.
-     * @param values 
-     * @param errMsg
-     * @param lineNumber
-     * @param sp study protocol
-     */
-    private void validateDiseaseCode(List<String> values, StringBuffer errMsg, long lineNumber, StudyProtocolDTO sp) {
-        PrimaryPurposeCode purpose = null;
-        if (sp != null) {
-            purpose = PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(sp.getPrimaryPurposeCode()));
-        }
-        String meddraCode = StringUtils.trim(values.get(PATIENT_DISEASE_INDEX));
-        if (StringUtils.isEmpty(meddraCode) && purpose != PrimaryPurposeCode.PREVENTION) {
-            errMsg.append("Patient Disease Meddra Code is missing for patient ID ").append(getPatientId(values))
-            .append(appendLineNumber(lineNumber)).append('\n');
-        } else if (StringUtils.isNotEmpty(meddraCode) && getDisease(meddraCode, errMsg) == null) {
-            errMsg.append("Patient Disease Meddra Code is invalid for patient ID ").append(getPatientId(values))
-            .append(appendLineNumber(lineNumber)).append('\n');
-        }
-    }
-
-    /**
-     * 
-     * @param key key
-     * @param values values
-     * @param errMsg err if any
-     * @param lineNumber line Number 
-     */
-    protected void validatePatientID(String key, List<String> values, StringBuffer errMsg, long lineNumber) {
-        if (KEY_WITH_PATIENTS_IDS.contains(key) && StringUtils.isEmpty(getPatientId(values))) {
-            errMsg.append(key).append(appendLineNumber(lineNumber))
-              .append(" must contain a patient identifier that is unique within the study.\n");
-        } 
-    }
-    
-    private void isPatientIdUnique(String patId, StringBuffer errMsg, long lineNumber) {
-        if (patientsIdList.contains(patId)) {
-            errMsg.append("Patient identifier " + patId + " is not unique ").append(appendLineNumber(lineNumber))
-                .append('\n');
-        } else {
-            patientsIdList.add(patId);
-        }
-    }
     
     /**
      * Gets the study protocol with the given id, be it NCI, CTEP or DCP identifier.
@@ -433,14 +301,7 @@ public class BaseBatchUploadReader {
      */
     protected String getPatientId(List<String> values) {
         return values.get(PATIENT_ID_INDEX).trim();
-    }
-    
-    /**
-     * @param patientsIdList the patientsIdList to set
-     */
-    public void setPatientsIdList(List<String> patientsIdList) {
-        this.patientsIdList = patientsIdList;
-    }
+    }   
     
     /**
      * @return the studySubjectService

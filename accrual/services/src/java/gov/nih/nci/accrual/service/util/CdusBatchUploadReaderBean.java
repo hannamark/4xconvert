@@ -92,16 +92,13 @@ import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
 import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
-import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -109,36 +106,24 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.io.File;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
+import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.LineIterator;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
-import au.com.bytecode.opencsv.CSVParser;
 
 /**
  * This class read CSV file and validates the input.
@@ -148,110 +133,26 @@ import au.com.bytecode.opencsv.CSVParser;
 @Stateless
 @Local(CdusBatchUploadReaderServiceLocal.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements CdusBatchUploadReaderServiceLocal {
-    /**
-     * The index of the identifier of a line (i.e it's type: PATIENT, ACCRUAL_COUNT, COLLECTION, etc.).
-     */
-    private static final int LINE_IDENTIFIER_INDEX = 0;
-    private static final int COLLECTION_EMAIL_INDEX = 9;
-    private static final int COLLECTION_PROTOCOL_INDEX = 0;
-    private static final int PATIENT_ID_INDEX = 2;
-    private static final int PATIENT_ZIP_INDEX = 3;
-    private static final int PATIENT_COUNTRY_CODE_INDEX = 4;
-    private static final int PATIENT_DOB_INDEX = 5;
-    private static final int PATIENT_GENDER_INDEX = 6;
-    private static final int PATIENT_ETHNICITY_INDEX = 7;
-    private static final int PATIENT_PAYMENT_METHOD_INDEX = 8;
-    private static final int PATIENT_REG_DATE_INDEX = 9;
-    private static final int PATIENT_REG_INST_ID_INDEX = 10;
-    private static final int PATIENT_DISEASE_INDEX = 21;
-
-    private static final Logger LOG = Logger.getLogger(CdusBatchUploadReaderBean.class);
+public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements CdusBatchUploadReaderServiceLocal { 
+    
+    @EJB
+    private CdusBatchUploadDataValidatorLocal cdusBatchUploadDataValidator;
 
     /**
      * {@inheritDoc}
      */
     public List<BatchValidationResults> validateBatchData(File file)  {
         List<BatchValidationResults> results = new ArrayList<BatchValidationResults>();
-        boolean archive = StringUtils.equals(StringUtils.substringAfter(file.getName(), "."), "zip");
+        boolean archive = StringUtils.equals(StringUtils.substringAfter(file.getName(), "."), "zip");       
         if (archive) {
-            results.addAll(validateArchiveBatchData(file));
+            results.addAll(cdusBatchUploadDataValidator.validateArchiveBatchData(file));
         } else {
-            results.add(validateSingleBatchData(file));
+            results.add(cdusBatchUploadDataValidator.validateSingleBatchData(file));
         }
         return results;
     }
     
-    /**
-     * Validates a single batch file, returning the results.
-     * @param file the file to validate
-     * @return the validation results
-     */
-    private BatchValidationResults validateSingleBatchData(File file)  {
-        StringBuffer errMsg = new StringBuffer();
-        BatchValidationResults results = new BatchValidationResults();
-        results.setFileName(file.getName());
-        try {
-            //We are parsing in this indirect manner instead of using the build in CSVReader because the reader does
-            //not properly handle lines with trailing whitespace characters. A defect has been filed and can be viewed
-            //at http://sourceforge.net/tracker/?func=detail&atid=773541&aid=3217444&group_id=148905
-            List<String[]> lines = new ArrayList<String[]>();
-            LineIterator lineIterator = FileUtils.lineIterator(file);
-            CSVParser parser = new CSVParser();
-            setPatientsIdList(new ArrayList<String>());
-            long lineNumber = 0;
-            String protocolId = null;
-            while (lineIterator.hasNext()) {
-                String[] line = parser.parseLine(StringUtils.strip(lineIterator.nextLine()));
-                lines.add(line);
-                ++lineNumber;
-                if (StringUtils.equalsIgnoreCase("COLLECTIONS", line[LINE_IDENTIFIER_INDEX]) 
-                        && line.length > COLLECTION_EMAIL_INDEX) {
-                    results.setMailTo(line[COLLECTION_EMAIL_INDEX]);
-                    protocolId = line[1];
-                }
-                
-                errMsg.append(validateBatchData(line, lineNumber, protocolId));
-            }
-            results.setErrors(new StringBuilder(errMsg.toString().trim()));          
-            if (StringUtils.isEmpty(errMsg.toString().trim())) {
-                results.setValidatedLines(lines);
-                results.setPassedValidation(true);
-            } else {
-                LOG.info(errMsg.toString());
-            }
-        } catch (IOException e) {
-            errMsg.append("Unable to open the batch file: ").append(file.getName());
-            results.setErrors(new StringBuilder(errMsg.toString().trim()));
-            LOG.error("error reading the file " + file.getName(), e);
-        }
-        return results;
-    }
    
-    /**
-     * Validates all the files in an zip file.
-     * @param archiveFile the zip file
-     * @return a list of all validation results
-     */
-    private List<BatchValidationResults> validateArchiveBatchData(File archiveFile) {
-        List<BatchValidationResults> results = new ArrayList<BatchValidationResults>();
-        try {
-            ZipFile zip = new ZipFile(archiveFile, ZipFile.OPEN_READ);
-            Enumeration<? extends ZipEntry> files = zip.entries();
-            while (files.hasMoreElements()) {
-                ZipEntry entry = files.nextElement();
-                File file = File.createTempFile(StringUtils.substringBefore(entry.getName(), "."), ".txt");
-                IOUtils.copy(zip.getInputStream(entry), FileUtils.openOutputStream(file));
-                BatchValidationResults result = validateSingleBatchData(file);
-                result.setFileName(entry.getName());
-                results.add(result);
-            }
-        } catch (Exception e) {
-            LOG.error("Error validating archive of batch files.", e);
-        }
-        return results;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -295,7 +196,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         
         String studyProtocolId = studyLine[1];
         StudyProtocolDTO spDto = getStudyProtocol(studyProtocolId);
-
+       
         int count = createStudySubjects(lines, spDto);
         importResults.setTotalImports(count);
         return importResults;
@@ -315,10 +216,10 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         Map<String, List<String>> raceMap = BatchUploadUtils.getPatientRaceInfo(lines);
         int count = 0;
         for (String[] p : patientsLines) {
-            List<String> races = raceMap.get(p[PATIENT_ID_INDEX]);
+            List<String> races = raceMap.get(p[BatchFileIndex.PATIENT_ID_INDEX]);
             //We're assuming this is the assigned identifier for the organization associated with the health care 
             //facility of the study site.
-            Ii studySiteOrgIi = getOrganizationIi(p[PATIENT_REG_INST_ID_INDEX]);
+            Ii studySiteOrgIi = getOrganizationIi(p[BatchFileIndex.PATIENT_REG_INST_ID_INDEX]);
             SearchStudySiteResultDto studySite = 
                 getSearchStudySiteService().getStudySiteByOrg(spDto.getIdentifier(), studySiteOrgIi);
             
@@ -327,7 +228,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             StudySubjectDto studySubject = getStudySubjectService().create(parseStudySubject(p, spDto.getIdentifier(),  
                     patient.getIdentifier(), studySite != null ? studySite.getStudySiteIi() : null));
 
-            Date regDate = BatchUploadUtils.getDate(p[PATIENT_REG_DATE_INDEX]);
+            Date regDate = BatchUploadUtils.getDate(p[BatchFileIndex.PATIENT_REG_DATE_INDEX]);
             PerformedSubjectMilestoneDto psm = new PerformedSubjectMilestoneDto();
             psm.setStudySubjectIdentifier(studySubject.getIdentifier());
             psm.setStudyProtocolIdentifier(spDto.getIdentifier());
@@ -338,15 +239,17 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         return count;
     }
 
+   
+
     private PatientDto parsePatient(String[] line, List<String> races, Ii orgIi) throws PAException {
         PatientDto patient = new PatientDto();
-        patient.setZip(StConverter.convertToSt(line[PATIENT_ZIP_INDEX]));
+        patient.setZip(StConverter.convertToSt(line[BatchFileIndex.PATIENT_ZIP_INDEX]));
         patient.setBirthDate(TsConverter.convertToTs(new Timestamp(
-                BatchUploadUtils.getPatientDOB(line[PATIENT_DOB_INDEX]).getTime())));
+                BatchUploadUtils.getPatientDOB(line[BatchFileIndex.PATIENT_DOB_INDEX]).getTime())));
         patient.setGenderCode(CdConverter.convertToCd(
-                CDUSPatientGenderCode.getByCode(line[PATIENT_GENDER_INDEX]).getValue()));
+                CDUSPatientGenderCode.getByCode(line[BatchFileIndex.PATIENT_GENDER_INDEX]).getValue()));
         patient.setEthnicCode(CdConverter.convertToCd(
-                CDUSPatientEthnicityCode.getByCode(line[PATIENT_ETHNICITY_INDEX]).getValue()));
+                CDUSPatientEthnicityCode.getByCode(line[BatchFileIndex.PATIENT_ETHNICITY_INDEX]).getValue()));
         if (CollectionUtils.isNotEmpty(races)) {
             patient.setRaceCode(DSetEnumConverter.convertSetToDSet(
                     CDUSPatientRaceCode.getCodesByCdusCodes(races)));
@@ -356,8 +259,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         patient.setOrganizationIdentifier(orgIi);
         
         //Default to United States if no country code is provided
-        String countryCode = StringUtils.isEmpty(line[PATIENT_COUNTRY_CODE_INDEX]) ? "US" 
-                : line[PATIENT_COUNTRY_CODE_INDEX];
+        String countryCode = StringUtils.isEmpty(line[BatchFileIndex.PATIENT_COUNTRY_CODE_INDEX]) ? "US" 
+                : line[BatchFileIndex.PATIENT_COUNTRY_CODE_INDEX];
         Country country = getCountryService().getByCode(countryCode);
         patient.setCountryIdentifier(IiConverter.convertToCountryIi(country.getId()));
         return patient;
@@ -367,9 +270,9 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         StudySubjectDto studySubject = new StudySubjectDto();
         studySubject.setStudyProtocolIdentifier(spIi);
         studySubject.setPatientIdentifier(patientIi);
-        studySubject.setAssignedIdentifier(StConverter.convertToSt(line[PATIENT_ID_INDEX]));
+        studySubject.setAssignedIdentifier(StConverter.convertToSt(line[BatchFileIndex.PATIENT_ID_INDEX]));
         CDUSPaymentMethodCode pmc = 
-            CDUSPaymentMethodCode.getByCode(line[PATIENT_PAYMENT_METHOD_INDEX]);
+            CDUSPaymentMethodCode.getByCode(line[BatchFileIndex.PATIENT_PAYMENT_METHOD_INDEX]);
         if (pmc != null) {
             studySubject.setPaymentMethodCode(CdConverter.convertToCd(pmc.getValue()));
         }
@@ -377,7 +280,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             studySubject.setStudySiteIdentifier(studySiteIi);
         }
 
-        String medraCode = line[PATIENT_DISEASE_INDEX];
+        String medraCode = line[BatchFileIndex.PATIENT_DISEASE_INDEX];
         if (StringUtils.isNotEmpty(medraCode)) {
             SDCDiseaseDTO disease = PaServiceLocator.getInstance().getDiseaseService().getByCode(medraCode);
             studySubject.setDiseaseIdentifier(disease.getIdentifier());
@@ -389,140 +292,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         return studySubject;
     }
 
-    /**
-     * This method split the data into key and value.
-     * @param data data
-     * @param lineNumber lineNumber
-     * @param the expected protocol id
-     * @return errMsg if any
-     */
-    private String validateBatchData(String[] data, long lineNumber, String expectedProtocolId) {
-        String key = data[0];
-        if (!LIST_OF_ELEMENT.containsKey(key)) {
-            return StringUtils.EMPTY;
-        }
-        List<String> values = Arrays.asList((String[]) ArrayUtils.subarray(data, 1, data.length));
-        StringBuffer errMsg = new StringBuffer();
-        if (LIST_OF_ELEMENT.containsKey(key) && LIST_OF_ELEMENT.get(key) != values.size()) {
-            errMsg.append(key).append(appendLineNumber(lineNumber));
-            errMsg.append(" does not have correct number of elements.\n");
-        }
-        validateProtocolNumber(key, values, errMsg, lineNumber, expectedProtocolId);
-        validatePatientID(key, values, errMsg, lineNumber);
-        validatePatientsMandatoryData(key, values, errMsg, lineNumber, getStudyProtocol(expectedProtocolId));
-        validateRegInstCode(key, values, errMsg, lineNumber);
-        validatePatientRaceData(key, values, errMsg, lineNumber);
-        validateAccuralCount(key, values, errMsg, lineNumber);
-        return errMsg.toString();
-    }
     
-    /**
-     * 
-     * @param values values
-     * @param errMsg if any
-     * @param lineNumber line Number
-     */
-    private void validateRegInstCode(String key, List<String> values, StringBuffer errMsg, long lineNumber) {
-       if (StringUtils.equals("PATIENTS", key)) {      
-           String regInstID = StringUtils.trim(values.get(PATIENT_REG_INST_ID_INDEX - 1));
-           if (StringUtils.isEmpty(regInstID)) {
-               errMsg.append("Patient Reg Inst Code is missing for patient ID ").append(getPatientId(values))
-               .append(appendLineNumber(lineNumber)).append('\n');
-           } else {
-               validatePatientTreatingSite(regInstID, errMsg, values, lineNumber);
-           }
-       }
-    }
-    
-    /**
-     * Test that the treating site ctep id exists for the particular trial being used.
-     * Do not validate if trial cannot be found as that validation is already being done 
-     * on the COLLECTION line.
-     */
-    private void validatePatientTreatingSite(String regInstID, StringBuffer errMsg, List<String> values, 
-            long lineNumber) {
-        Ii studySiteOrgIi = getOrganizationIi(regInstID, errMsg);
-        StudyProtocolDTO spDto = getStudyProtocol(values.get(COLLECTION_PROTOCOL_INDEX).trim());
-        if (spDto == null) {
-            return;
-        }
-        
-        try {
-            if (PAUtil.isIiNull(studySiteOrgIi)            
-                || getSearchStudySiteService().getStudySiteByOrg(spDto.getIdentifier(), studySiteOrgIi) == null) {
-                addUpPatientRegInstCode(values, errMsg, lineNumber);
-            }
-        } catch (PAException e) {
-            addUpPatientRegInstCode(values, errMsg, lineNumber);
-            LOG.error(e.getMessage());
-        }        
-    }
-    
-    private void addUpPatientRegInstCode(List<String> values, StringBuffer errMsg, 
-            long lineNumber) {
-        errMsg.append("Patient Reg Inst Code is invalid for patient ID ").append(getPatientId(values))
-        .append(appendLineNumber(lineNumber)).append('\n');
-    }
-
-    /**
-     * 
-     * @param key key
-     * @param values values
-     * @param errMsg err if any
-     * @param lineNumber 
-     * @param expectedProtocolId the protocol id expected to be seen.
-     */
-    private void validateProtocolNumber(String key, List<String> values, StringBuffer errMsg, long lineNumber, 
-            String expectedProtocolId) {
-        String protocolId = null;
-        if (values.size() > COLLECTION_PROTOCOL_INDEX) {
-            protocolId = values.get(COLLECTION_PROTOCOL_INDEX).trim();
-        }
-        if (StringUtils.isEmpty(protocolId)) {
-            errMsg.append(key).append(appendLineNumber(lineNumber))
-                .append(" must contain a valid NCI protocol identifier or the CTEP/DCP identifier.\n");
-        } else if (!StringUtils.equalsIgnoreCase(protocolId, expectedProtocolId)) {
-            errMsg.append(key).append(appendLineNumber(lineNumber))
-            .append(" does not contain the same protocol identifier as the one specified in the COLLECTIONS line.\n");
-        } else if (StringUtils.equals(key, "COLLECTIONS")) {
-            validateProtocolStatus(key, errMsg, lineNumber, protocolId);    
-        }
-    }
-    
-    /**
-     * Validates that the study protocol id is valid and active.
-     * @param key  the key
-     * @param errMsg error messages
-     * @param lineNumber line number
-     * @param protocolId the study protocol id
-     */
-    private void validateProtocolStatus(String key, StringBuffer errMsg, long lineNumber, String protocolId) {
-        StudyProtocolDTO sp = getStudyProtocol(protocolId);
-        if (sp == null) {
-            errMsg.append(key).append(appendLineNumber(lineNumber)).append(protocolId)
-            .append(" is not a valid NCI or CTEP/DCP identifier.\n");
-        } else if (!StringUtils.equalsIgnoreCase(sp.getStatusCode().getCode(), ActStatusCode.ACTIVE.getCode())) {
-            errMsg.append(key).append(appendLineNumber(lineNumber)).append(" with the identifier ")
-                .append(protocolId).append("is not an Active study.\n");   
-        } else if (!hasAccrualAccess(sp.getIdentifier())) {
-            errMsg.append(key).append(appendLineNumber(lineNumber))
-            .append(CsmUserUtil.getGridIdentityUsername(CaseSensitiveUsernameHolder.getUser()))
-            .append(" does not have accrual access to the study protocol with the identifier ").append(protocolId);
-        }
-    }
-    
-    private boolean hasAccrualAccess(Ii spIi) {
-        String user = CaseSensitiveUsernameHolder.getUser();
-        try {
-            RegistryUser ru = 
-                PaServiceLocator.getInstance().getRegistryUserService().getUser(user);
-            Bl hasAccess = getSearchTrialService().isAuthorized(spIi, IiConverter.convertToIi(ru.getId()));
-            return BlConverter.convertToBool(hasAccess);
-        } catch (Exception e) {
-            LOG.error("Error determining accrual access for " + user + ".", e);
-            return false;
-        }
-    }
 
     /**
      * {@inheritDoc}
@@ -570,4 +340,13 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                     null);
         }
     }
+
+    /**
+     * @param cdusBatchUploadDataValidator the cdusBatchUploadDataValidator to set
+     */
+    public void setCdusBatchUploadDataValidator(CdusBatchUploadDataValidatorLocal cdusBatchUploadDataValidator) {
+        this.cdusBatchUploadDataValidator = cdusBatchUploadDataValidator;
+    }
+    
+    
 }

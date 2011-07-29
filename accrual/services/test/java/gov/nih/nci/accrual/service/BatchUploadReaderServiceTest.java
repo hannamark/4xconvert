@@ -91,10 +91,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.service.util.BatchImportResults;
 import gov.nih.nci.accrual.service.util.BatchValidationResults;
+import gov.nih.nci.accrual.service.util.CdusBatchUploadDataValidator;
 import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderBean;
 import gov.nih.nci.accrual.service.util.CountryBean;
 import gov.nih.nci.accrual.service.util.CountryService;
@@ -111,6 +113,7 @@ import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ad;
 import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -127,10 +130,13 @@ import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PatientDTO;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 import gov.nih.nci.services.person.PersonDTO;
@@ -140,7 +146,9 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
@@ -160,6 +168,7 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
     private CountryService countryService = new CountryBean();
     private CdusBatchUploadReaderBean readerService;
     private StudySubjectServiceLocal studySubjectService = new StudySubjectBean();
+    private CdusBatchUploadDataValidator cdusBatchUploadDataValidator = new CdusBatchUploadDataValidator();
     private MailManagerServiceRemote mailService;
 
     @Before
@@ -176,11 +185,17 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         readerService.setCountryService(countryService);
         readerService.setStudySubjectService(studySubjectService);
         readerService.setPerformedActivityService(new PerformedActivityBean());
+        cdusBatchUploadDataValidator.setCountryService(countryService);
+        cdusBatchUploadDataValidator.setStudySubjectService(studySubjectService);    
+        cdusBatchUploadDataValidator.setPerformedActivityService(new PerformedActivityBean());
+        readerService.setCdusBatchUploadDataValidator(cdusBatchUploadDataValidator);
+       
 
 
         PatientBeanLocal patientBean = new PatientBeanLocal();
         patientBean.setCountryService(countryService);
         patientBean.setPatientCorrelationSvc(new POPatientBean());
+        cdusBatchUploadDataValidator.setPatientService(patientBean);
         readerService.setPatientService(patientBean);
 
         StudyProtocolServiceRemote spSvc = mock(StudyProtocolServiceRemote.class);
@@ -212,6 +227,7 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         SearchStudySiteService sssSvc = mock(SearchStudySiteService.class);
         when(sssSvc.getStudySiteByOrg(any(Ii.class), any(Ii.class))).thenReturn(new SearchStudySiteResultDto());
         readerService.setSearchStudySiteService(sssSvc);
+        cdusBatchUploadDataValidator.setSearchStudySiteService(sssSvc);
 
         SearchTrialService searchTrialSvc = mock(SearchTrialService.class);
         when(searchTrialSvc.isAuthorized(any(Ii.class), any(Ii.class))).thenAnswer(new Answer<Bl>() {
@@ -228,6 +244,17 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
             }
         });
         readerService.setSearchTrialService(searchTrialSvc);
+        cdusBatchUploadDataValidator.setSearchTrialService(searchTrialSvc);
+
+        OrganizationEntityServiceRemote organizationEntityService = mock(OrganizationEntityServiceRemote.class);
+        when(organizationEntityService.getOrganization(any(Ii.class))).thenReturn(new OrganizationDTO());
+        cdusBatchUploadDataValidator.setOrganizationEntityService(organizationEntityService);
+
+        HealthCareFacilityCorrelationServiceRemote healthCareFacilityCorrelationService = 
+            mock(HealthCareFacilityCorrelationServiceRemote.class);
+        when(healthCareFacilityCorrelationService.search(any(HealthCareFacilityDTO.class)))
+            .thenReturn(createListOfHealthCareFacilityDTO());
+        cdusBatchUploadDataValidator.setHealthCareFacilityCorrelationService(healthCareFacilityCorrelationService);
 
         final SDCDiseaseDTO disease = new SDCDiseaseDTO();
         disease.setIdentifier(IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
@@ -469,5 +496,88 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         assertEquals("CDUS_Complete.txt", importResults.get(1).getFileName());
         assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
         verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+    }
+    
+
+    @Test
+    public void testIncorrectOrganizationId() throws Exception {
+        OrganizationEntityServiceRemote organizationEntityService = mock(OrganizationEntityServiceRemote.class);
+        when(organizationEntityService.getOrganization(any(Ii.class))).thenReturn(null);
+        cdusBatchUploadDataValidator.setOrganizationEntityService(organizationEntityService);
+
+        HealthCareFacilityCorrelationServiceRemote healthCareFacilityCorrelationService = 
+            mock(HealthCareFacilityCorrelationServiceRemote.class);
+        when(healthCareFacilityCorrelationService.search(any(HealthCareFacilityDTO.class)))
+            .thenReturn(new ArrayList<HealthCareFacilityDTO>());
+        cdusBatchUploadDataValidator.setHealthCareFacilityCorrelationService(healthCareFacilityCorrelationService);
+
+        File file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
+        List<BatchValidationResults> results = readerService.validateBatchData(file);
+        assertFalse(results.get(0).isPassedValidation());
+    }
+    
+    @Test
+    public void testOrganizationIdBelongsToPO() throws Exception {
+        OrganizationEntityServiceRemote organizationEntityService = mock(OrganizationEntityServiceRemote.class);
+        when(organizationEntityService.getOrganization(any(Ii.class))).thenReturn(new OrganizationDTO());
+        cdusBatchUploadDataValidator.setOrganizationEntityService(organizationEntityService);
+
+        HealthCareFacilityCorrelationServiceRemote healthCareFacilityCorrelationService = 
+            mock(HealthCareFacilityCorrelationServiceRemote.class);
+        when(healthCareFacilityCorrelationService.search(any(HealthCareFacilityDTO.class)))
+            .thenReturn(new ArrayList<HealthCareFacilityDTO>());
+        cdusBatchUploadDataValidator.setHealthCareFacilityCorrelationService(healthCareFacilityCorrelationService);
+
+        File file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
+        List<BatchValidationResults> results = readerService.validateBatchData(file);
+        assertTrue(results.get(0).isPassedValidation());
+    }
+    
+    @Test
+    public void testOrganizationNullifiedEntity() throws Exception {
+        OrganizationEntityServiceRemote organizationEntityService = mock(OrganizationEntityServiceRemote.class);
+        when(organizationEntityService.getOrganization(any(Ii.class))).thenThrow(new NullifiedEntityException(new Ii()));
+        cdusBatchUploadDataValidator.setOrganizationEntityService(organizationEntityService);
+
+        HealthCareFacilityCorrelationServiceRemote healthCareFacilityCorrelationService = 
+            mock(HealthCareFacilityCorrelationServiceRemote.class);
+        when(healthCareFacilityCorrelationService.search(any(HealthCareFacilityDTO.class)))
+            .thenReturn(createListOfHealthCareFacilityDTO());
+        cdusBatchUploadDataValidator.setHealthCareFacilityCorrelationService(healthCareFacilityCorrelationService);
+
+        File file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
+        List<BatchValidationResults> results = readerService.validateBatchData(file);
+        assertFalse(results.get(0).isPassedValidation());
+    }
+    
+    @Test
+    public void testOrganizationIdBelongsToCTEP() throws Exception {
+        OrganizationEntityServiceRemote organizationEntityService = mock(OrganizationEntityServiceRemote.class);
+        when(organizationEntityService.getOrganization(any(Ii.class))).thenReturn(null);
+        cdusBatchUploadDataValidator.setOrganizationEntityService(organizationEntityService);
+
+        HealthCareFacilityCorrelationServiceRemote healthCareFacilityCorrelationService = 
+            mock(HealthCareFacilityCorrelationServiceRemote.class);
+        when(healthCareFacilityCorrelationService.search(any(HealthCareFacilityDTO.class)))
+            .thenReturn(createListOfHealthCareFacilityDTO());
+        cdusBatchUploadDataValidator.setHealthCareFacilityCorrelationService(healthCareFacilityCorrelationService);
+
+        File file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
+        List<BatchValidationResults> results = readerService.validateBatchData(file);
+        assertTrue(results.get(0).isPassedValidation());
+    }
+    
+    private List<HealthCareFacilityDTO> createListOfHealthCareFacilityDTO() {
+        List<HealthCareFacilityDTO> list = new ArrayList<HealthCareFacilityDTO>();
+        HealthCareFacilityDTO dto = new HealthCareFacilityDTO();       
+        DSet<Ii> dset = new DSet<Ii>();
+        Ii ii = new Ii();
+        ii.setRoot(DSetConverter.BASE_ROOT);
+        Set<Ii> iis = new HashSet<Ii>();
+        iis.add(ii);
+        dset.setItem(iis);
+        dto.setIdentifier(dset);
+        list.add(dto);
+        return list;
     }
 }

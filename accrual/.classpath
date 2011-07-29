@@ -119,7 +119,7 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/selenium/selenium-java-client-driver-1.0.2.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/selenium/selenium-server-1.0.3.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/selenium/selenium-server-coreless-1.0.3.jar"/>
-	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/selenium/pa-commons-test-3.6-alpha2.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/selenium/pa-commons-test-3.6-alpha3.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/accrual-web/runtime/quartz-all-1.6.3.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/commons-io-1.4.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/mockito-all-1.8.4.jar"/>
