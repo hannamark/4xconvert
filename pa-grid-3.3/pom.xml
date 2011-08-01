@@ -159,14 +159,14 @@
         <dependency>
             <groupId>gov.nih.nci.coppa.pa</groupId>
             <artifactId>pa-ejb-client</artifactId>
-            <version>3.5-alpha4</version>
+            <version>3.6-alpha5</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>gov.nih.nci.coppa.pa</groupId>
             <artifactId>pa-commons</artifactId>
-            <version>3.5-alpha6</version>
+            <version>3.6-alpha5</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
