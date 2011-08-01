@@ -108,7 +108,7 @@
 	<classpathentry kind="lib" path="lib/jdom-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/relaxngDatatype.jar"/>
 	<classpathentry kind="lib" path="lib/xsom14.jar"/>
-	<classpathentry kind="lib" path="build/lib/pa-commons-3.6-alpha2.jar"/>
-	<classpathentry kind="lib" path="build/lib/pa-ejb-client-3.6-alpha4.jar"/>
+	<classpathentry kind="lib" path="build/lib/pa-commons-3.6-alpha5.jar"/>
+	<classpathentry kind="lib" path="build/lib/pa-ejb-client-3.6-alpha5.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>
