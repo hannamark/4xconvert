@@ -172,4 +172,13 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.StudyProtocolService#getAbstractedCollaborativeTrials()
+     */
+    @Override
+    public List<StudyProtocolDTO> getAbstractedCollaborativeTrials() throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
