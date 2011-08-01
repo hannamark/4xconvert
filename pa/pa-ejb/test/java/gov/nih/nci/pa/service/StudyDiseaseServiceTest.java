@@ -91,8 +91,8 @@ import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -128,9 +128,9 @@ public class StudyDiseaseServiceTest extends AbstractHibernateTestCase {
         List<StudyDiseaseDTO> dtoList = bean.getByStudyProtocol(spIi);
         assertTrue(dtoList.size() > 0);
         Ii ii = dtoList.get(0).getIdentifier();
-        assertFalse(PAUtil.isIiNull(ii));
+        assertFalse(ISOUtil.isIiNull(ii));
         StudyDiseaseDTO resultDto = bean.get(ii);
-        assertFalse(PAUtil.isIiNull(resultDto.getIdentifier()));
+        assertFalse(ISOUtil.isIiNull(resultDto.getIdentifier()));
     }
 
     @Test
@@ -156,7 +156,7 @@ public class StudyDiseaseServiceTest extends AbstractHibernateTestCase {
                     e.getMessage());
         }
     }
-    
+
     @Test(expected=PAException.class)
     public void updateWithSameIdTest() throws Exception {
         List<StudyDiseaseDTO> dtoList = bean.getByStudyProtocol(spIi);

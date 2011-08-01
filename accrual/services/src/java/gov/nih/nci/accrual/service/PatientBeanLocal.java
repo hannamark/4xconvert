@@ -101,7 +101,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.po.service.EntityValidationException;
@@ -146,7 +146,7 @@ public class PatientBeanLocal implements PatientServiceLocal {
      * {@inheritDoc}
      */
     public PatientDto create(PatientDto dto) throws RemoteException {
-        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Update method should be used to modify existing.");
         }
         return createOrUpdate(dto);
@@ -174,7 +174,7 @@ public class PatientBeanLocal implements PatientServiceLocal {
      * {@inheritDoc}
      */
     public PatientDto get(Ii ii) throws RemoteException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             throw new RemoteException("Called get() with Ii == null.");
         }
         Patient bo = null;
@@ -203,7 +203,7 @@ public class PatientBeanLocal implements PatientServiceLocal {
      * {@inheritDoc}
      */
     public PatientDto update(PatientDto dto) throws RemoteException {
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Create method should be used to create new.");
         }
         return createOrUpdate(dto);
@@ -233,7 +233,7 @@ public class PatientBeanLocal implements PatientServiceLocal {
             session = PaHibernateUtil.getCurrentSession();
             bo.setUserLastUpdated(AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
             bo.setDateLastUpdated(new Date());
-            if (PAUtil.isIiNull(dto.getIdentifier())) {
+            if (ISOUtil.isIiNull(dto.getIdentifier())) {
                 bo.setUserLastCreated(bo.getUserLastUpdated());
                 bo.setDateLastCreated(bo.getDateLastUpdated());
             } else {
@@ -301,7 +301,7 @@ public class PatientBeanLocal implements PatientServiceLocal {
         popDTO.setScoperIdentifier(scoper);
 
         Country country = countryService.getCountry(dto.getCountryIdentifier());
-        String zip = PAUtil.isStNull(dto.getZip()) ? "11111" : StConverter.convertToString(dto.getZip());
+        String zip = ISOUtil.isStNull(dto.getZip()) ? "11111" : StConverter.convertToString(dto.getZip());
 
         Ad ad = AddressConverterUtil.create("Street", null, "City", "VA", zip, country.getAlpha3());
         popDTO.setPostalAddress(new DSet<Ad>());

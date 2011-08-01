@@ -90,9 +90,10 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PAFieldException;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -149,7 +150,7 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
      */
     public void create(List<DocumentDTO> documentDTOs, Ii studyProtocolIi) throws PAException {
         StringBuffer comments = new StringBuffer();
-        if (PAUtil.isIiNull(studyProtocolIi)) {
+        if (ISOUtil.isIiNull(studyProtocolIi)) {
             throw new PAException(" Study Protocol Identifier cannot be null");
         }
         DocumentWorkflowStatusDTO dws = docWrkFlowStatusService.getCurrentByStudyProtocol(studyProtocolIi);

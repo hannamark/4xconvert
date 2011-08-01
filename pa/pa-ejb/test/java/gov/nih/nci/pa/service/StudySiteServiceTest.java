@@ -99,6 +99,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -157,7 +158,7 @@ public class StudySiteServiceTest extends AbstractHibernateTestCase {
         StudySiteDTO spDto = createStudySite();
         StudySiteDTO result = remoteEjb.create(spDto);
 
-        assertFalse(PAUtil.isIiNull(result.getIdentifier()));
+        assertFalse(ISOUtil.isIiNull(result.getIdentifier()));
         assertEquals(CdConverter.convertCdToString(spDto.getFunctionalCode()),
                      CdConverter.convertCdToString(result.getFunctionalCode()));
         assertEquals(new Integer(63), IntConverter.convertToInteger(result.getTargetAccrualNumber()));

@@ -87,7 +87,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,7 +120,7 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
         disease = new DiseaseWebDTO();
         disease.setDiseaseIdentifier(IiConverter.convertToString(sd.getDiseaseIdentifier()));
         disease.setStudyDiseaseIdentifier(getSelectedRowIdentifier());
-        disease.setCtGovXmlIndicator(PAUtil.isBlNull(sd.getCtGovXmlIndicator()) ? null
+        disease.setCtGovXmlIndicator(ISOUtil.isBlNull(sd.getCtGovXmlIndicator()) ? null
                 : BlConverter.convertToBoolean(sd.getCtGovXmlIndicator()).toString());
         return super.edit();
     }
@@ -206,7 +206,7 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
       }
 
     private String buildParentPreferredName(String diseaseId) throws PAException {
-        List<PDQDiseaseParentDTO> parentList = 
+        List<PDQDiseaseParentDTO> parentList =
             getDiseaseParentSvc().getByChildDisease(IiConverter.convertToIi(diseaseId));
         StringBuffer ppBuff = new StringBuffer();
         for (PDQDiseaseParentDTO parent : parentList) {
@@ -233,7 +233,7 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
             n.setDiseaseIdentifier(IiConverter.convertToString(d.getIdentifier()));
             n.setCode(StConverter.convertToString(d.getDiseaseCode()));
             n.setConceptId(StConverter.convertToString(d.getNtTermIdentifier()));
-            if (!PAUtil.isBlNull(sd.getCtGovXmlIndicator())
+            if (!ISOUtil.isBlNull(sd.getCtGovXmlIndicator())
                     && BlConverter.convertToBoolean(sd.getCtGovXmlIndicator())) {
                 n.setCtGovXmlIndicator("Yes");
             } else {

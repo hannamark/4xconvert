@@ -86,7 +86,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.lang.reflect.ParameterizedType;
@@ -163,7 +163,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
      * @throws RemoteException exception
      */
     public DTO get(Ii ii) throws RemoteException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             throw new RemoteException("Called get() with Ii == null.");
         }
         BO bo = null;
@@ -193,7 +193,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
      * @throws RemoteException exception
      */
     public void delete(Ii ii) throws RemoteException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             throw new RemoteException("Called delete() with Ii == null.");
         }
         Session session = null;
@@ -214,7 +214,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
      * @throws RemoteException exception.
      */
     public DTO create(DTO dto) throws RemoteException {
-        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Update method should be used to modify existing.");
         }
         return createOrUpdateNew(dto, Converters.get(getConverterArgument()));
@@ -226,7 +226,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
      * @throws RemoteException exception.
      */
     public DTO update(DTO dto) throws RemoteException {
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Create method should be used to create new.");
         }
         return createOrUpdateNew(dto, Converters.get(getConverterArgument()));

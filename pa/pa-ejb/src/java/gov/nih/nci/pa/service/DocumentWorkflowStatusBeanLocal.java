@@ -87,7 +87,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.sql.Timestamp;
@@ -117,7 +117,7 @@ implements DocumentWorkflowStatusServiceLocal {
      */
     @Override
     public DocumentWorkflowStatusDTO create(DocumentWorkflowStatusDTO dto) throws PAException {
-        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Update method should be used to modify existing.  ");
         }
         DocumentWorkflowStatusDTO returnDto = new DocumentWorkflowStatusDTO();

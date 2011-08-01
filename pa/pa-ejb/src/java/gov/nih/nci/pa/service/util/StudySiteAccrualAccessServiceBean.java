@@ -91,7 +91,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.AbstractBaseIsoService;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -182,7 +182,7 @@ public class StudySiteAccrualAccessServiceBean
      */
     @Override
     public StudySiteAccrualAccessDTO create(StudySiteAccrualAccessDTO dto) throws PAException {
-        if (PAUtil.isIiNotNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Id is not null when calling StudySiteAccrualAccess.create().");
         }
         validateElibibleForCreate(dto);
@@ -204,7 +204,7 @@ public class StudySiteAccrualAccessServiceBean
      */
     @Override
     public StudySiteAccrualAccessDTO update(StudySiteAccrualAccessDTO dto) throws PAException {
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Id is null when calling StudySiteAccrualAccess.update().");
         }
         validateValues(dto);

@@ -13,8 +13,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudySiteAccrualStatusSortCriterion;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
@@ -60,7 +60,7 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
      * @throws PAException PAException
      */
     public StudySiteAccrualStatusDTO createStudySiteAccrualStatus(StudySiteAccrualStatusDTO dto) throws PAException {
-        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             String errMsg = "Existing StudySiteAccrualStatus objects cannot be modified.  Append new object instead.";
             throw new PAException(errMsg);
         }
@@ -110,7 +110,7 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudySite(Ii studySiteIi) throws PAException {
-        if (PAUtil.isIiNull(studySiteIi)) {
+        if (ISOUtil.isIiNull(studySiteIi)) {
             throw new PAException("Cannot call getStudySiteAccrualStatusByStudySite with a null identifier.");
         }
 

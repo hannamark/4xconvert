@@ -93,8 +93,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -106,8 +106,8 @@ import org.junit.Test;
  *
  */
 public class PDQDiseaseServiceTest extends AbstractHibernateTestCase {
-    private PDQDiseaseBeanLocal bean = new PDQDiseaseBeanLocal();
-    private PDQDiseaseServiceLocal remote = bean;
+    private final PDQDiseaseBeanLocal bean = new PDQDiseaseBeanLocal();
+    private final PDQDiseaseServiceLocal remote = bean;
     private Ii ii;
 
     @Before
@@ -129,7 +129,7 @@ public class PDQDiseaseServiceTest extends AbstractHibernateTestCase {
     @Test
     public void getTest() throws Exception {
         PDQDiseaseDTO dto = remote.get(ii);
-        assertFalse(PAUtil.isIiNull(dto.getIdentifier()));
+        assertFalse(ISOUtil.isIiNull(dto.getIdentifier()));
     }
 
     @Test

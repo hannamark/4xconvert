@@ -95,6 +95,7 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.exception.PAValidationException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -151,7 +152,7 @@ public class StudyOverallStatusBeanLocal extends
     @Override
     @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public StudyOverallStatusDTO create(StudyOverallStatusDTO dto) throws PAException {
-        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Existing StudyOverallStatus objects cannot be modified. Append new object instead.");
         }
         Session session = PaHibernateUtil.getCurrentSession();
@@ -349,7 +350,7 @@ public class StudyOverallStatusBeanLocal extends
         if (statusDto == null) {
             errorMsg.append("Study Overall Status cannot be null. ");
         } else {
-            if (!PAUtil.isIiNull(studyProtocolDTO.getIdentifier())
+            if (!ISOUtil.isIiNull(studyProtocolDTO.getIdentifier())
                     && isTrialStatusOrDateChanged(statusDto, studyProtocolDTO.getIdentifier())) {
                 errorMsg.append(enforceBusniessRuleForUpdate(statusDto, studyProtocolDTO));
             }
@@ -363,9 +364,9 @@ public class StudyOverallStatusBeanLocal extends
 
     private void validateReasonText(StudyOverallStatusDTO statusDto) throws PAException {
         StringBuffer errorMsg = new StringBuffer();
-        if (!PAUtil.isCdNull(statusDto.getStatusCode())
+        if (!ISOUtil.isCdNull(statusDto.getStatusCode())
                 && REASON_REQ_STATUS.contains(CdConverter.convertCdToString(statusDto.getStatusCode()))) {
-            if (PAUtil.isStNull(statusDto.getReasonText())) {
+            if (ISOUtil.isStNull(statusDto.getReasonText())) {
                 errorMsg.append("A reason must be entered when the study status is set to "
                         + CdConverter.convertCdToString(statusDto.getStatusCode()) + ".");
             }
@@ -408,8 +409,8 @@ public class StudyOverallStatusBeanLocal extends
             errMsg.append("Invalid study status transition from '" + oldStatusCode.getCode()
                     + "' to '" + newCode.getCode() + "'.  ");
         }
-        if (!PAUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode())
-                && PAUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())) {
+        if (!ISOUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode())
+                && ISOUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())) {
 
             if (StudyStatusCode.APPROVED.equals(oldStatusCode) && StudyStatusCode.ACTIVE.equals(newCode)) {
                 if (newStartDate.equals(newStatusTimestamp)) {

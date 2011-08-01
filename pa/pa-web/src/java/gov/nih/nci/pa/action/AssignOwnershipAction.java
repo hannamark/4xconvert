@@ -93,7 +93,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.RegistryUserService;
 import gov.nih.nci.pa.util.AssignOwnershipSearchCriteria;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -168,7 +168,7 @@ public class AssignOwnershipAction extends ActionSupport {
             .getAttribute(Constants.STUDY_PROTOCOL_II);
         String successMessage = null;
         try {
-            if (StringUtils.isNotEmpty(userId) && PAUtil.isIiNotNull(spIi)) {
+            if (StringUtils.isNotEmpty(userId) && !ISOUtil.isIiNull(spIi)) {
                 successMessage = changeOwnershipHelper(assign, Long.parseLong(userId),
                         IiConverter.convertToLong(spIi));
             } else {
@@ -199,7 +199,7 @@ public class AssignOwnershipAction extends ActionSupport {
     private void loadRegistryUsers() {
         try {
             Ii spIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
-            if (PAUtil.isIiNotNull(spIi)) {
+            if (!ISOUtil.isIiNull(spIi)) {
                 RegistryUser regUser = new RegistryUser();
                 regUser.setFirstName(criteria.getFirstName());
                 regUser.setLastName(criteria.getLastName());

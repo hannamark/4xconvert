@@ -11,9 +11,9 @@ import gov.nih.nci.pa.iso.dto.PDQDiseaseAlternameDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.PDQDiseaseAlternameSortCriterion;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class PDQDiseaseAlternameBeanLocal
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PDQDiseaseAlternameDTO> getByDisease(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; null found.  ");
         }
 

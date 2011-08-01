@@ -89,6 +89,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -179,7 +180,7 @@ public class TrialValidator {
     }
     private void validateTrialDTO(TrialDTO trialDto, Map<String, String> addFieldError) {
         InvalidValue[] invalidValues = new ClassValidator(trialDto.getClass()).getInvalidValues(trialDto);
-        
+
         for (int i = 0; i < invalidValues.length; i++) {
             addFieldError.put("trialDTO." + invalidValues[i].getPropertyName(), getText(invalidValues[i].getMessage()
                     .trim()));
@@ -201,7 +202,7 @@ public class TrialValidator {
         return StringUtils.isNotEmpty(code) && RegistryUtil.isValidDate(strDate);
     }
 
-    private void addErrorForDate(String fieldValue, String fieldName, String errMsg, 
+    private void addErrorForDate(String fieldValue, String fieldName, String errMsg,
             Map<String, String> fieldErrorMap) {
         if (!RegistryUtil.isValidDate(fieldValue)) {
             fieldErrorMap.put(fieldName, errMsg);
@@ -420,7 +421,7 @@ public class TrialValidator {
         }
 
         final Ii spII = IiConverter.convertToIi(tDTO.getIdentifier());
-        if (PAUtil.isIiNotNull(spII)) {
+        if (!ISOUtil.isIiNull(spII)) {
             try {
                 List<DocumentDTO> documentISOList = PaRegistry.getDocumentService().getDocumentsByStudyProtocol(spII);
                 if (!documentISOList.isEmpty()) {
@@ -457,7 +458,7 @@ public class TrialValidator {
         addToSession(tDTO.getSecondaryIdentifierAddList(), Constants.SECONDARY_IDENTIFIERS_LIST);
         List<DocumentDTO> documentISOList;
         final Ii spII = IiConverter.convertToIi(tDTO.getIdentifier());
-        if (!PAUtil.isIiNotNull(spII)) {
+        if (ISOUtil.isIiNull(spII)) {
             try {
                 documentISOList = PaRegistry.getDocumentService().getDocumentsByStudyProtocol(spII);
                 if (!(documentISOList.isEmpty())) {

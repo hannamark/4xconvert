@@ -11,6 +11,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class MockStudySiteAccrualStatusService extends AbstractBaseSearchBean<St
             Ii studySiteIi) throws PAException {
         StudySiteAccrualStatusDTO  returnDto = new StudySiteAccrualStatusDTO();
         for (StudySiteAccrualStatusDTO dto :dtoList) {
-            if (PAUtil.isIiNotNull(studySiteIi) && PAUtil.isIiNotNull(dto.getStudySiteIi())
+            if (!ISOUtil.isIiNull(studySiteIi) && !ISOUtil.isIiNull(dto.getStudySiteIi())
                     && studySiteIi.getExtension().equalsIgnoreCase(dto.getStudySiteIi().getExtension())) {
                 returnDto = dto;
             }

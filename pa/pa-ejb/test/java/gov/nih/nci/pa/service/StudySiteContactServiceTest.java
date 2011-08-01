@@ -82,7 +82,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
-
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
@@ -100,6 +99,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PAUtil;
@@ -117,7 +117,7 @@ import org.junit.Test;
  * @author hreinhart
  */
 public class StudySiteContactServiceTest extends AbstractHibernateTestCase {
-    private StudySiteContactServiceLocal remoteEjb = new StudySiteContactBeanLocal();
+    private final StudySiteContactServiceLocal remoteEjb = new StudySiteContactBeanLocal();
     Long protocolId;
     Ii protocolIi;
     Long siteId;
@@ -162,7 +162,7 @@ public class StudySiteContactServiceTest extends AbstractHibernateTestCase {
     public void create() throws Exception {
         StudySiteContactDTO dto = createStudySiteContactDTO(null, null, null);
         StudySiteContactDTO result = remoteEjb.create(dto);
-        assertFalse(PAUtil.isIiNull(result.getIdentifier()));
+        assertFalse(ISOUtil.isIiNull(result.getIdentifier()));
     }
 
     /**

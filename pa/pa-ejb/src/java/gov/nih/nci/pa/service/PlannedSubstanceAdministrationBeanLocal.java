@@ -90,8 +90,8 @@ import gov.nih.nci.pa.iso.dto.PlannedSubstanceAdministrationDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.PlannedSubstanceAdministrationSortCriterion;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
@@ -124,7 +124,7 @@ extends AbstractStudyIsoService<PlannedSubstanceAdministrationDTO, PlannedSubsta
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PlannedSubstanceAdministrationDTO> getPlannedSubstanceAdministrationByStudyProtocol(Ii ii)
     throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; found null.");
         }
 
@@ -154,10 +154,10 @@ extends AbstractStudyIsoService<PlannedSubstanceAdministrationDTO, PlannedSubsta
      */
     public PlannedSubstanceAdministrationDTO createPlannedSubstanceAdministration(PlannedSubstanceAdministrationDTO dto)
         throws PAException {
-        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Update method should be used to modify existing.");
         }
-        if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             throw new PAException("StudyProtocol must be set.");
         }
         return createOrUpdatePlannedSubstanceAdministration(dto);
@@ -168,7 +168,7 @@ extends AbstractStudyIsoService<PlannedSubstanceAdministrationDTO, PlannedSubsta
      */
     public PlannedSubstanceAdministrationDTO updatePlannedSubstanceAdministration(PlannedSubstanceAdministrationDTO dto)
         throws PAException {
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Create method should be used to modify existing.");
         }
         return createOrUpdatePlannedSubstanceAdministration(dto);
@@ -186,7 +186,7 @@ extends AbstractStudyIsoService<PlannedSubstanceAdministrationDTO, PlannedSubsta
         PlannedSubstanceAdministration bo = null;
         Session session = PaHibernateUtil.getCurrentSession();
         PlannedSubstanceAdministrationConverter converter = new PlannedSubstanceAdministrationConverter();
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getIdentifier())) {
             bo = converter.convertFromDtoToDomain(dto);
         } else {
             bo = (PlannedSubstanceAdministration) session.get(PlannedSubstanceAdministration.class,

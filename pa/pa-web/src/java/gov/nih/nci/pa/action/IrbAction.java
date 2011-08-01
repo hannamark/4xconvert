@@ -106,6 +106,7 @@ import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -467,7 +468,7 @@ public class IrbAction extends ActionSupport implements Preparable {
                   setApprovalStatus(part.getReviewBoardApprovalStatusCode().getCode());
                   setApprovalNumber(StConverter.convertToString(part.getReviewBoardApprovalNumber()));
                   setContactAffiliation(StConverter.convertToString(part.getReviewBoardOrganizationalAffiliation()));
-                  if (PAUtil.isIiNull(part.getOversightCommitteeIi())) {
+                  if (ISOUtil.isIiNull(part.getOversightCommitteeIi())) {
                       loadOrg(null);
                   } else {
                       Organization paOrg = correlationUtils.getPAOrganizationByIi(part.getOversightCommitteeIi());

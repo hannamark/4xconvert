@@ -86,7 +86,7 @@ import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
@@ -125,7 +125,7 @@ public class StudySubjectBeanLocal
      */
     @SuppressWarnings("unchecked")
     public List<StudySubjectDto> getByStudySite(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             throw new PAException("Called getByStudySite() with Ii == null.");
         }
         try {
@@ -191,7 +191,7 @@ public class StudySubjectBeanLocal
      */
     @Override
     public StudySubjectDto create(StudySubjectDto dto) throws RemoteException {
-        if (!PAUtil.isStNull(dto.getOutcomesLoginName())) {
+        if (!ISOUtil.isStNull(dto.getOutcomesLoginName())) {
             throw new RemoteException("Method createOutcomes() should be used to create outcomes participants.");
         }
         return super.create(dto);

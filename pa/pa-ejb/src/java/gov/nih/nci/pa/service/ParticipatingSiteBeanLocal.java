@@ -111,6 +111,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -361,7 +362,7 @@ implements ParticipatingSiteServiceLocal {
     }
 
     private void validateStudySite(StudySiteDTO studySiteDTO, StudySiteDTO currentSite) throws PAException {
-        if (PAUtil.isIiNotNull(studySiteDTO.getStudyProtocolIdentifier())) {
+        if (!ISOUtil.isIiNull(studySiteDTO.getStudyProtocolIdentifier())) {
             StudyProtocolDTO spDto = getStudyProtocolService()
                 .getStudyProtocol(studySiteDTO.getStudyProtocolIdentifier());
             if (spDto == null || !currentSite.getStudyProtocolIdentifier().getExtension()
@@ -429,7 +430,7 @@ implements ParticipatingSiteServiceLocal {
             StudySiteAccrualStatusDTO currentStatusDTO, OrganizationDTO orgDTO, HealthCareFacilityDTO hcfDTO,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
         StudyProtocolDTO spDTO = getStudyProtocolService().getStudyProtocol(studySiteDTO.getStudyProtocolIdentifier());
-        if (spDTO == null || PAUtil.isIiNull(spDTO.getIdentifier())) {
+        if (spDTO == null || ISOUtil.isIiNull(spDTO.getIdentifier())) {
             throw new PAException("Trial id " + studySiteDTO.getStudyProtocolIdentifier().getExtension()
                     + " does not exist.");
         }
@@ -448,7 +449,7 @@ implements ParticipatingSiteServiceLocal {
             StudySiteAccrualStatusDTO currentStatusDTO, Ii poHcfIi,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
         StudyProtocolDTO spDTO = getStudyProtocolService().getStudyProtocol(studySiteDTO.getStudyProtocolIdentifier());
-        if (spDTO == null || PAUtil.isIiNull(spDTO.getIdentifier())) {
+        if (spDTO == null || ISOUtil.isIiNull(spDTO.getIdentifier())) {
             throw new PAException("Trial id " + studySiteDTO.getStudyProtocolIdentifier().getExtension()
                     + " does not exist.");
         }
@@ -468,7 +469,7 @@ implements ParticipatingSiteServiceLocal {
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
         StudySiteDTO currentSite = getStudySiteDTO(studySiteDTO.getIdentifier());
         StudyProtocolDTO spDTO = getStudyProtocolService().getStudyProtocol(currentSite.getStudyProtocolIdentifier());
-        if (spDTO == null || PAUtil.isIiNull(spDTO.getIdentifier())) {
+        if (spDTO == null || ISOUtil.isIiNull(spDTO.getIdentifier())) {
             throw new PAException("Trial id " + currentSite.getStudyProtocolIdentifier().getExtension()
                     + " does not exist.");
         }
@@ -480,7 +481,7 @@ implements ParticipatingSiteServiceLocal {
     }
 
     private StudySiteDTO getStudySiteDTO(Ii studySiteIi) throws PAException {
-        if (PAUtil.isIiNull(studySiteIi)) {
+        if (ISOUtil.isIiNull(studySiteIi)) {
             throw new PAException("Study site identifier must be provided for update.");
         }
         StudySiteDTO currentSite = PaRegistry.getStudySiteService().get(studySiteIi);

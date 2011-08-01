@@ -86,9 +86,10 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudySiteContactSortCriterion;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
@@ -119,7 +120,7 @@ public class StudySiteContactBeanLocal extends
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudySiteContactDTO> getByStudySite(Ii studySiteIi) throws PAException {
-        if (PAUtil.isIiNull(studySiteIi)) {
+        if (ISOUtil.isIiNull(studySiteIi)) {
             throw new PAException("Cannot call getByStudySite with a null identifier.");
         }
 
@@ -169,7 +170,7 @@ public class StudySiteContactBeanLocal extends
 
     private void validateOrgContContacts(StudySiteContactDTO dto) throws PAException {
         PAServiceUtils paServiceUtil = new PAServiceUtils();
-        if (!PAUtil.isIiNull(dto.getOrganizationalContactIi()) && !PAUtil.isDSetTelNull(dto.getTelecomAddresses())) {
+        if (!ISOUtil.isIiNull(dto.getOrganizationalContactIi()) && !PAUtil.isDSetTelNull(dto.getTelecomAddresses())) {
             StructuralRole sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoOrganizationalContactIi(dto
                 .getOrganizationalContactIi().getExtension()));
             if (sr != null) {
@@ -182,7 +183,7 @@ public class StudySiteContactBeanLocal extends
 
     private void validateCrsContacts(StudySiteContactDTO dto) throws PAException {
         PAServiceUtils paServiceUtil = new PAServiceUtils();
-        if (!PAUtil.isIiNull(dto.getClinicalResearchStaffIi()) && !PAUtil.isDSetTelNull(dto.getTelecomAddresses())) {
+        if (!ISOUtil.isIiNull(dto.getClinicalResearchStaffIi()) && !PAUtil.isDSetTelNull(dto.getTelecomAddresses())) {
             StructuralRole sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoClinicalResearchStaffIi(dto
                 .getClinicalResearchStaffIi().getExtension()));
             if (sr != null) {

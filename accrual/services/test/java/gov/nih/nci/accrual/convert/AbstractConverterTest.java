@@ -94,6 +94,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.PqConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.math.BigDecimal;
@@ -139,7 +140,7 @@ public abstract class AbstractConverterTest {
     }
 
     protected boolean cdTest(Cd cd) {
-        return PAUtil.isCdNull(cd);
+        return ISOUtil.isCdNull(cd);
     }
 
     protected boolean dsetTest(DSet<Cd> dset) {

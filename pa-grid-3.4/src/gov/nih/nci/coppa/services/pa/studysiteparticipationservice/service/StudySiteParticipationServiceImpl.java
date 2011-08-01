@@ -27,7 +27,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.services.correlation.AbstractRoleDTO;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -45,7 +45,7 @@ import org.apache.log4j.Logger;
 /**
  * Implementation of the StudySiteParticipationService for adding, updating participating sites as well as finding if
  * those sites exist based on NCI study protocol ids and ctep Organization ids.
- * 
+ *
  * @author mshestopalov
  */
 public class StudySiteParticipationServiceImpl extends StudySiteParticipationServiceImplBase {
@@ -72,7 +72,7 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
 
             ParticipatingSiteDTO participatingSite = null;
             Ii hcfIi = extractIdentifer(hcfDTO);
-            if (PAUtil.isIiNotNull(hcfIi)) {
+            if (!ISOUtil.isIiNull(hcfIi)) {
                 participatingSite = service.createStudySiteParticipant(studySiteDTO, studySiteAccrualStatusDTO,
                         hcfIi, participatingSiteContactDTOList);
             } else {
@@ -106,10 +106,10 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
         }
     }
 
-    private void transformContacts(StudySite studySite, List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) 
+    private void transformContacts(StudySite studySite, List<ParticipatingSiteContactDTO> participatingSiteContactDTOList)
     throws DtoTransformException, PAException {
         for (StudySiteContact studySiteContact : studySite.getStudySiteContacts()) {
-            if (studySiteContact.getPersonRole() == null 
+            if (studySiteContact.getPersonRole() == null
                     || studySiteContact.getPersonRole().getContent().isEmpty()) {
                 throw new PAException("PersonRole cannot be empty for StudySiteContact.");
             }
@@ -134,7 +134,7 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
             } else {
                 throw new PAException("Invalid PersonRole for StudySiteContact: " + studySiteContact);
             }
-            
+
             participatingSiteContactDTOList.add(participatingSiteContactDTO);
         }
 
@@ -150,7 +150,7 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
             throw FaultUtil.reThrowRemote(e);
         }
     }
-    
+
     private Ii extractIdentifer(AbstractRoleDTO abstractRoleDTO) {
         Ii ii = null;
         if (abstractRoleDTO != null) {
@@ -161,6 +161,6 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
         }
         return ii;
     }
-    
+
 
 }

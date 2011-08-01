@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package gov.nih.nci.registry.service;
 
@@ -11,7 +11,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
@@ -52,7 +52,7 @@ public class MockOrganizationalContactCorrelationService implements
      */
     public Ii createCorrelation(OrganizationalContactDTO arg0)
             throws EntityValidationException {
-        
+
         if (arg0.getTitle().getValue().equalsIgnoreCase("TestEntityValidationException")) {
             throw new EntityValidationException(new HashMap<String, String[]>());
         }
@@ -66,13 +66,13 @@ public class MockOrganizationalContactCorrelationService implements
             throws NullifiedRoleException {
         OrganizationalContactDTO dto = new OrganizationalContactDTO();
         for (OrganizationalContactDTO contactDto : list) {
-            Ii  contactIi = DSetConverter.convertToIi(contactDto.getIdentifier()); 
-            if(PAUtil.isIiNotNull(ii) && PAUtil.isIiNotNull(contactIi)  
+            Ii  contactIi = DSetConverter.convertToIi(contactDto.getIdentifier());
+            if(!ISOUtil.isIiNull(ii) && !ISOUtil.isIiNull(contactIi)
                     && contactIi.getExtension().equals(ii.getExtension())) {
                 dto = contactDto;
             }
         }
-        
+
         return dto;
     }
 
@@ -94,7 +94,7 @@ public class MockOrganizationalContactCorrelationService implements
             if(dto.getScoperIdentifier().getExtension().equals(arg0.getScoperIdentifier().getExtension())) {
                 returnList.add(dto);
             }
-            if(arg0.getTitle() != null && arg0.getTitle().getValue() != null 
+            if(arg0.getTitle() != null && arg0.getTitle().getValue() != null
                     && arg0.getTitle().getValue().equalsIgnoreCase("Test Create Title")) {
                 return new ArrayList<OrganizationalContactDTO>();
             }

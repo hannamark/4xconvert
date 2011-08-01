@@ -93,8 +93,8 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -250,21 +250,21 @@ public class MockOrganizationCorrelationService implements
         List<StudySiteDTO> spList = PaRegistry.getStudySiteService().
                 getByStudyProtocol(IiConverter.convertToIi(studyProtocolId), criteria);
         for (StudySiteDTO sp : spList) {
-            if (!PAUtil.isIiNull(sp.getHealthcareFacilityIi())) {
+            if (!ISOUtil.isIiNull(sp.getHealthcareFacilityIi())) {
                 for (HealthCareFacility hcf : hcfList) {
                     if (hcf.getId().equals(IiConverter.convertToLong(sp.getHealthcareFacilityIi()))) {
                         orgList.add(hcf.getOrganization());
                     }
                 }
             }
-            if (!PAUtil.isIiNull(sp.getOversightCommitteeIi())) {
+            if (!ISOUtil.isIiNull(sp.getOversightCommitteeIi())) {
                 for (OversightCommittee oc : ocList) {
                     if (oc.getId().equals(IiConverter.convertToLong(sp.getOversightCommitteeIi()))) {
                         orgList.add(oc.getOrganization());
                     }
                 }
             }
-            if (!PAUtil.isIiNull(sp.getResearchOrganizationIi())) {
+            if (!ISOUtil.isIiNull(sp.getResearchOrganizationIi())) {
                 for (ResearchOrganization ro : roList) {
                     if (ro.getId().equals(IiConverter.convertToLong(sp.getResearchOrganizationIi()))) {
                         orgList.add(ro.getOrganization());

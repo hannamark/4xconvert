@@ -93,6 +93,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PAFieldException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
@@ -109,15 +110,15 @@ import org.junit.Test;
  *
  */
 public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
-    private StudyOnholdServiceLocal remote = new StudyOnholdBeanLocal();
+    private final StudyOnholdServiceLocal remote = new StudyOnholdBeanLocal();
     private Long spId;
     private Ii spIi;
 
-    private String time1 = "1/1/2000";
-    private String time2 = "1/1/2099";
-    private Timestamp now = new Timestamp(new Date().getTime());
-    private String reasonText = "reason";
-    private OnholdReasonCode reasonCode = OnholdReasonCode.INVALID_GRANT;
+    private final String time1 = "1/1/2000";
+    private final String time2 = "1/1/2099";
+    private final Timestamp now = new Timestamp(new Date().getTime());
+    private final String reasonText = "reason";
+    private final OnholdReasonCode reasonCode = OnholdReasonCode.INVALID_GRANT;
 
     @Before
     public void setUp() throws Exception {
@@ -209,7 +210,7 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
         x.setStudyProtocolIdentifier(spIi);
         StudyOnholdDTO y = remote.create(x);
         Ii ohIi = y.getIdentifier();
-        assertFalse(PAUtil.isIiNull(ohIi));
+        assertFalse(ISOUtil.isIiNull(ohIi));
 
         // confirm date rules (only off-hold date changes)
         y = new StudyOnholdDTO();

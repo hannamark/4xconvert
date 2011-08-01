@@ -91,6 +91,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.List;
@@ -110,14 +111,14 @@ public abstract class AbstractTrialRegistrationBean {
     public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
         this.paServiceUtils = paServiceUtils;
     }
-    
+
     /**
      * @return PAServiceUtils
      */
     protected PAServiceUtils getPAServiceUtils() {
         return this.paServiceUtils;
     }
-    
+
     /**
      * @param studyProtocolIi protocol ii
      * @param smCode  milestone code
@@ -126,7 +127,7 @@ public abstract class AbstractTrialRegistrationBean {
      */
     protected void sendTSRXML(Ii studyProtocolIi, Cd smCode, List<StudyInboxDTO> inbox)
             throws PAException {
-        if (PAUtil.isIiNotNull(studyProtocolIi) && !PAUtil.isCdNull(smCode) && !isActiveRecordInInbox(inbox)
+        if (!ISOUtil.isIiNull(studyProtocolIi) && !ISOUtil.isCdNull(smCode) && !isActiveRecordInInbox(inbox)
                 && MilestoneCode.isAboveTrialSummaryReport(MilestoneCode.getByCode(CdConverter
                         .convertCdToString(smCode)))) {
             paServiceUtils.createMilestone(studyProtocolIi, MilestoneCode.TRIAL_SUMMARY_SENT, null);
@@ -163,7 +164,7 @@ public abstract class AbstractTrialRegistrationBean {
     /**
      * @param studyProtocolDTO dto
      * @param returnStudyProtocolDTO  dto
-     */ 
+     */
     protected void setPrimaryPurposeCode(StudyProtocolDTO studyProtocolDTO,
             StudyProtocolDTO returnStudyProtocolDTO) {
         returnStudyProtocolDTO.setPrimaryPurposeCode(studyProtocolDTO.getPrimaryPurposeCode());

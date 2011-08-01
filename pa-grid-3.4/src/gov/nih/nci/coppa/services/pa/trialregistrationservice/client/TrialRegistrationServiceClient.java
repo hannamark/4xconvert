@@ -3,8 +3,8 @@ package gov.nih.nci.coppa.services.pa.trialregistrationservice.client;
 import gov.nih.nci.coppa.common.LimitOffset;
 import gov.nih.nci.coppa.po.Organization;
 import gov.nih.nci.coppa.po.Person;
-import gov.nih.nci.coppa.services.client.ClientUtils;
 import gov.nih.nci.coppa.services.pa.Document;
+import gov.nih.nci.coppa.services.pa.Ed;
 import gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol;
 import gov.nih.nci.coppa.services.pa.RegulatoryAuthority;
 import gov.nih.nci.coppa.services.pa.StudyContact;
@@ -108,14 +108,14 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
               // place client calls here if you want to use this main as a
               // test....
               System.out.println("creating a protocol");
-              createCompleteInterventionalStudyProtocol(client);
+              //createCompleteInterventionalStudyProtocol(client);
               //System.out.println("updating a protocol");
               //updateInterventionalStudyProtocol(client, ispId);
               //System.out.println("amending a protocol");
               //amendInterventionalStudyProtocol(client);
               //System.out.println("creating a proprietary protocol");
               //createAbbreviatedInterventionalStudyProtocol(client);
-              //getCtGovXml(client);
+              getCtGovXml(client);
             } else {
                 usage();
                 System.exit(1);
@@ -555,7 +555,10 @@ public class TrialRegistrationServiceClient extends TrialRegistrationServiceClie
       studyProtocol.setExtension("542534");
       studyProtocol.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
       studyProtocol.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
-      ClientUtils.print(client.getCtGovXml(studyProtocol));
+      Ed result = client.getCtGovXml(studyProtocol);
+
+      System.out.println(result.getValue());
+
   }
 
   @Override

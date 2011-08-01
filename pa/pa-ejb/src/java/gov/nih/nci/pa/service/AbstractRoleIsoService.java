@@ -94,7 +94,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
@@ -163,7 +163,7 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
      * @throws PAException on error
      */
     public List<DTO> getByStudyProtocol(Ii studyProtocolIi, List<DTO> dtos) throws PAException {
-        if (PAUtil.isIiNull(studyProtocolIi)) {
+        if (ISOUtil.isIiNull(studyProtocolIi)) {
             throw new PAException("Cannot call getByStudyProtocol method with a null identifier.");
         }
         StringBuffer criteria = new StringBuffer();
@@ -181,24 +181,7 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
                 criteria.append("or ");
             }
 
-            if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudyContact")) {
-                StudyContactDTO spcDTO = (StudyContactDTO) crit;
-                criteria.append("spart.roleCode = '"
-                        + StudyContactRoleCode.getByCode(spcDTO.getRoleCode().getCode()) + "' ");
-                appended = true;
-            }
-            if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySiteContact")) {
-                StudySiteContactDTO spcDTO = (StudySiteContactDTO) crit;
-                criteria.append("spart.roleCode = '"
-                        + StudySiteContactRoleCode.getByCode(spcDTO.getRoleCode().getCode()) + "' ");
-                appended = true;
-            }
-            if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySite")) {
-                StudySiteDTO spcDTO = (StudySiteDTO) crit;
-                criteria.append("spart.functionalCode = '"
-                        + StudySiteFunctionalCode.getByCode(spcDTO.getFunctionalCode().getCode()) + "' ");
-                appended = true;
-            }
+           appended = addTypeArgument(criteria, crit);
         }
         if (appended) {
             hql.append('(');
@@ -208,6 +191,29 @@ public abstract class AbstractRoleIsoService<DTO extends StudyDTO, BO extends Fu
         hql.append(" order by spart.id ");
 
         return runQuery(studyProtocolIi, hql);
+    }
+
+    private boolean addTypeArgument(StringBuffer criteria, DTO crit) {
+        boolean appended = false;
+        if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudyContact")) {
+            StudyContactDTO spcDTO = (StudyContactDTO) crit;
+            criteria.append("spart.roleCode = '"
+                    + StudyContactRoleCode.getByCode(spcDTO.getRoleCode().getCode()) + "' ");
+            appended = true;
+        }
+        if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySiteContact")) {
+            StudySiteContactDTO spcDTO = (StudySiteContactDTO) crit;
+            criteria.append("spart.roleCode = '"
+                    + StudySiteContactRoleCode.getByCode(spcDTO.getRoleCode().getCode()) + "' ");
+            appended = true;
+        }
+        if (getTypeArgument().getName().equals("gov.nih.nci.pa.domain.StudySite")) {
+            StudySiteDTO spcDTO = (StudySiteDTO) crit;
+            criteria.append("spart.functionalCode = '"
+                    + StudySiteFunctionalCode.getByCode(spcDTO.getFunctionalCode().getCode()) + "' ");
+            appended = true;
+        }
+        return appended;
     }
 
     @SuppressWarnings("unchecked")

@@ -87,8 +87,9 @@ import gov.nih.nci.pa.iso.convert.AbstractConverter;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.exception.PAValidationException;
-import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -119,7 +120,7 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
      */
     @SuppressWarnings("unchecked")
     public List<DTO> getByStudyProtocol(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; null found.  ");
         }
         Session session = PaHibernateUtil.getCurrentSession();

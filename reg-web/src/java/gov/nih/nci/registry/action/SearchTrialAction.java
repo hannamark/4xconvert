@@ -101,8 +101,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.BaseTrialDTO;
 import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
@@ -135,9 +135,9 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
- * 
+ *
  * @author Bala Nair
- * 
+ *
  */
 public class SearchTrialAction extends ActionSupport {
     private static final long serialVersionUID = 1L;
@@ -291,7 +291,7 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
-     * 
+     *
      * @return records
      */
     public List<StudyProtocolQueryDTO> getRecords() {
@@ -299,7 +299,7 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
-     * 
+     *
      * @return SearchProtocolCriteria SearchProtocolCriteria
      */
     public SearchProtocolCriteria getCriteria() {
@@ -307,7 +307,7 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
-     * 
+     *
      * @param criteria SearchProtocolCriteria
      */
     public void setCriteria(SearchProtocolCriteria criteria) {
@@ -315,7 +315,7 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
-     * 
+     *
      * @return studyProtocolId
      */
     public Long getStudyProtocolId() {
@@ -323,7 +323,7 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
-     * 
+     *
      * @param studyProtocolId studyProtocolId
      */
     public void setStudyProtocolId(Long studyProtocolId) {
@@ -368,7 +368,7 @@ public class SearchTrialAction extends ActionSupport {
             NullifiedRoleException {
         ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
         StudyProtocolDTO protocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-        if (!PAUtil.isBlNull(protocolDTO.getProprietaryTrialIndicator())
+        if (!ISOUtil.isBlNull(protocolDTO.getProprietaryTrialIndicator())
                 && BlConverter.convertToBoolean(protocolDTO.getProprietaryTrialIndicator())) {
             // prop trial
             loadPropTrial(studyProtocolIi);
@@ -492,7 +492,7 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
-     * 
+     *
      * @return st
      */
     public String getMyPartiallySavedTrial() {
@@ -519,7 +519,7 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
-     * 
+     *
      * @return view
      */
     public String partiallySubmittedView() {
@@ -576,12 +576,12 @@ public class SearchTrialAction extends ActionSupport {
 
             spQueryDTO.setLeadOrganizationId(IiConverter.convertToLong(studyProtocolStageDTO
                     .getLeadOrganizationIdentifier()));
-            if (PAUtil.isIiNotNull(studyProtocolStageDTO.getLeadOrganizationIdentifier())) {
+            if (!ISOUtil.isIiNull(studyProtocolStageDTO.getLeadOrganizationIdentifier())) {
                 spQueryDTO.setLeadOrganizationName(trialUtils.getOrgName(studyProtocolStageDTO
                         .getLeadOrganizationIdentifier()));
             }
             spQueryDTO.setPiId(IiConverter.convertToLong(studyProtocolStageDTO.getPiIdentifier()));
-            if (PAUtil.isIiNotNull(studyProtocolStageDTO.getPiIdentifier())) {
+            if (!ISOUtil.isIiNull(studyProtocolStageDTO.getPiIdentifier())) {
                 spQueryDTO.setPiFullName(trialUtils.getPersonName(studyProtocolStageDTO.getPiIdentifier()));
             }
             spQueryDTO.setStudyStatusCode(StudyStatusCode.getByCode(CdConverter.convertCdToString(studyProtocolStageDTO
@@ -589,7 +589,7 @@ public class SearchTrialAction extends ActionSupport {
             spQueryDTO.setStudyStatusDate(TsConverter.convertToTimestamp(studyProtocolStageDTO.getTrialStatusDate()));
             spQueryDTO.getLastCreated().setUserLastCreated(
                     StConverter.convertToString(studyProtocolStageDTO.getUserLastCreated()));
-            if (!PAUtil.isBlNull(studyProtocolStageDTO.getProprietaryTrialIndicator())
+            if (!ISOUtil.isBlNull(studyProtocolStageDTO.getProprietaryTrialIndicator())
                     && BlConverter.convertToBoolean(studyProtocolStageDTO.getProprietaryTrialIndicator())) {
                 spQueryDTO.setProprietaryTrial(true);
             } else {
@@ -602,7 +602,7 @@ public class SearchTrialAction extends ActionSupport {
 
     /**
      * Send xml.
-     * 
+     *
      * @return the string
      */
     public String sendXml() {

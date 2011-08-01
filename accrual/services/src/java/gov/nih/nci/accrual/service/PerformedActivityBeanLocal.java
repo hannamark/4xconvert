@@ -87,9 +87,9 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -120,7 +120,7 @@ public class PerformedActivityBeanLocal extends
      * {@inheritDoc}
      */
     public List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudySubject(Ii ii) throws RemoteException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             return null;
         }
 
@@ -159,10 +159,10 @@ public class PerformedActivityBeanLocal extends
      */
     public PerformedSubjectMilestoneDto createPerformedSubjectMilestone(PerformedSubjectMilestoneDto dto)
         throws RemoteException {
-        if (PAUtil.isIiNotNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Update method should be used to modify existing.  ");
         }
-        if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             throw new RemoteException("StudyProtocol must be set.  ");
         }
         return createOrUpdateNew(dto, Converters.get(PerformedSubjectMilestoneConverter.class));
@@ -173,7 +173,7 @@ public class PerformedActivityBeanLocal extends
      */
     public PerformedSubjectMilestoneDto updatePerformedSubjectMilestone(PerformedSubjectMilestoneDto dto)
         throws RemoteException {
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Create method should be used to modify existing.  ");
         }
         return createOrUpdateNew(dto, Converters.get(PerformedSubjectMilestoneConverter.class));

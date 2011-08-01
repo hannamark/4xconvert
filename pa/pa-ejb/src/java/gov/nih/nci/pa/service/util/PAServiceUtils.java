@@ -138,6 +138,7 @@ import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
@@ -268,7 +269,7 @@ public class PAServiceUtils {
      * @throws PAException on error.
      */
     public void addNciIdentifierToTrial(Ii spIi) throws PAException {
-        if (PAUtil.isIiNull(spIi)) {
+        if (ISOUtil.isIiNull(spIi)) {
             throw new PAException("Trial must have an Ii created.");
         }
         Session session = PaHibernateUtil.getCurrentSession();
@@ -329,7 +330,7 @@ public class PAServiceUtils {
         for (StudyDTO dto : dtos) {
             dto.setStudyProtocolIdentifier(studyProtocolIi);
             StudyPaService<StudyDTO> paService = getRemoteService(id);
-            if (PAUtil.isIiNull(dto.getIdentifier())) {
+            if (ISOUtil.isIiNull(dto.getIdentifier())) {
                 results.add((T) paService.create(dto));
             } else {
                 results.add((T) paService.update(dto));
@@ -493,7 +494,7 @@ public class PAServiceUtils {
         if (organizationDto != null && organizationDto.getIdentifier() != null) {
             SummaryFourFundingCategoryCode summaryFourFundingCategoryCode = null;
 
-            if (summary4studyResourcingDTO != null && !PAUtil.isCdNull(summary4studyResourcingDTO.getTypeCode())) {
+            if (summary4studyResourcingDTO != null && !ISOUtil.isCdNull(summary4studyResourcingDTO.getTypeCode())) {
                 summaryFourFundingCategoryCode = SummaryFourFundingCategoryCode.getByCode(
                         summary4studyResourcingDTO.getTypeCode().getCode());
             }
@@ -690,7 +691,7 @@ public class PAServiceUtils {
      */
     @SuppressWarnings("PMD.PreserveStackTrace") // TooManyResultsException stack trace isn't needed
     public List<StudySiteDTO> getStudySite(StudySiteDTO spDto, boolean isUnique) throws PAException {
-        if (PAUtil.isIiNull(spDto.getStudyProtocolIdentifier())) {
+        if (ISOUtil.isIiNull(spDto.getStudyProtocolIdentifier())) {
             throw new PAException(" StudyProtocol Ii is null");
         }
         LimitOffset pagingParams = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
@@ -778,7 +779,7 @@ public class PAServiceUtils {
      * @throws PAException
      */
     private void isIndIdeUpdated(StringBuffer errorMsg, StudyIndldeDTO sp) throws  PAException {
-        if (PAUtil.isIiNotNull(sp.getIdentifier())) {
+        if (!ISOUtil.isIiNull(sp.getIdentifier())) {
             StudyPaService<StudyDTO> paService = getRemoteService(IiConverter.convertToStudyIndIdeIi(
                     Long.valueOf(sp.getIdentifier().getExtension())));
             StudyIndldeDTO dbDTO = (StudyIndldeDTO) paService.get(sp.getIdentifier());
@@ -831,7 +832,7 @@ public class PAServiceUtils {
      * @throws PAException
      */
     private void isGrantUpdated(StudyResourcingDTO sp, StringBuffer errorMsg) throws PAException {
-        if (PAUtil.isIiNotNull(sp.getIdentifier())) {
+        if (!ISOUtil.isIiNull(sp.getIdentifier())) {
             StudyPaService<StudyDTO> paService = getRemoteService(IiConverter.convertToStudyResourcingIi(
                     Long.valueOf(sp.getIdentifier().getExtension())));
             StudyResourcingDTO dbDTO = (StudyResourcingDTO) paService.get(sp.getIdentifier());
@@ -891,7 +892,7 @@ public class PAServiceUtils {
             StudySiteAccrualStatusDTO latestDTO = null;
             List<StudySiteAccrualStatusDTO> participatingSitesOld = null;
             for (StudySiteAccrualStatusDTO studySiteAccuralStatus : participatingSites) {
-                if (PAUtil.isIiNotNull(studySiteAccuralStatus.getStudySiteIi())
+                if (!ISOUtil.isIiNull(studySiteAccuralStatus.getStudySiteIi())
                         && !isIiExistInPA(IiConverter.convertToStudySiteIi(Long.valueOf(studySiteAccuralStatus
                             .getStudySiteIi().getExtension())))) {
                     errorMsg.append("Study Site Id " + studySiteAccuralStatus.getStudySiteIi().getExtension()
@@ -947,17 +948,17 @@ public class PAServiceUtils {
             if (studyRegAuthDTO == null) {
                  errMsg.append("Regulatory Information fields must be Entered.\n");
             }
-            if (PAUtil.isBlNull(studyProtocolDTO.getFdaRegulatedIndicator())) {
+            if (ISOUtil.isBlNull(studyProtocolDTO.getFdaRegulatedIndicator())) {
                  errMsg.append("FDA Regulated Intervention Indicator is required field.\n");
             }
             if (PAConstants.YES.equalsIgnoreCase(
                 BlConverter.convertBLToString(studyProtocolDTO.getFdaRegulatedIndicator()))
-                && PAUtil.isBlNull(studyProtocolDTO.getSection801Indicator())) {
+                && ISOUtil.isBlNull(studyProtocolDTO.getSection801Indicator())) {
                  errMsg.append("Section 801 is required if FDA Regulated indicator is true.");
             }
             if (PAConstants.YES.equalsIgnoreCase(
                  BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()))
-                 && PAUtil.isBlNull(studyProtocolDTO.getDelayedpostingIndicator())) {
+                 && ISOUtil.isBlNull(studyProtocolDTO.getDelayedpostingIndicator())) {
                    errMsg.append("Delayed posting Indicator is required if Section 801 is true.");
             }
 
@@ -967,7 +968,7 @@ public class PAServiceUtils {
                          errMsg.append("FDA Regulated Intervention Indicator must be Yes "
                       +                       " since it has Trial IND/IDE records.\n");
                      }
-                     if (studyRegAuthDTO != null && PAUtil.isIiNotNull(
+                     if (studyRegAuthDTO != null && !ISOUtil.isIiNull(
                               studyRegAuthDTO.getRegulatoryAuthorityIdentifier())) {
                           Long sraId = Long.valueOf(studyRegAuthDTO.getRegulatoryAuthorityIdentifier().getExtension());
                           //doing this just to load the country since its lazy loaded.
@@ -1106,7 +1107,7 @@ public class PAServiceUtils {
      */
     public boolean isIiExistInPO(Ii poIi) {
         boolean retValue = false;
-        if (PAUtil.isIiNull(poIi)) {
+        if (ISOUtil.isIiNull(poIi)) {
             retValue = false;
             return retValue;
         }
@@ -1190,10 +1191,10 @@ public class PAServiceUtils {
     public void createPoObject(List<? extends PoDto> listOfObject) throws PAException {
       for (PoDto poDto : listOfObject) {
          try {
-             if (poDto instanceof OrganizationDTO && PAUtil.isIiNull(((OrganizationDTO) poDto).getIdentifier())) {
+             if (poDto instanceof OrganizationDTO && ISOUtil.isIiNull(((OrganizationDTO) poDto).getIdentifier())) {
                      PoRegistry.getOrganizationEntityService().createOrganization((OrganizationDTO) poDto);
                  }
-             if (poDto instanceof PersonDTO && PAUtil.isIiNull(((PersonDTO) poDto).getIdentifier())) {
+             if (poDto instanceof PersonDTO && ISOUtil.isIiNull(((PersonDTO) poDto).getIdentifier())) {
                  PoRegistry.getPersonEntityService().createPerson((PersonDTO) poDto);
              }
          } catch (Exception e) {
@@ -1282,7 +1283,7 @@ public class PAServiceUtils {
      * @throws PAException on error
      */
     public <Entity extends PoDto> Entity findEntity(Entity entity) throws PAException {
-        if (entity instanceof EntityDto && PAUtil.isIiNotNull(((EntityDto) entity).getIdentifier())) {
+        if (entity instanceof EntityDto && !ISOUtil.isIiNull(((EntityDto) entity).getIdentifier())) {
             return (Entity) getEntityByIi(((EntityDto) entity).getIdentifier());
         }
         return search(entity);
@@ -1316,15 +1317,15 @@ public class PAServiceUtils {
             StudySiteDTO studySiteDTO) {
         StringBuffer errorMsg = new StringBuffer();
         if (studySiteAccrualStatusDTO != null) {
-            errorMsg.append(PAUtil.isCdNull(studySiteAccrualStatusDTO.getStatusCode())
+            errorMsg.append(ISOUtil.isCdNull(studySiteAccrualStatusDTO.getStatusCode())
                     ? "Site recruitment Status Code cannot be null , " : "");
-            errorMsg.append(PAUtil.isTsNull(studySiteAccrualStatusDTO.getStatusDate())
+            errorMsg.append(ISOUtil.isTsNull(studySiteAccrualStatusDTO.getStatusDate())
                     ? "Site recruitment Status Date should be a valid date , " : "");
-            if (!PAUtil.isCdNull(studySiteAccrualStatusDTO.getStatusCode())
+            if (!ISOUtil.isCdNull(studySiteAccrualStatusDTO.getStatusCode())
                     && null == RecruitmentStatusCode.getByCode(studySiteAccrualStatusDTO.getStatusCode().getCode())) {
                 errorMsg.append("Please enter valid RecruitmentStatusCode.");
             }
-            if (!PAUtil.isTsNull(studySiteAccrualStatusDTO.getStatusDate())) {
+            if (!ISOUtil.isTsNull(studySiteAccrualStatusDTO.getStatusDate())) {
             errorMsg.append(PAUtil.isDateCurrentOrPast(TsConverter.convertToTimestamp(
                     studySiteAccrualStatusDTO.getStatusDate()))
                     ? " Site recruitment Status Date cannot be in the future, " : "");
@@ -1349,7 +1350,7 @@ public class PAServiceUtils {
                  errorMsg.append("Date Closed for Accrual must be same or bigger "
                          + " than Date Opened for Accrual.");
               }
-              if (!PAUtil.isCdNull(studySiteAccrualStatusDTO.getStatusCode())) {
+              if (!ISOUtil.isCdNull(studySiteAccrualStatusDTO.getStatusCode())) {
                   RecruitmentStatusCode recruitmentStatus =
                       RecruitmentStatusCode.getByCode(studySiteAccrualStatusDTO.getStatusCode().getCode());
                   String recStatus = CdConverter.convertCdToString(studySiteAccrualStatusDTO.getStatusCode());
@@ -1453,7 +1454,7 @@ public class PAServiceUtils {
             if (nullfiedIi != null) {
                 dupCorrelationIi = nullifiedEntities.get(nullfiedIi);
             }
-            if (PAUtil.isIiNotNull(dupCorrelationIi)) {
+            if (!ISOUtil.isIiNull(dupCorrelationIi)) {
                 try {
                     poCorrelationDto = corrService.getCorrelation(dupCorrelationIi);
                 } catch (NullifiedRoleException e2) {
@@ -1607,7 +1608,7 @@ public class PAServiceUtils {
                                                               .getPoResearchOrganizationByEntityIdentifier(poOrgIi));
         }
         StudySiteDTO spDto = PAUtil.getFirstObj(getStudySite(identifierDto, true));
-        if (spDto != null && !PAUtil.isStNull(spDto.getLocalStudyProtocolIdentifier())) {
+        if (spDto != null && !ISOUtil.isStNull(spDto.getLocalStudyProtocolIdentifier())) {
             retIdentifier = StConverter.convertToString(spDto.getLocalStudyProtocolIdentifier());
         }
         return retIdentifier;
@@ -1621,16 +1622,16 @@ public class PAServiceUtils {
         if (identifierDTO == null) {
             throw new PAException("Identifier DTO cannot be null");
         }
-        if (PAUtil.isIiNull(identifierDTO.getResearchOrganizationIi())) {
+        if (ISOUtil.isIiNull(identifierDTO.getResearchOrganizationIi())) {
             throw new PAException("Research Org Identifier cannot be null");
         }
-        if (PAUtil.isIiNull(identifierDTO.getStudyProtocolIdentifier())) {
+        if (ISOUtil.isIiNull(identifierDTO.getStudyProtocolIdentifier())) {
             throw new PAException("Study Protocol Identifier cannot be null");
         }
-        if (PAUtil.isCdNull(identifierDTO.getFunctionalCode())) {
+        if (ISOUtil.isCdNull(identifierDTO.getFunctionalCode())) {
             throw new PAException("Functional Code cannot be null");
         }
-        if (PAUtil.isIiNotNull(identifierDTO.getResearchOrganizationIi())) {
+        if (!ISOUtil.isIiNull(identifierDTO.getResearchOrganizationIi())) {
             gov.nih.nci.pa.util.CorrelationUtils commonsCorrUtils = new gov.nih.nci.pa.util.CorrelationUtils();
             StructuralRole srRO = commonsCorrUtils.getStructuralRoleByIi(identifierDTO.getResearchOrganizationIi());
             if (srRO == null) {
@@ -1664,7 +1665,7 @@ public class PAServiceUtils {
                                                 identifierDTO.getFunctionalCode().getCode()), e);
         }
         StudySiteDTO studySiteDB = PAUtil.getFirstObj(spDtos);
-        if (studySiteDB != null && PAUtil.isIiNotNull(studySiteDB.getIdentifier())) {
+        if (studySiteDB != null && !ISOUtil.isIiNull(studySiteDB.getIdentifier())) {
             identifierDTO.setIdentifier(studySiteDB.getIdentifier());
         }
         List<StudySiteDTO> newSiteDTOS = new ArrayList<StudySiteDTO>();
@@ -1678,7 +1679,7 @@ public class PAServiceUtils {
      */
     public String getEntityCountryName(Ii entityIi) {
         String countryName = null;
-        if (!PAUtil.isIiNull(entityIi)) {
+        if (!ISOUtil.isIiNull(entityIi)) {
             if (IiConverter.ORG_IDENTIFIER_NAME.equals(entityIi.getIdentifierName())) {
                 OrganizationDTO orgDTO = getPOOrganizationEntity(entityIi);
                 countryName = getCountryName(orgDTO.getPostalAddress());

@@ -80,7 +80,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
 import gov.nih.nci.pa.report.util.ReportUtil;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.sql.Timestamp;
 
@@ -105,10 +105,10 @@ public abstract class AbstractStandardReportBean<CRITERIA extends AbstractStanda
      */
     protected String dateRangeSql(AbstractStandardCriteriaDto criteria, String field) {
         StringBuffer sql = new StringBuffer();
-        if (!PAUtil.isTsNull(criteria.getTimeInterval().getLow())) {
+        if (!ISOUtil.isTsNull(criteria.getTimeInterval().getLow())) {
             sql.append("AND " + field + " >= :LOW ");
         }
-        if (!PAUtil.isTsNull(criteria.getTimeInterval().getHigh())) {
+        if (!ISOUtil.isTsNull(criteria.getTimeInterval().getHigh())) {
             sql.append("AND " + field + " < :HIGH ");
         }
         return sql.toString();
@@ -119,10 +119,10 @@ public abstract class AbstractStandardReportBean<CRITERIA extends AbstractStanda
      * @param query query
      */
     protected void setDateRangeParameters(AbstractStandardCriteriaDto criteria, SQLQuery query) {
-        if (!PAUtil.isTsNull(criteria.getTimeInterval().getLow())) {
+        if (!ISOUtil.isTsNull(criteria.getTimeInterval().getLow())) {
             query.setParameter("LOW", TsConverter.convertToTimestamp(criteria.getTimeInterval().getLow()));
         }
-        if (!PAUtil.isTsNull(criteria.getTimeInterval().getHigh())) {
+        if (!ISOUtil.isTsNull(criteria.getTimeInterval().getHigh())) {
             Timestamp high = TsConverter.convertToTimestamp(criteria.getTimeInterval().getHigh());
             query.setParameter("HIGH", ReportUtil.makeTimestamp(ReportUtil.getYear(high),
                     ReportUtil.getMonth(high), ReportUtil.getDay(high) + 1));

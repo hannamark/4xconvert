@@ -97,7 +97,7 @@ import gov.nih.nci.pa.service.StudyContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -444,13 +444,13 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                       PAOrganizationalContactDTO.class, OrganizationalContact.class,
                       OrganizationalContactConverter.class);
 
-                  if (PAUtil.isIiNotNull(srIi)) {
+                  if (!ISOUtil.isIiNull(srIi)) {
                       //nullified with Duplicate
                       OrganizationalContactDTO poOrgContactDto = (OrganizationalContactDTO)
                       paServiceUtil.getCorrelationByIi(srIi);
                       PAOrganizationalContactDTO orgContacPaDto = new PAOrganizationalContactDTO();
                       orgContacPaDto.setOrganizationIdentifier(poOrgContactDto.getScoperIdentifier());
-                      if (PAUtil.isIiNotNull(poOrgContactDto.getPlayerIdentifier())) {
+                      if (!ISOUtil.isIiNull(poOrgContactDto.getPlayerIdentifier())) {
                           orgContacPaDto.setPersonIdentifier(poOrgContactDto.getPlayerIdentifier());
                       }
                       orgContacPaDto.setIdentifier(DSetConverter.convertToIi(poOrgContactDto.getIdentifier()));

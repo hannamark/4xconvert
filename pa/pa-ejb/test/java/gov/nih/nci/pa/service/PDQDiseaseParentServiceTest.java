@@ -92,8 +92,8 @@ import gov.nih.nci.pa.iso.dto.PDQDiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.ArrayList;
@@ -107,9 +107,9 @@ import org.junit.Test;
  *
  */
 public class PDQDiseaseParentServiceTest extends AbstractHibernateTestCase {
-    private PDQDiseaseParentServiceBean bean = new PDQDiseaseParentServiceBean();
-    private PDQDiseaseParentServiceRemote remote = bean;
-    private PDQDiseaseBeanLocal diseaseBean = new PDQDiseaseBeanLocal();
+    private final PDQDiseaseParentServiceBean bean = new PDQDiseaseParentServiceBean();
+    private final PDQDiseaseParentServiceRemote remote = bean;
+    private final PDQDiseaseBeanLocal diseaseBean = new PDQDiseaseBeanLocal();
     private Ii dIi;
 
     @Before
@@ -130,9 +130,9 @@ public class PDQDiseaseParentServiceTest extends AbstractHibernateTestCase {
         List<PDQDiseaseParentDTO> dtoList = bean.getByChildDisease(dIi);
         assertTrue(dtoList.size() > 0);
         Ii ii = dtoList.get(0).getIdentifier();
-        assertFalse(PAUtil.isIiNull(ii));
+        assertFalse(ISOUtil.isIiNull(ii));
         PDQDiseaseParentDTO resultDto = bean.get(ii);
-        assertFalse(PAUtil.isIiNull(resultDto.getIdentifier()));
+        assertFalse(ISOUtil.isIiNull(resultDto.getIdentifier()));
     }
 
     @Test

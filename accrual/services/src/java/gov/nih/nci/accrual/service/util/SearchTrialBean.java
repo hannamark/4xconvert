@@ -94,7 +94,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
@@ -137,7 +137,7 @@ public class SearchTrialBean implements SearchTrialService {
     @SuppressWarnings(UNCHECKED)
     public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria,  Ii authorizedUser) throws PAException {
         List<SearchTrialResultDto> result = new ArrayList<SearchTrialResultDto>();
-        if (criteria != null && !PAUtil.isIiNull(authorizedUser)) {
+        if (criteria != null && !ISOUtil.isIiNull(authorizedUser)) {
             Session session = null;
             try {
                 session = PaHibernateUtil.getCurrentSession();

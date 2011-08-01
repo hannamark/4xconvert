@@ -132,6 +132,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
@@ -269,7 +270,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                             StringUtils.substring(StConverter.convertToString(spDTO
                                     .getKeywordText()), 0, PAAttributeMaxLen.KEYWORD), doc));
             Ts tsVerificationDate = spDTO.getRecordVerificationDate();
-            if (PAUtil.isTsNull(tsVerificationDate))  {
+            if (ISOUtil.isTsNull(tsVerificationDate))  {
                 DocumentWorkflowStatusDTO dto = getDocumentWorkflowStatusService()
                         .getCurrentByStudyProtocol(studyProtocolIi);
                 tsVerificationDate = TsConverter.convertToTs(IvlConverter.convertTs().convertLow(
@@ -370,7 +371,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                         .getReasonText()), 0, PAAttributeMaxLen.LEN_160), doc));
             }
 
-            if (!PAUtil.isBlNull(spDTO.getExpandedAccessIndicator())) {
+            if (!ISOUtil.isBlNull(spDTO.getExpandedAccessIndicator())) {
                 if (spDTO.getExpandedAccessIndicator().getValue()) {
                     XmlGenHelper.appendElement(root,
                             XmlGenHelper.createElementWithTextblock("expanded_access_status", "Available", doc));
@@ -872,7 +873,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         // sorts the list on display order
         Collections.sort(paECs, new Comparator<PlannedEligibilityCriterionDTO>() {
             public int compare(PlannedEligibilityCriterionDTO o1, PlannedEligibilityCriterionDTO o2) {
-                return (!PAUtil.isIntNull(o1.getDisplayOrder()) && !PAUtil.isIntNull(o2.getDisplayOrder())) ? o1
+                return (!ISOUtil.isIntNull(o1.getDisplayOrder()) && !ISOUtil.isIntNull(o2.getDisplayOrder())) ? o1
                         .getDisplayOrder().getValue().compareTo(o2.getDisplayOrder().getValue()) : 0;
             }
         });
@@ -913,7 +914,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             } else {
                 value = pq.getLow().getValue();
                 unit = pq.getLow().getUnit();
-                operator = (!PAUtil.isStNull(paEC.getOperator())) ? paEC.getOperator().getValue() : "";
+                operator = (!ISOUtil.isStNull(paEC.getOperator())) ? paEC.getOperator().getValue() : "";
                 if (incIndicator == null) {
                     nullCrit.append(XmlGenHelper.TAB).append(
                             XmlGenHelper.DASH).append(criterionName).append(' ').append(value).append(' ')
@@ -1163,7 +1164,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                         XmlGenHelper.createElementWithTextblock("outcome_measure",
                                 StringUtils.substring(smDTO.getName().getValue(), 0,
                         PAAttributeMaxLen.LEN_254), doc));
-                if (!PAUtil.isStNull(smDTO.getDescription())) {
+                if (!ISOUtil.isStNull(smDTO.getDescription())) {
                     createTextBlock("outcome_description", StringUtils.substring(smDTO.getDescription().getValue(), 0,
                             PAAttributeMaxLen.LEN_600), doc, po);
                 }

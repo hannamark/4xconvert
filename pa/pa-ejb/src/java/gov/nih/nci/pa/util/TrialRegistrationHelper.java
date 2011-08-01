@@ -290,7 +290,7 @@ public class TrialRegistrationHelper {
     private void checkIndIdeUpdates(List<StudyIndldeDTO> studyIndIdeDTOs) throws PAException {
         if (CollectionUtils.isNotEmpty(studyIndIdeDTOs)) {
             for (StudyIndldeDTO indIdeDto : studyIndIdeDTOs) {
-                if (PAUtil.isIiNull(indIdeDto.getIdentifier())) {
+                if (ISOUtil.isIiNull(indIdeDto.getIdentifier())) {
                     inboxProcessingComments.add(IND_IDE_UPDATED);
                     return;
                 }
@@ -317,7 +317,7 @@ public class TrialRegistrationHelper {
     private void checkGrantUpdates(List<StudyResourcingDTO> studyResourcingDTOs) throws PAException {
         if (CollectionUtils.isNotEmpty(studyResourcingDTOs)) {
             for (StudyResourcingDTO grantDto : studyResourcingDTOs) {
-                if (PAUtil.isIiNull(grantDto.getIdentifier())) {
+                if (ISOUtil.isIiNull(grantDto.getIdentifier())) {
                     inboxProcessingComments.add(GRANT_INFORMATION_UPDATED);
                     return;
                 }
@@ -415,19 +415,19 @@ public class TrialRegistrationHelper {
         if (studyProtocolDTO == null) {
             throw new PAValidationException("Study Protocol cannot be null.");
         }
-        if (PAUtil.isTsNull(studyProtocolDTO.getStartDate())) {
+        if (ISOUtil.isTsNull(studyProtocolDTO.getStartDate())) {
             sb.append("Study Protocol start date cannot be null.\n");
         }
-        if (PAUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode())) {
+        if (ISOUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode())) {
             sb.append("Study Protocol start date type code cannot be null.\n");
         }
-        if (PAUtil.isTsNull(studyProtocolDTO.getPrimaryCompletionDate())) {
+        if (ISOUtil.isTsNull(studyProtocolDTO.getPrimaryCompletionDate())) {
             sb.append("Study Protocol primary completion date cannot be null.\n");
         }
-        if (PAUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())) {
+        if (ISOUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())) {
             sb.append("Study Protocol primary completion date type code cannot be null.\n");
         }
-        if (PAUtil.isBlNull(studyProtocolDTO.getCtgovXmlRequiredIndicator())) {
+        if (ISOUtil.isBlNull(studyProtocolDTO.getCtgovXmlRequiredIndicator())) {
             sb.append("Study Protocol Ct.gov XML indicator cannot be null.");
         }
         if (sb.length() > 0) {

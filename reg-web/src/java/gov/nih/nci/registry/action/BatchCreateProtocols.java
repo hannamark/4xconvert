@@ -109,6 +109,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -212,7 +213,7 @@ public class BatchCreateProtocols {
             } else {
                 studyProtocolIi = submitUpdate(dto, folderPath, userName);
             }
-            if (PAUtil.isIiNull(studyProtocolIi)) {
+            if (ISOUtil.isIiNull(studyProtocolIi)) {
                 ++failedCount;
             } else {
                 String strMsg = " Successfully Registered with NCI Identifier "; // get the protocol
@@ -516,7 +517,7 @@ public class BatchCreateProtocols {
             webDto =
                     util.convertToDocumentDTO(participatingSitesCode, batchDto.getParticipatinSiteDocumentFileName(),
                             doc);
-            if (!PAUtil.isIiNull(partDocId)) {
+            if (!ISOUtil.isIiNull(partDocId)) {
                 webDto.setId(partDocId.getExtension());
             }
             webDto.setStudyProtocolId(studyProtocolId);

@@ -103,6 +103,7 @@ import gov.nih.nci.pa.service.BaseLookUpService;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -926,8 +927,8 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
          webDto.setName(StConverter.convertToString(i.getName()));
          webDto.setType(CdConverter.convertCdToString(pa.getSubcategoryCode()));
          webDto.setCtGovType(CdConverter.convertCdToString(i.getCtGovTypeCode()));
-         webDto.setProcedureName(!PAUtil.isCdNull(pa.getMethodCode()) ? pa.getMethodCode().getCode() : "");
-         webDto.setTargetSite(!PAUtil.isCdNull(pa.getTargetSiteCode()) ? pa.getTargetSiteCode().getCode() : "");
+         webDto.setProcedureName(!ISOUtil.isCdNull(pa.getMethodCode()) ? pa.getMethodCode().getCode() : "");
+         webDto.setTargetSite(!ISOUtil.isCdNull(pa.getTargetSiteCode()) ? pa.getTargetSiteCode().getCode() : "");
          return webDto;
      }
 
@@ -942,32 +943,33 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
           webDto.setName(StConverter.convertToString(i.getName()));
           webDto.setType(CdConverter.convertCdToString(pa.getSubcategoryCode()));
           webDto.setCtGovType(CdConverter.convertCdToString(i.getCtGovTypeCode()));
-          webDto.setDoseDurationUOM(!PAUtil.isPqUnitNull(pa.getDoseDuration()) ? pa.getDoseDuration().getUnit() : "");
-          webDto.setDoseDurationValue(!PAUtil.isPqValueNull(pa.getDoseDuration())
+          webDto.setDoseDurationUOM(!ISOUtil.isPqUnitNull(pa.getDoseDuration()) ? pa.getDoseDuration().getUnit() : "");
+          webDto.setDoseDurationValue(!ISOUtil.isPqValueNull(pa.getDoseDuration())
                 ? pa.getDoseDuration().getValue().toString() : "");
-          webDto.setDoseForm(!PAUtil.isCdNull(pa.getDoseFormCode()) ? pa.getDoseFormCode().getCode() : "");
-          webDto.setDoseFrequency(!PAUtil.isCdNull(pa.getDoseFrequencyCode())
+          webDto.setDoseForm(!ISOUtil.isCdNull(pa.getDoseFormCode()) ? pa.getDoseFormCode().getCode() : "");
+          webDto.setDoseFrequency(!ISOUtil.isCdNull(pa.getDoseFrequencyCode())
                 ? getDoseFreq(pa.getDoseFrequencyCode().getCode()) : "");
-          webDto.setDoseFrequencyCode(!PAUtil.isCdNull(pa.getDoseFrequencyCode())
+          webDto.setDoseFrequencyCode(!ISOUtil.isCdNull(pa.getDoseFrequencyCode())
                 ? pa.getDoseFrequencyCode().getCode() : "");
-          webDto.setDoseRegimen(!PAUtil.isStNull(pa.getDoseRegimen()) ? pa.getDoseRegimen().getValue() : "");
+          webDto.setDoseRegimen(!ISOUtil.isStNull(pa.getDoseRegimen()) ? pa.getDoseRegimen().getValue() : "");
 
-          webDto.setMinDoseValue(!PAUtil.isIvlLowNull(pa.getDose()) ? pa.getDose().getLow().getValue().toString() : "");
-          webDto.setMaxDoseValue(!PAUtil.isIvlHighNull(pa.getDose())
+          webDto.setMinDoseValue(!ISOUtil.isIvlLowNull(pa.getDose())
+                  ? pa.getDose().getLow().getValue().toString() : "");
+          webDto.setMaxDoseValue(!ISOUtil.isIvlHighNull(pa.getDose())
                 ? pa.getDose().getHigh().getValue().toString() : "");
-          webDto.setDoseUOM(!PAUtil.isIvlUnitNull(pa.getDose())
+          webDto.setDoseUOM(!ISOUtil.isIvlUnitNull(pa.getDose())
                  ? IvlConverter.convertPq().convertLowToJavaPq(pa.getDose()).getUnit() : "");
 
-          webDto.setDoseTotalUOM(!PAUtil.isIvlUnitNull(pa.getDoseTotal())
+          webDto.setDoseTotalUOM(!ISOUtil.isIvlUnitNull(pa.getDoseTotal())
                 ? IvlConverter.convertPq().convertLowToJavaPq(pa.getDoseTotal()).getUnit() : "");
-          webDto.setMinDoseTotalValue(!PAUtil.isIvlLowNull(pa.getDoseTotal())
+          webDto.setMinDoseTotalValue(!ISOUtil.isIvlLowNull(pa.getDoseTotal())
                 ? pa.getDoseTotal().getLow().getValue().toString() : "");
-          webDto.setMaxDoseTotalValue(!PAUtil.isIvlHighNull(pa.getDoseTotal())
+          webDto.setMaxDoseTotalValue(!ISOUtil.isIvlHighNull(pa.getDoseTotal())
                 ? pa.getDoseTotal().getHigh().getValue().toString() : "");
-          webDto.setRouteOfAdministration(!PAUtil.isCdNull(pa.getRouteOfAdministrationCode())
+          webDto.setRouteOfAdministration(!ISOUtil.isCdNull(pa.getRouteOfAdministrationCode())
                 ? pa.getRouteOfAdministrationCode().getCode() : "");
-          webDto.setApproachSite(!PAUtil.isCdNull(pa.getApproachSiteCode()) ? pa.getApproachSiteCode().getCode() : "");
-          webDto.setTargetSite(!PAUtil.isCdNull(pa.getTargetSiteCode()) ? pa.getTargetSiteCode().getCode() : "");
+          webDto.setApproachSite(!ISOUtil.isCdNull(pa.getApproachSiteCode()) ? pa.getApproachSiteCode().getCode() : "");
+          webDto.setTargetSite(!ISOUtil.isCdNull(pa.getTargetSiteCode()) ? pa.getTargetSiteCode().getCode() : "");
          }
          return webDto;
      }

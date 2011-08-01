@@ -177,6 +177,7 @@ import gov.nih.nci.pa.service.util.report.TSRReportSubGroupStratificationCriteri
 import gov.nih.nci.pa.service.util.report.TSRReportSummary4Information;
 import gov.nih.nci.pa.service.util.report.TSRReportTrialDesign;
 import gov.nih.nci.pa.service.util.report.TSRReportTrialIdentification;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -324,7 +325,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
         ByteArrayOutputStream outputByteStream = null;
 
         StudyProtocolDTO studyProtocolDto = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-        boolean isProprietaryTrial = !PAUtil.isBlNull(studyProtocolDto.getProprietaryTrialIndicator())
+        boolean isProprietaryTrial = !ISOUtil.isBlNull(studyProtocolDto.getProprietaryTrialIndicator())
             && BlConverter.convertToBoolean(studyProtocolDto.getProprietaryTrialIndicator());
 
         TSRReport tsrReport = new TSRReport(REPORT_TITLE, PAUtil.today(),
@@ -885,7 +886,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
                     .getAcceptHealthyVolunteersIndicator(), INFORMATION_NOT_PROVIDED));
             Collections.sort(paECs, new Comparator<PlannedEligibilityCriterionDTO>() {
                 public int compare(PlannedEligibilityCriterionDTO o1, PlannedEligibilityCriterionDTO o2) {
-                    return (!PAUtil.isIntNull(o1.getDisplayOrder()) && !PAUtil.isIntNull(o2.getDisplayOrder())) ? o1
+                    return (!ISOUtil.isIntNull(o1.getDisplayOrder()) && !ISOUtil.isIntNull(o2.getDisplayOrder())) ? o1
                             .getDisplayOrder().getValue().compareTo(o2.getDisplayOrder().getValue()) : 0;
                 }
             });

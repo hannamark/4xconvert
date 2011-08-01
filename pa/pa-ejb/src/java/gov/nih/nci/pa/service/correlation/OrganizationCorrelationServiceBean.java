@@ -95,6 +95,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -500,7 +501,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
     public Organization getOrganizationByFunctionRole(Ii studyProtocolIi , Cd cd) throws PAException {
         Organization o = null;
         Ii roIi = getROByFunctionRole(studyProtocolIi, cd);
-        if (PAUtil.isIiNotNull(roIi)) {
+        if (!ISOUtil.isIiNull(roIi)) {
             o = getCorrUtils().getPAOrganizationByIi(roIi);
         }
         return o;
@@ -577,7 +578,7 @@ public class OrganizationCorrelationServiceBean implements OrganizationCorrelati
      */
     public Ii getPoResearchOrganizationByEntityIdentifier(Ii orgPoIdentifier) throws PAException {
         Ii poROIi = null;
-        if (PAUtil.isIiNull(orgPoIdentifier)) {
+        if (ISOUtil.isIiNull(orgPoIdentifier)) {
             throw new PAException("Ii Cannot be null");
         }
         // Step 1 : get correlation if there

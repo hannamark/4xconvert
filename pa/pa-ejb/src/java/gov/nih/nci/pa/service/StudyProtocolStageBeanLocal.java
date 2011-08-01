@@ -34,6 +34,7 @@ import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
@@ -104,11 +105,11 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
                 CdConverter.convertCdToString(dto.getPhaseAdditionalQualifierCode())));
         criteria.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(
                 CdConverter.convertCdToString(dto.getPrimaryPurposeCode())));
-        if (!PAUtil.isStNull(dto.getOfficialTitle())) {
+        if (!ISOUtil.isStNull(dto.getOfficialTitle())) {
             criteria.setOfficialTitle(StConverter.convertToString(dto.getOfficialTitle()));
         }
 
-        if (!PAUtil.isStNull(dto.getUserLastCreated())) {
+        if (!ISOUtil.isStNull(dto.getUserLastCreated())) {
             String userName = dto.getUserLastCreated().getValue();
             try {
                 criteria.setUserLastCreated(CSMUserService.getInstance().getCSMUser(userName));
@@ -134,7 +135,7 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
      * @throws PAException e
      */
     public void delete(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             throw new PAException(II_CAN_NOT_BE_NULL);
         }
         Session session = PaHibernateUtil.getCurrentSession();
@@ -166,7 +167,7 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyProtocolStageDTO get(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             throw new PAException(II_CAN_NOT_BE_NULL);
         }
         StudyProtocolStage studyProtocol = null;
@@ -186,7 +187,7 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
      * @throws PAException e
      */
     public List<StudyFundingStageDTO> getGrantsByStudyProtocolStage(Ii studyProtocolStageIi)throws PAException {
-        if (PAUtil.isIiNull(studyProtocolStageIi)) {
+        if (ISOUtil.isIiNull(studyProtocolStageIi)) {
             throw new PAException(II_CAN_NOT_BE_NULL);
         }
         List<StudyFundingStageDTO> resultList = new ArrayList<StudyFundingStageDTO>();
@@ -206,7 +207,7 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
      */
     @SuppressWarnings("unchecked")
     public List<StudyIndIdeStageDTO> getIndIdesByStudyProtocolStage(Ii studyProtocolStageIi) throws PAException {
-        if (PAUtil.isIiNull(studyProtocolStageIi)) {
+        if (ISOUtil.isIiNull(studyProtocolStageIi)) {
             throw new PAException(II_CAN_NOT_BE_NULL);
         }
         String hql = "select spart StudyIndIdeStage spart join spart.studyProtocolStage spro where spro.id = "
@@ -240,7 +241,7 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
      */
     private void createDocuments(List<DocumentDTO> docDTOs, Ii studyProtocolStageIi) throws PAException {
         if (CollectionUtils.isNotEmpty(docDTOs)) {
-            if (PAUtil.isIiNull(studyProtocolStageIi)) {
+            if (ISOUtil.isIiNull(studyProtocolStageIi)) {
                 throw new PAException("StudyProtocolStageIi can not be null");
             }
             Session session = PaHibernateUtil.getCurrentSession();
@@ -287,7 +288,7 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
             sp.setDateLastCreated(new Timestamp((new Date()).getTime()));
             User user = null;
             try {
-                if (!PAUtil.isStNull(isoDTO.getUserLastCreated())) {
+                if (!ISOUtil.isStNull(isoDTO.getUserLastCreated())) {
                     user =  CSMUserService.getInstance().getCSMUser(isoDTO.getUserLastCreated().getValue());
                 }
             } catch (PAException e) {
@@ -340,7 +341,7 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
     private void createGrants(List<StudyFundingStageDTO> studyFundingStageDTOs,
             Ii studyProtocolStageIi) throws PAException {
         if (CollectionUtils.isNotEmpty(studyFundingStageDTOs)) {
-            if (PAUtil.isIiNull(studyProtocolStageIi)) {
+            if (ISOUtil.isIiNull(studyProtocolStageIi)) {
                 throw new PAException("StudyProtocolStageIi can not be null");
             }
             Session session = PaHibernateUtil.getCurrentSession();
@@ -356,7 +357,7 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
     }
 
     private void deleteGrants(Ii studyProtocolStageIi) throws PAException {
-        if (PAUtil.isIiNull(studyProtocolStageIi)) {
+        if (ISOUtil.isIiNull(studyProtocolStageIi)) {
             throw new PAException(II_CAN_NOT_BE_NULL);
         }
         StringBuffer sql = new StringBuffer("DELETE FROM STUDY_FUNDING_STAGE WHERE STUDY_PROTOCOL_STAGE_IDENTIFIER  = ")
@@ -367,7 +368,7 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
     private void createIndIde(List<StudyIndIdeStageDTO> studyIndIdeStageDTOs, Ii studyProtocolStageIi)
             throws PAException {
         if (CollectionUtils.isNotEmpty(studyIndIdeStageDTOs)) {
-            if (PAUtil.isIiNull(studyProtocolStageIi)) {
+            if (ISOUtil.isIiNull(studyProtocolStageIi)) {
                 throw new PAException("StudyProtocolStageIi can not be null");
             }
             Session session = PaHibernateUtil.getCurrentSession();
@@ -381,7 +382,7 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
     }
 
     private void deleteIndIdesForStudyProtocolStage(Ii studyProtocolStageIi) throws PAException {
-        if (PAUtil.isIiNull(studyProtocolStageIi)) {
+        if (ISOUtil.isIiNull(studyProtocolStageIi)) {
             throw new PAException(II_CAN_NOT_BE_NULL);
         }
         StringBuffer sql = new StringBuffer("DELETE FROM STUDY_INDIDE_STAGE WHERE STUDY_PROTOCOL_STAGE_IDENTIFIER  = ")
@@ -404,7 +405,7 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
             submissionMailBody = submissionMailBody.replace("${temporaryidentifier}", IiConverter.convertToString(
                 spDTO.getIdentifier()));
             String title = "";
-            if (!PAUtil.isStNull(spDTO.getOfficialTitle())) {
+            if (!ISOUtil.isStNull(spDTO.getOfficialTitle())) {
                 title = StConverter.convertToString(spDTO.getOfficialTitle());
             }
             submissionMailBody = submissionMailBody.replace("${trialTitle}", title);
@@ -427,7 +428,7 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
      * {@inheritDoc}
      */
     public List<DocumentDTO> getDocumentsByStudyProtocolStage(Ii studyProtocolStageIi) throws PAException {
-        if (PAUtil.isIiNull(studyProtocolStageIi)) {
+        if (ISOUtil.isIiNull(studyProtocolStageIi)) {
             throw new PAException(II_CAN_NOT_BE_NULL);
         }
         List<DocumentDTO> resultList = new ArrayList<DocumentDTO>();
@@ -458,7 +459,7 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
     }
 
     private void deleteDocuments(Ii studyProtocolStageIi) throws PAException {
-        if (PAUtil.isIiNull(studyProtocolStageIi)) {
+        if (ISOUtil.isIiNull(studyProtocolStageIi)) {
             throw new PAException(II_CAN_NOT_BE_NULL);
         }
        StringBuffer sql = new StringBuffer("DELETE FROM STUDY_DOCUMENT_STAGE WHERE STUDY_PROTOCOL_STAGE_IDENTIFIER  = ")

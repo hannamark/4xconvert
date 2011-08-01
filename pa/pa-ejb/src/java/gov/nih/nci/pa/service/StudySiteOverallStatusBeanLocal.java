@@ -87,9 +87,10 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudySiteOverallStatusSortCriterion;
-import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -119,7 +120,7 @@ public class StudySiteOverallStatusBeanLocal extends AbstractBaseSearchBean<Stud
      * @throws PAException e
      */
     public StudySiteOverallStatusDTO create(StudySiteOverallStatusDTO dto) throws PAException {
-        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             String errMsg = " Existing StudyOverallStatus objects cannot be modified.  Append new object instead. ";
             throw new PAException(errMsg);
         }
@@ -185,7 +186,7 @@ public class StudySiteOverallStatusBeanLocal extends AbstractBaseSearchBean<Stud
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudySiteOverallStatusDTO> getByStudySite(Ii studySiteIi) throws PAException {
-        if (PAUtil.isIiNull(studySiteIi)) {
+        if (ISOUtil.isIiNull(studySiteIi)) {
             throw new PAException("Ii should not be null.");
         }
 

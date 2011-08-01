@@ -84,7 +84,7 @@ import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -125,7 +125,7 @@ public class POPatientBean implements POPatientService {
      * {@inheritDoc}
      */
     public POPatientDTO create(POPatientDTO dto) throws RemoteException {
-        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Update method should be used to modify existing.");
         }
 
@@ -151,7 +151,7 @@ public class POPatientBean implements POPatientService {
      * {@inheritDoc}
      */
     public POPatientDTO get(Ii ii) throws RemoteException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             throw new RemoteException("Called get(null)");
         }
 
@@ -174,7 +174,7 @@ public class POPatientBean implements POPatientService {
      * {@inheritDoc}
      */
     public POPatientDTO update(POPatientDTO dto) throws RemoteException {
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new RemoteException("Create method should be used to create new.");
         }
 

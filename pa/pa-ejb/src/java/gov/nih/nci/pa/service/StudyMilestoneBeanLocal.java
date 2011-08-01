@@ -24,6 +24,7 @@ import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyMilestoneSortCriterion;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -127,12 +128,12 @@ public class StudyMilestoneBeanLocal
         checkUniquenessRules(newCode, existingDtoList);
         checkMilestoneSpecificRules(newCode, existingDtoList);
         checkDocumentWorkflowStatusRules(dto, newCode);
-        checkAbstractionsRules(dto, newCode);        
+        checkAbstractionsRules(dto, newCode);
         return dto;
     }
 
     private void checkRequiredDataRules(StudyMilestoneDTO dto) throws PAException {
-        if (PAUtil.isCdNull(dto.getMilestoneCode())) {
+        if (ISOUtil.isCdNull(dto.getMilestoneCode())) {
             throw new PAException("Milestone code is required.");
         }
     }
@@ -158,7 +159,7 @@ public class StudyMilestoneBeanLocal
 
     private void checkLateRejectionRules(StudyMilestoneDTO dto) throws PAException {
         if (MilestoneCode.LATE_REJECTION_DATE.getCode().equalsIgnoreCase(dto.getMilestoneCode().getCode())) {
-            if (PAUtil.isStNull(dto.getCommentText())) {
+            if (ISOUtil.isStNull(dto.getCommentText())) {
                 throw new PAException("Milestone Comment is required.");
             }
             StudyProtocolDTO sp = studyProtocolService.getStudyProtocol(dto.getStudyProtocolIdentifier());
@@ -253,11 +254,11 @@ public class StudyMilestoneBeanLocal
         }
         return false;
     }
-    
-    private void checkReadyForTSRMilestone(List<MilestoneCode> milestones) throws PAException {  
+
+    private void checkReadyForTSRMilestone(List<MilestoneCode> milestones) throws PAException {
             if (!canCreateReadyForTSRMilestone(milestones)) {
                 String msg = "\"{0}\" can not be created at this stage.";
-                throw new PAException(MessageFormat.format(msg, MilestoneCode.READY_FOR_TSR.getCode()));            
+                throw new PAException(MessageFormat.format(msg, MilestoneCode.READY_FOR_TSR.getCode()));
         }
     }
 
@@ -285,11 +286,11 @@ public class StudyMilestoneBeanLocal
         case LATE_REJECTION_DATE:
             checkPrerequisite(milestones, newCode, new ArrayList<MilestoneCode>(), MilestoneCode.SUBMISSION_ACCEPTED);
             break;
-            
+
         case READY_FOR_TSR:
             checkReadyForTSRMilestone(milestones);
             break;
-            
+
         default:
             break;
         }
@@ -482,10 +483,10 @@ public class StudyMilestoneBeanLocal
             readyForTSR.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.READY_FOR_TSR));
             readyForTSR.setMilestoneDate(dto.getMilestoneDate());
             readyForTSR.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
-            create(readyForTSR);            
+            create(readyForTSR);
         }
     }
-    
+
     private boolean canCreateReadyForTSRMilestone(List<MilestoneCode> mileStones) {
         boolean admin = false;
         boolean scientific = false;
@@ -515,7 +516,7 @@ public class StudyMilestoneBeanLocal
         }
         return false;
     }
-    
+
 
     private void sendTSREmail(StudyMilestoneDTO workDto) throws PAException {
         MilestoneCode milestoneCode = MilestoneCode.getByCode(

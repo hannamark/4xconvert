@@ -110,7 +110,7 @@ import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -557,7 +557,7 @@ public class AbstractCTGovXmlGeneratorServiceBean {
      * @return string
      */
     protected static String convertToCtValues(Cd cd) {
-        if (PAUtil.isCdNull(cd)) {
+        if (ISOUtil.isCdNull(cd)) {
             return null;
         }
         if (getNv().containsKey(cd.getCode())) {

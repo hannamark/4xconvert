@@ -90,8 +90,8 @@ import gov.nih.nci.pa.iso.dto.InterventionAlternateNameDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.InterventionAlternateNameSortCriterion;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.util.ArrayList;
@@ -126,7 +126,7 @@ public class InterventionAlternateNameServiceBean
     */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<InterventionAlternateNameDTO> getByIntervention(Ii interventionIi) throws PAException {
-        if (PAUtil.isIiNull(interventionIi)) {
+        if (ISOUtil.isIiNull(interventionIi)) {
             throw new PAException("Cannot call getByIntervention with a null identifier.");
         }
 

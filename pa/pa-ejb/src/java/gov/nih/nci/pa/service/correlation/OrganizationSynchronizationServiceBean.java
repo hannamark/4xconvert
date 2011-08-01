@@ -94,7 +94,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -301,7 +301,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                 // this is a nullified scenario .....
                 Long duplicateRoId = null;
                 Ii dupSRIi = paServiceUtil.getDuplicateIiOfNullifiedSR(roIdentifier);
-                if (PAUtil.isIiNotNull(dupSRIi)) {
+                if (!ISOUtil.isIiNull(dupSRIi)) {
                     // this is nullified scenario with nullified structural role with duplicate
                     ResearchOrganization dupRo = paServiceUtil.getOrCreateOrganizationalStructuralRoleInPA(dupSRIi);
                     duplicateRoId = dupRo.getId();
@@ -340,7 +340,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
             if (oscDto == null) {
                 // this is a nullified scenario .....
                 Ii dupSRIi = paServiceUtil.getDuplicateIiOfNullifiedSR(oscIdentifier);
-                if (PAUtil.isIiNotNull(dupSRIi)) {
+                if (!ISOUtil.isIiNull(dupSRIi)) {
                     OversightCommittee dupOsc = paServiceUtil.getOrCreateOrganizationalStructuralRoleInPA(dupSRIi);
                     Long duplicateOscId = dupOsc.getId();
                     newRoleCode = dupOsc.getStatusCode();
@@ -379,7 +379,7 @@ public class OrganizationSynchronizationServiceBean implements OrganizationSynch
                 // this is a nullified scenario .....
                 // check sr has duplicate
                 Ii dupSRIi = paServiceUtil.getDuplicateIiOfNullifiedSR(hcfIdentifier);
-                if (PAUtil.isIiNotNull(dupSRIi)) {
+                if (!ISOUtil.isIiNull(dupSRIi)) {
                     HealthCareFacility dupHcf = paServiceUtil.getOrCreateOrganizationalStructuralRoleInPA(dupSRIi);
                     Long duplicateHcfId = dupHcf.getId();
                     newRoleCode = dupHcf.getStatusCode();

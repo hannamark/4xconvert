@@ -90,6 +90,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOnholdServiceBean;
 import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.exception.PAFieldException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -138,7 +139,7 @@ public class MockStudyOnholdService  extends MockAbstractBaseIsoService <StudyOn
 
     @Override
     public StudyOnholdDTO create(StudyOnholdDTO dto) throws PAException {
-        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("ii should be null");
         }
         StudyOnhold bo = converter.convertFromDtoToDomain(dto);
@@ -165,7 +166,7 @@ public class MockStudyOnholdService  extends MockAbstractBaseIsoService <StudyOn
 
     @Override
     public StudyOnholdDTO update(StudyOnholdDTO dto) throws PAException {
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("ii should not be null");
         }
         StudyOnhold bo = converter.convertFromDtoToDomain(get(dto.getIdentifier()));

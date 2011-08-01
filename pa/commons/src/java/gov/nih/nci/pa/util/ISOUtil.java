@@ -80,6 +80,7 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ivl;
@@ -118,6 +119,16 @@ public class ISOUtil {
         }
         return isNull;
     }
+
+    /**
+     *checks if Ed is null.
+     * @param ed ed
+     * @return boolean
+     */
+    public static boolean isEdNull(Ed ed) {
+      return (ed == null || ed.getData() == null);
+    }
+
 
     /**
      * checks if Cd is null.

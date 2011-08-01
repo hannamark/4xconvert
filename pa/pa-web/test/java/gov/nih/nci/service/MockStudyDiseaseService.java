@@ -9,7 +9,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class MockStudyDiseaseService implements StudyDiseaseServiceLocal {
 
 	public List<StudyDiseaseDTO> getByStudyProtocol(Ii ii) throws PAException {
 		 List<StudyDiseaseDTO> sdList = new ArrayList<StudyDiseaseDTO>();
-		 if (PAUtil.isIiNotNull(ii)) {
+		 if (!ISOUtil.isIiNull(ii)) {
 		     for (StudyDiseaseDTO d: dtoList) {
 		         if (d.getStudyProtocolIdentifier().getExtension().equals(ii.getExtension())) {
 		             sdList.add(d);

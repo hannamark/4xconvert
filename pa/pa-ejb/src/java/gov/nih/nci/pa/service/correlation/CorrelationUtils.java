@@ -100,8 +100,8 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PADomainUtils;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -203,7 +203,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      * @throws PAException on error
      */
     public Organization getPAOrganizationByIi(Ii isoIi) throws PAException {
-        if (PAUtil.isIiNull(isoIi)) {
+        if (ISOUtil.isIiNull(isoIi)) {
             throw new PAException("orgStructuralRoleIi is null  ");
         }
         StringBuffer hql = new StringBuffer();
@@ -243,7 +243,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
      * @throws PAException on error
      */
     public Person getPAPersonByIi(Ii isoIi) throws PAException {
-        if (PAUtil.isIiNull(isoIi)) {
+        if (ISOUtil.isIiNull(isoIi)) {
             throw new PAException("isoIi is null  ");
         }
         Person per = null;
@@ -489,7 +489,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         Ii contactIi = null;
         Ii passedInIi = DSetConverter
         .getFirstInDSet(contactDTO.getIdentifier());
-        if (PAUtil.isIiNull(passedInIi)) {
+        if (ISOUtil.isIiNull(passedInIi)) {
             // if we get a generic contact dto w/ no id we store it
             contactIi = PoRegistry.getOrganizationalContactCorrelationService()
                 .createCorrelation(contactDTO);

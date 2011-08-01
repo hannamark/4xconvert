@@ -83,7 +83,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
@@ -130,7 +129,7 @@ import org.junit.rules.ExpectedException;
 
 /**
  * @author hreinhart
- * 
+ *
  */
 public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     private final StudyMilestoneBeanLocal bean = new StudyMilestoneBeanLocal();
@@ -181,7 +180,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         List<StudyMilestoneDTO> dtoList = bean.getByStudyProtocol(spIi);
         assertTrue(dtoList.size() > 0);
         Ii ii = dtoList.get(0).getIdentifier();
-        assertFalse(PAUtil.isIiNull(ii));
+        assertFalse(ISOUtil.isIiNull(ii));
         StudyMilestoneDTO resultDto = bean.get(ii);
         compareDataAttributes(dtoList.get(0), resultDto);
     }
@@ -311,14 +310,14 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         dto.setStudyProtocolIdentifier(spAmendIi);
         checkMilestoneFailure(dto, "Late Rejection Date is applicable to Original Submission.");
     }
-    
+
     @Test
     public void checkReadyForTSRMilestone() throws Exception {
-        StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.READY_FOR_TSR);       
+        StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.READY_FOR_TSR);
         checkMilestoneFailure(dto, "\"Ready for Trial Summary Report Date\" can not be created at this stage.");
     }
-    
-    
+
+
 
     @Test
     public void checkOnHoldRules() throws Exception {
@@ -369,7 +368,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE));
     }
 
-    
+
 
     @Test
     public void checkUniquenessRules() throws Exception {
@@ -639,8 +638,8 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_START));
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_QC_COMPLETE));
         checkMilestoneFailure(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE, canNotReachMsg);
-    }   
-    
+    }
+
 
     @Test
     public void checkDocumentWorkflowStatusRules() throws Exception {
@@ -673,7 +672,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         String msg = "Error injecting reference to AbstractionCompletionService.";
         checkMilestoneFailure(dto, msg);
     }
-    
+
     @Test
     public void checkTrialSummaryFeedbackPrerequisiteOK() throws PAException {
         addAbstractedWorkflowStatus();

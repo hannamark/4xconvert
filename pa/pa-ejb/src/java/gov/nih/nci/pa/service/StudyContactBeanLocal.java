@@ -17,9 +17,10 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyContactSortCriterion;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 
 import java.util.List;
@@ -89,7 +90,7 @@ public class StudyContactBeanLocal extends AbstractRoleIsoService<StudyContactDT
     @Override
     public void validate(StudyContactDTO dto) throws PAException {
         PAServiceUtils paServiceUtil = new PAServiceUtils();
-        if (!PAUtil.isIiNull(dto.getClinicalResearchStaffIi()) && !PAUtil.isDSetTelNull(dto.getTelecomAddresses())) {
+        if (!ISOUtil.isIiNull(dto.getClinicalResearchStaffIi()) && !PAUtil.isDSetTelNull(dto.getTelecomAddresses())) {
             StructuralRole sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoClinicalResearchStaffIi(dto
                 .getClinicalResearchStaffIi().getExtension()));
             if (sr != null) {
@@ -115,15 +116,15 @@ public class StudyContactBeanLocal extends AbstractRoleIsoService<StudyContactDT
     private void getStatusCode(StudyContactDTO dto) throws PAException {
         PAServiceUtils paServiceUtil = new PAServiceUtils();
         StructuralRole sr =  null;
-        if (!PAUtil.isIiNull(dto.getClinicalResearchStaffIi())) {
+        if (!ISOUtil.isIiNull(dto.getClinicalResearchStaffIi())) {
             sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoClinicalResearchStaffIi(
                     dto.getClinicalResearchStaffIi().getExtension()));
         }
-        if (!PAUtil.isIiNull(dto.getHealthCareProviderIi())) {
+        if (!ISOUtil.isIiNull(dto.getHealthCareProviderIi())) {
             sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoHealtcareProviderIi(
                     dto.getHealthCareProviderIi().getExtension()));
         }
-        if (!PAUtil.isIiNull(dto.getOrganizationalContactIi())) {
+        if (!ISOUtil.isIiNull(dto.getOrganizationalContactIi())) {
             sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoOrganizationalContactIi(
                     dto.getOrganizationalContactIi().getExtension()));
         }

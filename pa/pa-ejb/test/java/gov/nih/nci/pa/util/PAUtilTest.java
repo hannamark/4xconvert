@@ -8,16 +8,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import gov.nih.nci.iso21090.Bl;
-import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Int;
-import gov.nih.nci.iso21090.Ivl;
-import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
-import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.dto.MilestonesDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
@@ -55,30 +49,6 @@ import org.junit.Test;
 public class PAUtilTest {
 
     /**
-     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIiNull(gov.nih.nci.iso21090.Ii)}.
-     */
-    @Test
-    public void testIsIiNull() {
-        Ii ii = null;
-        assertTrue(PAUtil.isIiNull(ii));
-        ii = new Ii();
-        assertTrue(PAUtil.isIiNull(ii));
-        ii.setExtension(null);
-        assertTrue(PAUtil.isIiNull(ii));
-        ii.setExtension("");
-        assertTrue(PAUtil.isIiNull(ii));
-
-    }
-
-    /**
-     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIiNotNull(gov.nih.nci.iso21090.Ii)}.
-     */
-    @Test
-    public void testIsIiNotNull() {
-        assertTrue(PAUtil.isIiNotNull(IiConverter.convertToIi("1")));
-    }
-
-    /**
      * Test method for {@link gov.nih.nci.pa.util.PAUtil#isValidIi(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Ii)}.
      */
     @Test
@@ -92,154 +62,6 @@ public class PAUtilTest {
     @Test(expected=PAException.class)
     public void testIsValidIi2() throws  PAException {
         PAUtil.isValidIi(null , null);
-    }
-
-
-    /**
-     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isCdNull(gov.nih.nci.iso21090.Cd)}.
-     */
-    @Test
-    public void testIsCdNull() {
-        Cd cd = null;
-        assertTrue(PAUtil.isCdNull(cd));
-        cd = new Cd();
-        assertTrue(PAUtil.isCdNull(cd));
-        cd.setCode(null);
-        assertTrue(PAUtil.isCdNull(cd));
-        cd.setCode("");
-        assertTrue(PAUtil.isCdNull(cd));
-
-    }
-
-    /**
-     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isStNull(gov.nih.nci.iso21090.St)}.
-     */
-    @Test
-    public void testIsStNull() {
-        St st = null;
-        assertTrue(PAUtil.isStNull(st));
-        st = new St();
-        st.setValue(null);
-        assertTrue(PAUtil.isStNull(st));
-        st.setValue("");
-        assertTrue(PAUtil.isStNull(st));
-    }
-
-    /**
-     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isTsNull(gov.nih.nci.iso21090.Ts)}.
-     */
-    @Test
-    public void testIsTsNull() {
-        Ts ts = null;
-        assertTrue(PAUtil.isTsNull(ts));
-        ts = new Ts();
-        ts.setValue(null);
-        assertTrue(PAUtil.isTsNull(ts));
-    }
-
-    /**
-     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isBlNull(gov.nih.nci.iso21090.Bl)}.
-     */
-    @Test
-    public void testIsBlNull() {
-        Bl bl = null;
-        assertTrue(PAUtil.isBlNull(bl));
-    }
-
-    /**
-     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIntNull(gov.nih.nci.iso21090.Int)}.
-     */
-    @Test
-    public void testIsIntNull() {
-        Int in = null;
-        assertTrue(PAUtil.isIntNull(in));
-        in = new Int();
-        in.setValue(null);
-        assertTrue(PAUtil.isIntNull(in));
-    }
-
-    /**
-     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPqValueNull(gov.nih.nci.iso21090.Pq)}.
-     */
-    @Test
-    public void testIsPqValueNull() {
-        Pq pq =null;
-        assertTrue(PAUtil.isPqValueNull(pq));
-        pq = new Pq();
-        pq.setValue(null);
-        assertTrue(PAUtil.isPqValueNull(pq));
-    }
-
-    /**
-     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isPqUnitNull(gov.nih.nci.iso21090.Pq)}.
-     */
-    @Test
-    public void testIsPqUnitNull() {
-        Pq pq =null;
-        assertTrue(PAUtil.isPqUnitNull(pq));
-        pq = new Pq();
-        pq.setUnit(null);
-        assertTrue(PAUtil.isPqUnitNull(pq));
-    }
-
-    /**
-     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIvlHighNull(gov.nih.nci.iso21090.Ivl)}.
-     */
-    @Test
-    public void testIsIvlHighNull() {
-        Ivl<Pq> ivl = null;
-        assertTrue(PAUtil.isIvlHighNull(ivl));
-        ivl = new Ivl<Pq>();
-        Pq pqHigh = null;
-        ivl.setHigh(pqHigh);
-        assertTrue(PAUtil.isIvlHighNull(ivl));
-        pqHigh = new Pq();
-        pqHigh.setValue(null);
-        ivl.setHigh(pqHigh);
-        assertTrue(PAUtil.isIvlHighNull(ivl));
-    }
-
-    /**
-     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIvlLowNull(gov.nih.nci.iso21090.Ivl)}.
-     */
-    @Test
-    public void testIsIvlLowNull() {
-        Ivl<Pq> ivl = null;
-        assertTrue(PAUtil.isIvlLowNull(ivl));
-        ivl = new Ivl<Pq>();
-        Pq pqLow = null;
-        ivl.setLow(pqLow);
-        assertTrue(PAUtil.isIvlLowNull(ivl));
-        pqLow = new Pq();
-        pqLow.setValue(null);
-        ivl.setLow(pqLow);
-        assertTrue(PAUtil.isIvlLowNull(ivl));
-    }
-
-    /**
-     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isIvlUnitNull(gov.nih.nci.iso21090.Ivl)}.
-     */
-    @Test
-    public void testIsIvlUnitNull() {
-        Ivl<Pq> ivl = null;
-        assertTrue(PAUtil.isIvlUnitNull(ivl));
-        ivl = new Ivl<Pq>();
-        Pq pqHigh = null;
-        ivl.setHigh(pqHigh);
-        assertTrue(PAUtil.isIvlUnitNull(ivl));
-        pqHigh = new Pq();
-        ivl.setHigh(pqHigh);
-        assertTrue(PAUtil.isIvlUnitNull(ivl));
-        pqHigh.setUnit(null);
-        Pq pqLow = new Pq();
-        ivl.setHigh(pqHigh);
-        ivl.setLow(pqLow);
-        assertTrue(PAUtil.isIvlUnitNull(ivl));
-        pqHigh.setUnit("");
-        ivl.setHigh(pqHigh);
-        pqLow.setUnit("");
-        ivl.setLow(pqLow);
-        assertFalse(PAUtil.isIvlUnitNull(ivl));
     }
 
     /**
@@ -741,7 +563,7 @@ public class PAUtilTest {
         spDto.setSecondaryIdentifiers(DSetConverter.convertIiSetToDset(iiSet));
         assertTrue(PAUtil.checkAssignedIdentifierExists(spDto));
     }
-    
+
     private StudyMilestone createUnboundStudyMilestone(MilestoneCode msCode, long id) {
         StudyMilestone sm = new StudyMilestone();
         sm.setMilestoneCode(msCode);
@@ -756,34 +578,34 @@ public class PAUtilTest {
         MilestonesDTO msDto = new MilestonesDTO();
         Set<StudyMilestone> studyMilestones = new TreeSet<StudyMilestone>(new LastCreatedComparator());
         studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SUBMISSION_RECEIVED, studyMilestones.size()));
-        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SUBMISSION_ACCEPTED, studyMilestones.size())); 
-        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, 
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SUBMISSION_ACCEPTED, studyMilestones.size()));
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE,
                 studyMilestones.size()));
-        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, 
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE,
                 studyMilestones.size()));
         PAUtil.convertMilestonesToDTO(msDto, studyMilestones);
         assertEquals(MilestoneCode.SUBMISSION_ACCEPTED, msDto.getStudyMilestone().getMilestone());
         assertNull(msDto.getAdminMilestone().getMilestone());
-        assertEquals(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, 
+        assertEquals(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE,
                 msDto.getScientificMilestone().getMilestone());
     }
-    
+
     @Test
     public void testMilestoneSortingAdmNoSci() {
         MilestonesDTO msDto = new MilestonesDTO();
         Set<StudyMilestone> studyMilestones = new TreeSet<StudyMilestone>(new LastCreatedComparator());
         studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SUBMISSION_RECEIVED, studyMilestones.size()));
-        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SUBMISSION_ACCEPTED, studyMilestones.size())); 
-        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, 
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SUBMISSION_ACCEPTED, studyMilestones.size()));
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE,
                 studyMilestones.size()));
-        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, 
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE,
                 studyMilestones.size()));
         PAUtil.convertMilestonesToDTO(msDto, studyMilestones);
         assertEquals(MilestoneCode.SUBMISSION_ACCEPTED, msDto.getStudyMilestone().getMilestone());
         assertEquals(msDto.getAdminMilestone().getMilestone(), MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE);
         assertNull(msDto.getScientificMilestone().getMilestone());
     }
-    
+
     @Test
     public void testMilestoneSortingSciAndAdm() {
         MilestonesDTO msDto = new MilestonesDTO();
@@ -795,32 +617,32 @@ public class PAUtilTest {
         assertNull(msDto.getAdminMilestone().getMilestone());
         assertNull(msDto.getScientificMilestone().getMilestone());
         msDto = new MilestonesDTO();
-        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, 
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE,
                 studyMilestones.size()));
-        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, 
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE,
                 studyMilestones.size()));
-        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, 
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE,
                 studyMilestones.size()));
         PAUtil.convertMilestonesToDTO(msDto, studyMilestones);
         assertEquals(MilestoneCode.SUBMISSION_ACCEPTED, msDto.getStudyMilestone().getMilestone());
         assertEquals(MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, msDto.getAdminMilestone().getMilestone());
         assertEquals(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, msDto.getScientificMilestone().getMilestone());
         msDto = new MilestonesDTO();
-        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_READY_FOR_QC, 
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_READY_FOR_QC,
                 studyMilestones.size()));
-        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_QC_START, 
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_QC_START,
                 studyMilestones.size()));
-        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE, 
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.ADMINISTRATIVE_QC_COMPLETE,
                 studyMilestones.size()));
-        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, 
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE,
                 studyMilestones.size()));
-        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_READY_FOR_QC, 
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_READY_FOR_QC,
                 studyMilestones.size()));
-        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_QC_START, 
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_QC_START,
                 studyMilestones.size()));
-        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_QC_COMPLETE, 
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.SCIENTIFIC_QC_COMPLETE,
                 studyMilestones.size()));
-        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.INITIAL_ABSTRACTION_VERIFY, 
+        studyMilestones.add(createUnboundStudyMilestone(MilestoneCode.INITIAL_ABSTRACTION_VERIFY,
                 studyMilestones.size()));
         PAUtil.convertMilestonesToDTO(msDto, studyMilestones);
         assertEquals(MilestoneCode.INITIAL_ABSTRACTION_VERIFY, msDto.getStudyMilestone().getMilestone());

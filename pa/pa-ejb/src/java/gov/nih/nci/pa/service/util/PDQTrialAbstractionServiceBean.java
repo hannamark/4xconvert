@@ -126,7 +126,7 @@ import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.services.PoDto;
@@ -229,7 +229,7 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
     public void loadAbstractionElementFromPDQXml(URL xmlUrl, Ii studyProtocolIi) throws PAException, IOException {
         PDQAbstractionXMLParser parser = new PDQAbstractionXMLParser();
         parser.setUrl(xmlUrl);
-        if (PAUtil.isIiNull(studyProtocolIi)) {
+        if (ISOUtil.isIiNull(studyProtocolIi)) {
             throw new PAException("Ii should not be null.");
         }
         parser.parse();
@@ -407,7 +407,7 @@ public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelpe
     private void loadOutcomeMeasures(List<StudyOutcomeMeasureDTO> outcomeMeasureDTOs, Ii studyProtocolIi) {
         for (StudyOutcomeMeasureDTO outDTO : outcomeMeasureDTOs) {
             outDTO.setStudyProtocolIdentifier(studyProtocolIi);
-            if (PAUtil.isStNull(outDTO.getTimeFrame())) {
+            if (ISOUtil.isStNull(outDTO.getTimeFrame())) {
                 outDTO.setTimeFrame(StConverter.convertToSt("Not Provided"));
             }
             try {

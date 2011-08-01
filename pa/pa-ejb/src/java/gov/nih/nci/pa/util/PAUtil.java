@@ -80,15 +80,10 @@ package gov.nih.nci.pa.util;
 
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROLE;
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
-import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
-import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Int;
-import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.NullFlavor;
-import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
@@ -189,32 +184,6 @@ public class PAUtil {
         ROOT_TO_NULLIFIED_ERROR_MAP.put(IiConverter.ORGANIZATIONAL_CONTACT_ROOT, PAExceptionConstants.NULLIFIED_OCT);
     }
 
-
-    /**
-     * checks if Ii is null.
-     * @param ii ii
-     * @return boolean
-     */
-    public static boolean isIiNull(Ii ii) {
-        boolean isNull = false;
-        if (ii == null || ii.getExtension() == null) {
-            return true;
-        }
-        if (ii.getExtension().trim().length() == 0) {
-            isNull = true;
-        }
-        return isNull;
-    }
-
-    /**
-     *
-     * @param ii ii to validate
-     * @return boolean
-     */
-    public static boolean isIiNotNull(Ii ii) {
-        return !isIiNull(ii);
-
-    }
     /**
      *
      * @param toValidate ii to validate
@@ -225,7 +194,7 @@ public class PAUtil {
     public static boolean isValidIi(Ii toValidate , Ii source) throws PAException {
         boolean isValid = true;
         StringBuffer sb = new StringBuffer();
-        if (isIiNull(toValidate)) {
+        if (ISOUtil.isIiNull(toValidate)) {
             throw new PAException("to Validate Identifier is null");
         }
         if (!source.getIdentifierName().equals(toValidate.getIdentifierName())) {
@@ -239,139 +208,6 @@ public class PAUtil {
             throw new PAException(sb.toString());
         }
         return isValid;
-    }
-    /**
-     * checks if Cd is null.
-     * @param cd cd
-     * @return boolean
-     */
-    public static boolean isCdNull(Cd cd) {
-        boolean isNull = false;
-        if (cd == null || cd.getCode() == null) {
-            return true;
-        }
-        if (cd.getCode().trim().length() == 0) {
-            isNull = true;
-        }
-        return isNull;
-    }
-
-    /**
-     * checks if St is null.
-     * @param st st
-     * @return boolean
-     */
-    public static boolean isStNull(St st) {
-        boolean isNull = false;
-        if (st == null || st.getValue() == null) {
-            return true;
-        }
-        if (st.getValue().trim().length() == 0) {
-            isNull = true;
-        }
-        return isNull;
-    }
-
-    /**
-     * checks if Ts is null.
-     * @param ts Ts
-     * @return boolean
-     */
-    public static boolean isTsNull(Ts ts) {
-        boolean isNull = false;
-        if ((ts == null) || (ts.getValue() == null)) {
-            isNull = true;
-        }
-        return isNull;
-    }
-
-    /**
-     * checks if Bl is null.
-     * @param bl Bl
-     * @return boolean
-     */
-    public static boolean isBlNull(Bl bl) {
-        boolean isNull = false;
-        if (bl == null || bl.getValue() == null) {
-            return true;
-        }
-        return isNull;
-    }
-
-    /**
-     * checks if Int is null.
-     * @param in Int
-     * @return boolean
-     */
-    public static boolean isIntNull(Int in) {
-        boolean isNull = false;
-        if (in == null || in.getValue() == null) {
-            return true;
-        }
-        return isNull;
-    }
-
-    /**
-     * checks if pq value is null.
-     * @param pq Pq
-     * @return boolean
-     */
-    public static boolean isPqValueNull(Pq pq) {
-        boolean isNull = false;
-        if (pq == null || pq.getValue() == null) {
-            return true;
-        }
-        return isNull;
-    }
-    /**
-     * checks if pq Unit is null.
-     * @param pq Pq
-     * @return boolean
-     */
-    public static boolean isPqUnitNull(Pq pq) {
-        boolean isNull = false;
-        if (pq == null || pq.getUnit() == null) {
-            return true;
-        }
-        return isNull;
-    }
-
-    /**
-     * checks if ivl high is null.
-     * @param ivl Ivl
-     * @return boolean
-     */
-    public static boolean isIvlHighNull(Ivl<Pq> ivl) {
-        boolean isNull = false;
-        if (ivl == null || ivl.getHigh() == null || ivl.getHigh().getValue() == null) {
-            return true;
-        }
-        return isNull;
-    }
-    /**
-     * checks if ivl low is null.
-     * @param ivl Ivl
-     * @return boolean
-     */
-    public static boolean isIvlLowNull(Ivl<Pq> ivl) {
-        boolean isNull = false;
-        if (ivl == null || ivl.getLow() == null || ivl.getLow().getValue() == null) {
-            return true;
-        }
-        return isNull;
-    }
-    /**
-     * checks if ivl unit is null.
-     * @param ivl Ivl
-     * @return boolean
-     */
-    public static boolean isIvlUnitNull(Ivl<Pq> ivl) {
-        boolean isNull = false;
-        if (ivl == null ||  ivl.getHigh() == null
-            || ivl.getLow() == null || ivl.getHigh().getUnit() == null || ivl.getLow().getUnit() == null) {
-            return true;
-        }
-        return isNull;
     }
 
     /**
@@ -612,7 +448,7 @@ public class PAUtil {
      */
     public static String getIiExtension(Ii identifier) {
         String ext = "";
-        if (!isIiNull(identifier)) {
+        if (!ISOUtil.isIiNull(identifier)) {
             ext = identifier.getExtension();
         }
         return ext;
@@ -1140,14 +976,6 @@ public class PAUtil {
         return assignedIdentifierExists;
     }
 
-    /**
-     *checks if Ed is null.
-     * @param ed ed
-     * @return boolean
-     */
-    public static boolean isEdNull(Ed ed) {
-      return (ed == null || ed.getData() == null);
-    }
 
     /**
      * Given a NullifiedEntityException pull out a useful error message.
@@ -1183,7 +1011,7 @@ public class PAUtil {
         message.append(ID_OPEN_PAREN + oldIi.getExtension() + ")");
         OrganizationDTO poOrg = null;
 
-          if (isIiNotNull(newIi)) {
+          if (!ISOUtil.isIiNull(newIi)) {
                 try {
                     poOrg = PoRegistry.getOrganizationEntityService().getOrganization(newIi);
                 } catch (NullifiedEntityException e) {
@@ -1234,7 +1062,7 @@ public class PAUtil {
         message.append(errorMsg);
         message.append(ID_OPEN_PAREN + oldIi.getExtension() + ")");
 
-        if (isIiNotNull(newIi)) {
+        if (!ISOUtil.isIiNull(newIi)) {
             message.append(" , instead use id = ");
             message.append(newIi.getExtension());
         }
@@ -1253,7 +1081,7 @@ public class PAUtil {
         message.append(PAExceptionConstants.NULLIFIED_PERSON);
         message.append(ID_OPEN_PAREN + oldIi.getExtension() + ")");
         PersonDTO poPer = null;
-        if (isIiNotNull(newIi)) {
+        if (!ISOUtil.isIiNull(newIi)) {
             try {
                poPer = PoRegistry.getPersonEntityService().getPerson(newIi);
             } catch (NullifiedEntityException e) {

@@ -91,6 +91,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
@@ -304,7 +305,7 @@ public abstract class AbstractBaseParticipatingSiteBean extends AbstractBasePart
             CurationException, PAException, NullifiedEntityException {
 
         Ii poOrgIi = null;
-        if (PAUtil.isIiNotNull(organizationDTO.getIdentifier())
+        if (!ISOUtil.isIiNull(organizationDTO.getIdentifier())
                 && IiConverter.ORG_ROOT.equals(organizationDTO.getIdentifier().getRoot())) {
             OrganizationDTO currOrgDTO = PoRegistry.getOrganizationEntityService()
                 .getOrganization(organizationDTO.getIdentifier());

@@ -22,6 +22,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.PlannedActivitySortCriterion;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
@@ -92,7 +93,7 @@ public class PlannedActivityBeanLocal extends
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PlannedActivityDTO> getByArm(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
            return new ArrayList<PlannedActivityDTO>();
         }
         PlannedActivity criteria = new PlannedActivity();
@@ -114,7 +115,7 @@ public class PlannedActivityBeanLocal extends
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(Ii ii)
         throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             return new ArrayList<PlannedEligibilityCriterionDTO>();
         }
 
@@ -147,7 +148,7 @@ public class PlannedActivityBeanLocal extends
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public PlannedEligibilityCriterionDTO getPlannedEligibilityCriterion(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             return null;
         }
         PlannedEligibilityCriterionDTO resultDto = null;
@@ -170,10 +171,10 @@ public class PlannedActivityBeanLocal extends
     @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public PlannedEligibilityCriterionDTO createPlannedEligibilityCriterion(PlannedEligibilityCriterionDTO dto)
         throws PAException {
-        if (PAUtil.isIiNotNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Cannot call createPlannedEligibilityCriterion with a non null identifier");
         }
-        if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             throw new PAException("Cannot call createPlannedEligibilityCriterion with a null protocol identifier");
         }
         return createOrUpdatePlannedEligibilityCriterion(dto);
@@ -187,7 +188,7 @@ public class PlannedActivityBeanLocal extends
     @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public PlannedEligibilityCriterionDTO updatePlannedEligibilityCriterion(PlannedEligibilityCriterionDTO dto)
         throws PAException {
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Cannot call updatePlannedEligibilityCriterion with a null identifier");
         }
         return createOrUpdatePlannedEligibilityCriterion(dto);
@@ -199,7 +200,7 @@ public class PlannedActivityBeanLocal extends
      */
     @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public void deletePlannedEligibilityCriterion(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             throw new PAException(II_NOTFOUND);
         }
         Session session = PaHibernateUtil.getCurrentSession();
@@ -232,10 +233,10 @@ public class PlannedActivityBeanLocal extends
     @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public PlannedSubstanceAdministrationDTO createPlannedSubstanceAdministration(PlannedSubstanceAdministrationDTO dto)
         throws PAException {
-        if (PAUtil.isIiNotNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Cannot call createPlannedSubstanceAdministration with a non null identifier.");
         }
-        if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             throw new PAException("Cannot call createPlannedSubstanceAdministration with a null study protocol "
                     + "identifier");
         }
@@ -249,7 +250,7 @@ public class PlannedActivityBeanLocal extends
     @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public PlannedSubstanceAdministrationDTO updatePlannedSubstanceAdministration(PlannedSubstanceAdministrationDTO dto)
         throws PAException {
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Create method should be used to modify existing.");
         }
         validatePlannedSubstance(dto);
@@ -262,7 +263,7 @@ public class PlannedActivityBeanLocal extends
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PlannedSubstanceAdministrationDTO> getPlannedSubstanceAdministrationByStudyProtocol(Ii ii)
         throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             return new ArrayList<PlannedSubstanceAdministrationDTO>();
         }
 
@@ -292,7 +293,7 @@ public class PlannedActivityBeanLocal extends
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public PlannedSubstanceAdministrationDTO getPlannedSubstanceAdministration(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             return null;
         }
         PlannedSubstanceAdministrationDTO resultDto = null;
@@ -315,10 +316,10 @@ public class PlannedActivityBeanLocal extends
      */
     @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public PlannedProcedureDTO createPlannedProcedure(PlannedProcedureDTO dto) throws PAException {
-        if (PAUtil.isIiNotNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Update method should be used to modify existing.  ");
         }
-        if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             throw new PAException("StudyProtocol must be set.  ");
         }
         validatePlannedProcedure(dto);
@@ -330,7 +331,7 @@ public class PlannedActivityBeanLocal extends
      */
     @RolesAllowed(SCIENTIFIC_ABSTRACTOR_ROLE)
     public PlannedProcedureDTO updatePlannedProcedure(PlannedProcedureDTO dto) throws PAException {
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Create method should be used to modify existing.  ");
         }
         validatePlannedProcedure(dto);
@@ -342,7 +343,7 @@ public class PlannedActivityBeanLocal extends
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PlannedProcedureDTO> getPlannedProcedureByStudyProtocol(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             return new ArrayList<PlannedProcedureDTO>();
         }
 
@@ -372,7 +373,7 @@ public class PlannedActivityBeanLocal extends
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public PlannedProcedureDTO getPlannedProcedure(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             return null;
         }
         PlannedProcedureDTO resultDto = null;
@@ -407,7 +408,7 @@ public class PlannedActivityBeanLocal extends
      */
     private void checkIfValuesExist(PlannedSubstanceAdministrationDTO dto) throws PAException {
         StringBuffer errorBuffer = new StringBuffer();
-        if (!PAUtil.isCdNull(dto.getDoseFormCode())) {
+        if (!ISOUtil.isCdNull(dto.getDoseFormCode())) {
             boolean doseFormExists = PADomainUtils.checkIfValueExists(dto.getDoseFormCode().getCode(), "DOSE_FORM",
                                                                       "CODE");
             if (!doseFormExists) {
@@ -415,7 +416,7 @@ public class PlannedActivityBeanLocal extends
                            .append(" from table DOSE_FORM\n");
             }
         }
-        if (!PAUtil.isCdNull(dto.getDoseFrequencyCode())) {
+        if (!ISOUtil.isCdNull(dto.getDoseFrequencyCode())) {
             boolean doseFreqExists = PADomainUtils.checkIfValueExists(dto.getDoseFrequencyCode().getCode(),
                                                                       "DOSE_FREQUENCY", "CODE");
             if (!doseFreqExists) {
@@ -423,7 +424,7 @@ public class PlannedActivityBeanLocal extends
                            .append(" from table DOSE_FREQUENCY\n");
             }
         }
-        if (!PAUtil.isCdNull(dto.getRouteOfAdministrationCode())) {
+        if (!ISOUtil.isCdNull(dto.getRouteOfAdministrationCode())) {
             boolean roaExists = PADomainUtils.checkIfValueExists(dto.getRouteOfAdministrationCode().getCode(),
                                                                  "ROUTE_OF_ADMINISTRATION", "CODE");
             if (!roaExists) {
@@ -457,7 +458,7 @@ public class PlannedActivityBeanLocal extends
             }
         }
         if (dto.getSubcategoryCode().getCode().equals(ActivitySubcategoryCode.RADIATION.getCode())) {
-            if (!PAUtil.isCdNull(dto.getApproachSiteCode())) {
+            if (!ISOUtil.isCdNull(dto.getApproachSiteCode())) {
                 boolean approachSite = PADomainUtils.checkIfValueExists(dto.getApproachSiteCode().getCode(),
                                                                         "TARGET_SITE", "CODE");
                 if (!approachSite) {
@@ -465,7 +466,7 @@ public class PlannedActivityBeanLocal extends
                                .append(" from table TARGET_SITE\n");
                 }
             }
-            if (!PAUtil.isCdNull(dto.getTargetSiteCode())) {
+            if (!ISOUtil.isCdNull(dto.getTargetSiteCode())) {
                 boolean targetSite = PADomainUtils.checkIfValueExists(dto.getTargetSiteCode().getCode(), "TARGET_SITE",
                                                                       "CODE");
                 if (!targetSite) {
@@ -488,7 +489,7 @@ public class PlannedActivityBeanLocal extends
      */
     private void checkIfValuesExist(PlannedProcedureDTO dto) throws PAException {
         StringBuffer errorBuffer = new StringBuffer();
-        if (!PAUtil.isCdNull(dto.getMethodCode())) {
+        if (!ISOUtil.isCdNull(dto.getMethodCode())) {
             boolean approachSite = PADomainUtils.checkIfValueExists(dto.getMethodCode().getCode(), "METHOD_CODE",
                                                                     "CODE");
             if (!approachSite) {
@@ -496,7 +497,7 @@ public class PlannedActivityBeanLocal extends
                            .append(" from table METHOD_CODE\n");
             }
         }
-        if (!PAUtil.isCdNull(dto.getTargetSiteCode())) {
+        if (!ISOUtil.isCdNull(dto.getTargetSiteCode())) {
             boolean targetSite = PADomainUtils.checkIfValueExists(dto.getTargetSiteCode().getCode(), "TARGET_SITE",
                                                                   "CODE");
             if (!targetSite) {
@@ -517,7 +518,7 @@ public class PlannedActivityBeanLocal extends
         session = PaHibernateUtil.getCurrentSession();
         PlannedSubstanceAdministrationConverter converter = new PlannedSubstanceAdministrationConverter();
         bo = converter.convertFromDtoToDomain(dto);
-        if (PAUtil.isIiNotNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             bo.setDateLastUpdated(new Date());
         }
 
@@ -531,7 +532,7 @@ public class PlannedActivityBeanLocal extends
         PlannedProcedureDTO resultDto = null;
         Session session = null;
         session = PaHibernateUtil.getCurrentSession();
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getIdentifier())) {
             bo = PlannedProcedureConverter.convertFromDTOToDomain(dto);
         } else {
             bo = (PlannedProcedure) session.load(PlannedProcedure.class,
@@ -553,7 +554,7 @@ public class PlannedActivityBeanLocal extends
         PlannedEligibilityCriterion bo = null;
         Session session = PaHibernateUtil.getCurrentSession();
         final PlannedEligibilityCriterionConverter converter = new PlannedEligibilityCriterionConverter();
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getIdentifier())) {
             bo = converter.convertFromDtoToDomain(dto);
         } else {
             bo = (PlannedEligibilityCriterion) session.get(PlannedEligibilityCriterion.class,
@@ -582,17 +583,17 @@ public class PlannedActivityBeanLocal extends
     }
 
     private void businessRules(PlannedActivityDTO dto) throws PAException {
-        if (PAUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
             throw new PAException("PlannedActivity.studyProtocol must be set.");
         }
-        if (PAUtil.isCdNull(dto.getCategoryCode())) {
+        if (ISOUtil.isCdNull(dto.getCategoryCode())) {
             throw new PAException("PlannedActivity.categoryCode must be set.");
         }
         if (PAUtil.isTypeIntervention(dto.getCategoryCode())) {
-            if (PAUtil.isCdNull(dto.getSubcategoryCode())) {
+            if (ISOUtil.isCdNull(dto.getSubcategoryCode())) {
                 throw new PAException("Intervention type must be set.");
             }
-            if (PAUtil.isIiNull(dto.getInterventionIdentifier())) {
+            if (ISOUtil.isIiNull(dto.getInterventionIdentifier())) {
                 throw new PAException("An Intervention must be selected.");
             }
             if (getDuplicateIi(dto) != null) {
@@ -609,7 +610,7 @@ public class PlannedActivityBeanLocal extends
         try {
             InterventionDTO iDto = interventionSrv.get(dto.getInterventionIdentifier());
             String interventionName = iDto.getName().getValue();
-            
+
             List<PlannedActivityDTO> paList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
             for (PlannedActivityDTO padto : paList) {
                 Ii duplicateIi = comparePlannedActivities(dto, interventionName, padto);
@@ -620,16 +621,16 @@ public class PlannedActivityBeanLocal extends
             return null;
         } finally {
             // loading of the objects into the session to check for duplicates
-            // causes a non unique hibernate exception to occur when updating.   
+            // causes a non unique hibernate exception to occur when updating.
             PaHibernateUtil.getCurrentSession().flush();
-            PaHibernateUtil.getCurrentSession().clear();     
-        }       
+            PaHibernateUtil.getCurrentSession().clear();
+        }
     }
 
     private Ii comparePlannedActivities(PlannedActivityDTO dto, String interventionName, PlannedActivityDTO padto)
             throws PAException {
         boolean duplicate = false;
-        if (!PAUtil.isIiNull(padto.getInterventionIdentifier())) {
+        if (!ISOUtil.isIiNull(padto.getInterventionIdentifier())) {
             InterventionDTO interDto = interventionSrv.get(padto.getInterventionIdentifier());
             String interName = interDto.getName().getValue();
             if (isDuplicate(dto, interventionName, padto, interName)) {
@@ -653,14 +654,15 @@ public class PlannedActivityBeanLocal extends
                         || (padto.getTextDescription().getValue() != null
                         && dto.getTextDescription().getValue() != null && padto.getTextDescription().getValue().equals(
                         dto.getTextDescription().getValue())))
-                && ((PAUtil.isBlNull(dto.getLeadProductIndicator()) && PAUtil.isBlNull(padto.getLeadProductIndicator())
-                        ) || (!PAUtil.isBlNull(dto.getLeadProductIndicator())
-                        && !PAUtil.isBlNull(padto.getLeadProductIndicator()) && padto.getLeadProductIndicator()
+                && ((ISOUtil.isBlNull(dto.getLeadProductIndicator())
+                        && ISOUtil.isBlNull(padto.getLeadProductIndicator())
+                        ) || (!ISOUtil.isBlNull(dto.getLeadProductIndicator())
+                        && !ISOUtil.isBlNull(padto.getLeadProductIndicator()) && padto.getLeadProductIndicator()
                         .getValue().equals(dto.getLeadProductIndicator().getValue())));
     }
 
     private boolean isSameIdentifier(PlannedActivityDTO dto, PlannedActivityDTO padto) {
-        if (PAUtil.isIiNotNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             String comp1 = padto.getIdentifier().getExtension();
             String comp2 = dto.getIdentifier().getExtension();
             if (comp1.equals(comp2)) {
@@ -679,7 +681,7 @@ public class PlannedActivityBeanLocal extends
             LOG.info("Setting lead product indicator to null for non-drug PlannedActivity.");
             dto.setLeadProductIndicator(null);
         }
-        if (dto.getLeadProductIndicator() == null || PAUtil.isBlNull(dto.getLeadProductIndicator())) {
+        if (dto.getLeadProductIndicator() == null || ISOUtil.isBlNull(dto.getLeadProductIndicator())) {
             LOG.info("Generating Bl (false) for non-drug PlannedActivity.");
             dto.setLeadProductIndicator(BlConverter.convertToBl(false));
 
@@ -693,7 +695,7 @@ public class PlannedActivityBeanLocal extends
             for (PlannedSubstanceAdministrationDTO pa : paList) {
                 boolean paIsLead = (null == BlConverter.convertToBoolean(pa.getLeadProductIndicator())) ? false
                     : BlConverter.convertToBoolean(pa.getLeadProductIndicator());
-                if ((!PAUtil.isIiNull(pa.getInterventionIdentifier()))
+                if ((!ISOUtil.isIiNull(pa.getInterventionIdentifier()))
                     && (dtoIsNew || !dtoId.equals(IiConverter.convertToLong(pa.getIdentifier()))) && paIsLead) {
                     throw new PAException("Only one drug may be marked as lead for a given study.");
                 }

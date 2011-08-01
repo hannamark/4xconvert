@@ -18,7 +18,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.util.List;
@@ -97,25 +97,25 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
         if (errorMsg.length() > 0) {
             throw new PAValidationException(VALIDATION_EXCEPTION + " " + errorMsg.toString());
         }
-        if (PAUtil.isIiNotNull(studyIndldeDTO.getStudyProtocolIdentifier())) {
+        if (!ISOUtil.isIiNull(studyIndldeDTO.getStudyProtocolIdentifier())) {
             enforceNoDuplicate(studyIndldeDTO);
         }
     }
-    
+
     private boolean isIdeGrantorValid(StudyIndldeDTO studyIndldeDTO) {
-        return !(!PAUtil.isCdNull(studyIndldeDTO.getIndldeTypeCode())
+        return !(!ISOUtil.isCdNull(studyIndldeDTO.getIndldeTypeCode())
             && IndldeTypeCode.IDE.getCode().equals(studyIndldeDTO.getIndldeTypeCode().getCode())
-            && !PAUtil.isCdNull(studyIndldeDTO.getGrantorCode())
+            && !ISOUtil.isCdNull(studyIndldeDTO.getGrantorCode())
             && !GrantorCode.CDRH.getCode().equals(studyIndldeDTO.getGrantorCode().getCode()));
-         
+
     }
-    
+
     private boolean isIndGrantorValid(StudyIndldeDTO studyIndldeDTO) {
-        return !(!PAUtil.isCdNull(studyIndldeDTO.getIndldeTypeCode())
+        return !(!ISOUtil.isCdNull(studyIndldeDTO.getIndldeTypeCode())
                 && IndldeTypeCode.IND.getCode().equals(studyIndldeDTO.getIndldeTypeCode().getCode())
-                && !PAUtil.isCdNull(studyIndldeDTO.getGrantorCode())
+                && !ISOUtil.isCdNull(studyIndldeDTO.getGrantorCode())
                 && !GrantorCode.CBER.getCode().equals(studyIndldeDTO.getGrantorCode().getCode())
-                && !GrantorCode.CDER.getCode().equals(studyIndldeDTO.getGrantorCode().getCode()));  
+                && !GrantorCode.CDER.getCode().equals(studyIndldeDTO.getGrantorCode().getCode()));
         }
 
      /**
@@ -127,34 +127,34 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
         if (!isIndIdeContainsAllInfo(studyIndldeDTO)) {
           errorMsg.append("All IND/IDE values are required.\n");
         } else {
-        if (!PAUtil.isBlNull(studyIndldeDTO.getExpandedAccessIndicator())
+        if (!ISOUtil.isBlNull(studyIndldeDTO.getExpandedAccessIndicator())
             && BlConverter.convertToBool(studyIndldeDTO.getExpandedAccessIndicator())
-            && (PAUtil.isCdNull(studyIndldeDTO.getExpandedAccessStatusCode())
+            && (ISOUtil.isCdNull(studyIndldeDTO.getExpandedAccessStatusCode())
             || StringUtils.isBlank(CdConverter.convertCdToString(studyIndldeDTO.getExpandedAccessStatusCode())))) {
            errorMsg.append("Expanded Access Status value is required.\n");
         }
-      
-        if (!PAUtil.isCdNull(studyIndldeDTO.getHolderTypeCode())
+
+        if (!ISOUtil.isCdNull(studyIndldeDTO.getHolderTypeCode())
             && HolderTypeCode.NIH.getCode().equalsIgnoreCase(studyIndldeDTO.getHolderTypeCode().getCode())
-            && PAUtil.isCdNull(studyIndldeDTO.getNihInstHolderCode())) {
+            && ISOUtil.isCdNull(studyIndldeDTO.getNihInstHolderCode())) {
              errorMsg.append("NIH Institution value is required.\n");
         }
-        if (!PAUtil.isCdNull(studyIndldeDTO.getHolderTypeCode())
+        if (!ISOUtil.isCdNull(studyIndldeDTO.getHolderTypeCode())
             && HolderTypeCode.NCI.getCode().equalsIgnoreCase(studyIndldeDTO.getHolderTypeCode().getCode())
-            && PAUtil.isCdNull(studyIndldeDTO.getNciDivProgHolderCode())) {
+            && ISOUtil.isCdNull(studyIndldeDTO.getNciDivProgHolderCode())) {
              errorMsg.append("NCI Division/Program Code value is required.\n");
         }
        }
         //Validate List of values
-        if (!PAUtil.isCdNull(studyIndldeDTO.getIndldeTypeCode())
+        if (!ISOUtil.isCdNull(studyIndldeDTO.getIndldeTypeCode())
             && null == IndldeTypeCode.getByCode(studyIndldeDTO.getIndldeTypeCode().getCode())) {
               errorMsg.append("Please enter valid value for IND/IDE.\n");
         }
-        if (!PAUtil.isCdNull(studyIndldeDTO.getHolderTypeCode())
+        if (!ISOUtil.isCdNull(studyIndldeDTO.getHolderTypeCode())
             && null == HolderTypeCode.getByCode(studyIndldeDTO.getHolderTypeCode().getCode())) {
               errorMsg.append("Please enter valid value for IND/IDE Holder Type.\n");
         }
-        if (!PAUtil.isCdNull(studyIndldeDTO.getGrantorCode())
+        if (!ISOUtil.isCdNull(studyIndldeDTO.getGrantorCode())
              && null == GrantorCode.getByCode(studyIndldeDTO.getGrantorCode().getCode())) {
              errorMsg.append("Please enter valid value for IND/IDE Grantor.\n");
         }
@@ -164,21 +164,21 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
         if (!isIndGrantorValid(studyIndldeDTO)) {
                   errorMsg.append("IND Grantor must have either CBER or CDER value.\n");
         }
-        if (!PAUtil.isCdNull(studyIndldeDTO.getExpandedAccessStatusCode())
+        if (!ISOUtil.isCdNull(studyIndldeDTO.getExpandedAccessStatusCode())
             && null == ExpandedAccessStatusCode.getByCode(studyIndldeDTO.getExpandedAccessStatusCode().getCode())) {
               errorMsg.append("Please enter valid value for IND/IDE Expanded Access Status.\n");
         }
         //validate NIH Institution values
-        if (!PAUtil.isCdNull(studyIndldeDTO.getHolderTypeCode())
+        if (!ISOUtil.isCdNull(studyIndldeDTO.getHolderTypeCode())
             && studyIndldeDTO.getHolderTypeCode().getCode().equalsIgnoreCase(HolderTypeCode.NIH.getCode())
-            && !PAUtil.isCdNull(studyIndldeDTO.getNihInstHolderCode())
+            && !ISOUtil.isCdNull(studyIndldeDTO.getNihInstHolderCode())
             && null == NihInstituteCode.getByCode(studyIndldeDTO.getNihInstHolderCode().getCode())) {
              errorMsg.append("Please enter valid value for IND/IDE NIH Institution.\n");
         }
         //validate NCI Division values
-        if (!PAUtil.isCdNull(studyIndldeDTO.getHolderTypeCode())
+        if (!ISOUtil.isCdNull(studyIndldeDTO.getHolderTypeCode())
             && studyIndldeDTO.getHolderTypeCode().getCode().equalsIgnoreCase(HolderTypeCode.NCI.getCode())
-            && !PAUtil.isCdNull(studyIndldeDTO.getNciDivProgHolderCode())
+            && !ISOUtil.isCdNull(studyIndldeDTO.getNciDivProgHolderCode())
             && null == NciDivisionProgramCode.getByCode(studyIndldeDTO.getNciDivProgHolderCode().getCode())) {
              errorMsg.append("Please enter valid value for IND/IDE NCI Division /Program.\n");
         }
@@ -187,13 +187,13 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
 
       private boolean isIndIdeContainsAllInfo(StudyIndldeDTO dto) {
         int nullCount = checkIndIdeCodes(dto);
-        if (PAUtil.isStNull(dto.getIndldeNumber())) {
+        if (ISOUtil.isStNull(dto.getIndldeNumber())) {
           nullCount += 1;
         }
-        if (PAUtil.isBlNull(dto.getExpandedAccessIndicator())) {
+        if (ISOUtil.isBlNull(dto.getExpandedAccessIndicator())) {
           nullCount += 1;
         }
-        if (PAUtil.isBlNull(dto.getExemptIndicator())) {
+        if (ISOUtil.isBlNull(dto.getExemptIndicator())) {
             nullCount += 1;
         }
         if (nullCount == 0 || nullCount == IND_FIELD_COUNT) {
@@ -201,16 +201,16 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
         }
         return false;
      }
-      
+
      private int checkIndIdeCodes(StudyIndldeDTO dto) {
           int nullCount = 0;
-          if (PAUtil.isCdNull(dto.getIndldeTypeCode())) {
+          if (ISOUtil.isCdNull(dto.getIndldeTypeCode())) {
             nullCount += 1;
           }
-          if (PAUtil.isCdNull(dto.getGrantorCode())) {
+          if (ISOUtil.isCdNull(dto.getGrantorCode())) {
             nullCount += 1;
           }
-          if (PAUtil.isCdNull(dto.getHolderTypeCode())) {
+          if (ISOUtil.isCdNull(dto.getHolderTypeCode())) {
             nullCount += 1;
           }
           return nullCount;

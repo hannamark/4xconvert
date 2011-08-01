@@ -83,7 +83,7 @@ import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.enums.OffTreatmentReasonCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.util.zip.DataFormatException;
 
@@ -124,7 +124,7 @@ public class PerformedSubjectMilestoneConverter
         PerformedActivityConverter.convertFromDTOToDomain(dto , new PerformedSubjectMilestone());      
         bo.setInformedConsentDate(TsConverter.convertToTimestamp(dto.getInformedConsentDate()));
         bo.setRegistrationDate(TsConverter.convertToTimestamp(dto.getRegistrationDate()));
-        if (!PAUtil.isCdNull(dto.getReasonCode())) {
+        if (!ISOUtil.isCdNull(dto.getReasonCode())) {
             bo.setReasonCode(OffTreatmentReasonCode.getByCode(dto.getReasonCode().getCode()));
         }
         return bo;

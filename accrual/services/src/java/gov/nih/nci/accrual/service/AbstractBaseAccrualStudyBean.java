@@ -83,8 +83,8 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
-import gov.nih.nci.pa.util.PAUtil;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -114,7 +114,7 @@ public abstract class AbstractBaseAccrualStudyBean<DTO extends BaseDTO, BO exten
      */
     @SuppressWarnings("unchecked")
     public List<DTO> getByStudyProtocol(Ii ii) throws RemoteException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             throw new RemoteException("Called getByStudyProtocol() with Ii == null.");
         }
 

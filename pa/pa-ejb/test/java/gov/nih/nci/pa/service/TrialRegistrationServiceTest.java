@@ -80,8 +80,6 @@ package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -126,8 +124,8 @@ import gov.nih.nci.pa.service.util.RegulatoryInformationBean;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
@@ -154,7 +152,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Rule;
@@ -168,31 +165,31 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
     public ExpectedException thrown = ExpectedException.none();
 
     private final TrialRegistrationBeanLocal bean = new TrialRegistrationBeanLocal();
-    private StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
-    private StudyOverallStatusServiceLocal studyOverallStatusService = new StudyOverallStatusBeanLocal();
-    private StudyIndldeServiceLocal studyIndldeService  = new StudyIndldeBeanLocal();
-    private StudyResourcingServiceLocal studyResourcingService = new StudyResourcingBeanLocal();
-    private DocumentServiceLocal documentService = new DocumentBeanLocal();
-    private StudyDiseaseServiceLocal studyDiseaseService = new StudyDiseaseBeanLocal();
-    private ArmServiceLocal armService = new ArmBeanLocal();
-    private PlannedActivityServiceLocal plannedActivityService = new PlannedActivityBeanLocal();
-    private StratumGroupServiceLocal subGroupsService = new StratumGroupBeanLocal();
-    private StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
-    private StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
-    private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
-    private StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = new StudyOutcomeMeasureBeanLocal();
-    private StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityBeanLocal();
-    private StudyContactServiceLocal studyContactSvc = new StudyContactBeanLocal();
-    private RegulatoryInformationServiceRemote regulatoryInfoSvc = new RegulatoryInformationBean();
+    private final StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
+    private final StudyOverallStatusServiceLocal studyOverallStatusService = new StudyOverallStatusBeanLocal();
+    private final StudyIndldeServiceLocal studyIndldeService  = new StudyIndldeBeanLocal();
+    private final StudyResourcingServiceLocal studyResourcingService = new StudyResourcingBeanLocal();
+    private final DocumentServiceLocal documentService = new DocumentBeanLocal();
+    private final StudyDiseaseServiceLocal studyDiseaseService = new StudyDiseaseBeanLocal();
+    private final ArmServiceLocal armService = new ArmBeanLocal();
+    private final PlannedActivityServiceLocal plannedActivityService = new PlannedActivityBeanLocal();
+    private final StratumGroupServiceLocal subGroupsService = new StratumGroupBeanLocal();
+    private final StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
+    private final StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
+    private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
+    private final StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = new StudyOutcomeMeasureBeanLocal();
+    private final StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityBeanLocal();
+    private final StudyContactServiceLocal studyContactSvc = new StudyContactBeanLocal();
+    private final RegulatoryInformationServiceRemote regulatoryInfoSvc = new RegulatoryInformationBean();
     private ServiceLocator paSvcLoc;
-    private DocumentWorkflowStatusServiceLocal documentWrkService = new DocumentWorkflowStatusBeanLocal();
+    private final DocumentWorkflowStatusServiceLocal documentWrkService = new DocumentWorkflowStatusBeanLocal();
     private PoServiceLocator poSvcLoc;
     private OrganizationEntityServiceRemote poOrgSvc;
     private PersonEntityServiceRemote poPersonSvc;
 
     private Ii spIi;
 
-    private PAServiceUtils paServiceUtils = new MockPAServiceUtils();
+    private final PAServiceUtils paServiceUtils = new MockPAServiceUtils();
 
     @Before
     public void init() throws Exception {
@@ -360,7 +357,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
-        assertFalse(PAUtil.isIiNull(ii));
+        assertFalse(ISOUtil.isIiNull(ii));
     }
 
     @Test
@@ -390,7 +387,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
-        assertFalse(PAUtil.isIiNull(ii));
+        assertFalse(ISOUtil.isIiNull(ii));
     }
 
     @Test
@@ -969,7 +966,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
-        assertFalse(PAUtil.isIiNull(ii));
+        assertFalse(ISOUtil.isIiNull(ii));
 
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
@@ -1020,7 +1017,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
                 Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
                 sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
                 summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
-        assertFalse(PAUtil.isIiNull(amendedSpIi));
+        assertFalse(ISOUtil.isIiNull(amendedSpIi));
         assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
     }
 
@@ -1051,14 +1048,14 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
-        assertFalse(PAUtil.isIiNull(ii));
+        assertFalse(ISOUtil.isIiNull(ii));
 
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
-        
+
         return ii;
     }
-    
+
     @Test
     public void amendTrialTestWithProtocolHighlightedDoc() throws Exception {
         Ii ii = registerTrial();
@@ -1081,7 +1078,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
         StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
-        
+
         DocumentDTO changeDoc = new DocumentDTO();
         changeDoc.setFileName(StConverter.convertToSt("ProtocolHighlightedDocument.doc"));
         changeDoc.setText(EdConverter.convertToEd("ProtocolHighlightedDocument".getBytes()));
@@ -1090,10 +1087,10 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
                 Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
                 sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
                 summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
-        assertFalse(PAUtil.isIiNull(amendedSpIi));
+        assertFalse(ISOUtil.isIiNull(amendedSpIi));
         assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
     }
-    
+
     @Test
     public void amendTrialTestWithDeletedOtherIdentifiers() throws Exception {
         InterventionalStudyProtocolDTO studyProtocolDTO = getInterventionalStudyProtocol();
@@ -1124,7 +1121,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
                 principalInvestigatorDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
                 siteIdentifiers, studyContactDTO, null, summary4Org, summary4StudyResourcing,
                 null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
-        assertFalse(PAUtil.isIiNull(ii));
+        assertFalse(ISOUtil.isIiNull(ii));
 
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
@@ -1135,10 +1132,10 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         studyResourcingDTOs  = studyResourcingService.getStudyResourcingByStudyProtocol(ii);
         regAuthority = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(ii);
         createMilestones(ii);
-        
+
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
-        
+
         overallStatusDTO.setIdentifier(null);
         studyProtocolDTO.setAmendmentDate(TsConverter.convertToTs(TestSchema.TODAY));
 
@@ -1146,13 +1143,13 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         changeDoc.setFileName(StConverter.convertToSt("ProtocolHighlightedDocument.doc"));
         changeDoc.setText(EdConverter.convertToEd("ProtocolHighlightedDocument".getBytes()));
         changeDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT));
-        
+
         studyProtocolDTO.getSecondaryIdentifiers();
         studyProtocolDTO.getSecondaryIdentifiers().getItem().clear();
 
         thrown.expect(PAException.class);
         thrown.expectMessage("Validation Exception Other identifiers cannot be modified or deleted as part of an amendment.");
-        
+
         bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                 Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
                 sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
@@ -1181,7 +1178,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
         StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
-        
+
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
 
@@ -1190,16 +1187,16 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         changeDoc.setFileName(StConverter.convertToSt("ProtocolHighlightedDocument.doc"));
         changeDoc.setText(EdConverter.convertToEd("ProtocolHighlightedDocument".getBytes()));
         changeDoc.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT));
-        
+
         Ii newSecondaryIdentifier = new Ii();
         newSecondaryIdentifier.setExtension("Temp");
         studyProtocolDTO.getSecondaryIdentifiers().getItem().add(newSecondaryIdentifier);
-        
+
         Ii amendedSpIi = bean.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
                 Arrays.asList(changeDoc, documents.get(1), documents.get(2)), leadOrganizationDTO, principalInvestigatorDTO,
                 sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, null, studyContactDTO, null,
                 summary4Org, summary4StudyResourcing, null, regAuthority, BlConverter.convertToBl(Boolean.FALSE));
-        assertFalse(PAUtil.isIiNull(amendedSpIi));
+        assertFalse(ISOUtil.isIiNull(amendedSpIi));
         assertEquals(IiConverter.convertToLong(ii), IiConverter.convertToLong(amendedSpIi));
         studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
         assertEquals(2, studyProtocolDTO.getSecondaryIdentifiers().getItem().size());
@@ -1227,7 +1224,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
         StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
-        
+
         thrown.expect(PAException.class);
         thrown.expectMessage("Validation Exception At least one is required: Change Memo Document or Protocol Highlighted Document.");
 
@@ -1263,7 +1260,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         StudyContactDTO studyContactDTO = studyContactSvc.getByStudyProtocol(spIi).get(0);
         OrganizationDTO summary4Org = new  OrganizationDTO();
         StudyResourcingDTO summary4StudyResourcing = studyResourcingService.getSummary4ReportedResourcing(spIi);
-        
+
         DocumentDTO psDoc = new DocumentDTO();
         psDoc.setFileName(StConverter.convertToSt("Participating Site Document.doc"));
         psDoc.setText(EdConverter.convertToEd("Participating Site Document".getBytes()));
@@ -1297,7 +1294,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, null);
         paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_READY_FOR_QC, null);
         paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_START, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_COMPLETE, null);       
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_COMPLETE, null);
         paServiceUtils.createMilestone(ii, MilestoneCode.INITIAL_ABSTRACTION_VERIFY, null);
     }
 

@@ -16,7 +16,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +43,10 @@ public class MockStudyIndIdeService extends MockAbstractBaseIsoService <StudyInd
 
 
     public List<StudyIndldeDTO> getByStudyProtocol(Ii ii) throws PAException {
-        if (PAUtil.isIiNotNull(ii) && ii.getExtension().equals("2")) {
+        if (!ISOUtil.isIiNull(ii) && ii.getExtension().equals("2")) {
             return list;
         }
-        if (PAUtil.isIiNotNull(ii) && ii.getExtension().equals("3")) {
+        if (!ISOUtil.isIiNull(ii) && ii.getExtension().equals("3")) {
             throw new PAException("test");
         }
         return new ArrayList<StudyIndldeDTO>();
@@ -56,7 +56,7 @@ public class MockStudyIndIdeService extends MockAbstractBaseIsoService <StudyInd
     @Override
     public StudyIndldeDTO get(Ii ii) throws PAException {
         StudyIndldeDTO dto = null;
-        if(PAUtil.isIiNotNull(ii) && ii.getExtension().equals("1")) {
+        if(!ISOUtil.isIiNull(ii) && ii.getExtension().equals("1")) {
             dto = new StudyIndldeDTO();
             dto.setIdentifier(IiConverter.convertToIi(1L));
             dto.setExpandedAccessStatusCode(CdConverter.convertToCd(ExpandedAccessStatusCode.AVAILABLE));
@@ -68,7 +68,7 @@ public class MockStudyIndIdeService extends MockAbstractBaseIsoService <StudyInd
             dto.setGrantorCode(CdConverter.convertToCd(GrantorCode.CDER));
             dto.setIndldeNumber(StConverter.convertToSt("123456"));
         }
-        if(PAUtil.isIiNotNull(ii) && ii.getExtension().equals("3")) {
+        if(!ISOUtil.isIiNull(ii) && ii.getExtension().equals("3")) {
             throw new PAException("exceptionTest");
         }
         return dto;
@@ -76,7 +76,7 @@ public class MockStudyIndIdeService extends MockAbstractBaseIsoService <StudyInd
 
     @Override
     public void delete(Ii ii) throws PAException {
-        if (PAUtil.isIiNotNull(ii) && ii.getExtension().equals("3")) {
+        if (!ISOUtil.isIiNull(ii) && ii.getExtension().equals("3")) {
             throw new PAException("test");
         }
     }

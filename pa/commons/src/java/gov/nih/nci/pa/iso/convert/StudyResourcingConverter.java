@@ -87,6 +87,7 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 
 /**
@@ -124,7 +125,7 @@ public class StudyResourcingConverter extends AbstractConverter<StudyResourcingD
      * {@inheritDoc}
      */
     @Override
-    public StudyResourcing convertFromDtoToDomain(StudyResourcingDTO studyResourcingDTO) {
+    public StudyResourcing convertFromDtoToDomain(StudyResourcingDTO studyResourcingDTO) throws PAException {
         StudyResourcing studyResourcing = new StudyResourcing();
         convertFromDtoToDomain(studyResourcingDTO, studyResourcing);
         return studyResourcing;
@@ -134,7 +135,8 @@ public class StudyResourcingConverter extends AbstractConverter<StudyResourcingD
      * {@inheritDoc}
      */
     @Override
-    public void convertFromDtoToDomain(StudyResourcingDTO studyResourcingDTO, StudyResourcing studyResourcing) {
+    public void convertFromDtoToDomain(StudyResourcingDTO studyResourcingDTO, StudyResourcing studyResourcing)
+    throws PAException {
         StudyProtocol spBo = new StudyProtocol();
         spBo.setId(IiConverter.convertToLong(studyResourcingDTO.getStudyProtocolIdentifier()));
         if (studyResourcingDTO.getIdentifier() != null) {
@@ -160,24 +162,40 @@ public class StudyResourcingConverter extends AbstractConverter<StudyResourcingD
     }
 
     private void convertTypeAndFundingMechanismToDomain(StudyResourcingDTO studyResourcingDTO,
-            StudyResourcing studyResourcing) {
-        if (studyResourcingDTO.getTypeCode() != null) {
-            studyResourcing.setTypeCode(SummaryFourFundingCategoryCode.getByCode(
-                    studyResourcingDTO.getTypeCode().getCode()));
+            StudyResourcing studyResourcing) throws PAException {
+        if (!ISOUtil.isCdNull(studyResourcingDTO.getTypeCode())) {
+            SummaryFourFundingCategoryCode sumFourCode = SummaryFourFundingCategoryCode.getByCode(
+                    studyResourcingDTO.getTypeCode().getCode());
+            if (sumFourCode == null) {
+                throw new PAException("Summary Four Funding Category Code '"
+                        + studyResourcingDTO.getTypeCode().getCode() + "' is invalid.");
+            } else {
+                studyResourcing.setTypeCode(sumFourCode);
+            }
         }
         if (studyResourcingDTO.getFundingMechanismCode() != null) {
             studyResourcing.setFundingMechanismCode(CdConverter.convertCdToString(
                     studyResourcingDTO.getFundingMechanismCode()));
         }
+
     }
 
-    private void convertNihNciCodesToDomain(StudyResourcingDTO studyResourcingDTO, StudyResourcing studyResourcing) {
-        if (studyResourcingDTO.getNciDivisionProgramCode() != null) {
-            studyResourcing.setNciDivisionProgramCode(
-                    NciDivisionProgramCode.getByCode(studyResourcingDTO.getNciDivisionProgramCode().getCode()));
+    private void convertNihNciCodesToDomain(StudyResourcingDTO studyResourcingDTO, StudyResourcing studyResourcing)
+    throws PAException {
+        if (!ISOUtil.isCdNull(studyResourcingDTO.getNciDivisionProgramCode())) {
+            NciDivisionProgramCode nDivCode =
+                NciDivisionProgramCode.getByCode(studyResourcingDTO.getNciDivisionProgramCode().getCode());
+            if (nDivCode == null) {
+                throw new PAException("Nci Division Program Code '"
+                        + studyResourcingDTO.getNciDivisionProgramCode().getCode() + "' is invalid.");
+            } else {
+                studyResourcing.setNciDivisionProgramCode(nDivCode);
+            }
         }
         if (studyResourcingDTO.getNihInstitutionCode() != null) {
             studyResourcing.setNihInstituteCode(studyResourcingDTO.getNihInstitutionCode().getCode());
         }
     }
+
+
 }

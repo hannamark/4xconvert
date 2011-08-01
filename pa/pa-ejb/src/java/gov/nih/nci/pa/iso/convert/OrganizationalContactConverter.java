@@ -11,7 +11,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
 import org.apache.commons.lang.StringUtils;
@@ -46,12 +46,12 @@ public class OrganizationalContactConverter
         OrganizationalContactDTO poOcDto = null;
         if (dto != null) {
             poOcDto = new OrganizationalContactDTO();
-            if (!PAUtil.isIiNull(dto.getPersonIdentifier())) {
+            if (!ISOUtil.isIiNull(dto.getPersonIdentifier())) {
                 poOcDto.setPlayerIdentifier(dto.getPersonIdentifier());
             }
             poOcDto.setScoperIdentifier(dto.getOrganizationIdentifier());
             poOcDto.setTitle(StConverter.convertToSt(dto.getTitle()));
-            if (!PAUtil.isIiNull(dto.getIdentifier())) {
+            if (!ISOUtil.isIiNull(dto.getIdentifier())) {
              Ii ii = dto.getIdentifier();
              ii.setReliability(IdentifierReliability.ISS);
              poOcDto.setIdentifier(DSetConverter.convertIiToDset(ii));

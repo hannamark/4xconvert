@@ -94,9 +94,10 @@ import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.TrialRegistrationHelper;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -175,7 +176,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
         if (studyProtocolDTO == null) {
             throw new PAException(VALIDATION_EXCEPTION + "Study Protocol DTO is null");
         }
-        if (PAUtil.isIiNull(studyProtocolDTO.getIdentifier())) {
+        if (ISOUtil.isIiNull(studyProtocolDTO.getIdentifier())) {
             throw new PAException(VALIDATION_EXCEPTION + "Study Protocol DTO identifier is null");
         }
         try {
@@ -202,7 +203,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
                     studyProtocolIi);
             updateNctIdentifier(nctIdentifier, studyProtocolIi);
             StudyResourcingDTO srDto = null;
-            if (!PAUtil.isCdNull(summary4TypeCode)) {
+            if (!ISOUtil.isCdNull(summary4TypeCode)) {
                 srDto = new StudyResourcingDTO();
                 srDto.setTypeCode(summary4TypeCode);
             }
@@ -271,16 +272,16 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
         StringBuffer errorMsg = new StringBuffer();
         notNullCheck(studyProtocolDTO, leadOrganizationDTO, leadOrganizationIdentifier, nctIdentifier, errorMsg);
         validateOwner(studyProtocolDTO, errorMsg);
-        if (PAUtil.isStNull(nctIdentifier)
+        if (ISOUtil.isStNull(nctIdentifier)
                 && CollectionUtils.isEmpty(documentService.getByStudyProtocol(studyProtocolDTO.getIdentifier()))) {
             errorMsg.append("NCT identifier is required as there are no Documents");
         }
         if (CollectionUtils.isNotEmpty(studySiteDTOs)) {
             for (StudySiteDTO studySiteDto : studySiteDTOs) {
-                if (PAUtil.isIiNull(studySiteDto.getStudyProtocolIdentifier())) {
+                if (ISOUtil.isIiNull(studySiteDto.getStudyProtocolIdentifier())) {
                     errorMsg.append("Study Protocol Identifier  from Study Site cannot be null ");
                 }
-                if (PAUtil.isIiNull(studySiteDto.getIdentifier())) {
+                if (ISOUtil.isIiNull(studySiteDto.getIdentifier())) {
                     errorMsg.append("Study Site Identifier cannot be null ");
                 }
             }
@@ -302,13 +303,14 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
      */
     private void validateDocuments(List<DocumentDTO> documentDTOs, StringBuffer errorMsg) {
         for (DocumentDTO docDto : documentDTOs) {
-            if (PAUtil.isIiNotNull(docDto.getIdentifier()) && (!paServiceUtils.isIiExistInPA(docDto.getIdentifier()))) {
+            if (!ISOUtil.isIiNull(docDto.getIdentifier())
+                    && (!paServiceUtils.isIiExistInPA(docDto.getIdentifier()))) {
                 errorMsg.append("Document id " + docDto.getIdentifier().getExtension() + " does not exits.");
             }
         }
         for (Iterator<DocumentDTO> iter = documentDTOs.listIterator(); iter.hasNext();) {
             DocumentDTO docDto = iter.next();
-            if (PAUtil.isEdNull(docDto.getText())) {
+            if (ISOUtil.isEdNull(docDto.getText())) {
                 iter.remove();
             }
         }
@@ -340,7 +342,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             List<StudySiteAccrualStatusDTO> studySiteAccrualDTOs, StringBuffer errorMsg) throws PAException {
         Map<String, StudySiteDTO> studySiteMap = new HashMap<String, StudySiteDTO>();
         for (StudySiteDTO ssDto : studySiteDTOs) {
-            if (PAUtil.isIiNull(ssDto.getIdentifier())) {
+            if (ISOUtil.isIiNull(ssDto.getIdentifier())) {
                 errorMsg.append(" Study Site identifier cannot be null");
                 continue;
             }
@@ -351,7 +353,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             studySiteMap.put(ssDto.getIdentifier().getExtension(), studySiteDto);
         }
         for (StudySiteAccrualStatusDTO ssasDto : studySiteAccrualDTOs) {
-            if (PAUtil.isIiNull(ssasDto.getStudySiteIi())) {
+            if (ISOUtil.isIiNull(ssasDto.getStudySiteIi())) {
                 errorMsg.append(" Study Site Accrual Status identifier cannot be null");
                 continue;
             }
@@ -378,21 +380,21 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
         if (leadOrganizationDTO == null) {
             errorMsg.append("Lead Organization DTO cannot be null , ");
         }
-        if (PAUtil.isStNull(leadOrganizationIdentifier)) {
+        if (ISOUtil.isStNull(leadOrganizationIdentifier)) {
             errorMsg.append("Lead Organization identifier cannot be null , ");
         }
         if (studyProtocolDTO != null) {
-            if (PAUtil.isIiNull(studyProtocolDTO.getIdentifier())) {
+            if (ISOUtil.isIiNull(studyProtocolDTO.getIdentifier())) {
                 errorMsg.append("Study Protocol Identifier cannot be null ");
             }
-            if (PAUtil.isStNull(studyProtocolDTO.getOfficialTitle())) {
+            if (ISOUtil.isStNull(studyProtocolDTO.getOfficialTitle())) {
                 errorMsg.append("Official Title cannot be null ");
             }
-            if (PAUtil.isStNull(nctIdentifier)) {
-                if (PAUtil.isCdNull(studyProtocolDTO.getPrimaryPurposeCode())) {
+            if (ISOUtil.isStNull(nctIdentifier)) {
+                if (ISOUtil.isCdNull(studyProtocolDTO.getPrimaryPurposeCode())) {
                     errorMsg.append("Purpose cannot be null ");
                 }
-                if (PAUtil.isCdNull(studyProtocolDTO.getPhaseCode())) {
+                if (ISOUtil.isCdNull(studyProtocolDTO.getPhaseCode())) {
                     errorMsg.append("Phase cannot be null ");
                 }
             }
@@ -408,7 +410,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
      */
     private void validateOwner(StudyProtocolDTO studyProtocolDTO, StringBuffer errorMsg) throws PAException {
         String loginName = "";
-        if (!PAUtil.isStNull(studyProtocolDTO.getUserLastCreated())) {
+        if (!ISOUtil.isStNull(studyProtocolDTO.getUserLastCreated())) {
             loginName = studyProtocolDTO.getUserLastCreated().getValue();
             CSMUserService userService = new CSMUserService();
             User user = userService.getCSMUser(loginName);

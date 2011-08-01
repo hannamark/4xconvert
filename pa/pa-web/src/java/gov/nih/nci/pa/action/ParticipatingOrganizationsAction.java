@@ -121,6 +121,7 @@ import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.util.PAHealthCareProviderRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
@@ -361,7 +362,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
             spUpdated = true;
         }
-        if (PAUtil.isStNull(sp.getProgramCodeText())
+        if (ISOUtil.isStNull(sp.getProgramCodeText())
                 || !StConverter.convertToString(sp.getProgramCodeText()).equalsIgnoreCase(prgCode)) {
            sp.setProgramCodeText(StConverter.convertToSt(getProgramCode()));
            spUpdated = true;
@@ -372,7 +373,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
 
     private boolean isLocalStudyProtocolIdentifierUpdated(StudySiteDTO sp, String localId) {
         boolean spUpdated = false;
-        if (PAUtil.isStNull(sp.getLocalStudyProtocolIdentifier()) || (!PAUtil.isStNull(
+        if (ISOUtil.isStNull(sp.getLocalStudyProtocolIdentifier()) || (!ISOUtil.isStNull(
                 sp.getLocalStudyProtocolIdentifier()) && !StConverter.convertToString(
                 sp.getLocalStudyProtocolIdentifier()).equalsIgnoreCase(localId))) {
             sp.setLocalStudyProtocolIdentifier(StConverter.convertToSt(getSiteLocalTrialIdentifier()));
@@ -424,7 +425,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
         } else {
             setProgramCode(StConverter.convertToString(spDto.getProgramCodeText()));
         }
-        if (!PAUtil.isStNull(spDto.getLocalStudyProtocolIdentifier())) {
+        if (!ISOUtil.isStNull(spDto.getLocalStudyProtocolIdentifier())) {
             setSiteLocalTrialIdentifier(StConverter.convertToString(spDto.getLocalStudyProtocolIdentifier()));
         } else {
             setSiteLocalTrialIdentifier(null);
@@ -540,7 +541,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                         break;
                     }
                 }
-                if (!PAUtil.isIiNull(siteConDto.getOrganizationalContactIi())) {
+                if (!ISOUtil.isIiNull(siteConDto.getOrganizationalContactIi())) {
                     try {
                         PAContactDTO paDto = correlationUtils.getContactByPAOrganizationalContactId((
                             Long.valueOf(siteConDto.getOrganizationalContactIi().getExtension())));
@@ -611,7 +612,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      */
     private void loadProprietaryIndicator() throws PAException {
         StudyProtocolDTO studyProtocolDTO = studyProtocolService.getStudyProtocol(spIi);
-        if (!PAUtil.isBlNull(studyProtocolDTO.getProprietaryTrialIndicator())
+        if (!ISOUtil.isBlNull(studyProtocolDTO.getProprietaryTrialIndicator())
                 && studyProtocolDTO.getProprietaryTrialIndicator().getValue()) {
             setProprietaryTrialIndicator("true");
         } else {
@@ -772,7 +773,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
                         siteConDto = cDto;
                     }
                 }
-                if (!PAUtil.isIiNull(siteConDto.getOrganizationalContactIi())) {
+                if (!ISOUtil.isIiNull(siteConDto.getOrganizationalContactIi())) {
 
                     PAContactDTO paDto = correlationUtils.getContactByPAOrganizationalContactId((Long
                         .valueOf(siteConDto.getOrganizationalContactIi().getExtension())));

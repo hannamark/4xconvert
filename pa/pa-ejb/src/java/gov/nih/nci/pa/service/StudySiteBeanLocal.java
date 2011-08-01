@@ -31,8 +31,8 @@ import gov.nih.nci.pa.service.search.StudySiteSortCriterion;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.AssignedIdentifierEnum;
 import gov.nih.nci.pa.util.CorrelationUtils;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -155,18 +155,18 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
     }
 
     private StudySiteDTO businessRules(StudySiteDTO dto) throws PAException {
-        if (PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && PAUtil.isIiNull(dto.getResearchOrganizationIi())
-            && PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
+        if (ISOUtil.isIiNull(dto.getHealthcareFacilityIi()) && ISOUtil.isIiNull(dto.getResearchOrganizationIi())
+            && ISOUtil.isIiNull(dto.getOversightCommitteeIi())) {
             throw new PAException("Either healthcare facility or research organization or Oversight committee"
                 + " must be set.");
         }
-        if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && !PAUtil.isIiNull(dto.getResearchOrganizationIi())) {
+        if (!ISOUtil.isIiNull(dto.getHealthcareFacilityIi()) && !ISOUtil.isIiNull(dto.getResearchOrganizationIi())) {
             throw new PAException("Healthcare facility and research organization cannot both be set.");
         }
-        if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi()) && !PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
+        if (!ISOUtil.isIiNull(dto.getHealthcareFacilityIi()) && !ISOUtil.isIiNull(dto.getOversightCommitteeIi())) {
             throw new PAException("Healthcare facility and oversight committee cannot both be set.");
         }
-        if (!PAUtil.isIiNull(dto.getResearchOrganizationIi()) && !PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
+        if (!ISOUtil.isIiNull(dto.getResearchOrganizationIi()) && !ISOUtil.isIiNull(dto.getOversightCommitteeIi())) {
             throw new PAException("research organization and oversight committee cannot both be set.");
         }
         final String approvalStatusCodeString = CdConverter.convertCdToString(dto.getReviewBoardApprovalStatusCode());
@@ -186,7 +186,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
                 && ((approvalNumber == null) || (approvalNumber.length() == 0))) {
                 dto.setReviewBoardApprovalNumber(StConverter.convertToSt(null));
             }
-            if (PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
+            if (ISOUtil.isIiNull(dto.getOversightCommitteeIi())) {
                 throw new PAException("Oversight committee (board) must be set when review board approval status is '"
                     + ReviewBoardApprovalStatusCode.SUBMITTED_APPROVED.getDisplayName() + "' or '"
                     + ReviewBoardApprovalStatusCode.SUBMITTED_EXEMPT.getDisplayName() + "'.");
@@ -202,8 +202,8 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
     }
 
     private String getOrganizationId(StudySiteDTO dto) {
-        if (PAUtil.isIiNull(dto.getHealthcareFacilityIi())) {
-            return (PAUtil.isIiNull(dto.getResearchOrganizationIi())
+        if (ISOUtil.isIiNull(dto.getHealthcareFacilityIi())) {
+            return (ISOUtil.isIiNull(dto.getResearchOrganizationIi())
                 ? IiConverter.convertToString(dto.getOversightCommitteeIi())
                 : IiConverter.convertToString(dto.getResearchOrganizationIi()));
         }
@@ -211,7 +211,8 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
     }
 
     private String getFunctionalCode(StudySiteDTO dto) {
-        return (PAUtil.isCdNull(dto.getFunctionalCode())) ? "" : CdConverter.convertCdToString(dto.getFunctionalCode());
+        return (ISOUtil.isCdNull(dto.getFunctionalCode())) ? ""
+                : CdConverter.convertCdToString(dto.getFunctionalCode());
     }
 
     private void enforceNoDuplicate(StudySiteDTO dto) throws PAException {
@@ -232,12 +233,12 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
     }
 
     private void enforceOnlyOneOversightCommittee(StudySiteDTO dto) throws PAException {
-        if (!PAUtil.isCdNull(dto.getReviewBoardApprovalStatusCode())) {
+        if (!ISOUtil.isCdNull(dto.getReviewBoardApprovalStatusCode())) {
             List<StudySiteDTO> spList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
             for (StudySiteDTO sp : spList) {
                 if (!IiConverter.convertToLong(dto.getIdentifier())
                                 .equals(IiConverter.convertToLong(sp.getIdentifier()))
-                    && !PAUtil.isCdNull(sp.getReviewBoardApprovalStatusCode())) {
+                    && !ISOUtil.isCdNull(sp.getReviewBoardApprovalStatusCode())) {
                     sp.setReviewBoardApprovalStatusCode(null);
                     update(sp);
                 }
@@ -269,7 +270,7 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
         query = session.createQuery(hql);
         query.setParameter("localStudyProtocolIdentifier",
                            StConverter.convertToString(dto.getLocalStudyProtocolIdentifier()));
-        if (PAUtil.isIiNotNull(dto.getResearchOrganizationIi())
+        if (!ISOUtil.isIiNull(dto.getResearchOrganizationIi())
             && IiConverter.RESEARCH_ORG_IDENTIFIER_NAME.equalsIgnoreCase(dto.getResearchOrganizationIi()
                                                                             .getIdentifierName())) {
             ResearchOrganization ro = new CorrelationUtils().getStructuralRoleByIi(dto.getResearchOrganizationIi());
@@ -353,15 +354,15 @@ public class StudySiteBeanLocal extends AbstractRoleIsoService<StudySiteDTO, Stu
     private void getStatusCode(StudySiteDTO dto) throws PAException {
         PAServiceUtils paServiceUtil = new PAServiceUtils();
         StructuralRole sr = null;
-        if (!PAUtil.isIiNull(dto.getHealthcareFacilityIi())) {
+        if (!ISOUtil.isIiNull(dto.getHealthcareFacilityIi())) {
             Ii hcfIi = IiConverter.convertToPoHealthCareFacilityIi(dto.getHealthcareFacilityIi().getExtension());
             sr = paServiceUtil.getStructuralRole(hcfIi);
         }
-        if (!PAUtil.isIiNull(dto.getResearchOrganizationIi())) {
+        if (!ISOUtil.isIiNull(dto.getResearchOrganizationIi())) {
             Ii roIi = IiConverter.convertToPoResearchOrganizationIi(dto.getResearchOrganizationIi().getExtension());
             sr = paServiceUtil.getStructuralRole(roIi);
         }
-        if (!PAUtil.isIiNull(dto.getOversightCommitteeIi())) {
+        if (!ISOUtil.isIiNull(dto.getOversightCommitteeIi())) {
             Ii ocIi = IiConverter.convertToPoOversightCommitteeIi(dto.getOversightCommitteeIi().getExtension());
             sr = paServiceUtil.getStructuralRole(ocIi);
         }

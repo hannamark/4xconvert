@@ -10,6 +10,7 @@ import gov.nih.nci.pa.iso.convert.StudyOnholdConverter;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.service.exception.PAFieldException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
@@ -100,7 +101,7 @@ implements StudyOnholdServiceLocal {
     }
 
     private void reasonRules(StudyOnholdDTO dto) throws PAException {
-        if (PAUtil.isCdNull(dto.getOnholdReasonCode())) {
+        if (ISOUtil.isCdNull(dto.getOnholdReasonCode())) {
             throw new PAFieldException(FN_REASON_CODE,
                     "The On-hold reason code is a required field.");
         }

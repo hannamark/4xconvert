@@ -106,7 +106,7 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.io.File;
 import java.rmi.RemoteException;
@@ -274,7 +274,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         if (pmc != null) {
             studySubject.setPaymentMethodCode(CdConverter.convertToCd(pmc.getValue()));
         }
-        if (PAUtil.isIiNotNull(studySiteIi)) {
+        if (!ISOUtil.isIiNull(studySiteIi)) {
             studySubject.setStudySiteIdentifier(studySiteIi);
         }
 

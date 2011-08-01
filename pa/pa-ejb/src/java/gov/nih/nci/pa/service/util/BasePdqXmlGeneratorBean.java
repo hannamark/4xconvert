@@ -101,8 +101,8 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 
@@ -190,7 +190,7 @@ public class BasePdqXmlGeneratorBean extends CTGovXmlGeneratorServiceBeanLocal {
         // sorts the list on display order
         Collections.sort(paECs, new Comparator<PlannedEligibilityCriterionDTO>() {
             public int compare(PlannedEligibilityCriterionDTO o1, PlannedEligibilityCriterionDTO o2) {
-                return (!PAUtil.isIntNull(o1.getDisplayOrder()) && !PAUtil.isIntNull(o2.getDisplayOrder())) ? o1
+                return (!ISOUtil.isIntNull(o1.getDisplayOrder()) && !ISOUtil.isIntNull(o2.getDisplayOrder())) ? o1
                         .getDisplayOrder().getValue().compareTo(o2.getDisplayOrder().getValue()) : 0;
             }
         });
@@ -270,7 +270,7 @@ public class BasePdqXmlGeneratorBean extends CTGovXmlGeneratorServiceBeanLocal {
                 BaseXmlGenHelper.appendElement(idInfo,
                         BaseXmlGenHelper.createElementWithTextblock("has_expanded_access",
                                 BlConverter.convertBLToString(ideDTO.getExpandedAccessIndicator()), doc));
-                if (!PAUtil.isBlNull(spDTO.getExpandedAccessIndicator())) {
+                if (!ISOUtil.isBlNull(spDTO.getExpandedAccessIndicator())) {
                     if (ideDTO.getExpandedAccessIndicator().getValue()) {
                         BaseXmlGenHelper.appendElement(root,
                                 BaseXmlGenHelper.createElementWithTextblock("expanded_access_status", ideDTO

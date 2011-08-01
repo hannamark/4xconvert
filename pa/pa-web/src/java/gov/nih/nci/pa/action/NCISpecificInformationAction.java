@@ -97,7 +97,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -181,7 +181,7 @@ public class NCISpecificInformationAction extends ActionSupport {
         PAServiceUtils paServiceUtil = new PAServiceUtils();
         Organization dupOrg = null;
         Ii dupId = paServiceUtil.getDuplicateOrganizationIi(IiConverter.convertToPoOrganizationIi(poId));
-        if (PAUtil.isIiNotNull(dupId)) {
+        if (!ISOUtil.isIiNull(dupId)) {
             dupOrg = paServiceUtil.getOrCreatePAOrganizationByIi(dupId);
         }
         return dupOrg;
@@ -192,7 +192,7 @@ public class NCISpecificInformationAction extends ActionSupport {
      */
     public String update() {
         // Step1 : check for any errors
-        if ((PAUtil.isBlNull(getStudyProtocol().getProprietaryTrialIndicator())
+        if ((ISOUtil.isBlNull(getStudyProtocol().getProprietaryTrialIndicator())
               || !getStudyProtocol().getProprietaryTrialIndicator().getValue().booleanValue())
               && StringUtils.isEmpty(nciSpecificInformationWebDTO.getAccrualReportingMethodCode())) {
             addFieldError("nciSpecificInformationWebDTO.accrualReportingMethodCode",

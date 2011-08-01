@@ -98,7 +98,7 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -113,7 +113,7 @@ import java.util.Map;
 public class MockPlannedActivityService extends MockAbstractBaseIsoService<PlannedActivityDTO>
     implements PlannedActivityServiceLocal {
 
-    private List<PlannedActivity> list;
+    private final List<PlannedActivity> list;
     private static PlannedActivityConverter converter = new PlannedActivityConverter();
     private Long seq = 1L;
 
@@ -383,7 +383,7 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService<Plann
 
     public PlannedSubstanceAdministrationDTO getPlannedSubstanceAdministration(
             Ii ii) throws PAException {
-        if (PAUtil.isIiNotNull(ii)) {
+        if (!ISOUtil.isIiNull(ii)) {
             PlannedSubstanceAdministrationDTO dto = new PlannedSubstanceAdministrationDTO();
             dto.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.DRUG));
             dto.setIdentifier(IiConverter.convertToIi("1"));

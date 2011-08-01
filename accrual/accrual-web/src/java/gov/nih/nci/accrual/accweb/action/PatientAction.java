@@ -101,7 +101,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
@@ -490,7 +490,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         }
         PerformedSubjectMilestoneDto psmDto = null;
         for (PerformedSubjectMilestoneDto sm : smList) {
-            if (!PAUtil.isTsNull(sm.getRegistrationDate())) {
+            if (!ISOUtil.isTsNull(sm.getRegistrationDate())) {
                 psmDto = sm;
             }
         }
@@ -499,14 +499,14 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
 
     private void setRegistrationDate(PerformedSubjectMilestoneDto dto) {
         try {
-            if (!PAUtil.isTsNull(dto.getRegistrationDate())) {
-                if (!PAUtil.isIiNull(dto.getIdentifier())) {
+            if (!ISOUtil.isTsNull(dto.getRegistrationDate())) {
+                if (!ISOUtil.isIiNull(dto.getIdentifier())) {
                     getPerformedActivitySvc().updatePerformedSubjectMilestone(dto);
                 } else {
                     getPerformedActivitySvc().createPerformedSubjectMilestone(dto);
                 }
             } else {
-                if (!PAUtil.isIiNull(dto.getIdentifier())) {
+                if (!ISOUtil.isIiNull(dto.getIdentifier())) {
                     getPerformedActivitySvc().delete(dto.getIdentifier());
                 }
             }

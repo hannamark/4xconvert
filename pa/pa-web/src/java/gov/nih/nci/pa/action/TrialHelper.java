@@ -40,6 +40,7 @@ import gov.nih.nci.pa.service.correlation.PABaseCorrelation;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -218,14 +219,14 @@ public class TrialHelper {
         gtdDTO.setPrimaryPurposeCode(spDTO.getPrimaryPurposeCode().getCode());
         gtdDTO.setPrimaryPurposeAdditionalQualifierCode(spDTO.getPrimaryPurposeAdditionalQualifierCode().getCode());
         gtdDTO.setPrimaryPurposeOtherText(spDTO.getPrimaryPurposeOtherText().getValue());
-        if (!PAUtil.isBlNull(spDTO.getProprietaryTrialIndicator())) {
+        if (!ISOUtil.isBlNull(spDTO.getProprietaryTrialIndicator())) {
             gtdDTO.setProprietarytrialindicator(BlConverter.convertToString(spDTO.getProprietaryTrialIndicator()));
         }
         gtdDTO.setSubmissionNumber(spDTO.getSubmissionNumber().getValue());
         gtdDTO.setAmendmentReasonCode(CdConverter.convertCdToString(spDTO.getAmendmentReasonCode()));
         gtdDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
         gtdDTO.setStudyProtocolId(IiConverter.convertToString(spDTO.getIdentifier()));
-        if (!PAUtil.isBlNull(spDTO.getCtgovXmlRequiredIndicator())) {
+        if (!ISOUtil.isBlNull(spDTO.getCtgovXmlRequiredIndicator())) {
             gtdDTO.setCtGovXmlRequired(spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue());
         }
     }
@@ -340,12 +341,12 @@ public class TrialHelper {
         if (srDtos != null && !srDtos.isEmpty()) {
             CorrelationUtils cUtils = new CorrelationUtils();
             scDto = srDtos.get(0);
-            if (!PAUtil.isIiNull(scDto.getClinicalResearchStaffIi())) {
+            if (!ISOUtil.isIiNull(scDto.getClinicalResearchStaffIi())) {
                 Person p = cUtils.getPAPersonByIi(scDto.getClinicalResearchStaffIi());
                 gtdDTO.setCentralContactIdentifier(p.getIdentifier());
                 gtdDTO.setCentralContactName(p.getFullName());
             }
-            if (!PAUtil.isIiNull(scDto.getOrganizationalContactIi())) {
+            if (!ISOUtil.isIiNull(scDto.getOrganizationalContactIi())) {
                 PAContactDTO pcontact = cUtils.getContactByPAOrganizationalContactId(
                     Long.valueOf(scDto.getOrganizationalContactIi().getExtension()));
                 gtdDTO.setCentralContactIdentifier(PAUtil.getIiExtension(pcontact.getSrIdentifier()));
@@ -515,10 +516,10 @@ public class TrialHelper {
         if (srDTO == null) {
             return;
         }
-        if (!PAUtil.isCdNull(srDTO.getTypeCode())) {
+        if (!ISOUtil.isCdNull(srDTO.getTypeCode())) {
             gtdDTO.setSummaryFourFundingCategoryCode(srDTO.getTypeCode().getCode());
         }
-        if (PAUtil.isIiNotNull(srDTO.getOrganizationIdentifier())) {
+        if (!ISOUtil.isIiNull(srDTO.getOrganizationIdentifier())) {
             CorrelationUtils cUtils = new CorrelationUtils();
             Organization o = cUtils.getPAOrganizationByIi(srDTO.getOrganizationIdentifier());
             gtdDTO.setSummaryFourOrgIdentifier(o.getIdentifier());

@@ -140,6 +140,7 @@ import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -240,7 +241,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         List<AbstractionCompletionDTO> abstractionWarnList = new ArrayList<AbstractionCompletionDTO>();
 
         StudyProtocolDTO studyProtocolDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
-        if (!PAUtil.isBlNull(studyProtocolDTO.getProprietaryTrialIndicator())
+        if (!ISOUtil.isBlNull(studyProtocolDTO.getProprietaryTrialIndicator())
                 && BlConverter.convertToBoolean(studyProtocolDTO.getProprietaryTrialIndicator())) {
             abstractionCompletionRuleForProprietary(studyProtocolDTO, abstractionList, abstractionWarnList);
         } else {
@@ -643,9 +644,9 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
         // not a proprietary trial and the studyprotocol is set to ctgov = true
         // and there are no diseases with xml inclusion indicator set to true
-        if ((PAUtil.isBlNull(studyProtocolDTO.getProprietaryTrialIndicator()) || !BlConverter
+        if ((ISOUtil.isBlNull(studyProtocolDTO.getProprietaryTrialIndicator()) || !BlConverter
                 .convertToBoolean(studyProtocolDTO.getProprietaryTrialIndicator()))
-                && (!PAUtil.isBlNull(studyProtocolDTO.getCtgovXmlRequiredIndicator()) && BlConverter
+                && (!ISOUtil.isBlNull(studyProtocolDTO.getCtgovXmlRequiredIndicator()) && BlConverter
                         .convertToBoolean(studyProtocolDTO.getCtgovXmlRequiredIndicator())) && !ctgovxmlIndicator) {
             abstractionList.add(createError("Select Disease/Condition from Scientific Data Menu",
                     "Abstraction cannot be valid if trial has no diseases with ctgov xml indicator = 'yes'"));
@@ -1313,7 +1314,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         throws PAException  {
         StudyResourcingDTO studyResourcingDTO = studyResourcingService.getSummary4ReportedResourcing(
                 studyProtocolIi);
-        if (studyResourcingDTO != null && PAUtil.isIiNotNull(studyResourcingDTO.getOrganizationIdentifier())) {
+        if (studyResourcingDTO != null && !ISOUtil.isIiNull(studyResourcingDTO.getOrganizationIdentifier())) {
             Long paOrgId = IiConverter.convertToLong(studyResourcingDTO.getOrganizationIdentifier());
             Organization org = correlationUtils.getPAOrganizationByIi(IiConverter.convertToPaOrganizationIi(
                     paOrgId));

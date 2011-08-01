@@ -7,7 +7,7 @@ import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.iso.convert.StudyDiseaseConverter;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class StudyDiseaseBeanLocal extends
         StudyDiseaseServiceLocal {
 
     private StudyDiseaseDTO businessRules(StudyDiseaseDTO dto) throws PAException {
-        boolean isNew = PAUtil.isIiNull(dto.getIdentifier());
+        boolean isNew = ISOUtil.isIiNull(dto.getIdentifier());
         // no duplicate diseases in a study
         long newDiseaseId = IiConverter.convertToLong(dto.getDiseaseIdentifier());
         List<StudyDiseaseDTO> sdList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
@@ -42,7 +42,7 @@ public class StudyDiseaseBeanLocal extends
                     throw new PAException("Redundancy error:  this trial already includes the selected disease.  ");
             }
          }
-        
+
         return dto;
     }
 

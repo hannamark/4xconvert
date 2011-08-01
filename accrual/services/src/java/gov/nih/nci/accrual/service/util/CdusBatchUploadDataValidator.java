@@ -94,7 +94,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.CsmUserUtil;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -320,7 +320,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         }
         
         try {
-            if (PAUtil.isIiNull(studySiteOrgIi)            
+            if (ISOUtil.isIiNull(studySiteOrgIi)            
                 || getSearchStudySiteService().getStudySiteByOrg(spDto.getIdentifier(), studySiteOrgIi) == null) {
                 addUpPatienRegisteringInstitutionCode(values, errMsg, lineNumber);
             }

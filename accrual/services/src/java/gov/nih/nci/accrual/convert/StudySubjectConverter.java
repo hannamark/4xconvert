@@ -91,7 +91,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.util.zip.DataFormatException;
 
@@ -130,14 +130,14 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
     public StudySubject convertFromDtoToDomain(StudySubjectDto dto) throws DataFormatException {
         StudySubject bo = new StudySubject();
         bo.setAssignedIdentifier(StConverter.convertToString(dto.getAssignedIdentifier()));
-        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         }
         bo.setPatient(fKeySetter(Patient.class, dto.getPatientIdentifier()));
-        if (!PAUtil.isCdNull(dto.getPaymentMethodCode())) {
+        if (!ISOUtil.isCdNull(dto.getPaymentMethodCode())) {
             bo.setPaymentMethodCode(PaymentMethodCode.getByCode(dto.getPaymentMethodCode().getCode()));
         }
-        if (!PAUtil.isCdNull(dto.getStatusCode())) {
+        if (!ISOUtil.isCdNull(dto.getStatusCode())) {
             bo.setStatusCode(FunctionalRoleStatusCode.getByCode(dto.getStatusCode().getCode()));
         }
         if (dto.getStatusDateRange() != null) {

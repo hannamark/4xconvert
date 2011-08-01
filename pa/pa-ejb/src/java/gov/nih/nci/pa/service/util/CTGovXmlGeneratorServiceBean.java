@@ -90,6 +90,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ErrorCode;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
@@ -133,7 +134,7 @@ public class CTGovXmlGeneratorServiceBean extends CTGovXmlGeneratorServiceBeanLo
         boolean badTrialId = false;
         try {
             spDTO = getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-            if (spDTO == null || PAUtil.isIiNull(spDTO.getIdentifier())) {
+            if (spDTO == null || ISOUtil.isIiNull(spDTO.getIdentifier())) {
                 badTrialId = true;
             }
         } catch (PAException paEx) {

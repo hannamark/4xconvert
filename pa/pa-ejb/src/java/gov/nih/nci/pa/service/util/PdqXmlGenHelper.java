@@ -100,8 +100,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -356,7 +356,7 @@ public class PdqXmlGenHelper {
         Ii ctepId =  null;
         if (!CollectionUtils.isEmpty(ipDtos)) {
             for (IdentifiedPersonDTO ipDto : ipDtos) {
-                if (PAUtil.isIiNotNull(ipDto.getAssignedId()) && IiConverter.CTEP_PERSON_IDENTIFIER_ROOT.equals(
+                if (!ISOUtil.isIiNull(ipDto.getAssignedId()) && IiConverter.CTEP_PERSON_IDENTIFIER_ROOT.equals(
                         ipDto.getAssignedId().getRoot())) {
                     ctepId = ipDto.getAssignedId();
                     break;
@@ -452,7 +452,7 @@ public class PdqXmlGenHelper {
 
         String criterionName = StConverter.convertToString(paEC.getCriterionName());
         Boolean incIndicator = BlConverter.convertToBoolean(paEC.getInclusionIndicator());
-        String operator = (!PAUtil.isStNull(paEC.getOperator())) ? paEC.getOperator().getValue() : "";
+        String operator = (!ISOUtil.isStNull(paEC.getOperator())) ? paEC.getOperator().getValue() : "";
         BigDecimal value = pq.getLow().getValue();
         String unit = pq.getLow().getUnit();
         if (incIndicator == null) {

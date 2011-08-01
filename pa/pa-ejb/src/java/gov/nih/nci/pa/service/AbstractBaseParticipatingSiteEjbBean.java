@@ -87,6 +87,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
@@ -292,7 +293,7 @@ public class AbstractBaseParticipatingSiteEjbBean {
     private Ii getPoPersonIiFromPoPersonDTO(PersonDTO investigatorDTO)
     throws EntityValidationException, CurationException, PAException {
         Ii poPersonIi = null;
-        if (PAUtil.isIiNotNull(investigatorDTO.getIdentifier())
+        if (!ISOUtil.isIiNull(investigatorDTO.getIdentifier())
                 && IiConverter.PERSON_ROOT.equals(investigatorDTO.getIdentifier().getRoot())) {
             PersonDTO personDTO = null;
             try {
@@ -306,7 +307,7 @@ public class AbstractBaseParticipatingSiteEjbBean {
                         + investigatorDTO.getIdentifier().getExtension());
             }
             poPersonIi = personDTO.getIdentifier();
-        } else if (PAUtil.isIiNotNull(investigatorDTO.getIdentifier())) {
+        } else if (!ISOUtil.isIiNull(investigatorDTO.getIdentifier())) {
             IdentifiedPersonDTO idP = new IdentifiedPersonDTO();
             idP.setAssignedId(investigatorDTO.getIdentifier());
             List<IdentifiedPersonDTO> idps =

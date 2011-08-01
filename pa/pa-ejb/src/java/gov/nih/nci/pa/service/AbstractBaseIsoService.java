@@ -87,7 +87,7 @@ import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.lang.reflect.ParameterizedType;
@@ -234,7 +234,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
      */
     @SuppressWarnings(UNCHECKED)
     public DTO get(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; null found.");
         }
         DTO resultDto = null;
@@ -259,7 +259,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
      */
     @SuppressWarnings(UNCHECKED)
     public void delete(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             throw new PAException("Check the Ii value; null found.");
         }
         Session session = null;
@@ -283,7 +283,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         try {
             session = PaHibernateUtil.getCurrentSession();
             Date today = new Date();
-            if (PAUtil.isIiNull(dto.getIdentifier())) {
+            if (ISOUtil.isIiNull(dto.getIdentifier())) {
                 bo = convertFromDtoToDomain(dto);
                 bo.setUserLastCreated(CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser()));
                 bo.setDateLastCreated(today);
@@ -307,7 +307,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
      * @throws PAException exception.
      */
     public DTO create(DTO dto) throws PAException {
-        if (!PAUtil.isIiNull(dto.getIdentifier())) {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Update method should be used to modify existing.");
         }
        return createOrUpdate(dto);
@@ -319,7 +319,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
      * @throws PAException exception.
      */
     public DTO update(DTO dto) throws PAException {
-        if (PAUtil.isIiNull(dto.getIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Create method should be used to create new.");
         }
         return createOrUpdate(dto);

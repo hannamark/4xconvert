@@ -96,6 +96,7 @@ import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.DocumentSortCriterion;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
@@ -134,7 +135,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<DocumentDTO> getDocumentsByStudyProtocol(Ii studyProtocolIi) throws PAException {
-        if (PAUtil.isIiNull(studyProtocolIi)) {
+        if (ISOUtil.isIiNull(studyProtocolIi)) {
             throw new PAException("studyProtocol Identifier should not be null.");
         }
 
@@ -210,7 +211,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     @Override
     @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public void delete(Ii documentIi) throws PAException {
-        if (PAUtil.isIiNull(documentIi)) {
+        if (ISOUtil.isIiNull(documentIi)) {
             throw new PAException("Document Ii should not be null.");
         }
         DocumentDTO docDTO = get(documentIi);
@@ -257,7 +258,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
     @Override
     public void validate(DocumentDTO docDTO) throws PAException {
         super.validate(docDTO);
-        if (PAUtil.isEdNull(docDTO.getText())) {
+        if (ISOUtil.isEdNull(docDTO.getText())) {
             throw new PAValidationException("Document data cannot be null ");
         }
     }

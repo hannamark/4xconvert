@@ -92,8 +92,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -103,7 +103,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class DocumentServiceBeanTest extends AbstractHibernateTestCase {
-    private DocumentServiceLocal remoteEjb = new DocumentBeanLocal();
+    private final DocumentServiceLocal remoteEjb = new DocumentBeanLocal();
     private Ii pid;
 
     @Before
@@ -151,7 +151,7 @@ public class DocumentServiceBeanTest extends AbstractHibernateTestCase {
 
         docDTO = remoteEjb.get(docDTO.getIdentifier());
         assertNotNull(docDTO);
-        assertFalse(PAUtil.isEdNull(docDTO.getText()));
+        assertFalse(ISOUtil.isEdNull(docDTO.getText()));
     }
 
     @Test

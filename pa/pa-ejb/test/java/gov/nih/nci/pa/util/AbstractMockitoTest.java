@@ -942,7 +942,7 @@ public class AbstractMockitoTest {
             public StructuralRole answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
                 Ii input = (Ii) args[0];
-                if (PAUtil.isIiNull(input)) {
+                if (ISOUtil.isIiNull(input)) {
                   return null;
                 } else if (IiConverter.RESEARCH_ORG_ROOT.equals(input.getRoot())) {
                     return researchOrg;

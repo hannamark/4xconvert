@@ -82,7 +82,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.util.zip.DataFormatException;
 
@@ -113,7 +113,7 @@ public abstract class AbstractConverter<DTO extends BaseDTO, BO extends Abstract
      * @return domain object
      */
     public <T extends AbstractEntity> T  fKeySetter(Class<T> clazz, Ii pkey) {
-        if (PAUtil.isIiNull(pkey)) {
+        if (ISOUtil.isIiNull(pkey)) {
             return null;
         }
         try {

@@ -96,6 +96,7 @@ import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -350,7 +351,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
         List<PlannedActivityDTO> plaList = plaService.getByStudyProtocol(spIdIi);
         for (PlannedActivityDTO pla : plaList) {
             if (PAUtil.isTypeIntervention(pla.getCategoryCode())
-                 && (!PAUtil.isIiNull(pla.getInterventionIdentifier()))) {
+                 && (!ISOUtil.isIiNull(pla.getInterventionIdentifier()))) {
                 InterventionDTO intDto = intService.get(pla.getInterventionIdentifier());
                 InterventionWebDTO intWebDto = new InterventionWebDTO();
                 intWebDto.setDescription(StConverter.convertToString(pla.getTextDescription()));
@@ -370,7 +371,7 @@ public class TrialArmsAction extends ActionSupport implements Preparable {
         List<PlannedActivityDTO> plaList = plaService.getByStudyProtocol(spIdIi);
         for (PlannedActivityDTO pla : plaList) {
             if (PAUtil.isTypeIntervention(pla.getCategoryCode())
-                && (!PAUtil.isIiNull(pla.getInterventionIdentifier()))) {
+                && (!ISOUtil.isIiNull(pla.getInterventionIdentifier()))) {
                 InterventionDTO intDto = intService.get(pla.getInterventionIdentifier());
                 InterventionWebDTO intWebDto = new InterventionWebDTO();
                 intWebDto.setDescription(StConverter.convertToString(pla.getTextDescription()));

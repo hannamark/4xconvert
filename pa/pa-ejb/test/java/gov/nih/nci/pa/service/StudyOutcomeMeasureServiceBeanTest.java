@@ -89,8 +89,8 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -101,7 +101,7 @@ import org.junit.Test;
 
 public class StudyOutcomeMeasureServiceBeanTest extends AbstractHibernateTestCase {
 
-    private StudyOutcomeMeasureServiceLocal remoteEjb = new StudyOutcomeMeasureBeanLocal();;
+    private final StudyOutcomeMeasureServiceLocal remoteEjb = new StudyOutcomeMeasureBeanLocal();;
     private Ii pid;
     private Ii outComesid;
 
@@ -144,7 +144,7 @@ public class StudyOutcomeMeasureServiceBeanTest extends AbstractHibernateTestCas
         StudyOutcomeMeasureDTO dto2 = null;
         dto2 = new StudyOutcomeMeasureDTO();
         dto2 = remoteEjb.create(dto);
-        assertFalse(PAUtil.isIiNull(dto2.getIdentifier()));
+        assertFalse(ISOUtil.isIiNull(dto2.getIdentifier()));
         assertEquals(dto.getName().getValue(), dto2.getName().getValue());
     }
 

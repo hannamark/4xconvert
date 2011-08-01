@@ -101,6 +101,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -460,9 +461,9 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi(spNew.getId()));
         Ii initialIi = null;
         dto.setIdentifier(initialIi);
-        assertTrue(PAUtil.isIiNull(dto.getIdentifier()));
+        assertTrue(ISOUtil.isIiNull(dto.getIdentifier()));
         StudyOverallStatusDTO resultDto = bean.create(dto);
-        assertFalse(PAUtil.isIiNull(resultDto.getIdentifier()));
+        assertFalse(ISOUtil.isIiNull(resultDto.getIdentifier()));
     }
 
     @Test
@@ -491,7 +492,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         }
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/2000")));
         dto = bean.create(dto);
-        assertFalse(PAUtil.isIiNull(dto.getIdentifier()));
+        assertFalse(ISOUtil.isIiNull(dto.getIdentifier()));
     }
 
     @Test

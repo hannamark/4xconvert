@@ -93,6 +93,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
@@ -183,7 +184,7 @@ public class XmlGenHelper extends BaseXmlGenHelper {
         appendElement(lead, createElementWithTextblock("po_id", StringUtils.substring(
                 orgDTO.getIdentifier().getExtension(), 0, PAAttributeMaxLen.LEN_160), doc));
 
-        if (PAUtil.isIiNotNull(ctepId))  {
+        if (!ISOUtil.isIiNull(ctepId))  {
             appendElement(lead, createElementWithTextblock("ctep_id", StringUtils.substring(ctepId.getExtension(), 0,
                 PAAttributeMaxLen.LEN_160), doc));
         }
@@ -205,7 +206,7 @@ public class XmlGenHelper extends BaseXmlGenHelper {
         appendElement(lead, createElementWithTextblock("po_id", StringUtils.substring(
                 perDTO.getIdentifier().getExtension(), 0, PAAttributeMaxLen.LEN_160), doc));
 
-        if (PAUtil.isIiNotNull(ctepId))  {
+        if (!ISOUtil.isIiNull(ctepId))  {
             appendElement(lead, createElementWithTextblock("ctep_id", StringUtils.substring(ctepId.getExtension(), 0,
                 PAAttributeMaxLen.LEN_160), doc));
         }
@@ -232,7 +233,7 @@ public class XmlGenHelper extends BaseXmlGenHelper {
                 StringUtils.substring(DSetConverter.convertToIi(ocDTO.getIdentifier()).getExtension(), 0,
                 PAAttributeMaxLen.LEN_160), doc));
 
-        if (PAUtil.isIiNotNull(ctepId))  {
+        if (!ISOUtil.isIiNull(ctepId))  {
             appendElement(lead, createElementWithTextblock("ctep_id", StringUtils.substring(ctepId.getExtension(), 0,
                 PAAttributeMaxLen.LEN_160), doc));
         }

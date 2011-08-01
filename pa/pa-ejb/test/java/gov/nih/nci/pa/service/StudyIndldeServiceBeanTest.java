@@ -98,8 +98,8 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
@@ -165,7 +165,7 @@ public class StudyIndldeServiceBeanTest extends AbstractHibernateTestCase {
         StudyIndldeDTO dto2 = null;
         dto2 = new StudyIndldeDTO();
         dto2 = remoteEjb.create(dto);
-        assertFalse(PAUtil.isIiNull(dto2.getIdentifier()));
+        assertFalse(ISOUtil.isIiNull(dto2.getIdentifier()));
         assertEquals(dto.getExpandedAccessStatusCode().getCode(), dto2.getExpandedAccessStatusCode().getCode());
 
     }

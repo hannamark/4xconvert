@@ -95,8 +95,8 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
@@ -154,13 +154,13 @@ public class PARelationServiceBean {
      * @throws PAException pe
      */
     public void createSponsorAsPrimaryContactRelations(PAContactDTO contactDto) throws PAException {
-        if (PAUtil.isIiNull(contactDto.getOrganizationIdentifier())) {
+        if (ISOUtil.isIiNull(contactDto.getOrganizationIdentifier())) {
             throw new PAException(" Organization PO Identifier is null");
         }
-        if (PAUtil.isIiNull(contactDto.getPersonIdentifier()) && PAUtil.isIiNull(contactDto.getSrIdentifier())) {
+        if (ISOUtil.isIiNull(contactDto.getPersonIdentifier()) && ISOUtil.isIiNull(contactDto.getSrIdentifier())) {
             throw new PAException(" Person or Title PO Identifier is null");
         }
-        if (PAUtil.isIiNull(contactDto.getStudyProtocolIdentifier())) {
+        if (ISOUtil.isIiNull(contactDto.getStudyProtocolIdentifier())) {
             throw new PAException("Study Protocol Identifier is null");
         }
         OrganizationCorrelationServiceBean ocs = new OrganizationCorrelationServiceBean();

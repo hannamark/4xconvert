@@ -86,7 +86,7 @@ import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
@@ -117,7 +117,7 @@ public class SearchStudySiteBean implements SearchStudySiteService {
     @SuppressWarnings("unchecked")
     public List<SearchStudySiteResultDto> search(Ii studyProtocolIi, Ii registryUserIi) throws PAException {
         List<SearchStudySiteResultDto> result = new ArrayList<SearchStudySiteResultDto>();
-        if (!PAUtil.isIiNull(studyProtocolIi) && !PAUtil.isIiNull(registryUserIi)) {
+        if (!ISOUtil.isIiNull(studyProtocolIi) && !ISOUtil.isIiNull(registryUserIi)) {
             try {
                 Session session = PaHibernateUtil.getCurrentSession();
                 String hql = "select ss.id, org.name, org.identifier "

@@ -3,7 +3,7 @@ package gov.nih.nci.pa.report.dto.criteria;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 
 /**
  * @author Hugh Reinhart
@@ -20,7 +20,7 @@ public class AssignedIdentifierCriteriaDto extends AbstractCriteriaDto {
      */
     public static void validate(Object criteria) throws PAException {
         AbstractCriteriaDto.validate(criteria);
-        if (PAUtil.isStNull(((AssignedIdentifierCriteriaDto) criteria).getAssignedIdentifier())) {
+        if (ISOUtil.isStNull(((AssignedIdentifierCriteriaDto) criteria).getAssignedIdentifier())) {
             throw new PAException("ERROR:  Identifier criteria not entered.");
         }
     }

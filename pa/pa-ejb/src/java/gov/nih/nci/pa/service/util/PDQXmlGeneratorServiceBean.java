@@ -100,6 +100,7 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -273,7 +274,7 @@ public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implemen
                     "summary_4_funding_category", srDTO.getTypeCode().getCode(), doc));
         }
 
-        if (srDTO != null && PAUtil.isIiNotNull(srDTO.getOrganizationIdentifier())) {
+        if (srDTO != null && !ISOUtil.isIiNull(srDTO.getOrganizationIdentifier())) {
             Element nciSpecFundSpons = doc.createElement("summary_4_funding_sponsor_source");
             OrganizationDTO poOrgDTO =
                 PdqXmlGenHelper.getPoOrgDTOByPaOrgIi(srDTO.getOrganizationIdentifier(), this.getCorUtils());

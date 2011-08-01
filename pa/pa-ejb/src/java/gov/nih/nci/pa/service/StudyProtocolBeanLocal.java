@@ -135,9 +135,9 @@ import gov.nih.nci.pa.service.search.StudyProtocolBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyProtocolSortCriterion;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -227,7 +227,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             throw new PAException("Ii should not be null");
         }
         Session session = PaHibernateUtil.getCurrentSession();
@@ -314,7 +314,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public ObservationalStudyProtocolDTO getObservationalStudyProtocol(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             throw new PAException("Ii should not be null ");
         }
         Session  session = PaHibernateUtil.getCurrentSession();
@@ -379,7 +379,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void deleteStudyProtocol(Ii ii) throws PAException {
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             throw new PAException("Ii should not be null.");
         }
         try {
@@ -435,21 +435,21 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     public void validate(StudyProtocolDTO studyProtocolDTO) throws PAException {
         StringBuffer sb = new StringBuffer();
         sb.append(studyProtocolDTO == null ? "Study Protocol DTO cannot be null, " : "");
-        sb.append(PAUtil.isStNull(studyProtocolDTO.getOfficialTitle()) ? "Official Title cannot be null, " : "");
+        sb.append(ISOUtil.isStNull(studyProtocolDTO.getOfficialTitle()) ? "Official Title cannot be null, " : "");
     }
 
     private void enForceBusinessRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
         boolean dateRulesApply = false;
 
         ActStatusCode ascStatusCode = null;
-        if (!PAUtil.isCdNull(studyProtocolDTO.getStatusCode())) {
+        if (!ISOUtil.isCdNull(studyProtocolDTO.getStatusCode())) {
             ascStatusCode  = ActStatusCode.getByCode(studyProtocolDTO.getStatusCode().getCode());
         }
-        if (PAUtil.isIiNull(studyProtocolDTO.getIdentifier()) &&  ascStatusCode != null
+        if (ISOUtil.isIiNull(studyProtocolDTO.getIdentifier()) &&  ascStatusCode != null
                 && ascStatusCode.equals(ActStatusCode.ACTIVE)) {
             dateRulesApply = true;
         }
-        if (!PAUtil.isIiNull(studyProtocolDTO.getIdentifier())) {
+        if (!ISOUtil.isIiNull(studyProtocolDTO.getIdentifier())) {
             StudyProtocol oldBo = StudyProtocolConverter.convertFromDTOToDomain(
                     getStudyProtocolById(Long.valueOf(studyProtocolDTO.getIdentifier().getExtension())));
             boolean isProprietaryTrial = false;
@@ -709,7 +709,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyProtocolDTO getStudyProtocol(Ii studyProtocolIi) throws PAException {
         StudyProtocolDTO studyProtocolDTO = null;
-        if (PAUtil.isIiNull(studyProtocolIi)) {
+        if (ISOUtil.isIiNull(studyProtocolIi)) {
             throw new PAException("Ii should not be null");
         }
         if (isNonDbStudyProtocolIdentifier(studyProtocolIi)) {
@@ -739,7 +739,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyProtocolDTO loadStudyProtocol(Ii ii) {
         StudyProtocolDTO studyProtocolDTO = null;
-        if (PAUtil.isIiNull(ii)) {
+        if (ISOUtil.isIiNull(ii)) {
             return studyProtocolDTO;
         }
         try {

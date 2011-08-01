@@ -111,6 +111,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
@@ -275,7 +276,7 @@ public class MockStudyProtocolStageService extends AbstractBaseSearchBean<StudyP
             if (StringUtils.isNotEmpty(phaseCode) && tempSp.getPhaseCode().getCode().equalsIgnoreCase(phaseCode)) {
                 returnList.add(new StudyProtocolStageConverter().convertFromDomainToDto(tempSp));
             }
-            if (!PAUtil.isStNull(dto.getOfficialTitle())
+            if (!ISOUtil.isStNull(dto.getOfficialTitle())
                     && tempSp.getOfficialTitle().equalsIgnoreCase(StConverter.convertToString(dto.getOfficialTitle()))) {
                 returnList.add(new StudyProtocolStageConverter().convertFromDomainToDto(tempSp));
             }

@@ -90,7 +90,7 @@ import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.util.zip.DataFormatException;
 
@@ -130,10 +130,10 @@ public class PatientConverter extends AbstractConverter<PatientDto, Patient> {
         Patient bo = new Patient();
         bo.setBirthDate(AccrualUtil.yearMonthTsToTimestamp(dto.getBirthDate()));
         bo.setCountryIdentifier(IiConverter.convertToLong(dto.getCountryIdentifier()));
-        if (!PAUtil.isCdNull(dto.getEthnicCode())) {
+        if (!ISOUtil.isCdNull(dto.getEthnicCode())) {
             bo.setEthnicCode(PatientEthnicityCode.getByCode(dto.getEthnicCode().getCode()));
         }
-        if (!PAUtil.isCdNull(dto.getGenderCode())) {
+        if (!ISOUtil.isCdNull(dto.getGenderCode())) {
             bo.setSexCode(PatientGenderCode.getByCode(dto.getGenderCode().getCode()));
         }
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));

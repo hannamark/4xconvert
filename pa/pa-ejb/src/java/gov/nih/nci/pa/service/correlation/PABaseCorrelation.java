@@ -11,7 +11,7 @@ import gov.nih.nci.pa.iso.convert.POConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PAExceptionConstants;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
@@ -80,10 +80,10 @@ public class PABaseCorrelation <PADTO extends PACorrelationDTO, PODTO extends Co
      */
     public Long create(PADTO dto) throws PAException {
         CorrelationUtils corrUtils = new CorrelationUtils();
-        if (dto.isPersonMandatory() && PAUtil.isIiNull(dto.getPersonIdentifier())) {
+        if (dto.isPersonMandatory() && ISOUtil.isIiNull(dto.getPersonIdentifier())) {
             throw new PAException(PAExceptionConstants.NULL_II_PERSON);
         }
-        if (dto.isOrganizationMandatory() && PAUtil.isIiNull(dto.getOrganizationIdentifier())) {
+        if (dto.isOrganizationMandatory() && ISOUtil.isIiNull(dto.getOrganizationIdentifier())) {
             throw new PAException(PAExceptionConstants.NULL_II_ORG);
         }
         OrganizationDTO poOrg = null;

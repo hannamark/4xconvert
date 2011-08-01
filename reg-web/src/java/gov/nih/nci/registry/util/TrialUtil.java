@@ -39,6 +39,7 @@ import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.util.CommonsConstant;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -63,7 +64,7 @@ import org.apache.struts2.ServletActionContext;
 
 /**
  * The Class TrialUtil.
- * 
+ *
  * @author vrushali
  */
 public class TrialUtil extends TrialConvertUtils {
@@ -84,7 +85,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy.
-     * 
+     *
      * @param spDTO sdto
      * @param trialDTO gdto
      */
@@ -106,7 +107,7 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setCompletionDateType(spDTO.getPrimaryCompletionDateTypeCode().getCode());
         trialDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
         trialDTO.setSubmissionNumber(IntConverter.convertToString(spDTO.getSubmissionNumber()));
-        trialDTO.setXmlRequired(!PAUtil.isBlNull(spDTO.getCtgovXmlRequiredIndicator())
+        trialDTO.setXmlRequired(!ISOUtil.isBlNull(spDTO.getCtgovXmlRequiredIndicator())
                 && spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue());
         if (spDTO.getSecondaryIdentifiers() != null && spDTO.getSecondaryIdentifiers().getItem() != null) {
             List<Ii> listIi = new ArrayList<Ii>();
@@ -121,7 +122,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy.
-     * 
+     *
      * @param spqDTO sdto
      * @param trialDTO gdto
      */
@@ -134,7 +135,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy lo.
-     * 
+     *
      * @param o o
      * @param trialDTO gdto
      */
@@ -145,7 +146,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy pi.
-     * 
+     *
      * @param p p
      * @param trialDTO dto
      */
@@ -156,13 +157,13 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy responsible party.
-     * 
+     *
      * @param studyProtocolIi ii
      * @param trialDTO dto
      * @throws PAException ex
      * @throws NullifiedRoleException the nullified role exception
      */
-    private void copyResponsibleParty(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException, 
+    private void copyResponsibleParty(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException,
             NullifiedRoleException {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
@@ -199,7 +200,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy.
-     * 
+     *
      * @param dset set
      * @param trialDTO dto
      */
@@ -220,7 +221,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy sponsor.
-     * 
+     *
      * @param studyProtocolIi ii
      * @param trialDTO dto
      * @throws PAException ex
@@ -239,7 +240,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy nct nummber.
-     * 
+     *
      * @param studyProtocolIi ii
      * @param trialDTO dto
      * @throws PAException ex
@@ -253,7 +254,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy summary four.
-     * 
+     *
      * @param srDTO sdto
      * @param trialDTO tdto
      * @throws PAException ex
@@ -275,10 +276,10 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy indide list.
-     * 
+     *
      * @param studyIndldeDTOList iiDto
      * @param trialDTO dto
-     * 
+     *
      * @throws PAException ex
      */
     private void copyINDIDEList(List<StudyIndldeDTO> studyIndldeDTOList, TrialDTO trialDTO) throws PAException {
@@ -294,7 +295,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy grant list.
-     * 
+     *
      * @param isoGrantlist iso
      * @param trialDTO dto
      */
@@ -314,10 +315,10 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Gets the trial dto from db.
-     * 
+     *
      * @param studyProtocolIi Ii
      * @param trialDTO TrailDTO
-     * 
+     *
      * @throws PAException ex
      * @throws NullifiedRoleException e
      */
@@ -333,7 +334,7 @@ public class TrialUtil extends TrialConvertUtils {
         copyResponsibleParty(studyProtocolIi, trialDTO);
         copySponsor(studyProtocolIi, trialDTO);
         copyNctNummber(studyProtocolIi, trialDTO);
-        copySummaryFour(PaRegistry.getStudyResourcingService().getSummary4ReportedResourcing(studyProtocolIi), 
+        copySummaryFour(PaRegistry.getStudyResourcingService().getSummary4ReportedResourcing(studyProtocolIi),
                 trialDTO);
         // Copy IND's
         List<StudyIndldeDTO> studyIndldeDTOList = PaRegistry.getStudyIndldeService()
@@ -366,10 +367,10 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy collaborators.
-     * 
+     *
      * @param studyProtocolIi the study protocol ii
      * @param trialDTO the trial dto
-     * 
+     *
      * @throws PAException the PA exception
      */
     private void copyCollaborators(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
@@ -399,7 +400,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy participating sites.
-     * 
+     *
      * @param studyProtocolIi the study protocol ii
      * @param trialDTO the trial dto
      * @throws PAException the PA exception
@@ -433,10 +434,10 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy participating sites for proprietary trial.
-     * 
+     *
      * @param studyProtocolIi the study protocol ii
      * @param trialDTO the trial dto
-     * 
+     *
      * @throws PAException the PA exception
      */
     public void copyParticipatingSites(Ii studyProtocolIi, ProprietaryTrialDTO trialDTO) throws PAException {
@@ -465,7 +466,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy regulatory information.
-     * 
+     *
      * @param studyProtocolIi the study protocol ii
      * @param trialDTO the trial dto
      * @throws PAException the PA exception
@@ -515,9 +516,10 @@ public class TrialUtil extends TrialConvertUtils {
         }
     }
 
+
     /**
      * Copy Status data from the source to the destination Trial.
-     * 
+     *
      * @param copyTo the destination Trial to be updated
      * @param copyFrom the source Trial
      */
@@ -533,7 +535,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * updates the studyprocol dto with the trail details and status information.
-     * 
+     *
      * @param trialDTO TrialDTO
      * @param spdto StudyProtocolDTO
      * @throws PAException on error
@@ -544,7 +546,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Gets the study reg auth.
-     * 
+     *
      * @param studyProtocolIi the study protocol ii
      * @param trialDTO trialDTO
      * @return the study reg auth
@@ -554,7 +556,7 @@ public class TrialUtil extends TrialConvertUtils {
 
         StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = null;
         StudyRegulatoryAuthorityDTO sraDTO = new StudyRegulatoryAuthorityDTO();
-        if (PAUtil.isIiNotNull(studyProtocolIi)) {
+        if (!ISOUtil.isIiNull(studyProtocolIi)) {
             sraFromDatabaseDTO = PaRegistry.getStudyRegulatoryAuthorityService().getCurrentByStudyProtocol(
                     studyProtocolIi);
             sraDTO.setStudyProtocolIdentifier(studyProtocolIi);
@@ -588,7 +590,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy dcp nummber.
-     * 
+     *
      * @param studyProtocolIi ii
      * @param trialDTO dto
      * @throws PAException ex
@@ -602,7 +604,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy dcp nummber.
-     * 
+     *
      * @param studyProtocolIi ii
      * @param trialDTO dto
      * @throws PAException ex
@@ -615,7 +617,7 @@ public class TrialUtil extends TrialConvertUtils {
     }
 
     /**
-     * 
+     *
      * @param tempStudyProtocolId ii
      * @return trialDTO
      * @throws NullifiedRoleException on err
@@ -735,7 +737,7 @@ public class TrialUtil extends TrialConvertUtils {
     }
 
     /**
-     * 
+     *
      * @param trialDTO dto
      * @throws PAException on err
      */
@@ -754,7 +756,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Gets the Proprietary trial dto from db.
-     * 
+     *
      * @param studyProtocolIi the study protocol ii
      * @param trialDTO the trial dto
      * @throws PAException the PA exception
@@ -779,14 +781,14 @@ public class TrialUtil extends TrialConvertUtils {
         copyLO(getCorrelationUtils().getPAOrganizationByIi(
                 IiConverter.convertToPaOrganizationIi(spqDto.getLeadOrganizationId())), trialDTO);
         copyNctNummber(studyProtocolIi, trialDTO);
-        copySummaryFour(PaRegistry.getStudyResourcingService().getSummary4ReportedResourcing(studyProtocolIi), 
+        copySummaryFour(PaRegistry.getStudyResourcingService().getSummary4ReportedResourcing(studyProtocolIi),
                 trialDTO);
         copyParticipatingSites(studyProtocolIi, trialDTO);
     }
 
     /**
      * Gets the study site to update.
-     * 
+     *
      * @param ps the ps
      * @return the study site to update
      * @throws PAException the PA exception
