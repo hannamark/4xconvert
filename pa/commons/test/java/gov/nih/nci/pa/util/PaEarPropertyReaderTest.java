@@ -102,7 +102,6 @@ public class PaEarPropertyReaderTest {
         assertEquals("pawikiurl", PaEarPropertyReader.getPaHelpUrl());
         assertEquals("regwikiurl", PaEarPropertyReader.getRegistryHelpUrl());
         assertEquals("cteprss", PaEarPropertyReader.getRssUser());
-        assertEquals("http://www.sample.com", PaEarPropertyReader.getErrorCodeLocation().toString());
     }
 
     @Test

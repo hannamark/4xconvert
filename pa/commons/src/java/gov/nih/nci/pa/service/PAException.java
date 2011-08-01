@@ -124,7 +124,6 @@ public class PAException extends Exception {
     }
 
     /**
-     * String and Throwable constructor.
      * @param errorCode ErrorCode for interpretation
      * @param message message
      * @param t t
@@ -136,7 +135,6 @@ public class PAException extends Exception {
     }
 
     /**
-     * String and Throwable constructor.
      * @param errorCode ErrorCode for interpretation
      * @param message message
      */
@@ -161,7 +159,6 @@ public class PAException extends Exception {
     public ErrorCode getErrorCode() {
         return errorCode;
     }
-
 
 }
 

@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.util;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Error codes are intended to report some kind of issue that the end user can act upon.
@@ -94,6 +95,9 @@ import java.net.URI;
  * For example: PA_USER_001 or PA_DATA_002, etc. <br>
  * Possible categories are : <br>
  * common, system, security, data validation, etc.. <br>
+ *
+ * Please Note, each new Error code will require a dependency update in pa-grids <br>
+ *
  * @author ludetc
  *
  */
@@ -117,11 +121,12 @@ public enum ErrorCode {
     /**
      * See Wiki doc for more details.
      */
-    PA_DATA_001("The NCI trial ID provided is invalid"),
+    PA_USER_002("The user is not an owner of the study protocol"),
+
     /**
      * See Wiki doc for more details.
      */
-    PA_USER_002("The user is not an owner of the study protocol"),
+    PA_DATA_001("The NCI trial ID provided is invalid"),
 
     /**
      * See Wiki doc for more details.
@@ -133,7 +138,7 @@ public enum ErrorCode {
     /**
      * See Wiki doc for more details.
      */
-    PA_XML_001("PRSXML005: The generation of the XML file failed");
+    PA_XML_001("The generation of the XML file failed");
 
     private final String description;
 
@@ -159,7 +164,12 @@ public enum ErrorCode {
      * @return the location.
      */
     public static URI getErrorCodeLocation() {
-        return PaEarPropertyReader.getErrorCodeLocation();
+        try {
+            return new URI("https://wiki.nci.nih.gov/x/eALTAg");
+        } catch (URISyntaxException e) {
+            // This will not happen.
+            return null;
+        }
     }
 
 }

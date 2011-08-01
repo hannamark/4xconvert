@@ -81,8 +81,6 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.pa.service.PAException;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -112,7 +110,6 @@ public class PaEarPropertyReader {
     private static final String INVALID_DIRECTORY_ERROR_MSG = " is not a valid directory.";
     private static final String PA_HELP_URL = "wikiHelp.baseUrl.pa";
     private static final String REGISTRY_HELP_URL = "wikiHelp.baseUrl.registry";
-    private static final String ERROR_CODES_LOC = "error.codes.location";
 
     private static final String NO_VALUE = "does not have a value in paear.properties";
 
@@ -235,25 +232,6 @@ public class PaEarPropertyReader {
      */
     public static String getRegistryHelpUrl() throws PAException {
         return getPropTemplate(REGISTRY_HELP_URL);
-    }
-
-    /**
-     * Returns the URI for the error code documentation.
-     * @return the URI.
-     *
-     */
-    public static URI getErrorCodeLocation() {
-        String url = PROPS.getProperty(ERROR_CODES_LOC);
-        if (url == null) {
-            LOG.error(ERROR_CODES_LOC + NO_VALUE);
-        } else {
-            try {
-                return new URI(url);
-            } catch (URISyntaxException e) {
-                LOG.error(ERROR_CODES_LOC + NO_VALUE);
-            }
-        }
-        return null;
     }
 
     /**
