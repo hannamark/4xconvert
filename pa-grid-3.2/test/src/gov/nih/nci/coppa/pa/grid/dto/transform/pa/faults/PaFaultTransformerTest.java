@@ -102,7 +102,7 @@ public class PaFaultTransformerTest {
     }
 
     @Test
-    public void testToXml() throws DtoTransformException {
+    public void testToXml() throws Exception {
         assertNull(PAFaultTransformer.INSTANCE.toXml(null));
         PAFault fault = PAFaultTransformer.INSTANCE.toXml(new PAException(ErrorCode.PA_GENERAL, "unit test exception"));
         assertEquals("unit test exception", fault.getDescription()[0].get_value());
