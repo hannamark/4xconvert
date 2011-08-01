@@ -89,7 +89,6 @@ package gov.nih.nci.accrual.service.util;
  */
 public class BatchImportResults {
     private int totalImports = 0;
-    private String mailTo;
     private String fileName;
 
     /**
@@ -104,20 +103,6 @@ public class BatchImportResults {
      */
     public void setTotalImports(int totalImports) {
         this.totalImports = totalImports;
-    }
-
-    /**
-     * @return the mailTo
-     */
-    public String getMailTo() {
-        return mailTo;
-    }
-
-    /**
-     * @param mailTo the mailTo to set
-     */
-    public void setMailTo(String mailTo) {
-        this.mailTo = mailTo;
     }
 
     /**

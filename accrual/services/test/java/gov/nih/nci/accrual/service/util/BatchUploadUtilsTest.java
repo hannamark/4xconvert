@@ -135,8 +135,8 @@ public class BatchUploadUtilsTest {
         Date date = BatchUploadUtils.getDate(dateStr);
         Date expectedDate = new Date();        
         expectedDate = DateUtils.setYears(expectedDate, 1985);
-        expectedDate = DateUtils.setMonths(expectedDate, 3);
         expectedDate = DateUtils.setDays(expectedDate,  20);
+        expectedDate = DateUtils.setMonths(expectedDate, 3);
         expectedDate = DateUtils.setHours(expectedDate,  0);
         expectedDate = DateUtils.setMinutes(expectedDate, 0);
         expectedDate = DateUtils.setSeconds(expectedDate, 0);

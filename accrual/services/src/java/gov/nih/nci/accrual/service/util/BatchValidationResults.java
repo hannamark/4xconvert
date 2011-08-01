@@ -91,25 +91,10 @@ import java.util.List;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public class BatchValidationResults {
-    private String mailTo;
     private StringBuilder errors;
     private boolean passedValidation = false;
     private List<String[]> validatedLines = new ArrayList<String[]>();
     private String fileName;
-    
-    /**
-     * @return the mailTo
-     */
-    public String getMailTo() {
-        return mailTo;
-    }
-    
-    /**
-     * @param mailTo the mailTo to set
-     */
-    public void setMailTo(String mailTo) {
-        this.mailTo = mailTo;
-    }
     
     /**
      * @return the errors

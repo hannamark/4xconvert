@@ -158,9 +158,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 String[] line = parser.parseLine(StringUtils.strip(lineIterator.nextLine()));
                 lines.add(line);
                 ++lineNumber;
-                if (StringUtils.equalsIgnoreCase("COLLECTIONS", line[BatchFileIndex.LINE_IDENTIFIER_INDEX]) 
-                        && line.length > BatchFileIndex.COLLECTION_EMAIL_INDEX) {
-                    results.setMailTo(line[BatchFileIndex.COLLECTION_EMAIL_INDEX]);
+                if (StringUtils.equalsIgnoreCase("COLLECTIONS", line[BatchFileIndex.LINE_IDENTIFIER_INDEX])) {
                     protocolId = line[1];
                 }                
                 errMsg.append(validateBatchData(line, lineNumber, protocolId));

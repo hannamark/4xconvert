@@ -632,12 +632,4 @@
         overflowToDisk="false"
         memoryStoreEvictionPolicy="LFU"
         />
-
-    <cache
-        name="gov.nih.nci.pa.domain.Submission"
-        maxElementsInMemory="300"
-        eternal="true"
-        overflowToDisk="false"
-        memoryStoreEvictionPolicy="LFU"
-        />
 </ehcache>

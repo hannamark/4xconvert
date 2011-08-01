@@ -151,7 +151,6 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         }
         return results;
     }
-    
    
     /**
      * {@inheritDoc}
@@ -186,7 +185,6 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
      */
     private BatchImportResults importBatchData(BatchValidationResults results) throws PAException, RemoteException {
         BatchImportResults importResults = new BatchImportResults();
-        importResults.setMailTo(results.getMailTo());
         if (!results.isPassedValidation()) {
             return importResults;
         }

@@ -352,7 +352,6 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         assertEquals(1, results.size());
         assertFalse(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString()));
-        assertTrue(StringUtils.isNotEmpty(results.get(0).getMailTo()));
         assertTrue(results.get(0).getValidatedLines().isEmpty());
         verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
         mailService = mock(MailManagerServiceRemote.class);
@@ -364,7 +363,6 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         assertEquals(1, results.size());
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
-        assertTrue(StringUtils.isNotEmpty(results.get(0).getMailTo()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
         verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
     }
@@ -377,7 +375,6 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         assertEquals(1, results.size());
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
-        assertTrue(StringUtils.isNotEmpty(results.get(0).getMailTo()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
         verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
     }
@@ -390,7 +387,6 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         assertEquals(1, results.size());
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
-        assertTrue(StringUtils.isNotEmpty(results.get(0).getMailTo()));
         assertFalse(results.get(0).getValidatedLines().isEmpty());
         verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
     }
@@ -405,7 +401,6 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         for (BatchValidationResults result : validationResults) {
             assertTrue(result.isPassedValidation());
             assertTrue(StringUtils.isEmpty(result.getErrors().toString()));
-            assertTrue(StringUtils.isNotEmpty(result.getMailTo()));
             assertFalse(result.getValidatedLines().isEmpty());
         }
         verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
@@ -423,7 +418,6 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         assertEquals(1, results.size());
         assertFalse(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString()));
-        assertTrue(StringUtils.isNotEmpty(results.get(0).getMailTo()));
         assertTrue(results.get(0).getValidatedLines().isEmpty());
     }
 

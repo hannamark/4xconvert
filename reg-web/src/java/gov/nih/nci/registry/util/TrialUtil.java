@@ -63,7 +63,7 @@ import org.apache.struts2.ServletActionContext;
 
 /**
  * The Class TrialUtil.
- *
+ * 
  * @author vrushali
  */
 public class TrialUtil extends TrialConvertUtils {
@@ -84,6 +84,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy.
+     * 
      * @param spDTO sdto
      * @param trialDTO gdto
      */
@@ -98,10 +99,10 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setTrialType(spDTO.getStudyProtocolType().getValue());
         trialDTO.setIdentifier(spDTO.getIdentifier().getExtension());
         trialDTO.setStartDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(spDTO.getStartDate())
-            .toString()));
+                .toString()));
         trialDTO.setStartDateType(spDTO.getStartDateTypeCode().getCode());
-        trialDTO.setCompletionDate(PAUtil.normalizeDateString(TsConverter
-            .convertToTimestamp(spDTO.getPrimaryCompletionDate()).toString()));
+        trialDTO.setCompletionDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
+                spDTO.getPrimaryCompletionDate()).toString()));
         trialDTO.setCompletionDateType(spDTO.getPrimaryCompletionDateTypeCode().getCode());
         trialDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
         trialDTO.setSubmissionNumber(IntConverter.convertToString(spDTO.getSubmissionNumber()));
@@ -120,6 +121,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy.
+     * 
      * @param spqDTO sdto
      * @param trialDTO gdto
      */
@@ -129,8 +131,10 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setStatusCode(spqDTO.getStudyStatusCode().getCode());
         trialDTO.setStatusDate(PAUtil.normalizeDateString(spqDTO.getStudyStatusDate().toString()));
     }
+
     /**
      * Copy lo.
+     * 
      * @param o o
      * @param trialDTO gdto
      */
@@ -141,6 +145,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy pi.
+     * 
      * @param p p
      * @param trialDTO dto
      */
@@ -148,15 +153,17 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setPiIdentifier(p.getIdentifier());
         trialDTO.setPiName(p.getFullName());
     }
+
     /**
      * Copy responsible party.
+     * 
      * @param studyProtocolIi ii
      * @param trialDTO dto
      * @throws PAException ex
      * @throws NullifiedRoleException the nullified role exception
      */
-    private void copyResponsibleParty(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException,
-            NullifiedRoleException  {
+    private void copyResponsibleParty(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException, 
+            NullifiedRoleException {
         StudyContactDTO scDto = new StudyContactDTO();
         scDto.setRoleCode(CdConverter.convertToCd(StudyContactRoleCode.RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR));
         List<StudyContactDTO> scDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
@@ -168,15 +175,15 @@ public class TrialUtil extends TrialConvertUtils {
         } else {
             StudySiteContactDTO spart = new StudySiteContactDTO();
             spart.setRoleCode(CdConverter.convertToCd(StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
-            List<StudySiteContactDTO> spDtos = PaRegistry.getStudySiteContactService()
-                .getByStudyProtocol(studyProtocolIi, spart);
+            List<StudySiteContactDTO> spDtos = PaRegistry.getStudySiteContactService().getByStudyProtocol(
+                    studyProtocolIi, spart);
             trialDTO.setResponsiblePartyType(SPONSOR);
             if (CollectionUtils.isNotEmpty(spDtos)) {
                 trialDTO.setResponsiblePartyType(SPONSOR);
                 spart = spDtos.get(0);
                 dset = spart.getTelecomAddresses();
-                PAContactDTO paDto = getCorrelationUtils().getContactByPAOrganizationalContactId((Long.valueOf(spart
-                    .getOrganizationalContactIi().getExtension())));
+                PAContactDTO paDto = getCorrelationUtils().getContactByPAOrganizationalContactId(
+                        (Long.valueOf(spart.getOrganizationalContactIi().getExtension())));
                 if (paDto.getFullName() != null) {
                     trialDTO.setResponsiblePersonName(paDto.getFullName());
                     trialDTO.setResponsiblePersonIdentifier(PAUtil.getIiExtension(paDto.getPersonIdentifier()));
@@ -192,7 +199,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy.
-     *
+     * 
      * @param dset set
      * @param trialDTO dto
      */
@@ -210,8 +217,10 @@ public class TrialUtil extends TrialConvertUtils {
             trialDTO.setContactEmail(emails.get(0));
         }
     }
+
     /**
      * Copy sponsor.
+     * 
      * @param studyProtocolIi ii
      * @param trialDTO dto
      * @throws PAException ex
@@ -219,8 +228,7 @@ public class TrialUtil extends TrialConvertUtils {
     private void copySponsor(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
         StudySiteDTO spart = new StudySiteDTO();
         spart.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
-        List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService()
-            .getByStudyProtocol(studyProtocolIi, spart);
+        List<StudySiteDTO> spDtos = PaRegistry.getStudySiteService().getByStudyProtocol(studyProtocolIi, spart);
         if (spDtos != null && !spDtos.isEmpty()) {
             spart = spDtos.get(0);
             Organization o = getCorrelationUtils().getPAOrganizationByIi(spart.getResearchOrganizationIi());
@@ -228,8 +236,10 @@ public class TrialUtil extends TrialConvertUtils {
             trialDTO.setSponsorIdentifier(o.getIdentifier());
         }
     }
+
     /**
      * Copy nct nummber.
+     * 
      * @param studyProtocolIi ii
      * @param trialDTO dto
      * @throws PAException ex
@@ -240,8 +250,10 @@ public class TrialUtil extends TrialConvertUtils {
             trialDTO.setNctIdentifier(nctNumber);
         }
     }
+
     /**
      * Copy summary four.
+     * 
      * @param srDTO sdto
      * @param trialDTO tdto
      * @throws PAException ex
@@ -263,10 +275,10 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy indide list.
-     *
+     * 
      * @param studyIndldeDTOList iiDto
      * @param trialDTO dto
-     *
+     * 
      * @throws PAException ex
      */
     private void copyINDIDEList(List<StudyIndldeDTO> studyIndldeDTOList, TrialDTO trialDTO) throws PAException {
@@ -274,7 +286,6 @@ public class TrialUtil extends TrialConvertUtils {
             return;
         }
         List<TrialIndIdeDTO> indList = new ArrayList<TrialIndIdeDTO>();
-        //loop thru the iso dto
         for (StudyIndldeDTO isoDto : studyIndldeDTOList) {
             indList.add(new TrialIndIdeDTO(isoDto));
         }
@@ -283,6 +294,7 @@ public class TrialUtil extends TrialConvertUtils {
 
     /**
      * Copy grant list.
+     * 
      * @param isoGrantlist iso
      * @param trialDTO dto
      */
@@ -291,7 +303,6 @@ public class TrialUtil extends TrialConvertUtils {
             return;
         }
         List<TrialFundingWebDTO> grantList = new ArrayList<TrialFundingWebDTO>();
-        //loop thru iso
         TrialFundingWebDTO webDto = null;
         for (StudyResourcingDTO isoDto : isoGrantlist) {
             webDto = new TrialFundingWebDTO(isoDto);
@@ -301,213 +312,212 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setFundingDtos(grantList);
     }
 
-
-
-   /**
-    * Gets the trial dto from db.
-    *
-    * @param studyProtocolIi Ii
-    * @param trialDTO TrailDTO
-    *
-    * @throws PAException ex
-    * @throws NullifiedRoleException e
-    */
-   public void getTrialDTOFromDb(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException, NullifiedRoleException {
-       StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-       StudyProtocolQueryDTO spqDto = PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
-                                               Long.valueOf(studyProtocolIi.getExtension()));
-       copy(spDTO, trialDTO);
-       copy(spqDto, trialDTO);
-       copyLO(getCorrelationUtils().getPAOrganizationByIi(
-               IiConverter.convertToPaOrganizationIi(spqDto.getLeadOrganizationId())), trialDTO);
-       copyPI(getCorrelationUtils().getPAPersonByIi(IiConverter.convertToPaPersonIi(spqDto.getPiId())), trialDTO);
-       copyResponsibleParty(studyProtocolIi, trialDTO);
-       copySponsor(studyProtocolIi, trialDTO);
-       copyNctNummber(studyProtocolIi, trialDTO);
-       copySummaryFour(PaRegistry.getStudyResourcingService().
-                   getSummary4ReportedResourcing(studyProtocolIi), trialDTO);
-       //Copy IND's
-       List<StudyIndldeDTO> studyIndldeDTOList = PaRegistry.getStudyIndldeService()
-           .getByStudyProtocol(studyProtocolIi);
-       if (!(studyIndldeDTOList.isEmpty())) {
+    /**
+     * Gets the trial dto from db.
+     * 
+     * @param studyProtocolIi Ii
+     * @param trialDTO TrailDTO
+     * 
+     * @throws PAException ex
+     * @throws NullifiedRoleException e
+     */
+    public void getTrialDTOFromDb(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException, NullifiedRoleException {
+        StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+        StudyProtocolQueryDTO spqDto = PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
+                Long.valueOf(studyProtocolIi.getExtension()));
+        copy(spDTO, trialDTO);
+        copy(spqDto, trialDTO);
+        copyLO(getCorrelationUtils().getPAOrganizationByIi(
+                IiConverter.convertToPaOrganizationIi(spqDto.getLeadOrganizationId())), trialDTO);
+        copyPI(getCorrelationUtils().getPAPersonByIi(IiConverter.convertToPaPersonIi(spqDto.getPiId())), trialDTO);
+        copyResponsibleParty(studyProtocolIi, trialDTO);
+        copySponsor(studyProtocolIi, trialDTO);
+        copyNctNummber(studyProtocolIi, trialDTO);
+        copySummaryFour(PaRegistry.getStudyResourcingService().getSummary4ReportedResourcing(studyProtocolIi), 
+                trialDTO);
+        // Copy IND's
+        List<StudyIndldeDTO> studyIndldeDTOList = PaRegistry.getStudyIndldeService()
+                .getByStudyProtocol(studyProtocolIi);
+        if (!(studyIndldeDTOList.isEmpty())) {
             copyINDIDEList(studyIndldeDTOList, trialDTO);
-       }
-       // query the study grants
-       List<StudyResourcingDTO> isoList = PaRegistry.getStudyResourcingService()
-                   .getStudyResourcingByStudyProtocol(studyProtocolIi);
-       if (!(isoList.isEmpty())) {
-           copyGrantList(isoList, trialDTO);
-       }
-       //copy the reason for trial
-       StudyOverallStatusDTO sosDto = null;
-       sosDto = PaRegistry.getStudyOverallStatusService().getCurrentByStudyProtocol(studyProtocolIi);
-       if (sosDto != null) {
-           trialDTO.setReason(StConverter.convertToString(sosDto.getReasonText()));
-       } else {
-           trialDTO.setReason(null);
-       }
-       //get the regulatory information.
+        }
+        // query the study grants
+        List<StudyResourcingDTO> isoList = PaRegistry.getStudyResourcingService().getStudyResourcingByStudyProtocol(
+                studyProtocolIi);
+        if (!(isoList.isEmpty())) {
+            copyGrantList(isoList, trialDTO);
+        }
+        // copy the reason for trial
+        StudyOverallStatusDTO sosDto = null;
+        sosDto = PaRegistry.getStudyOverallStatusService().getCurrentByStudyProtocol(studyProtocolIi);
+        if (sosDto != null) {
+            trialDTO.setReason(StConverter.convertToString(sosDto.getReasonText()));
+        } else {
+            trialDTO.setReason(null);
+        }
         copyRegulatoryInformation(studyProtocolIi, trialDTO);
-       //get the collaborators information.
-       copyCollaborators(studyProtocolIi, trialDTO);
-       //get the participating sites information.
-       copyParticipatingSites(studyProtocolIi, trialDTO);
-       //Copy IND's to update list
-       trialDTO.setIndIdeUpdateDtos(trialDTO.getIndIdeDtos());
-       //copy Dcp
-       copyDcpIdentifier(studyProtocolIi, trialDTO);
-       //copy ctep
-       copyCtepIdentifier(studyProtocolIi, trialDTO);
-     // return trialDTO;
-   }
+        copyCollaborators(studyProtocolIi, trialDTO);
+        copyParticipatingSites(studyProtocolIi, trialDTO);
+        // Copy IND's to update list
+        trialDTO.setIndIdeUpdateDtos(trialDTO.getIndIdeDtos());
+        copyDcpIdentifier(studyProtocolIi, trialDTO);
+        copyCtepIdentifier(studyProtocolIi, trialDTO);
+    }
 
-   /**
-    * Copy collaborators.
-    *
-    * @param studyProtocolIi the study protocol ii
-    * @param trialDTO the trial dto
-    *
-    * @throws PAException the PA exception
-    */
-   private void copyCollaborators(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
-       ArrayList<StudySiteDTO> criteriaList = new ArrayList<StudySiteDTO>();
-       for (StudySiteFunctionalCode cd : StudySiteFunctionalCode.values()) {
-           if (cd.isCollaboratorCode()) {
-               StudySiteDTO searchCode = new StudySiteDTO();
-               searchCode.setFunctionalCode(CdConverter.convertToCd(cd));
-               criteriaList.add(searchCode);
-           }
-       }
-       List<PaOrganizationDTO> collaboratorsList = new ArrayList<PaOrganizationDTO>();
-       List<StudySiteDTO> spList = PaRegistry.getStudySiteService()
-                                               .getByStudyProtocol(studyProtocolIi, criteriaList);
-       for (StudySiteDTO sp : spList) {
-           Organization orgBo = getCorrelationUtils().getPAOrganizationByIi(sp.getResearchOrganizationIi());
-           PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();
-           orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
-           orgWebDTO.setName(orgBo.getName());
-           orgWebDTO.setNciNumber(orgBo.getIdentifier());
-           orgWebDTO.setFunctionalRole(sp.getFunctionalCode().getCode());
-           orgWebDTO.setStatus(sp.getStatusCode().getCode());
-           collaboratorsList.add(orgWebDTO);
-       }
-       trialDTO.setCollaborators(collaboratorsList);
+    /**
+     * Copy collaborators.
+     * 
+     * @param studyProtocolIi the study protocol ii
+     * @param trialDTO the trial dto
+     * 
+     * @throws PAException the PA exception
+     */
+    private void copyCollaborators(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
+        ArrayList<StudySiteDTO> criteriaList = new ArrayList<StudySiteDTO>();
+        for (StudySiteFunctionalCode cd : StudySiteFunctionalCode.values()) {
+            if (cd.isCollaboratorCode()) {
+                StudySiteDTO searchCode = new StudySiteDTO();
+                searchCode.setFunctionalCode(CdConverter.convertToCd(cd));
+                criteriaList.add(searchCode);
+            }
+        }
+        List<PaOrganizationDTO> collaboratorsList = new ArrayList<PaOrganizationDTO>();
+        List<StudySiteDTO> spList = PaRegistry.getStudySiteService().getByStudyProtocol(studyProtocolIi, criteriaList);
+        for (StudySiteDTO sp : spList) {
+            Organization orgBo = getCorrelationUtils().getPAOrganizationByIi(sp.getResearchOrganizationIi());
+            PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();
+            orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
+            orgWebDTO.setName(orgBo.getName());
+            orgWebDTO.setNciNumber(orgBo.getIdentifier());
+            orgWebDTO.setFunctionalRole(sp.getFunctionalCode().getCode());
+            orgWebDTO.setStatus(sp.getStatusCode().getCode());
+            collaboratorsList.add(orgWebDTO);
+        }
+        trialDTO.setCollaborators(collaboratorsList);
 
-   }
+    }
 
-   /**
-    * Copy participating sites.
-    * @param studyProtocolIi the study protocol ii
-    * @param trialDTO the trial dto
-    * @throws PAException the PA exception
-    */
-   private void copyParticipatingSites(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
-       List<PaOrganizationDTO> participatingSitesList = new ArrayList<PaOrganizationDTO>();
-       StudySiteDTO srDTO = new StudySiteDTO();
-       srDTO.setFunctionalCode(CdConverter.convertStringToCd(StudySiteFunctionalCode.TREATING_SITE
-                       .getCode()));
-       List<StudySiteDTO> spList = PaRegistry.getStudySiteService()
-                                               .getByStudyProtocol(studyProtocolIi, srDTO);
-       for (StudySiteDTO sp : spList) {
-           StudySiteAccrualStatusDTO ssas = PaRegistry.getStudySiteAccrualStatusService()
-                                              .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
-           Organization orgBo = getCorrelationUtils().getPAOrganizationByIi(sp.getHealthcareFacilityIi());
-           PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();
-           orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
-           orgWebDTO.setName(orgBo.getName());
-           orgWebDTO.setProgramCode(StConverter.convertToString(sp.getProgramCodeText()));
-           orgWebDTO.setNciNumber(orgBo.getIdentifier());
-           if (ssas == null || ssas.getStatusCode() == null || ssas.getStatusDate() == null) {
-               orgWebDTO.setRecruitmentStatus("unknown");
-               orgWebDTO.setRecruitmentStatusDate("unknown");
-           } else {
-               orgWebDTO.setRecruitmentStatus(CdConverter.convertCdToString(ssas.getStatusCode()));
-               orgWebDTO.setRecruitmentStatusDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
-                       ssas.getStatusDate()).toString()));
-           }
-           participatingSitesList.add(orgWebDTO);
-       }
-       trialDTO.setParticipatingSites(participatingSitesList);
-   }
+    /**
+     * Copy participating sites.
+     * 
+     * @param studyProtocolIi the study protocol ii
+     * @param trialDTO the trial dto
+     * @throws PAException the PA exception
+     */
+    private void copyParticipatingSites(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
+        List<PaOrganizationDTO> participatingSitesList = new ArrayList<PaOrganizationDTO>();
+        StudySiteDTO srDTO = new StudySiteDTO();
+        srDTO.setFunctionalCode(CdConverter.convertStringToCd(StudySiteFunctionalCode.TREATING_SITE.getCode()));
+        List<StudySiteDTO> spList = PaRegistry.getStudySiteService().getByStudyProtocol(studyProtocolIi, srDTO);
+        for (StudySiteDTO sp : spList) {
+            StudySiteAccrualStatusDTO ssas = PaRegistry.getStudySiteAccrualStatusService()
+                    .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
+            Organization orgBo = getCorrelationUtils().getPAOrganizationByIi(sp.getHealthcareFacilityIi());
+            PaOrganizationDTO orgWebDTO = new PaOrganizationDTO();
+            orgWebDTO.setId(IiConverter.convertToString(sp.getIdentifier()));
+            orgWebDTO.setName(orgBo.getName());
+            orgWebDTO.setProgramCode(StConverter.convertToString(sp.getProgramCodeText()));
+            orgWebDTO.setNciNumber(orgBo.getIdentifier());
+            if (ssas == null || ssas.getStatusCode() == null || ssas.getStatusDate() == null) {
+                orgWebDTO.setRecruitmentStatus("unknown");
+                orgWebDTO.setRecruitmentStatusDate("unknown");
+            } else {
+                orgWebDTO.setRecruitmentStatus(CdConverter.convertCdToString(ssas.getStatusCode()));
+                orgWebDTO.setRecruitmentStatusDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
+                        ssas.getStatusDate()).toString()));
+            }
+            participatingSitesList.add(orgWebDTO);
+        }
+        trialDTO.setParticipatingSites(participatingSitesList);
+    }
 
-   /**
-    * Copy participating sites for proprietary trial.
-    *
-    * @param studyProtocolIi the study protocol ii
-    * @param trialDTO the trial dto
-    *
-    * @throws PAException the PA exception
-    */
-   public void copyParticipatingSites(Ii studyProtocolIi, ProprietaryTrialDTO trialDTO) throws PAException {
-       List<SubmittedOrganizationDTO> organizationList = new ArrayList<SubmittedOrganizationDTO>();
-       StudySiteDTO srDTO = new StudySiteDTO();
-       srDTO.setFunctionalCode(CdConverter.convertStringToCd(StudySiteFunctionalCode.TREATING_SITE.getCode()));
-       List<StudySiteDTO> spList = PaRegistry.getStudySiteService().getByStudyProtocol(studyProtocolIi, srDTO);
-       for (StudySiteDTO sp : spList) {
-           StudySiteAccrualStatusDTO ssas = PaRegistry.getStudySiteAccrualStatusService()
-                               .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
-           Organization orgBo = getCorrelationUtils().getPAOrganizationByIi(sp.getHealthcareFacilityIi());
-           SubmittedOrganizationDTO orgWebDTO = new SubmittedOrganizationDTO(sp, ssas, orgBo);
-           List<PaPersonDTO> principalInvresults = PaRegistry.getPAHealthCareProviderService()
-                       .getPersonsByStudySiteId(Long.valueOf(sp.getIdentifier().getExtension().toString()),
-                   StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getName());
-           if (!principalInvresults.isEmpty()) {
-               for (PaPersonDTO per : principalInvresults) {
-                   orgWebDTO.setInvestigator(per.getFullName() != null ? per.getFullName() : "");
-               }
-           }
-           orgWebDTO.setNameInvestigator(orgWebDTO.getName() + " - " + orgWebDTO.getInvestigator());
-           organizationList.add(orgWebDTO);
-       }
-       trialDTO.setParticipatingSitesList(organizationList);
-   }
+    /**
+     * Copy participating sites for proprietary trial.
+     * 
+     * @param studyProtocolIi the study protocol ii
+     * @param trialDTO the trial dto
+     * 
+     * @throws PAException the PA exception
+     */
+    public void copyParticipatingSites(Ii studyProtocolIi, ProprietaryTrialDTO trialDTO) throws PAException {
+        List<SubmittedOrganizationDTO> organizationList = new ArrayList<SubmittedOrganizationDTO>();
+        StudySiteDTO srDTO = new StudySiteDTO();
+        srDTO.setFunctionalCode(CdConverter.convertStringToCd(StudySiteFunctionalCode.TREATING_SITE.getCode()));
+        List<StudySiteDTO> spList = PaRegistry.getStudySiteService().getByStudyProtocol(studyProtocolIi, srDTO);
+        for (StudySiteDTO sp : spList) {
+            StudySiteAccrualStatusDTO ssas = PaRegistry.getStudySiteAccrualStatusService()
+                    .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
+            Organization orgBo = getCorrelationUtils().getPAOrganizationByIi(sp.getHealthcareFacilityIi());
+            SubmittedOrganizationDTO orgWebDTO = new SubmittedOrganizationDTO(sp, ssas, orgBo);
+            List<PaPersonDTO> principalInvresults = PaRegistry.getPAHealthCareProviderService()
+                    .getPersonsByStudySiteId(Long.valueOf(sp.getIdentifier().getExtension().toString()),
+                            StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getName());
+            if (!principalInvresults.isEmpty()) {
+                for (PaPersonDTO per : principalInvresults) {
+                    orgWebDTO.setInvestigator(per.getFullName() != null ? per.getFullName() : "");
+                }
+            }
+            orgWebDTO.setNameInvestigator(orgWebDTO.getName() + " - " + orgWebDTO.getInvestigator());
+            organizationList.add(orgWebDTO);
+        }
+        trialDTO.setParticipatingSitesList(organizationList);
+    }
 
-   /**
-   * Copy regulatory information.
-   * @param studyProtocolIi the study protocol ii
-   * @param trialDTO the trial dto
-   * @throws PAException the PA exception
-   */
+    /**
+     * Copy regulatory information.
+     * 
+     * @param studyProtocolIi the study protocol ii
+     * @param trialDTO the trial dto
+     * @throws PAException the PA exception
+     */
     private void copyRegulatoryInformation(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
-        final StudyRegulatoryAuthorityServiceLocal studyRegAuthSvc = PaRegistry.getStudyRegulatoryAuthorityService();
-        final RegulatoryInformationServiceRemote regInfoSvc = PaRegistry.getRegulatoryInformationService();
-
-        StudyRegulatoryAuthorityDTO authorityDTO = studyRegAuthSvc.getCurrentByStudyProtocol(studyProtocolIi);
+        RegulatoryInformationServiceRemote regInfoSvc = PaRegistry.getRegulatoryInformationService();
         trialDTO.setCountryList(regInfoSvc.getDistinctCountryNames());
+        StudyRegulatoryAuthorityServiceLocal studyRegAuthSvc = PaRegistry.getStudyRegulatoryAuthorityService();
+        StudyRegulatoryAuthorityDTO authorityDTO = studyRegAuthSvc.getCurrentByStudyProtocol(studyProtocolIi);
         if (authorityDTO != null) { // load values from database
-            StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-            if (spDTO.getSection801Indicator().getValue() != null) {
-                trialDTO.setSection801Indicator(BlConverter.convertBLToString(spDTO.getSection801Indicator()));
-            }
-            if (spDTO.getFdaRegulatedIndicator().getValue() != null) {
-                trialDTO.setFdaRegulatoryInformationIndicator(BlConverter.convertBLToString(spDTO
-                    .getFdaRegulatedIndicator()));
-            }
-            if (spDTO.getDelayedpostingIndicator().getValue() != null) {
-                trialDTO.setDelayedPostingIndicator(BlConverter.convertBLToString(spDTO.getDelayedpostingIndicator()));
-            }
-            if (spDTO.getDataMonitoringCommitteeAppointedIndicator().getValue() != null) {
-                trialDTO.setDataMonitoringCommitteeAppointedIndicator((BlConverter.convertBLToString(spDTO
-                    .getDataMonitoringCommitteeAppointedIndicator())));
-            }
-            StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = studyRegAuthSvc.getCurrentByStudyProtocol(studyProtocolIi);
-            if (sraFromDatabaseDTO != null) {
-                Long sraId = Long.valueOf(sraFromDatabaseDTO.getRegulatoryAuthorityIdentifier().getExtension());
-                List<Long> regInfo = regInfoSvc.getRegulatoryAuthorityInfo(sraId);
-                trialDTO.setLst(regInfo.get(1).toString());
-                // set selected the name of the regulatory authority chosen
-                trialDTO.setRegIdAuthOrgList(regInfoSvc.getRegulatoryAuthorityNameId(Long.valueOf(regInfo.get(1)
-                    .toString())));
-                trialDTO.setSelectedRegAuth(regInfo.get(0).toString());
-            }
+            setRegulatoryIndicatorInfo(studyProtocolIi, trialDTO);
+            setRegulatoryAuthorityInfo(studyProtocolIi, trialDTO);
             setOversgtInfo(trialDTO);
         }
     }
 
-    
+    private void setRegulatoryAuthorityInfo(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
+        RegulatoryInformationServiceRemote regInfoSvc = PaRegistry.getRegulatoryInformationService();
+        StudyRegulatoryAuthorityServiceLocal studyRegAuthSvc = PaRegistry.getStudyRegulatoryAuthorityService();
+        StudyRegulatoryAuthorityDTO sraFromDatabaseDTO = studyRegAuthSvc.getCurrentByStudyProtocol(studyProtocolIi);
+        if (sraFromDatabaseDTO != null) {
+            Long sraId = Long.valueOf(sraFromDatabaseDTO.getRegulatoryAuthorityIdentifier().getExtension());
+            List<Long> regInfo = regInfoSvc.getRegulatoryAuthorityInfo(sraId);
+            trialDTO.setLst(regInfo.get(1).toString());
+            // set selected the name of the regulatory authority chosen
+            trialDTO.setRegIdAuthOrgList(regInfoSvc.getRegulatoryAuthorityNameId(Long
+                    .valueOf(regInfo.get(1).toString())));
+            trialDTO.setSelectedRegAuth(regInfo.get(0).toString());
+        }
+    }
+
+    private void setRegulatoryIndicatorInfo(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
+        StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+        if (spDTO.getSection801Indicator().getValue() != null) {
+            trialDTO.setSection801Indicator(BlConverter.convertBLToString(spDTO.getSection801Indicator()));
+        }
+        if (spDTO.getFdaRegulatedIndicator().getValue() != null) {
+            trialDTO.setFdaRegulatoryInformationIndicator(BlConverter.convertBLToString(spDTO
+                    .getFdaRegulatedIndicator()));
+        }
+        if (spDTO.getDelayedpostingIndicator().getValue() != null) {
+            trialDTO.setDelayedPostingIndicator(BlConverter.convertBLToString(spDTO.getDelayedpostingIndicator()));
+        }
+        if (spDTO.getDataMonitoringCommitteeAppointedIndicator().getValue() != null) {
+            trialDTO.setDataMonitoringCommitteeAppointedIndicator((BlConverter.convertBLToString(spDTO
+                    .getDataMonitoringCommitteeAppointedIndicator())));
+        }
+    }
 
     /**
      * Copy Status data from the source to the destination Trial.
+     * 
      * @param copyTo the destination Trial to be updated
      * @param copyFrom the source Trial
      */
@@ -520,20 +530,21 @@ public class TrialUtil extends TrialConvertUtils {
         copyTo.setCompletionDateType(copyFrom.getCompletionDateType());
         copyTo.setReason(copyFrom.getReason());
     }
-    
-   /**
-    * updates the studyprocol dto with the trail details and status information.
-    * @param trialDTO TrialDTO
-    * @param spdto StudyProtocolDTO
-    * @throws PAException on error
-    */
+
+    /**
+     * updates the studyprocol dto with the trail details and status information.
+     * 
+     * @param trialDTO TrialDTO
+     * @param spdto StudyProtocolDTO
+     * @throws PAException on error
+     */
     public void updateStudyProtcolDTO(StudyProtocolDTO spdto, TrialDTO trialDTO) throws PAException {
-
         convertToStudyProtocolDTO(trialDTO, spdto);
-
     }
+
     /**
      * Gets the study reg auth.
+     * 
      * @param studyProtocolIi the study protocol ii
      * @param trialDTO trialDTO
      * @return the study reg auth
@@ -562,7 +573,7 @@ public class TrialUtil extends TrialConvertUtils {
     /**
      * @param trialDTO trialDTO
      */
-    @SuppressWarnings({"PMD" })
+    @SuppressWarnings({ "PMD" })
     public void populateRegulatoryList(TrialDTO trialDTO) {
         try {
             trialDTO.setCountryList(PaRegistry.getRegulatoryInformationService().getDistinctCountryNames());
@@ -571,13 +582,13 @@ public class TrialUtil extends TrialConvertUtils {
                         Long.valueOf(trialDTO.getLst())));
             }
         } catch (PAException e) {
-            //do nothing
+            // do nothing
         }
     }
 
-
     /**
      * Copy dcp nummber.
+     * 
      * @param studyProtocolIi ii
      * @param trialDTO dto
      * @throws PAException ex
@@ -588,8 +599,10 @@ public class TrialUtil extends TrialConvertUtils {
             trialDTO.setDcpIdentifier(dcpId);
         }
     }
+
     /**
      * Copy dcp nummber.
+     * 
      * @param studyProtocolIi ii
      * @param trialDTO dto
      * @throws PAException ex
@@ -602,100 +615,114 @@ public class TrialUtil extends TrialConvertUtils {
     }
 
     /**
-     *
+     * 
      * @param tempStudyProtocolId ii
      * @return trialDTO
      * @throws NullifiedRoleException on err
      * @throws PAException on err
      */
     public BaseTrialDTO getTrialDTOForPartiallySumbissionById(String tempStudyProtocolId)
-        throws NullifiedRoleException,
-        PAException {
-            BaseTrialDTO trialDTO = new BaseTrialDTO();
-            trialDTO =  convertToTrialDTO(PaRegistry.getStudyProtocolStageService()
-                    .get(IiConverter.convertToIi(tempStudyProtocolId)));
-            List<StudyFundingStageDTO> fundingIsoDtos  = PaRegistry.getStudyProtocolStageService()
+            throws NullifiedRoleException, PAException {
+        BaseTrialDTO trialDTO = new BaseTrialDTO();
+        trialDTO = convertToTrialDTO(PaRegistry.getStudyProtocolStageService().get(
+                IiConverter.convertToIi(tempStudyProtocolId)));
+        List<StudyFundingStageDTO> fundingIsoDtos = PaRegistry.getStudyProtocolStageService()
                 .getGrantsByStudyProtocolStage(IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
-            List<TrialFundingWebDTO> webDTOs = new ArrayList<TrialFundingWebDTO>();
-            for (StudyFundingStageDTO fundingDto : fundingIsoDtos) {
-                webDTOs.add(convertToTrialFundingWebDTO(fundingDto));
-            }
-            trialDTO.setFundingDtos(webDTOs);
-            List<TrialIndIdeDTO> webIndDtos = new ArrayList<TrialIndIdeDTO>();
-            List <StudyIndIdeStageDTO> indIdeIsoDtos = PaRegistry.getStudyProtocolStageService().
-                getIndIdesByStudyProtocolStage(IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
-            for (StudyIndIdeStageDTO isoIndDto : indIdeIsoDtos) {
-                webIndDtos.add(convertToTrialIndIdeDTO(isoIndDto));
-            }
-            trialDTO.setIndIdeDtos(webIndDtos);
-            if (StringUtils.isEmpty(trialDTO.getPropritaryTrialIndicator())
-                    || trialDTO.getPropritaryTrialIndicator().equalsIgnoreCase(CommonsConstant.NO)) {
-                populateRegulatoryList((TrialDTO) trialDTO);
-            }
-            //populate doc
-            List <DocumentDTO> docDTOs = PaRegistry.getStudyProtocolStageService()
-               .getDocumentsByStudyProtocolStage(IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
-            List<TrialDocumentWebDTO> webDocList = new ArrayList<TrialDocumentWebDTO>();
-            for (DocumentDTO docDTO : docDTOs) {
-                 webDocList.add(new TrialDocumentWebDTO(docDTO));
-            }
-            trialDTO.setDocDtos(webDocList);
+        List<TrialFundingWebDTO> webDTOs = new ArrayList<TrialFundingWebDTO>();
+        for (StudyFundingStageDTO fundingDto : fundingIsoDtos) {
+            webDTOs.add(convertToTrialFundingWebDTO(fundingDto));
+        }
+        trialDTO.setFundingDtos(webDTOs);
+        List<TrialIndIdeDTO> webIndDtos = new ArrayList<TrialIndIdeDTO>();
+        List<StudyIndIdeStageDTO> indIdeIsoDtos = PaRegistry.getStudyProtocolStageService()
+                .getIndIdesByStudyProtocolStage(IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
+        for (StudyIndIdeStageDTO isoIndDto : indIdeIsoDtos) {
+            webIndDtos.add(convertToTrialIndIdeDTO(isoIndDto));
+        }
+        trialDTO.setIndIdeDtos(webIndDtos);
+        if (StringUtils.isEmpty(trialDTO.getPropritaryTrialIndicator())
+                || trialDTO.getPropritaryTrialIndicator().equalsIgnoreCase(CommonsConstant.NO)) {
+            populateRegulatoryList((TrialDTO) trialDTO);
+        }
+        // populate doc
+        List<DocumentDTO> docDTOs = PaRegistry.getStudyProtocolStageService().getDocumentsByStudyProtocolStage(
+                IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
+        List<TrialDocumentWebDTO> webDocList = new ArrayList<TrialDocumentWebDTO>();
+        for (DocumentDTO docDTO : docDTOs) {
+            webDocList.add(new TrialDocumentWebDTO(docDTO));
+        }
+        trialDTO.setDocDtos(webDocList);
         return trialDTO;
     }
+
     /**
      * @param trialDTO dto
      * @return dto
      * @throws PAException on err
      */
-    @SuppressWarnings("unchecked")
     public BaseTrialDTO saveDraft(BaseTrialDTO trialDTO) throws PAException {
         validateLeadOrganization(trialDTO);
+        List<StudyFundingStageDTO> fundingDTOS = getDraftGrant(trialDTO);
+        List<StudyIndIdeStageDTO> indDTOS = getDraftIndIde(trialDTO);
+        return saveDraft(trialDTO, fundingDTOS, indDTOS);
+    }
 
+    private BaseTrialDTO saveDraft(BaseTrialDTO trialDTO, List<StudyFundingStageDTO> fundingDTOS,
+            List<StudyIndIdeStageDTO> indDTOS) throws PAException {
+        StudyProtocolStageDTO spStageDto = convertToStudyProtocolStageDTO(trialDTO);
+        List<DocumentDTO> docDTOS = convertToISODocumentList(trialDTO.getDocDtos());
         Ii tempStudyProtocolIi = null;
-        List<TrialFundingWebDTO> grantList = (List<TrialFundingWebDTO>) ServletActionContext.getRequest()
-            .getSession().getAttribute(Constants.GRANT_LIST);
-        List<TrialIndIdeDTO> indList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest()
-            .getSession().getAttribute(Constants.INDIDE_LIST);
-        List<StudyFundingStageDTO> fundingDTOS = new ArrayList<StudyFundingStageDTO>();
-        List<StudyIndIdeStageDTO> indDTOS = new ArrayList<StudyIndIdeStageDTO>();
-        if (CollectionUtils.isNotEmpty(grantList)) {
-            for (TrialFundingWebDTO fundingDto : grantList) {
-                fundingDTOS.add(convertToStudyFundingStage(fundingDto));
-            }
+        if (StringUtils.isNotEmpty(trialDTO.getStudyProtocolId())) {
+            StudyProtocolStageDTO dto = PaRegistry.getStudyProtocolStageService().update(spStageDto, fundingDTOS,
+                    indDTOS, docDTOS);
+            tempStudyProtocolIi = dto.getIdentifier();
+        } else {
+            tempStudyProtocolIi = PaRegistry.getStudyProtocolStageService().create(spStageDto, fundingDTOS, indDTOS,
+                    docDTOS);
         }
+        if (trialDTO instanceof TrialDTO) {
+            setOversgtInfo((TrialDTO) trialDTO);
+        }
+        trialDTO.setStudyProtocolId(tempStudyProtocolIi.getExtension());
+        return trialDTO;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<StudyIndIdeStageDTO> getDraftIndIde(BaseTrialDTO trialDTO) {
+        List<TrialIndIdeDTO> indList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest().getSession()
+                .getAttribute(Constants.INDIDE_LIST);
+        List<StudyIndIdeStageDTO> indDTOS = new ArrayList<StudyIndIdeStageDTO>();
         if (CollectionUtils.isNotEmpty(indList)) {
             for (TrialIndIdeDTO indDto : indList) {
                 indDTOS.add(convertToStudyIndIdeStage(indDto));
             }
         }
-
-        StudyProtocolStageDTO spStageDto = convertToStudyProtocolStageDTO(trialDTO);
-        List<DocumentDTO> docDTOS = convertToISODocumentList(trialDTO.getDocDtos());
-        if (StringUtils.isNotEmpty(trialDTO.getStudyProtocolId())) {
-            StudyProtocolStageDTO dto = PaRegistry.getStudyProtocolStageService().update(
-                    spStageDto, fundingDTOS, indDTOS, docDTOS);
-            tempStudyProtocolIi =  dto.getIdentifier();
-        } else {
-            tempStudyProtocolIi = PaRegistry.getStudyProtocolStageService().create(
-                    spStageDto, fundingDTOS, indDTOS, docDTOS);
+        ServletActionContext.getRequest().getSession().removeAttribute("indIdeList");
+        if (indList != null) {
+            trialDTO.setIndIdeDtos(indList);
         }
-       ServletActionContext.getRequest().getSession().removeAttribute("indIdeList");
-       ServletActionContext.getRequest().getSession().removeAttribute("grantList");
-       if (indList != null) {
-           trialDTO.setIndIdeDtos(indList);
-       }
-       if (grantList != null) {
-           trialDTO.setFundingDtos(grantList);
-       }
-       if (trialDTO instanceof TrialDTO) {
-            setOversgtInfo((TrialDTO) trialDTO);
-       }
-       trialDTO.setStudyProtocolId(tempStudyProtocolIi.getExtension());
-        return trialDTO;
+        return indDTOS;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<StudyFundingStageDTO> getDraftGrant(BaseTrialDTO trialDTO) {
+        List<TrialFundingWebDTO> grantList = (List<TrialFundingWebDTO>) ServletActionContext.getRequest().getSession()
+                .getAttribute(Constants.GRANT_LIST);
+        List<StudyFundingStageDTO> fundingDTOS = new ArrayList<StudyFundingStageDTO>();
+        if (CollectionUtils.isNotEmpty(grantList)) {
+            for (TrialFundingWebDTO fundingDto : grantList) {
+                fundingDTOS.add(convertToStudyFundingStage(fundingDto));
+            }
+        }
+        ServletActionContext.getRequest().getSession().removeAttribute("grantList");
+        if (grantList != null) {
+            trialDTO.setFundingDtos(grantList);
+        }
+        return fundingDTOS;
     }
 
     private void validateLeadOrganization(BaseTrialDTO trialDTO) throws PAException {
-        StringBuffer errMsg =  new StringBuffer();
+        StringBuffer errMsg = new StringBuffer();
         if (StringUtils.isEmpty(trialDTO.getLeadOrgTrialIdentifier())) {
             errMsg.append("Lead Organization Trial Identifier is required.");
         }
@@ -708,24 +735,26 @@ public class TrialUtil extends TrialConvertUtils {
     }
 
     /**
-     *
+     * 
      * @param trialDTO dto
      * @throws PAException on err
      */
     public void setOversgtInfo(TrialDTO trialDTO) throws PAException {
-       if (trialDTO.getSelectedRegAuth() != null) {
-            String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(Long.valueOf(
-                trialDTO.getSelectedRegAuth()), "RegulatoryAuthority");
+        if (trialDTO.getSelectedRegAuth() != null) {
+            String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
+                    Long.valueOf(trialDTO.getSelectedRegAuth()), "RegulatoryAuthority");
             trialDTO.setTrialOversgtAuthOrgName(orgName);
-       }
-       if (trialDTO.getLst() != null) {
+        }
+        if (trialDTO.getLst() != null) {
             String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
-               Long.valueOf(trialDTO.getLst()), "Country");
+                    Long.valueOf(trialDTO.getLst()), "Country");
             trialDTO.setTrialOversgtAuthCountryName(countryName);
-       }
+        }
     }
+
     /**
      * Gets the Proprietary trial dto from db.
+     * 
      * @param studyProtocolIi the study protocol ii
      * @param trialDTO the trial dto
      * @throws PAException the PA exception
@@ -735,7 +764,7 @@ public class TrialUtil extends TrialConvertUtils {
             NullifiedRoleException {
         StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         StudyProtocolQueryDTO spqDto = PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
-                                                Long.valueOf(studyProtocolIi.getExtension()));
+                Long.valueOf(studyProtocolIi.getExtension()));
         trialDTO.setOfficialTitle(spDTO.getOfficialTitle().getValue());
         trialDTO.setAssignedIdentifier(PAUtil.getAssignedIdentifierExtension(spDTO));
         trialDTO.setPhaseCode(spDTO.getPhaseCode().getCode());
@@ -750,19 +779,19 @@ public class TrialUtil extends TrialConvertUtils {
         copyLO(getCorrelationUtils().getPAOrganizationByIi(
                 IiConverter.convertToPaOrganizationIi(spqDto.getLeadOrganizationId())), trialDTO);
         copyNctNummber(studyProtocolIi, trialDTO);
-        copySummaryFour(PaRegistry.getStudyResourcingService().
-                getSummary4ReportedResourcing(studyProtocolIi), trialDTO);
+        copySummaryFour(PaRegistry.getStudyResourcingService().getSummary4ReportedResourcing(studyProtocolIi), 
+                trialDTO);
         copyParticipatingSites(studyProtocolIi, trialDTO);
     }
 
     /**
      * Gets the study site to update.
+     * 
      * @param ps the ps
      * @return the study site to update
      * @throws PAException the PA exception
      */
-    public List<StudySiteDTO> getStudySiteToUpdate(List<SubmittedOrganizationDTO> ps)
-    throws PAException {
+    public List<StudySiteDTO> getStudySiteToUpdate(List<SubmittedOrganizationDTO> ps) throws PAException {
         List<StudySiteDTO> ssDTO = new ArrayList<StudySiteDTO>();
         for (SubmittedOrganizationDTO dto : ps) {
             StudySiteDTO sp = PaRegistry.getStudySiteService().get(IiConverter.convertToIi(dto.getId()));
@@ -779,21 +808,22 @@ public class TrialUtil extends TrialConvertUtils {
             }
             ssDTO.add(sp);
         }
-         return ssDTO;
+        return ssDTO;
     }
+
     /**
-    * @param trialDTO2 trialDTO
-    */
-   public void removeAssignedIdentifierFromSecondaryIds(TrialDTO trialDTO2) {
-       for (Iterator<Ii> iter = trialDTO2.getSecondaryIdentifierList().iterator(); iter.hasNext();) {
-           Ii ii = iter.next();
-           if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
-               iter.remove();
-           } else {
-               ii.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
-           }
-       }
-   }
+     * @param trialDTO2 trialDTO
+     */
+    public void removeAssignedIdentifierFromSecondaryIds(TrialDTO trialDTO2) {
+        for (Iterator<Ii> iter = trialDTO2.getSecondaryIdentifierList().iterator(); iter.hasNext();) {
+            Ii ii = iter.next();
+            if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
+                iter.remove();
+            } else {
+                ii.setRoot(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
+            }
+        }
+    }
 
     /**
      * @return the correlationUtils
