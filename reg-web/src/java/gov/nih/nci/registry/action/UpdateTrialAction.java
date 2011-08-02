@@ -515,13 +515,10 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
             // set the overall status
             StudyOverallStatusDTO sosDto = null;
-            sosDto = getOverallStatusForUpdate(util);
-            // add the new irb doc
-            DocumentDTO documentDTO = util.convertToISODocument(trialDTO.getDocDtos(), studyProtocolIi);
-            List<DocumentDTO> documentDTOs = new ArrayList<DocumentDTO>();
-            if (documentDTO != null) {
-                documentDTOs.add(documentDTO);
-            }
+            sosDto = getOverallStatusForUpdate(util);            
+            
+            List<DocumentDTO> documentDTOs = util.convertToISODocument(trialDTO.getDocDtos(), studyProtocolIi);
+            
             // summary4 info
             StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO,
                     studyProtocolIi);

@@ -145,6 +145,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
@@ -555,56 +556,72 @@ public class TrialConvertUtils {
     *
     * @throws PAException ex
     */
-   public List<DocumentDTO> convertToISODocumentList(List<TrialDocumentWebDTO> docList) throws PAException {
-       List<DocumentDTO> studyDocDTOList = new ArrayList<DocumentDTO>();
-       //loop thru the iso dto
-       for (TrialDocumentWebDTO dto : docList) {
-           DocumentDTO isoDTO = new DocumentDTO();
-           isoDTO.setTypeCode(CdConverter.convertStringToCd(dto.getTypeCode()));
-           isoDTO.setFileName(StConverter.convertToSt(dto.getFileName()));
-           isoDTO.setText(EdConverter.convertToEd(dto.getText()));
-           if (StringUtils.isNotEmpty(dto.getStudyProtocolId())) {
-               isoDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(Long.valueOf(
-                       dto.getStudyProtocolId())));
-           }
-           if (StringUtils.isNotEmpty(dto.getId())) {
-               isoDTO.setIdentifier(IiConverter.convertToDocumentIi(Long.valueOf((dto.getId()))));
-           }
-           studyDocDTOList.add(isoDTO);
-       }
-       return studyDocDTOList;
-   }
-
-
-   /**
-    * Convert to iso irb document .
-    *
-    * @param docList the doc list
-    * @param studyProtocolIi the study protocol ii
-    *
-    * @return the trial document web dto
-    *
-    * @throws PAException the PA exception
-    */
-   public DocumentDTO convertToISODocument(List<TrialDocumentWebDTO> docList, Ii studyProtocolIi)
-   throws PAException {
-       List<DocumentDTO> docs = PaRegistry.getDocumentService().
-                                   getDocumentsByStudyProtocol(studyProtocolIi);
-       DocumentDTO docToUpdate = null;
-       if (docList != null && !docList.isEmpty()) {
-        for (DocumentDTO doc : docs) {
-         if (DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode().equals(
-                       CdConverter.convertCdToString(doc.getTypeCode()))) {
-            docToUpdate = doc;
-            break;
-         }
+    public List<DocumentDTO> convertToISODocumentList(List<TrialDocumentWebDTO> docList) throws PAException {
+        List<DocumentDTO> studyDocDTOList = new ArrayList<DocumentDTO>();        
+        for (TrialDocumentWebDTO dto : docList) {
+            DocumentDTO isoDTO = convertTrialDocumentDTOToDocumentDTO(dto);
+            studyDocDTOList.add(isoDTO);
         }
-        TrialDocumentWebDTO dto = docList.get(0);
-        docToUpdate.setFileName(StConverter.convertToSt(dto.getFileName()));
-        docToUpdate.setText(EdConverter.convertToEd(dto.getText()));
-       }
-       return docToUpdate;
-   }
+        return studyDocDTOList;
+    }
+
+    private DocumentDTO convertTrialDocumentDTOToDocumentDTO(TrialDocumentWebDTO dto) {
+        DocumentDTO isoDTO = new DocumentDTO();
+        isoDTO.setTypeCode(CdConverter.convertStringToCd(dto.getTypeCode()));
+        isoDTO.setFileName(StConverter.convertToSt(dto.getFileName()));
+        isoDTO.setText(EdConverter.convertToEd(dto.getText()));
+        if (StringUtils.isNotEmpty(dto.getStudyProtocolId())) {
+            isoDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(Long.valueOf(dto
+                .getStudyProtocolId())));
+        }
+        if (StringUtils.isNotEmpty(dto.getId())) {
+            isoDTO.setIdentifier(IiConverter.convertToDocumentIi(Long.valueOf((dto.getId()))));
+        }
+        return isoDTO;
+    }
+
+    /**
+     * Convert to iso irb document .
+     * 
+     * @param docList the doc list
+     * @param studyProtocolIi the study protocol ii
+     * 
+     * @return isoDTOList
+     * 
+     * @throws PAException the PA exception
+     */
+    public List<DocumentDTO> convertToISODocument(List<TrialDocumentWebDTO> docList, Ii studyProtocolIi)
+            throws PAException {
+        List<DocumentDTO> studyDocDTOList = new ArrayList<DocumentDTO>();
+
+        List<DocumentDTO> docs = PaRegistry.getDocumentService().getDocumentsByStudyProtocol(studyProtocolIi);
+
+        if (CollectionUtils.isNotEmpty(docList)) {
+            for (TrialDocumentWebDTO newDoc : docList) {
+                DocumentDTO docToUpdate = null;
+                docToUpdate = findDocumentByType(docs, newDoc.getTypeCode());
+                if (docToUpdate != null) {
+                    docToUpdate.setFileName(StConverter.convertToSt(newDoc.getFileName()));
+                    docToUpdate.setText(EdConverter.convertToEd(newDoc.getText()));
+                } else {
+                    docToUpdate = convertTrialDocumentDTOToDocumentDTO(newDoc);
+                }
+                studyDocDTOList.add(docToUpdate);
+            }
+        }
+        return studyDocDTOList;
+    }
+
+    private DocumentDTO findDocumentByType(List<DocumentDTO> docs, String typeCode) {       
+        for (DocumentDTO doc : docs) {
+            if (typeCode.equals(CdConverter.convertCdToString(doc.getTypeCode()))
+                    && !DocumentTypeCode.OTHER.getCode().equals(CdConverter.convertCdToString(doc.getTypeCode()))) {
+                return doc;                
+            }
+        }
+       return null;
+    }
+  
    /**
     * Convert to document dto.
     *
@@ -784,32 +801,53 @@ public class TrialConvertUtils {
        return grantsDTOList;
    }
 
-   /**
-    * Adds the secondary identifiers.
-    * @param spDTO the sp dto
-    * @param trialDTO the trial dto
-    */
-   public void addSecondaryIdentifiers(StudyProtocolDTO spDTO, TrialDTO trialDTO) {
-       List <Ii> secondaryIis = new ArrayList<Ii>();
-       if (trialDTO.getSecondaryIdentifierList() != null && !trialDTO.getSecondaryIdentifierList().isEmpty()) {
-         secondaryIis.addAll(trialDTO.getSecondaryIdentifierList());
-       }
-       if (trialDTO.getSecondaryIdentifierAddList() != null && !trialDTO.getSecondaryIdentifierAddList().isEmpty()) {
-         secondaryIis.addAll(trialDTO.getSecondaryIdentifierAddList());
-       }
-       if (spDTO.getSecondaryIdentifiers() != null && spDTO.getSecondaryIdentifiers().getItem() != null) {
-         for (Ii ii : spDTO.getSecondaryIdentifiers().getItem()) {
-           if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
-             secondaryIis.add(ii);
-             break;
-           }
-         }
-       }
+    /**
+     * Adds the secondary identifiers.
+     * @param spDTO the sp dto
+     * @param trialDTO the trial dto
+     */
+    public void addSecondaryIdentifiers(StudyProtocolDTO spDTO, TrialDTO trialDTO) {
+        List<Ii> secondaryIis = calculateSecondaryIis(spDTO, trialDTO);
 
         spDTO.getSecondaryIdentifiers().setItem(null);
         trialDTO.getSecondaryIdentifierList().clear();
         trialDTO.setSecondaryIdentifierList(secondaryIis);
-     }
+    }
+
+    private List<Ii> calculateSecondaryIis(StudyProtocolDTO spDTO, TrialDTO trialDTO) {
+        List<Ii> secondaryIis = new ArrayList<Ii>();
+
+        addSecondaryIdentifiersFromTrialIdentifierList(trialDTO, secondaryIis);
+
+        addSecondaryIdentifiersFromTrialIdentifierAddList(trialDTO, secondaryIis);
+
+        addSecondaryIdentifiersFromStudyProtocol(spDTO, secondaryIis);
+
+        return secondaryIis;
+    }
+
+    private void addSecondaryIdentifiersFromTrialIdentifierAddList(TrialDTO trialDTO, List<Ii> secondaryIis) {
+        if (trialDTO.getSecondaryIdentifierAddList() != null && !trialDTO.getSecondaryIdentifierAddList().isEmpty()) {
+            secondaryIis.addAll(trialDTO.getSecondaryIdentifierAddList());
+        }
+    }
+
+    private void addSecondaryIdentifiersFromTrialIdentifierList(TrialDTO trialDTO, List<Ii> secondaryIis) {
+        if (trialDTO.getSecondaryIdentifierList() != null && !trialDTO.getSecondaryIdentifierList().isEmpty()) {
+            secondaryIis.addAll(trialDTO.getSecondaryIdentifierList());
+        }
+    }
+
+    private void addSecondaryIdentifiersFromStudyProtocol(StudyProtocolDTO spDTO, List<Ii> secondaryIis) {
+        if (spDTO.getSecondaryIdentifiers() != null && spDTO.getSecondaryIdentifiers().getItem() != null) {
+            for (Ii ii : spDTO.getSecondaryIdentifiers().getItem()) {
+                if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
+                    secondaryIis.add(ii);
+                    break;
+                }
+            }
+        }
+    }
 
    /**
     * Convert to Ctep study site dto.
