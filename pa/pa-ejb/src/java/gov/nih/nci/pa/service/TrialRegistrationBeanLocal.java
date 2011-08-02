@@ -1891,7 +1891,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
                 if (!ISOUtil.isIiNull(docDto.getIdentifier())
                         && !getPAServiceUtils().isIiExistInPA(IiConverter.convertToDocumentIi(Long.valueOf(docDto
                                 .getIdentifier().getExtension())))) {
-                    errorMsg.append("Document id " + docDto.getIdentifier().getExtension() + " does not exits.");
+                    errorMsg.append("Document id " + docDto.getIdentifier().getExtension() + " does not exist.");
                 }
             }
             errorMsg.append(validatePoObjects(summary4organizationDTO, "Summary 4 Organization ", false));

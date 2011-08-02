@@ -305,7 +305,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
         for (DocumentDTO docDto : documentDTOs) {
             if (!ISOUtil.isIiNull(docDto.getIdentifier())
                     && (!paServiceUtils.isIiExistInPA(docDto.getIdentifier()))) {
-                errorMsg.append("Document id " + docDto.getIdentifier().getExtension() + " does not exits.");
+                errorMsg.append("Document id " + docDto.getIdentifier().getExtension() + " does not exist.");
             }
         }
         for (Iterator<DocumentDTO> iter = documentDTOs.listIterator(); iter.hasNext();) {
