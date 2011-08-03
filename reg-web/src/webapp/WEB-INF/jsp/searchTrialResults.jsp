@@ -62,8 +62,11 @@
             <display:column escapeXml="true" titleKey="search.trial.leadOrganizationName" property="leadOrganizationName" sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column escapeXml="true" titleKey="search.trial.localStudyProtocolIdentifier" property="localStudyProtocolIdentifier" sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column escapeXml="true" titleKey="search.trial.piFullName" property="piFullName" sortable="true" headerClass="sortable" headerScope="col"/>
-            <display:column titleKey="search.trial.documentWorkflowStatus" property="documentWorkflowStatusCode" sortable="true" headerClass="sortable" headerScope="col"/>
+            <display:column titleKey="search.trial.documentWorkflowStatus" property="documentWorkflowStatusCode.code" sortable="true" headerClass="sortable" headerScope="col"/>
             <display:column titleKey="search.trial.recordVerificationDate" property="recordVerificationDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
+            <display:column titleKey="search.trial.nctNumber" property="nctNumber" sortable="true" headerClass="sortable"/>
+            <display:column titleKey="search.trial.submitter" property="lastCreated.userLastDisplayName" sortable="true" headerClass="sortable"/>
+            
             <display:column titleKey="search.trial.update" sortable="false" headerClass="sortable" media="html">
                 <s:if test="%{#attr.row.proprietaryTrial}">
                     <s:url id="url" action="updateProprietaryTrialview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
