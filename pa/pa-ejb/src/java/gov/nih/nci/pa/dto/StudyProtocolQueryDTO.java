@@ -96,6 +96,7 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private Boolean showSendXml = false;
     private String summ4FundingSrcCategory;
     private boolean searcherTrialOwner = false;
+    private String nctNumber;
 
     /**
      * @return the trialCategory
@@ -191,4 +192,19 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     public String getSumm4FundingSrcCategory() {
         return summ4FundingSrcCategory;
     }
+
+    /**
+     * @return the nctNumber
+     */
+    public String getNctNumber() {
+        return nctNumber;
+    }
+
+    /**
+     * @param nctNumber the nctNumber to set
+     */
+    public void setNctNumber(String nctNumber) {
+        this.nctNumber = nctNumber;
+    }    
+    
 }

@@ -164,12 +164,13 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    
     private List<Organization> generateDistinctOrganizationQuery(String organizationType) throws PAException {
-        List<Organization> sortedOrganizations = new ArrayList<Organization>();
-        Set<Long> orgSet = new HashSet<Long>();
-
-        Session session = PaHibernateUtil.getCurrentSession();
+        StringBuffer hql = prepareDistinctOrganizationQuery(organizationType);
+        return executeDistinctOrganizationQuery(hql);
+    }
+    
+    private StringBuffer prepareDistinctOrganizationQuery(String organizationType) {
         StringBuffer hql = new StringBuffer();
         if (organizationType.equalsIgnoreCase(PAConstants.LEAD_ORGANIZATION)) {
             hql.append("select o from Organization o join o.researchOrganizations as ros join ros.studySites as sps"
@@ -186,6 +187,16 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
                     + "cast(o.id as string) = sr.organizationIdentifier and "
                     + "sr.summary4ReportedResourceIndicator = true order by o.name");
         }
+        return hql;
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private List<Organization> executeDistinctOrganizationQuery(StringBuffer hql) {
+        List<Organization> sortedOrganizations = new ArrayList<Organization>();
+        Set<Long> orgSet = new HashSet<Long>();
+
+        Session session = PaHibernateUtil.getCurrentSession();
         try {
             List<Organization> organizations = session.createQuery(hql.toString()).list();
             for (Organization o : organizations) {
@@ -198,7 +209,7 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
         }
         return sortedOrganizations;
     }
-
+    
     private List<PaOrganizationDTO> createOrganizationDTO(List<Organization> organizations) {
         List<PaOrganizationDTO> organizationDTOs = new ArrayList<PaOrganizationDTO>();
         PaOrganizationDTO oganizationDTO = null;

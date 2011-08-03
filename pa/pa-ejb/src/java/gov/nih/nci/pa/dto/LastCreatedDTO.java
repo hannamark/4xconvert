@@ -95,6 +95,7 @@ public class LastCreatedDTO {
     private String userLastCreated;
     private String userLastCreatedUsername;
     private Date dateLastCreated;
+    private String userLastDisplayName;
     
     /**
      * @return the userLastCreatedUsername
@@ -130,5 +131,17 @@ public class LastCreatedDTO {
     public void setDateLastCreated(Date dateLastCreated) {
         this.dateLastCreated = dateLastCreated;
     }
+    /**
+     * @return the userLastDisplayName
+     */
+    public String getUserLastDisplayName() {
+        return userLastDisplayName;
+    }
+    /**
+     * @param userLastDisplayName the userLastDisplayName to set
+     */
+    public void setUserLastDisplayName(String userLastDisplayName) {
+        this.userLastDisplayName = userLastDisplayName;
+    }   
 
 }

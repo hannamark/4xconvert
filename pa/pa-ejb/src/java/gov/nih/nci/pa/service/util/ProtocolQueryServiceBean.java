@@ -124,6 +124,7 @@ import gov.nih.nci.pa.service.search.StudyProtocolBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyProtocolOptions;
 import gov.nih.nci.pa.service.search.StudyProtocolQueryBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyProtocolSortCriterion;
+import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
@@ -165,6 +166,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
 
     @EJB
     private RegistryUserServiceLocal registryUserService;
+    
+    private PAServiceUtils paServiceUtils;
+    
     private static final Logger LOG = Logger.getLogger(ProtocolQueryServiceBean.class);
 
     /**
@@ -274,7 +278,13 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 studyProtocolDto.setPhaseAdditionalQualifier(studyProtocol.getPhaseAdditionalQualifierCode());
                 if (studyProtocol.getUserLastCreated() != null) {
                     studyProtocolDto.getLastCreated().setUserLastCreated(
-                            studyProtocol.getUserLastCreated().getLoginName());
+                                                                         studyProtocol.getUserLastCreated()
+                                                                             .getLoginName());
+
+                    studyProtocolDto.getLastCreated().setUserLastDisplayName(
+                                                                             CsmUserUtil
+                                                                                 .getDisplayUsername(studyProtocol
+                                                                                     .getUserLastCreated()));
                 }
                 if (studyProtocol.getPrimaryPurposeCode() != null) {
                     studyProtocolDto.setPrimaryPurpose(studyProtocol.getPrimaryPurposeCode().getCode());
@@ -348,6 +358,13 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 nonViewableMilestones.add(DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED);
                 nonViewableMilestones.add(DocumentWorkflowStatusCode.REJECTED);
                 studyProtocolDto.setViewTSR(!nonViewableMilestones.contains(documentWorkflowStatus));
+                
+                String nctNumber = getPaServiceUtils().getStudyIdentifier(
+                                                                          IiConverter
+                                                                              .convertToStudyProtocolIi(studyProtocol
+                                                                                  .getId()),
+                                                                          PAConstants.NCT_IDENTIFIER_TYPE);
+                studyProtocolDto.setNctNumber(nctNumber);
 
                 if ((myTrialsOnly && studyProtocolDto.isSearcherTrialOwner()) || !myTrialsOnly) {
                     studyProtocolDtos.add(studyProtocolDto);
@@ -721,4 +738,21 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     public void setRegistryUserService(RegistryUserServiceLocal registryUserService) {
         this.registryUserService = registryUserService;
     }
+
+    /**
+     * @return the paServiceUtils
+     */
+    public PAServiceUtils getPaServiceUtils() {
+        if (paServiceUtils == null) {
+            paServiceUtils = new PAServiceUtils();
+        }
+        return paServiceUtils;
+    }
+
+    /**
+     * @param paServiceUtils the paServiceUtils to set
+     */
+    public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
+        this.paServiceUtils = paServiceUtils;
+    }    
 }

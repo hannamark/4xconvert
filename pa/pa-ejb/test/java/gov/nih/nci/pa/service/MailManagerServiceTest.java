@@ -85,6 +85,7 @@ package gov.nih.nci.pa.service;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Country;
@@ -118,8 +119,8 @@ import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceBeanLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceBean;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceBean;
-import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserServiceBean;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceBean;
@@ -145,7 +146,7 @@ import org.junit.Test;
 public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
     MailManagerBeanLocal bean = new MailManagerBeanLocal();
-    ProtocolQueryServiceLocal protocolQrySrv = new ProtocolQueryServiceBean();
+    ProtocolQueryServiceBean protocolQrySrv = new ProtocolQueryServiceBean();
     RegistryUserServiceLocal registryUserSrv = new RegistryUserServiceBean();
     CTGovXmlGeneratorServiceLocal ctGovXmlSrv = new CTGovXmlGeneratorServiceBeanLocal();
     TSRReportGeneratorServiceRemote tsrReptSrv = new TSRReportGeneratorServiceBean();
@@ -166,6 +167,8 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         ServiceLocator svcLocator = mock(ServiceLocator.class);
         when(svcLocator.getStudyProtocolService()).thenReturn(new StudyProtocolServiceBean());
         PaRegistry.getInstance().setServiceLocator(svcLocator);
+        PAServiceUtils paServiceUtils = mock(PAServiceUtils.class);
+        protocolQrySrv.setPaServiceUtils(paServiceUtils);
 
         CSMUserService.setRegistryUserService(new MockCSMUserService());
 
@@ -175,7 +178,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         bean.setTsrReportGeneratorService(tsrReptSrv);
         bean.setLookUpTableService(lookUpTableSrv);
         bean.setDocWrkflStatusSrv(docWrkStatSrv);
-        bean.setStudySiteService(studySiteService);
+        bean.setStudySiteService(studySiteService);      
 
         //setup owners for both prop/nonprop trials.
         RegistryUser owner1 = new RegistryUser();
