@@ -927,11 +927,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
         return retMaxVal;
     }
 
-    private void enforceEligibilityBusinessRules() throws PAException {
-
-        if (StringUtils.isEmpty(webDTO.getStructuredType())) {
-            addFieldError("webDTO.structuredType", getText("error.structuredType.mandatory"));
-        }
+    private void enforceEligibilityBusinessRules() throws PAException {        
         String ruleError = rulesForDisplayOrder(webDTO.getDisplayOrder());
         if (ruleError.length() > 0) {
             addFieldError("webDTO.displayOrder", ruleError);
@@ -940,6 +936,18 @@ public class EligibilityCriteriaAction extends ActionSupport {
                 && webDTO.getTextDescription().length() > MAXIMUM_CHAR_DESCRIPTION) {
             addFieldError("webDTO.TextDescription", getText("error.spType.description.maximumChar"));
         }
+        
+        validateStructuredTypeRules();
+
+        HashSet<String> order = new HashSet<String>();
+        String dispOrder = checkDisplayOrderExists(webDTO.getDisplayOrder(), id, buildDisplayOrderDBList(), order);
+        if (StringUtils.isNotEmpty(dispOrder)) {
+            String mesg = "Display Order(s) exist: ";
+            addFieldError("webDTO.displayOrder", mesg + dispOrder);
+        }
+    }
+    
+    private void validateStructuredTypeRules() {
         if (StringUtils.isNotEmpty(webDTO.getStructuredType())) {
             if (STRUCTURED.equalsIgnoreCase(webDTO.getStructuredType())) {
                 if (StringUtils.isEmpty(webDTO.getTextDescription()) || isBuildCriterionEmpty()) {
@@ -955,13 +963,8 @@ public class EligibilityCriteriaAction extends ActionSupport {
             } else if (StringUtils.isEmpty(webDTO.getTextDescription())) {
                 addFieldError("webDTO.buldcriterion", getText("error.unstructured.description"));
             }
-        }
-
-        HashSet<String> order = new HashSet<String>();
-        String dispOrder = checkDisplayOrderExists(webDTO.getDisplayOrder(), id, buildDisplayOrderDBList(), order);
-        if (StringUtils.isNotEmpty(dispOrder)) {
-            String mesg = "Display Order(s) exist: ";
-            addFieldError("webDTO.displayOrder", mesg + dispOrder);
+        } else {
+            addFieldError("webDTO.structuredType", getText("error.structuredType.mandatory"));
         }
     }
 

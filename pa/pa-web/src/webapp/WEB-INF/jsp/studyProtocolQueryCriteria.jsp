@@ -37,6 +37,16 @@
                 $("studyLockedBy").checked=false;
                 $("trialCategory").value="";
             }
+
+            document.onkeypress = runEnterScript;
+            function runEnterScript(e) {
+                var KeyID = (window.event) ? event.keyCode : e.keyCode;
+                if (KeyID == 13) {
+                    handleAction();
+                    return false;
+                }
+            }
+            
         </script>
     </head>
     <body>
