@@ -242,8 +242,6 @@ public class BatchCreateProtocols {
     private Ii submitUpdate(StudyProtocolBatchDTO dto, String folderPath, String userName) throws PAException,
             NullifiedRoleException, NullifiedEntityException, URISyntaxException, EntityValidationException,
             CurationException, IOException {
-        Ii studyProtocolIi = null;
-
         TrialUtil util = new TrialUtil();
         TrialDTO trialDTO = new TrialDTO();
 
@@ -258,27 +256,11 @@ public class BatchCreateProtocols {
         if (querydto.isProprietaryTrial()) {
             throw new PAException("Proprietary trials Update not supported. ");
         }
-        studyProtocolIi = IiConverter.convertToIi(listofDto.get(0).getStudyProtocolId());
+        Ii studyProtocolIi = IiConverter.convertToIi(listofDto.get(0).getStudyProtocolId());
 
-        StudyRegulatoryAuthorityDTO studyRegAuthDTO = new StudyRegulatoryAuthorityDTO();
-        if (dto.isCtGovXmlIndicator()) {
-            Long regAuthId =
-                    PaRegistry.getRegulatoryInformationService().getRegulatoryAuthorityId(dto.getOversightOrgName(),
-                            dto.getOversightAuthorityCountry());
-            studyRegAuthDTO.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(regAuthId));
-
-            studyRegAuthDTO.setStudyProtocolIdentifier(studyProtocolIi);
-        }
         trialDTO = getTrialDTOForUpdate(dto, folderPath, studyProtocolIi);
 
-        StudyRegulatoryAuthorityDTO sraFromDatabaseDTO =
-                PaRegistry.getStudyRegulatoryAuthorityService().getCurrentByStudyProtocol(studyProtocolIi);
-        if (sraFromDatabaseDTO != null) {
-            studyRegAuthDTO.setIdentifier(sraFromDatabaseDTO.getIdentifier());
-        }
-
-        StudyProtocolDTO studyProtocolDTO = null;
-        studyProtocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+        StudyProtocolDTO studyProtocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         if (studyProtocolDTO.getSecondaryIdentifiers() != null
                 && studyProtocolDTO.getSecondaryIdentifiers().getItem() != null) {
             List<Ii> listIi = new ArrayList<Ii>();
@@ -298,30 +280,7 @@ public class BatchCreateProtocols {
         StudyOverallStatusDTO overallStatusDTO = util.convertToStudyOverallStatusDTO(trialDTO);
         overallStatusDTO.setStudyProtocolIdentifier(studyProtocolIi);
         List<DocumentDTO> documentDTOs = util.convertToISODocumentList(trialDTO.getDocDtos());
-        StudyContactDTO studyContactDTO = null;
-        StudySiteContactDTO studySiteContactDTO = null;
-        OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
-
-        StudyResourcingDTO summary4studyResourcingDTO =
-                util.convertToSummary4StudyResourcingDTO(trialDTO, studyProtocolIi);
-        Ii responsiblePartyContactIi = null;
-        // check if ctgov xml indicator is true
-        if (dto.isCtGovXmlIndicator()) {
-            if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
-                studyContactDTO = util.convertToStudyContactDTO(trialDTO);
-            } else {
-                studySiteContactDTO = util.convertToStudySiteContactDTO(trialDTO);
-                if (trialDTO.getResponsiblePersonName() != null && !trialDTO.getResponsiblePersonName().equals("")) {
-                    responsiblePartyContactIi =
-                            IiConverter.convertToPoPersonIi(trialDTO.getResponsiblePersonIdentifier());
-                }
-                if (trialDTO.getResponsibleGenericContactName() != null
-                        && !trialDTO.getResponsibleGenericContactName().equals("")) {
-                    responsiblePartyContactIi =
-                            IiConverter.convertToPoOrganizationalContactIi(trialDTO.getResponsiblePersonIdentifier());
-                }
-            }
-        }
+        
         List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeDtos(), null);
         if (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty()) {
             for (Iterator<StudyIndldeDTO> it = studyIndldeDTOs.iterator(); it.hasNext();) {
@@ -344,17 +303,11 @@ public class BatchCreateProtocols {
                 }
             }
         }
-        // set the NCT number, DCP and CTEP Identifiers
-        List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
-        studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, studyProtocolIi));
-        studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, studyProtocolIi));
-        studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, studyProtocolIi));
 
         // get the values from db and update only those are needed and then convert
-        PaRegistry.getTrialRegistrationService().update(studyProtocolDTO, overallStatusDTO, studyIdentifierDTOs,
-                studyIndldeDTOs, studyResourcingDTOs, documentDTOs, studyContactDTO, studySiteContactDTO,
-                summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO, null, null,
-                null, BlConverter.convertToBl(Boolean.TRUE));
+        PaRegistry.getTrialRegistrationService().update(studyProtocolDTO, overallStatusDTO, studyResourcingDTOs, 
+                                                        documentDTOs, null, null, 
+                                                        BlConverter.convertToBl(Boolean.TRUE));
 
         return studyProtocolIi;
     }

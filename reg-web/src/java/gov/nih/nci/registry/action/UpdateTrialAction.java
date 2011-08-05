@@ -5,16 +5,12 @@ import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
-import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
-import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -31,12 +27,13 @@ import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
 import gov.nih.nci.registry.util.TrialUtil;
-import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -53,7 +50,6 @@ import com.opensymphony.xwork2.util.Element;
  * 
  * @author Vrushali
  */
-@SuppressWarnings("unchecked")
 public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     private static final long serialVersionUID = 1L;
@@ -417,15 +413,17 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
      * 
      * @return s
      */
+    @SuppressWarnings("unchecked")
     public String reviewUpdate() {
+        HttpSession session = ServletActionContext.getRequest().getSession();
         try {
             clearErrorsAndMessages();
             enforceBusinessRules();
             if (hasFieldErrors()) {
                 ServletActionContext.getRequest().setAttribute(
-                        "failureMessage",
-                        "The form has errors and could not be submitted, "
-                                + "please check the fields highlighted below");
+                                                               "failureMessage",
+                                                               "The form has errors and could not be submitted, "
+                                                                       + "please check the fields highlighted below");
                 TrialValidator.addSessionAttributes(trialDTO);
                 trialUtil.populateRegulatoryList(trialDTO);
                 synchActionWithDTO();
@@ -438,15 +436,15 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
                 return ERROR;
             }
             trialDTO.setDocDtos(getTrialDocuments());
+
             // add the IndIde,FundingList
-            List<TrialIndIdeDTO> indAddList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest().getSession()
-                    .getAttribute(Constants.INDIDE_ADD_LIST);
+            List<TrialIndIdeDTO> indAddList = (List<TrialIndIdeDTO>) session.getAttribute(Constants.INDIDE_ADD_LIST);
             if (indAddList != null) {
                 trialDTO.setIndIdeAddDtos(indAddList);
                 setIndIdeAddDtos(indAddList);
             }
-            List<TrialFundingWebDTO> grantAddList = (List<TrialFundingWebDTO>) ServletActionContext.getRequest()
-                    .getSession().getAttribute(Constants.GRANT_ADD_LIST);
+            List<TrialFundingWebDTO> grantAddList = (List<TrialFundingWebDTO>) session
+                .getAttribute(Constants.GRANT_ADD_LIST);
             if (grantAddList != null) {
                 trialDTO.setFundingAddDtos(grantAddList);
                 setFundingAddDtos(grantAddList);
@@ -454,8 +452,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             if (trialDTO.isXmlRequired()) {
                 trialUtil.setOversgtInfo(trialDTO);
             }
-            List<Ii> otherIdsList = (List<Ii>) ServletActionContext.getRequest().getSession()
-                    .getAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
+            List<Ii> otherIdsList = (List<Ii>) session.getAttribute(Constants.SECONDARY_IDENTIFIERS_LIST);
             if (otherIdsList != null) {
                 trialDTO.setSecondaryIdentifierAddList(otherIdsList);
             }
@@ -472,7 +469,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             return ERROR;
         }
         TrialValidator.removeSessionAttributes();
-        ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
+        session.setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
         return "review";
     }
 
@@ -514,41 +511,10 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             spDTO.setUserLastCreated(StConverter.convertToSt(UsernameHolder.getUser()));
 
             // set the overall status
-            StudyOverallStatusDTO sosDto = null;
-            sosDto = getOverallStatusForUpdate(util);            
-            
+            StudyOverallStatusDTO sosDto = getOverallStatusForUpdate(util);
+
             List<DocumentDTO> documentDTOs = util.convertToISODocument(trialDTO.getDocDtos(), studyProtocolIi);
             
-            // summary4 info
-            StudyResourcingDTO summary4studyResourcingDTO = util.convertToSummary4StudyResourcingDTO(trialDTO,
-                    studyProtocolIi);
-            OrganizationDTO summary4orgDTO = util.convertToSummary4OrgDTO(trialDTO);
-
-            StudyContactDTO studyContactDTO = null;
-            StudySiteContactDTO studyParticipationContactDTO = null;
-            Ii responsiblePartyContactIi = null;
-            // updated only if the ctGovXmlRequired is true
-            if (spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-                if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
-                    studyContactDTO = new StudyContactDTO();
-                    util.convertToStudyContactDTO(trialDTO, studyContactDTO);
-
-                } else {
-                    studyParticipationContactDTO = new StudySiteContactDTO();
-                    util.convertToStudySiteContactDTO(trialDTO, studyParticipationContactDTO);
-
-                    if (trialDTO.getResponsiblePersonName() != null 
-                            && !trialDTO.getResponsiblePersonName().equals("")) {
-                        responsiblePartyContactIi = IiConverter.convertToPoPersonIi(trialDTO
-                                .getResponsiblePersonIdentifier());
-                    }
-                    if (trialDTO.getResponsibleGenericContactName() != null
-                            && !trialDTO.getResponsibleGenericContactName().equals("")) {
-                        responsiblePartyContactIi = IiConverter.convertToPoOrganizationalContactIi(trialDTO
-                                .getResponsiblePersonIdentifier());
-                    }
-                }
-            }
             // indide updates and adds
             List<StudyIndldeDTO> studyIndldeDTOList = new ArrayList<StudyIndldeDTO>();
             // updated
@@ -575,15 +541,6 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
                 studyResourcingDTOs.addAll(studyResourcingAddDTOs);
             }
 
-            // updated only if the ctGovXmlRequired is true
-            StudyRegulatoryAuthorityDTO studyRegAuthDTO = null;
-            if (spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-                // update StudyRegulatory
-                studyRegAuthDTO = util.getStudyRegAuth(studyProtocolIi, trialDTO);
-            }
-            // collaborators update - send the collaborators list
-            List<StudySiteDTO> collaboratorsDTOList = getCollaboratorsForUpdate(trialDTO.getCollaborators());
-
             // ps update- send the participating sites list
             List<StudySiteAccrualStatusDTO> pssDTOList = getParticipatingSitesForUpdate(trialDTO
                     .getParticipatingSites());
@@ -592,15 +549,11 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             List<StudySiteDTO> prgCdUpdatedList = getStudySiteToUpdateProgramCode(trialDTO.getParticipatingSites());
 
             updateId = studyProtocolIi;
-            List<StudySiteDTO> studyIdentifierDTOs = new ArrayList<StudySiteDTO>();
-            studyIdentifierDTOs.add(util.convertToNCTStudySiteDTO(trialDTO, studyProtocolIi));
-            studyIdentifierDTOs.add(util.convertToDCPStudySiteDTO(trialDTO, studyProtocolIi));
-            studyIdentifierDTOs.add(util.convertToCTEPStudySiteDTO(trialDTO, studyProtocolIi));
+           
             // call the service to invoke the update method
-            PaRegistry.getTrialRegistrationService().update(spDTO, sosDto, studyIdentifierDTOs, studyIndldeDTOList,
-                    studyResourcingDTOs, documentDTOs, studyContactDTO, studyParticipationContactDTO, summary4orgDTO,
-                    summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO, collaboratorsDTOList,
-                    pssDTOList, prgCdUpdatedList, BlConverter.convertToBl(Boolean.FALSE));
+            PaRegistry.getTrialRegistrationService().update(spDTO, sosDto, studyResourcingDTOs, documentDTOs,
+                                                            pssDTOList, prgCdUpdatedList,
+                                                            BlConverter.convertToBl(Boolean.FALSE));
             TrialValidator.removeSessionAttributes();
             ServletActionContext.getRequest().getSession().setAttribute("protocolId", updateId.getExtension());
             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", updateId);
@@ -776,24 +729,6 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         return studyResoureDTO;
     }
 
-    /**
-     * Gets the collaborators for update.
-     * 
-     * @param collaboratorsList the collaborators list
-     * 
-     * @return the collaborators for update
-     * 
-     * @throws PAException the PA exception
-     */
-    private List<StudySiteDTO> getCollaboratorsForUpdate(List<PaOrganizationDTO> collaboratorsList) throws PAException {
-        List<StudySiteDTO> ssDTO = new ArrayList<StudySiteDTO>();
-        for (PaOrganizationDTO dto : collaboratorsList) {
-            StudySiteDTO sp = PaRegistry.getStudySiteService().get(IiConverter.convertToIi(dto.getId()));
-            sp.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.getByCode(dto.getFunctionalRole())));
-            ssDTO.add(sp);
-        }
-        return ssDTO;
-    }
 
     /**
      * Gets the participating sites for update.

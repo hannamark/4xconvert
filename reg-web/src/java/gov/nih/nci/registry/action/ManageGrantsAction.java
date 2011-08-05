@@ -85,6 +85,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -93,30 +95,18 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Vrushali
  *
  */
-@SuppressWarnings("unchecked")
 public class ManageGrantsAction extends ActionSupport {
+    
     private static final long serialVersionUID = 1L;
+    
     private String fundingMechanismCode;
     private String nihInstitutionCode;
     private String serialNumber;
     private String nciDivisionProgramCode;
     private String uuid;
-    /**
-     * @return the uuid
-     */
-    public String getUuid() {
-        return uuid;
-    }
 
     /**
-     * @param uuid the uuid to set
-     */
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    /**
-     *
+     * 
      * @return s
      */
     public String addGrant() {
@@ -124,20 +114,69 @@ public class ManageGrantsAction extends ActionSupport {
         return "display_grants";
     }
 
-    private void addNewGrantToSession(final String sessionListName) {
+    /**
+     * 
+     * @return s
+     */
+    public String addGrantForUpdate() {
+        addNewGrantToSession(Constants.GRANT_ADD_LIST);
+        return "display_grants_add";
+    }
+
+    @SuppressWarnings("unchecked")
+    private void addNewGrantToSession(String sessionListName) {
         TrialFundingWebDTO grantHolder = new TrialFundingWebDTO();
         grantHolder.setFundingMechanismCode(fundingMechanismCode);
         grantHolder.setNihInstitutionCode(nihInstitutionCode);
         grantHolder.setSerialNumber(serialNumber);
         grantHolder.setNciDivisionProgramCode(nciDivisionProgramCode);
         grantHolder.setRowId(UUID.randomUUID().toString());
-        List<TrialFundingWebDTO> sessionList = (List<TrialFundingWebDTO>) ServletActionContext.getRequest()
-            .getSession().getAttribute(sessionListName);
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        List<TrialFundingWebDTO> sessionList = (List<TrialFundingWebDTO>) session.getAttribute(sessionListName);
         if (sessionList == null) {
             sessionList = new ArrayList<TrialFundingWebDTO>();
+            session.setAttribute(sessionListName, sessionList);
         }
         sessionList.add(grantHolder);
-        ServletActionContext.getRequest().getSession().setAttribute(sessionListName, sessionList);
+    }
+
+    /**
+     * 
+     * @return result
+     */
+    public String deleteGrant() {
+        deleteGrantFromSession(Constants.GRANT_LIST);
+        return "display_grants";
+    }
+
+    /**
+     * 
+     * @return result
+     */
+    public String deleteGrantForUpdate() {
+        deleteGrantFromSession(Constants.GRANT_ADD_LIST);
+        return "display_grants_add";
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void deleteGrantFromSession(String sessionListName) {
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        List<TrialFundingWebDTO> sessionList = (List<TrialFundingWebDTO>) session.getAttribute(sessionListName);
+        for (int i = sessionList.size() - 1; i >= 0; i--) {
+            TrialFundingWebDTO holder = sessionList.get(i);
+            if (holder.getRowId().equals(uuid)) {
+                sessionList.remove(i);
+            }
+        }
+    }
+
+    /**
+     * Keeps the user looking at the spinning wheel until a SUCCESS/EXCEPTION occurs.
+     * 
+     * @return res
+     */
+    public String showWaitDialog() {
+        return "show_ok_create";
     }
 
     /**
@@ -197,58 +236,17 @@ public class ManageGrantsAction extends ActionSupport {
     }
 
     /**
-     *
-     * @return result
+     * @return the uuid
      */
-    public String deleteGrant() {
-        TrialFundingWebDTO holder;
-        List<TrialFundingWebDTO> sessionList =
-                (List<TrialFundingWebDTO>) ServletActionContext.getRequest().getSession().getAttribute(
-                        Constants.GRANT_LIST);
-        for (int i = 0; i < sessionList.size(); i++) {
-            holder = sessionList.get(i);
-            if (holder.getRowId().equals(uuid)) {
-                sessionList.remove(i);
-            }
-        }
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_LIST, sessionList);
-        return "display_grants";
+    public String getUuid() {
+        return uuid;
     }
 
     /**
-     * Keeps the user looking at the spinning wheel until a SUCCESS/EXCEPTION occurs.
-     *
-     * @return res
+     * @param uuid the uuid to set
      */
-    public String showWaitDialog() {
-        return "show_ok_create";
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
-    /**
-     *
-     * @return s
-     */
-    public String addGrantForUpdate() {
-        addNewGrantToSession(Constants.GRANT_ADD_LIST);
-        return "display_grants_add";
-    }
-
-    /**
-     *
-     * @return result
-     */
-    public String deleteGrantForUpdate() {
-        TrialFundingWebDTO holder;
-        List<TrialFundingWebDTO> sessionList =
-                (List<TrialFundingWebDTO>) ServletActionContext.getRequest().getSession().getAttribute(
-                        Constants.GRANT_ADD_LIST);
-        for (int i = 0; i < sessionList.size(); i++) {
-            holder = sessionList.get(i);
-            if (holder.getRowId().equals(uuid)) {
-                sessionList.remove(i);
-            }
-        }
-        ServletActionContext.getRequest().getSession().setAttribute(Constants.GRANT_ADD_LIST, sessionList);
-        return "display_grants_add";
-    }
 }

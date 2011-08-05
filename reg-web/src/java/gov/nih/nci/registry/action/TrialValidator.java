@@ -140,6 +140,7 @@ public class TrialValidator {
     protected static String getText(String messageKey) {
         return ResourceBundle.getBundle("ApplicationResources").getString(messageKey);
     }
+    
     /**
      *
      * @param trialDto dto
@@ -156,6 +157,7 @@ public class TrialValidator {
         validateSummaryFourInfo(trialDto, addFieldError);
         return addFieldError;
     }
+    
     private void validateStudyStatusReason(TrialDTO trialDto, Map<String, String> addFieldError) {
         if (StringUtils.isNotEmpty(trialDto.getStatusCode())
               && TRIAL_STATUS_REQ_SET.contains(trialDto.getStatusCode())) {
@@ -165,12 +167,14 @@ public class TrialValidator {
             addFieldError.put("trialDTO.reason", getText("error.reason.maxLength"));
          }
     }
+    
     private void validatePrimaryPurposeOtherText(TrialDTO trialDto, Map<String, String> addFieldError) {
         if (PAUtil.isPrimaryPurposeOtherTextReq(trialDto.getPrimaryPurposeCode(),
                trialDto.getPrimaryPurposeAdditionalQualifierCode(), trialDto.getPrimaryPurposeOtherText())) {
               addFieldError.put("trialDTO.primaryPurposeOtherText", getText("error.submit.otherPurposeText"));
         }
     }
+    
     private void validatePrimaryPurposeAdditionalQualifier(TrialDTO trialDto, Map<String, String> addFieldError) {
         if (PAUtil.isPrimaryPurposeOtherCodeReq(trialDto.getPrimaryPurposeCode(),
                 trialDto.getPrimaryPurposeAdditionalQualifierCode())) {
@@ -178,12 +182,12 @@ public class TrialValidator {
                    getText("error.submit.otherPurposeCode"));
         }
     }
-    private void validateTrialDTO(TrialDTO trialDto, Map<String, String> addFieldError) {
-        InvalidValue[] invalidValues = new ClassValidator(trialDto.getClass()).getInvalidValues(trialDto);
 
+    private void validateTrialDTO(TrialDTO trialDto, Map<String, String> addFieldError) {
+        InvalidValue[] invalidValues = new ClassValidator<TrialDTO>(TrialDTO.class).getInvalidValues(trialDto);
         for (int i = 0; i < invalidValues.length; i++) {
             addFieldError.put("trialDTO." + invalidValues[i].getPropertyName(), getText(invalidValues[i].getMessage()
-                    .trim()));
+                .trim()));
         }
     }
     private void validateDateAndFormat(TrialDTO trialDto, Map<String, String> addFieldError) {
@@ -202,7 +206,7 @@ public class TrialValidator {
         return StringUtils.isNotEmpty(code) && RegistryUtil.isValidDate(strDate);
     }
 
-    private void addErrorForDate(String fieldValue, String fieldName, String errMsg,
+    private void addErrorForDate(String fieldValue, String fieldName, String errMsg, 
             Map<String, String> fieldErrorMap) {
         if (!RegistryUtil.isValidDate(fieldValue)) {
             fieldErrorMap.put(fieldName, errMsg);
@@ -360,12 +364,9 @@ public class TrialValidator {
         }
         return webDTO;
     }
+    
     /**
-     *
-     * @param fileName
-     * @param file
-     * @param errorField
-     * @param errorMsg
+     * Removes the session attributes.
      */
     public static void removeSessionAttributes() {
         ServletActionContext.getRequest().getSession().removeAttribute("indIdeList");

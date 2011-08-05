@@ -113,6 +113,16 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void update(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
+            List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
+            List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs, List<StudySiteDTO> studySiteDTOs, 
+            Bl isBatchMode)
+            throws PAException {
+    }
+
 
 
 
