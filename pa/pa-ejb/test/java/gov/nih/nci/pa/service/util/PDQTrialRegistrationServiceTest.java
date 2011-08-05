@@ -245,8 +245,8 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         trialRegistrationSvc.setStudyProtocolService(new StudyProtocolServiceBean());
         trialRegistrationSvc.setOcsr(orgCorrelationSvc);
         trialRegistrationSvc.setStudySiteService(new StudySiteServiceBean());
-        trialRegistrationSvc.setUserServiceLocal(new MockRegistryUserServiceBean());
-        trialRegistrationSvc.setDocWrkFlowStatusService(new DocumentWorkflowStatusBeanLocal());
+        trialRegistrationSvc.setRegistryUserServiceLocal(new MockRegistryUserServiceBean());
+        trialRegistrationSvc.setDocumentWorkFlowStatusService(new DocumentWorkflowStatusBeanLocal());
         trialRegistrationSvc.setStudyInboxServiceLocal(new StudyInboxServiceBean());
         trialRegistrationSvc.setStudyRegulatoryAuthorityService(new StudyRegulatoryAuthorityBeanLocal());
         trialRegistrationSvc.setMailManagerSerivceLocal(mailManagerSerivceLocal);

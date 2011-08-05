@@ -96,8 +96,6 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.util.List;
 
 import javax.ejb.Remote;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 
 /**
  * @author Naveen Amiruddin
@@ -109,13 +107,7 @@ import javax.ejb.TransactionAttributeType;
 public interface TrialRegistrationServiceRemote {
 
     /**
-     * An action plan and execution of a pre-clinical or clinical study including all activities to test a particular
-     * hypothesis that is the basis of the study regarding the effectiveness of a particular treatment, drug, device,
-     * procedure, or care plan. This includes prevention, observational, therapeutic, and other types of studies that
-     * involve subjects.:
-     * <ul>
-     * <li>
-     * </ul>
+     * Creates a study protocol.
      *
      * @param studyProtocolDTO StudyProtocolDTO
      * @param overallStatusDTO OverallStatusDTO
@@ -150,10 +142,7 @@ public interface TrialRegistrationServiceRemote {
     // CHECKSTYLE:ON
 
     /**
-     * An action plan and execution of a pre-clinical for amending an existing protocols.
-     * <ul>
-     * <li>
-     * </ul>
+     * Amends a study protocol.
      *
      * @param studyProtocolDTO StudyProtocolDTO
      * @param overallStatusDTO OverallStatusDTO
@@ -188,10 +177,7 @@ public interface TrialRegistrationServiceRemote {
     // CHECKSTYLE:ON
 
     /**
-     * An action plan and execution of a pre-clinical for Updating an existing protocols.
-     * <ul>
-     * <li>
-     * </ul>
+     * Updates a study protocol.
      *
      * @param studyProtocolDTO StudyProtocolDTO
      * @param overallStatusDTO OverallStatusDTO
@@ -222,9 +208,26 @@ public interface TrialRegistrationServiceRemote {
             List<StudySiteDTO> studySiteDTOs, Bl isBatchMode) throws PAException;
 
     // CHECKSTYLE:ON
+    
+    /**
+     * Updates a study protocol.
+     * 
+     * @param studyProtocolDTO StudyProtocolDTO
+     * @param overallStatusDTO OverallStatusDTO
+     * @param studyResourcingDTOs list of nih grants
+     * @param documentDTOs List of documents IRB and Participating doc
+     * @param studySiteAccrualStatusDTOs list of updated participating sites
+     * @param studySiteDTOs list of StudySite DTOs with updated program code
+     * @param isBatchMode to identify if batch is caller
+     * @throws PAException on error
+     */
+    void update(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
+            List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
+            List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs, List<StudySiteDTO> studySiteDTOs, 
+            Bl isBatchMode) throws PAException;
 
     /**
-     *
+     * Creates a proprietary study protocol.
      * @param studyProtocolDTO studyProtocolDTO
      * @param studySiteAccrualStatusDTO studySiteAccrualStatusDTO
      * @param documentDTOs documentDTOs
@@ -240,7 +243,6 @@ public interface TrialRegistrationServiceRemote {
      * @return Ii
      * @throws PAException e
      */
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     // CHECKSTYLE:OFF More than 7 parameters
     Ii createAbbreviatedInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
             StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, List<DocumentDTO> documentDTOs,

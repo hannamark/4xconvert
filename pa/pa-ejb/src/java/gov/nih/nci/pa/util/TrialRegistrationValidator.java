@@ -1,0 +1,1186 @@
+/**
+ * The software subject to this notice and license includes both human readable
+ * source code form and machine readable, binary, object code form. The pa
+ * Software was developed in conjunction with the National Cancer Institute 
+ * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent 
+ * government employees are authors, any rights in such works shall be subject 
+ * to Title 17 of the United States Code, section 105. 
+ *
+ * This pa Software License (the License) is between NCI and You. You (or 
+ * Your) shall mean a person or an entity, and all other entities that control, 
+ * are controlled by, or are under common control with the entity. Control for 
+ * purposes of this definition means (i) the direct or indirect power to cause 
+ * the direction or management of such entity, whether by contract or otherwise,
+ * or (ii) ownership of fifty percent (50%) or more of the outstanding shares, 
+ * or (iii) beneficial ownership of such entity. 
+ *
+ * This License is granted provided that You agree to the conditions described 
+ * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up, 
+ * no-charge, irrevocable, transferable and royalty-free right and license in 
+ * its rights in the pa Software to (i) use, install, access, operate, 
+ * execute, copy, modify, translate, market, publicly display, publicly perform,
+ * and prepare derivative works of the pa Software; (ii) distribute and 
+ * have distributed to and by third parties the pa Software and any 
+ * modifications and derivative works thereof; and (iii) sublicense the 
+ * foregoing rights set out in (i) and (ii) to third parties, including the 
+ * right to license such rights to further third parties. For sake of clarity, 
+ * and not by way of limitation, NCI shall have no right of accounting or right 
+ * of payment from You or Your sub-licensees for the rights granted under this 
+ * License. This License is granted at no charge to You.
+ *
+ * Your redistributions of the source code for the Software must retain the 
+ * above copyright notice, this list of conditions and the disclaimer and 
+ * limitation of liability of Article 6, below. Your redistributions in object 
+ * code form must reproduce the above copyright notice, this list of conditions 
+ * and the disclaimer of Article 6 in the documentation and/or other materials 
+ * provided with the distribution, if any. 
+ *
+ * Your end-user documentation included with the redistribution, if any, must 
+ * include the following acknowledgment: This product includes software 
+ * developed by 5AM and the National Cancer Institute. If You do not include 
+ * such end-user documentation, You shall include this acknowledgment in the 
+ * Software itself, wherever such third-party acknowledgments normally appear.
+ *
+ * You may not use the names "The National Cancer Institute", "NCI", or "5AM" 
+ * to endorse or promote products derived from this Software. This License does 
+ * not authorize You to use any trademarks, service marks, trade names, logos or
+ * product names of either NCI or 5AM, except as required to comply with the 
+ * terms of this License. 
+ *
+ * For sake of clarity, and not by way of limitation, You may incorporate this 
+ * Software into Your proprietary programs and into any third party proprietary 
+ * programs. However, if You incorporate the Software into third party 
+ * proprietary programs, You agree that You are solely responsible for obtaining
+ * any permission from such third parties required to incorporate the Software 
+ * into such third party proprietary programs and for informing Your 
+ * sub-licensees, including without limitation Your end-users, of their 
+ * obligation to secure any required permissions from such third parties before 
+ * incorporating the Software into such third party proprietary software 
+ * programs. In the event that You fail to obtain such permissions, You agree 
+ * to indemnify NCI for any claims against NCI by such third parties, except to 
+ * the extent prohibited by law, resulting from Your failure to obtain such 
+ * permissions. 
+ *
+ * For sake of clarity, and not by way of limitation, You may add Your own 
+ * copyright statement to Your modifications and to the derivative works, and 
+ * You may provide additional or different license terms and conditions in Your 
+ * sublicenses of modifications of the Software, or any derivative works of the 
+ * Software as a whole, provided Your use, reproduction, and distribution of the
+ * Work otherwise complies with the conditions stated in this License.
+ *
+ * THIS SOFTWARE IS PROVIDED "AS IS," AND ANY EXPRESSED OR IMPLIED WARRANTIES, 
+ * (INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, 
+ * NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE) ARE DISCLAIMED. IN NO 
+ * EVENT SHALL THE NATIONAL CANCER INSTITUTE, 5AM SOLUTIONS, INC. OR THEIR 
+ * AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; 
+ * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+ * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package gov.nih.nci.pa.util;
+
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
+import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.PhaseCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyContactDTO;
+import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.CSMUserUtil;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyInboxServiceLocal;
+import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
+import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.services.EntityDto;
+import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.person.PersonDTO;
+
+import java.text.MessageFormat;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+
+/**
+ * Validator class for checking the input of the various trial registration methods.
+ * 
+ * @author Michael Visee
+ */
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveParameterList", "PMD.CyclomaticComplexity" })
+public class TrialRegistrationValidator {
+    
+    private static final String AMENDMENT = "Amendment";
+    private static final String CREATION = "Create";
+    private static final String REJECTION = "Reject";
+    private static final String UPDATE = "Update";
+    private static final String VALIDATION_EXCEPTION = "Validation Exception ";
+
+    /**
+     * The set of DocumentWorkflowStatusCode that cause an error for amendment.
+     */
+    static final Set<DocumentWorkflowStatusCode> ERROR_DWFS_FOR_AMEND = EnumSet.complementOf(EnumSet
+        .of(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE,
+            DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE));
+    /**
+     * The error message for wrong DocumentWorkflowStatusCode in amendment.
+     */
+    static final String ERROR_MESSAGE_DWFS_FOR_AMEND = "Only Trials with processing status Abstraction Verified "
+            + "Response or Abstraction Verified No Response can be Amended.\n";
+    
+    /**
+     * The set of DocumentWorkflowStatusCode that cause an error for amendment.
+     */
+    static final Set<DocumentWorkflowStatusCode> ERROR_DWFS_FOR_REJECT = EnumSet.complementOf(EnumSet
+        .of(DocumentWorkflowStatusCode.SUBMITTED,
+            DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED));
+    /**
+     * The error message for wrong DocumentWorkflowStatusCode in amendment.
+     */
+    static final String ERROR_MESSAGE_DWFS_FOR_REJECT = "Only Trials with SUBMITTED can be Rejected.\n";
+    
+    /**
+     * The set of DocumentWorkflowStatusCode that cause an error for update.
+     */
+    static final Set<DocumentWorkflowStatusCode> ERROR_DWFS_FOR_UPDATE = EnumSet
+        .of(DocumentWorkflowStatusCode.SUBMITTED, DocumentWorkflowStatusCode.REJECTED);
+
+    /**
+     * The error message for wrong DocumentWorkflowStatusCode in update.
+     */
+    static final String ERROR_MESSAGE_DWFS_FOR_UPDATE = "Only Trials with processing status Accepted or "
+            + "Abstracted or Abstraction Verified No Response or Abstraction Verified No Response can be Updated.\n";
+
+    private CSMUserUtil csmUserUtil;
+    private DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService;
+    private OrganizationCorrelationServiceRemote ocsr;
+    private PAServiceUtils paServiceUtils;
+    private RegistryUserServiceLocal registryUserServiceLocal;
+    private RegulatoryInformationServiceRemote regulatoryInfoBean;
+    private StudyInboxServiceLocal studyInboxServiceLocal;
+    private StudyIndldeServiceLocal studyIndldeService;
+    private StudyOverallStatusServiceLocal studyOverallStatusService;
+    private StudyProtocolServiceLocal studyProtocolService;
+    private StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal;
+    private StudyResourcingServiceLocal studyResourcingService;
+    private StudySiteServiceLocal studySiteService;
+    
+    /**
+     * Validates the input for a trial update.
+     * @param studyProtocolDTO The study protocol
+     * @param overallStatusDTO The overall status
+     * @param studyResourcingDTOs The list of nih grants
+     * @param documentDTOs List of documents IRB and Participating doc
+     * @param studySiteAccrualStatusDTOs The participating sites
+     * @throws PAException If any validation error happens
+     */
+    public void validateUpdate(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO, 
+            List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
+            List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs) throws PAException {
+        Ii spIi = studyProtocolDTO.getIdentifier();
+        StringBuilder errorMsg = new StringBuilder();
+        validateUser(studyProtocolDTO, UPDATE, true, errorMsg);
+        validateStatusAndDates(studyProtocolDTO, overallStatusDTO, errorMsg);
+        validateNihGrants(spIi, studyResourcingDTOs, errorMsg);
+        validateDWFS(spIi, ERROR_DWFS_FOR_UPDATE, ERROR_MESSAGE_DWFS_FOR_UPDATE, errorMsg);    
+        validateExistingStatus(spIi, errorMsg);
+        validateDocuments(documentDTOs, errorMsg);    
+        validateParticipatingSites(studyProtocolDTO, studySiteAccrualStatusDTOs, errorMsg);
+        if (errorMsg.length() > 0) {
+            throw new PAException(VALIDATION_EXCEPTION + errorMsg);
+        }
+    }
+    
+    /**
+     * Validates the user executing the operation.
+     * @param studyProtocolDTO The study protocol
+     * @param operation The operation
+     * @param checkTrialAccess true if the trial access must be checked
+     * @param errorMsg The StringBuilder collecting error messages
+     * @throws PAException If an error occurs
+     */
+    void validateUser(StudyProtocolDTO studyProtocolDTO, String operation, boolean checkTrialAccess,
+            StringBuilder errorMsg) throws PAException {
+        if (!ISOUtil.isStNull(studyProtocolDTO.getUserLastCreated())) {
+            String loginName = studyProtocolDTO.getUserLastCreated().getValue();
+            User user = csmUserUtil.getCSMUser(loginName);
+            if (user == null) {
+                errorMsg.append("Submitter " + loginName + " does not exist. Please do self register in CTRP.");
+            } else {
+                if (checkTrialAccess) {
+                    Long spId = Long.parseLong(studyProtocolDTO.getIdentifier().getExtension());
+                    if (!registryUserServiceLocal.hasTrialAccess(loginName, spId)) {
+                        errorMsg.append(operation);
+                        errorMsg.append(" to Trial can be submitted by the submitter of the original Trial.\n");
+                    }
+                }
+            }
+        } else {
+            errorMsg.append("Submitter is required.");
+        }
+    }
+
+    /**
+     * Validates the status and dates.
+     * 
+     * This method checks the mandatory fileds for dates and overal status and validates the overall status object.
+     * 
+     * @param studyProtocolDTO The study protocol
+     * @param overallStatusDTO The overall status
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validateStatusAndDates(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
+            StringBuilder errorMsg) {
+        boolean datesValid = validateStudyProtocolDates(studyProtocolDTO, errorMsg);
+        boolean statusFieldsValid = validateOverallStatusFields(overallStatusDTO, errorMsg);
+        if (datesValid && statusFieldsValid) {
+            validateOverallStatus(studyProtocolDTO, overallStatusDTO, errorMsg);
+        }
+    }
+    
+    /**
+     * Validates the study protocol dates.
+     * 
+     * This method validates the mandatory date and date type fields of the study protocol.
+     *  
+     * @param studyProtocolDTO The study protocol
+     * @param errorMsg The StringBuilder collecting error messages
+     * @return true if the dates are valid
+     */
+    @SuppressWarnings("PMD.CyclomaticComplexity")
+    boolean validateStudyProtocolDates(StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg) {
+        boolean valid = true;
+        if (ISOUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode())) {
+            errorMsg.append("Trial Start Date Type cannot be null. ");
+            valid = false;
+        }
+        if (ISOUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())) {
+            errorMsg.append("Primary Completion Date Type cannot be null. ");
+            valid = false;
+        }
+        if (ISOUtil.isTsNull(studyProtocolDTO.getStartDate())) {
+            errorMsg.append("Trial Start Date cannot be null. ");
+            valid = false;
+        }
+        Ts pcDate = studyProtocolDTO.getPrimaryCompletionDate();
+        if (pcDate == null || (ISOUtil.isTsNull(pcDate) && pcDate.getNullFlavor() != NullFlavor.UNK)) {
+            errorMsg.append("Primary Completion Date cannot be null. ");
+            valid = false;
+        }
+        return valid;
+    }
+
+    /**
+     * Validates the overall status fields.
+     * 
+     * This method validates the mandatory code and date fields of the overall status.
+     * 
+     * @param overallStatusDTO The overall status
+     * @param errorMsg The StringBuilder collecting error messages
+     * @return true if the overall status fields are valid
+     */
+    boolean validateOverallStatusFields(StudyOverallStatusDTO overallStatusDTO, StringBuilder errorMsg) {
+        boolean valid = true;
+        if (overallStatusDTO != null) {
+            if (ISOUtil.isCdNull(overallStatusDTO.getStatusCode())) {
+                errorMsg.append("Current Trial Status cannot be null. ");
+                valid = false;
+            }
+            if (ISOUtil.isTsNull(overallStatusDTO.getStatusDate())) {
+                errorMsg.append("Current Trial Status Date cannot be null. ");
+                valid = false;
+            }
+        } else {
+            errorMsg.append("Overall Status cannot be null. ");
+            valid = false;
+        }
+        return valid;
+    }
+    
+    /**
+     * Validates the overall status.
+     * @param studyProtocolDTO The study protocol
+     * @param overallStatusDTO The overall status
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validateOverallStatus(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
+            StringBuilder errorMsg) {
+        try {
+            studyOverallStatusService.validate(overallStatusDTO, studyProtocolDTO);
+        } catch (PAException e) {
+            errorMsg.append(e.getMessage());
+        }
+    }
+
+    /**
+     * Validates the nih grants. 
+     * 
+     * This method checks that all the given grants are valid and that there is not duplicate.
+     * 
+     * @param spIi The study protocol Ii
+     * @param studyResourcingDTOs The list of nih grants
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validateNihGrants(Ii spIi, List<StudyResourcingDTO> studyResourcingDTOs, StringBuilder errorMsg) {
+        if (CollectionUtils.isNotEmpty(studyResourcingDTOs)) {
+            for (StudyResourcingDTO studyResourcingDTO : studyResourcingDTOs) {
+                try {
+                    studyResourcingDTO.setStudyProtocolIdentifier(spIi);
+                    studyResourcingService.validate(studyResourcingDTO);
+                } catch (PAException e) {
+                    errorMsg.append(e.getMessage());
+                }
+            }
+            try {
+                paServiceUtils.enforceNoDuplicateGrants(studyResourcingDTOs);
+            } catch (PAException e) {
+                errorMsg.append("Duplicates grants are not allowed.");
+            }
+        }
+    }
+
+    /**
+     * Validates the current document workflow status.
+     * 
+     * This method validates that the current document workflow status allows update to the trial.
+     * @param spIi The study protocol Ii
+     * @param errorStatuses The statuses that cause an error
+     * @param error The error message
+     * @param errorMsg The StringBuilder collecting error messages
+     * @throws PAException If an error occurs in accessing the current document workflow status.
+     */
+    void validateDWFS(Ii spIi, Set<DocumentWorkflowStatusCode> errorStatuses, String error, StringBuilder errorMsg)
+            throws PAException {
+        DocumentWorkflowStatusDTO dwfsDTO = documentWorkFlowStatusService.getCurrentByStudyProtocol(spIi);
+        DocumentWorkflowStatusCode dwfs = DocumentWorkflowStatusCode.getByCode(dwfsDTO.getStatusCode().getCode());
+        if (errorStatuses.contains(dwfs)) {
+            errorMsg.append(error);
+        }
+    }
+    
+    /**
+     * Validates the current status.
+     * 
+     * This method validates that the current status allows update to the trial.
+     * @param spIi The study protocol Ii
+     * @param errorMsg The StringBuilder collecting error messages
+     * @throws PAException If an error occurs in accessing the current status.
+     */
+    void validateExistingStatus(Ii spIi, StringBuilder errorMsg) throws PAException {
+        StudyOverallStatusDTO statusDTO = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
+        StudyStatusCode status = StudyStatusCode.getByCode(statusDTO.getStatusCode().getCode());
+        Set<StudyStatusCode> errorStatuses = EnumSet.of(StudyStatusCode.ADMINISTRATIVELY_COMPLETE,
+                                                        StudyStatusCode.WITHDRAWN, StudyStatusCode.COMPLETE);
+        if (errorStatuses.contains(status)) {
+            errorMsg.append("Update to a Trial with Current Trial Status as Disapproved or"
+                    + " Withdrawn or Complete or Administratively Complete is not allowed.\n");
+        }
+    }
+
+    /**
+     * Validates that provided documents exist.
+     * 
+     * @param documentDTOs List of documents IRB and Participating doc
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validateDocuments(List<DocumentDTO> documentDTOs, StringBuilder errorMsg) {
+        if (CollectionUtils.isNotEmpty(documentDTOs)) {
+            for (DocumentDTO docDto : documentDTOs) {
+                if (!ISOUtil.isIiNull(docDto.getIdentifier())
+                        && !paServiceUtils.isIiExistInPA(IiConverter.convertToDocumentIi(Long.valueOf(docDto
+                            .getIdentifier().getExtension())))) {
+                    errorMsg.append("Document id " + docDto.getIdentifier().getExtension() + " does not exist.");
+                }
+            }
+        }
+    }
+
+    /**
+     * Validates the participating sites.
+     * @param studyProtocolDTO The study protocol
+     * @param studySiteAccrualStatusDTOs The participating sites
+     * @param errorMsg The StringBuilder collecting error messages
+     * @throws PAException if an error accurs accessing the recruitment status.
+     */
+    void validateParticipatingSites(StudyProtocolDTO studyProtocolDTO,
+            List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs, StringBuilder errorMsg) throws PAException {
+        if (CollectionUtils.isNotEmpty(studySiteAccrualStatusDTOs)) {
+            StudyRecruitmentStatusDTO recruitmentStatusDto = studyRecruitmentStatusServiceLocal
+                .getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
+            try {
+                paServiceUtils.enforceRecruitmentStatus(studyProtocolDTO, studySiteAccrualStatusDTOs,
+                                                        recruitmentStatusDto);
+            } catch (PAException e) {
+                errorMsg.append(e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Validates the SummaryFour information.
+     * @param studyProtocolDTO The study protocol
+     * @param organizationDTO organizationDTO
+     * @param studyResourcingDTO The studyResourcingDTO
+     * @throws PAException on error
+     */
+    public void validateSummary4SponsorAndCategory(StudyProtocolDTO studyProtocolDTO, OrganizationDTO organizationDTO,
+            StudyResourcingDTO studyResourcingDTO) throws PAException {
+        StringBuilder errorMsg = new StringBuilder();
+        if (organizationDTO == null) {
+            errorMsg.append("Summary Four Organization cannot be null, ");
+        }
+        validateSummary4Resourcing(studyProtocolDTO, studyResourcingDTO, errorMsg);
+        if (errorMsg.length() > 0) {
+            throw new PAException(VALIDATION_EXCEPTION + errorMsg.toString());
+        }
+    }
+
+    /**
+     * Validates the SummaryFour information.
+     * @param studyProtocolDTO The study protocol
+     * @param studyResourcingDTO The studyResourcingDTO
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validateSummary4Resourcing(StudyProtocolDTO studyProtocolDTO, StudyResourcingDTO studyResourcingDTO,
+            StringBuilder errorMsg) {
+        if (studyResourcingDTO == null) {
+            errorMsg.append("Summary Four Study Resourcing cannot be null, ");
+        } else {
+            String category = CdConverter.convertCdToString(studyResourcingDTO.getTypeCode());
+            if (StringUtils.isEmpty(category)) {
+                errorMsg.append("Summary Four Sponsor Category cannot be null, ");
+            } else {
+                validateSummary4Category(studyProtocolDTO, category, errorMsg);
+            }
+        }
+    }
+
+    /**
+     * validates the summary4 category.
+     * @param studyProtocolDTO The study protocol
+     * @param category The category to validate
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validateSummary4Category(StudyProtocolDTO studyProtocolDTO, String category, StringBuilder errorMsg) {
+        SummaryFourFundingCategoryCode categoryCode = SummaryFourFundingCategoryCode.getByCode(category);
+        boolean proprietary = BlConverter.convertToBool(studyProtocolDTO.getProprietaryTrialIndicator());
+        boolean industrial = StringUtils
+            .equalsIgnoreCase(category, SummaryFourFundingCategoryCode.INDUSTRIAL.getCode());
+        if ((categoryCode == null) || (proprietary && !industrial) || (!proprietary && industrial)) {
+            errorMsg.append("Please enter valid value for Summary 4 Sponsor Category.");
+        }
+    }
+
+    /**
+     * Validates the input for a trial amendment.
+     * @param studyProtocolDTO The study protocol
+     * @param overallStatusDTO The overall status
+     * @param leadOrganizationDTO The lead organization
+     * @param sponsorOrganizationDTO The sponsor organization
+     * @param studyContactDTO The study contact
+     * @param studySiteContactDTO  The study site contact
+     * @param summary4OrganizationDTO The summary4 organization
+     * @param summary4StudyResourcingDTO The summary 4 category code
+     * @param principalInvestigatorDTO The principal investigator
+     * @param responsiblePartyContactIi The responsible party contact
+     * @param studyRegAuthDTO The regulatory authority
+     * @param studyResourcingDTOs The list of nih grants
+     * @param documentDTOs List of documents IRB and Participating doc
+     * @param studyIndldeDTOs The list of study Ind/ides
+     * @throws PAException If any validation error happens
+     */
+    // CHECKSTYLE:OFF More than 7 Parameters
+    public void validateAmendment(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
+            OrganizationDTO leadOrganizationDTO, OrganizationDTO sponsorOrganizationDTO,
+            StudyContactDTO studyContactDTO, StudySiteContactDTO studySiteContactDTO,
+            OrganizationDTO summary4OrganizationDTO, StudyResourcingDTO summary4StudyResourcingDTO,
+            PersonDTO principalInvestigatorDTO, Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs, List<StudyIndldeDTO> studyIndldeDTOs) throws PAException {
+        // CHECKSTYLE:ON
+        Ii spIi = studyProtocolDTO.getIdentifier();
+        StringBuilder errorMsg = new StringBuilder();
+        validateUser(studyProtocolDTO, AMENDMENT, true, errorMsg);
+        validateStatusAndDates(studyProtocolDTO, overallStatusDTO, errorMsg);
+        validateNihGrants(spIi, studyResourcingDTOs, errorMsg);
+        validateIndlde(studyProtocolDTO, studyIndldeDTOs, errorMsg);
+        validateDWFS(spIi, ERROR_DWFS_FOR_AMEND, ERROR_MESSAGE_DWFS_FOR_AMEND, errorMsg);
+        validateExistingStatus(spIi, errorMsg);
+        validateOtherIdentifiers(studyProtocolDTO, errorMsg);
+        validateMandatoryDocuments(documentDTOs, errorMsg);
+        validateAmendmentDocuments(documentDTOs, errorMsg);
+        validatePOObjects(studyProtocolDTO, leadOrganizationDTO, sponsorOrganizationDTO, summary4OrganizationDTO,
+                          principalInvestigatorDTO, responsiblePartyContactIi, errorMsg);
+        validateAmendmentInfo(studyProtocolDTO, errorMsg);
+        validateStudyContact(studyProtocolDTO, studyContactDTO, studySiteContactDTO, errorMsg);
+        validateRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs, errorMsg);
+        validateSummary4Resourcing(studyProtocolDTO, summary4StudyResourcingDTO, errorMsg);
+        if (errorMsg.length() > 0) {
+            throw new PAException(VALIDATION_EXCEPTION + errorMsg);
+        }
+    }
+    
+    /**
+     * validates the Ind/ide.
+     * @param studyProtocolDTO The study protocol
+     * @param studyIndldeDTOs The list of study Ind/ides
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validateIndlde(StudyProtocolDTO studyProtocolDTO, List<StudyIndldeDTO> studyIndldeDTOs, 
+            StringBuilder errorMsg) {
+        if (CollectionUtils.isNotEmpty(studyIndldeDTOs)) {
+            for (StudyIndldeDTO indIdeDto : studyIndldeDTOs) {
+                try {
+                    indIdeDto.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
+                    studyIndldeService.validate(indIdeDto);
+                } catch (PAException e) {
+                    errorMsg.append(e.getMessage());
+                }
+            }
+            try {
+                paServiceUtils.enforceNoDuplicateIndIde(studyIndldeDTOs, studyProtocolDTO);
+            } catch (PAException e) {
+                errorMsg.append(e.getMessage());
+            }
+        }
+    }
+    
+    /**
+     * Validate the other identifiers for an amendment.
+     * @param studyProtocolDTO The study protocol
+     * @param errorMsg The StringBuilder collecting error messages
+     * @throws PAException If any error happens
+     */
+    void validateOtherIdentifiers(StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg) throws PAException {
+        StudyProtocolDTO saved = studyProtocolService.getStudyProtocol(studyProtocolDTO.getIdentifier());
+        Set<Ii> savedIdentifiers = saved.getSecondaryIdentifiers().getItem();
+        Set<Ii> newIdentifiers = studyProtocolDTO.getSecondaryIdentifiers().getItem();
+        if (!CollectionUtils.isSubCollection(savedIdentifiers, newIdentifiers)) {
+            errorMsg.append("Other identifiers cannot be modified or deleted as part of an amendment.");
+        }
+    }
+    
+    /**
+     * validates that the mandatory documents are present.
+     * @param documentDTOs The List of documents IRB and Participating doc
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validateMandatoryDocuments(List<DocumentDTO> documentDTOs, StringBuilder errorMsg) {
+        errorMsg.append(paServiceUtils.checkDocumentListForValidFileTypes(documentDTOs));
+        if (!paServiceUtils.isDocumentInList(documentDTOs, DocumentTypeCode.PROTOCOL_DOCUMENT)) {
+            errorMsg.append("Protocol Document is required.\n");
+        }
+        if (!paServiceUtils.isDocumentInList(documentDTOs, DocumentTypeCode.IRB_APPROVAL_DOCUMENT)) {
+            errorMsg.append("IRB Approval Document is required.\n");
+        }
+    }
+    
+    /**
+     * Validates that the documents required for amendment are present.
+     * @param documentDTOs The List of documents IRB and Participating doc
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validateAmendmentDocuments(List<DocumentDTO> documentDTOs, StringBuilder errorMsg) {
+        if (!paServiceUtils.isDocumentInList(documentDTOs, DocumentTypeCode.CHANGE_MEMO_DOCUMENT) && !paServiceUtils
+            .isDocumentInList(documentDTOs, DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT)) {
+            errorMsg.append("At least one is required: Change Memo Document or Protocol Highlighted Document.");
+        }
+    }
+    
+    /**
+     * Validates the PO objects for amendment.
+     * @param studyProtocolDTO The study protocol
+     * @param leadOrganizationDTO The lead organization
+     * @param sponsorOrganizationDTO The sponsor organization
+     * @param summary4organizationDTO The summary4 organization
+     * @param piPersonDTO The principal investigator
+     * @param responsiblePartyContactIi The responsible party contact
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validatePOObjects(StudyProtocolDTO studyProtocolDTO, OrganizationDTO leadOrganizationDTO,
+            OrganizationDTO sponsorOrganizationDTO, OrganizationDTO summary4organizationDTO, PersonDTO piPersonDTO,
+            Ii responsiblePartyContactIi, StringBuilder errorMsg) {
+        errorMsg.append(validatePoObject(leadOrganizationDTO, "Lead Organization", true));
+        errorMsg.append(validatePoObject(summary4organizationDTO, "Summary 4 Organization", false));
+        errorMsg.append(validatePoObject(piPersonDTO, "Principal Investigator", true));
+        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+            errorMsg.append(validatePoObject(sponsorOrganizationDTO, "Sponsor Organization", true));
+            if (!ISOUtil.isIiNull(responsiblePartyContactIi)
+                    && !paServiceUtils.isIiExistInPO(responsiblePartyContactIi)) {
+                String msg = "Error getting Responsible Party Contact from PO for id = {0}.\n";
+                errorMsg.append(MessageFormat.format(msg, responsiblePartyContactIi.getExtension()));
+            }
+        }
+    }
+    
+    /**
+     * Validate objects in po.
+     * @param poDTO The object to validate
+     * @param fieldName The field name
+     * @param iiRequired true if the Ii is required
+     * @return an error message or null if everything is valid
+     */
+    public String validatePoObject(EntityDto poDTO, String fieldName, boolean iiRequired) {
+        if (poDTO == null) {
+            return MessageFormat.format("{0} cannot be null.\n", fieldName);
+        }
+        StringBuilder errorMsg = new StringBuilder();
+        if (iiRequired && ISOUtil.isIiNull(poDTO.getIdentifier())) {
+            String msg = "Error getting {0} from PO. Identifier is required.\n";
+            errorMsg.append(MessageFormat.format(msg, fieldName));
+        }
+        if (!ISOUtil.isIiNull(poDTO.getIdentifier()) && !paServiceUtils.isIiExistInPO(poDTO.getIdentifier())) {
+            String msg = "Error getting {0} from PO for id = {1}.\n";
+            errorMsg.append(MessageFormat.format(msg, fieldName, poDTO.getIdentifier().getExtension()));
+        }
+        return errorMsg.toString();
+    }
+    
+    /**
+     * Validates the amendment information.
+     * @param studyProtocolDTO The study protocol
+     * @param errorMsg The StringBuilder collecting error messages
+     * @throws PAException If any error happens
+     */
+    void validateAmendmentInfo(StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg) throws PAException {
+        check(ISOUtil.isTsNull(studyProtocolDTO.getAmendmentDate()), "Amendment Date is required.  ", errorMsg);
+        if (!studyInboxServiceLocal.getOpenInboxEntries(studyProtocolDTO.getIdentifier()).isEmpty()) {
+            String ctroAddress = PaRegistry.getLookUpTableService().getPropertyValue("fromaddress");
+            String msg = "A trial with unaccepted updates cannot be amended. Please contact the CTRO at {0} to "
+                    + "have your trial''s updates accepted.";
+            errorMsg.append(MessageFormat.format(msg, ctroAddress));
+        }
+    }
+    
+    /**
+     * Validates the study contact info.
+     * @param studyProtocolDTO The study protocol
+     * @param studyContactDTO The study contact
+     * @param studySiteContactDTO The study site contact
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validateStudyContact(StudyProtocolDTO studyProtocolDTO, StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studySiteContactDTO, StringBuilder errorMsg) {
+        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+            check(studyContactDTO != null && studySiteContactDTO != null,
+                  "Only one of StudyContact or StudySiteContact can be used, ", errorMsg);
+            check(studyContactDTO == null && studySiteContactDTO == null,
+                  "One of StudyContact or StudySiteContact has to be used, ", errorMsg);
+            if (studyContactDTO != null) {
+                validateTelecomAddress(studyContactDTO.getTelecomAddresses(), "StudyContact", errorMsg);
+            }
+            if (studySiteContactDTO != null) {
+                validateTelecomAddress(studySiteContactDTO.getTelecomAddresses(), "StudySiteContact", errorMsg);
+            }
+        }
+    }
+    
+    /**
+     * validates email and phone in a telecom address.
+     * @param telecomAddress set of telecom info.
+     * @param contactType contact type.
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validateTelecomAddress(DSet<Tel> telecomAddress, String contactType, StringBuilder errorMsg) {
+        if (DSetConverter.getFirstElement(telecomAddress, PAConstants.EMAIL) == null) {
+            errorMsg.append(contactType).append(" Email cannot be null, ");
+        }
+        if (DSetConverter.getFirstElement(telecomAddress, PAConstants.PHONE) == null) {
+            errorMsg.append(contactType).append(" Phone cannot be null, ");
+        }
+    }
+
+    /**
+     * Validates regulatory info.
+     * 
+     * @param studyProtocolDTO The study protocol dto
+     * @param studyRegAuthDTO The study reg auth dto
+     * @param studyIndldeDTOs The study indlde dtos
+     * @param errorMsg The StringBuilder collecting error messages
+     * @throws PAException the PA exception
+     */
+    void validateRegulatoryInfo(StudyProtocolDTO studyProtocolDTO, StudyRegulatoryAuthorityDTO studyRegAuthDTO,
+            List<StudyIndldeDTO> studyIndldeDTOs, StringBuilder errorMsg) throws PAException {
+        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+            check(studyRegAuthDTO == null, "Regulatory Information fields must be Entered.\n", errorMsg);
+
+            check(ISOUtil.isBlNull(studyProtocolDTO.getFdaRegulatedIndicator()),
+                  "FDA Regulated Intervention Indicator is required field.\n", errorMsg);
+
+            String fdaRegulatedIndicator = BlConverter.convertBLToString(studyProtocolDTO.getFdaRegulatedIndicator());
+            boolean fdaRegulated = PAConstants.YES.equalsIgnoreCase(fdaRegulatedIndicator);
+            check(fdaRegulated && ISOUtil.isBlNull(studyProtocolDTO.getSection801Indicator()),
+                  "Section 801 is required if FDA Regulated indicator is true.\n", errorMsg);
+
+            String section801Indicator = (BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()));
+            boolean section801 = PAConstants.YES.equalsIgnoreCase(section801Indicator);
+            check(section801 && ISOUtil.isBlNull(studyProtocolDTO.getDelayedpostingIndicator()),
+                  "Delayed posting Indicator is required if Section 801 is true.\n", errorMsg);
+
+            if (containsNonExemptInds(studyIndldeDTOs)) {
+                check(!fdaRegulated,
+                      "FDA Regulated Intervention Indicator must be Yes since it has Trial IND/IDE records.\n",
+                      errorMsg);
+
+                if (studyRegAuthDTO != null && !ISOUtil.isIiNull(studyRegAuthDTO.getRegulatoryAuthorityIdentifier())) {
+                    Long sraId = Long.valueOf(studyRegAuthDTO.getRegulatoryAuthorityIdentifier().getExtension());
+                    // doing this just to load the country since its lazy loaded.
+                    boolean isUSA = regulatoryInfoBean.getRegulatoryAuthorityCountry(sraId).getAlpha3().equals("USA");
+                    String regAuthName = regulatoryInfoBean.getCountryOrOrgName(sraId, "RegulatoryAuthority");
+                    check(!(isUSA && regAuthName.equalsIgnoreCase("Food and Drug Administration")),
+                          "For IND protocols, Oversight Authorities must include United States: "
+                                  + "Food and Drug Administration.\n", errorMsg);
+
+                }
+            }
+        }
+    }
+    
+    /**
+     * Test if the given StudyIndleDTO list contains a non exempt one.
+     * @param studyIndldeDTOs ind
+     * @return true if least one non-exempt IND/IDE exists
+     */
+    boolean containsNonExemptInds(List<StudyIndldeDTO> studyIndldeDTOs) {
+        boolean isNonExemptInds = false;
+        if (CollectionUtils.isNotEmpty(studyIndldeDTOs)) {
+            for (StudyIndldeDTO dto : studyIndldeDTOs) {
+                if (BooleanUtils.isFalse(BlConverter.convertToBoolean(dto.getExemptIndicator()))) {
+                    isNonExemptInds = true;
+                    break;
+                }
+            }
+        }
+        return isNonExemptInds;
+    }
+    
+    /**
+     * Validates the input for a trial creation.
+     * @param studyProtocolDTO The study protocol
+     * @param overallStatusDTO The overall status
+     * @param leadOrganizationDTO The lead organization
+     * @param sponsorOrganizationDTO The sponsor organization
+     * @param studyContactDTO The study contact
+     * @param studySiteContactDTO  The study site contact
+     * @param summary4OrganizationDTO The summary4 organization
+     * @param summary4StudyResourcingDTO The summary 4 category code
+     * @param principalInvestigatorDTO The principal investigator
+     * @param leadOrganizationSiteIdentifierDTO The lead organization site
+     * @param responsiblePartyContactIi The responsible party contact
+     * @param studyRegAuthDTO The regulatory authority
+     * @param studyResourcingDTOs The list of nih grants
+     * @param documentDTOs List of documents IRB and Participating doc
+     * @param studyIndldeDTOs The list of study Ind/ides
+     * @throws PAException If any validation error happens
+     */
+    // CHECKSTYLE:OFF More than 7 Parameters
+    public void validateCreation(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
+            OrganizationDTO leadOrganizationDTO, OrganizationDTO sponsorOrganizationDTO,
+            StudyContactDTO studyContactDTO, StudySiteContactDTO studySiteContactDTO,
+            OrganizationDTO summary4OrganizationDTO, StudyResourcingDTO summary4StudyResourcingDTO,
+            PersonDTO principalInvestigatorDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            Ii responsiblePartyContactIi, StudyRegulatoryAuthorityDTO studyRegAuthDTO,
+            List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
+            List<StudyIndldeDTO> studyIndldeDTOs) throws PAException {
+        // CHECKSTYLE:ON
+        validateStudyProtocol(studyProtocolDTO);
+        StringBuilder errorMsg = new StringBuilder();
+        validateMandatoryFields(studyProtocolDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
+                                documentDTOs, errorMsg);
+        validateUser(studyProtocolDTO, CREATION, false, errorMsg);
+        validateStatusAndDates(studyProtocolDTO, overallStatusDTO, errorMsg);
+        validateNihGrants(studyProtocolDTO.getIdentifier(), studyResourcingDTOs, errorMsg);
+        validateIndlde(studyProtocolDTO, studyIndldeDTOs, errorMsg);
+        validateMandatoryDocuments(documentDTOs, errorMsg);
+        validatePOObjects(studyProtocolDTO, leadOrganizationDTO, sponsorOrganizationDTO, summary4OrganizationDTO,
+                          principalInvestigatorDTO, responsiblePartyContactIi, errorMsg);
+        validateStudyContact(studyProtocolDTO, studyContactDTO, studySiteContactDTO, errorMsg);
+        validatePiAndResponsibleParty(studyProtocolDTO, studyContactDTO, studySiteContactDTO,
+                                      responsiblePartyContactIi, errorMsg);
+        validateRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs, errorMsg);
+        validateSummary4Resourcing(studyProtocolDTO, summary4StudyResourcingDTO, errorMsg);
+        if (errorMsg.length() > 0) {
+            throw new PAException(VALIDATION_EXCEPTION + errorMsg);
+        }
+    }
+    
+    /**
+     * Validates the presence of the study protocol and the ctgov flag.
+     * @param studyProtocolDTO The study protocol
+     * @throws PAException if the study protocol is not present
+     */
+    void validateStudyProtocol(StudyProtocolDTO studyProtocolDTO) throws PAException {
+        if (studyProtocolDTO == null) {
+            throw new PAException(VALIDATION_EXCEPTION + "Study Protocol cannot be null.");
+        }
+        if (ISOUtil.isBlNull(studyProtocolDTO.getCtgovXmlRequiredIndicator())) {
+            throw new PAException(VALIDATION_EXCEPTION + "Study Protocol Ct.gov XML indicator cannot be null.");
+        }
+    }
+
+    /**
+     * Validates that the mandatory fields are present in the study protocol.
+     * @param studyProtocolDTO The study protocol
+     * @param sponsorOrganizationDTO The sponsor organization
+     * @param leadOrganizationSiteIdentifierDTO The lead organization site
+     * @param documentDTOs The List of documents IRB and Participating doc
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validateMandatoryFields(StudyProtocolDTO studyProtocolDTO, OrganizationDTO sponsorOrganizationDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO, List<DocumentDTO> documentDTOs, StringBuilder errorMsg) {
+        if (leadOrganizationSiteIdentifierDTO != null
+                && ISOUtil.isStNull(leadOrganizationSiteIdentifierDTO.getLocalStudyProtocolIdentifier())) {
+            errorMsg.append("Local StudyProtocol Identifier cannot be null , ");
+        }
+        if (documentDTOs == null) {
+            errorMsg.append("Document DTO's cannot be null, ");
+        }
+        if (ISOUtil.isStNull(studyProtocolDTO.getOfficialTitle())) {
+            errorMsg.append("Official Title cannot be null");
+        }
+        validatePhase(studyProtocolDTO, errorMsg);
+    }
+    
+    /**
+     * Validates the Phase code.
+     * @param studyProtocolDTO The study protocol
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validatePhase(StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg) {
+        if (ISOUtil.isCdNull(studyProtocolDTO.getPhaseCode())) {
+            errorMsg.append("Phase cannot be null , ");
+        } else {
+            if (PhaseCode.getByCode(CdConverter.convertCdToString(studyProtocolDTO.getPhaseCode())) == null) {
+                errorMsg.append("Please enter valid value for Phase Code.");
+            }
+        }
+
+    }
+
+    /**
+     * Validates the principal investigator and responsible party addresses.
+     * @param studyProtocolDTO The study protocol
+     * @param studyContactDTO The study contact
+     * @param studySiteContactDTO The study site contact
+     * @param responsiblePartyContactIi The responsible party Ii
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validatePiAndResponsibleParty(StudyProtocolDTO studyProtocolDTO, StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studySiteContactDTO, Ii responsiblePartyContactIi, StringBuilder errorMsg) {
+        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+            boolean respPartyExists = !ISOUtil.isIiNull(responsiblePartyContactIi);
+            validatePiStudyContact(studyContactDTO, !respPartyExists, errorMsg);
+            validateResponsiblePartySiteContact(studySiteContactDTO, respPartyExists, errorMsg);
+        }
+    }
+
+    /**
+     * Validate the addresses of the Principal Investigator StudyContact.
+     * @param studyContactDTO The study contact
+     * @param exists true if it must be checked
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validatePiStudyContact(StudyContactDTO studyContactDTO, boolean exists, StringBuilder errorMsg) {
+        if (exists
+                && (studyContactDTO == null || studyContactDTO.getTelecomAddresses() == null || CollectionUtils
+                    .isEmpty(studyContactDTO.getTelecomAddresses().getItem()))) {
+            errorMsg.append("Telecom information must be provided for Principal Investigator StudyContact,");
+        }
+    }
+
+    /**
+     * Validate the addresses of the responsible party study site contact.
+     * @param studySiteContactDTO The study site contact
+     * @param exists true if it must be checked
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validateResponsiblePartySiteContact(StudySiteContactDTO studySiteContactDTO, boolean exists,
+            StringBuilder errorMsg) {
+        if (exists
+                && (studySiteContactDTO == null || studySiteContactDTO.getTelecomAddresses() == null || CollectionUtils
+                    .isEmpty(studySiteContactDTO.getTelecomAddresses().getItem()))) {
+            errorMsg.append("Telecom information must be provided for Responsible Party StudySiteContact,");
+        }
+    }
+
+    /**
+     * Validates the input for a trial amendment.
+     * @param studyProtocolDTO The study protocol
+     * @throws PAException If any validation error happens
+     */
+    public void validateRejection(StudyProtocolDTO studyProtocolDTO) throws PAException {
+        StringBuilder errorMsg = new StringBuilder();
+        validateUser(studyProtocolDTO, REJECTION, false, errorMsg);
+        validateDWFS(studyProtocolDTO.getIdentifier(), ERROR_DWFS_FOR_REJECT, ERROR_MESSAGE_DWFS_FOR_REJECT, errorMsg);
+        if (errorMsg.length() > 0) {
+            throw new PAException(VALIDATION_EXCEPTION + errorMsg);
+        }
+    }
+
+    /**
+     * Validates the input for a proprietary trial creation.
+     * @param studyProtocolDTO The study protocol
+     * @param studySiteAccrualStatusDTO The study site accrual status
+     * @param documentDTOs The List of documents
+     * @param leadOrganizationDTO The lead organization
+     * @param studySiteInvestigatorDTO The Study Site Investigator
+     * @param leadOrganizationStudySiteDTO The Lead Organization Study Site
+     * @param studySiteOrganizationDTO The Study Site Organization
+     * @param studySiteDTO The study site
+     * @param nctIdentifierDTO The NCT identifier
+     * @param summary4OrganizationDTO The Summary 4 Organization
+     * @param summary4StudyResourcingDTO The summary4 resourcing
+     * @throws PAException If a validation error occurs
+     */
+    // CHECKSTYLE:OFF More than 7 Parameters
+    public void validateProprietaryCreation(StudyProtocolDTO studyProtocolDTO,
+            StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
+            StudySiteDTO leadOrganizationStudySiteDTO, OrganizationDTO studySiteOrganizationDTO,
+            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, OrganizationDTO summary4OrganizationDTO,
+            StudyResourcingDTO summary4StudyResourcingDTO) throws PAException {
+        // CHECKSTYLE:ON
+        if (studyProtocolDTO == null) {
+            throw new PAException(VALIDATION_EXCEPTION + "Study Protocol cannot be null.");
+        }
+        StringBuilder errorMsg = new StringBuilder();
+        validateMandatoryFieldsForProprietary(studyProtocolDTO, studySiteAccrualStatusDTO,
+                                              leadOrganizationStudySiteDTO, studySiteDTO, summary4StudyResourcingDTO,
+                                              errorMsg);
+        validateUser(studyProtocolDTO, CREATION, false, errorMsg);
+        validateNCTIdentifier(nctIdentifierDTO, errorMsg);
+        validatePhasePurposeAndTemplateDocument(studyProtocolDTO, documentDTOs, nctIdentifierDTO, errorMsg);
+        errorMsg.append(paServiceUtils.validateRecuritmentStatusDateRule(studySiteAccrualStatusDTO, studySiteDTO));
+        errorMsg.append(validatePoObject(leadOrganizationDTO, "Lead Organization", false));
+        errorMsg.append(validatePoObject(studySiteOrganizationDTO, "Study Site Organization", false));
+        errorMsg.append(validatePoObject(summary4OrganizationDTO, "Summary 4 Organization", false));
+        errorMsg.append(validatePoObject(studySiteInvestigatorDTO, "Study Site Investigator", false));
+        validateSummary4Resourcing(studyProtocolDTO, summary4StudyResourcingDTO, errorMsg);
+        if (errorMsg.length() > 0) {
+            throw new PAException(VALIDATION_EXCEPTION + errorMsg);
+        }
+    }
+
+    /**
+     * Validates the mandatory fields for proprietary trial creation.
+     * @param studyProtocolDTO The study protocol
+     * @param studySiteAccrualStatusDTO The study site accrual status
+     * @param leadOrganizationStudySiteDTO The lead organization study site
+     * @param studySiteDTO The study site
+     * @param summary4StudyResourcingDTO The summary4 resourcing
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    // CHECKSTYLE:OFF More than 7 Parameters
+    void validateMandatoryFieldsForProprietary(StudyProtocolDTO studyProtocolDTO,
+            StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, StudySiteDTO leadOrganizationStudySiteDTO,
+            StudySiteDTO studySiteDTO, StudyResourcingDTO summary4StudyResourcingDTO, StringBuilder errorMsg) {
+        // CHECKSTYLE:ON
+        check(ISOUtil.isStNull(studyProtocolDTO.getOfficialTitle()), "Official Title cannot be null , ", errorMsg);
+        check(studySiteAccrualStatusDTO == null, "Study Site Accrual Status cannot be null , ", errorMsg);
+        if (leadOrganizationStudySiteDTO == null) {
+            errorMsg.append("Lead Organization Study Site cannot be null , ");
+        } else {
+            check(ISOUtil.isStNull(leadOrganizationStudySiteDTO.getLocalStudyProtocolIdentifier()),
+                  "Lead Organization Trial Identifier cannot be null, ", errorMsg);
+
+        }
+        if (studySiteDTO == null) {
+            errorMsg.append("Study Site DTO cannot be null , ");
+        } else {
+            check(ISOUtil.isStNull(studySiteDTO.getLocalStudyProtocolIdentifier()),
+                  "Submitting Organization Local Trial Identifier cannot be null, ", errorMsg);
+        }
+    }
+
+    /**
+     * Validation of NCT identifier.
+     * @param nctIdentifierDTO The ncdIdentifier
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validateNCTIdentifier(StudySiteDTO nctIdentifierDTO, StringBuilder errorMsg) {
+        try {
+            if (!ISOUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
+                Cd functionalCode = CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+                nctIdentifierDTO.setFunctionalCode(functionalCode);
+                String poOrgId = ocsr.getPOOrgIdentifierByIdentifierType(PAConstants.NCT_IDENTIFIER_TYPE);
+                Ii ii = IiConverter.convertToPoOrganizationIi(String.valueOf(poOrgId));
+                nctIdentifierDTO.setResearchOrganizationIi(ocsr.getPoResearchOrganizationByEntityIdentifier(ii));
+                studySiteService.validate(nctIdentifierDTO);
+            }
+        } catch (PAException e) {
+            errorMsg.append(e.getMessage());
+        }
+    }
+    
+    /**
+     * Validates the phase, primary purpose and proprietary template document.
+     * @param studyProtocolDTO The study protocol
+     * @param documentDTOs The List of documents
+     * @param nctIdentifierDTO The NCT identifier
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    private void validatePhasePurposeAndTemplateDocument(StudyProtocolDTO studyProtocolDTO,
+            List<DocumentDTO> documentDTOs, StudySiteDTO nctIdentifierDTO, StringBuilder errorMsg) {
+        if (nctIdentifierDTO != null) {
+            if (ISOUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
+                validatePhaseAndPurpose(studyProtocolDTO, errorMsg);
+                if (CollectionUtils.isEmpty(documentDTOs)
+                        || !paServiceUtils.isDocumentInList(documentDTOs, DocumentTypeCode.PROTOCOL_DOCUMENT)) {
+                    errorMsg.append("Proprietary template document is mandatory if NCT number is not provided");
+                }
+            }
+        } else {
+            validatePhaseAndPurpose(studyProtocolDTO, errorMsg);
+        }
+    }
+
+    /**
+     * Validates the phase and primary purpose.
+     * @param studyProtocolDTO The study protocol
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void validatePhaseAndPurpose(StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg) {
+        validatePhase(studyProtocolDTO, errorMsg);
+        check(ISOUtil.isCdNull(studyProtocolDTO.getPrimaryPurposeCode()), "Purpose cannot be null , ", errorMsg);
+    }
+    
+    /**
+     * Check an error condition and concatenate the message in the message collector.
+     * @param condition The condition to check
+     * @param message The message
+     * @param errorMsg The StringBuilder collecting error messages
+     */
+    void check(boolean condition, String message, StringBuilder errorMsg) {
+        if (condition) {
+            errorMsg.append(message);
+        }
+    }
+
+    /**
+     * @param csmUserUtil the csmUserUtil to set
+     */
+    public void setCsmUserUtil(CSMUserUtil csmUserUtil) {
+        this.csmUserUtil = csmUserUtil;
+    }
+
+    /**
+     * @param documentWorkFlowStatusService the documentWorkFlowStatusService to set
+     */
+    public void setDocumentWorkFlowStatusService(DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService) {
+        this.documentWorkFlowStatusService = documentWorkFlowStatusService;
+    }
+
+    /**
+     * @param ocsr the ocsr to set
+     */
+    public void setOcsr(OrganizationCorrelationServiceRemote ocsr) {
+        this.ocsr = ocsr;
+    }
+
+    /**
+     * @param paServiceUtils the paServiceUtils to set
+     */
+    public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
+        this.paServiceUtils = paServiceUtils;
+    }
+
+    /**
+     * @param registryUserServiceLocal the registryUserServiceLocal to set
+     */
+    public void setRegistryUserServiceLocal(RegistryUserServiceLocal registryUserServiceLocal) {
+        this.registryUserServiceLocal = registryUserServiceLocal;
+    }
+
+    /**
+     * @param regulatoryInfoBean the regulatoryInfoBean to set
+     */
+    public void setRegulatoryInfoBean(RegulatoryInformationServiceRemote regulatoryInfoBean) {
+        this.regulatoryInfoBean = regulatoryInfoBean;
+    }
+
+    /**
+     * @param studyInboxServiceLocal the studyInboxServiceLocal to set
+     */
+    public void setStudyInboxServiceLocal(StudyInboxServiceLocal studyInboxServiceLocal) {
+        this.studyInboxServiceLocal = studyInboxServiceLocal;
+    }
+
+    /**
+     * @param studyIndldeService the studyIndldeService to set
+     */
+    public void setStudyIndldeService(StudyIndldeServiceLocal studyIndldeService) {
+        this.studyIndldeService = studyIndldeService;
+    }
+
+    /**
+     * @param studyOverallStatusService the studyOverallStatusService to set
+     */
+    public void setStudyOverallStatusService(StudyOverallStatusServiceLocal studyOverallStatusService) {
+        this.studyOverallStatusService = studyOverallStatusService;
+    }
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
+    }
+
+    /**
+     * @param studyRecruitmentStatusServiceLocal the studyRecruitmentStatusServiceLocal to set
+     */
+    public void setStudyRecruitmentStatusServiceLocal(
+            StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal) {
+        this.studyRecruitmentStatusServiceLocal = studyRecruitmentStatusServiceLocal;
+    }
+
+    /**
+     * @param studyResourcingService the studyResourcingService to set
+     */
+    public void setStudyResourcingService(StudyResourcingServiceLocal studyResourcingService) {
+        this.studyResourcingService = studyResourcingService;
+    }
+
+    /**
+     * @param studySiteService the studySiteService to set
+     */
+    public void setStudySiteService(StudySiteServiceLocal studySiteService) {
+        this.studySiteService = studySiteService;
+    }
+}

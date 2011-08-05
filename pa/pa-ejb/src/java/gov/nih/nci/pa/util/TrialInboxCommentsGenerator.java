@@ -83,23 +83,17 @@
 
 package gov.nih.nci.pa.util;
 
-import gov.nih.nci.iso21090.DSet;
-import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
-import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
-import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
@@ -107,31 +101,28 @@ import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
-import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
-import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 
 /**
- * Helper class for TrialRegistrationBeanLocal.
+ * Helper class for Generation of inbox processing comments.
  *
  * @author kkanchinadam
  */
 
-public class TrialRegistrationHelper {
+public class TrialInboxCommentsGenerator {
     private final List<String> inboxProcessingComments = new ArrayList<String>();
-    private final DocumentWorkflowStatusServiceLocal docWrkFlowStatusService;
     private final AbstractionCompletionServiceRemote abstractionCompletionService;
-    private final StudyProtocolServiceLocal studyProtocolService;
-    private final StudyOverallStatusServiceLocal studyOverallStatusService;
-    private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
+    private final DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService;
     private final StudyIndldeServiceLocal studyIndldeService;
+    private final StudyOverallStatusServiceLocal studyOverallStatusService;
+    private final StudyProtocolServiceLocal studyProtocolService;
     private final StudyResourcingServiceLocal studyResourcingService;
+    private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
 
     private static final String SPACE = " ";
     private static final String IRB_DOCUMENT_UPDATED = "IRB Document was updated.";
@@ -142,21 +133,9 @@ public class TrialRegistrationHelper {
             + "and Date was updated.";
     private static final String IND_IDE_UPDATED = "Ind Ide was updated.";
     private static final String GRANT_INFORMATION_UPDATED = "Grant information was updated.";
+    
     /**
-     * Validation exception start text.
-     */
-    public static final String VALIDATION_EXCEPTION = "Validation Exception ";
-    /**
-     * Email validation.
-     */
-    private static final String EMAIL_NOT_NULL = "Email cannot be null, ";
-    /**
-     * Phone validation.
-     */
-    private static final String PHONE_NOT_NULL = "Phone cannot be null, ";
-
-    /**
-     * @param docWrkFlowStatusService document workflow status service
+     * @param documentWorkFlowStatusService document workflow status service
      * @param abstractionCompletionService abstraction completion service
      * @param studyProtocolService study protocol service
      * @param studyOverallStatusService study overall status service
@@ -164,13 +143,13 @@ public class TrialRegistrationHelper {
      * @param studyIndldeService study ind ide service
      * @param studyResourcingService study resourcing service
      */
-    public TrialRegistrationHelper(DocumentWorkflowStatusServiceLocal docWrkFlowStatusService,
+    @SuppressWarnings("PMD.ExcessiveParameterList")
+    public TrialInboxCommentsGenerator(DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService,
             AbstractionCompletionServiceRemote abstractionCompletionService,
             StudyProtocolServiceLocal studyProtocolService, StudyOverallStatusServiceLocal studyOverallStatusService,
             StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService,
             StudyIndldeServiceLocal studyIndldeService, StudyResourcingServiceLocal studyResourcingService) {
-        super();
-        this.docWrkFlowStatusService = docWrkFlowStatusService;
+        this.documentWorkFlowStatusService = documentWorkFlowStatusService;
         this.abstractionCompletionService = abstractionCompletionService;
         this.studyProtocolService = studyProtocolService;
         this.studyOverallStatusService = studyOverallStatusService;
@@ -189,14 +168,13 @@ public class TrialRegistrationHelper {
      * @param studyResourcingDTOs study resourcing dtos
      * @throws PAException the exception
      */
-    public void checkForInboxProcessingComments(StudyProtocolDTO studyProtocolDTO,
-            List<DocumentDTO> documentDTOs, StudyOverallStatusDTO overallStatusDTO,
-            List<StudySiteAccrualStatusDTO> participatingSites, List<StudyIndldeDTO> studyIndIdeDTOs,
-            List<StudyResourcingDTO> studyResourcingDTOs)
-            throws PAException {
+    @SuppressWarnings("PMD.ExcessiveParameterList")
+    public void checkForInboxProcessingComments(StudyProtocolDTO studyProtocolDTO, List<DocumentDTO> documentDTOs,
+            StudyOverallStatusDTO overallStatusDTO, List<StudySiteAccrualStatusDTO> participatingSites,
+            List<StudyIndldeDTO> studyIndIdeDTOs, List<StudyResourcingDTO> studyResourcingDTOs) throws PAException {
         inboxProcessingComments.clear();
-        checkIrbDocUpdates(documentDTOs);
-        checkParticipatingDocUpdates(documentDTOs);
+        checkDocumentUpdates(documentDTOs, DocumentTypeCode.IRB_APPROVAL_DOCUMENT, IRB_DOCUMENT_UPDATED);
+        checkDocumentUpdates(documentDTOs, DocumentTypeCode.PARTICIPATING_SITES, PARTICIPATING_DOCUMENT_UPDATED);
         checkTrialUpdateForReview(studyProtocolDTO);
         checkPrimaryPurposeUpdates(studyProtocolDTO);
         checkStatusDatesUpdates(studyProtocolDTO, overallStatusDTO);
@@ -209,31 +187,19 @@ public class TrialRegistrationHelper {
      * @return the inbox comments.
      */
     public String getInboxProcessingComments() {
-        StringBuffer sbuf = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (String comment : inboxProcessingComments) {
-            sbuf.append(comment).append(SPACE);
+            sb.append(comment).append(SPACE);
         }
-        return sbuf.toString();
+        return sb.toString();
     }
-
-    private void checkIrbDocUpdates(List<DocumentDTO> documentDTOs) {
+    
+    private void checkDocumentUpdates(List<DocumentDTO> documentDTOs, DocumentTypeCode docTypeCode, String comment) {
         if (CollectionUtils.isNotEmpty(documentDTOs)) {
+            String codeString = docTypeCode.getCode();
             for (DocumentDTO doc : documentDTOs) {
-                if (DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode().equals(
-                        CdConverter.convertCdToString(doc.getTypeCode()))) {
-                    inboxProcessingComments.add(IRB_DOCUMENT_UPDATED);
-                    return;
-                }
-            }
-        }
-    }
-
-    private void checkParticipatingDocUpdates(List<DocumentDTO> documentDTOs) {
-        if (CollectionUtils.isNotEmpty(documentDTOs)) {
-            for (DocumentDTO doc : documentDTOs) {
-                if (DocumentTypeCode.PARTICIPATING_SITES.getCode().equals(
-                        CdConverter.convertCdToString(doc.getTypeCode()))) {
-                    inboxProcessingComments.add(PARTICIPATING_DOCUMENT_UPDATED);
+                if (codeString.equals(CdConverter.convertCdToString(doc.getTypeCode()))) {
+                    inboxProcessingComments.add(comment);
                     return;
                 }
             }
@@ -241,17 +207,16 @@ public class TrialRegistrationHelper {
     }
 
     private void checkTrialUpdateForReview(StudyProtocolDTO studyProtocolDTO) throws PAException {
-        DocumentWorkflowStatusDTO isoDocWrkStatus = docWrkFlowStatusService.getCurrentByStudyProtocol(studyProtocolDTO
-                .getIdentifier());
+        Ii spIi = studyProtocolDTO.getIdentifier();
+        DocumentWorkflowStatusDTO isoDocWrkStatus = documentWorkFlowStatusService.getCurrentByStudyProtocol(spIi);
         if (PAUtil.isAbstractedAndAbove(isoDocWrkStatus.getStatusCode())) {
-            List<AbstractionCompletionDTO> errorList = abstractionCompletionService
-                    .validateAbstractionCompletion(studyProtocolDTO.getIdentifier());
+            List<AbstractionCompletionDTO> errorList = abstractionCompletionService.validateAbstractionCompletion(spIi);
             if (!errorList.isEmpty()) {
                 StringBuffer sbuf = new StringBuffer();
                 sbuf.append("<b>Type :</b>  <b>Description :</b> <b>Comments :</b><br>");
                 for (AbstractionCompletionDTO abDTO : errorList) {
                     sbuf.append(abDTO.getErrorType()).append(':').append(abDTO.getErrorDescription()).append(':')
-                            .append(abDTO.getComment()).append("<br>");
+                        .append(abDTO.getComment()).append("<br>");
                 }
                 inboxProcessingComments.add(sbuf.toString());
             }
@@ -337,199 +302,5 @@ public class TrialRegistrationHelper {
         || !(grantDto.getNciDivisionProgramCode().getCode().equals(dto.getNciDivisionProgramCode()
                 .getCode()));
     }
-    /**
-     * @param spDTO spDTO
-     * @param summary4organizationDTO summary4organizationDTO
-     * @param summary4studyResourcingDTO summary4studyResourcingDTO
-     * @throws PAException on error
-     */
-    public void enforceSummaryFourSponsorAndCategory(StudyProtocolDTO spDTO, OrganizationDTO summary4organizationDTO,
-            StudyResourcingDTO summary4studyResourcingDTO) throws PAException {
-        StringBuffer sb = new StringBuffer();
-        String summ4Category = null;
-        // validate of null objects
-        sb.append(summary4organizationDTO == null ? "Summary Four Organization DTO cannot be null, " : "");
-        if (summary4studyResourcingDTO != null) {
-            summ4Category = CdConverter.convertCdToString(summary4studyResourcingDTO.getTypeCode());
-        } else {
-            sb.append("Summary Four Study Resourcing DTO cannot be null, ");
-        }
-        if (StringUtils.isEmpty(summ4Category)) {
-            sb.append("Summary 4 Sponsor Category cannot be null, ");
-        } else {
-            validateSponsorType(spDTO, sb, summ4Category);
-        }
-        if (sb.length() > 0) {
-            throw new PAException("Validation Exception " + sb.toString());
-        }
-    }
-
-    /**
-     * @param spDTO
-     * @param sb
-     * @param summ4Category
-     */
-    private void validateSponsorType(StudyProtocolDTO spDTO, StringBuffer sb,
-            String summ4Category) {
-        if ((null == SummaryFourFundingCategoryCode.getByCode(summ4Category))
-                || (BlConverter.convertToBool(spDTO.getProprietaryTrialIndicator())
-                && !isSum4IndustrialSponsorType(summ4Category))
-                || (!BlConverter.convertToBool(spDTO.getProprietaryTrialIndicator())
-                && isSum4IndustrialSponsorType(summ4Category))) {
-                sb.append("Please enter valid value for Summary 4 Sponsor Category.");
-        }
-    }
-
-    /**
-     * @param spDTO
-     * @param summ4Category
-     * @return
-     */
-    private boolean isSum4IndustrialSponsorType(String summ4Category) {
-        return  StringUtils.equalsIgnoreCase(summ4Category, SummaryFourFundingCategoryCode.INDUSTRIAL.getCode());
-    }
-    /**
-     * Check basic contact info as well as study contacts for PI role and site contacts for Resp Party role.
-     * @param studyProtocolDTO trial
-     * @param studyContactDTO  study contact
-     * @param studySiteContactDTO site contact
-     * @param respPartyExists does resp Party exist
-     * @throws PAException when error.
-     */
-    public static void enforceBusinessRulesForStudyContact(StudyProtocolDTO studyProtocolDTO,
-            StudyContactDTO studyContactDTO, StudySiteContactDTO studySiteContactDTO,
-            boolean respPartyExists) throws PAException {
-        enforceBusinessRulesForStudyContact(studyProtocolDTO, studyContactDTO, studySiteContactDTO);
-        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-            checkTelecomReqsForPiAndRespParty(studyContactDTO, studySiteContactDTO, respPartyExists);
-        }
-    }
-
-    /**
-     * Validates the study protocol making sure needed fields are set.
-     * @param studyProtocolDTO the study protocol to validate
-     * @throws PAException upon validation error
-     */
-    public static void validateStudyProtocol(StudyProtocolDTO studyProtocolDTO) throws PAException {
-        StringBuffer sb = new StringBuffer();
-        if (studyProtocolDTO == null) {
-            throw new PAValidationException("Study Protocol cannot be null.");
-        }
-        if (ISOUtil.isTsNull(studyProtocolDTO.getStartDate())) {
-            sb.append("Study Protocol start date cannot be null.\n");
-        }
-        if (ISOUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode())) {
-            sb.append("Study Protocol start date type code cannot be null.\n");
-        }
-        if (ISOUtil.isTsNull(studyProtocolDTO.getPrimaryCompletionDate())) {
-            sb.append("Study Protocol primary completion date cannot be null.\n");
-        }
-        if (ISOUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())) {
-            sb.append("Study Protocol primary completion date type code cannot be null.\n");
-        }
-        if (ISOUtil.isBlNull(studyProtocolDTO.getCtgovXmlRequiredIndicator())) {
-            sb.append("Study Protocol Ct.gov XML indicator cannot be null.");
-        }
-        if (sb.length() > 0) {
-            throw new PAException(VALIDATION_EXCEPTION + sb.toString());
-        }
-    }
-
-    private static void checkTelecomReqsForPiAndRespParty(StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, boolean respPartyExists) throws PAException {
-        StringBuffer sb = new StringBuffer();
-        sb.append(checkTelecomReqsForPi(studyContactDTO, !respPartyExists));
-        sb.append(checkTelecomReqsForRespParty(studySiteContactDTO, respPartyExists));
-        if (sb.length() > 0) {
-            throw new PAException(VALIDATION_EXCEPTION + sb.toString());
-        }
-    }
-
-    private static String checkTelecomReqsForRespParty(StudySiteContactDTO studySiteContactDTO,
-           boolean respPartyExists) {
-        StringBuffer sb = new StringBuffer();
-        if (respPartyExists && (studySiteContactDTO == null
-                || studySiteContactDTO.getTelecomAddresses() == null
-                || CollectionUtils.isEmpty(studySiteContactDTO.getTelecomAddresses().getItem()))) {
-            sb.append("Telecom information must be provided for Responsible Party StudySiteContact,");
-        }
-        return sb.toString();
-    }
-
-    private static String checkTelecomReqsForPi(StudyContactDTO studyContactDTO, boolean piExists) {
-        StringBuffer sb = new StringBuffer();
-        if (piExists && (studyContactDTO == null
-                || studyContactDTO.getTelecomAddresses() == null
-                    || CollectionUtils.isEmpty(studyContactDTO.getTelecomAddresses().getItem()))) {
-            sb.append("Telecom information must be provided for Principal Investigator StudyContact,");
-        }
-        return sb.toString();
-    }
-
-    /**
-     * Validation for basic StudyContact business rules.
-     * @param studyProtocolDTO trial
-     * @param studyContactDTO contact
-     * @param studySiteContactDTO site contact
-     * @throws PAException when error.
-     */
-    public static void enforceBusinessRulesForStudyContact(StudyProtocolDTO studyProtocolDTO,
-            StudyContactDTO studyContactDTO, StudySiteContactDTO studySiteContactDTO) throws PAException {
-        StringBuffer sb = new StringBuffer();
-        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-            sb.append(checkStudyContactEmptyTelecom(studyContactDTO, studySiteContactDTO));
-            if (sb.length() > 0) {
-                throw new PAException(VALIDATION_EXCEPTION + sb.toString());
-            }
-        }
-    }
-
-    private static String checkStudyContactEmptyTelecom(StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO) throws PAException {
-        StringBuffer sb = new StringBuffer();
-        sb.append(checkStudyOrStudySiteContactTelecom(studyContactDTO, studySiteContactDTO));
-        sb.append(isAddressSet(studyContactDTO, studySiteContactDTO));
-        return sb.toString();
-    }
-
-    private static String isAddressSet(StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO) throws PAException {
-        StringBuffer sb = new StringBuffer();
-        if (studyContactDTO != null) {
-            sb.append(checkTelecomAddress(studyContactDTO.getTelecomAddresses(), "StudyContact"));
-        }
-        if (studySiteContactDTO != null) {
-            sb.append(checkTelecomAddress(studySiteContactDTO.getTelecomAddresses(), "StudySiteContact"));
-        }
-        return sb.toString();
-    }
-
-    private static String checkStudyOrStudySiteContactTelecom(StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO) throws PAException {
-        StringBuffer sb = new StringBuffer();
-        if (studyContactDTO != null && studySiteContactDTO != null) {
-            sb.append("Only one of StudyContact or StudySiteContact can be used, ");
-        }
-        if (studyContactDTO == null && studySiteContactDTO == null) {
-            sb.append("One of StudyContact or StudySiteContact has to be used, ");
-        }
-        return sb.toString();
-    }
-    /**
-     * Check for email and phone in a telecom address.
-     * @param telecomAddress set of telecom info.
-     * @param contactType contact type.
-     * @throws PAException when error.
-     * @return error string.
-     */
-    public static String checkTelecomAddress(DSet<Tel> telecomAddress, String contactType) throws PAException {
-        StringBuffer sb = new StringBuffer();
-        if (DSetConverter.getFirstElement(telecomAddress, PAConstants.EMAIL) == null) {
-            sb.append(contactType).append(' ').append(EMAIL_NOT_NULL);
-        }
-        if (DSetConverter.getFirstElement(telecomAddress, PAConstants.PHONE) == null) {
-            sb.append(contactType).append(' ').append(PHONE_NOT_NULL);
-        }
-        return sb.toString();
-    }
+   
 }

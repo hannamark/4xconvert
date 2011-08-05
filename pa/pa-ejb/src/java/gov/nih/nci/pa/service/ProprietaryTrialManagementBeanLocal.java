@@ -99,7 +99,7 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.util.TrialRegistrationHelper;
+import gov.nih.nci.pa.util.TrialRegistrationValidator;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -184,13 +184,11 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             studyProtocolDTO.setProprietaryTrialIndicator(spDto.getProprietaryTrialIndicator());
             validate(studyProtocolDTO, leadOrganizationDTO, leadOrganizationIdentifier, nctIdentifier, documentDTOs,
                     studySiteDTOs, studySiteAccrualDTOs);
-            TrialRegistrationHelper trialRegistrationHelper = new TrialRegistrationHelper(docWrkFlowStatusService, null,
-                    studyProtocolService, null, studySiteAccrualStatusService, null, null);
-
             StudyResourcingDTO summary4StudyResourcingDTO = new StudyResourcingDTO();
             summary4StudyResourcingDTO.setTypeCode(summary4TypeCode);
-            trialRegistrationHelper.enforceSummaryFourSponsorAndCategory(studyProtocolDTO, summary4OrganizationDTO,
-                    summary4StudyResourcingDTO);
+            TrialRegistrationValidator validator = new TrialRegistrationValidator();
+            validator.validateSummary4SponsorAndCategory(studyProtocolDTO, summary4OrganizationDTO, 
+                                                            summary4StudyResourcingDTO);
             // the validation are done, proceed to update
             Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
             spDto.setOfficialTitle(studyProtocolDTO.getOfficialTitle());

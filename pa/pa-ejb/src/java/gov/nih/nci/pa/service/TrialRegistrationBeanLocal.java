@@ -79,30 +79,25 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
-import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudyRelationshipTypeCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudySiteStatusCode;
-import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
-import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
-import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -111,7 +106,6 @@ import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyRelationshipDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
@@ -128,12 +122,12 @@ import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
-import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
@@ -142,11 +136,9 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
-import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
-import gov.nih.nci.pa.util.TrialRegistrationHelper;
-import gov.nih.nci.security.authorization.domainobjects.User;
-import gov.nih.nci.services.EntityDto;
+import gov.nih.nci.pa.util.TrialInboxCommentsGenerator;
+import gov.nih.nci.pa.util.TrialRegistrationValidator;
 import gov.nih.nci.services.PoDto;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -178,384 +170,35 @@ import org.hibernate.Session;
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Interceptors(PaHibernateSessionInterceptor.class)
 public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean implements TrialRegistrationServiceLocal {
-    @EJB private StudyProtocolServiceLocal studyProtocolService = null;
-    @EJB private StudyRelationshipServiceLocal studyRelationshipService = null;
-    @EJB private StudyOverallStatusServiceLocal studyOverallStatusService = null;
-    @EJB private StudyIndldeServiceLocal studyIndldeService = null;
-    @EJB private StudyResourcingServiceLocal studyResourcingService = null;
-    @EJB private StudyMilestoneServicelocal studyMilestoneService = null;
-    @EJB private DocumentServiceLocal documentService = null;
-    @EJB private StudyDiseaseServiceLocal studyDiseaseService = null;
-    @EJB private ArmServiceLocal armService = null;
-    @EJB private PlannedActivityServiceLocal plannedActivityService = null;
-    @EJB private StratumGroupServiceLocal subGroupsService = null;
-    @EJB private StudySiteServiceLocal studySiteService = null;
-    @EJB private StudySiteContactServiceLocal studySiteContactService = null;
-    @EJB private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = null;
-    @EJB private StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = null;
-    @EJB private StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = null;
-    @EJB private OrganizationCorrelationServiceRemote ocsr = null;
-    @EJB private StudyContactServiceLocal studyContactService = null;
-    @EJB private TSRReportGeneratorServiceRemote tsrReportService = null;
-    @EJB private DocumentWorkflowStatusServiceLocal docWrkFlowStatusService = null;
-    @EJB private RegulatoryInformationServiceRemote regulatoryInfoBean = null;
-    @EJB private StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal = null;
-    @EJB private StudyObjectiveServiceLocal studyObjectiveService = null;
-    @EJB private StudySiteOverallStatusServiceLocal studySiteOverallStatusService = null;
-    @EJB private AbstractionCompletionServiceRemote abstractionCompletionService = null;
-    @EJB private StudyInboxServiceLocal studyInboxServiceLocal = null;
-    @EJB private MailManagerServiceLocal mailManagerSerivceLocal = null;
-    @EJB private RegistryUserServiceLocal userServiceLocal = null;
+    @EJB private StudyProtocolServiceLocal studyProtocolService;
+    @EJB private StudyRelationshipServiceLocal studyRelationshipService;
+    @EJB private StudyOverallStatusServiceLocal studyOverallStatusService;
+    @EJB private StudyIndldeServiceLocal studyIndldeService;
+    @EJB private StudyResourcingServiceLocal studyResourcingService;
+    @EJB private StudyMilestoneServicelocal studyMilestoneService;
+    @EJB private DocumentServiceLocal documentService;
+    @EJB private StudySiteServiceLocal studySiteService;
+    @EJB private StudySiteContactServiceLocal studySiteContactService;
+    @EJB private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
+    @EJB private StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService;
+    @EJB private OrganizationCorrelationServiceRemote ocsr;
+    @EJB private StudyContactServiceLocal studyContactService;
+    @EJB private TSRReportGeneratorServiceRemote tsrReportService;
+    @EJB private DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService;
+    @EJB private RegulatoryInformationServiceRemote regulatoryInfoBean;
+    @EJB private StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal;
+    @EJB private AbstractionCompletionServiceRemote abstractionCompletionService;
+    @EJB private StudyInboxServiceLocal studyInboxServiceLocal;
+    @EJB private MailManagerServiceLocal mailManagerSerivceLocal;
+    @EJB private RegistryUserServiceLocal registryUserServiceLocal;
 
     private static final String CREATE = "Create";
     private static final String AMENDMENT = "Amendment";
     private static final String UPDATE = "Update";
-    private static final String REJECTION = "Reject";
     private static final String PROTOCOL_ID_NULL = "Study Protocol Identifier is null";
     private static final String NO_PROTOCOL_FOUND = "No Study Protocol found for = ";
     private static final String SQL_APPEND = " AND FUNCTIONAL_CODE IN ";
-    private static final String VALIDATION_EXCEPTION = "Validation Exception ";
-    private TrialRegistrationHelper trialRegistrationHelper = null;
-
-    /**
-     * @return the studyProtocolService
-     */
-    public StudyProtocolServiceLocal getStudyProtocolService() {
-        return studyProtocolService;
-    }
-    /**
-     * @param studyProtocolService the studyProtocolService to set
-     */
-    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
-        this.studyProtocolService = studyProtocolService;
-    }
-    /**
-     * @return the studyRelationshipService
-     */
-    public StudyRelationshipServiceLocal getStudyRelationshipService() {
-        return studyRelationshipService;
-    }
-    /**
-     * @param studyRelationshipService the studyRelationshipService to set
-     */
-    public void setStudyRelationshipService(StudyRelationshipServiceLocal studyRelationshipService) {
-        this.studyRelationshipService = studyRelationshipService;
-    }
-    /**
-     * @return the studyOverallStatusService
-     */
-    public StudyOverallStatusServiceLocal getStudyOverallStatusService() {
-        return studyOverallStatusService;
-    }
-    /**
-     * @param studyOverallStatusService the studyOverallStatusService to set
-     */
-    public void setStudyOverallStatusService(StudyOverallStatusServiceLocal studyOverallStatusService) {
-        this.studyOverallStatusService = studyOverallStatusService;
-    }
-    /**
-     * @return the studyIndldeService
-     */
-    public StudyIndldeServiceLocal getStudyIndldeService() {
-        return studyIndldeService;
-    }
-    /**
-     * @param studyIndldeService the studyIndldeService to set
-     */
-    public void setStudyIndldeService(StudyIndldeServiceLocal studyIndldeService) {
-        this.studyIndldeService = studyIndldeService;
-    }
-    /**
-     * @return the studyResourcingService
-     */
-    public StudyResourcingServiceLocal getStudyResourcingService() {
-        return studyResourcingService;
-    }
-    /**
-     * @param studyResourcingService the studyResourcingService to set
-     */
-    public void setStudyResourcingService(StudyResourcingServiceLocal studyResourcingService) {
-        this.studyResourcingService = studyResourcingService;
-    }
-    /**
-     * @return the studyMilestoneService
-     */
-    public StudyMilestoneServicelocal getStudyMilestoneService() {
-        return studyMilestoneService;
-    }
-    /**
-     * @param studyMilestoneService the studyMilestoneService to set
-     */
-    public void setStudyMilestoneService(StudyMilestoneServicelocal studyMilestoneService) {
-        this.studyMilestoneService = studyMilestoneService;
-    }
-    /**
-     * @return the documentService
-     */
-    public DocumentServiceLocal getDocumentService() {
-        return documentService;
-    }
-    /**
-     * @param documentService the documentService to set
-     */
-    public void setDocumentService(DocumentServiceLocal documentService) {
-        this.documentService = documentService;
-    }
-    /**
-     * @return the studyDiseaseService
-     */
-    public StudyDiseaseServiceLocal getStudyDiseaseService() {
-        return studyDiseaseService;
-    }
-    /**
-     * @param studyDiseaseService the studyDiseaseService to set
-     */
-    public void setStudyDiseaseService(StudyDiseaseServiceLocal studyDiseaseService) {
-        this.studyDiseaseService = studyDiseaseService;
-    }
-    /**
-     * @return the armService
-     */
-    public ArmServiceLocal getArmService() {
-        return armService;
-    }
-    /**
-     * @param armService the armService to set
-     */
-    public void setArmService(ArmServiceLocal armService) {
-        this.armService = armService;
-    }
-    /**
-     * @return the plannedActivityService
-     */
-    public PlannedActivityServiceLocal getPlannedActivityService() {
-        return plannedActivityService;
-    }
-    /**
-     * @param plannedActivityService the plannedActivityService to set
-     */
-    public void setPlannedActivityService(PlannedActivityServiceLocal plannedActivityService) {
-        this.plannedActivityService = plannedActivityService;
-    }
-    /**
-     * @return the subGroupsService
-     */
-    public StratumGroupServiceLocal getSubGroupsService() {
-        return subGroupsService;
-    }
-    /**
-     * @param subGroupsService the subGroupsService to set
-     */
-    public void setSubGroupsService(StratumGroupServiceLocal subGroupsService) {
-        this.subGroupsService = subGroupsService;
-    }
-    /**
-     * @return the studySiteService
-     */
-    public StudySiteServiceLocal getStudySiteService() {
-        return studySiteService;
-    }
-    /**
-     * @param studySiteService the studySiteService to set
-     */
-    public void setStudySiteService(StudySiteServiceLocal studySiteService) {
-        this.studySiteService = studySiteService;
-    }
-    /**
-     * @return the studySiteContactService
-     */
-    public StudySiteContactServiceLocal getStudySiteContactService() {
-        return studySiteContactService;
-    }
-    /**
-     * @param studySiteContactService the studySiteContactService to set
-     */
-    public void setStudySiteContactService(StudySiteContactServiceLocal studySiteContactService) {
-        this.studySiteContactService = studySiteContactService;
-    }
-    /**
-     * @return the studySiteAccrualStatusService
-     */
-    public StudySiteAccrualStatusServiceLocal getStudySiteAccrualStatusService() {
-        return studySiteAccrualStatusService;
-    }
-    /**
-     * @param studySiteAccrualStatusService the studySiteAccrualStatusService to set
-     */
-    public void setStudySiteAccrualStatusService(StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService) {
-        this.studySiteAccrualStatusService = studySiteAccrualStatusService;
-    }
-    /**
-     * @return the studyOutcomeMeasureService
-     */
-    public StudyOutcomeMeasureServiceLocal getStudyOutcomeMeasureService() {
-        return studyOutcomeMeasureService;
-    }
-    /**
-     * @param studyOutcomeMeasureService the studyOutcomeMeasureService to set
-     */
-    public void setStudyOutcomeMeasureService(StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService) {
-        this.studyOutcomeMeasureService = studyOutcomeMeasureService;
-    }
-    /**
-     * @return the studyRegulatoryAuthorityService
-     */
-    public StudyRegulatoryAuthorityServiceLocal getStudyRegulatoryAuthorityService() {
-        return studyRegulatoryAuthorityService;
-    }
-    /**
-     * @param studyRegulatoryAuthorityService the studyRegulatoryAuthorityService to set
-     */
-    public void setStudyRegulatoryAuthorityService(
-            StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService) {
-        this.studyRegulatoryAuthorityService = studyRegulatoryAuthorityService;
-    }
-    /**
-     * @return the ocsr
-     */
-    public OrganizationCorrelationServiceRemote getOcsr() {
-        return ocsr;
-    }
-    /**
-     * @param ocsr the ocsr to set
-     */
-    public void setOcsr(OrganizationCorrelationServiceRemote ocsr) {
-        this.ocsr = ocsr;
-    }
-    /**
-     * @return the studyContactService
-     */
-    public StudyContactServiceLocal getStudyContactService() {
-        return studyContactService;
-    }
-    /**
-     * @param studyContactService the studyContactService to set
-     */
-    public void setStudyContactService(StudyContactServiceLocal studyContactService) {
-        this.studyContactService = studyContactService;
-    }
-    /**
-     * @return the tsrReportService
-     */
-    public TSRReportGeneratorServiceRemote getTsrReportService() {
-        return tsrReportService;
-    }
-    /**
-     * @param tsrReportService the tsrReportService to set
-     */
-    public void setTsrReportService(TSRReportGeneratorServiceRemote tsrReportService) {
-        this.tsrReportService = tsrReportService;
-    }
-    /**
-     * @return the docWrkFlowStatusService
-     */
-    public DocumentWorkflowStatusServiceLocal getDocWrkFlowStatusService() {
-        return docWrkFlowStatusService;
-    }
-    /**
-     * @param docWrkFlowStatusService the docWrkFlowStatusService to set
-     */
-    public void setDocWrkFlowStatusService(DocumentWorkflowStatusServiceLocal docWrkFlowStatusService) {
-        this.docWrkFlowStatusService = docWrkFlowStatusService;
-    }
-    /**
-     * @return the regulatoryInfoBean
-     */
-    public RegulatoryInformationServiceRemote getRegulatoryInfoBean() {
-        return regulatoryInfoBean;
-    }
-    /**
-     * @param regulatoryInfoBean the regulatoryInfoBean to set
-     */
-    public void setRegulatoryInfoBean(RegulatoryInformationServiceRemote regulatoryInfoBean) {
-        this.regulatoryInfoBean = regulatoryInfoBean;
-    }
-    /**
-     * @return the studyRecruitmentStatusServiceLocal
-     */
-    public StudyRecruitmentStatusServiceLocal getStudyRecruitmentStatusServiceLocal() {
-        return studyRecruitmentStatusServiceLocal;
-    }
-    /**
-     * @param studyRecruitmentStatusServiceLocal the studyRecruitmentStatusServiceLocal to set
-     */
-    public void setStudyRecruitmentStatusServiceLocal(
-            StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal) {
-        this.studyRecruitmentStatusServiceLocal = studyRecruitmentStatusServiceLocal;
-    }
-    /**
-     * @return the studyObjectiveService
-     */
-    public StudyObjectiveServiceLocal getStudyObjectiveService() {
-        return studyObjectiveService;
-    }
-    /**
-     * @param studyObjectiveService the studyObjectiveService to set
-     */
-    public void setStudyObjectiveService(StudyObjectiveServiceLocal studyObjectiveService) {
-        this.studyObjectiveService = studyObjectiveService;
-    }
-    /**
-     * @return the studySiteOverallStatusService
-     */
-    public StudySiteOverallStatusServiceLocal getStudySiteOverallStatusService() {
-        return studySiteOverallStatusService;
-    }
-    /**
-     * @param studySiteOverallStatusService the studySiteOverallStatusService to set
-     */
-    public void setStudySiteOverallStatusService(StudySiteOverallStatusServiceLocal studySiteOverallStatusService) {
-        this.studySiteOverallStatusService = studySiteOverallStatusService;
-    }
-    /**
-     * @return the abstractionCompletionService
-     */
-    public AbstractionCompletionServiceRemote getAbstractionCompletionService() {
-        return abstractionCompletionService;
-    }
-    /**
-     * @param abstractionCompletionService the abstractionCompletionService to set
-     */
-    public void setAbstractionCompletionService(AbstractionCompletionServiceRemote abstractionCompletionService) {
-        this.abstractionCompletionService = abstractionCompletionService;
-    }
-    /**
-     * @return the studyInboxServiceLocal
-     */
-    public StudyInboxServiceLocal getStudyInboxServiceLocal() {
-        return studyInboxServiceLocal;
-    }
-    /**
-     * @param studyInboxServiceLocal the studyInboxServiceLocal to set
-     */
-    public void setStudyInboxServiceLocal(StudyInboxServiceLocal studyInboxServiceLocal) {
-        this.studyInboxServiceLocal = studyInboxServiceLocal;
-    }
-    /**
-     * @return the mailManagerSerivceLocal
-     */
-    public MailManagerServiceLocal getMailManagerSerivceLocal() {
-        return mailManagerSerivceLocal;
-    }
-    /**
-     * @param mailManagerSerivceLocal the mailManagerSerivceLocal to set
-     */
-    public void setMailManagerSerivceLocal(MailManagerServiceLocal mailManagerSerivceLocal) {
-        this.mailManagerSerivceLocal = mailManagerSerivceLocal;
-    }
-    /**
-     * @return the userServiceLocal
-     */
-    public RegistryUserServiceLocal getUserServiceLocal() {
-        return userServiceLocal;
-    }
-    /**
-     * @param userServiceLocal the userServiceLocal to set
-     */
-    public void setUserServiceLocal(RegistryUserServiceLocal userServiceLocal) {
-        this.userServiceLocal = userServiceLocal;
-    }
-
+    
     private void addNciOrgAsCollaborator(StudyProtocolDTO studyProtocolDTO, Ii studyProtocolIi)
             throws TooManyResultsException, PAException {
         StudySiteDTO nCiCollaborator = new StudySiteDTO();
@@ -587,26 +230,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     }
 
     /**
-     * An action plan and execution of a pre-clinical for amending an existing protocols.
-     * @param studyProtocolDTO StudyProtocolDTO
-     * @param overallStatusDTO OverallStatusDTO
-     * @param studyIndldeDTOs list of Study Ind/ides
-     * @param studyResourcingDTOs list of nih grants
-     * @param documentDTOs list of documents
-     * @param leadOrganizationDTO Pead organization
-     * @param principalInvestigatorDTO Principal Investigator
-     * @param sponsorOrganizationDTO Sponsort Organization
-     * @param leadOrganizationSiteIdentifierDTO local protocol identifier
-     * @param studyIdentifierDTOs List of Study Identifier DTO
-     * @param studyContactDTO phone and email info when Pi is responsible
-     * @param studySiteContactDTO phone and email info when sponsor is responsible
-     * @param summary4organizationDTO summary 4 organization code
-     * @param summary4studyResourcingDTO summary 4 category code
-     * @param responsiblePartyContactIi id of the person when sponsor is responsible
-     * @param studyRegAuthDTO studyRegAuthDTO
-     * @param isBatchMode to identify if batch is caller
-     * @return ii of Study Protocol
-     * @throws PAException on error
+     * {@inheritDoc}
      */
     // CHECKSTYLE:OFF More than 7 Parameters
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -615,44 +239,141 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
             List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
-            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
+            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4OrganizationDTO,
+            StudyResourcingDTO summary4StudyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode) throws PAException {
         // CHECKSTYLE:ON
 
         try {
             validateStudyExist(studyProtocolDTO, AMENDMENT);
+            Ii spIi = studyProtocolDTO.getIdentifier();
             StudyProtocolDTO spDTO = getStudyProtocolForCreateOrAmend(studyProtocolDTO, AMENDMENT);
             if (studyRegAuthDTO != null) {
                 studyRegAuthDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
                 StudyRegulatoryAuthorityDTO tempDTO = studyRegulatoryAuthorityService.getCurrentByStudyProtocol(spDTO
-                        .getIdentifier());
+                    .getIdentifier());
                 if (tempDTO != null) {
                     studyRegAuthDTO.setIdentifier(tempDTO.getIdentifier());
                 }
             }
-            updateStudyProtocolObjs(spDTO, overallStatusDTO, leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
-                    studyIndldeDTOs, studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
-                    sponsorOrganizationDTO, studyContactDTO, studySiteContactDTO, summary4organizationDTO,
-                    summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO, null, null, null,
-                    AMENDMENT, isBatchMode);
+            TrialRegistrationValidator validator = createValidator();
+            validator.validateAmendment(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO,
+                                        sponsorOrganizationDTO, studyContactDTO, studySiteContactDTO,
+                                        summary4OrganizationDTO, summary4StudyResourcingDTO, principalInvestigatorDTO,
+                                        responsiblePartyContactIi, studyRegAuthDTO, studyResourcingDTOs, documentDTOs,
+                                        studyIndldeDTOs);
+            PAServiceUtils paServiceUtils = getPAServiceUtils();
+            Ii toStudyProtocolIi = paServiceUtils.copy(studyProtocolDTO.getIdentifier());
+            updateStudyProtocol(studyProtocolDTO, toStudyProtocolIi);
+            updateStudyIdentifiers(spIi, studyIdentifierDTOs);
+            paServiceUtils.createOrUpdate(studyIndldeDTOs, IiConverter.convertToStudyIndIdeIi(null), spIi);
+            paServiceUtils.createOrUpdate(studyResourcingDTOs, IiConverter.convertToStudyResourcingIi(null), spIi);
+            updateRegulatoryAndSponsorInfo(studyProtocolDTO, leadOrganizationDTO, principalInvestigatorDTO,
+                                           sponsorOrganizationDTO, studyContactDTO, studySiteContactDTO,
+                                           responsiblePartyContactIi, studyRegAuthDTO);
+            // update summary4
+            paServiceUtils.manageSummaryFour(spIi, summary4OrganizationDTO, summary4StudyResourcingDTO);
+            updateStudySiteIdentifier(spIi, leadOrganizationDTO, leadOrganizationSiteIdentifierDTO);
+
+            paServiceUtils.managePrincipalInvestigator(spIi, leadOrganizationDTO, principalInvestigatorDTO,
+                                                       StudyTypeCode.INTERVENTIONAL);
+            overallStatusDTO.setStudyProtocolIdentifier(spIi);
+            createStudyRelationship(spIi, toStudyProtocolIi, studyProtocolDTO);
+            paServiceUtils.createMilestone(spIi, MilestoneCode.SUBMISSION_RECEIVED, null);
+            studyOverallStatusService.create(overallStatusDTO);
+            saveDocuments(documentDTOs, spIi);
+            sendMail(AMENDMENT, isBatchMode, spIi);
+            return studyProtocolDTO.getIdentifier();
         } catch (Exception e) {
-            throw new PAException(e);
+            throw new PAException(e.getMessage(), e);
         }
-
-        return studyProtocolDTO.getIdentifier();
-
     }
 
-    private void createInboxProcessingComments(StudyProtocolDTO studyProtocolDTO)
-            throws PAException {
-        String inboxProcessingComments = null;
-        if (trialRegistrationHelper != null) {
-            inboxProcessingComments = trialRegistrationHelper.getInboxProcessingComments();
+    /**
+     * Updates the study protocol identifiers.
+     * @param spIi The study protocol Ii
+     * @param studyIdentifierDTOs The list of study Identifier
+     * @throws PAException if an error occurs
+     */
+    void updateStudyIdentifiers(Ii spIi, List<StudySiteDTO> studyIdentifierDTOs) throws PAException {
+        if (CollectionUtils.isNotEmpty(studyIdentifierDTOs)) {
+            PAServiceUtils paServiceUtils = getPAServiceUtils();
+            for (StudySiteDTO studyIdentifierDTO : studyIdentifierDTOs) {
+                if (studyIdentifierDTO != null
+                        && !ISOUtil.isStNull(studyIdentifierDTO.getLocalStudyProtocolIdentifier())
+                        && !ISOUtil.isIiNull(studyIdentifierDTO.getResearchOrganizationIi())) {
+                    studyIdentifierDTO.setStudyProtocolIdentifier(spIi);
+                    Cd functionalCode = CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+                    studyIdentifierDTO.setFunctionalCode(functionalCode);
+                    paServiceUtils.manageStudyIdentifiers(studyIdentifierDTO);
+                }
+            }
         }
+    }
+    
+    /**
+     * Updates the regulatory authority, the respomsible party and the sponsor.
+     * @param studyProtocolDTO The study protocol
+     * @param leadOrganizationDTO The lead organization
+     * @param principalInvestigatorDTO The principal investigator
+     * @param sponsorOrganizationDTO The sponsor organization
+     * @param studyContactDTO The study contact
+     * @param studySiteContactDTO The study site contact
+     * @param responsiblePartyContactIi The responsible party Ii
+     * @param studyRegAuthDTO The regulatory authority
+     * @throws PAException if an error occurs
+     */
+    // CHECKSTYLE:OFF More than 7 Parameters
+    void updateRegulatoryAndSponsorInfo(StudyProtocolDTO studyProtocolDTO, OrganizationDTO leadOrganizationDTO,
+            PersonDTO principalInvestigatorDTO, OrganizationDTO sponsorOrganizationDTO,
+            StudyContactDTO studyContactDTO, StudySiteContactDTO studySiteContactDTO, Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO) throws PAException {
+        // CHECKSTYLE:ON
+        PAServiceUtils paServiceUtils = getPAServiceUtils();
+        Ii spIi = studyProtocolDTO.getIdentifier();
+        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
+            if (studyRegAuthDTO != null) {
+                List<StudyRegulatoryAuthorityDTO> sraDto = new ArrayList<StudyRegulatoryAuthorityDTO>();
+                sraDto.add(studyRegAuthDTO);
+                paServiceUtils.createOrUpdate(sraDto, IiConverter.convertToStudyRegulatoryAuthorityIi(null), spIi);
+
+            }
+            paServiceUtils.removeResponsibleParty(spIi);
+            paServiceUtils.createResponsibleParty(spIi, leadOrganizationDTO, principalInvestigatorDTO,
+                                                  sponsorOrganizationDTO, responsiblePartyContactIi, studyContactDTO,
+                                                  studySiteContactDTO);
+            paServiceUtils.manageSponsor(spIi, sponsorOrganizationDTO);
+        } else {
+            paServiceUtils.removeRegulatoryAuthority(spIi);
+            paServiceUtils.removeResponsibleParty(spIi);
+            paServiceUtils.removeSponsor(spIi);
+        }
+    }
+    
+    /**
+     * update the study site identifier.
+     * @param spIi The study protocol
+     * @param loDTO The lead organization
+     * @param loSiteDTO The lead organization site
+     * @throws PAException if an error occurs
+     */
+    void updateStudySiteIdentifier(Ii spIi, OrganizationDTO loDTO, StudySiteDTO loSiteDTO) throws PAException {
+        if (loSiteDTO != null) {
+            loSiteDTO.setStudyProtocolIdentifier(spIi);
+            ocsr.createResearchOrganizationCorrelations(loDTO.getIdentifier().getExtension());
+            loSiteDTO
+                .setResearchOrganizationIi(ocsr.getPoResearchOrganizationByEntityIdentifier(loDTO.getIdentifier()));
+            loSiteDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        }
+        getPAServiceUtils().manageStudyIdentifiers(loSiteDTO);
+    }
+    
+    private void createInboxProcessingComments(TrialInboxCommentsGenerator icGenerator, Ii spIi)
+            throws PAException {
+        String inboxProcessingComments = icGenerator.getInboxProcessingComments();
         if (StringUtils.isNotEmpty(inboxProcessingComments)) {
             StudyInboxDTO studyInboxDTO = new StudyInboxDTO();
-            studyInboxDTO.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
+            studyInboxDTO.setStudyProtocolIdentifier(spIi);
             studyInboxDTO.setInboxDateRange(IvlConverter.convertTs()
                     .convertToIvl(new Timestamp(new Date().getTime()), null));
             studyInboxDTO.setComments(StConverter.convertToSt(inboxProcessingComments));
@@ -662,29 +383,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     }
 
     /**
-     * An action plan and execution of a pre-clinical or clinical study including all activities to test a particular
-     * hypothesis that is the basis of the study regarding the effectiveness of a particular treatment, drug, device,
-     * procedure, or care plan. This includes prevention, observational, therapeutic, and other types of studies that
-     * involve subjects.
-     * @param studyProtocolDTO StudyProtocolDTO
-     * @param overallStatusDTO OverallStatusDTO
-     * @param studyIndldeDTOs list of Study Ind/ides
-     * @param studyResourcingDTOs list of nih grants
-     * @param documentDTOs list of documents
-     * @param leadOrganizationDTO lead organization
-     * @param principalInvestigatorDTO Principal Investigator
-     * @param sponsorOrganizationDTO Sponsor Organization
-     * @param leadOrganizationSiteIdentifierDTO local protocol identifier
-     * @param studyIdentifierDTOs study Identifiers
-     * @param studyContactDTO phone and email info when Pi is responsible
-     * @param studySiteContactDTO phone and email info when sponsor is responsible
-     * @param summary4organizationDTO summary 4 organization code
-     * @param summary4studyResourcingDTO summary 4 category code
-     * @param responsiblePartyContactIi id of the person when sponsor is responsible
-     * @param studyRegAuthDTO create studyRegAuthDTO
-     * @param isBatchMode to identify if batch is caller
-     * @return ii of Study Protocol
-     * @throws PAException on error
+     * {@inheritDoc}
      */
     // CHECKSTYLE:OFF More than 7 Parameters
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -694,11 +393,10 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
             OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
             List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
-            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
+            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4OrganizationDTO,
+            StudyResourcingDTO summary4StudyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode) throws PAException {
         // CHECKSTYLE:ON
-        Ii studyProtocolIi = null;
         try {
             if (CollectionUtils.isNotEmpty(studyResourcingDTOs)) {
                 for (StudyResourcingDTO studyResourcingDTO : studyResourcingDTOs) {
@@ -707,35 +405,72 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
                     studyResourcingDTO.setTypeCode(null);
                 }
             }
-            TrialRegistrationHelper.validateStudyProtocol(studyProtocolDTO);
+            TrialRegistrationValidator validator = createValidator();
+            validator.validateCreation(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO, sponsorOrganizationDTO,
+                                       studyContactDTO, studySiteContactDTO, summary4OrganizationDTO,
+                                       summary4StudyResourcingDTO, principalInvestigatorDTO,
+                                       leadOrganizationSiteIdentifierDTO, responsiblePartyContactIi, studyRegAuthDTO,
+                                       studyResourcingDTOs, documentDTOs, studyIndldeDTOs);
+            PAServiceUtils paServiceUtils = getPAServiceUtils();
+            boolean ctgovXmlRequired = studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue();
             studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
-            studyProtocolIi = createStudyProtocolObjs(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                    studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
-                    sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs, studyContactDTO,
-                    studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
-                    responsiblePartyContactIi, studyRegAuthDTO, CREATE, isBatchMode);
+            List<PoDto> listOfDTOToCreateInPO = new ArrayList<PoDto>();
+            listOfDTOToCreateInPO.add(leadOrganizationDTO);
+            // created only if the ctGovXmlRequired is true
+            if (ctgovXmlRequired) {
+                listOfDTOToCreateInPO.add(sponsorOrganizationDTO);
+            }
+            listOfDTOToCreateInPO.add(principalInvestigatorDTO);
+            OrganizationDTO newSummary4OrganizationDTO = paServiceUtils.findOrCreateEntity(summary4OrganizationDTO);
+            listOfDTOToCreateInPO.add(newSummary4OrganizationDTO);
+            paServiceUtils.createPoObject(listOfDTOToCreateInPO);
+            if (ctgovXmlRequired && !BlConverter.convertToBool(studyProtocolDTO.getFdaRegulatedIndicator())
+                    && (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty())) {
+                studyProtocolDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.TRUE));
+                studyProtocolDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.FALSE));
+            }
+            studyProtocolDTO.setIdentifier(null);
+            studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt("1"));
+            Ii spIi = createStudyProtocol(studyProtocolDTO);
+            paServiceUtils.createMilestone(spIi, MilestoneCode.SUBMISSION_RECEIVED, null);
+            overallStatusDTO.setStudyProtocolIdentifier(spIi);
+            studyOverallStatusService.create(overallStatusDTO);
+            paServiceUtils.createOrUpdate(studyIndldeDTOs, IiConverter.convertToStudyIndIdeIi(null), spIi);
+            paServiceUtils.createOrUpdate(studyResourcingDTOs, IiConverter.convertToStudyResourcingIi(null), spIi);
+
+            paServiceUtils.manageSummaryFour(spIi, newSummary4OrganizationDTO, summary4StudyResourcingDTO);
+
+            updateStudySiteIdentifier(spIi, leadOrganizationDTO, leadOrganizationSiteIdentifierDTO);
+            StudyTypeCode studyTypeCode = (studyProtocolDTO instanceof InterventionalStudyProtocolDTO)
+                    ? StudyTypeCode.INTERVENTIONAL : StudyTypeCode.OBSERVATIONAL;
+            paServiceUtils.managePrincipalInvestigator(spIi, leadOrganizationDTO, principalInvestigatorDTO,
+                                                       studyTypeCode);
+            if (ctgovXmlRequired) {
+                createSponsor(spIi, sponsorOrganizationDTO);
+                getPAServiceUtils().createResponsibleParty(spIi, leadOrganizationDTO, principalInvestigatorDTO,
+                                                           sponsorOrganizationDTO, responsiblePartyContactIi,
+                                                           studyContactDTO, studySiteContactDTO);
+            }
+            // list of study identifiers like NCT,DCP, CTEP
+            updateStudyIdentifiers(spIi, studyIdentifierDTOs);
+            addNciOrgAsCollaborator(studyProtocolDTO, spIi);
+            if (ctgovXmlRequired && studyRegAuthDTO != null) {
+                studyRegAuthDTO.setStudyProtocolIdentifier(spIi);
+                paServiceUtils.createOrUpdate(Arrays.asList(studyRegAuthDTO), IiConverter
+                    .convertToStudyRegulatoryAuthorityIi(null), spIi);
+            }
+            assignOwnership(studyProtocolDTO, spIi);
+            paServiceUtils.addNciIdentifierToTrial(spIi);
+            saveDocuments(documentDTOs, spIi);
+            sendMail(CREATE, isBatchMode, spIi);
+            return spIi;
         } catch (Exception e) {
-            throw new PAException(e);
+            throw new PAException(e.getMessage(), e);
         }
-        return studyProtocolIi;
-
     }
-
+   
     /**
-     * @param studyProtocolDTO studyProtocolDTO
-     * @param studySiteAccrualStatusDTO studySiteAccrualStatusDTO
-     * @param documentDTOs documentDTOs
-     * @param leadOrganizationDTO leadOrganizationDTO
-     * @param studySiteInvestigatorDTO studySiteInvestigatorDTO
-     * @param leadOrganizationStudySiteDTO leadOrganizationStudySiteDTO
-     * @param studySiteOrganizationDTO studySiteOrganizationDTO
-     * @param studySiteDTO studySiteDTO
-     * @param nctIdentifierDTO nctIdentifierDTO
-     * @param summary4OrganizationDTO summary4OrganizationDTO
-     * @param summary4StudyResourcingDTO summary4StudyResourcingDTO
-     * @param isBatchMode to identify if batch is caller
-     * @return Ii s
-     * @throws PAException e
+     * {@inheritDoc}
      */
     // CHECKSTYLE:OFF More than 7 Parameters
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -746,20 +481,15 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, OrganizationDTO summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode) throws PAException {
         // CHECKSTYLE:ON
-        Ii studyProtocolIi = null;
-        StudyTypeCode studyTypeCode = null;
         // validate method needs to be here
-        StringBuffer errorMsg = new StringBuffer();
         setPhaseAdditionalQualifier(studyProtocolDTO, studyProtocolDTO);
         setPrimaryPurposeCode(studyProtocolDTO, studyProtocolDTO);
-        errorMsg.append(enforceBusinessRulesForProprietary(studyProtocolDTO, studySiteAccrualStatusDTO, documentDTOs,
-                leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO, studySiteOrganizationDTO,
-                studySiteDTO, nctIdentifierDTO, summary4OrganizationDTO, summary4StudyResourcingDTO));
-        if (errorMsg.length() > 0) {
-            throw new PAException(VALIDATION_EXCEPTION + errorMsg.toString());
-        }
         studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        validateSummary4Information(studyProtocolDTO, summary4OrganizationDTO, summary4StudyResourcingDTO);
+        TrialRegistrationValidator validator = createValidator();
+        validator.validateProprietaryCreation(studyProtocolDTO, studySiteAccrualStatusDTO, documentDTOs,
+                                              leadOrganizationDTO, studySiteInvestigatorDTO,
+                                              leadOrganizationStudySiteDTO, studySiteOrganizationDTO, studySiteDTO,
+                                              nctIdentifierDTO, summary4OrganizationDTO, summary4StudyResourcingDTO);
         List<PoDto> listOfDTOToCreateInPO = new ArrayList<PoDto>();
         listOfDTOToCreateInPO.add(leadOrganizationDTO);
         listOfDTOToCreateInPO.add(studySiteOrganizationDTO);
@@ -769,51 +499,52 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt("1"));
 
         try {
-            if (studyProtocolDTO instanceof InterventionalStudyProtocolDTO) {
-                studyProtocolIi = studyProtocolService.createInterventionalStudyProtocol(
-                         (InterventionalStudyProtocolDTO) getStudyProtocolForCreateOrAmend(studyProtocolDTO, CREATE));
-                studyTypeCode = StudyTypeCode.INTERVENTIONAL;
-            } else {
-                studyProtocolIi = studyProtocolService .createObservationalStudyProtocol(
-                    (ObservationalStudyProtocolDTO) getStudyProtocolForCreateOrAmend(studyProtocolDTO, CREATE));
-                studyTypeCode = StudyTypeCode.OBSERVATIONAL;
-            }
-            getPAServiceUtils().createMilestone(studyProtocolIi, MilestoneCode.SUBMISSION_RECEIVED, null);
-            List<DocumentDTO> savedDocs = getPAServiceUtils().createOrUpdate(documentDTOs,
-                    IiConverter.convertToDocumentIi(null), studyProtocolIi);
-            getPAServiceUtils().manageSummaryFour(studyProtocolIi, summary4OrganizationDTO, summary4StudyResourcingDTO);
-
-            if (leadOrganizationStudySiteDTO != null) {
-                leadOrganizationStudySiteDTO.setStudyProtocolIdentifier(studyProtocolIi);
-                ocsr.createResearchOrganizationCorrelations(leadOrganizationDTO.getIdentifier().getExtension());
-                leadOrganizationStudySiteDTO.setResearchOrganizationIi(ocsr
-                        .getPoResearchOrganizationByEntityIdentifier(leadOrganizationDTO.getIdentifier()));
-                leadOrganizationStudySiteDTO.setFunctionalCode(CdConverter
-                        .convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-            }
-            getPAServiceUtils().manageStudyIdentifiers(leadOrganizationStudySiteDTO);
-            nctIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
+            Ii spIi = createStudyProtocol(studyProtocolDTO);
+            getPAServiceUtils().createMilestone(spIi, MilestoneCode.SUBMISSION_RECEIVED, null);
+            
+            getPAServiceUtils().manageSummaryFour(spIi, summary4OrganizationDTO, summary4StudyResourcingDTO);
+            updateStudySiteIdentifier(spIi, leadOrganizationDTO, leadOrganizationStudySiteDTO);
+            
+            nctIdentifierDTO.setStudyProtocolIdentifier(spIi);
             nctIdentifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
             String poOrgId = ocsr.getPOOrgIdentifierByIdentifierType(PAConstants.NCT_IDENTIFIER_TYPE);
             nctIdentifierDTO.setResearchOrganizationIi(ocsr.getPoResearchOrganizationByEntityIdentifier(IiConverter
                     .convertToPoOrganizationIi(String.valueOf(poOrgId))));
             getPAServiceUtils().manageStudyIdentifiers(nctIdentifierDTO);
             // create StudySite
-            Ii studySiteIi = createStudySite(studyProtocolIi, studySiteOrganizationDTO, studySiteDTO);
+            Ii studySiteIi = createStudySite(spIi, studySiteOrganizationDTO, studySiteDTO);
             studySiteAccrualStatusDTO.setStudySiteIi(studySiteIi);
             studySiteAccrualStatusService.createStudySiteAccrualStatus(studySiteAccrualStatusDTO);
             // set PI
-            createStudySiteContact(studySiteIi, studyProtocolIi, studySiteOrganizationDTO, studySiteInvestigatorDTO,
+            StudyTypeCode studyTypeCode = (studyProtocolDTO instanceof InterventionalStudyProtocolDTO)
+            ? StudyTypeCode.INTERVENTIONAL : StudyTypeCode.OBSERVATIONAL;
+            createStudySiteContact(studySiteIi, spIi, studySiteOrganizationDTO, studySiteInvestigatorDTO,
                     studyTypeCode);
-            assignOwnership(studyProtocolDTO, studyProtocolIi);
-            getPAServiceUtils().addNciIdentifierToTrial(studyProtocolIi);
-            getPAServiceUtils().moveDocumentContents(savedDocs, studyProtocolIi);
-            sendMail(CREATE, isBatchMode, studyProtocolIi);
+            assignOwnership(studyProtocolDTO, spIi);
+            getPAServiceUtils().addNciIdentifierToTrial(spIi);
+            saveDocuments(documentDTOs, spIi);
+            sendMail(CREATE, isBatchMode, spIi);
+            return spIi;
         } catch (Exception e) {
-            throw new PAException(e);
+            throw new PAException(e.getMessage(), e);
         }
-        return studyProtocolIi;
     }
+    
+    /**
+     * Creates a new Study protocol.
+     * @param studyProtocolDTO The study protocol.
+     * @return The Ii of the new study protocol
+     * @throws PAException if an error occurs.
+     */
+    Ii createStudyProtocol(StudyProtocolDTO studyProtocolDTO) throws PAException {
+        StudyProtocolDTO spDTO = getStudyProtocolForCreateOrAmend(studyProtocolDTO, CREATE);
+        if (studyProtocolDTO instanceof InterventionalStudyProtocolDTO) {
+            return studyProtocolService.createInterventionalStudyProtocol((InterventionalStudyProtocolDTO) spDTO);
+        } 
+        return studyProtocolService.createObservationalStudyProtocol((ObservationalStudyProtocolDTO) spDTO);
+    }
+
+    
     /**This will assign ownership.
      * @param studyProtocolDTO
      * @param isBatchMode
@@ -822,9 +553,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
      */
     private void assignOwnership(StudyProtocolDTO studyProtocolDTO, Ii studyProtocolIi) throws PAException {
         // assign ownership
-        RegistryUser usr = userServiceLocal.getUser(StConverter.convertToString(studyProtocolDTO
+        RegistryUser usr = registryUserServiceLocal.getUser(StConverter.convertToString(studyProtocolDTO
                 .getUserLastCreated()));
-        userServiceLocal.assignOwnership(usr.getId(), IiConverter.convertToLong(studyProtocolIi));
+        registryUserServiceLocal.assignOwnership(usr.getId(), IiConverter.convertToLong(studyProtocolIi));
         //PO-2646: We're adding an explicit evict of the study protocol so the complete trial is loaded
         //when searched upon later in the trial creation process. Failure to do so was resulting in NPE further down
         //the line.
@@ -851,123 +582,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         studyPartDTO.setStudyProtocolIdentifier(spDTO.getIdentifier());
         studyPartDTO.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
         studyPartDTO = studySiteService.create(studyPartDTO);
-    }
-
-    // CHECKSTYLE:OFF More than 7 Parameters
-    private Ii createStudyProtocolObjs(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
-            List<StudyIndldeDTO> studyIndldeDTOs, List<StudyResourcingDTO> studyResourcingDTOs,
-            List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
-            OrganizationDTO sponsorOrganizationDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
-            List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
-            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
-            StudyRegulatoryAuthorityDTO studyRegAuthDTO, String operation, Bl isBatchMode) throws PAException,
-            TooManyResultsException {
-        // CHECKSTYLE:ON
-        validate(studyProtocolDTO, overallStatusDTO, operation, studyResourcingDTOs, documentDTOs, leadOrganizationDTO,
-                sponsorOrganizationDTO, summary4organizationDTO, principalInvestigatorDTO, responsiblePartyContactIi,
-                studyIndldeDTOs);
-        enforceBusinessRules(studyProtocolDTO, overallStatusDTO, documentDTOs, leadOrganizationDTO,
-                principalInvestigatorDTO, sponsorOrganizationDTO, studyContactDTO, studySiteContactDTO,
-                leadOrganizationSiteIdentifierDTO, responsiblePartyContactIi);
-        validateSummary4Information(studyProtocolDTO, summary4organizationDTO, summary4studyResourcingDTO);
-        getPAServiceUtils().enforceRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs
-                , regulatoryInfoBean);
-
-        List<PoDto> listOfDTOToCreateInPO = new ArrayList<PoDto>();
-        listOfDTOToCreateInPO.add(leadOrganizationDTO);
-        // created only if the ctGovXmlRequired is true
-        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-            listOfDTOToCreateInPO.add(sponsorOrganizationDTO);
-        }
-        listOfDTOToCreateInPO.add(principalInvestigatorDTO);
-        OrganizationDTO newSummary4OrganizationDTO = getPAServiceUtils().findOrCreateEntity(summary4organizationDTO);
-        listOfDTOToCreateInPO.add(newSummary4OrganizationDTO);
-        getPAServiceUtils().createPoObject(listOfDTOToCreateInPO);
-
-        Ii studyProtocolIi = null;
-        StudyTypeCode studyTypeCode = null;
-        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()
-                && !BlConverter.convertToBool(studyProtocolDTO.getFdaRegulatedIndicator())
-                && (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty())) {
-            studyProtocolDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.TRUE));
-            studyProtocolDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.FALSE));
-        }
-        studyProtocolDTO.setIdentifier(null);
-        studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt("1"));
-        if (studyProtocolDTO instanceof InterventionalStudyProtocolDTO) {
-            studyProtocolIi = studyProtocolService.createInterventionalStudyProtocol(
-                 (InterventionalStudyProtocolDTO) getStudyProtocolForCreateOrAmend(studyProtocolDTO, CREATE));
-            studyTypeCode = StudyTypeCode.INTERVENTIONAL;
-        } else {
-            studyProtocolIi = studyProtocolService.createObservationalStudyProtocol(
-               (ObservationalStudyProtocolDTO) getStudyProtocolForCreateOrAmend(studyProtocolDTO, CREATE));
-            studyTypeCode = StudyTypeCode.OBSERVATIONAL;
-        }
-        getPAServiceUtils().createMilestone(studyProtocolIi, MilestoneCode.SUBMISSION_RECEIVED, null);
-        overallStatusDTO.setStudyProtocolIdentifier(studyProtocolIi);
-        studyOverallStatusService.create(overallStatusDTO);
-        getPAServiceUtils().createOrUpdate(studyIndldeDTOs, IiConverter.convertToStudyIndIdeIi(null), studyProtocolIi);
-        getPAServiceUtils().createOrUpdate(studyResourcingDTOs, IiConverter.convertToStudyResourcingIi(null),
-                studyProtocolIi);
-        List<DocumentDTO> savedDocs =
-            getPAServiceUtils().createOrUpdate(documentDTOs, IiConverter.convertToDocumentIi(null), studyProtocolIi);
-        getPAServiceUtils().manageSummaryFour(studyProtocolIi, newSummary4OrganizationDTO, summary4studyResourcingDTO);
-        if (leadOrganizationSiteIdentifierDTO != null) {
-            leadOrganizationSiteIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
-            ocsr.createResearchOrganizationCorrelations(leadOrganizationDTO.getIdentifier().getExtension());
-            leadOrganizationSiteIdentifierDTO.setResearchOrganizationIi(ocsr
-                    .getPoResearchOrganizationByEntityIdentifier(leadOrganizationDTO.getIdentifier()));
-            leadOrganizationSiteIdentifierDTO.setFunctionalCode(CdConverter
-                    .convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-        }
-        getPAServiceUtils().manageStudyIdentifiers(leadOrganizationSiteIdentifierDTO);
-
-        getPAServiceUtils().managePrincipalInvestigator(studyProtocolIi, leadOrganizationDTO, principalInvestigatorDTO,
-                studyTypeCode);
-        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-            createSponsor(studyProtocolIi, sponsorOrganizationDTO);
-            getPAServiceUtils().createResponsibleParty(studyProtocolIi, leadOrganizationDTO, principalInvestigatorDTO,
-                    sponsorOrganizationDTO, responsiblePartyContactIi, studyContactDTO, studySiteContactDTO);
-        }
-        // list of study identifiers like NCT,DCP, CTEP
-        if (CollectionUtils.isNotEmpty(studyIdentifierDTOs)) {
-            for (StudySiteDTO studyIdentifierDTO : studyIdentifierDTOs) {
-                if (!ISOUtil.isStNull(studyIdentifierDTO.getLocalStudyProtocolIdentifier())
-                        && !ISOUtil.isIiNull(studyIdentifierDTO.getResearchOrganizationIi())) {
-                    studyIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
-                    studyIdentifierDTO.setFunctionalCode(
-                            CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-                    getPAServiceUtils().manageStudyIdentifiers(studyIdentifierDTO);
-                }
-            }
-        }
-        addNciOrgAsCollaborator(studyProtocolDTO, studyProtocolIi);
-        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue() && studyRegAuthDTO != null) {
-            studyRegAuthDTO.setStudyProtocolIdentifier(studyProtocolIi);
-            getPAServiceUtils().createOrUpdate(Arrays.asList(studyRegAuthDTO),
-                    IiConverter.convertToStudyRegulatoryAuthorityIi(null), studyProtocolIi);
-        }
-        assignOwnership(studyProtocolDTO, studyProtocolIi);
-        getPAServiceUtils().addNciIdentifierToTrial(studyProtocolIi);
-        getPAServiceUtils().moveDocumentContents(savedDocs, studyProtocolIi);
-        sendMail(CREATE, isBatchMode, studyProtocolIi);
-        return studyProtocolIi;
-    }
-    /**
-     * @param studyProtocolDTO
-     * @param summary4organizationDTO
-     * @param summary4studyResourcingDTO
-     * @throws PAException
-     */
-    private void validateSummary4Information(StudyProtocolDTO studyProtocolDTO,
-            OrganizationDTO summary4organizationDTO,
-            StudyResourcingDTO summary4studyResourcingDTO) throws PAException {
-        trialRegistrationHelper = new TrialRegistrationHelper(docWrkFlowStatusService, abstractionCompletionService,
-                studyProtocolService, studyOverallStatusService, studySiteAccrualStatusService, studyIndldeService,
-                studyResourcingService);
-        trialRegistrationHelper.enforceSummaryFourSponsorAndCategory(studyProtocolDTO, summary4organizationDTO,
-                summary4studyResourcingDTO);
     }
 
     private void createStudyRelationship(Ii fromStudyProtocolIi, Ii toStudyProtocolIi, StudyProtocolDTO spDto)
@@ -1085,219 +699,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         getPAServiceUtils().executeSql(sql);
     }
 
-    // CHECKSTYLE:OFF More than 7 Parameters
-    private void enforceBusinessRules(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
-            List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
-            OrganizationDTO sponsorOrganizationDTO, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
-            Ii responsiblePartyContactIi)
-    throws PAException {
-        // CHECKSTYLE:ON
-        StringBuffer sb = new StringBuffer();
-        // validate of null objects
-        sb.append(studyProtocolDTO == null ? "Study Protocol DTO cannot be null , " : "");
-        sb.append(overallStatusDTO == null ? "Study OverallStatus DTO cannot be null , " : "");
-        sb.append(documentDTOs == null ? "Document DTO's cannot be null , " : "");
-        sb.append(leadOrganizationDTO == null ? "Lead Organization DTO cannot be null , " : "");
-        sb.append(principalInvestigatorDTO == null ? "Principal Investigator DTO cannot be null , " : "");
-        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-            sb.append(sponsorOrganizationDTO == null ? "Sponsor Organization DTO cannot be null , " : "");
-        }
-        // validates for attributes
-        sb.append(ISOUtil.isStNull(studyProtocolDTO.getOfficialTitle()) ? "Official Title cannot be null , " : "");
-        validatePhase(studyProtocolDTO, sb);
-        sb.append(ISOUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode()) ? "Trial Start Date Type cannot be null , "
-                : "");
-        sb.append(ISOUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())
-                ? "Primary Completion Date Type cannot be null , " : "");
-        sb.append(ISOUtil.isTsNull(studyProtocolDTO.getStartDate()) ? "Trial Start Date cannot be null , " : "");
-        sb.append(ISOUtil.isTsNull(studyProtocolDTO.getPrimaryCompletionDate())
-                && studyProtocolDTO.getPrimaryCompletionDate().getNullFlavor() != NullFlavor.UNK
-                ? "Primary Completion Date cannot be null , " : "");
-        if (leadOrganizationSiteIdentifierDTO != null) {
-            sb.append(ISOUtil.isStNull(leadOrganizationSiteIdentifierDTO.getLocalStudyProtocolIdentifier())
-                    ? "Local StudyProtocol Identifier cannot be null , " : "");
-        }
-        sb.append(ISOUtil.isIiNull(leadOrganizationDTO.getIdentifier())
-                ? "Lead Organization Identifier cannot be null , " : "");
-        sb.append(ISOUtil.isIiNull(principalInvestigatorDTO.getIdentifier())
-                ? "Principal Investigator  Identifier cannot be null , " : "");
-        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-            sb.append(ISOUtil.isIiNull(sponsorOrganizationDTO.getIdentifier())
-                    ? "Sponsor Organization  Identifier cannot be null , " : "");
-        }
-        if (overallStatusDTO != null) {
-            sb.append(ISOUtil.isCdNull(overallStatusDTO.getStatusCode()) ? "Current Trial Status Code cannot be null , "
-                    : "");
-            sb.append(ISOUtil.isTsNull(overallStatusDTO.getStatusDate()) ? "Current Trial Status Date cannot be null , "
-                    : "");
-        }
-        if (sb.length() > 0) {
-            throw new PAException(VALIDATION_EXCEPTION + sb.toString());
-        }
-        TrialRegistrationHelper.enforceBusinessRulesForStudyContact(studyProtocolDTO,
-                studyContactDTO, studySiteContactDTO, !ISOUtil.isIiNull(responsiblePartyContactIi));
-
-    }
-    /**
-     * @param studyProtocolDTO
-     * @param sb
-     */
-    private void validatePhase(StudyProtocolDTO studyProtocolDTO,
-            StringBuffer sb) {
-        sb.append(ISOUtil.isCdNull(studyProtocolDTO.getPhaseCode()) ? "Phase cannot be null , " : "");
-        if (PhaseCode.getByCode(CdConverter.convertCdToString(studyProtocolDTO.getPhaseCode())) == null) {
-                sb.append("Please enter valid value for Phase Code.");
-        }
-    }
-
-    // CHECKSTYLE:OFF More than 7 Parameters
-    private String enforceBusinessRulesForProprietary(StudyProtocolDTO studyProtocolDTO,
-            StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, List<DocumentDTO> documentDTOs,
-            OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
-            StudySiteDTO leadOrganizationStudySiteDTO, OrganizationDTO studySiteOrganizationDTO,
-            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, OrganizationDTO summary4OrganizationDTO,
-            StudyResourcingDTO summary4StudyResourcingDTO) throws PAException {
-        // CHECKSTYLE:ON
-        StringBuffer errorMsg = new StringBuffer();
-        errorMsg.append(studyProtocolDTO == null ? "Study Protocol DTO cannot be null , " : "");
-        errorMsg.append(studySiteAccrualStatusDTO == null ? "Study Site Accrual Status DTO cannot be null , " : "");
-
-        errorMsg.append(leadOrganizationDTO == null ? "Lead Organization DTO cannot be null , " : "");
-        errorMsg.append(studySiteInvestigatorDTO == null ? "Principal Investigator DTO cannot be null , " : "");
-        errorMsg.append(studySiteOrganizationDTO == null ? "Study Site Organization DTO cannot be null , " : "");
-
-        errorMsg.append(leadOrganizationStudySiteDTO == null ? "Lead Organization Study SiteDTO cannot be null , "
-                : "");
-        errorMsg.append(studySiteDTO == null ? "Study Site DTO cannot be null , " : "");
-
-        String loginName = "";
-        if (!ISOUtil.isStNull(studyProtocolDTO.getUserLastCreated())) {
-            loginName = studyProtocolDTO.getUserLastCreated().getValue();
-            CSMUserUtil userService = CSMUserService.getInstance();
-            User user = userService.getCSMUser(loginName);
-            if (user == null) {
-                errorMsg.append("Submitter " + loginName + " does not exist. Please do self register in CTRP.");
-            }
-        } else {
-            errorMsg.append("Submitter is required.");
-        }
-        try {
-            // duplicate check only for NCT
-            if (!ISOUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
-                nctIdentifierDTO
-                        .setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-                String poOrgId = ocsr.getPOOrgIdentifierByIdentifierType(PAConstants.NCT_IDENTIFIER_TYPE);
-                nctIdentifierDTO.setResearchOrganizationIi(ocsr.getPoResearchOrganizationByEntityIdentifier(IiConverter
-                        .convertToPoOrganizationIi(String.valueOf(poOrgId))));
-                studySiteService.validate(nctIdentifierDTO);
-            }
-        } catch (PAException e) {
-            errorMsg.append(e.getMessage());
-        }
-
-        // validates for attributes
-        errorMsg.append(ISOUtil.isStNull(studyProtocolDTO.getOfficialTitle())
-                ? "Official Title cannot be null , " : "");
-        if (nctIdentifierDTO != null) {
-            if (ISOUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
-                validatePhase(studyProtocolDTO, errorMsg);
-                errorMsg.append(ISOUtil.isCdNull(studyProtocolDTO.getPrimaryPurposeCode()) ? "Purpose cannot be null , "
-                        : "");
-                if (CollectionUtils.isEmpty(documentDTOs)
-                        || !getPAServiceUtils().isDocumentInList(documentDTOs, DocumentTypeCode.PROTOCOL_DOCUMENT)) {
-                    errorMsg.append("Proprietary template document is mandatory if NCT number is not provided");
-                }
-            }
-        } else {
-            validatePhase(studyProtocolDTO, errorMsg);
-            errorMsg.append(ISOUtil.isCdNull(studyProtocolDTO.getPrimaryPurposeCode()) ? "Purpose cannot be null , "
-                    : "");
-        }
-        if (studySiteDTO != null) {
-            errorMsg.append(ISOUtil.isStNull(studySiteDTO.getLocalStudyProtocolIdentifier())
-                    ? "Submitting Organization Local Trial Identifier cannot be null, " : "");
-        }
-        if (leadOrganizationStudySiteDTO != null) {
-            errorMsg.append(ISOUtil.isStNull(leadOrganizationStudySiteDTO.getLocalStudyProtocolIdentifier())
-                    ? "Lead Organization Trial Identifier cannot be null, " : "");
-        }
-        errorMsg.append(getPAServiceUtils().validateRecuritmentStatusDateRule(studySiteAccrualStatusDTO, studySiteDTO));
-        if (summary4StudyResourcingDTO != null && !ISOUtil.isCdNull(summary4StudyResourcingDTO.getTypeCode())
-                && null == SummaryFourFundingCategoryCode.getByCode(CdConverter
-                        .convertCdToString(summary4StudyResourcingDTO.getTypeCode()))) {
-            errorMsg.append(CdConverter.convertCdToString(summary4StudyResourcingDTO.getTypeCode())).append(
-                    " is not valid Summary Four Funding Category Code");
-        }
-        errorMsg.append(validatePoObjects(leadOrganizationDTO, "Lead Organization ", false));
-        errorMsg.append(validatePoObjects(studySiteOrganizationDTO, "Study Site Organization ", false));
-        errorMsg.append(validatePoObjects(summary4OrganizationDTO, "Summary 4 Organization ", false));
-        errorMsg.append(validatePoObjects(studySiteInvestigatorDTO, "Study Site Investigator ", false));
-
-        return errorMsg.toString();
-    }
-
-    // CHECKSTYLE:OFF More than 7 Parameters
-    private void enforceBusinessRulesForUpdate(StudyProtocolDTO studyProtocolDTO,
-            StudyOverallStatusDTO overallStatusDTO, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, List<StudyIndldeDTO> studyIndldeDTOs,
-            List<StudyResourcingDTO> studyResourcingDTOs, StudyRegulatoryAuthorityDTO studyRegAuthDTO,
-            List<StudySiteAccrualStatusDTO> participatingSites, String operation, List<StudySiteDTO> collaborators)
-            throws PAException {
-        // CHECKSTYLE:ON
-        StringBuffer sb = new StringBuffer();
-        // validate of null objects
-        sb.append(studyProtocolDTO == null ? "Study Protocol DTO cannot be null , " : "");
-        sb.append(overallStatusDTO == null ? "Study OverallStatus DTO cannot be null , " : "");
-
-        // validates for attributes
-        sb.append(ISOUtil.isCdNull(studyProtocolDTO.getStartDateTypeCode()) ? "Trial Start Date Type cannot be null , "
-                : "");
-        sb.append(ISOUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())
-                ? "Primary Completion Date Type cannot be null , " : "");
-        sb.append(ISOUtil.isTsNull(studyProtocolDTO.getStartDate()) ? "Trial Start Date cannot be null , " : "");
-        sb.append(ISOUtil.isTsNull(studyProtocolDTO.getPrimaryCompletionDate())
-                && studyProtocolDTO.getPrimaryCompletionDate().getNullFlavor() != NullFlavor.UNK
-                ? "Primary Completion Date cannot be null , " : "");
-        validatePhase(studyProtocolDTO, sb);
-        if (overallStatusDTO != null) {
-            sb.append(ISOUtil.isCdNull(overallStatusDTO.getStatusCode()) ? "Current Trial Status cannot be null , "
-                            : "");
-            sb.append(ISOUtil.isTsNull(overallStatusDTO.getStatusDate()) ? "Current Trial Status Date cannot be null , "
-                    : "");
-        }
-        if (UPDATE.equalsIgnoreCase(operation) && collaborators != null && !collaborators.isEmpty()) {
-            for (StudySiteDTO collaborator : collaborators) {
-                if (!ISOUtil.isIiNull(collaborator.getIdentifier())
-                        && !getPAServiceUtils().isIiExistInPA(IiConverter.convertToStudySiteIi(Long.valueOf(collaborator
-                                .getIdentifier().getExtension())))) {
-                    sb.append("Collaborator Id " + collaborator.getIdentifier().getExtension() + " does not exist.");
-                }
-            }
-        }
-        if (sb.length() > 0) {
-            throw new PAException(VALIDATION_EXCEPTION + sb.toString());
-        }
-        TrialRegistrationHelper.enforceBusinessRulesForStudyContact(studyProtocolDTO,
-                studyContactDTO, studySiteContactDTO);
-        getPAServiceUtils().enforceNoDuplicateIndIde(studyIndldeDTOs, studyProtocolDTO);
-        getPAServiceUtils().enforceNoDuplicateGrants(studyResourcingDTOs);
-        getPAServiceUtils().enforceRegulatoryInfo(studyProtocolDTO, studyRegAuthDTO, studyIndldeDTOs
-                , regulatoryInfoBean);
-        if (UPDATE.equalsIgnoreCase(operation)) {
-            enforceRecruitmentStatus(studyProtocolDTO, participatingSites);
-        }
-    }
-
-    private void enforceRecruitmentStatus(StudyProtocolDTO studyProtocolDTO,
-            List<StudySiteAccrualStatusDTO> participatingSites) throws PAException {
-        if (participatingSites != null && !participatingSites.isEmpty()) {
-            StudyRecruitmentStatusDTO recruitmentStatusDto = studyRecruitmentStatusServiceLocal
-                    .getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
-            getPAServiceUtils().enforceRecruitmentStatus(studyProtocolDTO, participatingSites, recruitmentStatusDto);
-        }
-    }
-
     private StudyProtocolDTO getStudyProtocolForCreateOrAmend(StudyProtocolDTO studyProtocolDTO, String operation)
             throws PAException {
         StudyProtocolDTO createStudyProtocolDTO = null;
@@ -1347,7 +748,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         return createStudyProtocolDTO;
     }
 
-
     /**
      * Reject a protocol and rollback all the changes.
      * @param studyProtocolIi study protocol identifier
@@ -1358,7 +758,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     public void reject(Ii studyProtocolIi, St rejectionReason) throws PAException {
         try {
             StudyProtocolDTO studyProtocolDto = studyProtocolService.getInterventionalStudyProtocol(studyProtocolIi);
-            validate(studyProtocolDto, null, REJECTION, null, null, null, null, null, null, null, null);
+            TrialRegistrationValidator validator = createValidator();
+            validator.validateRejection(studyProtocolDto);
             // Original trial Rejection
             if (studyProtocolDto.getSubmissionNumber().getValue().intValue() == 1) {
                 StudyMilestoneDTO smDto = new StudyMilestoneDTO();
@@ -1396,23 +797,23 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
                     throw new PAException("Study Relationship not found for the Amended Protocol");
 
                 }
-                InterventionalStudyProtocolDTO sourceSpDto = studyProtocolService.getInterventionalStudyProtocol(
-                        sourceSpIi);
+                InterventionalStudyProtocolDTO sourceSpDto = studyProtocolService
+                    .getInterventionalStudyProtocol(sourceSpIi);
                 // overwrite with the target
                 sourceSpDto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
                 // studyProtocolService.updateStudyProtocol(sourceSpDto);
                 Session session = PaHibernateUtil.getCurrentSession();
                 InterventionalStudyProtocol source = InterventionalStudyProtocolConverter
-                        .convertFromDTOToDomain(sourceSpDto);
+                    .convertFromDTOToDomain(sourceSpDto);
                 Long id = IiConverter.convertToLong(targetSpIi);
-                InterventionalStudyProtocol target = (InterventionalStudyProtocol) session.load(
-                        InterventionalStudyProtocol.class, id);
+                InterventionalStudyProtocol target = (InterventionalStudyProtocol) session
+                    .load(InterventionalStudyProtocol.class, id);
                 source.setId(target.getId());
                 target = source;
                 session.merge(target);
                 Ii sourceIi = null;
-                List<StudyContactDTO> studyContactDtos = getPAServiceUtils().getStudyContact(sourceSpIi,
-                        StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR, true);
+                List<StudyContactDTO> studyContactDtos = getPAServiceUtils()
+                    .getStudyContact(sourceSpIi, StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR, true);
                 StudyContactDTO scSourceDTO = null;
                 if (PAUtil.getFirstObj(studyContactDtos) != null) {
                     scSourceDTO = PAUtil.getFirstObj(studyContactDtos);
@@ -1420,8 +821,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
                     throw new PAException("Source Study Principal Investigator is not available");
                 }
                 sourceIi = scSourceDTO.getIdentifier();
-                studyContactDtos = getPAServiceUtils().getStudyContact(targetSpIi,
-                        StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR, true);
+                studyContactDtos = getPAServiceUtils()
+                    .getStudyContact(targetSpIi, StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR, true);
                 StudyContactDTO scTargetDTO = null;
                 if (PAUtil.getFirstObj(studyContactDtos) != null) {
                     scTargetDTO = PAUtil.getFirstObj(studyContactDtos);
@@ -1496,7 +897,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
                 getPAServiceUtils().executeSql(deleteAndReplace(sourceSpIi, targetSpIi));
             }
         } catch (Exception e) {
-            throw new PAException(e);
+            throw new PAException(e.getMessage(), e);
         }
     }
 
@@ -1550,63 +951,9 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             List<StudySiteDTO> studySiteDTOs, Bl isBatchMode) throws PAException {
         // CHECKSTYLE:ON
 
-        try {
-            validateStudyExist(studyProtocolDTO, UPDATE);
-            CorrelationUtils cUtils = new CorrelationUtils();
-            OrganizationDTO leadOrgDTO = new OrganizationDTO();
-            StudySiteDTO studySiteDto = new StudySiteDTO();
-            studySiteDto.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
-            studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-            studySiteDto = PAUtil.getFirstObj(getPAServiceUtils().getStudySite(studySiteDto, true));
-            leadOrgDTO.setIdentifier(IiConverter.convertToIi(cUtils.getPAOrganizationByIi(
-                    studySiteDto.getResearchOrganizationIi()).getIdentifier()));
-            // updated only if the ctGovXmlRequired is true
-            OrganizationDTO sponsorOrgDTO = new OrganizationDTO();
-            if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-                studySiteDto = new StudySiteDTO();
-                studySiteDto.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
-                studySiteDto.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.SPONSOR));
-                studySiteDto = PAUtil.getFirstObj(getPAServiceUtils().getStudySite(studySiteDto, true));
-                sponsorOrgDTO.setIdentifier(IiConverter.convertToIi(cUtils.getPAOrganizationByIi(
-                        studySiteDto.getResearchOrganizationIi()).getIdentifier()));
-            }
-            PersonDTO principalInvestigatorDTO = new PersonDTO();
-            StudyContactDTO studyContactDto = PAUtil.getFirstObj(getPAServiceUtils().getStudyContact(studyProtocolDTO
-                    .getIdentifier(), StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR, true));
-            principalInvestigatorDTO.setIdentifier(IiConverter.convertToIi(cUtils.getPAPersonByIi(
-                    studyContactDto.getClinicalResearchStaffIi()).getIdentifier()));
-
-            InterventionalStudyProtocolDTO dbStudyProtocolDTO = studyProtocolService
-                    .getInterventionalStudyProtocol(studyProtocolDTO.getIdentifier());
-            setPrimaryPurposeCode(studyProtocolDTO, dbStudyProtocolDTO);
-            dbStudyProtocolDTO.setStartDate(studyProtocolDTO.getStartDate());
-            dbStudyProtocolDTO.setStartDateTypeCode(studyProtocolDTO.getStartDateTypeCode());
-            dbStudyProtocolDTO.setPrimaryCompletionDate(studyProtocolDTO.getPrimaryCompletionDate());
-            dbStudyProtocolDTO.setPrimaryCompletionDateTypeCode(studyProtocolDTO.getPrimaryCompletionDateTypeCode());
-            dbStudyProtocolDTO.setFdaRegulatedIndicator(studyProtocolDTO.getFdaRegulatedIndicator());
-            dbStudyProtocolDTO.setSection801Indicator(studyProtocolDTO.getSection801Indicator());
-            dbStudyProtocolDTO.setDelayedpostingIndicator(studyProtocolDTO.getDelayedpostingIndicator());
-            dbStudyProtocolDTO.setDataMonitoringCommitteeAppointedIndicator(studyProtocolDTO
-                    .getDataMonitoringCommitteeAppointedIndicator());
-            dbStudyProtocolDTO.setProgramCodeText(studyProtocolDTO.getProgramCodeText());
-            dbStudyProtocolDTO.setSecondaryIdentifiers(studyProtocolDTO.getSecondaryIdentifiers());
-            // Even though we are setting UserLastCreated value which came from DB, the value will not be updated in DB.
-            // UserLastCreated is used as a place holder to determine the currently logged in user and/or the person
-            // submitting the update.
-            // Also, to determine the owner of the trial. Remove this line when the ejbContext.callerPrincipal will give
-            // the userLogged in value.
-            dbStudyProtocolDTO.setUserLastCreated(studyProtocolDTO.getUserLastCreated());
-            updateStudyProtocolObjs(dbStudyProtocolDTO, overallStatusDTO, null, studyIdentifierDTOs, studyIndldeDTOs,
-                    studyResourcingDTOs, documentDTOs, leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO,
-                    studyContactDTO, studyParticipationContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
-                    responsiblePartyContactIi, studyRegAuthDTO, collaboratorDTOs, studySiteAccrualStatusDTOs,
-                    studySiteDTOs, UPDATE, isBatchMode);
-            StudyMilestoneDTO smDto = studyMilestoneService.getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
-            List<StudyInboxDTO> inbox = studyInboxServiceLocal.getByStudyProtocol(studyProtocolDTO.getIdentifier());
-            sendTSRXML(studyProtocolDTO.getIdentifier(), smDto.getMilestoneCode(), inbox);
-        } catch (Exception e) {
-            throw new PAException(e);
-        }
+        update(studyProtocolDTO, overallStatusDTO, studyResourcingDTOs, documentDTOs, studySiteAccrualStatusDTOs,
+               studySiteDTOs, isBatchMode);
+       
     }
 
     private void updateParticipatingSites(List<StudySiteAccrualStatusDTO> participatingSites) throws PAException {
@@ -1623,356 +970,283 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         getPAServiceUtils().executeSql(sql);
     }
 
-    private Ii updateStudyProtocol(StudyProtocolDTO studyProtocolDTO, Ii toStudyProtocolIi, String operation)
-        throws PAException {
-        if (AMENDMENT.equalsIgnoreCase(operation)) {
-            ByteArrayOutputStream rtfStream = tsrReportService.generateRtfTsrReport(studyProtocolDTO.getIdentifier());
-            DocumentDTO docDto = new DocumentDTO();
-            docDto.setStudyProtocolIdentifier(toStudyProtocolIi);
-            docDto.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.TSR));
-            docDto.setText(EdConverter.convertToEd(rtfStream.toByteArray()));
-            docDto.setFileName(StConverter.convertToSt("TSR.rtf"));
+    private void updateStudyProtocol(StudyProtocolDTO studyProtocolDTO, Ii toStudyProtocolIi)
+            throws PAException {
+        ByteArrayOutputStream rtfStream = tsrReportService.generateRtfTsrReport(studyProtocolDTO.getIdentifier());
+        DocumentDTO docDto = new DocumentDTO();
+        docDto.setStudyProtocolIdentifier(toStudyProtocolIi);
+        docDto.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.TSR));
+        docDto.setText(EdConverter.convertToEd(rtfStream.toByteArray()));
+        docDto.setFileName(StConverter.convertToSt("TSR.rtf"));
 
-            documentService.create(docDto);
-            // reset milestones
-            String sql = null;
-            Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
-            sql = "Delete from STUDY_MILESTONE WHERE STUDY_PROTOCOL_IDENTIFIER  = " + studyProtocolIi.getExtension();
-            getPAServiceUtils().executeSql(sql);
-            sql = "Delete from DOCUMENT_WORKFLOW_STATUS WHERE STUDY_PROTOCOL_IDENTIFIER  = "
-                    + studyProtocolIi.getExtension();
-            getPAServiceUtils().executeSql(sql);
-            sql = "Delete from STUDY_ONHOLD WHERE STUDY_PROTOCOL_IDENTIFIER  = " + studyProtocolIi.getExtension();
-            getPAServiceUtils().executeSql(sql);
-            studyProtocolDTO.setAmendmentReasonCode(null);
-            studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt(getPAServiceUtils()
-                    .generateSubmissionNumber(PAUtil.getAssignedIdentifierExtension(studyProtocolDTO))));
-            studyProtocolDTO.setStatusDate(TsConverter.convertToTs(null));
-        }
-        if (UPDATE.equalsIgnoreCase(operation)) {
-            studyProtocolDTO.setRecordVerificationDate(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
-        }
-        studyProtocolService.updateStudyProtocol(studyProtocolDTO);
-        return studyProtocolDTO.getIdentifier();
-    }
-
-    // CHECKSTYLE:OFF More than 7 Parameters
-    private void updateStudyProtocolObjs(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
-            StudySiteDTO leadOrganizationSiteIdentifierDTO, List<StudySiteDTO> studyIdentifierDTOs,
-            List<StudyIndldeDTO> studyIndldeDTOs, List<StudyResourcingDTO> studyResourcingDTOs,
-            List<DocumentDTO> documentDTOs, OrganizationDTO leadOrganizationDTO, PersonDTO principalInvestigatorDTO,
-            OrganizationDTO sponsorOrganizationDTO, StudyContactDTO studyContactDTO,
-            StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4organizationDTO,
-            StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
-            StudyRegulatoryAuthorityDTO studyRegAuthDTO, List<StudySiteDTO> collaborators,
-            List<StudySiteAccrualStatusDTO> participatingSites, List<StudySiteDTO> pgCdUpdatedList, String operation,
-            Bl isBatchMode) throws PAException {
-        // CHECKSTYLE:ON
-
+        documentService.create(docDto);
+        // reset milestones
+        String sql = null;
         Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
-        Ii toStudyProtocolIi = null;
-        validate(studyProtocolDTO, overallStatusDTO, operation, studyResourcingDTOs, documentDTOs, leadOrganizationDTO,
-                sponsorOrganizationDTO, summary4organizationDTO, principalInvestigatorDTO, responsiblePartyContactIi,
-                studyIndldeDTOs);
+        sql = "Delete from STUDY_MILESTONE WHERE STUDY_PROTOCOL_IDENTIFIER  = " + studyProtocolIi.getExtension();
+        getPAServiceUtils().executeSql(sql);
+        sql = "Delete from DOCUMENT_WORKFLOW_STATUS WHERE STUDY_PROTOCOL_IDENTIFIER  = "
+                + studyProtocolIi.getExtension();
+        getPAServiceUtils().executeSql(sql);
+        sql = "Delete from STUDY_ONHOLD WHERE STUDY_PROTOCOL_IDENTIFIER  = " + studyProtocolIi.getExtension();
+        getPAServiceUtils().executeSql(sql);
+        studyProtocolDTO.setAmendmentReasonCode(null);
+        studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt(getPAServiceUtils()
+            .generateSubmissionNumber(PAUtil.getAssignedIdentifierExtension(studyProtocolDTO))));
+        studyProtocolDTO.setStatusDate(TsConverter.convertToTs(null));
 
-        enforceBusinessRulesForUpdate(studyProtocolDTO, overallStatusDTO, studyContactDTO, studySiteContactDTO,
-                studyIndldeDTOs, studyResourcingDTOs, studyRegAuthDTO, participatingSites, operation, collaborators);
-        validateSummary4Information(studyProtocolDTO, summary4organizationDTO, summary4studyResourcingDTO);
-        if (UPDATE.equalsIgnoreCase(operation)) {
-            trialRegistrationHelper = new TrialRegistrationHelper(docWrkFlowStatusService, abstractionCompletionService,
-                    studyProtocolService, studyOverallStatusService, studySiteAccrualStatusService, studyIndldeService,
-                    studyResourcingService);
-            trialRegistrationHelper.checkForInboxProcessingComments(studyProtocolDTO, documentDTOs, overallStatusDTO,
-                    participatingSites, studyIndldeDTOs, studyResourcingDTOs);
-        } else if (AMENDMENT.equalsIgnoreCase(operation)) {
-            toStudyProtocolIi = getPAServiceUtils().copy(studyProtocolDTO.getIdentifier());
-        }
-        // update studyProtocol
-        studyProtocolIi = updateStudyProtocol(studyProtocolDTO, toStudyProtocolIi, operation);
-        // list of study identifiers like NCT,DCP, CTEP
-        if (studyIdentifierDTOs != null) {
-            for (StudySiteDTO studyIdentifierDTO : studyIdentifierDTOs) {
-                if (studyIdentifierDTO != null
-                        && !ISOUtil.isStNull(studyIdentifierDTO.getLocalStudyProtocolIdentifier())
-                        && !ISOUtil.isIiNull(studyIdentifierDTO.getResearchOrganizationIi())) {
-                    studyIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
-                    studyIdentifierDTO.setFunctionalCode(CdConverter
-                            .convertToCd(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER));
-                    getPAServiceUtils().manageStudyIdentifiers(studyIdentifierDTO);
-                }
-            }
-        }
-        getPAServiceUtils().createOrUpdate(studyIndldeDTOs, IiConverter.convertToStudyIndIdeIi(null), studyProtocolIi);
-        getPAServiceUtils().createOrUpdate(studyResourcingDTOs, IiConverter.convertToStudyResourcingIi(null),
-                studyProtocolIi);
-
-        if (UPDATE.equalsIgnoreCase(operation)) {
-            List<StudySiteDTO> collaboratorDTOs = new ArrayList<StudySiteDTO>();
-            if (CollectionUtils.isNotEmpty(collaborators)) {
-                for (StudySiteDTO collaborator : collaborators) {
-                    StudySiteDTO dbCollaborator = studySiteService.get(collaborator.getIdentifier());
-                    dbCollaborator.setFunctionalCode(collaborator.getFunctionalCode());
-                    collaboratorDTOs.add(dbCollaborator);
-                }
-            }
-            getPAServiceUtils().createOrUpdate(collaboratorDTOs, IiConverter.convertToStudySiteIi(null)
-                    , studyProtocolIi);
-            updateParticipatingSites(participatingSites);
-            getPAServiceUtils().createOrUpdate(pgCdUpdatedList, IiConverter.convertToStudySiteIi(null)
-                    , studyProtocolIi);
-        }
-        // updated only if the ctGovXmlRequired is true
-        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-            // regulatory auth update
-            if (studyRegAuthDTO != null) {
-                List<StudyRegulatoryAuthorityDTO> sraDto = new ArrayList<StudyRegulatoryAuthorityDTO>();
-                sraDto.add(studyRegAuthDTO);
-                getPAServiceUtils().createOrUpdate(sraDto, IiConverter.convertToStudyRegulatoryAuthorityIi(null),
-                        studyProtocolIi);
-
-            }
-            // responsible party and sponsor update
-            getPAServiceUtils().removeResponsibleParty(studyProtocolDTO.getIdentifier());
-            if (AMENDMENT.equalsIgnoreCase(operation)) {
-                getPAServiceUtils().manageSponsor(studyProtocolIi, sponsorOrganizationDTO);
-            }
-            getPAServiceUtils().createResponsibleParty(studyProtocolIi, leadOrganizationDTO, principalInvestigatorDTO,
-                    sponsorOrganizationDTO, responsiblePartyContactIi, studyContactDTO, studySiteContactDTO);
-        } else {
-            if (AMENDMENT.equalsIgnoreCase(operation)) {
-                // remove study regulatory authority
-                getPAServiceUtils().removeRegulatoryAuthority(studyProtocolDTO.getIdentifier());
-                // remove the associated responsible party/sponsor
-                getPAServiceUtils().removeResponsibleParty(studyProtocolDTO.getIdentifier());
-                // remove sponsor
-                getPAServiceUtils().removeSponsor(studyProtocolDTO.getIdentifier());
-
-            }
-        }
-
-        // update summary4
-        getPAServiceUtils().manageSummaryFour(studyProtocolIi, summary4organizationDTO, summary4studyResourcingDTO);
-        if (AMENDMENT.equalsIgnoreCase(operation)) {
-
-            if (leadOrganizationSiteIdentifierDTO != null) {
-                leadOrganizationSiteIdentifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
-                ocsr.createResearchOrganizationCorrelations(leadOrganizationDTO.getIdentifier().getExtension());
-                leadOrganizationSiteIdentifierDTO.setResearchOrganizationIi(ocsr
-                        .getPoResearchOrganizationByEntityIdentifier(leadOrganizationDTO.getIdentifier()));
-                leadOrganizationSiteIdentifierDTO.setFunctionalCode(CdConverter
-                        .convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-            }
-            getPAServiceUtils().manageStudyIdentifiers(leadOrganizationSiteIdentifierDTO);
-
-            getPAServiceUtils().managePrincipalInvestigator(studyProtocolIi, leadOrganizationDTO
-                    , principalInvestigatorDTO, StudyTypeCode.INTERVENTIONAL);
-            overallStatusDTO.setStudyProtocolIdentifier(studyProtocolIi);
-            createStudyRelationship(studyProtocolIi, toStudyProtocolIi, studyProtocolDTO);
-            getPAServiceUtils().createMilestone(studyProtocolIi, MilestoneCode.SUBMISSION_RECEIVED, null);
-        }
-        studyOverallStatusService.create(overallStatusDTO);
-        List<DocumentDTO> savedDocs = getPAServiceUtils().createOrUpdate(documentDTOs,
-                IiConverter.convertToDocumentIi(null), studyProtocolDTO.getIdentifier());
-        if (UPDATE.equalsIgnoreCase(operation)) {
-            createInboxProcessingComments(studyProtocolDTO);
-        }
-        getPAServiceUtils().moveDocumentContents(savedDocs, studyProtocolDTO.getIdentifier());
-        // do not send the mail when its batch mode
-        sendMail(operation, isBatchMode, studyProtocolIi);
+        studyProtocolService.updateStudyProtocol(studyProtocolDTO);
     }
 
-    // CHECKSTYLE:OFF More than 7 Parameters
-    private void validate(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO, String operation,
+    private InterventionalStudyProtocolDTO validateStudyExist(StudyProtocolDTO studyProtocolDTO, String operation)
+            throws PAException {
+        if (studyProtocolDTO == null || ISOUtil.isIiNull(studyProtocolDTO.getIdentifier())) {
+            throw new PAException("Trial Identifier not provided.\n");
+        }
+        // make sure Trial Exist
+        InterventionalStudyProtocolDTO dto = studyProtocolService.getInterventionalStudyProtocol(studyProtocolDTO
+            .getIdentifier());
+        if (dto == null) {
+            throw new PAException("No Trial found for given Trial Identifier.\n");
+        }
+        if (!ISOUtil.isBlNull(dto.getProprietaryTrialIndicator())
+                && dto.getProprietaryTrialIndicator().getValue().booleanValue()) {
+            throw new PAException(operation + " to Proprietary trial is not supported. ");
+        }
+        return dto;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void update(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
-            OrganizationDTO leadOrganizationDTO, OrganizationDTO sponsorOrganizationDTO,
-            OrganizationDTO summary4organizationDTO, PersonDTO piPersonDTO, Ii responsiblePartyContactIi,
-            List<StudyIndldeDTO> studyIndldeDTOs) throws PAException {
-        // CHECKSTYLE:ON
-        StringBuffer errorMsg = new StringBuffer();
-        // is user valid
-        String loginName = "";
-        if (!ISOUtil.isStNull(studyProtocolDTO.getUserLastCreated())) {
-            loginName = studyProtocolDTO.getUserLastCreated().getValue();
-            CSMUserUtil userService = CSMUserService.getInstance();
-            User user = userService.getCSMUser(loginName);
-            if (user == null) {
-                errorMsg.append("Submitter " + loginName + " does not exist. Please do self register in CTRP.");
-            }
-        } else {
-            errorMsg.append("Submitter is required.");
-        }
-        if (REJECTION.equalsIgnoreCase(operation)) {
-            DocumentWorkflowStatusDTO dws = docWrkFlowStatusService.getCurrentByStudyProtocol(studyProtocolDTO
-                    .getIdentifier());
-            if (!DocumentWorkflowStatusCode.SUBMITTED.getCode().equals(dws.getStatusCode().getCode())
-                 && !DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED.getCode().equals(dws.getStatusCode().getCode())) {
-                errorMsg.append("Only Trials with SUBMITTED can be REJECTED");
-            }
-        } else {
-            try {
-                studyOverallStatusService.validate(overallStatusDTO, studyProtocolDTO);
-            } catch (PAException e) {
-                errorMsg.append(e.getMessage());
-            }
-            if (CollectionUtils.isNotEmpty(studyResourcingDTOs)) {
-                for (StudyResourcingDTO studyResourcingDTO : studyResourcingDTOs) {
-                    try {
-                        studyResourcingDTO.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
-                        studyResourcingService.validate(studyResourcingDTO);
-                    } catch (PAException e) {
-                        errorMsg.append(e.getMessage());
-                    }
-                }
-            }
-            if (CollectionUtils.isNotEmpty(studyIndldeDTOs)) {
-                for (StudyIndldeDTO indIdeDto : studyIndldeDTOs) {
-                    try {
-                        indIdeDto.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
-                        studyIndldeService.validate(indIdeDto);
-                    } catch (PAException e) {
-                        errorMsg.append(e.getMessage());
-                    }
-                }
-            }
-        }
-        if (AMENDMENT.equalsIgnoreCase(operation) || UPDATE.equalsIgnoreCase(operation)) {
-            DocumentWorkflowStatusDTO isoDocWrkStatus = docWrkFlowStatusService
-                    .getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
-            String dwfs = isoDocWrkStatus.getStatusCode().getCode();
-            if (!userServiceLocal.hasTrialAccess(loginName, Long.parseLong(studyProtocolDTO.getIdentifier()
-                    .getExtension()))) {
-                errorMsg.append(operation)
-                        .append("to Trial can be submitted by the submitter of the original Trial.\n");
-            }
-            StudyOverallStatusDTO statusDTO = studyOverallStatusService.getCurrentByStudyProtocol(studyProtocolDTO
-                    .getIdentifier());
-            if ((AMENDMENT.equalsIgnoreCase(operation))
-                    && (!(dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode()) || dwfs
-                            .equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode())))) {
-                errorMsg.append("Trial with processing status Abstraction Verified Response or "
-                        + " Abstraction Verified No Response can be Amended.\n");
-            }
-            if ((UPDATE.equalsIgnoreCase(operation))
-                    && (dwfs.equals(DocumentWorkflowStatusCode.SUBMITTED.getCode()) || dwfs
-                            .equals(DocumentWorkflowStatusCode.REJECTED.getCode()))) {
-                errorMsg.append("Only Trials with processing status Accepted or Abstracted or  "
-                        + " Abstraction Verified No Response or  "
-                        + " Abstraction Verified No Response can be Updated.");
-            }
-            if (statusDTO.getStatusCode().getCode().equals(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode())
-                    || statusDTO.getStatusCode().getCode().equals(StudyStatusCode.WITHDRAWN.getCode())
-                    || statusDTO.getStatusCode().getCode().equals(StudyStatusCode.COMPLETE.getCode())) {
-                errorMsg.append(operation).append(
-                        " to a Trial with Current Trial Status as Disapproved or"
-                                + " Withdrawn or Complete or Administratively Complete is not allowed.\n");
-            }
-            if (wereOtherIdentifiersRemoved(studyProtocolDTO)) {
-                errorMsg.append("Other identifiers cannot be modified or deleted as part of an amendment.");
-            }
-        }
-        if (CREATE.equalsIgnoreCase(operation) || AMENDMENT.equalsIgnoreCase(operation)) {
-            errorMsg.append(getPAServiceUtils().checkDocumentListForValidFileTypes(documentDTOs));
-            if (!getPAServiceUtils().isDocumentInList(documentDTOs, DocumentTypeCode.PROTOCOL_DOCUMENT)) {
-                errorMsg.append("Protocol Document is required.\n");
-            }
-            if (!getPAServiceUtils().isDocumentInList(documentDTOs, DocumentTypeCode.IRB_APPROVAL_DOCUMENT)) {
-                errorMsg.append("IRB Approval Document is required.\n");
-            }
-            errorMsg.append(validatePoObjects(leadOrganizationDTO, "Lead Organization ", true));
-            // if ctGovXMLreq is true
-            if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-                errorMsg.append(validatePoObjects(sponsorOrganizationDTO, "Sponsor Organization ", true));
-            }
-            errorMsg.append(validatePoObjects(summary4organizationDTO, "Summary 4 Organization ", false));
-            errorMsg.append(validatePoObjects(piPersonDTO, "Principal Investigator ", false));
-        }
-        if (UPDATE.equalsIgnoreCase(operation) && documentDTOs != null && !documentDTOs.isEmpty()) {
-            for (DocumentDTO docDto : documentDTOs) {
-                if (!ISOUtil.isIiNull(docDto.getIdentifier())
-                        && !getPAServiceUtils().isIiExistInPA(IiConverter.convertToDocumentIi(Long.valueOf(docDto
-                                .getIdentifier().getExtension())))) {
-                    errorMsg.append("Document id " + docDto.getIdentifier().getExtension() + " does not exist.");
-                }
-            }
-            errorMsg.append(validatePoObjects(summary4organizationDTO, "Summary 4 Organization ", false));
-        }
-        if (AMENDMENT.equalsIgnoreCase(operation)
-                && (!getPAServiceUtils().isDocumentInList(documentDTOs, DocumentTypeCode.CHANGE_MEMO_DOCUMENT)
-                        && !getPAServiceUtils()
-                        .isDocumentInList(documentDTOs, DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT))) {
-            errorMsg.append("At least one is required: Change Memo Document or Protocol Highlighted Document.");
-        }
-        // if ctGovXMLreq is true - then perform the validation.
-        if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()
-                && !ISOUtil.isIiNull(responsiblePartyContactIi)
-                && !getPAServiceUtils().isIiExistInPO(responsiblePartyContactIi)) {
-            errorMsg.append("Error getting Responsible Party Contact from PO for id = "
-                    + responsiblePartyContactIi.getExtension() + ".  ");
-        }
-        if (AMENDMENT.equalsIgnoreCase(operation) && ISOUtil.isTsNull(studyProtocolDTO.getAmendmentDate())) {
-            errorMsg.append("Amendment Date is required.  ");
-        }
-        if (AMENDMENT.equalsIgnoreCase(operation)
-                && !studyInboxServiceLocal.getOpenInboxEntries(studyProtocolDTO.getIdentifier()).isEmpty()) {
-            String ctroAddress = PaRegistry.getLookUpTableService().getPropertyValue("fromaddress");
-            errorMsg.append("A trial with unaccepted updates cannot be amended. Please contact the CTRO at ")
-                .append(ctroAddress).append(" to have your trial's updates accepted.");
-        }
-        if (errorMsg.length() > 0) {
-            throw new PAException(VALIDATION_EXCEPTION + errorMsg);
+            List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs, List<StudySiteDTO> studySiteDTOs, Bl batchMode)
+            throws PAException {
+        try {
+            InterventionalStudyProtocolDTO spDTO = validateStudyExist(studyProtocolDTO, UPDATE);
+            Ii spIi = studyProtocolDTO.getIdentifier();
+            spDTO.setSecondaryIdentifiers(studyProtocolDTO.getSecondaryIdentifiers());
+
+            spDTO.setStartDate(studyProtocolDTO.getStartDate());
+            spDTO.setStartDateTypeCode(studyProtocolDTO.getStartDateTypeCode());
+            spDTO.setPrimaryCompletionDate(studyProtocolDTO.getPrimaryCompletionDate());
+            spDTO.setPrimaryCompletionDateTypeCode(studyProtocolDTO.getPrimaryCompletionDateTypeCode());
+
+            // Even though we are setting UserLastCreated value which came from DB, the value will not be updated in DB.
+            // UserLastCreated is used as a place holder to determine the currently logged in user and/or the person
+            // submitting the update.
+            // Also, to determine the owner of the trial. Remove this line when the ejbContext.callerPrincipal will give
+            // the userLogged in value.
+            spDTO.setUserLastCreated(studyProtocolDTO.getUserLastCreated());
+            TrialRegistrationValidator validator = createValidator();
+            validator.validateUpdate(spDTO, overallStatusDTO, studyResourcingDTOs, documentDTOs,
+                                     studySiteAccrualStatusDTOs);
+            TrialInboxCommentsGenerator icGenerator = new TrialInboxCommentsGenerator(documentWorkFlowStatusService,
+                    abstractionCompletionService, studyProtocolService, studyOverallStatusService,
+                    studySiteAccrualStatusService, studyIndldeService, studyResourcingService);
+            icGenerator.checkForInboxProcessingComments(studyProtocolDTO, documentDTOs, overallStatusDTO,
+                                                        studySiteAccrualStatusDTOs, null, studyResourcingDTOs);
+
+            studyProtocolDTO.setRecordVerificationDate(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
+            studyProtocolService.updateStudyProtocol(studyProtocolDTO);
+            PAServiceUtils paServiceUtils = getPAServiceUtils();
+            paServiceUtils.createOrUpdate(studyResourcingDTOs, IiConverter.convertToStudyResourcingIi(null), spIi);
+
+            updateParticipatingSites(studySiteAccrualStatusDTOs);
+            paServiceUtils.createOrUpdate(studySiteDTOs, IiConverter.convertToStudySiteIi(null), spIi);
+
+            studyOverallStatusService.create(overallStatusDTO);
+
+            createInboxProcessingComments(icGenerator, spIi);
+            saveDocuments(documentDTOs, spIi);
+            // do not send the mail when its batch mode
+            sendMail(UPDATE, batchMode, spIi);
+
+            StudyMilestoneDTO smDto = studyMilestoneService.getCurrentByStudyProtocol(spIi);
+            List<StudyInboxDTO> inbox = studyInboxServiceLocal.getByStudyProtocol(spIi);
+            sendTSRXML(spIi, smDto.getMilestoneCode(), inbox);
+        } catch (Exception e) {
+            throw new PAException(e.getMessage(), e);
         }
     }
-
-    private boolean wereOtherIdentifiersRemoved(StudyProtocolDTO newDTO) throws PAException {
-        StudyProtocolDTO savedDTO = studyProtocolService.getInterventionalStudyProtocol(newDTO
-                .getIdentifier());
-        return !CollectionUtils.isSubCollection(savedDTO.getSecondaryIdentifiers().getItem(), newDTO
-                .getSecondaryIdentifiers().getItem());
+    
+    /**
+     * Save the given documents.
+     * @param documentDTOs The list of document DTOs
+     * @param spIi The study potocol Ii
+     * @throws PAException If an error occurs
+     */
+    void saveDocuments(List<DocumentDTO> documentDTOs, Ii spIi) throws PAException {
+        PAServiceUtils paServiceUtils = getPAServiceUtils();
+        Ii nullDocumentIi = IiConverter.convertToDocumentIi(null);
+        List<DocumentDTO> savedDocs = paServiceUtils.createOrUpdate(documentDTOs, nullDocumentIi, spIi);
+        paServiceUtils.moveDocumentContents(savedDocs, spIi);
     }
-    private <TYPE extends PoDto> String validatePoObjects(TYPE poDTO, String fieldName, boolean iiRequired) {
-        String strNewLine = ".\n";
-        StringBuffer errorMsg = new StringBuffer();
-
-        if (poDTO == null) {
-            errorMsg.append(fieldName).append("cannot be null.");
-            return errorMsg.toString();
-        }
-        if (iiRequired && ISOUtil.isIiNull(((EntityDto) poDTO).getIdentifier())) {
-            errorMsg.append("Error getting ").append(fieldName)
-                .append(" from PO. Identifier is required ").append(strNewLine);
-        }
-
-        if (poDTO instanceof OrganizationDTO && !ISOUtil.isIiNull(((OrganizationDTO) poDTO).getIdentifier())) {
-            if (!getPAServiceUtils().isIiExistInPO(((OrganizationDTO) poDTO).getIdentifier())) {
-                errorMsg.append("Error getting ").append(fieldName).append(" from PO for id = ").append(
-                        ((OrganizationDTO) poDTO).getIdentifier().getExtension()).append(strNewLine);
-            }
-        } else if (poDTO instanceof PersonDTO && !ISOUtil.isIiNull(((PersonDTO) poDTO).getIdentifier())) {
-            if (!getPAServiceUtils().isIiExistInPO(((PersonDTO) poDTO).getIdentifier())) {
-                errorMsg.append("Error getting ").append(fieldName).append(" from PO for id = ").append(
-                        ((PersonDTO) poDTO).getIdentifier().getExtension()).append(strNewLine);
-            }
-        } else {
-            String poValidErr = getPAServiceUtils().isDTOValidInPO(poDTO);
-            if (StringUtils.isNotEmpty(poValidErr)) {
-                errorMsg.append("Error validating ").append(fieldName).append(strNewLine).append(poValidErr);
-            }
-        }
-        return errorMsg.toString();
+    
+    private TrialRegistrationValidator createValidator() {
+        TrialRegistrationValidator validator = new TrialRegistrationValidator();
+        validator.setCsmUserUtil(CSMUserService.getInstance());
+        validator.setDocumentWorkFlowStatusService(documentWorkFlowStatusService);
+        validator.setOcsr(ocsr);
+        validator.setPaServiceUtils(getPAServiceUtils());
+        validator.setRegistryUserServiceLocal(registryUserServiceLocal);
+        validator.setRegulatoryInfoBean(regulatoryInfoBean);
+        validator.setStudyInboxServiceLocal(studyInboxServiceLocal);
+        validator.setStudyIndldeService(studyIndldeService);
+        validator.setStudyOverallStatusService(studyOverallStatusService);
+        validator.setStudyProtocolService(studyProtocolService);
+        validator.setStudyRecruitmentStatusServiceLocal(studyRecruitmentStatusServiceLocal);
+        validator.setStudyResourcingService(studyResourcingService);
+        validator.setStudySiteService(studySiteService);
+        return validator;
     }
 
-    private void validateStudyExist(StudyProtocolDTO studyProtocolDTO, String operation) throws PAException {
-        if (AMENDMENT.equalsIgnoreCase(operation) || UPDATE.equalsIgnoreCase(operation)) {
-            // make sure Trial Exist
-            InterventionalStudyProtocolDTO dto = studyProtocolService.getInterventionalStudyProtocol(studyProtocolDTO
-                    .getIdentifier());
-            if (dto == null) {
-                throw new PAException("No Trial found for given Trial Identifier.\n");
-            }
-            if (!ISOUtil.isBlNull(dto.getProprietaryTrialIndicator())
-                    && dto.getProprietaryTrialIndicator().getValue().booleanValue()) {
-                throw new PAException(operation + " to Proprietary trial is not supported. ");
-            }
-        }
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
+    }
+
+    /**
+     * @param studyRelationshipService the studyRelationshipService to set
+     */
+    public void setStudyRelationshipService(StudyRelationshipServiceLocal studyRelationshipService) {
+        this.studyRelationshipService = studyRelationshipService;
+    }
+
+    /**
+     * @param studyOverallStatusService the studyOverallStatusService to set
+     */
+    public void setStudyOverallStatusService(StudyOverallStatusServiceLocal studyOverallStatusService) {
+        this.studyOverallStatusService = studyOverallStatusService;
+    }
+
+    /**
+     * @param studyIndldeService the studyIndldeService to set
+     */
+    public void setStudyIndldeService(StudyIndldeServiceLocal studyIndldeService) {
+        this.studyIndldeService = studyIndldeService;
+    }
+
+    /**
+     * @param studyResourcingService the studyResourcingService to set
+     */
+    public void setStudyResourcingService(StudyResourcingServiceLocal studyResourcingService) {
+        this.studyResourcingService = studyResourcingService;
+    }
+
+    /**
+     * @param studyMilestoneService the studyMilestoneService to set
+     */
+    public void setStudyMilestoneService(StudyMilestoneServicelocal studyMilestoneService) {
+        this.studyMilestoneService = studyMilestoneService;
+    }
+
+    /**
+     * @param documentService the documentService to set
+     */
+    public void setDocumentService(DocumentServiceLocal documentService) {
+        this.documentService = documentService;
+    }
+
+    /**
+     * @param studySiteService the studySiteService to set
+     */
+    public void setStudySiteService(StudySiteServiceLocal studySiteService) {
+        this.studySiteService = studySiteService;
+    }
+
+    /**
+     * @param studySiteContactService the studySiteContactService to set
+     */
+    public void setStudySiteContactService(StudySiteContactServiceLocal studySiteContactService) {
+        this.studySiteContactService = studySiteContactService;
+    }
+
+    /**
+     * @param studySiteAccrualStatusService the studySiteAccrualStatusService to set
+     */
+    public void setStudySiteAccrualStatusService(StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService) {
+        this.studySiteAccrualStatusService = studySiteAccrualStatusService;
+    }
+
+    /**
+     * @param authorityService the studyRegulatoryAuthorityService to set
+     */
+    public void setStudyRegulatoryAuthorityService(StudyRegulatoryAuthorityServiceLocal authorityService) {
+        this.studyRegulatoryAuthorityService = authorityService;
+    }
+
+    /**
+     * @param ocsr the ocsr to set
+     */
+    public void setOcsr(OrganizationCorrelationServiceRemote ocsr) {
+        this.ocsr = ocsr;
+    }
+
+    /**
+     * @param studyContactService the studyContactService to set
+     */
+    public void setStudyContactService(StudyContactServiceLocal studyContactService) {
+        this.studyContactService = studyContactService;
+    }
+
+    /**
+     * @param tsrReportService the tsrReportService to set
+     */
+    public void setTsrReportService(TSRReportGeneratorServiceRemote tsrReportService) {
+        this.tsrReportService = tsrReportService;
+    }
+
+    /**
+     * @param documentWorkFlowStatusService the documentWorkFlowStatusService to set
+     */
+    public void setDocumentWorkFlowStatusService(DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService) {
+        this.documentWorkFlowStatusService = documentWorkFlowStatusService;
+    }
+
+    /**
+     * @param regulatoryInfoBean the regulatoryInfoBean to set
+     */
+    public void setRegulatoryInfoBean(RegulatoryInformationServiceRemote regulatoryInfoBean) {
+        this.regulatoryInfoBean = regulatoryInfoBean;
+    }
+
+    /**
+     * @param studyRecruitmentStatusServiceLocal the studyRecruitmentStatusServiceLocal to set
+     */
+    public void setStudyRecruitmentStatusServiceLocal(
+            StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal) {
+        this.studyRecruitmentStatusServiceLocal = studyRecruitmentStatusServiceLocal;
+    }
+
+    /**
+     * @param abstractionCompletionService the abstractionCompletionService to set
+     */
+    public void setAbstractionCompletionService(AbstractionCompletionServiceRemote abstractionCompletionService) {
+        this.abstractionCompletionService = abstractionCompletionService;
+    }
+
+    /**
+     * @param studyInboxServiceLocal the studyInboxServiceLocal to set
+     */
+    public void setStudyInboxServiceLocal(StudyInboxServiceLocal studyInboxServiceLocal) {
+        this.studyInboxServiceLocal = studyInboxServiceLocal;
+    }
+
+    /**
+     * @param mailManagerSerivceLocal the mailManagerSerivceLocal to set
+     */
+    public void setMailManagerSerivceLocal(MailManagerServiceLocal mailManagerSerivceLocal) {
+        this.mailManagerSerivceLocal = mailManagerSerivceLocal;
+    }
+
+    /**
+     * @param registryUserServiceLocal the registryUserServiceLocal to set
+     */
+    public void setRegistryUserServiceLocal(RegistryUserServiceLocal registryUserServiceLocal) {
+        this.registryUserServiceLocal = registryUserServiceLocal;
     }
 }
