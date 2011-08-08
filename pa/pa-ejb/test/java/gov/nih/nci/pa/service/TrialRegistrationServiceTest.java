@@ -116,6 +116,7 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.MockLookUpTableServiceBean;
 import gov.nih.nci.pa.service.util.MockPAServiceUtils;
@@ -171,24 +172,25 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
     public ExpectedException thrown = ExpectedException.none();
 
     private final TrialRegistrationBeanLocal bean = new TrialRegistrationBeanLocal();
-    private StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
-    private StudyOverallStatusServiceLocal studyOverallStatusService = new StudyOverallStatusBeanLocal();
-    private StudyIndldeServiceLocal studyIndldeService  = new StudyIndldeBeanLocal();
-    private StudyResourcingServiceLocal studyResourcingService = new StudyResourcingBeanLocal();
-    private DocumentServiceLocal documentService = new DocumentBeanLocal();
     private ArmServiceLocal armService = new ArmBeanLocal();
-    private StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
-    private StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
-    private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
-    private StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = new StudyOutcomeMeasureBeanLocal();
-    private StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityBeanLocal();
-    private StudyContactServiceLocal studyContactSvc = new StudyContactBeanLocal();
-    private RegulatoryInformationServiceRemote regulatoryInfoSvc = new RegulatoryInformationBean();
-    private ServiceLocator paSvcLoc;
+    private DocumentServiceLocal documentService = new DocumentBeanLocal();
     private DocumentWorkflowStatusServiceLocal documentWrkService = new DocumentWorkflowStatusBeanLocal();
-    private PoServiceLocator poSvcLoc;
+    private LookUpTableServiceRemote lookUpTableServiceRemote = new MockLookUpTableServiceBean();
     private OrganizationEntityServiceRemote poOrgSvc;
     private PersonEntityServiceRemote poPersonSvc;
+    private PoServiceLocator poSvcLoc;
+    private RegulatoryInformationServiceRemote regulatoryInfoSvc = new RegulatoryInformationBean();
+    private ServiceLocator paSvcLoc;
+    private StudyContactServiceLocal studyContactSvc = new StudyContactBeanLocal();
+    private StudyIndldeServiceLocal studyIndldeService  = new StudyIndldeBeanLocal();
+    private StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = new StudyOutcomeMeasureBeanLocal();
+    private StudyOverallStatusServiceLocal studyOverallStatusService = new StudyOverallStatusBeanLocal();
+    private StudyProtocolServiceLocal studyProtocolService = new StudyProtocolBeanLocal();
+    private StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService = new StudyRegulatoryAuthorityBeanLocal();
+    private StudyResourcingServiceLocal studyResourcingService = new StudyResourcingBeanLocal();
+    private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = new StudySiteAccrualStatusBeanLocal();
+    private StudySiteContactServiceLocal studySiteContactService = new StudySiteContactBeanLocal();
+    private StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
 
     private Ii spIi;
 
@@ -206,6 +208,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         prop.setValue("ncictro@mail.nih.gov");
         TestSchema.addUpdObject(prop);
 
+        bean.setLookUpTableServiceRemote(lookUpTableServiceRemote);
         bean.setStudyProtocolService(studyProtocolService);
         bean.setStudyOverallStatusService(studyOverallStatusService);
         bean.setStudyIndldeService(studyIndldeService);
@@ -227,7 +230,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         PaRegistry.getInstance().setServiceLocator(paSvcLoc);
 
         when (paSvcLoc.getDocumentWorkflowStatusService()).thenReturn(documentWrkService);
-        when (paSvcLoc.getLookUpTableService()).thenReturn(new MockLookUpTableServiceBean());
+        when (paSvcLoc.getLookUpTableService()).thenReturn(lookUpTableServiceRemote);
 
         StudySiteServiceLocal studySiteSrv = mock(StudySiteServiceLocal.class);
         when(paSvcLoc.getStudySiteService()).thenReturn(studySiteSrv);

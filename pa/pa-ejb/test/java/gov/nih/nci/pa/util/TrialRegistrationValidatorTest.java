@@ -86,7 +86,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -97,6 +100,9 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
+import gov.nih.nci.iso21090.TelEmail;
+import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -112,6 +118,7 @@ import gov.nih.nci.pa.iso.dto.StudyRegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -125,19 +132,26 @@ import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.services.EntityDto;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 
 /**
@@ -146,17 +160,24 @@ import org.junit.Test;
 public class TrialRegistrationValidatorTest {
     private TrialRegistrationValidator validator = new TrialRegistrationValidator();
     private CSMUserUtil csmUserUtil = mock(CSMUserUtil.class);
+    private LookUpTableServiceRemote lookUpTableServiceRemote = mock(LookUpTableServiceRemote.class);
     private PAServiceUtils paServiceUtils = mock(PAServiceUtils.class);
     private RegistryUserServiceLocal registryUserServiceLocal = mock(RegistryUserServiceLocal.class);
     private StudyInboxServiceLocal studyInboxServiceLocal = mock(StudyInboxServiceLocal.class);
     private StudyIndldeServiceLocal studyIndldeService = mock(StudyIndldeServiceLocal.class);
     private StudyOverallStatusServiceLocal studyOverallStatusService = mock(StudyOverallStatusServiceLocal.class);
-    private final StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);
+    private StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);
     private StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal = 
-        mock(StudyRecruitmentStatusServiceLocal.class);
+            mock(StudyRecruitmentStatusServiceLocal.class);
     private StudyResourcingServiceLocal studyResourcingService = mock(StudyResourcingServiceLocal.class);
     private StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
     private StringBuilder errorMsg = new StringBuilder();
+    
+    /**
+     * Exception rule.
+     */
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     /**
      * Initialization method.
@@ -164,6 +185,7 @@ public class TrialRegistrationValidatorTest {
     @Before
     public void init() {
         validator.setCsmUserUtil(csmUserUtil);
+        validator.setLookUpTableServiceRemote(lookUpTableServiceRemote);
         validator.setPaServiceUtils(paServiceUtils);
         validator.setRegistryUserServiceLocal(registryUserServiceLocal);
         validator.setStudyInboxServiceLocal(studyInboxServiceLocal);
@@ -575,6 +597,39 @@ public class TrialRegistrationValidatorTest {
     }
     
     /**
+     * test the validateSummary4SponsorAndCategory method with no StudyResourcing
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testvalidateSummary4SponsorAndCategoryNoOrganization() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Validation Exception Summary Four Organization cannot be null, ");
+        validator = mock(TrialRegistrationValidator.class);
+        doCallRealMethod().when(validator).validateSummary4SponsorAndCategory(studyProtocolDTO, null, null);
+        validator.validateSummary4SponsorAndCategory(studyProtocolDTO, null, null);
+        verify(validator).validateSummary4Resourcing(eq(studyProtocolDTO), (StudyResourcingDTO) isNull(),
+                                                     any(StringBuilder.class));
+    }
+
+    /**
+     * test the validateSummary4SponsorAndCategory method with valid data
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testvalidateSummary4SponsorAndCategoryValid() throws PAException {
+        OrganizationDTO organization = new OrganizationDTO();
+        StudyResourcingDTO studyResourcingDTO = new StudyResourcingDTO();
+        validator = mock(TrialRegistrationValidator.class);
+        doCallRealMethod().when(validator).validateSummary4SponsorAndCategory(studyProtocolDTO, organization,
+                                                                              studyResourcingDTO);
+        validator.validateSummary4SponsorAndCategory(studyProtocolDTO, organization, studyResourcingDTO);
+        verify(validator).validateSummary4Resourcing(eq(studyProtocolDTO), eq(studyResourcingDTO),
+                                                     any(StringBuilder.class));
+    }
+    
+    
+    
+    /**
      * test the validateSummary4Resourcing method with no studyResourcing
      */
     @Test
@@ -653,6 +708,9 @@ public class TrialRegistrationValidatorTest {
         verify(validator).validateOtherIdentifiers(eq(studyProtocolDTO), (StringBuilder) any());
         verify(validator).validateMandatoryDocuments(eq(documentDTOs), (StringBuilder) any());
         verify(validator).validateAmendmentDocuments(eq(documentDTOs), (StringBuilder) any());
+        verify(validator).validatePOObjects(eq(studyProtocolDTO), eq(leadOrganizationDTO), eq(sponsorOrganizationDTO),
+                                            eq(summary4organizationDTO), eq(piPersonDTO),
+                                            eq(responsiblePartyContactIi), (StringBuilder) any());
         verify(validator).validateAmendmentInfo(eq(studyProtocolDTO), (StringBuilder) any());
         verify(validator).validateStudyContact(eq(studyProtocolDTO), eq(studyContactDTO), eq(studySiteContactDTO),
                                                (StringBuilder) any());
@@ -959,16 +1017,19 @@ public class TrialRegistrationValidatorTest {
      */
     @Test
     public void testvalidateAmendmentInfoInvalid() throws PAException {
-     // TODO: ivalid inbox tests
         Ii spIi = IiConverter.convertToIi(1L);
         studyProtocolDTO.setIdentifier(spIi);
         List<StudyInboxDTO> inboxDTOs = new ArrayList<StudyInboxDTO>();
+        inboxDTOs.add(new StudyInboxDTO());
         when(studyInboxServiceLocal.getOpenInboxEntries(spIi)).thenReturn(inboxDTOs);
+        when(lookUpTableServiceRemote.getPropertyValue("fromaddress")).thenReturn("FromAddress");
         validator.validateAmendmentInfo(studyProtocolDTO, errorMsg);
         verify(studyInboxServiceLocal).getOpenInboxEntries(spIi);
-        checkErrorMsg("Amendment Date is required.  ");
+        verify(lookUpTableServiceRemote).getPropertyValue("fromaddress");
+        checkErrorMsg("Amendment Date is required.  A trial with unaccepted updates cannot be amended. Please contact"
+                + " the CTRO at FromAddress to have your trial's updates accepted.");
     }
-    
+
     /**
      * test the validateAmendmentInfo with valid data.
      * @throws PAException if an error occurs
@@ -999,6 +1060,249 @@ public class TrialRegistrationValidatorTest {
     }
     
     /**
+     * Test the validateStudyContact method with CtgovXmlRequiredIndicator false.
+     */
+    @Test
+    public void testValidateStudyContactNotCTGOV() {
+        studyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(false));
+        validator.validateStudyContact(studyProtocolDTO, null, null, errorMsg);
+        checkErrorMsg("");
+    }
+    
+    /**
+     * Test the validateStudyContact method with no data.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testValidateStudyContactAllNUll() {
+        studyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(true));
+        validator = mock(TrialRegistrationValidator.class);
+        doCallRealMethod().when(validator).check(anyBoolean(), anyString(), eq(errorMsg));
+        doCallRealMethod().when(validator).validateStudyContact(studyProtocolDTO, null, null, errorMsg);
+        validator.validateStudyContact(studyProtocolDTO, null, null, errorMsg);
+        verify(validator, never()).validateTelecomAddress(any(DSet.class), any(String.class), eq(errorMsg));
+        checkErrorMsg("One of StudyContact or StudySiteContact has to be used, ");
+    }
+    
+    /**
+     * Test the validateStudyContact method with both contacts.
+     */
+    @Test
+    public void testValidateStudyContactBothContacts() {
+        studyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(true));
+        StudyContactDTO studyContactDTO = new StudyContactDTO();
+        DSet<Tel> contactAddress = new DSet<Tel>();
+        studyContactDTO.setTelecomAddresses(contactAddress);
+        StudySiteContactDTO studySiteContactDTO = new StudySiteContactDTO();
+        DSet<Tel> siteContactAddress = new DSet<Tel>();
+        studySiteContactDTO.setTelecomAddresses(siteContactAddress);
+        validator = mock(TrialRegistrationValidator.class);
+        doCallRealMethod().when(validator).check(anyBoolean(), anyString(), eq(errorMsg));
+        doCallRealMethod().when(validator).validateStudyContact(studyProtocolDTO, studyContactDTO, studySiteContactDTO, errorMsg);
+        validator.validateStudyContact(studyProtocolDTO, studyContactDTO, studySiteContactDTO, errorMsg);
+        verify(validator).validateTelecomAddress(contactAddress, "StudyContact", errorMsg);
+        verify(validator).validateTelecomAddress(siteContactAddress, "StudySiteContact", errorMsg);
+        checkErrorMsg("Only one of StudyContact or StudySiteContact can be used, ");
+    }
+    
+    /**
+     * Test the validateStudyContact method with both contacts.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testValidateStudyContactValid() {
+        studyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(true));
+        StudyContactDTO studyContactDTO = new StudyContactDTO();
+        DSet<Tel> contactAddress = new DSet<Tel>();
+        studyContactDTO.setTelecomAddresses(contactAddress);
+        validator = mock(TrialRegistrationValidator.class);
+        doCallRealMethod().when(validator).check(anyBoolean(), anyString(), eq(errorMsg));
+        doCallRealMethod().when(validator).validateStudyContact(studyProtocolDTO, studyContactDTO, null, errorMsg);
+        validator.validateStudyContact(studyProtocolDTO, studyContactDTO, null, errorMsg);
+        verify(validator).validateTelecomAddress(contactAddress, "StudyContact", errorMsg);
+        verify(validator, never()).validateTelecomAddress(any(DSet.class), eq("StudySiteContact"), eq(errorMsg));
+        checkErrorMsg("");
+    }
+    
+    /**
+     * Test the validateTelecomAddress method with invalid data.
+     */
+    @Test
+    public void testValidateTelecomAddressInvalid() {
+        DSet<Tel> address = new DSet<Tel>();
+        validator.validateTelecomAddress(address, "Contact", errorMsg);
+        checkErrorMsg("Contact Email cannot be null, Contact Phone cannot be null, ");
+    }
+    
+    /**
+     * Test the validateTelecomAddress method with invalid data.
+     * @throws URISyntaxException if an error occurs
+     */
+    @Test
+    public void testValidateTelecomAddressValid() throws URISyntaxException {
+        DSet<Tel> address = new DSet<Tel>();
+        Set<Tel> items = new HashSet<Tel>();
+        address.setItem(items);
+        TelEmail email = new TelEmail();
+        email.setValue(new URI("mailto:123@nih.gov"));
+        items.add(email);
+        TelPhone phone = new TelPhone();
+        phone.setValue(new URI("tel:111-222-3333"));
+        items.add(phone);
+        validator.validateTelecomAddress(address, "Contact", errorMsg);
+        checkErrorMsg("");
+    }
+
+    /**
+     * Test the validateCreation method.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testValidateCreation() throws PAException {
+        validator = mock(TrialRegistrationValidator.class);
+        Ii spIi = IiConverter.convertToIi(1L);
+        studyProtocolDTO.setIdentifier(spIi);
+        StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
+        OrganizationDTO leadOrganizationDTO = new OrganizationDTO();
+        OrganizationDTO sponsorOrganizationDTO = new OrganizationDTO();
+        StudyContactDTO studyContactDTO = new StudyContactDTO();
+        StudySiteContactDTO studySiteContactDTO = new StudySiteContactDTO();
+        OrganizationDTO summary4organizationDTO = new OrganizationDTO();
+        StudyResourcingDTO summary4StudyResourcingDTO = new StudyResourcingDTO();
+        PersonDTO principalInvestigatorDTO = new PersonDTO();
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = new StudySiteDTO();
+        Ii responsiblePartyContactIi = IiConverter.convertToIi(1L);
+        StudyRegulatoryAuthorityDTO studyRegAuthDTO = new StudyRegulatoryAuthorityDTO();
+        List<StudyResourcingDTO> studyResourcingDTOs = new ArrayList<StudyResourcingDTO>();
+        List<DocumentDTO> documentDTOs = new ArrayList<DocumentDTO>();
+        List<StudyIndldeDTO> studyIndldeDTOs = new ArrayList<StudyIndldeDTO>();
+        doCallRealMethod().when(validator).validateCreation(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO,
+                                                            sponsorOrganizationDTO, studyContactDTO,
+                                                            studySiteContactDTO, summary4organizationDTO,
+                                                            summary4StudyResourcingDTO, principalInvestigatorDTO,
+                                                            leadOrganizationSiteIdentifierDTO,
+                                                            responsiblePartyContactIi, studyRegAuthDTO,
+                                                            studyResourcingDTOs, documentDTOs, studyIndldeDTOs);
+        validator.validateCreation(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO, sponsorOrganizationDTO,
+                                   studyContactDTO, studySiteContactDTO, summary4organizationDTO,
+                                   summary4StudyResourcingDTO, principalInvestigatorDTO,
+                                   leadOrganizationSiteIdentifierDTO, responsiblePartyContactIi, studyRegAuthDTO,
+                                   studyResourcingDTOs, documentDTOs, studyIndldeDTOs);
+        verify(validator).validateStudyProtocol(studyProtocolDTO);
+        verify(validator).validateMandatoryFields(eq(studyProtocolDTO), eq(leadOrganizationSiteIdentifierDTO),
+                                                  eq(documentDTOs), (StringBuilder) any());
+        verify(validator).validateUser(eq(studyProtocolDTO), eq("Create"), eq(false), (StringBuilder) any());
+        verify(validator).validateStatusAndDates(eq(studyProtocolDTO), eq(overallStatusDTO), (StringBuilder) any());
+        verify(validator).validateNihGrants(eq(spIi), eq(studyResourcingDTOs), (StringBuilder) any());
+        verify(validator).validateIndlde(eq(studyProtocolDTO), eq(studyIndldeDTOs), (StringBuilder) any());
+        verify(validator).validateMandatoryDocuments(eq(documentDTOs), (StringBuilder) any());
+        verify(validator).validatePOObjects(eq(studyProtocolDTO), eq(leadOrganizationDTO), eq(sponsorOrganizationDTO),
+                                            eq(summary4organizationDTO), eq(principalInvestigatorDTO),
+                                            eq(responsiblePartyContactIi), (StringBuilder) any());
+        verify(validator).validateStudyContact(eq(studyProtocolDTO), eq(studyContactDTO), eq(studySiteContactDTO),
+                                               (StringBuilder) any());
+        verify(validator).validatePiAndResponsibleParty(eq(studyProtocolDTO), eq(studyContactDTO),
+                                                        eq(studySiteContactDTO), eq(responsiblePartyContactIi),
+                                                        (StringBuilder) any());
+        verify(validator).validateRegulatoryInfo(eq(studyProtocolDTO), eq(studyRegAuthDTO), eq(studyIndldeDTOs),
+                                                 (StringBuilder) any());
+        verify(validator).validateSummary4Resourcing(eq(studyProtocolDTO), eq(summary4StudyResourcingDTO),
+                                                     (StringBuilder) any());
+    }
+
+    /**
+     * test the validateStudyProtocol method with a null study protocol.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testValidateStudyProtocolNull() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Validation Exception Study Protocol cannot be null.");
+        validator.validateStudyProtocol(null);
+    }
+    
+    /**
+     * test the validateStudyProtocol method with a null study protocol
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testValidateStudyProtocolNoCTGOV() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Validation Exception Study Protocol Ct.gov XML indicator cannot be null.");
+        validator.validateStudyProtocol(studyProtocolDTO);
+    }
+    
+    /**
+     * test the validateStudyProtocol method with a null study protocol
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testValidateStudyProtocolValid() throws PAException {
+        studyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(true));
+        validator.validateStudyProtocol(studyProtocolDTO);
+    }
+    
+    /**
+     * test the validateMandatoryFields method with invalid data.
+     */
+    @Test
+    public void testValidateMandatoryFieldsInvalid() {
+        StudySiteDTO leadOrganizationSiteIdentifierDTO = new StudySiteDTO();
+        validator = mock(TrialRegistrationValidator.class);
+        doCallRealMethod().when(validator).check(anyBoolean(), anyString(), eq(errorMsg));
+        doCallRealMethod().when(validator).validateMandatoryFields(studyProtocolDTO, leadOrganizationSiteIdentifierDTO,
+                                                                   null, errorMsg);
+        validator.validateMandatoryFields(studyProtocolDTO, leadOrganizationSiteIdentifierDTO, null, errorMsg);
+        verify(validator).validatePhase(studyProtocolDTO, errorMsg);
+        checkErrorMsg("Local StudyProtocol Identifier cannot be null , Document DTO's cannot be null, Official Title"+
+        " cannot be null");
+    }
+
+    /**
+     * test the validateMandatoryFields method with valid data.
+     */
+    @Test
+    public void testValidateMandatoryFieldsValid() {
+        List<DocumentDTO> documents = new ArrayList<DocumentDTO>();
+        studyProtocolDTO.setOfficialTitle(StConverter.convertToSt("Official title"));
+        validator = mock(TrialRegistrationValidator.class);
+        doCallRealMethod().when(validator).check(anyBoolean(), anyString(), eq(errorMsg));
+        doCallRealMethod().when(validator).validateMandatoryFields(studyProtocolDTO, null, documents, errorMsg);
+        validator.validateMandatoryFields(studyProtocolDTO, null, documents, errorMsg);
+        verify(validator).validatePhase(studyProtocolDTO, errorMsg);
+        checkErrorMsg("");
+    }
+    
+    /**
+     * test the validatePhase method with a null phase
+     */
+    @Test
+    public void testvalidatePhaseNull() {
+        validator.validatePhase(studyProtocolDTO, errorMsg);
+        checkErrorMsg("Phase cannot be null , ");
+    }
+    
+    /**
+     * test the validatePhase method with a invalid phase code.
+     */
+    @Test
+    public void testvalidatePhaseInvalid() {
+        studyProtocolDTO.setPhaseCode(CdConverter.convertStringToCd("xxx"));
+        validator.validatePhase(studyProtocolDTO, errorMsg);
+        checkErrorMsg("Please enter valid value for Phase Code.");
+    }
+    
+    /**
+     * test the validatePhase method with a valid data.
+     */
+    @Test
+    public void testvalidatePhaseValid() {
+        studyProtocolDTO.setPhaseCode(CdConverter.convertStringToCd("0"));
+        validator.validatePhase(studyProtocolDTO, errorMsg);
+        checkErrorMsg("");
+    }
+
+    /**
      * Test the validateUpdate method.
      * @throws PAException if an error occurs
      */
@@ -1013,6 +1317,56 @@ public class TrialRegistrationValidatorTest {
         verify(validator).validateDWFS(eq(spIi), eq(TrialRegistrationValidator.ERROR_DWFS_FOR_REJECT),
                                        eq(TrialRegistrationValidator.ERROR_MESSAGE_DWFS_FOR_REJECT),
                                        (StringBuilder) any());
+    }
+    
+    /**
+     * Test the validateProprietaryCreation method.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testValidateProprietaryCreation() throws PAException {
+        validator = mock(TrialRegistrationValidator.class);
+        Ii spIi = IiConverter.convertToIi(1L);
+        studyProtocolDTO.setIdentifier(spIi);
+        StudySiteAccrualStatusDTO studySiteAccrualStatusDTO = new StudySiteAccrualStatusDTO();
+        OrganizationDTO leadOrganizationDTO = new OrganizationDTO();
+        PersonDTO studySiteInvestigatorDTO = new PersonDTO();
+        StudySiteDTO leadOrganizationStudySiteDTO = new StudySiteDTO();
+        OrganizationDTO studySiteOrganizationDTO = new OrganizationDTO();
+        StudySiteDTO studySiteDTO = new StudySiteDTO();
+        StudySiteDTO nctIdentifierDTO = new StudySiteDTO();
+        OrganizationDTO summary4OrganizationDTO = new OrganizationDTO();
+        StudyResourcingDTO summary4StudyResourcingDTO = new StudyResourcingDTO();
+        List<DocumentDTO> documentDTOs = new ArrayList<DocumentDTO>();
+        doCallRealMethod().when(validator).setPaServiceUtils(paServiceUtils);
+        doCallRealMethod().when(validator).validateProprietaryCreation(studyProtocolDTO, studySiteAccrualStatusDTO,
+                                                                       documentDTOs, leadOrganizationDTO,
+                                                                       studySiteInvestigatorDTO,
+                                                                       leadOrganizationStudySiteDTO,
+                                                                       studySiteOrganizationDTO, studySiteDTO,
+                                                                       nctIdentifierDTO, summary4OrganizationDTO,
+                                                                       summary4StudyResourcingDTO);
+        when(paServiceUtils.validateRecuritmentStatusDateRule(studySiteAccrualStatusDTO, studySiteDTO)).thenReturn("");
+        when(validator.validatePoObject(any(EntityDto.class), anyString(), anyBoolean())).thenReturn("");
+        validator.setPaServiceUtils(paServiceUtils);
+        validator.validateProprietaryCreation(studyProtocolDTO, studySiteAccrualStatusDTO, documentDTOs,
+                                              leadOrganizationDTO, studySiteInvestigatorDTO,
+                                              leadOrganizationStudySiteDTO, studySiteOrganizationDTO, studySiteDTO,
+                                              nctIdentifierDTO, summary4OrganizationDTO, summary4StudyResourcingDTO);
+        verify(validator).validateMandatoryFieldsForProprietary(eq(studyProtocolDTO), eq(studySiteAccrualStatusDTO),
+                                                                eq(leadOrganizationStudySiteDTO), eq(studySiteDTO),
+                                                                eq(summary4StudyResourcingDTO), (StringBuilder) any());
+        verify(validator).validateUser(eq(studyProtocolDTO), eq("Create"), eq(false), (StringBuilder) any());
+        verify(validator).validateNCTIdentifier(eq(nctIdentifierDTO), (StringBuilder) any());
+        verify(validator).validatePhasePurposeAndTemplateDocument(eq(studyProtocolDTO), eq(documentDTOs),
+                                                                  eq(nctIdentifierDTO), (StringBuilder) any());
+        verify(paServiceUtils).validateRecuritmentStatusDateRule(studySiteAccrualStatusDTO, studySiteDTO);
+        verify(validator).validatePoObject(leadOrganizationDTO, "Lead Organization", false);
+        verify(validator).validatePoObject(studySiteOrganizationDTO, "Study Site Organization", false);
+        verify(validator).validatePoObject(summary4OrganizationDTO, "Summary 4 Organization", false);
+        verify(validator).validatePoObject(studySiteInvestigatorDTO, "Study Site Investigator", false);
+        verify(validator).validateSummary4Resourcing(eq(studyProtocolDTO), eq(summary4StudyResourcingDTO),
+                                                     (StringBuilder) any());
     }
 
 }

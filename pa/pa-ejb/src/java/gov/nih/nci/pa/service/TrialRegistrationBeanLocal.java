@@ -126,6 +126,7 @@ import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
@@ -170,27 +171,28 @@ import org.hibernate.Session;
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Interceptors(PaHibernateSessionInterceptor.class)
 public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean implements TrialRegistrationServiceLocal {
-    @EJB private StudyProtocolServiceLocal studyProtocolService;
-    @EJB private StudyRelationshipServiceLocal studyRelationshipService;
-    @EJB private StudyOverallStatusServiceLocal studyOverallStatusService;
-    @EJB private StudyIndldeServiceLocal studyIndldeService;
-    @EJB private StudyResourcingServiceLocal studyResourcingService;
-    @EJB private StudyMilestoneServicelocal studyMilestoneService;
-    @EJB private DocumentServiceLocal documentService;
-    @EJB private StudySiteServiceLocal studySiteService;
-    @EJB private StudySiteContactServiceLocal studySiteContactService;
-    @EJB private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
-    @EJB private StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService;
-    @EJB private OrganizationCorrelationServiceRemote ocsr;
-    @EJB private StudyContactServiceLocal studyContactService;
-    @EJB private TSRReportGeneratorServiceRemote tsrReportService;
-    @EJB private DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService;
-    @EJB private RegulatoryInformationServiceRemote regulatoryInfoBean;
-    @EJB private StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal;
     @EJB private AbstractionCompletionServiceRemote abstractionCompletionService;
-    @EJB private StudyInboxServiceLocal studyInboxServiceLocal;
+    @EJB private DocumentServiceLocal documentService;
+    @EJB private DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService;
+    @EJB private LookUpTableServiceRemote lookUpTableServiceRemote;
     @EJB private MailManagerServiceLocal mailManagerSerivceLocal;
+    @EJB private OrganizationCorrelationServiceRemote ocsr;
     @EJB private RegistryUserServiceLocal registryUserServiceLocal;
+    @EJB private RegulatoryInformationServiceRemote regulatoryInfoBean;
+    @EJB private StudyContactServiceLocal studyContactService;
+    @EJB private StudyInboxServiceLocal studyInboxServiceLocal;
+    @EJB private StudyIndldeServiceLocal studyIndldeService;
+    @EJB private StudyMilestoneServicelocal studyMilestoneService;
+    @EJB private StudyOverallStatusServiceLocal studyOverallStatusService;
+    @EJB private StudyProtocolServiceLocal studyProtocolService;
+    @EJB private StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal;
+    @EJB private StudyRegulatoryAuthorityServiceLocal studyRegulatoryAuthorityService;
+    @EJB private StudyRelationshipServiceLocal studyRelationshipService;
+    @EJB private StudyResourcingServiceLocal studyResourcingService;
+    @EJB private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
+    @EJB private StudySiteContactServiceLocal studySiteContactService;
+    @EJB private StudySiteServiceLocal studySiteService;
+    @EJB private TSRReportGeneratorServiceRemote tsrReportService;
 
     private static final String CREATE = "Create";
     private static final String AMENDMENT = "Amendment";
@@ -1088,6 +1090,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         TrialRegistrationValidator validator = new TrialRegistrationValidator();
         validator.setCsmUserUtil(CSMUserService.getInstance());
         validator.setDocumentWorkFlowStatusService(documentWorkFlowStatusService);
+        validator.setLookUpTableServiceRemote(lookUpTableServiceRemote);
         validator.setOcsr(ocsr);
         validator.setPaServiceUtils(getPAServiceUtils());
         validator.setRegistryUserServiceLocal(registryUserServiceLocal);
@@ -1103,45 +1106,10 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     }
 
     /**
-     * @param studyProtocolService the studyProtocolService to set
+     * @param abstractionCompletionService the abstractionCompletionService to set
      */
-    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
-        this.studyProtocolService = studyProtocolService;
-    }
-
-    /**
-     * @param studyRelationshipService the studyRelationshipService to set
-     */
-    public void setStudyRelationshipService(StudyRelationshipServiceLocal studyRelationshipService) {
-        this.studyRelationshipService = studyRelationshipService;
-    }
-
-    /**
-     * @param studyOverallStatusService the studyOverallStatusService to set
-     */
-    public void setStudyOverallStatusService(StudyOverallStatusServiceLocal studyOverallStatusService) {
-        this.studyOverallStatusService = studyOverallStatusService;
-    }
-
-    /**
-     * @param studyIndldeService the studyIndldeService to set
-     */
-    public void setStudyIndldeService(StudyIndldeServiceLocal studyIndldeService) {
-        this.studyIndldeService = studyIndldeService;
-    }
-
-    /**
-     * @param studyResourcingService the studyResourcingService to set
-     */
-    public void setStudyResourcingService(StudyResourcingServiceLocal studyResourcingService) {
-        this.studyResourcingService = studyResourcingService;
-    }
-
-    /**
-     * @param studyMilestoneService the studyMilestoneService to set
-     */
-    public void setStudyMilestoneService(StudyMilestoneServicelocal studyMilestoneService) {
-        this.studyMilestoneService = studyMilestoneService;
+    public void setAbstractionCompletionService(AbstractionCompletionServiceRemote abstractionCompletionService) {
+        this.abstractionCompletionService = abstractionCompletionService;
     }
 
     /**
@@ -1152,55 +1120,6 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     }
 
     /**
-     * @param studySiteService the studySiteService to set
-     */
-    public void setStudySiteService(StudySiteServiceLocal studySiteService) {
-        this.studySiteService = studySiteService;
-    }
-
-    /**
-     * @param studySiteContactService the studySiteContactService to set
-     */
-    public void setStudySiteContactService(StudySiteContactServiceLocal studySiteContactService) {
-        this.studySiteContactService = studySiteContactService;
-    }
-
-    /**
-     * @param studySiteAccrualStatusService the studySiteAccrualStatusService to set
-     */
-    public void setStudySiteAccrualStatusService(StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService) {
-        this.studySiteAccrualStatusService = studySiteAccrualStatusService;
-    }
-
-    /**
-     * @param authorityService the studyRegulatoryAuthorityService to set
-     */
-    public void setStudyRegulatoryAuthorityService(StudyRegulatoryAuthorityServiceLocal authorityService) {
-        this.studyRegulatoryAuthorityService = authorityService;
-    }
-
-    /**
-     * @param ocsr the ocsr to set
-     */
-    public void setOcsr(OrganizationCorrelationServiceRemote ocsr) {
-        this.ocsr = ocsr;
-    }
-
-    /**
-     * @param studyContactService the studyContactService to set
-     */
-    public void setStudyContactService(StudyContactServiceLocal studyContactService) {
-        this.studyContactService = studyContactService;
-    }
-
-    /**
-     * @param tsrReportService the tsrReportService to set
-     */
-    public void setTsrReportService(TSRReportGeneratorServiceRemote tsrReportService) {
-        this.tsrReportService = tsrReportService;
-    }
-
-    /**
      * @param documentWorkFlowStatusService the documentWorkFlowStatusService to set
      */
     public void setDocumentWorkFlowStatusService(DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService) {
@@ -1208,32 +1127,10 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     }
 
     /**
-     * @param regulatoryInfoBean the regulatoryInfoBean to set
+     * @param lookUpTableServiceRemote the lookUpTableServiceRemote to set
      */
-    public void setRegulatoryInfoBean(RegulatoryInformationServiceRemote regulatoryInfoBean) {
-        this.regulatoryInfoBean = regulatoryInfoBean;
-    }
-
-    /**
-     * @param studyRecruitmentStatusServiceLocal the studyRecruitmentStatusServiceLocal to set
-     */
-    public void setStudyRecruitmentStatusServiceLocal(
-            StudyRecruitmentStatusServiceLocal studyRecruitmentStatusServiceLocal) {
-        this.studyRecruitmentStatusServiceLocal = studyRecruitmentStatusServiceLocal;
-    }
-
-    /**
-     * @param abstractionCompletionService the abstractionCompletionService to set
-     */
-    public void setAbstractionCompletionService(AbstractionCompletionServiceRemote abstractionCompletionService) {
-        this.abstractionCompletionService = abstractionCompletionService;
-    }
-
-    /**
-     * @param studyInboxServiceLocal the studyInboxServiceLocal to set
-     */
-    public void setStudyInboxServiceLocal(StudyInboxServiceLocal studyInboxServiceLocal) {
-        this.studyInboxServiceLocal = studyInboxServiceLocal;
+    public void setLookUpTableServiceRemote(LookUpTableServiceRemote lookUpTableServiceRemote) {
+        this.lookUpTableServiceRemote = lookUpTableServiceRemote;
     }
 
     /**
@@ -1244,9 +1141,121 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     }
 
     /**
+     * @param ocsr the ocsr to set
+     */
+    public void setOcsr(OrganizationCorrelationServiceRemote ocsr) {
+        this.ocsr = ocsr;
+    }
+
+    /**
      * @param registryUserServiceLocal the registryUserServiceLocal to set
      */
     public void setRegistryUserServiceLocal(RegistryUserServiceLocal registryUserServiceLocal) {
         this.registryUserServiceLocal = registryUserServiceLocal;
+    }
+
+    /**
+     * @param regulatoryInfoBean the regulatoryInfoBean to set
+     */
+    public void setRegulatoryInfoBean(RegulatoryInformationServiceRemote regulatoryInfoBean) {
+        this.regulatoryInfoBean = regulatoryInfoBean;
+    }
+
+    /**
+     * @param studyContactService the studyContactService to set
+     */
+    public void setStudyContactService(StudyContactServiceLocal studyContactService) {
+        this.studyContactService = studyContactService;
+    }
+
+    /**
+     * @param studyInboxServiceLocal the studyInboxServiceLocal to set
+     */
+    public void setStudyInboxServiceLocal(StudyInboxServiceLocal studyInboxServiceLocal) {
+        this.studyInboxServiceLocal = studyInboxServiceLocal;
+    }
+
+    /**
+     * @param studyIndldeService the studyIndldeService to set
+     */
+    public void setStudyIndldeService(StudyIndldeServiceLocal studyIndldeService) {
+        this.studyIndldeService = studyIndldeService;
+    }
+
+    /**
+     * @param studyMilestoneService the studyMilestoneService to set
+     */
+    public void setStudyMilestoneService(StudyMilestoneServicelocal studyMilestoneService) {
+        this.studyMilestoneService = studyMilestoneService;
+    }
+
+    /**
+     * @param studyOverallStatusService the studyOverallStatusService to set
+     */
+    public void setStudyOverallStatusService(StudyOverallStatusServiceLocal studyOverallStatusService) {
+        this.studyOverallStatusService = studyOverallStatusService;
+    }
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
+    }
+
+    /**
+     * @param srsServiceLocal the studyRecruitmentStatusServiceLocal to set
+     */
+    public void setStudyRecruitmentStatusServiceLocal(StudyRecruitmentStatusServiceLocal srsServiceLocal) {
+        this.studyRecruitmentStatusServiceLocal = srsServiceLocal;
+    }
+
+    /**
+     * @param sraService the studyRegulatoryAuthorityService to set
+     */
+    public void setStudyRegulatoryAuthorityService(StudyRegulatoryAuthorityServiceLocal sraService) {
+        this.studyRegulatoryAuthorityService = sraService;
+    }
+
+    /**
+     * @param studyRelationshipService the studyRelationshipService to set
+     */
+    public void setStudyRelationshipService(StudyRelationshipServiceLocal studyRelationshipService) {
+        this.studyRelationshipService = studyRelationshipService;
+    }
+
+    /**
+     * @param studyResourcingService the studyResourcingService to set
+     */
+    public void setStudyResourcingService(StudyResourcingServiceLocal studyResourcingService) {
+        this.studyResourcingService = studyResourcingService;
+    }
+
+    /**
+     * @param studySiteAccrualStatusService the studySiteAccrualStatusService to set
+     */
+    public void setStudySiteAccrualStatusService(StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService) {
+        this.studySiteAccrualStatusService = studySiteAccrualStatusService;
+    }
+
+    /**
+     * @param studySiteContactService the studySiteContactService to set
+     */
+    public void setStudySiteContactService(StudySiteContactServiceLocal studySiteContactService) {
+        this.studySiteContactService = studySiteContactService;
+    }
+
+    /**
+     * @param studySiteService the studySiteService to set
+     */
+    public void setStudySiteService(StudySiteServiceLocal studySiteService) {
+        this.studySiteService = studySiteService;
+    }
+
+    /**
+     * @param tsrReportService the tsrReportService to set
+     */
+    public void setTsrReportService(TSRReportGeneratorServiceRemote tsrReportService) {
+        this.tsrReportService = tsrReportService;
     }
 }

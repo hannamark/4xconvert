@@ -121,6 +121,7 @@ import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
@@ -189,6 +190,7 @@ public class TrialRegistrationValidator {
 
     private CSMUserUtil csmUserUtil;
     private DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService;
+    private LookUpTableServiceRemote lookUpTableServiceRemote;
     private OrganizationCorrelationServiceRemote ocsr;
     private PAServiceUtils paServiceUtils;
     private RegistryUserServiceLocal registryUserServiceLocal;
@@ -681,7 +683,7 @@ public class TrialRegistrationValidator {
     void validateAmendmentInfo(StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg) throws PAException {
         check(ISOUtil.isTsNull(studyProtocolDTO.getAmendmentDate()), "Amendment Date is required.  ", errorMsg);
         if (!studyInboxServiceLocal.getOpenInboxEntries(studyProtocolDTO.getIdentifier()).isEmpty()) {
-            String ctroAddress = PaRegistry.getLookUpTableService().getPropertyValue("fromaddress");
+            String ctroAddress = lookUpTableServiceRemote.getPropertyValue("fromaddress");
             String msg = "A trial with unaccepted updates cannot be amended. Please contact the CTRO at {0} to "
                     + "have your trial''s updates accepted.";
             errorMsg.append(MessageFormat.format(msg, ctroAddress));
@@ -797,7 +799,7 @@ public class TrialRegistrationValidator {
      * @param leadOrganizationDTO The lead organization
      * @param sponsorOrganizationDTO The sponsor organization
      * @param studyContactDTO The study contact
-     * @param studySiteContactDTO  The study site contact
+     * @param studySiteContactDTO The study site contact
      * @param summary4OrganizationDTO The summary4 organization
      * @param summary4StudyResourcingDTO The summary 4 category code
      * @param principalInvestigatorDTO The principal investigator
@@ -821,8 +823,7 @@ public class TrialRegistrationValidator {
         // CHECKSTYLE:ON
         validateStudyProtocol(studyProtocolDTO);
         StringBuilder errorMsg = new StringBuilder();
-        validateMandatoryFields(studyProtocolDTO, sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
-                                documentDTOs, errorMsg);
+        validateMandatoryFields(studyProtocolDTO, leadOrganizationSiteIdentifierDTO, documentDTOs, errorMsg);
         validateUser(studyProtocolDTO, CREATION, false, errorMsg);
         validateStatusAndDates(studyProtocolDTO, overallStatusDTO, errorMsg);
         validateNihGrants(studyProtocolDTO.getIdentifier(), studyResourcingDTOs, errorMsg);
@@ -839,7 +840,7 @@ public class TrialRegistrationValidator {
             throw new PAException(VALIDATION_EXCEPTION + errorMsg);
         }
     }
-    
+
     /**
      * Validates the presence of the study protocol and the ctgov flag.
      * @param studyProtocolDTO The study protocol
@@ -857,26 +858,20 @@ public class TrialRegistrationValidator {
     /**
      * Validates that the mandatory fields are present in the study protocol.
      * @param studyProtocolDTO The study protocol
-     * @param sponsorOrganizationDTO The sponsor organization
      * @param leadOrganizationSiteIdentifierDTO The lead organization site
      * @param documentDTOs The List of documents IRB and Participating doc
      * @param errorMsg The StringBuilder collecting error messages
      */
-    void validateMandatoryFields(StudyProtocolDTO studyProtocolDTO, OrganizationDTO sponsorOrganizationDTO,
-            StudySiteDTO leadOrganizationSiteIdentifierDTO, List<DocumentDTO> documentDTOs, StringBuilder errorMsg) {
-        if (leadOrganizationSiteIdentifierDTO != null
-                && ISOUtil.isStNull(leadOrganizationSiteIdentifierDTO.getLocalStudyProtocolIdentifier())) {
-            errorMsg.append("Local StudyProtocol Identifier cannot be null , ");
-        }
-        if (documentDTOs == null) {
-            errorMsg.append("Document DTO's cannot be null, ");
-        }
-        if (ISOUtil.isStNull(studyProtocolDTO.getOfficialTitle())) {
-            errorMsg.append("Official Title cannot be null");
-        }
+    void validateMandatoryFields(StudyProtocolDTO studyProtocolDTO, StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<DocumentDTO> documentDTOs, StringBuilder errorMsg) {
+        check(leadOrganizationSiteIdentifierDTO != null
+                      && ISOUtil.isStNull(leadOrganizationSiteIdentifierDTO.getLocalStudyProtocolIdentifier()),
+              "Local StudyProtocol Identifier cannot be null , ", errorMsg);
+        check(documentDTOs == null, "Document DTO's cannot be null, ", errorMsg);
+        check(ISOUtil.isStNull(studyProtocolDTO.getOfficialTitle()), "Official Title cannot be null", errorMsg);
         validatePhase(studyProtocolDTO, errorMsg);
     }
-    
+
     /**
      * Validates the Phase code.
      * @param studyProtocolDTO The study protocol
@@ -886,9 +881,8 @@ public class TrialRegistrationValidator {
         if (ISOUtil.isCdNull(studyProtocolDTO.getPhaseCode())) {
             errorMsg.append("Phase cannot be null , ");
         } else {
-            if (PhaseCode.getByCode(CdConverter.convertCdToString(studyProtocolDTO.getPhaseCode())) == null) {
-                errorMsg.append("Please enter valid value for Phase Code.");
-            }
+            check(PhaseCode.getByCode(CdConverter.convertCdToString(studyProtocolDTO.getPhaseCode())) == null,
+                  "Please enter valid value for Phase Code.", errorMsg);
         }
 
     }
@@ -1055,7 +1049,7 @@ public class TrialRegistrationValidator {
      * @param nctIdentifierDTO The NCT identifier
      * @param errorMsg The StringBuilder collecting error messages
      */
-    private void validatePhasePurposeAndTemplateDocument(StudyProtocolDTO studyProtocolDTO,
+    void validatePhasePurposeAndTemplateDocument(StudyProtocolDTO studyProtocolDTO,
             List<DocumentDTO> documentDTOs, StudySiteDTO nctIdentifierDTO, StringBuilder errorMsg) {
         if (nctIdentifierDTO != null) {
             if (ISOUtil.isStNull(nctIdentifierDTO.getLocalStudyProtocolIdentifier())) {
@@ -1104,6 +1098,13 @@ public class TrialRegistrationValidator {
      */
     public void setDocumentWorkFlowStatusService(DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService) {
         this.documentWorkFlowStatusService = documentWorkFlowStatusService;
+    }
+
+    /**
+     * @param lookUpTableServiceRemote the lookUpTableServiceRemote to set
+     */
+    public void setLookUpTableServiceRemote(LookUpTableServiceRemote lookUpTableServiceRemote) {
+        this.lookUpTableServiceRemote = lookUpTableServiceRemote;
     }
 
     /**
