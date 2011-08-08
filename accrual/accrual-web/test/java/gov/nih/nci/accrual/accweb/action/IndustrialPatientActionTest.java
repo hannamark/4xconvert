@@ -73,180 +73,180 @@
 * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*
-*
 */
-package gov.nih.nci.accrual.service.util;
+package gov.nih.nci.accrual.accweb.action;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
-import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
-import gov.nih.nci.accrual.service.AbstractServiceTest;
-import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.iso21090.Bl;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.St;
-import gov.nih.nci.pa.enums.StudyStatusCode;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.accrual.accweb.util.MockSearchTrialBean;
+import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
+import gov.nih.nci.accrual.util.AccrualServiceLocator;
+import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
+import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
 
 /**
- * @author Hugh Reinhart
- * @since Aug 25, 2009
+ * @author oweisms
  */
-public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialService> {
-    SearchTrialService bean;
 
-    @Override
+public class IndustrialPatientActionTest extends AbstractAccrualActionTest {
+
+    private IndustrialPatientAction action;
+    @Rule public ExpectedException thrown = ExpectedException.none();
     @Before
-    public void instantiateServiceBean() throws Exception {
-        AccrualCsmUtil.setCsmUtil(new MockCsmUtil());
-        bean = new SearchTrialBean();
+    public void setup() {
+        action = new IndustrialPatientAction();
+    }
+    @Test
+    public void prepareSettingTheTrialInSession() {
+        action.setStudyProtocolId(null);
+        action.prepare();
+        assertNull(ServletActionContext.getRequest().getSession().getAttribute("trialSummary"));
+
+        action.setStudyProtocolId(1L);
+        action.prepare();
+        assertNotNull(ServletActionContext.getRequest().getSession().getAttribute("trialSummary"));
     }
 
     @Test
-    public void searchUser1() throws Exception {
-        search(TestSchema.registryUsers.get(0).getId(), true);
+    public void preparePAException() throws PAException {
+        setupPreparePAException();
+        
+        action.setStudyProtocolId(1L);
+        action.prepare();
+        assertEquals("Test message", action.getActionErrors().iterator().next());
+    }
+
+    private void setupPreparePAException() throws PAException {
+        ServiceLocatorPaInterface serviceLocator = mock(ServiceLocatorPaInterface.class);
+        RegistryUserServiceRemote mockService = mock(RegistryUserServiceRemote.class);
+        when(serviceLocator.getRegistryUserService()).thenReturn(mockService);
+        when(mockService.getUser(any(String.class))).thenThrow(new PAException("Test message"));
+        PaServiceLocator.getInstance().setServiceLocator(serviceLocator);
     }
 
     @Test
-    public void searchUser2() throws Exception {
-        search(TestSchema.registryUsers.get(0).getId(), true);
+    public void execute() {
+        action.setStudyProtocolId(MockSearchTrialBean.INDUSTRIAL_STUDY_PROTOCOL_ID);
+        action.prepare();
+        assertEquals("success", action.execute());
+    }
+
+
+    @Test
+    public void executeNonIndustrialTrial() {
+        action.setStudyProtocolId(MockSearchTrialBean.NONINDUSTRIAL_STUDY_PROTOCOL_ID);
+        action.prepare();
+        assertEquals("invalid", action.execute());
     }
 
     @Test
-    public void searchUser3() throws Exception {
-        search(0L, false);
-    }
-
-    public void search(Long registryUserId, boolean shouldBeAuthorized) throws Exception {
-        Ii ruIi = IiConverter.convertToIi(registryUserId);
-        int goodCount = shouldBeAuthorized ? 1: 0;
-
-        // second study is inactive
-        List<SearchTrialResultDto> results = bean.search(new SearchTrialCriteriaDto(), ruIi);
-        assertEquals(goodCount, results.size());
-        if (results.size() > 0) {
-            SearchTrialResultDto str = results.get(0);
-            St aid = str.getAssignedIdentifier();
-            assertNotNull(aid);
-            Ii id = str.getIdentifier();
-            assertNotNull(id);
-            St lon = str.getLeadOrgName();
-            assertNotNull(lon);
-            St loti = str.getLeadOrgTrialIdentifier();
-            assertNotNull(loti);
-            St ot = str.getOfficialTitle();
-            assertNotNull(ot);
-            St pi = str.getPrincipalInvestigator();
-            assertNotNull(pi);
-            Ii spi = str.getStudyProtocolIdentifier();
-            assertNotNull(spi);
-            Cd status = str.getStudyStatusCode();
-            assertNotNull(status);
-        }
-
-        // get by assigned identifier
-        SearchTrialCriteriaDto crit = new SearchTrialCriteriaDto();
-        Ii assignedId = new Ii();
-        for (Ii id : TestSchema.studyProtocols.get(0).getOtherIdentifiers()) {
-            if (StringUtils.equals(id.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT)) {
-                assignedId = id;
-                break;
-            }
-        }
-
-        crit.setAssignedIdentifier(StConverter.convertToSt(assignedId.getExtension()));
-        assertEquals(goodCount, bean.search(crit, ruIi).size());
-        crit.setAssignedIdentifier(BST);
-        assertEquals(0, bean.search(crit, ruIi).size());
-
-        // get by title
-        crit = new SearchTrialCriteriaDto();
-        crit.setOfficialTitle(StConverter.convertToSt(TestSchema.studyProtocols.get(0).getOfficialTitle()));
-        assertEquals(goodCount, bean.search(crit, ruIi).size());
-        crit.setOfficialTitle(BST);
-        assertEquals(0, bean.search(crit, ruIi).size());
-
-        // get by title
-        crit = new SearchTrialCriteriaDto();
-        crit.setLeadOrgTrialIdentifier(StConverter.convertToSt(TestSchema.studySites.get(0).getLocalStudyProtocolIdentifier()));
-        assertEquals(goodCount, bean.search(crit, ruIi).size());
-        crit.setLeadOrgTrialIdentifier(BST);
-        assertEquals(0, bean.search(crit, ruIi).size());
+    public void update() {
+        action.setStudyProtocolId(MockSearchTrialBean.INDUSTRIAL_STUDY_PROTOCOL_ID);
+        action.prepare();
+        
+        List<Long> submittedSiteIds = new ArrayList<Long>();
+        submittedSiteIds.add(1L);
+        submittedSiteIds.add(2L);
+        List<Long> sitesToSave = new ArrayList<Long>();
+        sitesToSave.add(1L);
+        action.setSubmittedSiteIds(submittedSiteIds);
+        action.setSitesToSave(sitesToSave);
+        assertEquals("saved", action.update());
     }
 
     @Test
-    public void getTrialSummaryByStudyProtocolIi() throws Exception {
-        SearchTrialResultDto result = bean.getTrialSummaryByStudyProtocolIi(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId()));
-        assertNotNull(result);
+    public void updatePAException() throws PAException {
+        setupUpdatePAException();
+        action.setSitesToSave(new ArrayList<Long>());
+        action.update();
+        assertEquals("Test message", action.getActionErrors().iterator().next());
+    }
 
-        try {
-            bean.getTrialSummaryByStudyProtocolIi(BII);
-            fail();
-        } catch (PAException e) {
-            // expected behavior
-        }
+    @SuppressWarnings("unchecked")
+    private void setupUpdatePAException() throws PAException {
+        action.setStudyProtocolId(MockSearchTrialBean.INDUSTRIAL_STUDY_PROTOCOL_ID);
+        action.prepare();
+        
+        ServiceLocatorAccInterface serviceLocator = mock(ServiceLocatorAccInterface.class);
+        SubjectAccrualCountService mockService = mock(SubjectAccrualCountService.class);
+        when(serviceLocator.getSubjectAccrualCountService()).thenReturn(mockService);
+        doThrow(new PAException("Test message")).when(mockService).save(any(List.class));
+        AccrualServiceLocator.getInstance().setServiceLocator(serviceLocator);
+    }
+    @Test
+    public void getSiteCount() throws PAException {
+        List<StudySiteSubjectAccrualCount> counts = setupGetSiteCount();
+        assertEquals((Integer) 123, action.getSiteCount(counts, 1L).getAccrualCount());
+    }
+    
+    @Test
+    public void getSiteCountInvalid() throws PAException {
+        List<StudySiteSubjectAccrualCount> counts = setupGetSiteCount();
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Invalid site id for study - (Study Protocol Id, Site Id):");
+        action.getSiteCount(counts, 2L);
+    }
+    
+    private List<StudySiteSubjectAccrualCount> setupGetSiteCount() {
+        StudySiteSubjectAccrualCount count = new StudySiteSubjectAccrualCount();
+        List<StudySiteSubjectAccrualCount> counts = new ArrayList<StudySiteSubjectAccrualCount>();
+        counts.add(count);
+        StudySite site = new StudySite();
+        count.setSite(site);
+        site.setId(1L);
+        count.setAccrualCount(123);
+        return counts;
+    }
+    
+    @Test 
+    public void updateCountForSiteIfSet() throws PAException {
+        StudySiteSubjectAccrualCount count = new StudySiteSubjectAccrualCount();
+        String submittedCount = null;
+        action.updateCountForSiteIfSet(count, submittedCount);
+        assertNull(count.getAccrualCount());
+        
+        submittedCount = "123";
+        action.updateCountForSiteIfSet(count, submittedCount);
+        assertEquals((Integer) 123, count.getAccrualCount());
+    }
+    @Test
+    public void assertValidCount() throws PAException {
+        action.assertValidCount("123");
+        assertTrue(true);
     }
 
     @Test
-    public void isIndustrial() throws Exception {
-        SearchTrialBean bean = new SearchTrialBean();
-        Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId());
-        assertFalse(bean.isIndustrial(studyProtocolIi));
-
-        studyProtocolIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(2).getId());
-        assertTrue(bean.isIndustrial(studyProtocolIi));
+    public void assertValidCountNegative() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("error.accrual.count.invalid");
+        action.assertValidCount("-123");
     }
 
     @Test
-    public void getStudyOverallStatus() throws Exception {
-        List<SearchTrialResultDto> rList = bean.search(new SearchTrialCriteriaDto(), BII);
-        for (SearchTrialResultDto r : rList) {
-            if (IiConverter.convertToLong(r.getStudyProtocolIdentifier()).equals(TestSchema.studyProtocols.get(0).getId())) {
-                assertEquals(StudyStatusCode.ACTIVE, StudyStatusCode.getByCode(r.getStudyStatusCode().getCode()));
-            }
-            if (IiConverter.convertToLong(r.getStudyProtocolIdentifier()).equals(TestSchema.studyProtocols.get(1).getId())) {
-                assertNull(StudyStatusCode.getByCode(r.getStudyStatusCode().getCode()));
-            }
-        }
-    }
-
-    @Test
-    public void searchTrialExceptions() throws Exception {
-        try {
-            List<SearchTrialResultDto> results = bean.search(null, null);
-            assertEquals(0, results.size());
-        } catch (Exception ex) {
-            // expected
-        }
-
-        try {
-            List<SearchTrialResultDto> results = bean.search(new SearchTrialCriteriaDto(), null);
-            assertEquals(0, results.size());
-        } catch (Exception ex) {
-            // expected
-        }
-
-        try {
-            Bl flag = bean.isAuthorized(null, null);
-            assertNotNull(flag);
-            assertEquals(false, flag.getValue());
-        } catch (Exception ex) {
-            // expected
-        }
+    public void assertValidCountCharacters() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("error.accrual.count.invalid");
+        action.assertValidCount("something");
     }
 }

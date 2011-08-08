@@ -86,6 +86,7 @@ import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
 
 
 /**
@@ -178,5 +179,13 @@ public final class AccrualServiceLocator implements ServiceLocatorAccInterface {
      */
     public CdusBatchUploadReaderServiceLocal getBatchUploadReaderService() {
         return serviceLocator.getBatchUploadReaderService();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SubjectAccrualCountService getSubjectAccrualCountService() {
+        return serviceLocator.getSubjectAccrualCountService();
     }
 }

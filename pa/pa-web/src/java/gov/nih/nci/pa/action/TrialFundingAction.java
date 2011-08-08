@@ -268,7 +268,7 @@ public class TrialFundingAction extends ActionSupport {
         }
         if (StringUtils.isNotEmpty(trialFundingWebDTO.getSerialNumber())
                 && !NumberUtils.isDigits(trialFundingWebDTO.getSerialNumber())) {
-            addFieldError("trialFundingWebDTO.serialNumber", "Please Enter a numeric value");
+            addFieldError("trialFundingWebDTO.serialNumber", getText("error.numeric"));
         }
     }
 

@@ -77,11 +77,13 @@
 
 package gov.nih.nci.accrual.accweb.decorator;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.iso.util.BlConverter;
 
 import org.junit.Test;
 
@@ -120,6 +122,7 @@ public class SearchTrialResultDecoratorTest extends AbstractDecoratorTest<Search
         ii = new Ii();
         ii.setExtension("protocol id 1");
         dto.setStudyProtocolIdentifier(ii);
+        dto.setIndustrial(BlConverter.convertToBl(true));
         return dto;
     }
 
@@ -174,5 +177,14 @@ public class SearchTrialResultDecoratorTest extends AbstractDecoratorTest<Search
 
         setNullRow();
         assertTrue(0 == bean.getStudyProtocolIdentifier().length());
+    }
+    
+    @Test
+    public void isIndustrial() {
+        setDataRow();
+        assertTrue(bean.isIndustrial());
+
+        setNullRow();
+        assertFalse(bean.isIndustrial());
     }
 }

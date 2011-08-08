@@ -85,6 +85,7 @@ import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
 import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
 
 /**
@@ -101,6 +102,8 @@ public class MockServiceLocator implements ServiceLocatorAccInterface {
     private final POPatientService poPatientService = new MockPaPatientServiceBean();
     private final CdusBatchUploadReaderServiceLocal cdusBatchUploadReaderService =
         mock(CdusBatchUploadReaderServiceLocal.class);
+    private final SubjectAccrualCountService subjectAccrualCountService =
+        mock(SubjectAccrualCountService.class);
     
     /**
      * {@inheritDoc}
@@ -150,5 +153,13 @@ public class MockServiceLocator implements ServiceLocatorAccInterface {
      */
     public CdusBatchUploadReaderServiceLocal getBatchUploadReaderService() {
        return cdusBatchUploadReaderService;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SubjectAccrualCountService getSubjectAccrualCountService() {
+        return subjectAccrualCountService;
     }
 }

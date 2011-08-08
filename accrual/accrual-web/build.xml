@@ -32,8 +32,8 @@
     <property name="web.build.coberturaOutputDir" value="${web.build.dir}/generated-classes"/>
     <property name="web.test.reports" value="${web.report.dir}/test-reports"/>
     <property name="web.coverage.reports" value="${web.report.dir}/coverage-reports"/>
-    <property name="web.coverage.line" value="88"/>
-    <property name="web.coverage.branch" value="80"/>
+    <property name="web.coverage.line" value="89"/>
+    <property name="web.coverage.branch" value="82"/>
     <property name="web.pmd.maxerrors" value="3"/>
 
     <property name="ivy.file" value="ivy-2.0.0.jar" />

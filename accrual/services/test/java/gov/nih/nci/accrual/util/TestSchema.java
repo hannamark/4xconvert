@@ -91,6 +91,7 @@ import gov.nih.nci.pa.domain.SDCDisease;
 import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySubject;
@@ -109,6 +110,7 @@ import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -278,6 +280,23 @@ public class TestSchema {
         sp.setStatusCode(ActStatusCode.ACTIVE);
         sp.setSubmissionNumber(Integer.valueOf(2));
         sp.setProprietaryTrialIndicator(false);
+        addUpdObject(sp);
+
+        StudyResourcing sr = new StudyResourcing();
+        sr.setTypeCode(SummaryFourFundingCategoryCode.INDUSTRIAL);
+        sr.setStudyProtocol(sp);
+        addUpdObject(sr);
+
+        StudySite ssAccrualCount = new StudySite();
+        ssAccrualCount.setLocalStudyProtocolIdentifier("T1 Local SP 001");
+        ssAccrualCount.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ssAccrualCount.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        ssAccrualCount.setStudyProtocol(sp);
+        addUpdObject(ssAccrualCount);
+        
+        List<StudyResourcing> srList = new ArrayList<StudyResourcing>();
+        srList.add(sr);
+        sp.setStudyResourcings(srList);
         addUpdObject(sp);
         studyProtocols.add(sp);
         

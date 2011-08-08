@@ -89,6 +89,7 @@ import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -211,12 +212,33 @@ public class SearchTrialBean implements SearchTrialService {
             result.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi((Long) qArr[SP_ID_IDX]));
             result.setStudyStatusCode(CdConverter.convertToCd((StudyStatusCode) qArr[SOS_STATUS_IDX]));
             result.setIdentifier(studyProtocolIi);
+            result.setIndustrial(BlConverter.convertToBl(isIndustrial(studyProtocolIi)));
             Person person = (Person) qArr[PERSON_IDX];
             result.setPrincipalInvestigator(StConverter.convertToSt(person == null ? null : person.getFullName()));
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in SearchTrialBean.getTrialSummaryByStudyProtocolIi().", hbe);
         }
         return result;
+    }
+
+    /**
+     * Check if Trial is Industrial.
+     * 
+     * @param studyProtocolIi study protocol ii
+     * @return true if industrial, false otherwise
+     * @throws PAException on error
+     */
+    protected Boolean isIndustrial(Ii studyProtocolIi) throws PAException {
+        Session session = null;
+        try {
+            session = PaHibernateUtil.getCurrentSession();
+            Query query = session.createQuery("from StudyResourcing sr where sr.typeCode = '"
+                    + SummaryFourFundingCategoryCode.INDUSTRIAL + "' and sr.studyProtocol.id="
+                    + IiConverter.convertToString(studyProtocolIi));
+            return query.list().size() == 1;
+        } catch (HibernateException hbe) {
+            throw new PAException("Hibernate exception in SearchTrialBean.getTrialSummaryByStudyProtocolIi().", hbe);
+        }
     }
 
     @SuppressWarnings(UNCHECKED)

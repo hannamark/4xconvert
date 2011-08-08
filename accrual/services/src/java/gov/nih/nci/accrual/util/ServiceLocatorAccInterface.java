@@ -86,6 +86,7 @@ import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
 
 /**
  * @author Hugh Reinhart
@@ -121,10 +122,13 @@ public interface ServiceLocatorAccInterface {
      * @return CountryService
      */
     CountryService getCountryService();
-    
     /**
      * Gets the cdus batch upload service.
      * @return the batch upload service.
      */
     CdusBatchUploadReaderServiceLocal getBatchUploadReaderService();
+    /**
+     * @return Subject Accrual Count Service
+     */
+    SubjectAccrualCountService getSubjectAccrualCountService();
 }

@@ -101,11 +101,23 @@ public class SearchStudySiteResultWebDtoTest {
         iso = new SearchStudySiteResultDto();
         searchStudySiteResultWebDto = new SearchStudySiteResultWebDto(iso);
         searchStudySiteResultWebDto.setOrgIi("orgIi");
+        searchStudySiteResultWebDto.setOrgName("orgName");
+        searchStudySiteResultWebDto.setSsIi("ssIi");
     }
 
     @Test
     public void orgIiPropertyTest() {
       assertNotNull(searchStudySiteResultWebDto.getOrgIi());
+    }
+
+    @Test
+    public void orgNamePropertyTest() {
+      assertNotNull(searchStudySiteResultWebDto.getOrgName());
+    }
+
+    @Test
+    public void ssIiPropertyTest() {
+      assertNotNull(searchStudySiteResultWebDto.getSsIi());
     }
 
 }

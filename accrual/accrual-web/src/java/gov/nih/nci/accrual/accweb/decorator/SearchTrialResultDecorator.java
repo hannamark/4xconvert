@@ -77,8 +77,10 @@
 package gov.nih.nci.accrual.accweb.decorator;
 
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
+import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 
@@ -126,4 +128,18 @@ public class SearchTrialResultDecorator extends AbstractStudyDecorator<SearchTri
         }
         return "";
     }
+    
+    /**
+    *
+    * @return true if trial is Industrial
+    */
+   public boolean isIndustrial() {
+       Bl isIndustrial = ((SearchTrialResultDto) getCurrentRowObject()).getIndustrial();
+
+       if (isIndustrial != null) {
+           return BlConverter.convertToBoolean(isIndustrial);
+       }
+       return false;
+   }
+
 }

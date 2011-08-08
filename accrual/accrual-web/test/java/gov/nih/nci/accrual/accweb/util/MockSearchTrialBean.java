@@ -100,18 +100,22 @@ import org.apache.commons.lang.StringUtils;
  */
 public class MockSearchTrialBean implements SearchTrialService {
 
+    public static final long NONINDUSTRIAL_STUDY_PROTOCOL_ID = 1l;
+    public static final long INDUSTRIAL_STUDY_PROTOCOL_ID = 3l;
+
     /** mock data. */
     public static List<SearchTrialResultDto> dtos;
 
     static {
         dtos = new ArrayList<SearchTrialResultDto>();
         SearchTrialResultDto r = new SearchTrialResultDto();
-        r.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        r.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(NONINDUSTRIAL_STUDY_PROTOCOL_ID));
         r.setAssignedIdentifier(StConverter.convertToSt("NCI-2009-00001"));
         r.setLeadOrgName(StConverter.convertToSt("Duke"));
         r.setLeadOrgTrialIdentifier(StConverter.convertToSt("DUKE 001"));
         r.setOfficialTitle(StConverter.convertToSt("Phase II study for Melanoma"));
         r.setPrincipalInvestigator(StConverter.convertToSt("John Doe"));
+        r.setIndustrial(BlConverter.convertToBl(false));
         dtos.add(r);
 
         r = new SearchTrialResultDto();
@@ -121,6 +125,17 @@ public class MockSearchTrialBean implements SearchTrialService {
         r.setLeadOrgTrialIdentifier(StConverter.convertToSt("WAKE 001"));
         r.setOfficialTitle(StConverter.convertToSt("Phase IV study for Breast Cancer"));
         r.setPrincipalInvestigator(StConverter.convertToSt("Azam Baig"));
+        r.setIndustrial(BlConverter.convertToBl(false));
+        dtos.add(r);
+
+        r = new SearchTrialResultDto();
+        r.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(INDUSTRIAL_STUDY_PROTOCOL_ID));
+        r.setAssignedIdentifier(StConverter.convertToSt("NCI-2009-00003"));
+        r.setLeadOrgName(StConverter.convertToSt("Mayo"));
+        r.setLeadOrgTrialIdentifier(StConverter.convertToSt("Mayo 001"));
+        r.setOfficialTitle(StConverter.convertToSt("Phase IV study for Breast Cancer"));
+        r.setPrincipalInvestigator(StConverter.convertToSt("Azam Baig"));
+        r.setIndustrial(BlConverter.convertToBl(true));
         dtos.add(r);
     }
 

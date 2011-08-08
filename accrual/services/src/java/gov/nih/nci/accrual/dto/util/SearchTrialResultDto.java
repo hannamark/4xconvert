@@ -79,6 +79,7 @@
 package gov.nih.nci.accrual.dto.util;
 
 import gov.nih.nci.accrual.dto.AbstractStudyDto;
+import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.St;
 
@@ -95,6 +96,7 @@ public class SearchTrialResultDto extends AbstractStudyDto {
     private St leadOrgName;
     private St principalInvestigator;
     private Cd studyStatusCode;
+    private Bl industrial;
 
     /**
      * @return the assignedIdentifier
@@ -167,5 +169,17 @@ public class SearchTrialResultDto extends AbstractStudyDto {
      */
     public void setStudyStatusCode(Cd studyStatusCode) {
         this.studyStatusCode = studyStatusCode;
+    }
+    /**
+     * @return the industrial
+     */
+    public Bl getIndustrial() {
+        return industrial;
+    }
+    /**
+     * @param industrial the industrial to set
+     */
+    public void setIndustrial(Bl industrial) {
+        this.industrial = industrial;
     }
 }

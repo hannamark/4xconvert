@@ -86,6 +86,7 @@ import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
 
 /**
  * @author Hugh Reinhart
@@ -148,4 +149,12 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
     public CdusBatchUploadReaderServiceLocal getBatchUploadReaderService() {
         return (CdusBatchUploadReaderServiceLocal) JNDIUtil.lookup("accrual/CdusBatchUploadReaderBean/local");
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public SubjectAccrualCountService getSubjectAccrualCountService() {
+        return (SubjectAccrualCountService) JNDIUtil.lookup("accrual/SubjectAccrualCountBean/local");
+    }
+
 }

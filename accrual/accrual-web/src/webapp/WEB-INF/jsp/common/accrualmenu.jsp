@@ -20,7 +20,7 @@
                     </c:otherwise>
                 </c:choose>
                 <c:choose>
-                    <c:when test="${sessionScope.studyProtocolIi != null}">
+                    <c:when test="${sessionScope.studyProtocolIi != null && !sessionScope.trialSummary.industrial.value}">
                         <c:choose>
                             <c:when test="${(requestScope.topic == 'subjects_intro') || (requestScope.topic == 'subjects_adding') || (requestScope.topic == 'subjects_update')}">
                                 <li><a href="patients.action" class="selected">Study Subject Search</a></li> 

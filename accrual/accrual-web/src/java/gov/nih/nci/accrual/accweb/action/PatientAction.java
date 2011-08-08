@@ -96,6 +96,7 @@ import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -156,9 +157,20 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
      */
     @Override
     public String execute() {
+        if (isSessionTrialIndustrial()) {
+            addActionError(getText("error.invalidaccess.industrial"));
+            return "invalid";
+        } 
+
         getListOfCountries();
         getListOfStudySites();
         return super.execute();
+    }
+
+    private boolean isSessionTrialIndustrial() {
+        SearchTrialResultDto trialSummary = (SearchTrialResultDto) ServletActionContext.getRequest().getSession()
+                .getAttribute("trialSummary");
+        return BlConverter.convertToBoolean(trialSummary.getIndustrial());
     }
 
     /**

@@ -102,8 +102,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
-import com.mockrunner.mock.web.MockHttpSession;
-import com.mockrunner.mock.web.MockServletContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
@@ -131,11 +129,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     
     @Test
     public void prepare() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setSession(new MockHttpSession());
-        request.setRemoteUser(TEST_USER);
-        ServletActionContext.setServletContext(new MockServletContext());
-        ServletActionContext.setRequest(request);
+        setupMockHttpSession();
         
         action = new PatientAction();
         action.setUnitedStatesId(1L);        
@@ -147,6 +141,17 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         assertNotNull(ServletActionContext.getRequest().getSession().getAttribute("trialSummary"));
     }
     
+    @Test
+    public void executeIndustrialTrial() {
+        setupMockHttpSession();
+
+        action = new PatientAction();
+        action.setUnitedStatesId(1L);
+        action.setStudyProtocolId(3L);
+        action.prepare();
+        assertEquals("invalid", action.execute());
+    }
+
     @Override
     @Test
     public void executeTest() {

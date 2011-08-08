@@ -91,6 +91,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.OnDelete;
@@ -125,6 +126,7 @@ public class StudySite extends OrganizationFunctionalRole {
     private String programCodeText;
     private Timestamp accrualDateRangeHigh;
     private Timestamp accrualDateRangeLow;
+    private StudySiteSubjectAccrualCount accrualCount;
 
     /**
      * @return the programCode
@@ -392,4 +394,18 @@ public class StudySite extends OrganizationFunctionalRole {
         this.accrualDateRangeLow = accrualDateRangeLow;
     }
 
+    /**
+     * @return the accrualCount
+     */
+    @OneToOne(mappedBy = "site")
+    public StudySiteSubjectAccrualCount getAccrualCount() {
+        return accrualCount;
+    }
+
+    /**
+     * @param accrualCount the accrualCount to set
+     */
+    public void setAccrualCount(StudySiteSubjectAccrualCount accrualCount) {
+        this.accrualCount = accrualCount;
+    }
 }

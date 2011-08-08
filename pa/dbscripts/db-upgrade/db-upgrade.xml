@@ -714,4 +714,12 @@
         <comment>Audit Log no longer as limited number of chars.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.5/PO-3879.sql"/>
      </changeSet>
+     <changeSet id="PO-3871" author="aevansel">
+        <comment>Drop submission table.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3871.sql"/>
+     </changeSet>
+     <changeSet id="PO-3761" author="moweis">
+        <comment>Track participating site subject accrual count.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3761.sql"/>
+     </changeSet>
 </databaseChangeLog>
