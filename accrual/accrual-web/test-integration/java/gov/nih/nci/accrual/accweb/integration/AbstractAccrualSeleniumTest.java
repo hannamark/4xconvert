@@ -85,6 +85,7 @@ package gov.nih.nci.accrual.accweb.integration;
 import gov.nih.nci.coppa.test.integration.AbstractSeleneseTestCase;
 import gov.nih.nci.pa.test.integration.util.TestProperties;
 
+import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -96,7 +97,8 @@ import org.junit.Ignore;
  */
 @Ignore
 public abstract class AbstractAccrualSeleniumTest extends AbstractSeleneseTestCase {
-
+    public static final FastDateFormat MONTH_DAY_YEAR_FMT = FastDateFormat.getInstance("MM/dd/yyyy");
+    
     @Override
     @Before
     public void setUp() throws Exception {

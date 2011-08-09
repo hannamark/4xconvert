@@ -256,12 +256,12 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     @Test
     public void displayDiseaseTest() throws Exception {
         try{
-            action.displayDisease();
+            action.getDisplayDisease();
         }catch(Exception e){
             //expected
         }
         ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("diseaseId", "1");
-        assertEquals(ActionSupport.SUCCESS, action.displayDisease());
+        assertEquals(ActionSupport.SUCCESS, action.getDisplayDisease());
     }
 
     @Test

@@ -54,7 +54,7 @@
             }
             
             function loadDiv(intid) {
-                 var url = '/accrual/protected/ajaxpatientsdisplayDisease.action';
+                 var url = '/accrual/protected/ajaxpatientsgetDisplayDisease.action';
                  var params = { diseaseId: intid };
                  var div = document.getElementById('loadDetails');   
                  div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>'; 

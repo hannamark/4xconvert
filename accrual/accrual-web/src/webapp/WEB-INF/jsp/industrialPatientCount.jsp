@@ -1,6 +1,14 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp" />
-
+<script language="javascript">
+function setCheckbox(index) {
+    if (document.countform.sitesToSave[index] == undefined) {
+        document.countform.sitesToSave.checked=true;
+    } else {
+        document.countform.sitesToSave[index].checked=true;
+    }
+}
+</script>
 <h1>
     <fmt:message key="participatingsite.accrual.count.title" />
 </h1>
@@ -22,7 +30,7 @@
         <display:column titleKey="participatingsite.accrual.count.sitename" headerClass="sortable" headerScope="col" property="siteName"/>
         <display:column titleKey="participatingsite.accrual.count.numOfSubjectEnrolled" headerClass="sortable" headerScope="col" >
             <s:hidden name="submittedSiteIds" value="%{#attr.row.site.id}" />
-            <s:textfield name="submittedCounts" value="%{#attr.row.accrualCount}" size="9" maxlength="9" onfocus="document.countform.sitesToSave[%{#attr.row_rowNum-1}].checked=true;"/>
+            <s:textfield name="submittedCounts" value="%{#attr.row.accrualCount}" size="9" maxlength="9" onfocus="setCheckbox(%{#attr.row_rowNum-1});"/>
         </display:column>
         <display:column titleKey="participatingsite.accrual.count.dateLastUpdated" headerClass="sortable"
             property="dateLastUpdated" headerScope="col" />

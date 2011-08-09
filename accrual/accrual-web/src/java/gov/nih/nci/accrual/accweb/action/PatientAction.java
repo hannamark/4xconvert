@@ -93,7 +93,6 @@ import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -133,6 +132,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
     private List<SearchStudySiteResultWebDto> listOfStudySites = null;
     private PatientWebDto patient;
     private EligibleGenderCode genderCriterion;
+    private final PatientHelper helper = new PatientHelper(this);
     
     /**
      * {@inheritDoc}
@@ -198,8 +198,8 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
                 }
             }
             if (patient != null) {
-                patient.setRaceCode(removeUnderTabs(patient.getRaceCode()));
-                patient.setEthnicCode(removeUnderTabs(patient.getEthnicCode()));
+                patient.setRaceCode(getParsedCode(patient.getRaceCode()));
+                patient.setEthnicCode(getParsedCode(patient.getEthnicCode()));
             }
             if (patient == null) {
                 addActionError("Error retrieving study subject info.");
@@ -254,7 +254,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
      */
     @Override
     public String add() throws RemoteException {
-        businessRules();
+        helper.validate();
         getListOfStudySites();
         if (hasActionErrors()) {
             return super.create();
@@ -284,7 +284,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
      */
     @Override
     public String edit() throws RemoteException {
-        businessRules();
+        helper.validate();
         getListOfStudySites();
         if (hasActionErrors()) {
             return super.update();
@@ -325,11 +325,11 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         try {
             if (getCriteria().getStudySiteId() != null) {
                 SearchStudySiteResultWebDto selectedSite = getSelectedStudySite(getCriteria().getStudySiteId());
-                getDisplayTagList().addAll(convertToWebDTOs(getStudySubjects(getCriteria().getStudySiteId()), 
+                getDisplayTagList().addAll(helper.convertToWebDTOs(getStudySubjects(getCriteria().getStudySiteId()), 
                         selectedSite.getOrgName()));
             } else {
                 for (SearchStudySiteResultWebDto ss : getListOfStudySites()) {
-                   getDisplayTagList().addAll(convertToWebDTOs(getStudySubjects(Long.valueOf(ss.getSsIi())), 
+                   getDisplayTagList().addAll(helper.convertToWebDTOs(getStudySubjects(Long.valueOf(ss.getSsIi())), 
                            ss.getOrgName()));
                 }
             }
@@ -348,22 +348,6 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
                 statusCode);
     }
     
-    private List<PatientWebDto> convertToWebDTOs(List<StudySubjectDto> dtos, String orgName) throws RemoteException {
-        List<PatientWebDto> results = new ArrayList<PatientWebDto>();
-        for (StudySubjectDto dto : dtos) {
-            PatientDto pat = getPatientSvc().get(dto.getPatientIdentifier());
-            SDCDiseaseDTO disease;
-            try {
-                disease = getSDCDiseaseSvc().get(dto.getDiseaseIdentifier());
-            } catch (Exception e) {
-                disease = null;
-            }
-            PerformedSubjectMilestoneDto psmDto = getRegistrationDate(dto);
-            results.add(new PatientWebDto(pat, dto, orgName, psmDto, getListOfCountries(), disease));
-        }        
-        return results;
-    }
-    
     private SearchStudySiteResultWebDto getSelectedStudySite(Long studySiteId) {
         for (SearchStudySiteResultWebDto dto : getListOfStudySites()) {
             if (StringUtils.equalsIgnoreCase(dto.getSsIi(), studySiteId.toString())) {
@@ -378,7 +362,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
      *
      * @return result
      */
-    public String displayDisease() {
+    public String getDisplayDisease() {
         DiseaseWebDTO webDTO = new DiseaseWebDTO();
         webDTO.setDiseaseIdentifier(ServletActionContext.getRequest().getParameter("diseaseId"));
         if (StringUtils.isEmpty(webDTO.getDiseaseIdentifier())) {
@@ -472,7 +456,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         return listOfStudySites;
     }
 
-    private EligibleGenderCode getGenderCriterion() {
+    EligibleGenderCode getGenderCriterion() {
         if (genderCriterion == null) {
             genderCriterion = EligibleGenderCode.BOTH;
             try {
@@ -492,7 +476,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         return genderCriterion;
     }
 
-    private PerformedSubjectMilestoneDto getRegistrationDate(StudySubjectDto sub) {
+    PerformedSubjectMilestoneDto getRegistrationDate(StudySubjectDto sub) {
         List<PerformedSubjectMilestoneDto> smList;
         try {
             smList = getPerformedActivitySvc().getPerformedSubjectMilestoneByStudySubject(sub.getIdentifier());
@@ -528,67 +512,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         }
     }
 
-    private void businessRules() {
-        PatientWebDto.validate(patient, this);
-        if (!hasActionErrors()) {
-            validateNoPatientDuplicates();
-            validateUnitedStatesRules();
-            validateEligibilityCriteria();
-            if (StringUtils.isEmpty(patient.getRegistrationDate())) {
-                addActionError("Registration Date is required.");
-            }
-        }
-    }
-
-    private void validateNoPatientDuplicates() {
-        List<StudySubjectDto> allSss = null;
-        try {
-            allSss = getStudySubjectSvc().getByStudyProtocol(getSpIi());
-        } catch (RemoteException e) {
-            LOG.error("Error in PatientAction.validateNoPatientDuplicates().", e);
-            addActionError(e.getLocalizedMessage());
-        }
-        for (StudySubjectDto ss : allSss) {
-            if (isDuplicatePatient(ss)) {
-                addActionError("This Study Subject Id (" + patient.getAssignedIdentifier()
-                        + ") has already been added to this study.");
-            }
-        }
-    }
-
-    private boolean isDuplicatePatient(StudySubjectDto ss) {
-        return StConverter.convertToString(ss.getAssignedIdentifier()).equals(patient.getAssignedIdentifier())
-                && (patient.getStudySubjectId() == null
-                    || !patient.getStudySubjectId().equals(IiConverter.convertToLong(ss.getIdentifier())))
-                && !deletedStatusCode.equals(CdConverter.convertCdToString(ss.getStatusCode()));
-    }
-
-    private void validateUnitedStatesRules() {
-        if (unitedStatesId.equals(patient.getCountryIdentifier())) {
-            if (StringUtils.isEmpty(patient.getZip())) {
-                addActionError("Zip code is mandatory if country is United States.");
-            }
-        } else {
-            if (StringUtils.isNotEmpty(patient.getZip())) {
-                addActionError("Zip code should only be entered if country is United States.");
-                if (StringUtils.isNotEmpty(patient.getPaymentMethodCode())) {
-                    addActionError("Method of payment should only be entered if country is United States.");
-                }
-            }
-        }
-    }
-
-    private void validateEligibilityCriteria() {
-        if (EligibleGenderCode.FEMALE.equals(getGenderCriterion())
-                && patient.getGenderCode().equals(PatientGenderCode.MALE.getCode())
-            || EligibleGenderCode.MALE.equals(getGenderCriterion())
-                && patient.getGenderCode().equals(PatientGenderCode.FEMALE.getCode())) {
-            addActionError("Gender must not be " + patient.getGenderCode()
-                    + " for subjects in this study.");
-        }
-    }
-
-    private Set<String> removeUnderTabs(Set<String> codes) {
+    private Set<String> getParsedCode(Set<String> codes) {
         Set<String> newCodes = new HashSet<String>();
         for (String rc : codes) {
             newCodes.add(rc.replace('_', ' '));
@@ -596,10 +520,17 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         return newCodes;
     }
 
-    private String removeUnderTabs(String code) {
+    private String getParsedCode(String code) {
         return code.replace('_', ' ');
     }
 
+    /**
+     * @return the unitedStatesId
+     */
+    public Long getUnitedStatesId() {
+        return PatientAction.unitedStatesId;
+    }
+    
     /**
      * @param unitedStatesId the unitedStatesId to set
      */
