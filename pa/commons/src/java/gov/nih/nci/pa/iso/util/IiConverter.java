@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.iso.util;
 
+import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.util.CommonsConstant;
@@ -215,7 +216,7 @@ public class IiConverter {
 
     /** The identifier name for family. */
     public static final String FAMILY_IDENTIFIER_NAME = "Family identifier";
-    
+
     /** The ii base root value for family. */
     public static final String FAMILY_ROOT = "2.16.840.1.113883.3.26.4.6.1";
 
@@ -303,7 +304,7 @@ public class IiConverter {
 
     /** The CTEP Organization ii root value. */
     public static final String CTEP_ORG_IDENTIFIER_ROOT = "2.16.840.1.113883.3.26.6.2";
-    
+
     /** The Constant STUDY_CONTACT_IDENTIFIER_NAME. */
     public static final String STUDY_CONTACT_IDENTIFIER_NAME = "Study Contact identifier";
 
@@ -371,32 +372,31 @@ public class IiConverter {
      * @return Ii ii
      */
     public static Ii convertToIi(Long id) {
+        return convertObjectToIi(id);
+    }
+
+    /**
+     * Convert to ii.
+     * @param extension string
+     * @return Ii
+     */
+    public static Ii convertToIi(String extension) {
+        return convertObjectToIi(extension);
+    }
+
+    private static Ii convertObjectToIi(Object extension) {
         Ii ii = new Ii();
-        if (id == null) {
+        if (extension == null) {
             ii.setNullFlavor(NullFlavor.NI);
         } else {
-            ii.setExtension(id.toString());
-            ii.setIdentifierName(CommonsConstant.PA_INTERNAL);
+            convertNonNullExtensionToIi(ii, extension.toString());
         }
         return ii;
     }
 
-
-    /**
-     * Convert to ii.
-     * @param str string
-     * @return Ii
-     */
-    public static Ii convertToIi(String str) {
-        Ii ii = new Ii();
-        if (str == null) {
-            ii.setNullFlavor(NullFlavor.NI);
-        } else {
-            ii.setExtension(str);
-            ii.setIdentifierName(CommonsConstant.PA_INTERNAL);
-        }
-        return ii;
-
+    private static void convertNonNullExtensionToIi(Ii ii, String extension) {
+        ii.setExtension(extension);
+        ii.setIdentifierName(CommonsConstant.PA_INTERNAL);
     }
 
     /**
@@ -547,6 +547,8 @@ public class IiConverter {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(PERSON_IDENTIFIER_NAME);
         ii.setRoot(PERSON_ROOT);
+        // We don't know if this ID actually exists in PO, so its reliability is unverified (UNV)
+        ii.setReliability(IdentifierReliability.UNV);
         return ii;
     }
 
@@ -583,6 +585,8 @@ public class IiConverter {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(ORG_IDENTIFIER_NAME);
         ii.setRoot(ORG_ROOT);
+        // We don't know if this ID actually exists in PO, so its reliability is unverified (UNV)
+        ii.setReliability(IdentifierReliability.UNV);
         return ii;
     }
 

@@ -130,7 +130,7 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
     throws PAException {
         return createOrganizationDTO(generateDistinctOrganizationQuery(organizationType));
     }
-    
+
     /**
      * This expects only id and identifier.
      * @param organization organization
@@ -140,7 +140,7 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Organization getOrganizationByIndetifers(Organization organization) throws PAException {
         if (organization.getId() == null && organization.getIdentifier() == null) {
-            throw new PAException("Id or poIdentifier should not be null");
+            throw new PAException("ID or poIdentifier should not be null");
         }
         Session session = PaHibernateUtil.getCurrentSession();
 
@@ -153,7 +153,7 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
             hql.append(" and org.identifier = '").append(organization.getIdentifier()).append('\'');
         }
 
-        LOG.info(" query getOrganizationByPoIndetifer = " + hql);
+        LOG.info("query getOrganizationByPoIndetifer = " + hql);
 
         Query query = session.createQuery(hql.toString());
         try {

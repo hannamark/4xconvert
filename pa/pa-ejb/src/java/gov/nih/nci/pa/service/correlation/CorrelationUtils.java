@@ -393,7 +393,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         } else if ("PENDING".equalsIgnoreCase(cd.getCode())) {
             return EntityStatusCode.PENDING;
         } else {
-            throw new PAException(" Unsuported PA known status " + cd.getCode());
+            throw new PAException("Unsupported PA known status " + cd.getCode());
         }
     }
 
@@ -420,7 +420,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         } else if ("TERMINATED".equalsIgnoreCase(cd.getCode())) {
             return StructuralRoleStatusCode.TERMINATED;
         } else {
-            throw new PAException(" Unsuported PA known status " + cd.getCode());
+            throw new PAException("Unsupported PA known status " + cd.getCode());
         }
     }
 
@@ -433,8 +433,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
     private Organization createPAOrganization(Organization organization) throws PAException {
         Organization returnVal = null;
         if (organization == null) {
-            LOG.error(" organization should not be null ");
-            throw new PAException(" organization should not be null ");
+            throw new PAException("organization should not be null");
         }
         Session session = null;
         session = PaHibernateUtil.getCurrentSession();
@@ -459,8 +458,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
     private Person createPAPerson(Person person) throws PAException {
         Person returnVal = null;
         if (person == null) {
-            LOG.error(" Person should not be null ");
-            throw new PAException(" Person should not be null ");
+            throw new PAException("Person should not be null");
         }
         Session session = null;
         session = PaHibernateUtil.getCurrentSession();
@@ -521,12 +519,10 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         List<HealthCareFacilityDTO> hcfs =
             PoRegistry.getHealthCareFacilityCorrelationService().search(criteria);
         if (hcfs.isEmpty()) {
-            throw new PAException("Provided Hcf ctep id: "
-                    + ctepHcfIi.getExtension()
+            throw new PAException("Provided Hcf ctep id: " + ctepHcfIi.getExtension()
                     + " but did not find a corresponding HCF in PO.");
         } else if (hcfs.size() > 1) {
-            throw new PAException("more than 1 HCF found for given ctep id: "
-                    + ctepHcfIi.getExtension());
+            throw new PAException("more than 1 HCF found for given ctep id: " + ctepHcfIi.getExtension());
         }
 
         return DSetConverter.convertToIi(hcfs.get(0).getIdentifier());
@@ -546,13 +542,10 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         List<OrganizationalContactDTO> orgContacts =
             PoRegistry.getOrganizationalContactCorrelationService().search(criteria);
         if (orgContacts.isEmpty()) {
-            throw new PAException("Provided Org Contact ctep id: "
-                    + ctepOrgContactIi.getExtension()
-                    + "but did not find a corresponding "
-                    + "OrgContact in PO.");
+            throw new PAException("Provided Org Contact ctep id: " + ctepOrgContactIi.getExtension()
+                    + "but did not find a corresponding " + "OrgContact in PO.");
         } else if (orgContacts.size() > 1) {
-            throw new PAException("more than 1 OrgContact found for given ctep id: "
-                    + ctepOrgContactIi.getExtension());
+            throw new PAException("more than 1 OrgContact found for given ctep id: " + ctepOrgContactIi.getExtension());
         }
 
         return DSetConverter.convertToIi(orgContacts.get(0).getIdentifier());
@@ -576,13 +569,10 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         List<IdentifiedPersonDTO> idps =
             PoRegistry.getIdentifiedPersonEntityService().search(idP);
         if (idps.isEmpty()) {
-            throw new PAException(
-                    "Provided Person ctep id: "
-                    + ctepCrsIi.getExtension()
+            throw new PAException("Provided Person ctep id: " + ctepCrsIi.getExtension()
                     + " but did not find a corresponding Identified Person in PO.");
         } else if (idps.size() > 1) {
-            throw new PAException("more than 1 Identified Person found for given ctep id: "
-                    + ctepCrsIi.getExtension());
+            throw new PAException("more than 1 Identified Person found for given ctep id: " + ctepCrsIi.getExtension());
         }
 
         Ii poPersonIi = idps.get(0).getPlayerIdentifier();
@@ -602,8 +592,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             toStoreCrsDTO.setScoperIdentifier(scoperOrg);
             return PoRegistry.getClinicalResearchStaffCorrelationService().createCorrelation(toStoreCrsDTO);
         } else if (crss.size() > 1) {
-            throw new PAException("more than 1 CRS found for given person id:"
-                    + poPersonIi.getExtension());
+            throw new PAException("more than 1 CRS found for given person id:" + poPersonIi.getExtension());
         }
 
         return DSetConverter.convertToIi(crss.get(0).getIdentifier());
@@ -649,13 +638,10 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         List<IdentifiedPersonDTO> idps =
             PoRegistry.getIdentifiedPersonEntityService().search(idP);
         if (idps.isEmpty()) {
-            throw new PAException(
-                    "Provided Person ctep id: "
-                    + ctepHcpIi.getExtension()
+            throw new PAException("Provided Person ctep id: " + ctepHcpIi.getExtension()
                     + " but did not find a corresponding Identified Person in PO.");
         } else if (idps.size() > 1) {
-            throw new PAException("more than 1 Identified Person found for given ctep id:"
-                    + ctepHcpIi.getExtension());
+            throw new PAException("more than 1 Identified Person found for given ctep id:" + ctepHcpIi.getExtension());
         }
 
         Ii poPersonIi = idps.get(0).getPlayerIdentifier();
@@ -678,8 +664,7 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             return PoRegistry.getHealthCareProviderCorrelationService()
                 .createCorrelation(toStoreHcpDTO);
         } else if (hcps.size() > 1) {
-            throw new PAException("more than 1 HCP found for given person id:"
-                    + poPersonIi.getExtension());
+            throw new PAException("more than 1 HCP found for given person id:" + poPersonIi.getExtension());
         }
 
         return DSetConverter.convertToIi(hcps.get(0).getIdentifier());
@@ -699,12 +684,8 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
             String newPoId) throws NullifiedEntityException, PAException {
 
         Session session = PaHibernateUtil.getCurrentSession();
-        session.createQuery("update StudyProtocolStage set "
-                + item + " = :newPoId "
-                + "where " + item + " = :oldPoId")
-        .setString("newPoId", newPoId)
-        .setString("oldPoId", oldPoId)
-        .executeUpdate();
+        session.createQuery("update StudyProtocolStage set " + item + " = :newPoId " + "where " + item + " = :oldPoId")
+            .setString("newPoId", newPoId).setString("oldPoId", oldPoId).executeUpdate();
     }
 
     /**

@@ -173,7 +173,6 @@ public class AddressConverterUtil {
      * @return appended string buffer
      */
     public static String convertToAddress(Ad ad) {
-
         if (ad == null || CollectionUtils.isEmpty(ad.getPart())) {
             return null;
         }
@@ -201,7 +200,6 @@ public class AddressConverterUtil {
             sb.deleteCharAt(sb.lastIndexOf(","));
         }
         return sb.toString();
-
     }
 
     private static Adxp createAddressPart(AddressPartType type) {
@@ -240,12 +238,11 @@ public class AddressConverterUtil {
             case UNIT: return new AdxpUnit();
             case ZIP: return new AdxpZip();
 
-
             // there must be a new type added
             default: throw new UnsupportedOperationException(type.name());
         }
     }
-    
+
     /**
      * Help convert an Ad into a Address Bo.
      * @param ad address
@@ -257,13 +254,12 @@ public class AddressConverterUtil {
             return null;
         }
         List<Adxp> adxpList = ad.getPart();
-        
+
         for (Adxp adxp : adxpList) {
-                
             addressMap.put(AdxpAl.class.getName(),
                     getAddressPart(adxp, AdxpAl.class, addressMap.get(AdxpAl.class.getName())));
             addressMap.put(AdxpCty.class.getName(),
-                    getAddressPart(adxp, AdxpCty.class, addressMap.get(AdxpCty.class.getName())));      
+                    getAddressPart(adxp, AdxpCty.class, addressMap.get(AdxpCty.class.getName())));
             addressMap.put(AdxpSta.class.getName(),
                     getAddressPart(adxp, AdxpSta.class, addressMap.get(AdxpSta.class.getName())));
             addressMap.put(AdxpZip.class.getName(),
@@ -271,16 +267,12 @@ public class AddressConverterUtil {
             addressMap.put(AdxpCnt.class.getName(),
                     getAddressPart(adxp, AdxpCnt.class, addressMap.get(AdxpCnt.class.getName())));
         }
-        
         return addressMap;
-
     }
-    
-    
+
     private static String getAddressPart(Adxp part, Class<? extends Adxp> clazz, String defaultValue) {
-        
         if (clazz == AdxpCnt.class && clazz.isInstance(part)) {
-            return part.getCode(); 
+            return part.getCode();
         } else if (clazz.isInstance(part)) {
            return part.getValue();
         } else {

@@ -5,6 +5,10 @@
 <!-- ====================================================================== -->
 
 <project name="commons" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+    <property name="commons.coverage.line" value="51"/>
+    <property name="commons.coverage.branch" value="40"/>
+    <property name="commons.pmd.maxerrors" value="35"/>
+
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>
     <property name="commons.dir" value="${pa.dir}/commons"/>
@@ -30,9 +34,6 @@
     <property name="commons.build.testResourceDir.0" value="${commons.dir}/test/resources"/>
     <property name="commons.test.reports" value="${pa.report.dir}/commons/test-reports"/>
     <property name="commons.coverage.reports" value="${pa.report.dir}/commons/coverage-reports"/>
-    <property name="commons.coverage.line" value="51"/>
-    <property name="commons.coverage.branch" value="38"/>
-    <property name="commons.pmd.maxerrors" value="35"/>
     <property name="commons.reporting.outputDirectory" value="${pa.report.dir}/commons/site"/>
     <property name="commons.jar" value="${commons.build.finalName}.jar"/>
     <property name="commons-test.jar" value="${commons.build.finalName}-test.jar"/>
@@ -374,11 +375,7 @@
         <jar jarfile="${commons.build.dir}/${commons-test.jar}"
              compress="true"
              index="false"
-             basedir="${commons.build.testOutputDir}"
-             excludes="**/enums/*
-                       **/iso/dto/Regulatory*.class
-                       **/iso/dto/Study*.class
-                       **/iso/util/*"/>
+             basedir="${commons.build.testOutputDir}" />
     </target>
 
     <target name="package-notest-noivy" depends="compile,jar"/>

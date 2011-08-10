@@ -116,7 +116,7 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
         studyProtocolStageDTO.setLeadOrganizationIdentifier(IiConverter.convertToPoOrganizationIi(
                 studyProtocolStage.getLeadOrganizationIdentifier()));
         studyProtocolStageDTO.setPiIdentifier(IiConverter.convertToPoPersonIi(studyProtocolStage.getPiIdentifier()));
-        studyProtocolStageDTO.setSponsorIdentifier(IiConverter.convertToIi(
+        studyProtocolStageDTO.setSponsorIdentifier(IiConverter.convertToPoOrganizationIi(
                 studyProtocolStage.getSponsorIdentifier()));
         studyProtocolStageDTO.setResponsiblePartyType(StConverter.convertToSt(
                 studyProtocolStage.getResponsiblePartyType()));
@@ -190,7 +190,7 @@ public class StudyProtocolStageConverter extends AbstractConverter<StudyProtocol
         convertFromDtoToDomain(studyProtocolStageDTO, studyProtocolStage);
         return studyProtocolStage;
     }
-    
+
     /**
      * {@inheritDoc}
      */

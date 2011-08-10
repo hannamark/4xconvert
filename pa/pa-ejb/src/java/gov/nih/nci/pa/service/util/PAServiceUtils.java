@@ -913,6 +913,7 @@ public class PAServiceUtils {
             if (CollectionUtils.isNotEmpty(participatingSitesOld)) {
                 // else sort the old statuses and the get the latest
                 Collections.sort(participatingSitesOld, new Comparator<StudySiteAccrualStatusDTO>() {
+                    @Override
                     public int compare(StudySiteAccrualStatusDTO o1, StudySiteAccrualStatusDTO o2) {
                         return o1.getIdentifier().getExtension().compareToIgnoreCase(o2.getIdentifier().getExtension());
                     }
@@ -1114,20 +1115,12 @@ public class PAServiceUtils {
         if (IiConverter.ORG_IDENTIFIER_NAME.equals(poIi.getIdentifierName())
                 || IiConverter.ORG_ROOT.equalsIgnoreCase(poIi.getRoot())) {
             OrganizationDTO poOrg = getPOOrganizationEntity(IiConverter.convertToPoOrganizationIi(poIi.getExtension()));
-            if (poOrg != null) {
-                retValue = true;
-            } else {
-                retValue = false;
-            }
+            retValue = poOrg != null;
         }
         if (IiConverter.PERSON_IDENTIFIER_NAME.equalsIgnoreCase(poIi.getIdentifierName())
                 || IiConverter.PERSON_ROOT.equalsIgnoreCase(poIi.getRoot())) {
             PersonDTO poPerson = getPoPersonEntity(IiConverter.convertToPoPersonIi(poIi.getExtension()));
-            if (poPerson != null) {
-                retValue = true;
-            } else {
-                retValue = false;
-            }
+            retValue = poPerson != null;
         }
         if (IiConverter.ORGANIZATIONAL_CONTACT_ROOT.equalsIgnoreCase(poIi.getRoot())) {
             try {
@@ -1737,6 +1730,7 @@ public class PAServiceUtils {
         }
         return poOrg;
     }
+
     /**
      * @param entityIi Ii
      * @return personDto
@@ -1751,6 +1745,7 @@ public class PAServiceUtils {
         }
         return poPerson;
     }
+
     /**
      * @param entityIi ii
      * @return name
@@ -1762,26 +1757,28 @@ public class PAServiceUtils {
         }
         return EnOnConverter.convertEnOnToString(orgDto.getName());
     }
-      /**
-       * @param poOrgId orgId
-       * @return ii
-       * @throws PAException on error
-       */
-      public Ii getDuplicateOrganizationIi(Ii poOrgId) throws PAException {
-          try {
-              PoRegistry.getOrganizationEntityService().getOrganization(poOrgId);
-              // we get here if the org is NOT nullified
-          } catch (NullifiedEntityException e) {
-              // we get in here if the org WAS nullified.
-              Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
-              for (Map.Entry<Ii, Ii> entry : nullifiedEntities.entrySet()) {
-                  if (entry.getKey().getExtension().equals(poOrgId.getExtension())) {
-                      return entry.getValue();
-                  }
-              }
-          }
-          return null;
-      }
+
+    /**
+     * @param poOrgId orgId
+     * @return ii
+     * @throws PAException on error
+     */
+    public Ii getDuplicateOrganizationIi(Ii poOrgId) throws PAException {
+        try {
+            PoRegistry.getOrganizationEntityService().getOrganization(poOrgId);
+            // we get here if the org is NOT nullified
+        } catch (NullifiedEntityException e) {
+            // we get in here if the org WAS nullified.
+            Map<Ii, Ii> nullifiedEntities = e.getNullifiedEntities();
+            for (Map.Entry<Ii, Ii> entry : nullifiedEntities.entrySet()) {
+                if (entry.getKey().getExtension().equals(poOrgId.getExtension())) {
+                    return entry.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
       /**
        * Get Ii of duplicate person.
        * @param poPerId poPerId

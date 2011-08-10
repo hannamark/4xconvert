@@ -84,15 +84,19 @@ package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IiConverterTest;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -103,6 +107,8 @@ import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationService
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
+import gov.nih.nci.services.person.PersonDTO;
+import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,6 +142,17 @@ public class PaServiceUtilsTest {
         identifiedOrgs.add(identOrgDto);
         when(identifierOrganizationSvc.search(any(IdentifiedOrganizationDTO.class))).thenReturn(identifiedOrgs);
         when(paSvcLoc.getLookUpTableService()).thenReturn(new MockLookUpTableServiceBean());
+
+        setupPersonMocks();
+    }
+
+    private void setupPersonMocks() throws NullifiedEntityException{
+        PersonDTO personDto = new PersonDTO();
+        Ii personPoIi = IiConverterTest.makePersonPoIi("1");
+        personDto.setIdentifier(personPoIi);
+        PersonEntityServiceRemote personService = mock(PersonEntityServiceRemote.class);
+        when(personService.getPerson(eq(personPoIi))).thenReturn(personDto);
+        when(poSvcLoc.getPersonEntityService()).thenReturn(personService);
     }
 
     @Test
@@ -143,7 +160,7 @@ public class PaServiceUtilsTest {
         OrganizationDTO orgDto = paServiceUtil.getOrganizationByCtepId("some ctep id");
         assertEquals(orgDto.getIdentifier().getExtension(), "player ext");
     }
-    
+
     @Test
     public void testbadFileTypeCheck() {
         DocumentDTO doc1 = new DocumentDTO();
@@ -162,6 +179,33 @@ public class PaServiceUtilsTest {
         doc1.setFileName(StConverter.convertToSt("goodFile1.doc"));
         doc1.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.PROTOCOL_DOCUMENT));
         assertEquals("", paServiceUtil.checkDocumentListForValidFileTypes(docs));
+    }
+
+    @Test
+    public void testGetPersonByIi() {
+        Ii personIi = IiConverterTest.makePersonPoIi("1");
+
+        PersonDTO person = paServiceUtil.getPoPersonEntity(personIi);
+        assertEquals("Person has wrong extension", "1", person.getIdentifier().getExtension());
+        assertEquals("Person has wrong root", IiConverter.PERSON_ROOT, person.getIdentifier().getRoot());
+    }
+
+
+    @Test
+    public void testGetPersonByIiNotFound() {
+        Ii personIi = IiConverterTest.makePersonPoIi("2");
+
+        PersonDTO person = paServiceUtil.getPoPersonEntity(personIi);
+        assertNull("Person should not have been found", person);
+    }
+
+    @Test(expected = PAException.class)
+    public void testGetEntityByIiWrongRoot() throws PAException {
+        Ii ii = new Ii();
+        ii.setRoot("bad root");
+        ii.setExtension("1");
+
+        paServiceUtil.getEntityByIi(ii);
     }
 
 }

@@ -32,12 +32,12 @@ public interface PoServiceLocator {
     HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService();
 
     /**
-     * @return HealthCareFacilityCorrelationServiceRemote
+     * @return ResearchOrganizationCorrelationServiceRemote
      */
     ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService();
 
     /**
-     * @return HealthCareFacilityCorrelationServiceRemote
+     * @return OversightCommitteeCorrelationServiceRemote
      */
     OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationService();
 

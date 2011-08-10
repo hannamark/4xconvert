@@ -91,7 +91,8 @@ import org.junit.Test;
 
 public class SubjectAccrualCountTest extends AbstractAccrualSeleniumTest {
 
-    private static String TRIAL_TITLE = StringUtils.substring("AccrualTest:" + UUID.randomUUID(), 0, 30);
+    private static final String INDUSTRIAL_PATIENTS_UPDATE_COUNTS_ID = "id=industrialPatientsupdate_submittedCounts";
+    private static final String TRIAL_TITLE = StringUtils.substring("AccrualTest:" + UUID.randomUUID(), 0, 30);
     
     @Test
     public void testAccrualCount() throws Exception {
@@ -99,17 +100,17 @@ public class SubjectAccrualCountTest extends AbstractAccrualSeleniumTest {
         searchForTrialInAccrual();
         
         assertTrue(selenium.isTextPresent("Participating Site Subject Accrual Count"));
-        String countValueBefore = selenium.getValue("id=industrialPatientsupdate_submittedCounts");
-        selenium.type("id=industrialPatientsupdate_submittedCounts", "40");
-        assertNotEquals(countValueBefore, selenium.getValue("id=industrialPatientsupdate_submittedCounts"));
+        String countValueBefore = selenium.getValue(INDUSTRIAL_PATIENTS_UPDATE_COUNTS_ID);
+        selenium.type(INDUSTRIAL_PATIENTS_UPDATE_COUNTS_ID, "40");
+        assertNotEquals(countValueBefore, selenium.getValue(INDUSTRIAL_PATIENTS_UPDATE_COUNTS_ID));
         clickAndWaitAjax("link=Reset");
-        assertEquals(countValueBefore, selenium.getValue("id=industrialPatientsupdate_submittedCounts"));
-        selenium.type("id=industrialPatientsupdate_submittedCounts", "40");
+        assertEquals(countValueBefore, selenium.getValue(INDUSTRIAL_PATIENTS_UPDATE_COUNTS_ID));
+        selenium.type(INDUSTRIAL_PATIENTS_UPDATE_COUNTS_ID, "40");
         clickAndWait("link=Save");
         waitForPageToLoad();
         assertTrue(selenium.isTextPresent("Message: Record Updated"));
-        assertEquals(40, selenium.getValue("id=industrialPatientsupdate_submittedCounts"));
-        selenium.type("id=industrialPatientsupdate_submittedCounts", "not a number");
+        assertEquals(40, selenium.getValue(INDUSTRIAL_PATIENTS_UPDATE_COUNTS_ID));
+        selenium.type(INDUSTRIAL_PATIENTS_UPDATE_COUNTS_ID, "not a number");
         clickAndWait("link=Save");
         waitForPageToLoad();
         assertTrue(selenium.isTextPresent("Subject accrual counts must be positive integers."));
