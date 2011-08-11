@@ -6,14 +6,15 @@
     <display:table class="data" summary="This table contains your trial search results.
     Please use column headers to sort results" decorator="gov.nih.nci.accrual.accweb.decorator.SearchTrialResultDecorator"
       sort="list" pagesize="10" id="row" name="displayTagList" requestURI="viewTrials.action" export="false">
-       <s:if test="%{#attr.row.industrial.value}">
-           <display:column titleKey="accrual.list.trials.protocolNumber" property="assignedIdentifier" sortable="true" href="industrialPatients.action" paramId="studyProtocolId"
-             paramProperty="studyProtocolIdentifier.extension" headerClass="sortable" headerScope="col"/>
-       </s:if>
-       <s:else>
-           <display:column titleKey="accrual.list.trials.protocolNumber" property="assignedIdentifier" sortable="true" href="patients.action" paramId="studyProtocolId"
-             paramProperty="studyProtocolIdentifier.extension" headerClass="sortable" headerScope="col"/>
-       </s:else>
+       <display:column titleKey="accrual.list.trials.protocolNumber" sortable="true" headerClass="sortable" headerScope="col">
+           <s:if test="%{#attr.row.industrial.value}">
+                <s:url id="url" action="industrialPatients"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolIdentifier.extension}" /></s:url>
+           </s:if>
+           <s:else>
+                <s:url id="url" action="patients"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolIdentifier.extension}" /></s:url>
+           </s:else>
+           <s:a href="%{url}"><s:property value="%{#attr.row.assignedIdentifier.value}" /></s:a>
+       </display:column>
        <display:column escapeXml="true" titleKey="accrual.list.trials.protocolTitle" property="officialTitle" sortable="true" headerClass="sortable" headerScope="col"/>
        <display:column titleKey="accrual.list.trials.trialStatus" property="studyStatusCode" sortable="true" headerClass="sortable" headerScope="col"/>
    </display:table>
