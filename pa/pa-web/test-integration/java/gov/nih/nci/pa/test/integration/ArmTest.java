@@ -94,7 +94,7 @@ public class ArmTest extends AbstractPaSeleniumTest {
     @Test
     public void testListArms() {
         loginAsScientificAbstractor();
-        searchAndSelectTrial("Test Trial created by Selenium.");
+        searchAndSelectTrial("PA Test Trial created by Selenium.");
         clickAndWait("link=Arms");
         assertTrue(selenium.isTextPresent("Nothing found to display."));
         assertTrue(selenium.isElementPresent("link=Add"));
@@ -103,7 +103,7 @@ public class ArmTest extends AbstractPaSeleniumTest {
     @Test
     public void testAddArm() {
         loginAsScientificAbstractor();
-        searchAndSelectTrial("Test Trial created by Selenium.");
+        searchAndSelectTrial("PA Test Trial created by Selenium.");
         clickAndWait("link=Arms");
         assertTrue(selenium.isTextPresent("Nothing found to display."));
         assertTrue(selenium.isElementPresent("link=Add"));
@@ -120,7 +120,7 @@ public class ArmTest extends AbstractPaSeleniumTest {
     @Test
     public void testEditArm() {
         loginAsScientificAbstractor();
-        searchAndSelectTrial("Test Trial created by Selenium.");
+        searchAndSelectTrial("PA Test Trial created by Selenium.");
         clickAndWait("link=Arms");
         assertTrue(selenium.isTextPresent("One item found"));
 
@@ -138,7 +138,7 @@ public class ArmTest extends AbstractPaSeleniumTest {
     @Test
     public void testDeleteArm() {
         loginAsScientificAbstractor();
-        searchAndSelectTrial("Test Trial created by Selenium.");
+        searchAndSelectTrial("PA Test Trial created by Selenium.");
         clickAndWait("link=Arms");
         assertTrue(selenium.isTextPresent("One item found"));
 

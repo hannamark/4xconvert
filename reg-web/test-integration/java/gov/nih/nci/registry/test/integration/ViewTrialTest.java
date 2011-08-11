@@ -123,7 +123,7 @@ public class ViewTrialTest extends AbstractRegistrySeleniumTest {
         selenium.type("officialTitle", "Test Trial created by Selenium.");
         clickAndWait("searchMyTrialsBtn");
 
-        assertTrue("Wrong search results returned", selenium.isTextPresent("One item found"));
+        assertTrue("Wrong search results returned", selenium.isTextPresent("regexp:(One|[0-9]+) item(s)? found"));
 
         clickAndWait("xpath=//table[@id='row']/tbody/tr[1]/td[1]/a");
         assertTrue(selenium.isTextPresent("Regulatory Information"));

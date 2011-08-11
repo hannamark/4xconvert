@@ -100,7 +100,7 @@ public class PlannedMarkerTest extends AbstractPaSeleniumTest {
     @Test
     public void testPlannedMarkers() throws Exception {
         loginAsScientificAbstractor();
-        searchAndSelectTrial("Test Trial created by Selenium.");
+        searchAndSelectTrial("PA Test Trial created by Selenium.");
         checkOutTrialAsScientificAbstractor();
         acceptTrial();
         verifyTrialAccepted();

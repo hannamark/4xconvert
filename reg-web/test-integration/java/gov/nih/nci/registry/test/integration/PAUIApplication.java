@@ -113,7 +113,7 @@ public class PAUIApplication extends AbstractRegistrySeleniumTest {
     }
 
     private void loginPA(String username, String password) {
-        selenium.open("/pa");
+        openAndWait("/pa");
         selenium.type("j_username", username);
         selenium.type("j_password", password);
         clickAndWait("id=loginLink");

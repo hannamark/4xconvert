@@ -122,7 +122,7 @@ public abstract class AbstractAccrualSeleniumTest extends AbstractSeleneseTestCa
     }
 
     protected void login(String username, String password) {
-        selenium.open("/accrual");
+        openAndWait("/accrual");
         verifyHomePage();
         clickAndWait("link=Log In");
         selenium.type("j_username", username);

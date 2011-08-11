@@ -1,6 +1,6 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The reg-web
+ * source code form and machine readable, binary, object code form. The accrual
  * Software was developed in conjunction with the National Cancer Institute 
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent 
  * government employees are authors, any rights in such works shall be subject 
@@ -85,6 +85,8 @@ package gov.nih.nci.accrual.accweb.integration;
 import java.net.URISyntaxException;
 import java.util.Date;
 
+import org.junit.Ignore;
+
 import com.thoughtworks.selenium.Selenium;
 
 
@@ -92,6 +94,7 @@ import com.thoughtworks.selenium.Selenium;
  * @author moweis
  *
  */
+@Ignore
 public class RegistryUIApplication extends AbstractAccrualSeleniumTest {
     
     public RegistryUIApplication(Selenium selenium) {
@@ -187,7 +190,7 @@ public class RegistryUIApplication extends AbstractAccrualSeleniumTest {
     }
 
     private void loginRegistry(String username, String password) {
-        selenium.open("/registry");
+        openAndWait("/registry");
         clickAndWait("link=Log In");
         selenium.type("j_username", username);
         selenium.type("j_password", password);

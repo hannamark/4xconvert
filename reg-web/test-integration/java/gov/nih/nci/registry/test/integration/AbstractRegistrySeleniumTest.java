@@ -126,7 +126,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
     }
 
     protected void login(String username, String password) {
-        selenium.open("/registry");
+        openAndWait("/registry");
         verifyLoginPage();
         clickAndWait("link=Log In");
         selenium.type("j_username", username);
@@ -229,6 +229,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
             System.out.println("Waiting on first run - org");
             pause(2000);
         }
+        selenium.type("orgNameSearch", "Division");
         clickAndWaitAjax("link=Search");
         waitForElementById("row", 30);
         selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/a");
@@ -301,6 +302,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         waitForElementById("reviewTrialForm", 60);
         clickAndWaitAjax("link=Submit");
         waitForPageToLoad();
+        pause(2000);
         firstRun = false;
     }
 

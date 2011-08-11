@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.registry.test.integration;
 
+import java.util.UUID;
+
+import org.apache.commons.lang.StringUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -92,35 +95,47 @@ import org.junit.Test;
  */
 public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
 
+    private final String UUID_1 = UUID.randomUUID().toString();
+    private final String UUID_2 = UUID.randomUUID().toString();
+    private final String LEAD_ORG_TRIAL_ID = StringUtils.substring("LEAD-ORG" + UUID_1, 0, 30);
+    private final String LEAD_ORG_TRIAL_ID2 = StringUtils.substring("LEAD-ORG" + UUID_2, 0, 30);
+    private final String TRIAL_NAME = StringUtils.substring("Test Trial created by Selenium." + UUID_1, 0, 90);
+    private final String TRIAL_NAME2 = StringUtils.substring("Test Summ 4 Anatomic Site Trial created by Selenium." + UUID_1, 0, 90);
+    private final String PA_LEAD_ORG_TRIAL_ID = StringUtils.substring("LEAD-ORG" + UUID_1, 0, 30);
+    private final String PA_TRIAL_NAME = "PA Test Trial created by Selenium.";
     /**
      * Tests registering a trial.
      * @throws Exception on error
      */
     @Test
     public void testRegisterTrial() throws Exception {
+        
         loginAndAcceptDisclaimer();
         // register a trial
-        registerTrial("Test Trial created by Selenium.", "LEAD-ORG");
+        registerTrial(TRIAL_NAME + UUID_1, LEAD_ORG_TRIAL_ID);
+        waitForPageToLoad();
         assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
         assertTrue("No success message found",
                    selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
-        int nciId1 = getSeqNumFromNciId(getNciIdViaSearch("Test Trial created by Selenium."));
+        int nciId1 = getSeqNumFromNciId(getNciIdViaSearch(TRIAL_NAME));
         // try to register a trial with the same lead org trial ID and fail
-        registerTrial("Test Trial created by Selenium.", "LEAD-ORG");
+        registerTrial(TRIAL_NAME, LEAD_ORG_TRIAL_ID);
+        waitForPageToLoad();
         assertFalse("A success message was found", selenium.isElementPresent("css=div.confirm_msg"));
         assertFalse("A success message was found",
                     selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
         assertTrue("No error message found", selenium.isElementPresent("css=div.error_msg"));
         assertTrue("No error message found",
                    selenium
-                       .isTextPresent("Duplicate Trial Submission: A trial exists in the system with the same Lead Organization Trial Identifier for the selected Lead Organization"));
+                       .isTextPresent("Error Message: A trial exists in the system with the same Lead Organization Trial Identifier for the selected Lead Organization"));
 
         // try to register a trial with the a new lead org trial ID (and title) and succeed
-        registerTrial("Test Summ 4 Anatomic Site Trial created by Selenium.", "LEAD-ORG2");
+        registerTrial(TRIAL_NAME2, LEAD_ORG_TRIAL_ID2);
+        waitForPageToLoad();
         assertTrue("No success message found", selenium.isElementPresent("css=div.confirm_msg"));
         assertTrue("No success message found",
                    selenium.isTextPresent("The trial has been successfully submitted and assigned the NCI Identifier"));
-        int nciId2 = getSeqNumFromNciId(getNciIdViaSearch("Test Summ 4 Anatomic Site Trial created by Selenium."));
+        int nciId2 = getSeqNumFromNciId(getNciIdViaSearch(TRIAL_NAME2));
         assertEquals(nciId2, nciId1 + 1);
     }
 
@@ -132,11 +147,18 @@ public class RegisterTrialTest extends AbstractRegistrySeleniumTest {
     public void testSaveDraftTrial() throws Exception {
         loginAndAcceptDisclaimer();
         // register a trial
-        registerDraftTrial("Test Trial Draft created by Selenium.", "LEAD-ORG");
+        registerDraftTrial("Test Trial Draft created by Selenium.", LEAD_ORG_TRIAL_ID);
+        waitForPageToLoad();
         assertTrue("No success message found",
                    selenium.isTextPresent("The trial draft has been successfully saved and assigned the Identifier"));
     }
 
+    @Test
+    public void testRegisterForPA() throws Exception {
+        loginAndAcceptDisclaimer();
+        registerTrial(PA_TRIAL_NAME, PA_LEAD_ORG_TRIAL_ID);        
+    }
+    
     /**
      * Tests Lookup of an organization with apostrophe.
      * @throws Exception on error

@@ -100,7 +100,7 @@ public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
     @Test
     public void testCreateParticipatingSite() {
         loginAsAdminAbstractor();
-        searchAndSelectTrial("Test Trial created by Selenium.");
+        searchAndSelectTrial("PA Test Trial created by Selenium.");
         checkOutTrialAsAdminAbstractor();
         verifyTrialAccepted();
 
@@ -161,7 +161,7 @@ public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
     @Test
     public void testStatusChange() {
         loginAsAdminAbstractor();
-        searchAndSelectTrial("Test Trial created by Selenium.");
+        searchAndSelectTrial("PA Test Trial created by Selenium.");
 
         clickAndWait("link=Participating Sites");
         assertTrue(selenium.isTextPresent("One item found"));

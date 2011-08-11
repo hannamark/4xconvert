@@ -98,7 +98,7 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
     @Test
     public void testListDocuments() {
         loginAsAdminAbstractor();
-        searchAndSelectTrial("Test Trial created by Selenium.");
+        searchAndSelectTrial("PA Test Trial created by Selenium.");
 
         clickAndWait("link=Trial Related Documents");
         assertTrue(selenium.isTextPresent("2 items found"));
@@ -112,7 +112,7 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
     @Test
     public void testAddDocument() throws URISyntaxException {
         loginAsAdminAbstractor();
-        searchAndSelectTrial("Test Trial created by Selenium.");
+        searchAndSelectTrial("PA Test Trial created by Selenium.");
 
         clickAndWait("link=Trial Related Documents");
         assertTrue(selenium.isTextPresent("2 items found"));
@@ -145,7 +145,7 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
     @Test
     public void testEditDocument() throws URISyntaxException {
         loginAsAdminAbstractor();
-        searchAndSelectTrial("Test Trial created by Selenium.");
+        searchAndSelectTrial("PA Test Trial created by Selenium.");
 
         clickAndWait("link=Trial Related Documents");
         assertTrue(selenium.isTextPresent("3 items found"));
@@ -168,7 +168,7 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
     @Test
     public void testDeleteDocument() {
         loginAsAdminAbstractor();
-        searchAndSelectTrial("Test Trial created by Selenium.");
+        searchAndSelectTrial("PA Test Trial created by Selenium.");
 
         clickAndWait("link=Trial Related Documents");
         assertTrue(selenium.isTextPresent("3 items found"));

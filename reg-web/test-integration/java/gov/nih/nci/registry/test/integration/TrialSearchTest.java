@@ -103,7 +103,7 @@ public class TrialSearchTest  extends AbstractRegistrySeleniumTest {
 
         // search my trials, verify export links
         clickAndWait("searchMyTrialsBtn");
-        assertTrue("Wrong search results returned", selenium.isTextPresent("2 items found"));
+        assertTrue("Wrong search results returned", selenium.isTextPresent("regexp:(One|[0-9]+) item(s)? found"));
         assertTrue("Missing export to CSV link", selenium.isElementPresent("link=CSV"));
         assertTrue("Missing export to Excel link", selenium.isElementPresent("link=Excel"));
 
@@ -116,7 +116,7 @@ public class TrialSearchTest  extends AbstractRegistrySeleniumTest {
         // search all trials, verify export links
         selenium.type("officialTitle", "selenium");
         clickAndWait("searchAllTrialsBtn");
-        assertTrue("Wrong search results returned", selenium.isTextPresent("2 items found"));
+        assertTrue("Wrong search results returned", selenium.isTextPresent("regexp:(One|[0-9]+) item(s)? found"));
 
         assertTrue("Missing export to CSV link", selenium.isElementPresent("link=CSV"));
         assertTrue("Missing export to Excel link", selenium.isElementPresent("link=Excel"));
@@ -124,7 +124,7 @@ public class TrialSearchTest  extends AbstractRegistrySeleniumTest {
         // search all trials, verify export links
         selenium.type("officialTitle", "");
         clickAndWait("searchSavedDraftsBtn");
-        assertTrue("Wrong search results returned", selenium.isTextPresent("One item found"));
+        assertTrue("Wrong search results returned", selenium.isTextPresent("regexp:(One|[0-9]+) item(s)? found"));
         assertTrue("Missing export to CSV link", selenium.isElementPresent("link=CSV"));
         assertTrue("Missing export to Excel link", selenium.isElementPresent("link=Excel"));
 

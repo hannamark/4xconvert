@@ -1,6 +1,6 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The reg-web
+ * source code form and machine readable, binary, object code form. The accrual
  * Software was developed in conjunction with the National Cancer Institute 
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent 
  * government employees are authors, any rights in such works shall be subject 
@@ -85,6 +85,7 @@ package gov.nih.nci.accrual.accweb.integration;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.Ignore;
 
 import com.thoughtworks.selenium.Selenium;
 
@@ -93,6 +94,7 @@ import com.thoughtworks.selenium.Selenium;
  * @author moweis
  *
  */
+@Ignore
 public class PAUIApplication extends AbstractAccrualSeleniumTest {
     private final String today = MONTH_DAY_YEAR_FMT.format(new Date());    
     public PAUIApplication(Selenium selenium) {
@@ -117,7 +119,7 @@ public class PAUIApplication extends AbstractAccrualSeleniumTest {
     }
 
     private void loginPA(String username, String password) {
-        selenium.open("/pa");
+        openAndWait("/pa");
         selenium.type("j_username", username);
         selenium.type("j_password", password);
         clickAndWait("id=loginLink");
@@ -223,7 +225,7 @@ public class PAUIApplication extends AbstractAccrualSeleniumTest {
         waitForPageToLoad();
         pause(1000);
         selenium.select("access.registryUserId", "label=User, Abstractor - abstractor-ci");
-        selenium.select("access.studySiteId","label=Cancer Therapy Evaluation Program");
+        selenium.select("access.studySiteId","label=ClinicalTrials.gov");
         selenium.select("access.statusCode","label=Active");
         clickAndWaitAjax("link=Save");
     }

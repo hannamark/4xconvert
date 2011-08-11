@@ -94,6 +94,10 @@ import org.junit.Test;
  */
 public class UpdateTrialStatusTest extends AbstractRegistrySeleniumTest {
     
+    /**
+     * 
+     */
+    private static final String UPDATE_STATUS_LINK_LOCATOR = "xpath=//table[@id='row']//tr[1]//td[13]/a";
     private final String LEAD_ORG_IDENTIFIER = "UpdateStatusLeadOrgIdentifier" + UUID.randomUUID();
     private final String UPDATE_TRIAL_TITLE = "Update Trial Status Popup test created by Selenium." + UUID.randomUUID(); 
 
@@ -139,7 +143,7 @@ public class UpdateTrialStatusTest extends AbstractRegistrySeleniumTest {
     }
 
     private void updateStatusViaPopup() {
-        clickAndWaitAjax("xpath=//table[@id='row']//tr[1]//td[11]/a");
+        clickAndWaitAjax(UPDATE_STATUS_LINK_LOCATOR);
         selenium.selectFrame("popupFrame");
         waitForElementById("updateTrialStatusForm_trialDTO_completionDateTypeAnticipated", 60);
         assertUpdateStatusPageFieldsArePresent();
