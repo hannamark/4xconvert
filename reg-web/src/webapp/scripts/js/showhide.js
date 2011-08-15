@@ -34,5 +34,7 @@
 	function displayTrialStatusDefinition(selectBoxId) {
 		$('allTrialStatusDefinitions').childElements().invoke('hide');
 		var selectedValue = $(selectBoxId).value;
-		$(selectedValue).show();
+		if (selectedValue != "") {
+		    $(selectedValue).show();
+		}
 	}
