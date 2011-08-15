@@ -148,7 +148,7 @@ public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
         clickAndWaitAjax("link=Look Up Generic Contact");
         waitForElementById("popupFrame", 15);
         selenium.selectFrame("popupFrame");
-        waitForElementById("titles", 15);
+        waitForElementById("search_title", 15);
         selenium.type("id=search_title", "title");
         clickAndWaitAjax("link=Search");
         waitForElementById("row", 15);
@@ -168,6 +168,7 @@ public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
         selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/a");
         waitForPageToLoad();
 
+        waitForElementById("recStatus", 30);
         changeStatus("Approved");
         changeStatus("Active");
         changeStatus("Enrolling by Invitation");

@@ -182,12 +182,12 @@ public class IndustrialPatientAction extends AbstractAccrualAction implements Pr
     private void parseCounts(List<StudySiteSubjectAccrualCount> counts) throws PAException {
         for (int i = 0; i < getSubmittedSiteIds().size(); i++) {
             if (getSitesToSave().contains(getSubmittedSiteIds().get(i))) {
-                saveCount(counts, i);
+                parseCount(counts, i);
             }
         }
     }
 
-    private void saveCount(List<StudySiteSubjectAccrualCount> counts, int countIndex) throws PAException {
+    private void parseCount(List<StudySiteSubjectAccrualCount> counts, int countIndex) throws PAException {
         StudySiteSubjectAccrualCount count = getSiteCount(counts, getSubmittedSiteIds().get(countIndex));
         updateCountForSiteIfSet(count, getSubmittedCounts().get(countIndex));
     }

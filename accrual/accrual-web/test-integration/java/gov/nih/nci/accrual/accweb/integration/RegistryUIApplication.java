@@ -116,6 +116,7 @@ public class RegistryUIApplication extends AbstractAccrualSeleniumTest {
         waitForPageToLoad();
         selenium.selectWindow(null);
 
+        waitForElementById("submitProprietaryTrial_trialDTO_leadOrgTrialIdentifier", 60);
         selenium.type("submitProprietaryTrial_trialDTO_leadOrgTrialIdentifier", trialTitle);
         selenium.type("submitProprietaryTrial_trialDTO_localSiteIdentifier", trialTitle);
         selenium.type("trialDTO.nctIdentifier", trialTitle);
@@ -126,8 +127,6 @@ public class RegistryUIApplication extends AbstractAccrualSeleniumTest {
         String today = MONTH_DAY_YEAR_FMT.format(new Date());
         selenium.type("submitProprietaryTrial_trialDTO_siteStatusDate", today);
 
-        //TODO summ4sponsor
-        
         //Select Lead Organization
         clickAndWaitAjax("link=Look Up Org");
         waitForElementById("popupFrame", 60);

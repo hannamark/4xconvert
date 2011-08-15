@@ -35,6 +35,14 @@ function setCheckbox(index) {
         <display:column titleKey="participatingsite.accrual.count.dateLastUpdated" headerClass="sortable"
             property="dateLastUpdated" headerScope="col" />
     </display:table>
-    <s:a href="#" cssClass="btn" onclick="document.countform.submit()"><span class="btn_img"><span class="save">Save</span></span></s:a>
-    <s:a href="#" cssClass="btn" onclick="document.countform.reset();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
+    <div class="actionsrow">
+        <del class="btnwrapper">
+            <ul class="btnrow">
+                <li>
+                    <s:a href="#" cssClass="btn" onclick="document.countform.submit()"><span class="btn_img"><span class="save">Save</span></span></s:a>
+                    <s:a href="#" cssClass="btn" onclick="document.countform.reset();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
+                </li>
+            </ul>
+        </del>
+    </div>
 </s:form>

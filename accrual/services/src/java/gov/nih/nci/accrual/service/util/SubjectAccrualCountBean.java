@@ -82,7 +82,10 @@
  */
 package gov.nih.nci.accrual.service.util;
 
+import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
+import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -119,27 +122,33 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
     @SuppressWarnings("unchecked")
     public List<StudySiteSubjectAccrualCount> getCounts(Ii studyProtocolIi) throws PAException {
         Long studyProtocolId = IiConverter.convertToLong(studyProtocolIi);
+        RegistryUser user = PaServiceLocator.getInstance().getRegistryUserService().getUser(
+                CaseSensitiveUsernameHolder.getUser());
         try {
-            String hql = "from StudySite ss where ss.studyProtocol.id = :studyProtocolId and ss.functionalCode = "
-                    + ":functionalCode";
+            String hql = "from StudySite ss left join ss.accrualCount join ss.studySiteAccrualAccess ssas " 
+                + "where ss.studyProtocol.id = :studyProtocolId " 
+                + "and ss.functionalCode = :functionalCode "
+                + "and ssas.registryUser.id = :registerUserId";
             Query query = PaHibernateUtil.getCurrentSession().createQuery(hql);
             query.setParameter("studyProtocolId", studyProtocolId);
             query.setParameter("functionalCode", StudySiteFunctionalCode.TREATING_SITE);
+            query.setParameter("registerUserId", user.getId());
 
-            List<StudySite> sites = query.list();
-            return getCountsForSites(sites);
+            List<Object[]> queryResults = query.list(); 
+            return getCountsForSites(queryResults);
             
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in getByStudyProtocol().", hbe);
         }
     }
 
-    private List<StudySiteSubjectAccrualCount> getCountsForSites(List<StudySite> sites) {
+    private List<StudySiteSubjectAccrualCount> getCountsForSites(List<Object[]> queryResults) {
         List<StudySiteSubjectAccrualCount> resultList = new ArrayList<StudySiteSubjectAccrualCount>();
-        for (StudySite ss : sites) {
-            StudySiteSubjectAccrualCount accrualCount = ss.getAccrualCount(); 
+        for (Object[] result : queryResults) {
+            StudySiteSubjectAccrualCount accrualCount = (StudySiteSubjectAccrualCount) result[1]; 
             if (accrualCount == null) {
                 accrualCount = new StudySiteSubjectAccrualCount();
+                StudySite ss = (StudySite) result[0];
                 accrualCount.setSite(ss);
                 accrualCount.setStudyProtocol(ss.getStudyProtocol());
             }
@@ -154,11 +163,48 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
      */
     @Override
     public void save(List<StudySiteSubjectAccrualCount> counts) throws PAException {
+        assertAccrualAccess(counts);
         for (StudySiteSubjectAccrualCount count : counts) {
             if (count.getAccrualCount() != null) {
-                count.setDateLastUpdated(new Date());
-                PaHibernateUtil.getCurrentSession().saveOrUpdate(count);
+                saveAccrualCount(count);
             }
+        }
+    }
+
+    private void saveAccrualCount(StudySiteSubjectAccrualCount newCount) {
+        StudySiteSubjectAccrualCount countToSave = newCount; 
+        if (newCount.getId() != null) {
+            countToSave = (StudySiteSubjectAccrualCount) PaHibernateUtil.getCurrentSession().load(
+                    StudySiteSubjectAccrualCount.class, newCount.getId());
+            countToSave.setAccrualCount(newCount.getAccrualCount());
+        }
+        countToSave.setDateLastUpdated(new Date());
+        PaHibernateUtil.getCurrentSession().saveOrUpdate(countToSave);
+    }
+
+    private void assertAccrualAccess(List<StudySiteSubjectAccrualCount> counts) throws PAException {
+        for (StudySiteSubjectAccrualCount count : counts) {
+            if (count.getAccrualCount() != null) {
+                assertAccrualAccess(count.getSite());
+            }
+        }
+    }
+
+    private void assertAccrualAccess(StudySite site) throws PAException {
+        RegistryUser user = PaServiceLocator.getInstance().getRegistryUserService()
+                .getUser(CaseSensitiveUsernameHolder.getUser());
+        try {
+            String hql = "from StudySite ss join ss.studySiteAccrualAccess ssas where ss.id = :studySiteId"
+                    + " and ssas.registryUser.id = :registerUserId";
+            Query query = PaHibernateUtil.getCurrentSession().createQuery(hql);
+            query.setParameter("studySiteId", site.getId());
+            query.setParameter("registerUserId", user.getId());
+            if (query.uniqueResult() == null) {
+                throw new PAException("User (" + user.getId() + ") doesn't have accrual access to site ("
+                        + site.getId() + ")");
+            }
+        } catch (HibernateException e) {
+            throw new PAException("Hibernate exception in getByStudyProtocol().", e);
         }
     }
 }

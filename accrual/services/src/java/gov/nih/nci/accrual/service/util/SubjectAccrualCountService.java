@@ -98,7 +98,7 @@ import javax.ejb.Local;
 public interface SubjectAccrualCountService {
 
     /**
-     * Return the subject accrual counts for each site in a study.
+     * Return the subject accrual counts for each site in a study for a specified registry user.
      * @param studyProtocolIi study protocol ii of the study
      * @return list of subject accrual counts for all sites in a study
      * @throws PAException exception thrown if error 
