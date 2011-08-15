@@ -170,6 +170,11 @@ public abstract class PlannedActivityServiceImplBase {
 		return (gov.nih.nci.coppa.services.pa.regulatoryauthorityservice.service.globus.resource.RegulatoryAuthorityServiceResourceHome)resource;
 	}
 	
+	public gov.nih.nci.coppa.services.accrual.subjectaccrualservice.service.globus.resource.SubjectAccrualServiceResourceHome getSubjectAccrualServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("subjectAccrualServiceHome");
+		return (gov.nih.nci.coppa.services.accrual.subjectaccrualservice.service.globus.resource.SubjectAccrualServiceResourceHome)resource;
+	}
+	
 	
 	protected ResourceHome getResourceHome(String resourceKey) throws Exception {
 		MessageContext ctx = MessageContext.getCurrentContext();

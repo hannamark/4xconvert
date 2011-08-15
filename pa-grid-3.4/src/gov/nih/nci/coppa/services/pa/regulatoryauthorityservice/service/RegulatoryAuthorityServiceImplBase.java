@@ -170,6 +170,11 @@ public abstract class RegulatoryAuthorityServiceImplBase {
 		return (gov.nih.nci.coppa.services.pa.interventionservice.service.globus.resource.InterventionServiceResourceHome)resource;
 	}
 	
+	public gov.nih.nci.coppa.services.accrual.subjectaccrualservice.service.globus.resource.SubjectAccrualServiceResourceHome getSubjectAccrualServiceResourceHome() throws Exception {
+		ResourceHome resource = getResourceHome("subjectAccrualServiceHome");
+		return (gov.nih.nci.coppa.services.accrual.subjectaccrualservice.service.globus.resource.SubjectAccrualServiceResourceHome)resource;
+	}
+	
 	
 	protected ResourceHome getResourceHome(String resourceKey) throws Exception {
 		MessageContext ctx = MessageContext.getCurrentContext();

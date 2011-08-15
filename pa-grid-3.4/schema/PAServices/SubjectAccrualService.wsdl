@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns4="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" xmlns:ns26="http://enterpriseservices.nci.nih.gov/PAServices/StudyOutcomeMeasureService/types" xmlns:ns39="http://enterpriseservices.nci.nih.gov/PAServices/DiseaseService/types" xmlns:ns5="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns30="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/types" xmlns:ns1="uri:iso.org:21090" xmlns:ns16="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" xmlns:ns12="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" xmlns:ns19="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types" xmlns:ns28="http://enterpriseservices.nci.nih.gov/PAServices/StudyIndIdeService/types" xmlns:ns10="http://iso21090.nci.nih.gov" xmlns:ns7="http://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/View" xmlns:ns29="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/types" xmlns:ns9="http://po.coppa.nci.nih.gov" xmlns:ns0="http://accrual.services.coppa.nci.nih.gov" xmlns:ns32="http://enterpriseservices.nci.nih.gov/PAServices/DocumentWorkflowStatusService/types" xmlns:ns35="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteService/types" xmlns:ns31="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/types" xmlns:ns27="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService/types" xmlns:ns6="http://faults.common.coppa.nci.nih.gov" xmlns:ns2="http://pa.services.coppa.nci.nih.gov" xmlns:ns13="http://enterpriseservices.nci.nih.gov/PAServices/types" xmlns:ns34="http://enterpriseservices.nci.nih.gov/PAServices/StudyRelationshipService/types" xmlns:ns11="http://common.coppa.nci.nih.gov" xmlns:ns24="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationContactService/types" xmlns:ns8="http://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/Management" xmlns:ns42="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/types" xmlns:ns25="http://enterpriseservices.nci.nih.gov/PAServices/StudyOverallStatusService/types" xmlns:ns37="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService/types" xmlns:ns23="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationService/types" xmlns:ns14="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns40="http://enterpriseservices.nci.nih.gov/PAServices/InterventionService/types" xmlns:ns15="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns17="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" xmlns:ns36="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/types" xmlns:ns22="http://enterpriseservices.nci.nih.gov/PAServices/StudyRecruitmentStatusService/types" xmlns:ns18="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types" xmlns:ns20="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/types" xmlns:ns38="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/types" xmlns:ns41="http://enterpriseservices.nci.nih.gov/PAServices/RegulatoryAuthorityService/types" xmlns:ns3="http://faults.pa.services.coppa.nci.nih.gov" xmlns:ns33="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/types" xmlns:ns21="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/types" name="SubjectAccrualService" targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService">
+  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
+  <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
+  <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
+  <import namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" location="./ServiceSecurity.wsdl" />
+  <!--============================================================
+
+                      T Y P E S
+                      
+  ============================================================-->
+  <types>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService" elementFormDefault="qualified" attributeFormDefault="unqualified">
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
+      <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" schemaLocation="./../wsrf/faults/WS-BaseFaults.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyOutcomeMeasureService/types" schemaLocation="./StudyOutcomeMeasureServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/DiseaseService/types" schemaLocation="./DiseaseServiceTypes.xsd" />
+      <import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="./../ws/addressing/WS-Addressing.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/types" schemaLocation="./StudyContactServiceTypes.xsd" />
+      <import namespace="uri:iso.org:21090" schemaLocation="./ISO_datatypes_Narrative.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" schemaLocation="./xsd/cagrid/types/service/servicemodel.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" schemaLocation="./ArmServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types" schemaLocation="./StudySiteAccrualStatusServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyIndIdeService/types" schemaLocation="./StudyIndIdeServiceTypes.xsd" />
+      <import namespace="http://iso21090.nci.nih.gov" schemaLocation="./ISO_extensions.xsd" />
+      <import namespace="http://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/View" schemaLocation="./StudySiteParticipationViewTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/types" schemaLocation="./StudyDiseaseServiceTypes.xsd" />
+      <import namespace="http://po.coppa.nci.nih.gov" schemaLocation="./CoppaPO.xsd" />
+      <import namespace="http://accrual.services.coppa.nci.nih.gov" schemaLocation="./CoppaAccrual.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/DocumentWorkflowStatusService/types" schemaLocation="./DocumentWorkflowStatusServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteService/types" schemaLocation="./StudySiteServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/types" schemaLocation="./PlannedActivityServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService/types" schemaLocation="./StudyOnholdServiceTypes.xsd" />
+      <import namespace="http://faults.common.coppa.nci.nih.gov" schemaLocation="./CoppaCommonsFaults.xsd" />
+      <import namespace="http://pa.services.coppa.nci.nih.gov" schemaLocation="./CoppaPA.xsd" />
+      <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="./../ws/xml.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/types" schemaLocation="./PAServicesTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyRelationshipService/types" schemaLocation="./StudyRelationshipServiceTypes.xsd" />
+      <import namespace="http://common.coppa.nci.nih.gov" schemaLocation="./CoppaCommons.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationContactService/types" schemaLocation="./StudyParticipationContactServiceTypes.xsd" />
+      <import namespace="http://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/Management" schemaLocation="./StudySiteParticipationManagementTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/types" schemaLocation="./SubjectAccrualServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyOverallStatusService/types" schemaLocation="./StudyOverallStatusServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService/types" schemaLocation="./StudySiteContactServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationService/types" schemaLocation="./StudyParticipationServiceTypes.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" schemaLocation="./xsd/cagrid/types/security/security.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/InterventionService/types" schemaLocation="./InterventionServiceTypes.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" schemaLocation="./xsd/cagrid/types/caGridMetadata.xsd" />
+      <import namespace="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" schemaLocation="./xsd/cagrid/types/common/common.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/types" schemaLocation="./StudySiteParticipationServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyRecruitmentStatusService/types" schemaLocation="./StudyRecruitmentStatusServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types" schemaLocation="./StudyProtocolServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/types" schemaLocation="./StudyResourcingServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/types" schemaLocation="./TrialRegistrationServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/RegulatoryAuthorityService/types" schemaLocation="./RegulatoryAuthorityServiceTypes.xsd" />
+      <import namespace="http://faults.pa.services.coppa.nci.nih.gov" schemaLocation="./CoppaPAFaults.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/types" schemaLocation="./DocumentServiceTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/types" schemaLocation="./StudyRegulatoryAuthorityServiceTypes.xsd" />
+      <element name="ManageSubjectAccrualsRequest">
+        <complexType>
+          <sequence>
+            <element name="studySubjects">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:StudySubject" minOccurs="1" maxOccurs="unbounded" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="ManageSubjectAccrualsResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudySubject" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteSubjectAccrualRequest">
+        <complexType>
+          <sequence>
+            <element name="subjectAccrualdenfier">
+              <complexType>
+                <sequence>
+                  <element ref="ns10:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="DeleteSubjectAccrualResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="SubmitBatchDataRequest">
+        <complexType>
+          <sequence>
+            <element name="batchData">
+              <complexType>
+                <sequence>
+                  <element ref="ns2:Ed" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="SubmitBatchDataResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="SearchRequest">
+        <complexType>
+          <sequence>
+            <element name="studyProtocolIdentifer">
+              <complexType>
+                <sequence>
+                  <element ref="ns10:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="participatingSiteIdentifier">
+              <complexType>
+                <sequence>
+                  <element ref="ns10:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="startDate">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Ts" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="endDate">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Ts" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="pagingParams">
+              <complexType>
+                <sequence>
+                  <element ref="ns11:LimitOffset" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="SearchResponse">
+        <complexType>
+          <sequence>
+            <element ref="ns0:StudySubject" minOccurs="1" maxOccurs="unbounded" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateSubjectAccrualCountRequest">
+        <complexType>
+          <sequence>
+            <element name="participatingSiteIdentifier">
+              <complexType>
+                <sequence>
+                  <element ref="ns10:Id" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+            <element name="accrualCount">
+              <complexType>
+                <sequence>
+                  <element ref="ns0:Integer" minOccurs="1" maxOccurs="1" />
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </complexType>
+      </element>
+      <element name="UpdateSubjectAccrualCountResponse">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="SubjectAccrualServiceResourceProperties">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+    </schema>
+  </types>
+  <!--  place service messages here -->
+  <message name="ManageSubjectAccrualsRequest">
+    <part name="parameters" element="tns:ManageSubjectAccrualsRequest" />
+  </message>
+  <message name="ManageSubjectAccrualsResponse">
+    <part name="parameters" element="tns:ManageSubjectAccrualsResponse" />
+  </message>
+  <message name="DeleteSubjectAccrualRequest">
+    <part name="parameters" element="tns:DeleteSubjectAccrualRequest" />
+  </message>
+  <message name="DeleteSubjectAccrualResponse">
+    <part name="parameters" element="tns:DeleteSubjectAccrualResponse" />
+  </message>
+  <message name="SubmitBatchDataRequest">
+    <part name="parameters" element="tns:SubmitBatchDataRequest" />
+  </message>
+  <message name="SubmitBatchDataResponse">
+    <part name="parameters" element="tns:SubmitBatchDataResponse" />
+  </message>
+  <message name="SearchRequest">
+    <part name="parameters" element="tns:SearchRequest" />
+  </message>
+  <message name="SearchResponse">
+    <part name="parameters" element="tns:SearchResponse" />
+  </message>
+  <message name="UpdateSubjectAccrualCountRequest">
+    <part name="parameters" element="tns:UpdateSubjectAccrualCountRequest" />
+  </message>
+  <message name="UpdateSubjectAccrualCountResponse">
+    <part name="parameters" element="tns:UpdateSubjectAccrualCountResponse" />
+  </message>
+  <message name="PAFaultFaultMessage">
+    <part name="fault" element="ns3:PAFault" />
+  </message>
+  <message name="TooManyResultsFaultFaultMessage">
+    <part name="fault" element="ns3:TooManyResultsFault" />
+  </message>
+  <!--============================================================
+
+                       P O R T T Y P E
+                      
+  ============================================================-->
+  <portType name="SubjectAccrualServicePortType" wsrp:ResourceProperties="tns:SubjectAccrualServiceResourceProperties">
+    <operation name="manageSubjectAccruals">
+      <input message="tns:ManageSubjectAccrualsRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/ManageSubjectAccrualsRequest" />
+      <output message="tns:ManageSubjectAccrualsResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/ManageSubjectAccrualsResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="deleteSubjectAccrual">
+      <input message="tns:DeleteSubjectAccrualRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/DeleteSubjectAccrualRequest" />
+      <output message="tns:DeleteSubjectAccrualResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/DeleteSubjectAccrualResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="submitBatchData">
+      <input message="tns:SubmitBatchDataRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/SubmitBatchDataRequest" />
+      <output message="tns:SubmitBatchDataResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/SubmitBatchDataResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="search">
+      <input message="tns:SearchRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/SearchRequest" />
+      <output message="tns:SearchResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/SearchResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/PAFaultFaultMessage" />
+      <fault name="TooManyResultsFault" message="tns:TooManyResultsFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/TooManyResultsFaultFaultMessage" />
+    </operation>
+    <operation name="updateSubjectAccrualCount">
+      <input message="tns:UpdateSubjectAccrualCountRequest" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/UpdateSubjectAccrualCountRequest" />
+      <output message="tns:UpdateSubjectAccrualCountResponse" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/UpdateSubjectAccrualCountResponse" />
+      <fault name="PAFault" message="tns:PAFaultFaultMessage" wsa:Action="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/PAFaultFaultMessage" />
+    </operation>
+    <operation name="getServiceSecurityMetadata">
+      <input message="wns0:GetServiceSecurityMetadataRequest" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataRequest" />
+      <output message="wns0:GetServiceSecurityMetadataResponse" wsa:Action="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity/GetServiceSecurityMetadataResponse" />
+    </operation>
+  </portType>
+</definitions>
+

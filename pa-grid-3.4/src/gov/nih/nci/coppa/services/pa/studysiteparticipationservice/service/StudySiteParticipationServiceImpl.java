@@ -162,5 +162,4 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
         return ii;
     }
 
-
 }

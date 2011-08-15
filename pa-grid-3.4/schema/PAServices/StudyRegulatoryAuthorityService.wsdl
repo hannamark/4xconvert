@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns3="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" xmlns:ns25="http://enterpriseservices.nci.nih.gov/PAServices/StudyOutcomeMeasureService/types" xmlns:ns38="http://enterpriseservices.nci.nih.gov/PAServices/DiseaseService/types" xmlns:ns4="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns29="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/types" xmlns:ns1="uri:iso.org:21090" xmlns:ns15="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" xmlns:ns11="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" xmlns:ns18="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types" xmlns:ns27="http://enterpriseservices.nci.nih.gov/PAServices/StudyIndIdeService/types" xmlns:ns9="http://iso21090.nci.nih.gov" xmlns:ns6="http://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/View" xmlns:ns28="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/types" xmlns:ns8="http://po.coppa.nci.nih.gov" xmlns:ns31="http://enterpriseservices.nci.nih.gov/PAServices/DocumentWorkflowStatusService/types" xmlns:ns34="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteService/types" xmlns:ns30="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/types" xmlns:ns26="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService/types" xmlns:ns5="http://faults.common.coppa.nci.nih.gov" xmlns:ns0="http://pa.services.coppa.nci.nih.gov" xmlns:ns12="http://enterpriseservices.nci.nih.gov/PAServices/types" xmlns:ns33="http://enterpriseservices.nci.nih.gov/PAServices/StudyRelationshipService/types" xmlns:ns10="http://common.coppa.nci.nih.gov" xmlns:ns23="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationContactService/types" xmlns:ns7="http://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/Management" xmlns:ns24="http://enterpriseservices.nci.nih.gov/PAServices/StudyOverallStatusService/types" xmlns:ns36="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService/types" xmlns:ns22="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationService/types" xmlns:ns13="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns39="http://enterpriseservices.nci.nih.gov/PAServices/InterventionService/types" xmlns:ns14="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns16="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" xmlns:ns35="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/types" xmlns:ns21="http://enterpriseservices.nci.nih.gov/PAServices/StudyRecruitmentStatusService/types" xmlns:ns17="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types" xmlns:ns19="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/types" xmlns:ns37="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/types" xmlns:ns40="http://enterpriseservices.nci.nih.gov/PAServices/RegulatoryAuthorityService/types" xmlns:ns2="http://faults.pa.services.coppa.nci.nih.gov" xmlns:ns32="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/types" xmlns:ns20="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/types" name="StudyRegulatoryAuthorityService" targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService">
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService" xmlns:wsrp="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.xsd" xmlns:wsrlw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceLifetime-1.2-draft-01.wsdl" xmlns:wsdlpp="http://www.globus.org/namespaces/2004/10/WSDLPreprocessor" xmlns:gtwsdl1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ServiceGroup-1.2-draft-01.wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:wsntw="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" xmlns:wsrbfw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" xmlns:wsrpw="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" xmlns:wns0="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" xmlns:ns4="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd" xmlns:ns26="http://enterpriseservices.nci.nih.gov/PAServices/StudyOutcomeMeasureService/types" xmlns:ns39="http://enterpriseservices.nci.nih.gov/PAServices/DiseaseService/types" xmlns:ns5="http://schemas.xmlsoap.org/ws/2004/03/addressing" xmlns:ns30="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/types" xmlns:ns1="uri:iso.org:21090" xmlns:ns16="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service" xmlns:ns12="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types" xmlns:ns19="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types" xmlns:ns28="http://enterpriseservices.nci.nih.gov/PAServices/StudyIndIdeService/types" xmlns:ns10="http://iso21090.nci.nih.gov" xmlns:ns7="http://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/View" xmlns:ns29="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/types" xmlns:ns9="http://po.coppa.nci.nih.gov" xmlns:ns0="http://accrual.services.coppa.nci.nih.gov" xmlns:ns32="http://enterpriseservices.nci.nih.gov/PAServices/DocumentWorkflowStatusService/types" xmlns:ns35="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteService/types" xmlns:ns31="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/types" xmlns:ns27="http://enterpriseservices.nci.nih.gov/PAServices/StudyOnholdService/types" xmlns:ns6="http://faults.common.coppa.nci.nih.gov" xmlns:ns2="http://pa.services.coppa.nci.nih.gov" xmlns:ns13="http://enterpriseservices.nci.nih.gov/PAServices/types" xmlns:ns34="http://enterpriseservices.nci.nih.gov/PAServices/StudyRelationshipService/types" xmlns:ns11="http://common.coppa.nci.nih.gov" xmlns:ns24="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationContactService/types" xmlns:ns8="http://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/Management" xmlns:ns42="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/types" xmlns:ns25="http://enterpriseservices.nci.nih.gov/PAServices/StudyOverallStatusService/types" xmlns:ns37="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService/types" xmlns:ns23="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationService/types" xmlns:ns14="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security" xmlns:ns40="http://enterpriseservices.nci.nih.gov/PAServices/InterventionService/types" xmlns:ns15="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata" xmlns:ns17="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common" xmlns:ns36="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/types" xmlns:ns22="http://enterpriseservices.nci.nih.gov/PAServices/StudyRecruitmentStatusService/types" xmlns:ns18="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types" xmlns:ns20="http://enterpriseservices.nci.nih.gov/PAServices/StudyResourcingService/types" xmlns:ns38="http://enterpriseservices.nci.nih.gov/PAServices/TrialRegistrationService/types" xmlns:ns41="http://enterpriseservices.nci.nih.gov/PAServices/RegulatoryAuthorityService/types" xmlns:ns3="http://faults.pa.services.coppa.nci.nih.gov" xmlns:ns33="http://enterpriseservices.nci.nih.gov/PAServices/DocumentService/types" xmlns:ns21="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService/types" name="StudyRegulatoryAuthorityService" targetNamespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyRegulatoryAuthorityService">
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-ResourceProperties-1.2-draft-01.wsdl" location="../wsrf/properties/WS-ResourceProperties.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.wsdl" location="../wsrf/faults/WS-BaseFaults.wsdl" />
   <import namespace="http://docs.oasis-open.org/wsn/2004/06/wsn-WS-BaseNotification-1.2-draft-01.wsdl" location="../wsrf/notification/WS-BaseN.wsdl" />
@@ -26,6 +26,7 @@
       <import namespace="http://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/View" schemaLocation="./StudySiteParticipationViewTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/types" schemaLocation="./StudyDiseaseServiceTypes.xsd" />
       <import namespace="http://po.coppa.nci.nih.gov" schemaLocation="./CoppaPO.xsd" />
+      <import namespace="http://accrual.services.coppa.nci.nih.gov" schemaLocation="./CoppaAccrual.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/DocumentWorkflowStatusService/types" schemaLocation="./DocumentWorkflowStatusServiceTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteService/types" schemaLocation="./StudySiteServiceTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/types" schemaLocation="./PlannedActivityServiceTypes.xsd" />
@@ -38,6 +39,7 @@
       <import namespace="http://common.coppa.nci.nih.gov" schemaLocation="./CoppaCommons.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationContactService/types" schemaLocation="./StudyParticipationContactServiceTypes.xsd" />
       <import namespace="http://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/Management" schemaLocation="./StudySiteParticipationManagementTypes.xsd" />
+      <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/types" schemaLocation="./SubjectAccrualServiceTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyOverallStatusService/types" schemaLocation="./StudyOverallStatusServiceTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService/types" schemaLocation="./StudySiteContactServiceTypes.xsd" />
       <import namespace="http://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationService/types" schemaLocation="./StudyParticipationServiceTypes.xsd" />
@@ -60,7 +62,7 @@
             <element name="studyProtocolId">
               <complexType>
                 <sequence>
-                  <element ref="ns9:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns10:Id" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -70,7 +72,7 @@
       <element name="GetByStudyProtocolResponse">
         <complexType>
           <sequence>
-            <element ref="ns0:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="unbounded" />
+            <element ref="ns2:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="unbounded" />
           </sequence>
         </complexType>
       </element>
@@ -80,7 +82,7 @@
             <element name="studyRegulatoryAuthority">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -90,7 +92,7 @@
       <element name="CreateResponse">
         <complexType>
           <sequence>
-            <element ref="ns0:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="1" />
+            <element ref="ns2:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
@@ -100,7 +102,7 @@
             <element name="studyRegulatoryAuthority">
               <complexType>
                 <sequence>
-                  <element ref="ns0:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns2:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -110,7 +112,7 @@
       <element name="UpdateResponse">
         <complexType>
           <sequence>
-            <element ref="ns0:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="1" />
+            <element ref="ns2:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
@@ -120,14 +122,14 @@
             <element name="fromStudyProtocolId">
               <complexType>
                 <sequence>
-                  <element ref="ns9:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns10:Id" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
             <element name="toStudyProtocolId">
               <complexType>
                 <sequence>
-                  <element ref="ns9:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns10:Id" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -145,7 +147,7 @@
             <element name="studyProtocolId">
               <complexType>
                 <sequence>
-                  <element ref="ns9:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns10:Id" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -155,7 +157,7 @@
       <element name="GetCurrentByStudyProtocolResponse">
         <complexType>
           <sequence>
-            <element ref="ns0:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="1" />
+            <element ref="ns2:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
@@ -165,7 +167,7 @@
             <element name="id">
               <complexType>
                 <sequence>
-                  <element ref="ns9:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns10:Id" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -175,7 +177,7 @@
       <element name="GetResponse">
         <complexType>
           <sequence>
-            <element ref="ns0:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="1" />
+            <element ref="ns2:StudyRegulatoryAuthority" minOccurs="1" maxOccurs="1" />
           </sequence>
         </complexType>
       </element>
@@ -185,7 +187,7 @@
             <element name="id">
               <complexType>
                 <sequence>
-                  <element ref="ns9:Id" minOccurs="1" maxOccurs="1" />
+                  <element ref="ns10:Id" minOccurs="1" maxOccurs="1" />
                 </sequence>
               </complexType>
             </element>
@@ -248,7 +250,7 @@
     <part name="parameters" element="tns:DeleteResponse" />
   </message>
   <message name="PAFaultFaultMessage">
-    <part name="fault" element="ns2:PAFault" />
+    <part name="fault" element="ns3:PAFault" />
   </message>
   <!--============================================================
 

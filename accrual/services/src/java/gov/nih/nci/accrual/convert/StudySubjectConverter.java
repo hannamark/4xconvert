@@ -197,4 +197,5 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
             dto.setZipCode(StConverter.convertToSt(bo.getPatient().getZip()));
         }
     }
+
 }

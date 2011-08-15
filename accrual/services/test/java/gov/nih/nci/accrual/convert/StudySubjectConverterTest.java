@@ -81,7 +81,16 @@ package gov.nih.nci.accrual.convert;
 
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
+import gov.nih.nci.pa.domain.Patient;
+import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
+import gov.nih.nci.pa.domain.SDCDisease;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 
 import org.junit.Test;
 /**
@@ -105,7 +114,6 @@ public class StudySubjectConverterTest extends AbstractConverterTest {
         dto.setStudyProtocolIdentifier(iiVal);
         dto.setStudySiteIdentifier(iiVal);
         dto.setDiseaseIdentifier(iiVal);
-        dto.setOutcomesLoginName(stVal);
 
         StudySubject bo = Converters.get(StudySubjectConverter.class).convertFromDtoToDomain(dto);
         StudySubjectDto r = Converters.get(StudySubjectConverter.class).convertFromDomainToDto(bo);
@@ -118,6 +126,54 @@ public class StudySubjectConverterTest extends AbstractConverterTest {
         assertTrue(iiTest(r.getStudyProtocolIdentifier()));
         assertTrue(iiTest(r.getStudySiteIdentifier()));
         assertTrue(iiTest(r.getDiseaseIdentifier()));
-        assertTrue(stTest(r.getOutcomesLoginName()));
+    }
+    
+    @Test
+    public void subjectAccrualConversion() throws Exception {
+        PerformedSubjectMilestone milestone = new PerformedSubjectMilestone();
+        milestone.setRegistrationDate(TsConverter.convertToTimestamp(tsVal));
+        
+        SDCDisease disease = new SDCDisease();
+        disease.setId(IiConverter.convertToLong(iiVal));
+        
+        StudySite participatingSite = new StudySite();
+        participatingSite.setId(IiConverter.convertToLong(iiVal));
+        
+        Patient patient = new Patient();
+        patient.setBirthDate(TsConverter.convertToTimestamp(tsVal));
+        patient.setSexCode(null);
+        patient.setRaceCode(CdConverter.convertCdToString(cdVal));
+        patient.setEthnicCode(null);
+        patient.setCountryIdentifier(IiConverter.convertToLong(iiVal));
+        patient.setZip(StConverter.convertToString(stVal));
+        
+        StudySubject subject = new StudySubject();
+        subject.setId(IiConverter.convertToLong(iiVal));
+        subject.setAssignedIdentifier(StConverter.convertToString(stVal));
+        subject.getPerformedActivities().add(milestone);
+        SubjectAccrualDTO dto = Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(subject);
+
+        assertTrue(iiTest(dto.getIdentifier()));
+        assertTrue(stTest(dto.getAssignedIdentifier()));
+        assertTrue(tsTest(dto.getRegistrationDate()));
+        assertTrue(cdTest(dto.getPaymentMethod()));
+        
+        subject.setDisease(disease);
+        subject.setPatient(patient);
+        subject.setStudySite(participatingSite);
+        dto = Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(subject);
+
+        assertTrue(iiTest(dto.getIdentifier()));
+        assertTrue(stTest(dto.getAssignedIdentifier()));
+        assertTrue(cdTest(dto.getGender()));
+        assertTrue(tsTest(dto.getBirthDate()));
+        assertTrue(dsetTest(dto.getRace()));
+        assertTrue(cdTest(dto.getEthnicity()));
+        assertTrue(iiTest(dto.getCountryIdentifier()));
+        assertTrue(stTest(dto.getZipCode()));
+        assertTrue(tsTest(dto.getRegistrationDate()));
+        assertTrue(cdTest(dto.getPaymentMethod()));
+        assertTrue(iiTest(dto.getDiseaseIdentifier()));
+        assertTrue(iiTest(dto.getParticipatingSiteIdentifier()));
     }
 }

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ISO="uri:iso.org:21090" xmlns:COPPA-ACCRUAL="http://accrual.services.coppa.nci.nih.gov"
+    targetNamespace="http://accrual.services.coppa.nci.nih.gov" elementFormDefault="qualified" xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+    jxb:version="1.0">
+    <xs:import schemaLocation="ISO_datatypes_Narrative.xsd" namespace="uri:iso.org:21090" />
+    
+    <xs:complexType name="BaseType" abstract="true">
+        <xs:sequence>
+            <xs:element name="identifier" type="ISO:II" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:element name="StudySubject">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="COPPA-ACCRUAL:BaseType">
+                    <xs:sequence>
+                        <xs:element name="assignedIdentifier" type="ISO:ST"/>
+                        <xs:element name="birthDate" type="ISO:TS"/>
+                        <xs:element name="gender" type="ISO:CD"/>
+                        <xs:element name="race" type="ISO:DSET_CD"/>
+                        <xs:element name="ethnicity" type="ISO:CD"/>
+                        <xs:element name="countryIdentifier" type="ISO:II"/> 
+                        <xs:element name="zipCode" type="ISO:ST"/>
+                        <xs:element name="registrationDate" type="ISO:TS"/>
+                        <xs:element name="methodOfPayment" type="ISO:CD"/>
+                        <xs:element name="diseaseIdentifier" type="ISO:II"/>
+                        <xs:element name="participatingSiteIdentifier" type="ISO:II"/>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="Integer">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="ISO:INT" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="Ts">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="ISO:TS" />
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    
+</xs:schema>

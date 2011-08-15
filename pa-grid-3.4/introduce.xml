@@ -1,6 +1,35 @@
 <ns1:ServiceDescription introduceVersion="1.3" xmlns:ns1="gme://gov.nih.nci.cagrid/1/Introduce">
  <ns2:Namespaces xsi:type="ns2:NamespacesType" xmlns:ns2="gme://gov.nih.nci.cagrid.introduce/1/Namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns2:Namespace generateStubs="true" location="./CoppaPA.xsd" namespace="http://pa.services.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.services.pa" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace generateStubs="false" location="./CoppaAccrual.xsd" namespace="http://accrual.services.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.services.accrual" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement className="Integer" deserializer="gov.nih.nci.iso21090.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.iso21090.grid.ser.JaxbSerializerFactory" type="Integer" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="StudySubject" deserializer="gov.nih.nci.iso21090.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.iso21090.grid.ser.JaxbSerializerFactory" type="StudySubject" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement className="Ts" deserializer="gov.nih.nci.iso21090.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.iso21090.grid.ser.JaxbSerializerFactory" type="Ts" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./ISO_datatypes_Narrative.xsd" namespace="uri:iso.org:21090" packageName="org.iso._21090" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement className="" deserializer="" serializer="" type="br" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="caption" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="col" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="colgroup" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="content" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="footnote" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="footnoteRef" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="item" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="linkHtml" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="list" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="paragraph" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="renderMultiMedia" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="sub" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="sup" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="table" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="tbody" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="td" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="text" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="tfoot" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="th" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="thead" xsi:type="ns2:SchemaElementType"/>
+   <ns2:SchemaElement type="tr" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace generateStubs="false" location="./CoppaPA.xsd" namespace="http://pa.services.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.services.pa" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement className="Arm" deserializer="gov.nih.nci.iso21090.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.iso21090.grid.ser.JaxbSerializerFactory" type="Arm" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="Disease" deserializer="gov.nih.nci.iso21090.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.iso21090.grid.ser.JaxbSerializerFactory" type="Disease" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="Document" deserializer="gov.nih.nci.iso21090.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.iso21090.grid.ser.JaxbSerializerFactory" type="Document" xsi:type="ns2:SchemaElementType"/>
@@ -33,31 +62,7 @@
    <ns2:SchemaElement className="StudySiteContact" deserializer="gov.nih.nci.iso21090.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.iso21090.grid.ser.JaxbSerializerFactory" type="StudySiteContact" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement className="StudySiteOverallStatus" deserializer="gov.nih.nci.iso21090.grid.ser.JaxbDeserializerFactory" serializer="gov.nih.nci.iso21090.grid.ser.JaxbSerializerFactory" type="StudySiteOverallStatus" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
-  <ns2:Namespace location="./ISO_datatypes_Narrative.xsd" namespace="uri:iso.org:21090" packageName="org.iso._21090" xsi:type="ns2:NamespaceType">
-   <ns2:SchemaElement className="" deserializer="" serializer="" type="br" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="caption" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="col" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="colgroup" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="content" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="footnote" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="footnoteRef" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="item" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="linkHtml" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="list" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="paragraph" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="renderMultiMedia" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="sub" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="sup" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="table" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="tbody" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="td" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="text" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="tfoot" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="th" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="thead" xsi:type="ns2:SchemaElementType"/>
-   <ns2:SchemaElement type="tr" xsi:type="ns2:SchemaElementType"/>
-  </ns2:Namespace>
-  <ns2:Namespace location="./CoppaPAFaults.xsd" namespace="http://faults.pa.services.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.services.pa.faults" xsi:type="ns2:NamespaceType">
+  <ns2:Namespace generateStubs="true" location="./CoppaPAFaults.xsd" namespace="http://faults.pa.services.coppa.nci.nih.gov" packageName="gov.nih.nci.coppa.services.pa.faults" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="DuplicateParticipatingSiteFault" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="PAFault" xsi:type="ns2:SchemaElementType"/>
    <ns2:SchemaElement type="TooManyResultsFault" xsi:type="ns2:SchemaElementType"/>
@@ -274,6 +279,9 @@
   </ns2:Namespace>
   <ns2:Namespace location="./RegulatoryAuthorityServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/RegulatoryAuthorityService/types" packageName="gov.nih.nci.coppa.services.pa.regulatoryauthorityservice.stubs.types" xsi:type="ns2:NamespaceType">
    <ns2:SchemaElement type="RegulatoryAuthorityServiceReference" xsi:type="ns2:SchemaElementType"/>
+  </ns2:Namespace>
+  <ns2:Namespace location="./SubjectAccrualServiceTypes.xsd" namespace="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/types" packageName="gov.nih.nci.coppa.services.accrual.subjectaccrualservice.stubs.types" xsi:type="ns2:NamespaceType">
+   <ns2:SchemaElement type="SubjectAccrualServiceReference" xsi:type="ns2:SchemaElementType"/>
   </ns2:Namespace>
  </ns2:Namespaces>
  <ns3:Services xsi:type="ns3:ServicesType" xmlns:ns3="gme://gov.nih.nci.cagrid.introduce/1/Services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -3853,11 +3861,83 @@
    </ns3:ResourceFrameworkOptions>
    <ns862:Extensions xsi:type="ns862:ExtensionsType" xmlns:ns862="gme://gov.nih.nci.cagrid.introduce/1/Extension"/>
   </ns3:Service>
+  <ns3:Service name="SubjectAccrualService" namespace="http://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService" packageName="gov.nih.nci.coppa.services.accrual.subjectaccrualservice" xsi:type="ns3:ServiceType">
+   <ns863:Methods xsi:type="ns863:MethodsType" xmlns:ns863="gme://gov.nih.nci.cagrid.introduce/1/Methods">
+    <ns863:Method isImported="true" isProvided="true" name="getServiceSecurityMetadata" xsi:type="ns863:MethodType">
+     <ns863:Output qName="ns864:ServiceSecurityMetadata" isArray="false" isClientHandle="false" xmlns:ns864="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security"/>
+     <ns865:MethodSecurity xsi:type="ns865:MethodSecurity" xmlns:ns865="gme://gov.nih.nci.cagrid.introduce/1/Security">
+      <ns865:SecuritySetting xsi:type="ns865:SecuritySetting">None</ns865:SecuritySetting>
+      <ns865:MethodAuthorization xsi:type="ns865:MethodAuthorization">
+       <ns865:NoAuthorization xsi:type="ns865:NoAuthorization"/>
+      </ns865:MethodAuthorization>
+     </ns865:MethodSecurity>
+     <ns863:ImportInformation namespace="http://security.introduce.cagrid.nci.nih.gov/ServiceSecurity" packageName="gov.nih.nci.cagrid.introduce.security.stubs" portTypeName="ServiceSecurityPortType" wsdlFile="ServiceSecurity.wsdl"/>
+     <ns863:ProviderInformation providerClass="gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl"/>
+    </ns863:Method>
+    <ns863:Method description="" isImported="false" isProvided="false" name="manageSubjectAccruals" xsi:type="ns863:MethodType">
+     <ns863:Inputs>
+      <ns863:Input qName="ns866:StudySubject" description="" isArray="true" name="studySubjects" xmlns:ns866="http://accrual.services.coppa.nci.nih.gov"/>
+     </ns863:Inputs>
+     <ns863:Output qName="ns867:StudySubject" description="" isArray="true" xmlns:ns867="http://accrual.services.coppa.nci.nih.gov"/>
+     <ns863:Exceptions>
+      <ns863:Exception description="" name="PAFault" qname="ns868:PAFault" xmlns:ns868="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns863:Exceptions>
+    </ns863:Method>
+    <ns863:Method description="" isImported="false" isProvided="false" name="deleteSubjectAccrual" xsi:type="ns863:MethodType">
+     <ns863:Inputs>
+      <ns863:Input qName="ns869:Id" description="" isArray="false" name="subjectAccrualdenfier" xmlns:ns869="http://iso21090.nci.nih.gov"/>
+     </ns863:Inputs>
+     <ns863:Output qName="void" description="" isArray="false"/>
+     <ns863:Exceptions>
+      <ns863:Exception description="" name="PAFault" qname="ns870:PAFault" xmlns:ns870="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns863:Exceptions>
+    </ns863:Method>
+    <ns863:Method description="" isImported="false" isProvided="false" name="submitBatchData" xsi:type="ns863:MethodType">
+     <ns863:Inputs>
+      <ns863:Input qName="ns871:Ed" description="" isArray="false" name="batchData" xmlns:ns871="http://pa.services.coppa.nci.nih.gov"/>
+     </ns863:Inputs>
+     <ns863:Output qName="void" description="" isArray="false"/>
+     <ns863:Exceptions>
+      <ns863:Exception description="" name="PAFault" qname="ns872:PAFault" xmlns:ns872="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns863:Exceptions>
+    </ns863:Method>
+    <ns863:Method description="" isImported="false" isProvided="false" name="search" xsi:type="ns863:MethodType">
+     <ns863:Inputs>
+      <ns863:Input qName="ns873:Id" description="" isArray="false" name="studyProtocolIdentifer" xmlns:ns873="http://iso21090.nci.nih.gov"/>
+      <ns863:Input qName="ns874:Id" description="" isArray="false" name="participatingSiteIdentifier" xmlns:ns874="http://iso21090.nci.nih.gov"/>
+      <ns863:Input qName="ns875:Ts" description="" isArray="false" name="startDate" xmlns:ns875="http://accrual.services.coppa.nci.nih.gov"/>
+      <ns863:Input qName="ns876:Ts" description="" isArray="false" name="endDate" xmlns:ns876="http://accrual.services.coppa.nci.nih.gov"/>
+      <ns863:Input qName="ns877:LimitOffset" description="" isArray="false" name="pagingParams" xmlns:ns877="http://common.coppa.nci.nih.gov"/>
+     </ns863:Inputs>
+     <ns863:Output qName="ns878:StudySubject" description="" isArray="true" xmlns:ns878="http://accrual.services.coppa.nci.nih.gov"/>
+     <ns863:Exceptions>
+      <ns863:Exception description="" name="PAFault" qname="ns879:PAFault" xmlns:ns879="http://faults.pa.services.coppa.nci.nih.gov"/>
+      <ns863:Exception description="" name="TooManyResultsFault" qname="ns880:TooManyResultsFault" xmlns:ns880="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns863:Exceptions>
+    </ns863:Method>
+    <ns863:Method description="" isImported="false" isProvided="false" name="updateSubjectAccrualCount" xsi:type="ns863:MethodType">
+     <ns863:Inputs>
+      <ns863:Input qName="ns881:Id" description="" isArray="false" name="participatingSiteIdentifier" xmlns:ns881="http://iso21090.nci.nih.gov"/>
+      <ns863:Input qName="ns882:Integer" description="" isArray="false" name="accrualCount" xmlns:ns882="http://accrual.services.coppa.nci.nih.gov"/>
+     </ns863:Inputs>
+     <ns863:Output qName="void" description="" isArray="false"/>
+     <ns863:Exceptions>
+      <ns863:Exception description="" name="PAFault" qname="ns883:PAFault" xmlns:ns883="http://faults.pa.services.coppa.nci.nih.gov"/>
+     </ns863:Exceptions>
+    </ns863:Method>
+   </ns863:Methods>
+   <ns884:ResourcePropertiesList xsi:type="ns884:ResourcePropertiesListType" xmlns:ns884="gme://gov.nih.nci.cagrid.introduce/1/Resources"/>
+   <ns3:description xsi:type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></ns3:description>
+   <ns3:ResourceFrameworkOptions xsi:type="ns3:ResourceFrameworkOptions">
+    <ns3:Identifiable xsi:type="ns3:Identifiable"/>
+    <ns3:Secure xsi:type="ns3:Secure"/>
+   </ns3:ResourceFrameworkOptions>
+  </ns3:Service>
  </ns3:Services>
- <ns863:Extensions xsi:type="ns863:ExtensionsType" xmlns:ns863="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ns863:Extension name="cagrid_metadata" version="1.3" xsi:type="ns863:ExtensionType"/>
- </ns863:Extensions>
- <ns864:ServiceProperties xmlns:ns864="gme://gov.nih.nci.cagrid.introduce/1/Property">
-  <ns864:Property description="The separator used to encord the gridServicePrincipal and grid user's identity when Using the com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule" isFromETC="false" key="gridServicePrincipalSeparator" value="||"/>
- </ns864:ServiceProperties>
+ <ns885:Extensions xsi:type="ns885:ExtensionsType" xmlns:ns885="gme://gov.nih.nci.cagrid.introduce/1/Extension" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ns885:Extension name="cagrid_metadata" version="1.3" xsi:type="ns885:ExtensionType"/>
+ </ns885:Extensions>
+ <ns886:ServiceProperties xmlns:ns886="gme://gov.nih.nci.cagrid.introduce/1/Property">
+  <ns886:Property description="The separator used to encord the gridServicePrincipal and grid user's identity when Using the com.fiveamsolutions.nci.commons.authentication.CommonsGridLoginModule" isFromETC="false" key="gridServicePrincipalSeparator" value="||"/>
+ </ns886:ServiceProperties>
 </ns1:ServiceDescription>

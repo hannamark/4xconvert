@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:aggr="http://mds.globus.org/aggregator/types" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="defaultServerConfig">
+  <service name="SERVICE-INSTANCE-PREFIX/SubjectAccrualService" provider="Handler" use="literal" style="document">
+    <parameter name="className" value="gov.nih.nci.coppa.services.accrual.subjectaccrualservice.service.globus.SubjectAccrualServiceProviderImpl" />
+    <wsdlFile>share/schema/PAServices/SubjectAccrualService_service.wsdl</wsdlFile>
+    <parameter name="securityDescriptor" value="ETC-PATH/SubjectAccrualService-security-desc.xml" />
+    <parameter name="allowedMethods" value="*" />
+    <parameter name="handlerClass" value="org.globus.axis.providers.RPCProvider" />
+    <parameter name="scope" value="Application" />
+    <parameter name="providers" value=" gov.nih.nci.cagrid.introduce.security.service.globus.ServiceSecurityProviderImpl" />
+    <parameter name="loadOnStartup" value="true" />
+    <parameter name="securityMetadata" value="ETC-PATH/SubjectAccrualService-security-metadata.xml" />
+    <parameter name="subjectaccrualservice-etcDirectoryPath" value="ETC-PATH" />
+    <parameter name="subjectaccrualservice-serviceName" value="SubjectAccrualService" />
+  </service>
   <service name="SERVICE-INSTANCE-PREFIX/RegulatoryAuthorityService" provider="Handler" use="literal" style="document">
     <parameter name="className" value="gov.nih.nci.coppa.services.pa.regulatoryauthorityservice.service.globus.RegulatoryAuthorityServiceProviderImpl" />
     <wsdlFile>share/schema/PAServices/RegulatoryAuthorityService_service.wsdl</wsdlFile>
@@ -340,6 +353,12 @@
   </service>
   <typeMapping name="AggregatorContent" qname="aggr:AggregatorContent" type="java:org.globus.mds.aggregator.types.AggregatorContent" serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" encodingStyle="" />
   <!-- START INTRODUCE TYPEMAPPINGS -->
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.iso21090.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.iso21090.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.accrual.Integer" qname="ns2:Integer" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://accrual.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.iso21090.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.iso21090.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.accrual.StudySubject" qname="ns2:StudySubject" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://accrual.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
+<ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.iso21090.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.iso21090.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.accrual.Ts" qname="ns2:Ts" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://accrual.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
+
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.iso21090.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.iso21090.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.pa.Arm" qname="ns2:Arm" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://pa.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>
 
 <ns3:typeMapping encodingStyle="" serializer="gov.nih.nci.iso21090.grid.ser.JaxbSerializerFactory" deserializer="gov.nih.nci.iso21090.grid.ser.JaxbDeserializerFactory" type="ns1:gov.nih.nci.coppa.services.pa.Disease" qname="ns2:Disease" xmlns:ns1="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns2="http://pa.services.coppa.nci.nih.gov" xmlns:ns3="http://xml.apache.org/axis/wsdd/"/>

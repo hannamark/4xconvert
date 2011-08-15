@@ -105,6 +105,10 @@ http\://enterpriseservices.nci.nih.gov/PAServices/RegulatoryAuthorityService=gov
 http\://enterpriseservices.nci.nih.gov/PAServices/RegulatoryAuthorityService/bindings=gov.nih.nci.coppa.services.pa.regulatoryauthorityservice.stubs.bindings
 http\://enterpriseservices.nci.nih.gov/PAServices/RegulatoryAuthorityService/service=gov.nih.nci.coppa.services.pa.regulatoryauthorityservice.stubs.service
 http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
+http\://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService=gov.nih.nci.coppa.services.accrual.subjectaccrualservice.stubs
+http\://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/bindings=gov.nih.nci.coppa.services.accrual.subjectaccrualservice.stubs.bindings
+http\://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/service=gov.nih.nci.coppa.services.accrual.subjectaccrualservice.stubs.service
+http\://security.introduce.cagrid.nci.nih.gov/ServiceSecurity=gov.nih.nci.cagrid.introduce.security.stubs
 
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyOutcomeMeasureService/types=gov.nih.nci.coppa.services.pa.studyoutcomemeasureservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/DiseaseService/types=gov.nih.nci.coppa.services.pa.diseaseservice.stubs.types
@@ -118,6 +122,7 @@ http\://iso21090.nci.nih.gov=gov.nih.nci.iso21090.extensions
 http\://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/View=gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.view
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/types=gov.nih.nci.coppa.services.pa.studydiseaseservice.stubs.types
 http\://po.coppa.nci.nih.gov=gov.nih.nci.coppa.po
+http\://accrual.services.coppa.nci.nih.gov=gov.nih.nci.coppa.services.accrual
 http\://enterpriseservices.nci.nih.gov/PAServices/DocumentWorkflowStatusService/types=gov.nih.nci.coppa.services.pa.documentworkflowstatusservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteService/types=gov.nih.nci.coppa.services.pa.studysiteservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/types=gov.nih.nci.coppa.services.pa.plannedactivityservice.stubs.types
@@ -130,6 +135,7 @@ http\://enterpriseservices.nci.nih.gov/PAServices/StudyRelationshipService/types
 http\://common.coppa.nci.nih.gov=gov.nih.nci.coppa.common
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationContactService/types=gov.nih.nci.coppa.services.pa.studyparticipationcontactservice.stubs.types
 http\://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/Management=gov.nih.nci.coppa.services.pa.studysiteparticipationservice.types.management
+http\://enterpriseservices.nci.nih.gov/PAServices/SubjectAccrualService/types=gov.nih.nci.coppa.services.accrual.subjectaccrualservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyOverallStatusService/types=gov.nih.nci.coppa.services.pa.studyoverallstatusservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteContactService/types=gov.nih.nci.coppa.services.pa.studysitecontactservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyParticipationService/types=gov.nih.nci.coppa.services.pa.studyparticipationservice.stubs.types

@@ -163,6 +163,7 @@
             <arg file="${basedir}/schema/PAServices/ISO_datatypes_Narrative.xsd" />
             <arg file="${basedir}/schema/PAServices/StudySiteParticipationManagementTypes.xsd" />
             <arg file="${basedir}/schema/PAServices/StudySiteParticipationViewTypes.xsd" />
+            <arg file="${basedir}/schema/PAServices/CoppaAccrual.xsd" />
             <arg value="-d" />
             <arg file="${stubs.src}" />
             <arg value="-b" />
@@ -561,4 +562,8 @@
     <target name="runStudySiteParticipationSimpleClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample studysiteparticipation Client">
         <run-client serviceendpointname="StudySiteParticipationService" class="gov.nih.nci.coppa.services.pa.studysiteparticipationservice.client.StudySiteParticipationServiceSimpleClient" debug-suspend="n" />
     </target>
+    <target name="runSubjectAccrualClient" depends="checkGlobus, defineClasspaths, jarTests-quick" description="Run the sample studysiteparticipation Client">
+        <run-client serviceendpointname="SubjectAccrualService" class="gov.nih.nci.coppa.services.accrual.subjectaccrualservice.client.SubjectAccrualServiceClient" debug-suspend="n" />
+    </target>
 </project>
+
