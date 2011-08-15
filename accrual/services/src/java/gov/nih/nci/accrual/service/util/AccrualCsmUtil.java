@@ -80,13 +80,12 @@
 package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.security.SecurityServiceProvider;
 import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
 import gov.nih.nci.security.exceptions.CSTransactionException;
-
-import java.rmi.RemoteException;
 
 import org.apache.log4j.Logger;
 
@@ -108,14 +107,14 @@ public class AccrualCsmUtil implements CsmUtil {
     /**
      * {@inheritDoc}
      */
-    public User getCSMUser(String loginName) throws RemoteException {
+    public User getCSMUser(String loginName) throws PAException {
         User csmUser = null;
         try {
             UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
             csmUser = upManager.getUser(loginName);
         } catch (CSException cse) {
-            LOG.error(" CSM Exception while retrieving CSM user : " + loginName, cse);
-            throw new RemoteException(" CSM exception while retrieving CSM user :" + loginName, cse);
+            LOG.error("CSM Exception while retrieving CSM user : " + loginName, cse);
+            throw new PAException("CSM exception while retrieving CSM user :" + loginName, cse);
         }
         return csmUser;
     }
@@ -123,7 +122,7 @@ public class AccrualCsmUtil implements CsmUtil {
     /**
      * {@inheritDoc}
      */
-    public User createCSMUser(RegistryUser user, String loginName) throws RemoteException {
+    public User createCSMUser(RegistryUser user, String loginName) throws PAException {
         User createdCSMUser = null;
         try {
             // create the csm user
@@ -140,8 +139,8 @@ public class AccrualCsmUtil implements CsmUtil {
             assignUserToGroups(loginName, upManager);
             createdCSMUser = upManager.getUser(loginName);
         } catch (CSException cse) {
-            LOG.error(" CSM Exception while creating CSM user : " + loginName, cse);
-            throw new RemoteException(" CSM exception while creating CSM user :" + loginName, cse);
+            LOG.error("CSM Exception while creating CSM user : " + loginName, cse);
+            throw new PAException("CSM exception while creating CSM user :" + loginName, cse);
         }
 
         return createdCSMUser;
@@ -154,7 +153,7 @@ public class AccrualCsmUtil implements CsmUtil {
     /**
      * {@inheritDoc}
      */
-    public User updateCSMUser(RegistryUser user, String loginName) throws RemoteException {
+    public User updateCSMUser(RegistryUser user, String loginName) throws PAException {
         User createdCSMUser = null;
         try {
             // create the csm user
@@ -179,7 +178,7 @@ public class AccrualCsmUtil implements CsmUtil {
             createdCSMUser = upManager.getUser(loginName);
         } catch (CSException cse) {
             LOG.error(" CSM Exception while updating CSM user : " + loginName, cse);
-            throw new RemoteException(" CSM exception while updating CSM user :" + loginName, cse);
+            throw new PAException(" CSM exception while updating CSM user :" + loginName, cse);
         }
 
         return createdCSMUser;
