@@ -93,8 +93,8 @@ import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -138,7 +138,7 @@ public class PatientHelper {
         List<StudySubjectDto> allSss = null;
         try {
             allSss = action.getStudySubjectSvc().getByStudyProtocol(action.getSpIi());
-        } catch (RemoteException e) {
+        } catch (PAException e) {
             LOG.error("Error in PatientAction.validateNoPatientDuplicates().", e);
             action.addActionError(e.getLocalizedMessage());
         }
@@ -188,9 +188,9 @@ public class PatientHelper {
      * @param dtos dtos to convert
      * @param orgName organization name
      * @return converted web dtos
-     * @throws RemoteException in case of error
+     * @throws PAException in case of error
      */
-    public List<PatientWebDto> convertToWebDTOs(List<StudySubjectDto> dtos, String orgName) throws RemoteException {
+    public List<PatientWebDto> convertToWebDTOs(List<StudySubjectDto> dtos, String orgName) throws PAException {
         List<PatientWebDto> results = new ArrayList<PatientWebDto>();
         for (StudySubjectDto dto : dtos) {
             PatientDto pat = action.getPatientSvc().get(dto.getPatientIdentifier());

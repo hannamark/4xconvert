@@ -150,12 +150,12 @@ public class POPatientServiceTest extends AbstractServiceTest<POPatientBean>{
 
         try{
             bean.create(dto2);
-        } catch(PAException e){
+        } catch (PAException e){
             // expected
         }
         try{
             bean.get(null);
-        } catch(PAException e){
+        } catch (PAException e){
             // expected
         }
     }
@@ -165,7 +165,7 @@ public class POPatientServiceTest extends AbstractServiceTest<POPatientBean>{
         try {
             bean.create(null);
             fail();
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             // expected to fail
         }
     }

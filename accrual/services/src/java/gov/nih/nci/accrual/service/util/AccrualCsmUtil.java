@@ -87,14 +87,11 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
 import gov.nih.nci.security.exceptions.CSTransactionException;
 
-import org.apache.log4j.Logger;
-
 /**
  * @author Hugh Reinhart
  * @since Sep 11, 2009
  */
 public class AccrualCsmUtil implements CsmUtil {
-    private static final Logger LOG  = Logger.getLogger(AccrualCsmUtil.class);
     private static CsmUtil csmUtil = new AccrualCsmUtil();
 
    /**
@@ -113,7 +110,6 @@ public class AccrualCsmUtil implements CsmUtil {
             UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
             csmUser = upManager.getUser(loginName);
         } catch (CSException cse) {
-            LOG.error("CSM Exception while retrieving CSM user : " + loginName, cse);
             throw new PAException("CSM exception while retrieving CSM user :" + loginName, cse);
         }
         return csmUser;
@@ -139,8 +135,7 @@ public class AccrualCsmUtil implements CsmUtil {
             assignUserToGroups(loginName, upManager);
             createdCSMUser = upManager.getUser(loginName);
         } catch (CSException cse) {
-            LOG.error("CSM Exception while creating CSM user : " + loginName, cse);
-            throw new PAException("CSM exception while creating CSM user :" + loginName, cse);
+            throw new PAException(" CSM exception while creating CSM user :" + loginName, cse);
         }
 
         return createdCSMUser;
@@ -177,8 +172,7 @@ public class AccrualCsmUtil implements CsmUtil {
             assignUserToGroups(loginName, upManager);
             createdCSMUser = upManager.getUser(loginName);
         } catch (CSException cse) {
-            LOG.error(" CSM Exception while updating CSM user : " + loginName, cse);
-            throw new PAException(" CSM exception while updating CSM user :" + loginName, cse);
+            throw new PAException("CSM exception while updating CSM user :" + loginName, cse);
         }
 
         return createdCSMUser;

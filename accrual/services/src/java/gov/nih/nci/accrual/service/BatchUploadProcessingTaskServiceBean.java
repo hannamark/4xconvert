@@ -91,7 +91,6 @@ import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.io.File;
-import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
 
@@ -120,7 +119,7 @@ public class BatchUploadProcessingTaskServiceBean implements BatchUploadProcessi
     /**
      * {@inheritDoc}
      */
-    public void processBatchUploads() throws PAException, RemoteException {
+    public void processBatchUploads() throws PAException {
         CdusBatchUploadReaderServiceLocal batchUploadService = 
             AccrualServiceLocator.getInstance().getBatchUploadReaderService();
         File uploadDirectory = new File(PaEarPropertyReader.getAccrualBatchUploadPath());

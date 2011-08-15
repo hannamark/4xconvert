@@ -91,7 +91,6 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -128,7 +127,7 @@ public class MockStudySubjectBean implements StudySubjectService {
     /**
      * {@inheritDoc}
      */
-    public StudySubjectDto create(StudySubjectDto dto) throws RemoteException {
+    public StudySubjectDto create(StudySubjectDto dto) throws PAException {
         dto.setIdentifier(IiConverter.convertToIi(seq++));
         ssList.add(dto);
         return dto;
@@ -137,7 +136,7 @@ public class MockStudySubjectBean implements StudySubjectService {
     /**
      * {@inheritDoc}
      */
-    public void delete(Ii ii) throws RemoteException {
+    public void delete(Ii ii) throws PAException {
         // TODO Auto-generated method stub
 
     }
@@ -145,7 +144,7 @@ public class MockStudySubjectBean implements StudySubjectService {
     /**
      * {@inheritDoc}
      */
-    public StudySubjectDto get(Ii ii) throws RemoteException {
+    public StudySubjectDto get(Ii ii) throws PAException {
         Long id = IiConverter.convertToLong(ii);
         StudySubjectDto result = null;
         for (StudySubjectDto dto : ssList) {
@@ -159,7 +158,7 @@ public class MockStudySubjectBean implements StudySubjectService {
     /**
      * {@inheritDoc}
      */
-    public StudySubjectDto update(StudySubjectDto dto) throws RemoteException {
+    public StudySubjectDto update(StudySubjectDto dto) throws PAException {
         Long id = IiConverter.convertToLong(dto.getIdentifier());
         for (StudySubjectDto ss : ssList) {
             if (id.equals(IiConverter.convertToLong(ss.getIdentifier()))) {
@@ -172,7 +171,7 @@ public class MockStudySubjectBean implements StudySubjectService {
     /**
      * {@inheritDoc}
      */
-    public List<StudySubjectDto> getByStudyProtocol(Ii ii) throws RemoteException {
+    public List<StudySubjectDto> getByStudyProtocol(Ii ii) throws PAException {
         return ssList;
     }
 

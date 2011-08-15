@@ -90,7 +90,6 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -185,18 +184,4 @@ public class StudySubjectBeanLocal
             criteria.createCriteria("patient", "p").add(Restrictions.eq("p.birthDate", birthDate));
         }
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StudySubjectDto create(StudySubjectDto dto) throws RemoteException {
-        if (!ISOUtil.isStNull(dto.getOutcomesLoginName())) {
-            throw new RemoteException("Method createOutcomes() should be used to create outcomes participants.");
-        }
-        return super.create(dto);
-    }
-
-
-
 }

@@ -93,10 +93,8 @@ import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 
-import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.List;
 
@@ -121,7 +119,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         assertNotNull(dto);
         try {
             dto = bean.get(BII);
-        } catch (RemoteException e) {
+        } catch (PAException e) {
             // expected behavior
         }
     }
@@ -185,7 +183,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         try {
             bean.getByStudyProtocol(null);
             fail();
-        } catch (RemoteException ex) {
+        } catch (PAException ex) {
             // expected
         }
 
@@ -208,7 +206,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         try {
             bean.get(null);
             fail();
-        } catch (RemoteException ex) {
+        } catch (PAException ex) {
             // expected
         }
 
@@ -217,7 +215,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         try {
             bean.update(dto);
             fail();
-        } catch (RemoteException ex) {
+        } catch (PAException ex) {
             // expected
         }
 
@@ -226,28 +224,21 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
             dto.setIdentifier(ii);
             bean.create(dto);
             fail();
-        } catch (RemoteException ex) {
-            // expected
-        }
-
-        try{
-            dto.setOutcomesLoginName(StConverter.convertToSt("Test"));
-            bean.create(dto);
-        } catch (RemoteException ex) {
+        } catch (PAException ex) {
             // expected
         }
 
         try {
             bean.delete(null);
             fail();
-        } catch (RemoteException ex) {
+        } catch (PAException ex) {
             // expected
         }
 
         try {
             bean.delete(ii);
             fail();
-        } catch (RemoteException ex) {
+        } catch (PAException ex) {
             // expected
         }
     }

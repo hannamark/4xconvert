@@ -86,12 +86,12 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.zip.DataFormatException;
 
@@ -160,11 +160,11 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
     /**
      * @param ii index of object
      * @return null
-     * @throws RemoteException exception
+     * @throws PAException exception
      */
-    public DTO get(Ii ii) throws RemoteException {
+    public DTO get(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
-            throw new RemoteException("Called get() with Ii == null.");
+            throw new PAException("Called get() with Ii == null.");
         }
         BO bo = null;
         DTO resultDto = null;
@@ -178,23 +178,23 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
                 return resultDto;
             }
         } catch (HibernateException hbe) {
-            throw new RemoteException("Hibernate exception in get().", hbe);
+            throw new PAException("Hibernate exception in get().", hbe);
         }
         try {
             resultDto = convertFromDomainToDto(bo);
         } catch (DataFormatException e) {
-            throw new RemoteException("Iso conversion exception in get().", e);
+            throw new PAException("Iso conversion exception in get().", e);
         }
         return resultDto;
     }
 
     /**
      * @param ii index of object
-     * @throws RemoteException exception
+     * @throws PAException exception
      */
-    public void delete(Ii ii) throws RemoteException {
+    public void delete(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
-            throw new RemoteException("Called delete() with Ii == null.");
+            throw new PAException("Called delete() with Ii == null.");
         }
         Session session = null;
         try {
@@ -203,7 +203,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
             session.delete(bo);
             session.flush();
         }  catch (HibernateException hbe) {
-            throw new RemoteException("Hibernate exception while deleting ii = "
+            throw new PAException("Hibernate exception while deleting ii = "
                     + IiConverter.convertToString(ii) + ".", hbe);
         }
     }
@@ -211,11 +211,11 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
     /**
      * @param dto arm to create
      * @return the created planned activity
-     * @throws RemoteException exception.
+     * @throws PAException exception.
      */
-    public DTO create(DTO dto) throws RemoteException {
+    public DTO create(DTO dto) throws PAException {
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
-            throw new RemoteException("Update method should be used to modify existing.");
+            throw new PAException("Update method should be used to modify existing.");
         }
         return createOrUpdateNew(dto, Converters.get(getConverterArgument()));
     }
@@ -223,11 +223,11 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
     /**
      * @param dto arm to update
      * @return the updated planned activity
-     * @throws RemoteException exception.
+     * @throws PAException exception.
      */
-    public DTO update(DTO dto) throws RemoteException {
+    public DTO update(DTO dto) throws PAException {
         if (ISOUtil.isIiNull(dto.getIdentifier())) {
-            throw new RemoteException("Create method should be used to create new.");
+            throw new PAException("Create method should be used to create new.");
         }
         return createOrUpdateNew(dto, Converters.get(getConverterArgument()));
     }
@@ -235,10 +235,10 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
     /**
      * Sets the audit values.
      *
-     * @throws RemoteException on error
+     * @throws PAException on error
      * @param bo the new audit values
      */
-    protected void setAuditValues(AbstractEntity bo) throws RemoteException {
+    protected void setAuditValues(AbstractEntity bo) throws PAException {
         bo.setUserLastUpdated(AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
         bo.setDateLastUpdated(new Date());
         if (bo.getId() == null) {
@@ -257,16 +257,16 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
      * @param <CONVERTER2> converter
      * @return the dTO
      *
-     * @throws RemoteException the remote exception
+     * @throws PAException the remote exception
      */
     protected <DTO2 extends BaseDTO, BO2 extends AbstractEntity,
     CONVERTER2 extends AbstractConverter<DTO2, BO2>> DTO2
-    createOrUpdateNew(DTO2 dto, AbstractConverter<DTO2, BO2> conv) throws RemoteException {
+    createOrUpdateNew(DTO2 dto, AbstractConverter<DTO2, BO2> conv) throws PAException {
         BO2 bo = null;
         try {
             bo = conv.convertFromDtoToDomain(dto);
         } catch (DataFormatException e) {
-            throw new RemoteException("Iso conversion exception in createOrUpdateNew().", e);
+            throw new PAException("Iso conversion exception in createOrUpdateNew().", e);
         }
         DTO2 resultDto = null;
         try {
@@ -275,12 +275,12 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
             bo = (BO2) session.merge(bo);
             session.flush();
         } catch (HibernateException hbe) {
-            throw new RemoteException("Hibernate exception in createOrUpdateNew().", hbe);
+            throw new PAException("Hibernate exception in createOrUpdateNew().", hbe);
         }
         try {
             resultDto = conv.convertFromDomainToDto(bo);
         } catch (DataFormatException e) {
-            throw new RemoteException("Iso conversion exception in createOrUpdateNew().", e);
+            throw new PAException("Iso conversion exception in createOrUpdateNew().", e);
         }
         return resultDto;
     }

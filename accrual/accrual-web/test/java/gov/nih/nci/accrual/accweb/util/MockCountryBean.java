@@ -84,7 +84,6 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.service.PAException;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,14 +106,14 @@ public class MockCountryBean implements CountryService {
     /**
      * {@inheritDoc}
      */
-    public List<Country> getCountries() throws RemoteException {
+    public List<Country> getCountries() throws PAException {
         return rList;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Country getCountry(Ii ii) throws RemoteException {
+    public Country getCountry(Ii ii) throws PAException {
         return rList.get(0);
     }
 

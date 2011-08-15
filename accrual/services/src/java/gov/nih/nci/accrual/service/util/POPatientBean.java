@@ -84,14 +84,13 @@ import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PatientDTO;
-
-import java.rmi.RemoteException;
 
 import javax.ejb.Stateless;
 
@@ -124,9 +123,9 @@ public class POPatientBean implements POPatientService {
     /**
      * {@inheritDoc}
      */
-    public POPatientDTO create(POPatientDTO dto) throws RemoteException {
+    public POPatientDTO create(POPatientDTO dto) throws PAException {
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
-            throw new RemoteException("Update method should be used to modify existing.");
+            throw new PAException("Update method should be used to modify existing.");
         }
 
         PatientCorrelationServiceRemote pcsr = PoRegistry.getPatientCorrelationService();
@@ -139,9 +138,9 @@ public class POPatientBean implements POPatientService {
             Ii newId = pcsr.createCorrelation(patient);
             createdDTO = get(IiConverter.convertToPOPatientIi(IiConverter.convertToLong(newId)));
         } catch (CurationException ex) {
-            throw new RemoteException(ex.toString(), ex);
+            throw new PAException(ex.toString(), ex);
         } catch (EntityValidationException ex) {
-            throw new RemoteException(ex.toString(), ex);
+            throw new PAException(ex.toString(), ex);
         } 
         
         return createdDTO;
@@ -150,9 +149,9 @@ public class POPatientBean implements POPatientService {
     /**
      * {@inheritDoc}
      */
-    public POPatientDTO get(Ii ii) throws RemoteException {
+    public POPatientDTO get(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
-            throw new RemoteException("Called get(null)");
+            throw new PAException("Called get(null)");
         }
 
         PatientCorrelationServiceRemote pcsr = PoRegistry.getPatientCorrelationService();
@@ -160,7 +159,7 @@ public class POPatientBean implements POPatientService {
         try {
             patient = pcsr.getCorrelation(ii);
         } catch (NullifiedRoleException ex) {
-            throw new RemoteException(ex.toString(), ex);
+            throw new PAException(ex.toString(), ex);
         }
         
         POPatientDTO dto = new POPatientDTO();
@@ -173,9 +172,9 @@ public class POPatientBean implements POPatientService {
     /**
      * {@inheritDoc}
      */
-    public POPatientDTO update(POPatientDTO dto) throws RemoteException {
+    public POPatientDTO update(POPatientDTO dto) throws PAException {
         if (ISOUtil.isIiNull(dto.getIdentifier())) {
-            throw new RemoteException("Create method should be used to create new.");
+            throw new PAException("Create method should be used to create new.");
         }
 
         PatientCorrelationServiceRemote pcsr = PoRegistry.getPatientCorrelationService();
@@ -188,7 +187,7 @@ public class POPatientBean implements POPatientService {
             pcsr.updateCorrelation(patient);
             updatedDTO = get(IiConverter.convertToPOPatientIi(IiConverter.convertToLong(dto.getIdentifier())));
         } catch (EntityValidationException ex) {
-            throw new RemoteException(ex.toString(), ex);
+            throw new PAException(ex.toString(), ex);
         }
 
         return updatedDTO;

@@ -84,8 +84,8 @@ import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
 
-import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -106,46 +106,42 @@ public class MockPerformedActivityBean implements PerformedActivityService {
     }
 
     public PerformedSubjectMilestoneDto createPerformedSubjectMilestone(
-            PerformedSubjectMilestoneDto dto) throws RemoteException {
+            PerformedSubjectMilestoneDto dto) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
    
-    public List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudySubject(
-            Ii ii) throws RemoteException {
+    public List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudySubject(Ii ii) throws PAException {
         return psmList;
     }
 
-    public PerformedSubjectMilestoneDto updatePerformedSubjectMilestone(
-            PerformedSubjectMilestoneDto dto) throws RemoteException {
+    public PerformedSubjectMilestoneDto updatePerformedSubjectMilestone(PerformedSubjectMilestoneDto dto) 
+    throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public List<PerformedActivityDto> getByStudyProtocol(Ii ii)
-            throws RemoteException {
+    public List<PerformedActivityDto> getByStudyProtocol(Ii ii) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public PerformedActivityDto create(PerformedActivityDto dto)
-            throws RemoteException {
+    public PerformedActivityDto create(PerformedActivityDto dto) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public void delete(Ii ii) throws RemoteException {
+    public void delete(Ii ii) throws PAException {
         // TODO Auto-generated method stub
         
     }
 
-    public PerformedActivityDto get(Ii ii) throws RemoteException {
+    public PerformedActivityDto get(Ii ii) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public PerformedActivityDto update(PerformedActivityDto dto)
-            throws RemoteException {
+    public PerformedActivityDto update(PerformedActivityDto dto) throws PAException {
         // TODO Auto-generated method stub
         return null;
     }

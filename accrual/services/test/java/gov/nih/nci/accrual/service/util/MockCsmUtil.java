@@ -81,9 +81,9 @@ package gov.nih.nci.accrual.service.util;
 
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,7 +110,7 @@ public class MockCsmUtil implements CsmUtil {
         users.add(user);
     }
 
-    public User getCSMUser(String loginName) throws RemoteException {
+    public User getCSMUser(String loginName) throws PAException {
         for (User user : users) {
             if (user.getLoginName().equals(loginName)) {
                 return user;
@@ -119,11 +119,11 @@ public class MockCsmUtil implements CsmUtil {
         return TestSchema.createUser();
     }
     
-    public User createCSMUser(RegistryUser registryUser, String loginName) throws RemoteException {
+    public User createCSMUser(RegistryUser registryUser, String loginName) throws PAException {
         return users.get(0);
     }
     
-    public User updateCSMUser(RegistryUser registryUser, String loginName) throws RemoteException {
+    public User updateCSMUser(RegistryUser registryUser, String loginName) throws PAException {
         for (User user : users) {
             if (user.getLoginName().equals(loginName)) {
                 return user;

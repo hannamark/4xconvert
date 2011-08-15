@@ -92,9 +92,9 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 
-import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -124,18 +124,18 @@ public class PerformedActivityServiceTest extends AbstractServiceTest<PerformedA
             dto1.setIdentifier(null);
             dto1.setStudyProtocolIdentifier(null);
             bean.createPerformedSubjectMilestone(dto1);
-        } catch (RemoteException e) {
+        } catch (PAException e) {
             // expected behavior
         }
         try{
             bean.createPerformedSubjectMilestone(dto1);            
-        } catch (RemoteException e) {
+        } catch (PAException e) {
             // expected behavior
         }
         try{
             dto1.setIdentifier(null);
             bean.updatePerformedSubjectMilestone(dto1);
-        } catch (RemoteException e) {
+        } catch (PAException e) {
             // expected behavior
         }
     }
@@ -152,7 +152,7 @@ public class PerformedActivityServiceTest extends AbstractServiceTest<PerformedA
         
         try {
             bean.create(pa);
-        } catch(RemoteException e){
+        } catch(PAException e){
             //expected
         }
    
@@ -172,7 +172,7 @@ public class PerformedActivityServiceTest extends AbstractServiceTest<PerformedA
         
         try {
             bean.createPerformedSubjectMilestone(psmr);
-        } catch(RemoteException e){
+        } catch(PAException e){
             //expected
         }
         

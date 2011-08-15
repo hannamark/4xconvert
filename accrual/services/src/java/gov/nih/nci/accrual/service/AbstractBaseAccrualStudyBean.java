@@ -83,10 +83,10 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
@@ -113,9 +113,9 @@ public abstract class AbstractBaseAccrualStudyBean<DTO extends BaseDTO, BO exten
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public List<DTO> getByStudyProtocol(Ii ii) throws RemoteException {
+    public List<DTO> getByStudyProtocol(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
-            throw new RemoteException("Called getByStudyProtocol() with Ii == null.");
+            throw new PAException("Called getByStudyProtocol() with Ii == null.");
         }
 
         Session session = null;
@@ -139,14 +139,14 @@ public abstract class AbstractBaseAccrualStudyBean<DTO extends BaseDTO, BO exten
             // step 3: query the result
             queryList = query.list();
         } catch (HibernateException hbe) {
-            throw new RemoteException("Hibernate exception in getByStudyProtocol().", hbe);
+            throw new PAException("Hibernate exception in getByStudyProtocol().", hbe);
         }
-        ArrayList<DTO> resultList = new ArrayList<DTO>();
+        List<DTO> resultList = new ArrayList<DTO>();
         for (BO bo : queryList) {
             try {
                 resultList.add(convertFromDomainToDto(bo));
             } catch (DataFormatException e) {
-                throw new RemoteException("Iso conversion exception in getByStudyProtocol().", e);
+                throw new PAException("Iso conversion exception in getByStudyProtocol().", e);
             }
         }
         LOG.debug("Leaving getByStudyProtocol, returning " + resultList.size() + " object(s).");

@@ -79,8 +79,8 @@
 package gov.nih.nci.accrual.accweb.action;
 
 import gov.nih.nci.accrual.accweb.util.AccrualConstants;
+import gov.nih.nci.pa.service.PAException;
 
-import java.rmi.RemoteException;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
@@ -153,9 +153,9 @@ public abstract class AbstractListEditAccrualAction<DTO> extends AbstractAccrual
     /**
      * Add a new record to database (needs to be overridden).  Returns to list jsp.
      * @return result
-     * @throws RemoteException exception
+     * @throws PAException exception
      */
-    public String add() throws RemoteException {
+    public String add() throws PAException {
         loadDisplayList();
         ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
                 AccrualConstants.CREATE_MESSAGE);
@@ -165,9 +165,9 @@ public abstract class AbstractListEditAccrualAction<DTO> extends AbstractAccrual
     /**
      * Update a record in the database (needs to be overridden).  Returns to list jsp.
      * @return result
-     * @throws RemoteException exception
+     * @throws PAException exception
      */
-    public String edit() throws RemoteException {
+    public String edit() throws PAException {
         loadDisplayList();
         ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
                 AccrualConstants.UPDATE_MESSAGE);
@@ -177,9 +177,9 @@ public abstract class AbstractListEditAccrualAction<DTO> extends AbstractAccrual
     /**
      * Delete a record from database (needs to be overridden). Returns to list jsp.
      * @return action result
-     * @throws RemoteException exception
+     * @throws PAException exception
      */
-    public String delete() throws RemoteException {
+    public String delete() throws PAException {
         loadDisplayList();
         ServletActionContext.getRequest().setAttribute(AccrualConstants.SUCCESS_MESSAGE,
                 AccrualConstants.DELETE_MESSAGE);

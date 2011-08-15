@@ -83,7 +83,6 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.service.PAException;
 
-import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.ejb.Local;
@@ -98,15 +97,15 @@ public interface CountryService {
     /**
      * @param ii country index
      * @return country
-     * @throws RemoteException exception
+     * @throws PAException exception
      */
-    Country getCountry(Ii ii) throws RemoteException;
+    Country getCountry(Ii ii) throws PAException;
     
     /**
      * @return list of countries from database
-     * @throws RemoteException exception
+     * @throws PAException exception
      */
-    List<Country> getCountries() throws RemoteException;
+    List<Country> getCountries() throws PAException;
     
     /**
      * Returns the country with the given 2-digit code.

@@ -103,7 +103,6 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 
-import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -241,7 +240,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
      * {@inheritDoc}
      */
     @Override
-    public String delete() throws RemoteException {
+    public String delete() throws PAException {
         StudySubjectDto dto = getStudySubjectSvc().get(IiConverter.convertToIi(getSelectedRowIdentifier()));
         dto.setStatusCode(CdConverter.convertStringToCd(deletedStatusCode));
         dto.getStatusDateRange().setHigh(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
@@ -253,7 +252,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
      * {@inheritDoc}
      */
     @Override
-    public String add() throws RemoteException {
+    public String add() throws PAException {
         helper.validate();
         getListOfStudySites();
         if (hasActionErrors()) {
@@ -268,7 +267,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
                 .getPerformedStudySubjectMilestoneDto();
         try {
             pat = getPatientSvc().create(pat);
-        } catch (RemoteException e) {
+        } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
             return super.create();
         }
@@ -283,7 +282,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
      * {@inheritDoc}
      */
     @Override
-    public String edit() throws RemoteException {
+    public String edit() throws PAException {
         helper.validate();
         getListOfStudySites();
         if (hasActionErrors()) {
@@ -297,7 +296,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
                 .getPerformedStudySubjectMilestoneDto();
         try {
             pat = getPatientSvc().update(pat);
-        } catch (RemoteException e) {
+        } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
             return super.update();
         }
@@ -333,8 +332,6 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
                            ss.getOrgName()));
                 }
             }
-        } catch (RemoteException e) {
-            addActionError(e.getLocalizedMessage());
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
         }
@@ -428,7 +425,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
                         unitedStatesId = c.getId();
                     }
                 }
-            } catch (RemoteException e) {
+            } catch (PAException e) {
                 LOG.error("Error loading countries.", e);
             }
         }
@@ -480,7 +477,7 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
         List<PerformedSubjectMilestoneDto> smList;
         try {
             smList = getPerformedActivitySvc().getPerformedSubjectMilestoneByStudySubject(sub.getIdentifier());
-        } catch (RemoteException e) {
+        } catch (PAException e) {
             LOG.error("Error in PatientAction.getRegistrationDate().", e);
             return null;
         }

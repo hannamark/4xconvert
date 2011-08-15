@@ -109,7 +109,6 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 
 import java.io.File;
-import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -156,7 +155,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
      * {@inheritDoc}
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public List<BatchImportResults> importBatchData(File file) throws PAException, RemoteException {
+    public List<BatchImportResults> importBatchData(File file) throws PAException {
         List<BatchValidationResults> validationResults = validateBatchData(file);
         for (BatchValidationResults validationResult : validationResults) {
             if (!validationResult.isPassedValidation()) {
@@ -167,8 +166,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         return importBatchData(validationResults);
     }
        
-    private List<BatchImportResults> importBatchData(List<BatchValidationResults> validationResults) throws PAException,
-            RemoteException {
+    private List<BatchImportResults> importBatchData(List<BatchValidationResults> validationResults) 
+        throws PAException {
         List<BatchImportResults> importResults = new ArrayList<BatchImportResults>();
         for (BatchValidationResults result : validationResults) {
             importResults.add(importBatchData(result));
@@ -181,9 +180,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
      * @param results the validation results
      * @return the batch import results
      * @throws PAException on error
-     * @throws RemoteException on error
      */
-    private BatchImportResults importBatchData(BatchValidationResults results) throws PAException, RemoteException {
+    private BatchImportResults importBatchData(BatchValidationResults results) throws PAException {
         BatchImportResults importResults = new BatchImportResults();
         if (!results.isPassedValidation()) {
             return importResults;
@@ -206,9 +204,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
      * @param spDto the study protocol
      * @return the total number of create study subjects
      * @throws PAException on error
-     * @throws RemoteException on error
      */
-    private int createStudySubjects(List<String[]> lines, StudyProtocolDTO spDto) throws PAException, RemoteException {
+    private int createStudySubjects(List<String[]> lines, StudyProtocolDTO spDto) throws PAException {
         //Create patients, then the study subjects
         List<String[]> patientsLines = BatchUploadUtils.getPatientInfo(lines);
         Map<String, List<String>> raceMap = BatchUploadUtils.getPatientRaceInfo(lines);

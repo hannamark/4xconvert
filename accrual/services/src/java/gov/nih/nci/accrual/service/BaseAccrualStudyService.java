@@ -80,8 +80,8 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.service.PAException;
 
-import java.rmi.RemoteException;
 import java.util.List;
 
 /**
@@ -93,7 +93,7 @@ public interface BaseAccrualStudyService<DTO> extends BaseAccrualService<DTO> {
     /**
      * @param ii studyProtocol index
      * @return list of dto's
-     * @throws RemoteException exception
+     * @throws PAException exception
      */
-    List<DTO> getByStudyProtocol(Ii ii) throws RemoteException;
+    List<DTO> getByStudyProtocol(Ii ii) throws PAException;
 }

@@ -80,8 +80,7 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.iso21090.Ii;
-
-import java.rmi.RemoteException;
+import gov.nih.nci.pa.service.PAException;
 
 import javax.ejb.Remote;
 
@@ -91,22 +90,26 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface PatientService {
+    
     /**
      * @param ii index of object
      * @return object
-     * @throws RemoteException exception
+     * @throws PAException exception
      */
-    PatientDto get(Ii ii) throws RemoteException;
+    
+    PatientDto get(Ii ii) throws PAException;
+    
     /**
      * @param dto dto
      * @return created object
-     * @throws RemoteException exception
+     * @throws PAException exception
      */
-    PatientDto create(PatientDto dto) throws RemoteException;
+    PatientDto create(PatientDto dto) throws PAException;
+    
     /**
      * @param dto dto
      * @return updated object
-     * @throws RemoteException exception
+     * @throws PAException exception
      */
-    PatientDto update(PatientDto dto) throws RemoteException;
+    PatientDto update(PatientDto dto) throws PAException;
 }

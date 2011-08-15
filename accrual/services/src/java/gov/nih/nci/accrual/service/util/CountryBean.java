@@ -87,7 +87,6 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -112,9 +111,9 @@ public class CountryBean implements CountryService {
     /**
      * {@inheritDoc}
      */
-    public Country getCountry(Ii ii) throws RemoteException {
+    public Country getCountry(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
-            throw new RemoteException("Called getCountry() with Ii == null.");
+            throw new PAException("Called getCountry() with Ii == null.");
         }
         Country bo = null;
         Session session = null;
@@ -122,10 +121,10 @@ public class CountryBean implements CountryService {
             session = PaHibernateUtil.getCurrentSession();
             bo = (Country) session.get(Country.class, IiConverter.convertToLong(ii));
         } catch (HibernateException hbe) {
-            throw new RemoteException("Hibernate exception in getCountry().", hbe);
+            throw new PAException("Hibernate exception in getCountry().", hbe);
         }
         if (bo == null) {
-            throw new RemoteException("Country not found.");
+            throw new PAException("Country not found.");
         }
         return bo;
     }
@@ -134,7 +133,7 @@ public class CountryBean implements CountryService {
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
-    public List<Country> getCountries() throws RemoteException {
+    public List<Country> getCountries() throws PAException {
         List<Country> countryDtos = new ArrayList<Country>();
         Session session = null;
         try {
@@ -150,7 +149,7 @@ public class CountryBean implements CountryService {
                 }
             }
         } catch (HibernateException hbe) {
-            throw new RemoteException("Exception at getDistinctCountryNames", hbe);
+            throw new PAException("Exception at getDistinctCountryNames", hbe);
         }
         return countryDtos;
     }

@@ -85,7 +85,6 @@ package gov.nih.nci.accrual.service.util;
 import gov.nih.nci.pa.service.PAException;
 
 import java.io.File;
-import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.ejb.Local;
@@ -108,9 +107,8 @@ public interface CdusBatchUploadReaderServiceLocal {
      * @param file file to read
      * @return the import results
      * @throws PAException on error
-     * @throws RemoteException on error
      */
-    List<BatchImportResults> importBatchData(File file) throws PAException, RemoteException;
+    List<BatchImportResults> importBatchData(File file) throws PAException;
     
     /**
      * Sends the validation error email.

@@ -108,9 +108,9 @@ import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 
-import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -164,7 +164,7 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
 
         try {
             dto = bean.get(BII);
-        } catch (RemoteException e) {
+        } catch (PAException e) {
             // expected behavior
         }
     }
@@ -194,7 +194,7 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         try {
             bean.enforceBusinessRules(dto);
             fail("Should have failed for unique code violation.");
-        } catch (RemoteException e) {
+        } catch (PAException e) {
             // expected behavior
         }
     }
@@ -237,14 +237,14 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         try {
             bean.get(null);
             fail();
-        } catch (RemoteException ex) {
+        } catch (PAException ex) {
             // expected
         }
 
         try {
             bean.update(dto);
             fail();
-        } catch (RemoteException ex) {
+        } catch (PAException ex) {
             // expected
         }
 
@@ -253,7 +253,7 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         try {
             bean.create(dto);
             fail();
-        } catch (RemoteException ex) {
+        } catch (PAException ex) {
             // expected
         }
     }

@@ -81,8 +81,8 @@ package gov.nih.nci.accrual.service;
 import gov.nih.nci.accrual.dto.PerformedActivityDto;
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.service.PAException;
 
-import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.ejb.Remote;
@@ -98,25 +98,25 @@ public interface PerformedActivityService extends BaseAccrualStudyService<Perfor
      * Gets the performed subject milestone by study protocol.
      * @param ii the ii
      * @return the performed subject milestone by study protocol
-     * @throws RemoteException the remote exception
+     * @throws PAException the remote exception
      */
-    List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudySubject(Ii ii) throws RemoteException;
+    List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudySubject(Ii ii) throws PAException;
 
     /**
      * Creates the performed subject milestone.
      * @param dto the dto
      * @return the performed subject milestone dto
-     * @throws RemoteException the remote exception
+     * @throws PAException the remote exception
      */
     PerformedSubjectMilestoneDto createPerformedSubjectMilestone(PerformedSubjectMilestoneDto dto) 
-        throws RemoteException;
+        throws PAException;
 
     /**
      * Update performed subject milestone.
      * @param dto the dto
      * @return the performed subject milestone dto
-     * @throws RemoteException the remote exception
+     * @throws PAException the remote exception
      */
     PerformedSubjectMilestoneDto updatePerformedSubjectMilestone(PerformedSubjectMilestoneDto dto)
-            throws RemoteException;
+            throws PAException;
 }

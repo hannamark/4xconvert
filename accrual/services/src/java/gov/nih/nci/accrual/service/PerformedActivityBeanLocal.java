@@ -87,11 +87,11 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
@@ -119,7 +119,7 @@ public class PerformedActivityBeanLocal extends
     /**
      * {@inheritDoc}
      */
-    public List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudySubject(Ii ii) throws RemoteException {
+    public List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudySubject(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
             return null;
         }
@@ -142,12 +142,12 @@ public class PerformedActivityBeanLocal extends
 
         // step 3: query the result
         queryList = query.list();
-        ArrayList<PerformedSubjectMilestoneDto> resultList = new ArrayList<PerformedSubjectMilestoneDto>();
+        List<PerformedSubjectMilestoneDto> resultList = new ArrayList<PerformedSubjectMilestoneDto>();
         for (PerformedSubjectMilestone bo : queryList) {
             try {
                 resultList.add(Converters.get(PerformedSubjectMilestoneConverter.class).convertFromDomainToDto(bo));
             } catch (DataFormatException e) {
-                throw new RemoteException("Iso conversion exception in "
+                throw new PAException("Iso conversion exception in "
                         + " getPerformedSubjectMilestoneByStudySubject().", e);
             }
         }
@@ -158,12 +158,12 @@ public class PerformedActivityBeanLocal extends
      * {@inheritDoc}
      */
     public PerformedSubjectMilestoneDto createPerformedSubjectMilestone(PerformedSubjectMilestoneDto dto)
-        throws RemoteException {
+        throws PAException {
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
-            throw new RemoteException("Update method should be used to modify existing.  ");
+            throw new PAException("Update method should be used to modify existing.  ");
         }
         if (ISOUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
-            throw new RemoteException("StudyProtocol must be set.  ");
+            throw new PAException("StudyProtocol must be set.  ");
         }
         return createOrUpdateNew(dto, Converters.get(PerformedSubjectMilestoneConverter.class));
     }
@@ -172,9 +172,9 @@ public class PerformedActivityBeanLocal extends
      * {@inheritDoc}
      */
     public PerformedSubjectMilestoneDto updatePerformedSubjectMilestone(PerformedSubjectMilestoneDto dto)
-        throws RemoteException {
+        throws PAException {
         if (ISOUtil.isIiNull(dto.getIdentifier())) {
-            throw new RemoteException("Create method should be used to modify existing.  ");
+            throw new PAException("Create method should be used to modify existing.  ");
         }
         return createOrUpdateNew(dto, Converters.get(PerformedSubjectMilestoneConverter.class));
     }

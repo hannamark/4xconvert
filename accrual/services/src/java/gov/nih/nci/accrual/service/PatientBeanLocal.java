@@ -101,6 +101,7 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -108,7 +109,6 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
-import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -145,18 +145,18 @@ public class PatientBeanLocal implements PatientServiceLocal {
     /**
      * {@inheritDoc}
      */
-    public PatientDto create(PatientDto dto) throws RemoteException {
+    public PatientDto create(PatientDto dto) throws PAException {
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
-            throw new RemoteException("Update method should be used to modify existing.");
+            throw new PAException("Update method should be used to modify existing.");
         }
         return createOrUpdate(dto);
     }
-
+    
     /**
-     * @param dto dto
-     * @throws RemoteException exception
+     * @param dto
+     * @throws PAException
      */
-    void enforceBusinessRules(PatientDto dto) throws RemoteException {
+    void enforceBusinessRules(PatientDto dto) throws PAException {
         Set<String> raceCodes = DSetEnumConverter.convertDSetToSet(dto.getRaceCode());
         boolean containsUnique = false;
         for (String raceCode : raceCodes) {
@@ -165,7 +165,7 @@ public class PatientBeanLocal implements PatientServiceLocal {
             }
         }
         if (raceCodes.size() > 1 && containsUnique) {
-           throw new RemoteException("Business rule is violated. No multiple selection"
+           throw new PAException("Business rule is violated. No multiple selection"
                 + " when race code is Not Reported or Unknown.");
         }
     }
@@ -173,9 +173,9 @@ public class PatientBeanLocal implements PatientServiceLocal {
     /**
      * {@inheritDoc}
      */
-    public PatientDto get(Ii ii) throws RemoteException {
+    public PatientDto get(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
-            throw new RemoteException("Called get() with Ii == null.");
+            throw new PAException("Called get() with Ii == null.");
         }
         Patient bo = null;
         PatientDto resultDto = null;
@@ -189,12 +189,12 @@ public class PatientBeanLocal implements PatientServiceLocal {
                 return resultDto;
             }
         } catch (HibernateException hbe) {
-            throw new RemoteException("Hibernate exception in get().", hbe);
+            throw new PAException("Hibernate exception in get().", hbe);
         }
         try {
             resultDto = Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
         } catch (DataFormatException e) {
-            throw new RemoteException("Iso conversion exception in get().", e);
+            throw new PAException("Iso conversion exception in get().", e);
         }
         return resultDto;
     }
@@ -202,31 +202,31 @@ public class PatientBeanLocal implements PatientServiceLocal {
     /**
      * {@inheritDoc}
      */
-    public PatientDto update(PatientDto dto) throws RemoteException {
+    public PatientDto update(PatientDto dto) throws PAException {
         if (ISOUtil.isIiNull(dto.getIdentifier())) {
-            throw new RemoteException("Create method should be used to create new.");
+            throw new PAException("Create method should be used to create new.");
         }
         return createOrUpdate(dto);
     }
 
-    private PatientDto createOrUpdate(PatientDto dto) throws RemoteException {
+    private PatientDto createOrUpdate(PatientDto dto) throws PAException {
         enforceBusinessRules(dto);
         Patient bo = convertDtoToDomain(dto);
         bo = setDomainAuditFields(dto, bo);
         return convertDomainToDTO(bo);
     }
 
-    private PatientDto convertDomainToDTO(Patient bo) throws RemoteException {
+    private PatientDto convertDomainToDTO(Patient bo) throws PAException {
         PatientDto resultDto = null;
         try {
             resultDto = Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
         } catch (DataFormatException e) {
-            throw new RemoteException("Iso conversion exception in createOrUpdate().", e);
+            throw new PAException("Iso conversion exception in createOrUpdate().", e);
         }
         return resultDto;
     }
 
-    private Patient setDomainAuditFields(PatientDto dto, Patient bo) throws RemoteException {
+    private Patient setDomainAuditFields(PatientDto dto, Patient bo) throws PAException {
         Session session = null;
         Patient returnBo = null;
         try {
@@ -245,12 +245,12 @@ public class PatientBeanLocal implements PatientServiceLocal {
             returnBo = (Patient) session.merge(bo);
             session.flush();
         } catch (HibernateException hbe) {
-            throw new RemoteException("Hibernate exception in createOrUpdate().", hbe);
+            throw new PAException("Hibernate exception in createOrUpdate().", hbe);
         }
         return returnBo;
     }
 
-    private Patient convertDtoToDomain(PatientDto dto) throws RemoteException {
+    private Patient convertDtoToDomain(PatientDto dto) throws PAException {
         Patient bo = null;
         try {
             updatePOPatientCorrelation(dto);
@@ -262,13 +262,12 @@ public class PatientBeanLocal implements PatientServiceLocal {
             bo.setStatusCode(StructuralRoleStatusCode.PENDING);
             bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         } catch (DataFormatException e) {
-            throw new RemoteException("Iso conversion exception in createOrUpdate().", e);
+            throw new PAException("Iso conversion exception in createOrUpdate().", e);
         }
         return bo;
     }
 
-    private void updatePOPatientDetails(PatientDto dto) throws RemoteException {
-
+    private void updatePOPatientDetails(PatientDto dto) {
         gov.nih.nci.services.person.PersonDTO poPersonDTO = new gov.nih.nci.services.person.PersonDTO();
         try {
             PersonEntityServiceRemote peService = PoRegistry.getPersonEntityService();
@@ -292,8 +291,7 @@ public class PatientBeanLocal implements PatientServiceLocal {
     }
 
     @SuppressWarnings("unchecked")
-    private void updatePOPatientCorrelation(PatientDto dto)
-            throws RemoteException {
+    private void updatePOPatientCorrelation(PatientDto dto) throws PAException {
         POPatientDTO popDTO = new POPatientDTO();
         Ii scoper = IiConverter.convertToPoOrganizationIi(
                 IiConverter.convertToString(dto.getOrganizationIdentifier()));

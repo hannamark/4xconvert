@@ -97,7 +97,6 @@ import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -269,9 +268,9 @@ public class BaseBatchUploadReader {
      * Retrieves the PO identifier of the organization related with the given identifier.
      * @param orgIdentifier the CTEP/DCP identifier or the po id of the org
      * @return the po identifier of the org
-     * @throws RemoteException on error
+     * @throws PAException on error
      */
-    protected Ii getOrganizationIi(String orgIdentifier) throws RemoteException {
+    protected Ii getOrganizationIi(String orgIdentifier) throws PAException {
         Ii resultingIi = null;
         //Look up via other identifiers first in case a CTEP/DCP id is being passed
         IdentifiedOrganizationDTO identifiedOrg = new IdentifiedOrganizationDTO();

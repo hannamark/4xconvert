@@ -86,8 +86,8 @@ import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
 
-import java.rmi.RemoteException;
 import java.util.List;
 
 import org.junit.Before;
@@ -114,12 +114,12 @@ public class CountryServiceTest extends AbstractServiceTest<CountryService> {
         try {
             place = bean.getCountry(null);
             fail();
-        } catch (RemoteException ex) {
+        } catch (PAException ex) {
             // expected
         }
         try {
             place = bean.getCountry(BII);
-        } catch (RemoteException ex) {
+        } catch (PAException ex) {
             // expected
         }
         
@@ -128,7 +128,7 @@ public class CountryServiceTest extends AbstractServiceTest<CountryService> {
             Ii ii = IiConverter.convertToCountryIi(id);
             place = bean.getCountry(ii);
             assertNotNull(place);
-        } catch (RemoteException ex) {
+        } catch (PAException ex) {
             // expected
         }
         

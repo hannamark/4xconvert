@@ -79,8 +79,7 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.iso21090.Ii;
-
-import java.rmi.RemoteException;
+import gov.nih.nci.pa.service.PAException;
 
 /**
  * @author Hugh Reinhart
@@ -92,24 +91,24 @@ public interface BaseAccrualService<DTO> {
     /**
      * @param ii index of object
      * @return object
-     * @throws RemoteException exception
+     * @throws PAException exception
      */
-    DTO get(Ii ii) throws RemoteException;
+    DTO get(Ii ii) throws PAException;
     /**
      * @param dto dto
      * @return created object
-     * @throws RemoteException exception
+     * @throws PAException exception
      */
-    DTO create(DTO dto) throws RemoteException;
+    DTO create(DTO dto) throws PAException;
     /**
      * @param dto dto
      * @return updated object
-     * @throws RemoteException exception
+     * @throws PAException exception
      */
-    DTO update(DTO dto) throws RemoteException;
+    DTO update(DTO dto) throws PAException;
     /**
      * @param ii index of object
-     * @throws RemoteException exception
+     * @throws PAException exception
      */
-    void delete(Ii ii) throws RemoteException;
+    void delete(Ii ii) throws PAException;
 }

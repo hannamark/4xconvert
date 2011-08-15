@@ -91,9 +91,9 @@ import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,7 +121,7 @@ public class MockPatientBean implements PatientService {
     /**
      * {@inheritDoc}
      */
-    public PatientDto create(PatientDto dto) throws RemoteException {
+    public PatientDto create(PatientDto dto) throws PAException {
         dto.setIdentifier(IiConverter.convertToIi(seq++));
         pList.add(dto);
         return dto;
@@ -130,7 +130,7 @@ public class MockPatientBean implements PatientService {
     /**
      * {@inheritDoc}
      */
-    public PatientDto get(Ii ii) throws RemoteException {
+    public PatientDto get(Ii ii) throws PAException {
         Long id = IiConverter.convertToLong(ii);
         PatientDto result = null;
         for (PatientDto dto : pList) {
@@ -144,7 +144,7 @@ public class MockPatientBean implements PatientService {
     /**
      * {@inheritDoc}
      */
-    public PatientDto update(PatientDto dto) throws RemoteException {
+    public PatientDto update(PatientDto dto) throws PAException {
         Long id = IiConverter.convertToLong(dto.getIdentifier());
         for (PatientDto p : pList) {
             if (id.equals(IiConverter.convertToLong(p.getIdentifier()))) {
