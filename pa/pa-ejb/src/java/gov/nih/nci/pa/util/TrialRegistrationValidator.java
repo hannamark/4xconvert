@@ -144,7 +144,8 @@ import org.apache.commons.lang.StringUtils;
  * 
  * @author Michael Visee
  */
-@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveParameterList", "PMD.CyclomaticComplexity" })
+@SuppressWarnings({"PMD.ExcessiveClassLength", "PMD.TooManyMethods", "PMD.ExcessiveParameterList",
+        "PMD.CyclomaticComplexity" })
 public class TrialRegistrationValidator {
     
     private static final String AMENDMENT = "Amendment";

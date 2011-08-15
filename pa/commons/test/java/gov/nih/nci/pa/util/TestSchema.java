@@ -214,6 +214,7 @@ public class TestSchema {
     public static List<Long> regAuthIds;
     public static List<Long> personIds;
     public static List<Long> organizationalContactIds;
+    public static List<Long> studyDiseaseIds;
     public static List<Country> countries;
     private static User user;
 
@@ -259,6 +260,7 @@ public class TestSchema {
         personIds = new ArrayList<Long>();
         countries = new ArrayList<Country>();
         anatomicSiteIds = new ArrayList<Long>();
+        studyDiseaseIds = new ArrayList<Long>();
 
         User curator = getUser(true);
         addUpdObject(curator);
@@ -563,8 +565,10 @@ public class TestSchema {
 
         StudyDisease studyDisease = TestSchema.createStudyDiseaseObj(sp, dis01);
         addUpdObject(studyDisease);
+        studyDiseaseIds.add(studyDisease.getId());
         StudyDisease studyDisease2 = TestSchema.createStudyDiseaseObj(sp, dis02);
         addUpdObject(studyDisease2);
+        studyDiseaseIds.add(studyDisease2.getId());
 
         StudyMilestone studyMilestone = createStudyMilestoneObj("comment 01", sp);
         addUpdObject(studyMilestone);

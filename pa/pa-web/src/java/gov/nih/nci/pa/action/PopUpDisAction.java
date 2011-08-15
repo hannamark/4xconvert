@@ -80,104 +80,175 @@ package gov.nih.nci.pa.action;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.DiseaseWebDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseParentDTO;
+import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
+import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
 import gov.nih.nci.pa.util.Constants;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 
 /**
 * @author Hugh Reinhart
 * @since 11/31/2008
 */
-public class PopUpDisAction extends ActionSupport {
+public class PopUpDisAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 8987838321L;
 
     private static final Logger LOG = Logger.getLogger(PopUpDisAction.class);
-
+    
+    private PDQDiseaseParentServiceRemote pdqDiseaseParentService;
+    private PDQDiseaseServiceLocal pdqDiseaseService;
+    private StudyDiseaseServiceLocal studyDiseaseService;
+    
     private String searchName;
     private String includeSynonym;
     private String exactMatch;
-    private List<DiseaseWebDTO> disWebList = new ArrayList<DiseaseWebDTO>();
-
-
-    private void loadResultList() {
-        disWebList.clear();
-        String tName = ServletActionContext.getRequest().getParameter("searchName");
-        String includeSyn = ServletActionContext.getRequest().getParameter("includeSynonym");
-        String exactMat = ServletActionContext.getRequest().getParameter("exactMatch");
-
-        if (StringUtils.isEmpty(tName)) {
+    private List<DiseaseWebDTO> disWebList; 
+    private Long diseaseId;
+    private boolean includeXml = true;
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() throws PAException {
+        pdqDiseaseParentService = PaRegistry.getDiseaseParentService();
+        pdqDiseaseService = PaRegistry.getDiseaseService();
+        studyDiseaseService = PaRegistry.getStudyDiseaseService();
+    }
+    
+    /**
+     * Search the diseases according to the user criteria and loads them in the diseaseWebList.
+     * @return The result name
+     */
+    public String displayList() {
+        disWebList = new ArrayList<DiseaseWebDTO>();
+        if (StringUtils.isEmpty(searchName)) {
             String message = "Please enter at least one search criteria";
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, message);
-            return;
+            return "displayList";
         }
-
-        PDQDiseaseDTO criteria = new PDQDiseaseDTO();
-        criteria.setPreferredName(StConverter.convertToSt(tName));
-        criteria.setIncludeSynonym(StConverter.convertToSt(includeSyn));
-        criteria.setExactMatch(StConverter.convertToSt(exactMat));
-
-        List<PDQDiseaseDTO> diseaseList = null;
         try {
-            diseaseList = PaRegistry.getDiseaseService().search(criteria);
+        Map<Ii, StudyDiseaseDTO> existingDiseaseIis = getExistingDiseases(getStudyProtocolIi());    
+        List<PDQDiseaseDTO> pdqDiseaseDTOs = searchDiseases();
+        disWebList = getDiseaseWebList(existingDiseaseIis, pdqDiseaseDTOs);
+        loadParentPreferredNames();
         } catch (PAException e) {
-            error(e.getMessage());
-            return;
+            error(e.getMessage(), e);
         } catch (Exception e) {
             error("Exception while loading disease results.", e);
-            return;
         }
-        for (PDQDiseaseDTO disease : diseaseList) {
-            DiseaseWebDTO newRec = new DiseaseWebDTO();
-            newRec.setDiseaseIdentifier(IiConverter.convertToString(disease.getIdentifier()));
-            newRec.setPreferredName(StConverter.convertToString(disease.getPreferredName()));
-            newRec.setCode(StConverter.convertToString(disease.getDiseaseCode()));
-            newRec.setConceptId(StConverter.convertToString(disease.getNtTermIdentifier()));
-            newRec.setMenuDisplayName(StConverter.convertToString(disease.getDisplayName()));
-            getDisWebList().add(newRec);
-        }
-        loadParentPreferredNames();
+        return "displayList";
     }
 
-    private void loadParentPreferredNames() {
-        Ii[] iis = new Ii[disWebList.size()];
-        int x = 0;
-        for (DiseaseWebDTO dto : disWebList) {
-            iis[x++] = IiConverter.convertToIi(dto.getDiseaseIdentifier());
+    /**
+     * Gets the study protocol Ii from the session.
+     * @return The study protocol Ii
+     */
+    Ii getStudyProtocolIi() {
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) session.getAttribute(Constants.TRIAL_SUMMARY);
+        return IiConverter.convertToStudyProtocolIi(spDTO.getStudyProtocolId());
+    }
+
+    /**
+     * Gets the Map of StudyDiseaseDTO keyed by disease Ii.
+     * @param spIi The study protocol Ii
+     * @return The Map of StudyDiseaseDTO keyed by disease Ii.
+     * @throws PAException If an error occurs
+     */
+    Map<Ii, StudyDiseaseDTO> getExistingDiseases(Ii spIi) throws PAException {
+        Map<Ii, StudyDiseaseDTO> diseaseIis = new HashMap<Ii, StudyDiseaseDTO>();
+        List<StudyDiseaseDTO> studyDiseaseDTOs = studyDiseaseService.getByStudyProtocol(spIi);
+        for (StudyDiseaseDTO studyDiseaseDTO : studyDiseaseDTOs) {
+            diseaseIis.put(studyDiseaseDTO.getDiseaseIdentifier(), studyDiseaseDTO);
         }
-        List<PDQDiseaseParentDTO> dpList;
-        try {
-            dpList = PaRegistry.getDiseaseParentService().getByChildDisease(iis);
-        } catch (Exception e) {
-            error("Exception thrown while getting disease parents.", e);
-            return;
+        return diseaseIis;
+    }
+    
+    /**
+     * Search the diseases corresponding to the criteria entered by the user.
+     * @return The list of diseases corresponding to the criteria entered by the user
+     * @throws PAException If an error occurs.
+     */
+    List<PDQDiseaseDTO> searchDiseases() throws PAException {
+        PDQDiseaseDTO criteria = new PDQDiseaseDTO();
+        criteria.setPreferredName(StConverter.convertToSt(searchName));
+        criteria.setIncludeSynonym(StConverter.convertToSt(includeSynonym));
+        criteria.setExactMatch(StConverter.convertToSt(exactMatch));
+        return pdqDiseaseService.search(criteria);
+    }
+
+    /**
+     * Get the disease webdto list.
+     * @param existingDiseases The Map of disease Iis to StudyDisease for diseases already associated with the study
+     *        protocol
+     * @param searchResult The list of diseases corresponding to the criteria entered by the user
+     * @return The disease webdto list.
+     */
+    List<DiseaseWebDTO> getDiseaseWebList(Map<Ii, StudyDiseaseDTO> existingDiseases, List<PDQDiseaseDTO> searchResult) {
+        List<DiseaseWebDTO> result = new ArrayList<DiseaseWebDTO>();
+        for (PDQDiseaseDTO disease : searchResult) {
+            DiseaseWebDTO diseaseWebDTO = new DiseaseWebDTO();
+            diseaseWebDTO.setDiseaseIdentifier(IiConverter.convertToString(disease.getIdentifier()));
+            diseaseWebDTO.setPreferredName(StConverter.convertToString(disease.getPreferredName()));
+            diseaseWebDTO.setCode(StConverter.convertToString(disease.getDiseaseCode()));
+            diseaseWebDTO.setConceptId(StConverter.convertToString(disease.getNtTermIdentifier()));
+            diseaseWebDTO.setMenuDisplayName(StConverter.convertToString(disease.getDisplayName()));
+            diseaseWebDTO.setSelected(existingDiseases.containsKey(disease.getIdentifier()));
+            if (diseaseWebDTO.isSelected()) {
+                StudyDiseaseDTO studyDiseaseDTO = existingDiseases.get(disease.getIdentifier());
+                diseaseWebDTO.setStudyDiseaseIdentifier(IiConverter.convertToString(studyDiseaseDTO.getIdentifier()));
+                boolean xmlIndicator = !ISOUtil.isBlNull(studyDiseaseDTO.getCtGovXmlIndicator())
+                        && BlConverter.convertToBoolean(studyDiseaseDTO.getCtGovXmlIndicator());
+                diseaseWebDTO.setCtGovXmlIndicator((xmlIndicator) ? "Yes" : "No");
+            }
+            result.add(diseaseWebDTO);
         }
+        return result;
+    }
+
+    /**
+     * load the parent disease preferred names.
+     */
+    void loadParentPreferredNames() {
+        List<PDQDiseaseParentDTO> dpList = getDiseaseParents();
         HashMap<String, String> childParent = new HashMap<String, String>();
         for (PDQDiseaseParentDTO dp : dpList) {
             String child = IiConverter.convertToString(dp.getIdentifier());
             PDQDiseaseDTO parentDTO;
             try {
-                parentDTO = PaRegistry.getDiseaseService().get(dp.getParentDiseaseIdentifier());
+                parentDTO = pdqDiseaseService.get(dp.getParentDiseaseIdentifier());
             } catch (Exception e) {
-                error("Exception throw while getting disease name for parent.", e);
+                error("Exception thrown while getting disease name for parent.", e);
                 return;
             }
             if (childParent.containsKey(child)) {
-                childParent.put(child, childParent.get(child) + ", "
-                        + StConverter.convertToString(parentDTO.getPreferredName()));
+                childParent.put(child,
+                                childParent.get(child) + ", "
+                                        + StConverter.convertToString(parentDTO.getPreferredName()));
             } else {
                 childParent.put(child, StConverter.convertToString(parentDTO.getPreferredName()));
             }
@@ -186,46 +257,81 @@ public class PopUpDisAction extends ActionSupport {
             dto.setParentPreferredName(childParent.get(dto.getDiseaseIdentifier()));
         }
     }
+    
+    /**
+     * Get the parent diseases of the diseases already in the disease web list.
+     * @return The parent diseases of the diseases already in the disease web list.
+     */
+    List<PDQDiseaseParentDTO> getDiseaseParents() {
+        Ii[] iis = new Ii[disWebList.size()];
+        int x = 0;
+        for (DiseaseWebDTO dto : disWebList) {
+            iis[x++] = IiConverter.convertToIi(dto.getDiseaseIdentifier());
+        }
+        try {
+            return pdqDiseaseParentService.getByChildDisease(iis);
+        } catch (Exception e) {
+            error("Exception thrown while getting disease parents.", e);
+            return new ArrayList<PDQDiseaseParentDTO>();
+        }
+    }
 
     private void error(String errMsg, Throwable t) {
         LOG.error(errMsg, t);
         ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, errMsg);
     }
 
-    private void error(String errMsg) {
-        error(errMsg, null);
+    /**
+     * Add a disease to the study protocol.
+     * @return result
+     */
+    public String add() {
+        try {
+            StudyDiseaseDTO sdDto = getStudyDisease();
+            studyDiseaseService.create(sdDto);
+        } catch (Exception e) {
+            addActionError(e.getMessage());
+        }
+        return displayList();
+    }
+    
+    /**
+     * Creates the new study disease dto to add.
+     * @return the new study disease dto.
+     */
+    StudyDiseaseDTO getStudyDisease() {
+        StudyDiseaseDTO sdDto = new StudyDiseaseDTO();
+        sdDto.setDiseaseIdentifier(IiConverter.convertToIi(diseaseId));
+        sdDto.setCtGovXmlIndicator(BlConverter.convertToBl(includeXml));
+        sdDto.setStudyProtocolIdentifier(getStudyProtocolIi());
+        return sdDto;
     }
 
     /**
+     * Remove a disease from the study protocol.
      * @return result
      */
-    public String displayList() {
-        loadResultList();
-        return SUCCESS;
+    public String remove() {
+        try {
+            studyDiseaseService.delete(IiConverter.convertToIi(diseaseId));
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+        }
+        return displayList();
     }
+
     /**
      * @return the searchName
      */
     public String getSearchName() {
         return searchName;
     }
+
     /**
      * @param searchName the searchName to set
      */
     public void setSearchName(String searchName) {
         this.searchName = searchName;
-    }
-    /**
-     * @return the disWebList
-     */
-    public List<DiseaseWebDTO> getDisWebList() {
-        return disWebList;
-    }
-    /**
-     * @param disWebList the disWebList to set
-     */
-    public void setDisWebList(List<DiseaseWebDTO> disWebList) {
-        this.disWebList = disWebList;
     }
 
     /**
@@ -254,5 +360,68 @@ public class PopUpDisAction extends ActionSupport {
      */
     public void setExactMatch(String exactMatch) {
         this.exactMatch = exactMatch;
+    }
+
+    /**
+     * @return the disWebList
+     */
+    public List<DiseaseWebDTO> getDisWebList() {
+        return disWebList;
+    }
+
+    /**
+     * @param disWebList the disWebList to set
+     */
+    public void setDisWebList(List<DiseaseWebDTO> disWebList) {
+        this.disWebList = disWebList;
+    }
+
+    /**
+     * @return the diseaseId
+     */
+    public Long getDiseaseId() {
+        return diseaseId;
+    }
+
+    /**
+     * @param diseaseId the diseaseId to set
+     */
+    public void setDiseaseId(Long diseaseId) {
+        this.diseaseId = diseaseId;
+    }
+
+    /**
+     * @return the includeXml
+     */
+    public boolean isIncludeXml() {
+        return includeXml;
+    }
+
+    /**
+     * @param includeXml the includeXml to set
+     */
+    public void setIncludeXml(boolean includeXml) {
+        this.includeXml = includeXml;
+    }
+
+    /**
+     * @param pdqDiseaseParentService the pdqDiseaseParentService to set
+     */
+    public void setPdqDiseaseParentService(PDQDiseaseParentServiceRemote pdqDiseaseParentService) {
+        this.pdqDiseaseParentService = pdqDiseaseParentService;
+    }
+
+    /**
+     * @param pdqDiseaseService the pdqDiseaseService to set
+     */
+    public void setPdqDiseaseService(PDQDiseaseServiceLocal pdqDiseaseService) {
+        this.pdqDiseaseService = pdqDiseaseService;
+    }
+
+    /**
+     * @param studyDiseaseService the studyDiseaseService to set
+     */
+    public void setStudyDiseaseService(StudyDiseaseServiceLocal studyDiseaseService) {
+        this.studyDiseaseService = studyDiseaseService;
     }
 }

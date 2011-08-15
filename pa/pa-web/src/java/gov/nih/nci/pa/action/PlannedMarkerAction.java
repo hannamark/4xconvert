@@ -92,6 +92,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.system.applicationservice.ApplicationService;
@@ -107,28 +108,34 @@ import org.apache.struts2.ServletActionContext;
 
 /**
  * Action class for listing/manipulating planned markers.
- *
+ * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class PlannedMarkerAction extends AbstractListEditAction {
-    private static final long serialVersionUID = 1L;
+
+    private static final long serialVersionUID = 560802697544499600L;
+    private static final Logger LOG = Logger.getLogger(PlannedMarkerAction.class);
+
+    private ApplicationService appService;
+    private PlannedMarkerServiceLocal plannedMarkerService;
+
     private PlannedMarkerWebDTO plannedMarker = new PlannedMarkerWebDTO();
     private List<PlannedMarkerWebDTO> plannedMarkerList;
     private String cdeId;
-    private ApplicationService appService;
-    private static final Logger LOG = Logger.getLogger(PlannedMarkerAction.class);
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void prepare() throws PAException {
+        super.prepare();
         try {
             appService = ApplicationServiceProvider.getApplicationService();
         } catch (Exception e) {
             LOG.error("Error attempting to instatiate caDSR Application Service.", e);
         }
-        super.prepare();
+        plannedMarkerService = PaRegistry.getPlannedMarkerService();
     }
 
     /**
@@ -146,7 +153,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             }
 
             try {
-                getPlannedMarkerService().create(marker);
+                plannedMarkerService.create(marker);
             } catch (PAException e) {
                 addActionError(e.getMessage());
             }
@@ -162,8 +169,8 @@ public class PlannedMarkerAction extends AbstractListEditAction {
      */
     @Override
     public String edit() throws PAException {
-        PlannedMarkerDTO marker =
-            PaRegistry.getPlannedMarkerService().get(IiConverter.convertToIi(getSelectedRowIdentifier()));
+        PlannedMarkerDTO marker = PaRegistry.getPlannedMarkerService()
+            .get(IiConverter.convertToIi(getSelectedRowIdentifier()));
         plannedMarker = populateWebDTO(marker);
         return super.edit();
     }
@@ -177,7 +184,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         if (!hasFieldErrors()) {
             PlannedMarkerDTO marker = populateDTO(true);
             try {
-                getPlannedMarkerService().update(marker);
+                plannedMarkerService.update(marker);
             } catch (PAException e) {
                 addActionError(e.getMessage());
             }
@@ -193,7 +200,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
      */
     @Override
     public String delete() throws PAException {
-        getPlannedMarkerService().delete(IiConverter.convertToIi(getSelectedRowIdentifier()));
+        plannedMarkerService.delete(IiConverter.convertToIi(getSelectedRowIdentifier()));
         return super.delete();
     }
 
@@ -234,7 +241,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     @Override
     protected void loadListForm() throws PAException {
         List<PlannedMarkerWebDTO> pmList = new ArrayList<PlannedMarkerWebDTO>();
-        List<PlannedMarkerDTO> results = getPlannedMarkerService().getByStudyProtocol(getSpIi());
+        List<PlannedMarkerDTO> results = plannedMarkerService.getByStudyProtocol(getSpIi());
         for (PlannedMarkerDTO dto : results) {
             pmList.add(populateWebDTO(dto));
         }
@@ -247,7 +254,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
     @Override
     protected void loadEditForm() throws PAException {
         if (plannedMarker != null && plannedMarker.getId() != null) {
-            PlannedMarkerDTO markerDTO = getPlannedMarkerService().get(IiConverter.convertToIi(plannedMarker.getId()));
+            PlannedMarkerDTO markerDTO = plannedMarkerService.get(IiConverter.convertToIi(plannedMarker.getId()));
             plannedMarker = populateWebDTO(markerDTO);
         }
     }
@@ -266,8 +273,8 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             addFieldError("plannedMarker.assayPurpose", getText("error.plannedMarker.assayPurpose"));
         }
         if (StringUtils.isEmpty(getPlannedMarker().getTissueCollectionMethod())) {
-            addFieldError("plannedMarker.tissueCollectionMethod",
-                    getText("error.plannedMarker.tissueCollectionMethod"));
+            addFieldError("plannedMarker.tissueCollectionMethod", 
+                          getText("error.plannedMarker.tissueCollectionMethod"));
         }
         enforceAdditionalBusinessRules();
     }
@@ -310,7 +317,7 @@ public class PlannedMarkerAction extends AbstractListEditAction {
         PlannedMarkerDTO marker = new PlannedMarkerDTO();
         marker.setIdentifier(IiConverter.convertToIi(getPlannedMarker().getId()));
         marker.setName(StConverter.convertToSt(getPlannedMarker().getName()));
-        //If no meaning (i.e. long name)  is provided, use the name instead.
+        // If no meaning (i.e. long name) is provided, use the name instead.
         if (StringUtils.isEmpty(getPlannedMarker().getMeaning()) || isEdit) {
             marker.setLongName(marker.getName());
         } else {
@@ -330,8 +337,8 @@ public class PlannedMarkerAction extends AbstractListEditAction {
             marker.setAssayPurposeOtherText(StConverter.convertToSt(getPlannedMarker().getAssayPurposeOtherText()));
         }
         marker.setTissueSpecimenTypeCode(CdConverter.convertStringToCd(getPlannedMarker().getTissueSpecimenType()));
-        marker.setTissueCollectionMethodCode(
-                CdConverter.convertStringToCd(getPlannedMarker().getTissueCollectionMethod()));
+        marker.setTissueCollectionMethodCode(CdConverter.convertStringToCd(getPlannedMarker()
+            .getTissueCollectionMethod()));
         marker.setStatusCode(CdConverter.convertStringToCd(getPlannedMarker().getStatus()));
         marker.setStudyProtocolIdentifier(getSpIi());
         return marker;
@@ -391,5 +398,12 @@ public class PlannedMarkerAction extends AbstractListEditAction {
      */
     public void setAppService(ApplicationService appService) {
         this.appService = appService;
+    }
+
+    /**
+     * @param plannedMarkerService the plannedMarkerService to set
+     */
+    public void setPlannedMarkerService(PlannedMarkerServiceLocal plannedMarkerService) {
+        this.plannedMarkerService = plannedMarkerService;
     }
 }

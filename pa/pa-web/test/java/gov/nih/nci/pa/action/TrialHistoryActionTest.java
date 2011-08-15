@@ -83,6 +83,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
@@ -97,6 +98,7 @@ import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -127,8 +129,8 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
     private TrialHistoryAction trialHistory;
 
     private final StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);
-    private final DocumentServiceLocal docSvc = mock(DocumentServiceLocal.class);
-    private final StudyInboxServiceLocal studyInboxSvc = mock(StudyInboxServiceLocal.class);
+    private final DocumentServiceLocal documentService = mock(DocumentServiceLocal.class);
+    private final StudyInboxServiceLocal studyInboxService = mock(StudyInboxServiceLocal.class);
     private final ServiceLocator serviceLoc = mock(ServiceLocator.class);
 
     @Before
@@ -136,7 +138,6 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
         trialHistory = new TrialHistoryAction();
         trialHistory.prepare();
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
-
         setupMocks();
      }
 
@@ -202,6 +203,10 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
     }
 
     private void setupMocks() throws PAException, TooManyResultsException {
+        trialHistory.setDocumentService(documentService);
+        trialHistory.setStudyInboxService(studyInboxService);
+        trialHistory.setStudyProtocolService(studyProtocolService);
+        
         StudyProtocolDTO spDto = new StudyProtocolDTO();
         spDto.setPhaseCode(CdConverter.convertStringToCd(PhaseCode.NA.getCode()));
         when(studyProtocolService.getStudyProtocol(any(Ii.class))).thenReturn(spDto);
@@ -230,23 +235,20 @@ public class TrialHistoryActionTest extends AbstractPaActionTest {
         docDto.setIdentifier(IiConverter.convertToIi("docII"));
         docDto.setFileName(StConverter.convertToSt("file name"));
         docDto.setTypeCode(CdConverter.convertStringToCd("doc code"));
+        docDto.setText(EdConverter.convertToEd("Document Text".getBytes()));
         docs.add(docDto);
 
-        when(docSvc.getDocumentsByStudyProtocol(any(Ii.class))).thenReturn(docs);
-
+        when(documentService.get(any(Ii.class))).thenReturn(docDto);
+        when(documentService.getDocumentsByStudyProtocol(any(Ii.class))).thenReturn(docs);
 
         StudyInboxDTO siDto = new StudyInboxDTO();
         Ivl<Ts> ivlTs = new Ivl<Ts>();
         ivlTs.setLow(TsConverter.convertToTs(new Timestamp(0)));
         siDto.setInboxDateRange(ivlTs);
-        when(studyInboxSvc.get(any(Ii.class))).thenReturn(siDto);
-
-        trialHistory.setStudyProtocolSvc(studyProtocolService);
-        trialHistory.setDocumentSvc(docSvc);
-
-        when(studyInboxSvc.getByStudyProtocol(any(Ii.class))).thenReturn(new ArrayList<StudyInboxDTO>());
-        when(studyInboxSvc.update(any(StudyInboxDTO.class))).thenThrow(new PAException("ERROR!!!"));
-        when(serviceLoc.getStudyInboxService()).thenReturn(studyInboxSvc);
+        when(studyInboxService.get(any(Ii.class))).thenReturn(siDto);
+        when(studyInboxService.getByStudyProtocol(any(Ii.class))).thenReturn(new ArrayList<StudyInboxDTO>());
+        when(studyInboxService.update(any(StudyInboxDTO.class))).thenThrow(new PAException("ERROR!!!"));
+        when(serviceLoc.getStudyInboxService()).thenReturn(studyInboxService);
 
         ProtocolQueryServiceLocal protocolQSvc = mock(ProtocolQueryServiceLocal.class);
         when(protocolQSvc.getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class)))

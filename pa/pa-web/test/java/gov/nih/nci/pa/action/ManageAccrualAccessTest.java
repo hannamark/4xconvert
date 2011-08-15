@@ -81,14 +81,20 @@ package gov.nih.nci.pa.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.StudySiteAccrualAccessWebDTO;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.service.MockStudySiteService;
 import gov.nih.nci.service.util.MockStudySiteAccrualAccessService;
 
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -120,6 +126,9 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
 
     @Test
     public void addAccrualAccess() throws Exception {
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        StudyProtocolQueryDTO protocolSessionBean = (StudyProtocolQueryDTO) session
+            .getAttribute(Constants.TRIAL_SUMMARY);
         listAccrualAccess();
 
         // click Add button fails because dwf is not eligible for accrual

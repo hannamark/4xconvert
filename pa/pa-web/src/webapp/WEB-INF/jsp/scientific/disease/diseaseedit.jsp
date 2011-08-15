@@ -23,11 +23,6 @@
                 setFocusToFirstControl();
             }
 
-            function diseaseAdd() {
-                document.diseaseForm.action="diseaseadd.action";
-                document.diseaseForm.submit();
-            }
-
             function diseaseUpdate() {
                 input_box = confirm("Click OK to save changes.  Cancel to Abort.");
                 if (input_box == true){
@@ -60,9 +55,6 @@
                 <s:if test="%{currentAction == 'edit'}"> 
                     <fmt:message key="disease.edit.details.title"/>
                 </s:if>
-                <s:elseif test="%{currentAction == 'create'}">
-                    <fmt:message key="disease.add.details.title"/>
-                </s:elseif>
             </h2>
             <table class="form">
                 <tr>
@@ -81,11 +73,6 @@
                                                 <span class="btn_img"> <span class="save">Save</span></span>
                                             </s:a>
                                         </s:if> 
-                                        <s:else>
-                                            <s:a href="#" cssClass="btn" onclick="diseaseAdd();">
-                                                <span class="btn_img"> <span class="save">Save</span></span>
-                                            </s:a>
-                                        </s:else>
                                     </li>
                                 </ul>
                             </del>

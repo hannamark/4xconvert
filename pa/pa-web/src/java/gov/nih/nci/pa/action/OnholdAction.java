@@ -83,7 +83,9 @@ import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOnholdBeanLocal;
+import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.exception.PAFieldException;
+import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,10 +95,22 @@ import java.util.List;
  * @since 2/19/2009
  */
 public class OnholdAction extends AbstractListEditAction {
-    private static final long serialVersionUID = 1237474790L;
+
+    private static final long serialVersionUID = -2979599251858185340L;
+
+    private StudyOnholdServiceLocal studyOnholdService;
 
     private List<OnholdWebDTO> onholdList;
     private OnholdWebDTO onhold;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() throws PAException {
+        super.prepare();
+        studyOnholdService = PaRegistry.getStudyOnholdService();
+    }
 
     /**
      * @return action result
@@ -105,7 +119,7 @@ public class OnholdAction extends AbstractListEditAction {
     @Override
     public String add() throws PAException {
         try {
-            getStudyOnholdSvc().create(onhold.getIsoDto(getSpIi()));
+            studyOnholdService.create(onhold.getIsoDto(getSpIi()));
         } catch (PAFieldException e) {
             addFieldError(e);
             return AR_EDIT;
@@ -123,7 +137,7 @@ public class OnholdAction extends AbstractListEditAction {
     @Override
     public String update() throws PAException {
         try {
-            getStudyOnholdSvc().update(onhold.getIsoDto(getSpIi()));
+            studyOnholdService.update(onhold.getIsoDto(getSpIi()));
         } catch (PAFieldException e) {
             addFieldError(e);
             return AR_EDIT;
@@ -140,7 +154,7 @@ public class OnholdAction extends AbstractListEditAction {
     @Override
     protected void loadEditForm() throws PAException {
         if (CA_EDIT.equals(getCurrentAction())) {
-            setOnhold(new OnholdWebDTO(getStudyOnholdSvc().get(IiConverter.convertToIi(getSelectedRowIdentifier()))));
+            setOnhold(new OnholdWebDTO(studyOnholdService.get(IiConverter.convertToIi(getSelectedRowIdentifier()))));
         } else {
             setOnhold(new OnholdWebDTO());
         }
@@ -151,7 +165,7 @@ public class OnholdAction extends AbstractListEditAction {
      */
     @Override
     protected void loadListForm() throws PAException {
-        List<StudyOnholdDTO> isoList = getStudyOnholdSvc().getByStudyProtocol(getSpIi());
+        List<StudyOnholdDTO> isoList = studyOnholdService.getByStudyProtocol(getSpIi());
         setOnholdList(new ArrayList<OnholdWebDTO>());
         for (StudyOnholdDTO iso : isoList) {
             getOnholdList().add(new OnholdWebDTO(iso));
@@ -164,18 +178,21 @@ public class OnholdAction extends AbstractListEditAction {
     public List<OnholdWebDTO> getOnholdList() {
         return onholdList;
     }
+
     /**
      * @param onholdList the onholdList to set
      */
     public void setOnholdList(List<OnholdWebDTO> onholdList) {
         this.onholdList = onholdList;
     }
+
     /**
      * @return the onhold
      */
     public OnholdWebDTO getOnhold() {
         return onhold;
     }
+
     /**
      * @param onhold the onhold to set
      */
@@ -184,17 +201,24 @@ public class OnholdAction extends AbstractListEditAction {
     }
 
     private void addFieldError(PAFieldException e) {
-        switch(e.getFieldNumber()) {
-            case StudyOnholdBeanLocal.FN_REASON_CODE:
-                addFieldError("onhold.reasonCode", e.getMessage());
-                break;
-            case StudyOnholdBeanLocal.FN_DATE_LOW:
-                addFieldError("onhold.dateLow", e.getMessage());
-                break;
-            case StudyOnholdBeanLocal.FN_DATE_HIGH:
-                addFieldError("onhold.dateHigh", e.getMessage());
-                break;
-            default:
+        switch (e.getFieldNumber()) {
+        case StudyOnholdBeanLocal.FN_REASON_CODE:
+            addFieldError("onhold.reasonCode", e.getMessage());
+            break;
+        case StudyOnholdBeanLocal.FN_DATE_LOW:
+            addFieldError("onhold.dateLow", e.getMessage());
+            break;
+        case StudyOnholdBeanLocal.FN_DATE_HIGH:
+            addFieldError("onhold.dateHigh", e.getMessage());
+            break;
+        default:
         }
+    }
+
+    /**
+     * @param studyOnholdService the studyOnholdService to set
+     */
+    public void setStudyOnholdService(StudyOnholdServiceLocal studyOnholdService) {
+        this.studyOnholdService = studyOnholdService;
     }
 }

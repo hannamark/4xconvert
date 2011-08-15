@@ -81,24 +81,10 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
-import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
-import gov.nih.nci.pa.service.DocumentServiceLocal;
-import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
-import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
-import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
-import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
-import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
-import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
-import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
-import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
-import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
-import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
-import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PaRegistry;
+
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -112,7 +98,8 @@ import com.opensymphony.xwork2.Preparable;
  * @since 12/6/2008
  */
 public abstract class AbstractListEditAction extends ActionSupport implements Preparable {
-    private static final long serialVersionUID = 1234573645L;
+    
+    private static final long serialVersionUID = -739752598760711484L;
 
     /** Action result to call list jsp. */
     protected static final String AR_LIST = "list";
@@ -132,44 +119,14 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     /** Index of current StudyProtocol. */
     private Ii spIi;
 
-    private StudyDiseaseServiceLocal studyDisesaeSvc;
-    private PDQDiseaseServiceLocal diseaseSvc;
-    private PDQDiseaseParentServiceRemote diseaseParentSvc;
-    private StudyMilestoneServicelocal studyMilestoneSvc;
-    private ProtocolQueryServiceLocal protocolQuerySvc;
-    private PlannedActivityServiceLocal plannedActivitySvc;
-    private InterventionServiceLocal interventionSvc;
-    private InterventionAlternateNameServiceRemote interventionAlternateNameSvc;
-    private StudyOnholdServiceLocal studyOnholdSvc;
-    private StudyProtocolServiceLocal studyProtocolSvc;
-    private DocumentServiceLocal documentSvc;
-    private StudySiteAccrualAccessServiceLocal accrualAccessSvc;
-    private StudySiteAccrualStatusServiceLocal accrualStatusSvc;
-    private RegistryUserServiceLocal registryUserSvc;
-    private PlannedMarkerServiceLocal plannedMarkerService;
-
     /**
      * @throws PAException exception
      */
+    @Override
     public void prepare() throws PAException {
-        studyDisesaeSvc = PaRegistry.getStudyDiseaseService();
-        diseaseSvc = PaRegistry.getDiseaseService();
-        diseaseParentSvc = PaRegistry.getDiseaseParentService();
-        studyMilestoneSvc = PaRegistry.getStudyMilestoneService();
-        protocolQuerySvc = PaRegistry.getProtocolQueryService();
-        plannedActivitySvc = PaRegistry.getPlannedActivityService();
-        interventionSvc = PaRegistry.getInterventionService();
-        interventionAlternateNameSvc = PaRegistry.getInterventionAlternateNameService();
-        studyOnholdSvc = PaRegistry.getStudyOnholdService();
-        studyProtocolSvc = PaRegistry.getStudyProtocolService();
-        documentSvc = PaRegistry.getDocumentService();
-        accrualAccessSvc = PaRegistry.getStudySiteAccrualAccessService();
-        accrualStatusSvc = PaRegistry.getStudySiteAccrualStatusService();
-        spDTO = (StudyProtocolQueryDTO) ServletActionContext
-                .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        spDTO = (StudyProtocolQueryDTO) session.getAttribute(Constants.TRIAL_SUMMARY);
         spIi = IiConverter.convertToStudyProtocolIi(spDTO.getStudyProtocolId());
-        registryUserSvc = PaRegistry.getRegistryUserService();
-        plannedMarkerService = PaRegistry.getPlannedMarkerService();
     }
 
     /**
@@ -194,6 +151,7 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
         loadEditForm();
         return AR_EDIT;
     }
+
     /**
      * Call the edit jsp in "edit" mode.
      * @return action result
@@ -206,7 +164,7 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     }
 
     /**
-     * Add a new record to database (needs to be overridden).  Returns to list jsp.
+     * Add a new record to database (needs to be overridden). Returns to list jsp.
      * @return result
      * @throws PAException exception
      */
@@ -216,7 +174,7 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
     }
 
     /**
-     * Update a record in the database (needs to be overridden).  Returns to list jsp.
+     * Update a record in the database (needs to be overridden). Returns to list jsp.
      * @return result
      * @throws PAException exception
      */
@@ -301,213 +259,4 @@ public abstract class AbstractListEditAction extends ActionSupport implements Pr
         this.spIi = spIi;
     }
 
-    /**
-     * @return the studyDisesaeSvc
-     */
-    public StudyDiseaseServiceLocal getStudyDisesaeSvc() {
-        return studyDisesaeSvc;
-    }
-
-    /**
-     * @param studyDisesaeSvc the studyDisesaeSvc to set
-     */
-    public void setStudyDisesaeSvc(StudyDiseaseServiceLocal studyDisesaeSvc) {
-        this.studyDisesaeSvc = studyDisesaeSvc;
-    }
-
-    /**
-     * @return the diseaseSvc
-     */
-    public PDQDiseaseServiceLocal getDiseaseSvc() {
-        return diseaseSvc;
-    }
-
-    /**
-     * @param diseaseSvc the diseaseSvc to set
-     */
-    public void setDiseaseSvc(PDQDiseaseServiceLocal diseaseSvc) {
-        this.diseaseSvc = diseaseSvc;
-    }
-
-    /**
-     * @return the diseaseParentSvc
-     */
-    public PDQDiseaseParentServiceRemote getDiseaseParentSvc() {
-        return diseaseParentSvc;
-    }
-
-    /**
-     * @param diseaseParentSvc the diseaseParentSvc to set
-     */
-    public void setDiseaseParentSvc(PDQDiseaseParentServiceRemote diseaseParentSvc) {
-        this.diseaseParentSvc = diseaseParentSvc;
-    }
-
-    /**
-     * @return the studyMilestoneSvc
-     */
-    public StudyMilestoneServicelocal getStudyMilestoneSvc() {
-        return studyMilestoneSvc;
-    }
-
-    /**
-     * @param studyMilestoneSvc the studyMilestoneSvc to set
-     */
-    public void setStudyMilestoneSvc(StudyMilestoneServicelocal studyMilestoneSvc) {
-        this.studyMilestoneSvc = studyMilestoneSvc;
-    }
-
-    /**
-     * @return the protocolQuerySvc
-     */
-    public ProtocolQueryServiceLocal getProtocolQuerySvc() {
-        return protocolQuerySvc;
-    }
-
-    /**
-     * @param protocolQuerySvc the protocolQuerySvc to set
-     */
-    public void setProtocolQuerySvc(ProtocolQueryServiceLocal protocolQuerySvc) {
-        this.protocolQuerySvc = protocolQuerySvc;
-    }
-
-    /**
-     * @return the plannedActivitySvc
-     */
-    public PlannedActivityServiceLocal getPlannedActivitySvc() {
-        return plannedActivitySvc;
-    }
-
-    /**
-     * @param plannedActivitySvc the plannedActivitySvc to set
-     */
-    public void setPlannedActivitySvc(PlannedActivityServiceLocal plannedActivitySvc) {
-        this.plannedActivitySvc = plannedActivitySvc;
-    }
-
-    /**
-     * @return the interventionSvc
-     */
-    public InterventionServiceLocal getInterventionSvc() {
-        return interventionSvc;
-    }
-
-    /**
-     * @param interventionSvc the interventionSvc to set
-     */
-    public void setInterventionSvc(InterventionServiceLocal interventionSvc) {
-        this.interventionSvc = interventionSvc;
-    }
-
-    /**
-     * @return the interventionAlternateNameSvc
-     */
-    public InterventionAlternateNameServiceRemote getInterventionAlternateNameSvc() {
-        return interventionAlternateNameSvc;
-    }
-
-    /**
-     * @param interventionAlternateNameSvc the interventionAlternateNameSvc to set
-     */
-    public void setInterventionAlternateNameSvc(InterventionAlternateNameServiceRemote interventionAlternateNameSvc) {
-        this.interventionAlternateNameSvc = interventionAlternateNameSvc;
-    }
-
-    /**
-     * @return the studyOnholdSvc
-     */
-    public StudyOnholdServiceLocal getStudyOnholdSvc() {
-        return studyOnholdSvc;
-    }
-
-    /**
-     * @param studyOnholdSvc the studyOnholdSvc to set
-     */
-    public void setStudyOnholdSvc(StudyOnholdServiceLocal studyOnholdSvc) {
-        this.studyOnholdSvc = studyOnholdSvc;
-    }
-
-    /**
-     * @return the studyProtocolSvc
-     */
-    public StudyProtocolServiceLocal getStudyProtocolSvc() {
-        return studyProtocolSvc;
-    }
-
-    /**
-     * @param studyProtocolSvc the studyProtocolSvc to set
-     */
-    public void setStudyProtocolSvc(StudyProtocolServiceLocal studyProtocolSvc) {
-        this.studyProtocolSvc = studyProtocolSvc;
-    }
-
-    /**
-     * @return the documentSvc
-     */
-    public DocumentServiceLocal getDocumentSvc() {
-        return documentSvc;
-    }
-
-    /**
-     * @param documentSvc the documentSvc to set
-     */
-    public void setDocumentSvc(DocumentServiceLocal documentSvc) {
-        this.documentSvc = documentSvc;
-    }
-
-    /**
-     * @return the accrualAccessSvc
-     */
-    public StudySiteAccrualAccessServiceLocal getAccrualAccessSvc() {
-        return accrualAccessSvc;
-    }
-
-    /**
-     * @param accrualAccessSvc the accrualAccessSvc to set
-     */
-    public void setAccrualAccessSvc(StudySiteAccrualAccessServiceLocal accrualAccessSvc) {
-        this.accrualAccessSvc = accrualAccessSvc;
-    }
-
-    /**
-     * @return the accrualStatusSvc
-     */
-    public StudySiteAccrualStatusServiceLocal getAccrualStatusSvc() {
-        return accrualStatusSvc;
-    }
-
-    /**
-     * @param accrualStatusSvc the accrualStatusSvc to set
-     */
-    public void setAccrualStatusSvc(StudySiteAccrualStatusServiceLocal accrualStatusSvc) {
-        this.accrualStatusSvc = accrualStatusSvc;
-    }
-
-    /**
-     * @return the registryUserSvc
-     */
-    public RegistryUserServiceLocal getRegistryUserSvc() {
-        return registryUserSvc;
-    }
-
-    /**
-     * @param registryUserSvc the registryUserSvc to set
-     */
-    public void setRegistryUserSvc(RegistryUserServiceLocal registryUserSvc) {
-        this.registryUserSvc = registryUserSvc;
-    }
-
-    /**
-     * @return the plannedMarkerService
-     */
-    public PlannedMarkerServiceLocal getPlannedMarkerService() {
-        return plannedMarkerService;
-    }
-
-    /**
-     * @param plannedMarkerService the plannedMarkerService to set
-     */
-    public void setPlannedMarkerService(PlannedMarkerServiceLocal plannedMarkerService) {
-        this.plannedMarkerService = plannedMarkerService;
-    }
 }

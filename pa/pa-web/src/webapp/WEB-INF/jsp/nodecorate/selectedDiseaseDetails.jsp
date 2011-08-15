@@ -1,24 +1,15 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
 
+<s:hidden name="currentAction"/>
+<s:hidden name="disease.diseaseIdentifier"/>
+<s:hidden name="disease.studyDiseaseIdentifier"/>
 <table class="form">
-    <s:hidden name="currentAction"/>
-    <s:hidden name="disease.diseaseIdentifier"/>
-    <s:hidden name="disease.studyDiseaseIdentifier"/>
     <tr>
         <td class="label"><s:label>Preferred Name:</s:label><span
             class="required">*</span></td>
         <td class="value" style="width: 250px">
             <s:textfield readonly="true" name="disease.preferredName" maxlength="160" size="160" 
                     cssStyle="width:280px;float:left" cssClass="readonly"/> 
-        </td>
-        <td class="value">
-            <s:if test="%{currentAction == 'create'}"> 
-            <ul style="margin-top: -6px;">
-                <li style="padding-left: 0"><a href="#" class="btn"
-                    onclick="lookup();" /><span class="btn_img"><span
-                    class="search">Look Up</span></span></a></li>
-            </ul>
-            </s:if>
         </td>
     </tr>
     <tr>

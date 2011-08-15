@@ -95,6 +95,10 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -118,7 +122,13 @@ import org.apache.struts2.ServletActionContext;
 * @since 1/16/2009
 */
 public final class MilestoneAction extends AbstractListEditAction {
-    private static final long serialVersionUID = 1234533333L;
+    
+    private static final long serialVersionUID = -2837652488778559394L;
+
+    private MailManagerServiceLocal mailManagerService;
+    private ProtocolQueryServiceLocal protocolQueryService;
+    private StudyMilestoneServicelocal studyMilestoneService;
+    private StudyProtocolServiceLocal studyProtocolService;
 
     private MilestoneWebDTO milestone;
     private List<MilestoneWebDTO> milestoneList;
@@ -126,6 +136,18 @@ public final class MilestoneAction extends AbstractListEditAction {
     private Integer submissionNumber;
     private List<String> allowedMilestones;
     private boolean addAllowed;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() throws PAException {
+        super.prepare();
+        mailManagerService = PaRegistry.getMailManagerService();
+        protocolQueryService = PaRegistry.getProtocolQueryService();
+        studyMilestoneService = PaRegistry.getStudyMilestoneService();
+        studyProtocolService = PaRegistry.getStudyProtocolService();
+    }
 
     /**
      * @throws PAException exception
@@ -154,7 +176,7 @@ public final class MilestoneAction extends AbstractListEditAction {
         loadAmendmentMap();
         Ii spIi = amendmentMap.get(submissionNumber).getIdentifier();
         addAllowed = spIi.getExtension().equals(getSpIi().getExtension()) && !computeAllowedMilestones().isEmpty();
-        List<StudyMilestoneDTO> smList = getStudyMilestoneSvc().getByStudyProtocol(spIi);
+        List<StudyMilestoneDTO> smList = studyMilestoneService.getByStudyProtocol(spIi);
         milestoneList = new ArrayList<MilestoneWebDTO>();
         for (StudyMilestoneDTO sm : smList) {
             milestoneList.add(new MilestoneWebDTO(sm));
@@ -163,13 +185,13 @@ public final class MilestoneAction extends AbstractListEditAction {
 
     private void loadAmendmentMap() throws PAException {
         Ii studyProtocolIi = getSpIi();
-        StudyProtocolDTO spDTO = getStudyProtocolSvc().getStudyProtocol(studyProtocolIi);
+        StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
         StudyProtocolDTO toSearchspDTO = new StudyProtocolDTO();
         toSearchspDTO.setSecondaryIdentifiers(DSetConverter.convertIiToDset(PAUtil.getAssignedIdentifier(spDTO)));
-        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         Map<Integer, MilestoneTrialHistoryWebDTO> spMap = new TreeMap<Integer, MilestoneTrialHistoryWebDTO>();
         try {
-            List<StudyProtocolDTO> spList = getStudyProtocolSvc().search(toSearchspDTO, limit);
+            List<StudyProtocolDTO> spList = studyProtocolService.search(toSearchspDTO, limit);
             if (CollectionUtils.isNotEmpty(spList)) {
                 for (StudyProtocolDTO sp : spList) {
                     Integer sn = IntConverter.convertToInteger(sp.getSubmissionNumber());
@@ -184,7 +206,7 @@ public final class MilestoneAction extends AbstractListEditAction {
         }
         setAmendmentMap(spMap);
     }
-    
+
     /**
      * @return action result
      * @throws PAException exception
@@ -202,23 +224,23 @@ public final class MilestoneAction extends AbstractListEditAction {
         }
         dto.setStudyProtocolIdentifier(getSpIi());
         try {
-            getStudyMilestoneSvc().create(dto);
+            studyMilestoneService.create(dto);
             // update the trial summary session bean
-            StudyProtocolQueryDTO studyProtocolQueryDTO =
-                getProtocolQuerySvc().getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(getSpIi()));
+            Long spIi = IiConverter.convertToLong(getSpIi());
+            StudyProtocolQueryDTO studyProtocolQueryDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(spIi);
             ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
             if (MilestoneCode.SUBMISSION_ACCEPTED.getCode().equalsIgnoreCase(milestone.getMilestone())) {
                 StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(getSpIi());
                 Integer sn = IntConverter.convertToInteger(spDTO.getSubmissionNumber());
                 if (sn > 1) {
-                    //send mail
-                    PaRegistry.getMailManagerService().sendAmendAcceptEmail(getSpIi());
+                    // send mail
+                    mailManagerService.sendAmendAcceptEmail(getSpIi());
                 } else {
-                    PaRegistry.getMailManagerService().sendAcceptEmail(getSpIi());
+                    mailManagerService.sendAcceptEmail(getSpIi());
                 }
                 TrialHelper helper = new TrialHelper();
-                ServletActionContext.getRequest().getSession().setAttribute(Constants.DOC_WFS_MENU,
-                        helper.setMenuLinks(DocumentWorkflowStatusCode.ACCEPTED));
+                ServletActionContext.getRequest().getSession()
+                    .setAttribute(Constants.DOC_WFS_MENU, helper.setMenuLinks(DocumentWorkflowStatusCode.ACCEPTED));
             }
         } catch (PAException e) {
             addActionError(e.getMessage());
@@ -310,6 +332,34 @@ public final class MilestoneAction extends AbstractListEditAction {
      */
     public void setAllowedMilestones(List<String> allowedMilestones) {
         this.allowedMilestones = allowedMilestones;
+    }
+
+    /**
+     * @param mailManagerService the mailManagerService to set
+     */
+    public void setMailManagerService(MailManagerServiceLocal mailManagerService) {
+        this.mailManagerService = mailManagerService;
+    }
+
+    /**
+     * @param protocolQueryService the protocolQueryService to set
+     */
+    public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
+    }
+
+    /**
+     * @param studyMilestoneService the studyMilestoneService to set
+     */
+    public void setStudyMilestoneService(StudyMilestoneServicelocal studyMilestoneService) {
+        this.studyMilestoneService = studyMilestoneService;
+    }
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
     }
 
 }

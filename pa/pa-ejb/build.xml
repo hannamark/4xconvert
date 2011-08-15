@@ -6,8 +6,8 @@
 
 <project name="pa-ejb" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <property name="pa-ejb.coverage.line" value="71"/>
-    <property name="pa-ejb.coverage.branch" value="56"/>
-    <property name="pa-ejb.pmd.maxerrors" value="358"/>
+    <property name="pa-ejb.coverage.branch" value="57"/>
+    <property name="pa-ejb.pmd.maxerrors" value="356"/>
 
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>

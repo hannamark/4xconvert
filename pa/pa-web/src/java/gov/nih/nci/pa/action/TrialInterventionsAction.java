@@ -100,11 +100,14 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.BaseLookUpService;
+import gov.nih.nci.pa.service.InterventionAlternateNameServiceRemote;
+import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -118,19 +121,24 @@ import com.opensymphony.xwork2.validator.annotations.DoubleRangeFieldValidator;
 import com.opensymphony.xwork2.validator.annotations.StringLengthFieldValidator;
 
 /**
-* @author Hugh Reinhart
-* @since 10/31/2008
-*/
+ * @author Hugh Reinhart
+ * @since 10/31/2008
+ */
 public final class TrialInterventionsAction extends AbstractListEditAction {
-    private static final long serialVersionUID = 1876567890L;
-    static final String SPACE = " ";
-    static final String COMMA_SPACE = ", ";
-    static final String DASH = "-";
 
-    static final String MESSAGE = "Numeric value between 0.0-999999.99";
-    static final String KEY = "i18n.key";
-    static final String MIN = "0.0";
-    static final String MAX = "999999.99";
+    private static final long serialVersionUID = 3643161558861866000L;
+
+    private static final String SPACE = " ";
+    private static final String COMMA_SPACE = ", ";
+    private static final String DASH = "-";
+    private static final String MESSAGE = "Numeric value between 0.0-999999.99";
+    private static final String MIN = "0.0";
+    private static final String MAX = "999999.99";
+
+    private InterventionAlternateNameServiceRemote interventionAlternateNameService;
+    private InterventionServiceLocal interventionService;
+    private PlannedActivityServiceLocal plannedActivityService;
+
     private List<InterventionWebDTO> interventionsList;
     private String interventionIdentifier;
     private String interventionType;
@@ -139,8 +147,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     private String interventionOtherNames;
     private String selectedType;
 
-
-   //DRUG & RADIATION Attributes
+    // DRUG & RADIATION Attributes
 
     private String minDoseValue;
     private String maxDoseValue;
@@ -159,11 +166,19 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     private String approachSite;
     private String targetSite;
 
-
-    //PLANNED PROCEDURE Attributes
+    // PLANNED PROCEDURE Attributes
     private String procedureName;
 
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() throws PAException {
+        super.prepare();
+        interventionAlternateNameService = PaRegistry.getInterventionAlternateNameService();
+        interventionService = PaRegistry.getInterventionService();
+        plannedActivityService = PaRegistry.getPlannedActivityService();
+    }
 
     /**
      * @return result
@@ -172,7 +187,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     @Override
     public String delete() throws PAException {
         try {
-            getPlannedActivitySvc().delete(IiConverter.convertToIi(getSelectedRowIdentifier()));
+            plannedActivityService.delete(IiConverter.convertToIi(getSelectedRowIdentifier()));
         } catch (PAException e) {
             addActionError(e.getMessage());
             return AR_LIST;
@@ -186,19 +201,19 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      */
     @Override
     public String add() throws PAException {
-     try {
-       enforceBusinessRules();
-        if (isSubstance()) {
-          getPlannedActivitySvc().createPlannedSubstanceAdministration(generateSubstanceIsoDto());
-        } else if (isProcedure()) {
-          getPlannedActivitySvc().createPlannedProcedure(generateProcedureIsoDto());
-        } else {
-          getPlannedActivitySvc().create(generateIsoDto());
+        try {
+            enforceBusinessRules();
+            if (isSubstance()) {
+                plannedActivityService.createPlannedSubstanceAdministration(generateSubstanceIsoDto());
+            } else if (isProcedure()) {
+                plannedActivityService.createPlannedProcedure(generateProcedureIsoDto());
+            } else {
+                plannedActivityService.create(generateIsoDto());
+            }
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            return AR_EDIT;
         }
-       } catch (PAException e) {
-          addActionError(e.getMessage());
-          return AR_EDIT;
-       }
         return super.add();
     }
 
@@ -213,15 +228,15 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
             if (isSubstance()) {
                 PlannedSubstanceAdministrationDTO plannedDto = generateSubstanceIsoDto();
                 plannedDto.setIdentifier(IiConverter.convertToIi(getSelectedRowIdentifier()));
-                getPlannedActivitySvc().updatePlannedSubstanceAdministration(plannedDto);
+                plannedActivityService.updatePlannedSubstanceAdministration(plannedDto);
             } else if (isProcedure()) {
                 PlannedProcedureDTO plannedDto = generateProcedureIsoDto();
                 plannedDto.setIdentifier(IiConverter.convertToIi(getSelectedRowIdentifier()));
-                getPlannedActivitySvc().updatePlannedProcedure(plannedDto);
+                plannedActivityService.updatePlannedProcedure(plannedDto);
             } else {
                 PlannedActivityDTO pa = generateIsoDto();
                 pa.setIdentifier(IiConverter.convertToIi(getSelectedRowIdentifier()));
-                getPlannedActivitySvc().update(pa);
+                plannedActivityService.update(pa);
             }
         } catch (PAException e) {
             addActionError(e.getMessage());
@@ -237,7 +252,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     public String display() throws PAException {
         setInterventionIdentifier(ServletActionContext.getRequest().getParameter("interventionId"));
         if (StringUtils.isNotEmpty(getInterventionIdentifier())) {
-            InterventionDTO iDto = getInterventionSvc().get(IiConverter.convertToIi(interventionIdentifier));
+            InterventionDTO iDto = interventionService.get(IiConverter.convertToIi(interventionIdentifier));
             setInterventionName(StConverter.convertToString(iDto.getName()));
             setInterventionOtherNames(otherNamesCSV(iDto.getIdentifier()));
             setInterventionType(CdConverter.convertCdToString(iDto.getCtGovTypeCode()));
@@ -247,9 +262,9 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
 
     /**
      * Display sub page.
-     *
+     * 
      * @return the string
-     *
+     * 
      * @throws PAException the PA exception
      */
     public String displaySubPage() throws PAException {
@@ -268,7 +283,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     @Override
     protected void loadListForm() throws PAException {
         setInterventionsList(new ArrayList<InterventionWebDTO>());
-        List<PlannedActivityDTO> paList = getPlannedActivitySvc().getByStudyProtocol(getSpIi());
+        List<PlannedActivityDTO> paList = plannedActivityService.getByStudyProtocol(getSpIi());
         for (PlannedActivityDTO pa : paList) {
             if (PAUtil.isTypeIntervention(pa.getCategoryCode())) {
                 getInterventionsList().add(generateWebDto(pa));
@@ -283,40 +298,39 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     protected void loadEditForm() throws PAException {
         if (StringUtils.isNotEmpty(getSelectedRowIdentifier())) {
             InterventionWebDTO i = new InterventionWebDTO();
-            final PlannedActivityServiceLocal plannedActivitySvc = getPlannedActivitySvc();
             if (getSelectedType().equals(ActivitySubcategoryCode.DRUG.getCode())
-                || getSelectedType().equals(ActivitySubcategoryCode.RADIATION.getCode())) {
-               PlannedSubstanceAdministrationDTO plannedDto =
-                 plannedActivitySvc
-                   .getPlannedSubstanceAdministration(IiConverter.convertToIi(getSelectedRowIdentifier()));
-               i = generateWebDto(plannedDto);
-               setDoseDurationUOM(i.getDoseDurationUOM());
-               setDoseDurationValue(i.getDoseDurationValue());
-               setDoseForm(i.getDoseForm());
-               setDoseFrequency(i.getDoseFrequency());
-               setDoseFrequencyCode(i.getDoseFrequencyCode());
-               setDoseRegimen(i.getDoseRegimen());
-               setDoseTotalUOM(i.getDoseTotalUOM());
-               setMinDoseValue(i.getMinDoseValue());
-               setMaxDoseValue(i.getMaxDoseValue());
-               setMinDoseTotalValue(i.getMinDoseTotalValue());
-               setMaxDoseTotalValue(i.getMaxDoseTotalValue());
-               setDoseUOM(i.getDoseUOM());
-               setRouteOfAdministration(i.getRouteOfAdministration());
-               setInterventionType(plannedDto.getSubcategoryCode().getCode());
-               setApproachSite(i.getApproachSite());
-               setTargetSite(i.getTargetSite());
+                    || getSelectedType().equals(ActivitySubcategoryCode.RADIATION.getCode())) {
+                PlannedSubstanceAdministrationDTO plannedDto = plannedActivityService
+                    .getPlannedSubstanceAdministration(IiConverter.convertToIi(getSelectedRowIdentifier()));
+                i = generateWebDto(plannedDto);
+                setDoseDurationUOM(i.getDoseDurationUOM());
+                setDoseDurationValue(i.getDoseDurationValue());
+                setDoseForm(i.getDoseForm());
+                setDoseFrequency(i.getDoseFrequency());
+                setDoseFrequencyCode(i.getDoseFrequencyCode());
+                setDoseRegimen(i.getDoseRegimen());
+                setDoseTotalUOM(i.getDoseTotalUOM());
+                setMinDoseValue(i.getMinDoseValue());
+                setMaxDoseValue(i.getMaxDoseValue());
+                setMinDoseTotalValue(i.getMinDoseTotalValue());
+                setMaxDoseTotalValue(i.getMaxDoseTotalValue());
+                setDoseUOM(i.getDoseUOM());
+                setRouteOfAdministration(i.getRouteOfAdministration());
+                setInterventionType(plannedDto.getSubcategoryCode().getCode());
+                setApproachSite(i.getApproachSite());
+                setTargetSite(i.getTargetSite());
             } else if (getSelectedType().equals(ActivitySubcategoryCode.PROCEDURE_SURGERY.getCode())) {
-               PlannedProcedureDTO plannedDto =
-                    plannedActivitySvc.getPlannedProcedure(IiConverter.convertToIi(getSelectedRowIdentifier()));
-               i = generateWebDto(plannedDto);
-               setInterventionType(plannedDto.getSubcategoryCode().getCode());
-               setProcedureName(i.getProcedureName());
-               setTargetSite(i.getTargetSite());
+                PlannedProcedureDTO plannedDto = plannedActivityService.getPlannedProcedure(IiConverter
+                    .convertToIi(getSelectedRowIdentifier()));
+                i = generateWebDto(plannedDto);
+                setInterventionType(plannedDto.getSubcategoryCode().getCode());
+                setProcedureName(i.getProcedureName());
+                setTargetSite(i.getTargetSite());
             } else {
-               PlannedActivityDTO paDto = plannedActivitySvc.get(IiConverter.convertToIi(getSelectedRowIdentifier()));
-               i = generateWebDto(paDto);
-               setInterventionType(paDto.getSubcategoryCode().getCode());
+                PlannedActivityDTO paDto = plannedActivityService.get(IiConverter
+                    .convertToIi(getSelectedRowIdentifier()));
+                i = generateWebDto(paDto);
+                setInterventionType(paDto.getSubcategoryCode().getCode());
             }
             setInterventionIdentifier(i.getIdentifier());
             setInterventionName(i.getName());
@@ -384,7 +398,7 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
     /**
      * @return the interventionDescription
      */
-    @StringLengthFieldValidator(message = "Length must be less than 5000 characters" , maxLength = "5000")
+    @StringLengthFieldValidator(message = "Length must be less than 5000 characters", maxLength = "5000")
     public String getInterventionDescription() {
         return interventionDescription;
     }
@@ -393,8 +407,8 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      * @param interventionDescription the interventionDescription to set
      */
     public void setInterventionDescription(String interventionDescription) {
-        this.interventionDescription =
-            StringUtils.left(interventionDescription, PlannedActivity.TEXT_DESCRIPTION_LENGTH);
+        this.interventionDescription = StringUtils.left(interventionDescription,
+                                                        PlannedActivity.TEXT_DESCRIPTION_LENGTH);
     }
 
     /**
@@ -416,58 +430,54 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      * @throws PAException on error.
      */
     public String displaySelectedType() throws PAException {
-       String id =  ServletActionContext.getRequest().getParameter("id");
-       String className =  ServletActionContext.getRequest().getParameter("className");
-       String divName =  ServletActionContext.getRequest().getParameter("divName");
+        String id = ServletActionContext.getRequest().getParameter("id");
+        String className = ServletActionContext.getRequest().getParameter("className");
+        String divName = ServletActionContext.getRequest().getParameter("divName");
         if (StringUtils.isNotEmpty(id)) {
-         if ("DoseForm".equalsIgnoreCase(className)) {
-           BaseLookUpService<DoseForm> lookUpService =
-               new BaseLookUpService<DoseForm>(DoseForm.class);
-           DoseForm df = lookUpService.getById(Long.parseLong(id));
-           setDoseForm(df.getCode());
-         } else if ("DoseFrequency".equalsIgnoreCase(className)) {
-            BaseLookUpService<DoseFrequency> lookUpService =
-                    new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
-            DoseFrequency dfreq = lookUpService.getById(Long.parseLong(id));
-            setDoseFrequency(dfreq.getDisplayName());
-            setDoseFrequencyCode(dfreq.getCode());
-         } else if ("RouteOfAdministration".equalsIgnoreCase(className)) {
-             BaseLookUpService<RouteOfAdministration> lookUpService =
-                     new BaseLookUpService<RouteOfAdministration>(RouteOfAdministration.class);
-             RouteOfAdministration roa = lookUpService.getById(Long.parseLong(id));
-             setRouteOfAdministration(roa.getCode());
-         } else if ("MethodCode".equalsIgnoreCase(className)) {
-            BaseLookUpService<MethodCode> lookUpService =
-                     new BaseLookUpService<MethodCode>(MethodCode.class);
-            MethodCode mc = lookUpService.getById(Long.parseLong(id));
-            setProcedureName(mc.getCode());
-         } else if ("UnitOfMeasurement".equalsIgnoreCase(className) && divName.contains("loadDoseUOM")) {
-            BaseLookUpService<UnitOfMeasurement> lookUpService =
-                     new BaseLookUpService<UnitOfMeasurement>(UnitOfMeasurement.class);
-            UnitOfMeasurement uom = lookUpService.getById(Long.parseLong(id));
-            setDoseUOM(uom.getCode());
-         } else if ("UnitOfMeasurement".equalsIgnoreCase(className) && divName.contains("loadDoseDurationUOM")) {
-             BaseLookUpService<UnitOfMeasurement> lookUpService =
-                 new BaseLookUpService<UnitOfMeasurement>(UnitOfMeasurement.class);
-              UnitOfMeasurement uom = lookUpService.getById(Long.parseLong(id));
-              setDoseDurationUOM(uom.getCode());
-         } else if ("UnitOfMeasurement".equalsIgnoreCase(className) && divName.contains("loadTotalDoseUOM")) {
-             BaseLookUpService<UnitOfMeasurement> lookUpService =
-                 new BaseLookUpService<UnitOfMeasurement>(UnitOfMeasurement.class);
-              UnitOfMeasurement uom = lookUpService.getById(Long.parseLong(id));
-              setDoseTotalUOM(uom.getCode());
-         } else if ("TargetSite".equalsIgnoreCase(className) && divName.contains("TargetSite")) {
-            BaseLookUpService<TargetSite> lookUpService =
-                     new BaseLookUpService<TargetSite>(TargetSite.class);
-            TargetSite ts = lookUpService.getById(Long.parseLong(id));
-            setTargetSite(ts.getCode());
-         } else if ("TargetSite".equalsIgnoreCase(className) && divName.contains("ApproachSite")) {
-             BaseLookUpService<TargetSite> lookUpService =
-                 new BaseLookUpService<TargetSite>(TargetSite.class);
-             TargetSite ts = lookUpService.getById(Long.parseLong(id));
-             setApproachSite(ts.getCode());
-         }
-     }
+            if ("DoseForm".equalsIgnoreCase(className)) {
+                BaseLookUpService<DoseForm> lookUpService = new BaseLookUpService<DoseForm>(DoseForm.class);
+                DoseForm df = lookUpService.getById(Long.parseLong(id));
+                setDoseForm(df.getCode());
+            } else if ("DoseFrequency".equalsIgnoreCase(className)) {
+                BaseLookUpService<DoseFrequency> lookUpService = new BaseLookUpService<DoseFrequency>(
+                        DoseFrequency.class);
+                DoseFrequency dfreq = lookUpService.getById(Long.parseLong(id));
+                setDoseFrequency(dfreq.getDisplayName());
+                setDoseFrequencyCode(dfreq.getCode());
+            } else if ("RouteOfAdministration".equalsIgnoreCase(className)) {
+                BaseLookUpService<RouteOfAdministration> lookUpService = new BaseLookUpService<RouteOfAdministration>(
+                        RouteOfAdministration.class);
+                RouteOfAdministration roa = lookUpService.getById(Long.parseLong(id));
+                setRouteOfAdministration(roa.getCode());
+            } else if ("MethodCode".equalsIgnoreCase(className)) {
+                BaseLookUpService<MethodCode> lookUpService = new BaseLookUpService<MethodCode>(MethodCode.class);
+                MethodCode mc = lookUpService.getById(Long.parseLong(id));
+                setProcedureName(mc.getCode());
+            } else if ("UnitOfMeasurement".equalsIgnoreCase(className) && divName.contains("loadDoseUOM")) {
+                BaseLookUpService<UnitOfMeasurement> lookUpService = new BaseLookUpService<UnitOfMeasurement>(
+                        UnitOfMeasurement.class);
+                UnitOfMeasurement uom = lookUpService.getById(Long.parseLong(id));
+                setDoseUOM(uom.getCode());
+            } else if ("UnitOfMeasurement".equalsIgnoreCase(className) && divName.contains("loadDoseDurationUOM")) {
+                BaseLookUpService<UnitOfMeasurement> lookUpService = new BaseLookUpService<UnitOfMeasurement>(
+                        UnitOfMeasurement.class);
+                UnitOfMeasurement uom = lookUpService.getById(Long.parseLong(id));
+                setDoseDurationUOM(uom.getCode());
+            } else if ("UnitOfMeasurement".equalsIgnoreCase(className) && divName.contains("loadTotalDoseUOM")) {
+                BaseLookUpService<UnitOfMeasurement> lookUpService = new BaseLookUpService<UnitOfMeasurement>(
+                        UnitOfMeasurement.class);
+                UnitOfMeasurement uom = lookUpService.getById(Long.parseLong(id));
+                setDoseTotalUOM(uom.getCode());
+            } else if ("TargetSite".equalsIgnoreCase(className) && divName.contains("TargetSite")) {
+                BaseLookUpService<TargetSite> lookUpService = new BaseLookUpService<TargetSite>(TargetSite.class);
+                TargetSite ts = lookUpService.getById(Long.parseLong(id));
+                setTargetSite(ts.getCode());
+            } else if ("TargetSite".equalsIgnoreCase(className) && divName.contains("ApproachSite")) {
+                BaseLookUpService<TargetSite> lookUpService = new BaseLookUpService<TargetSite>(TargetSite.class);
+                TargetSite ts = lookUpService.getById(Long.parseLong(id));
+                setApproachSite(ts.getCode());
+            }
+        }
         return divName;
     }
 
@@ -475,294 +485,320 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
      * @return the minDoseValue
      */
     @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX)
-     public String getMinDoseValue() {
-       return minDoseValue;
-     }
+    public String getMinDoseValue() {
+        return minDoseValue;
+    }
+
     /**
      * @param minDoseValue the minDoseValue to set
      */
-     public void setMinDoseValue(String minDoseValue) {
-       this.minDoseValue = minDoseValue;
-     }
-     /**
-      * @return the maxDoseValue
-      */
-     @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX)
-     public String getMaxDoseValue() {
-       return maxDoseValue;
-     }
-     /**
-      * @param maxDoseValue the maxDoseValue to set
-      */
-     public void setMaxDoseValue(String maxDoseValue) {
-       this.maxDoseValue = maxDoseValue;
-     }
-     /**
-      * @return the doseUOM
-      */
-     public String getDoseUOM() {
-       return doseUOM;
-     }
-     /**
-      * @param doseUOM the doseUOM to set
-      */
-      public void setDoseUOM(String doseUOM) {
-       this.doseUOM = doseUOM;
-      }
+    public void setMinDoseValue(String minDoseValue) {
+        this.minDoseValue = minDoseValue;
+    }
+
+    /**
+     * @return the maxDoseValue
+     */
+    @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX)
+    public String getMaxDoseValue() {
+        return maxDoseValue;
+    }
+
+    /**
+     * @param maxDoseValue the maxDoseValue to set
+     */
+    public void setMaxDoseValue(String maxDoseValue) {
+        this.maxDoseValue = maxDoseValue;
+    }
+
+    /**
+     * @return the doseUOM
+     */
+    public String getDoseUOM() {
+        return doseUOM;
+    }
+
+    /**
+     * @param doseUOM the doseUOM to set
+     */
+    public void setDoseUOM(String doseUOM) {
+        this.doseUOM = doseUOM;
+    }
+
     /**
      * @return the doseDurationValue
      */
-      @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX)
-     public String getDoseDurationValue() {
-       return doseDurationValue;
-     }
+    @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX)
+    public String getDoseDurationValue() {
+        return doseDurationValue;
+    }
+
     /**
      * @param doseDurationValue the doseDurationValue to set
      */
-     public void setDoseDurationValue(String doseDurationValue) {
-       this.doseDurationValue = doseDurationValue;
-     }
+    public void setDoseDurationValue(String doseDurationValue) {
+        this.doseDurationValue = doseDurationValue;
+    }
+
     /**
      * @return the doseDurationUOM
      */
     public String getDoseDurationUOM() {
-      return doseDurationUOM;
+        return doseDurationUOM;
     }
+
     /**
      * @param doseDurationUOM the doseDurationUOM to set
      */
     public void setDoseDurationUOM(String doseDurationUOM) {
-      this.doseDurationUOM = doseDurationUOM;
+        this.doseDurationUOM = doseDurationUOM;
     }
+
     /**
      * @return the doseRegimen
      */
-    @StringLengthFieldValidator(message = "Length must be less than 1000 characters" , maxLength = "1000")
-     public String getDoseRegimen() {
-       return doseRegimen;
-     }
+    @StringLengthFieldValidator(message = "Length must be less than 1000 characters", maxLength = "1000")
+    public String getDoseRegimen() {
+        return doseRegimen;
+    }
+
     /**
      * @param doseRegimen the doseRegimen to set
      */
-     public void setDoseRegimen(String doseRegimen) {
-       this.doseRegimen = doseRegimen;
-     }
+    public void setDoseRegimen(String doseRegimen) {
+        this.doseRegimen = doseRegimen;
+    }
+
     /**
      * @return the minDoseTotalValue
      */
-     @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX)
-     public String getMinDoseTotalValue() {
-      return minDoseTotalValue;
-     }
-   /**
-    * @param minDoseTotalValue the minDoseTotalValue to set
-    */
-    public void setMinDoseTotalValue(String minDoseTotalValue) {
-       this.minDoseTotalValue = minDoseTotalValue;
+    @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX)
+    public String getMinDoseTotalValue() {
+        return minDoseTotalValue;
     }
+
+    /**
+     * @param minDoseTotalValue the minDoseTotalValue to set
+     */
+    public void setMinDoseTotalValue(String minDoseTotalValue) {
+        this.minDoseTotalValue = minDoseTotalValue;
+    }
+
     /**
      * @return the maxDoseTotalValue
      */
     @DoubleRangeFieldValidator(message = MESSAGE, minInclusive = MIN, maxInclusive = MAX)
-     public String getMaxDoseTotalValue() {
+    public String getMaxDoseTotalValue() {
         return maxDoseTotalValue;
-     }
+    }
+
     /**
      * @param maxDoseTotalValue the maxDoseTotalValue to set
      */
-     public void setMaxDoseTotalValue(String maxDoseTotalValue) {
+    public void setMaxDoseTotalValue(String maxDoseTotalValue) {
         this.maxDoseTotalValue = maxDoseTotalValue;
-     }
-     /**
-      * @return the doseTotalUOM
-      */
-     public String getDoseTotalUOM() {
+    }
+
+    /**
+     * @return the doseTotalUOM
+     */
+    public String getDoseTotalUOM() {
         return doseTotalUOM;
-     }
-     /**
-      * @param doseTotalUOM the doseTotalUOM to set
-      */
-      public void setDoseTotalUOM(String doseTotalUOM) {
+    }
+
+    /**
+     * @param doseTotalUOM the doseTotalUOM to set
+     */
+    public void setDoseTotalUOM(String doseTotalUOM) {
         this.doseTotalUOM = doseTotalUOM;
-      }
-     /**
-      * @return the routeOfAdministration
-      */
-      public String getRouteOfAdministration() {
-         return routeOfAdministration;
-      }
+    }
+
+    /**
+     * @return the routeOfAdministration
+     */
+    public String getRouteOfAdministration() {
+        return routeOfAdministration;
+    }
+
     /**
      * @param routeOfAdministration the routeOfAdministration to set
      */
-     public void setRouteOfAdministration(String routeOfAdministration) {
-       this.routeOfAdministration = routeOfAdministration;
-     }
+    public void setRouteOfAdministration(String routeOfAdministration) {
+        this.routeOfAdministration = routeOfAdministration;
+    }
+
     /**
      * @return the doseForm
      */
-     public String getDoseForm() {
-       return doseForm;
-     }
+    public String getDoseForm() {
+        return doseForm;
+    }
+
     /**
      * @param doseForm the doseForm to set
      */
-     public void setDoseForm(String doseForm) {
-       this.doseForm = doseForm;
-     }
+    public void setDoseForm(String doseForm) {
+        this.doseForm = doseForm;
+    }
+
     /**
      * @return the doseFrequency
      */
-     public String getDoseFrequency() {
-       return doseFrequency;
-     }
+    public String getDoseFrequency() {
+        return doseFrequency;
+    }
+
     /**
      * @param doseFrequency the doseFrequency to set
      */
-     public void setDoseFrequency(String doseFrequency) {
-       this.doseFrequency = doseFrequency;
-     }
+    public void setDoseFrequency(String doseFrequency) {
+        this.doseFrequency = doseFrequency;
+    }
+
     /**
      * @return the procedureName
      */
-     public String getProcedureName() {
-       return procedureName;
-     }
-   /**
-     * @param procedureName the procedureName to set
-    */
-    public void setProcedureName(String procedureName) {
-       this.procedureName = procedureName;
+    public String getProcedureName() {
+        return procedureName;
     }
+
+    /**
+     * @param procedureName the procedureName to set
+     */
+    public void setProcedureName(String procedureName) {
+        this.procedureName = procedureName;
+    }
+
     /**
      * @return the selectedType
      */
-     public String getSelectedType() {
-      return selectedType;
-     }
+    public String getSelectedType() {
+        return selectedType;
+    }
 
     /**
      * @param selectedType the selectedType to set
      */
-     public void setSelectedType(String selectedType) {
-      this.selectedType = selectedType;
-     }
+    public void setSelectedType(String selectedType) {
+        this.selectedType = selectedType;
+    }
 
     /**
      * @return the approachSite
      */
-     public String getApproachSite() {
-       return approachSite;
-     }
+    public String getApproachSite() {
+        return approachSite;
+    }
 
     /**
      * @param approachSite the approachSite to set
      */
-     public void setApproachSite(String approachSite) {
+    public void setApproachSite(String approachSite) {
         this.approachSite = approachSite;
-     }
+    }
 
     /**
      * @return the targetSite
      */
-     public String getTargetSite() {
-       return targetSite;
-     }
+    public String getTargetSite() {
+        return targetSite;
+    }
 
     /**
      * @param targetSite the targetSite to set
      */
-     public void setTargetSite(String targetSite) {
-       this.targetSite = targetSite;
-     }
+    public void setTargetSite(String targetSite) {
+        this.targetSite = targetSite;
+    }
 
+    /**
+     * Generate.
+     * 
+     * @return the string
+     * 
+     * @throws PAException the PA exception
+     */
+    public String generate() throws PAException {
+        try {
+            enforceBusinessRules();
+            String description = "";
+            if (isSubstance()) {
+                description = convertInterventionToCSV(generateWebDto(generateSubstanceIsoDto()));
+            } else if (isProcedure()) {
+                description = convertInterventionToCSV(generateWebDto(generateProcedureIsoDto()));
+            }
+            setInterventionDescription(description);
+        } catch (PAException e) {
+            addActionError(e.getMessage());
 
-     /**
-      * Generate.
-      *
-      * @return the string
-      *
-      * @throws PAException the PA exception
-      */
-     public String generate() throws PAException {
-      try {
-        enforceBusinessRules();
-        String description = "";
-        if (isSubstance()) {
-           description = convertInterventionToCSV(generateWebDto(generateSubstanceIsoDto()));
-        } else if (isProcedure()) {
-           description = convertInterventionToCSV(generateWebDto(generateProcedureIsoDto()));
         }
-        setInterventionDescription(description);
-       } catch (PAException e) {
-          addActionError(e.getMessage());
-
-      }
         return AR_EDIT;
-     }
-     private String convertInterventionToCSV(InterventionWebDTO interDto) {
-         StringBuffer sbuf = new StringBuffer();
+    }
 
-         if (interDto.getMinDoseValue() != null && !"".equals(interDto.getMinDoseValue())) {
-             sbuf.append(interDto.getMinDoseValue());
-         }
-         if (interDto.getMaxDoseValue() != null && !"".equals(interDto.getMaxDoseValue())) {
-             sbuf.append(DASH).append(interDto.getMaxDoseValue());
-         }
-         if (interDto.getDoseUOM() != null && !"".equals(interDto.getDoseUOM())) {
-             sbuf.append(SPACE).append(interDto.getDoseUOM());
-         }
-         if (interDto.getDoseForm() != null && !"".equals(interDto.getDoseForm())) {
-             sbuf.append(COMMA_SPACE);
-             sbuf.append(interDto.getDoseForm());
-         }
-         if (interDto.getRouteOfAdministration() != null && !"".equals(interDto.getRouteOfAdministration())) {
-             sbuf.append(COMMA_SPACE);
-             sbuf.append(interDto.getRouteOfAdministration());
-         }
-         if (interDto.getDoseDurationValue() != null && !"".equals(interDto.getDoseDurationValue())) {
-             sbuf.append(" for ");
-             sbuf.append(interDto.getDoseDurationValue());
-             if (interDto.getDoseDurationUOM() != null) {
-                 sbuf.append(SPACE);
-                 sbuf.append(interDto.getDoseDurationUOM());
-             }
-         }
-         if (interDto.getDoseFrequency() != null && !"".equals(interDto.getDoseFrequency())) {
-             sbuf.append(COMMA_SPACE);
-             sbuf.append(interDto.getDoseFrequency());
-         }
-         if (interDto.getDoseRegimen() != null && !"".equals(interDto.getDoseRegimen())) {
-             sbuf.append(COMMA_SPACE);
-             sbuf.append(interDto.getDoseRegimen());
-             sbuf.append(SPACE);
-         }
-         if (interDto.getMinDoseTotalValue() != null && !"".equals(interDto.getMinDoseTotalValue())) {
-             sbuf.append(" Total dose:  ");
-             sbuf.append(interDto.getMinDoseTotalValue());
-             if (interDto.getMaxDoseTotalValue() != null) {
-                 sbuf.append(DASH).append(interDto.getMaxDoseTotalValue());
-             }
-             if (interDto.getDoseTotalUOM() != null) {
-                 sbuf.append(SPACE);
-                 sbuf.append(interDto.getDoseTotalUOM());
-                 sbuf.append(SPACE);
-             }
-         }
-         if (interDto.getApproachSite() != null && !"".equals(interDto.getApproachSite())) {
+    private String convertInterventionToCSV(InterventionWebDTO interDto) {
+        StringBuffer sbuf = new StringBuffer();
+
+        if (interDto.getMinDoseValue() != null && !"".equals(interDto.getMinDoseValue())) {
+            sbuf.append(interDto.getMinDoseValue());
+        }
+        if (interDto.getMaxDoseValue() != null && !"".equals(interDto.getMaxDoseValue())) {
+            sbuf.append(DASH).append(interDto.getMaxDoseValue());
+        }
+        if (interDto.getDoseUOM() != null && !"".equals(interDto.getDoseUOM())) {
+            sbuf.append(SPACE).append(interDto.getDoseUOM());
+        }
+        if (interDto.getDoseForm() != null && !"".equals(interDto.getDoseForm())) {
+            sbuf.append(COMMA_SPACE);
+            sbuf.append(interDto.getDoseForm());
+        }
+        if (interDto.getRouteOfAdministration() != null && !"".equals(interDto.getRouteOfAdministration())) {
+            sbuf.append(COMMA_SPACE);
+            sbuf.append(interDto.getRouteOfAdministration());
+        }
+        if (interDto.getDoseDurationValue() != null && !"".equals(interDto.getDoseDurationValue())) {
+            sbuf.append(" for ");
+            sbuf.append(interDto.getDoseDurationValue());
+            if (interDto.getDoseDurationUOM() != null) {
+                sbuf.append(SPACE);
+                sbuf.append(interDto.getDoseDurationUOM());
+            }
+        }
+        if (interDto.getDoseFrequency() != null && !"".equals(interDto.getDoseFrequency())) {
+            sbuf.append(COMMA_SPACE);
+            sbuf.append(interDto.getDoseFrequency());
+        }
+        if (interDto.getDoseRegimen() != null && !"".equals(interDto.getDoseRegimen())) {
+            sbuf.append(COMMA_SPACE);
+            sbuf.append(interDto.getDoseRegimen());
+            sbuf.append(SPACE);
+        }
+        if (interDto.getMinDoseTotalValue() != null && !"".equals(interDto.getMinDoseTotalValue())) {
+            sbuf.append(" Total dose:  ");
+            sbuf.append(interDto.getMinDoseTotalValue());
+            if (interDto.getMaxDoseTotalValue() != null) {
+                sbuf.append(DASH).append(interDto.getMaxDoseTotalValue());
+            }
+            if (interDto.getDoseTotalUOM() != null) {
+                sbuf.append(SPACE);
+                sbuf.append(interDto.getDoseTotalUOM());
+                sbuf.append(SPACE);
+            }
+        }
+        if (interDto.getApproachSite() != null && !"".equals(interDto.getApproachSite())) {
             sbuf.append("Approach Site:  ");
             sbuf.append(interDto.getApproachSite());
             sbuf.append(SPACE);
-         }
-         if (interDto.getTargetSite() != null && !"".equals(interDto.getTargetSite())) {
-             sbuf.append("Target Site:  ");
-             sbuf.append(interDto.getTargetSite());
-             sbuf.append(SPACE);
-         }
-         if (interDto.getProcedureName() != null && !"".equals(interDto.getProcedureName())) {
-             sbuf.append("Method:  ");
-             sbuf.append(interDto.getProcedureName());
-         }
-         return sbuf.toString();
+        }
+        if (interDto.getTargetSite() != null && !"".equals(interDto.getTargetSite())) {
+            sbuf.append("Target Site:  ");
+            sbuf.append(interDto.getTargetSite());
+            sbuf.append(SPACE);
+        }
+        if (interDto.getProcedureName() != null && !"".equals(interDto.getProcedureName())) {
+            sbuf.append("Method:  ");
+            sbuf.append(interDto.getProcedureName());
+        }
+        return sbuf.toString();
     }
 
     private boolean isSubstance() {
@@ -891,126 +927,148 @@ public final class TrialInterventionsAction extends AbstractListEditAction {
         return pq;
     }
 
-     private PlannedProcedureDTO generateProcedureIsoDto() {
-         PlannedProcedureDTO paDto = new PlannedProcedureDTO();
-         paDto.setIdentifier(null);
-         paDto.setStudyProtocolIdentifier(getSpIi());
-         paDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.PLANNED_PROCEDURE));
-         paDto.setInterventionIdentifier(IiConverter.convertToIi(getInterventionIdentifier()));
-         paDto.setTextDescription(StConverter.convertToSt(getInterventionDescription()));
-         paDto.setSubcategoryCode(CdConverter.convertStringToCd(getInterventionType()));
-         paDto.setMethodCode(CdConverter.convertStringToCd(getProcedureName()));
-         paDto.setTargetSiteCode(CdConverter.convertStringToCd(getTargetSite()));
-         return paDto;
-     }
+    private PlannedProcedureDTO generateProcedureIsoDto() {
+        PlannedProcedureDTO paDto = new PlannedProcedureDTO();
+        paDto.setIdentifier(null);
+        paDto.setStudyProtocolIdentifier(getSpIi());
+        paDto.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.PLANNED_PROCEDURE));
+        paDto.setInterventionIdentifier(IiConverter.convertToIi(getInterventionIdentifier()));
+        paDto.setTextDescription(StConverter.convertToSt(getInterventionDescription()));
+        paDto.setSubcategoryCode(CdConverter.convertStringToCd(getInterventionType()));
+        paDto.setMethodCode(CdConverter.convertStringToCd(getProcedureName()));
+        paDto.setTargetSiteCode(CdConverter.convertStringToCd(getTargetSite()));
+        return paDto;
+    }
 
-     private InterventionWebDTO generateWebDto(PlannedActivityDTO pa) throws PAException {
-         InterventionDTO i = getInterventionSvc().get(pa.getInterventionIdentifier());
-         InterventionWebDTO webDto = new InterventionWebDTO();
-         webDto.setIdentifier(IiConverter.convertToString(pa.getInterventionIdentifier()));
-         webDto.setPlannedActivityIdentifier(IiConverter.convertToString(pa.getIdentifier()));
-         webDto.setOtherNames(otherNamesCSV(i.getIdentifier()));
-         webDto.setDescription(StConverter.convertToString(pa.getTextDescription()));
-         webDto.setName(StConverter.convertToString(i.getName()));
-         webDto.setType(CdConverter.convertCdToString(pa.getSubcategoryCode()));
-         webDto.setCtGovType(CdConverter.convertCdToString(i.getCtGovTypeCode()));
-         return webDto;
-     }
+    private InterventionWebDTO generateWebDto(PlannedActivityDTO pa) throws PAException {
+        InterventionDTO i = interventionService.get(pa.getInterventionIdentifier());
+        InterventionWebDTO webDto = new InterventionWebDTO();
+        webDto.setIdentifier(IiConverter.convertToString(pa.getInterventionIdentifier()));
+        webDto.setPlannedActivityIdentifier(IiConverter.convertToString(pa.getIdentifier()));
+        webDto.setOtherNames(otherNamesCSV(i.getIdentifier()));
+        webDto.setDescription(StConverter.convertToString(pa.getTextDescription()));
+        webDto.setName(StConverter.convertToString(i.getName()));
+        webDto.setType(CdConverter.convertCdToString(pa.getSubcategoryCode()));
+        webDto.setCtGovType(CdConverter.convertCdToString(i.getCtGovTypeCode()));
+        return webDto;
+    }
 
-     private InterventionWebDTO generateWebDto(PlannedProcedureDTO pa) throws PAException {
-         InterventionDTO i = getInterventionSvc().get(pa.getInterventionIdentifier());
-         InterventionWebDTO webDto = new InterventionWebDTO();
-         webDto.setIdentifier(IiConverter.convertToString(pa.getInterventionIdentifier()));
-         webDto.setPlannedActivityIdentifier(IiConverter.convertToString(pa.getIdentifier()));
-         webDto.setOtherNames(otherNamesCSV(i.getIdentifier()));
-         webDto.setDescription(StConverter.convertToString(pa.getTextDescription()));
-         webDto.setName(StConverter.convertToString(i.getName()));
-         webDto.setType(CdConverter.convertCdToString(pa.getSubcategoryCode()));
-         webDto.setCtGovType(CdConverter.convertCdToString(i.getCtGovTypeCode()));
-         webDto.setProcedureName(!ISOUtil.isCdNull(pa.getMethodCode()) ? pa.getMethodCode().getCode() : "");
-         webDto.setTargetSite(!ISOUtil.isCdNull(pa.getTargetSiteCode()) ? pa.getTargetSiteCode().getCode() : "");
-         return webDto;
-     }
+    private InterventionWebDTO generateWebDto(PlannedProcedureDTO pa) throws PAException {
+        InterventionDTO i = interventionService.get(pa.getInterventionIdentifier());
+        InterventionWebDTO webDto = new InterventionWebDTO();
+        webDto.setIdentifier(IiConverter.convertToString(pa.getInterventionIdentifier()));
+        webDto.setPlannedActivityIdentifier(IiConverter.convertToString(pa.getIdentifier()));
+        webDto.setOtherNames(otherNamesCSV(i.getIdentifier()));
+        webDto.setDescription(StConverter.convertToString(pa.getTextDescription()));
+        webDto.setName(StConverter.convertToString(i.getName()));
+        webDto.setType(CdConverter.convertCdToString(pa.getSubcategoryCode()));
+        webDto.setCtGovType(CdConverter.convertCdToString(i.getCtGovTypeCode()));
+        webDto.setProcedureName(!ISOUtil.isCdNull(pa.getMethodCode()) ? pa.getMethodCode().getCode() : "");
+        webDto.setTargetSite(!ISOUtil.isCdNull(pa.getTargetSiteCode()) ? pa.getTargetSiteCode().getCode() : "");
+        return webDto;
+    }
 
-     private InterventionWebDTO generateWebDto(PlannedSubstanceAdministrationDTO pa) throws PAException {
-         InterventionWebDTO webDto = new InterventionWebDTO();
-         if (pa != null && pa.getInterventionIdentifier() != null) {
-          InterventionDTO i = getInterventionSvc().get(pa.getInterventionIdentifier());
-          webDto.setIdentifier(IiConverter.convertToString(pa.getInterventionIdentifier()));
-          webDto.setPlannedActivityIdentifier(IiConverter.convertToString(pa.getIdentifier()));
-          webDto.setOtherNames(otherNamesCSV(i.getIdentifier()));
-          webDto.setDescription(StConverter.convertToString(pa.getTextDescription()));
-          webDto.setName(StConverter.convertToString(i.getName()));
-          webDto.setType(CdConverter.convertCdToString(pa.getSubcategoryCode()));
-          webDto.setCtGovType(CdConverter.convertCdToString(i.getCtGovTypeCode()));
-          webDto.setDoseDurationUOM(!ISOUtil.isPqUnitNull(pa.getDoseDuration()) ? pa.getDoseDuration().getUnit() : "");
-          webDto.setDoseDurationValue(!ISOUtil.isPqValueNull(pa.getDoseDuration())
-                ? pa.getDoseDuration().getValue().toString() : "");
-          webDto.setDoseForm(!ISOUtil.isCdNull(pa.getDoseFormCode()) ? pa.getDoseFormCode().getCode() : "");
-          webDto.setDoseFrequency(!ISOUtil.isCdNull(pa.getDoseFrequencyCode())
-                ? getDoseFreq(pa.getDoseFrequencyCode().getCode()) : "");
-          webDto.setDoseFrequencyCode(!ISOUtil.isCdNull(pa.getDoseFrequencyCode())
-                ? pa.getDoseFrequencyCode().getCode() : "");
-          webDto.setDoseRegimen(!ISOUtil.isStNull(pa.getDoseRegimen()) ? pa.getDoseRegimen().getValue() : "");
+    private InterventionWebDTO generateWebDto(PlannedSubstanceAdministrationDTO pa) throws PAException {
+        InterventionWebDTO webDto = new InterventionWebDTO();
+        if (pa != null && pa.getInterventionIdentifier() != null) {
+            InterventionDTO i = interventionService.get(pa.getInterventionIdentifier());
+            webDto.setIdentifier(IiConverter.convertToString(pa.getInterventionIdentifier()));
+            webDto.setPlannedActivityIdentifier(IiConverter.convertToString(pa.getIdentifier()));
+            webDto.setOtherNames(otherNamesCSV(i.getIdentifier()));
+            webDto.setDescription(StConverter.convertToString(pa.getTextDescription()));
+            webDto.setName(StConverter.convertToString(i.getName()));
+            webDto.setType(CdConverter.convertCdToString(pa.getSubcategoryCode()));
+            webDto.setCtGovType(CdConverter.convertCdToString(i.getCtGovTypeCode()));
+            webDto
+                .setDoseDurationUOM(!ISOUtil.isPqUnitNull(pa.getDoseDuration()) ? pa.getDoseDuration().getUnit() : "");
+            webDto.setDoseDurationValue(!ISOUtil.isPqValueNull(pa.getDoseDuration()) ? pa.getDoseDuration().getValue()
+                .toString() : "");
+            webDto.setDoseForm(!ISOUtil.isCdNull(pa.getDoseFormCode()) ? pa.getDoseFormCode().getCode() : "");
+            webDto.setDoseFrequency(!ISOUtil.isCdNull(pa.getDoseFrequencyCode()) ? getDoseFreq(pa
+                .getDoseFrequencyCode().getCode()) : "");
+            webDto.setDoseFrequencyCode(!ISOUtil.isCdNull(pa.getDoseFrequencyCode()) ? pa.getDoseFrequencyCode()
+                .getCode() : "");
+            webDto.setDoseRegimen(!ISOUtil.isStNull(pa.getDoseRegimen()) ? pa.getDoseRegimen().getValue() : "");
 
-          webDto.setMinDoseValue(!ISOUtil.isIvlLowNull(pa.getDose())
-                  ? pa.getDose().getLow().getValue().toString() : "");
-          webDto.setMaxDoseValue(!ISOUtil.isIvlHighNull(pa.getDose())
-                ? pa.getDose().getHigh().getValue().toString() : "");
-          webDto.setDoseUOM(!ISOUtil.isIvlUnitNull(pa.getDose())
-                 ? IvlConverter.convertPq().convertLowToJavaPq(pa.getDose()).getUnit() : "");
+            webDto.setMinDoseValue(!ISOUtil.isIvlLowNull(pa.getDose()) ? pa.getDose().getLow().getValue().toString()
+                    : "");
+            webDto.setMaxDoseValue(!ISOUtil.isIvlHighNull(pa.getDose()) ? pa.getDose().getHigh().getValue().toString()
+                    : "");
+            webDto.setDoseUOM(!ISOUtil.isIvlUnitNull(pa.getDose()) ? IvlConverter.convertPq()
+                .convertLowToJavaPq(pa.getDose()).getUnit() : "");
 
-          webDto.setDoseTotalUOM(!ISOUtil.isIvlUnitNull(pa.getDoseTotal())
-                ? IvlConverter.convertPq().convertLowToJavaPq(pa.getDoseTotal()).getUnit() : "");
-          webDto.setMinDoseTotalValue(!ISOUtil.isIvlLowNull(pa.getDoseTotal())
-                ? pa.getDoseTotal().getLow().getValue().toString() : "");
-          webDto.setMaxDoseTotalValue(!ISOUtil.isIvlHighNull(pa.getDoseTotal())
-                ? pa.getDoseTotal().getHigh().getValue().toString() : "");
-          webDto.setRouteOfAdministration(!ISOUtil.isCdNull(pa.getRouteOfAdministrationCode())
-                ? pa.getRouteOfAdministrationCode().getCode() : "");
-          webDto.setApproachSite(!ISOUtil.isCdNull(pa.getApproachSiteCode()) ? pa.getApproachSiteCode().getCode() : "");
-          webDto.setTargetSite(!ISOUtil.isCdNull(pa.getTargetSiteCode()) ? pa.getTargetSiteCode().getCode() : "");
-         }
-         return webDto;
-     }
+            webDto.setDoseTotalUOM(!ISOUtil.isIvlUnitNull(pa.getDoseTotal()) ? IvlConverter.convertPq()
+                .convertLowToJavaPq(pa.getDoseTotal()).getUnit() : "");
+            webDto.setMinDoseTotalValue(!ISOUtil.isIvlLowNull(pa.getDoseTotal()) ? pa.getDoseTotal().getLow()
+                .getValue().toString() : "");
+            webDto.setMaxDoseTotalValue(!ISOUtil.isIvlHighNull(pa.getDoseTotal()) ? pa.getDoseTotal().getHigh()
+                .getValue().toString() : "");
+            webDto.setRouteOfAdministration(!ISOUtil.isCdNull(pa.getRouteOfAdministrationCode()) ? pa
+                .getRouteOfAdministrationCode().getCode() : "");
+            webDto.setApproachSite(!ISOUtil.isCdNull(pa.getApproachSiteCode()) ? pa.getApproachSiteCode().getCode()
+                    : "");
+            webDto.setTargetSite(!ISOUtil.isCdNull(pa.getTargetSiteCode()) ? pa.getTargetSiteCode().getCode() : "");
+        }
+        return webDto;
+    }
 
+    private String otherNamesCSV(Ii interventionIi) throws PAException {
+        List<InterventionAlternateNameDTO> ians = interventionAlternateNameService.getByIntervention(interventionIi);
+        StringBuffer onBuff = new StringBuffer("");
+        for (InterventionAlternateNameDTO ian : ians) {
+            if (ians.get(0) != ian) {
+                onBuff.append(", ");
+            }
+            onBuff.append(StConverter.convertToString(ian.getName()));
+        }
+        return onBuff.toString();
+    }
 
-     private String otherNamesCSV(Ii interventionIi) throws PAException {
-        List<InterventionAlternateNameDTO> ians = getInterventionAlternateNameSvc().getByIntervention(interventionIi);
-         StringBuffer onBuff = new StringBuffer("");
-         for (InterventionAlternateNameDTO ian : ians) {
-             if (ians.get(0) !=  ian) {
-                 onBuff.append(", ");
-             }
-             onBuff.append(StConverter.convertToString(ian.getName()));
-         }
-         return onBuff.toString();
-     }
-
-     private String getDoseFreq(String doseFreqCode) throws PAException {
-         String doseFreqDisplayName = "";
-         BaseLookUpService<DoseFrequency> lookUpService = new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
-         DoseFrequency example = new DoseFrequency();
-         example.setCode(doseFreqCode);
-         List<DoseFrequency> dfreqs = lookUpService.search(new AnnotatedBeanSearchCriteria<DoseFrequency>(example));
-         if (CollectionUtils.isNotEmpty(dfreqs)) {
-             doseFreqDisplayName =  dfreqs.get(0).getDisplayName();
-         }
-         return doseFreqDisplayName;
-     }
+    private String getDoseFreq(String doseFreqCode) throws PAException {
+        String doseFreqDisplayName = "";
+        BaseLookUpService<DoseFrequency> lookUpService = new BaseLookUpService<DoseFrequency>(DoseFrequency.class);
+        DoseFrequency example = new DoseFrequency();
+        example.setCode(doseFreqCode);
+        List<DoseFrequency> dfreqs = lookUpService.search(new AnnotatedBeanSearchCriteria<DoseFrequency>(example));
+        if (CollectionUtils.isNotEmpty(dfreqs)) {
+            doseFreqDisplayName = dfreqs.get(0).getDisplayName();
+        }
+        return doseFreqDisplayName;
+    }
 
     /**
      * @return the doseFrequencyCode
      */
-     public String getDoseFrequencyCode() {
-      return doseFrequencyCode;
-     }
+    public String getDoseFrequencyCode() {
+        return doseFrequencyCode;
+    }
 
     /**
      * @param doseFrequencyCode the doseFrequencyCode to set
      */
-     public void setDoseFrequencyCode(String doseFrequencyCode) {
-      this.doseFrequencyCode = doseFrequencyCode;
-     }
+    public void setDoseFrequencyCode(String doseFrequencyCode) {
+        this.doseFrequencyCode = doseFrequencyCode;
+    }
+
+    /**
+     * @param interventionAltNameSvc the interventionAlternateNameService to set
+     */
+    public void setInterventionAlternateNameService(InterventionAlternateNameServiceRemote interventionAltNameSvc) {
+        this.interventionAlternateNameService = interventionAltNameSvc;
+    }
+
+    /**
+     * @param interventionService the interventionService to set
+     */
+    public void setInterventionService(InterventionServiceLocal interventionService) {
+        this.interventionService = interventionService;
+    }
+
+    /**
+     * @param plannedActivityService the plannedActivityService to set
+     */
+    public void setPlannedActivityService(PlannedActivityServiceLocal plannedActivityService) {
+        this.plannedActivityService = plannedActivityService;
+    }
 
 }

@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.DiseaseWebDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
@@ -87,7 +88,11 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
+import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,11 +109,27 @@ import com.opensymphony.xwork2.Preparable;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-public final class DiseaseAction extends AbstractListEditAction implements Preparable {
-    private static final long serialVersionUID = 1234584746L;
+public class DiseaseAction extends AbstractListEditAction implements Preparable {
+   
+    private static final long serialVersionUID = 9154119501160489767L;
+    
+    private PDQDiseaseParentServiceRemote pdqDiseaseParentService;
+    private PDQDiseaseServiceLocal pdqDiseaseService;
+    private StudyDiseaseServiceLocal studyDiseaseService;
 
     private DiseaseWebDTO disease;
     private List<DiseaseWebDTO> diseaseList;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() throws PAException {
+        super.prepare();
+        pdqDiseaseParentService = PaRegistry.getDiseaseParentService();
+        pdqDiseaseService = PaRegistry.getDiseaseService();
+        studyDiseaseService = PaRegistry.getStudyDiseaseService();
+    }
 
     /**
      * @return action result
@@ -116,12 +137,12 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
      */
     @Override
     public String edit() throws PAException {
-        StudyDiseaseDTO sd = getStudyDisesaeSvc().get(IiConverter.convertToIi(getSelectedRowIdentifier()));
+        StudyDiseaseDTO sd = studyDiseaseService.get(IiConverter.convertToIi(getSelectedRowIdentifier()));
         disease = new DiseaseWebDTO();
         disease.setDiseaseIdentifier(IiConverter.convertToString(sd.getDiseaseIdentifier()));
         disease.setStudyDiseaseIdentifier(getSelectedRowIdentifier());
-        disease.setCtGovXmlIndicator(ISOUtil.isBlNull(sd.getCtGovXmlIndicator()) ? null
-                : BlConverter.convertToBoolean(sd.getCtGovXmlIndicator()).toString());
+        disease.setCtGovXmlIndicator(ISOUtil.isBlNull(sd.getCtGovXmlIndicator()) ? null : BlConverter
+            .convertToBoolean(sd.getCtGovXmlIndicator()).toString());
         return super.edit();
     }
 
@@ -131,7 +152,7 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
      */
     @Override
     public String delete() throws PAException {
-        getStudyDisesaeSvc().delete(IiConverter.convertToIi(getSelectedRowIdentifier()));
+        studyDiseaseService.delete(IiConverter.convertToIi(getSelectedRowIdentifier()));
         return super.delete();
     }
 
@@ -140,41 +161,13 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
      * @throws PAException exception
      */
     @Override
-    public String add() throws PAException {
-        enforceBusinessRules();
-        if (!hasActionErrors()) {
-            StudyDiseaseDTO sdDto = new StudyDiseaseDTO();
-            sdDto.setIdentifier(null);
-            sdDto.setDiseaseIdentifier(IiConverter.convertToIi(getDisease().getDiseaseIdentifier()));
-            sdDto.setCtGovXmlIndicator(BlConverter.convertToBl(Boolean.valueOf(getDisease().getCtGovXmlIndicator())));
-            sdDto.setStudyProtocolIdentifier(getSpIi());
-            try {
-                getStudyDisesaeSvc().create(sdDto);
-            } catch (PAException e) {
-                addActionError(e.getMessage());
-            }
-        }
-        if (hasActionErrors()) {
-            return super.create();
-        }
-        return super.add();
-    }
-
-    /**
-     * @return result
-     * @throws PAException exception
-     */
-    @Override
     public String update() throws PAException {
-        enforceBusinessRules();
-        if (!hasActionErrors()) {
-            StudyDiseaseDTO pa = getStudyDisesaeSvc().get(IiConverter.convertToIi(disease.getStudyDiseaseIdentifier()));
-            pa.setCtGovXmlIndicator(BlConverter.convertToBl(Boolean.valueOf(getDisease().getCtGovXmlIndicator())));
-            try {
-                getStudyDisesaeSvc().update(pa);
-            } catch (PAException e) {
-                addActionError(e.getMessage());
-            }
+        StudyDiseaseDTO pa = studyDiseaseService.get(IiConverter.convertToIi(disease.getStudyDiseaseIdentifier()));
+        pa.setCtGovXmlIndicator(BlConverter.convertToBl(Boolean.valueOf(getDisease().getCtGovXmlIndicator())));
+        try {
+            studyDiseaseService.update(pa);
+        } catch (PAException e) {
+            addActionError(e.getMessage());
         }
         if (hasActionErrors()) {
             return super.edit();
@@ -183,7 +176,7 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
     }
 
     /**
-     * Method called from pop-up.  Loads selected disease.
+     * Method called from pop-up. Loads selected disease.
      * @return result
      * @throws PAException on error.
      */
@@ -193,27 +186,15 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
         return super.create();
     }
 
-    private void enforceBusinessRules() throws PAException {
-        if (StringUtils.isEmpty(disease.getDiseaseIdentifier())) {
-            addActionError("Please select a Disease/Condition to add to the trial.  ");
-            return;
-        }
-        PDQDiseaseDTO dto = getDiseaseSvc().get(IiConverter.convertToIi(getDisease().getDiseaseIdentifier()));
-        String menu = StConverter.convertToString(dto.getDisplayName());
-        if (StringUtils.isEmpty(menu)) {
-            addActionError("Diseases without a menu display name are not suitable for reporting.  ");
-        }
-      }
-
     private String buildParentPreferredName(String diseaseId) throws PAException {
-        List<PDQDiseaseParentDTO> parentList =
-            getDiseaseParentSvc().getByChildDisease(IiConverter.convertToIi(diseaseId));
+        List<PDQDiseaseParentDTO> parentList = pdqDiseaseParentService.getByChildDisease(IiConverter
+            .convertToIi(diseaseId));
         StringBuffer ppBuff = new StringBuffer();
         for (PDQDiseaseParentDTO parent : parentList) {
-            if (parentList.get(0) !=  parent) {
+            if (parentList.get(0) != parent) {
                 ppBuff.append(", ");
             }
-            PDQDiseaseDTO temp = getDiseaseSvc().get(parent.getParentDiseaseIdentifier());
+            PDQDiseaseDTO temp = pdqDiseaseService.get(parent.getParentDiseaseIdentifier());
             ppBuff.append(StConverter.convertToString(temp.getPreferredName()));
         }
         return ppBuff.toString();
@@ -225,16 +206,16 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
     @Override
     protected void loadListForm() throws PAException {
         List<DiseaseWebDTO> nl = new ArrayList<DiseaseWebDTO>();
-        List<StudyDiseaseDTO> sdList = getStudyDisesaeSvc().getByStudyProtocol(getSpIi());
+        List<StudyDiseaseDTO> sdList = studyDiseaseService.getByStudyProtocol(getSpIi());
         for (StudyDiseaseDTO sd : sdList) {
-            PDQDiseaseDTO d = getDiseaseSvc().get(sd.getDiseaseIdentifier());
+            PDQDiseaseDTO d = pdqDiseaseService.get(sd.getDiseaseIdentifier());
             DiseaseWebDTO n = new DiseaseWebDTO();
             n.setStudyDiseaseIdentifier(IiConverter.convertToString(sd.getIdentifier()));
             n.setDiseaseIdentifier(IiConverter.convertToString(d.getIdentifier()));
             n.setCode(StConverter.convertToString(d.getDiseaseCode()));
             n.setConceptId(StConverter.convertToString(d.getNtTermIdentifier()));
-            if (!ISOUtil.isBlNull(sd.getCtGovXmlIndicator())
-                    && BlConverter.convertToBoolean(sd.getCtGovXmlIndicator())) {
+            Bl xmlIndicator = sd.getCtGovXmlIndicator();
+            if (!ISOUtil.isBlNull(xmlIndicator) && BlConverter.convertToBoolean(xmlIndicator)) {
                 n.setCtGovXmlIndicator("Yes");
             } else {
                 n.setCtGovXmlIndicator("No");
@@ -247,10 +228,9 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
         setDiseaseList(nl);
     }
 
-
     /**
-     * Uses data from disease.diseaseIdentifier, disease.lead, and disease.studyDiseaseIdentifier.
-     * Reads remainder from database.
+     * Uses data from disease.diseaseIdentifier, disease.lead, and disease.studyDiseaseIdentifier. Reads remainder from
+     * database.
      * @throws PAException exception
      */
     @Override
@@ -259,7 +239,7 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
             disease = new DiseaseWebDTO();
         } else {
             Ii ii = IiConverter.convertToIi(disease.getDiseaseIdentifier());
-            PDQDiseaseDTO dto = getDiseaseSvc().get(ii);
+            PDQDiseaseDTO dto = pdqDiseaseService.get(ii);
             disease.setCode(StConverter.convertToString(dto.getDiseaseCode()));
             disease.setConceptId(StConverter.convertToString(dto.getNtTermIdentifier()));
             disease.setMenuDisplayName(StConverter.convertToString(dto.getDisplayName()));
@@ -295,4 +275,26 @@ public final class DiseaseAction extends AbstractListEditAction implements Prepa
     public void setDiseaseList(List<DiseaseWebDTO> diseaseList) {
         this.diseaseList = diseaseList;
     }
+
+    /**
+     * @param pdqDiseaseParentService the pdqDiseaseParentService to set
+     */
+    public void setPdqDiseaseParentService(PDQDiseaseParentServiceRemote pdqDiseaseParentService) {
+        this.pdqDiseaseParentService = pdqDiseaseParentService;
+    }
+
+    /**
+     * @param pdqDiseaseService the pdqDiseaseService to set
+     */
+    public void setPdqDiseaseService(PDQDiseaseServiceLocal pdqDiseaseService) {
+        this.pdqDiseaseService = pdqDiseaseService;
+    }
+
+    /**
+     * @param studyDiseaseService the studyDiseaseService to set
+     */
+    public void setStudyDiseaseService(StudyDiseaseServiceLocal studyDiseaseService) {
+        this.studyDiseaseService = studyDiseaseService;
+    }
+
 }

@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertNotNull;
+
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.test.util.MockServiceLocator;
 import gov.nih.nci.pa.util.Constants;
@@ -109,7 +110,28 @@ import com.opensymphony.xwork2.util.ValueStackFactory;
  */
 public abstract class AbstractPaActionTest {
 
-    protected StudyProtocolQueryDTO protocolSessionBean;
+    /**
+     * Creates the action context with a mock request. 
+     */
+    public static void initActionContext() {
+        ConfigurationManager configurationManager = new ConfigurationManager();
+        configurationManager.addContainerProvider(new XWorkConfigurationProvider());
+        Configuration config = configurationManager.getConfiguration();
+        Container container = config.getContainer();
+
+        ValueStack stack = container.getInstance(ValueStackFactory.class).createValueStack();
+        stack.getContext().put(ActionContext.CONTAINER, container);
+        ActionContext.setContext(new ActionContext(stack.getContext()));
+
+        assertNotNull(ActionContext.getContext());
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setSession(new MockHttpSession());
+        ServletActionContext.setRequest(request);
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        ServletActionContext.setResponse(response);
+    }
 
     /**
      * Set up services.
@@ -125,30 +147,11 @@ public abstract class AbstractPaActionTest {
      */
     @Before
     public void initMockRequest() {
-        ConfigurationManager configurationManager = new ConfigurationManager();
-        configurationManager.addContainerProvider(new XWorkConfigurationProvider());
-        Configuration config = configurationManager.getConfiguration();
-        Container container = config.getContainer();
-
-        ValueStack stack = container.getInstance(ValueStackFactory.class).createValueStack();
-        stack.getContext().put(ActionContext.CONTAINER, container);
-        ActionContext.setContext(new ActionContext(stack.getContext()));
-
-        assertNotNull(ActionContext.getContext());
-
-        protocolSessionBean = new StudyProtocolQueryDTO();
+        initActionContext();
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        StudyProtocolQueryDTO protocolSessionBean = new StudyProtocolQueryDTO();
         protocolSessionBean.setStudyProtocolId(1L);
-
-        HttpSession sess = new MockHttpSession();
-        sess.setAttribute(Constants.TRIAL_SUMMARY, protocolSessionBean);
-
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setSession(sess);
-        ServletActionContext.setRequest(request);
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        ServletActionContext.setResponse(response);
-
+        session.setAttribute(Constants.TRIAL_SUMMARY, protocolSessionBean);
     }
 
     /**

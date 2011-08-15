@@ -93,7 +93,10 @@ import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyInboxServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.exception.PAFieldException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAConstants;
@@ -120,12 +123,18 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 
 /**
  * The Class TrialHistoryAction.
- *
+ * 
  * @author Anupama Sharma
  * @since 04/16/2009
  */
 public final class TrialHistoryAction extends AbstractListEditAction implements ServletResponseAware {
-    private static final long serialVersionUID = 1876567890L;
+
+    private static final long serialVersionUID = 3505660792038543678L;
+
+    private DocumentServiceLocal documentService;
+    private StudyInboxServiceLocal studyInboxService;
+    private StudyProtocolServiceLocal studyProtocolService;
+
     private List<TrialHistoryWebDTO> trialHistoryWebDTO;
     private TrialHistoryWebDTO trialHistoryWbDto;
     private String studyProtocolii;
@@ -136,8 +145,19 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
     private final StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() throws PAException {
+        super.prepare();
+        documentService = PaRegistry.getDocumentService();
+        studyInboxService = PaRegistry.getStudyInboxService();
+        studyProtocolService = PaRegistry.getStudyProtocolService();
+    }
+
+    /**
      * Gets the study protocolii.
-     *
+     * 
      * @return the studyProtocolii
      */
     public String getStudyProtocolii() {
@@ -146,7 +166,7 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
 
     /**
      * Sets the study protocolii.
-     *
+     * 
      * @param studyProtocolii the studyProtocolii to set
      */
     public void setStudyProtocolii(String studyProtocolii) {
@@ -155,7 +175,7 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
 
     /**
      * Gets the docii.
-     *
+     * 
      * @return the docii
      */
     public String getDocii() {
@@ -164,7 +184,7 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
 
     /**
      * Sets the docii.
-     *
+     * 
      * @param docii the docii to set
      */
     public void setDocii(String docii) {
@@ -195,12 +215,13 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         return servletResponse;
     }
 
-   /**
-    * Sets the servlet response.
-    * @param servletResponse the servletResponse to set
-    */
+    /**
+     * Sets the servlet response.
+     * @param servletResponse the servletResponse to set
+     */
+    @Override
     public void setServletResponse(HttpServletResponse servletResponse) {
-      this.servletResponse = servletResponse;
+        this.servletResponse = servletResponse;
     }
 
     /**
@@ -221,32 +242,32 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
      */
     public String acceptUpdate() throws PAException {
         try {
-         String sInbxId = ServletActionContext.getRequest().getParameter("studyInboxId");
-         StudyInboxDTO dto = PaRegistry.getStudyInboxService().get(IiConverter.convertToIi(sInbxId));
-         StudyInboxDTO studyInboxDTO = new StudyInboxDTO();
-         studyInboxDTO.setIdentifier(IiConverter.convertToIi(sInbxId));
-         //set the close date
-         Timestamp now = new Timestamp(new Date().getTime());
-         studyInboxDTO.setInboxDateRange(dto.getInboxDateRange());
-         studyInboxDTO.getInboxDateRange().setHigh(TsConverter.convertToTs(now));
-         //update
-         PaRegistry.getStudyInboxService().update(studyInboxDTO);
-         } catch (Exception e) {
-            LOG.error("Error while accepting the trial update." , e);
+            String sInbxId = ServletActionContext.getRequest().getParameter("studyInboxId");
+            StudyInboxDTO dto = studyInboxService.get(IiConverter.convertToIi(sInbxId));
+            StudyInboxDTO studyInboxDTO = new StudyInboxDTO();
+            studyInboxDTO.setIdentifier(IiConverter.convertToIi(sInbxId));
+            // set the close date
+            Timestamp now = new Timestamp(new Date().getTime());
+            studyInboxDTO.setInboxDateRange(dto.getInboxDateRange());
+            studyInboxDTO.getInboxDateRange().setHigh(TsConverter.convertToTs(now));
+            // update
+            studyInboxService.update(studyInboxDTO);
+        } catch (Exception e) {
+            LOG.error("Error while accepting the trial update.", e);
             addActionError("Error while accepting the trial update.");
-         } finally {
-             loadTrialUpdates();
-         }
-         return AR_LIST;
+        } finally {
+            loadTrialUpdates();
+        }
+        return AR_LIST;
     }
 
     private void loadTrialUpdates() throws PAException {
-        Ii studyProtocolIi =
-            (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
-        StudyProtocolDTO spDTO = getStudyProtocolSvc().getStudyProtocol(studyProtocolIi);
+        Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
+            .getAttribute(Constants.STUDY_PROTOCOL_II);
+        StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
         criteria.setInBoxProcessing(Boolean.TRUE);
         criteria.setNciIdentifier(PAUtil.getAssignedIdentifierExtension(spDTO));
-        List<StudyInboxDTO> inboxEntries = PaRegistry.getStudyInboxService().getOpenInboxEntries(studyProtocolIi);
+        List<StudyInboxDTO> inboxEntries = studyInboxService.getOpenInboxEntries(studyProtocolIi);
         for (StudyInboxDTO dto : inboxEntries) {
             TrialUpdateWebDTO webDTO = new TrialUpdateWebDTO();
             webDTO.setId(IiConverter.convertToLong(dto.getIdentifier()));
@@ -265,20 +286,20 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
     protected void loadListForm() throws PAException {
         Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession()
             .getAttribute(Constants.STUDY_PROTOCOL_II);
-        StudyProtocolDTO spDTO = getStudyProtocolSvc().getStudyProtocol(studyProtocolIi);
+        StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
         StudyProtocolDTO toSearchspDTO = new StudyProtocolDTO();
         toSearchspDTO.setSecondaryIdentifiers(DSetConverter.convertIiToDset(PAUtil.getAssignedIdentifier(spDTO)));
-        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS , 0);
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         toSearchspDTO.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
         List<StudyProtocolDTO> spList = new ArrayList<StudyProtocolDTO>();
         try {
-            List<StudyProtocolDTO> activeList = getStudyProtocolSvc().search(toSearchspDTO, limit);
+            List<StudyProtocolDTO> activeList = studyProtocolService.search(toSearchspDTO, limit);
             if (CollectionUtils.isNotEmpty(activeList)) {
                 spList.addAll(activeList);
             }
 
             toSearchspDTO.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
-            List<StudyProtocolDTO> inactiveList = getStudyProtocolSvc().search(toSearchspDTO, limit);
+            List<StudyProtocolDTO> inactiveList = studyProtocolService.search(toSearchspDTO, limit);
             if (CollectionUtils.isNotEmpty(inactiveList)) {
                 spList.addAll(inactiveList);
             }
@@ -305,7 +326,7 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
      */
     private String getDocuments(StudyProtocolDTO sp) throws PAException {
         StringBuffer documents = new StringBuffer();
-        List<DocumentDTO> documentDTO = getDocumentSvc().getDocumentsByStudyProtocol(sp.getIdentifier());
+        List<DocumentDTO> documentDTO = documentService.getDocumentsByStudyProtocol(sp.getIdentifier());
         for (DocumentDTO docDto : documentDTO) {
             String fileName = StConverter.convertToString(docDto.getFileName());
             documents.append("<a href='#' onclick=\"handlePopup('");
@@ -325,17 +346,17 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
 
     /**
      * Open.
-     *
+     * 
      * @return the string
-     *
+     * 
      * @throws PAException the PA exception
      */
     public String open() throws PAException {
         try {
-            DocumentDTO docDTO = PaRegistry.getDocumentService().get(IiConverter.convertToIi(getDocii()));
+            DocumentDTO docDTO = documentService.get(IiConverter.convertToIi(getDocii()));
 
             final Ii spIi = IiConverter.convertToIi(getStudyProtocolii());
-            StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(spIi);
+            StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(spIi);
 
             StringBuffer fileName = new StringBuffer();
             fileName.append(PAUtil.getAssignedIdentifier(spDTO)).append('-').append(docDTO.getFileName().getValue());
@@ -379,8 +400,8 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
                 return AR_EDIT;
             }
             final Ii spIi = IiConverter.convertToIi(trialHistoryWbDto.getIdentifier());
-            StudyProtocolDTO sp = getStudyProtocolSvc().getStudyProtocol(spIi);
-            getStudyProtocolSvc().updateStudyProtocol(trialHistoryWbDto.getIsoDto(sp));
+            StudyProtocolDTO sp = studyProtocolService.getStudyProtocol(spIi);
+            studyProtocolService.updateStudyProtocol(trialHistoryWbDto.getIsoDto(sp));
         } catch (PAFieldException e) {
             addActionError(e.getMessage());
             return AR_EDIT;
@@ -393,36 +414,34 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
 
     /**
      * Load edit form.
-     *
+     * 
      * @throws PAException exception
      */
     @Override
     protected void loadEditForm() throws PAException {
         if (CA_EDIT.equals(getCurrentAction())) {
-         setTrialHistoryWbDto(new TrialHistoryWebDTO(
-           getStudyProtocolSvc().getStudyProtocol(IiConverter.convertToIi(getSelectedRowIdentifier()))));
+            setTrialHistoryWbDto(new TrialHistoryWebDTO(studyProtocolService.getStudyProtocol(IiConverter
+                .convertToIi(getSelectedRowIdentifier()))));
         } else {
-        setTrialHistoryWbDto(new TrialHistoryWebDTO());
+            setTrialHistoryWbDto(new TrialHistoryWebDTO());
         }
     }
-
 
     /**
      * Enforce business rules.
      */
     private void enforceBusinessRules() {
         if (StringUtils.isEmpty(trialHistoryWbDto.getAmendmentDate())) {
-          addFieldError("trialHistoryWbDto.amendmentDate", getText("Amendment Date must be Entered/Selected"));
+            addFieldError("trialHistoryWbDto.amendmentDate", getText("Amendment Date must be Entered/Selected"));
         }
         if (StringUtils.isEmpty(trialHistoryWbDto.getAmendmentReasonCode())) {
-          addFieldError("trialHistoryWbDTO.amendmentReasonCode", getText("Reason code must be Selected"));
+            addFieldError("trialHistoryWbDTO.amendmentReasonCode", getText("Reason code must be Selected"));
         }
         if (!isValidDate(trialHistoryWbDto.getAmendmentDate())) {
-           addFieldError("trialHistoryWbDto.amendmentDate",
-                  getText("Please enter the Date in the correct format MM/dd/yyyy"));
+            addFieldError("trialHistoryWbDto.amendmentDate",
+                          getText("Please enter the Date in the correct format MM/dd/yyyy"));
         }
     }
-
 
     /**
      * Checks if String is valid date.
@@ -430,37 +449,36 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
      * @return true, if is valid date
      */
     private boolean isValidDate(String dateStr) {
-      if (dateStr == null) {
-         return false;
-      }
-      //set the format to use as a constructor argument
-      SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy" , Locale.getDefault());
-      if (dateStr.trim().length() != dateFormat.toPattern().length()) {
-        return false;
-      }
-      dateFormat.setLenient(false);
-      try {
-        //parse the dateStr parameter
-        dateFormat.parse(dateStr.trim());
-        }  catch (ParseException pe) {
-         return false;
-       }
-         return true;
+        if (dateStr == null) {
+            return false;
+        }
+        // set the format to use as a constructor argument
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+        if (dateStr.trim().length() != dateFormat.toPattern().length()) {
+            return false;
+        }
+        dateFormat.setLenient(false);
+        try {
+            // parse the dateStr parameter
+            dateFormat.parse(dateStr.trim());
+        } catch (ParseException pe) {
+            return false;
+        }
+        return true;
     }
 
     /**
      * Gets the trial history web dto.
-     *
+     * 
      * @return the trialHistoryWebDTO
      */
     public List<TrialHistoryWebDTO> getTrialHistoryWebDTO() {
         return trialHistoryWebDTO;
     }
 
-
     /**
      * Sets the trial history web dto.
-     *
+     * 
      * @param trialHistoryWebDTO the trialHistoryWebDTO to set
      */
     public void setTrialHistoryWebDTO(List<TrialHistoryWebDTO> trialHistoryWebDTO) {
@@ -469,17 +487,16 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
 
     /**
      * Gets the trial history wb dto.
-     *
+     * 
      * @return the trialHistoryWbDto
      */
     public TrialHistoryWebDTO getTrialHistoryWbDto() {
         return trialHistoryWbDto;
     }
 
-
     /**
      * Sets the trial history wb dto.
-     *
+     * 
      * @param trialHistoryWbDto the trialHistoryWbDto to set
      */
     public void setTrialHistoryWbDto(TrialHistoryWebDTO trialHistoryWbDto) {
@@ -500,5 +517,25 @@ public final class TrialHistoryAction extends AbstractListEditAction implements 
         this.records = records;
     }
 
+    /**
+     * @param documentService the documentService to set
+     */
+    public void setDocumentService(DocumentServiceLocal documentService) {
+        this.documentService = documentService;
+    }
+
+    /**
+     * @param studyInboxService the studyInboxService to set
+     */
+    public void setStudyInboxService(StudyInboxServiceLocal studyInboxService) {
+        this.studyInboxService = studyInboxService;
+    }
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
+    }
 
 }

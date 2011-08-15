@@ -321,7 +321,8 @@
             <result>/WEB-INF/jsp/nodecorate/diseaseDetails.jsp</result>
         </action>
         <action name="popupDis*" class="gov.nih.nci.pa.action.PopUpDisAction" method="{1}">
-            <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
+            <result>/WEB-INF/jsp/nodecorate/lookupdiseases.jsp</result>
+            <result name="displayList">/WEB-INF/jsp/nodecorate/lookupdiseasesdisplayList.jsp</result>
         </action>
         <action name="popupInt*" class="gov.nih.nci.pa.action.PopUpIntAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/lookupinterventions{1}.jsp</result>

@@ -79,122 +79,267 @@
 package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.PDQDisease;
-import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyDiseaseDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
-import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-
+import org.junit.rules.ExpectedException;
 /**
  * @author hreinhart
- *
+ * 
  */
 public class StudyDiseaseServiceTest extends AbstractHibernateTestCase {
-    private final StudyDiseaseBeanLocal bean = new StudyDiseaseBeanLocal();
-    private final StudyDiseaseServiceLocal remote = bean;
-    private Ii spIi;
-    private Ii dIi;
-
+    
+    /**
+     * Rule for exception. 
+     */
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+ 
+    private StudyDiseaseBeanLocal bean = new StudyDiseaseBeanLocal();
+    private PDQDiseaseServiceLocal pdqDiseaseServiceLocal = new PDQDiseaseBeanLocal();
+    private StringBuilder errorMsg = new StringBuilder();
+    
+    /**
+     * Initialization method.
+     */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
         TestSchema.primeData();
-        spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
-        dIi = IiConverter.convertToStudyDiseaseIi(TestSchema.pdqDiseaseIds.get(2));
+        bean.setPdqDiseaseServiceLocal(pdqDiseaseServiceLocal);
     }
 
-    private void compareDataAttributes(StudyDisease bo1, StudyDisease bo2) {
-        assertEquals(bo1.getDisease().getId(), bo2.getDisease().getId());
-        assertEquals(bo1.getStudyProtocol().getId(), bo2.getStudyProtocol().getId());
-    }
-
+    /**
+     * Test the get method for a existing StudyDisease.
+     * @throws PAException if an error occurs
+     */
     @Test
-    public void getTest() throws Exception {
-        List<StudyDiseaseDTO> dtoList = bean.getByStudyProtocol(spIi);
-        assertTrue(dtoList.size() > 0);
-        Ii ii = dtoList.get(0).getIdentifier();
-        assertFalse(ISOUtil.isIiNull(ii));
-        StudyDiseaseDTO resultDto = bean.get(ii);
-        assertFalse(ISOUtil.isIiNull(resultDto.getIdentifier()));
+    public void testGetExist() throws PAException {
+        Ii studyDiseaseIi = IiConverter.convertToStudyDiseaseIi(TestSchema.studyDiseaseIds.get(0));
+        StudyDiseaseDTO studyDiseaseDTO = bean.get(studyDiseaseIi);
+        assertNotNull("studyDiseaseDTO not found", studyDiseaseDTO);
+        assertEquals("Wrong studyDiseaseDTO returned", studyDiseaseIi, studyDiseaseDTO.getIdentifier());
     }
 
+    /**
+     * Test the get method for a existing StudyDisease.
+     * @throws PAException if an error occurs
+     */
     @Test
-    public void createTest() throws Exception {
-        List<StudyDiseaseDTO> dtoList = bean.getByStudyProtocol(spIi);
-        int oldSize = dtoList.size();
+    public void testGetNotExist() throws PAException {
+        StudyDiseaseDTO studyDiseaseDTO = bean.get(IiConverter.convertToStudyDiseaseIi(25L));
+        assertNull("Get should not find anything", studyDiseaseDTO);
+    }
 
-        PDQDisease disease = new PDQDisease();
-        disease.setId(IiConverter.convertToLong(dIi));
-        StudyProtocol studyProtocol = new StudyProtocol();
-        studyProtocol.setId(IiConverter.convertToLong(spIi));
-        StudyDisease bo = TestSchema.createStudyDiseaseObj(studyProtocol, disease);
-        assertNull(bo.getId());
-        StudyDisease resultBo = bean.convertFromDtoToDomain(remote.create(bean.convertFromDomainToDto(bo)));
-        compareDataAttributes(bo, resultBo);
-        assertNotNull(resultBo.getId());
-        dtoList = bean.getByStudyProtocol(spIi);
-        assertEquals(oldSize + 1, dtoList.size());
-        try {
-            resultBo = bean.convertFromDtoToDomain(remote.create(bean.convertFromDomainToDto(bo)));
-        } catch (PAException e) {
-            assertEquals("Redundancy error:  this trial already includes the selected disease.  ",
-                    e.getMessage());
+    /**
+     * Test the get method for a existing StudyDisease.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testGetByStudyProtocolExist() throws PAException {
+        Ii spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
+        List<StudyDiseaseDTO> dtoList = bean.getByStudyProtocol(spIi);
+        assertNotNull("No result returned", dtoList);
+        assertEquals("Wrong number of StudyDisease found", 2, dtoList.size());
+        for (int i = 0; i < dtoList.size(); i++) {
+            StudyDiseaseDTO studyDiseaseDTO = dtoList.get(i);
+            Ii expected = IiConverter.convertToStudyDiseaseIi(TestSchema.studyDiseaseIds.get(i));
+            assertEquals("Wrong StudyDisease found", expected, studyDiseaseDTO.getIdentifier());
+            assertEquals("Wrong study protocol identifier", spIi, studyDiseaseDTO.getStudyProtocolIdentifier());
         }
     }
 
-    @Test(expected=PAException.class)
-    public void updateWithSameIdTest() throws Exception {
+    /**
+     * Test the get method for a existing StudyDisease.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testGetByStudyProtocolNotExist() throws PAException {
+        StudyProtocol studyProtocol = TestSchema.createStudyProtocolObj();
+        Ii spIi = IiConverter.convertToStudyProtocolIi(studyProtocol.getId());
         List<StudyDiseaseDTO> dtoList = bean.getByStudyProtocol(spIi);
-        assertTrue(dtoList.size() > 0);
-        StudyDiseaseDTO dto1 = dtoList.get(0);
-        StudyDiseaseDTO dto2 = dtoList.get(1);
-        StudyDisease bo1 = bean.convertFromDtoToDomain(dto1);
-        StudyDisease bo2 = bean.convertFromDtoToDomain(dto2);
-        bo1.setDisease(bo2.getDisease());
-        remote.update(bean.convertFromDomainToDto(bo1));
+        assertNotNull("No result returned", dtoList);
+        assertEquals("Wrong number of StudyDisease found", 0, dtoList.size());
     }
 
+    /**
+     * Test the create method with valid data.
+     * @throws PAException if an error occurs
+     */
     @Test
-    public void updateTest() throws Exception {
+    public void testCreateValid() throws PAException {
+        StudyProtocol studyProtocol = TestSchema.createStudyProtocolObj();
+        Ii spIi = IiConverter.convertToStudyProtocolIi(studyProtocol.getId());
+        StudyDiseaseDTO studyDiseaseDTO = new StudyDiseaseDTO();
+        studyDiseaseDTO.setStudyProtocolIdentifier(spIi);
+        Ii diseaseIi = IiConverter.convertToIi(TestSchema.pdqDiseaseIds.get(0));
+        studyDiseaseDTO.setDiseaseIdentifier(diseaseIi);
+        studyDiseaseDTO.setCtGovXmlIndicator(BlConverter.convertToBl(true));
+        StudyDiseaseDTO result = bean.create(studyDiseaseDTO);
+        assertStudyDiseaseDTO(studyDiseaseDTO, result);
         List<StudyDiseaseDTO> dtoList = bean.getByStudyProtocol(spIi);
-        assertTrue(dtoList.size() > 0);
-        StudyDiseaseDTO dto = dtoList.get(0);
-        StudyDisease bo = bean.convertFromDtoToDomain(dto);
-        StudyDiseaseDTO resultDto = remote.update(bean.convertFromDomainToDto(bo));
-        StudyDisease resultBo = bean.convertFromDtoToDomain(resultDto);
-        compareDataAttributes(bo, resultBo);
-        assertEquals(bo.getId(), resultBo.getId());
+        assertNotNull("No result returned", dtoList);
+        assertEquals("Wrong number of StudyDisease found", 1, dtoList.size());
+        assertStudyDiseaseDTO(studyDiseaseDTO, dtoList.get(0));
+    }
+    
+    private void assertStudyDiseaseDTO(StudyDiseaseDTO expected, StudyDiseaseDTO actual) {
+        assertEquals("Wrong study protocol Ii", expected.getStudyProtocolIdentifier(),
+                     actual.getStudyProtocolIdentifier());
+        assertEquals("Wrong disease Ii", expected.getDiseaseIdentifier(), actual.getDiseaseIdentifier());
+        assertEquals("Wrong ctgov Xml Indicator", expected.getCtGovXmlIndicator(), actual.getCtGovXmlIndicator());
+    }
+    
+    /**
+     * test that the create method with invalid data.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCreateInvalid() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Missing Disease/Condition. ");
+        StudyProtocol studyProtocol = TestSchema.createStudyProtocolObj();
+        Ii spIi = IiConverter.convertToStudyProtocolIi(studyProtocol.getId());
+        StudyDiseaseDTO studyDiseaseDTO = new StudyDiseaseDTO();
+        studyDiseaseDTO.setStudyProtocolIdentifier(spIi);
+        studyDiseaseDTO.setCtGovXmlIndicator(BlConverter.convertToBl(true));
+        bean.create(studyDiseaseDTO);
+    }
+    
+    /**
+     * Test the update methodwith valid data.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testUpdateValid() throws PAException {
+        Ii studyDiseaseIi = IiConverter.convertToStudyDiseaseIi(TestSchema.studyDiseaseIds.get(0));
+        StudyDiseaseDTO studyDiseaseDTO = bean.get(studyDiseaseIi);
+        Ii diseaseIi = IiConverter.convertToIi(TestSchema.pdqDiseaseIds.get(3));
+        studyDiseaseDTO.setDiseaseIdentifier(diseaseIi);
+        StudyDiseaseDTO result = bean.update(studyDiseaseDTO);
+        assertStudyDiseaseDTO(studyDiseaseDTO, result);
+        StudyDiseaseDTO saved = bean.get(studyDiseaseIi);
+        assertNotNull("No result returned", saved);
+        assertStudyDiseaseDTO(studyDiseaseDTO, saved);
     }
 
+    /**
+     * Test the update method with invalid data (twice the same disease).
+     * @throws PAException if an error occurs
+     */
     @Test
-    public void deleteTest() throws Exception {
+    public void testUpdateWithSameId() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Redundancy error:  this trial already includes the selected disease.  ");
+        Ii spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
+        List<StudyDiseaseDTO> dtoList = bean.getByStudyProtocol(spIi);
+        assertEquals("Wrong number of StudyDisease found", 2, dtoList.size());
+        StudyDiseaseDTO studyDiseaseDTO0 = dtoList.get(0);
+        StudyDiseaseDTO studyDiseaseDTO1 = dtoList.get(1);
+        studyDiseaseDTO1.setDiseaseIdentifier(studyDiseaseDTO0.getDiseaseIdentifier());
+        bean.update(studyDiseaseDTO1);
+    }
+
+    /**
+     * test the delete method.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testDelete() throws PAException {
+        Ii spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         List<StudyDiseaseDTO> dtoList = bean.getByStudyProtocol(spIi);
         int oldSize = dtoList.size();
         Ii ii = dtoList.get(0).getIdentifier();
-        remote.delete(ii);
+        bean.delete(ii);
         dtoList = bean.getByStudyProtocol(spIi);
         assertEquals(oldSize - 1, dtoList.size());
     }
+    
+    /**
+     * test the businessRules method with no disease identifier.
+     * @throws PAException if an error occurs
+     */
     @Test
-    public void iiRootTest() throws Exception {
-        List<StudyDiseaseDTO> dtoList = bean.getByStudyProtocol(spIi);
-        assertTrue(dtoList.size() > 0);
-        StudyDiseaseDTO dto = dtoList.get(0);
-        assertEquals(dto.getStudyProtocolIdentifier().getRoot(), IiConverter.STUDY_PROTOCOL_ROOT);
+    public void testBusinessRulesNoDiseaseId() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Missing Disease/Condition. ");
+        StudyDiseaseDTO dto = new StudyDiseaseDTO();
+        bean.businessRules(dto);
     }
+    
+    /**
+     * test the businessRules method with valid data.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testBusinessRulesValid() throws PAException {
+        StudyDiseaseDTO dto = new StudyDiseaseDTO();
+        dto.setDiseaseIdentifier(IiConverter.convertToIi(1L));
+        bean = mock(StudyDiseaseBeanLocal.class);
+        doCallRealMethod().when(bean).businessRules(dto);
+        bean.businessRules(dto);
+        verify(bean).validateDisease(eq(dto.getDiseaseIdentifier()), any(StringBuilder.class));
+        verify(bean).validateNoduplicate(eq(dto), any(StringBuilder.class));
+    }
+    
+    /**
+     * Test the validateDisease with valid data.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testValidateDiseaseValid() throws PAException {
+        pdqDiseaseServiceLocal = mock(PDQDiseaseServiceLocal.class);
+        bean.setPdqDiseaseServiceLocal(pdqDiseaseServiceLocal);
+        Ii diseaseIi = IiConverter.convertToIi(1L);
+        PDQDiseaseDTO pdqDiseaseDTO = new PDQDiseaseDTO();
+        pdqDiseaseDTO.setDisplayName(StConverter.convertToSt("displayName"));
+        when(pdqDiseaseServiceLocal.get(diseaseIi)).thenReturn(pdqDiseaseDTO);
+        bean.validateDisease(diseaseIi, errorMsg);
+        verify(pdqDiseaseServiceLocal).get(diseaseIi);
+        checkErrorMsg("");
+    }
+    
+    /**
+     * Test the validateDisease with valid data.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testValidateDiseaseInvalid() throws PAException {
+        pdqDiseaseServiceLocal = mock(PDQDiseaseServiceLocal.class);
+        bean.setPdqDiseaseServiceLocal(pdqDiseaseServiceLocal);
+        Ii diseaseIi = IiConverter.convertToIi(1L);
+        PDQDiseaseDTO pdqDiseaseDTO = new PDQDiseaseDTO();
+        when(pdqDiseaseServiceLocal.get(diseaseIi)).thenReturn(pdqDiseaseDTO);
+        bean.validateDisease(diseaseIi, errorMsg);
+        verify(pdqDiseaseServiceLocal).get(diseaseIi);
+        checkErrorMsg("Diseases without a menu display name are not suitable for reporting.  ");
+    }
+    
+    private void checkErrorMsg(String expectedMessage) {
+        assertEquals("Wrong error message", expectedMessage, errorMsg.toString());
+    }
+
 }

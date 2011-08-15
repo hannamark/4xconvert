@@ -10,6 +10,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.pa.dto.MilestoneWebDTO;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -130,7 +131,7 @@ public class MilestoneActionTest extends AbstractPaActionTest {
     }
     
     private void setUpAmendmentSearch() {
-        action.setStudyProtocolSvc(new MockStudyProtocolService() {
+        action.setStudyProtocolService(new MockStudyProtocolService() {
             @Override
             public List<StudyProtocolDTO> search(StudyProtocolDTO dto, LimitOffset pagingParams) throws PAException {
                 List<StudyProtocolDTO> result = new ArrayList<StudyProtocolDTO>();
@@ -143,8 +144,9 @@ public class MilestoneActionTest extends AbstractPaActionTest {
     
     private void setUpDateCheckForTodayOnMilestone() throws PAException {
         StudyMilestoneServicelocal svcMil = mock(StudyMilestoneServicelocal.class);
-        action.setStudyMilestoneSvc(svcMil);
+        action.setStudyMilestoneService(svcMil);
         when(svcMil.create(any(StudyMilestoneDTO.class))).thenAnswer(new Answer<StudyMilestoneDTO>() {
+            @Override
             public StudyMilestoneDTO answer(InvocationOnMock invocation) throws Throwable {
                 Object args[] = invocation.getArguments();
                 StudyMilestoneDTO smDto = (StudyMilestoneDTO) args[0];

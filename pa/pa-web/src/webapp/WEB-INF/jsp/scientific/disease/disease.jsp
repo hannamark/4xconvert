@@ -12,31 +12,39 @@
         <script type="text/javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
         <script type="text/javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
         <script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
+        <c:url value="/protected/popupDis.action" var="lookupUrl" />
         
         <script language="javascript" type="text/javascript">
             function handleView(diseaseId) {
-                var url = '/pa/protected/popupDiseaseDetails.action?diseaseId='+diseaseId;
+                var url = "<%=request.getContextPath()%>/protected/popupDiseaseDetails.action?diseaseId=" + diseaseId;
                 showPopup(url, null, 'Disease');
             }
             
             function handleEdit(rowId) {
-                document.diseaseForm.selectedRowIdentifier.value = rowId;
-                document.diseaseForm.action="diseaseedit.action";
-                document.diseaseForm.submit();
+                var form = document.diseaseForm;
+                form.selectedRowIdentifier.value = rowId;
+                form.action = "diseaseedit.action";
+                form.submit();
             }
             
             function handleDelete(rowId) {
                 input_box=confirm("Click OK to remove the disease from the study.  Cancel to abort.");
                 if (input_box == true){
-                    document.diseaseForm.selectedRowIdentifier.value = rowId;
-                    document.diseaseForm.action="diseasedelete.action";
-                    document.diseaseForm.submit();
+                    var form = document.diseaseForm;
+                    form.selectedRowIdentifier.value = rowId;
+                    form.action = "diseasedelete.action";
+                    form.submit();
                 }
             }
             
             function handleCreate() {
-                document.diseaseForm.action="diseasecreate.action";
-                document.diseaseForm.submit();
+                showPopup('${lookupUrl}', refresh, 'Disease');
+            }
+            
+            function refresh() {
+                var form = document.diseaseForm;
+                form.action = "disease.action";
+                form.submit();
             }
         </script>
     </head>
@@ -76,7 +84,7 @@
                                                 titleKey="disease.parentPreferredName" headerClass="sortable" />
                                 <display:column escapeXml="true" property="ctGovXmlIndicator" sortable="true" 
                                                 titleKey="disease.includeInXML" headerClass="sortable"/>
-                                <pa:scientificAbstractorDisplayWhenCheckedOut>x
+                                <pa:scientificAbstractorDisplayWhenCheckedOut>
                                     <display:column titleKey="disease.edit" headerClass="centered" class="action">
                                         <s:a href="#" onclick="handleEdit(%{#attr.row.studyDiseaseIdentifier})">
                                             <img src="<c:url value='/images/ico_edit.gif'/>" alt="Edit" width="16" height="16" />

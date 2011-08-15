@@ -2,7 +2,7 @@
 <c:set var="pagePrefix" value="nodecorate.lookupdiseases."/>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
-        <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
+        <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"></link>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
         
@@ -12,16 +12,34 @@
                 window.top.hidePopWin(true); 
             }
             
-            function callParentSubmit(disid) {   
-                top.window.loadDiv(disid);
-                window.top.hidePopWin(true); 
-            }
-            
             function loadDiv() {     
-                var url = '/pa/protected/popupDisdisplayList.action';
+                var url = '<%=request.getContextPath()%>/protected/popupDisdisplayList.action';
                 var params = {
                     exactMatch: $("exactMatch") != null && $("exactMatch").checked == true,
                     includeSynonym: $("includeSynonym") != null && $("includeSynonym").checked == true,
+                    searchName: $("searchName").value
+                };
+                var div = $('getDiseases');
+                div.innerHTML = '<div><img  alt="Indicator" align="absmiddle" src="../images/loading.gif"/>&nbsp;Loading...</div>';
+                var aj = callAjaxPost(div, url, params);
+                return false;
+            }
+            
+            function addDisease(diseaseid) {
+                 return addOrRemoveDisease(diseaseid, 'add');
+            }
+            
+            function removeDisease(diseaseid) {
+                return addOrRemoveDisease(diseaseid, 'remove');
+            }
+            
+            function addOrRemoveDisease(diseaseid, diseaseAction) {
+                var url = '<%=request.getContextPath()%>/protected/popupDis'+ diseaseAction +'.action';
+                var params = {
+                    diseaseId: diseaseid,     
+                    exactMatch: $("exactMatch") != null && $("exactMatch").checked == true,
+                    includeSynonym: $("includeSynonym") != null && $("includeSynonym").checked == true,
+                    includeXml: $('includeXml').checked,
                     searchName: $("searchName").value
                 };
                 var div = $('getDiseases');
@@ -65,8 +83,10 @@
                     <del class="btnwrapper">
                         <ul class="btnrow">
                             <li>
+                                <div><label for="includeXml"><fmt:message key="${pagePrefix}includeXml"/></label>  
+                                <s:checkbox id="includeXml" name="includeXml" /></div>
                                 <s:a href="#" cssClass="btn" onclick="loadDiv();"><span class="btn_img"><span class="search"><fmt:message key="${pagePrefix}button.search" /></span></span></s:a>
-                                <s:a href="#" cssClass="btn" onclick="window.top.hidePopWin();"><span class="btn_img"><span class="close"><fmt:message key="${pagePrefix}button.close" /></span></span></s:a>  
+                                <s:a href="#" cssClass="btn" onclick="window.top.hidePopWin(true);"><span class="btn_img"><span class="close"><fmt:message key="${pagePrefix}button.close" /></span></span></s:a>  
                             </li>
                         </ul>
                     </del>

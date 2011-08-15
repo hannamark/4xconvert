@@ -86,8 +86,11 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceBean;
+import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.LabelValueBean;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -106,9 +109,14 @@ import org.apache.struts2.ServletActionContext;
  * @author Hugh Reinhart
  * @since Sep 3, 2009
  */
+@SuppressWarnings("PMD.TooManyMethods")
 public class ManageAccrualAccessAction extends AbstractListEditAction {
 
-    private static final long serialVersionUID = -4655853779195760379L;
+    private static final long serialVersionUID = -1924093330034538567L;
+    
+    private RegistryUserServiceLocal registryUserService;
+    private StudySiteAccrualAccessServiceLocal accrualAccessService;
+    private StudySiteAccrualStatusServiceLocal accrualStatusService;
 
     private List<StudySiteAccrualAccessWebDTO> accessList;
     private StudySiteAccrualAccessWebDTO access = new StudySiteAccrualAccessWebDTO();
@@ -119,6 +127,17 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     private String phone;
     private String siteRecruitmentStatus;
     private Long registryUserId;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() throws PAException {
+        super.prepare();
+        registryUserService = PaRegistry.getRegistryUserService();
+        accrualAccessService = PaRegistry.getStudySiteAccrualAccessService();
+        accrualStatusService = PaRegistry.getStudySiteAccrualStatusService();
+    }
 
     /**
      * {@inheritDoc}
@@ -139,7 +158,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     public String add() throws PAException {
         try {
             StudySiteAccrualAccessDTO dto = populateDTO(getAccess());
-            getAccrualAccessSvc().create(dto);
+            accrualAccessService.create(dto);
         } catch (PAException e) {
             addActionError(e.getMessage());
             return AR_EDIT;
@@ -154,7 +173,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     public String update() throws PAException {
         try {
             StudySiteAccrualAccessDTO dto = populateDTO(getAccess());
-            getAccrualAccessSvc().update(dto);
+            accrualAccessService.update(dto);
         } catch (PAException e) {
             addActionError(e.getMessage());
             return AR_EDIT;
@@ -168,8 +187,8 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     @Override
     protected void loadEditForm() throws PAException {
         if (CA_EDIT.equals(getCurrentAction())) {
-            StudySiteAccrualAccessDTO dto =
-                getAccrualAccessSvc().get(IiConverter.convertToIi(getSelectedRowIdentifier()));
+            StudySiteAccrualAccessDTO dto = accrualAccessService.get(IiConverter
+                .convertToIi(getSelectedRowIdentifier()));
             StudySiteAccrualAccessWebDTO webDTO = populateWebDTO(dto);
             setAccess(webDTO);
             setEmail(webDTO.getEmailAddress());
@@ -185,8 +204,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      */
     @Override
     protected void loadListForm() throws PAException {
-        List<StudySiteAccrualAccessDTO> dtos =
-            getAccrualAccessSvc().getByStudyProtocol(getSpDTO().getStudyProtocolId());
+        List<StudySiteAccrualAccessDTO> dtos = accrualAccessService.getByStudyProtocol(getSpDTO().getStudyProtocolId());
         List<StudySiteAccrualAccessWebDTO> webDtos = new ArrayList<StudySiteAccrualAccessWebDTO>();
         for (StudySiteAccrualAccessDTO dto : dtos) {
             webDtos.add(populateWebDTO(dto));
@@ -225,8 +243,8 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
         } catch (NumberFormatException e) {
             studySiteId = null;
         }
-        StudySiteAccrualStatusDTO iso = getAccrualStatusSvc().getCurrentStudySiteAccrualStatusByStudySite(IiConverter
-                .convertToStudySiteIi(studySiteId));
+        StudySiteAccrualStatusDTO iso = accrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(IiConverter
+            .convertToStudySiteIi(studySiteId));
         setSiteRecruitmentStatus(iso == null ? null : CdConverter.convertCdToString(iso.getStatusCode()));
         return SUCCESS;
     }
@@ -265,7 +283,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      */
     public Map<Long, String> getSites() throws PAException {
         if (sites == null) {
-            sites = getAccrualAccessSvc().getTreatingSites(getSpDTO().getStudyProtocolId());
+            sites = accrualAccessService.getTreatingSites(getSpDTO().getStudyProtocolId());
         }
         return sites;
     }
@@ -295,7 +313,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      * @throws PAException
      */
     private List<LabelValueBean> getDisplayUsersList() throws PAException {
-        Set<User> uSet = getAccrualAccessSvc().getSubmitters();
+        Set<User> uSet = accrualAccessService.getSubmitters();
 
         List<LabelValueBean> lvBeanList = new ArrayList<LabelValueBean>();
         for (User u : uSet) {
@@ -306,7 +324,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
                 LabelValueBean lvBean = new LabelValueBean();
                 lvBean.setId(usr.getId());
                 lvBean.setName(StudySiteAccrualAccessServiceBean.getFullName(usr) + " - "
-                            + CsmUserUtil.getGridIdentityUsername(loginId));
+                        + CsmUserUtil.getGridIdentityUsername(loginId));
                 lvBeanList.add(lvBean);
             }
         }
@@ -318,7 +336,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
             return null;
         }
         try {
-            RegistryUser regUser = getRegistryUserSvc().getUser(user.getLoginName());
+            RegistryUser regUser = registryUserService.getUser(user.getLoginName());
             if (regUser == null) {
                 return null;
             }
@@ -348,8 +366,8 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
         }
 
         try {
-            StudySiteAccrualStatusDTO siteStatus =
-                getAccrualStatusSvc().getCurrentStudySiteAccrualStatusByStudySite(dto.getStudySiteIdentifier());
+            StudySiteAccrualStatusDTO siteStatus = accrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(dto
+                .getStudySiteIdentifier());
             webDTO.setSiteRecruitmentStatus(CdConverter.convertCdToString(siteStatus.getStatusCode()));
             webDTO.setSiteName(getSites().get(webDTO.getStudySiteId()));
         } catch (Exception e) {
@@ -377,7 +395,6 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
         }
         return regUserNames;
     }
-
 
     /**
      * @return the email
@@ -433,5 +450,26 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      */
     public void setRegistryUserId(Long registryUserId) {
         this.registryUserId = registryUserId;
+    }
+
+    /**
+     * @param registryUserService the registryUserService to set
+     */
+    public void setRegistryUserService(RegistryUserServiceLocal registryUserService) {
+        this.registryUserService = registryUserService;
+    }
+
+    /**
+     * @param accrualAccessService the accrualAccessService to set
+     */
+    public void setAccrualAccessService(StudySiteAccrualAccessServiceLocal accrualAccessService) {
+        this.accrualAccessService = accrualAccessService;
+    }
+
+    /**
+     * @param accrualStatusService the accrualStatusService to set
+     */
+    public void setAccrualStatusService(StudySiteAccrualStatusServiceLocal accrualStatusService) {
+        this.accrualStatusService = accrualStatusService;
     }
 }
