@@ -136,6 +136,7 @@ public class StudySiteAccrualAccessServiceBean
     /**
      * {@inheritDoc}
      */
+    @Override
     public Set<User> getSubmitters() throws PAException {
         if (lastUpdate == null
                 || lastUpdate.getTime() + REFRESH_TIME < new Timestamp(new Date().getTime()).getTime()) {
@@ -147,6 +148,7 @@ public class StudySiteAccrualAccessServiceBean
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("unchecked")
     public Map<Long, String> getTreatingSites(Long studyProtocolId) throws PAException {
         Session session = null;
@@ -194,10 +196,20 @@ public class StudySiteAccrualAccessServiceBean
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<StudySiteAccrualAccessDTO> getByStudyProtocol(Long studyProtocolId) throws PAException {
         List<StudySiteAccrualAccess> ssaaList = getBosByStudyProtocol(studyProtocolId);
         return convertFromDomainToDTOs(ssaaList);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<StudySiteAccrualAccessDTO> getByStudySite(Long studySiteId) throws PAException {
+        return convertFromDomainToDTOs(getBosByStudySite(studySiteId));
+    }
+
 
     /**
      * {@inheritDoc}
@@ -343,5 +355,4 @@ public class StudySiteAccrualAccessServiceBean
     public static void setLastUpdate(Timestamp lastUpdate) {
         StudySiteAccrualAccessServiceBean.lastUpdate = lastUpdate;
     }
-
 }

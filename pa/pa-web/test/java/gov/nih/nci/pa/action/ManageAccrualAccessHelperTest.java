@@ -76,49 +76,109 @@
 *
 *
 */
+package gov.nih.nci.pa.action;
 
-package gov.nih.nci.pa.service.util;
-
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.pa.dto.StudySiteAccrualAccessWebDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
-import gov.nih.nci.pa.service.BasePaService;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.security.authorization.domainobjects.User;
+import gov.nih.nci.pa.service.exception.PADuplicateException;
+import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import org.junit.Before;
+import org.junit.Test;
+
 
 /**
- * @author Hugh Reinhart
- * @since Sep 2, 2009
+ * @author Max Shestopalov
+ * @since Sep 8, 2009
  */
-public interface StudySiteAccrualAccessServiceLocal extends BasePaService<StudySiteAccrualAccessDTO> {
+public class ManageAccrualAccessHelperTest extends AbstractPaActionTest {
 
-    /**
-     * @return submitter csm accounts
-     * @throws PAException exception
-     */
-    Set<User> getSubmitters() throws PAException;
+    ManageAccrualAccessHelper accHelp = null;
+    StudySiteAccrualAccessServiceLocal ssAccSvc = null;
+    @Before
+    public void prepare() {
+        ServiceLocator svcLoc = mock(ServiceLocator.class);
+        ssAccSvc = mock(StudySiteAccrualAccessServiceLocal.class);
+        when(svcLoc.getStudySiteAccrualAccessService()).thenReturn(ssAccSvc);
+        PaRegistry.getInstance().setServiceLocator(svcLoc);
+        accHelp = new ManageAccrualAccessHelper();
+    }
 
-    /**
-     * @param studyProtocolId protocol id
-     * @return list of treating sites
-     * @throws PAException exception
-     */
-    Map<Long, String> getTreatingSites(Long studyProtocolId) throws PAException;
+    @Test(expected = PADuplicateException.class)
+    public void addTreatingSiteAccess() throws PAException {
+        StudySiteAccrualAccessWebDTO webDto = new StudySiteAccrualAccessWebDTO();
+        webDto.setStatusCode("ACTIVE");
+        webDto.setRegistryUserId(1L);
+        webDto.setStudySiteId(1L);
+        accHelp.addTreatingSiteAccess(webDto);
+        when(ssAccSvc.create(any(StudySiteAccrualAccessDTO.class))).thenThrow(new PADuplicateException(""));
+        accHelp.addTreatingSiteAccess(webDto);
+    }
 
-    /**
-     * @param studyProtocolId study site pkey
-     * @return list of access
-     * @throws PAException exception
-     */
-    List<StudySiteAccrualAccessDTO> getByStudyProtocol(Long studyProtocolId) throws PAException;
+    @Test
+    public void updateTreatingSiteAccess() throws PAException {
+        StudySiteAccrualAccessWebDTO webDto = new StudySiteAccrualAccessWebDTO();
+        webDto.setStatusCode("ACTIVE");
+        webDto.setRegistryUserId(1L);
+        webDto.setStudySiteId(1L);
+        accHelp.updateTreatingSiteAccess(webDto);
+    }
+    @Test
+    public void addMultipleTreatingSitesAccessWoutUpdate() throws PAException {
 
-    /**
-     * Return a list of study site accrual access objects by site id.
-     * @param studySiteId study site id
-     * @return list of access
-     * @throws PAException exception
-     */
-    List<StudySiteAccrualAccessDTO> getByStudySite(Long studySiteId) throws PAException;
+        StudySiteAccrualAccessWebDTO webDto = new StudySiteAccrualAccessWebDTO();
+        webDto.setStatusCode("ACTIVE");
+        webDto.setRegistryUserId(1L);
+        webDto.setStudySiteId(ManageAccrualAccessHelper.ALL_TREATING_SITES_ID);
+        accHelp.addMultipleTreatingSitesAccess(webDto, getTreatingSiteMap());
+
+    }
+
+    private Map<Long, String> getTreatingSiteMap() {
+        Map<Long, String> treatingSiteMap = new HashMap<Long, String>();
+        treatingSiteMap.put(-1L, "All Sites");
+        treatingSiteMap.put(1L, "Treating Site 1");
+        treatingSiteMap.put(2L, "Treating Site 2");
+        return treatingSiteMap;
+    }
+
+    @Test
+    public void addMultipleTreatingSitesAccessWithUpdate() throws PAException {
+
+        StudySiteAccrualAccessWebDTO webDto = new StudySiteAccrualAccessWebDTO();
+        webDto.setStatusCode("ACTIVE");
+        webDto.setRegistryUserId(1L);
+        webDto.setStudySiteId(ManageAccrualAccessHelper.ALL_TREATING_SITES_ID);
+        Map<Long, String> treatingSiteMap = new HashMap<Long, String>();
+
+        treatingSiteMap.put(-1L, "All Sites");
+        treatingSiteMap.put(1L, "Treating Site 1");
+        treatingSiteMap.put(2L, "Treating Site 2");
+        when(ssAccSvc.create(any(StudySiteAccrualAccessDTO.class))).thenThrow(new PADuplicateException(""));
+        List<StudySiteAccrualAccessDTO> ssAccAccessDtos = new ArrayList<StudySiteAccrualAccessDTO>();
+        StudySiteAccrualAccessDTO dto = new StudySiteAccrualAccessDTO();
+        dto.setIdentifier(IiConverter.convertToIi(1L));
+        dto.setRegistryUserIdentifier(IiConverter.convertToIi(1L));
+        dto.setStudySiteIdentifier(IiConverter.convertToIi(1L));
+        dto.setStatusCode(CdConverter.convertStringToCd("INACTIVE"));
+        ssAccAccessDtos.add(dto);
+        when(ssAccSvc.getByStudySite(any(Long.class))).thenReturn(ssAccAccessDtos);
+        accHelp.addMultipleTreatingSitesAccess(webDto, getTreatingSiteMap());
+
+    }
+
+
 }

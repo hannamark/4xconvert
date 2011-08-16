@@ -117,6 +117,7 @@ import org.junit.Test;
 public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase {
     private static final String REQUEST_DETAILS = "request details";
     private Long ssId;
+    private Long spId;
     private static Ii REGISTRY_USER_IDENTIFIER;
     private Ii identifier;
 
@@ -140,6 +141,7 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         this.bean = bean;
         TestSchema.primeData();
         ssId = TestSchema.studySiteIds.get(0);
+        spId = TestSchema.studyProtocolIds.get(0);
         REGISTRY_USER_IDENTIFIER = IiConverter.convertToIi(TestSchema.getRegistryUser().getId());
      }
 
@@ -167,14 +169,21 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
     }
 
     @Test
+    public void getByStudyProtocol() throws Exception {
+        create();
+        List<StudySiteAccrualAccessDTO> rList = bean.getByStudyProtocol(spId);
+        assertEquals(1, rList.size());
+        assertEquals(identifier, rList.get(0).getIdentifier());
+        assertEquals(ssId, new Long(rList.get(0).getStudySiteIdentifier().getExtension()));
+    }
+
+    @Test
     public void getByStudySite() throws Exception {
         create();
         List<StudySiteAccrualAccessDTO> rList = bean.getByStudyProtocol(ssId);
-        boolean found = false;
-        for (StudySiteAccrualAccessDTO r : rList) {
-            found =  identifier.equals(r.getIdentifier()) ? true : found;
-        }
-        assertTrue(found);
+        assertEquals(1, rList.size());
+        assertEquals(identifier, rList.get(0).getIdentifier());
+        assertEquals(ssId, new Long(rList.get(0).getStudySiteIdentifier().getExtension()));
     }
 
     @Test

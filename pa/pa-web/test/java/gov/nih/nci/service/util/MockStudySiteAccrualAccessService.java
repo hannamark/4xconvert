@@ -160,6 +160,7 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<StudySiteAccrualAccessDTO> getByStudyProtocol(Long studyProtocolId) throws PAException {
         return CONVERTER.convertFromDomainToDtos(list);
     }
@@ -167,6 +168,7 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
     /**
      * {@inheritDoc}
      */
+    @Override
     public Set<User> getSubmitters() throws PAException {
         // TODO Auto-generated method stub
         return null;
@@ -175,6 +177,7 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
     /**
      * {@inheritDoc}
      */
+    @Override
     public Map<Long, String> getTreatingSites(Long studyProtocolId) throws PAException {
         // TODO Auto-generated method stub
         return null;
@@ -195,5 +198,13 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
         bo.setRequestDetails(StConverter.convertToString(access.getRequestDetails()));
         bo.setStatusCode(ActiveInactiveCode.getByCode(CdConverter.convertCdToString(access.getStatusCode())));
         return access;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<StudySiteAccrualAccessDTO> getByStudySite(Long studySiteId) throws PAException {
+        return CONVERTER.convertFromDomainToDtos(list);
     }
 }

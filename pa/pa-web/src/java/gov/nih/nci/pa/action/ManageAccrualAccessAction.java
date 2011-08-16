@@ -99,6 +99,7 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -113,7 +114,7 @@ import org.apache.struts2.ServletActionContext;
 public class ManageAccrualAccessAction extends AbstractListEditAction {
 
     private static final long serialVersionUID = -1924093330034538567L;
-    
+
     private RegistryUserServiceLocal registryUserService;
     private StudySiteAccrualAccessServiceLocal accrualAccessService;
     private StudySiteAccrualStatusServiceLocal accrualStatusService;
@@ -127,6 +128,8 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     private String phone;
     private String siteRecruitmentStatus;
     private Long registryUserId;
+    private final ManageAccrualAccessHelper accAccHelper = new ManageAccrualAccessHelper();
+
 
     /**
      * {@inheritDoc}
@@ -157,8 +160,12 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     @Override
     public String add() throws PAException {
         try {
-            StudySiteAccrualAccessDTO dto = populateDTO(getAccess());
-            accrualAccessService.create(dto);
+            if (ManageAccrualAccessHelper.ALL_TREATING_SITES_ID == getAccess().getStudySiteId().longValue()) {
+                accAccHelper.addMultipleTreatingSitesAccess(getAccess(), getSites());
+                getAccess().setStudySiteId(ManageAccrualAccessHelper.ALL_TREATING_SITES_ID);
+            } else {
+                accAccHelper.addTreatingSiteAccess(getAccess());
+            }
         } catch (PAException e) {
             addActionError(e.getMessage());
             return AR_EDIT;
@@ -166,14 +173,15 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
         return super.add();
     }
 
+
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String update() throws PAException {
         try {
-            StudySiteAccrualAccessDTO dto = populateDTO(getAccess());
-            accrualAccessService.update(dto);
+            accAccHelper.updateTreatingSiteAccess(getAccess());
         } catch (PAException e) {
             addActionError(e.getMessage());
             return AR_EDIT;
@@ -218,7 +226,9 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      */
     public String loadEmail() throws PAException {
         RegistryUser user = getRegUsers().get(getRegistryUserId());
-        setEmail(user.getEmailAddress());
+        if (user != null) {
+            setEmail(user.getEmailAddress());
+        }
         return SUCCESS;
     }
 
@@ -228,7 +238,9 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      */
     public String loadPhone() throws PAException {
         RegistryUser user = getRegUsers().get(getRegistryUserId());
-        setPhone(user.getPhone());
+        if (user != null) {
+            setPhone(user.getPhone());
+        }
         return SUCCESS;
     }
 
@@ -237,15 +249,20 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      * @throws PAException exception
      */
     public String loadSiteRecruitmentStatus() throws PAException {
-        Long studySiteId;
+        Long studySiteId = null;
         try {
             studySiteId = Long.valueOf(ServletActionContext.getRequest().getParameter("studySiteId"));
         } catch (NumberFormatException e) {
-            studySiteId = null;
+            setSiteRecruitmentStatus(null);
         }
-        StudySiteAccrualStatusDTO iso = accrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(IiConverter
-            .convertToStudySiteIi(studySiteId));
-        setSiteRecruitmentStatus(iso == null ? null : CdConverter.convertCdToString(iso.getStatusCode()));
+
+        if (studySiteId != null) {
+            StudySiteAccrualStatusDTO iso = accrualStatusService
+                .getCurrentStudySiteAccrualStatusByStudySite(IiConverter
+                    .convertToStudySiteIi(studySiteId));
+            setSiteRecruitmentStatus(iso == null ? null : CdConverter.convertCdToString(iso.getStatusCode()));
+        }
+
         return SUCCESS;
     }
 
@@ -283,7 +300,9 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      */
     public Map<Long, String> getSites() throws PAException {
         if (sites == null) {
-            sites = accrualAccessService.getTreatingSites(getSpDTO().getStudyProtocolId());
+            sites = new LinkedHashMap<Long, String>();
+            sites.put(ManageAccrualAccessHelper.ALL_TREATING_SITES_ID, "All Sites");
+            sites.putAll(accrualAccessService.getTreatingSites(getSpDTO().getStudyProtocolId()));
         }
         return sites;
     }
@@ -374,16 +393,6 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
             LOG.error("Error retrieving status for study site with id " + webDTO.getStudySiteId() + ".");
         }
         return webDTO;
-    }
-
-    private StudySiteAccrualAccessDTO populateDTO(StudySiteAccrualAccessWebDTO webDTO) {
-        StudySiteAccrualAccessDTO dto = new StudySiteAccrualAccessDTO();
-        dto.setIdentifier(IiConverter.convertToIi(webDTO.getIdentifier()));
-        dto.setRegistryUserIdentifier(IiConverter.convertToIi(webDTO.getRegistryUserId()));
-        dto.setRequestDetails(StConverter.convertToSt(webDTO.getRequestDetails()));
-        dto.setStudySiteIdentifier(IiConverter.convertToIi(webDTO.getStudySiteId()));
-        dto.setStatusCode(CdConverter.convertStringToCd(webDTO.getStatusCode()));
-        return dto;
     }
 
     /**

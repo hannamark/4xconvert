@@ -81,16 +81,32 @@ package gov.nih.nci.pa.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.StudySiteAccrualAccessWebDTO;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
+import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.service.MockStudySiteService;
 import gov.nih.nci.service.util.MockStudySiteAccrualAccessService;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -103,10 +119,12 @@ import org.junit.Test;
  * @since Sep 8, 2009
  */
 public class ManageAccrualAccessTest extends AbstractPaActionTest {
-    private Long testRegUserId = MockStudySiteAccrualAccessService.regUsers.get(0).getId();
-    private Long testStudySiteId = MockStudySiteService.list.get(2).getId();
-    private String testStatusCode = ActiveInactiveCode.ACTIVE.getCode();
-    private String testRequestDetails = "test request details";
+    private final Long testRegUserId = MockStudySiteAccrualAccessService.regUsers.get(0).getId();
+    private final Long testStudySiteId = MockStudySiteService.list.get(2).getId();
+    private final String testStatusCode = ActiveInactiveCode.ACTIVE.getCode();
+    private final String testRequestDetails = "test request details";
+    private StudySiteAccrualAccessServiceLocal ssAccSvc = null;
+
     private ManageAccrualAccessAction act;
 
     @Before
@@ -115,6 +133,22 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
         MockStudySiteAccrualAccessService.list.clear();
         act = new ManageAccrualAccessAction();
         act.prepare();
+
+    }
+
+    private void loadMocksInPaRegistry() throws PAException {
+        ServiceLocator svcLoc = mock(ServiceLocator.class);
+        RegistryUserServiceLocal regSvc = mock(RegistryUserServiceLocal.class);
+        when(regSvc.getUserById(any(Long.class))).thenReturn(new RegistryUser());
+        ssAccSvc = mock(StudySiteAccrualAccessServiceLocal.class);
+        when(svcLoc.getStudySiteAccrualAccessService()).thenReturn(ssAccSvc);
+        when(svcLoc.getRegistryUserService()).thenReturn(regSvc);
+        Map<Long, String> treatingSiteMap = new HashMap<Long, String>();
+        treatingSiteMap.put(1L, "Treating Site 1");
+        treatingSiteMap.put(2L, "Treating Site 2");
+        when(ssAccSvc.getTreatingSites(any(Long.class))).thenReturn(treatingSiteMap);
+        PaRegistry.getInstance().setServiceLocator(svcLoc);
+        act.setAccrualAccessService(ssAccSvc);
     }
 
     @Test
@@ -157,6 +191,65 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
         assertEquals(testStudySiteId, dto.getStudySiteId());
         assertEquals(testStatusCode, dto.getStatusCode());
         assertEquals(testRequestDetails, dto.getRequestDetails());
+    }
+
+    @Test
+    public void addAllAccrualAccessWithoutUpdate() throws Exception {
+        loadMocksInPaRegistry();
+        listAccrualAccess();
+
+        act.getAccess().setRegistryUserId(testRegUserId);
+        act.getAccess().setStudySiteId(ManageAccrualAccessHelper.ALL_TREATING_SITES_ID);
+        act.getAccess().setStatusCode(testStatusCode);
+
+        loadTreatingSitesForProtocol();
+
+        assertEquals(AbstractListEditAction.AR_LIST, act.add());
+        assertFalse(act.hasActionErrors());
+        assertEquals(2, act.getAccessList().size());
+
+    }
+
+    @Test
+    public void addAllAccrualAccessWithUpdate() throws Exception {
+        loadMocksInPaRegistry();
+        listAccrualAccess();
+
+        List<StudySiteAccrualAccessDTO> addAllReturnList = new ArrayList<StudySiteAccrualAccessDTO>();
+        StudySiteAccrualAccessDTO ssAcDto1 = new StudySiteAccrualAccessDTO();
+        ssAcDto1.setRegistryUserIdentifier(IiConverter.convertToIi(1L));
+        ssAcDto1.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(1L));
+        ssAcDto1.setIdentifier(IiConverter.convertToActivityIi(1L));
+        addAllReturnList.add(ssAcDto1);
+        when(ssAccSvc.getByStudySite(any(Long.class))).thenReturn(addAllReturnList);
+        when(ssAccSvc.getByStudyProtocol(any(Long.class))).thenReturn(addAllReturnList);
+
+        assertEquals(AbstractListEditAction.AR_LIST, act.execute());
+        assertEquals(1, act.getAccessList().size());
+
+        act.getAccess().setRegistryUserId(testRegUserId);
+        act.getAccess().setStudySiteId(ManageAccrualAccessHelper.ALL_TREATING_SITES_ID);
+        act.getAccess().setStatusCode(testStatusCode);
+
+        loadTreatingSitesForProtocol();
+        when(ssAccSvc.create(any(StudySiteAccrualAccessDTO.class))).thenThrow(new PADuplicateException(""));
+        assertEquals(AbstractListEditAction.AR_LIST, act.add());
+        assertFalse(act.hasActionErrors());
+        assertEquals(2, act.getAccessList().size());
+
+    }
+
+    private void loadTreatingSitesForProtocol() throws PAException {
+        List<StudySiteAccrualAccessDTO> addAllReturnList = new ArrayList<StudySiteAccrualAccessDTO>();
+        StudySiteAccrualAccessDTO ssAcDto1 = new StudySiteAccrualAccessDTO();
+        ssAcDto1.setRegistryUserIdentifier(IiConverter.convertToIi(1L));
+        ssAcDto1.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(1L));
+        addAllReturnList.add(ssAcDto1);
+        StudySiteAccrualAccessDTO ssAcDto2 = new StudySiteAccrualAccessDTO();
+        ssAcDto2.setRegistryUserIdentifier(IiConverter.convertToIi(1L));
+        ssAcDto2.setStudySiteIdentifier(IiConverter.convertToStudySiteIi(2L));
+        addAllReturnList.add(ssAcDto2);
+        when(ssAccSvc.getByStudyProtocol(any(Long.class))).thenReturn(addAllReturnList);
     }
 
     @Test

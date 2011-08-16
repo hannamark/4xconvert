@@ -49,6 +49,7 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
      * @return StudySiteAccrualStatusDTO
      * @throws PAException PAException
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudySiteAccrualStatusDTO getStudySiteAccrualStatus(Ii ii) throws PAException {
         throw new PAException(errMsgMethodNotImplemented);
@@ -59,6 +60,7 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
      * @return StudySiteAccrualStatusDTO
      * @throws PAException PAException
      */
+    @Override
     public StudySiteAccrualStatusDTO createStudySiteAccrualStatus(StudySiteAccrualStatusDTO dto) throws PAException {
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             String errMsg = "Existing StudySiteAccrualStatus objects cannot be modified.  Append new object instead.";
@@ -101,6 +103,7 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
      * @return StudySiteAccrualStatusDTO
      * @throws PAException PAException
      */
+    @Override
     public StudySiteAccrualStatusDTO updateStudySiteAccrualStatus(StudySiteAccrualStatusDTO dto) throws PAException {
         throw new PAException(errMsgMethodNotImplemented);
     }
@@ -108,6 +111,7 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
     /**
      * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudySiteAccrualStatusDTO> getStudySiteAccrualStatusByStudySite(Ii studySiteIi) throws PAException {
         if (ISOUtil.isIiNull(studySiteIi)) {
@@ -137,6 +141,7 @@ public class StudySiteAccrualStatusBeanLocal extends AbstractBaseSearchBean<Stud
      * @return StudySiteAccrualStatusDTO Current status.
      * @throws PAException Exception.
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudySiteAccrualStatusDTO getCurrentStudySiteAccrualStatusByStudySite(Ii studySiteIi) throws PAException {
         List<StudySiteAccrualStatusDTO> ssasList = this.getStudySiteAccrualStatusByStudySite(studySiteIi);
