@@ -110,6 +110,7 @@ public class StudySubject extends Subject {
     private Patient patient;
     private StudySite studySite;
     private SDCDisease disease;
+    private ICD9Disease icd9disease;
     private String outcomesLoginName;
     private List<PerformedActivity> performedActivities = new ArrayList<PerformedActivity>();
 
@@ -184,6 +185,23 @@ public class StudySubject extends Subject {
     public void setDisease(SDCDisease disease) {
         this.disease = disease;
     }
+    
+    /**
+     * @return the icd9disease
+     */
+    @ManyToOne
+    @JoinColumn(name = "icd9disease_identifier")   
+    public ICD9Disease getIcd9disease() {
+        return icd9disease;
+    }
+    
+    /**
+     * @param icd9disease the icd9disease to set
+     */
+    public void setIcd9disease(ICD9Disease icd9disease) {
+        this.icd9disease = icd9disease;
+    }   
+    
     /**
      * @return the performedActivities
      */
@@ -209,5 +227,5 @@ public class StudySubject extends Subject {
      */
     public void setOutcomesLoginName(String outcomesLoginName) {
         this.outcomesLoginName = outcomesLoginName;
-    }
+    }    
 }

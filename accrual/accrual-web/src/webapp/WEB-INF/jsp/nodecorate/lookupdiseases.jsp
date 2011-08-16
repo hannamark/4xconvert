@@ -5,8 +5,8 @@
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
         <script type="text/javascript" language="javascript">
-            function submitform(disid) {
-                top.window.loadDiv(disid);
+            function submitform(disid, type) {
+                top.window.loadDiv(disid, type);
                 window.top.hidePopWin(true); 
             }
             

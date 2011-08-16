@@ -119,7 +119,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
      * default constructor.
      */
     public AbstractBaseAccrualBean() {
-        Class clss = getClass();
+        Class<?> clss = getClass();
         Type type = clss.getGenericSuperclass();
         while (!(type instanceof ParameterizedType)) {
             clss = clss.getSuperclass();

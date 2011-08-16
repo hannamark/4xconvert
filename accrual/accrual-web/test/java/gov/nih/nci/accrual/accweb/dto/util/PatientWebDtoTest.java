@@ -78,8 +78,10 @@
  */
 package gov.nih.nci.accrual.accweb.dto.util;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
 import gov.nih.nci.accrual.util.AccrualUtil;
 
 import org.junit.Before;
@@ -97,9 +99,7 @@ public class PatientWebDtoTest {
         patientWebDto = new PatientWebDto();
         patientWebDto.setAssignedIdentifier("assignedIdentifier");
         patientWebDto.setBirthDate(AccrualUtil.normalizeYearMonthString("1977/01"));
-        patientWebDto.setCountryIdentifier(Long.valueOf(1));
-        patientWebDto.setDiseaseIdentifier(Long.valueOf(1));
-        patientWebDto.setDiseasePreferredName("diseasePreferredName");
+        patientWebDto.setCountryIdentifier(Long.valueOf(1));        
         patientWebDto.setEthnicCode("ethnicCode");
         patientWebDto.setGenderCode("genderCode");
         patientWebDto.setIdentifier("identifier");
@@ -128,17 +128,7 @@ public class PatientWebDtoTest {
     @Test
     public void countryIdentifierPropertyTest() {
         assertNotNull(patientWebDto.getCountryIdentifier());
-    }
-
-    @Test
-    public void diseaseIdentifierPropertyTest() {
-        assertNotNull(patientWebDto.getDiseaseIdentifier());
-    }
-
-    @Test
-    public void diseasePreferredNamePropertyTest() {
-        assertNotNull(patientWebDto.getDiseasePreferredName());
-    }
+    }      
 
     @Test
     public void ethnicCodePropertyTest() {
@@ -213,6 +203,42 @@ public class PatientWebDtoTest {
     @Test
     public void organizationNamePropertyTest() {
         assertNull(patientWebDto.getOrganizationName());
+    }
+    
+    @Test
+    public void icd9DiseasePreferredNameTest() {
+        patientWebDto.setIcd9DiseasePreferredName("name");
+        assertNotNull(patientWebDto.getIcd9DiseasePreferredName());       
+    }
+    
+    @Test
+    public void icd9DiseaseIdentifierTest() {
+        patientWebDto.setIcd9DiseaseIdentifier(1L);
+        assertNotNull(patientWebDto.getIcd9DiseaseIdentifier());        
+    }
+    
+    @Test
+    public void diseasePreferredNameICD9Test() {   
+        patientWebDto.setIcd9DiseasePreferredName("name");
+        assertEquals("name", patientWebDto.getDiseasePreferredName());
+    }
+    
+    @Test
+    public void diseaseIdentifierICD9Test() {       
+        patientWebDto.setIcd9DiseaseIdentifier(30L);
+        assertEquals(Long.valueOf(30), patientWebDto.getDiseaseIdentifier());        
+    }
+    
+    @Test
+    public void diseasePreferredNameSDCTest() {    
+        patientWebDto.setSdcDiseasePreferredName("nameSdc");
+        assertEquals("nameSdc", patientWebDto.getDiseasePreferredName());
+    }
+    
+    @Test
+    public void diseaseIdentifierSDCTest() {       
+        patientWebDto.setSdcDiseaseIdentifier(20L);
+        assertEquals(Long.valueOf(20), patientWebDto.getDiseaseIdentifier());        
     }
 
 }

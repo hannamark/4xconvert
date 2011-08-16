@@ -89,6 +89,7 @@ import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -194,15 +195,37 @@ public class PatientHelper {
         List<PatientWebDto> results = new ArrayList<PatientWebDto>();
         for (StudySubjectDto dto : dtos) {
             PatientDto pat = action.getPatientSvc().get(dto.getPatientIdentifier());
-            SDCDiseaseDTO disease;
-            try {
-                disease = action.getSDCDiseaseSvc().get(dto.getDiseaseIdentifier());
-            } catch (Exception e) {
-                disease = null;
+            SDCDiseaseDTO disease = getSDCDisease(dto);
+            ICD9DiseaseDTO icd9Disease = null;
+
+            if (disease == null) {
+                icd9Disease = getICD9Disease(dto);
             }
+
             PerformedSubjectMilestoneDto psmDto = action.getRegistrationDate(dto);
-            results.add(new PatientWebDto(pat, dto, orgName, psmDto, action.getListOfCountries(), disease));
-        }        
+            results
+                .add(new PatientWebDto(pat, dto, orgName, psmDto, action.getListOfCountries(), disease, icd9Disease));
+        }
         return results;
+    }
+
+    private ICD9DiseaseDTO getICD9Disease(StudySubjectDto dto) {
+        ICD9DiseaseDTO icd9Disease = new ICD9DiseaseDTO();
+        try {
+            icd9Disease = action.getIcd9DiseaseSvc().get(dto.getIcd9DiseaseIdentifier());
+        } catch (PAException e) {
+            icd9Disease = null;
+        }
+        return icd9Disease;
+    }
+
+    private SDCDiseaseDTO getSDCDisease(StudySubjectDto dto) {
+        SDCDiseaseDTO disease;
+        try {
+            disease = action.getSDCDiseaseSvc().get(dto.getDiseaseIdentifier());
+        } catch (Exception e) {
+            disease = null;
+        }
+        return disease;
     }
 }

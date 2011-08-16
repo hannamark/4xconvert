@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The accrual
+ * source code form and machine readable, binary, object code form. The pa
  * Software was developed in conjunction with the National Cancer Institute 
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent 
  * government employees are authors, any rights in such works shall be subject 
  * to Title 17 of the United States Code, section 105. 
  *
- * This accrual Software License (the License) is between NCI and You. You (or 
+ * This pa Software License (the License) is between NCI and You. You (or 
  * Your) shall mean a person or an entity, and all other entities that control, 
  * are controlled by, or are under common control with the entity. Control for 
  * purposes of this definition means (i) the direct or indirect power to cause 
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described 
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up, 
  * no-charge, irrevocable, transferable and royalty-free right and license in 
- * its rights in the accrual Software to (i) use, install, access, operate, 
+ * its rights in the pa Software to (i) use, install, access, operate, 
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the accrual Software; (ii) distribute and 
- * have distributed to and by third parties the accrual Software and any 
+ * and prepare derivative works of the pa Software; (ii) distribute and 
+ * have distributed to and by third parties the pa Software and any 
  * modifications and derivative works thereof; and (iii) sublicense the 
  * foregoing rights set out in (i) and (ii) to third parties, including the 
  * right to license such rights to further third parties. For sake of clarity, 
@@ -80,15 +80,67 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.util;
+package gov.nih.nci.pa.iso.convert;
 
-import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import static org.junit.Assert.assertEquals;
+
+import gov.nih.nci.pa.domain.ICD9Disease;
+import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 
 /**
- * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
- *
+ * @author merenkoi
  */
-public abstract class AbstractAccrualHibernateTestCase extends AbstractHibernateTestCase {
+public class ICD9DiseaseConverterTest extends
+AbstractConverterTest<ICD9DiseaseConverter, ICD9DiseaseDTO, ICD9Disease> {
+
     
-   
+    private static final String DISEASE_NAME = "diseaseName";   
+    private static final String DISEASE_CODE = "diseaseCode";
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ICD9Disease makeBo() {
+        ICD9Disease disease = new ICD9Disease();
+        disease.setId(ID);
+        disease.setDiseaseCode(DISEASE_CODE);
+        disease.setName(DISEASE_NAME);
+        return disease;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ICD9DiseaseDTO makeDto() {
+        ICD9DiseaseDTO diseaseDTO =  new ICD9DiseaseDTO();
+        diseaseDTO.setIdentifier(IiConverter.convertToIi(ID));
+        diseaseDTO.setDiseaseCode(StConverter.convertToSt(DISEASE_CODE));
+        diseaseDTO.setName(StConverter.convertToSt(DISEASE_NAME));
+        return diseaseDTO;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void verifyBo(ICD9Disease bo) {
+        assertEquals(ID, bo.getId());
+        assertEquals(DISEASE_CODE, bo.getDiseaseCode());
+        assertEquals(DISEASE_NAME, bo.getName());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void verifyDto(ICD9DiseaseDTO dto) {
+        assertEquals(ID, IiConverter.convertToLong(dto.getIdentifier()));
+        assertEquals(DISEASE_CODE, dto.getDiseaseCode().getValue());
+        assertEquals(DISEASE_NAME, dto.getName().getValue());
+    }    
+
 }

@@ -80,6 +80,7 @@
 package gov.nih.nci.accrual.convert;
 
 import static org.junit.Assert.assertTrue;
+
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.pa.domain.Patient;
@@ -105,14 +106,7 @@ public class StudySubjectConverterTest extends AbstractConverterTest {
     @Override
     @Test
     public void conversionTest() throws Exception {
-        StudySubjectDto dto = new StudySubjectDto();
-        dto.setIdentifier(iiVal);
-        dto.setPatientIdentifier(iiVal);
-        dto.setPaymentMethodCode(cdVal);
-        dto.setStatusCode(cdVal);
-        dto.setStatusDateRange(ivlVal);
-        dto.setStudyProtocolIdentifier(iiVal);
-        dto.setStudySiteIdentifier(iiVal);
+        StudySubjectDto dto = createStudySubjectDTO();
         dto.setDiseaseIdentifier(iiVal);
 
         StudySubject bo = Converters.get(StudySubjectConverter.class).convertFromDtoToDomain(dto);
@@ -175,5 +169,17 @@ public class StudySubjectConverterTest extends AbstractConverterTest {
         assertTrue(cdTest(dto.getPaymentMethod()));
         assertTrue(iiTest(dto.getDiseaseIdentifier()));
         assertTrue(iiTest(dto.getParticipatingSiteIdentifier()));
+    }
+    
+    private StudySubjectDto createStudySubjectDTO() {
+        StudySubjectDto dto = new StudySubjectDto();
+        dto.setIdentifier(iiVal);
+        dto.setPatientIdentifier(iiVal);
+        dto.setPaymentMethodCode(cdVal);
+        dto.setStatusCode(cdVal);
+        dto.setStatusDateRange(ivlVal);
+        dto.setStudyProtocolIdentifier(iiVal);
+        dto.setStudySiteIdentifier(iiVal);        
+        return dto;
     }
 }

@@ -85,6 +85,17 @@ package gov.nih.nci.accrual.accweb.dto.util;
  * @since 12/02/2008
  */
 public class DiseaseWebDTO {
+    
+    /**
+     * SDC_TYPE type of disease.
+     */
+    public static final String SDC_TYPE = "sdc";
+    
+    /**
+     * ICD9_TYPE type of disease.
+     */
+    public static final String ICD9_TYPE = "icd9";
+    
     private String studyDiseaseIdentifier;
     private String diseaseIdentifier;
     private String preferredName;
@@ -92,6 +103,7 @@ public class DiseaseWebDTO {
     private String conceptId;
     private String displayName;
     private String lead;
+    private String type;
     /**
      * @return the studyDiseaseIdentifier
      */
@@ -176,4 +188,17 @@ public class DiseaseWebDTO {
     public void setLead(String lead) {
         this.lead = lead;
     }
+    /**
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
+    /**
+     * @param type the type to set
+     */
+    public void setType(String type) {
+        this.type = type;
+    }    
+    
 }

@@ -91,6 +91,7 @@ import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.HealthCareProvider;
+import gov.nih.nci.pa.domain.ICD9Disease;
 import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.InterventionAlternateName;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
@@ -209,6 +210,7 @@ public class TestSchema {
     public static List<Long> oversightCommitteeIds;
     public static List<Long> pdqDiseaseIds;
     public static List<Long> sdcDiseaseIds;
+    public static List<Long> icd9DiseaseIds;
     public static List<Long> anatomicSiteIds;
     public static List<Long> outcomeIds;
     public static List<Long> regAuthIds;
@@ -255,6 +257,7 @@ public class TestSchema {
         organizationalContactIds = new ArrayList<Long>();
         pdqDiseaseIds = new ArrayList<Long>();
         sdcDiseaseIds = new ArrayList<Long>();
+        icd9DiseaseIds = new ArrayList<Long>();
         outcomeIds = new ArrayList<Long>();
         regAuthIds = new ArrayList<Long>();
         personIds = new ArrayList<Long>();
@@ -647,6 +650,28 @@ public class TestSchema {
         SDCDisease sdc04 = TestSchema.createSdcDisease("Leg Cancer");
         addUpdObject(sdc04);
         sdcDiseaseIds.add(sdc04.getId());
+        
+        
+        
+        ICD9Disease icd901 = TestSchema.createICD9Disease("code1", "name1");
+        addUpdObject(icd901);
+        icd9DiseaseIds.add(icd901.getId());
+        
+        ICD9Disease icd902 = TestSchema.createICD9Disease("code2", "name2");
+        addUpdObject(icd902);
+        icd9DiseaseIds.add(icd902.getId());
+        
+        ICD9Disease icd903 = TestSchema.createICD9Disease("code3", "name3");
+        addUpdObject(icd903);
+        icd9DiseaseIds.add(icd903.getId());
+        
+        ICD9Disease icd904 = TestSchema.createICD9Disease("code4", "namedif4");
+        addUpdObject(icd904);
+        icd9DiseaseIds.add(icd904.getId());
+        
+        ICD9Disease icd905 = TestSchema.createICD9Disease("code5", "namedif5");
+        addUpdObject(icd905);
+        icd9DiseaseIds.add(icd905.getId());
 
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
@@ -868,6 +893,17 @@ public class TestSchema {
         create.setCtepSubCategory("diseaseSubCategory");
         create.setDisplayName("menuDisplayName");
         create.setPreferredName(preferredName);
+        create.setUserLastCreated(getUser());
+        create.setDateLastCreated(TODAY);
+        create.setUserLastUpdated(getUser());
+        create.setDateLastUpdated(TODAY);
+        return create;
+    }
+    
+    private static ICD9Disease createICD9Disease(String diseaseCode, String name) {
+        ICD9Disease create = new ICD9Disease();
+        create.setDiseaseCode(diseaseCode);
+        create.setName(name);
         create.setUserLastCreated(getUser());
         create.setDateLastCreated(TODAY);
         create.setUserLastUpdated(getUser());

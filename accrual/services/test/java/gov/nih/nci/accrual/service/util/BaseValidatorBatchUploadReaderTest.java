@@ -80,15 +80,70 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.util;
+package gov.nih.nci.accrual.service.util;
 
-import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hsqldb.lib.StringUtil;
+import org.junit.Test;
 
 /**
- * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
- *
+ * @author merenkoi
  */
-public abstract class AbstractAccrualHibernateTestCase extends AbstractHibernateTestCase {
-    
+public class BaseValidatorBatchUploadReaderTest {    
    
+    private static final String CODE = "code";
+    private static final List<String> valueList = createValueList();
+
+    @Test
+    public void validateDiseaseCodeICD9ValidationFails() {
+        StringBuffer errMsg = new StringBuffer();
+        BaseValidatorBatchUploadReader bean = mock(BaseValidatorBatchUploadReader.class);
+        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null);
+        when(bean.getDisease(CODE, errMsg)).thenReturn(null);
+        when(bean.getICD9Disease(CODE, errMsg)).thenReturn(null);
+        
+        bean.validateDiseaseCode(valueList, errMsg, 1, null);
+        
+        assertFalse(StringUtil.isEmpty(errMsg.toString()));
+      
+    }
+    
+    @Test
+    public void validateDiseaseCodeICD9ValidationPasses() {
+        StringBuffer errMsg = new StringBuffer();
+        BaseValidatorBatchUploadReader bean = mock(BaseValidatorBatchUploadReader.class);
+        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null);
+        when(bean.getDisease(CODE, errMsg)).thenReturn(null);
+        when(bean.getICD9Disease(CODE, errMsg)).thenReturn(new ICD9DiseaseDTO());
+        
+        bean.validateDiseaseCode(valueList, errMsg, 1, null);
+        
+        assertTrue(StringUtil.isEmpty(errMsg.toString()));
+      
+    }
+    
+    private static List<String> createValueList() {
+        List<String> result = new ArrayList<String>(21);
+        new BaseValidatorBatchUploadReader();
+        for (int i = 0; i <= BaseBatchUploadReader.PATIENT_DISEASE_INDEX; i++) {
+            if (i == BaseBatchUploadReader.PATIENT_DISEASE_INDEX) {
+                result.add(CODE);
+            } else {
+                result.add(null);
+            }
+        }
+        return result;
+
+    }
+
 }

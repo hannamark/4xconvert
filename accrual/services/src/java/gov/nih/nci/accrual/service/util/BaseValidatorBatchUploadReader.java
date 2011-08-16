@@ -113,15 +113,7 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
             }
         }
     }
-
-    /**
-     * 
-     * @param lineNumber line Number
-     * @return string
-     */
-    protected String appendLineNumber(long lineNumber) {
-        return " at line " + lineNumber + " ";
-    }
+    
 
     /**
      * 
@@ -225,40 +217,31 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
 
     /**
      * Validates that the patient disease is provided and valid. If a study has the primary purpose 'Prevention', the
-     * Meddra Disease code is not required.
+     * Meddra/ICD9 Disease code is not required.
      * @param values
      * @param errMsg
      * @param lineNumber
      * @param sp study protocol
      */
-    private void validateDiseaseCode(List<String> values, StringBuffer errMsg, long lineNumber, StudyProtocolDTO sp) {
+    void validateDiseaseCode(List<String> values, StringBuffer errMsg, long lineNumber, StudyProtocolDTO sp) {
         PrimaryPurposeCode purpose = null;
         if (sp != null) {
             purpose = PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(sp.getPrimaryPurposeCode()));
         }
-        String meddraCode = StringUtils.trim(values.get(PATIENT_DISEASE_INDEX));
-        if (StringUtils.isEmpty(meddraCode) && purpose != PrimaryPurposeCode.PREVENTION) {
-            errMsg.append("Patient Disease Meddra Code is missing for patient ID ").append(getPatientId(values))
+        String code = StringUtils.trim(values.get(PATIENT_DISEASE_INDEX));
+        if (StringUtils.isEmpty(code) && purpose != PrimaryPurposeCode.PREVENTION) {
+            errMsg.append("Patient Disease Meddra/ICD9 Code is missing for patient ID ").append(getPatientId(values))
                 .append(appendLineNumber(lineNumber)).append('\n');
-        } else if (StringUtils.isNotEmpty(meddraCode) && getDisease(meddraCode, errMsg) == null) {
-            errMsg.append("Patient Disease Meddra Code is invalid for patient ID ").append(getPatientId(values))
+        } else if (checkCodeExist(errMsg, code)) {
+            errMsg.append("Patient Disease Meddra/ICD9 Code is invalid for patient ID ").append(getPatientId(values))
                 .append(appendLineNumber(lineNumber)).append('\n');
         }
     }
 
-    /**
-     * 
-     * @param key key
-     * @param values values
-     * @param errMsg err if any
-     * @param lineNumber line Number
-     */
-    protected void validatePatientID(String key, List<String> values, StringBuffer errMsg, long lineNumber) {
-        if (KEY_WITH_PATIENTS_IDS.contains(key) && StringUtils.isEmpty(getPatientId(values))) {
-            errMsg.append(key).append(appendLineNumber(lineNumber))
-                .append(" must contain a patient identifier that is unique within the study.\n");
-        }
+    private boolean checkCodeExist(StringBuffer errMsg, String code) {
+        return StringUtils.isNotEmpty(code) && getDisease(code, errMsg) == null && getICD9Disease(code, errMsg) == null;
     }
+    
 
     private void isPatientIdUnique(String patId, StringBuffer errMsg, long lineNumber, List<String> patientsIdList) {
         if (patientsIdList.contains(patId)) {
@@ -267,6 +250,15 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
         } else {
             patientsIdList.add(patId);
         }
-    }    
+    }  
+    
+    /**
+     * 
+     * @param lineNumber line Number
+     * @return string
+     */
+    protected String appendLineNumber(long lineNumber) {
+        return " at line " + lineNumber + " ";
+    }
 
 }

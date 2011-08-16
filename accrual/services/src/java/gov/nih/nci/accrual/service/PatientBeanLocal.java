@@ -289,8 +289,7 @@ public class PatientBeanLocal implements PatientServiceLocal {
             LOG.info("EntityValidationException in updatePOPatientDetails:  " + e.getMessage());
         }
     }
-
-    @SuppressWarnings("unchecked")
+    
     private void updatePOPatientCorrelation(PatientDto dto) throws PAException {
         POPatientDTO popDTO = new POPatientDTO();
         Ii scoper = IiConverter.convertToPoOrganizationIi(
@@ -302,8 +301,9 @@ public class PatientBeanLocal implements PatientServiceLocal {
         String zip = ISOUtil.isStNull(dto.getZip()) ? "11111" : StConverter.convertToString(dto.getZip());
 
         Ad ad = AddressConverterUtil.create("Street", null, "City", "VA", zip, country.getAlpha3());
-        popDTO.setPostalAddress(new DSet<Ad>());
-        popDTO.getPostalAddress().setItem(Collections.singleton(ad));
+        DSet<Ad> address = new DSet<Ad>();
+        address.setItem(Collections.singleton(ad));
+        popDTO.setPostalAddress(address);      
 
         POPatientDTO poPatientDTO = null;
             if (dto.getAssignedIdentifier() != null && dto.getAssignedIdentifier().getExtension() != null) {

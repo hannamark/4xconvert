@@ -53,9 +53,9 @@
                 showPopWin('${lookupUrl}', 900, 400, '', 'Disease');
             }
             
-            function loadDiv(intid) {
+            function loadDiv(intid, type) {
                  var url = '/accrual/protected/ajaxpatientsgetDisplayDisease.action';
-                 var params = { diseaseId: intid };
+                 var params = { diseaseId: intid, dType: type };
                  var div = document.getElementById('loadDetails');   
                  div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>'; 
                  var aj = callAjaxPost(div, url, params);

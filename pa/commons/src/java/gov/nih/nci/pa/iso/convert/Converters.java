@@ -90,7 +90,9 @@ import java.util.Map;
  */
 @SuppressWarnings({"unchecked" })
 public class Converters {
-    private static Map<Class, AbstractConverter> converterMap = new HashMap<Class, AbstractConverter>();
+    private static Map<Class<?>, AbstractConverter<?, ?>> converterMap = 
+            new HashMap<Class<?>, AbstractConverter<?, ?>>();
+    
     static {
         converterMap.put(ArmConverter.class, new ArmConverter());
         converterMap.put(PlannedActivityConverter.class, new PlannedActivityConverter());
@@ -125,6 +127,7 @@ public class Converters {
         converterMap.put(PlannedProcedureConverter.class, new PlannedProcedureConverter());
         converterMap.put(PlannedMarkerConverter.class, new PlannedMarkerConverter());
         converterMap.put(StudySiteAccrualAccessConverter.class, new StudySiteAccrualAccessConverter());
+        converterMap.put(ICD9DiseaseConverter.class, new ICD9DiseaseConverter());
     }
 
     /**
@@ -133,7 +136,7 @@ public class Converters {
      * @return converter
      * @throws PAException exception
      */
-    public static <TYPE extends AbstractConverter> TYPE get(Class<TYPE> clazz)  throws PAException {
+    public static <TYPE extends AbstractConverter<?, ?>> TYPE get(Class<TYPE> clazz)  throws PAException {
         if (converterMap.containsKey(clazz)) {
             return (TYPE) converterMap.get(clazz);
         }

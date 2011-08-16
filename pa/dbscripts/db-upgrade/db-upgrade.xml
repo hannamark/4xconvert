@@ -722,4 +722,12 @@
         <comment>Track participating site subject accrual count.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3761.sql"/>
      </changeSet>
+     <changeSet id="PO-3435" author="merenkoi">
+        <comment>Add ICD9 Disease Codes Table.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3435.sql"/>
+     </changeSet>
+     <changeSet id="PO-3435_1" author="merenkoi">
+        <comment>Add data to ICD9 Disease Codes Table.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3435_1.sql"/>
+     </changeSet>
 </databaseChangeLog>

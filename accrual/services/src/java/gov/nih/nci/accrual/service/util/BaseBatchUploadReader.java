@@ -88,6 +88,7 @@ import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -247,6 +248,24 @@ public class BaseBatchUploadReader {
     }
     
     /**
+     * Loads the disease with the given ICD9 code, returning null if no such disease can be found.
+     * @param code the ICD9 code of the disease to retrieve
+     * @param errMsg the error messages
+     * @return the disease with the give ICD9 code or null if no such disease can be found
+     */
+    protected ICD9DiseaseDTO getICD9Disease(String code, StringBuffer errMsg) {
+        ICD9DiseaseDTO disease = null;
+        try {
+            disease = PaServiceLocator.getInstance().getICD9DiseaseService().getByCode(code);
+        } catch (PAException e) {
+            LOG.error("Error retrieving ICD9 disease." , e);
+            errMsg.append("Unable to load the ICD9 diease with code ")
+                .append(code).append(" from the database.");
+        }
+        return disease;
+    }
+    
+    /**
      * Retrieves the PO identifier of the organization related with the given identifier.
      * @param orgIdentifier the CTEP/DCP identifier or the po id of the org
      * @param errMsg the error messages
@@ -289,9 +308,9 @@ public class BaseBatchUploadReader {
             } catch (NullifiedEntityException e) {
                 LOG.error("The organization that is attempting to be loaded is nullified.");
             }
-        }
+        }       
         return resultingIi;
-    }
+    }    
     
     /**
      * 

@@ -8,7 +8,7 @@
     <display:column title="Select" headerClass="centered" class="action" sortable="false">
         <c:choose>
         <c:when test="${(row.displayName!=null)&&(row.displayName!='')}">
-            <a href="#" class="btn" onclick="submitform('${row.diseaseIdentifier}')">
+            <a href="#" class="btn" onclick="submitform('${row.diseaseIdentifier}', '${row.type}')">
                 <span class="btn_img"><span class="add">Select</span></span>
             </a>
         </c:when>

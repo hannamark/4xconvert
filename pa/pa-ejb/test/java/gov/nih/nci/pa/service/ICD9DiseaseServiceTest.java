@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The accrual
+ * source code form and machine readable, binary, object code form. The pa
  * Software was developed in conjunction with the National Cancer Institute 
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent 
  * government employees are authors, any rights in such works shall be subject 
  * to Title 17 of the United States Code, section 105. 
  *
- * This accrual Software License (the License) is between NCI and You. You (or 
+ * This pa Software License (the License) is between NCI and You. You (or 
  * Your) shall mean a person or an entity, and all other entities that control, 
  * are controlled by, or are under common control with the entity. Control for 
  * purposes of this definition means (i) the direct or indirect power to cause 
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described 
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up, 
  * no-charge, irrevocable, transferable and royalty-free right and license in 
- * its rights in the accrual Software to (i) use, install, access, operate, 
+ * its rights in the pa Software to (i) use, install, access, operate, 
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the accrual Software; (ii) distribute and 
- * have distributed to and by third parties the accrual Software and any 
+ * and prepare derivative works of the pa Software; (ii) distribute and 
+ * have distributed to and by third parties the pa Software and any 
  * modifications and derivative works thereof; and (iii) sublicense the 
  * foregoing rights set out in (i) and (ii) to third parties, including the 
  * right to license such rights to further third parties. For sake of clarity, 
@@ -80,15 +80,56 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.util;
+package gov.nih.nci.pa.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.TestSchema;
+
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
- *
+ * @author merenkoi
  */
-public abstract class AbstractAccrualHibernateTestCase extends AbstractHibernateTestCase {
-    
+public class ICD9DiseaseServiceTest extends AbstractHibernateTestCase {
+   private ICD9DiseaseBeanLocal bean;
    
+   @Before
+   public void setUp() throws Exception { 
+       bean = new ICD9DiseaseBeanLocal();
+       TestSchema.primeData();
+   }
+   
+   @Test
+   public void getByName() throws PAException {
+       List<ICD9DiseaseDTO> dtos = bean.getByName("dif");
+       
+       assertEquals(2, dtos.size());
+       for (ICD9DiseaseDTO dto : dtos) {
+          assertTrue(StringUtils.contains(dto.getName().getValue(), "dif"));           
+       }
+   }
+   
+   @Test
+   public void getByCode() throws PAException {
+       ICD9DiseaseDTO dto = bean.getByCode("code1");
+       assertNotNull(dto);
+       assertEquals("code1", dto.getDiseaseCode().getValue());
+   }
+   
+   @Test
+   public void getByCodeNullResult() throws PAException {
+       ICD9DiseaseDTO dto = bean.getByCode("notExistedCode");
+       assertNull(dto);       
+   }
+
 }

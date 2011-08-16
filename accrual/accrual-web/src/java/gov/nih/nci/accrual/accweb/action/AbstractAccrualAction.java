@@ -91,6 +91,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
@@ -115,12 +116,14 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     private PerformedActivityService performedActivitySvc;
     private CountryService countrySvc;
     private SDCDiseaseServiceRemote sdcDiseaseSvc;
+    private ICD9DiseaseServiceRemote icd9DiseaseSvc;
     private PlannedActivityServiceRemote plannedActivitySvc;
     private CdusBatchUploadReaderServiceLocal cdusBatchUploadReaderSvc;
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void prepare() {
         searchTrialSvc = AccrualServiceLocator.getInstance().getSearchTrialService();
         searchStudySiteSvc = AccrualServiceLocator.getInstance().getSearchStudySiteService();
@@ -130,6 +133,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         countrySvc = AccrualServiceLocator.getInstance().getCountryService();
         cdusBatchUploadReaderSvc = AccrualServiceLocator.getInstance().getBatchUploadReaderService();
         sdcDiseaseSvc = PaServiceLocator.getInstance().getDiseaseService();
+        icd9DiseaseSvc = PaServiceLocator.getInstance().getICD9DiseaseService();
         plannedActivitySvc = PaServiceLocator.getInstance().getPlannedActivityService();
     }
     /**
@@ -232,8 +236,15 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
      */
     public SDCDiseaseServiceRemote getSDCDiseaseSvc() {
         return sdcDiseaseSvc;
-    }
+    }    
 
+    /**
+     * @return the icd9DiseaseSvc
+     */
+    public ICD9DiseaseServiceRemote getIcd9DiseaseSvc() {
+        return icd9DiseaseSvc;
+    }
+   
     /**
      * @return the plannedActivitySvc
      */

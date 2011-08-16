@@ -93,6 +93,7 @@ import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.EligibleGenderCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
+import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.PlannedEligibilityCriterionDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
@@ -362,22 +363,43 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
     public String getDisplayDisease() {
         DiseaseWebDTO webDTO = new DiseaseWebDTO();
         webDTO.setDiseaseIdentifier(ServletActionContext.getRequest().getParameter("diseaseId"));
+        webDTO.setType(ServletActionContext.getRequest().getParameter("dType"));
         if (StringUtils.isEmpty(webDTO.getDiseaseIdentifier())) {
             webDTO = new DiseaseWebDTO();
         } else {
             Ii ii = IiConverter.convertToIi(webDTO.getDiseaseIdentifier());
             try {
-                SDCDiseaseDTO dto = getSDCDiseaseSvc().get(ii);
-                webDTO.setPreferredName(StConverter.convertToString(dto.getPreferredName()));
-                webDTO.setDiseaseIdentifier(IiConverter.convertToString(dto.getIdentifier()));
+                if (webDTO.getType().equals(DiseaseWebDTO.SDC_TYPE)) {
+                    SDCDiseaseDTO dto = getSDCDiseaseSvc().get(ii);
+                    webDTO.setPreferredName(StConverter.convertToString(dto.getPreferredName()));
+                    webDTO.setDiseaseIdentifier(IiConverter.convertToString(dto.getIdentifier()));
+                } else {
+                    ICD9DiseaseDTO dto = getIcd9DiseaseSvc().get(ii);
+                    webDTO.setPreferredName(StConverter.convertToString(dto.getPreferredName()));
+                    webDTO.setDiseaseIdentifier(IiConverter.convertToString(dto.getIdentifier()));
+                }
             } catch (Exception e) {
                 return ERROR;
             }
         }
+        setPatientDisease(webDTO);
+        return "displayDiseases";
+    }
+
+    void setPatientDisease(DiseaseWebDTO webDTO) {
         patient = new PatientWebDto();
-        patient.setDiseasePreferredName(webDTO.getPreferredName());
-        patient.setDiseaseIdentifier(Long.valueOf(webDTO.getDiseaseIdentifier()));
-        return SUCCESS;
+        if (webDTO.getType().equals(DiseaseWebDTO.SDC_TYPE)) {
+            patient.setIcd9DiseasePreferredName(null);
+            patient.setIcd9DiseaseIdentifier(null);
+            patient.setSdcDiseasePreferredName(webDTO.getPreferredName());
+            patient.setSdcDiseaseIdentifier(Long.valueOf(webDTO.getDiseaseIdentifier()));
+
+        } else {
+            patient.setSdcDiseasePreferredName(null);
+            patient.setSdcDiseaseIdentifier(null);
+            patient.setIcd9DiseasePreferredName(webDTO.getPreferredName());
+            patient.setIcd9DiseaseIdentifier(Long.valueOf(webDTO.getDiseaseIdentifier()));
+        }
     }
 
     /**

@@ -96,9 +96,11 @@ public class StudySubjectDto extends AbstractStudyDto {
     private Ii patientIdentifier;
     private Ii studySiteIdentifier;
     private Ii diseaseIdentifier;
+    private Ii icd9DiseaseIdentifier;
     private Cd paymentMethodCode;
     private Cd statusCode;
     private Ivl<Ts> statusDateRange;
+    
     
     /**
      * @return the assignedIdentifier
@@ -183,5 +185,19 @@ public class StudySubjectDto extends AbstractStudyDto {
      */
     public void setDiseaseIdentifier(Ii diseaseIdentifier) {
         this.diseaseIdentifier = diseaseIdentifier;
+    }    
+    /**
+     * @return the icd9DiseaseIdentifier
+     */
+    public Ii getIcd9DiseaseIdentifier() {
+        return icd9DiseaseIdentifier;
     }
+    /**
+     * @param icd9DiseaseIdentifier the icd9DiseaseIdentifier to set
+     */
+    public void setIcd9DiseaseIdentifier(Ii icd9DiseaseIdentifier) {
+        this.icd9DiseaseIdentifier = icd9DiseaseIdentifier;
+    }
+    
+    
 }

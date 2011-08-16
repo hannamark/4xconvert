@@ -90,6 +90,7 @@ import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
@@ -140,9 +141,14 @@ public class PatientWebDto {
     // from StudySite...Organization
     private String organizationName;
 
-    // disease
-    private String diseasePreferredName;
-    private Long diseaseIdentifier;
+    // disease    
+    private String sdcDiseasePreferredName;
+    private Long sdcDiseaseIdentifier;
+    
+    private String icd9DiseasePreferredName;
+    private Long icd9DiseaseIdentifier;
+    
+    
 
 
     /**
@@ -198,9 +204,10 @@ public class PatientWebDto {
      * @param psm registration date
      * @param listOfCountries country list
      * @param dIsoDto disease ISO DTO
+     * @param icd9DiseaseDto icd9disease ISO DTO
      */
-    public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, String orgName,
-            PerformedSubjectMilestoneDto psm, List<Country> listOfCountries, SDCDiseaseDTO dIsoDto) {
+    public PatientWebDto(PatientDto pIsoDto, StudySubjectDto ssIsoDto, String orgName, PerformedSubjectMilestoneDto psm,
+            List<Country> listOfCountries, SDCDiseaseDTO dIsoDto, ICD9DiseaseDTO icd9DiseaseDto) {
         setPatientData(pIsoDto, listOfCountries);
 
         if (ssIsoDto != null) {
@@ -221,8 +228,11 @@ public class PatientWebDto {
         }
 
         if (dIsoDto != null) {
-            diseasePreferredName = StConverter.convertToString(dIsoDto.getPreferredName());
-            diseaseIdentifier = IiConverter.convertToLong(dIsoDto.getIdentifier());
+            sdcDiseasePreferredName = StConverter.convertToString(dIsoDto.getPreferredName());
+            sdcDiseaseIdentifier = IiConverter.convertToLong(dIsoDto.getIdentifier());
+        } else if (icd9DiseaseDto != null) {
+            icd9DiseasePreferredName = StConverter.convertToString(icd9DiseaseDto.getPreferredName());
+            icd9DiseaseIdentifier = IiConverter.convertToLong(icd9DiseaseDto.getIdentifier());
         }
     }
 
@@ -272,7 +282,8 @@ public class PatientWebDto {
         ssub.setStudyProtocolIdentifier(IiConverter.convertToIi(getStudyProtocolId()));
         ssub.setPatientIdentifier(IiConverter.convertToIi(getPatientId()));
         ssub.setAssignedIdentifier(StConverter.convertToSt(getAssignedIdentifier()));
-        ssub.setDiseaseIdentifier(IiConverter.convertToIi(getDiseaseIdentifier()));
+        ssub.setDiseaseIdentifier(IiConverter.convertToIi(getSdcDiseaseIdentifier()));
+        ssub.setIcd9DiseaseIdentifier(IiConverter.convertToIi(getIcd9DiseaseIdentifier()));
         ssub.setPaymentMethodCode(CdConverter.convertToCd(PaymentMethodCode.getByCode(getPaymentMethodCode())));
         ssub.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.getByCode(getStatusCode())));
         ssub.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
@@ -507,32 +518,18 @@ public class PatientWebDto {
     }
 
     /**
-     * @return the diseasePreferredNames
+     * @return the disease Preferred Name
      */
     public String getDiseasePreferredName() {
-        return diseasePreferredName;
+        return sdcDiseasePreferredName != null ? sdcDiseasePreferredName : icd9DiseasePreferredName;
     }
 
     /**
-     * @param diseasePreferredName the diseasePreferredName to set
-     */
-    public void setDiseasePreferredName(String diseasePreferredName) {
-        this.diseasePreferredName = diseasePreferredName;
-    }
-
-    /**
-     * @return the diseaseIdentifier
+     * @return the disease Identifier
      */
     public Long getDiseaseIdentifier() {
-        return diseaseIdentifier;
-    }
-
-    /**
-     * @param diseaseIdentifier the diseaseIdentifier to set
-     */
-    public void setDiseaseIdentifier(Long diseaseIdentifier) {
-        this.diseaseIdentifier = diseaseIdentifier;
-    }
+        return sdcDiseaseIdentifier != null ? sdcDiseaseIdentifier : icd9DiseaseIdentifier;
+    }    
 
     /**
      * Gets the po identifier.
@@ -549,4 +546,63 @@ public class PatientWebDto {
     public void setPoIdentifier(Long poIdentifier) {
         this.poIdentifier = poIdentifier;
     }
+
+    /**
+     * @return the sdcDiseasePreferredName
+     */
+    public String getSdcDiseasePreferredName() {
+        return sdcDiseasePreferredName;
+    }
+
+    /**
+     * @param sdcDiseasePreferredName the sdcDiseasePreferredName to set
+     */
+    public void setSdcDiseasePreferredName(String sdcDiseasePreferredName) {
+        this.sdcDiseasePreferredName = sdcDiseasePreferredName;
+        icd9DiseasePreferredName = null;
+    }
+
+    /**
+     * @return the sdcDiseaseIdentifier
+     */
+    public Long getSdcDiseaseIdentifier() {
+        return sdcDiseaseIdentifier;
+    }
+
+    /**
+     * @param sdcDiseaseIdentifier the sdcDiseaseIdentifier to set
+     */
+    public void setSdcDiseaseIdentifier(Long sdcDiseaseIdentifier) {
+        this.sdcDiseaseIdentifier = sdcDiseaseIdentifier;        
+    }
+
+    /**
+     * @return the icd9DiseasePreferredName
+     */
+    public String getIcd9DiseasePreferredName() {
+        return icd9DiseasePreferredName;
+    }
+
+    /**
+     * @param icd9DiseasePreferredName the icd9DiseasePreferredName to set
+     */
+    public void setIcd9DiseasePreferredName(String icd9DiseasePreferredName) {
+        this.icd9DiseasePreferredName = icd9DiseasePreferredName;
+        sdcDiseasePreferredName = null;
+    }
+
+    /**
+     * @return the icd9DiseaseIdentifier
+     */
+    public Long getIcd9DiseaseIdentifier() {
+        return icd9DiseaseIdentifier;
+    }
+
+    /**
+     * @param icd9DiseaseIdentifier the icd9DiseaseIdentifier to set
+     */
+    public void setIcd9DiseaseIdentifier(Long icd9DiseaseIdentifier) {
+        this.icd9DiseaseIdentifier = icd9DiseaseIdentifier;       
+    }   
+    
 }

@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.accrual.util;
 
+import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -95,6 +96,13 @@ public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
      */
     public SDCDiseaseServiceRemote getDiseaseService() {
         return (SDCDiseaseServiceRemote) JNDIUtil.lookupPa("/pa/SDCDiseaseServiceBean/remote");
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public ICD9DiseaseServiceRemote getICD9DiseaseService() {
+        return (ICD9DiseaseServiceRemote) JNDIUtil.lookupPa("/pa/ICD9DiseaseServiceBean/remote");
     }
 
     /**
@@ -124,4 +132,5 @@ public class PaJndiServiceLocator implements ServiceLocatorPaInterface {
     public RegistryUserServiceRemote getRegistryUserService() {
         return (RegistryUserServiceRemote) JNDIUtil.lookupPa("/pa/RegistryUserServiceBean/remote");
     }
+    
 }

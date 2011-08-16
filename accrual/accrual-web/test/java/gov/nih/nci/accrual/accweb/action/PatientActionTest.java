@@ -83,6 +83,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import gov.nih.nci.accrual.accweb.dto.util.DiseaseWebDTO;
 import gov.nih.nci.accrual.accweb.dto.util.PatientWebDto;
 import gov.nih.nci.accrual.accweb.dto.util.SearchPatientsCriteriaWebDto;
 import gov.nih.nci.accrual.accweb.dto.util.SearchStudySiteResultWebDto;
@@ -203,7 +205,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
         patient.setAssignedIdentifier("PO PATIENT ID 01");
         patient.setStudySiteId(Long.valueOf("01"));
-        patient.setDiseaseIdentifier(Long.valueOf("1"));
+        patient.setSdcDiseaseIdentifier(Long.valueOf("1"));
         patient.setRegistrationDate("12/10/2009");
         action.setPatient(patient);
         assertEquals(ActionSupport.SUCCESS, action.add());
@@ -223,7 +225,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
         patient.setAssignedIdentifier("PO PATIENT ID 01");
         patient.setStudySiteId(Long.valueOf("01"));
-        patient.setDiseaseIdentifier(Long.valueOf("1"));
+        patient.setSdcDiseaseIdentifier(Long.valueOf("1"));
         patient.setStudySubjectId(1L);
         patient.setPatientId(1L);
         patient.setRegistrationDate("12/10/2009");
@@ -245,7 +247,7 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
         patient.setAssignedIdentifier("PO PATIENT ID 01");
         patient.setStudySiteId(Long.valueOf("01"));
-        patient.setDiseaseIdentifier(Long.valueOf("1"));
+        patient.setSdcDiseaseIdentifier(Long.valueOf("1"));
         patient.setStudySubjectId(1L);
         patient.setZip("12345");
         patient.setPaymentMethodCode("paymentMethodCode");
@@ -254,14 +256,27 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     }
 
     @Test
-    public void displayDiseaseTest() throws Exception {
+    public void displayDiseaseSDCTest() throws Exception {
         try{
             action.getDisplayDisease();
         }catch(Exception e){
             //expected
         }
         ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("diseaseId", "1");
-        assertEquals(ActionSupport.SUCCESS, action.getDisplayDisease());
+        ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("dType", DiseaseWebDTO.SDC_TYPE);
+        assertEquals("displayDiseases", action.getDisplayDisease());
+    }
+    
+    @Test
+    public void displayDiseaseICD9Test() throws Exception {
+        try{
+            action.getDisplayDisease();
+        }catch(Exception e){
+            //expected
+        }
+        ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("diseaseId", "1");
+        ((MockHttpServletRequest) ServletActionContext.getRequest()).setupAddParameter("dType", DiseaseWebDTO.ICD9_TYPE);
+        assertEquals("displayDiseases", action.getDisplayDisease());
     }
 
     @Test
@@ -285,11 +300,38 @@ public class PatientActionTest extends AbstractAccrualActionTest {
         patient.setStatusCode(ActStatusCode.ACTIVE.getCode());
         patient.setAssignedIdentifier("PO PATIENT ID 01");
         patient.setStudySiteId(Long.valueOf("01"));
-        patient.setDiseaseIdentifier(Long.valueOf("1"));
+        patient.setSdcDiseaseIdentifier(Long.valueOf("1"));
         patient.setRegistrationDate("1/1/2011");
         patient.setBirthDate("2/1/2011");
         action.setPatient(patient);
         assertEquals("detail", action.add());
         assertTrue(action.hasActionErrors());
     }
+    
+    @Test
+    public void setPatientDiseaseSDC() {
+        DiseaseWebDTO webDTO = new DiseaseWebDTO();        
+        webDTO.setType(DiseaseWebDTO.SDC_TYPE);
+        webDTO.setDiseaseIdentifier("1");
+        webDTO.setPreferredName("preferredName");
+        
+        action.setPatientDisease(webDTO);
+        
+        assertEquals(Long.valueOf(1), action.getPatient().getSdcDiseaseIdentifier());
+        assertEquals("preferredName", action.getPatient().getSdcDiseasePreferredName());
+    }
+    
+    @Test
+    public void setPatientDiseaseICD9() {
+        DiseaseWebDTO webDTO = new DiseaseWebDTO();        
+        webDTO.setType(DiseaseWebDTO.ICD9_TYPE);
+        webDTO.setDiseaseIdentifier("1");
+        webDTO.setPreferredName("preferredName");
+        
+        action.setPatientDisease(webDTO);
+        
+        assertEquals(Long.valueOf(1), action.getPatient().getIcd9DiseaseIdentifier());
+        assertEquals("preferredName", action.getPatient().getIcd9DiseasePreferredName());
+    } 
+    
 }

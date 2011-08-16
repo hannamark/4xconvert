@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The accrual
+ * source code form and machine readable, binary, object code form. The pa
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This accrual Software License (the License) is between NCI and You. You (or
+ * This ${project_name} Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the accrual Software to (i) use, install, access, operate,
+ * its rights in the ${project_name} Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the accrual Software; (ii) distribute and
- * have distributed to and by third parties the accrual Software and any
+ * and prepare derivative works of the ${project_name} Software; (ii) distribute and
+ * have distributed to and by third parties the ${project_name} Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,33 +80,32 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.convert;
+package gov.nih.nci.pa.service;
 
-import java.util.HashMap;
-import java.util.Map;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.ABSTRACTOR_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
+import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
+
+import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.jboss.annotation.security.SecurityDomain;
 
 /**
- * @author Hugh Reinhart
- * @since Aug 13, 2009
- */
-@SuppressWarnings("unchecked")
-public class Converters {
-    private static final Map<Class<? extends AbstractConverter<?, ?>>, AbstractConverter<?, ?>> CONVERTERS_MAP = 
-        new HashMap<Class<? extends AbstractConverter<?, ?>>, AbstractConverter<?, ?>>();
-    
-    static {
-        CONVERTERS_MAP.put(PerformedSubjectMilestoneConverter.class,  new PerformedSubjectMilestoneConverter());
-        CONVERTERS_MAP.put(StudySubjectConverter.class, new StudySubjectConverter());
-        CONVERTERS_MAP.put(PatientConverter.class, new PatientConverter());
-        CONVERTERS_MAP.put(PerformedActivityConverter.class, new PerformedActivityConverter());
-    }
+* @author merenkoi
+*/
+@Stateless
+@Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@SecurityDomain("pa")
+@RolesAllowed({CLIENT_ROLE, ABSTRACTOR_ROLE, SUBMITTER_ROLE })
+public class ICD9DiseaseServiceBean extends ICD9DiseaseBeanLocal implements ICD9DiseaseServiceRemote {
 
-    /**
-     * @param clazz class
-     * @param <CONV> the converter type to get
-     * @return converter
-     */
-    public static <CONV extends AbstractConverter<?, ?>> CONV get(Class<CONV> clazz) {
-        return (CONV) CONVERTERS_MAP.get(clazz);
-    }
+
 }

@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The accrual
+ * source code form and machine readable, binary, object code form. The pa
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This accrual Software License (the License) is between NCI and You. You (or
+ * This ${project_name} Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the accrual Software to (i) use, install, access, operate,
+ * its rights in the ${project_name} Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the accrual Software; (ii) distribute and
- * have distributed to and by third parties the accrual Software and any
+ * and prepare derivative works of the ${project_name} Software; (ii) distribute and
+ * have distributed to and by third parties the ${project_name} Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,33 +80,62 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.convert;
+package gov.nih.nci.pa.iso.dto;
 
-import java.util.HashMap;
-import java.util.Map;
+import gov.nih.nci.iso21090.St;
 
 /**
- * @author Hugh Reinhart
- * @since Aug 13, 2009
+ * @author merenkoi
  */
-@SuppressWarnings("unchecked")
-public class Converters {
-    private static final Map<Class<? extends AbstractConverter<?, ?>>, AbstractConverter<?, ?>> CONVERTERS_MAP = 
-        new HashMap<Class<? extends AbstractConverter<?, ?>>, AbstractConverter<?, ?>>();
+public class ICD9DiseaseDTO extends BaseDTO {
+   
+    private static final long serialVersionUID = 6731715428032111245L;
     
-    static {
-        CONVERTERS_MAP.put(PerformedSubjectMilestoneConverter.class,  new PerformedSubjectMilestoneConverter());
-        CONVERTERS_MAP.put(StudySubjectConverter.class, new StudySubjectConverter());
-        CONVERTERS_MAP.put(PatientConverter.class, new PatientConverter());
-        CONVERTERS_MAP.put(PerformedActivityConverter.class, new PerformedActivityConverter());
+    private St diseaseCode;
+    private St name;
+    private St preferredName;
+  
+
+    /**
+     * @return the diseaseCode
+     */
+    public St getDiseaseCode() {
+        return diseaseCode;
     }
 
     /**
-     * @param clazz class
-     * @param <CONV> the converter type to get
-     * @return converter
+     * @param diseaseCode the diseaseCode to set
      */
-    public static <CONV extends AbstractConverter<?, ?>> CONV get(Class<CONV> clazz) {
-        return (CONV) CONVERTERS_MAP.get(clazz);
+    public void setDiseaseCode(St diseaseCode) {
+        this.diseaseCode = diseaseCode;
     }
+
+    /**
+     * @return the name
+     */
+    public St getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(St name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the preferredName
+     */
+    public St getPreferredName() {
+        return preferredName;
+    }
+
+    /**
+     * @param preferredName the preferredName to set
+     */
+    public void setPreferredName(St preferredName) {
+        this.preferredName = preferredName;
+    }     
+
 }

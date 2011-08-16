@@ -79,6 +79,7 @@
 package gov.nih.nci.accrual.accweb.action;
 
 import gov.nih.nci.accrual.accweb.dto.util.DiseaseWebDTO;
+import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -97,7 +98,7 @@ public class PopUpAction extends AbstractAccrualAction {
     private static final long serialVersionUID = 8987838321L;
 
     private static final Logger LOG = Logger.getLogger(PopUpAction.class);
-    private static final int MAX_SEARCH_RESULT_SIZE = 500;
+    static final int MAX_SEARCH_RESULT_SIZE = 500;
 
     private String searchName;
     private List<DiseaseWebDTO> disWebList = new ArrayList<DiseaseWebDTO>();
@@ -113,6 +114,17 @@ public class PopUpAction extends AbstractAccrualAction {
             return;
         }
 
+        loadSDCDiseases(tName);
+        loadICD9Diseases(tName);
+        
+        if (disWebList.size() > MAX_SEARCH_RESULT_SIZE) {
+            disWebList.clear();
+            error("Too many diseases found.  Please narrow search.");
+            return;
+        }
+    }
+
+    private void loadSDCDiseases(String tName) {
         SDCDiseaseDTO criteria = new SDCDiseaseDTO();
         criteria.setPreferredName(StConverter.convertToSt(tName));
 
@@ -120,22 +132,51 @@ public class PopUpAction extends AbstractAccrualAction {
         try {
             diseaseList = getSDCDiseaseSvc().search(criteria);
         } catch (Exception e) {
-            error("Exception while loading disease results.", e);
+            error("Exception while loading SDC disease results.", e);
             return;
         }
-        if (diseaseList.size() > MAX_SEARCH_RESULT_SIZE) {
-            error("Too many diseases found.  Please narrow search.");
-            return;
-        }
+        
         for (SDCDiseaseDTO disease : diseaseList) {
-            DiseaseWebDTO newRec = new DiseaseWebDTO();
-            newRec.setDiseaseIdentifier(IiConverter.convertToString(disease.getIdentifier()));
-            newRec.setPreferredName(StConverter.convertToString(disease.getPreferredName()));
-            newRec.setCode(StConverter.convertToString(disease.getDiseaseCode()));
-            newRec.setDisplayName(StConverter.convertToString(disease.getDisplayName()));
+            DiseaseWebDTO newRec = convertToDiseaseWebDTO(disease);
             getDisWebList().add(newRec);
         }
     }
+
+    private DiseaseWebDTO convertToDiseaseWebDTO(SDCDiseaseDTO disease) {
+        DiseaseWebDTO newRec = new DiseaseWebDTO();
+        newRec.setDiseaseIdentifier(IiConverter.convertToString(disease.getIdentifier()));
+        newRec.setPreferredName(StConverter.convertToString(disease.getPreferredName()));
+        newRec.setCode(StConverter.convertToString(disease.getDiseaseCode()));
+        newRec.setDisplayName(StConverter.convertToString(disease.getDisplayName()));
+        newRec.setType(DiseaseWebDTO.SDC_TYPE);
+        return newRec;
+    }
+    
+    private void loadICD9Diseases(String tName) {
+        List<ICD9DiseaseDTO> diseaseList = null;
+        try {
+            diseaseList = getIcd9DiseaseSvc().getByName(tName);
+        } catch (Exception e) {
+            error("Exception while loading ICD9 disease results.", e);
+            return;
+        }
+       
+        for (ICD9DiseaseDTO disease : diseaseList) {
+            DiseaseWebDTO newRec = convertToDiseaseWebDTO(disease);
+            getDisWebList().add(newRec);
+        }
+    }
+
+    private DiseaseWebDTO convertToDiseaseWebDTO(ICD9DiseaseDTO disease) {
+        DiseaseWebDTO newRec = new DiseaseWebDTO();
+        newRec.setDiseaseIdentifier(IiConverter.convertToString(disease.getIdentifier()));
+        newRec.setPreferredName(StConverter.convertToString(disease.getPreferredName()));
+        newRec.setCode(StConverter.convertToString(disease.getDiseaseCode()));
+        newRec.setDisplayName(StConverter.convertToString(disease.getPreferredName()));
+        newRec.setType(DiseaseWebDTO.ICD9_TYPE);
+        return newRec;
+    }
+    
 
     private void error(String errMsg, Throwable t) {
         LOG.error(errMsg, t);

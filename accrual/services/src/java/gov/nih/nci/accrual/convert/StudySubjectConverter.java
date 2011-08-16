@@ -84,6 +84,7 @@ package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
+import gov.nih.nci.pa.domain.ICD9Disease;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.SDCDisease;
@@ -122,12 +123,13 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
         dto.setPaymentMethodCode(CdConverter.convertToCd(bo.getPaymentMethodCode()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(bo.getStatusDateRangeLow(),
-                bo.getStatusDateRangeHigh()));
+                                                                     bo.getStatusDateRangeHigh()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
-        dto.setStudySiteIdentifier(IiConverter.convertToIi(
-                bo.getStudySite() == null ? null : bo.getStudySite().getId()));
-        dto.setDiseaseIdentifier(IiConverter.convertToIi(
-                bo.getDisease() == null ? null : bo.getDisease().getId()));
+        dto.setStudySiteIdentifier(IiConverter.convertToIi(bo.getStudySite() == null ? null 
+                : bo.getStudySite().getId()));
+        dto.setDiseaseIdentifier(IiConverter.convertToIi(bo.getDisease() == null ? null : bo.getDisease().getId()));
+        dto.setIcd9DiseaseIdentifier(IiConverter.convertToIi(bo.getIcd9disease() == null ? null : bo.getIcd9disease()
+            .getId()));
         return dto;
     }
 
@@ -154,7 +156,13 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
         }
         bo.setStudyProtocol(fKeySetter(StudyProtocol.class, dto.getStudyProtocolIdentifier()));
         bo.setStudySite(fKeySetter(StudySite.class, dto.getStudySiteIdentifier()));
-        bo.setDisease(fKeySetter(SDCDisease.class, dto.getDiseaseIdentifier()));
+        if (!ISOUtil.isIiNull(dto.getDiseaseIdentifier())) {
+            bo.setDisease(fKeySetter(SDCDisease.class, dto.getDiseaseIdentifier()));
+            bo.setIcd9disease(null);
+        } else {
+            bo.setIcd9disease(fKeySetter(ICD9Disease.class, dto.getIcd9DiseaseIdentifier()));
+            bo.setDisease(null);
+        }
         return bo;
     }
 

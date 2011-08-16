@@ -97,7 +97,7 @@ public class POPatientDTO extends BaseDTO {
     
     private Ii duplicateOf;
     private Ii playerId;
-    private DSet pAddr;
+    private DSet<?> pAddr;
     private Ii scoperId;
     private Cd status;
     private DSet<Tel> tAddr;
@@ -122,7 +122,7 @@ public class POPatientDTO extends BaseDTO {
      * 
      * @return DSet
      */
-    public DSet getPostalAddress() {
+    public DSet<?> getPostalAddress() {
         return pAddr;
     }
     
@@ -171,7 +171,7 @@ public class POPatientDTO extends BaseDTO {
      * 
      * @param obj the address
      */
-    public void setPostalAddress(DSet obj) {
+    public void setPostalAddress(DSet<?> obj) {
         pAddr = obj;
     }
     

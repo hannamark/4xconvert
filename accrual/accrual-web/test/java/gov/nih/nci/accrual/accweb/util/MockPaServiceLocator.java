@@ -81,12 +81,15 @@ package gov.nih.nci.accrual.accweb.util;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
@@ -96,6 +99,7 @@ import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.mockito.invocation.InvocationOnMock;
@@ -112,6 +116,7 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
     private final StudyProtocolServiceRemote studyProtocolService = mock(StudyProtocolServiceRemote.class);
     private final MailManagerServiceRemote mailManagerService = mock(MailManagerServiceRemote.class);
     private final RegistryUserServiceRemote registryUserService = mock(RegistryUserServiceRemote.class);
+    private final ICD9DiseaseServiceRemote icd9DiseaseSvc = mock(ICD9DiseaseServiceRemote.class);;
     
     private static Map<Long, SDCDiseaseDTO> dtos;
 
@@ -148,6 +153,8 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
         RegistryUser ru = new RegistryUser();
         ru.setId(1L);
         when(registryUserService.getUser(any(String.class))).thenReturn(ru);
+        when(icd9DiseaseSvc.get(any(Ii.class))).thenReturn(createICD9DiseaseDTO());
+        when(icd9DiseaseSvc.getByName(any(String.class))).thenReturn(createICD9DiseaseDTOList());       
     }
     
     /**
@@ -184,4 +191,26 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
     public RegistryUserServiceRemote getRegistryUserService() {
         return registryUserService;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ICD9DiseaseServiceRemote getICD9DiseaseService() {
+        return icd9DiseaseSvc;
+    }
+    
+    private ICD9DiseaseDTO createICD9DiseaseDTO() {
+        ICD9DiseaseDTO dto = new ICD9DiseaseDTO();
+        dto.setIdentifier(IiConverter.convertToIi(1L));
+        dto.setPreferredName(StConverter.convertToSt("pname"));
+        dto.setDiseaseCode(StConverter.convertToSt("code"));
+        dto.setName(StConverter.convertToSt("pname"));
+        return dto;
+    }
+    
+    private List<ICD9DiseaseDTO> createICD9DiseaseDTOList() {
+        List<ICD9DiseaseDTO> list = new ArrayList<ICD9DiseaseDTO>();
+        list.add(createICD9DiseaseDTO());
+        return list;
+    }    
 }

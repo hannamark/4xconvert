@@ -97,6 +97,7 @@ import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -140,6 +141,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<BatchValidationResults> validateBatchData(File file)  {
         List<BatchValidationResults> results = new ArrayList<BatchValidationResults>();
         boolean archive = StringUtils.equals(StringUtils.substringAfter(file.getName(), "."), "zip");       
@@ -154,6 +156,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     /**
      * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<BatchImportResults> importBatchData(File file) throws PAException {
         List<BatchValidationResults> validationResults = validateBatchData(file);
@@ -266,8 +269,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         studySubject.setStudyProtocolIdentifier(spIi);
         studySubject.setPatientIdentifier(patientIi);
         studySubject.setAssignedIdentifier(StConverter.convertToSt(line[BatchFileIndex.PATIENT_ID_INDEX]));
-        CDUSPaymentMethodCode pmc = 
-            CDUSPaymentMethodCode.getByCode(line[BatchFileIndex.PATIENT_PAYMENT_METHOD_INDEX]);
+        CDUSPaymentMethodCode pmc = CDUSPaymentMethodCode.getByCode(line[BatchFileIndex.PATIENT_PAYMENT_METHOD_INDEX]);
         if (pmc != null) {
             studySubject.setPaymentMethodCode(CdConverter.convertToCd(pmc.getValue()));
         }
@@ -275,11 +277,19 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             studySubject.setStudySiteIdentifier(studySiteIi);
         }
 
-        String medraCode = line[BatchFileIndex.PATIENT_DISEASE_INDEX];
-        if (StringUtils.isNotEmpty(medraCode)) {
-            SDCDiseaseDTO disease = PaServiceLocator.getInstance().getDiseaseService().getByCode(medraCode);
-            studySubject.setDiseaseIdentifier(disease.getIdentifier());
+        String diseaseCode = line[BatchFileIndex.PATIENT_DISEASE_INDEX];
+
+        if (StringUtils.isNotEmpty(diseaseCode)) {
+            SDCDiseaseDTO disease = PaServiceLocator.getInstance().getDiseaseService().getByCode(diseaseCode);
+            if (disease != null) {
+                studySubject.setDiseaseIdentifier(disease.getIdentifier());
+            } else {
+                ICD9DiseaseDTO icd9Disease = PaServiceLocator.getInstance().getICD9DiseaseService()
+                    .getByCode(diseaseCode);
+                studySubject.setIcd9DiseaseIdentifier(icd9Disease.getIdentifier());
+            }
         }
+        
 
         studySubject.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
         studySubject.setStatusDateRange(
@@ -292,6 +302,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void sendValidationErrorEmail(List<BatchValidationResults> validationResults) throws PAException {
         if (CollectionUtils.isEmpty(validationResults)) {
             return;
@@ -312,6 +323,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void sendConfirmationEmail(List<BatchImportResults> importResults) throws PAException {
         if (CollectionUtils.isEmpty(importResults)) {
             return;

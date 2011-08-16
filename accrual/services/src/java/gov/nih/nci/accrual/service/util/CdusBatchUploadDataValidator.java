@@ -131,6 +131,7 @@ import au.com.bytecode.opencsv.CSVParser;
 @Stateless
 @Local(CdusBatchUploadDataValidatorLocal.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@SuppressWarnings("PMD.TooManyMethods")
 public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader implements
         CdusBatchUploadDataValidatorLocal {
     
@@ -141,6 +142,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     /**
      * {@inheritDoc}
      */
+    @Override
     public BatchValidationResults validateSingleBatchData(File file)  {
         StringBuffer errMsg = new StringBuffer();
         BatchValidationResults results = new BatchValidationResults();
@@ -181,6 +183,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<BatchValidationResults> validateArchiveBatchData(File archiveFile) {
         List<BatchValidationResults> results = new ArrayList<BatchValidationResults>();
         try {
@@ -393,6 +396,13 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             LOG.error("Error determining accrual access for " + user + ".", e);
             return false;
         }
+    }    
+  
+    private void validatePatientID(String key, List<String> values, StringBuffer errMsg, long lineNumber) {
+        if (KEY_WITH_PATIENTS_IDS.contains(key) && StringUtils.isEmpty(getPatientId(values))) {
+            errMsg.append(key).append(appendLineNumber(lineNumber))
+                .append(" must contain a patient identifier that is unique within the study.\n");
+        }
     }
 
     /**
@@ -428,10 +438,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     public void setHealthCareFacilityCorrelationService(
             HealthCareFacilityCorrelationServiceRemote healthCareFacilityCorrelationService) {
         this.healthCareFacilityCorrelationService = healthCareFacilityCorrelationService;
-    }
-    
-    
-    
+    }  
     
 
 }

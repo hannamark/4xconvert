@@ -83,6 +83,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.iso21090.Ts;
@@ -130,6 +131,10 @@ public class PatientConverterTest extends AbstractConverterTest {
         assertTrue(iiTest(r.getIdentifier()));
         assertTrue(dsetTest(r.getRaceCode()));
         assertTrue(stTest(r.getZip()));
+        
+        bo.setBirthDate(null);
+        dto = Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
+        assertNull(dto.getBirthDate());
     }
 
     @Test

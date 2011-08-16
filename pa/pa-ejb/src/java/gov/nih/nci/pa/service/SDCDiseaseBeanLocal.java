@@ -88,10 +88,10 @@ import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.search.SDCDiseaseBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.SDCDiseaseSortCriterion;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
-import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.List;
 
@@ -120,6 +120,7 @@ public class SDCDiseaseBeanLocal extends AbstractBaseIsoService<SDCDiseaseDTO, S
      * @return all diseases with preferred names or alternate names matching search string
      * @throws PAException exception
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<SDCDiseaseDTO> search(SDCDiseaseDTO searchCriteria) throws PAException {
         if (searchCriteria == null) {
@@ -150,6 +151,7 @@ public class SDCDiseaseBeanLocal extends AbstractBaseIsoService<SDCDiseaseDTO, S
     /**
      * {@inheritDoc}
      */
+    @Override
     public SDCDiseaseDTO getByCode(String code) throws PAException {
         Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(SDCDisease.class);
         criteria.add(Restrictions.eq("diseaseCode", code));
