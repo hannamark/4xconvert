@@ -161,17 +161,13 @@ public class PAUIApplication extends AbstractAccrualSeleniumTest {
     private void addDisease() {
         clickAndWait("link=Disease/Condition");
         clickAndWait("link=Add");
-        clickAndWait("link=Look Up");
         selenium.selectFrame("popupFrame");
         waitForElementById("searchName", 15);
         selenium.type("id=searchName", "test");
         clickAndWaitAjax("link=Search");
         waitForElementById("row", 15);
-        selenium.click("//table[@id='row']/tbody/tr[2]/td[6]/a");
-        waitForPageToLoad();
-        pause(1000);
-        selenium.selectWindow(null);
-        clickAndWaitAjax("link=Save");
+        clickAndWaitAjax("//table[@id='row']/tbody/tr[2]/td[6]/a");
+        clickAndWaitAjax("link=Close");
     }
 
     private void updateToVerified() {
