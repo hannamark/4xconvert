@@ -143,6 +143,7 @@ gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.security=gov.nih.nci.cagrid.
 http\://enterpriseservices.nci.nih.gov/PAServices/InterventionService/types=gov.nih.nci.coppa.services.pa.interventionservice.stubs.types
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata=gov.nih.nci.cagrid.metadata
 gme\://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common=gov.nih.nci.cagrid.metadata.common
+http\://faults.accrual.services.coppa.nci.nih.gov=gov.nih.nci.coppa.services.accrual.faults
 http\://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/types=gov.nih.nci.coppa.services.pa.studysiteparticipationservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyRecruitmentStatusService/types=gov.nih.nci.coppa.services.pa.studyrecruitmentstatusservice.stubs.types
 http\://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types=gov.nih.nci.coppa.services.pa.studyprotocolservice.stubs.types

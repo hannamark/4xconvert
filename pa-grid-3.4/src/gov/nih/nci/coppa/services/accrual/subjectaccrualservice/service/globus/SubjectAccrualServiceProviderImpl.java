@@ -26,7 +26,7 @@ public class SubjectAccrualServiceProviderImpl{
 	}
 	
 
-    public gov.nih.nci.coppa.services.accrual.subjectaccrualservice.stubs.ManageSubjectAccrualsResponse manageSubjectAccruals(gov.nih.nci.coppa.services.accrual.subjectaccrualservice.stubs.ManageSubjectAccrualsRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+    public gov.nih.nci.coppa.services.accrual.subjectaccrualservice.stubs.ManageSubjectAccrualsResponse manageSubjectAccruals(gov.nih.nci.coppa.services.accrual.subjectaccrualservice.stubs.ManageSubjectAccrualsRequest params) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault, gov.nih.nci.coppa.services.accrual.faults.IndexedInputValidationFault {
     gov.nih.nci.coppa.services.accrual.subjectaccrualservice.stubs.ManageSubjectAccrualsResponse boxedResult = new gov.nih.nci.coppa.services.accrual.subjectaccrualservice.stubs.ManageSubjectAccrualsResponse();
     boxedResult.setStudySubject(impl.manageSubjectAccruals(params.getStudySubjects().getStudySubject()));
     return boxedResult;

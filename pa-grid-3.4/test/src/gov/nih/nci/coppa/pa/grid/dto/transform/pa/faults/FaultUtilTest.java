@@ -4,11 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
 import gov.nih.nci.coppa.po.faults.EntityValidationFault;
 import gov.nih.nci.coppa.po.faults.NullifiedEntityFault;
 import gov.nih.nci.coppa.po.faults.NullifiedRoleFault;
 import gov.nih.nci.coppa.po.faults.SimpleIIMapTypeEntry;
 import gov.nih.nci.coppa.po.faults.StringMapTypeEntry;
+import gov.nih.nci.coppa.services.accrual.faults.IndexedInputValidationFault;
 import gov.nih.nci.coppa.services.pa.faults.DuplicateParticipatingSiteFault;
 import gov.nih.nci.coppa.services.pa.faults.PAFault;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
@@ -108,6 +110,15 @@ public class FaultUtilTest {
         assertNull(result.getCause());
         assertEquals("A Participating Site with trial id 123 and HCF id 123 already exists.",
                 result.getDescription()[0].get_value());
+    }
+
+    @Test
+    public void testReThrowRemoteIndexedInputValidationException() {
+        IndexedInputValidationException cause = new IndexedInputValidationException("Validation Exception", 1);
+        IndexedInputValidationFault result = (IndexedInputValidationFault) FaultUtil.reThrowRemote(cause);
+        assertNull(result.getCause());
+        assertEquals("Validation Exception", result.getDescription()[0].get_value());
+        assertEquals(1, result.getIndex().getValue().intValue());
     }
 
 }

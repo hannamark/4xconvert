@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
  */
 public interface SubjectAccrualServiceI {
 
-  public gov.nih.nci.coppa.services.accrual.StudySubject[] manageSubjectAccruals(gov.nih.nci.coppa.services.accrual.StudySubject[] studySubjects) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
+  public gov.nih.nci.coppa.services.accrual.StudySubject[] manageSubjectAccruals(gov.nih.nci.coppa.services.accrual.StudySubject[] studySubjects) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault, gov.nih.nci.coppa.services.accrual.faults.IndexedInputValidationFault ;
 
   public void deleteSubjectAccrual(gov.nih.nci.iso21090.extensions.Id subjectAccrualdenfier) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault ;
 

@@ -42,7 +42,7 @@ public class SubjectAccrualServiceImpl extends SubjectAccrualServiceImplBase {
 	/**
 	 * {@inheritDoc}
 	 */
-  public gov.nih.nci.coppa.services.accrual.StudySubject[] manageSubjectAccruals(gov.nih.nci.coppa.services.accrual.StudySubject[] studySubjects) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.accrual.StudySubject[] manageSubjectAccruals(gov.nih.nci.coppa.services.accrual.StudySubject[] studySubjects) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault, gov.nih.nci.coppa.services.accrual.faults.IndexedInputValidationFault {
 	    try {
 	        List<SubjectAccrualDTO> input = StudySubjectTransformer.INSTANCE.convert(studySubjects);
 	        List<SubjectAccrualDTO> results = subjectAccrualService.manageSubjectAccruals(input);

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:wsrbf="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
+    xmlns:ISO="uri:iso.org:21090"
+    xmlns:COPPA-PA="http://pa.services.coppa.nci.nih.gov"
+    xmlns:COPPA-PA-FAULTS="http://faults.pa.services.coppa.nci.nih.gov"
+    targetNamespace="http://faults.accrual.services.coppa.nci.nih.gov"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <import namespace="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
+        schemaLocation="../wsrf/faults/WS-BaseFaults.xsd" />
+    <import schemaLocation="ISO_datatypes_Narrative.xsd" namespace="uri:iso.org:21090" />
+    
+    <element name="IndexedInputValidationFault">
+        <complexType>
+            <complexContent>
+                <extension base="wsrbf:BaseFaultType" >
+                   <xs:sequence>
+                       <xs:element name="index" type="ISO:INT" />
+                   </xs:sequence>
+                </extension>
+            </complexContent>
+        </complexType>
+    </element>
+</schema>

@@ -1,10 +1,12 @@
 package gov.nih.nci.coppa.services.pa.grid.dto.pa.faults;
 
+import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.faults.EntityValidationFaultTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.faults.NullifiedEntityFaultTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.faults.NullifiedRoleFaultTransformer;
 import gov.nih.nci.coppa.po.grid.dto.transform.po.faults.TooManyResultsFaultTransformer;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.coppa.services.accrual.grid.dto.accrual.faults.IndexedInputValidationTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.exception.DuplicateParticipatingSiteException;
@@ -45,9 +47,12 @@ public final class FaultUtil {
             } else if (cause instanceof TooManyResultsException) {
                 TooManyResultsException e = (TooManyResultsException) cause;
                 return TooManyResultsFaultTransformer.INSTANCE.toXml(e);
-            } else if (input instanceof DuplicateParticipatingSiteException) { 
+            } else if (input instanceof DuplicateParticipatingSiteException) {
                 DuplicateParticipatingSiteException e = (DuplicateParticipatingSiteException) input;
                 return DuplicateParticipatingSiteTransformer.INSTANCE.toXml(e);
+            } else if (input instanceof IndexedInputValidationException) {
+                IndexedInputValidationException e = (IndexedInputValidationException) input;
+                return IndexedInputValidationTransformer.INSTANCE.toXml(e);
             } else if (input instanceof PAException) {
                 PAException e = (PAException) input;
                 return PAFaultTransformer.INSTANCE.toXml(e);

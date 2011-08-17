@@ -88,7 +88,7 @@ public class SubjectAccrualServiceClient extends SubjectAccrualServiceClientBase
 	    ClientUtils.print(results);
 	}
 
-  public gov.nih.nci.coppa.services.accrual.StudySubject[] manageSubjectAccruals(gov.nih.nci.coppa.services.accrual.StudySubject[] studySubjects) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
+  public gov.nih.nci.coppa.services.accrual.StudySubject[] manageSubjectAccruals(gov.nih.nci.coppa.services.accrual.StudySubject[] studySubjects) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault, gov.nih.nci.coppa.services.accrual.faults.IndexedInputValidationFault {
     synchronized(portTypeMutex){
       configureStubSecurity((Stub)portType,"manageSubjectAccruals");
     gov.nih.nci.coppa.services.accrual.subjectaccrualservice.stubs.ManageSubjectAccrualsRequest params = new gov.nih.nci.coppa.services.accrual.subjectaccrualservice.stubs.ManageSubjectAccrualsRequest();
