@@ -139,7 +139,7 @@ public class UpdateTrialStatusTest extends AbstractRegistrySeleniumTest {
 
     private void assertUpdateStatusLinkIsPresent() {
         searchForUpdateStatusTrial();
-        assertTrue(selenium.isTextPresent("Update Status"));
+        assertTrue(selenium.isTextPresent("Status Change"));
     }
 
     private void updateStatusViaPopup() {
