@@ -110,7 +110,7 @@ public class StudySubjectTransformerTest
         result.setGender(new CDTransformerTest().makeDtoSimple());
         result.setRace(new DSETCDTransformerTest().makeDtoSimple());
         result.setEthnicity(new CDTransformerTest().makeDtoSimple());
-        result.setCountryIdentifier(new IITransformerTest().makeDtoSimple());
+        result.setCountryCode(new CDTransformerTest().makeDtoSimple());
         result.setZipCode(new STTransformerTest().makeDtoSimple());
         result.setRegistrationDate(new TSTransformerTest().makeDtoSimple());
         result.setPaymentMethod(new CDTransformerTest().makeDtoSimple());
@@ -128,7 +128,7 @@ public class StudySubjectTransformerTest
         result.setGender(new CDTransformerTest().makeXmlSimple());
         result.setRace(new DSETCDTransformerTest().makeXmlSimple());
         result.setEthnicity(new CDTransformerTest().makeXmlSimple());
-        result.setCountryIdentifier(new IITransformerTest().makeXmlSimple());
+        result.setCountryCode(new CDTransformerTest().makeXmlSimple());
         result.setZipCode(new STTransformerTest().makeXmlSimple());
         result.setRegistrationDate(new TSTransformerTest().makeXmlSimple());
         result.setMethodOfPayment(new CDTransformerTest().makeXmlSimple());
@@ -145,7 +145,7 @@ public class StudySubjectTransformerTest
         new CDTransformerTest().verifyDtoSimple(x.getGender());
         new DSETCDTransformerTest().verifyDtoSimple(x.getRace());
         new CDTransformerTest().verifyDtoSimple(x.getEthnicity());
-        new IITransformerTest().verifyDtoSimple(x.getCountryIdentifier());
+        new CDTransformerTest().verifyDtoSimple(x.getCountryCode());
         new STTransformerTest().verifyDtoSimple(x.getZipCode());
         new TSTransformerTest().verifyDtoSimple(x.getRegistrationDate());
         new CDTransformerTest().verifyDtoSimple(x.getPaymentMethod());
@@ -161,7 +161,7 @@ public class StudySubjectTransformerTest
         new CDTransformerTest().verifyXmlSimple(x.getGender());
         new DSETCDTransformerTest().verifyXmlSimple(x.getRace());
         new CDTransformerTest().verifyXmlSimple(x.getEthnicity());
-        new IITransformerTest().verifyXmlSimple(x.getCountryIdentifier());
+        new CDTransformerTest().verifyXmlSimple(x.getCountryCode());
         new STTransformerTest().verifyXmlSimple(x.getZipCode());
         new TSTransformerTest().verifyXmlSimple(x.getRegistrationDate());
         new CDTransformerTest().verifyXmlSimple(x.getMethodOfPayment());

@@ -82,8 +82,6 @@ package gov.nih.nci.accrual.convert;
 import gov.nih.nci.pa.domain.AbstractEntity;
 import gov.nih.nci.pa.iso.dto.BaseDTO;
 
-import java.util.zip.DataFormatException;
-
 /**
  * @author lhebel
  *
@@ -95,7 +93,7 @@ public class InvalidConverter extends AbstractConverter<BaseDTO, AbstractEntity>
      * {@inheritDoc}
      */
     @Override
-    public BaseDTO convertFromDomainToDto(AbstractEntity bo) throws DataFormatException {
+    public BaseDTO convertFromDomainToDto(AbstractEntity bo) {
         return null;
     }
 
@@ -103,7 +101,7 @@ public class InvalidConverter extends AbstractConverter<BaseDTO, AbstractEntity>
      * {@inheritDoc}
      */
     @Override
-    public AbstractEntity convertFromDtoToDomain(BaseDTO dto) throws DataFormatException {
+    public AbstractEntity convertFromDtoToDomain(BaseDTO dto) {
         return null;
     }
 }

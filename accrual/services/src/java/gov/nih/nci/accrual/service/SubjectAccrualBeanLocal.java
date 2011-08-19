@@ -82,21 +82,46 @@
  */
 package gov.nih.nci.accrual.service;
 
+import gov.nih.nci.accrual.convert.Converters;
+import gov.nih.nci.accrual.convert.StudySubjectConverter;
+import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
+import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
+import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
+import gov.nih.nci.accrual.service.util.CountryService;
+import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.StudySubject;
+import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.PaymentMethodCode;
+import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
+import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Implementation of the subject accrual service.
@@ -107,13 +132,193 @@ import javax.interceptor.Interceptors;
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
+    @EJB
+    private PatientServiceLocal patientService;
+    @EJB
+    private StudySubjectServiceLocal studySubjectService;
+    @EJB
+    private PerformedActivityServiceLocal performedActivityService;
+    @EJB
+    private CountryService countryService;
+    
     private static final String UNIMPLEMENTED_MSG = "Method not yet implemented.";
+    private static final String REQUIRED_MSG = "%s is a required field.\n";
+    private static final String INVALID_VALUE = "%s is not a valid value for %s.\n";
+
+    /**
+     * {@inheritDoc}
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public List<SubjectAccrualDTO> manageSubjectAccruals(List<SubjectAccrualDTO> subjects) throws PAException {
+        for (int i = 0; i < subjects.size(); i++) {
+            validateRequiredFields(subjects.get(i), i);
+        }
+        List<SubjectAccrualDTO> results = new ArrayList<SubjectAccrualDTO>();
+        for (SubjectAccrualDTO subject : subjects) {
+            if (ISOUtil.isIiNull(subject.getIdentifier())) {
+                results.add(create(subject));
+            } else {
+                results.add(update(subject));
+            }
+        }
+        return results;
+    }
+
+
+    private void validateRequiredFields(SubjectAccrualDTO subjectAccrual, int index) 
+    throws PAException {
+        StringBuffer errors = new StringBuffer();
+        if (ISOUtil.isStNull(subjectAccrual.getAssignedIdentifier())) {
+            errors.append(String.format(REQUIRED_MSG, "Assigned Identifier"));
+        }
+        validateDatesAndPaymentMethod(subjectAccrual, errors);
+        validateGenderAndEthnicity(subjectAccrual, errors);
+        if (subjectAccrual.getRace() == null || CollectionUtils.isEmpty(subjectAccrual.getRace().getItem())) {
+            errors.append(String.format(REQUIRED_MSG, "Race"));
+        }
+        validateCountry(subjectAccrual, errors);        
+        validateDiseaseAndParticipatingSite(subjectAccrual, errors);
+        if (errors.length() != 0) {
+            throw new IndexedInputValidationException(errors.toString(), index);
+        }
+    }
     
     /**
      * {@inheritDoc}
      */
-    public List<SubjectAccrualDTO> manageSubjectAccruals(List<SubjectAccrualDTO> subjects) throws PAException {
-        throw new PAException(UNIMPLEMENTED_MSG);
+    public SubjectAccrualDTO create(SubjectAccrualDTO dto) throws PAException {
+        if (!ISOUtil.isIiNull(dto.getIdentifier())) {
+            throw new PAException("Cannot create a subject accrual with an identifier set. Please use update().");
+        }
+        StudySiteDTO participatingSite = 
+            PaServiceLocator.getInstance().getStudySiteService().get(dto.getParticipatingSiteIdentifier());
+
+        PatientDto patient = getPatientService().create(populatePatientDTO(dto, new PatientDto()));
+        StudySubjectDto studySubject = populateStudySubjectDTO(dto, new StudySubjectDto());
+        studySubject.setStudyProtocolIdentifier(participatingSite.getStudyProtocolIdentifier());
+        studySubject.setPatientIdentifier(patient.getIdentifier());
+        studySubject = getStudySubjectService().create(studySubject);
+
+        PerformedSubjectMilestoneDto psm = new PerformedSubjectMilestoneDto();
+        psm.setRegistrationDate(dto.getRegistrationDate());
+        psm.setStudySubjectIdentifier(studySubject.getIdentifier());
+        psm.setStudyProtocolIdentifier(participatingSite.getStudyProtocolIdentifier());
+
+        getPerformedActivityService().createPerformedSubjectMilestone(psm);
+
+        StudySubject result = (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class, 
+                IiConverter.convertToLong(studySubject.getIdentifier()));
+        return Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(result);
+    }
+    
+
+    private void validateDatesAndPaymentMethod(SubjectAccrualDTO dto, StringBuffer errMsg) {
+        if (ISOUtil.isTsNull(dto.getBirthDate())) {
+            errMsg.append(String.format(REQUIRED_MSG, "Birth Date"));
+        }
+        if (ISOUtil.isTsNull(dto.getRegistrationDate())) {
+            errMsg.append(String.format(REQUIRED_MSG, "Registration Date"));
+        }
+        String code = CdConverter.convertCdToString(dto.getPaymentMethod());
+        if (code != null && PaymentMethodCode.getByCode(code) == null) {
+            errMsg.append(String.format(INVALID_VALUE, code, "Payment Method Code"));
+        }
+    }
+    
+    private void validateCountry(SubjectAccrualDTO dto, StringBuffer errMsg) throws PAException {
+        String code = CdConverter.convertCdToString(dto.getCountryCode());
+        if (ISOUtil.isCdNull(dto.getCountryCode())) {
+            errMsg.append(String.format(REQUIRED_MSG, "Country Code"));
+        } else if (getCountryService().getByCode(code) == null) {
+            errMsg.append(String.format(INVALID_VALUE, code, "Country Code"));
+        } else if (StringUtils.equals("US", code) && ISOUtil.isStNull(dto.getZipCode())) {
+            errMsg.append("Zip Code must be specified when the subject's country is the US.");
+        }
+    }
+    
+    private void validateGenderAndEthnicity(SubjectAccrualDTO subjectAccrual, StringBuffer errMsg) {
+        String gender = CdConverter.convertCdToString(subjectAccrual.getGender());
+        if (StringUtils.isEmpty(gender)) {
+            errMsg.append(String.format(REQUIRED_MSG, "Gender"));
+        } else if (PatientGenderCode.getByCode(gender) == null) {
+            errMsg.append(String.format(INVALID_VALUE, gender, "Gender"));
+        }
+        String ethnicity = CdConverter.convertCdToString(subjectAccrual.getEthnicity());
+        if (StringUtils.isEmpty(ethnicity)) {
+            errMsg.append(String.format(REQUIRED_MSG, "Ethnicity"));
+        } else if (PatientGenderCode.getByCode(gender) == null) {
+            errMsg.append(String.format(INVALID_VALUE, ethnicity, "Ethnicity"));
+        }
+    }
+
+    private void validateDiseaseAndParticipatingSite(SubjectAccrualDTO subjectAccrual, StringBuffer errMsg) 
+        throws PAException {
+        if (ISOUtil.isIiNull(subjectAccrual.getDiseaseIdentifier())) {
+            errMsg.append(String.format(REQUIRED_MSG, "Disease Identifier"));
+        } else {
+            SDCDiseaseDTO sdc = 
+                PaServiceLocator.getInstance().getDiseaseService().get(subjectAccrual.getDiseaseIdentifier());
+            ICD9DiseaseDTO icd9 = 
+                PaServiceLocator.getInstance().getICD9DiseaseService().get(subjectAccrual.getDiseaseIdentifier());
+            if (sdc == null && icd9 == null) {
+                errMsg.append(String.format(INVALID_VALUE, subjectAccrual.getDiseaseIdentifier().getExtension(), 
+                    "Disease Identifier"));
+            }
+        }
+
+        if (ISOUtil.isIiNull(subjectAccrual.getParticipatingSiteIdentifier())) {
+            errMsg.append(String.format(REQUIRED_MSG, "Participating Site Identifier"));
+        } else if (PaServiceLocator.getInstance().getStudySiteService()
+                .get(subjectAccrual.getParticipatingSiteIdentifier()) == null) {
+            errMsg.append(String.format(INVALID_VALUE, subjectAccrual.getParticipatingSiteIdentifier().getExtension(), 
+            "Participating Site Identifier"));
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public SubjectAccrualDTO update(SubjectAccrualDTO dto) throws PAException {
+        if (ISOUtil.isIiNull(dto.getIdentifier())) {
+            throw new PAException("Cannot update a subject accrual without an identifier set. Please use create().");
+        }
+        StudySiteDTO participatingSite = 
+            PaServiceLocator.getInstance().getStudySiteService().get(dto.getParticipatingSiteIdentifier());
+
+        StudySubjectDto studySubject = getStudySubjectService().get(dto.getIdentifier());
+        studySubject = getStudySubjectService().update(populateStudySubjectDTO(dto, studySubject));
+        PatientDto patient = getPatientService().get(studySubject.getPatientIdentifier());
+        patient.setOrganizationIdentifier(participatingSite.getHealthcareFacilityIi());
+        patient = getPatientService().update(populatePatientDTO(dto, patient));
+        PerformedSubjectMilestoneDto psm =
+            getPerformedActivityService().getPerformedSubjectMilestoneByStudySubject(
+                    studySubject.getIdentifier()).iterator().next();
+        psm.setRegistrationDate(dto.getRegistrationDate());
+        getPerformedActivityService().updatePerformedSubjectMilestone(psm);
+
+        StudySubject result = (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class, 
+                IiConverter.convertToLong(studySubject.getIdentifier()));
+        return Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(result);
+    }
+
+    private PatientDto populatePatientDTO(SubjectAccrualDTO dto, PatientDto patientDTO) throws PAException {
+        Country country = getCountryService().getByCode(CdConverter.convertCdToString(dto.getCountryCode()));
+        patientDTO.setBirthDate(dto.getBirthDate());        
+        patientDTO.setCountryIdentifier(IiConverter.convertToIi(country.getId()));
+        patientDTO.setEthnicCode(dto.getEthnicity());
+        patientDTO.setGenderCode(dto.getGender());
+        patientDTO.setRaceCode(dto.getRace());
+        patientDTO.setZip(dto.getZipCode());
+        return patientDTO;    
+    }
+
+    private StudySubjectDto populateStudySubjectDTO(SubjectAccrualDTO dto, StudySubjectDto studySubjectDTO)  {
+        studySubjectDTO.setDiseaseIdentifier(dto.getDiseaseIdentifier());
+        studySubjectDTO.setAssignedIdentifier(dto.getAssignedIdentifier());
+        studySubjectDTO.setPaymentMethodCode(dto.getPaymentMethod());
+        studySubjectDTO.setStudySiteIdentifier(dto.getParticipatingSiteIdentifier());
+        studySubjectDTO.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
+        return studySubjectDTO;
     }
     
     /**
@@ -122,26 +327,82 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     public void deleteSubjectAccrual(Ii subjectAccrualIi) throws PAException {
         throw new PAException(UNIMPLEMENTED_MSG);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void updateSubjectAccrualCount(Ii participatingSiteIi, Int count) throws PAException {
         throw new PAException(UNIMPLEMENTED_MSG);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void submitBatchData(Ed batchFile) throws PAException {
         throw new PAException(UNIMPLEMENTED_MSG);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public List<SubjectAccrualDTO> search(Ii studyIdentifier, Ii participatingSiteIdentifier, Ts startDate,
             Ts endDate, LimitOffset pagingParams) throws PAException {
         throw new PAException(UNIMPLEMENTED_MSG);
+    }
+
+    /**
+     * @return the patientService
+     */
+    public PatientServiceLocal getPatientService() {
+        return patientService;
+    }
+
+    /**
+     * @param patientService the patientService to set
+     */
+    public void setPatientService(PatientServiceLocal patientService) {
+        this.patientService = patientService;
+    }
+
+    /**
+     * @return the studySubjectService
+     */
+    public StudySubjectServiceLocal getStudySubjectService() {
+        return studySubjectService;
+    }
+
+    /**
+     * @param studySubjectService the studySubjectService to set
+     */
+    public void setStudySubjectService(StudySubjectServiceLocal studySubjectService) {
+        this.studySubjectService = studySubjectService;
+    }
+
+    /**
+     * @return the performedActivityService
+     */
+    public PerformedActivityServiceLocal getPerformedActivityService() {
+        return performedActivityService;
+    }
+
+    /**
+     * @param performedActivityService the performedActivityService to set
+     */
+    public void setPerformedActivityService(PerformedActivityServiceLocal performedActivityService) {
+        this.performedActivityService = performedActivityService;
+    }
+
+    /**
+     * @return the countryService
+     */
+    public CountryService getCountryService() {
+        return countryService;
+    }
+
+    /**
+     * @param countryService the countryService to set
+     */
+    public void setCountryService(CountryService countryService) {
+        this.countryService = countryService;
     }
 }

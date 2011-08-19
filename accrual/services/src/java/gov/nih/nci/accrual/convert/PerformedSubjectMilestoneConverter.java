@@ -85,24 +85,18 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.ISOUtil;
 
-import java.util.zip.DataFormatException;
-
 /**
  * @author Hugh Reinhart
  * @since Aug 13, 2009
  */
 public class PerformedSubjectMilestoneConverter 
     extends AbstractConverter<PerformedSubjectMilestoneDto, PerformedSubjectMilestone> {
-
+    
     /**
-     * Convert from domain to dto.
-     * @param bo the bo
-     * @return the performed subject milestone dto
-     * @throws DataFormatException the data format exception
+     * {@inheritDoc}
      */
     @Override
-    public PerformedSubjectMilestoneDto convertFromDomainToDto(PerformedSubjectMilestone bo) 
-        throws DataFormatException {
+    public PerformedSubjectMilestoneDto convertFromDomainToDto(PerformedSubjectMilestone bo) {
         PerformedSubjectMilestoneDto dto = (PerformedSubjectMilestoneDto)
         PerformedActivityConverter.convertFromDomainToDTO(bo, new PerformedSubjectMilestoneDto());
         dto.setInformedConsentDate(TsConverter.convertToTs(bo.getInformedConsentDate()));
@@ -110,16 +104,12 @@ public class PerformedSubjectMilestoneConverter
         dto.setReasonCode(CdConverter.convertToCd(bo.getReasonCode()));
         return dto;
     }
-
+    
     /**
-     * Convert from dto to domain.
-     * @param dto the dto
-     * @return the performed subject milestone
-     * @throws DataFormatException the data format exception
+     * {@inheritDoc}
      */
     @Override
-    public PerformedSubjectMilestone convertFromDtoToDomain(PerformedSubjectMilestoneDto dto) 
-        throws DataFormatException {
+    public PerformedSubjectMilestone convertFromDtoToDomain(PerformedSubjectMilestoneDto dto) {
         PerformedSubjectMilestone bo = (PerformedSubjectMilestone)
         PerformedActivityConverter.convertFromDTOToDomain(dto , new PerformedSubjectMilestone());      
         bo.setInformedConsentDate(TsConverter.convertToTimestamp(dto.getInformedConsentDate()));

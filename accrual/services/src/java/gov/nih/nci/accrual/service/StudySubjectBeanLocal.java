@@ -93,7 +93,6 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -142,8 +141,6 @@ public class StudySubjectBeanLocal
             return resultList;
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in getByStudyProtocol().", hbe);
-        } catch (DataFormatException e) {
-            throw new PAException("Conversion exception in getByStudyProtocol().", e);
         }
     }
 
@@ -164,8 +161,6 @@ public class StudySubjectBeanLocal
             return results;
         } catch (HibernateException e) {
             throw new PAException("Error retrieving study subjects", e);
-        } catch (DataFormatException e) {
-            throw new PAException("Iso conversion exception in getStudySubjects.", e);
         }
     }
 

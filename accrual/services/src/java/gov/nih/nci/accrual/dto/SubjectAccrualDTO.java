@@ -102,7 +102,7 @@ public class SubjectAccrualDTO extends BaseDTO {
     private Cd gender;
     private DSet<Cd> race;
     private Cd ethnicity;
-    private Ii countryIdentifier;
+    private Cd countryCode;
     private St zipCode;
     private Ts registrationDate;
     private Cd paymentMethod;
@@ -180,20 +180,6 @@ public class SubjectAccrualDTO extends BaseDTO {
     }
     
     /**
-     * @return the countryIdentifier
-     */
-    public Ii getCountryIdentifier() {
-        return countryIdentifier;
-    }
-    
-    /**
-     * @param countryIdentifier the countryIdentifier to set
-     */
-    public void setCountryIdentifier(Ii countryIdentifier) {
-        this.countryIdentifier = countryIdentifier;
-    }
-    
-    /**
      * @return the zipCode
      */
     public St getZipCode() {
@@ -268,5 +254,19 @@ public class SubjectAccrualDTO extends BaseDTO {
      */
     public static long getSerialversionuid() {
         return serialVersionUID;
+    }
+
+    /**
+     * @return the countryCode
+     */
+    public Cd getCountryCode() {
+        return countryCode;
+    }
+
+    /**
+     * @param countryCode the countryCode to set
+     */
+    public void setCountryCode(Cd countryCode) {
+        this.countryCode = countryCode;
     }
 }

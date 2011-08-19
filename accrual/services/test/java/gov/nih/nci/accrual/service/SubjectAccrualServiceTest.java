@@ -82,18 +82,58 @@
  */
 package gov.nih.nci.accrual.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
+import gov.nih.nci.accrual.dto.util.POPatientDTO;
+import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
+import gov.nih.nci.accrual.service.util.CountryBean;
+import gov.nih.nci.accrual.service.util.POPatientService;
+import gov.nih.nci.accrual.util.AccrualServiceLocator;
+import gov.nih.nci.accrual.util.AccrualUtil;
+import gov.nih.nci.accrual.util.MockPoServiceLocator;
+import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.accrual.util.PoRegistry;
+import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
+import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
+import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.PatientEthnicityCode;
+import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.PatientRaceCode;
+import gov.nih.nci.pa.enums.PaymentMethodCode;
+import gov.nih.nci.pa.iso.convert.Converters;
+import gov.nih.nci.pa.iso.convert.StudySiteConverter;
+import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.DSetConverter;
+import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * Tests for the subject accrual service.
@@ -101,21 +141,124 @@ import org.junit.rules.ExpectedException;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public class SubjectAccrualServiceTest extends AbstractServiceTest<SubjectAccrualServiceRemote> {
+    private SubjectAccrualBeanLocal bean;
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     
     @Override
     @Before
     public void instantiateServiceBean() throws Exception {
+        POPatientService poPatientSvc = mock(POPatientService.class);
+        POPatientDTO patientDTO = new POPatientDTO();
+        patientDTO.setIdentifier(IiConverter.convertToIi(1L));
+        patientDTO.setPlayerIdentifier(IiConverter.convertToIi(1L));
+        when(poPatientSvc.create(any(POPatientDTO.class))).thenReturn(patientDTO);
+        when(poPatientSvc.update(any(POPatientDTO.class))).thenReturn(patientDTO);
+        when(poPatientSvc.get(any(Ii.class))).thenReturn(patientDTO);
+        
+        PatientBeanLocal patientService = new PatientBeanLocal();
+        patientService.setCountryService(new CountryBean());
+        patientService.setPatientCorrelationSvc(poPatientSvc);
+        
+        PerformedActivityBean performedActivitySvc = new PerformedActivityBean();
+        
         bean = new SubjectAccrualServiceBean();
+        bean.setPatientService(patientService);
+        bean.setStudySubjectService(new StudySubjectBean());
+        bean.setPerformedActivityService(performedActivitySvc);
+        bean.setCountryService(new CountryBean());
+        
+        StudySiteServiceRemote studySiteSvc = mock(StudySiteServiceRemote.class);
+        when(studySiteSvc.get(any(Ii.class))).thenReturn(Converters.get(StudySiteConverter.class).convertFromDomainToDto(TestSchema.studySites.get(0)));        
+                
+        final SDCDiseaseDTO disease = new SDCDiseaseDTO();
+        disease.setIdentifier(IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
+        SDCDiseaseServiceRemote diseaseSvc = mock(SDCDiseaseServiceRemote.class);
+        when(diseaseSvc.get(any(Ii.class))).thenAnswer(new Answer<SDCDiseaseDTO>() {
+            public SDCDiseaseDTO answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                Ii ii = (Ii) args[0];
+                if (IiConverter.convertToLong(ii).equals(TestSchema.diseases.get(0).getId())) {
+                    return disease;
+                }
+                return null;
+            }
+        });
+        
+        ICD9DiseaseServiceRemote icd9DiseaseSvc = mock(ICD9DiseaseServiceRemote.class);
+        
+        ServiceLocatorPaInterface paSvcLocator = mock(ServiceLocatorPaInterface.class);
+        when(paSvcLocator.getDiseaseService()).thenReturn(diseaseSvc);
+        when(paSvcLocator.getICD9DiseaseService()).thenReturn(icd9DiseaseSvc);
+        when(paSvcLocator.getStudySiteService()).thenReturn(studySiteSvc);
+        ServiceLocatorAccInterface accSvcLocator = mock(ServiceLocatorAccInterface.class);
+        when(accSvcLocator.getPerformedActivityService()).thenReturn(performedActivitySvc);
+        
+        PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
+        AccrualServiceLocator.getInstance().setServiceLocator(accSvcLocator);
+        PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
     }
 
     @Test
     public void manageSubjectAccruals() throws Exception {
-        thrown.expect(PAException.class);
-        thrown.expectMessage("Method not yet implemented.");
+        List<SubjectAccrualDTO> results = bean.manageSubjectAccruals(new ArrayList<SubjectAccrualDTO>());
+        assertTrue(results.isEmpty());
         
-        bean.manageSubjectAccruals(new ArrayList<SubjectAccrualDTO>());
+        SubjectAccrualDTO dto = new SubjectAccrualDTO();
+        dto.setAssignedIdentifier(StConverter.convertToSt("Patient-1"));
+        dto.setBirthDate(AccrualUtil.yearMonthStringToTs("01/2000"));
+        dto.setGender(CdConverter.convertToCd(PatientGenderCode.MALE));
+        dto.setEthnicity(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
+        dto.setRace(DSetConverter.convertCdListToDSet(Arrays.asList(CdConverter.convertToCd(PatientRaceCode.AMERICAN_INDIAN))));
+        dto.setCountryCode(CdConverter.convertStringToCd(TestSchema.countries.get(0).getAlpha2()));
+        dto.setZipCode(StConverter.convertToSt("22222"));
+        dto.setRegistrationDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2000")));
+        dto.setPaymentMethod(CdConverter.convertToCd(PaymentMethodCode.MEDICAID));
+        dto.setDiseaseIdentifier(IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
+        dto.setParticipatingSiteIdentifier(IiConverter.convertToIi(TestSchema.participatingSites.get(0).getId()));
+        
+        results = bean.manageSubjectAccruals(Arrays.asList(dto));
+        assertEquals(1, results.size());
+        assertFalse(ISOUtil.isIiNull(results.get(0).getIdentifier()));
+        validateSubjectAccrualDTO(dto, results.get(0));
+        
+        dto = results.get(0);
+        dto.setRegistrationDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2001")));
+        dto.setGender(CdConverter.convertToCd(PatientGenderCode.FEMALE));
+        dto.setPaymentMethod(CdConverter.convertToCd(PaymentMethodCode.MEDICARE));
+        
+        results = bean.manageSubjectAccruals(Arrays.asList(dto));
+        assertEquals(1, results.size());
+        assertFalse(ISOUtil.isIiNull(results.get(0).getIdentifier()));
+        validateSubjectAccrualDTO(dto, results.get(0));
+    }
+    
+    @Test
+    public void manageSubjectAccrualRequiredValidation() throws Exception {
+        thrown.expect(IndexedInputValidationException.class);
+        thrown.expectMessage("is a required field.");
+        bean.manageSubjectAccruals(Arrays.asList(new SubjectAccrualDTO()));
+    }
+    
+    @Test
+    public void manageSubjectAccrualInvalidValuesValidation() throws Exception {
+        thrown.expect(IndexedInputValidationException.class);
+        thrown.expectMessage("is not a valid value for");
+        
+        SubjectAccrualDTO dto = new SubjectAccrualDTO();
+        dto.setAssignedIdentifier(StConverter.convertToSt("Patient-1"));
+        dto.setBirthDate(AccrualUtil.yearMonthStringToTs("01/2000"));
+        dto.setGender(CdConverter.convertStringToCd("FOO"));
+        dto.setEthnicity(CdConverter.convertStringToCd("FOO"));
+        dto.setRace(DSetConverter.convertCdListToDSet(Arrays.asList(CdConverter.convertToCd(PatientRaceCode.AMERICAN_INDIAN))));
+        dto.setCountryCode(CdConverter.convertStringToCd("FOO"));
+        dto.setZipCode(StConverter.convertToSt("22222"));
+        dto.setRegistrationDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2000")));
+        dto.setPaymentMethod(CdConverter.convertStringToCd("FOO"));
+        dto.setDiseaseIdentifier(IiConverter.convertToIi(1234L));
+        dto.setParticipatingSiteIdentifier(IiConverter.convertToIi(1234L));
+        
+        bean.manageSubjectAccruals(Arrays.asList(dto));
     }
     
     @Test
@@ -148,5 +291,20 @@ public class SubjectAccrualServiceTest extends AbstractServiceTest<SubjectAccrua
         thrown.expectMessage("Method not yet implemented.");
         
         bean.search(IiConverter.convertToIi(1L), IiConverter.convertToIi(1L), null, null, null);
+    }
+    
+    private void validateSubjectAccrualDTO(SubjectAccrualDTO expected, SubjectAccrualDTO given) {
+        assertEquals(StConverter.convertToString(expected.getAssignedIdentifier()), StConverter.convertToString(given.getAssignedIdentifier()));
+        assertEquals(AccrualUtil.tsToYearMonthString(expected.getBirthDate()), AccrualUtil.tsToYearMonthString(given.getBirthDate()));
+        assertEquals(CdConverter.convertCdToString(expected.getGender()), CdConverter.convertCdToString(given.getGender()));
+        assertEquals(CdConverter.convertCdToString(expected.getEthnicity()), CdConverter.convertCdToString(given.getEthnicity()));
+        assertEquals(DSetEnumConverter.convertDSetToCsv(PatientRaceCode.class, expected.getRace()), 
+                DSetEnumConverter.convertDSetToCsv(PatientRaceCode.class, given.getRace()));
+        assertEquals(CdConverter.convertCdToString(expected.getCountryCode()), CdConverter.convertCdToString(given.getCountryCode()));
+        assertEquals(StConverter.convertToString(expected.getZipCode()), StConverter.convertToString(given.getZipCode()));
+        assertEquals(AccrualUtil.tsToYearMonthString(expected.getRegistrationDate()), AccrualUtil.tsToYearMonthString(given.getRegistrationDate()));
+        assertEquals(CdConverter.convertCdToString(expected.getPaymentMethod()), CdConverter.convertCdToString(given.getPaymentMethod()));
+        assertEquals(IiConverter.convertToLong(expected.getDiseaseIdentifier()), IiConverter.convertToLong(given.getDiseaseIdentifier()));
+        assertEquals(IiConverter.convertToLong(expected.getParticipatingSiteIdentifier()), IiConverter.convertToLong(given.getParticipatingSiteIdentifier()));
     }
 }

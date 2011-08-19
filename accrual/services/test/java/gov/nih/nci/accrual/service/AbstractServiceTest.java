@@ -102,7 +102,6 @@ public abstract class AbstractServiceTest<SERVICE_INTERFACE> extends AbstractAcc
     public void setUpTestSchema() throws Exception {
         TestSchema.primeData();
         AccrualCsmUtil.setCsmUtil(new MockCsmUtil());
-        AccrualCsmUtil.setCsmUtil(new MockCsmUtil());
    }
 
     public abstract void instantiateServiceBean() throws Exception;

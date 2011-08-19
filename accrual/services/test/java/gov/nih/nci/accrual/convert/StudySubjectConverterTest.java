@@ -80,9 +80,9 @@
 package gov.nih.nci.accrual.convert;
 
 import static org.junit.Assert.assertTrue;
-
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
+import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.SDCDisease;
@@ -138,7 +138,8 @@ public class StudySubjectConverterTest extends AbstractConverterTest {
         patient.setSexCode(null);
         patient.setRaceCode(CdConverter.convertCdToString(cdVal));
         patient.setEthnicCode(null);
-        patient.setCountryIdentifier(IiConverter.convertToLong(iiVal));
+        patient.setCountry(new Country());
+        patient.getCountry().setId(IiConverter.convertToLong(iiVal));
         patient.setZip(StConverter.convertToString(stVal));
         
         StudySubject subject = new StudySubject();
@@ -163,7 +164,7 @@ public class StudySubjectConverterTest extends AbstractConverterTest {
         assertTrue(tsTest(dto.getBirthDate()));
         assertTrue(dsetTest(dto.getRace()));
         assertTrue(cdTest(dto.getEthnicity()));
-        assertTrue(iiTest(dto.getCountryIdentifier()));
+        assertTrue(cdTest(dto.getCountryCode()));
         assertTrue(stTest(dto.getZipCode()));
         assertTrue(tsTest(dto.getRegistrationDate()));
         assertTrue(cdTest(dto.getPaymentMethod()));

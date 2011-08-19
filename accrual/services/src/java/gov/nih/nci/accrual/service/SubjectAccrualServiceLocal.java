@@ -82,6 +82,9 @@
  */
 package gov.nih.nci.accrual.service;
 
+import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
+import gov.nih.nci.pa.service.PAException;
+
 import javax.ejb.Local;
 
 /**
@@ -89,5 +92,21 @@ import javax.ejb.Local;
  */
 @Local
 public interface SubjectAccrualServiceLocal extends SubjectAccrualServiceRemote {
+    
+    /**
+     * Creates a subject accrual.
+     * @param dto the subject accrual to create.
+     * @return the created subject accrual with the ID set.
+     * @throws PAException on error
+     */
+    SubjectAccrualDTO create(SubjectAccrualDTO dto) throws PAException;
+    
+    /**
+     * Updates a subject accrual.
+     * @param dto the accrual to update
+     * @return the updated subject accrual
+     * @throws PAException on error
+     */
+    SubjectAccrualDTO update(SubjectAccrualDTO dto) throws PAException;
 
 }

@@ -730,4 +730,8 @@
         <comment>Add data to ICD9 Disease Codes Table.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3435_1.sql"/>
      </changeSet>
+     <changeSet id="PO-3929" author="aevansel">
+        <comment>Modifies the patient class to reference the actual country instead of just the identifier.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3929.sql"/>
+     </changeSet>
 </databaseChangeLog>

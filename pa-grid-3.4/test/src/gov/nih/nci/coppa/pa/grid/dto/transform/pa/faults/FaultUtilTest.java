@@ -118,7 +118,7 @@ public class FaultUtilTest {
         IndexedInputValidationFault result = (IndexedInputValidationFault) FaultUtil.reThrowRemote(cause);
         assertNull(result.getCause());
         assertEquals("Validation Exception", result.getDescription()[0].get_value());
-        assertEquals(1, result.getIndex().getValue().intValue());
+        assertEquals(1, result.getIndex());
     }
 
 }

@@ -81,7 +81,6 @@ package gov.nih.nci.accrual.accweb.util;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -94,6 +93,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
@@ -116,7 +116,8 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
     private final StudyProtocolServiceRemote studyProtocolService = mock(StudyProtocolServiceRemote.class);
     private final MailManagerServiceRemote mailManagerService = mock(MailManagerServiceRemote.class);
     private final RegistryUserServiceRemote registryUserService = mock(RegistryUserServiceRemote.class);
-    private final ICD9DiseaseServiceRemote icd9DiseaseSvc = mock(ICD9DiseaseServiceRemote.class);;
+    private final ICD9DiseaseServiceRemote icd9DiseaseSvc = mock(ICD9DiseaseServiceRemote.class);
+    private final StudySiteServiceRemote studySiteSvc = mock(StudySiteServiceRemote.class);
     
     private static Map<Long, SDCDiseaseDTO> dtos;
 
@@ -212,5 +213,12 @@ public class MockPaServiceLocator implements ServiceLocatorPaInterface {
         List<ICD9DiseaseDTO> list = new ArrayList<ICD9DiseaseDTO>();
         list.add(createICD9DiseaseDTO());
         return list;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public StudySiteServiceRemote getStudySiteService() {
+        return studySiteSvc;
     }    
 }

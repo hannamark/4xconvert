@@ -115,7 +115,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.zip.DataFormatException;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -184,19 +183,13 @@ public class PatientBeanLocal implements PatientServiceLocal {
             session = PaHibernateUtil.getCurrentSession();
             bo = (Patient) session.get(Patient.class, IiConverter.convertToLong(ii));
             if (bo == null) {
-                LOG.error("Object not found using get() for id = "
-                        + IiConverter.convertToString(ii) + ".");
+                LOG.error("Object not found using get() for id = " + IiConverter.convertToString(ii) + ".");
                 return resultDto;
             }
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in get().", hbe);
         }
-        try {
-            resultDto = Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
-        } catch (DataFormatException e) {
-            throw new PAException("Iso conversion exception in get().", e);
-        }
-        return resultDto;
+        return Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
     }
 
     /**
@@ -217,13 +210,7 @@ public class PatientBeanLocal implements PatientServiceLocal {
     }
 
     private PatientDto convertDomainToDTO(Patient bo) throws PAException {
-        PatientDto resultDto = null;
-        try {
-            resultDto = Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
-        } catch (DataFormatException e) {
-            throw new PAException("Iso conversion exception in createOrUpdate().", e);
-        }
-        return resultDto;
+        return Converters.get(PatientConverter.class).convertFromDomainToDto(bo);
     }
 
     private Patient setDomainAuditFields(PatientDto dto, Patient bo) throws PAException {
@@ -251,19 +238,14 @@ public class PatientBeanLocal implements PatientServiceLocal {
     }
 
     private Patient convertDtoToDomain(PatientDto dto) throws PAException {
-        Patient bo = null;
-        try {
-            updatePOPatientCorrelation(dto);
-            bo = Converters.get(PatientConverter.class).convertFromDtoToDomain(dto);
-            bo.setIdentifier(IiConverter.convertToString(dto.getAssignedIdentifier()));
-           //PO generated Player identifier
-            bo.setPersonIdentifier(IiConverter.convertToString(dto.getPersonIdentifier()));
-            updatePOPatientDetails(dto);
-            bo.setStatusCode(StructuralRoleStatusCode.PENDING);
-            bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
-        } catch (DataFormatException e) {
-            throw new PAException("Iso conversion exception in createOrUpdate().", e);
-        }
+        updatePOPatientCorrelation(dto);
+        Patient bo = Converters.get(PatientConverter.class).convertFromDtoToDomain(dto);
+        bo.setIdentifier(IiConverter.convertToString(dto.getAssignedIdentifier()));
+        //PO generated Player identifier
+        bo.setPersonIdentifier(IiConverter.convertToString(dto.getPersonIdentifier()));
+        updatePOPatientDetails(dto);
+        bo.setStatusCode(StructuralRoleStatusCode.PENDING);
+        bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         return bo;
     }
 

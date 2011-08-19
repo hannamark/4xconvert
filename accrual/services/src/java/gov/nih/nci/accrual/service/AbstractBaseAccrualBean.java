@@ -93,7 +93,6 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Date;
-import java.util.zip.DataFormatException;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -133,9 +132,8 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
     /**
      * @param bo domain object
      * @return DTO iso transfer object
-     * @throws DataFormatException exception
      */
-    protected DTO convertFromDomainToDto(BO bo) throws DataFormatException {
+    protected DTO convertFromDomainToDto(BO bo) {
         return Converters.get(getConverterArgument()).convertFromDomainToDto(bo);
     }
 
@@ -180,12 +178,7 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in get().", hbe);
         }
-        try {
-            resultDto = convertFromDomainToDto(bo);
-        } catch (DataFormatException e) {
-            throw new PAException("Iso conversion exception in get().", e);
-        }
-        return resultDto;
+        return convertFromDomainToDto(bo);
     }
 
     /**
@@ -259,29 +252,18 @@ public abstract class AbstractBaseAccrualBean<DTO extends BaseDTO, BO extends Ab
      *
      * @throws PAException the remote exception
      */
-    protected <DTO2 extends BaseDTO, BO2 extends AbstractEntity,
-    CONVERTER2 extends AbstractConverter<DTO2, BO2>> DTO2
-    createOrUpdateNew(DTO2 dto, AbstractConverter<DTO2, BO2> conv) throws PAException {
-        BO2 bo = null;
-        try {
-            bo = conv.convertFromDtoToDomain(dto);
-        } catch (DataFormatException e) {
-            throw new PAException("Iso conversion exception in createOrUpdateNew().", e);
-        }
-        DTO2 resultDto = null;
+    protected <DTO2 extends BaseDTO, BO2 extends AbstractEntity, CONVERTER2 extends AbstractConverter<DTO2, BO2>> DTO2
+        createOrUpdateNew(DTO2 dto, AbstractConverter<DTO2, BO2> conv) throws PAException {
+        BO2 bo = conv.convertFromDtoToDomain(dto);
         try {
             Session session = PaHibernateUtil.getCurrentSession();
             setAuditValues(bo);
             bo = (BO2) session.merge(bo);
             session.flush();
+            session.clear();
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in createOrUpdateNew().", hbe);
         }
-        try {
-            resultDto = conv.convertFromDomainToDto(bo);
-        } catch (DataFormatException e) {
-            throw new PAException("Iso conversion exception in createOrUpdateNew().", e);
-        }
-        return resultDto;
+        return conv.convertFromDomainToDto(bo);
     }
 }

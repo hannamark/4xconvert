@@ -30,9 +30,9 @@
     <property name="services.build.coberturaOutputDir" value="${services.build.dir}/generated-classes"/>
     <property name="services.test.reports" value="${services.report.dir}/test-reports"/>
     <property name="services.coverage.reports" value="${services.report.dir}/coverage-reports"/>
-    <property name="services.coverage.line" value="85"/>
+    <property name="services.coverage.line" value="86"/>
     <property name="services.coverage.branch" value="85"/>
-    <property name="services.pmd.maxerrors" value="0"/>
+    <property name="services.pmd.maxerrors" value="1"/>
 
     <property name="ivy.file" value="ivy-2.0.0.jar" />
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />

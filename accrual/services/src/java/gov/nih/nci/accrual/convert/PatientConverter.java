@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.convert;
 
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
+import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
@@ -92,8 +93,6 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.ISOUtil;
 
-import java.util.zip.DataFormatException;
-
 /**
  * @author Hugh Reinhart
  * @since Aug 28, 2009
@@ -104,12 +103,12 @@ public class PatientConverter extends AbstractConverter<PatientDto, Patient> {
      * {@inheritDoc}
      */
     @Override
-    public PatientDto convertFromDomainToDto(Patient bo) throws DataFormatException {
+    public PatientDto convertFromDomainToDto(Patient bo) {
         PatientDto dto = new PatientDto();
         if (bo.getBirthDate() != null) {
             dto.setBirthDate(AccrualUtil.yearMonthStringToTs(bo.getBirthDate().toString()));
         }
-        dto.setCountryIdentifier(IiConverter.convertToIi(bo.getCountryIdentifier()));
+        dto.setCountryIdentifier(IiConverter.convertToIi(bo.getCountry().getId()));
         dto.setEthnicCode(CdConverter.convertToCd(bo.getEthnicCode()));
         dto.setGenderCode(CdConverter.convertToCd(bo.getSexCode()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
@@ -126,10 +125,13 @@ public class PatientConverter extends AbstractConverter<PatientDto, Patient> {
      * {@inheritDoc}
      */
     @Override
-    public Patient convertFromDtoToDomain(PatientDto dto) throws DataFormatException {
+    public Patient convertFromDtoToDomain(PatientDto dto) {
         Patient bo = new Patient();
         bo.setBirthDate(AccrualUtil.yearMonthTsToTimestamp(dto.getBirthDate()));
-        bo.setCountryIdentifier(IiConverter.convertToLong(dto.getCountryIdentifier()));
+        
+        Country country = new Country();
+        country.setId(IiConverter.convertToLong(dto.getCountryIdentifier()));
+        bo.setCountry(country);
         if (!ISOUtil.isCdNull(dto.getEthnicCode())) {
             bo.setEthnicCode(PatientEthnicityCode.getByCode(dto.getEthnicCode().getCode()));
         }

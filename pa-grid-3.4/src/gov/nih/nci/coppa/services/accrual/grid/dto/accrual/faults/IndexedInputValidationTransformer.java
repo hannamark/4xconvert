@@ -85,11 +85,9 @@ package gov.nih.nci.coppa.services.accrual.grid.dto.accrual.faults;
 import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
 import gov.nih.nci.coppa.services.accrual.faults.IndexedInputValidationFault;
 import gov.nih.nci.coppa.services.grid.faults.CoppaFaultHelper;
-import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.INTTransformer;
 
 /**
  * Transformed for the IndexedInputValidationException.
@@ -119,9 +117,7 @@ public class IndexedInputValidationTransformer
             return null;
         }
         IndexedInputValidationFault xml = CoppaFaultHelper.toFault(new IndexedInputValidationFault(), input);
-        Int index = new Int();
-        index.setValue(input.getIndex());
-        xml.setIndex(INTTransformer.INSTANCE.toXml(index));
+        xml.setIndex(input.getIndex());
         return xml;
     }
 

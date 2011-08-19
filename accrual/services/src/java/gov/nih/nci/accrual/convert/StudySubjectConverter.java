@@ -102,8 +102,6 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.util.ISOUtil;
 
-import java.util.zip.DataFormatException;
-
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -115,7 +113,7 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
      * {@inheritDoc}
      */
     @Override
-    public StudySubjectDto convertFromDomainToDto(StudySubject bo) throws DataFormatException {
+    public StudySubjectDto convertFromDomainToDto(StudySubject bo) {
         StudySubjectDto dto = new StudySubjectDto();
         dto.setAssignedIdentifier(StConverter.convertToSt(bo.getAssignedIdentifier()));
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
@@ -137,7 +135,7 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
      * {@inheritDoc}
      */
     @Override
-    public StudySubject convertFromDtoToDomain(StudySubjectDto dto) throws DataFormatException {
+    public StudySubject convertFromDtoToDomain(StudySubjectDto dto) {
         StudySubject bo = new StudySubject();
         bo.setAssignedIdentifier(StConverter.convertToString(dto.getAssignedIdentifier()));
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
@@ -170,9 +168,8 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
      * Converts a StudySubject to the condensed study subject/patient dto.
      * @param bo the business object to convert
      * @return the condensed study subject/patient dto
-     * @throws DataFormatException on error
      */
-    public SubjectAccrualDTO convertFromDomainToSubjectDTO(StudySubject bo) throws DataFormatException {
+    public SubjectAccrualDTO convertFromDomainToSubjectDTO(StudySubject bo) {
         SubjectAccrualDTO dto = new SubjectAccrualDTO();
         dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
         dto.setAssignedIdentifier(StConverter.convertToSt(bo.getAssignedIdentifier()));
@@ -201,9 +198,8 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
             dto.setGender(CdConverter.convertToCd(bo.getPatient().getSexCode()));
             dto.setRace(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.class, bo.getPatient().getRaceCode()));
             dto.setEthnicity(CdConverter.convertToCd(bo.getPatient().getEthnicCode()));
-            dto.setCountryIdentifier(IiConverter.convertToIi(bo.getPatient().getCountryIdentifier()));
+            dto.setCountryCode(CdConverter.convertStringToCd(bo.getPatient().getCountry().getAlpha2()));
             dto.setZipCode(StConverter.convertToSt(bo.getPatient().getZip()));
         }
     }
-
 }

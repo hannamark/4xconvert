@@ -95,6 +95,7 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -209,23 +210,17 @@ public class PatientHelper {
         return results;
     }
 
-    private ICD9DiseaseDTO getICD9Disease(StudySubjectDto dto) {
-        ICD9DiseaseDTO icd9Disease = new ICD9DiseaseDTO();
-        try {
-            icd9Disease = action.getIcd9DiseaseSvc().get(dto.getIcd9DiseaseIdentifier());
-        } catch (PAException e) {
-            icd9Disease = null;
+    private ICD9DiseaseDTO getICD9Disease(StudySubjectDto dto) throws PAException {
+        if (ISOUtil.isIiNull(dto.getDiseaseIdentifier())) {
+            return null;
         }
-        return icd9Disease;
+        return action.getIcd9DiseaseSvc().get(dto.getIcd9DiseaseIdentifier());
     }
 
-    private SDCDiseaseDTO getSDCDisease(StudySubjectDto dto) {
-        SDCDiseaseDTO disease;
-        try {
-            disease = action.getSDCDiseaseSvc().get(dto.getDiseaseIdentifier());
-        } catch (Exception e) {
-            disease = null;
+    private SDCDiseaseDTO getSDCDisease(StudySubjectDto dto) throws PAException {
+        if (ISOUtil.isIiNull(dto.getDiseaseIdentifier())) {
+            return null;
         }
-        return disease;
+        return action.getSDCDiseaseSvc().get(dto.getDiseaseIdentifier());
     }
 }

@@ -89,7 +89,6 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -143,11 +142,7 @@ public abstract class AbstractBaseAccrualStudyBean<DTO extends BaseDTO, BO exten
         }
         List<DTO> resultList = new ArrayList<DTO>();
         for (BO bo : queryList) {
-            try {
-                resultList.add(convertFromDomainToDto(bo));
-            } catch (DataFormatException e) {
-                throw new PAException("Iso conversion exception in getByStudyProtocol().", e);
-            }
+            resultList.add(convertFromDomainToDto(bo));
         }
         LOG.debug("Leaving getByStudyProtocol, returning " + resultList.size() + " object(s).");
         return resultList;

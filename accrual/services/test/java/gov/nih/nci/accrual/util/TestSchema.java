@@ -133,6 +133,7 @@ public class TestSchema {
     public static List<SDCDisease> diseases;
     public static List<StudyProtocol> studyProtocols;
     public static List<StudySite> studySites;
+    public static List<StudySite> participatingSites;
     public static List<StudyDisease> studyDiseases;
     public static List<Patient> patients;
     public static List<StudySubject> studySubjects;
@@ -151,6 +152,7 @@ public class TestSchema {
     public static <T> void addUpdObject(T obj) {
         Session session = PaHibernateUtil.getCurrentSession();
         session.saveOrUpdate(obj);
+        session.flush();
     }
 
     /**
@@ -169,6 +171,7 @@ public class TestSchema {
         studyProtocols = new ArrayList<StudyProtocol>();
         studyOverallStatuses = new ArrayList<StudyOverallStatus>();
         studySites = new ArrayList<StudySite>();
+        participatingSites = new ArrayList<StudySite>();
         patients = new ArrayList<Patient>();
         studySubjects = new ArrayList<StudySubject>();
         performedSubjectMilestones = new ArrayList<PerformedSubjectMilestone>();
@@ -244,6 +247,13 @@ public class TestSchema {
         sp.setProprietaryTrialIndicator(false);
         addUpdObject(sp);
         studyProtocols.add(sp);
+        
+        StudySite participatingSite = new StudySite();
+        participatingSite.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        participatingSite.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        participatingSite.setStudyProtocol(sp);
+        addUpdObject(participatingSite);
+        participatingSites.add(participatingSite);
 
         sp = new StudyProtocol();
         sp.setOfficialTitle("A Phase II/III Randomized, Placebo-Controlled Double-Blind Clinical Trial of Ginger");
@@ -447,7 +457,7 @@ public class TestSchema {
         // Patient
         Patient p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("7/1/1963"));
-        p.setCountryIdentifier(countries.get(0).getId());
+        p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.HISPANIC);
         p.setIdentifier("PO PATIENT ID 01");
         p.setPersonIdentifier("1");
@@ -461,7 +471,7 @@ public class TestSchema {
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("5/10/1963"));
-        p.setCountryIdentifier(countries.get(0).getId());
+        p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
         p.setIdentifier("2");
         p.setPersonIdentifier("PO PERSON ID 02");
@@ -475,7 +485,7 @@ public class TestSchema {
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("8/11/1963"));
-        p.setCountryIdentifier(countries.get(0).getId());
+        p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
         p.setIdentifier("3");
         p.setPersonIdentifier("PO PERSON ID 03");
@@ -489,7 +499,7 @@ public class TestSchema {
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("1/3/1960"));
-        p.setCountryIdentifier(countries.get(0).getId());
+        p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.NOT_REPORTED);
         p.setIdentifier("4");
         p.setPersonIdentifier("PO PERSON ID 04");
@@ -503,7 +513,7 @@ public class TestSchema {
 
         p = new Patient();
         p.setBirthDate(PAUtil.dateStringToTimestamp("9/7/1968"));
-        p.setCountryIdentifier(countries.get(0).getId());
+        p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.UNKNOWN);
         p.setIdentifier("5");
         p.setPersonIdentifier("PO PERSON ID 05");
@@ -563,6 +573,7 @@ public class TestSchema {
         addUpdObject(ru);
 
         PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
     }
     
     public static void clearUser() {

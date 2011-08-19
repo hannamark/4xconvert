@@ -89,8 +89,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.validator.NotNull;
 
 /**
  * @author Hugh Reinhart
@@ -107,20 +111,24 @@ public class Patient extends StructuralRole {
     private PatientEthnicityCode ethnicCode;
     private Timestamp birthDate;
     private String personIdentifier;
-    private Long countryIdentifier;
+    private Country country;
     private String zip;
+
     /**
-     * @return the countryIdentifier
+     * @return the country
      */
-    @Column(name = "COUNTRY_IDENTIFIER")
-    public Long getCountryIdentifier() {
-        return countryIdentifier;
+    @ManyToOne
+    @JoinColumn(name = "COUNTRY_IDENTIFIER")
+    @NotNull
+    public Country getCountry() {
+        return country;
     }
+
     /**
-     * @param countryIdentifier the countryIdentifier to set
+     * @param country the country to set
      */
-    public void setCountryIdentifier(Long countryIdentifier) {
-        this.countryIdentifier = countryIdentifier;
+    public void setCountry(Country country) {
+        this.country = country;
     }
     /**
      * @return the zip

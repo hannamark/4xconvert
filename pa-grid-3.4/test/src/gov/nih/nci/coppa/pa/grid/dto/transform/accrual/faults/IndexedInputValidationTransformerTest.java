@@ -89,7 +89,6 @@ import gov.nih.nci.coppa.services.accrual.faults.IndexedInputValidationFault;
 import gov.nih.nci.coppa.services.accrual.grid.dto.accrual.faults.IndexedInputValidationTransformer;
 import gov.nih.nci.coppa.services.grid.faults.CoppaFaultHelper;
 import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.INTTransformer;
 
 import org.junit.Test;
 
@@ -116,6 +115,6 @@ public class IndexedInputValidationTransformerTest {
         IndexedInputValidationFault fault =
             IndexedInputValidationTransformer.INSTANCE.toXml(new IndexedInputValidationException("Validation Exception", 1));
         assertEquals("Validation Exception", fault.getDescription()[0].get_value());
-        assertEquals(1, INTTransformer.INSTANCE.toDto(fault.getIndex()).getValue().intValue());
+        assertEquals(1, fault.getIndex());
     }
 }

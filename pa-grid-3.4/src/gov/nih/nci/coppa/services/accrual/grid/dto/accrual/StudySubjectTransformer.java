@@ -124,7 +124,7 @@ implements Transformer<StudySubject, SubjectAccrualDTO> {
         result.setBirthDate(TSTransformer.INSTANCE.toDto(input.getBirthDate()));
         result.setRace(DSETCDTransformer.INSTANCE.toDto(input.getRace()));
         result.setEthnicity(CDTransformer.INSTANCE.toDto(input.getEthnicity()));
-        result.setCountryIdentifier(IITransformer.INSTANCE.toDto(input.getCountryIdentifier()));
+        result.setCountryCode(CDTransformer.INSTANCE.toDto(input.getCountryCode()));
         result.setZipCode(STTransformer.INSTANCE.toDto(input.getZipCode()));
         result.setRegistrationDate(TSTransformer.INSTANCE.toDto(input.getRegistrationDate()));
         result.setPaymentMethod(CDTransformer.INSTANCE.toDto(input.getMethodOfPayment()));
@@ -148,7 +148,7 @@ implements Transformer<StudySubject, SubjectAccrualDTO> {
         result.setBirthDate(TSTransformer.INSTANCE.toXml(input.getBirthDate()));
         result.setRace(DSETCDTransformer.INSTANCE.toXml(input.getRace()));
         result.setEthnicity(CDTransformer.INSTANCE.toXml(input.getEthnicity()));
-        result.setCountryIdentifier(IITransformer.INSTANCE.toXml(input.getCountryIdentifier()));
+        result.setCountryCode(CDTransformer.INSTANCE.toXml(input.getCountryCode()));
         result.setZipCode(STTransformer.INSTANCE.toXml(input.getZipCode()));
         result.setRegistrationDate(TSTransformer.INSTANCE.toXml(input.getRegistrationDate()));
         result.setMethodOfPayment(CDTransformer.INSTANCE.toXml(input.getPaymentMethod()));

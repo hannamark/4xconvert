@@ -84,8 +84,6 @@ import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.util.ISOUtil;
 
-import java.util.zip.DataFormatException;
-
 /**
  * @author Hugh Reinhart
  * @since Aug 13, 2009
@@ -96,15 +94,14 @@ public abstract class AbstractConverter<DTO extends BaseDTO, BO extends Abstract
     /**
      * @param dto iso dto
      * @return domain object
-     * @throws DataFormatException exception
      */
-    public abstract BO convertFromDtoToDomain(DTO dto) throws DataFormatException;
+    public abstract BO convertFromDtoToDomain(DTO dto);
+    
     /**
      * @param bo domain object
      * @return iso dto
-     * @throws DataFormatException exception
      */
-    public abstract DTO convertFromDomainToDto(BO bo) throws DataFormatException;
+    public abstract DTO convertFromDomainToDto(BO bo);
 
     /**
      * @param <T> type of object being referenced

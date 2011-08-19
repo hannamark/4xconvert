@@ -94,7 +94,6 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -119,6 +118,7 @@ public class PerformedActivityBeanLocal extends
     /**
      * {@inheritDoc}
      */
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PerformedSubjectMilestoneDto> getPerformedSubjectMilestoneByStudySubject(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
             return null;
@@ -144,12 +144,7 @@ public class PerformedActivityBeanLocal extends
         queryList = query.list();
         List<PerformedSubjectMilestoneDto> resultList = new ArrayList<PerformedSubjectMilestoneDto>();
         for (PerformedSubjectMilestone bo : queryList) {
-            try {
-                resultList.add(Converters.get(PerformedSubjectMilestoneConverter.class).convertFromDomainToDto(bo));
-            } catch (DataFormatException e) {
-                throw new PAException("Iso conversion exception in "
-                        + " getPerformedSubjectMilestoneByStudySubject().", e);
-            }
+            resultList.add(Converters.get(PerformedSubjectMilestoneConverter.class).convertFromDomainToDto(bo));
         }
         return resultList;
     }
