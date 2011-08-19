@@ -13,12 +13,12 @@
   <Content xsi:type="agg:AggregatorContent" xmlns:agg="http://mds.globus.org/aggregator/types">
     <agg:AggregatorConfig xsi:type="agg:AggregatorConfig">
       <agg:GetMultipleResourcePropertiesPollType
-			xmlns:ns1="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
+			xmlns:ns3="http://docs.oasis-open.org/wsrf/2004/06/wsrf-WS-BaseFaults-1.2-draft-01.xsd"
 			xmlns:ns27="http://enterpriseservices.nci.nih.gov/PAServices/StudyOutcomeMeasureService/types"
 			xmlns:ns40="http://enterpriseservices.nci.nih.gov/PAServices/DiseaseService/types"
-			xmlns:ns2="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+			xmlns:ns4="http://schemas.xmlsoap.org/ws/2004/03/addressing"
 			xmlns:ns31="http://enterpriseservices.nci.nih.gov/PAServices/StudyContactService/types"
-			xmlns:ns3="uri:iso.org:21090"
+			xmlns:ns1="uri:iso.org:21090"
 			xmlns:ns17="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.service"
 			xmlns:ns13="http://enterpriseservices.nci.nih.gov/PAServices/ArmService/types"
 			xmlns:ns20="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteAccrualStatusService/types"
@@ -27,7 +27,7 @@
 			xmlns:ns8="http://pa.services.coppa.nci.nih.gov/StudySiteParticipationService/types/View"
 			xmlns:ns30="http://enterpriseservices.nci.nih.gov/PAServices/StudyDiseaseService/types"
 			xmlns:ns10="http://po.coppa.nci.nih.gov"
-			xmlns:ns4="http://accrual.services.coppa.nci.nih.gov"
+			xmlns:ns0="http://accrual.services.coppa.nci.nih.gov"
 			xmlns:ns33="http://enterpriseservices.nci.nih.gov/PAServices/DocumentWorkflowStatusService/types"
 			xmlns:ns36="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteService/types"
 			xmlns:ns32="http://enterpriseservices.nci.nih.gov/PAServices/PlannedActivityService/types"
@@ -48,7 +48,7 @@
 			xmlns:ns41="http://enterpriseservices.nci.nih.gov/PAServices/InterventionService/types"
 			xmlns:ns16="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata"
 			xmlns:ns18="gme://caGrid.caBIG/1.0/gov.nih.nci.cagrid.metadata.common"
-			xmlns:ns0="http://faults.accrual.services.coppa.nci.nih.gov"
+			xmlns:ns2="http://faults.accrual.services.coppa.nci.nih.gov"
 			xmlns:ns37="http://enterpriseservices.nci.nih.gov/PAServices/StudySiteParticipationService/types"
 			xmlns:ns23="http://enterpriseservices.nci.nih.gov/PAServices/StudyRecruitmentStatusService/types"
 			xmlns:ns19="http://enterpriseservices.nci.nih.gov/PAServices/StudyProtocolService/types"

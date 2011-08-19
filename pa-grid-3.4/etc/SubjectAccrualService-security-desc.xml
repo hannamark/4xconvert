@@ -6,8 +6,15 @@
     </auth-method>
   </method>
   <auth-method>
-    <none />
+    <GSITransport>
+      <protection-level>
+        <privacy />
+      </protection-level>
+    </GSITransport>
   </auth-method>
+  <run-as>
+    <system-identity />
+  </run-as>
   <authz value="none" />
 </securityConfig>
 

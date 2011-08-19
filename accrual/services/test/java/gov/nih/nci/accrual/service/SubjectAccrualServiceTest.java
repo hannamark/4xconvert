@@ -169,7 +169,7 @@ public class SubjectAccrualServiceTest extends AbstractServiceTest<SubjectAccrua
         bean.setCountryService(new CountryBean());
         
         StudySiteServiceRemote studySiteSvc = mock(StudySiteServiceRemote.class);
-        when(studySiteSvc.get(any(Ii.class))).thenReturn(Converters.get(StudySiteConverter.class).convertFromDomainToDto(TestSchema.studySites.get(0)));        
+        when(studySiteSvc.get(any(Ii.class))).thenReturn(Converters.get(StudySiteConverter.class).convertFromDomainToDto(TestSchema.participatingSites.get(0)));        
                 
         final SDCDiseaseDTO disease = new SDCDiseaseDTO();
         disease.setIdentifier(IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));

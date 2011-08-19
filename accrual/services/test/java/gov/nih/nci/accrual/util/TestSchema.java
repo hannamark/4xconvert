@@ -252,6 +252,7 @@ public class TestSchema {
         participatingSite.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         participatingSite.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
         participatingSite.setStudyProtocol(sp);
+        participatingSite.setHealthCareFacility(hcf);
         addUpdObject(participatingSite);
         participatingSites.add(participatingSite);
 

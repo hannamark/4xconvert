@@ -119,8 +119,13 @@ public class SubjectAccrualServiceClient extends SubjectAccrualServiceClientBase
 
 	    StudySubject[] studySubjects = {subject};
 
-
 	    StudySubject[] results = client.manageSubjectAccruals(studySubjects);
+        ClientUtils.print(results);
+
+	    subject = results[0];
+	    subject.setAssignedIdentifier(ISOUtils.buildST("Grid-Subject-1-Edit"));
+	    studySubjects = new StudySubject[] {subject};
+	    client.manageSubjectAccruals(studySubjects);
 	    ClientUtils.print(results);
 	}
 

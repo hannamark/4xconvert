@@ -97,6 +97,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
@@ -122,6 +123,8 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 
 /**
  * Implementation of the subject accrual service.
@@ -193,7 +196,9 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         StudySiteDTO participatingSite = 
             PaServiceLocator.getInstance().getStudySiteService().get(dto.getParticipatingSiteIdentifier());
 
-        PatientDto patient = getPatientService().create(populatePatientDTO(dto, new PatientDto()));
+        PatientDto patient = populatePatientDTO(dto, new PatientDto());
+        patient.setOrganizationIdentifier(getOrganizationIi(participatingSite.getHealthcareFacilityIi()));
+        patient = getPatientService().create(patient);
         StudySubjectDto studySubject = populateStudySubjectDTO(dto, new StudySubjectDto());
         studySubject.setStudyProtocolIdentifier(participatingSite.getStudyProtocolIdentifier());
         studySubject.setPatientIdentifier(patient.getIdentifier());
@@ -288,7 +293,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         StudySubjectDto studySubject = getStudySubjectService().get(dto.getIdentifier());
         studySubject = getStudySubjectService().update(populateStudySubjectDTO(dto, studySubject));
         PatientDto patient = getPatientService().get(studySubject.getPatientIdentifier());
-        patient.setOrganizationIdentifier(participatingSite.getHealthcareFacilityIi());
+        patient.setOrganizationIdentifier(getOrganizationIi(participatingSite.getHealthcareFacilityIi()));
         patient = getPatientService().update(populatePatientDTO(dto, patient));
         PerformedSubjectMilestoneDto psm =
             getPerformedActivityService().getPerformedSubjectMilestoneByStudySubject(
@@ -319,6 +324,13 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         studySubjectDTO.setStudySiteIdentifier(dto.getParticipatingSiteIdentifier());
         studySubjectDTO.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
         return studySubjectDTO;
+    }
+    
+    private Ii getOrganizationIi(Ii hcfIi) {
+        Criteria crit = PaHibernateUtil.getCurrentSession().createCriteria(HealthCareFacility.class);
+        crit.add(Restrictions.eq("identifier", hcfIi.getExtension()));
+        HealthCareFacility hcf = (HealthCareFacility) crit.uniqueResult();
+        return IiConverter.convertToPoOrganizationIi(hcf.getOrganization().getIdentifier());
     }
     
     /**
