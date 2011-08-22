@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.accrual.service;
 
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -93,6 +94,7 @@ import gov.nih.nci.accrual.dto.util.POPatientDTO;
 import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
 import gov.nih.nci.accrual.service.util.CountryBean;
 import gov.nih.nci.accrual.service.util.POPatientService;
+import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.MockPoServiceLocator;
@@ -102,10 +104,16 @@ import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
@@ -120,12 +128,17 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
+import gov.nih.nci.pa.service.StudySiteService;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -144,10 +157,19 @@ public class SubjectAccrualServiceTest extends AbstractServiceTest<SubjectAccrua
     private SubjectAccrualBeanLocal bean;
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+    public SubjectAccrualBeanLocal beanLocal;
+    public SubjectAccrualCountService accCountSvc;
+    public StudySiteService studySiteSvc;
     
     @Override
     @Before
     public void instantiateServiceBean() throws Exception {
+      
+        ServiceLocatorPaInterface paSvcLocator = mock(ServiceLocatorPaInterface.class);
+        RegistryUserServiceRemote regSvc = mock(RegistryUserServiceRemote.class);
+        when(regSvc.getUser(any(String.class))).thenReturn(TestSchema.registryUsers.get(0));
+        when(paSvcLocator.getRegistryUserService()).thenReturn(regSvc);
+      
         POPatientService poPatientSvc = mock(POPatientService.class);
         POPatientDTO patientDTO = new POPatientDTO();
         patientDTO.setIdentifier(IiConverter.convertToIi(1L));
@@ -163,6 +185,11 @@ public class SubjectAccrualServiceTest extends AbstractServiceTest<SubjectAccrua
         PerformedActivityBean performedActivitySvc = new PerformedActivityBean();
         
         bean = new SubjectAccrualServiceBean();
+        beanLocal = new SubjectAccrualBeanLocal();
+        accCountSvc = mock(SubjectAccrualCountService.class);
+        beanLocal.setSubjectAccrualCountSvc(accCountSvc);
+        studySiteSvc = mock(StudySiteService.class);
+        beanLocal.setStudySiteSvc(studySiteSvc);
         bean.setPatientService(patientService);
         bean.setStudySubjectService(new StudySubjectBean());
         bean.setPerformedActivityService(performedActivitySvc);
@@ -187,7 +214,7 @@ public class SubjectAccrualServiceTest extends AbstractServiceTest<SubjectAccrua
         
         ICD9DiseaseServiceRemote icd9DiseaseSvc = mock(ICD9DiseaseServiceRemote.class);
         
-        ServiceLocatorPaInterface paSvcLocator = mock(ServiceLocatorPaInterface.class);
+        
         when(paSvcLocator.getDiseaseService()).thenReturn(diseaseSvc);
         when(paSvcLocator.getICD9DiseaseService()).thenReturn(icd9DiseaseSvc);
         when(paSvcLocator.getStudySiteService()).thenReturn(studySiteSvc);
@@ -197,6 +224,7 @@ public class SubjectAccrualServiceTest extends AbstractServiceTest<SubjectAccrua
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
         AccrualServiceLocator.getInstance().setServiceLocator(accSvcLocator);
         PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
+
     }
 
     @Test
@@ -269,14 +297,65 @@ public class SubjectAccrualServiceTest extends AbstractServiceTest<SubjectAccrua
         bean.deleteSubjectAccrual(IiConverter.convertToIi(1L));
     }
     
+    private StudySite createAccessibleStudySite() {
+        StudySite ss = new StudySite();
+        ss.setLocalStudyProtocolIdentifier("my treating site");
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        ss.setStudyProtocol(TestSchema.studyProtocols.get(0));
+        TestSchema.addUpdObject(ss);
+        StudySiteAccrualAccess ssAccAccess = new StudySiteAccrualAccess();
+        ssAccAccess.setStudySite(ss);
+        ssAccAccess.setRegistryUser(TestSchema.registryUsers.get(0));
+        ssAccAccess.setStatusCode(ActiveInactiveCode.ACTIVE);
+        ssAccAccess.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        TestSchema.addUpdObject(ssAccAccess);
+        return ss;
+    }
+  
     @Test
-    public void updateSubjectAccrualCount() throws Exception {
-        thrown.expect(PAException.class);
-        thrown.expectMessage("Method not yet implemented.");
-        
-        bean.updateSubjectAccrualCount(IiConverter.convertToIi(1L), IntConverter.convertToInt(100));
+    public void updateSubjectAccrualCountWoutExistingCount() throws Exception {
+        StudySite ss = createAccessibleStudySite(); 
+        when(studySiteSvc.get(any(Ii.class))).thenReturn(new StudySiteConverter().convertFromDomainToDto(ss));
+        beanLocal.updateSubjectAccrualCount(IiConverter.convertToIi(ss.getId()), IntConverter.convertToInt(100));
     }
     
+    @Test 
+    public void updateSubjectAccrualIiFailureNull() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Study Site Ii must be valid.");
+        bean.updateSubjectAccrualCount(null, IntConverter.convertToInt(100));
+    }
+    
+    @Test 
+    public void updateSubjectAccrualIiFailureNone() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Study Site Ii must be valid.");
+        bean.updateSubjectAccrualCount(new Ii(), IntConverter.convertToInt(100));
+    }
+   
+    @Test 
+    public void updateSubjectAccrualUserAuthFailure() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("User does not have accrual access to site.");
+        bean.updateSubjectAccrualCount(IiConverter.convertToIi(1L), IntConverter.convertToInt(100));
+    }
+
+    @Test
+    public void updateSubjectAccrualCountWithExistingCount() throws Exception {
+        StudySite ss = createAccessibleStudySite(); 
+        when(studySiteSvc.get(any(Ii.class))).thenReturn(new StudySiteConverter().convertFromDomainToDto(ss));
+        StudySiteSubjectAccrualCount count = new StudySiteSubjectAccrualCount();
+        count.setSite(ss);
+        count.setStudyProtocol(TestSchema.studyProtocols.get(0));
+        count.setAccrualCount(new Integer(50));
+        TestSchema.addUpdObject(count);
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+        beanLocal.updateSubjectAccrualCount(IiConverter.convertToIi(ss.getId()), IntConverter.convertToInt(100));
+       
+    }
+   
     @Test
     public void submitBatchData() throws Exception {
         thrown.expect(PAException.class);

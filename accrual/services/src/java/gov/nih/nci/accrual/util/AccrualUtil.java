@@ -78,13 +78,26 @@
 */
 package gov.nih.nci.accrual.util;
 
+import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+
+import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
  *
@@ -204,5 +217,31 @@ public class AccrualUtil {
      */
     public static Timestamp yearMonthStringToTimestamp(String dateString) {
         return new Timestamp(yearMonthStringToDate(dateString).getTime());
+    }
+    
+    /**
+     * Checks that user has accrual access to site with id provided.
+     * @param studySiteIi site ii
+     * @return boolean
+     * @throws PAException on error.
+     */
+    public static boolean isUserAllowedAccrualAccess(Ii studySiteIi)
+        throws PAException {
+        User user = AccrualCsmUtil.getInstance().getCSMUser(UsernameHolder.getUser());
+
+        RegistryUser regUser = PaServiceLocator.getInstance()
+            .getRegistryUserService().getUser(user.getLoginName());
+       
+        Integer result = 
+            (Integer) PaHibernateUtil.getCurrentSession().createCriteria(StudySiteAccrualAccess.class)
+            .add(Restrictions.eq("studySite.id", Long.parseLong(studySiteIi.getExtension())))
+            .add(Restrictions.eq("registryUser", regUser))
+            .add(Restrictions.eq("statusCode", ActiveInactiveCode.ACTIVE))
+            .setProjection(Projections.rowCount()).uniqueResult();            
+                
+        if (result == null || result.intValue() == 0) {           
+            return false;
+        }
+        return true;
     }
 }

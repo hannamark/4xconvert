@@ -146,7 +146,8 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
 
     @Test
     public void testGetCounts() throws PAException {
-        List<StudySiteSubjectAccrualCount> accrualCounts = bean.getCounts(IiConverter.convertToIi(TestSchema.studyProtocols.get(0).getId()));
+        List<StudySiteSubjectAccrualCount> accrualCounts = bean.getCounts(IiConverter.convertToIi(TestSchema
+                .studyProtocols.get(0).getId()));
         assertEquals(1, accrualCounts.size());
         for (StudySiteSubjectAccrualCount accrualCount : accrualCounts) {
             if (accrualCount.getSite().getId().equals(TestSchema.studySites.get(1).getId())) {
@@ -155,6 +156,21 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
                 assertNull(accrualCount.getAccrualCount());
             }
         }
+    }
+    
+    @Test
+    public void testGetCountByStudySite() throws PAException {
+        StudySiteSubjectAccrualCount accrualCount = 
+                bean.getCountByStudySiteId(IiConverter.convertToIi(TestSchema.studySites.get(1).getId()));
+        assertNotNull(accrualCount);
+        assertEquals((Integer) 10, accrualCount.getAccrualCount());
+    }
+    
+    @Test
+    public void testGetNoCountByStudySite() throws PAException {
+        StudySiteSubjectAccrualCount accrualCount = 
+                bean.getCountByStudySiteId(IiConverter.convertToIi(TestSchema.studySites.get(0).getId()));
+        assertNull(accrualCount);
     }
 
     @Test

@@ -80,143 +80,84 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.service.util;
+package gov.nih.nci.accrual.util;
 
-import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
-import gov.nih.nci.accrual.util.PaServiceLocator;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.RegistryUser;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
+import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.pa.domain.StudySite;
-import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
-import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
-import java.util.ArrayList;
+import java.sql.Timestamp;
 import java.util.Date;
-import java.util.List;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
-
+import org.junit.Before;
+import org.junit.Test;
 /**
- * @author moweis
+ * @author mshestopalov
  *
  */
-@Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class SubjectAccrualCountBean implements SubjectAccrualCountService {
+public class AccrualUtilTest extends AbstractAccrualHibernateTestCase {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<StudySiteSubjectAccrualCount> getCounts(Ii studyProtocolIi) throws PAException {
-        Long studyProtocolId = IiConverter.convertToLong(studyProtocolIi);
-        RegistryUser user = PaServiceLocator.getInstance().getRegistryUserService().getUser(
-                CaseSensitiveUsernameHolder.getUser());
-        try {
-            String hql = "from StudySite ss left join ss.accrualCount join ss.studySiteAccrualAccess ssas " 
-                + "where ss.studyProtocol.id = :studyProtocolId " 
-                + "and ss.functionalCode = :functionalCode "
-                + "and ssas.registryUser.id = :registerUserId";
-            Query query = PaHibernateUtil.getCurrentSession().createQuery(hql);
-            query.setParameter("studyProtocolId", studyProtocolId);
-            query.setParameter("functionalCode", StudySiteFunctionalCode.TREATING_SITE);
-            query.setParameter("registerUserId", user.getId());
-
-            List<Object[]> queryResults = query.list(); 
-            return getCountsForSites(queryResults);
-            
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in getByStudyProtocol().", hbe);
-        }
-    }
-
-    private List<StudySiteSubjectAccrualCount> getCountsForSites(List<Object[]> queryResults) {
-        List<StudySiteSubjectAccrualCount> resultList = new ArrayList<StudySiteSubjectAccrualCount>();
-        for (Object[] result : queryResults) {
-            StudySiteSubjectAccrualCount accrualCount = (StudySiteSubjectAccrualCount) result[1]; 
-            if (accrualCount == null) {
-                accrualCount = new StudySiteSubjectAccrualCount();
-                StudySite ss = (StudySite) result[0];
-                accrualCount.setSite(ss);
-                accrualCount.setStudyProtocol(ss.getStudyProtocol());
-            }
-            resultList.add(accrualCount);
-        }
-
-        return resultList;
+    @Before
+    public void setup() throws PAException {
+        TestSchema.primeData();
+        AccrualCsmUtil.setCsmUtil(new MockCsmUtil());
+        ServiceLocatorPaInterface svcLocal = mock(ServiceLocatorPaInterface.class);
+        RegistryUserServiceRemote regSvc = mock(RegistryUserServiceRemote.class);
+        when(regSvc.getUser(any(String.class))).thenReturn(TestSchema.registryUsers.get(0));
+        when(svcLocal.getRegistryUserService()).thenReturn(regSvc);
+        PaServiceLocator.getInstance().setServiceLocator(svcLocal);
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StudySiteSubjectAccrualCount getCountByStudySiteId(Ii studySiteIi) {    
-            return (StudySiteSubjectAccrualCount) PaHibernateUtil.getCurrentSession()
-                .createCriteria(StudySiteSubjectAccrualCount.class)
-                .add(Restrictions.eq("site.id", IiConverter.convertToLong(studySiteIi)))
-                .uniqueResult();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void save(List<StudySiteSubjectAccrualCount> counts) throws PAException {
-        assertAccrualAccess(counts);
-        for (StudySiteSubjectAccrualCount count : counts) {
-            if (count.getAccrualCount() != null) {
-                saveAccrualCount(count);
-            }
-        }
-    }
-
-    private void saveAccrualCount(StudySiteSubjectAccrualCount newCount) {
-        StudySiteSubjectAccrualCount countToSave = newCount; 
-        if (newCount.getId() != null) {
-            countToSave = (StudySiteSubjectAccrualCount) PaHibernateUtil.getCurrentSession().load(
-                    StudySiteSubjectAccrualCount.class, newCount.getId());
-            countToSave.setAccrualCount(newCount.getAccrualCount());
-        }
-        countToSave.setDateLastUpdated(new Date());
-        PaHibernateUtil.getCurrentSession().saveOrUpdate(countToSave);
-    }
-
-    private void assertAccrualAccess(List<StudySiteSubjectAccrualCount> counts) throws PAException {
-        for (StudySiteSubjectAccrualCount count : counts) {
-            if (count.getAccrualCount() != null) {
-                assertAccrualAccess(count.getSite());
-            }
-        }
-    }
-
-    private void assertAccrualAccess(StudySite site) throws PAException {
-        RegistryUser user = PaServiceLocator.getInstance().getRegistryUserService()
-                .getUser(CaseSensitiveUsernameHolder.getUser());
-        try {
-            String hql = "from StudySite ss join ss.studySiteAccrualAccess ssas where ss.id = :studySiteId"
-                    + " and ssas.registryUser.id = :registerUserId";
-            Query query = PaHibernateUtil.getCurrentSession().createQuery(hql);
-            query.setParameter("studySiteId", site.getId());
-            query.setParameter("registerUserId", user.getId());
-            if (query.uniqueResult() == null) {
-                throw new PAException("User (" + user.getId() + ") doesn't have accrual access to site ("
-                        + site.getId() + ")");
-            }
-        } catch (HibernateException e) {
-            throw new PAException("Hibernate exception in getByStudyProtocol().", e);
-        }
+    @Test
+    public void testAccrualAccessCheck() throws PAException {
+        // doesn't find access due to status
+        StudySiteAccrualAccess bo = new StudySiteAccrualAccess();
+        bo.setRegistryUser(TestSchema.registryUsers.get(0));
+        bo.setStudySite(TestSchema.studySites.get(0));
+        bo.setStatusCode(ActiveInactiveCode.INACTIVE);
+        bo.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        TestSchema.addUpdObject(bo);
+        assertFalse(AccrualUtil.isUserAllowedAccrualAccess(
+                IiConverter.convertToIi(TestSchema.studySites.get(0).getId())));
+       
+        
+        // finds access
+        bo.setStatusCode(ActiveInactiveCode.ACTIVE);       
+        TestSchema.addUpdObject(bo);
+        assertTrue(AccrualUtil.isUserAllowedAccrualAccess(
+                IiConverter.convertToIi(TestSchema.studySites.get(0).getId())));
+      
+        // doesn't find access due to site id
+        bo.setStatusCode(ActiveInactiveCode.INACTIVE);       
+        TestSchema.addUpdObject(bo);
+        
+        StudySite ss = new StudySite();
+        ss.setLocalStudyProtocolIdentifier("T1 Local SP 001");
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        ss.setStudyProtocol(TestSchema.studyProtocols.get(0));
+        TestSchema.addUpdObject(ss);
+        StudySiteAccrualAccess bo2 = new StudySiteAccrualAccess();
+        bo2.setRegistryUser(TestSchema.registryUsers.get(0));
+        bo2.setStudySite(ss);
+        bo2.setStatusCode(ActiveInactiveCode.ACTIVE);
+        bo2.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        TestSchema.addUpdObject(bo2);
+        
+        assertFalse(AccrualUtil.isUserAllowedAccrualAccess(
+                IiConverter.convertToIi(TestSchema.studySites.get(0).getId())));
+        
     }
 }

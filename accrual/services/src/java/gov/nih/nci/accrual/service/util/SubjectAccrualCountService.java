@@ -111,4 +111,11 @@ public interface SubjectAccrualCountService {
      * @throws PAException exception thrown if error
      */
     void save(List<StudySiteSubjectAccrualCount> counts) throws PAException;
+    
+    /**
+     * Return the subject accrual counts for site by site id.
+     * @param studySiteIi site id.
+     * @return accrual count
+     */
+    StudySiteSubjectAccrualCount getCountByStudySiteId(Ii studySiteIi);
 }

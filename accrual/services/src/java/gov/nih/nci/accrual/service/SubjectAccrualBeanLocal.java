@@ -90,6 +90,8 @@ import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
 import gov.nih.nci.accrual.service.util.CountryService;
+import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ed;
@@ -98,16 +100,20 @@ import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.HealthCareFacility;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.iso.convert.StudySiteConverter;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudySiteService;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -148,6 +154,12 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private static final String REQUIRED_MSG = "%s is a required field.\n";
     private static final String INVALID_VALUE = "%s is not a valid value for %s.\n";
 
+    @EJB
+    private SubjectAccrualCountService subjectAccrualCountSvc;
+    
+    @EJB
+    private StudySiteService studySiteSvc;
+    
     /**
      * {@inheritDoc}
      */
@@ -344,7 +356,26 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      * {@inheritDoc}
      */
     public void updateSubjectAccrualCount(Ii participatingSiteIi, Int count) throws PAException {
-        throw new PAException(UNIMPLEMENTED_MSG);
+        if (ISOUtil.isIiNull(participatingSiteIi)) {
+            throw new PAException("Study Site Ii must be valid.");
+        }
+        if (!AccrualUtil.isUserAllowedAccrualAccess(participatingSiteIi)) {
+            throw new PAException("User does not have accrual access to site.");
+        }
+        
+        StudySiteSubjectAccrualCount ssAccCount = getSubjectAccrualCountSvc()
+            .getCountByStudySiteId(participatingSiteIi);
+        if (ssAccCount == null) {
+            StudySiteDTO ssDto = getStudySiteSvc().get(participatingSiteIi);
+            StudySite ss = new StudySiteConverter().convertFromDtoToDomain(ssDto);
+            ssAccCount = new StudySiteSubjectAccrualCount();
+            ssAccCount.setSite(ss);
+            ssAccCount.setStudyProtocol(ss.getStudyProtocol());
+        }
+        ssAccCount.setAccrualCount(count.getValue());
+        List<StudySiteSubjectAccrualCount> counts = new ArrayList<StudySiteSubjectAccrualCount>();
+        counts.add(ssAccCount);
+        getSubjectAccrualCountSvc().save(counts);
     }
 
     /**
@@ -361,6 +392,35 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             Ts endDate, LimitOffset pagingParams) throws PAException {
         throw new PAException(UNIMPLEMENTED_MSG);
     }
+
+    /**
+     * @param subjectAccrualCountSvc the subjectAccrualCountSvc to set
+     */
+    public void setSubjectAccrualCountSvc(SubjectAccrualCountService subjectAccrualCountSvc) {
+        this.subjectAccrualCountSvc = subjectAccrualCountSvc;
+    }
+
+    /**
+     * @return the subjectAccrualCountSvc
+     */
+    public SubjectAccrualCountService getSubjectAccrualCountSvc() {
+        return subjectAccrualCountSvc;
+    }
+
+    /**
+     * @param studySiteSvc the studySiteSvc to set
+     */
+    public void setStudySiteSvc(StudySiteService studySiteSvc) {
+        this.studySiteSvc = studySiteSvc;
+    }
+
+    /**
+     * @return the studySiteSvc
+     */
+    public StudySiteService getStudySiteSvc() {
+        return studySiteSvc;
+    }
+
 
     /**
      * @return the patientService
@@ -417,4 +477,5 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     public void setCountryService(CountryService countryService) {
         this.countryService = countryService;
     }
+
 }
