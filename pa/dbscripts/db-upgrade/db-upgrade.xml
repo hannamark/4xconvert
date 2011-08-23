@@ -734,4 +734,8 @@
         <comment>Modifies the patient class to reference the actual country instead of just the identifier.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3929.sql"/>
      </changeSet>
+     <changeSet id="PO-3995" author="aevansel">
+        <comment>Add class for batch file storage to the model.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3995.sql"/>
+     </changeSet>
 </databaseChangeLog>

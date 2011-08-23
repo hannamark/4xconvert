@@ -82,8 +82,8 @@
  */
 package gov.nih.nci.accrual.accweb.action;
 
-import gov.nih.nci.accrual.service.util.BatchImportResults;
-import gov.nih.nci.accrual.service.util.BatchValidationResults;
+import gov.nih.nci.accrual.service.batch.BatchImportResults;
+import gov.nih.nci.accrual.service.batch.BatchValidationResults;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 

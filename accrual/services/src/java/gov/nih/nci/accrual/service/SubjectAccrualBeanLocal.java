@@ -113,7 +113,6 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudySiteService;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -156,9 +155,6 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
 
     @EJB
     private SubjectAccrualCountService subjectAccrualCountSvc;
-    
-    @EJB
-    private StudySiteService studySiteSvc;
     
     /**
      * {@inheritDoc}
@@ -366,7 +362,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         StudySiteSubjectAccrualCount ssAccCount = getSubjectAccrualCountSvc()
             .getCountByStudySiteId(participatingSiteIi);
         if (ssAccCount == null) {
-            StudySiteDTO ssDto = getStudySiteSvc().get(participatingSiteIi);
+            StudySiteDTO ssDto = PaServiceLocator.getInstance().getStudySiteService().get(participatingSiteIi);
             StudySite ss = new StudySiteConverter().convertFromDtoToDomain(ssDto);
             ssAccCount = new StudySiteSubjectAccrualCount();
             ssAccCount.setStudySite(ss);
@@ -406,21 +402,6 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     public SubjectAccrualCountService getSubjectAccrualCountSvc() {
         return subjectAccrualCountSvc;
     }
-
-    /**
-     * @param studySiteSvc the studySiteSvc to set
-     */
-    public void setStudySiteSvc(StudySiteService studySiteSvc) {
-        this.studySiteSvc = studySiteSvc;
-    }
-
-    /**
-     * @return the studySiteSvc
-     */
-    public StudySiteService getStudySiteSvc() {
-        return studySiteSvc;
-    }
-
 
     /**
      * @return the patientService

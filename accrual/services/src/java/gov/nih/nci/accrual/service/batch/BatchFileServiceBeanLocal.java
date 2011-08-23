@@ -80,75 +80,92 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.service.util;
+package gov.nih.nci.accrual.service.batch;
 
-import java.util.ArrayList;
+import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
+import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
+import gov.nih.nci.pa.domain.BatchFile;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
+
+import java.util.Date;
 import java.util.List;
 
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.criterion.Restrictions;
+
 /**
- * Bean for holding the results of batch file validation.
- * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class BatchValidationResults {
-    private StringBuilder errors;
-    private boolean passedValidation = false;
-    private List<String[]> validatedLines = new ArrayList<String[]>();
-    private String fileName;
+@Stateless
+@Interceptors(PaHibernateSessionInterceptor.class)
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
+public class BatchFileServiceBeanLocal implements BatchFileService {
     
     /**
-     * @return the errors
+     * {@inheritDoc}
      */
-    public StringBuilder getErrors() {
-        return errors;
-    }
-    
-    /**
-     * @param errors the errors to set
-     */
-    public void setErrors(StringBuilder errors) {
-        this.errors = errors;
-    }
-    
-    /**
-     * @return the validatedLines
-     */
-    public List<String[]> getValidatedLines() {
-        return validatedLines;
+    public void save(BatchFile batchFile) throws PAException {
+        if (batchFile.getId() != null) {
+            throw new PAException("Please call update() with existing batch file objects.");
+        }
+        batchFile.setDateLastCreated(new Date());
+        batchFile.setUserLastCreated(AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
+        try {
+            PaHibernateUtil.getCurrentSession().save(batchFile);
+        } catch (HibernateException hbe) {
+            throw new PAException("Error while saving batch file.", hbe);
+        }
+        
     }
     
     /**
-     * @param validatedLines the validatedLines to set
+     * {@inheritDoc}
      */
-    public void setValidatedLines(List<String[]> validatedLines) {
-        this.validatedLines = validatedLines;
+    public void update(BatchFile batchFile) throws PAException {
+        if (batchFile.getId() == null) {
+            throw new PAException("Please call save() with new batch file objects.");
+        }
+        batchFile.setDateLastUpdated(new Date());
+        batchFile.setUserLastUpdated(AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser()));
+        try {
+            PaHibernateUtil.getCurrentSession().update(batchFile);
+        } catch (HibernateException hbe) {
+            throw new PAException("Error while saving batch file.", hbe);
+        }
     }
-
+    
     /**
-     * @return the passedValidation
+     * {@inheritDoc}
      */
-    public boolean isPassedValidation() {
-        return passedValidation;
+    public BatchFile getById(Long id) throws PAException {
+        try {
+            return (BatchFile) PaHibernateUtil.getCurrentSession().get(BatchFile.class, id);
+        } catch (HibernateException hbe) {
+            throw new PAException("Error retrieving batch file with the identifier " + id, hbe);
+        }
     }
-
+    
     /**
-     * @param passedValidation the passedValidation to set
+     * {@inheritDoc}
      */
-    public void setPassedValidation(boolean passedValidation) {
-        this.passedValidation = passedValidation;
-    }
-
-    /**
-     * @return the fileName
-     */
-    public String getFileName() {
-        return fileName;
-    }
-
-    /**
-     * @param fileName the fileName to set
-     */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    @SuppressWarnings("unchecked")
+    public List<BatchFile> getBatchFilesAvailableForProcessing() throws PAException {
+        Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(BatchFile.class);
+        criteria.add(Restrictions.eq("passedValidation", Boolean.TRUE));
+        criteria.add(Restrictions.eq("processed", Boolean.FALSE));
+        
+        try {
+            return criteria.list();
+        } catch (HibernateException hbe) {
+            throw new PAException("Error while retrieving available batch files.", hbe);
+        }
     }
 }

@@ -80,29 +80,62 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.service.util;
+package gov.nih.nci.accrual.service.batch;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Bean for holding results of batch import.
+ * Bean for holding the results of batch file validation.
  * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class BatchImportResults {
-    private int totalImports = 0;
+public class BatchValidationResults {
+    private StringBuilder errors;
+    private boolean passedValidation = false;
+    private List<String[]> validatedLines = new ArrayList<String[]>();
     private String fileName;
-
+    
     /**
-     * @return the totalImports
+     * @return the errors
      */
-    public int getTotalImports() {
-        return totalImports;
+    public StringBuilder getErrors() {
+        return errors;
+    }
+    
+    /**
+     * @param errors the errors to set
+     */
+    public void setErrors(StringBuilder errors) {
+        this.errors = errors;
+    }
+    
+    /**
+     * @return the validatedLines
+     */
+    public List<String[]> getValidatedLines() {
+        return validatedLines;
+    }
+    
+    /**
+     * @param validatedLines the validatedLines to set
+     */
+    public void setValidatedLines(List<String[]> validatedLines) {
+        this.validatedLines = validatedLines;
     }
 
     /**
-     * @param totalImports the totalImports to set
+     * @return the passedValidation
      */
-    public void setTotalImports(int totalImports) {
-        this.totalImports = totalImports;
+    public boolean isPassedValidation() {
+        return passedValidation;
+    }
+
+    /**
+     * @param passedValidation the passedValidation to set
+     */
+    public void setPassedValidation(boolean passedValidation) {
+        this.passedValidation = passedValidation;
     }
 
     /**
@@ -118,5 +151,4 @@ public class BatchImportResults {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
-
 }

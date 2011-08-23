@@ -80,101 +80,139 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.service.util;
+package gov.nih.nci.accrual.service.batch;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.FileReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.lang.time.FastDateFormat;
-import org.junit.Before;
-import org.junit.Test;
-
-import au.com.bytecode.opencsv.CSVReader;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
- * Tests for batch upload utils.
+ * Utility methods for converting batch uploads into data objects.
  * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class BatchUploadUtilsTest {
-    private List<String[]> batchFile = new ArrayList<String[]>();
-    private List<String[]> someFile = new ArrayList<String[]>();
-    
-    @Before
-    public void setUp() throws Exception {
-        File abbreviatedBatchFile = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
-        batchFile = new CSVReader(new FileReader(abbreviatedBatchFile)).readAll();
-        String[] someStrings = {"1", "2", "3", "4"};
-        someFile.add(someStrings);
+public class BatchUploadUtils {
+    private static final Logger LOG = Logger.getLogger(BatchUploadUtils.class);
+    private static final String DOB_DATE_FORMAT = "yyyyMM";
+    private static final String FULL_DATE_FORMAT = "yyyyMMdd";
+    /**
+     * Index of a patients race code from the PATIENT_RACE line.
+     */
+    private static final int RACE_INDEX = 3;
+    /**
+     * The index of the identifier of a line (i.e it's type: PATIENT, ACCRUAL_COUNT, COLLECTION, etc.).
+     */
+    private static final int LINE_IDENTIFIER_INDEX = 0;
+    /**
+     * The total number accruals from an ACCRUAL_COUNT line.
+     */
+    private static final int  ACCRUAL_COUNT_INDEX = 2;
+    /**
+     * The unique identifier of a patient on a PATIENT_RACE line.
+     */
+    private static final int PATIENT_ID_INDEX = 2;
+   
+    /**
+     * Returns the patient date of birth from the given dob string.
+     * @param dob the dob string in year/month format
+     * @return the parsed date or null if the date is unparseable
+     */
+    public static Date getPatientDOB(String dob) {
+        return formatDate(dob, DOB_DATE_FORMAT);
     }
     
-    @Test
-    public void testDOBConversion() {
-        Date today = DateUtils.truncate(new Date(), Calendar.MONTH);
-        String dob = FastDateFormat.getInstance("yyyyMM").format(today);
-        assertEquals(today, BatchUploadUtils.getPatientDOB(dob));
-        assertNull(BatchUploadUtils.getPatientDOB(""));
-        assertNull(BatchUploadUtils.getPatientDOB("abcd"));
+    /**
+     * Returns a date from the given date string (yyyyMMdd).
+     * @param date the date to parse
+     * @return the parsed date or null if the date is unparseable
+     */
+    public static Date getDate(String date) {
+        return formatDate(date, FULL_DATE_FORMAT);
     }
     
-    @Test
-    public void testGetDate() { 
-        String dateStr = "19850420";
-        Date date = BatchUploadUtils.getDate(dateStr);
-        Date expectedDate = new Date();        
-        expectedDate = DateUtils.setYears(expectedDate, 1985);
-        expectedDate = DateUtils.setDays(expectedDate,  20);
-        expectedDate = DateUtils.setMonths(expectedDate, 3);
-        expectedDate = DateUtils.setHours(expectedDate,  0);
-        expectedDate = DateUtils.setMinutes(expectedDate, 0);
-        expectedDate = DateUtils.setSeconds(expectedDate, 0);
-        expectedDate = DateUtils.setMilliseconds(expectedDate, 0);
-        
-        assertEquals(expectedDate, date);
+    private static Date formatDate(String input, String format) {
+        SimpleDateFormat formatter = new SimpleDateFormat(format, Locale.getDefault());
+        Date date = null;
+        try {
+            date = formatter.parse(input);
+        } catch (ParseException e) {
+            LOG.error("Error parsing the date " + input + " with the following format " + format);
+        }
+        return date;
     }
     
-    @Test
-    public void testGetStudyLine() {
-        String[] results = BatchUploadUtils.getStudyLine(batchFile);
-        assertFalse(ArrayUtils.isEmpty(results));
+    /**
+     * Returns the 'COLLECTION' line info from the batch file.
+     * @param batchFile the batch file as a list
+     * @return the line containing the collection info
+     */
+    public static String[] getStudyLine(List<String[]> batchFile) {
+        String[] results = new String[] {};
+        for (String[] line : batchFile) {
+            if (StringUtils.equals("COLLECTIONS", line[LINE_IDENTIFIER_INDEX])) {
+                results = line;
+                break;
+            }
+        }
+        return results;
     }
     
-    @Test
-    public void testGetStudyLineNull() {        
-        String[] results = BatchUploadUtils.getStudyLine(someFile);
-        assertTrue(ArrayUtils.isEmpty(results));
+    /**
+     * Returns the total number of accruals from the batch file.
+     * @param batchFile the batch file as a list
+     * @return the total number of accruals or null if the element isn't found
+     */
+    public static Integer getTotalNumberOfAccruals(List<String[]> batchFile) {
+        Integer results = null;
+        for (String[] line : batchFile) {
+            if (StringUtils.equals("ACCRUAL_COUNT", line[LINE_IDENTIFIER_INDEX])) {
+                results = Integer.valueOf(line[ACCRUAL_COUNT_INDEX]);
+            }
+        }
+        return results;
     }
     
-    @Test
-    public void testGetTotalNumberOfAccruals() {
-        Integer totalNumberOfAccruals = BatchUploadUtils.getTotalNumberOfAccruals(batchFile);
-        assertNull(totalNumberOfAccruals);
-    }    
-    
-    
-    @Test
-    public void testGetPatientInfo() {
-        List<String[]> patients = BatchUploadUtils.getPatientInfo(batchFile);
-        assertFalse(patients.isEmpty());
-        assertEquals(72, patients.size());
+    /**
+     * Returns a list of all the patient lines from the batch file.
+     * @param batchFile the batch file as a list
+     * @return the list of patient lines
+     */
+    public static List<String[]> getPatientInfo(List<String[]> batchFile) {
+        List<String[]> patients = new ArrayList<String[]>();
+        for (String[] line : batchFile) {
+            if (StringUtils.equals("PATIENTS" , line[LINE_IDENTIFIER_INDEX])) {
+                patients.add(line);
+            }
+        }
+        return patients;
     }
     
-    @Test
-    public void testGetPatientRaceInfo() {
-        Map<String, List<String>> raceMap = BatchUploadUtils.getPatientRaceInfo(batchFile);
-        assertFalse(raceMap.isEmpty());
-        assertEquals(72, raceMap.size());
+    /**
+     * Returns a map of patient ids to patient race codes.
+     * @param batchFile the batch file as a list
+     * @return a map of patient ids to races
+     */
+    public static Map<String, List<String>> getPatientRaceInfo(List<String[]> batchFile) {
+        Map<String, List<String>> raceMap = new HashMap<String, List<String>>();
+        for (String[] line : batchFile) {
+            if (StringUtils.equals("PATIENT_RACES", line[LINE_IDENTIFIER_INDEX])) {
+                String patientId = line[PATIENT_ID_INDEX];
+                if (raceMap.get(patientId) == null) {
+                    raceMap.put(patientId, Arrays.asList(line[RACE_INDEX]));
+                } else {
+                    raceMap.get(patientId).add(line[RACE_INDEX]);
+                }
+            }
+        }
+        return raceMap;
     }
 }

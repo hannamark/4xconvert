@@ -129,7 +129,6 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
-import gov.nih.nci.pa.service.StudySiteService;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -160,7 +159,7 @@ public class SubjectAccrualServiceTest extends AbstractServiceTest<SubjectAccrua
     public ExpectedException thrown = ExpectedException.none();
     public SubjectAccrualBeanLocal beanLocal;
     public SubjectAccrualCountService accCountSvc;
-    public StudySiteService studySiteSvc;
+    public StudySiteServiceRemote studySiteSvc;
     
     @Override
     @Before
@@ -189,14 +188,12 @@ public class SubjectAccrualServiceTest extends AbstractServiceTest<SubjectAccrua
         beanLocal = new SubjectAccrualBeanLocal();
         accCountSvc = mock(SubjectAccrualCountService.class);
         beanLocal.setSubjectAccrualCountSvc(accCountSvc);
-        studySiteSvc = mock(StudySiteService.class);
-        beanLocal.setStudySiteSvc(studySiteSvc);
         bean.setPatientService(patientService);
         bean.setStudySubjectService(new StudySubjectBean());
         bean.setPerformedActivityService(performedActivitySvc);
         bean.setCountryService(new CountryBean());
         
-        StudySiteServiceRemote studySiteSvc = mock(StudySiteServiceRemote.class);
+        studySiteSvc = mock(StudySiteServiceRemote.class);
         when(studySiteSvc.get(any(Ii.class))).thenReturn(Converters.get(StudySiteConverter.class).convertFromDomainToDto(TestSchema.participatingSites.get(0)));        
                 
         final SDCDiseaseDTO disease = new SDCDiseaseDTO();

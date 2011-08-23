@@ -80,65 +80,118 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.service;
+package gov.nih.nci.accrual.service.batch;
 
-import gov.nih.nci.accrual.service.batch.BatchImportResults;
-import gov.nih.nci.accrual.service.batch.BatchValidationResults;
-import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
-import gov.nih.nci.accrual.util.AccrualServiceLocator;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import gov.nih.nci.accrual.service.AbstractServiceTest;
+import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
-import java.io.File;
-import java.util.Collection;
 import java.util.List;
 
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.log4j.Logger;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
- * Implementation of the batch upload processor.
- * 
- * @author Abraham J. Evans-EL
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-@Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Local(BatchUploadProcessingTaskServiceLocal.class)
-public class BatchUploadProcessingTaskServiceBean implements BatchUploadProcessingTaskServiceLocal {
-    private static final Logger LOG = Logger.getLogger(BatchUploadProcessingTaskServiceBean.class);
+public class BatchFileServiceTest extends AbstractServiceTest<BatchFileService>{
+    private BatchFileServiceBeanLocal bean;
+    private static final String FIlE_PATH = "/test/file/path";
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
     
-    /**
-     * {@inheritDoc}
-     */
-    public void processBatchUploads() throws PAException {
-        CdusBatchUploadReaderServiceLocal batchUploadService = 
-            AccrualServiceLocator.getInstance().getBatchUploadReaderService();
-        File uploadDirectory = new File(PaEarPropertyReader.getAccrualBatchUploadPath());
-        @SuppressWarnings("unchecked")
-        Collection<File> batchFiles = FileUtils.listFiles(uploadDirectory, FileFilterUtils.fileFileFilter(), null);
-        LOG.info("Performing accrual batch processing on " + batchFiles.size() +  " files.");
+    @Override
+    @Before
+    public void instantiateServiceBean() throws Exception {
+        bean = new BatchFileServiceBeanLocal();
+    }
+    
+    
+    @Test
+    public void save() throws Exception {
+        BatchFile batchFile = new BatchFile();
+        batchFile.setSubmitter(TestSchema.registryUsers.get(0));
+        batchFile.setFileLocation(FIlE_PATH);
         
-        for (File batchFile : batchFiles) {
-            //First, validate the file, then process it, send emails as necessary.
-            LOG.info("Processing batch upload: " + batchFile.getAbsolutePath());
-            List<BatchValidationResults> validationResults = batchUploadService.validateBatchData(batchFile);
-            batchUploadService.sendValidationErrorEmail(validationResults);
-            List<BatchImportResults> importResults = batchUploadService.importBatchData(batchFile);
-            batchUploadService.sendConfirmationEmail(importResults);
-        }
+        bean.save(batchFile);
         
-        //Delete all the files once processing has finished.
-        for (File batchFile : batchFiles) {
-            FileUtils.deleteQuietly(batchFile);
-        }
+        assertNotNull(batchFile.getUserLastCreated());
+        assertNotNull(batchFile.getDateLastCreated());
+        assertFalse(batchFile.isPassedValidation());
+        assertFalse(batchFile.isProcessed());
+        
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Please call update() with existing batch file objects.");
+        
+        bean.save(batchFile);
+    }
+    
+    @Test
+    public void update() throws Exception {
+        BatchFile batchFile = new BatchFile();
+        batchFile.setSubmitter(TestSchema.registryUsers.get(0));
+        batchFile.setFileLocation(FIlE_PATH);
+        
+        bean.save(batchFile);
+        
+        assertNotNull(batchFile.getUserLastCreated());
+        assertNotNull(batchFile.getDateLastCreated());
+        assertFalse(batchFile.isPassedValidation());
+        assertFalse(batchFile.isProcessed());
+        
+        batchFile.setPassedValidation(true);
+        bean.update(batchFile);
+        
+        batchFile = bean.getById(batchFile.getId());
+        
+        assertNotNull(batchFile.getUserLastCreated());
+        assertNotNull(batchFile.getDateLastCreated());
+        assertNotNull(batchFile.getUserLastUpdated());
+        assertNotNull(batchFile.getDateLastUpdated());
+        assertTrue(batchFile.isPassedValidation());
+        assertFalse(batchFile.isProcessed());
+    }
+    
+    @Test
+    public void updateException() throws Exception {
+        BatchFile batchFile = new BatchFile();
+        batchFile.setSubmitter(TestSchema.registryUsers.get(0));
+        batchFile.setFileLocation(FIlE_PATH);
+        
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Please call save() with new batch file objects.");
+        bean.update(batchFile);
+    }
+    
+    @Test
+    public void getBatchFilesAvailableForProcessing() throws Exception {
+        BatchFile batchFile = new BatchFile();
+        batchFile.setSubmitter(TestSchema.registryUsers.get(0));
+        batchFile.setFileLocation(FIlE_PATH);
+        
+        bean.save(batchFile);
+        
+        List<BatchFile> files = bean.getBatchFilesAvailableForProcessing();
+        assertTrue(files.isEmpty());
+        
+        batchFile.setPassedValidation(true);
+        bean.update(batchFile);
+        files = bean.getBatchFilesAvailableForProcessing();
+        
+        assertFalse(files.isEmpty());
+        assertEquals(1, files.size());
+        
+        batchFile.setProcessed(true);
+        bean.update(batchFile);
+        files = bean.getBatchFilesAvailableForProcessing();
+        
+        assertTrue(files.isEmpty());
     }
 }

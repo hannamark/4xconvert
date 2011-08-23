@@ -80,65 +80,43 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.service;
-
-import gov.nih.nci.accrual.service.batch.BatchImportResults;
-import gov.nih.nci.accrual.service.batch.BatchValidationResults;
-import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
-import gov.nih.nci.accrual.util.AccrualServiceLocator;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
-
-import java.io.File;
-import java.util.Collection;
-import java.util.List;
-
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.log4j.Logger;
+package gov.nih.nci.accrual.service.batch;
 
 /**
- * Implementation of the batch upload processor.
+ * Bean for holding results of batch import.
  * 
- * @author Abraham J. Evans-EL
+ * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-@Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Local(BatchUploadProcessingTaskServiceLocal.class)
-public class BatchUploadProcessingTaskServiceBean implements BatchUploadProcessingTaskServiceLocal {
-    private static final Logger LOG = Logger.getLogger(BatchUploadProcessingTaskServiceBean.class);
-    
+public class BatchImportResults {
+    private int totalImports = 0;
+    private String fileName;
+
     /**
-     * {@inheritDoc}
+     * @return the totalImports
      */
-    public void processBatchUploads() throws PAException {
-        CdusBatchUploadReaderServiceLocal batchUploadService = 
-            AccrualServiceLocator.getInstance().getBatchUploadReaderService();
-        File uploadDirectory = new File(PaEarPropertyReader.getAccrualBatchUploadPath());
-        @SuppressWarnings("unchecked")
-        Collection<File> batchFiles = FileUtils.listFiles(uploadDirectory, FileFilterUtils.fileFileFilter(), null);
-        LOG.info("Performing accrual batch processing on " + batchFiles.size() +  " files.");
-        
-        for (File batchFile : batchFiles) {
-            //First, validate the file, then process it, send emails as necessary.
-            LOG.info("Processing batch upload: " + batchFile.getAbsolutePath());
-            List<BatchValidationResults> validationResults = batchUploadService.validateBatchData(batchFile);
-            batchUploadService.sendValidationErrorEmail(validationResults);
-            List<BatchImportResults> importResults = batchUploadService.importBatchData(batchFile);
-            batchUploadService.sendConfirmationEmail(importResults);
-        }
-        
-        //Delete all the files once processing has finished.
-        for (File batchFile : batchFiles) {
-            FileUtils.deleteQuietly(batchFile);
-        }
+    public int getTotalImports() {
+        return totalImports;
     }
+
+    /**
+     * @param totalImports the totalImports to set
+     */
+    public void setTotalImports(int totalImports) {
+        this.totalImports = totalImports;
+    }
+
+    /**
+     * @return the fileName
+     */
+    public String getFileName() {
+        return fileName;
+    }
+
+    /**
+     * @param fileName the fileName to set
+     */
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
 }

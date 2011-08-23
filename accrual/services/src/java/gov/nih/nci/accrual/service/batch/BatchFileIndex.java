@@ -80,70 +80,85 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.service.util;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.hsqldb.lib.StringUtil;
-import org.junit.Test;
+package gov.nih.nci.accrual.service.batch;
 
 /**
- * @author merenkoi
+ * @author Igor Merenko
+ * 
+ *  The index of the identifier of a line (i.e it's type: PATIENT, ACCRUAL_COUNT, COLLECTION, etc.).
  */
-public class BaseValidatorBatchUploadReaderTest {    
-   
-    private static final String CODE = "code";
-    private static final List<String> valueList = createValueList();
+public final class BatchFileIndex {
 
-    @Test
-    public void validateDiseaseCodeICD9ValidationFails() {
-        StringBuffer errMsg = new StringBuffer();
-        BaseValidatorBatchUploadReader bean = mock(BaseValidatorBatchUploadReader.class);
-        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null);
-        when(bean.getDisease(CODE, errMsg)).thenReturn(null);
-        when(bean.getICD9Disease(CODE, errMsg)).thenReturn(null);
-        
-        bean.validateDiseaseCode(valueList, errMsg, 1, null);
-        
-        assertFalse(StringUtil.isEmpty(errMsg.toString()));
-      
-    }
-    
-    @Test
-    public void validateDiseaseCodeICD9ValidationPasses() {
-        StringBuffer errMsg = new StringBuffer();
-        BaseValidatorBatchUploadReader bean = mock(BaseValidatorBatchUploadReader.class);
-        doCallRealMethod().when(bean).validateDiseaseCode(valueList, errMsg, 1, null);
-        when(bean.getDisease(CODE, errMsg)).thenReturn(null);
-        when(bean.getICD9Disease(CODE, errMsg)).thenReturn(new ICD9DiseaseDTO());
-        
-        bean.validateDiseaseCode(valueList, errMsg, 1, null);
-        
-        assertTrue(StringUtil.isEmpty(errMsg.toString()));
-      
-    }
-    
-    private static List<String> createValueList() {
-        List<String> result = new ArrayList<String>(21);
-        new BaseValidatorBatchUploadReader();
-        for (int i = 0; i <= BaseBatchUploadReader.PATIENT_DISEASE_INDEX; i++) {
-            if (i == BaseBatchUploadReader.PATIENT_DISEASE_INDEX) {
-                result.add(CODE);
-            } else {
-                result.add(null);
-            }
-        }
-        return result;
+    /**
+     * empty private constructor.
+     */
+    private BatchFileIndex() {
 
     }
+
+    /**
+     * line identifier index.
+     */
+    public static final int LINE_IDENTIFIER_INDEX = 0;
+
+    /**
+     * collection email index.
+     */
+    public static final int COLLECTION_EMAIL_INDEX = 9;
+
+    /**
+     * collection protocol index.
+     */
+    public static final int COLLECTION_PROTOCOL_INDEX = 0;
+
+    /**
+     * patient id index.
+     */
+    public static final int PATIENT_ID_INDEX = 2;
+
+    /**
+     * patient zip index.
+     */
+    public static final int PATIENT_ZIP_INDEX = 3;
+
+    /**
+     * patient country code index.
+     */
+    public static final int PATIENT_COUNTRY_CODE_INDEX = 4;
+
+    /**
+     * patient dob index.
+     */
+    public static final int PATIENT_DOB_INDEX = 5;
+
+    /**
+     * patient gender index.
+     */
+    public static final int PATIENT_GENDER_INDEX = 6;
+
+    /**
+     * patient ethnicity index.
+     */
+    public static final int PATIENT_ETHNICITY_INDEX = 7;
+
+    /**
+     * patient payment method index.
+     */
+    public static final int PATIENT_PAYMENT_METHOD_INDEX = 8;
+
+    /**
+     * patient registering date index.
+     */
+    public static final int PATIENT_REG_DATE_INDEX = 9;
+
+    /**
+     * patient registering institution id index.
+     */
+    public static final int PATIENT_REG_INST_ID_INDEX = 10;
+
+    /**
+     * patient disease index.
+     */
+    public static final int PATIENT_DISEASE_INDEX = 21;
 
 }

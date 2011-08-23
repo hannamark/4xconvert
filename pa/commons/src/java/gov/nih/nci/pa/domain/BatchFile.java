@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The accrual
+ * source code form and machine readable, binary, object code form. The pa
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This accrual Software License (the License) is between NCI and You. You (or
+ * This pa Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the accrual Software to (i) use, install, access, operate,
+ * its rights in the pa Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the accrual Software; (ii) distribute and
- * have distributed to and by third parties the accrual Software and any
+ * and prepare derivative works of the pa Software; (ii) distribute and
+ * have distributed to and by third parties the pa Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,61 +80,90 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.service;
+package gov.nih.nci.pa.domain;
 
-import static org.junit.Assert.assertFalse;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import gov.nih.nci.accrual.service.batch.BatchImportResults;
-import gov.nih.nci.accrual.service.batch.BatchValidationResults;
-import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
-import gov.nih.nci.accrual.util.AbstractAccrualHibernateTestCase;
-import gov.nih.nci.accrual.util.AccrualServiceLocator;
-import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
-import gov.nih.nci.accrual.util.TestSchema;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-import java.io.File;
-import java.util.ArrayList;
-
-import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.hibernate.validator.NotNull;
 
 /**
- * Tests for the batch upload processing task.
- *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class BatchUploadProcessingTaskServiceTest extends AbstractAccrualHibernateTestCase {
-    private static final int NUMBER_OF_BATCH_FILES = 3;
-    private BatchUploadProcessingTaskServiceBean bean = new BatchUploadProcessingTaskServiceBean();
+@Entity
+@Table(name = "BATCH_FILE")
+public class BatchFile extends AbstractEntity {
+    private static final long serialVersionUID = 1L;
+    private RegistryUser submitter;
+    private boolean passedValidation = false;
+    private boolean processed = false;
+    private String fileLocation;
 
-    @Before
-    public void setUp() throws Exception {
-        File uploadDirectory = new File(PaEarPropertyReader.getAccrualBatchUploadPath());
-        for (int i = 1; i <= NUMBER_OF_BATCH_FILES; i++) {
-            String fileName = "accrual_batch_" + i + ".txt";
-            FileUtils.touch(new File(uploadDirectory + File.separator + fileName));
-        }
-
-        TestSchema.primeData();
-        CdusBatchUploadReaderServiceLocal readerService = mock(CdusBatchUploadReaderServiceLocal.class);
-        when(readerService.validateBatchData(any(File.class))).thenReturn(new ArrayList<BatchValidationResults>());
-        when(readerService.importBatchData(any(File.class))).thenReturn(new ArrayList<BatchImportResults>());
-        ServiceLocatorAccInterface svcLocator = mock(ServiceLocatorAccInterface.class);
-        when(svcLocator.getBatchUploadReaderService()).thenReturn(readerService);
-        AccrualServiceLocator.getInstance().setServiceLocator(svcLocator);
+    /**
+     * @return the submitter
+     */
+    @ManyToOne
+    @JoinColumn(name = "registry_user_id")
+    @NotNull
+    public RegistryUser getSubmitter() {
+        return submitter;
     }
 
-    @Test
-    public void testBatchUploadProcessingTask() throws Exception {
-        bean.processBatchUploads();
-        File uploadDirectory = new File(PaEarPropertyReader.getAccrualBatchUploadPath());
-        for (int i = 1; i <= NUMBER_OF_BATCH_FILES; i++) {
-            String fileName = "accrual_batch_" + i + ".txt";
-            assertFalse(new File(uploadDirectory + File.separator + fileName).exists());
-        }
+    /**
+     * @param submitter the submitter to set
+     */
+    public void setSubmitter(RegistryUser submitter) {
+        this.submitter = submitter;
+    }
+
+    /**
+     * @return the passedValidation
+     */
+    @Column(name = "passed_validation")
+    @NotNull
+    public boolean isPassedValidation() {
+        return passedValidation;
+    }
+
+    /**
+     * @param passedValidation the passedValidation to set
+     */
+    public void setPassedValidation(boolean passedValidation) {
+        this.passedValidation = passedValidation;
+    }
+
+    /**
+     * @return the processed
+     */
+    @Column(name = "is_processed")
+    @NotNull
+    public boolean isProcessed() {
+        return processed;
+    }
+
+    /**
+     * @param processed the processed to set
+     */
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
+    }
+
+    /**
+     * @return the fileLocation
+     */
+    @Column(name = "file_location", updatable = false)
+    @NotNull
+    public String getFileLocation() {
+        return fileLocation;
+    }
+
+    /**
+     * @param fileLocation the fileLocation to set
+     */
+    public void setFileLocation(String fileLocation) {
+        this.fileLocation = fileLocation;
     }
 }

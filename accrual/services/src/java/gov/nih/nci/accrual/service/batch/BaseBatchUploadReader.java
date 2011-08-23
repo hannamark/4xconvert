@@ -80,11 +80,14 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.accrual.service.util;
+package gov.nih.nci.accrual.service.batch;
 
 import gov.nih.nci.accrual.service.PatientServiceLocal;
 import gov.nih.nci.accrual.service.PerformedActivityServiceLocal;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
+import gov.nih.nci.accrual.service.util.CountryService;
+import gov.nih.nci.accrual.service.util.SearchStudySiteService;
+import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.iso21090.Ii;

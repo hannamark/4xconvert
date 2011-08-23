@@ -80,7 +80,7 @@ import gov.nih.nci.accrual.accweb.util.AccrualConstants;
 import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectService;
-import gov.nih.nci.accrual.service.util.CdusBatchUploadReaderServiceLocal;
+import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
