@@ -114,8 +114,10 @@ public class CtepEntityImporter {
     @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
     protected void initCtepServices(Context ctepContext) {
         try {
-            setCtepOrgService((OrganizationService) ctepContext.lookup("OrganizationService"));
-            setCtepPersonService((PersonService) ctepContext.lookup("PersonService"));
+            setCtepOrgService((OrganizationService) ctepContext
+                    .lookup("OrganizationService#gov.nih.nci.coppa.services.OrganizationService"));
+            setCtepPersonService((PersonService) ctepContext
+                    .lookup("PersonService#gov.nih.nci.coppa.services.PersonService"));
         } catch (NamingException e) {
             throw new RuntimeException(e);
         }

@@ -100,6 +100,8 @@ import javax.jms.JMSException;
 import javax.naming.Context;
 import javax.naming.NamingException;
 
+import weblogic.jndi.WLInitialContextFactory;
+
 /**
  * @author Scott Miller
  *
@@ -182,12 +184,12 @@ public class CtepImportServiceBean implements CtepImportService {
     public static Context createCtepInitialContext() throws NamingException {
         Properties props = getConfig();
         Hashtable<Object, Object> env = new Hashtable<Object, Object>();
-        env.put(Context.INITIAL_CONTEXT_FACTORY, "oracle.j2ee.rmi.RMIInitialContextFactory");
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "weblogic.jndi.WLInitialContextFactory");
         env.put(Context.SECURITY_PRINCIPAL, props.get("ctep.username"));
         env.put(Context.SECURITY_CREDENTIALS, props.get("ctep.password"));
         env.put(Context.PROVIDER_URL, props.get("ctep.url"));
 
-        oracle.j2ee.rmi.RMIInitialContextFactory contextFactory = new oracle.j2ee.rmi.RMIInitialContextFactory();
+        WLInitialContextFactory contextFactory = new WLInitialContextFactory();
         return contextFactory.getInitialContext(env);
     }
 

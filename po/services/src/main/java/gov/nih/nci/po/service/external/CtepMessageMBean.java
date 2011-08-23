@@ -120,6 +120,7 @@ public class CtepMessageMBean extends CtepMessageBean implements CtepMessageMana
     private String topicConnectionFactoryName = CtepImportServiceBean.getConfig().getProperty(
             "ctep.jms.topic.connection.factory.name");
     private String topicName = CtepImportServiceBean.getConfig().getProperty("ctep.jms.topic.name");;
+    private final String clientId = CtepImportServiceBean.getConfig().getProperty("ctep.jms.client.id");
     private String subscriptionName = CtepImportServiceBean.getConfig().getProperty("ctep.jms.subscription.name");
     private boolean busy = false;
     private String statusMessage;
@@ -225,6 +226,7 @@ public class CtepMessageMBean extends CtepMessageBean implements CtepMessageMana
                     .lookup(topicConnectionFactoryName);
             Topic topic = (Topic) initialContext.lookup(topicName);
             topicConnection = connectionFactory.createTopicConnection();
+            topicConnection.setClientID(clientId);
             topicSession = topicConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
             topicSubscriber = topicSession.createDurableSubscriber(topic, subscriptionName);
             topicSubscriber.setMessageListener(CtepMessageMBean.this);

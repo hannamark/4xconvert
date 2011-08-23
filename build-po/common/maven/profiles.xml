@@ -39,16 +39,10 @@
                 <jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort>%%jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort%%</jboss.mq.service.POInvocationLayer.type.UIL2.ServerBindPort>
                 <jboss.mq.service.POInvocationLayer.type.UIL2.ConnectAddress>%%jboss.mq.service.POInvocationLayer.type.UIL2.ConnectAddress%%</jboss.mq.service.POInvocationLayer.type.UIL2.ConnectAddress>
 
-                <!-- SMM: Preliminary: used to drive Selenium tests
-                <jboss.port>@jboss.server.port@</jboss.port>
-                <test.selenium.server.port>@selenium.proxy.port@</test.selenium.server.port>
-                <test.selenium.server.debug>true</test.selenium.server.debug>
-                <test.selenium.browser>@selenium.browser@</test.selenium.browser>
-                -->
-
                 <ctep.username>%%ctep.username%%</ctep.username>
                 <ctep.password>%%ctep.password%%</ctep.password>
                 <ctep.url>%%ctep.url%%</ctep.url>
+                <ctep.jms.client.id>%%ctep.jms.client.id%%</ctep.jms.client.id>
                 <ctep.jms.subscription.name>%%ctep.jms.subscription.name%%</ctep.jms.subscription.name>
                 <ctep.jms.topic.connection.factory.name>%%ctep.jms.topic.connection.factory.name%%</ctep.jms.topic.connection.factory.name>
                 <ctep.jms.topic.name>%%ctep.jms.topic.name%%</ctep.jms.topic.name>
