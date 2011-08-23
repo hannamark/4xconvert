@@ -140,6 +140,11 @@
                             <artifactId>json-simple</artifactId>
                             <includeInApplicationXml>true</includeInApplicationXml>
                         </jarModule>
+                        <jarModule>
+                            <groupId>weblogic</groupId>
+                            <artifactId>wlthinclient-trimmed</artifactId>
+                            <includeInApplicationXml>true</includeInApplicationXml>
+                        </jarModule>
 
                         <ejbModule>
                             <groupId>${project.parent.groupId}</groupId>

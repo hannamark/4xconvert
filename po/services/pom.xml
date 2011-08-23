@@ -101,6 +101,12 @@
 
         <!-- Jars required -->
         <dependency>
+             <groupId>weblogic</groupId>
+             <artifactId>wlthinclient-trimmed</artifactId>
+             <version>10.3.3</version>
+             <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>gov.nih.nci</groupId>
             <artifactId>security</artifactId>
             <version>4.2</version>
