@@ -369,7 +369,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
             StudySiteDTO ssDto = getStudySiteSvc().get(participatingSiteIi);
             StudySite ss = new StudySiteConverter().convertFromDtoToDomain(ssDto);
             ssAccCount = new StudySiteSubjectAccrualCount();
-            ssAccCount.setSite(ss);
+            ssAccCount.setStudySite(ss);
             ssAccCount.setStudyProtocol(ss.getStudyProtocol());
         }
         ssAccCount.setAccrualCount(count.getValue());

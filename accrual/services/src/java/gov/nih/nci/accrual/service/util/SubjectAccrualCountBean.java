@@ -103,6 +103,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
@@ -126,7 +127,7 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
         RegistryUser user = PaServiceLocator.getInstance().getRegistryUserService().getUser(
                 CaseSensitiveUsernameHolder.getUser());
         try {
-            String hql = "from StudySite ss left join ss.accrualCount join ss.studySiteAccrualAccess ssas " 
+            String hql = "select ss from StudySite ss join ss.studySiteAccrualAccess ssas " 
                 + "where ss.studyProtocol.id = :studyProtocolId " 
                 + "and ss.functionalCode = :functionalCode "
                 + "and ssas.registryUser.id = :registerUserId";
@@ -135,7 +136,7 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
             query.setParameter("functionalCode", StudySiteFunctionalCode.TREATING_SITE);
             query.setParameter("registerUserId", user.getId());
 
-            List<Object[]> queryResults = query.list(); 
+            List<StudySite> queryResults = query.list(); 
             return getCountsForSites(queryResults);
             
         } catch (HibernateException hbe) {
@@ -143,15 +144,14 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
         }
     }
 
-    private List<StudySiteSubjectAccrualCount> getCountsForSites(List<Object[]> queryResults) {
+    private List<StudySiteSubjectAccrualCount> getCountsForSites(List<StudySite> studySites) {
         List<StudySiteSubjectAccrualCount> resultList = new ArrayList<StudySiteSubjectAccrualCount>();
-        for (Object[] result : queryResults) {
-            StudySiteSubjectAccrualCount accrualCount = (StudySiteSubjectAccrualCount) result[1]; 
+        for (StudySite site : studySites) {
+            StudySiteSubjectAccrualCount accrualCount = site.getAccrualCount(); 
             if (accrualCount == null) {
-                accrualCount = new StudySiteSubjectAccrualCount();
-                StudySite ss = (StudySite) result[0];
-                accrualCount.setSite(ss);
-                accrualCount.setStudyProtocol(ss.getStudyProtocol());
+                accrualCount = new StudySiteSubjectAccrualCount();                
+                accrualCount.setStudySite(site);
+                accrualCount.setStudyProtocol(site.getStudyProtocol());
             }
             resultList.add(accrualCount);
         }
@@ -166,7 +166,7 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
     public StudySiteSubjectAccrualCount getCountByStudySiteId(Ii studySiteIi) {    
             return (StudySiteSubjectAccrualCount) PaHibernateUtil.getCurrentSession()
                 .createCriteria(StudySiteSubjectAccrualCount.class)
-                .add(Restrictions.eq("site.id", IiConverter.convertToLong(studySiteIi)))
+                .add(Restrictions.eq("studySite.id", IiConverter.convertToLong(studySiteIi)))
                 .uniqueResult();
     }
 
@@ -184,20 +184,39 @@ public class SubjectAccrualCountBean implements SubjectAccrualCountService {
     }
 
     private void saveAccrualCount(StudySiteSubjectAccrualCount newCount) {
-        StudySiteSubjectAccrualCount countToSave = newCount; 
+        StudySiteSubjectAccrualCount countToSave = newCount;
+        Date currentDay = new Date();
         if (newCount.getId() != null) {
-            countToSave = (StudySiteSubjectAccrualCount) PaHibernateUtil.getCurrentSession().load(
-                    StudySiteSubjectAccrualCount.class, newCount.getId());
-            countToSave.setAccrualCount(newCount.getAccrualCount());
+            if (DateUtils.isSameDay(currentDay, countToSave.getDateLastUpdated())) {
+                countToSave = (StudySiteSubjectAccrualCount) PaHibernateUtil.getCurrentSession()
+                    .load(StudySiteSubjectAccrualCount.class, newCount.getId());
+
+                countToSave.setAccrualCount(newCount.getAccrualCount());
+            } else {
+                countToSave = createNewStudySiteSubjectAccrualCount(countToSave);
+            }
         }
-        countToSave.setDateLastUpdated(new Date());
+
+        countToSave.setDateLastUpdated(currentDay);
         PaHibernateUtil.getCurrentSession().saveOrUpdate(countToSave);
+    }
+    
+    private StudySiteSubjectAccrualCount createNewStudySiteSubjectAccrualCount(StudySiteSubjectAccrualCount old) {
+        StudySiteSubjectAccrualCount result = new StudySiteSubjectAccrualCount();
+        result.setAccrualCount(old.getAccrualCount());
+        result.setDateLastCreated(old.getDateLastCreated());
+        result.setDateLastUpdated(old.getDateLastUpdated());
+        result.setStudyProtocol(old.getStudyProtocol());
+        result.setStudySite(old.getStudySite());
+        result.setUserLastCreated(old.getUserLastCreated());
+        result.setUserLastUpdated(old.getUserLastUpdated());
+        return result;
     }
 
     private void assertAccrualAccess(List<StudySiteSubjectAccrualCount> counts) throws PAException {
         for (StudySiteSubjectAccrualCount count : counts) {
             if (count.getAccrualCount() != null) {
-                assertAccrualAccess(count.getSite());
+                assertAccrualAccess(count.getStudySite());
             }
         }
     }

@@ -83,6 +83,7 @@ import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -91,11 +92,14 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
@@ -126,7 +130,7 @@ public class StudySite extends OrganizationFunctionalRole {
     private String programCodeText;
     private Timestamp accrualDateRangeHigh;
     private Timestamp accrualDateRangeLow;
-    private StudySiteSubjectAccrualCount accrualCount;
+    private SortedSet<StudySiteSubjectAccrualCount> accrualCounts;
 
     /**
      * @return the programCode
@@ -395,17 +399,30 @@ public class StudySite extends OrganizationFunctionalRole {
     }
 
     /**
-     * @return the accrualCount
+     * @return the accrualCounts
      */
-    @OneToOne(mappedBy = "site")
-    public StudySiteSubjectAccrualCount getAccrualCount() {
-        return accrualCount;
+    @OneToMany(mappedBy = MAPPED_BY_SS)    
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Sort(type = SortType.COMPARATOR, comparator = LastDateUpdateComparator.class)
+    public SortedSet<StudySiteSubjectAccrualCount> getAccrualCounts() {
+        return accrualCounts;
     }
 
     /**
-     * @param accrualCount the accrualCount to set
+     * @param accrualCounts the accrualCounts to set
      */
-    public void setAccrualCount(StudySiteSubjectAccrualCount accrualCount) {
-        this.accrualCount = accrualCount;
+    public void setAccrualCounts(SortedSet<StudySiteSubjectAccrualCount> accrualCounts) {
+        this.accrualCounts = accrualCounts;
+    }
+    
+    /**
+     * @return the latest accrualCount
+     */
+    @Transient
+    public StudySiteSubjectAccrualCount getAccrualCount() {        
+        if (CollectionUtils.isNotEmpty(accrualCounts)) {          
+                return accrualCounts.first();           
+        }
+        return null;
     }
 }

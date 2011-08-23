@@ -115,7 +115,7 @@ public class SubjectAccrualCountDecoratorTest {
         organization.setName("Test");
         hcf.setOrganization(organization);
         site.setHealthCareFacility(hcf);
-        accrualCount.setSite(site);
+        accrualCount.setStudySite(site);
         accrualCount.setDateLastUpdated(now);
         decorator.initRow(accrualCount, 0, 0);
     }
@@ -137,7 +137,7 @@ public class SubjectAccrualCountDecoratorTest {
     }
 
     private void setupRO() {
-        StudySite site = ((StudySiteSubjectAccrualCount) decorator.getCurrentRowObject()).getSite();
+        StudySite site = ((StudySiteSubjectAccrualCount) decorator.getCurrentRowObject()).getStudySite();
         ResearchOrganization ro = new ResearchOrganization();
         ro.setOrganization(site.getHealthCareFacility().getOrganization());
         site.setHealthCareFacility(null);
@@ -151,7 +151,7 @@ public class SubjectAccrualCountDecoratorTest {
     }
 
     private void setupNullSR() {
-        StudySite site = ((StudySiteSubjectAccrualCount) decorator.getCurrentRowObject()).getSite();
+        StudySite site = ((StudySiteSubjectAccrualCount) decorator.getCurrentRowObject()).getStudySite();
         site.setHealthCareFacility(null);
         site.setResearchOrganization(null);
     }

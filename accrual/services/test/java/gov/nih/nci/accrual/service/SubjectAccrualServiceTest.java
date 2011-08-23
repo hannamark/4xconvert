@@ -89,6 +89,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.accrual.dto.util.POPatientDTO;
 import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
@@ -346,7 +347,7 @@ public class SubjectAccrualServiceTest extends AbstractServiceTest<SubjectAccrua
         StudySite ss = createAccessibleStudySite(); 
         when(studySiteSvc.get(any(Ii.class))).thenReturn(new StudySiteConverter().convertFromDomainToDto(ss));
         StudySiteSubjectAccrualCount count = new StudySiteSubjectAccrualCount();
-        count.setSite(ss);
+        count.setStudySite(ss);
         count.setStudyProtocol(TestSchema.studyProtocols.get(0));
         count.setAccrualCount(new Integer(50));
         TestSchema.addUpdObject(count);

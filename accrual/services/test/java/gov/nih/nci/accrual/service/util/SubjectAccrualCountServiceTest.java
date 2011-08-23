@@ -91,6 +91,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.accrual.service.AbstractServiceTest;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
@@ -103,9 +104,13 @@ import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Hibernate;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -138,8 +143,9 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
     
     private void setup() {
         accrualCount = new StudySiteSubjectAccrualCount();
-        accrualCount.setSite(TestSchema.studySites.get(1));
+        accrualCount.setStudySite(TestSchema.studySites.get(1));
         accrualCount.setStudyProtocol(TestSchema.studyProtocols.get(0));
+        accrualCount.setDateLastUpdated(new Date());
         accrualCount.setAccrualCount(10);
         TestSchema.addUpdObject(accrualCount);
     }
@@ -150,7 +156,7 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
                 .studyProtocols.get(0).getId()));
         assertEquals(1, accrualCounts.size());
         for (StudySiteSubjectAccrualCount accrualCount : accrualCounts) {
-            if (accrualCount.getSite().getId().equals(TestSchema.studySites.get(1).getId())) {
+            if (accrualCount.getStudySite().getId().equals(TestSchema.studySites.get(1).getId())) {
                 assertEquals((Integer) 10, accrualCount.getAccrualCount());
             } else {
                 assertNull(accrualCount.getAccrualCount());
@@ -193,14 +199,14 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
     @Test
     public void testSave() throws PAException {
         List<StudySiteSubjectAccrualCount> accrualCounts = new ArrayList<StudySiteSubjectAccrualCount>();
-        accrualCount.setAccrualCount(1);
+        accrualCount.setAccrualCount(1);        
         accrualCounts.add(accrualCount);
         bean.save(accrualCounts);
         PaHibernateUtil.getCurrentSession().flush();
         
         accrualCounts = bean.getCounts(IiConverter.convertToIi(1L));
         for (StudySiteSubjectAccrualCount accrualCount : accrualCounts) {
-            if (accrualCount.getSite().getId().equals(TestSchema.studySites.get(1).getId())) {
+            if (accrualCount.getStudySite().getId().equals(TestSchema.studySites.get(1).getId())) {
                 assertNotNull(accrualCount.getDateLastUpdated());
                 assertEquals((Integer) 1, accrualCount.getAccrualCount());
             }
@@ -208,12 +214,47 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
     }
     
     @Test
+    public void testSaveNewDay() throws PAException {
+        List<StudySiteSubjectAccrualCount> accrualCounts = new ArrayList<StudySiteSubjectAccrualCount>();
+
+        StudySiteSubjectAccrualCount accrualCount = new StudySiteSubjectAccrualCount();
+        accrualCount.setStudySite(TestSchema.studySites.get(1));
+        accrualCount.setStudyProtocol(TestSchema.studyProtocols.get(0));
+        accrualCount.setAccrualCount(20);
+        accrualCount.setDateLastUpdated(DateUtils.addDays(new Date(), -5));
+        TestSchema.addUpdObject(accrualCount);
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().evict(accrualCount);
+        
+        accrualCount.setAccrualCount(25);
+        accrualCounts.add(accrualCount);
+        
+        bean.save(accrualCounts);
+        PaHibernateUtil.getCurrentSession().flush();
+        PaHibernateUtil.getCurrentSession().clear();
+
+        accrualCounts = bean.getCounts(IiConverter.convertToIi(1L));        
+        assertTrue(CollectionUtils.isNotEmpty(accrualCounts));
+        Hibernate.initialize(accrualCounts.get(0).getStudySite().getAccrualCounts()) ;
+        assertEquals(3, accrualCounts.get(0).getStudySite().getAccrualCounts().size());
+        List<Integer> expectedCounts = new ArrayList<Integer>(Arrays.asList(10,20,25));
+        
+        for (StudySiteSubjectAccrualCount count : accrualCounts.get(0).getStudySite().getAccrualCounts()) {
+            assertTrue(expectedCounts.contains(count.getAccrualCount()));
+            int i = expectedCounts.indexOf(count.getAccrualCount());            
+            expectedCounts.remove(i);            
+        }
+        assertTrue(CollectionUtils.isEmpty(expectedCounts));
+    }
+    
+    
+    @Test
     public void testSaveInvalidAccess() throws PAException {
         List<StudySiteSubjectAccrualCount> accrualCounts = new ArrayList<StudySiteSubjectAccrualCount>();
         accrualCount.setAccrualCount(1);
         StudySite site = new StudySite();
         site.setId(999L);
-        accrualCount.setSite(site);
+        accrualCount.setStudySite(site);
         accrualCounts.add(accrualCount);
         
 
@@ -233,7 +274,7 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
         StudySiteSubjectAccrualCount invalidCount = new StudySiteSubjectAccrualCount();
         StudySite site = new StudySite();
         site.setId(999L);
-        invalidCount.setSite(site);
+        invalidCount.setStudySite(site);
         invalidCount.setStudyProtocol(TestSchema.studyProtocols.get(0));
         invalidCount.setAccrualCount(10);
         accrualCounts.add(invalidCount);
@@ -248,7 +289,7 @@ public class SubjectAccrualCountServiceTest extends AbstractServiceTest<SubjectA
         List<StudySiteSubjectAccrualCount> accrualCounts;
         accrualCounts = bean.getCounts(IiConverter.convertToIi(1L));
         for (StudySiteSubjectAccrualCount ac : accrualCounts) {
-            if (ac.getSite().getId().equals(TestSchema.studySites.get(1).getId())) {
+            if (ac.getStudySite().getId().equals(TestSchema.studySites.get(1).getId())) {
                 assertNotSame(validCount.getAccrualCount(), ac.getAccrualCount());
             }
         }

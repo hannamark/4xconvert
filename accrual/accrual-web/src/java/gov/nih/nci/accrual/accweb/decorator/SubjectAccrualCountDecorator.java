@@ -101,7 +101,7 @@ public class SubjectAccrualCountDecorator extends TableDecorator {
      * @return site id
      */
     public String getSiteId() {
-        StudySite site = ((StudySiteSubjectAccrualCount) getCurrentRowObject()).getSite();
+        StudySite site = ((StudySiteSubjectAccrualCount) getCurrentRowObject()).getStudySite();
         return getOrganization(site).getIdentifier();
     }
 
@@ -109,7 +109,7 @@ public class SubjectAccrualCountDecorator extends TableDecorator {
      * @return site name
      */
     public String getSiteName() {
-        StudySite site = ((StudySiteSubjectAccrualCount) getCurrentRowObject()).getSite();
+        StudySite site = ((StudySiteSubjectAccrualCount) getCurrentRowObject()).getStudySite();
         return getOrganization(site).getName();
     }
 

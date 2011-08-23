@@ -24,12 +24,12 @@ function setCheckbox(index) {
     <display:table class="data" sort="list" pagesize="10" uid="row" name="studySiteCounts" export="false"
         decorator="gov.nih.nci.accrual.accweb.decorator.SubjectAccrualCountDecorator">
         <display:column titleKey="participatingsite.accrual.count.checkbox" headerClass="sortable" headerScope="col">
-            <s:checkbox name="sitesToSave" fieldValue="%{#attr.row.site.id}" />
+            <s:checkbox name="sitesToSave" fieldValue="%{#attr.row.studySite.id}" />
         </display:column> 
         <display:column titleKey="participatingsite.accrual.count.siteid" headerClass="sortable" headerScope="col" property="siteId"/>
         <display:column titleKey="participatingsite.accrual.count.sitename" headerClass="sortable" headerScope="col" property="siteName"/>
         <display:column titleKey="participatingsite.accrual.count.numOfSubjectEnrolled" headerClass="sortable" headerScope="col" >
-            <s:hidden name="submittedSiteIds" value="%{#attr.row.site.id}" />
+            <s:hidden name="submittedSiteIds" value="%{#attr.row.studySite.id}" />
             <s:textfield name="submittedCounts" value="%{#attr.row.accrualCount}" size="9" maxlength="9" onfocus="setCheckbox(%{#attr.row_rowNum-1});"/>
         </display:column>
         <display:column titleKey="participatingsite.accrual.count.dateLastUpdated" headerClass="sortable"

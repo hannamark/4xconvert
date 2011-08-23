@@ -85,7 +85,7 @@ package gov.nih.nci.pa.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
@@ -99,7 +99,7 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
 public class StudySiteSubjectAccrualCount extends AbstractStudyEntity implements Auditable  {
     private static final long serialVersionUID = 1L;
 
-    private StudySite site;
+    private StudySite studySite;
     private Integer accrualCount;
     
     /**
@@ -112,17 +112,17 @@ public class StudySiteSubjectAccrualCount extends AbstractStudyEntity implements
     /**
      * @return the site
      */
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "study_site_identifier", updatable = false)
-    public StudySite getSite() {
-        return site;
+    public StudySite getStudySite() {
+        return studySite;
     }
     
     /**
      * @param site the site to set
      */
-    public void setSite(StudySite site) {
-        this.site = site;
+    public void setStudySite(StudySite site) {
+        this.studySite = site;
     }
     
     /**

@@ -213,7 +213,7 @@ public class IndustrialPatientActionTest extends AbstractAccrualActionTest {
         List<StudySiteSubjectAccrualCount> counts = new ArrayList<StudySiteSubjectAccrualCount>();
         counts.add(count);
         StudySite site = new StudySite();
-        count.setSite(site);
+        count.setStudySite(site);
         site.setId(1L);
         count.setAccrualCount(123);
         return counts;

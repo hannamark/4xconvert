@@ -195,7 +195,7 @@ public class IndustrialPatientAction extends AbstractAccrualAction implements Pr
     StudySiteSubjectAccrualCount getSiteCount(List<StudySiteSubjectAccrualCount> counts, Long siteId)
             throws PAException {
         for (StudySiteSubjectAccrualCount count : counts) {
-            if (count.getSite().getId().equals(siteId)) {
+            if (count.getStudySite().getId().equals(siteId)) {
                 return count;
             }
         }
