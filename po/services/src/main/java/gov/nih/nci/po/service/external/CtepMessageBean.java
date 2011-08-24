@@ -107,14 +107,6 @@ import org.apache.log4j.Logger;
  *
  * @author gax
  *
-@MessageDriven(activationConfig = {
-        @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge"),
-        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic"),
-        @ActivationConfigProperty(propertyName = "destination", propertyValue = "jms/CTISTopic"),
-        @ActivationConfigProperty(propertyName = "subscriptionDurability", propertyValue = "Durable"),
-        @ActivationConfigProperty(propertyName = "clientId", propertyValue = "PoCTISTopicSubscriber"),
-        @ActivationConfigProperty(propertyName = "subscriptionName", propertyValue = "po-consummer")
-    })
  */
 public class CtepMessageBean implements MessageListener {
 
