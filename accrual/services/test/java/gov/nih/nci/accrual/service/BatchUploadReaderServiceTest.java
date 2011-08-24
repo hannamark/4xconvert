@@ -91,258 +91,33 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
+import gov.nih.nci.accrual.service.batch.AbstractBatchUploadReaderTest;
 import gov.nih.nci.accrual.service.batch.BatchImportResults;
 import gov.nih.nci.accrual.service.batch.BatchValidationResults;
-import gov.nih.nci.accrual.service.batch.CdusBatchUploadDataValidator;
-import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderBean;
-import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
-import gov.nih.nci.accrual.service.util.CountryBean;
-import gov.nih.nci.accrual.service.util.CountryService;
-import gov.nih.nci.accrual.service.util.MockCsmUtil;
-import gov.nih.nci.accrual.service.util.POPatientBean;
-import gov.nih.nci.accrual.service.util.SearchStudySiteService;
-import gov.nih.nci.accrual.service.util.SearchTrialService;
-import gov.nih.nci.accrual.util.AbstractAccrualHibernateTestCase;
 import gov.nih.nci.accrual.util.PaServiceLocator;
-import gov.nih.nci.accrual.util.PoRegistry;
-import gov.nih.nci.accrual.util.PoServiceLocator;
-import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
-import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.services.TooManyResultsException;
-import gov.nih.nci.iso21090.Ad;
-import gov.nih.nci.iso21090.Bl;
-import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.enums.ActStatusCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
-import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
-import gov.nih.nci.pa.iso.util.AddressConverterUtil;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.DSetConverter;
-import gov.nih.nci.pa.iso.util.EnPnConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
-import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
-import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
-import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
-import gov.nih.nci.services.correlation.PatientDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
-import gov.nih.nci.services.person.PersonDTO;
-import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 /**
  * @author vrushali
  */
-public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCase {
-    private Ii abbreviatedIi;
-    private Ii completeIi;
-    private Ii inactiveIi;
-    private Ii preventionIi;
-    private ServiceLocatorPaInterface paSvcLocator;
-    private CountryService countryService = new CountryBean();
-    private CdusBatchUploadReaderBean readerService;
-    private StudySubjectServiceLocal studySubjectService = new StudySubjectBean();
-    private CdusBatchUploadDataValidator cdusBatchUploadDataValidator = new CdusBatchUploadDataValidator();
-    private MailManagerServiceRemote mailService;
-
-    @Before
-    public void setUp() throws Exception {
-        AccrualCsmUtil.setCsmUtil(new MockCsmUtil());
-        TestSchema.primeData();
-        abbreviatedIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId());
-        inactiveIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(1).getId());
-        completeIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(2).getId());
-        preventionIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(3).getId());
-
-        mailService = mock(MailManagerServiceRemote.class);
-        readerService = new CdusBatchUploadReaderBean();
-        readerService.setCountryService(countryService);
-        readerService.setStudySubjectService(studySubjectService);
-        readerService.setPerformedActivityService(new PerformedActivityBean());
-        cdusBatchUploadDataValidator.setCountryService(countryService);
-        cdusBatchUploadDataValidator.setStudySubjectService(studySubjectService);    
-        cdusBatchUploadDataValidator.setPerformedActivityService(new PerformedActivityBean());
-        readerService.setCdusBatchUploadDataValidator(cdusBatchUploadDataValidator);
-       
-
-
-        PatientBeanLocal patientBean = new PatientBeanLocal();
-        patientBean.setCountryService(countryService);
-        patientBean.setPatientCorrelationSvc(new POPatientBean());
-        cdusBatchUploadDataValidator.setPatientService(patientBean);
-        readerService.setPatientService(patientBean);
-
-        StudyProtocolServiceRemote spSvc = mock(StudyProtocolServiceRemote.class);
-        when(spSvc.loadStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
-            public StudyProtocolDTO answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                Ii ii = (Ii) args[0];
-                StudyProtocolDTO dto = new StudyProtocolDTO();
-                if (StringUtils.equals(ii.getExtension(), "NCI-2009-00001")) {
-                    dto.setIdentifier(abbreviatedIi);
-                    dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
-                } else if (StringUtils.equals(ii.getExtension(), "NCI-2009-00002")) {
-                    dto.setIdentifier(inactiveIi);
-                    dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
-                } else if (StringUtils.equals(ii.getExtension(), "NCI-2010-00003")) {
-                    dto.setIdentifier(completeIi);
-                    dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
-                } else if (StringUtils.equals(ii.getExtension(), "NCI-2009-00003")) {
-                    dto.setIdentifier(preventionIi);
-                    dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
-                    dto.setPrimaryPurposeCode(CdConverter.convertToCd(PrimaryPurposeCode.PREVENTION));
-                } else {
-                    dto = null;
-                }
-                return dto;
-            }
-        });
-
-        SearchStudySiteService sssSvc = mock(SearchStudySiteService.class);
-        when(sssSvc.getStudySiteByOrg(any(Ii.class), any(Ii.class))).thenReturn(new SearchStudySiteResultDto());
-        readerService.setSearchStudySiteService(sssSvc);
-        cdusBatchUploadDataValidator.setSearchStudySiteService(sssSvc);
-
-        SearchTrialService searchTrialSvc = mock(SearchTrialService.class);
-        when(searchTrialSvc.isAuthorized(any(Ii.class), any(Ii.class))).thenAnswer(new Answer<Bl>() {
-            public Bl answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                Ii spIi = (Ii) args[0];
-                Bl result = new Bl();
-                if (StringUtils.equals(spIi.getExtension(), "NCI-2009-00002")) {
-                    result.setValue(Boolean.FALSE);
-                } else {
-                    result.setValue(Boolean.TRUE);
-                }
-                return result;
-            }
-        });
-        readerService.setSearchTrialService(searchTrialSvc);
-        cdusBatchUploadDataValidator.setSearchTrialService(searchTrialSvc);
-
-        OrganizationEntityServiceRemote organizationEntityService = mock(OrganizationEntityServiceRemote.class);
-        when(organizationEntityService.getOrganization(any(Ii.class))).thenReturn(new OrganizationDTO());
-        cdusBatchUploadDataValidator.setOrganizationEntityService(organizationEntityService);
-
-        HealthCareFacilityCorrelationServiceRemote healthCareFacilityCorrelationService = 
-            mock(HealthCareFacilityCorrelationServiceRemote.class);
-        when(healthCareFacilityCorrelationService.search(any(HealthCareFacilityDTO.class)))
-            .thenReturn(createListOfHealthCareFacilityDTO());
-        cdusBatchUploadDataValidator.setHealthCareFacilityCorrelationService(healthCareFacilityCorrelationService);
-
-        final SDCDiseaseDTO disease = new SDCDiseaseDTO();
-        disease.setIdentifier(IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
-        SDCDiseaseServiceRemote diseaseSvc = mock(SDCDiseaseServiceRemote.class);
-        when(diseaseSvc.getByCode(any(String.class))).thenAnswer(new Answer<SDCDiseaseDTO>() {
-            public SDCDiseaseDTO answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                String medraCode = (String) args[0];
-                List<String> validCodes = Arrays.asList("10053571", "10010029");
-                if (validCodes.contains(medraCode)) {
-                    return disease;
-                }
-                return null;
-            }
-        });
-
-        RegistryUserServiceRemote registryUserService = mock(RegistryUserServiceRemote.class);
-        RegistryUser user = new RegistryUser();
-        user.setId(1L);
-        user.setEmailAddress("test@example.com");
-        when(registryUserService.getUser(anyString())).thenReturn(user);
-
-        paSvcLocator = mock(ServiceLocatorPaInterface.class);
-        when(paSvcLocator.getStudyProtocolService()).thenReturn(spSvc);
-        when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
-        when(paSvcLocator.getDiseaseService()).thenReturn(diseaseSvc);
-        when(paSvcLocator.getRegistryUserService()).thenReturn(registryUserService);
-
-        PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
-
-        PoServiceLocator poServiceLoc = mock(PoServiceLocator.class);
-        PoRegistry.getInstance().setPoServiceLocator(poServiceLoc);
-
-        IdentifiedOrganizationCorrelationServiceRemote identifiedOrgCorrelationSvc
-        = mock(IdentifiedOrganizationCorrelationServiceRemote.class);
-        when(identifiedOrgCorrelationSvc.search(any(IdentifiedOrganizationDTO.class))).thenAnswer(new Answer<List<IdentifiedOrganizationDTO>>() {
-            public List<IdentifiedOrganizationDTO> answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                IdentifiedOrganizationDTO org = (IdentifiedOrganizationDTO) args[0];
-                if (StringUtils.equals(IiConverter.convertToString(org.getAssignedId()), "CTEP")) {
-                    IdentifiedOrganizationDTO result = new IdentifiedOrganizationDTO();
-                    result.setPlayerIdentifier(IiConverter.convertToIi(TestSchema.organizations.get(0).getId()));
-                    return Arrays.asList(result);
-                }
-                return new ArrayList<IdentifiedOrganizationDTO>();
-            }
-        });
-
-        OrganizationEntityServiceRemote orgSvc = mock(OrganizationEntityServiceRemote.class);
-        when(orgSvc.getOrganization(any(Ii.class))).thenAnswer(new Answer<OrganizationDTO>() {
-            public OrganizationDTO answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                Ii ii = (Ii) args[0];
-                OrganizationDTO org = new OrganizationDTO();
-                if (StringUtils.equalsIgnoreCase(IiConverter.convertToString(ii), "1")) {
-                    org.setIdentifier(IiConverter.convertToIi(TestSchema.organizations.get(0).getId()));
-                } else if (StringUtils.equalsIgnoreCase(IiConverter.convertToString(ii), "2")) {
-                    org.setIdentifier(IiConverter.convertToIi(TestSchema.organizations.get(1).getId()));
-                } else {
-                    org = null;
-                }
-                return org;
-            }
-        });
-
-        PatientCorrelationServiceRemote poPatientSvc = mock(PatientCorrelationServiceRemote.class);
-
-        Ii ii = IiConverter.convertToPoPersonIi("1");
-        PatientDTO patient = new PatientDTO();
-        patient.setIdentifier(DSetConverter.convertIiToDset(ii));
-        patient.setPlayerIdentifier(ii);
-        when(poPatientSvc.getCorrelation(any(Ii.class))).thenReturn(patient);
-        when(poPatientSvc.createCorrelation(any(PatientDTO.class))).thenReturn(ii);
-
-        PersonEntityServiceRemote poPersonSvc = mock(PersonEntityServiceRemote.class);
-
-        PersonDTO personDto = new PersonDTO();
-        personDto.setIdentifier(IiConverter.convertToPoPersonIi("1"));
-        personDto.setName(EnPnConverter.convertToEnPn("1", "2", "3", "4", "5"));
-        Ad adr = AddressConverterUtil.create("street", "deliv", "city", "MD", "20000", "USA");
-        personDto.setPostalAddress(adr);
-        when(poPersonSvc.getPerson(any(Ii.class))).thenReturn(personDto);
-
-        when(poServiceLoc.getPatientCorrelationService()).thenReturn(poPatientSvc);
-        when(poServiceLoc.getPersonEntityService()).thenReturn(poPersonSvc);
-        when(poServiceLoc.getIdentifiedOrganizationCorrelationService()).thenReturn(identifiedOrgCorrelationSvc);
-        when(poServiceLoc.getOrganizationEntityService()).thenReturn(orgSvc);
-    }
+public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest {
 
     @Test
     public void completeBatchValidation() throws URISyntaxException, PAException {
@@ -559,19 +334,5 @@ public class BatchUploadReaderServiceTest extends AbstractAccrualHibernateTestCa
         File file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
         List<BatchValidationResults> results = readerService.validateBatchData(file);
         assertTrue(results.get(0).isPassedValidation());
-    }
-    
-    private List<HealthCareFacilityDTO> createListOfHealthCareFacilityDTO() {
-        List<HealthCareFacilityDTO> list = new ArrayList<HealthCareFacilityDTO>();
-        HealthCareFacilityDTO dto = new HealthCareFacilityDTO();       
-        DSet<Ii> dset = new DSet<Ii>();
-        Ii ii = new Ii();
-        ii.setRoot(DSetConverter.BASE_ROOT);
-        Set<Ii> iis = new HashSet<Ii>();
-        iis.add(ii);
-        dset.setItem(iis);
-        dto.setIdentifier(dset);
-        list.add(dto);
-        return list;
     }
 }

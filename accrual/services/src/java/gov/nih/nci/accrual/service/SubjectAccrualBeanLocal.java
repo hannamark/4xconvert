@@ -88,18 +88,25 @@ import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.accrual.service.batch.BatchFileService;
+import gov.nih.nci.accrual.service.batch.BatchValidationResults;
+import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
+import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
 import gov.nih.nci.accrual.util.AccrualUtil;
+import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.HealthCareFacility;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.domain.StudySubject;
@@ -114,11 +121,15 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -127,6 +138,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
@@ -148,13 +160,15 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private PerformedActivityServiceLocal performedActivityService;
     @EJB
     private CountryService countryService;
-    
+    @EJB
+    private SubjectAccrualCountService subjectAccrualCountSvc;
+    @EJB
+    private BatchFileService batchFileService;
+    @EJB
+    private CdusBatchUploadReaderServiceLocal batchService;
     private static final String UNIMPLEMENTED_MSG = "Method not yet implemented.";
     private static final String REQUIRED_MSG = "%s is a required field.\n";
     private static final String INVALID_VALUE = "%s is not a valid value for %s.\n";
-
-    @EJB
-    private SubjectAccrualCountService subjectAccrualCountSvc;
     
     /**
      * {@inheritDoc}
@@ -378,7 +392,55 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      * {@inheritDoc}
      */
     public void submitBatchData(Ed batchFile) throws PAException {
-        throw new PAException(UNIMPLEMENTED_MSG);
+        if (ISOUtil.isEdNull(batchFile)) {
+            throw new PAException("Null batch files are not allowed. Please provide a valid batch file.");
+        }
+        String filePath = generateFileLocation();
+        RegistryUser submitter = getBatchSubmitter();
+        File file = writeBatchFileToFilesystem(batchFile, filePath);
+        
+        BatchFile batch = new BatchFile();
+        batch.setSubmitter(submitter);
+        batch.setFileLocation(filePath);
+        batch.setPassedValidation(validationBatchFile(file));
+        getBatchFileService().save(batch);
+    }
+
+
+    private File writeBatchFileToFilesystem(Ed batchFile, String filePath) throws PAException {
+        File file = new File(filePath);
+        try {
+            FileUtils.writeByteArrayToFile(file, batchFile.getData());
+        } catch (IOException e) {
+            throw new PAException("An error has occurred while trying to submit your batch data. Please try again.", e);
+        }
+        return file;
+    }
+    
+    private String generateFileLocation() throws PAException {
+        return PaEarPropertyReader.getAccrualBatchUploadPath() + File.separator + UUID.randomUUID() + "-batchFile.txt";
+    }
+    
+    private RegistryUser getBatchSubmitter() throws PAException {
+        return PaServiceLocator.getInstance().getRegistryUserService().getUser(AccrualCsmUtil.getInstance()
+                .getCSMUser(CaseSensitiveUsernameHolder.getUser()).getLoginName());
+    }
+    
+    /**
+     * Validates the given file, returning true is validation has passed, false otherwise.
+     * @param file the file to validate
+     * @return true if validation succeeded, false otherwise
+     */
+    private boolean validationBatchFile(File file) {
+        List<BatchValidationResults> validationResults = getBatchService().validateBatchData(file);
+        boolean passed = true;
+        for (BatchValidationResults result : validationResults) {
+            if (!result.isPassedValidation()) {
+                passed = false;
+                break;
+            }
+        }
+        return passed;
     }
 
     /**
@@ -459,4 +521,32 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         this.countryService = countryService;
     }
 
+    /**
+     * @return the batchFileService
+     */
+    public BatchFileService getBatchFileService() {
+        return batchFileService;
+    }
+
+    /**
+     * @param batchFileService the batchFileService to set
+     */
+    public void setBatchFileService(BatchFileService batchFileService) {
+        this.batchFileService = batchFileService;
+    }
+
+
+    /**
+     * @return the batchService
+     */
+    public CdusBatchUploadReaderServiceLocal getBatchService() {
+        return batchService;
+    }
+
+    /**
+     * @param batchService the batchService to set
+     */
+    public void setBatchService(CdusBatchUploadReaderServiceLocal batchService) {
+        this.batchService = batchService;
+    }
 }

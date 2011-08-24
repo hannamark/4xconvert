@@ -87,12 +87,19 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.security.exceptions.CSException;
 import gov.nih.nci.security.exceptions.CSTransactionException;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author Hugh Reinhart
  * @since Sep 11, 2009
  */
 public class AccrualCsmUtil implements CsmUtil {
     private static CsmUtil csmUtil = new AccrualCsmUtil();
+    /**
+     * Based on gridServicePrincipalSeparator used in security-config.xml.  Escaped for regular expression support.
+     */
+    private static final String PRINCIPAL_SEPARATOR = "\\|\\|";
+    
 
    /**
     * @return the instance
@@ -108,7 +115,7 @@ public class AccrualCsmUtil implements CsmUtil {
         User csmUser = null;
         try {
             UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
-            csmUser = upManager.getUser(loginName);
+            csmUser = upManager.getUser(extractUserName(loginName));
         } catch (CSException cse) {
             throw new PAException("CSM exception while retrieving CSM user :" + loginName, cse);
         }
@@ -120,11 +127,12 @@ public class AccrualCsmUtil implements CsmUtil {
      */
     public User createCSMUser(RegistryUser user, String loginName) throws PAException {
         User createdCSMUser = null;
+        String userName = extractUserName(loginName);
         try {
             // create the csm user
             User csmUser = new User();
             // get values from Registry User object and set in CSM User object
-            csmUser.setLoginName(loginName);
+            csmUser.setLoginName(userName);
             csmUser.setFirstName(user.getFirstName());
             csmUser.setLastName(user.getLastName());
             csmUser.setOrganization(user.getAffiliateOrg());
@@ -132,10 +140,10 @@ public class AccrualCsmUtil implements CsmUtil {
             ///create new user in CSM table
             UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
             upManager.createUser(csmUser);
-            assignUserToGroups(loginName, upManager);
-            createdCSMUser = upManager.getUser(loginName);
+            assignUserToGroups(userName, upManager);
+            createdCSMUser = upManager.getUser(userName);
         } catch (CSException cse) {
-            throw new PAException(" CSM exception while creating CSM user :" + loginName, cse);
+            throw new PAException("CSM exception while creating CSM user :" + userName, cse);
         }
 
         return createdCSMUser;
@@ -150,16 +158,17 @@ public class AccrualCsmUtil implements CsmUtil {
      */
     public User updateCSMUser(RegistryUser user, String loginName) throws PAException {
         User createdCSMUser = null;
+        String userName = extractUserName(loginName);
         try {
             // create the csm user
             User csmUser = new User();
             UserProvisioningManager upManager = SecurityServiceProvider.
             getUserProvisioningManager("pa");
-            csmUser = upManager.getUser(loginName);
+            csmUser = upManager.getUser(userName);
 
             // get values from Registry User object and set in CSM User object
             csmUser.setUserId(user.getCsmUserId());
-            csmUser.setLoginName(loginName);
+            csmUser.setLoginName(userName);
             csmUser.setFirstName(user.getFirstName());
             csmUser.setLastName(user.getLastName());
             csmUser.setOrganization(user.getAffiliateOrg());
@@ -169,13 +178,29 @@ public class AccrualCsmUtil implements CsmUtil {
             // assign the updated user to the appropriate group
             // read the CSM group name from the properties
             //String submitterGroup = PaEarPropertyReader.getCSMSubmitterGroup();
-            assignUserToGroups(loginName, upManager);
-            createdCSMUser = upManager.getUser(loginName);
+            assignUserToGroups(userName, upManager);
+            createdCSMUser = upManager.getUser(userName);
         } catch (CSException cse) {
-            throw new PAException("CSM exception while updating CSM user :" + loginName, cse);
+            throw new PAException("CSM exception while updating CSM user :" + userName, cse);
         }
 
         return createdCSMUser;
+    }
+    
+    /**
+     * Extract the userName.  Used in case, there are multiple userNames passed in of the form:
+     * 'userName1||userName2' or just 'userName'.  The first version userName1 is grid account userName,
+     * and userName2 is the actual userName of interest.  In both scenarios, we want to use the userName
+     * at the end (e.g. 'userName2','userName').
+     * @param userName the username to extract
+     * @return the extracted username
+     */
+    public String extractUserName(String userName) {
+        if (StringUtils.isEmpty(userName)) {
+            return null;
+        }
+        String [] userNames = userName.split(PRINCIPAL_SEPARATOR);
+        return userNames[userNames.length - 1];
     }
     
     /**

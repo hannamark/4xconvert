@@ -738,4 +738,8 @@
         <comment>Add class for batch file storage to the model.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3995.sql"/>
      </changeSet>
+     <changeSet id="PO-3997" author="aevansel">
+        <comment>Updating batch file db columns</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3997.sql"/>
+     </changeSet>
 </databaseChangeLog>

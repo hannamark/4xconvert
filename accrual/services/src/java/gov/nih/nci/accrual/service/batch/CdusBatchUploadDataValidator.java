@@ -165,6 +165,9 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 }                
                 errMsg.append(validateBatchData(line, lineNumber, protocolId));
             }
+            if (StringUtils.isEmpty(protocolId)) {
+                errMsg.append("No Study Protocol Identifier could be found in the given file.");
+            }
             results.setErrors(new StringBuilder(errMsg.toString().trim()));          
             if (StringUtils.isEmpty(errMsg.toString().trim())) {
                 results.setValidatedLines(lines);

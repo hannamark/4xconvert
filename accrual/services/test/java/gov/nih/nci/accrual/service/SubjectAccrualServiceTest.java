@@ -85,26 +85,27 @@ package gov.nih.nci.accrual.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.accrual.dto.util.POPatientDTO;
+import gov.nih.nci.accrual.service.batch.AbstractBatchUploadReaderTest;
+import gov.nih.nci.accrual.service.batch.BatchFileServiceBeanLocal;
 import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
 import gov.nih.nci.accrual.service.util.CountryBean;
 import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.util.AccrualUtil;
-import gov.nih.nci.accrual.util.MockPoServiceLocator;
 import gov.nih.nci.accrual.util.PaServiceLocator;
-import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
-import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
@@ -117,55 +118,48 @@ import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
-import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
-import gov.nih.nci.pa.iso.util.EdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
+import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 /**
  * Tests for the subject accrual service.
  * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
-public class SubjectAccrualServiceTest extends AbstractServiceTest<SubjectAccrualServiceRemote> {
-    private SubjectAccrualBeanLocal bean;
+public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-    public SubjectAccrualBeanLocal beanLocal;
+    private SubjectAccrualBeanLocal bean;
     public SubjectAccrualCountService accCountSvc;
     public StudySiteServiceRemote studySiteSvc;
     
-    @Override
     @Before
-    public void instantiateServiceBean() throws Exception {
-      
-        ServiceLocatorPaInterface paSvcLocator = mock(ServiceLocatorPaInterface.class);
+    public void setUp() throws Exception {
         RegistryUserServiceRemote regSvc = mock(RegistryUserServiceRemote.class);
         when(regSvc.getUser(any(String.class))).thenReturn(TestSchema.registryUsers.get(0));
         when(paSvcLocator.getRegistryUserService()).thenReturn(regSvc);
@@ -183,43 +177,27 @@ public class SubjectAccrualServiceTest extends AbstractServiceTest<SubjectAccrua
         patientService.setPatientCorrelationSvc(poPatientSvc);
         
         PerformedActivityBean performedActivitySvc = new PerformedActivityBean();
+        accCountSvc = mock(SubjectAccrualCountService.class);
         
         bean = new SubjectAccrualServiceBean();
-        beanLocal = new SubjectAccrualBeanLocal();
-        accCountSvc = mock(SubjectAccrualCountService.class);
-        beanLocal.setSubjectAccrualCountSvc(accCountSvc);
+        bean.setSubjectAccrualCountSvc(accCountSvc);
         bean.setPatientService(patientService);
         bean.setStudySubjectService(new StudySubjectBean());
         bean.setPerformedActivityService(performedActivitySvc);
         bean.setCountryService(new CountryBean());
+        bean.setBatchFileService(new BatchFileServiceBeanLocal());
+        bean.setBatchService(readerService);
         
         studySiteSvc = mock(StudySiteServiceRemote.class);
         when(studySiteSvc.get(any(Ii.class))).thenReturn(Converters.get(StudySiteConverter.class).convertFromDomainToDto(TestSchema.participatingSites.get(0)));        
-                
-        final SDCDiseaseDTO disease = new SDCDiseaseDTO();
-        disease.setIdentifier(IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
-        SDCDiseaseServiceRemote diseaseSvc = mock(SDCDiseaseServiceRemote.class);
-        when(diseaseSvc.get(any(Ii.class))).thenAnswer(new Answer<SDCDiseaseDTO>() {
-            public SDCDiseaseDTO answer(InvocationOnMock invocation) throws Throwable {
-                Object[] args = invocation.getArguments();
-                Ii ii = (Ii) args[0];
-                if (IiConverter.convertToLong(ii).equals(TestSchema.diseases.get(0).getId())) {
-                    return disease;
-                }
-                return null;
-            }
-        });
         
         ICD9DiseaseServiceRemote icd9DiseaseSvc = mock(ICD9DiseaseServiceRemote.class);
         
-        
-        when(paSvcLocator.getDiseaseService()).thenReturn(diseaseSvc);
         when(paSvcLocator.getICD9DiseaseService()).thenReturn(icd9DiseaseSvc);
         when(paSvcLocator.getStudySiteService()).thenReturn(studySiteSvc);
         ServiceLocatorAccInterface accSvcLocator = mock(ServiceLocatorAccInterface.class);
         when(accSvcLocator.getPerformedActivityService()).thenReturn(performedActivitySvc);
         
-        PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
         AccrualServiceLocator.getInstance().setServiceLocator(accSvcLocator);
         PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
 
@@ -315,7 +293,7 @@ public class SubjectAccrualServiceTest extends AbstractServiceTest<SubjectAccrua
     public void updateSubjectAccrualCountWoutExistingCount() throws Exception {
         StudySite ss = createAccessibleStudySite(); 
         when(studySiteSvc.get(any(Ii.class))).thenReturn(new StudySiteConverter().convertFromDomainToDto(ss));
-        beanLocal.updateSubjectAccrualCount(IiConverter.convertToIi(ss.getId()), IntConverter.convertToInt(100));
+        bean.updateSubjectAccrualCount(IiConverter.convertToIi(ss.getId()), IntConverter.convertToInt(100));
     }
     
     @Test 
@@ -350,16 +328,35 @@ public class SubjectAccrualServiceTest extends AbstractServiceTest<SubjectAccrua
         TestSchema.addUpdObject(count);
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
-        beanLocal.updateSubjectAccrualCount(IiConverter.convertToIi(ss.getId()), IntConverter.convertToInt(100));
-       
+        bean.updateSubjectAccrualCount(IiConverter.convertToIi(ss.getId()), IntConverter.convertToInt(100));
     }
    
     @Test
     public void submitBatchData() throws Exception {
-        thrown.expect(PAException.class);
-        thrown.expectMessage("Method not yet implemented.");
+        File file = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
+        Ed batchData = new Ed();
+        batchData.setData(FileUtils.readFileToByteArray(file));
         
-        bean.submitBatchData(EdConverter.convertToEd("Incorrect Data".getBytes()));
+        bean.submitBatchData(batchData);
+        
+        List<BatchFile> readyForProcessing = bean.getBatchFileService().getBatchFilesAvailableForProcessing();
+        assertFalse(readyForProcessing.isEmpty());
+        assertEquals(1, readyForProcessing.size());
+        
+        BatchFile bf = readyForProcessing.get(0);
+        assertTrue(bf.isPassedValidation());
+        assertFalse(bf.isProcessed());
+        assertNotNull(bf.getFileLocation());
+        FileUtils.deleteQuietly(new File(bf.getFileLocation()));
+    }
+    
+    @Test
+    public void submitBatchDataNullChecks() throws Exception {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Null batch files are not allowed. Please provide a valid batch file.");
+        
+        Ed batchData = new Ed();
+        bean.submitBatchData(batchData);
     }
     
     @Test
