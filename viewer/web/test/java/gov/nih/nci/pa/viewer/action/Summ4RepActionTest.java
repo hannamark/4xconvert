@@ -190,17 +190,14 @@ public class Summ4RepActionTest extends AbstractReportActionTest<Summ4RepAction>
         assertEquals(MockService.TEST_STR, item.getType());
         assertEquals(MockService.TEST_STR, item.getAnatomicSites().get(0));
         
-        assertEquals(1, action.getAgentDeviceMap().get("NATIONAL").size());  
+        assertEquals(2, action.getAgentDeviceMap().get("NATIONAL").size());  
         assertEquals(1, action.getAgentDeviceMap().get("INDUSTRIAL").size());
-        assertEquals(1, action.getAgentDeviceMap().get("EXTERNALLY_PEER_REVIEWED").size());
-        assertEquals(1, action.getAgentDeviceMap().get("INSTITUTIONAL").size());
+        assertEquals(2, action.getAgentDeviceMap().get("EXTERNALLY_PEER_REVIEWED").size());
+        assertEquals(2, action.getAgentDeviceMap().get("INSTITUTIONAL").size());
         
-        assertEquals(1, action.getAnciCorrList().size());
-        assertEquals(1, action.getEpidemOutcomeList().size());
-        
-        assertEquals(1, action.getOtherInterventionMap().get("NATIONAL").size());
-        assertEquals(1, action.getOtherInterventionMap().get("INSTITUTIONAL").size());
-        assertEquals(1, action.getOtherInterventionMap().get("EXTERNALLY_PEER_REVIEWED").size());
+        assertEquals(0, action.getAnciCorrList().size());
+        assertEquals(0, action.getEpidemOutcomeList().size());
+        assertEquals(0, action.getOtherInterventionMap().size());
     }
     
     

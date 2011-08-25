@@ -85,7 +85,6 @@ package gov.nih.nci.pa.viewer.action;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.report.dto.result.Summ4RepResultDto;
 import gov.nih.nci.pa.report.service.Summ4RepLocal;
-import gov.nih.nci.pa.report.service.Summ4ReportBean;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.viewer.dto.criteria.Summ4RepCriteriaWebDto;
 import gov.nih.nci.pa.viewer.dto.result.Summ4ResultWebDto;
@@ -210,39 +209,6 @@ public class Summ4RepAction
         return false;
     }
     
-    private void storeItem(Summ4ResultWebDto item) {
-   
-        if (StringUtils.equals(item.getSortCriteria(), Summ4ReportBean.EPIDEM_OUTCOME)) {
-            epidemOutcomeList.add(item);
-        } else if (StringUtils.equals(item.getSortCriteria(), Summ4ReportBean.AGENT_DEVICE)) {
-            // we shouldn't have an item w/out a getSubSortCriteria.
-            addItemToMap(agentDeviceMap, item);
-        } else if (StringUtils.equals(item.getSortCriteria(), Summ4ReportBean.ANCILLARY_CORRELATIVE)) {
-            anciCorrList.add(item);
-        } else if (StringUtils.equals(item.getSortCriteria(), Summ4ReportBean.OTHER_INTERVENTION)) {
-            // we shouldn't have an item w/out a type.
-            addItemToMap(otherInterventionMap, item);
-        }
-    }
-    
-    private void addItemToMap(Map<String, List<Summ4ResultWebDto>> myMap, Summ4ResultWebDto item) {
-        if (!myMap.containsKey(item.getSubSortCriteria())) {
-            myMap.put(item.getSubSortCriteria(), new ArrayList<Summ4ResultWebDto>());
-        }
-        myMap.get(item.getSubSortCriteria()).add(item);
-    }
-        
-    private void sessionScopeStoreAttributes() {
-        ServletActionContext.getRequest().getSession()
-            .setAttribute(ViewerConstants.SUMM4_AGENT_DEVICE_RESULT_MAP, agentDeviceMap);   
-        ServletActionContext.getRequest().getSession()
-            .setAttribute(ViewerConstants.SUMM4_OTHER_INTERVENTION_RESULT_MAP, otherInterventionMap);
-        ServletActionContext.getRequest().getSession()
-            .setAttribute(ViewerConstants.SUMM4_EPIDEMIOLOGIC_OTHER_OUTCOME_RESULT_LIST, epidemOutcomeList);
-        ServletActionContext.getRequest().getSession()
-            .setAttribute(ViewerConstants.SUMM4_ANCILLARY_CORRELATIVE_RESULT_LIST, anciCorrList);
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -256,14 +222,22 @@ public class Summ4RepAction
         }
        
         for (Summ4ResultWebDto item : getResultList()) {
-            storeItem(item);
+            addItemToMap(agentDeviceMap, item);
         }
         
-        sessionScopeStoreAttributes();
+        ServletActionContext.getRequest().getSession()
+                .setAttribute(ViewerConstants.SUMM4_AGENT_DEVICE_RESULT_MAP, agentDeviceMap);
         
         return super.getReport();
     }
     
+    private void addItemToMap(Map<String, List<Summ4ResultWebDto>> myMap, Summ4ResultWebDto item) {
+        if (!myMap.containsKey(item.getSubSortCriteria())) {
+            myMap.put(item.getSubSortCriteria(), new ArrayList<Summ4ResultWebDto>());
+        }
+        myMap.get(item.getSubSortCriteria()).add(item);
+    }
+        
     /**
      * Auto complete action.
      * @return list
