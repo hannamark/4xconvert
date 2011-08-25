@@ -89,7 +89,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.accrual.dto.util.POPatientDTO;
 import gov.nih.nci.accrual.service.batch.AbstractBatchUploadReaderTest;
@@ -103,6 +105,7 @@ import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
 import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.BatchFile;
@@ -360,11 +363,29 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     }
     
     @Test
-    public void search() throws Exception {
+    public void searchstudyIdentifierNull() throws Exception {
         thrown.expect(PAException.class);
-        thrown.expectMessage("Method not yet implemented.");
-        
-        bean.search(IiConverter.convertToIi(1L), IiConverter.convertToIi(1L), null, null, null);
+        thrown.expectMessage("Study identifier must not be null when calling seach.");
+
+        bean.search(null, IiConverter.convertToIi(1L), null, null, null);
+    }
+
+    @Test
+    public void search() throws Exception {
+        StudySubjectServiceLocal studySubjectService = mock(StudySubjectServiceLocal.class);
+        bean.setStudySubjectService(studySubjectService);
+
+        Long studyIdentifier = 2L;
+        Long participatingSiteIdentifier = 3L;
+        Timestamp startDate = new Timestamp(21212);
+        Timestamp endDate = new Timestamp(322323);
+        LimitOffset pagingParams = new LimitOffset(2, 4);
+
+        bean.search(IiConverter.convertToIi(studyIdentifier), IiConverter.convertToIi(participatingSiteIdentifier),
+                    TsConverter.convertToTs(startDate), TsConverter.convertToTs(endDate), pagingParams);
+        verify(studySubjectService).search(studyIdentifier, participatingSiteIdentifier, startDate, endDate,
+                                           pagingParams);
+
     }
     
     private void validateSubjectAccrualDTO(SubjectAccrualDTO expected, SubjectAccrualDTO given) {

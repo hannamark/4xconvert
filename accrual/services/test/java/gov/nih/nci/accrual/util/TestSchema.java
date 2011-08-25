@@ -554,6 +554,7 @@ public class TestSchema {
         PerformedSubjectMilestone m = new PerformedSubjectMilestone();
         m.setCategoryCode(ActivityCategoryCode.OTHER);
         m.setInformedConsentDate(PAUtil.dateStringToTimestamp("6/13/2009"));
+        m.setRegistrationDate(PAUtil.dateStringToTimestamp("5/21/2009"));
         m.setStudyProtocol(studyProtocols.get(0));
         m.setStudySubject(studySubjects.get(0));
         addUpdObject(m);

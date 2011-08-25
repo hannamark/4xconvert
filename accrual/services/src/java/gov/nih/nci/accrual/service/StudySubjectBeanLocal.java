@@ -81,17 +81,24 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.convert.StudySubjectConverter;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
+import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolService;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -114,14 +121,15 @@ import org.hibernate.criterion.Restrictions;
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class StudySubjectBeanLocal
-        extends AbstractBaseAccrualStudyBean<StudySubjectDto, StudySubject, StudySubjectConverter>
-        implements StudySubjectServiceLocal {
+public class StudySubjectBeanLocal extends
+        AbstractBaseAccrualStudyBean<StudySubjectDto, StudySubject, StudySubjectConverter> implements
+        StudySubjectServiceLocal {
 
     /**
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
+    @Override
     public List<StudySubjectDto> getByStudySite(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
             throw new PAException("Called getByStudySite() with Ii == null.");
@@ -129,16 +137,12 @@ public class StudySubjectBeanLocal
         try {
             Session session = PaHibernateUtil.getCurrentSession();
             String hql = "select ssub from StudySubject ssub join ssub.studySite ssite where ssite.id = :studySiteId "
-                + "order by ssub.id ";
+                    + "order by ssub.id ";
             Query query = session.createQuery(hql);
             query.setParameter("studySiteId", IiConverter.convertToLong(ii));
             List<StudySubject> queryList = query.list();
 
-            List<StudySubjectDto> resultList = new ArrayList<StudySubjectDto>();
-            for (StudySubject bo : queryList) {
-                resultList.add(convertFromDomainToDto(bo));
-            }
-            return resultList;
+            return convertFromBoListToDtoList(queryList);
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in getByStudyProtocol().", hbe);
         }
@@ -148,21 +152,138 @@ public class StudySubjectBeanLocal
      * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
+    @Override
     public List<StudySubjectDto> getStudySubjects(String assignedIdentifier, Long studySiteId, Date birthDate,
             FunctionalRoleStatusCode statusCode) throws PAException {
         try {
             Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(StudySubject.class);
             populateCriteria(assignedIdentifier, studySiteId, birthDate, statusCode, criteria);
             List<StudySubject> subjects = criteria.list();
-            List<StudySubjectDto> results = new ArrayList<StudySubjectDto>();
-            for (StudySubject bo : subjects) {
-                results.add(convertFromDomainToDto(bo));
-            }
-            return results;
+            return convertFromBoListToDtoList(subjects);
         } catch (HibernateException e) {
             throw new PAException("Error retrieving study subjects", e);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<StudySubjectDto> search(Long studyIdentifier, Long participatingSiteIdentifier, Timestamp startDate,
+            Timestamp endDate, LimitOffset pagingParams) throws PAException {
+        verifyStudyIdentifier(studyIdentifier);
+
+        List<StudySubject> studySubjects = searchStudySubject(studyIdentifier, participatingSiteIdentifier, startDate,
+                                                          endDate, pagingParams);
+        
+        calculateAccessibleStudySubjects(studySubjects, getUserId());
+        
+        return convertFromBoListToDtoList(studySubjects);
+        
+    }
+
+    void verifyStudyIdentifier(Long studyIdentifier) throws PAException {
+        if (getStudyProtocolService().getStudyProtocol(IiConverter.convertToStudyProtocolIi(studyIdentifier)) == null) {
+            throw new PAException("No study with the given identifier.");
+        }
+    }
+
+    StudyProtocolService getStudyProtocolService() {
+        return PaServiceLocator.getInstance().getStudyProtocolService();
+    }
+    
+    Long getUserId() throws PAException {
+        return PaServiceLocator.getInstance().getRegistryUserService().getUser(CaseSensitiveUsernameHolder.getUser())
+            .getId();
+    }
+    
+    void calculateAccessibleStudySubjects(List<StudySubject> studySubjects, Long userId) {
+        for (Iterator<StudySubject> it = studySubjects.iterator(); it.hasNext();) {
+            StudySubject studySubject = it.next();
+            boolean found = false;
+            for (StudySiteAccrualAccess access : studySubject.getStudySite().getStudySiteAccrualAccess()) {
+                if (access.getRegistryUser().getId() == userId) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                it.remove();
+            }
+        }
+
+    }
+
+    @SuppressWarnings("unchecked")
+    List<StudySubject> searchStudySubject(Long studyIdentifier, Long participatingSiteIdentifier,
+            Timestamp startDate, Timestamp endDate, LimitOffset pagingParams) throws PAException {
+
+        try {
+            String str = createSearchQueryString(participatingSiteIdentifier, startDate, endDate);
+
+            Query query = createSearchQuery(new CreateSearchQueryParameterBean(studyIdentifier,
+                    participatingSiteIdentifier, startDate, endDate, pagingParams), str);
+
+            return query.list();
+           
+        } catch (HibernateException hbe) {
+            throw new PAException("Hibernate exception in search().", hbe);
+        }
+    }
+    
+    private String createSearchQueryString(Long participatingSiteIdentifier, Timestamp startDate,
+            Timestamp endDate) {
+        StringBuilder str = new StringBuilder();
+        str.append("select ssub from StudySubject ssub");
+
+        str.append(" where ssub.studyProtocol.id = :studyProtocolId ");
+
+        if (participatingSiteIdentifier != null) {
+            str.append(" and ssub.studySite.id = :studySiteId");
+        }
+
+        if (startDate != null || endDate != null) {
+            str.append(" and exists (from PerformedSubjectMilestone psm where psm.studySubject.id = ssub.id");
+            if (startDate != null) {
+                str.append(" and psm.registrationDate>= :startDate");
+            }
+            if (endDate != null) {
+                str.append(" and psm.registrationDate<= :endDate");
+            }
+            str.append(")");
+        }
+
+        str.append(" order by ssub.id ");
+        return str.toString();
+    }
+
+    private Query createSearchQuery(CreateSearchQueryParameterBean parameterObject, String str) {
+        Query query = PaHibernateUtil.getCurrentSession().createQuery(str);
+        if (parameterObject.getPagingParams() != null) {
+            query.setFirstResult(parameterObject.getPagingParams().getOffset());
+            query.setMaxResults(parameterObject.getPagingParams().getLimit());
+        }
+        
+        query.setParameter("studyProtocolId", parameterObject.getStudyIdentifier());
+        if (parameterObject.getParticipatingSiteIdentifier() != null) {
+            query.setParameter("studySiteId", parameterObject.getParticipatingSiteIdentifier());
+        }
+        if (parameterObject.getStartDate() != null) {
+            query.setParameter("startDate", parameterObject.getStartDate());
+        }
+        if (parameterObject.getEndDate() != null) {
+            query.setParameter("endDate", parameterObject.getEndDate());
+        }
+        return query;
+    }
+
+    List<StudySubjectDto> convertFromBoListToDtoList(List<StudySubject> queryList) {
+        List<StudySubjectDto> resultList = new ArrayList<StudySubjectDto>();
+        for (StudySubject bo : queryList) {
+            resultList.add(convertFromDomainToDto(bo));
+        }
+        return resultList;
+    }  
 
     private void populateCriteria(String assignedIdentifier, Long studySiteId, Date birthDate,
             FunctionalRoleStatusCode statusCode, Criteria criteria) {
@@ -178,5 +299,66 @@ public class StudySubjectBeanLocal
         if (birthDate != null) {
             criteria.createCriteria("patient", "p").add(Restrictions.eq("p.birthDate", birthDate));
         }
+    }
+    
+    /**
+     * @author merenkoi
+     */
+    private static class CreateSearchQueryParameterBean {
+
+        private final Long studyIdentifier;
+
+        private final Long participatingSiteIdentifier;
+
+        private final Timestamp startDate;
+
+        private final Timestamp endDate;
+
+        private final LimitOffset pagingParams;
+
+        public CreateSearchQueryParameterBean(Long studyIdentifier, Long participatingSiteIdentifier,
+                Timestamp startDate, Timestamp endDate, LimitOffset pagingParams) {
+            this.studyIdentifier = studyIdentifier;
+            this.participatingSiteIdentifier = participatingSiteIdentifier;
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.pagingParams = pagingParams;
+        }
+
+        /**
+         * @return the studyIdentifier
+         */
+        public Long getStudyIdentifier() {
+            return studyIdentifier;
+        }
+
+        /**
+         * @return the participatingSiteIdentifier
+         */
+        public Long getParticipatingSiteIdentifier() {
+            return participatingSiteIdentifier;
+        }
+
+        /**
+         * @return the startDate
+         */
+        public Timestamp getStartDate() {
+            return startDate;
+        }
+
+        /**
+         * @return the endDate
+         */
+        public Timestamp getEndDate() {
+            return endDate;
+        }
+
+        /**
+         * @return the pagingParams
+         */
+        public LimitOffset getPagingParams() {
+            return pagingParams;
+        }
+
     }
 }

@@ -211,7 +211,7 @@ public class PatientHelper {
     }
 
     private ICD9DiseaseDTO getICD9Disease(StudySubjectDto dto) throws PAException {
-        if (ISOUtil.isIiNull(dto.getDiseaseIdentifier())) {
+        if (ISOUtil.isIiNull(dto.getIcd9DiseaseIdentifier())) {
             return null;
         }
         return action.getIcd9DiseaseSvc().get(dto.getIcd9DiseaseIdentifier());

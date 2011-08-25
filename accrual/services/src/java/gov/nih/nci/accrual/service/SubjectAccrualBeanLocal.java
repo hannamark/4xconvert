@@ -119,6 +119,7 @@ import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
@@ -463,9 +464,28 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     /**
      * {@inheritDoc}
      */
-    public List<SubjectAccrualDTO> search(Ii studyIdentifier, Ii participatingSiteIdentifier, Ts startDate,
-            Ts endDate, LimitOffset pagingParams) throws PAException {
-        throw new PAException(UNIMPLEMENTED_MSG);
+    public List<SubjectAccrualDTO> search(Ii studyIdentifier, Ii participatingSiteIdentifier, Ts startDate, Ts endDate,
+            LimitOffset pagingParams) throws PAException {
+        if (ISOUtil.isIiNull(studyIdentifier)) {
+            throw new PAException("Study identifier must not be null when calling seach.");
+        }
+
+        List<StudySubjectDto> studySubjectDtoList = getStudySubjectService()
+            .search(IiConverter.convertToLong(studyIdentifier), IiConverter.convertToLong(participatingSiteIdentifier),
+                    TsConverter.convertToTimestamp(startDate), TsConverter.convertToTimestamp(endDate), pagingParams);
+
+        return convertStudySubjectDtoToSubjectAccrualDTOList(studySubjectDtoList);
+    }
+
+    List<SubjectAccrualDTO> convertStudySubjectDtoToSubjectAccrualDTOList(List<StudySubjectDto> studySubjectDtoList) {
+        List<SubjectAccrualDTO> result = new ArrayList<SubjectAccrualDTO>();
+        for (StudySubjectDto studySubjectDto : studySubjectDtoList) {
+            StudySubject studySubject = (StudySubject) PaHibernateUtil.getCurrentSession()
+                .get(StudySubject.class, IiConverter.convertToLong(studySubjectDto.getIdentifier()));
+            result.add(Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(studySubject));
+
+        }
+        return result;
     }
 
     /**

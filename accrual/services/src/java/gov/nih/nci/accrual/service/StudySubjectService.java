@@ -80,10 +80,12 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.service.PAException;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -113,4 +115,17 @@ public interface StudySubjectService extends BaseAccrualStudyService<StudySubjec
      */
     List<StudySubjectDto> getStudySubjects(String assignedIdentifier, Long studySiteId, Date birthDate, 
             FunctionalRoleStatusCode statusCode) throws PAException;
+    
+    
+    /**
+     * @param studyIdentifier the study protocol id
+     * @param participatingSiteIdentifier the study site id
+     * @param startDate the start date
+     * @param endDate the end date
+     * @param pagingParams LimitIffset
+     * @return List<StudySubjectDto>
+     * @throws PAException Security Conditions are not met, Study Identifier is invalid
+     */
+    List<StudySubjectDto> search(Long studyIdentifier, Long participatingSiteIdentifier, Timestamp startDate,
+            Timestamp endDate, LimitOffset pagingParams) throws PAException;
 }

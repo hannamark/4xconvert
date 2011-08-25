@@ -84,22 +84,39 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
+import gov.nih.nci.pa.domain.StudySubject;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolService;
+import gov.nih.nci.pa.util.PAUtil;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InOrder;
 
 /**
  * @author Hugh Reinhart
@@ -169,6 +186,118 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         results = bean.getStudySubjects("004", TestSchema.studySites.get(0).getId(), birthDate, 
                 FunctionalRoleStatusCode.ACTIVE);
         assertEquals(0, results.size());
+    }
+    
+    @Test
+    public void searchStudySubjectByProtocolIdSiteId() throws PAException {
+        List<StudySubject> result = ((StudySubjectBean)bean).searchStudySubject(TestSchema.studyProtocols.get(0).getId(),
+                                                   TestSchema.studySites.get(0).getId(), null, null, null);
+          assertEquals(2, result.size());
+    }
+    
+    @Test
+    public void searchPaganation() throws PAException {
+        LimitOffset pagingParams = new LimitOffset(5, 1);
+        List<StudySubject> result = ((StudySubjectBean)bean).searchStudySubject(TestSchema.studyProtocols.get(0).getId(),
+                                                   TestSchema.studySites.get(0).getId(), null, null, pagingParams);
+        assertEquals(1, result.size());
+        assertEquals(TestSchema.studySubjects.get(1).getId(),
+                     Long.valueOf(result.get(0).getId()));
+    }
+    
+    @Test(expected = PAException.class)
+    public void searchByIncorrectProtocolId() throws PAException {
+        StudySubjectBeanLocal bean = mock(StudySubjectBeanLocal.class);
+        StudyProtocolService studyProtocolService = mock(StudyProtocolService.class);
+        when(studyProtocolService.getStudyProtocol(IiConverter.convertToStudyProtocolIi(Long.valueOf(999999999))))
+            .thenReturn(null);
+        when(bean.getStudyProtocolService()).thenReturn(studyProtocolService);
+        
+        Long studyId = Long.valueOf(999999999);
+        doCallRealMethod().when(bean).search(studyId, null, null, null, null); 
+        doCallRealMethod().when(bean).verifyStudyIdentifier(studyId);
+        bean.search(studyId, null, null, null, null);
+    }
+    
+    @Test
+    public void searchStudySubjectByProtocolIdDates() throws PAException {
+        List<StudySubject> result = ((StudySubjectBean) bean).searchStudySubject(TestSchema.studyProtocols.get(0)
+            .getId(), null, PAUtil.dateStringToTimestamp("5/20/2009"), PAUtil.dateStringToTimestamp("5/22/2009"), null);
+        assertEquals(1, result.size());
+        assertEquals(TestSchema.studySubjects.get(0).getId(), Long.valueOf(result.get(0).getId()));
+    }
+    
+    @Test
+    public void calculateAccessibleStudySubjects() {
+        List<StudySubject> studySubjects = createStudySubjectsForUserSearch();
+        ((StudySubjectBean)bean).calculateAccessibleStudySubjects(studySubjects, 2L);
+        assertEquals(3, studySubjects.size());
+        List<Long> expectedList = new ArrayList<Long>(Arrays.asList(new Long[] {2L, 3L, 7L}));
+        List<Long> actualList = new ArrayList<Long>();
+        for (StudySubject studySubject :  studySubjects) {
+            actualList.add(studySubject.getId());
+        }        
+        CollectionUtils.isEqualCollection(expectedList, actualList);        
+    }
+    
+    @Test
+    public void search() throws PAException {
+        StudySubjectBean bean = mock(StudySubjectBean.class);
+
+        Long studyIdentifier = 2L;
+        Long participatingSiteIdentifier = 3L;
+        Timestamp startDate = new Timestamp(21212);
+        Timestamp endDate = new Timestamp(322323);
+        LimitOffset pagingParams = new LimitOffset(2, 4);
+        List<StudySubject> studySubjects = new ArrayList<StudySubject>();
+        List<StudySubjectDto> studySubjectDtos = new ArrayList<StudySubjectDto>();
+
+        Long userId = 100L;
+
+        when(bean.searchStudySubject(studyIdentifier, participatingSiteIdentifier, startDate, endDate, pagingParams))
+            .thenReturn(studySubjects);
+        when(bean.getUserId()).thenReturn(userId);
+        when(bean.convertFromBoListToDtoList(studySubjects)).thenReturn(studySubjectDtos);
+
+        doCallRealMethod().when(bean).search(studyIdentifier, participatingSiteIdentifier, startDate, endDate, pagingParams); 
+        List<StudySubjectDto> result = bean.search(studyIdentifier, participatingSiteIdentifier, startDate, endDate, pagingParams);
+        assertEquals(studySubjectDtos, result);
+        
+        InOrder inOrder = inOrder(bean);
+        inOrder.verify(bean).verifyStudyIdentifier(studyIdentifier);
+        inOrder.verify(bean).searchStudySubject(studyIdentifier, participatingSiteIdentifier, startDate, endDate, pagingParams);
+
+        inOrder.verify(bean).getUserId();
+        inOrder.verify(bean).calculateAccessibleStudySubjects(studySubjects, userId);
+        inOrder.verify(bean).convertFromBoListToDtoList(studySubjects);
+
+    }
+    
+    private List<StudySubject> createStudySubjectsForUserSearch() {
+        List<StudySubject> result = new ArrayList<StudySubject>();
+        result.add(createStudySubjectForUserSearch(1L,1L) );
+        result.add(createStudySubjectForUserSearch(2L,2L) );
+        result.add(createStudySubjectForUserSearch(3L,2L) );
+        result.add(createStudySubjectForUserSearch(4L,1L) );
+        result.add(createStudySubjectForUserSearch(5L,1L) );
+        result.add(createStudySubjectForUserSearch(6L,3L) );
+        result.add(createStudySubjectForUserSearch(7L,2L) );
+       return result;        
+    }
+    
+    private StudySubject createStudySubjectForUserSearch(Long subjectId, Long userId) {
+        StudySubject result = new StudySubject();
+        result.setId(subjectId);
+        StudySite site = new StudySite();
+        List<StudySiteAccrualAccess> accesses = new ArrayList<StudySiteAccrualAccess>();
+        StudySiteAccrualAccess access = new StudySiteAccrualAccess();
+        RegistryUser registryUser = new RegistryUser();
+        registryUser.setId(userId);
+        access.setRegistryUser(registryUser);
+        accesses.add(access);
+        site.setStudySiteAccrualAccess(accesses);
+        result.setStudySite(site);
+        return result;
     }
 
     @Test

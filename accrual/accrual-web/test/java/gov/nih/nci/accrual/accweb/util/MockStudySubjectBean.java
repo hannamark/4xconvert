@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.accweb.util;
 
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.service.StudySubjectService;
+import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Ts;
@@ -91,6 +92,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -120,6 +122,7 @@ public class MockStudySubjectBean implements StudySubjectService {
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<StudySubjectDto> getByStudySite(Ii ii) throws PAException {
         return ssList;
     }
@@ -127,6 +130,7 @@ public class MockStudySubjectBean implements StudySubjectService {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudySubjectDto create(StudySubjectDto dto) throws PAException {
         dto.setIdentifier(IiConverter.convertToIi(seq++));
         ssList.add(dto);
@@ -136,6 +140,7 @@ public class MockStudySubjectBean implements StudySubjectService {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void delete(Ii ii) throws PAException {
         // TODO Auto-generated method stub
 
@@ -144,6 +149,7 @@ public class MockStudySubjectBean implements StudySubjectService {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudySubjectDto get(Ii ii) throws PAException {
         Long id = IiConverter.convertToLong(ii);
         StudySubjectDto result = null;
@@ -158,6 +164,7 @@ public class MockStudySubjectBean implements StudySubjectService {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudySubjectDto update(StudySubjectDto dto) throws PAException {
         Long id = IiConverter.convertToLong(dto.getIdentifier());
         for (StudySubjectDto ss : ssList) {
@@ -171,6 +178,7 @@ public class MockStudySubjectBean implements StudySubjectService {
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<StudySubjectDto> getByStudyProtocol(Ii ii) throws PAException {
         return ssList;
     }
@@ -178,9 +186,21 @@ public class MockStudySubjectBean implements StudySubjectService {
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<StudySubjectDto> getStudySubjects(String assignedIdentifier, Long studySiteId, Date birthDate,
             FunctionalRoleStatusCode statusCode) throws PAException {
         return ssList;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<StudySubjectDto> search(Long studyIdentifier, Long participatingSiteIdentifier, Timestamp startDate,
+                                        Timestamp endDate, LimitOffset pagingParams) throws PAException {
+       throw new UnsupportedOperationException();
+    }
+    
+    
 
 }
