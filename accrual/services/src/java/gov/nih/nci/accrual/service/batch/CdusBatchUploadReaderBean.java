@@ -90,11 +90,10 @@ import gov.nih.nci.accrual.enums.CDUSPatientEthnicityCode;
 import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
 import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
 import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
-import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
@@ -142,8 +141,9 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
      * {@inheritDoc}
      */
     @Override
-    public List<BatchValidationResults> validateBatchData(File file)  {
+    public List<BatchValidationResults> validateBatchData(BatchFile batchFile)  {
         List<BatchValidationResults> results = new ArrayList<BatchValidationResults>();
+        File file = new File(batchFile.getFileLocation());
         boolean archive = StringUtils.equals(StringUtils.substringAfter(file.getName(), "."), "zip");       
         if (archive) {
             results.addAll(cdusBatchUploadDataValidator.validateArchiveBatchData(file));
@@ -158,8 +158,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
      */
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public List<BatchImportResults> importBatchData(File file) throws PAException {
-        List<BatchValidationResults> validationResults = validateBatchData(file);
+    public List<BatchImportResults> importBatchData(BatchFile batchFile) throws PAException {
+        List<BatchValidationResults> validationResults = validateBatchData(batchFile);
         for (BatchValidationResults validationResult : validationResults) {
             if (!validationResult.isPassedValidation()) {
                 return new ArrayList<BatchImportResults>();
@@ -303,7 +303,8 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
      * {@inheritDoc}
      */
     @Override
-    public void sendValidationErrorEmail(List<BatchValidationResults> validationResults) throws PAException {
+    public void sendValidationErrorEmail(List<BatchValidationResults> validationResults, BatchFile batchFile) 
+        throws PAException {
         if (CollectionUtils.isEmpty(validationResults)) {
             return;
         }
@@ -314,17 +315,18 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                         result.getErrors()));
             }
         }
+        if (StringUtils.isEmpty(errorReport.toString().trim())) {
+            batchFile.setPassedValidation(true);
+        }
         String subject = "Accrual Error Report";
-        RegistryUser user = PaServiceLocator.getInstance().getRegistryUserService().getUser(
-                CaseSensitiveUsernameHolder.getUser());
-        sendEmail(user.getEmailAddress(), subject, errorReport);
+        sendEmail(batchFile.getSubmitter().getEmailAddress(), subject, errorReport);
     }
     
     /**
      * {@inheritDoc}
      */
     @Override
-    public void sendConfirmationEmail(List<BatchImportResults> importResults) throws PAException {
+    public void sendConfirmationEmail(List<BatchImportResults> importResults, BatchFile batchFile) throws PAException {
         if (CollectionUtils.isEmpty(importResults)) {
             return;
         }
@@ -335,10 +337,11 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
                         result.getTotalImports(), result.getFileName()));
             }
         }
+        if (StringUtils.isNotEmpty(confirmation.toString().trim())) {
+            batchFile.setProcessed(true);
+        }
         String subject = "Accrual Confirmation Report";
-        RegistryUser user = PaServiceLocator.getInstance().getRegistryUserService().getUser(
-                CaseSensitiveUsernameHolder.getUser());
-        sendEmail(user.getEmailAddress(), subject, confirmation);
+        sendEmail(batchFile.getSubmitter().getEmailAddress(), subject, confirmation);
     }
     
     private void sendEmail(String to, String subject, StringBuffer msg) {

@@ -84,15 +84,14 @@ package gov.nih.nci.accrual.accweb.action;
 
 import gov.nih.nci.accrual.service.batch.BatchImportResults;
 import gov.nih.nci.accrual.service.batch.BatchValidationResults;
+import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -133,7 +132,8 @@ public class BatchUploadAction extends AbstractAccrualAction {
     }
     
     /**
-     * Handles the uploaded file, either processing it immediately or placing it in the accrual batch upload directory.
+     * Handles the uploaded file, validating it and either importing it immediately or placing into the queue for
+     * later import.
      * @param file the file to copy
      * @throws IOException on IO error
      * @throws PAException on error
@@ -141,15 +141,17 @@ public class BatchUploadAction extends AbstractAccrualAction {
     private void handleBatchFile(File file) throws IOException, PAException {
         if (processImmediately) {
             //Validate then import, sending emails as necessary.
-            List<BatchValidationResults> validationResults = getCdusBatchUploadReaderSvc().validateBatchData(file);
-            getCdusBatchUploadReaderSvc().sendValidationErrorEmail(validationResults);
-            List<BatchImportResults> results =  getCdusBatchUploadReaderSvc().importBatchData(file);
-            getCdusBatchUploadReaderSvc().sendConfirmationEmail(results);
+            BatchFile batchFile = getBatchFileSvc().createBatchFile(file, uploadFileName);
+            List<BatchValidationResults> validationResults = getCdusBatchUploadReaderSvc().validateBatchData(batchFile);
+            getCdusBatchUploadReaderSvc().sendValidationErrorEmail(validationResults, batchFile);
+            List<BatchImportResults> results =  getCdusBatchUploadReaderSvc().importBatchData(batchFile);
+            getCdusBatchUploadReaderSvc().sendConfirmationEmail(results, batchFile);
+            getBatchFileSvc().update(batchFile);
         } else {
-            String batchUploadLocation = PaEarPropertyReader.getAccrualBatchUploadPath();
-            String fullPath = batchUploadLocation + File.separator + uploadFileName;
-            File transferredFile = new File(fullPath);
-            FileUtils.copyFile(file, transferredFile);        
+            BatchFile batchFile = getBatchFileSvc().createBatchFile(file, uploadFileName);
+            List<BatchValidationResults> validationResults = getCdusBatchUploadReaderSvc().validateBatchData(batchFile);
+            getCdusBatchUploadReaderSvc().sendValidationErrorEmail(validationResults, batchFile);
+            getBatchFileSvc().update(batchFile);
         }
     }
     

@@ -125,6 +125,9 @@ import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -169,6 +172,11 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private static final String UNIMPLEMENTED_MSG = "Method not yet implemented.";
     private static final String REQUIRED_MSG = "%s is a required field.\n";
     private static final String INVALID_VALUE = "%s is not a valid value for %s.\n";
+    /**
+     * The 1st 4 bytes of a byte of a file that indicates a zip file. Used to determine if the information
+     * passed in to the submitBatchData method is a zip file. 
+     */
+    private static final int ZIP_FILE_SIGNATURE = 0x504b0304;
     
     /**
      * {@inheritDoc}
@@ -395,30 +403,37 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         if (ISOUtil.isEdNull(batchFile)) {
             throw new PAException("Null batch files are not allowed. Please provide a valid batch file.");
         }
-        String filePath = generateFileLocation();
+        String filePath = generateFileLocation(batchFile);
         RegistryUser submitter = getBatchSubmitter();
-        File file = writeBatchFileToFilesystem(batchFile, filePath);
+        writeBatchFileToFilesystem(batchFile, filePath);
         
         BatchFile batch = new BatchFile();
         batch.setSubmitter(submitter);
         batch.setFileLocation(filePath);
-        batch.setPassedValidation(validationBatchFile(file));
+        batch.setPassedValidation(validateBatchFile(batch));
         getBatchFileService().save(batch);
     }
 
 
-    private File writeBatchFileToFilesystem(Ed batchFile, String filePath) throws PAException {
-        File file = new File(filePath);
+    private void writeBatchFileToFilesystem(Ed batchFile, String filePath) throws PAException {
         try {
+            File file = new File(filePath);
             FileUtils.writeByteArrayToFile(file, batchFile.getData());
         } catch (IOException e) {
             throw new PAException("An error has occurred while trying to submit your batch data. Please try again.", e);
         }
-        return file;
     }
     
-    private String generateFileLocation() throws PAException {
-        return PaEarPropertyReader.getAccrualBatchUploadPath() + File.separator + UUID.randomUUID() + "-batchFile.txt";
+    private String generateFileLocation(Ed batchFile) throws PAException {
+        try {
+            DataInputStream in = 
+                new DataInputStream(new BufferedInputStream(new ByteArrayInputStream(batchFile.getData())));
+            String extension = in.readInt() == ZIP_FILE_SIGNATURE ? ".zip" : ".txt";
+            return PaEarPropertyReader.getAccrualBatchUploadPath() + File.separator + UUID.randomUUID() + "-batchFile" 
+                + extension;
+        } catch (IOException e) {
+            throw new PAException("Unable to determine whether batch is an archive or a single file.", e);
+        }
     }
     
     private RegistryUser getBatchSubmitter() throws PAException {
@@ -430,12 +445,14 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      * Validates the given file, returning true is validation has passed, false otherwise.
      * @param file the file to validate
      * @return true if validation succeeded, false otherwise
+     * @throws PAException on error
      */
-    private boolean validationBatchFile(File file) {
+    private boolean validateBatchFile(BatchFile file) throws PAException {
         List<BatchValidationResults> validationResults = getBatchService().validateBatchData(file);
         boolean passed = true;
         for (BatchValidationResults result : validationResults) {
             if (!result.isPassedValidation()) {
+                getBatchService().sendValidationErrorEmail(validationResults, file);
                 passed = false;
                 break;
             }

@@ -85,6 +85,7 @@ package gov.nih.nci.accrual.service.batch;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.service.PAException;
 
+import java.io.File;
 import java.util.List;
 
 import javax.ejb.Local;
@@ -102,6 +103,16 @@ public interface BatchFileService {
      * @throws PAException on error
      */
     void save(BatchFile batchFile) throws PAException;
+    
+    /**
+     * Creates a batch file from the given file, create the business object and moving the contents to the
+     * correct location on the file system.
+     * @param file the file to create a batch file from
+     * @param destinationFileName the name of the destination file
+     * @return the created batch file
+     * @throws PAException on error
+     */
+    BatchFile createBatchFile(File file, String destinationFileName) throws PAException;
     
     /**
      * Updates the given batch file.

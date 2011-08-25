@@ -82,9 +82,9 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
+import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.service.PAException;
 
-import java.io.File;
 import java.util.List;
 
 import javax.ejb.Local;
@@ -97,30 +97,33 @@ public interface CdusBatchUploadReaderServiceLocal {
     
     /**
      * Reads and validate the csv file.
-     * @param file file to read
+     * @param batchFile batch file to read
      * @return the validation results
      */
-    List<BatchValidationResults> validateBatchData(File file);
+    List<BatchValidationResults> validateBatchData(BatchFile batchFile);
     
     /**
-     * Reads, validates and imports the csv files.
-     * @param file file to read
+     * Validates and imports the csv files.
+     * @param batchFile batch file to read
      * @return the import results
      * @throws PAException on error
      */
-    List<BatchImportResults> importBatchData(File file) throws PAException;
+    List<BatchImportResults> importBatchData(BatchFile batchFile) throws PAException;
     
     /**
      * Sends the validation error email.
      * @param validationResults the validation results
+     * @param batchFile the batch file that's been validated
      * @throws PAException if unable to lookup user 
      */
-    void sendValidationErrorEmail(List<BatchValidationResults> validationResults) throws PAException;
+    void sendValidationErrorEmail(List<BatchValidationResults> validationResults, BatchFile batchFile) 
+        throws PAException;
     
     /**
      * Sends the import validation email.
      * @param importResults the import results
+     * @param batchFile the batch file that's been imported
      * @throws PAException if unable to lookup user 
      */
-    void sendConfirmationEmail(List<BatchImportResults> importResults) throws PAException;
+    void sendConfirmationEmail(List<BatchImportResults> importResults, BatchFile batchFile) throws PAException;
 }

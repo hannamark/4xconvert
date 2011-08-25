@@ -82,26 +82,23 @@
  */
 package gov.nih.nci.accrual.service;
 
+import gov.nih.nci.accrual.service.batch.BatchFileService;
 import gov.nih.nci.accrual.service.batch.BatchImportResults;
-import gov.nih.nci.accrual.service.batch.BatchValidationResults;
 import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
+import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
-import java.io.File;
-import java.util.Collection;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -115,6 +112,8 @@ import org.apache.log4j.Logger;
 @Local(BatchUploadProcessingTaskServiceLocal.class)
 public class BatchUploadProcessingTaskServiceBean implements BatchUploadProcessingTaskServiceLocal {
     private static final Logger LOG = Logger.getLogger(BatchUploadProcessingTaskServiceBean.class);
+    @EJB
+    private BatchFileService batchFileSvc;
     
     /**
      * {@inheritDoc}
@@ -122,23 +121,29 @@ public class BatchUploadProcessingTaskServiceBean implements BatchUploadProcessi
     public void processBatchUploads() throws PAException {
         CdusBatchUploadReaderServiceLocal batchUploadService = 
             AccrualServiceLocator.getInstance().getBatchUploadReaderService();
-        File uploadDirectory = new File(PaEarPropertyReader.getAccrualBatchUploadPath());
-        @SuppressWarnings("unchecked")
-        Collection<File> batchFiles = FileUtils.listFiles(uploadDirectory, FileFilterUtils.fileFileFilter(), null);
-        LOG.info("Performing accrual batch processing on " + batchFiles.size() +  " files.");
-        
-        for (File batchFile : batchFiles) {
-            //First, validate the file, then process it, send emails as necessary.
-            LOG.info("Processing batch upload: " + batchFile.getAbsolutePath());
-            List<BatchValidationResults> validationResults = batchUploadService.validateBatchData(batchFile);
-            batchUploadService.sendValidationErrorEmail(validationResults);
+
+        List<BatchFile> filesToProcess = batchFileSvc.getBatchFilesAvailableForProcessing();
+        LOG.info("Performing accrual batch processing on " + filesToProcess.size() +  " files.");
+        for (BatchFile batchFile : filesToProcess) {
+            //Process it, sending email as necessary.
+            LOG.info("Processing batch upload: " + batchFile.getFileLocation());
             List<BatchImportResults> importResults = batchUploadService.importBatchData(batchFile);
-            batchUploadService.sendConfirmationEmail(importResults);
+            batchUploadService.sendConfirmationEmail(importResults, batchFile);
+            batchFileSvc.update(batchFile);
         }
-        
-        //Delete all the files once processing has finished.
-        for (File batchFile : batchFiles) {
-            FileUtils.deleteQuietly(batchFile);
-        }
+    }
+
+    /**
+     * @return the batchFileSvc
+     */
+    public BatchFileService getBatchFileSvc() {
+        return batchFileSvc;
+    }
+
+    /**
+     * @param batchFileSvc the batchFileSvc to set
+     */
+    public void setBatchFileSvc(BatchFileService batchFileSvc) {
+        this.batchFileSvc = batchFileSvc;
     }
 }

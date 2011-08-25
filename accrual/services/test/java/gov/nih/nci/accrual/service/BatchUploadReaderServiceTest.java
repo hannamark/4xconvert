@@ -95,8 +95,10 @@ import gov.nih.nci.accrual.service.batch.AbstractBatchUploadReaderTest;
 import gov.nih.nci.accrual.service.batch.BatchImportResults;
 import gov.nih.nci.accrual.service.batch.BatchValidationResults;
 import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
@@ -122,8 +124,10 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
     @Test
     public void completeBatchValidation() throws URISyntaxException, PAException {
         File file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
-        List<BatchValidationResults> results = readerService.validateBatchData(file);
-        readerService.sendValidationErrorEmail(results);
+        BatchFile batchFile = getBatchFile(file);
+        
+        List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+        readerService.sendValidationErrorEmail(results, batchFile);
         assertEquals(1, results.size());
         assertFalse(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString()));
@@ -133,8 +137,9 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
 
         file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
-        results = readerService.validateBatchData(file);
-        readerService.sendValidationErrorEmail(results);
+        batchFile = getBatchFile(file);
+        results = readerService.validateBatchData(batchFile);
+        readerService.sendValidationErrorEmail(results, batchFile);
         assertEquals(1, results.size());
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
@@ -145,8 +150,9 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
     @Test
     public void abbreviatedBatchValidation() throws URISyntaxException, PAException {
         File file = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
-        List<BatchValidationResults> results = readerService.validateBatchData(file);
-        readerService.sendValidationErrorEmail(results);
+        BatchFile batchFile = getBatchFile(file);
+        List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+        readerService.sendValidationErrorEmail(results, batchFile);
         assertEquals(1, results.size());
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
@@ -157,8 +163,9 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
     @Test
     public void abbreviatedPreventionBatchValidation() throws URISyntaxException, PAException {
         File file = new File(this.getClass().getResource("/cdus-abbreviated-prevention-study.txt").toURI());
-        List<BatchValidationResults> results = readerService.validateBatchData(file);
-        readerService.sendValidationErrorEmail(results);
+        BatchFile batchFile = getBatchFile(file);
+        List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+        readerService.sendValidationErrorEmail(results, batchFile);
         assertEquals(1, results.size());
         assertTrue(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
@@ -170,8 +177,9 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
     @Test
     public void archiveBatchValidation() throws URISyntaxException, PAException {
         File file = new File(this.getClass().getResource("/CDUS.zip").toURI());
-        List<BatchValidationResults> validationResults = readerService.validateBatchData(file);
-        readerService.sendValidationErrorEmail(validationResults);
+        BatchFile batchFile = getBatchFile(file);
+        List<BatchValidationResults> validationResults = readerService.validateBatchData(batchFile);
+        readerService.sendValidationErrorEmail(validationResults, batchFile);
         assertEquals(2, validationResults.size());
         for (BatchValidationResults result : validationResults) {
             assertTrue(result.isPassedValidation());
@@ -189,7 +197,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
 
         File file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
-        List<BatchValidationResults> results = readerService.validateBatchData(file);
+        List<BatchValidationResults> results = readerService.validateBatchData(getBatchFile(file));
         assertEquals(1, results.size());
         assertFalse(results.get(0).isPassedValidation());
         assertTrue(StringUtils.isNotEmpty(results.get(0).getErrors().toString()));
@@ -201,8 +209,9 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertEquals(0, studySubjectService.getByStudyProtocol(completeIi).size());
 
         File file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
-        List<BatchImportResults> importResults = readerService.importBatchData(file);
-        readerService.sendConfirmationEmail(importResults);
+        BatchFile batchFile = getBatchFile(file);
+        List<BatchImportResults> importResults = readerService.importBatchData(batchFile);
+        readerService.sendConfirmationEmail(importResults, batchFile);
         assertEquals(1, importResults.size());
         assertEquals(24, importResults.get(0).getTotalImports());
         assertEquals("CDUS_Complete.txt", importResults.get(0).getFileName());
@@ -212,8 +221,9 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
 
         file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
-        importResults = readerService.importBatchData(file);
-        readerService.sendConfirmationEmail(importResults);
+        batchFile = getBatchFile(file);
+        importResults = readerService.importBatchData(getBatchFile(file));
+        readerService.sendConfirmationEmail(importResults, batchFile);
         assertEquals(0, importResults.size());
         verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
     }
@@ -223,8 +233,9 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertEquals(2, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
 
         File file = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
-        List<BatchImportResults> importResults = readerService.importBatchData(file);
-        readerService.sendConfirmationEmail(importResults);
+        BatchFile batchFile = getBatchFile(file);
+        List<BatchImportResults> importResults = readerService.importBatchData(batchFile);
+        readerService.sendConfirmationEmail(importResults, batchFile);
         assertEquals(1, importResults.size());
         assertEquals(72, importResults.get(0).getTotalImports());
         assertEquals("CDUS_Abbreviated.txt", importResults.get(0).getFileName());
@@ -238,8 +249,9 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertEquals(0, studySubjectService.getByStudyProtocol(preventionIi).size());
 
         File file = new File(this.getClass().getResource("/cdus-abbreviated-prevention-study.txt").toURI());
-        List<BatchImportResults> importResults = readerService.importBatchData(file);
-        readerService.sendConfirmationEmail(importResults);
+        BatchFile batchFile = getBatchFile(file);
+        List<BatchImportResults> importResults = readerService.importBatchData(batchFile);
+        readerService.sendConfirmationEmail(importResults, batchFile);
         assertEquals(1, importResults.size());
         assertEquals(72, importResults.get(0).getTotalImports());
         assertEquals("cdus-abbreviated-prevention-study.txt", importResults.get(0).getFileName());
@@ -250,12 +262,13 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
     @Test
     public void testPerformImportOfArchive() throws Exception {
         File file = new File(this.getClass().getResource("/CDUS.zip").toURI());
-
+        BatchFile batchFile = getBatchFile(file);
+        
         assertEquals(2, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
         assertEquals(0, studySubjectService.getByStudyProtocol(completeIi).size());
 
-        List<BatchImportResults> importResults = readerService.importBatchData(file);
-        readerService.sendConfirmationEmail(importResults);
+        List<BatchImportResults> importResults = readerService.importBatchData(batchFile);
+        readerService.sendConfirmationEmail(importResults, batchFile);
         assertEquals(2, importResults.size());
         assertEquals(72, importResults.get(0).getTotalImports());
         assertEquals("CDUS_Abbreviated.txt", importResults.get(0).getFileName());
@@ -281,7 +294,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         cdusBatchUploadDataValidator.setHealthCareFacilityCorrelationService(healthCareFacilityCorrelationService);
 
         File file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
-        List<BatchValidationResults> results = readerService.validateBatchData(file);
+        List<BatchValidationResults> results = readerService.validateBatchData(getBatchFile(file));
         assertFalse(results.get(0).isPassedValidation());
     }
     
@@ -298,7 +311,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         cdusBatchUploadDataValidator.setHealthCareFacilityCorrelationService(healthCareFacilityCorrelationService);
 
         File file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
-        List<BatchValidationResults> results = readerService.validateBatchData(file);
+        List<BatchValidationResults> results = readerService.validateBatchData(getBatchFile(file));
         assertTrue(results.get(0).isPassedValidation());
     }
     
@@ -315,7 +328,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         cdusBatchUploadDataValidator.setHealthCareFacilityCorrelationService(healthCareFacilityCorrelationService);
 
         File file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
-        List<BatchValidationResults> results = readerService.validateBatchData(file);
+        List<BatchValidationResults> results = readerService.validateBatchData(getBatchFile(file));
         assertFalse(results.get(0).isPassedValidation());
     }
     
@@ -332,7 +345,15 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         cdusBatchUploadDataValidator.setHealthCareFacilityCorrelationService(healthCareFacilityCorrelationService);
 
         File file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
-        List<BatchValidationResults> results = readerService.validateBatchData(file);
+        List<BatchValidationResults> results = readerService.validateBatchData(getBatchFile(file));
         assertTrue(results.get(0).isPassedValidation());
+    }
+    
+    
+    private BatchFile getBatchFile(File file) {
+        BatchFile bf = new BatchFile();
+        bf.setFileLocation(file.getAbsolutePath());
+        bf.setSubmitter(TestSchema.registryUsers.get(0));
+        return bf;
     }
 }

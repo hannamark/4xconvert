@@ -80,6 +80,7 @@ import static org.mockito.Mockito.mock;
 import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectService;
+import gov.nih.nci.accrual.service.batch.BatchFileService;
 import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.POPatientService;
@@ -102,8 +103,8 @@ public class MockServiceLocator implements ServiceLocatorAccInterface {
     private final POPatientService poPatientService = new MockPaPatientServiceBean();
     private final CdusBatchUploadReaderServiceLocal cdusBatchUploadReaderService =
         mock(CdusBatchUploadReaderServiceLocal.class);
-    private final SubjectAccrualCountService subjectAccrualCountService =
-        mock(SubjectAccrualCountService.class);
+    private final SubjectAccrualCountService subjectAccrualCountService = mock(SubjectAccrualCountService.class);
+    private final BatchFileService batchFileSvc = mock(BatchFileService.class);
     
     /**
      * {@inheritDoc}
@@ -158,8 +159,14 @@ public class MockServiceLocator implements ServiceLocatorAccInterface {
     /**
      * {@inheritDoc}
      */
-    @Override
     public SubjectAccrualCountService getSubjectAccrualCountService() {
         return subjectAccrualCountService;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public BatchFileService getBatchFileService() {
+        return batchFileSvc;
     }
 }

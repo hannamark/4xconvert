@@ -84,19 +84,26 @@ package gov.nih.nci.accrual.service.batch;
 
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
+import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.pa.domain.BatchFile;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.io.FileUtils;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
@@ -123,7 +130,34 @@ public class BatchFileServiceBeanLocal implements BatchFileService {
         } catch (HibernateException hbe) {
             throw new PAException("Error while saving batch file.", hbe);
         }
-        
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public BatchFile createBatchFile(File file, String destinationFileName) throws PAException {
+        BatchFile batchFile = new BatchFile();
+        batchFile.setSubmitter(getBatchSubmitter());
+        batchFile.setFileLocation(writeBatchFileToFilesystem(file, destinationFileName));
+        save(batchFile);
+        return batchFile;
+    }
+    
+    private RegistryUser getBatchSubmitter() throws PAException {
+        return PaServiceLocator.getInstance().getRegistryUserService().getUser(AccrualCsmUtil.getInstance()
+                .getCSMUser(CaseSensitiveUsernameHolder.getUser()).getLoginName());
+    }
+    
+    private String writeBatchFileToFilesystem(File file, String destinationFileName) throws PAException {
+        try {
+            String destination = PaEarPropertyReader.getAccrualBatchUploadPath() + File.separator + UUID.randomUUID() 
+                + "-" + destinationFileName;
+            File destinationFile = new File(destination);
+            FileUtils.copyFile(file, destinationFile);
+            return destinationFile.getAbsolutePath();
+        } catch (IOException e) {
+            throw new PAException("An error has occurred while trying to submit your batch data. Please try again.", e);
+        }
     }
     
     /**

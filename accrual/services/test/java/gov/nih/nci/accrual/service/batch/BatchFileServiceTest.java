@@ -86,13 +86,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.service.AbstractServiceTest;
+import gov.nih.nci.accrual.util.PaServiceLocator;
+import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 
+import java.io.File;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -107,9 +116,16 @@ public class BatchFileServiceTest extends AbstractServiceTest<BatchFileService>{
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     
+    
     @Override
     @Before
     public void instantiateServiceBean() throws Exception {
+        ServiceLocatorPaInterface paSvcLocator = mock(ServiceLocatorPaInterface.class);
+        RegistryUserServiceRemote regSvc = mock(RegistryUserServiceRemote.class);
+        when(regSvc.getUser(any(String.class))).thenReturn(TestSchema.registryUsers.get(0));
+        when(paSvcLocator.getRegistryUserService()).thenReturn(regSvc);
+        PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
+        
         bean = new BatchFileServiceBeanLocal();
     }
     
@@ -131,6 +147,16 @@ public class BatchFileServiceTest extends AbstractServiceTest<BatchFileService>{
         thrown.expectMessage("Please call update() with existing batch file objects.");
         
         bean.save(batchFile);
+    }
+    
+    @Test
+    public void createBatchFile() throws Exception {
+        File file = new File(this.getClass().getResource("/CDUS_Complete.txt").toURI());
+        BatchFile batchFile = bean.createBatchFile(file, file.getName());
+        assertTrue(StringUtils.contains(batchFile.getFileLocation(), "CDUS_Complete.txt"));
+        assertFalse(batchFile.isPassedValidation());
+        assertFalse(batchFile.isProcessed());
+        FileUtils.deleteQuietly(new File(batchFile.getFileLocation()));
     }
     
     @Test

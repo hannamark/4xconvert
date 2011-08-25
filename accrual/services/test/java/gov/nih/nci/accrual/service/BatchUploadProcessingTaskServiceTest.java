@@ -82,23 +82,34 @@
  */
 package gov.nih.nci.accrual.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.accrual.service.batch.BatchFileService;
+import gov.nih.nci.accrual.service.batch.BatchFileServiceBeanLocal;
 import gov.nih.nci.accrual.service.batch.BatchImportResults;
 import gov.nih.nci.accrual.service.batch.BatchValidationResults;
 import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
+import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
+import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.accrual.util.AbstractAccrualHibernateTestCase;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
 import gov.nih.nci.accrual.util.TestSchema;
+import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.hibernate.criterion.Order;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -110,31 +121,61 @@ import org.junit.Test;
 public class BatchUploadProcessingTaskServiceTest extends AbstractAccrualHibernateTestCase {
     private static final int NUMBER_OF_BATCH_FILES = 3;
     private BatchUploadProcessingTaskServiceBean bean = new BatchUploadProcessingTaskServiceBean();
+    private BatchFileService batchFileSvc = new BatchFileServiceBeanLocal();
 
     @Before
     public void setUp() throws Exception {
+        TestSchema.primeData();
+        AccrualCsmUtil.setCsmUtil(new MockCsmUtil());
+        
         File uploadDirectory = new File(PaEarPropertyReader.getAccrualBatchUploadPath());
         for (int i = 1; i <= NUMBER_OF_BATCH_FILES; i++) {
             String fileName = "accrual_batch_" + i + ".txt";
-            FileUtils.touch(new File(uploadDirectory + File.separator + fileName));
+            File file = new File(uploadDirectory + File.separator + fileName);
+            FileUtils.touch(file);
+            
+            BatchFile batchFile = new BatchFile();
+            batchFile.setPassedValidation(true);
+            batchFile.setFileLocation(file.getAbsolutePath());
+            batchFile.setSubmitter(TestSchema.registryUsers.get(0));
+            batchFileSvc.save(batchFile);
         }
-
-        TestSchema.primeData();
+        
+        bean.setBatchFileSvc(batchFileSvc);
+        
         CdusBatchUploadReaderServiceLocal readerService = mock(CdusBatchUploadReaderServiceLocal.class);
-        when(readerService.validateBatchData(any(File.class))).thenReturn(new ArrayList<BatchValidationResults>());
-        when(readerService.importBatchData(any(File.class))).thenReturn(new ArrayList<BatchImportResults>());
+        BatchImportResults importResults = new BatchImportResults();
+        importResults.setTotalImports(100);
+        when(readerService.validateBatchData(any(BatchFile.class))).thenReturn(new ArrayList<BatchValidationResults>());
+        when(readerService.importBatchData(any(BatchFile.class))).thenReturn(Arrays.asList(importResults));
         ServiceLocatorAccInterface svcLocator = mock(ServiceLocatorAccInterface.class);
         when(svcLocator.getBatchUploadReaderService()).thenReturn(readerService);
         AccrualServiceLocator.getInstance().setServiceLocator(svcLocator);
+    }
+    
+    @After
+    public void cleanUpBatchFiles() throws Exception {
+        File uploadDirectory = new File(PaEarPropertyReader.getAccrualBatchUploadPath());
+        for (int i = 1; i <= NUMBER_OF_BATCH_FILES; i++) {
+            String fileName = "accrual_batch_" + i + ".txt";
+            FileUtils.deleteQuietly(new File(uploadDirectory + File.separator + fileName));
+        }
     }
 
     @Test
     public void testBatchUploadProcessingTask() throws Exception {
         bean.processBatchUploads();
-        File uploadDirectory = new File(PaEarPropertyReader.getAccrualBatchUploadPath());
-        for (int i = 1; i <= NUMBER_OF_BATCH_FILES; i++) {
-            String fileName = "accrual_batch_" + i + ".txt";
-            assertFalse(new File(uploadDirectory + File.separator + fileName).exists());
+        @SuppressWarnings("unchecked")
+        List<BatchFile> batchFiles = 
+            PaHibernateUtil.getCurrentSession().createCriteria(BatchFile.class).addOrder(Order.asc("id")).list();
+        assertFalse(batchFiles.isEmpty());
+        assertEquals(3, batchFiles.size());
+        String directory = PaEarPropertyReader.getAccrualBatchUploadPath() + File.separator;
+        for (int i = 0; i < NUMBER_OF_BATCH_FILES; i++) {
+            BatchFile batchFile = batchFiles.get(i);
+            String filePath = directory + "accrual_batch_" + (i + 1) + ".txt";
+            
+            assertEquals(batchFile.getFileLocation(), filePath);
         }
     }
 }

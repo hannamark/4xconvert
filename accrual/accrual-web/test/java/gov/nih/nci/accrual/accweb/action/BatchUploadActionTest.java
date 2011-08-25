@@ -155,9 +155,7 @@ public class BatchUploadActionTest extends AbstractAccrualActionTest {
         batchUploadAction.setUploadContentType("text/plain");
         assertEquals(ActionSupport.SUCCESS, batchUploadAction.doUpload());
         assertFalse(batchUploadAction.hasActionErrors());
-        assertTrue(batchUploadAction.hasActionMessages());
-        
-        assertTrue(new File(txtUploadedFilePath).exists());
+        assertTrue(batchUploadAction.hasActionMessages());        
         
         batchUploadAction.clearErrorsAndMessages();
         batchUploadAction.setUploadContentType("application/zip");
@@ -167,7 +165,6 @@ public class BatchUploadActionTest extends AbstractAccrualActionTest {
         assertEquals(ActionSupport.SUCCESS, batchUploadAction.doUpload());
         assertFalse(batchUploadAction.hasActionErrors());
         assertTrue(batchUploadAction.hasActionMessages());
-        assertTrue(new File(zipUploadedFilePath).exists());
         
         batchUploadAction.clearErrorsAndMessages();
         batchUploadAction.setUploadContentType("text/foo");
