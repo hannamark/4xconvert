@@ -128,7 +128,8 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
         // Flush the session in order to get all the results not written to the db yet
         session.flush();
         // step 1: form the hql
-        String hql = "from " + getTypeArgument().getName() + "  where studyProtocol.id = :studyProtocolId"
+        String hql = "select alias from " + getTypeArgument().getName()
+                + " alias join alias.studyProtocol sp where sp.id = :studyProtocolId"
                 + getByStudyProtocolQueryOrderClause();
         // step 2: construct query object
         Query query = session.createQuery(hql);
@@ -146,7 +147,7 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
      * @return The order by clause forv the HQL query that gets the objects by Study Protocol.
      */
     protected String getByStudyProtocolQueryOrderClause() {
-        return " order by id";
+        return " order by alias.id";
     }
 
     /**

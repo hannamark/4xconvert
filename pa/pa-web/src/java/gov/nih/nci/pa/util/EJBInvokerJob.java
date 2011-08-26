@@ -2,6 +2,7 @@ package gov.nih.nci.pa.util;
 
 import java.lang.reflect.Method;
 import java.util.Hashtable;
+import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -52,7 +53,6 @@ import org.quartz.JobExecutionException;
  * @author Joel Shellman
  * @author <a href="mailto:bonhamcm@thirdeyeconsulting.com">Chris Bonham</a>
  */
-@SuppressWarnings("rawtypes")
 public class EJBInvokerJob implements Job {
 
     private static final Logger LOG  = Logger.getLogger(EJBInvokerJob.class);
@@ -119,7 +119,7 @@ public class EJBInvokerJob implements Job {
 
         Object ejb = locateEjb(dataMap);
 
-        Class[] argTypes = initailizeArgTypes(arguments, dataMap);
+        Class<?>[] argTypes = initializeArgTypes(arguments, dataMap);
 
         try {
             Method methodToExecute = ejb.getClass().getDeclaredMethod(methodName, argTypes);
@@ -143,8 +143,8 @@ public class EJBInvokerJob implements Job {
         }
     }
 
-    private Class[] initailizeArgTypes(Object[] arguments, JobDataMap dataMap) {
-        Class[] argTypes = (Class[]) dataMap.get(EJB_ARG_TYPES_KEY);
+    private Class<?>[] initializeArgTypes(Object[] arguments, JobDataMap dataMap) {
+        Class<?>[] argTypes = (Class<?>[]) dataMap.get(EJB_ARG_TYPES_KEY);
         if (argTypes == null) {
             argTypes = new Class[arguments.length];
             for (int i = 0; i < arguments.length; i++) {
@@ -184,7 +184,7 @@ public class EJBInvokerJob implements Job {
 
         String ejbInterfaceName = dataMap.getString(EJB_INTERFACE_NAME_KEY);
 
-        Class ejbInterface = null;
+        Class<?> ejbInterface = null;
 
         try {
             ejbInterface = Class.forName(ejbInterfaceName);
@@ -200,8 +200,6 @@ public class EJBInvokerJob implements Job {
         return (T) object;
     }
 
-
-
     /**
      * Gets the initial context.
      *
@@ -214,38 +212,28 @@ public class EJBInvokerJob implements Job {
     @SuppressWarnings("PMD.ReplaceHashtableWithMap") // hashtable is needed here for external dependency
     private InitialContext getInitialContext(JobDataMap jobDataMap) throws NamingException {
         Hashtable<String, String> params = new Hashtable<String, String>();
-
-        String initialContextFactory = jobDataMap.getString(INITIAL_CONTEXT_FACTORY);
-
-        if (initialContextFactory != null) {
-            params.put(Context.INITIAL_CONTEXT_FACTORY, initialContextFactory);
-        }
-
-        String providerUrl = jobDataMap.getString(PROVIDER_URL);
-
-        if (providerUrl != null) {
-            params.put(Context.PROVIDER_URL, providerUrl);
-        }
-        
-        String urlPkgPrefixes = jobDataMap.getString(URL_PKG_PREFIXES);
-        if (urlPkgPrefixes != null) {
-           params.put(Context.URL_PKG_PREFIXES, urlPkgPrefixes); 
-        }
-
-        String principal = jobDataMap.getString(PRINCIPAL);
-
-        if (principal != null) {
-            params.put(Context.SECURITY_PRINCIPAL, principal);
-        }
-
-        String credentials = jobDataMap.getString(CREDENTIALS);
-
-        if (credentials != null) {
-            params.put(Context.SECURITY_CREDENTIALS, credentials);
-        }
-
+        addParameter(jobDataMap, params, INITIAL_CONTEXT_FACTORY, Context.INITIAL_CONTEXT_FACTORY);
+        addParameter(jobDataMap, params, PROVIDER_URL, Context.PROVIDER_URL);
+        addParameter(jobDataMap, params, URL_PKG_PREFIXES, Context.URL_PKG_PREFIXES);
+        addParameter(jobDataMap, params, PRINCIPAL, Context.SECURITY_PRINCIPAL);
+        addParameter(jobDataMap, params, CREDENTIALS, Context.SECURITY_CREDENTIALS);
         return (params.size() == 0) ? new InitialContext() : new InitialContext(params);
 
+    }
+
+    /**
+     * Add a parameter from the the input into the given parameter map.
+     * @param inpuMap The input map
+     * @param parameterMap The parameter map
+     * @param inputName The name of the input
+     * @param parameterName The name of the parameter corresponding to the input
+     */
+    private void addParameter(JobDataMap inpuMap, Map<String, String> parameterMap, String inputName,
+            String parameterName) {
+        String parameterValue = inpuMap.getString(inputName);
+        if (parameterValue != null) {
+            parameterMap.put(parameterName, parameterValue);
+        }
     }
 
 }

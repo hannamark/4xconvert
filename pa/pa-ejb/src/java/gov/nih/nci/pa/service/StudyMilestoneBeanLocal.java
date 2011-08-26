@@ -98,7 +98,7 @@ public class StudyMilestoneBeanLocal
      */
     @Override
     protected String getByStudyProtocolQueryOrderClause() {
-        return " order by milestoneDate,id";
+        return " order by alias.milestoneDate,alias.id";
     }
 
     /**
