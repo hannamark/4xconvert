@@ -81,8 +81,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
@@ -112,8 +111,6 @@ import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
-import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
@@ -132,13 +129,21 @@ import org.junit.rules.ExpectedException;
  *
  */
 public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
-    private final StudyMilestoneBeanLocal bean = new StudyMilestoneBeanLocal();
-    private final DocumentWorkflowStatusBeanLocal dws = new DocumentWorkflowStatusBeanLocal();
-    private final StudyOnholdServiceLocal ohs = new StudyOnholdServiceBean();
-    private final StudyProtocolServiceLocal sps = new StudyProtocolServiceBean();
-    private final StudyInboxServiceLocal sis = new StudyInboxServiceBean();
-    private final MailManagerBeanLocal mailSrc = new MailManagerBeanLocal();
-    private final AbstractionCompletionServiceBean abstractionCompletionSerivce = new AbstractionCompletionServiceBean();
+    private static final MilestoneCode[] UP_TO_READY_FOR_TSR = new MilestoneCode[]{MilestoneCode.SUBMISSION_RECEIVED,
+        MilestoneCode.SUBMISSION_ACCEPTED, MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE,
+        MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, MilestoneCode.ADMINISTRATIVE_READY_FOR_QC,
+        MilestoneCode.ADMINISTRATIVE_QC_START, MilestoneCode.ADMINISTRATIVE_QC_COMPLETE,
+        MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE,
+        MilestoneCode.SCIENTIFIC_READY_FOR_QC, MilestoneCode.SCIENTIFIC_QC_START,
+        MilestoneCode.SCIENTIFIC_QC_COMPLETE};
+    
+    private StudyMilestoneBeanLocal bean = new StudyMilestoneBeanLocal();
+    private AbstractionCompletionServiceBean abstractionCompletionSerivce = new AbstractionCompletionServiceBean();
+    private DocumentWorkflowStatusBeanLocal dws = new DocumentWorkflowStatusBeanLocal();
+    private MailManagerBeanLocal mailSrc = new MailManagerBeanLocal();
+    private StudyInboxServiceLocal sis = new StudyInboxServiceBean();
+    private StudyOnholdServiceLocal ohs = new StudyOnholdServiceBean();
+    private StudyProtocolServiceLocal sps = new StudyProtocolServiceBean();
 
     private Ii spIi;
     private Ii spAmendIi;
@@ -150,17 +155,16 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     public void setUp() throws Exception {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
 
-        ServiceLocator paSvcLoc = mock(ServiceLocator.class);
-        PaRegistry.getInstance().setServiceLocator(paSvcLoc);
-        when(paSvcLoc.getDocumentWorkflowStatusService()).thenReturn(new DocumentWorkflowStatusBeanLocal());
-
+        bean.setAbstractionCompletionService(abstractionCompletionSerivce);
+        bean.setDocumentWorkflowStatusService(dws);
+        bean.setMailManagerService(mailSrc);
+        bean.setStudyInboxService(sis);
         bean.setStudyOnholdService(ohs);
         bean.setStudyProtocolService(sps);
-        bean.setStudyInboxService(sis);
-        bean.setMailManagerService(mailSrc);
+        
         mailSrc.setProtocolQueryService(new ProtocolQueryServiceBean());
         bean.setValidateAbstractions(false);
-        bean.setAbstractionCompletionService(abstractionCompletionSerivce);
+        
         TestSchema.primeData();
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         spAmendIi = TestSchema.createAmendStudyProtocol();
@@ -660,6 +664,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
 
     @Test
     public void checkAbstractionsRules() throws Exception {
+        createMilestones(UP_TO_READY_FOR_TSR);
         StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_SENT);
         DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
         dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTED));
@@ -710,12 +715,13 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
 
     @Test
     public void checkTSRSentMail() throws PAException {
+        Ii studyProtocolIi = TestSchema.nonPropTrialData();
         StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_SENT);
-        dto.setStudyProtocolIdentifier(TestSchema.nonPropTrialData());
+        dto.setStudyProtocolIdentifier(studyProtocolIi);
         DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
         dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTED));
         dwfDto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
-        dwfDto.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
+        dwfDto.setStudyProtocolIdentifier(studyProtocolIi);
         dws.create(dwfDto);
         mailSrc.setLookUpTableService(new LookUpTableServiceBean());
         TSRReportGeneratorServiceRemote tsrBean = new TSRReportGeneratorServiceBean();
@@ -860,4 +866,12 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         return new Timestamp(calendar.getTime().getTime());
     }
 
+    /**
+     * Creates the milestones specified in the given array
+     */
+    private void createMilestones(MilestoneCode[] milestones) throws PAException {
+        for (MilestoneCode code : milestones) {
+            bean.create(getMilestoneDTO(code));
+        }
+    }
 }

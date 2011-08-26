@@ -742,6 +742,11 @@ public class TestSchema {
 
         DocumentWorkflowStatus docWrk = TestSchema.createDocumentWorkflowStatus(nonpropTrial);
         TestSchema.addUpdObject(docWrk);
+        
+        StudyMilestone milestone = TestSchema.createStudyMilestoneObj("READY ", nonpropTrial);
+        milestone.setMilestoneCode(MilestoneCode.READY_FOR_TSR);
+        TestSchema.addUpdObject(milestone);
+        
         // properties
         PAProperties prop = new PAProperties();
         prop.setName("smtp");

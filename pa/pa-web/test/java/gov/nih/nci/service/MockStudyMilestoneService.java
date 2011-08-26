@@ -25,7 +25,7 @@ import java.util.Map;
  */
 public class MockStudyMilestoneService extends MockAbstractBaseIsoService<StudyMilestoneDTO> implements
         StudyMilestoneServicelocal {
-    static List<StudyMilestoneDTO> mileList;
+    private static List<StudyMilestoneDTO> mileList;
     static {
         mileList = new ArrayList<StudyMilestoneDTO>();
         StudyMilestoneDTO dto = new StudyMilestoneDTO();
@@ -40,6 +40,7 @@ public class MockStudyMilestoneService extends MockAbstractBaseIsoService<StudyM
     /**
      * {@inheritDoc}
      */
+    @Override
     public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
         return null;
 
@@ -48,6 +49,7 @@ public class MockStudyMilestoneService extends MockAbstractBaseIsoService<StudyM
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<StudyMilestoneDTO> getByStudyProtocol(Ii ii) throws PAException {
         List<StudyMilestoneDTO> returnList = new ArrayList<StudyMilestoneDTO>();
         for (StudyMilestoneDTO dto : mileList) {
@@ -61,6 +63,7 @@ public class MockStudyMilestoneService extends MockAbstractBaseIsoService<StudyM
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyMilestoneDTO getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
         return null;
     }
@@ -103,6 +106,7 @@ public class MockStudyMilestoneService extends MockAbstractBaseIsoService<StudyM
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<StudyMilestoneDTO> search(StudyMilestoneDTO dto, LimitOffset pagingParams) throws PAException,
             TooManyResultsException {
         return null;

@@ -99,12 +99,13 @@ import java.util.Map;
  * @author hreinhart
  *
  */
-public class MockStudyOverallStatusService   extends MockAbstractBaseIsoService <StudyOverallStatusDTO> implements StudyOverallStatusServiceLocal {
+public class MockStudyOverallStatusService extends MockAbstractBaseIsoService<StudyOverallStatusDTO> implements
+        StudyOverallStatusServiceLocal {
 
-    ArrayList<StudyOverallStatus> sosList;
+    private ArrayList<StudyOverallStatus> sosList;
 
     /**
-     *
+     * Default constructor.
      */
     public MockStudyOverallStatusService() {
         super();
@@ -127,94 +128,89 @@ public class MockStudyOverallStatusService   extends MockAbstractBaseIsoService 
         sosList.add(sos);
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyOverallStatusService#getCurrentStudyOverallStatusByStudyProtocol(gov.nih.nci.iso21090.Ii)
+    /**
+     * {@inheritDoc}
      */
-    public StudyOverallStatusDTO getCurrentByStudyProtocol(
-            Ii studyProtocolId) throws PAException {
-
+    @Override
+    public StudyOverallStatusDTO getCurrentByStudyProtocol(Ii studyProtocolId) throws PAException {
         List<StudyOverallStatusDTO> dtoList = getByStudyProtocol(studyProtocolId);
         StudyOverallStatusDTO result = null;
-        if(dtoList.size() > 0) {
+        if (dtoList.size() > 0) {
             result = dtoList.get(dtoList.size() - 1);
         }
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyOverallStatusService#getStudyOverallStatusByStudyProtocol(gov.nih.nci.iso21090.Ii)
+    /**
+     * {@inheritDoc}
      */
-    public List<StudyOverallStatusDTO> getByStudyProtocol(
-            Ii studyProtocolId) throws PAException {
+    @Override
+    public List<StudyOverallStatusDTO> getByStudyProtocol(Ii studyProtocolId) throws PAException {
         ArrayList<StudyOverallStatusDTO> result = new ArrayList<StudyOverallStatusDTO>();
         for (StudyOverallStatus sos : sosList) {
-            if(sos.getStudyProtocol().getId().equals(IiConverter.convertToLong(studyProtocolId))) {
+            if (sos.getStudyProtocol().getId().equals(IiConverter.convertToLong(studyProtocolId))) {
                 result.add(Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(sos));
             }
         }
         return result;
     }
 
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyOverallStatusService#updateStudyOverallStatus(gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO)
+    /**
+     * {@inheritDoc}
      */
     @Override
-    public StudyOverallStatusDTO create(
-            StudyOverallStatusDTO studyOverallStatusDTO) throws PAException {
-        // TODO Auto-generated method stub
+    public StudyOverallStatusDTO create(StudyOverallStatusDTO studyOverallStatusDTO) throws PAException {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyOverallStatusServiceRemote#getStudyOverallStatus(gov.nih.nci.iso21090.Ii)
+    /**
+     * {@inheritDoc}
      */
     @Override
-    public StudyOverallStatusDTO get(Ii ii)
-            throws PAException {
-        // TODO Auto-generated method stub
+    public StudyOverallStatusDTO get(Ii ii) throws PAException {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyOverallStatusServiceRemote#updateStudyOverallStatus(gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO)
+    /**
+     * {@inheritDoc}
      */
     @Override
-    public StudyOverallStatusDTO update(
-            StudyOverallStatusDTO dto) throws PAException {
-        // TODO Auto-generated method stub
+    public StudyOverallStatusDTO update(StudyOverallStatusDTO dto) throws PAException {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.BasePaService#delete(gov.nih.nci.iso21090.Ii)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void delete(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
-
     }
 
-    public Map<Ii, Ii>  copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi)
-            throws PAException {
-        // TODO Auto-generated method stub
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<Ii, Ii> copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi) throws PAException {
         return null;
 
     }
 
-    public void validate(StudyOverallStatusDTO statusDto,
-            StudyProtocolDTO studyProtocolDTO) throws PAException {
-        if(StudyStatusCode.APPROVED.getCode().equals(statusDto.getStatusCode().getCode())) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validate(StudyOverallStatusDTO statusDto, StudyProtocolDTO studyProtocolDTO) throws PAException {
+        if (StudyStatusCode.APPROVED.getCode().equals(statusDto.getStatusCode().getCode())) {
             throw new PAException("Invalid study status transition");
         }
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyOverallStatusServiceLocal#isTrialStatusOrDateChanged(gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO, gov.nih.nci.iso21090.Ii)
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public boolean isTrialStatusOrDateChanged(StudyOverallStatusDTO newStatusDto, Ii studyProtocolIi)
             throws PAException {
-        // TODO Auto-generated method stub
         return false;
     }
 

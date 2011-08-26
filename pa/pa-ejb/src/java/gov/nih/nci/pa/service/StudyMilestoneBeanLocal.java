@@ -28,14 +28,14 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
-import gov.nih.nci.pa.util.PaRegistry;
 
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -57,19 +57,49 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 public class StudyMilestoneBeanLocal
     extends AbstractCurrentStudyIsoService<StudyMilestoneDTO, StudyMilestone, StudyMilestoneConverter>
     implements StudyMilestoneServicelocal {
+    
+    /** TRIAL_SUMMARY_SENT stop search milestones. **/
+    private static final Set<MilestoneCode> TSS_STOP_SEARCH = EnumSet.complementOf(EnumSet
+        .of(MilestoneCode.TRIAL_SUMMARY_SENT, MilestoneCode.TRIAL_SUMMARY_FEEDBACK,
+            MilestoneCode.INITIAL_ABSTRACTION_VERIFY, MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION,
+            MilestoneCode.LATE_REJECTION_DATE));
+
+    /** TRIAL_SUMMARY_FEEDBACK stop search milestones. **/
+    private static final Set<MilestoneCode> TSF_STOP_SEARCH = EnumSet.of(MilestoneCode.SUBMISSION_ACCEPTED,
+                                                                         MilestoneCode.TRIAL_SUMMARY_FEEDBACK);
+    
+    /** LATE_REJECTION_DATE stop search milestones. **/
+    private static final Set<MilestoneCode> LRD_STOP_SEARCH = EnumSet.noneOf(MilestoneCode.class);
+
+    @EJB
+    private AbstractionCompletionServiceRemote abstractionCompletionService;
+    
+    @EJB
+    private DocumentWorkflowStatusServiceLocal documentWorkflowStatusService;
+    
+    @EJB
+    private MailManagerServiceLocal mailManagerService;
+    
+    @EJB
+    private StudyInboxServiceLocal studyInboxService;
 
     @EJB
     private StudyOnholdServiceLocal studyOnholdService;
-    @EJB
-    private AbstractionCompletionServiceRemote abstractionCompletionService;
-    @EJB
-    private MailManagerServiceLocal mailManagerService;
+    
     @EJB
     private StudyProtocolServiceLocal studyProtocolService;
-    @EJB
-    private StudyInboxServiceLocal studyInboxService;
+    
+    
     /** For testing purposes only. Set to false to bypass abstraction validations. */
     private boolean validateAbstractions = true;
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getByStudyProtocolQueryOrderClause() {
+        return " order by milestoneDate,id";
+    }
 
     /**
      * @param dto dto
@@ -111,15 +141,15 @@ public class StudyMilestoneBeanLocal
     }
 
     private DocumentWorkflowStatusCode getCurrentDocumentWorkflowStatus(Ii studyProtocolIi) throws PAException {
-        DocumentWorkflowStatusDTO dw =
-            PaRegistry.getDocumentWorkflowStatusService().getCurrentByStudyProtocol(studyProtocolIi);
-        return  (dw == null) ? null
-                : DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dw.getStatusCode()));
+        DocumentWorkflowStatusDTO dw = documentWorkflowStatusService.getCurrentByStudyProtocol(studyProtocolIi);
+        return (dw == null) ? null : DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dw
+            .getStatusCode()));
     }
 
     private StudyMilestoneDTO businessRules(StudyMilestoneDTO dto) throws PAException {
         MilestoneCode newCode = MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode()));
-        List<StudyMilestoneDTO> existingDtoList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+        Ii spIi = dto.getStudyProtocolIdentifier();
+        List<StudyMilestoneDTO> existingDtoList = getByStudyProtocol(spIi);
         checkRequiredDataRules(dto);
         checkDateRules(dto, existingDtoList);
         checkLateRejectionRules(dto);
@@ -278,15 +308,15 @@ public class StudyMilestoneBeanLocal
         case SCIENTIFIC_QC_COMPLETE:
             checkProcessAndQC(milestones, newCode);
             break;
+        case TRIAL_SUMMARY_SENT:
+            checkPreRequisite(milestones, newCode, TSS_STOP_SEARCH, MilestoneCode.READY_FOR_TSR);
+            break;
         case TRIAL_SUMMARY_FEEDBACK:
-            checkPrerequisite(milestones, newCode, Arrays.asList(MilestoneCode.SUBMISSION_ACCEPTED,
-                                                                 MilestoneCode.TRIAL_SUMMARY_FEEDBACK),
-                                                                 MilestoneCode.TRIAL_SUMMARY_SENT);
+            checkPreRequisite(milestones, newCode, TSF_STOP_SEARCH, MilestoneCode.TRIAL_SUMMARY_SENT);
             break;
         case LATE_REJECTION_DATE:
-            checkPrerequisite(milestones, newCode, new ArrayList<MilestoneCode>(), MilestoneCode.SUBMISSION_ACCEPTED);
+            checkPreRequisite(milestones, newCode, LRD_STOP_SEARCH, MilestoneCode.SUBMISSION_ACCEPTED);
             break;
-
         case READY_FOR_TSR:
             checkReadyForTSRMilestone(milestones);
             break;
@@ -341,8 +371,8 @@ public class StudyMilestoneBeanLocal
         throw new PAException(MessageFormat.format(msg, milestone.getCode()));
     }
 
-    private void checkPrerequisite(List<MilestoneCode> milestones, MilestoneCode milestone,
-            List<MilestoneCode> stopSearchMilestones, MilestoneCode preRequisite) throws PAException {
+    private void checkPreRequisite(List<MilestoneCode> milestones, MilestoneCode milestone,
+            Set<MilestoneCode> stopSearchMilestones, MilestoneCode preRequisite) throws PAException {
         for (int i = milestones.size() - 1; i >= 0; i--) {
             MilestoneCode current = milestones.get(i);
             if (current.equals(preRequisite)) {
@@ -431,17 +461,17 @@ public class StudyMilestoneBeanLocal
         }
     }
 
-    private void createDocumentWorkflowStatus(
-            DocumentWorkflowStatusCode dwf, StudyMilestoneDTO dto) throws PAException {
+    private void createDocumentWorkflowStatus(DocumentWorkflowStatusCode dwf, StudyMilestoneDTO dto) 
+            throws PAException {
         DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
         dwfDto.setStatusCode(CdConverter.convertToCd(dwf));
-        dwfDto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(
-                TsConverter.convertToTimestamp(dto.getMilestoneDate()), null));
+        dwfDto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(TsConverter.convertToTimestamp(dto
+                                                                            .getMilestoneDate()), null));
         dwfDto.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
         if (dto.getCommentText() != null) {
             dwfDto.setCommentText(dto.getCommentText());
         }
-        PaRegistry.getDocumentWorkflowStatusService().create(dwfDto);
+        documentWorkflowStatusService.create(dwfDto);
     }
 
     private void updateRecordVerificationDates(StudyMilestoneDTO dto) throws PAException {
@@ -546,6 +576,7 @@ public class StudyMilestoneBeanLocal
     /**
      * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyMilestoneDTO> search(StudyMilestoneDTO dto, LimitOffset pagingParams) throws PAException,
     TooManyResultsException {
@@ -580,17 +611,17 @@ public class StudyMilestoneBeanLocal
     }
 
     /**
-     * @param studyOnholdService the studyOnholdService to set
-     */
-    public void setStudyOnholdService(StudyOnholdServiceLocal studyOnholdService) {
-        this.studyOnholdService = studyOnholdService;
-    }
-
-    /**
      * @param abstractionCompletionService the abstractionCompletionService to set
      */
     public void setAbstractionCompletionService(AbstractionCompletionServiceRemote abstractionCompletionService) {
         this.abstractionCompletionService = abstractionCompletionService;
+    }
+
+    /**
+     * @param documentWorkflowStatusService the documentWorkflowStatusService to set
+     */
+    public void setDocumentWorkflowStatusService(DocumentWorkflowStatusServiceLocal documentWorkflowStatusService) {
+        this.documentWorkflowStatusService = documentWorkflowStatusService;
     }
 
     /**
@@ -601,17 +632,24 @@ public class StudyMilestoneBeanLocal
     }
 
     /**
-     * @param studyProtocolService the studyProtocolService to set
-     */
-    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
-        this.studyProtocolService = studyProtocolService;
-    }
-
-    /**
      * @param studyInboxService the studyInboxService to set
      */
     public void setStudyInboxService(StudyInboxServiceLocal studyInboxService) {
         this.studyInboxService = studyInboxService;
+    }
+
+    /**
+     * @param studyOnholdService the studyOnholdService to set
+     */
+    public void setStudyOnholdService(StudyOnholdServiceLocal studyOnholdService) {
+        this.studyOnholdService = studyOnholdService;
+    }
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
     }
 
     /**
@@ -620,4 +658,5 @@ public class StudyMilestoneBeanLocal
     public void setValidateAbstractions(boolean validateAbstractions) {
         this.validateAbstractions = validateAbstractions;
     }
+
 }

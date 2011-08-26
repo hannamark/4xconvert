@@ -15,7 +15,7 @@
     <property name="pa.checkstyle.url" value="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml"/>
     <property name="java.major.version" value="1.6"/>
     <property name="java.encoding" value="utf-8"/>
-    
+
     <property name="pa-ejb.build.dir" value="${pa.dir}/pa-ejb/target"/>
 
     <property name="pa-web.build.finalName" value="pa-web"/>
@@ -47,7 +47,7 @@
     <property name="jboss.server.jndi.port" value="1099" />
     <property name="bda-utils" value="${basedir}/../../target/pa/bda-utils" />
     <property name="database.upgrades.dir" value="${basedir}/../dbscripts/db-upgrade"/>
-    
+
     <property name="selenium.delay" value="10"/>
 
     <!-- ====================================================================== -->
@@ -64,12 +64,12 @@
             <include name="*.jar"/>
         </fileset>
     </path>
-    
+
     <path id="pa-ejb.package.test.classpath">
-            <fileset dir="${pa.dir}/pa-ejb/target">
-                <include name="*-test.jar"/>
-            </fileset>
-        </path>
+        <fileset dir="${pa.dir}/pa-ejb/target">
+            <include name="*-test.jar"/>
+        </fileset>
+    </path>
 
     <property name="compile.jar.dir" location="${lib.dir}/pa-web/compile" />
     <path id="compile.classpath">
@@ -179,32 +179,30 @@
                 <path refid="common.package.classpath"/>
             </classpath>
         </javac>
-        <copy file="${pa.resourceDir}/quartz_jobs.xml"
-              todir="${pa-web.build.outputDir}"
-              overwrite="true">
-           <filterset>
+        <copy file="${pa.resourceDir}/quartz_jobs.xml" todir="${pa-web.build.outputDir}" overwrite="true">
+            <filterset>
                 <filter token="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
-           </filterset>
+                <filter token="pasystem.user" value="${pasystem.user}" />
+                <filter token="pasystem.password" value="${pasystem.password}" />
+            </filterset>
         </copy>
-        <copy file="${pa.resourceDir}/csm.properties"
-                      todir="${pa-web.build.outputDir}"
-                      overwrite="true">
-                   <filterset>
-                       <filter token="database.driver" value="${jdbc.driver}"/>
-                       <filter token="database.url" value="${jdbc.url}"/>
-                       <filter token="database.user" value="${db.username}"/>
-                       <filter token="database.password" value="${db.password}"/>
-                          <filter token="database.dialect" value="${hibernate.dialect}"/>
-                          <filter token="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
-                          <filter token="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
-                   </filterset>
-                </copy>
+        <copy file="${pa.resourceDir}/csm.properties" todir="${pa-web.build.outputDir}" overwrite="true">
+            <filterset>
+                <filter token="database.driver" value="${jdbc.driver}" />
+                <filter token="database.url" value="${jdbc.url}" />
+                <filter token="database.user" value="${db.username}" />
+                <filter token="database.password" value="${db.password}" />
+                <filter token="database.dialect" value="${hibernate.dialect}" />
+                <filter token="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}" />
+                <filter token="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}" />
+            </filterset>
+        </copy>
         <copy todir="${pa-web.build.outputDir}">
             <filterset>
-                <filter token="po.server.name" value="${po.server.name}"/>
-                <filter token="po.port.number" value="${po.port.number}"/>
+                <filter token="po.server.name" value="${po.server.name}" />
+                <filter token="po.port.number" value="${po.port.number}" />
             </filterset>
-            <fileset dir="${pa-web.build.resourceDir.0}"/>
+            <fileset dir="${pa-web.build.resourceDir.0}" />
         </copy>
     </target>
 
@@ -304,7 +302,7 @@
             <fileset dir="src">
                 <include name="**/*.java"/>
             </fileset>
-         </pmd>
+        </pmd>
     </target>
 
     <!-- ====================================================================== -->
@@ -312,8 +310,8 @@
     <!-- ====================================================================== -->
 
     <target name="test-simian">
-       <taskdef resource="simiantask.properties" classpathref="test-simian.classpath"/>
-       <simian>
+        <taskdef resource="simiantask.properties" classpathref="test-simian.classpath"/>
+        <simian>
             <fileset dir="src" includes="**/*.java"/>
             <formatter type="plain" toFile="${pa.report.dir}/pa-web/simian.txt"/>
             <formatter type="xml" toFile="${pa.report.dir}/pa-web/simian.xml"/>
@@ -346,7 +344,7 @@
         <waitfor maxwait="120" maxwaitunit="second" checkevery="5" checkeveryunit="second">
             <http url="http://${pa.server.name}:${selenium.server.port}/selenium-server/driver/?cmd=shutDownSeleniumServer"/>
         </waitfor>
-     </target>
+    </target>
 
     <!-- ====================================================================== -->
     <!-- Run JUnit Integration Tests                                            -->
@@ -367,7 +365,7 @@
                     <include name="**/AllSeleniumTests.java"/>
                 </fileset>
             </batchtest>
-         </junit>
+        </junit>
     </target>
 
     <!-- ====================================================================== -->
@@ -500,7 +498,8 @@
             <classpath refid="ejb.package.classpath"/>
             <classpath refid="common.package.classpath"/>
             <classpath refid="pa-ejb.package.test.classpath"/>
-            <test if="test" name="${test}" haltonerror="false" haltonfailure="false"></test>
+            <test if="test" name="${test}" haltonerror="false" haltonfailure="false">
+            </test>
             <batchtest todir="${pa-web.test.reports}" fork="yes" unless="test">
                 <fileset dir="${pa-web.build.testDir.0}">
                     <include name="**/*Test.java"/>
@@ -557,7 +556,7 @@
         <cobertura-report datafile="${pa-web.build.dir}/cobertura.ser" format="xml" destdir="${pa-web.coverage.reports}"
                           srcdir="${pa-web.build.srcDir.0}" />
         <cobertura-check datafile="${pa-web.build.dir}/cobertura.ser" totalbranchrate="${pa-web.coverage.branch}" totallinerate="${pa-web.coverage.line}" haltonfailure="true"/>
-     </target>
+    </target>
 
 
     <!-- ====================================================================== -->
@@ -599,8 +598,8 @@
     </target>
     <target name="ivy-test"
             depends="init:ivy,ivy-test-cobertura,ivy-test-junit,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian">
-            <ivy:resolve refresh="true" conf="test" />
-            <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="test" />
+        <ivy:resolve refresh="true" conf="test" />
+        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="test" />
     </target>
     <target name="ivy-runtime" depends="init:ivy" description="Updates the local ivy repository">
         <ivy:resolve refresh="true" conf="runtime" />
@@ -619,49 +618,49 @@
     <!-- ====================================================================== -->
 
     <target name="generate-javadoc">
-        <javadoc destdir="${pa-web.build.javadoc}"
-            sourcepath="${pa-web.build.srcDir.0}"
-            windowtitle="CTRP PA WEB">
-            <doctitle><![CDATA[<h1>CTRP PA Abstraction Web Layer</h1>]]></doctitle>
+        <javadoc destdir="${pa-web.build.javadoc}" sourcepath="${pa-web.build.srcDir.0}" windowtitle="CTRP PA WEB">
+            <doctitle>
+                <![CDATA[<h1>CTRP PA Abstraction Web Layer</h1>]]>
+            </doctitle>
             <classpath>
-                <path refid="compile.classpath"/>
+                <path refid="compile.classpath" />
                 <path refid="common.package.classpath" />
             </classpath>
         </javadoc>
     </target>
 
-    <!-- ====================================================================== -->
-    <!-- Determines build version and revision                                  -->
-    <!-- ====================================================================== -->
-    <target name="determine-build-version">
-        <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="compile.classpath"/>
-        <svn>
-            <status path="." revisionproperty="project.revision" urlproperty="project.url" />
-        </svn>
-        <propertyregex property="project.base" input="${project.url}" casesensitive="false"
+<!-- ====================================================================== -->
+<!-- Determines build version and revision                                  -->
+<!-- ====================================================================== -->
+<target name="determine-build-version">
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="compile.classpath"/>
+    <svn>
+        <status path="." revisionproperty="project.revision" urlproperty="project.url" />
+    </svn>
+    <propertyregex property="project.base" input="${project.url}" casesensitive="false"
             select="\1" regexp="coppa\/([^/]*)\/"/>
-        <if>
-            <equals arg1="${project.base}" arg2="trunk"/>
+    <if>
+        <equals arg1="${project.base}" arg2="trunk"/>
+        <then>
+            <property name="project.version" value="${project.base}"/>
+        </then>
+        <elseif>
+            <!-- We're expecting tags to be in the tags/pa-[version]-code format-->
+            <equals arg1="${project.base}" arg2="tags"/>
             <then>
+                <propertyregex property="project.base" input="${project.url}" casesensitive="false" override="true"
+                            select="\2" regexp="coppa\/([^/]*)\/pa-([^/]*)-code\/"/>
                 <property name="project.version" value="${project.base}"/>
             </then>
-           <elseif>
-               <!-- We're expecting tags to be in the tags/pa-[version]-code format-->
-               <equals arg1="${project.base}" arg2="tags"/>
-               <then>
-                   <propertyregex property="project.base" input="${project.url}" casesensitive="false" override="true"
-                            select="\2" regexp="coppa\/([^/]*)\/pa-([^/]*)-code\/"/>
-                   <property name="project.version" value="${project.base}"/>
-               </then>
-           </elseif>
-           <else>
-               <propertyregex property="project.base" input="${project.url}" casesensitive="false" override="true"
+        </elseif>
+        <else>
+            <propertyregex property="project.base" input="${project.url}" casesensitive="false" override="true"
                    select="\2" regexp="coppa\/([^/]*)\/([^/]*)\/"/>
-               <property name="project.version" value="${project.base}"/>
-           </else>
-        </if>
-        <echo message="Project URL: ${project.url}"/>
-        <echo message="Project Version: ${project.version}"/>
-        <echo message="Project Revision: ${project.revision}"/>
-    </target>
+            <property name="project.version" value="${project.base}"/>
+        </else>
+    </if>
+    <echo message="Project URL: ${project.url}"/>
+    <echo message="Project Version: ${project.version}"/>
+    <echo message="Project Revision: ${project.revision}"/>
+</target>
 </project>

@@ -79,7 +79,6 @@
 
 package gov.nih.nci.pa.service.util;
 
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
@@ -91,19 +90,16 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
-import gov.nih.nci.pa.util.PaRegistry;
 
 import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.Local;
-import javax.ejb.LocalHome;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -111,6 +107,8 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.joda.time.DateTime;
 
 /**
  * @author Anupama Sharma
@@ -118,127 +116,172 @@ import org.apache.log4j.Logger;
  */
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Local(StudyMilestoneTasksServiceLocal.class)
-@LocalHome(StudyMilestoneTasksServiceLocalHome.class)
 public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(StudyMilestoneTasksServiceBean.class);
-    private static final int PAST_7_DAYS = 7;
-
+    private static final int[] DAYS_DELTA_PER_DOW = new int[]{7, 7, 7, 7, 7, 5, 6 };
+    private static final String MILESTONE_COMMENT = "Milestone auto-set based on non-response within 5 days";
+    
+    @EJB 
+    private LookUpTableServiceRemote lookUpTableService;
+    @EJB 
+    private MailManagerServiceLocal mailManagerService;
     @EJB
-    private StudyMilestoneServicelocal smRemote;
-    /**
-     * Perform task.
-     * if we run into more problems, we should look into making the query protocol-focused,
-     * rather than milestone-focused, which may simplify the code a bit (at the cost of a more complex query)
-     * @throws PAException exception
-     */
-    public void performTask() throws PAException {
-        Calendar milestoneDate = Calendar.getInstance();
-        Set<StudyMilestone> studyMilestoneList = getTrialSummarySentMilestones();
-        LOG.info("StudyMilestoneTasksServiceBean searching for studies; search results returned "
-                    + studyMilestoneList.size());
-
-        for (StudyMilestone smdto : studyMilestoneList) {
-            milestoneDate.setTime(smdto.getMilestoneDate());
-            if (isMoreThan5Businessdays(milestoneDate)) {
-                try {
-                    createMilestone(smdto);
-                } catch (PAException e) {
-                    // swallowing the exception in order to continue processing the rest of the records
-                    sendFailureNotification(smdto, e);
-                }
-             }
-         }
-    }
-
+    private StudyMilestoneServicelocal studyMilestoneService;
+    @EJB
+    private StudyMilestoneTasksServiceLocal studyMilestoneTasksService;
+    
+    @Resource
+    private SessionContext context;
 
     /**
-     * @param smdto
-     * @throws PAException
+     * Perform task. if we run into more problems, we should look into making the query protocol-focused, rather than
+     * milestone-focused, which may simplify the code a bit (at the cost of a more complex query)
      */
-    private void createMilestone(StudyMilestone smdto) throws PAException {
-        LOG.info("Creating a new milestone with code - initial abstraction verify for study protocol "
-                + smdto.getStudyProtocol().getId());
-        StudyMilestoneDTO newDTO = new StudyMilestoneDTO();
-        newDTO.setCommentText(StConverter.convertToSt("Milestone auto-set based on Non-Response within 5 days"));
-        newDTO.setMilestoneCode(CdConverter.convertStringToCd(
-        MilestoneCode.INITIAL_ABSTRACTION_VERIFY.getCode()));
-        newDTO.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        newDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(
-                smdto.getStudyProtocol().getId()));
-        smRemote.create(newDTO);
-    }
-
-
-    /**
-     * @param mailSubject
-     * @param mailTo
-     * @param smdto
-     * @param e
-     * @throws PAException
-     */
-    private void sendFailureNotification(StudyMilestone smdto, PAException e) throws PAException {
-        String trialID = "";
-        for (Iterator<Ii> iter = smdto.getStudyProtocol().getOtherIdentifiers().iterator();
-            iter.hasNext();) {
-            Ii ii = iter.next();
-            if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
-                trialID = ii.getExtension();
-            }
-        }
-        String mailBody = " An error occurred while running the Abstraction Verified No Response Script."
-            + " The trial ID is " + trialID + " and the error is " + e.getMessage();
-        LOG.error(mailBody, e);
-        try {
-            String mailSubject = PaRegistry.getLookUpTableService().getPropertyValue("abstraction.script.subject");
-            String mailTo = PaRegistry.getLookUpTableService().getPropertyValue("abstraction.script.mailTo");
-            PaRegistry.getMailManagerService().sendMailWithAttachment(mailTo, mailSubject, mailBody, null);
-        } catch (Exception e1) {
-            LOG.error("error-- ", e1);
-        }
-    }
-
-
-    /**
-     *
-     * @param milestoneDate milestoneDate
-     * @return true, if successful
-     */
-    private static boolean isMoreThan5Businessdays(Calendar milestoneDate) {
-        boolean ret = false;
-        Calendar today = Calendar.getInstance();
-        today.add(Calendar.DAY_OF_MONTH, -PAST_7_DAYS);
-        if (milestoneDate.before(today)) {
-            ret = true;
-        }
-        LOG.info("Study's TSR sent date is " + milestoneDate.getTime() + ". isMoreThan5Businessdays: " + ret);
-        return ret;
+    @Override
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public void performTask() {
+        LOG.info("Starting StudyMilestoneTasksServiceBean");
+        DateTime overdueDate = getOverdueDate(new DateTime());
+        Set<StudyMilestone> milestones = studyMilestoneTasksService.getTrialSummarySentMilestones(overdueDate);
+        LOG.info("StudyMilestoneTasksServiceBean searching for milestones. Results returned " + milestones.size());
+        StudyMilestoneTaskMessageCollection errors = createMilestones(milestones);
+        sendFailureNotification(errors);
+        LOG.info("Ending StudyMilestoneTasksServiceBean");
     }
 
     /**
-     * Gets List of DTOs for which TSR is sent but not having to INITIAL_ABSTRACTION_VERIFY.
+     * Compute the overdue date for the TRIAL_SUMMARY_SENT milestones to select. It is 5 business days before the
+     * given time.
+     * @param now The actual time
+     * @return The overdue date for the TRIAL_SUMMARY_SENT milestones to select
+     */
+    DateTime getOverdueDate(DateTime now) {
+        return now.minusDays(DAYS_DELTA_PER_DOW[now.getDayOfWeek() - 1]).toDateMidnight().toDateTime();
+    }
+
+    /**
+     * Gets List of TRIAL_SUMMARY_SENT milestones sent before the given threshold but not having to
+     * INITIAL_ABSTRACTION_VERIFY.
+     * @param threshold The threshold
      * @return list Of StudyMilestone
      */
+    @Override
     @SuppressWarnings("unchecked")
-    private Set<StudyMilestone> getTrialSummarySentMilestones() {
-        String hsql = "select sm from StudyMilestone sm where sm.milestoneCode='" + MilestoneCode.TRIAL_SUMMARY_SENT
-            + "' and sm.studyProtocol  in (select sm1.studyProtocol from StudyMilestone sm1 where "
-            + " sm1.milestoneCode='" + MilestoneCode.TRIAL_SUMMARY_SENT + "' and sm1.studyProtocol not in "
-            + " (select sm2.studyProtocol"
-            + " from StudyMilestone sm2 where sm2.milestoneCode='" + MilestoneCode.INITIAL_ABSTRACTION_VERIFY + "'))";
-
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Set<StudyMilestone> getTrialSummarySentMilestones(DateTime threshold) {
+        String queryString = "select sm1 from StudyMilestone sm1 where sm1.milestoneCode = :tss and "
+                + "sm1.milestoneDate <= :threshold and not exists"
+                + "(select sm2 from StudyMilestone sm2 where sm2.studyProtocol.id = sm1.studyProtocol.id and "
+                + "((sm2.milestoneCode =  :tss and sm2.milestoneDate>sm1.milestoneDate)or(sm2.milestoneCode = :abs)))";
+        Query query = PaHibernateUtil.getCurrentSession().createQuery(queryString);
+        query.setParameter("threshold", threshold.toDate());
+        query.setParameter("tss", MilestoneCode.TRIAL_SUMMARY_SENT);
+        query.setParameter("abs", MilestoneCode.INITIAL_ABSTRACTION_VERIFY);
         Set<StudyMilestone> mileStoneList = new TreeSet<StudyMilestone>(new MilestoneComparator());
-        mileStoneList.addAll(PaHibernateUtil.getCurrentSession().createQuery(hsql).list());
+        mileStoneList.addAll(query.list());
         return mileStoneList;
     }
 
     /**
-     * @param smRemote the smRemote to set
+     * Attempts to create the INITIAL_ABSTRACTION_VERIFY milestone for each given TRIAL_SUMMARY_SENT milestone.
+     * @param milestones The TRIAL_SUMMARY_SENT milestones
+     * @return The set of TRIAL_SUMMARY_SENT for which validation failed
      */
-    public void setSmRemote(StudyMilestoneServicelocal smRemote) {
-        this.smRemote = smRemote;
+    StudyMilestoneTaskMessageCollection createMilestones(Set<StudyMilestone> milestones) {
+        StudyMilestoneTaskMessageCollection errors = new StudyMilestoneTaskMessageCollection();
+        for (StudyMilestone milestone : milestones) {
+            try {
+                Long studyProtocolId = milestone.getStudyProtocol().getId();
+                LOG.info("Creating a new milestone with code - initial abstraction verify for study protocol "
+                        + studyProtocolId);
+                StudyMilestoneDTO newDTO = new StudyMilestoneDTO();
+                newDTO.setCommentText(StConverter.convertToSt(MILESTONE_COMMENT));
+                newDTO.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.INITIAL_ABSTRACTION_VERIFY));
+                newDTO.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+                newDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(studyProtocolId));
+                studyMilestoneTasksService.createMilestone(newDTO);
+            } catch (Exception e) {
+                // swallowing the exception in order to continue processing the rest of the records
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Exception creating the milestone: ", e);
+                } else {
+                    LOG.info("Exception creating the milestone: " + e.getMessage());
+                }
+                errors.add(milestone, e.getMessage());
+            }
+            if (Thread.interrupted()) {
+                break;
+            }
+        }
+        return errors;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createMilestone(StudyMilestoneDTO milestone) throws PAException {
+        try {
+            studyMilestoneService.create(milestone);
+        } catch (PAException e) {
+            context.setRollbackOnly();
+            throw e;
+        }
+    }
+    
+    /**
+     * Sends the email notification for the given error collection.
+     * @param errors The error collection.
+     */
+    void sendFailureNotification(StudyMilestoneTaskMessageCollection errors) {
+        if (!errors.isEmpty()) {
+            String mailBody = errors.getSummary();
+            try {
+                String mailSubject = lookUpTableService.getPropertyValue("abstraction.script.subject");
+                String mailTo = lookUpTableService.getPropertyValue("abstraction.script.mailTo");
+                mailManagerService.sendMailWithAttachment(mailTo, mailSubject, mailBody, null);
+            } catch (PAException e) {
+                LOG.error("error sending notification mail", e);
+            }
+        }
+
+    }
+
+    /**
+     * @param lookUpTableService the lookUpTableService to set
+     */
+    public void setLookUpTableService(LookUpTableServiceRemote lookUpTableService) {
+        this.lookUpTableService = lookUpTableService;
+    }
+
+    /**
+     * @param mailManagerService the mailManagerService to set
+     */
+    public void setMailManagerService(MailManagerServiceLocal mailManagerService) {
+        this.mailManagerService = mailManagerService;
+    }
+
+    /**
+     * @param studyMilestoneService the studyMilestoneService to set
+     */
+    public void setStudyMilestoneService(StudyMilestoneServicelocal studyMilestoneService) {
+        this.studyMilestoneService = studyMilestoneService;
+    }
+
+    /**
+     * @param studyMilestoneTasksService the studyMilestoneTasksService to set
+     */
+    public void setStudyMilestoneTasksService(StudyMilestoneTasksServiceLocal studyMilestoneTasksService) {
+        this.studyMilestoneTasksService = studyMilestoneTasksService;
+    }
+
+    /**
+     * @param context the context to set
+     */
+    public void setContext(SessionContext context) {
+        this.context = context;
     }
 
     /**
@@ -250,10 +293,12 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
         /**
          * {@inheritDoc}
          */
+        @Override
         public int compare(StudyMilestone milestone0, StudyMilestone milestone1) {
             Long studyId0 = milestone0.getStudyProtocol().getId();
             Long studyId1 = milestone1.getStudyProtocol().getId();
             return new CompareToBuilder().append(studyId0, studyId1).toComparison();
-       }
+        }
     }
+
 }

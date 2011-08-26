@@ -117,6 +117,9 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService<Plann
     private static PlannedActivityConverter converter = new PlannedActivityConverter();
     private Long seq = 1L;
 
+    /**
+     * Default constructor.
+     */
     public MockPlannedActivityService() {
         list = new ArrayList<PlannedActivity>();
         PlannedActivity pa = new PlannedActivity();
@@ -137,67 +140,44 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService<Plann
     }
 
     /**
-     * Creates the planned eligibility criterion.
-     *
-     * @param dto the dto
-     *
-     * @return the planned eligibility criterion dto
-     *
-     * @throws PAException the PA exception
+     * {@inheritDoc}
      */
+    @Override
     public PlannedEligibilityCriterionDTO createPlannedEligibilityCriterion(PlannedEligibilityCriterionDTO dto)
             throws PAException {
         return null;
     }
 
     /**
-     * Delete planned eligibility criterion.
-     *
-     * @param ii the ii
-     *
-     * @throws PAException the PA exception
+     * {@inheritDoc}
      */
+    @Override
     public void deletePlannedEligibilityCriterion(Ii ii) throws PAException {
 
     }
 
     /**
-     * Gets the by arm.
-     *
-     * @param ii the ii
-     *
-     * @return the by arm
-     *
-     * @throws PAException the PA exception
+     * {@inheritDoc}
      */
+    @Override
     public List<PlannedActivityDTO> getByArm(Ii ii) throws PAException {
         return null;
     }
 
     /**
-     * Gets the planned eligibility criterion.
-     *
-     * @param ii the ii
-     *
-     * @return the planned eligibility criterion
-     *
-     * @throws PAException the PA exception
+     * {@inheritDoc}
      */
+    @Override
     public PlannedEligibilityCriterionDTO getPlannedEligibilityCriterion(Ii ii) throws PAException {
         return null;
     }
 
     /**
-     * Gets the planned eligibility criterion by study protocol.
-     *
-     * @param ii the ii
-     *
-     * @return the planned eligibility criterion by study protocol
-     *
-     * @throws PAException the PA exception
+     * {@inheritDoc}
      */
-    public List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(
-            Ii ii) throws PAException {
+    @Override
+    public List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(Ii ii) 
+            throws PAException {
         List<PlannedEligibilityCriterionDTO> dtoList = new ArrayList<PlannedEligibilityCriterionDTO>();
         PlannedEligibilityCriterionDTO dto = new PlannedEligibilityCriterionDTO();
         dto.setStudyProtocolIdentifier(IiConverter.convertToIi("1"));
@@ -224,28 +204,18 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService<Plann
     }
 
     /**
-     * Update planned eligibility criterion.
-     *
-     * @param dto the dto
-     *
-     * @return the planned eligibility criterion dto
-     *
-     * @throws PAException the PA exception
+     * {@inheritDoc}
      */
+    @Override
     public PlannedEligibilityCriterionDTO updatePlannedEligibilityCriterion(
             PlannedEligibilityCriterionDTO dto) throws PAException {
         return null;
     }
 
-    /**
-     * Gets the by study protocol.
-     *
-     * @param ii the ii
-     *
-     * @return the by study protocol
-     *
-     * @throws PAException the PA exception
-     */
+   /**
+    * {@inheritDoc}
+    */
+    @Override
     public List<PlannedActivityDTO> getByStudyProtocol(Ii ii) throws PAException {
         List<PlannedActivityDTO> resultList = new ArrayList<PlannedActivityDTO>();
         for (PlannedActivity item : list) {
@@ -255,10 +225,13 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService<Plann
         }
         return resultList;
     }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#getCurrentByStudyProtocol(gov.nih.nci.iso21090.Ii)
-     */
+    
+   /**
+    * 
+    * @param studyProtocolIi The studyProtocolIi
+    * @return The PlannedActivityDTO 
+    * @throws PAException if an error occurs
+    */
     public PlannedActivityDTO getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
         List<PlannedActivityDTO> dtoList = this.getByStudyProtocol(studyProtocolIi);
         PlannedActivityDTO result = null;
@@ -298,13 +271,7 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService<Plann
     }
 
     /**
-     * Gets the.
-     *
-     * @param ii the ii
-     *
-     * @return the planned activity dto
-     *
-     * @throws PAException the PA exception
+     * {@inheritDoc}
      */
     @Override
     public PlannedActivityDTO get(Ii ii) throws PAException {
@@ -317,13 +284,7 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService<Plann
      }
 
     /**
-     * Update.
-     *
-     * @param dto the dto
-     *
-     * @return the planned activity dto
-     *
-     * @throws PAException the PA exception
+     * {@inheritDoc}
      */
     @Override
     public PlannedActivityDTO update(PlannedActivityDTO dto) throws PAException {
@@ -339,36 +300,43 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService<Plann
     }
 
     /**
-     * copies the study protocol record from source to target.
-     *
-     * @param fromStudyProtocolIi source
-     * @param toStudyProtocolIi target
-     *
-     * @throws PAException exception.
+     * {@inheritDoc}
      */
+    @Override
     public void copyPlannedEligibilityStudyCriterions(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
 
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyPaService#copy(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Ii)
+    /**
+     * {@inheritDoc}
      */
-    public Map<Ii, Ii> copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi)
+    @Override
+    public Map<Ii, Ii> copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi) throws PAException {
+        return null;
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PlannedProcedureDTO createPlannedProcedure(PlannedProcedureDTO dto) throws PAException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PlannedSubstanceAdministrationDTO createPlannedSubstanceAdministration(PlannedSubstanceAdministrationDTO dto)
             throws PAException {
         return null;
-
     }
 
-    public PlannedProcedureDTO createPlannedProcedure(PlannedProcedureDTO dto)
-            throws PAException {
-        return null;
-    }
-
-    public PlannedSubstanceAdministrationDTO createPlannedSubstanceAdministration(
-            PlannedSubstanceAdministrationDTO dto) throws PAException {
-        return null;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public PlannedProcedureDTO getPlannedProcedure(Ii ii) throws PAException {
         PlannedProcedureDTO dto = new PlannedProcedureDTO();
         dto.setInterventionIdentifier(IiConverter.convertToIi("1"));
@@ -376,13 +344,19 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService<Plann
         return dto;
     }
 
-    public List<PlannedProcedureDTO> getPlannedProcedureByStudyProtocol(Ii ii)
-            throws PAException {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<PlannedProcedureDTO> getPlannedProcedureByStudyProtocol(Ii ii) throws PAException {
         return null;
     }
 
-    public PlannedSubstanceAdministrationDTO getPlannedSubstanceAdministration(
-            Ii ii) throws PAException {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PlannedSubstanceAdministrationDTO getPlannedSubstanceAdministration(Ii ii) throws PAException {
         if (!ISOUtil.isIiNull(ii)) {
             PlannedSubstanceAdministrationDTO dto = new PlannedSubstanceAdministrationDTO();
             dto.setSubcategoryCode(CdConverter.convertToCd(ActivitySubcategoryCode.DRUG));
@@ -392,21 +366,36 @@ public class MockPlannedActivityService extends MockAbstractBaseIsoService<Plann
         return null;
     }
 
-    public List<PlannedSubstanceAdministrationDTO> getPlannedSubstanceAdministrationByStudyProtocol(
-            Ii ii) throws PAException {
-        return null;
-    }
-
-    public PlannedProcedureDTO updatePlannedProcedure(PlannedProcedureDTO dto)
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<PlannedSubstanceAdministrationDTO> getPlannedSubstanceAdministrationByStudyProtocol(Ii ii)
             throws PAException {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PlannedProcedureDTO updatePlannedProcedure(PlannedProcedureDTO dto) throws PAException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public PlannedSubstanceAdministrationDTO updatePlannedSubstanceAdministration(PlannedSubstanceAdministrationDTO dto)
             throws PAException {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Ii getDuplicateIi(PlannedActivityDTO dto) throws PAException {
         return null;
     }

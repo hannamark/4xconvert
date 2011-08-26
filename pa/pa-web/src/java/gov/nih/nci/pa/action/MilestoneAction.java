@@ -122,9 +122,9 @@ import org.apache.struts2.ServletActionContext;
 * @since 1/16/2009
 */
 public final class MilestoneAction extends AbstractListEditAction {
-    
-    private static final long serialVersionUID = -2837652488778559394L;
 
+    private static final long serialVersionUID = -2837652488778559394L;
+    
     private MailManagerServiceLocal mailManagerService;
     private ProtocolQueryServiceLocal protocolQueryService;
     private StudyMilestoneServicelocal studyMilestoneService;
@@ -230,7 +230,7 @@ public final class MilestoneAction extends AbstractListEditAction {
             StudyProtocolQueryDTO studyProtocolQueryDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(spIi);
             ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
             if (MilestoneCode.SUBMISSION_ACCEPTED.getCode().equalsIgnoreCase(milestone.getMilestone())) {
-                StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(getSpIi());
+                StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(getSpIi());
                 Integer sn = IntConverter.convertToInteger(spDTO.getSubmissionNumber());
                 if (sn > 1) {
                     // send mail

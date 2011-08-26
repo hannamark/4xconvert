@@ -241,6 +241,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
 
         OrganizationCorrelationServiceRemote ocsr = mock(OrganizationCorrelationServiceRemote.class);
         when(ocsr.getPoResearchOrganizationByEntityIdentifier(any(Ii.class))).thenAnswer(new Answer<Ii>() {
+            @Override
             public Ii answer(InvocationOnMock invocation) throws Throwable {
                 Ii ii = (Ii) invocation.getArguments()[0];
                 return IiConverter.convertToPoResearchOrganizationIi(ii.getExtension());
@@ -260,11 +261,13 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         when(tsrReportSvc.generateHtmlTsrReport(any(Ii.class))).thenReturn(rtfResults);
         when(tsrReportSvc.generatePdfTsrReport(any(Ii.class))).thenReturn(rtfResults);
         when(tsrReportSvc.generateRtfTsrReport(any(Ii.class))).thenReturn(rtfResults);
-
-        studyMilestoneSvc.setStudyProtocolService(studyProtocolService);
+        
+        studyMilestoneSvc.setAbstractionCompletionService(abstractionCompletionSvc);
+        studyMilestoneSvc.setDocumentWorkflowStatusService(documentWrkService);
         studyMilestoneSvc.setStudyInboxService(studyInboxSvc);
         studyMilestoneSvc.setStudyOnholdService(studyOnholdSvc);
-        studyMilestoneSvc.setAbstractionCompletionService(abstractionCompletionSvc);
+        studyMilestoneSvc.setStudyProtocolService(studyProtocolService);
+        
         when(paSvcLoc.getStudyMilestoneService()).thenReturn(studyMilestoneSvc);
         when(paSvcLoc.getStudyIndldeService()).thenReturn(studyIndldeService);
         when(paSvcLoc.getDocumentService()).thenReturn(documentService);

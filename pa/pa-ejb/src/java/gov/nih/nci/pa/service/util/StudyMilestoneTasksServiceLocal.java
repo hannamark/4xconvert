@@ -79,9 +79,15 @@
 
 package gov.nih.nci.pa.service.util;
 
+import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.service.PAException;
 
+import java.util.Set;
+
 import javax.ejb.Local;
+
+import org.joda.time.DateTime;
 
 
 /**
@@ -96,7 +102,21 @@ public interface StudyMilestoneTasksServiceLocal {
  
     /**
      * Perform task.
+     */
+    void performTask();
+
+    /**
+     * Gets the milestones that needs to be processed.
+     * @param threshold The threshold date for selecting milestones. This method is here only for transaction management
+     *        purposes.
+     * @return The milestones that needs to be processed.
+     */
+    Set<StudyMilestone> getTrialSummarySentMilestones(DateTime threshold);
+
+    /**
+     * Creates a new milestone.
+     * @param milestone The milestone to create This method is here only for transaction management purposes.
      * @throws PAException exception
      */
-    void performTask() throws PAException;
+    void createMilestone(StudyMilestoneDTO milestone) throws PAException;
 }

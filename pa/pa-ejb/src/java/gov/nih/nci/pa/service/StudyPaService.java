@@ -93,19 +93,21 @@ import java.util.Map;
  */
 public interface StudyPaService<DTO> extends BasePaService<DTO> {
     /**
+     * Retrieves the List of DTOs related to the study protocol with the given Ii ordered by id.
      * @param ii index of object
-     * @return null
+     * @return The List of DTOs related to the study protocol. The default ordering is by ID, but specific
+     *         implementations may change that behavior.
      * @throws PAException exception
      */
     List<DTO> getByStudyProtocol(Ii ii) throws PAException;
-    
+
     /**
-     * creates a new record of studyprotocol by changing to new studyprotocol identifier.
-     * @param fromStudyProtocolIi from where the study protocol objects to be copied  
+     * creates a new record of study protocol by changing to new study protocol identifier.
+     * @param fromStudyProtocolIi from where the study protocol objects to be copied
      * @param toStudyProtocolIi to where the study protocol objects to be copied
-     * @return map 
+     * @return map
      * @throws PAException on error
      */
-    Map<Ii , Ii> copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException;
+    Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException;
  
 }

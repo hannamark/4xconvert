@@ -235,6 +235,7 @@ public enum MilestoneCode implements CodedEnum<String> {
     /**
      * @return code coded value of enum
      */
+    @Override
     public String getCode() {
         return code;
     }
@@ -242,6 +243,7 @@ public enum MilestoneCode implements CodedEnum<String> {
     /**
      *@return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -320,6 +322,7 @@ public enum MilestoneCode implements CodedEnum<String> {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getNameByCode(String str) {
         return getByCode(str).name();
     }

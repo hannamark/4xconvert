@@ -89,6 +89,7 @@ import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -232,6 +233,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
      * @return null
      * @throws PAException exception
      */
+    @Override
     @SuppressWarnings(UNCHECKED)
     public DTO get(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
@@ -257,6 +259,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
      * @param ii index of object
      * @throws PAException exception
      */
+    @Override
     @SuppressWarnings(UNCHECKED)
     public void delete(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
@@ -283,15 +286,17 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
         try {
             session = PaHibernateUtil.getCurrentSession();
             Date today = new Date();
+            User user = CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser()); 
             if (ISOUtil.isIiNull(dto.getIdentifier())) {
                 bo = convertFromDtoToDomain(dto);
-                bo.setUserLastCreated(CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser()));
+                
+                bo.setUserLastCreated(user);
                 bo.setDateLastCreated(today);
             } else {
                 bo = (BO) session.get(getTypeArgument(), IiConverter.convertToLong(dto.getIdentifier()));
                 convertFromDtoToDomain(dto, bo);
             }
-            bo.setUserLastUpdated(CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser()));
+            bo.setUserLastUpdated(user);
             bo.setDateLastUpdated(today);
             session.saveOrUpdate(bo);
             resultDto = convertFromDomainToDto(bo);
@@ -306,6 +311,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
      * @return the created planned activity
      * @throws PAException exception.
      */
+    @Override
     public DTO create(DTO dto) throws PAException {
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Update method should be used to modify existing.");
@@ -318,6 +324,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
      * @return the updated planned activity
      * @throws PAException exception.
      */
+    @Override
     public DTO update(DTO dto) throws PAException {
         if (ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Create method should be used to create new.");
@@ -330,6 +337,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
      * @param dto Dto object
      * @throws PAException if validation fails
      */
+    @Override
     public void validate(DTO dto) throws PAException {
         StringBuffer sb = new StringBuffer();
         sb.append(dto == null ? "DTO cannot be null , " : "");

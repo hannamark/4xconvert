@@ -101,10 +101,11 @@ import java.util.Map;
  * @author Hugh Reinhart
  *
  */
-public class MockStudyOnholdService  extends MockAbstractBaseIsoService <StudyOnholdDTO> implements StudyOnholdServiceLocal {
+public class MockStudyOnholdService extends MockAbstractBaseIsoService<StudyOnholdDTO> implements
+        StudyOnholdServiceLocal {
 
-    public static List<StudyOnhold> list;
-    static StudyOnholdConverter converter = new StudyOnholdConverter();
+    private static List<StudyOnhold> list;
+    private static StudyOnholdConverter converter = new StudyOnholdConverter();
     private static Long seq = 1L;
 
     static {
@@ -118,6 +119,10 @@ public class MockStudyOnholdService  extends MockAbstractBaseIsoService <StudyOn
         list.add(so);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<StudyOnholdDTO> getByStudyProtocol(Ii ii) throws PAException {
         List<StudyOnholdDTO> resultList = new ArrayList<StudyOnholdDTO>();
         for (StudyOnhold item : list) {
@@ -128,6 +133,11 @@ public class MockStudyOnholdService  extends MockAbstractBaseIsoService <StudyOn
         return resultList;
     }
 
+    /**
+     * @param studyProtocolIi The study protocol Ii
+     * @return The current StudyOnholdDTO
+     * @throws PAException if an error occurs
+     */
     public StudyOnholdDTO getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
         List<StudyOnholdDTO> dtoList = this.getByStudyProtocol(studyProtocolIi);
         StudyOnholdDTO result = null;
@@ -137,6 +147,9 @@ public class MockStudyOnholdService  extends MockAbstractBaseIsoService <StudyOn
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StudyOnholdDTO create(StudyOnholdDTO dto) throws PAException {
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
@@ -149,11 +162,17 @@ public class MockStudyOnholdService  extends MockAbstractBaseIsoService <StudyOn
         return converter.convertFromDomainToDto(bo);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void delete(Ii ii) throws PAException {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StudyOnholdDTO get(Ii ii) throws PAException {
         for (StudyOnhold item : list) {
@@ -164,6 +183,9 @@ public class MockStudyOnholdService  extends MockAbstractBaseIsoService <StudyOn
         throw new PAException("Onhold not found in mock service for id = " + IiConverter.convertToString(ii));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StudyOnholdDTO update(StudyOnholdDTO dto) throws PAException {
         if (ISOUtil.isIiNull(dto.getIdentifier())) {
@@ -175,6 +197,10 @@ public class MockStudyOnholdService  extends MockAbstractBaseIsoService <StudyOn
         return converter.convertFromDomainToDto(bo);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Bl isOnhold(Ii studyProtocolIi) throws PAException {
         Bl result = new Bl();
         result.setValue(false);
@@ -193,6 +219,10 @@ public class MockStudyOnholdService  extends MockAbstractBaseIsoService <StudyOn
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Map<Ii, Ii> copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi) throws PAException {
         return null;
 

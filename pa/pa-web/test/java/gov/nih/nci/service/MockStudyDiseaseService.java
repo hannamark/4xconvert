@@ -20,7 +20,7 @@ import java.util.Map;
  *
  */
 public class MockStudyDiseaseService implements StudyDiseaseServiceLocal {
-    static List<StudyDiseaseDTO> dtoList;
+    private static List<StudyDiseaseDTO> dtoList;
     static {
         dtoList = new ArrayList<StudyDiseaseDTO>();
         StudyDiseaseDTO dto = new StudyDiseaseDTO();
@@ -35,55 +35,69 @@ public class MockStudyDiseaseService implements StudyDiseaseServiceLocal {
         dtoList.add(dto);
     }
 
-	public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
-			throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
+        return null;
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<StudyDiseaseDTO> getByStudyProtocol(Ii ii) throws PAException {
+        List<StudyDiseaseDTO> sdList = new ArrayList<StudyDiseaseDTO>();
+        if (!ISOUtil.isIiNull(ii)) {
+            for (StudyDiseaseDTO d : dtoList) {
+                if (d.getStudyProtocolIdentifier().getExtension().equals(ii.getExtension())) {
+                    sdList.add(d);
+                }
+            }
+        }
+        return sdList;
+    }
 
-	public List<StudyDiseaseDTO> getByStudyProtocol(Ii ii) throws PAException {
-		 List<StudyDiseaseDTO> sdList = new ArrayList<StudyDiseaseDTO>();
-		 if (!ISOUtil.isIiNull(ii)) {
-		     for (StudyDiseaseDTO d: dtoList) {
-		         if (d.getStudyProtocolIdentifier().getExtension().equals(ii.getExtension())) {
-		             sdList.add(d);
-		         }
-		     }
-		 }
-		return sdList;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudyDiseaseDTO create(StudyDiseaseDTO dto) throws PAException {
+        return null;
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void delete(Ii ii) throws PAException {
+    }
 
-	public StudyDiseaseDTO create(StudyDiseaseDTO dto) throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudyDiseaseDTO get(Ii ii) throws PAException {
+        StudyDiseaseDTO sd = new StudyDiseaseDTO();
+        sd.setDiseaseIdentifier(IiConverter.convertToIi("1"));
+        sd.setCtGovXmlIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        return sd;
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudyDiseaseDTO update(StudyDiseaseDTO dto) throws PAException {
+        return null;
+    }
 
-	public void delete(Ii ii) throws PAException {
-		// TODO Auto-generated method stub
-
-	}
-
-
-	public StudyDiseaseDTO get(Ii ii) throws PAException {
-		StudyDiseaseDTO sd =  new StudyDiseaseDTO();
-		sd.setDiseaseIdentifier(IiConverter.convertToIi("1"));
-		sd.setCtGovXmlIndicator(BlConverter.convertToBl(Boolean.FALSE));
-		return sd;
-	}
-
-
-	public StudyDiseaseDTO update(StudyDiseaseDTO dto) throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public void validate(StudyDiseaseDTO dto) throws PAException {
-		// TODO Auto-generated method stub
-
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validate(StudyDiseaseDTO dto) throws PAException {
+    }
 
 }

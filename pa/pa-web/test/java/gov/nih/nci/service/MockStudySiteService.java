@@ -104,11 +104,10 @@ import java.util.Map;
  * @author hreinhart
  *
  */
-public class MockStudySiteService  extends MockAbstractBaseIsoService <StudySiteDTO> 
-    implements StudySiteServiceLocal {
+public class MockStudySiteService extends MockAbstractBaseIsoService<StudySiteDTO> implements StudySiteServiceLocal {
 
     public static List<StudySite> list;
-    static StudySiteConverter converter = new StudySiteConverter();
+    private static StudySiteConverter converter = new StudySiteConverter();
     private static Long seq = 1L;
 
     static {
@@ -144,13 +143,10 @@ public class MockStudySiteService  extends MockAbstractBaseIsoService <StudySite
     }
 
     /**
-     * @param studyProtocolIi
-     * @param spDTOList
-     * @return
-     * @throws PAException
+     * {@inheritDoc}
      */
-    public List<StudySiteDTO> getByStudyProtocol(Ii studyProtocolIi,
-            List<StudySiteDTO> spDTOList) throws PAException {
+    @Override
+    public List<StudySiteDTO> getByStudyProtocol(Ii studyProtocolIi, List<StudySiteDTO> spDTOList) throws PAException {
         List<StudySiteDTO> resultList = new ArrayList<StudySiteDTO>();
         for (StudySite sp : list) {
             if (sp.getStudyProtocol().getId().equals(IiConverter.convertToLong(studyProtocolIi))) {
@@ -166,25 +162,20 @@ public class MockStudySiteService  extends MockAbstractBaseIsoService <StudySite
     }
 
     /**
-     * @param studyProtocolIi
-     * @param spDTO
-     * @return
-     * @throws PAException
+     * {@inheritDoc}
      */
-    public List<StudySiteDTO> getByStudyProtocol(Ii studyProtocolIi,
-            StudySiteDTO spDTO) throws PAException {
+    @Override
+    public List<StudySiteDTO> getByStudyProtocol(Ii studyProtocolIi, StudySiteDTO spDTO) throws PAException {
         List<StudySiteDTO> criteria = new ArrayList<StudySiteDTO>();
         criteria.add(spDTO);
         return getByStudyProtocol(studyProtocolIi, criteria);
     }
 
     /**
-     * @param ii
-     * @return
-     * @throws PAException
+     * {@inheritDoc}
      */
-    public List<StudySiteDTO> getByStudyProtocol(Ii ii)
-            throws PAException {
+    @Override
+    public List<StudySiteDTO> getByStudyProtocol(Ii ii) throws PAException {
         List<StudySiteDTO> resultList = new ArrayList<StudySiteDTO>();
         for (StudySite sp : list) {
             if (sp.getId() == IiConverter.convertToLong(ii)) {
@@ -194,6 +185,11 @@ public class MockStudySiteService  extends MockAbstractBaseIsoService <StudySite
         return resultList;
     }
 
+    /**
+     * @param studyProtocolIi The study protocol Ii
+     * @return the current StudySiteDTO
+     * @throws PAException if an error occurs
+     */
     public StudySiteDTO getCurrentByStudyProtocol(Ii studyProtocolIi) throws PAException {
         List<StudySiteDTO> dtoList = this.getByStudyProtocol(studyProtocolIi);
         StudySiteDTO result = null;
@@ -202,10 +198,9 @@ public class MockStudySiteService  extends MockAbstractBaseIsoService <StudySite
         }
         return result;
     }
+
     /**
-     * @param dto
-     * @return
-     * @throws PAException
+     * {@inheritDoc}
      */
     @Override
     public StudySiteDTO create(StudySiteDTO dto) throws PAException {
@@ -216,19 +211,14 @@ public class MockStudySiteService  extends MockAbstractBaseIsoService <StudySite
     }
 
     /**
-     * @param ii
-     * @throws PAException
+     * {@inheritDoc}
      */
     @Override
     public void delete(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
-
     }
 
     /**
-     * @param ii
-     * @return
-     * @throws PAException
+     * {@inheritDoc}
      */
     @Override
     public StudySiteDTO get(Ii ii) throws PAException {
@@ -240,37 +230,41 @@ public class MockStudySiteService  extends MockAbstractBaseIsoService <StudySite
     }
 
     /**
-     * @param dto
-     * @return
-     * @throws PAException
+     * {@inheritDoc}
      */
     @Override
-    public StudySiteDTO update(StudySiteDTO dto)
-            throws PAException {
-        // TODO Auto-generated method stub
+    public StudySiteDTO update(StudySiteDTO dto) throws PAException {
         return null;
     }
 
-    public Map<Ii,Ii> copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi)
-            throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public void cascadeRoleStatus(Ii ii, Cd roleStatusCode) throws PAException {
-        // TODO Auto-generated method stub
-
-    }
-
-    public List<StudySiteDTO> search(StudySiteDTO dto, LimitOffset pagingParams)
-            throws PAException, TooManyResultsException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudySiteService#getStudySiteIiByTrialAndPoHcfIi(gov.nih.nci.iso21090.Ii, gov.nih.nci.iso21090.Ii)
+    /**
+     * {@inheritDoc}
      */
+    @Override
+    public Map<Ii, Ii> copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi) throws PAException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void cascadeRoleStatus(Ii ii, Cd roleStatusCode) throws PAException {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<StudySiteDTO> search(StudySiteDTO dto, LimitOffset pagingParams) throws PAException,
+            TooManyResultsException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Ii getStudySiteIiByTrialAndPoHcfIi(Ii studyProtocolIi, Ii poHcfIi) throws EntityValidationException,
             CurationException, PAException, TooManyResultsException {
         return IiConverter.convertToStudySiteIi(1L);

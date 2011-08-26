@@ -113,11 +113,12 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
                                         CONVERTER extends AbstractConverter<DTO, BO>>
         extends AbstractBaseIsoService<DTO, BO, CONVERTER> implements StudyPaService<DTO> {
 
+    
+
     /**
-     * @param ii index of object
-     * @return null
-     * @throws PAException exception
+     * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("unchecked")
     public List<DTO> getByStudyProtocol(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
@@ -127,8 +128,8 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
         // Flush the session in order to get all the results not written to the db yet
         session.flush();
         // step 1: form the hql
-        String hql = "select alias from " + getTypeArgument().getName()
-                + " alias join alias.studyProtocol sp where sp.id = :studyProtocolId order by alias.id ";
+        String hql = "from " + getTypeArgument().getName() + "  where studyProtocol.id = :studyProtocolId"
+                + getByStudyProtocolQueryOrderClause();
         // step 2: construct query object
         Query query = session.createQuery(hql);
         query.setParameter("studyProtocolId", IiConverter.convertToLong(ii));
@@ -141,15 +142,20 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
     }
 
     /**
-     * creates a new record of study protocol by changing to new study protocol identifier.
-     * @param fromStudyProtocolIi from where the study protocol objects to be copied
-     * @param toStudyProtocolIi to where the study protocol objects to be copied
-     * @return map
-     * @throws PAException on error
+     * Builds the order by clause forv the HQL query that gets the objects by Study Protocol.
+     * @return The order by clause forv the HQL query that gets the objects by Study Protocol.
      */
-    public Map<Ii , Ii> copy(Ii fromStudyProtocolIi , Ii toStudyProtocolIi) throws PAException {
+    protected String getByStudyProtocolQueryOrderClause() {
+        return " order by id";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
         List<DTO> dtos = getByStudyProtocol(fromStudyProtocolIi);
-        Map<Ii , Ii> map = new HashMap<Ii , Ii>();
+        Map<Ii, Ii> map = new HashMap<Ii, Ii>();
         Session session = PaHibernateUtil.getCurrentSession();
         Ii from = null;
         Ii to = new Ii();
@@ -165,7 +171,7 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
             to.setExtension(bo.getId().toString());
             map.put(from, to);
         }
-        createMappingIdentifier(map , toStudyProtocolIi);
+        createMappingIdentifier(map, toStudyProtocolIi);
         return map;
     }
 
@@ -183,7 +189,7 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
             sb.append(pa.getMessage());
         }
         try {
-        PAUtil.isValidIi(dto.getStudyProtocolIdentifier() , IiConverter.convertToStudyProtocolIi(null));
+            PAUtil.isValidIi(dto.getStudyProtocolIdentifier(), IiConverter.convertToStudyProtocolIi(null));
         } catch (PAException pa) {
             sb.append(pa.getMessage());
         }

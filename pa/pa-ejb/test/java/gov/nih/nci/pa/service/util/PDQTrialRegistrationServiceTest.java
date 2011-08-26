@@ -90,6 +90,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
@@ -264,15 +265,14 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         trialRegistrationSvc.setTsrReportService(mockTsrGeneratorSvc);
 
         StudyMilestoneServiceBean studyMilestoneSvc = new StudyMilestoneServiceBean();
-        studyMilestoneSvc.setStudyProtocolService(new StudyProtocolBeanLocal());
-        studyMilestoneSvc.setStudyOnholdService(new StudyOnholdBeanLocal());
-        studyMilestoneSvc.setMailManagerService(mailManagerSerivceLocal);
-
-        StudyInboxServiceLocal mockInboxSvc = mock(StudyInboxServiceLocal.class);
-        studyMilestoneSvc.setStudyInboxService(mockInboxSvc);
-
         AbstractionCompletionServiceBean abstractionCompletionSvc = mock(AbstractionCompletionServiceBean.class);
         studyMilestoneSvc.setAbstractionCompletionService(abstractionCompletionSvc);
+        studyMilestoneSvc.setDocumentWorkflowStatusService(new DocumentWorkflowStatusBeanLocal());
+        studyMilestoneSvc.setMailManagerService(mailManagerSerivceLocal);
+        StudyInboxServiceLocal mockInboxSvc = mock(StudyInboxServiceLocal.class);
+        studyMilestoneSvc.setStudyInboxService(mockInboxSvc);
+        studyMilestoneSvc.setStudyOnholdService(new StudyOnholdBeanLocal());
+        studyMilestoneSvc.setStudyProtocolService(new StudyProtocolBeanLocal());
 
         when(paSvcLoc.getTrialRegistrationService()).thenReturn(trialRegistrationSvc);
         when(paSvcLoc.getStudyMilestoneService()).thenReturn(studyMilestoneSvc);
@@ -328,6 +328,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         when(poSvcLoc.getHealthCareProviderCorrelationService()).thenReturn(new MockPoHealthCareProviderCorrelationService());
 
         when(poOrgSvc.search(any(OrganizationDTO.class), any(LimitOffset.class))).thenAnswer(new Answer<List<OrganizationDTO>>() {
+            @Override
             public List<OrganizationDTO> answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
                 OrganizationDTO org = (OrganizationDTO) args[0];
@@ -342,6 +343,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
                 return Arrays.asList(org);
             }});
         when(poOrgSvc.getOrganization(any(Ii.class))).thenAnswer(new Answer<OrganizationDTO>() {
+            @Override
             public OrganizationDTO answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
                 Ii id = (Ii) args[0];
@@ -349,6 +351,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
             }});
 
         when(poPersonSvc.search(any(PersonDTO.class), any(LimitOffset.class))).thenAnswer(new Answer<List<PersonDTO>>() {
+            @Override
             public List<PersonDTO> answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
                 PersonDTO person = (PersonDTO) args[0];

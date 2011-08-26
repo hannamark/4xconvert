@@ -26,8 +26,9 @@ import java.util.Map;
  * @author Vrushali
  *
  */
-public class MockStudyIndIdeService extends MockAbstractBaseIsoService <StudyIndldeDTO> implements StudyIndldeServiceLocal {
-    static List<StudyIndldeDTO> list;
+public class MockStudyIndIdeService extends MockAbstractBaseIsoService<StudyIndldeDTO> implements
+        StudyIndldeServiceLocal {
+    private static List<StudyIndldeDTO> list;
     static {
         list = new ArrayList<StudyIndldeDTO>();
         StudyIndldeDTO indIde = new StudyIndldeDTO();
@@ -35,13 +36,18 @@ public class MockStudyIndIdeService extends MockAbstractBaseIsoService <StudyInd
         list.add(indIde);
     }
 
-    public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
-            throws PAException {
-        // TODO Auto-generated method stub
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
         return null;
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<StudyIndldeDTO> getByStudyProtocol(Ii ii) throws PAException {
         if (!ISOUtil.isIiNull(ii) && ii.getExtension().equals("2")) {
             return list;
@@ -52,11 +58,13 @@ public class MockStudyIndIdeService extends MockAbstractBaseIsoService <StudyInd
         return new ArrayList<StudyIndldeDTO>();
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StudyIndldeDTO get(Ii ii) throws PAException {
         StudyIndldeDTO dto = null;
-        if(!ISOUtil.isIiNull(ii) && ii.getExtension().equals("1")) {
+        if (!ISOUtil.isIiNull(ii) && ii.getExtension().equals("1")) {
             dto = new StudyIndldeDTO();
             dto.setIdentifier(IiConverter.convertToIi(1L));
             dto.setExpandedAccessStatusCode(CdConverter.convertToCd(ExpandedAccessStatusCode.AVAILABLE));
@@ -68,28 +76,39 @@ public class MockStudyIndIdeService extends MockAbstractBaseIsoService <StudyInd
             dto.setGrantorCode(CdConverter.convertToCd(GrantorCode.CDER));
             dto.setIndldeNumber(StConverter.convertToSt("123456"));
         }
-        if(!ISOUtil.isIiNull(ii) && ii.getExtension().equals("3")) {
+        if (!ISOUtil.isIiNull(ii) && ii.getExtension().equals("3")) {
             throw new PAException("exceptionTest");
         }
         return dto;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void delete(Ii ii) throws PAException {
         if (!ISOUtil.isIiNull(ii) && ii.getExtension().equals("3")) {
             throw new PAException("test");
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StudyIndldeDTO create(StudyIndldeDTO dto) throws PAException {
-        if (dto !=null && dto.getIndldeNumber().getValue().equals("exception")) {
+        if (dto != null && dto.getIndldeNumber().getValue().equals("exception")) {
             throw new PAException("create");
         }
         return new StudyIndldeDTO();
     }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StudyIndldeDTO update(StudyIndldeDTO dto) throws PAException {
-        if (dto !=null && dto.getIndldeNumber().equals("exception")) {
+        if (dto != null && dto.getIndldeNumber().equals("exception")) {
             throw new PAException("update");
         }
         return new StudyIndldeDTO();

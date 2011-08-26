@@ -73,6 +73,9 @@ public class EJBInvokerJob implements Job {
 
     /** The Constant INITIAL_CONTEXT_FACTORY. */
     public static final String INITIAL_CONTEXT_FACTORY = "java.naming.factory.initial";
+    
+    /** The Constant URL_PKG_PREFIXES. */
+    public static final String URL_PKG_PREFIXES = "java.naming.factory.url.pkgs";
 
     /** The Constant PROVIDER_URL. */
     public static final String PROVIDER_URL = "java.naming.provider.url";
@@ -98,6 +101,7 @@ public class EJBInvokerJob implements Job {
      * @param context JobExecutionContext
      * @throws JobExecutionException exception
      */
+    @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         JobDataMap dataMap = context.getMergedJobDataMap();
 
@@ -221,6 +225,11 @@ public class EJBInvokerJob implements Job {
 
         if (providerUrl != null) {
             params.put(Context.PROVIDER_URL, providerUrl);
+        }
+        
+        String urlPkgPrefixes = jobDataMap.getString(URL_PKG_PREFIXES);
+        if (urlPkgPrefixes != null) {
+           params.put(Context.URL_PKG_PREFIXES, urlPkgPrefixes); 
         }
 
         String principal = jobDataMap.getString(PRINCIPAL);

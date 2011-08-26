@@ -3,147 +3,244 @@
  */
 package gov.nih.nci.pa.service.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.enums.ActiveInactiveCode;
-import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.ArmTypeCode;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.enums.RecruitmentStatusCode;
-import gov.nih.nci.pa.iso.dto.ArmDTO;
-import gov.nih.nci.pa.iso.dto.DocumentDTO;
-import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
-import gov.nih.nci.pa.iso.dto.InterventionDTO;
-import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
-import gov.nih.nci.pa.iso.dto.StudyContactDTO;
-import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
-import gov.nih.nci.pa.iso.dto.StudyRecruitmentStatusDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
-import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.ArmServiceLocal;
-import gov.nih.nci.pa.service.DocumentServiceLocal;
-import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
-import gov.nih.nci.pa.service.InterventionServiceLocal;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.PlannedActivityServiceLocal;
-import gov.nih.nci.pa.service.StudyContactServiceLocal;
-import gov.nih.nci.pa.service.StudyDiseaseServiceLocal;
-import gov.nih.nci.pa.service.StudyInboxServiceBean;
-import gov.nih.nci.pa.service.StudyIndldeBeanLocal;
-import gov.nih.nci.pa.service.StudyMilestoneBeanLocal;
-import gov.nih.nci.pa.service.StudyOnholdBeanLocal;
-import gov.nih.nci.pa.service.StudyOutcomeMeasureServiceLocal;
-import gov.nih.nci.pa.service.StudyOverallStatusBeanLocal;
-import gov.nih.nci.pa.service.StudyProtocolBeanLocal;
-import gov.nih.nci.pa.service.StudyRecruitmentStatusServiceLocal;
-import gov.nih.nci.pa.service.StudyRegulatoryAuthorityBeanLocal;
-import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
-import gov.nih.nci.pa.service.StudySiteBeanLocal;
-import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
-import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
-import gov.nih.nci.pa.util.AbstractHibernateTestCase;
-import gov.nih.nci.pa.util.AbstractMockitoTest;
-import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.util.ServiceLocator;
+import gov.nih.nci.pa.service.StudyMilestoneServicelocal;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.hibernate.Session;
-import org.junit.Before;
+import javax.ejb.SessionContext;
+
+import org.joda.time.DateTime;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 
 /**
  * @author asharma
- *
+ * 
  */
-public class StudyMilestoneTasksServiceBeanTest extends AbstractHibernateTestCase {
+public class StudyMilestoneTasksServiceBeanTest {
 
-    Session sess;
-    StudyMilestoneBeanLocal result = new StudyMilestoneBeanLocal();
-    StudyMilestoneTasksServiceBean taskBean = new StudyMilestoneTasksServiceBean();
+    private LookUpTableServiceRemote lookUpTableService = mock(LookUpTableServiceRemote.class);
+    private MailManagerServiceLocal mailManagerService = mock(MailManagerServiceLocal.class);
+    private StudyMilestoneServicelocal studyMilestoneService = mock(StudyMilestoneServicelocal.class);
+    private StudyMilestoneTasksServiceLocal studyMilestoneTasksService = mock(StudyMilestoneTasksServiceLocal.class);
+    private SessionContext context = mock(SessionContext.class);
+    private StudyMilestoneTasksServiceBean sut;
 
-    @Before
-    public void setup() throws Exception {
-        AbstractMockitoTest mockitoTest = new AbstractMockitoTest();
-        mockitoTest.setUp();
-
-        taskBean.setSmRemote(result);
-        result.setStudyOnholdService(new StudyOnholdBeanLocal());
-        result.setStudyInboxService(new StudyInboxServiceBean());
-        AbstractionCompletionServiceBean abstractionBean = new AbstractionCompletionServiceBean();
-        abstractionBean.setPlannedMarkerSvc(mockitoTest.getPlannedMarkerSvc());
-        result.setAbstractionCompletionService(abstractionBean);
-        abstractionBean.setStudyProtocolService(new StudyProtocolBeanLocal());
-        abstractionBean.setStudySiteService(new StudySiteBeanLocal());
-        abstractionBean.setStudyRegulatoryAuthorityService(new StudyRegulatoryAuthorityBeanLocal());
-        abstractionBean.setStudyOverallStatusService(new StudyOverallStatusBeanLocal());
-        abstractionBean.setStudyIndldeService(new StudyIndldeBeanLocal());
-        abstractionBean.setRegulatoryInfoBean(new RegulatoryInformationBean());
-        StudyOutcomeMeasureServiceLocal studyOutcomeMeasureService = mock(StudyOutcomeMeasureServiceLocal.class);
-        abstractionBean.setStudyOutcomeMeasureService(studyOutcomeMeasureService);
-        StudyOutcomeMeasureDTO outcomeDto = new StudyOutcomeMeasureDTO();
-        outcomeDto.setPrimaryIndicator(BlConverter.convertToBl(Boolean.TRUE));
-        when(studyOutcomeMeasureService.getByStudyProtocol(any(Ii.class))).thenReturn(Arrays.asList(outcomeDto));
-        DocumentServiceLocal documentServiceLocal = mock(DocumentServiceLocal.class);
-        abstractionBean.setDocumentServiceLocal(documentServiceLocal);
-        when(documentServiceLocal.getDocumentsByStudyProtocol(any(Ii.class))).thenReturn(new ArrayList<DocumentDTO>());
-        ServiceLocator paRegSvcLoc = mock(ServiceLocator.class);
-        PlannedActivityServiceLocal plannedActivityService = mock(PlannedActivityServiceLocal.class);
-        PlannedActivityDTO plannedDTO = new PlannedActivityDTO();
-        plannedDTO.setCategoryCode(CdConverter.convertToCd(ActivityCategoryCode.INTERVENTION));
-        plannedDTO.setIdentifier(IiConverter.convertToIi("1"));
-        abstractionBean.setPlannedActivityService(plannedActivityService);
-        InterventionServiceLocal interventionSvc = mock(InterventionServiceLocal.class);
-        abstractionBean.setInterventionSvc(interventionSvc);
-        InterventionDTO interventionDto = new InterventionDTO();
-        interventionDto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
-        when(interventionSvc.get(any(Ii.class))).thenReturn(interventionDto);
-        when(plannedActivityService.getByStudyProtocol(any(Ii.class))).thenReturn(Arrays.asList(plannedDTO));
-        DocumentWorkflowStatusServiceLocal mockDocWrkBean = mock(DocumentWorkflowStatusServiceLocal.class);
-        DocumentWorkflowStatusDTO dw = new DocumentWorkflowStatusDTO();
-        dw.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.VERIFICATION_PENDING));
-        when(mockDocWrkBean.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(dw);
-        when(paRegSvcLoc.getDocumentWorkflowStatusService()).thenReturn(mockDocWrkBean);
-        OrganizationCorrelationServiceRemote orgCorrBean = mock(OrganizationCorrelationServiceRemote.class);
-        when(paRegSvcLoc.getOrganizationCorrelationService()).thenReturn(orgCorrBean);
-        PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
-        StudyContactServiceLocal studyContactService = mock(StudyContactServiceLocal.class);
-        abstractionBean.setStudyContactService(studyContactService);
-        when(studyContactService.getByStudyProtocol(any(Ii.class))).thenReturn(new ArrayList<StudyContactDTO>());
-        StudySiteContactServiceLocal studySiteContactService = mock(StudySiteContactServiceLocal.class);
-        abstractionBean.setStudySiteContactService(studySiteContactService);
-        when(studySiteContactService.getByStudyProtocol(any(Ii.class))).thenReturn(new ArrayList<StudySiteContactDTO>());
-        ArmServiceLocal armService = mock(ArmServiceLocal.class);
-        abstractionBean.setArmService(armService);
-        ArmDTO armDto = new ArmDTO();
-        armDto.setName(StConverter.convertToSt("arm Name"));
-        armDto.setTypeCode(CdConverter.convertToCd(ArmTypeCode.NO_INTERVENTION));
-        when(armService.getByStudyProtocol(any(Ii.class))).thenReturn(Arrays.asList(armDto));
-        abstractionBean.setStudyResourcingService(mock(StudyResourcingServiceLocal.class));
-        abstractionBean.setStudyDiseaseService(mock(StudyDiseaseServiceLocal.class));
-        StudyRecruitmentStatusServiceLocal mockStudyRecruitBean = mock(StudyRecruitmentStatusServiceLocal.class);
-        StudyRecruitmentStatusDTO recruitDto = new StudyRecruitmentStatusDTO();
-        recruitDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.IN_REVIEW));
-        when(mockStudyRecruitBean.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(recruitDto);
-        when(mockStudyRecruitBean.getByStudyProtocol(any(Ii.class))).thenReturn(Arrays.asList(recruitDto));
-        abstractionBean.setStudyRecruitmentStatusServiceLocal(mockStudyRecruitBean);
-        when(paRegSvcLoc.getLookUpTableService()).thenReturn(mockitoTest.getLookupSvc());
-        when(mockitoTest.getLookupSvc().getPropertyValue(anyString())).thenReturn("");
+    /**
+     * Creates a real StudyMilestoneTasksServiceBean and inject the mock services in it.
+     * @return A real StudyMilestoneTasksServiceBean with mock services injected.
+     */
+    private StudyMilestoneTasksServiceBean createStudyMilestoneTasksServiceBean() {
+        StudyMilestoneTasksServiceBean studyMilestoneTasksService = new StudyMilestoneTasksServiceBean();
+        setDependencies(studyMilestoneTasksService);
+        return studyMilestoneTasksService;
     }
 
     /**
-     * Test method for {@link gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceBean#performTask()}.
+     * Creates a mock StudyMilestoneTasksServiceBean and inject the mock services in it.
+     * @return A mock StudyMilestoneTasksServiceBean with mock services injected.
+     */
+    private StudyMilestoneTasksServiceBean createStudyMilestoneTasksServiceBeanMock() {
+        StudyMilestoneTasksServiceBean service = mock(StudyMilestoneTasksServiceBean.class);
+        doCallRealMethod().when(service).setLookUpTableService(lookUpTableService);
+        doCallRealMethod().when(service).setMailManagerService(mailManagerService);
+        doCallRealMethod().when(service).setStudyMilestoneService(studyMilestoneService);
+        doCallRealMethod().when(service).setStudyMilestoneTasksService(studyMilestoneTasksService);
+        doCallRealMethod().when(service).setContext(context);
+        setDependencies(service);
+        return service;
+    }
+
+    /**
+     * Inject the mock services in the given StudyMilestoneTasksServiceBean.
+     * @param service The StudyMilestoneTasksServiceBean to setup with mock services
+     */
+    private void setDependencies(StudyMilestoneTasksServiceBean service) {
+        service.setLookUpTableService(lookUpTableService);
+        service.setMailManagerService(mailManagerService);
+        service.setStudyMilestoneService(studyMilestoneService);
+        service.setStudyMilestoneTasksService(studyMilestoneTasksService);
+        service.setContext(context);
+    }
+
+    /**
+     * Test the performTask method
+     * @throws PAException if an error occurs.
      */
     @Test
     public void testPerformTask() throws PAException {
-        taskBean.performTask();
+        sut = createStudyMilestoneTasksServiceBeanMock();
+        doCallRealMethod().when(sut).performTask();
+        DateTime threshold = new DateTime();
+        when(sut.getOverdueDate(any(DateTime.class))).thenReturn(threshold);
+        Set<StudyMilestone> milestones = new HashSet<StudyMilestone>();
+        when(studyMilestoneTasksService.getTrialSummarySentMilestones(threshold)).thenReturn(milestones);
+        StudyMilestoneTaskMessageCollection errors = new StudyMilestoneTaskMessageCollection();
+        when(sut.createMilestones(milestones)).thenReturn(errors);
+
+        sut.performTask();
+
+        InOrder inOrder = inOrder(sut, studyMilestoneTasksService);
+        inOrder.verify(sut).getOverdueDate(any(DateTime.class));
+        inOrder.verify(studyMilestoneTasksService).getTrialSummarySentMilestones(threshold);
+        inOrder.verify(sut).createMilestones(milestones);
+        inOrder.verify(sut).sendFailureNotification(errors);
+    }
+
+    /**
+     * Test the createMilestones method with a valid case
+     * @throws PAException if an error occurs.
+     */
+    @Test
+    public void testCreateMilestonesValid() throws PAException {
+        DateTime before = new DateTime();
+        sut = createStudyMilestoneTasksServiceBean();
+        Set<StudyMilestone> milestones = new HashSet<StudyMilestone>();
+        milestones.add(StudyMilestoneTaskMessageTest.createMilestone(0L, 1L));
+
+        StudyMilestoneTaskMessageCollection errors = sut.createMilestones(milestones);
+
+        assertTrue("Error collection should be empty", errors.isEmpty());
+
+        ArgumentCaptor<StudyMilestoneDTO> captor = ArgumentCaptor.forClass(StudyMilestoneDTO.class);
+        verify(studyMilestoneTasksService).createMilestone(captor.capture());
+        assertMilestoneDTO(captor.getValue(), 0L, before);
+    }
+
+    /**
+     * Check that the given milestoneDTO is the new milestone created automatically
+     * @param milestoneDTO The dto to check
+     * @param studyProtocolId The expected study protocol id
+     */
+    private void assertMilestoneDTO(StudyMilestoneDTO milestoneDTO, Long studyProtocolId, DateTime before) {
+        String expectedComment = "Milestone auto-set based on non-response within 5 days";
+        assertEquals("Wrong comment", expectedComment, StConverter.convertToString(milestoneDTO.getCommentText()));
+        String expectedCode = MilestoneCode.INITIAL_ABSTRACTION_VERIFY.getCode();
+        assertEquals("Wrong milestone code", expectedCode,
+                     CdConverter.convertCdToString(milestoneDTO.getMilestoneCode()));
+        DateTime creationDate = new DateTime(TsConverter.convertToTimestamp(milestoneDTO.getMilestoneDate()));
+        assertFalse("Creation date in the past", creationDate.isBefore(before));
+        assertFalse("Creation date in the future", creationDate.isAfterNow());
+        Ii expectedSpIi = IiConverter.convertToStudyProtocolIi(studyProtocolId);
+        assertEquals("Wrong study protocol Ii", expectedSpIi, milestoneDTO.getStudyProtocolIdentifier());
+    }
+
+    /**
+     * Test the createMilestones method with an invalid case
+     * @throws PAException if an error occurs.
+     */
+    @Test
+    public void testCreateMilestonesInvalid() throws PAException {
+        DateTime before = new DateTime();
+        sut = createStudyMilestoneTasksServiceBean();
+        Set<StudyMilestone> milestones = new HashSet<StudyMilestone>();
+        milestones.add(StudyMilestoneTaskMessageTest.createMilestone(0L, 1L));
+        doThrow(new PAException("PAException")).when(studyMilestoneTasksService)
+            .createMilestone(any(StudyMilestoneDTO.class));
+        StudyMilestoneTaskMessageCollection errors = sut.createMilestones(milestones);
+
+        assertFalse("Error collection should not be empty", errors.isEmpty());
+        String expectedBody = "An error occurred while running the Abstraction Verified No Response Script.\n"
+                + "The trial ID is 1 and the error is PAException\n";
+        assertEquals("Wrong error message body", expectedBody, errors.getSummary());
+
+        ArgumentCaptor<StudyMilestoneDTO> captor = ArgumentCaptor.forClass(StudyMilestoneDTO.class);
+        verify(studyMilestoneTasksService).createMilestone(captor.capture());
+        assertMilestoneDTO(captor.getValue(), 0L, before);
+    }
+    
+    /**
+     * Test the createMilestone method in the valid case.
+     * @throws PAException if an error occurs.
+     */
+    @Test
+    public void testCreateMilestoneValid() throws PAException {
+        sut = createStudyMilestoneTasksServiceBean();
+        StudyMilestoneDTO milestoneDTO = new StudyMilestoneDTO();
+        when(studyMilestoneService.create(milestoneDTO)).thenReturn(milestoneDTO);
+        sut.createMilestone(milestoneDTO);
+        verify(studyMilestoneService).create(milestoneDTO);
+        verify(context, never()).setRollbackOnly();
+    }
+    
+    /**
+     * Test the createMilestone method in the invalid case.
+     * @throws PAException if an error occurs.
+     */
+    @Test
+    public void testCreateMilestoneInvalid() throws PAException {
+        sut = createStudyMilestoneTasksServiceBean();
+        StudyMilestoneDTO milestoneDTO = new StudyMilestoneDTO();
+        PAException exception = new PAException("PAException");
+        when(studyMilestoneService.create(milestoneDTO)).thenThrow(exception);
+        try {
+            sut.createMilestone(milestoneDTO);
+            fail("createMilestone should have failed");
+        } catch (PAException e) {
+            verify(context).setRollbackOnly();
+            assertEquals("Wrong exception thrown", exception, e);
+        } catch (Exception e) {
+            fail("Wrong exception thrown");
+        }
+        verify(studyMilestoneService).create(milestoneDTO);
+    }
+
+    /**
+     * test the sendFailureNotification method with an empty error collection
+     * @throws PAException if an error occurs.
+     */
+    @Test
+    public void testsendFailureNotificationEmpty() throws PAException {
+        sut = createStudyMilestoneTasksServiceBean();
+        StudyMilestoneTaskMessageCollection errors = new StudyMilestoneTaskMessageCollection();
+        sut.sendFailureNotification(errors);
+        verify(lookUpTableService, never()).getPropertyValue(anyString());
+        verify(mailManagerService, never()).sendMailWithAttachment(anyString(), anyString(), anyString(),
+                                                                   any(File[].class));
+    }
+
+    /**
+     * test the sendFailureNotification method with an non empty error collection
+     * @throws PAException if an error occurs.
+     */
+    @Test
+    public void testsendFailureNotificationNotEmpty() throws PAException {
+        sut = createStudyMilestoneTasksServiceBean();
+        StudyMilestoneTaskMessageCollection errors = new StudyMilestoneTaskMessageCollection();
+        errors.add(StudyMilestoneTaskMessageTest.createMilestone(0L, 1L), "message1");
+        String mailBody = errors.getSummary();
+        when(lookUpTableService.getPropertyValue("abstraction.script.subject")).thenReturn("mailSubject");
+        when(lookUpTableService.getPropertyValue("abstraction.script.mailTo")).thenReturn("mailTo");
+        sut.sendFailureNotification(errors);
+        verify(lookUpTableService).getPropertyValue("abstraction.script.subject");
+        verify(lookUpTableService).getPropertyValue("abstraction.script.mailTo");
+        verify(mailManagerService).sendMailWithAttachment("mailTo", "mailSubject", mailBody, null);
     }
 
 }
