@@ -86,7 +86,6 @@ package gov.nih.nci.pa.report.service;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -324,20 +323,12 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "ss2.identifier = ss.identifier  "
         + "where sp.status_code = '" + StudyStatusCode.ACTIVE.getName() + "'  "
         + "and sm.milestone_code = '" + MilestoneCode.READY_FOR_TSR.getName() + "' "
-        + "and dws.status_code in ('" + DocumentWorkflowStatusCode.ABSTRACTED.getName()
-        + "',' " + DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getName() + "',"
-        + "'" + DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getName()
-        + "','" + DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED.getName() + "') "
-        + "and sr.summ_4_rept_indicator = TRUE "
         + "and ss.functional_code in ('" + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "', '"
         + StudySiteFunctionalCode.TREATING_SITE.getName() + "') ");
         sql.append(generateOrgClause(criteria));
         sql.append("and sp.start_date >= :LOW "
         + "and sp.pri_compl_date <= :HIGH "
         + ") trial_list  "
-        + "where "
-        + "trial_list.Pi is not null "
-        + "and sort_category is not null "
         + "order by sort_category, sort_sub_category, pi");
         return sql;
     }
