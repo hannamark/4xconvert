@@ -15,77 +15,84 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MockPaPlannedActivityServiceBean implements PlannedActivityServiceRemote{
+/**
+ * @author guthikondak
+ */
+public class MockPaPlannedActivityServiceBean implements PlannedActivityServiceRemote {
 
     private List<PlannedEligibilityCriterionDTO> pecList;
-    {
+
+    /**
+     * Default constructor.
+     */
+    public MockPaPlannedActivityServiceBean() {
         pecList = new ArrayList<PlannedEligibilityCriterionDTO>();
-        PlannedEligibilityCriterionDTO dto= new PlannedEligibilityCriterionDTO();
+        PlannedEligibilityCriterionDTO dto = new PlannedEligibilityCriterionDTO();
         dto.setCriterionName(StConverter.convertToSt("GENDER"));
-        dto.setEligibleGenderCode(CdConverter.convertToCd(PatientGenderCode.FEMALE));        
+        dto.setEligibleGenderCode(CdConverter.convertToCd(PatientGenderCode.FEMALE));
         pecList.add(dto);
     }
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void copyPlannedEligibilityStudyCriterions(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
-        // TODO Auto-generated method stub
-
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedEligibilityCriterionDTO createPlannedEligibilityCriterion(PlannedEligibilityCriterionDTO dto)
             throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedProcedureDTO createPlannedProcedure(PlannedProcedureDTO dto) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedSubstanceAdministrationDTO createPlannedSubstanceAdministration(PlannedSubstanceAdministrationDTO dto)
             throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deletePlannedEligibilityCriterion(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
-
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<PlannedActivityDTO> getByArm(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedEligibilityCriterionDTO getPlannedEligibilityCriterion(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<PlannedEligibilityCriterionDTO> getPlannedEligibilityCriterionByStudyProtocol(Ii ii) throws PAException {
         return pecList;
     }
@@ -93,123 +100,121 @@ public class MockPaPlannedActivityServiceBean implements PlannedActivityServiceR
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedProcedureDTO getPlannedProcedure(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<PlannedProcedureDTO> getPlannedProcedureByStudyProtocol(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedSubstanceAdministrationDTO getPlannedSubstanceAdministration(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<PlannedSubstanceAdministrationDTO> getPlannedSubstanceAdministrationByStudyProtocol(Ii ii)
             throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedEligibilityCriterionDTO updatePlannedEligibilityCriterion(PlannedEligibilityCriterionDTO dto)
             throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedProcedureDTO updatePlannedProcedure(PlannedProcedureDTO dto) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedSubstanceAdministrationDTO updatePlannedSubstanceAdministration(PlannedSubstanceAdministrationDTO dto)
             throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedActivityDTO create(PlannedActivityDTO dto) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void delete(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
-
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedActivityDTO get(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedActivityDTO update(PlannedActivityDTO dto) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void validate(PlannedActivityDTO dto) throws PAException {
-        // TODO Auto-generated method stub
-
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<PlannedActivityDTO> getByStudyProtocol(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public Ii getDuplicateIi(PlannedActivityDTO dto) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 }

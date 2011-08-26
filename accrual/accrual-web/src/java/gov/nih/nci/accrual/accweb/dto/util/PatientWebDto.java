@@ -113,6 +113,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Hugh Reinhart
  * @since Sep 22, 2009
  */
+@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveParameterList" })
 public class PatientWebDto {
     // from PatientDto
     private Long patientId;
