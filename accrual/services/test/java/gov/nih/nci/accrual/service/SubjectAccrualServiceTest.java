@@ -86,14 +86,17 @@ package gov.nih.nci.accrual.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
+import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
+import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.accrual.dto.util.POPatientDTO;
+import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.service.batch.AbstractBatchUploadReaderTest;
 import gov.nih.nci.accrual.service.batch.BatchFileServiceBeanLocal;
 import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
@@ -268,12 +271,44 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         bean.manageSubjectAccruals(Arrays.asList(dto));
     }
     
+    private SubjectAccrualDTO loadStudyAccrualDto(Ii studySiteIi, Ii diseaseIi) {
+        SubjectAccrualDTO dto = new SubjectAccrualDTO();
+        dto.setAssignedIdentifier(StConverter.convertToSt("Patient-1"));
+        dto.setBirthDate(AccrualUtil.yearMonthStringToTs("01/2000"));
+        dto.setGender(CdConverter.convertToCd(PatientGenderCode.MALE));
+        dto.setEthnicity(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
+        dto.setRace(DSetConverter.convertCdListToDSet(Arrays.asList(CdConverter.convertToCd(PatientRaceCode.AMERICAN_INDIAN))));
+        dto.setCountryCode(CdConverter.convertStringToCd(TestSchema.countries.get(0).getAlpha2()));
+        dto.setZipCode(StConverter.convertToSt("22222"));
+        dto.setRegistrationDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2000")));
+        dto.setPaymentMethod(CdConverter.convertToCd(PaymentMethodCode.MEDICAID));
+        dto.setDiseaseIdentifier(diseaseIi);
+        dto.setParticipatingSiteIdentifier(studySiteIi);
+        return dto;
+    }
+    
     @Test
     public void deleteSubject() throws Exception {
-        thrown.expect(PAException.class);
-        thrown.expectMessage("Method not yet implemented.");
+        StudySite ss = createAccessibleStudySite(); 
+        SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
+                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));        
+        List<SubjectAccrualDTO> results = bean.manageSubjectAccruals(Arrays.asList(dto));
+        assertEquals(1, results.size());
         
-        bean.deleteSubjectAccrual(IiConverter.convertToIi(1L));
+        StudySubjectDto ssDto = bean.getStudySubjectService().get(results.get(0).getIdentifier());
+        assertNotNull(ssDto);
+        assertEquals(IiConverter.convertToLong(ssDto.getIdentifier()), IiConverter.convertToLong(results.get(0).getIdentifier()));
+        PatientDto pDto = bean.getPatientService().get(ssDto.getPatientIdentifier());
+        assertNotNull(pDto);
+        List<PerformedSubjectMilestoneDto> pActList = bean.getPerformedActivityService().getPerformedSubjectMilestoneByStudySubject(ssDto.getIdentifier());
+        assertNotNull(pActList);
+        assertEquals(1, pActList.size());
+        
+        bean.deleteSubjectAccrual(ssDto.getIdentifier());
+        PaHibernateUtil.getCurrentSession().flush();
+        assertNull(bean.getStudySubjectService().get(ssDto.getIdentifier()));
+        assertNull(bean.getPatientService().get(pDto.getIdentifier()));
+        assertEquals(0, bean.getPerformedActivityService().getPerformedSubjectMilestoneByStudySubject(ssDto.getIdentifier()).size());
     }
     
     private StudySite createAccessibleStudySite() {
@@ -318,6 +353,36 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         thrown.expect(PAException.class);
         thrown.expectMessage("User does not have accrual access to site.");
         bean.updateSubjectAccrualCount(IiConverter.convertToIi(1L), IntConverter.convertToInt(100));
+    }
+    
+    @Test 
+    public void deleteSubjectAccrualIiFailureNull() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Study Subject Ii must be valid.");
+        bean.deleteSubjectAccrual(null);
+    }
+    
+    @Test 
+    public void deleteSubjectAccrualIiFailureNone() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Study Subject Ii must be valid.");
+        bean.deleteSubjectAccrual(new Ii());
+    }
+    
+    @Test 
+    public void deleteSubjectAccrualFindSiteFailure() throws PAException {
+        thrown.expect(PAException.class);
+        Ii subjectAccrualIi = IiConverter.convertToIi(-1L);
+        thrown.expectMessage("A Study Subject with id " + subjectAccrualIi.getExtension() 
+                    + " does not exist.");
+        bean.deleteSubjectAccrual(subjectAccrualIi);
+    }
+    
+    @Test 
+    public void deleteSubjectAccrualUserAuthFailure() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("User does not have accrual access to site.");
+        bean.deleteSubjectAccrual(IiConverter.convertToIi(1L));
     }
 
     @Test

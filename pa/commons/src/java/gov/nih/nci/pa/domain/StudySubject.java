@@ -83,6 +83,7 @@ import gov.nih.nci.pa.enums.PaymentMethodCode;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -90,8 +91,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.NotNull;
 
 /**
@@ -144,9 +149,11 @@ public class StudySubject extends Subject {
     /**
      * @return the patient
      */
-    @ManyToOne
-    @JoinColumn(name = "patient_identifier", updatable = false)
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "patient_identifier")
     @NotNull
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     public Patient getPatient() {
         return patient;
     }
@@ -185,27 +192,28 @@ public class StudySubject extends Subject {
     public void setDisease(SDCDisease disease) {
         this.disease = disease;
     }
-    
+
     /**
      * @return the icd9disease
      */
     @ManyToOne
-    @JoinColumn(name = "icd9disease_identifier")   
+    @JoinColumn(name = "icd9disease_identifier")
     public ICD9Disease getIcd9disease() {
         return icd9disease;
     }
-    
+
     /**
      * @param icd9disease the icd9disease to set
      */
     public void setIcd9disease(ICD9Disease icd9disease) {
         this.icd9disease = icd9disease;
-    }   
-    
+    }
+
     /**
      * @return the performedActivities
      */
     @OneToMany(mappedBy = "studySubject")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     public List<PerformedActivity> getPerformedActivities() {
         return performedActivities;
     }
@@ -227,5 +235,5 @@ public class StudySubject extends Subject {
      */
     public void setOutcomesLoginName(String outcomesLoginName) {
         this.outcomesLoginName = outcomesLoginName;
-    }    
+    }
 }

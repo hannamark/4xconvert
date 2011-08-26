@@ -82,8 +82,6 @@ import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -91,7 +89,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.validator.NotNull;
@@ -143,7 +140,6 @@ public class Patient extends StructuralRole {
     public void setZip(String zip) {
         this.zip = zip;
     }
-    private List<StudySubject> studySubjects = new ArrayList<StudySubject>();
 
     /**
      * @return the raceCode
@@ -212,17 +208,5 @@ public class Patient extends StructuralRole {
     public void setPersonIdentifier(String personIdentifier) {
         this.personIdentifier = personIdentifier;
     }
-    /**
-     * @return the studySubjects
-     */
-    @OneToMany(mappedBy = "patient")
-    public List<StudySubject> getStudySubjects() {
-        return studySubjects;
-    }
-    /**
-     * @param studySubjects the studySubjects to set
-     */
-    public void setStudySubjects(List<StudySubject> studySubjects) {
-        this.studySubjects = studySubjects;
-    }
+
 }

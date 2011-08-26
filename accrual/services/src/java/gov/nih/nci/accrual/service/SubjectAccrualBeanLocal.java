@@ -170,7 +170,6 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private BatchFileService batchFileService;
     @EJB
     private CdusBatchUploadReaderServiceLocal batchService;
-    private static final String UNIMPLEMENTED_MSG = "Method not yet implemented.";
     private static final String REQUIRED_MSG = "%s is a required field.\n";
     private static final String INVALID_VALUE = "%s is not a valid value for %s.\n";
     /**
@@ -368,7 +367,22 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      * {@inheritDoc}
      */
     public void deleteSubjectAccrual(Ii subjectAccrualIi) throws PAException {
-        throw new PAException(UNIMPLEMENTED_MSG);
+        if (ISOUtil.isIiNull(subjectAccrualIi)) {
+            throw new PAException("Study Subject Ii must be valid.");
+        }
+        StudySubject studySubject = (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class, 
+                IiConverter.convertToLong(subjectAccrualIi));
+        if (studySubject == null) {
+            throw new PAException("A Study Subject with id " + subjectAccrualIi.getExtension() 
+                    + " does not exist.");
+        }
+        if (!AccrualUtil.isUserAllowedAccrualAccess(IiConverter
+                    .convertToStudySiteIi(studySubject.getStudySite().getId()))) {
+            throw new PAException("User does not have accrual access to site.");
+        }
+
+        getPatientService().nullifyPOPatient(IiConverter.convertToIi(studySubject.getPatient().getId()));
+        getStudySubjectService().delete(subjectAccrualIi);
     }
 
     /**

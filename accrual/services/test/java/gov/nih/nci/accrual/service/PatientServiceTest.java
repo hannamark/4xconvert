@@ -85,6 +85,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.service.util.CountryBean;
 import gov.nih.nci.accrual.service.util.CountryService;
@@ -92,6 +96,7 @@ import gov.nih.nci.accrual.service.util.POPatientBean;
 import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.util.MockPoServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
+import gov.nih.nci.accrual.util.PoServiceLocator;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
@@ -110,6 +115,8 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.po.service.EntityValidationException;
+import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -136,6 +143,40 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
         bean.setPatientCorrelationSvc(psb);
         countryIi =IiConverter.convertToIi(TestSchema.countries.get(0).getId());
     }
+    
+    private PatientDto loadPatientDto() {
+        PatientDto dto = new PatientDto();
+        dto.setBirthDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/16/2009")));
+        dto.setCountryIdentifier(countryIi);
+        dto.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
+        dto.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
+        dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.class, PatientRaceCode.BLACK.getName()));
+        dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
+        dto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/1/2009")));
+        dto.setZip(StConverter.convertToSt(USStateCode.TX.toString()));
+        dto.setOrganizationIdentifier(IiConverter.convertToIi("ORG01"));
+        return dto;
+    }
+    
+    @Test
+    public void testNullifiedPOPatient() throws PAException {       
+        PatientDto r = bean.create(loadPatientDto());
+        assertNotNull(r);
+        bean.nullifyPOPatient(r.getIdentifier());
+    }
+    
+    @Test(expected=PAException.class)
+    public void testNullifiedPOPatientExp() throws PAException, EntityValidationException {       
+        PatientDto r = bean.create(loadPatientDto());
+        PoServiceLocator poSvcLoc = mock(PoServiceLocator.class);
+        PatientCorrelationServiceRemote patCorrSvc = mock(PatientCorrelationServiceRemote.class);
+        doThrow(new EntityValidationException(null)).when(patCorrSvc)
+            .updateCorrelationStatus(any(Ii.class), any(Cd.class));
+        when(poSvcLoc.getPatientCorrelationService()).thenReturn(patCorrSvc);
+        PoRegistry.getInstance().setPoServiceLocator(poSvcLoc);
+        bean.nullifyPOPatient(r.getIdentifier());
+    }
+    
 
     @Test
     public void get() throws Exception {
@@ -201,18 +242,7 @@ public class PatientServiceTest extends AbstractServiceTest<PatientService> {
 
     @Test
     public void create() throws Exception {
-        PatientDto dto = new PatientDto();
-        dto.setBirthDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/16/2009")));
-        //dto.setCountryIdentifier(IiConverter.convertToIi(new Long(101)));
-        dto.setCountryIdentifier(countryIi);
-        dto.setEthnicCode(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
-        dto.setGenderCode(CdConverter.convertToCd(PatientGenderCode.MALE));
-        dto.setRaceCode(DSetEnumConverter.convertCsvToDSet(PatientRaceCode.class, PatientRaceCode.BLACK.getName()));
-        dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.ACTIVE));
-        dto.setStatusDateRangeLow(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("7/1/2009")));
-        dto.setZip(StConverter.convertToSt(USStateCode.TX.toString()));
-        dto.setOrganizationIdentifier(IiConverter.convertToIi("ORG01"));
-        PatientDto r = bean.create(dto);
+        PatientDto r = bean.create(loadPatientDto());
         assertNotNull(r);
 
         // birth date must be only year and month

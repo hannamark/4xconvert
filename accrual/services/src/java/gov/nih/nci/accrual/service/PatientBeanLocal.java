@@ -97,6 +97,7 @@ import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -313,5 +314,22 @@ public class PatientBeanLocal implements PatientServiceLocal {
      */
     public void setPatientCorrelationSvc(POPatientService patientCorrelationSvc) {
         this.patientCorrelationSvc = patientCorrelationSvc;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void nullifyPOPatient(Ii ii) throws PAException {
+        Patient pat = (Patient) PaHibernateUtil.getCurrentSession()
+            .load(Patient.class, Long.parseLong(ii.getExtension()));
+        try {
+            PoRegistry.getPatientCorrelationService().updateCorrelationStatus(IiConverter
+                    .convertToPOPatientIi(Long.parseLong(pat.getIdentifier())), 
+                    CdConverter.convertToCd(StructuralRoleStatusCode.NULLIFIED));
+        } catch (EntityValidationException e) {
+            throw new PAException(e);
+        }
+        
     }
 }
