@@ -106,7 +106,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.ejb.EJB;
-import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -126,7 +125,6 @@ import org.apache.log4j.Logger;
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Local(PDQUpdateGeneratorTaskServiceLocal.class)
 public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTaskServiceLocal {
     private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     private final SimpleDateFormat time = new SimpleDateFormat("-HH-mm-ss", Locale.US);
@@ -140,6 +138,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
     /**
      * {@inheritDoc}
      */
+    @Override
     public void performTask() throws PAException {
         String folderPath = PaEarPropertyReader.getPDQUploadPath();
         //First, delete all files older than 30 days.
@@ -203,6 +202,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
      * @return listOfFilesNames
      * @throws PAException on error
      */
+    @Override
     public List<String> getListOfFileNames() throws PAException {
         List<String> listOfFileNames = new ArrayList<String>();
         File folder = new File(PaEarPropertyReader.getPDQUploadPath());
@@ -220,6 +220,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
      * @return requested file name
      * @throws PAException on error
      */
+    @Override
     public String getRequestedFileName(String requestedFileName) throws PAException {
         StringBuffer filePath = new StringBuffer();
         filePath.append(PaEarPropertyReader.getPDQUploadPath()).append(File.separator);

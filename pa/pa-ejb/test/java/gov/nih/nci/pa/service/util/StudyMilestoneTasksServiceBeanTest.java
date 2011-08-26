@@ -32,15 +32,13 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.ejb.SessionContext;
-
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 
 /**
- * @author asharma
+ * @author Michael Visee
  * 
  */
 public class StudyMilestoneTasksServiceBeanTest {
@@ -49,7 +47,6 @@ public class StudyMilestoneTasksServiceBeanTest {
     private MailManagerServiceLocal mailManagerService = mock(MailManagerServiceLocal.class);
     private StudyMilestoneServicelocal studyMilestoneService = mock(StudyMilestoneServicelocal.class);
     private StudyMilestoneTasksServiceLocal studyMilestoneTasksService = mock(StudyMilestoneTasksServiceLocal.class);
-    private SessionContext context = mock(SessionContext.class);
     private StudyMilestoneTasksServiceBean sut;
 
     /**
@@ -72,7 +69,6 @@ public class StudyMilestoneTasksServiceBeanTest {
         doCallRealMethod().when(service).setMailManagerService(mailManagerService);
         doCallRealMethod().when(service).setStudyMilestoneService(studyMilestoneService);
         doCallRealMethod().when(service).setStudyMilestoneTasksService(studyMilestoneTasksService);
-        doCallRealMethod().when(service).setContext(context);
         setDependencies(service);
         return service;
     }
@@ -86,7 +82,6 @@ public class StudyMilestoneTasksServiceBeanTest {
         service.setMailManagerService(mailManagerService);
         service.setStudyMilestoneService(studyMilestoneService);
         service.setStudyMilestoneTasksService(studyMilestoneTasksService);
-        service.setContext(context);
     }
 
     /**
@@ -186,7 +181,6 @@ public class StudyMilestoneTasksServiceBeanTest {
         when(studyMilestoneService.create(milestoneDTO)).thenReturn(milestoneDTO);
         sut.createMilestone(milestoneDTO);
         verify(studyMilestoneService).create(milestoneDTO);
-        verify(context, never()).setRollbackOnly();
     }
     
     /**
@@ -202,12 +196,9 @@ public class StudyMilestoneTasksServiceBeanTest {
         try {
             sut.createMilestone(milestoneDTO);
             fail("createMilestone should have failed");
-        } catch (PAException e) {
-            verify(context).setRollbackOnly();
-            assertEquals("Wrong exception thrown", exception, e);
         } catch (Exception e) {
-            fail("Wrong exception thrown");
-        }
+            assertEquals("Wrong exception thrown", exception, e);
+        } 
         verify(studyMilestoneService).create(milestoneDTO);
     }
 

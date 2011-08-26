@@ -79,11 +79,23 @@
                 </entry>
                 <entry>
                     <key>java.naming.factory.initial</key>
-                    <value>org.jnp.interfaces.NamingContextFactory</value>
+                    <value>org.jboss.security.jndi.JndiLoginInitialContextFactory</value>
                 </entry>
                 <entry>
                     <key>java.naming.provider.url</key>
                     <value>jnp://localhost:@jboss.server.jndi.port@</value>
+                </entry>
+                <entry>
+                    <key>java.naming.factory.url.pkgs</key>
+                    <value>org.jboss.naming:org.jnp.interfaces</value>
+                </entry>
+                <entry>
+                    <key>java.naming.security.principal</key>
+                    <value>@pasystem.user@</value>
+                </entry>
+                <entry>
+                    <key>java.naming.security.credentials</key>
+                    <value>@pasystem.password@</value>
                 </entry>
             </job-data-map>
         </job-detail>
@@ -119,13 +131,25 @@
                     <key>method</key>
                     <value>performTask</value>
                 </entry>
-                <entry>
+               <entry>
                     <key>java.naming.factory.initial</key>
-                    <value>org.jnp.interfaces.NamingContextFactory</value>
+                    <value>org.jboss.security.jndi.JndiLoginInitialContextFactory</value>
                 </entry>
                 <entry>
                     <key>java.naming.provider.url</key>
                     <value>jnp://localhost:@jboss.server.jndi.port@</value>
+                </entry>
+                <entry>
+                    <key>java.naming.factory.url.pkgs</key>
+                    <value>org.jboss.naming:org.jnp.interfaces</value>
+                </entry>
+                <entry>
+                    <key>java.naming.security.principal</key>
+                    <value>@pasystem.user@</value>
+                </entry>
+                <entry>
+                    <key>java.naming.security.credentials</key>
+                    <value>@pasystem.password@</value>
                 </entry>
             </job-data-map>
         </job-detail>
@@ -164,11 +188,23 @@
                 </entry>
                 <entry>
                     <key>java.naming.factory.initial</key>
-                    <value>org.jnp.interfaces.NamingContextFactory</value>
+                    <value>org.jboss.security.jndi.JndiLoginInitialContextFactory</value>
                 </entry>
                 <entry>
                     <key>java.naming.provider.url</key>
                     <value>jnp://localhost:@jboss.server.jndi.port@</value>
+                </entry>
+                <entry>
+                    <key>java.naming.factory.url.pkgs</key>
+                    <value>org.jboss.naming:org.jnp.interfaces</value>
+                </entry>
+                <entry>
+                    <key>java.naming.security.principal</key>
+                    <value>@pasystem.user@</value>
+                </entry>
+                <entry>
+                    <key>java.naming.security.credentials</key>
+                    <value>@pasystem.password@</value>
                 </entry>
             </job-data-map>
         </job-detail>

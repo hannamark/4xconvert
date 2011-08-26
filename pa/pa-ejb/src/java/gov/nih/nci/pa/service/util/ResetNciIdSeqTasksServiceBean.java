@@ -86,7 +86,6 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
-import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -103,7 +102,6 @@ import org.hibernate.Session;
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-@Local(ResetNciIdSeqTasksServiceLocal.class)
 public class ResetNciIdSeqTasksServiceBean implements ResetNciIdSeqTasksServiceLocal {
 
     private static final Logger LOG = Logger.getLogger(ResetNciIdSeqTasksServiceBean.class);
@@ -111,6 +109,7 @@ public class ResetNciIdSeqTasksServiceBean implements ResetNciIdSeqTasksServiceL
     /**
      * {@inheritDoc}
      */
+    @Override
     public void performTask() throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
         String queryCheckForExisting = "select cast(substring(max(extension),10) as int) from study_otheridentifiers sp"

@@ -97,9 +97,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -131,9 +129,6 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
     @EJB
     private StudyMilestoneTasksServiceLocal studyMilestoneTasksService;
     
-    @Resource
-    private SessionContext context;
-
     /**
      * Perform task. if we run into more problems, we should look into making the query protocol-focused, rather than
      * milestone-focused, which may simplify the code a bit (at the cost of a more complex query)
@@ -223,12 +218,8 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createMilestone(StudyMilestoneDTO milestone) throws PAException {
-        try {
-            studyMilestoneService.create(milestone);
-        } catch (PAException e) {
-            context.setRollbackOnly();
-            throw e;
-        }
+        studyMilestoneService.create(milestone);
+
     }
     
     /**
@@ -275,13 +266,6 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
      */
     public void setStudyMilestoneTasksService(StudyMilestoneTasksServiceLocal studyMilestoneTasksService) {
         this.studyMilestoneTasksService = studyMilestoneTasksService;
-    }
-
-    /**
-     * @param context the context to set
-     */
-    public void setContext(SessionContext context) {
-        this.context = context;
     }
 
     /**

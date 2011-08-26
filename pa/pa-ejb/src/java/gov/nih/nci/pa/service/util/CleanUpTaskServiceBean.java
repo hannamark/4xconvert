@@ -89,7 +89,6 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import java.io.File;
 import java.util.Date;
 
-import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -106,21 +105,23 @@ import org.apache.commons.lang.time.DateUtils;
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Local(CleanUpTaskServiceLocal.class)
 public class CleanUpTaskServiceBean implements CleanUpTaskServiceLocal {
     private static final int MAX_FILE_AGE = -30;
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteDocAfter30DaysTask() throws PAException {
         File uploadDirName = new File(PaEarPropertyReader.getDocUploadPath());
         Date thirtyDaysAgo = DateUtils.addDays(new Date(), MAX_FILE_AGE);
         for (File file : uploadDirName.listFiles()) {
             if (isDirDeletable(thirtyDaysAgo, file, file.getName())) {
-                  FileUtils.deleteQuietly(file);
+                FileUtils.deleteQuietly(file);
             }
         }
     }
+
     /**
      * @param thirtyDaysAgo
      * @param file
@@ -129,7 +130,7 @@ public class CleanUpTaskServiceBean implements CleanUpTaskServiceLocal {
      */
     private boolean isDirDeletable(Date thirtyDaysAgo, File file, String dirName) {
         return file.isDirectory() && FileUtils.isFileOlder(file, thirtyDaysAgo) && !dirName.startsWith("NCI-")
-             && !dirName.startsWith("CTRP-") && !dirName.startsWith("TSR-") && !dirName.startsWith("pdq");
+                && !dirName.startsWith("CTRP-") && !dirName.startsWith("TSR-") && !dirName.startsWith("pdq");
     }
 
 }

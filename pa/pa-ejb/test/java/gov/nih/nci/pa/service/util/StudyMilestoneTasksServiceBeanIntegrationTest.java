@@ -134,8 +134,6 @@ import gov.nih.nci.pa.util.ServiceLocator;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.ejb.SessionContext;
-
 import org.junit.Test;
 
 /**
@@ -152,7 +150,6 @@ public class StudyMilestoneTasksServiceBeanIntegrationTest extends AbstractHiber
         mockitoTest.setUp();
         StudyMilestoneBeanLocal result = new StudyMilestoneBeanLocal();
         StudyMilestoneTasksServiceBean taskBean = new StudyMilestoneTasksServiceBean();
-        taskBean.setContext(mock(SessionContext.class));
         taskBean.setStudyMilestoneService(result);
         taskBean.setStudyMilestoneTasksService(taskBean);
         result.setStudyOnholdService(new StudyOnholdBeanLocal());
