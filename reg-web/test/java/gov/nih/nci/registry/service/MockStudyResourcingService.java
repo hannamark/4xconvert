@@ -20,7 +20,7 @@ import java.util.Map;
  *
  */
 public class MockStudyResourcingService implements StudyResourcingServiceLocal {
-    static List<StudyResourcingDTO> list;
+    private static List<StudyResourcingDTO> list;
     static {
         list = new ArrayList<StudyResourcingDTO>();
         StudyResourcingDTO studyRDto = new StudyResourcingDTO();
@@ -41,108 +41,121 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
         list.add(studyRDto);
     }
 
-    /*
+    /**
      * {@inheritDoc}
      */
-    public StudyResourcingDTO createStudyResourcing(
-            StudyResourcingDTO studyResourcingDTO) throws PAException {
-        // TODO Auto-generated method stub
+    @Override
+    public StudyResourcingDTO createStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
         return null;
     }
 
-    /*
+    /**
      * {@inheritDoc}
      */
-    public Boolean deleteStudyResourcingById(StudyResourcingDTO studyResourcingDTO)
-            throws PAException {
-        // TODO Auto-generated method stub
+    @Override
+    public Boolean deleteStudyResourcingById(StudyResourcingDTO studyResourcingDTO) throws PAException {
         return null;
     }
 
-    /*
+    /**
      * {@inheritDoc}
      */
-    public StudyResourcingDTO getStudyResourcingById(Ii studyResourceIi)
-            throws PAException {
-        StudyResourcingDTO matchingDto= new StudyResourcingDTO();
-        for (StudyResourcingDTO dto :list){
-            if(dto.getIdentifier().getExtension().equals(studyResourceIi.getExtension())){
+    @Override
+    public StudyResourcingDTO getStudyResourcingById(Ii studyResourceIi) throws PAException {
+        StudyResourcingDTO matchingDto = new StudyResourcingDTO();
+        for (StudyResourcingDTO dto : list) {
+            if (dto.getIdentifier().getExtension().equals(studyResourceIi.getExtension())) {
                 matchingDto = dto;
             }
         }
         return matchingDto;
     }
 
-    /*
+    /**
      * {@inheritDoc}
      */
-    public List<StudyResourcingDTO> getStudyResourcingByStudyProtocol(
-            Ii studyProtocolIi) throws PAException {
+    @Override
+    public List<StudyResourcingDTO> getStudyResourcingByStudyProtocol(Ii studyProtocolIi) throws PAException {
         List<StudyResourcingDTO> matchingDtosList = new ArrayList<StudyResourcingDTO>();
-        for (StudyResourcingDTO dto :list){
-            if(dto.getStudyProtocolIdentifier().getExtension().equals(studyProtocolIi.getExtension())){
+        for (StudyResourcingDTO dto : list) {
+            if (dto.getStudyProtocolIdentifier().getExtension().equals(studyProtocolIi.getExtension())) {
                 matchingDtosList.add(dto);
             }
         }
         return matchingDtosList;
     }
 
-    /*
+    /**
      * {@inheritDoc}
      */
-    public StudyResourcingDTO getSummary4ReportedResourcing(Ii studyProtocolIi)
-            throws PAException {
+    @Override
+    public StudyResourcingDTO getSummary4ReportedResourcing(Ii studyProtocolIi) throws PAException {
         if (studyProtocolIi != null && studyProtocolIi.getExtension().equals("3")) {
             return new StudyResourcingDTO();
         }
         return null;
     }
 
-    /*
+    /**
      * {@inheritDoc}
      */
-    public StudyResourcingDTO updateStudyResourcing(
-            StudyResourcingDTO studyResourcingDTO) throws PAException {
-        // TODO Auto-generated method stub
+    @Override
+    public StudyResourcingDTO updateStudyResourcing(StudyResourcingDTO studyResourcingDTO) throws PAException {
         return null;
     }
 
-    public void validate(StudyResourcingDTO studyResourcingDTO)
-            throws PAException {
-        // TODO Auto-generated method stub
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validate(StudyResourcingDTO studyResourcingDTO) throws PAException {
     }
 
-	public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
-			throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
+        return null;
+    }
 
-	public List<StudyResourcingDTO> getByStudyProtocol(Ii ii)
-			throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<StudyResourcingDTO> getByStudyProtocol(Ii ii) throws PAException {
+        return null;
+    }
 
-	public StudyResourcingDTO create(StudyResourcingDTO dto) throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudyResourcingDTO create(StudyResourcingDTO dto) throws PAException {
+        return null;
+    }
 
-	public void delete(Ii ii) throws PAException {
-		// TODO Auto-generated method stub
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void delete(Ii ii) throws PAException {
+    }
 
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudyResourcingDTO get(Ii ii) throws PAException {
+        return null;
+    }
 
-	public StudyResourcingDTO get(Ii ii) throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public StudyResourcingDTO update(StudyResourcingDTO dto) throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudyResourcingDTO update(StudyResourcingDTO dto) throws PAException {
+        return null;
+    }
 
 }

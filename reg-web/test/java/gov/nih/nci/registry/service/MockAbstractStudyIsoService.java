@@ -8,19 +8,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MockAbstractStudyIsoService<DTO> 
-    extends MockAbstractBaseIsoService<DTO> implements StudyPaService<DTO> {
-
-    public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi)
-            throws PAException {
-        // TODO Auto-generated method stub
+/**
+ * Default adapter class for MockAbstractBaseIsoService.
+ * 
+ * @author amiruddinn
+ * 
+ * @param <DTO> The type of DTO processed
+ */
+public class MockAbstractStudyIsoService<DTO> extends MockAbstractBaseIsoService<DTO> implements StudyPaService<DTO> {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<DTO> getByStudyProtocol(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
         return new ArrayList<DTO>();
     }
-    
-    
+
 }
