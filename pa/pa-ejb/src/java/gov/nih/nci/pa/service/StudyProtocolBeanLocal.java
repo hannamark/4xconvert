@@ -252,7 +252,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
         }
         enForceBusinessRules(ispDTO);
-        if (ispDTO.getBlindedRoleCode() != null && ispDTO.getBlindedRoleCode().getItem() != null) {
+        if (ISOUtil.isDSetNotEmpty(ispDTO.getBlindedRoleCode())) {
             totBlindCodes = ispDTO.getBlindedRoleCode().getItem().size();
         }
         checkBlindingSchemaCode(ispDTO, totBlindCodes);

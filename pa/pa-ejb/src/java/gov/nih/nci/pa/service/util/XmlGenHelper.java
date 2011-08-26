@@ -106,7 +106,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -221,25 +220,22 @@ public class XmlGenHelper extends BaseXmlGenHelper {
      * @param doc document
      * @param ctepId ctep id
      */
+    @SuppressWarnings("unchecked")
     public static void loadPoOrgContact(OrganizationalContactDTO ocDTO, Element lead, Document doc, Ii ctepId) {
         Map<String, String> addressBo = null;
-        if (ocDTO.getPostalAddress() != null && CollectionUtils.isNotEmpty(ocDTO.getPostalAddress().getItem())) {
-            addressBo = AddressConverterUtil
-                .convertToAddressBo((Ad) ocDTO.getPostalAddress().getItem().iterator().next());
+        if (ISOUtil.isDSetNotEmpty(ocDTO.getPostalAddress())) {
+            addressBo =
+                AddressConverterUtil.convertToAddressBo((Ad) ocDTO.getPostalAddress().getItem().iterator().next());
         }
         DSet<Tel> telecom = ocDTO.getTelecomAddress();
-
         appendElement(lead, createElementWithTextblock("po_id",
                 StringUtils.substring(DSetConverter.convertToIi(ocDTO.getIdentifier()).getExtension(), 0,
                 PAAttributeMaxLen.LEN_160), doc));
-
         if (!ISOUtil.isIiNull(ctepId))  {
             appendElement(lead, createElementWithTextblock("ctep_id", StringUtils.substring(ctepId.getExtension(), 0,
                 PAAttributeMaxLen.LEN_160), doc));
         }
-
         loadPoAddressTelecom(addressBo, telecom, lead, doc);
-
     }
     /**
      * Load a PO address and telecom info into xml.

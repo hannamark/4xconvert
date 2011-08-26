@@ -220,7 +220,7 @@ public class ArmBeanLocal extends AbstractStudyIsoService<ArmDTO, Arm, ArmConver
     private void copyInterventions(Ii toStudyProtocolIi, ArmDTO dto) throws PAException {
         Collection<Ii> paIiSet = new ArrayList<Ii>();
         Set<Ii> newPaIiSet = new HashSet<Ii>();
-        if ((dto.getInterventions() != null) && (dto.getInterventions().getItem() != null)) {
+        if (ISOUtil.isDSetNotEmpty(dto.getInterventions())) {
             paIiSet = dto.getInterventions().getItem();
         }
         for (Ii paIi : paIiSet) {

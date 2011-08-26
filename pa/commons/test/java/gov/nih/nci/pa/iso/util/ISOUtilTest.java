@@ -86,6 +86,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ivl;
@@ -93,6 +94,8 @@ import gov.nih.nci.iso21090.Pq;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.util.ISOUtil;
+
+import java.util.HashSet;
 
 import org.junit.Test;
 
@@ -263,5 +266,39 @@ public class ISOUtilTest {
         pqLow.setUnit("");
         ivl.setLow(pqLow);
         assertFalse(ISOUtil.isIvlUnitNull(ivl));
+    }
+
+    @Test
+    public void isDsetEmpty() {
+        assertTrue(ISOUtil.isDSetEmpty(null));
+
+        DSet<Ii> dset = new DSet<Ii>();
+        assertTrue(ISOUtil.isDSetEmpty(dset));
+
+        dset.setItem(null);
+        assertTrue(ISOUtil.isDSetEmpty(dset));
+
+        dset.setItem(new HashSet<Ii>());
+        assertTrue(ISOUtil.isDSetEmpty(dset));
+
+        dset.getItem().add(new Ii());
+        assertFalse(ISOUtil.isDSetEmpty(dset));
+    }
+
+    @Test
+    public void isDsetNotEmpty() {
+        assertFalse(ISOUtil.isDSetNotEmpty(null));
+
+        DSet<Ii> dset = new DSet<Ii>();
+        assertFalse(ISOUtil.isDSetNotEmpty(dset));
+
+        dset.setItem(null);
+        assertFalse(ISOUtil.isDSetNotEmpty(dset));
+
+        dset.setItem(new HashSet<Ii>());
+        assertFalse(ISOUtil.isDSetNotEmpty(dset));
+
+        dset.getItem().add(new Ii());
+        assertTrue(ISOUtil.isDSetNotEmpty(dset));
     }
 }

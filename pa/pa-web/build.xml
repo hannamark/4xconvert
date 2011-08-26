@@ -5,6 +5,10 @@
 <!-- ====================================================================== -->
 
 <project name="pa-web" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+    <property name="pa-web.coverage.line" value="63"/>
+    <property name="pa-web.coverage.branch" value="48"/>
+    <property name="pa-web.pmd.maxerrors" value="130"/>
+    
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>
     <property name="pa.report.dir" value="${software.dir}/target/pa/reports"/>
@@ -29,9 +33,6 @@
     <property name="pa-web.build.testResourceDir.0" value="${pa.dir}/pa-web/test/resources"/>
     <property name="pa-web.test.reports" value="${pa.report.dir}/pa-web/test-reports"/>
     <property name="pa-web.coverage.reports" value="${pa.report.dir}/pa-web/coverage-reports"/>
-    <property name="pa-web.coverage.line" value="61"/>
-    <property name="pa-web.coverage.branch" value="47"/>
-    <property name="pa-web.pmd.maxerrors" value="130"/>
     <property name="pa-web.reporting.outputDirectory" value="${pa.report.dir}/pa-web/site"/>
     <property name="pa-web.war" value="${pa-web.build.finalName}.war"/>
     <property name="pa-web.build.coberturaOutputDir" value="${pa-web.build.dir}/generated-classes"/>

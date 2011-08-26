@@ -145,7 +145,6 @@ import java.util.regex.Pattern;
 
 import javax.ejb.SessionContext;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -890,7 +889,7 @@ public class PAUtil {
      */
     public static String getAssignedIdentifierExtension(StudyProtocolDTO spDTO) {
         String assignedIdentifier = "";
-        if (spDTO.getSecondaryIdentifiers() != null && spDTO.getSecondaryIdentifiers().getItem() != null) {
+        if (ISOUtil.isDSetNotEmpty(spDTO.getSecondaryIdentifiers())) {
             for (Ii ii : spDTO.getSecondaryIdentifiers().getItem()) {
                 if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
                     return ii.getExtension();
@@ -910,7 +909,7 @@ public class PAUtil {
     public static Ii getAssignedIdentifier(StudyProtocolDTO spDTO) {
         Ii assignedIdentifier = new Ii();
         assignedIdentifier.setNullFlavor(NullFlavor.NI);
-        if (spDTO.getSecondaryIdentifiers() != null && spDTO.getSecondaryIdentifiers().getItem() != null) {
+        if (ISOUtil.isDSetNotEmpty(spDTO.getSecondaryIdentifiers())) {
             for (Ii ii : spDTO.getSecondaryIdentifiers().getItem()) {
                 if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
                     return ii;
@@ -927,8 +926,7 @@ public class PAUtil {
      */
     public static List<Ii> getOtherIdentifiers(StudyProtocolDTO spDTO) {
         List<Ii> results = new ArrayList<Ii>();
-        if (spDTO.getSecondaryIdentifiers() != null
-                && CollectionUtils.isNotEmpty(spDTO.getSecondaryIdentifiers().getItem())) {
+        if (ISOUtil.isDSetNotEmpty(spDTO.getSecondaryIdentifiers())) {
             for (Ii id : spDTO.getSecondaryIdentifiers().getItem()) {
                 if (StringUtils.equals(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT, id.getRoot())) {
                     results.add(id);
@@ -945,8 +943,7 @@ public class PAUtil {
      */
     public static Ii getNonOtherIdentifiers(StudyProtocolDTO spDTO) {
         Ii results = new Ii();
-        if (spDTO.getSecondaryIdentifiers() != null
-                && CollectionUtils.isNotEmpty(spDTO.getSecondaryIdentifiers().getItem())) {
+        if (ISOUtil.isDSetNotEmpty(spDTO.getSecondaryIdentifiers())) {
             for (Ii id : spDTO.getSecondaryIdentifiers().getItem()) {
                 if (!StringUtils.equals(IiConverter.STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT, id.getRoot())) {
                     return id;
@@ -966,7 +963,7 @@ public class PAUtil {
      */
     public static boolean checkAssignedIdentifierExists(StudyProtocolDTO spDTO) {
         boolean assignedIdentifierExists = false;
-        if (spDTO.getSecondaryIdentifiers() != null && spDTO.getSecondaryIdentifiers().getItem() != null) {
+        if (ISOUtil.isDSetNotEmpty(spDTO.getSecondaryIdentifiers())) {
             for (Ii ii : spDTO.getSecondaryIdentifiers().getItem()) {
                 if (IiConverter.STUDY_PROTOCOL_ROOT.equals(ii.getRoot())) {
                     return true;

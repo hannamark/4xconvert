@@ -553,9 +553,8 @@ implements ParticipatingSiteServiceLocal {
     }
 
     private void checkStudySiteContactTelecom(DSet<Tel> telecom) throws PAException {
-        if (telecom == null || CollectionUtils.isEmpty(telecom.getItem())) {
-            throw new PAException("Study Site Contacts must have telecom address info "
-                    + "for primary contact.");
+        if (ISOUtil.isDSetEmpty(telecom)) {
+            throw new PAException("Study Site Contacts must have telecom address info for primary contact.");
         }
     }
 

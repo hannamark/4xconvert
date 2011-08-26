@@ -78,8 +78,10 @@
 */
 package gov.nih.nci.pa.util;
 
+import gov.nih.nci.iso21090.Any;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
@@ -96,6 +98,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import org.springframework.util.CollectionUtils;
 
 /**
 *
@@ -262,6 +266,27 @@ public class ISOUtil {
             return true;
         }
         return isNull;
+    }
+
+    /**
+     * Checks to see if the given DSet is empty, meaning it's either null or has no items in it.
+     * @param dset the DSet to check
+     * @param <T> type
+     * @return true iff the given DSet is null or contains no items
+     */
+    public static <T extends Any> boolean isDSetEmpty(DSet<T> dset) {
+        return dset == null || CollectionUtils.isEmpty(dset.getItem());
+    }
+
+
+    /**
+     * Checks to see if the given DSet is not empty, meaning it's not null there's at least one items in it.
+     * @param dset the DSet to check
+     * @param <T> type
+     * @return true iff the given DSet isn't null and contains contains at least one item
+     */
+    public static <T extends Any> boolean isDSetNotEmpty(DSet<T> dset) {
+        return dset != null && !CollectionUtils.isEmpty(dset.getItem());
     }
 
     /**

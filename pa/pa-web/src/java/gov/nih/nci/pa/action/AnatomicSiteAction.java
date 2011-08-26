@@ -88,6 +88,7 @@ import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.dto.AnatomicSiteWebDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
@@ -95,7 +96,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.util.CollectionUtils;
 
 import com.opensymphony.xwork2.Preparable;
 
@@ -144,9 +144,7 @@ public class AnatomicSiteAction extends AbstractListEditAction implements Prepar
     @Override
     public String delete() throws PAException {
         StudyProtocolDTO studyProtocolDto = PaRegistry.getStudyProtocolService().getStudyProtocol(getSpIi());
-        if (studyProtocolDto.getSummary4AnatomicSites() != null
-                && !CollectionUtils.isEmpty(studyProtocolDto.getSummary4AnatomicSites().getItem())) {
-
+        if (ISOUtil.isDSetNotEmpty(studyProtocolDto.getSummary4AnatomicSites())) {
             for (Cd as : studyProtocolDto.getSummary4AnatomicSites().getItem()) {
                 if (as.getCode().equals(getSelectedRowIdentifier())) {
                     studyProtocolDto.getSummary4AnatomicSites().getItem().remove(as);
@@ -155,7 +153,6 @@ public class AnatomicSiteAction extends AbstractListEditAction implements Prepar
             }
             PaRegistry.getStudyProtocolService().updateStudyProtocol(studyProtocolDto);
         }
-
         return super.delete();
     }
 
@@ -174,8 +171,7 @@ public class AnatomicSiteAction extends AbstractListEditAction implements Prepar
         enforceBusinessRules();
         if (!hasActionErrors()) {
             StudyProtocolDTO studyProtocolDto = PaRegistry.getStudyProtocolService().getStudyProtocol(getSpIi());
-            if (studyProtocolDto.getSummary4AnatomicSites() == null
-                    || CollectionUtils.isEmpty(studyProtocolDto.getSummary4AnatomicSites().getItem())) {
+            if (ISOUtil.isDSetEmpty(studyProtocolDto.getSummary4AnatomicSites())) {
                 DSet<Cd> dSet = new DSet<Cd>();
                 dSet.setItem(new HashSet<Cd>());
                 studyProtocolDto.setSummary4AnatomicSites(dSet);
@@ -196,9 +192,7 @@ public class AnatomicSiteAction extends AbstractListEditAction implements Prepar
     protected void loadListForm() throws PAException {
         anatomicSiteList = new ArrayList<AnatomicSiteWebDTO>();
         StudyProtocolDTO studyProtocolDto = PaRegistry.getStudyProtocolService().getStudyProtocol(getSpIi());
-        if (studyProtocolDto.getSummary4AnatomicSites() != null
-                && !CollectionUtils.isEmpty(studyProtocolDto.getSummary4AnatomicSites().getItem())) {
-
+        if (ISOUtil.isDSetNotEmpty(studyProtocolDto.getSummary4AnatomicSites())) {
             for (Cd as : studyProtocolDto.getSummary4AnatomicSites().getItem()) {
                 AnatomicSiteWebDTO n = new AnatomicSiteWebDTO(as);
                 anatomicSiteList.add(n);

@@ -147,7 +147,7 @@ public class ArmConverter extends AbstractConverter<ArmDTO, Arm> {
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         Collection<PlannedActivity> interventions = new ArrayList<PlannedActivity>();
         Collection<Ii> paIiSet = new ArrayList<Ii>();
-        if ((dto.getInterventions() != null) && (dto.getInterventions().getItem() != null)) {
+        if (ISOUtil.isDSetNotEmpty(dto.getInterventions())) {
             paIiSet = dto.getInterventions().getItem();
         }
         for (Ii paIi : paIiSet) {
