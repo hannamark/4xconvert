@@ -138,12 +138,14 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
     /**
     *@return String DisplayName
     */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -163,6 +165,8 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
     public static RecruitmentStatusCode getByCode(String code) {
         return getByClassAndCode(RecruitmentStatusCode.class, code);
     }
+    
+    
 
     /**
      * @return String[] display names of enums
@@ -177,17 +181,19 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
     }
 
     /**
-     * @return the set of recruiting status
+     * Test if this status is recruiting.
+     * @return true if this status is recruiting
      */
-    public static Set<RecruitmentStatusCode> getRecruitingStatuses() {
-        return RECRUITING_STATUSES;
+    public boolean isRecruiting() {
+        return RECRUITING_STATUSES.contains(this);
     }
 
     /**
-     * @return the set of non recruiting statuses
+     * Test if this status is recruiting.
+     * @return true if this status is recruiting
      */
-    public static Set<RecruitmentStatusCode> getNonRecruitingStatuses() {
-        return NON_RECRUITING_STATUSES;
+    public boolean isNonRecruiting() {
+        return NON_RECRUITING_STATUSES.contains(this);
     }
 
     /**
@@ -200,6 +206,7 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getNameByCode(String str) {
         return getByCode(str).name();
     }

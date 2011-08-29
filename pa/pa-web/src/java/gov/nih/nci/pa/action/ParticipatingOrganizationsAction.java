@@ -211,6 +211,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
      * @see com.opensymphony.xwork2.Preparable#prepare()
      * @throws PAException on error
      */
+    @Override
     public void prepare() throws PAException {
         sPartService = PaRegistry.getStudySiteService();
         ssasService = PaRegistry.getStudySiteAccrualStatusService();
@@ -1615,7 +1616,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     private void enforcePartialRulesForProp4(String strDateOpenedForAccrual, String strDateClosedForAccrual) {
         if (StringUtils.isNotEmpty(recStatus)) {
             RecruitmentStatusCode recruitmentStatus = RecruitmentStatusCode.getByCode(recStatus);
-            if (RecruitmentStatusCode.getNonRecruitingStatuses().contains(recruitmentStatus)) {
+            if (recruitmentStatus.isNonRecruiting()) {
                 if (StringUtils.isNotEmpty(dateOpenedForAccrual)) {
                     addFieldError(strDateOpenedForAccrual, "Date Opened for Acrual must be null for " + recStatus);
                 }

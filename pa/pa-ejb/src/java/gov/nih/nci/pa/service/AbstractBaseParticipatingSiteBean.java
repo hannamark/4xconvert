@@ -119,7 +119,7 @@ public abstract class AbstractBaseParticipatingSiteBean extends AbstractBasePart
     private void enforceBusinessRecruitmentRules1ForProprietary(boolean openDateAvail,
             StudySiteAccrualStatusDTO currentStatus) throws PAException {
         RecruitmentStatusCode status = RecruitmentStatusCode.getByCode(currentStatus.getStatusCode().getCode());
-        if (RecruitmentStatusCode.getNonRecruitingStatuses().contains(status)) {
+        if (status.isNonRecruiting()) {
             if (openDateAvail) {
                 throw new PAException("Date Opened for Accrual must be null for "
                         + currentStatus.getStatusCode().getCode());

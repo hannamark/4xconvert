@@ -205,6 +205,8 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
                 }
                 errors.add(milestone, e.getMessage());
             }
+            // We test for interruption to provide a smoother server shutdown if it happens during this background task
+            // The next execution will pick the ones that are not processed anyway
             if (Thread.interrupted()) {
                 break;
             }
@@ -219,7 +221,6 @@ public class StudyMilestoneTasksServiceBean implements StudyMilestoneTasksServic
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createMilestone(StudyMilestoneDTO milestone) throws PAException {
         studyMilestoneService.create(milestone);
-
     }
     
     /**

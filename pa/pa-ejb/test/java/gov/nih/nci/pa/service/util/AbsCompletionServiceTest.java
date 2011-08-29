@@ -87,6 +87,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
@@ -108,25 +109,27 @@ public class AbsCompletionServiceTest extends AbstractMockitoTest {
 
     @Before
     public void setup() throws Exception {
-        bean.setStudyResourcingService(studyResourcingSvc);
-        bean.setStudySiteContactService(studySiteContactSvc);
-        bean.setPlannedActivityService(plannedActSvc);
-        bean.setPlannedMarkerSvc(plannedMarkerSvc);
+        bean.setCorrelationUtils(corUtils);
+       
         bean.setArmService(armSvc);
+        bean.setDocumentService(documentSvc);
+        bean.setInterventionService(interventionSvc);
+        bean.setOrganizationCorrelationService(orgSvc);
+        bean.setPlannedActivityService(plannedActSvc);
+        bean.setPlannedMarkerService(plannedMarkerSvc);
+        bean.setRegistryUserService(regUserSvc);
+        bean.setStudyContactService(studyContactSvc);
         bean.setStudyDiseaseService(studyDiseaseSvc);
+        bean.setStudyIndldeService(studyIndIdeSvc);
         bean.setStudyOutcomeMeasureService(studyOutcomeMeasureSvc);
         bean.setStudyOverallStatusService(studyOverallStatusSvc);
-        bean.setStudyRegulatoryAuthorityService(studyRegAuthSvc);
-        bean.setStudyContactService(studyContactSvc);
-        bean.setStudyIndldeService(studyIndIdeSvc);
-        bean.setStudySiteService(studySiteSvc);
         bean.setStudyProtocolService(spSvc);
-        bean.setStudyRecruitmentStatusServiceLocal(studyRecruitmentStatusSvc);
-        bean.setStudySiteAccrualStatusServiceLocal(studySiteAccrualStatusSvc);
-        bean.setDocumentServiceLocal(documentSvc);
-        bean.setInterventionSvc(interventionSvc);
-        bean.setCorrelationUtils(corUtils);
-        bean.setRegistryUserServiceLocal(regUserSvc);
+        bean.setStudyRecruitmentStatusService(studyRecruitmentStatusSvc);
+        bean.setStudyRegulatoryAuthorityService(studyRegAuthSvc);
+        bean.setStudyResourcingService(studyResourcingSvc);
+        bean.setStudySiteService(studySiteSvc);
+        bean.setStudySiteAccrualStatusService(studySiteAccrualStatusSvc);
+        bean.setStudySiteContactService(studySiteContactSvc);
     }
 
     @Test

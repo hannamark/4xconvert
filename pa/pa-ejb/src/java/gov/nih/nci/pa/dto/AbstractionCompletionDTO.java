@@ -82,59 +82,74 @@ package gov.nih.nci.pa.dto;
  * @since 11/24/2008
  */
 public class AbstractionCompletionDTO {
+    /**
+     * type for error messages.
+     */
+    public static final String ERROR_TYPE = "Error";
+    
+    /**
+     * type for warning messages.
+     */
+    public static final String WARNING_TYPE = "Warning";
 
+    private String errorCode;
+    private String errorDescription;
+    private String errorType;
+    private String comment;
 
-  private String errorCode;
-  private String errorDescription;
-  private String errorType;
-  private String comment;
+    /**
+     * @return errorCode
+     */
+    public String getErrorCode() {
+        return errorCode;
+    }
 
-  /**
-   * @return errorCode
-   */
-  public String getErrorCode() {
-    return errorCode;
-  }
-  /**
-   * @param errorCode errorCode
-   */
-  public void setErrorCode(String errorCode) {
-    this.errorCode = errorCode;
-  }
-  /**
-   * @return errorDescription
-   */
-  public String getErrorDescription() {
-    return errorDescription;
-  }
-  /**
-   * @param errorDescription errorDescription
-   */
-  public void setErrorDescription(String errorDescription) {
-    this.errorDescription = errorDescription;
-  }
-  /**
-   * @return errorType
-   */
-  public String getErrorType() {
-    return errorType;
-  }
-  /**
-   * @param errorType errorType
-   */
-  public void setErrorType(String errorType) {
-    this.errorType = errorType;
-  }
-  /**
-   * @return comment
-   */
-  public String getComment() {
-    return comment;
-  }
-  /**
-   * @param comment comment
-   */
-  public void setComment(String comment) {
-    this.comment = comment;
-  }
+    /**
+     * @param errorCode errorCode
+     */
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    /**
+     * @return errorDescription
+     */
+    public String getErrorDescription() {
+        return errorDescription;
+    }
+
+    /**
+     * @param errorDescription errorDescription
+     */
+    public void setErrorDescription(String errorDescription) {
+        this.errorDescription = errorDescription;
+    }
+
+    /**
+     * @return errorType
+     */
+    public String getErrorType() {
+        return errorType;
+    }
+
+    /**
+     * @param errorType errorType
+     */
+    public void setErrorType(String errorType) {
+        this.errorType = errorType;
+    }
+
+    /**
+     * @return comment
+     */
+    public String getComment() {
+        return comment;
+    }
+
+    /**
+     * @param comment comment
+     */
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 }

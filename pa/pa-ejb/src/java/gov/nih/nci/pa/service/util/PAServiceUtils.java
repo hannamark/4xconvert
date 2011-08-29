@@ -887,7 +887,7 @@ public class PAServiceUtils {
             RecruitmentStatusCode.getByCode(recruitmentStatusDto.getStatusCode().getCode());
         StringBuffer errorMsg = new StringBuffer();
         if (CollectionUtils.isNotEmpty(participatingSites)
-                && RecruitmentStatusCode.getRecruitingStatuses().contains(studyRecruitmentStatus)) {
+                && studyRecruitmentStatus.isRecruiting()) {
             boolean recruiting = false;
             StudySiteAccrualStatusDTO latestDTO = null;
             List<StudySiteAccrualStatusDTO> participatingSitesOld = null;
@@ -902,7 +902,7 @@ public class PAServiceUtils {
                 RecruitmentStatusCode recruimentStatus =
                     RecruitmentStatusCode.getByCode(studySiteAccuralStatus.getStatusCode().getCode());
                 // base condition if one of the newly changed status is recruiting ;then break
-                if (latestId == null && RecruitmentStatusCode.getRecruitingStatuses().contains(recruimentStatus)) {
+                if (latestId == null && recruimentStatus.isRecruiting()) {
                     recruiting = true;
                     break;
                 } else {
@@ -921,7 +921,7 @@ public class PAServiceUtils {
                 latestDTO = participatingSitesOld.get(participatingSitesOld.size() - 1);
                 RecruitmentStatusCode recruimentStatus = latestDTO == null ? null
                         : RecruitmentStatusCode.getByCode(latestDTO.getStatusCode().getCode());
-                if (RecruitmentStatusCode.getRecruitingStatuses().contains(recruimentStatus)) {
+                if (recruimentStatus != null && recruimentStatus.isRecruiting()) {
                     recruiting = true;
                 }
                 if (!recruiting) {
@@ -1347,7 +1347,7 @@ public class PAServiceUtils {
                   RecruitmentStatusCode recruitmentStatus =
                       RecruitmentStatusCode.getByCode(studySiteAccrualStatusDTO.getStatusCode().getCode());
                   String recStatus = CdConverter.convertCdToString(studySiteAccrualStatusDTO.getStatusCode());
-                  if (RecruitmentStatusCode.getNonRecruitingStatuses().contains(recruitmentStatus)) {
+                  if (recruitmentStatus.isNonRecruiting()) {
                       if (dateOpenedForAccrual != null) {
                           errorMsg.append("Date Opened for Accrual must be null for ").append(recStatus);
                       }
