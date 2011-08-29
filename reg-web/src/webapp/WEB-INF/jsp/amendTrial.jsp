@@ -650,13 +650,13 @@
                     <s:if test="%{trialDTO.xmlRequired == true}">
                        <div id="regDiv" style="display:''">
                            <!--  Regulatory Info page -->
-                           <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInforamtion.jsp" %>
+                           <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInformation.jsp" %>
                        </div>
                     </s:if>
                     <s:else>
                        <div id="regDiv" style="display:none">
                            <!--  Regulatory Info page -->
-                           <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInforamtion.jsp" %>
+                           <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInformation.jsp" %>
                        </div>
                     </s:else>
                     <tr>

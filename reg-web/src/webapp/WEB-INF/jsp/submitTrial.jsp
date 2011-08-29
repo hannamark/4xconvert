@@ -632,7 +632,7 @@
                             <s:set name="statusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
                             <td>
                                 <s:select headerKey="" headerValue="--Select--" name="trialDTO.statusCode" list="#statusCodeValues"
-                                    value="trialDTO.statusCode" cssStyle="width:206px" onchange="displayTrialStatusDefinition('submitTrial_trialDTO_statusCode');" />
+                                    value="trialDTO.statusCode" onchange="displayTrialStatusDefinition('submitTrial_trialDTO_statusCode');" />
                                 <span class="formErrorMsg">
                                     <s:fielderror>
                                         <s:param>trialDTO.statusCode</s:param>
@@ -762,13 +762,13 @@
                     <s:if test="%{trialDTO.xmlRequired == true}">
                         <div id="regDiv" style="display:''">
                             <!-- Regulatory page -->
-                            <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInforamtion.jsp" %>
+                            <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInformation.jsp" %>
                         </div>
                     </s:if>
                     <s:else>
                         <div id="regDiv" style="display:none">
                             <!-- Regulatory page -->
-                            <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInforamtion.jsp" %>
+                            <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInformation.jsp" %>
                         </div>
                     </s:else>
                     <tr>
