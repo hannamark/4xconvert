@@ -210,7 +210,7 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
         if (ISOUtil.isIiNull(studyProtocolStageIi)) {
             throw new PAException(II_CAN_NOT_BE_NULL);
         }
-        String hql = "select spart StudyIndIdeStage spart join spart.studyProtocolStage spro where spro.id = "
+        String hql = "select spart from StudyIndIdeStage spart join spart.studyProtocolStage spro where spro.id = "
             + " :studyProtocolId";
         List<StudyIndIdeStage> queryList = (List<StudyIndIdeStage>) getResultList(studyProtocolStageIi, hql);
         return new StudyIndIdeStageConverter().convertFromDomainToDtos(queryList);
