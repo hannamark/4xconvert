@@ -5,9 +5,9 @@
 <!-- ====================================================================== -->
 
 <project name="pa-web" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
-    <property name="pa-web.coverage.line" value="63"/>
-    <property name="pa-web.coverage.branch" value="48"/>
-    <property name="pa-web.pmd.maxerrors" value="130"/>
+    <property name="pa-web.coverage.line" value="64"/>
+    <property name="pa-web.coverage.branch" value="49"/>
+    <property name="pa-web.pmd.maxerrors" value="128"/>
     
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>

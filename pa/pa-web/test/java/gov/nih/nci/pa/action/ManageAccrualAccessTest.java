@@ -120,7 +120,7 @@ import org.junit.Test;
  */
 public class ManageAccrualAccessTest extends AbstractPaActionTest {
     private final Long testRegUserId = MockStudySiteAccrualAccessService.regUsers.get(0).getId();
-    private final Long testStudySiteId = MockStudySiteService.list.get(2).getId();
+    private final Long testStudySiteId = IiConverter.convertToLong(MockStudySiteService.dtos.get(2).getIdentifier());
     private final String testStatusCode = ActiveInactiveCode.ACTIVE.getCode();
     private final String testRequestDetails = "test request details";
     private StudySiteAccrualAccessServiceLocal ssAccSvc = null;

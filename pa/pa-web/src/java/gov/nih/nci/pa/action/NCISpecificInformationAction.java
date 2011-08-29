@@ -94,12 +94,12 @@ import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import org.apache.commons.lang.StringUtils;
@@ -192,29 +192,25 @@ public class NCISpecificInformationAction extends ActionSupport {
      */
     public String update() {
         // Step1 : check for any errors
-        if ((ISOUtil.isBlNull(getStudyProtocol().getProprietaryTrialIndicator())
-              || !getStudyProtocol().getProprietaryTrialIndicator().getValue().booleanValue())
+        if (!BlConverter.convertToBool(getStudyProtocol().getProprietaryTrialIndicator())
               && StringUtils.isEmpty(nciSpecificInformationWebDTO.getAccrualReportingMethodCode())) {
             addFieldError("nciSpecificInformationWebDTO.accrualReportingMethodCode",
                     getText("error.studyProtocol.accrualReportingMethodCode"));
         }
-
         if (hasFieldErrors()) {
             return ERROR;
         }
         // Step2 : retrieve the studyprotocol
-        StudyProtocolDTO spDTO = new StudyProtocolDTO();
         StudyResourcingDTO srDTO = new StudyResourcingDTO();
         try {
             // Step 0 : get the studyprotocol from database
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().getAttribute(
                     Constants.STUDY_PROTOCOL_II);
-            spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
             // Step1 : update values to StudyProtocol
             spDTO.setAccrualReportingMethodCode(CdConverter.convertToCd(AccrualReportingMethodCode
                     .getByCode(nciSpecificInformationWebDTO.getAccrualReportingMethodCode())));
             spDTO.setProgramCodeText(StConverter.convertToSt(nciSpecificInformationWebDTO.getProgramCodeText()));
-
             // Step2 : update values to StudyResourcing
             srDTO.setTypeCode(CdConverter.convertToCd(SummaryFourFundingCategoryCode
                     .getByCode(nciSpecificInformationWebDTO.getSummaryFourFundingCategoryCode())));
@@ -223,28 +219,7 @@ public class NCISpecificInformationAction extends ActionSupport {
             spDTO = PaRegistry.getStudyProtocolService().updateStudyProtocol(spDTO);
             // Step 4: check if we have an organization for PO id
             String poIdentifier = nciSpecificInformationWebDTO.getOrganizationIi();
-            Long orgId = null;
-            if (StringUtils.isNotEmpty(poIdentifier)) {
-                Organization o = new Organization();
-                o.setIdentifier(poIdentifier);
-                Organization org = PaRegistry.getPAOrganizationService().getOrganizationByIndetifers(o);
-                if (org == null) {
-                    OrganizationCorrelationServiceBean ocsb = new OrganizationCorrelationServiceBean();
-                    OrganizationDTO oDto = PoRegistry.getOrganizationEntityService().getOrganization(
-                            IiConverter.convertToPoOrganizationIi(poIdentifier));
-                    // create a new org if its null
-//                    org = new Organization();
-//                    org.setIdentifier(poIdentifier);
-//                    org.setName(nciSpecificInformationWebDTO.getOrganizationName());
-//                    Organization crOrg = PaRegistry.getPAOrganizationService().createOrganization(org);
-//                    ocsb.createPAOrganizationUsingPO(oDto);
-                    orgId = ocsb.createPAOrganizationUsingPO(oDto).getId();
-                } else {
-                    // get the org from the database
-                    orgId = org.getId();
-                }
-            }
-            updateSummary4DTO(studyProtocolIi, orgId);
+            updateSummary4DTO(studyProtocolIi, getOrganizationId(poIdentifier));
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Update succeeded.");
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
@@ -252,6 +227,24 @@ public class NCISpecificInformationAction extends ActionSupport {
         }
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         return SUCCESS;
+    }
+
+    private Long getOrganizationId(String poIdentifier) throws PAException, NullifiedEntityException {
+        Long orgId = null;
+        if (StringUtils.isNotEmpty(poIdentifier)) {
+            Organization o = new Organization();
+            o.setIdentifier(poIdentifier);
+            Organization org = PaRegistry.getPAOrganizationService().getOrganizationByIndetifers(o);
+            if (org == null) {
+                OrganizationDTO oDto = PoRegistry.getOrganizationEntityService().getOrganization(
+                        IiConverter.convertToPoOrganizationIi(poIdentifier));
+                orgId = PaRegistry.getOrganizationCorrelationService().createPAOrganizationUsingPO(oDto).getId();
+            } else {
+                // get the org from the database
+                orgId = org.getId();
+            }
+        }
+        return orgId;
     }
 
     /**

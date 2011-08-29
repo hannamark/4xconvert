@@ -85,6 +85,7 @@ import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.iso.convert.StudySiteAccrualAccessConverter;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -135,9 +136,11 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
         bo.getRegistryUser().setId(IiConverter.convertToLong(access.getRegistryUserIdentifier()));
         bo.setRequestDetails(StConverter.convertToString(access.getRequestDetails()));
         bo.setStatusCode(ActiveInactiveCode.getByCode(CdConverter.convertCdToString(access.getStatusCode())));
-        for (StudySite ss : MockStudySiteService.list) {
-            if (ss.getId().equals(IiConverter.convertToLong(access.getStudySiteIdentifier()))) {
-                bo.setStudySite(ss);
+        for (StudySiteDTO ss : MockStudySiteService.dtos) {
+            if (ss.getIdentifier().getExtension().equals(access.getStudySiteIdentifier().getExtension())) {
+                StudySite s = new StudySite();
+                s.setId(IiConverter.convertToLong(ss.getIdentifier()));
+                bo.setStudySite(s);
             }
         }
         list.add(bo);

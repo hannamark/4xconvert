@@ -82,15 +82,12 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.domain.HealthCareFacility;
-import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.domain.ResearchOrganization;
-import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
-import gov.nih.nci.pa.iso.convert.StudySiteConverter;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.po.data.CurationException;
@@ -106,40 +103,36 @@ import java.util.Map;
  */
 public class MockStudySiteService extends MockAbstractBaseIsoService<StudySiteDTO> implements StudySiteServiceLocal {
 
-    public static List<StudySite> list;
-    private static StudySiteConverter converter = new StudySiteConverter();
+    public static List<StudySiteDTO> dtos;
     private static Long seq = 1L;
 
     static {
-        list = new ArrayList<StudySite>();
-        StudySite ss = new StudySite();
-        ss.setId(seq++);
-        ss.setStudyProtocol(MockStudyProtocolService.list.get(0));
-        ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
-        ss.setLocalStudyProtocolIdentifier("LSPID 001");
-        list.add(ss);
-        ss = new StudySite();
-        ss.setId(seq++);
-        ss.setStudyProtocol(MockStudyProtocolService.list.get(0));
-        ss.setFunctionalCode(StudySiteFunctionalCode.FUNDING_SOURCE);
-        ss.setLocalStudyProtocolIdentifier("LSPID 002");
-        ResearchOrganization researchOrg = new ResearchOrganization();
-        researchOrg.setId(1L);
-        ss.setResearchOrganization(researchOrg);
-        list.add(ss);
-        ss = new StudySite();
-        ss.setId(seq++);
-        ss.setStudyProtocol(MockStudyProtocolService.list.get(0));
-        ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
-        ss.setLocalStudyProtocolIdentifier("LSPID 003");
-        HealthCareFacility hcf = new HealthCareFacility();
-        hcf.setId(1L);
-        Organization org = new Organization();
-        org.setName("test org. name");
-        org.setId(1L);
-        hcf.setOrganization(org);
-        ss.setHealthCareFacility(hcf);
-        list.add(ss);
+        dtos = new ArrayList<StudySiteDTO>();
+        StudySiteDTO ss = new StudySiteDTO();
+        ss.setIdentifier(IiConverter.convertToStudySiteIi(seq++));
+        ss.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
+        ss.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(MockStudyProtocolService.list.get(0).getId()));
+        ss.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
+        ss.setLocalStudyProtocolIdentifier(StConverter.convertToSt("LSPID 001"));
+        dtos.add(ss);
+
+        ss = new StudySiteDTO();
+        ss.setIdentifier(IiConverter.convertToStudySiteIi(seq++));
+        ss.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
+        ss.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(MockStudyProtocolService.list.get(0).getId()));
+        ss.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.FUNDING_SOURCE));
+        ss.setLocalStudyProtocolIdentifier(StConverter.convertToSt("LSPID 002"));
+        ss.setResearchOrganizationIi(IiConverter.convertToIi(1L));
+        dtos.add(ss);
+
+        ss = new StudySiteDTO();
+        ss.setIdentifier(IiConverter.convertToStudySiteIi(seq++));
+        ss.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.ACTIVE));
+        ss.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(MockStudyProtocolService.list.get(0).getId()));
+        ss.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+        ss.setLocalStudyProtocolIdentifier(StConverter.convertToSt("LSPID 003"));
+        ss.setHealthcareFacilityIi(IiConverter.convertToIi(1L));
+        dtos.add(ss);
     }
 
     /**
@@ -148,11 +141,11 @@ public class MockStudySiteService extends MockAbstractBaseIsoService<StudySiteDT
     @Override
     public List<StudySiteDTO> getByStudyProtocol(Ii studyProtocolIi, List<StudySiteDTO> spDTOList) throws PAException {
         List<StudySiteDTO> resultList = new ArrayList<StudySiteDTO>();
-        for (StudySite sp : list) {
-            if (sp.getStudyProtocol().getId().equals(IiConverter.convertToLong(studyProtocolIi))) {
+        for (StudySiteDTO ss : dtos) {
+            if (ss.getStudyProtocolIdentifier().getExtension().equals(studyProtocolIi.getExtension())) {
                 for (StudySiteDTO criteria : spDTOList) {
-                    if (criteria.getFunctionalCode().getCode().equals(sp.getFunctionalCode().getCode())) {
-                        resultList.add(converter.convertFromDomainToDto(sp));
+                    if (criteria.getFunctionalCode().getCode().equals(ss.getFunctionalCode().getCode())) {
+                        resultList.add(ss);
                         break;
                     }
                 }
@@ -177,9 +170,9 @@ public class MockStudySiteService extends MockAbstractBaseIsoService<StudySiteDT
     @Override
     public List<StudySiteDTO> getByStudyProtocol(Ii ii) throws PAException {
         List<StudySiteDTO> resultList = new ArrayList<StudySiteDTO>();
-        for (StudySite sp : list) {
-            if (sp.getId() == IiConverter.convertToLong(ii)) {
-                resultList.add(converter.convertFromDomainToDto(sp));
+        for (StudySiteDTO ss : dtos) {
+            if (ss.getIdentifier().getExtension().equals(ii.getExtension())) {
+                resultList.add(ss);
             }
         }
         return resultList;
@@ -204,10 +197,9 @@ public class MockStudySiteService extends MockAbstractBaseIsoService<StudySiteDT
      */
     @Override
     public StudySiteDTO create(StudySiteDTO dto) throws PAException {
-        StudySite bo = converter.convertFromDtoToDomain(dto);
-        bo.setId(seq++);
-        list.add(bo);
-        return converter.convertFromDomainToDto(bo);
+        dto.setIdentifier(IiConverter.convertToStudySiteIi(seq++));
+        dtos.add(dto);
+        return dto;
     }
 
     /**
@@ -258,7 +250,7 @@ public class MockStudySiteService extends MockAbstractBaseIsoService<StudySiteDT
     @Override
     public List<StudySiteDTO> search(StudySiteDTO dto, LimitOffset pagingParams) throws PAException,
             TooManyResultsException {
-        return null;
+        return dtos;
     }
 
     /**

@@ -163,8 +163,8 @@ public class PARelationServiceBean {
         if (ISOUtil.isIiNull(contactDto.getStudyProtocolIdentifier())) {
             throw new PAException("Study Protocol Identifier is null");
         }
-        OrganizationCorrelationServiceBean ocs = new OrganizationCorrelationServiceBean();
-        Long roId = ocs.createResearchOrganizationCorrelations(contactDto.getOrganizationIdentifier().getExtension());
+        Long roId = PaRegistry.getOrganizationCorrelationService().
+            createResearchOrganizationCorrelations(contactDto.getOrganizationIdentifier().getExtension());
         if (roId == null) {
             throw new PAException("Research Organization could not be created");
         }

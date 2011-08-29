@@ -107,6 +107,7 @@ import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
 import gov.nih.nci.pa.iso.dto.StudyOutcomeMeasureDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EdConverter;
@@ -424,7 +425,14 @@ public class MockServiceLocator implements ServiceLocator {
     }
 
     public StudySiteContactServiceLocal getStudySiteContactService() {
-        return null;
+        StudySiteContactServiceLocal svc = mock(StudySiteContactServiceLocal.class);
+        List<StudySiteContactDTO> results = new ArrayList<StudySiteContactDTO>();
+        try {
+            when(svc.getByStudyProtocol(any(Ii.class), any(StudySiteContactDTO.class))).thenReturn(results);
+        } catch (PAException e) {
+            //Unreachable
+        }
+        return svc;
     }
 
     public PAHealthCareProviderRemote getPAHealthCareProviderService() {
