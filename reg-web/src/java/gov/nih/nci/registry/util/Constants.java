@@ -191,9 +191,6 @@ public class Constants {
     /** Responsible Party . */
     public static final String RESP_PARTY = "respParty";
 
-    /** Sponsor . */
-    public static final String SPONSOR = "sponsor";
-
     /** Responsible Party Contact . */
     public static final String RESP_PARTY_CONTACT = "respPartyContact";
 

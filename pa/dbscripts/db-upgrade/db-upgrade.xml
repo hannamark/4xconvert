@@ -742,4 +742,12 @@
         <comment>Updating batch file db columns</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3997.sql"/>
      </changeSet>
+     <changeSet id="PO-3992" author="moweis">
+        <comment>Migrating draft trial recruiting status from the old values to the new values.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3992.sql"/>
+     </changeSet>
+     <changeSet id="PO-3955" author="moweis">
+        <comment>Update draft responsible party types from pi to PI.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3955.sql"/>
+     </changeSet>
 </databaseChangeLog>

@@ -102,7 +102,7 @@ public abstract class AbstractRegWebTest {
         trialDTO.setLeadOrganizationIdentifier("1");
         trialDTO.setPiIdentifier("2");
         trialDTO.setSponsorIdentifier("3");
-        trialDTO.setResponsiblePartyType("pi");
+        trialDTO.setResponsiblePartyType(TrialDTO.RESPONSIBLE_PARTY_TYPE_PI);
         trialDTO.setIdentifier("1");
         trialDTO.setContactEmail("contactEmail@mail.com");
         trialDTO.setContactPhone("contact Phone ");
@@ -294,7 +294,7 @@ public abstract class AbstractRegWebTest {
         dto.setPiCountry("AUS");
         dto.setPiEmail("piE@mail.co");
         dto.setPiPhone("piPhone");
-        dto.setResponsibleParty("Sponsor");
+        dto.setResponsibleParty(TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR);
         dto.setSponsorContactType("Personal");
         dto.setSponsorContactFName("sponsorContactFName");
         dto.setSponsorContactLName("sponsorContactLName");

@@ -122,8 +122,8 @@ import org.hibernate.validator.InvalidValue;
  */
 public class TrialValidator {
     private static final String TRIAL_COMPLETION_DATE = "trialDTO.completionDate";
-    private static String actualString = "Actual";
-    private static String anticipatedString = "Anticipated";
+    private static final String ACTUAL_DATETYPE = "Actual";
+    private static final String ANTICIPATED_DATETYPE = "Anticipated";
     private static final Logger LOG = Logger.getLogger(TrialValidator.class);
     private static final Set<String> TRIAL_STATUS_REQ_SET = new HashSet<String>();
     static {
@@ -232,11 +232,11 @@ public class TrialValidator {
         }
     }
     private void validateRespPartyInfo(TrialDTO trialDto, Map<String, String> fieldErrorMap) {
-       addErrors(trialDto.getResponsiblePartyType(), "ResponsiblePartyNotSelected", "error.submit.ResponsibleParty",
+       addErrors(trialDto.getResponsiblePartyType(), "trialDTO.responsiblePartyType", "error.submit.ResponsibleParty",
             fieldErrorMap);
        addErrors(trialDto.getSponsorIdentifier(), "trialDTO.sponsorIdentifier", "error.submit.sponsor", fieldErrorMap);
-       if (!(trialDto.getResponsiblePartyType().equalsIgnoreCase("PI"))) {
-              addErrors(trialDto.getResponsiblePersonIdentifier(), "ResponsiblePartyNotSelected",
+       if (!TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equalsIgnoreCase(trialDto.getResponsiblePartyType())) {
+              addErrors(trialDto.getResponsiblePersonIdentifier(), "sponsorContactMissing",
               "error.submit.sponsorResponsibleParty", fieldErrorMap);
        }
        addErrors(trialDto.getContactPhone(), "trialDTO.contactPhone", "error.submit.contactPhone", fieldErrorMap);
@@ -302,14 +302,14 @@ public class TrialValidator {
     private void validateCompletionDateType(TrialDTO trialDto, StudyStatusCode newCode,
           Collection<String> addActionError) {
        if (!(StudyStatusCode.COMPLETE == newCode || StudyStatusCode.ADMINISTRATIVELY_COMPLETE == newCode)
-              && !trialDto.getCompletionDateType().equals(anticipatedString)) {
+              && !ANTICIPATED_DATETYPE.equals(trialDto.getCompletionDateType())) {
                 addActionError.add("Trial completion date must be 'Anticipated' when the status is "
                   + "not 'Complete' or 'Administratively Complete'.");
        }
     }
     private void validateStartDateType(TrialDTO trialDto, Collection<String> addActionError, StudyStatusCode newCode) {
         if (!StudyStatusCode.APPROVED.getCode().equals(newCode.getCode()) && !StudyStatusCode.WITHDRAWN.getCode()
-         .equals(newCode.getCode()) && trialDto.getStartDateType().equals(anticipatedString)) {
+         .equals(newCode.getCode()) && ANTICIPATED_DATETYPE.equals(trialDto.getStartDateType())) {
               addActionError.add("Trial start date can be 'Anticipated' only if the status is "
                   + "'Approved' or 'Withdrawn'.");
         }
@@ -319,7 +319,7 @@ public class TrialValidator {
         if (StudyStatusCode.COMPLETE == newCode || StudyStatusCode.ADMINISTRATIVELY_COMPLETE == newCode) {
             StudyOverallStatusDTO oldStatusDto = PaRegistry.getStudyOverallStatusService()
                  .getCurrentByStudyProtocol(IiConverter.convertToIi(trialDto.getIdentifier()));
-            if (trialDto.getCompletionDateType().equals(anticipatedString)) {
+            if (ANTICIPATED_DATETYPE.equals(trialDto.getCompletionDateType())) {
               addActionError.add("Primary Completion Date cannot be 'Anticipated' when "
                     + "Current Trial Status is '" + newCode.getCode() + "'.");
             }
@@ -334,7 +334,7 @@ public class TrialValidator {
             StudyStatusCode newCode, Timestamp newStatusTimestamp, StudyStatusCode oldStatusCode) {
         if (StringUtils.equalsIgnoreCase(StudyStatusCode.APPROVED.getCode(), oldStatusCode.getCode())) {
             valiateTransitionToActiveStatus(trialDto, addActionError, newCode, newStatusTimestamp);
-            if (StudyStatusCode.WITHDRAWN.equals(newCode) && trialDto.getStartDateType().equals(actualString)) {
+            if (StudyStatusCode.WITHDRAWN.equals(newCode) && ACTUAL_DATETYPE.equals(trialDto.getStartDateType())) {
                addActionError.add("Trial Start date type should be 'Anticipated' and Trial Start date "
                     + "should be future date if Trial Status is changed from 'Approved' to 'Withdrawn'.  ");
             }
@@ -347,7 +347,7 @@ public class TrialValidator {
                  addActionError.add("When transitioning from 'Approved' to 'Active' the trial start "
                       + "date must be the same as the status date.");
              }
-             if (!trialDto.getStartDateType().equals(actualString)) {
+             if (!ACTUAL_DATETYPE.equals(trialDto.getStartDateType())) {
                  addActionError.add("When transitioning from 'Approved' to 'Active' "
                       + "the trial start date must be 'Actual'.");
              }

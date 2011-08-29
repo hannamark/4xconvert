@@ -18,6 +18,17 @@ import org.hibernate.validator.NotEmpty;
  *
  */
 public class TrialDTO extends BaseTrialDTO {
+    
+    /**
+     * PI responsible party type. 
+     */
+    public static final String RESPONSIBLE_PARTY_TYPE_PI = "PI";
+    
+    /**
+     * Sponsor responsible party type. 
+     */
+    public static final String RESPONSIBLE_PARTY_TYPE_SPONSOR = "sponsor";
+
     private String accrualReportingMethodCode;
     private String piIdentifier;
     private String piName;

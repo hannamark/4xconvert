@@ -411,7 +411,7 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         tDto = getMockTrialDTO();
         tDto.setIdentifier("1");
         tDto.setDocDtos(getDocumentDtos());
-        tDto.setResponsiblePartyType("Sponsor");
+        tDto.setResponsiblePartyType(TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR);
         tDto.setResponsiblePersonName("responsiblePersonName");
         tDto.setResponsiblePersonIdentifier("12");
         tDto.setResponsibleGenericContactName("responsibleGenericContactName");

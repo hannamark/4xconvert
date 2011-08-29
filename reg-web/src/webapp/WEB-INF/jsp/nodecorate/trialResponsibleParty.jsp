@@ -24,31 +24,47 @@
                 </td>
                 <td>
                 <s:radio name="trialDTO.responsiblePartyType" id="trialDTO.responsiblePartyType" list="#{'PI':'PI', 'sponsor':'Sponsor'}" onclick="manageRespPartyLookUp();"/>
+                 <span class="formErrorMsg">
+                     <s:fielderror>
+                         <s:param>trialDTO.responsiblePartyType</s:param>
+                     </s:fielderror>
+                 </span>
                 </td>
         </tr>
-        <s:if test="trialDTO.responsiblePartyType == 'sponsor'">
-             <tr id="rpcid" >
-              <td scope="row" class="label">
-                <label for="submitTrial_resPartyContactFullName"> <fmt:message key="submit.trial.responsiblePartyContact"/></label>
-              </td>
-              <td class="value">
-              <div id="loadResponsibleContactField">
-                   <%@ include file="/WEB-INF/jsp/nodecorate/trialresponsibleContact.jsp" %>
-              </div>
-              </td>
-             </tr>
-              <tr id="rpgcid">
-                    <td scope="row" class="label">
-                        <label for="submitTrial_resPartyGenericContact"><fmt:message key="submit.trial.responsiblePartyGenericContact"/></label>
-                    </td>
-                    <td class="value">
-                        <div id="loadResponsiblePartyGenericContactField">
-                        <%@ include file="/WEB-INF/jsp/nodecorate/trialResPartyGenericContact.jsp" %>
-                        </div>
-                    </td>
-          </tr>
-         </s:if>
-         <s:else>
+    <s:if test="trialDTO.responsiblePartyType == 'sponsor'">
+        <tr id="rpcid">
+            <td scope="row" class="label"><label for="submitTrial_resPartyContactFullName"> <fmt:message
+                        key="submit.trial.responsiblePartyContact" />
+            </label></td>
+            <td class="value">
+                <div id="loadResponsibleContactField">
+                    <%@ include file="/WEB-INF/jsp/nodecorate/trialresponsibleContact.jsp"%>
+                </div> 
+                <span class="formErrorMsg"> 
+                    <s:fielderror>
+                        <s:param>sponsorContactMissing</s:param>
+                    </s:fielderror> 
+                </span>
+            </td>
+        </tr>
+        <tr id="rpgcid">
+            <td scope="row" class="label"><label for="submitTrial_resPartyGenericContact"><fmt:message
+                        key="submit.trial.responsiblePartyGenericContact" />
+            </label></td>
+            <td class="value">
+                <div id="loadResponsiblePartyGenericContactField">
+                    <%@ include file="/WEB-INF/jsp/nodecorate/trialResPartyGenericContact.jsp"%>
+                </div>
+                <span class="formErrorMsg"> 
+                    <s:fielderror>
+                        <s:param>sponsorContactMissing</s:param>
+                    </s:fielderror> 
+                </span>
+            </td>
+        </tr>
+
+    </s:if>
+    <s:else>
             <tr id="rpcid" style="display:none">
                      <td scope="row" class="label">
                                  <label for="submitTrial_resPartyContactFullName"> <fmt:message key="submit.trial.responsiblePartyContact"/></label>

@@ -19,6 +19,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.OrganizationBatchDTO;
 import gov.nih.nci.registry.dto.PersonBatchDTO;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
+import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.enums.TrialStatusReasonCode;
@@ -131,8 +132,8 @@ public class TrialBatchDataValidator {
         //Sponsor validation
         fieldErr.append(validateSponsorInfo(batchDto));
         if (StringUtils.isNotEmpty(batchDto.getResponsibleParty())
-             && !batchDto.getResponsibleParty().equalsIgnoreCase("Sponsor")
-             && !batchDto.getResponsibleParty().equalsIgnoreCase("PI")) {
+             && !TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR.equalsIgnoreCase(batchDto.getResponsibleParty())
+             && !TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equalsIgnoreCase(batchDto.getResponsibleParty())) {
              fieldErr.append("Please enter valid value for Responsible Party.");
         }
         if (StringUtils.isEmpty(batchDto.getResponsibleParty())) {
@@ -438,7 +439,7 @@ public class TrialBatchDataValidator {
     private StringBuffer validateSponsorContactInfo(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
         if (StringUtils.isNotEmpty(batchDto.getResponsibleParty())
-                && batchDto.getResponsibleParty().equalsIgnoreCase("Sponsor")
+                && TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR.equalsIgnoreCase(batchDto.getResponsibleParty())
                 && StringUtils.isNotEmpty(batchDto.getSponsorContactType())) {
             if (batchDto.getSponsorContactType().equalsIgnoreCase("Personal")) {
                 PersonBatchDTO sponsorContact = buildSponsorContact(batchDto);

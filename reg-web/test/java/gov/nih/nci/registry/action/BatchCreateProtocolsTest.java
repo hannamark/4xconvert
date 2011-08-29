@@ -6,6 +6,7 @@ package gov.nih.nci.registry.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import gov.nih.nci.registry.dto.StudyProtocolBatchDTO;
+import gov.nih.nci.registry.dto.TrialDTO;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -41,7 +42,7 @@ public class BatchCreateProtocolsTest extends AbstractRegWebTest {
           getBatchGrants(dto);
           getBatchIndIde(dto);
           dto.setNihGrantNCIDivisionCode("CCR");
-          dto.setResponsibleParty("pi");
+          dto.setResponsibleParty(TrialDTO.RESPONSIBLE_PARTY_TYPE_PI);
           dto.setSponsorContactPhone("1234567");
           dto.setProtcolDocumentFileName("ProtocolDoc.doc");
           dto.setIrbApprovalDocumentFileName("ProtocolDoc.doc");
@@ -116,7 +117,7 @@ public class BatchCreateProtocolsTest extends AbstractRegWebTest {
           dto.setOtherTrialRelDocumentFileName(null);
           dto.setProtocolHighlightDocFileName(null);
           dto.setChangeRequestDocFileName("ProtocolDoc.doc");
-          dto.setResponsibleParty("sponsor");
+          dto.setResponsibleParty(TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR);
           dto.setSponsorContactType("Generic");
           dto.setResponsibleGenericContactName("responsibleGenericContactName");
           dto.setSponsorContactPhone("sponsorContactPhone");

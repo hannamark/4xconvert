@@ -334,7 +334,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
             Ii responsiblePartyContactIi = null;
             // updated only if the ctGovXmlRequired is true
             if (studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
-                if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
+                if (TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equalsIgnoreCase(trialDTO.getResponsiblePartyType())) {
                     studyContactDTO = util.convertToStudyContactDTO(trialDTO);
                 } else {
                     studySiteContactDTO = util.convertToStudySiteContactDTO(trialDTO);

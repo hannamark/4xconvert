@@ -330,7 +330,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
     public void testReviewWhenRespPartyIsSponsor() throws URISyntaxException{
         trialAction = new AmendmentTrialAction();
         TrialDTO dto = getMockTrialDTO();
-        dto.setResponsiblePartyType("sponsor");
+        dto.setResponsiblePartyType(TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR);
         dto.setResponsiblePersonIdentifier("2");
         dto.setResponsiblePersonName("responsiblePersonName");
         trialAction.setTrialDTO(dto);
@@ -394,7 +394,7 @@ public class AmendmentTrialActionTest extends AbstractRegWebTest {
         trialAction = new AmendmentTrialAction();
         HttpSession sess = new MockHttpSession();
         TrialDTO dto = getMockTrialDTO();
-        dto.setResponsiblePartyType("sponsor");
+        dto.setResponsiblePartyType(TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR);
         dto.setResponsiblePersonIdentifier("2");
         dto.setResponsiblePersonName("responsiblePersonName");
         dto.setDocDtos(getDocumentDtos());

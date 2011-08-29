@@ -166,10 +166,6 @@ public class TrialConvertUtils {
      * **/
     protected static final String NULLIFIED_ORGANIZATION = "Nullified Organization";
     /**
-     * The Constant SPONSOR.
-     **/
-    protected static final String SPONSOR = "sponsor";
-    /**
      * The Constant MAXF.
      **/
     protected static final int MAXF = 1024;

@@ -170,7 +170,7 @@ public class TrialUtil extends TrialConvertUtils {
         List<StudyContactDTO> scDtos = PaRegistry.getStudyContactService().getByStudyProtocol(studyProtocolIi, scDto);
         DSet<Tel> dset = null;
         if (CollectionUtils.isNotEmpty(scDtos)) {
-            trialDTO.setResponsiblePartyType("PI");
+            trialDTO.setResponsiblePartyType(TrialDTO.RESPONSIBLE_PARTY_TYPE_PI);
             scDto = scDtos.get(0);
             dset = scDto.getTelecomAddresses();
         } else {
@@ -178,9 +178,8 @@ public class TrialUtil extends TrialConvertUtils {
             spart.setRoleCode(CdConverter.convertToCd(StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
             List<StudySiteContactDTO> spDtos = PaRegistry.getStudySiteContactService().getByStudyProtocol(
                     studyProtocolIi, spart);
-            trialDTO.setResponsiblePartyType(SPONSOR);
+            trialDTO.setResponsiblePartyType(TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR);
             if (CollectionUtils.isNotEmpty(spDtos)) {
-                trialDTO.setResponsiblePartyType(SPONSOR);
                 spart = spDtos.get(0);
                 dset = spart.getTelecomAddresses();
                 PAContactDTO paDto = getCorrelationUtils().getContactByPAOrganizationalContactId(

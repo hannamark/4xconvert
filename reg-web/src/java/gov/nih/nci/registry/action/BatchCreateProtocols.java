@@ -362,7 +362,7 @@ public class BatchCreateProtocols {
         if (batchDto.isCtGovXmlIndicator()) {
             if (StringUtils.isNotEmpty(batchDto.getResponsibleParty())) {
                 trialDTO.setResponsiblePartyType(batchDto.getResponsibleParty());
-                if (batchDto.getResponsibleParty().equalsIgnoreCase("sponsor")) {
+                if (TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR.equalsIgnoreCase(batchDto.getResponsibleParty())) {
                     trialDTO.setContactEmail(batchDto.getSponsorContactEmail());
                     trialDTO.setContactPhone(batchDto.getSponsorContactPhone());
                     if (batchDto.getSponsorContactType().equalsIgnoreCase(strPersonal)) {
@@ -375,8 +375,7 @@ public class BatchCreateProtocols {
                     }
                 }
             }
-            if (StringUtils.isNotEmpty(batchDto.getResponsibleParty())
-                    && batchDto.getResponsibleParty().equalsIgnoreCase("Sponsor")) {
+            if (TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR.equalsIgnoreCase(batchDto.getResponsibleParty())) {
                 if (batchDto.getSponsorContactType().equalsIgnoreCase(strPersonal)) {
                     PersonBatchDTO sponsorPersonDto = dataValidator.buildSponsorContact(batchDto);
                     responsiblePersonId = lookUpPersons(sponsorPersonDto);
@@ -515,7 +514,7 @@ public class BatchCreateProtocols {
         StudyRegulatoryAuthorityDTO studyRegAuthDTO = new StudyRegulatoryAuthorityDTO();
         if (trialDTO.isXmlRequired()) {
             sponsorOrgDTO = util.convertToSponsorOrgDTO(trialDTO);
-            if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
+            if (TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equalsIgnoreCase(trialDTO.getResponsiblePartyType())) {
                 studyContactDTO = util.convertToStudyContactDTO(trialDTO);
             } else {
                 studySiteContactDTO = util.convertToStudySiteContactDTO(trialDTO);
@@ -687,7 +686,7 @@ public class BatchCreateProtocols {
         // check ctgovxml indicator is true
         if (batchDTO.isCtGovXmlIndicator()) {
             trialDTO.setResponsiblePartyType(batchDTO.getResponsibleParty());
-            if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("pi")) {
+            if (TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equalsIgnoreCase(trialDTO.getResponsiblePartyType())) {
                 trialDTO.setContactEmail(batchDTO.getPiEmail());
                 trialDTO.setContactPhone(batchDTO.getPiPhone());
             } else {
@@ -741,7 +740,7 @@ public class BatchCreateProtocols {
             // check if Sponsor Contact is needed if needed the the lookup ahead to catch other Validation error
             // look up new Person or create if needed.
 
-            if (batchDTO.getResponsibleParty().equalsIgnoreCase("Sponsor")) {
+            if (TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR.equalsIgnoreCase(batchDTO.getResponsibleParty())) {
                 if (batchDTO.getSponsorContactType().equalsIgnoreCase("Personal")) {
                     PersonBatchDTO sponsorPersonDto = dataValidator.buildSponsorContact(batchDTO);
                     responsiblePersonId = lookUpPersons(sponsorPersonDto);

@@ -475,7 +475,7 @@ public class SearchTrialAction extends ActionSupport {
     private void getReponsibleParty(TrialDTO trialDTO, boolean maskFields) throws PAException, NullifiedRoleException {
         if (!maskFields) {
             ServletActionContext.getRequest().setAttribute(Constants.RESP_PARTY, trialDTO.getResponsiblePartyType());
-            if (trialDTO.getResponsiblePartyType().equalsIgnoreCase("Sponsor")) {
+            if (TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR.equalsIgnoreCase(trialDTO.getResponsiblePartyType())) {
                 if (StringUtils.isNotEmpty(trialDTO.getResponsiblePersonName())) {
                     ServletActionContext.getRequest().setAttribute(Constants.RESP_PARTY_CONTACT,
                             trialDTO.getResponsiblePersonName());
@@ -485,7 +485,8 @@ public class SearchTrialAction extends ActionSupport {
                             trialDTO.getResponsibleGenericContactName());
                 }
             }
-            ServletActionContext.getRequest().setAttribute(Constants.SPONSOR, trialDTO.getSponsorName());
+            ServletActionContext.getRequest().setAttribute(TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR,
+                    trialDTO.getSponsorName());
             ServletActionContext.getRequest().setAttribute(Constants.RESP_PARTY_PHONE, trialDTO.getContactPhone());
             ServletActionContext.getRequest().setAttribute(Constants.RESP_PARTY_EMAIL, trialDTO.getContactEmail());
         }

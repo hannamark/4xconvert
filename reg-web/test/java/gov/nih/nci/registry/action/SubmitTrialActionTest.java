@@ -222,7 +222,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     public void testCreateWithRespPartyAsSponsor(){
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
-        dto.setResponsiblePartyType("sponsor");
+        dto.setResponsiblePartyType(TrialDTO.RESPONSIBLE_PARTY_TYPE_SPONSOR);
         dto.setResponsiblePersonIdentifier("3");
         HttpSession sess = new MockHttpSession();
         sess.setAttribute("trialDTO", dto);

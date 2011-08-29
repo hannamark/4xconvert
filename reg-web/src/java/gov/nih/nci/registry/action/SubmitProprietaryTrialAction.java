@@ -277,7 +277,11 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
              }
 
         } catch (PAException e) {
-            LOG.error(e);
+            setDocumentsInSession();
+            addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
+            return ERROR;
+        } catch (Exception e) {
+            LOG.error("Error creating trial", e);
             setDocumentsInSession();
             addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
             return ERROR;
@@ -355,7 +359,10 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
             ServletActionContext.getRequest().setAttribute("partialSubmission", "submit");
             ServletActionContext.getRequest().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
         } catch (PAException e) {
-            LOG.error(e.getLocalizedMessage());
+            addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
+            return ERROR;
+        } catch (Exception e) {
+            LOG.error("Error saving draft", e);
             addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
             return ERROR;
         }
