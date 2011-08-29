@@ -96,7 +96,6 @@ import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
@@ -115,14 +114,8 @@ public class CountryBean implements CountryService {
         if (ISOUtil.isIiNull(ii)) {
             throw new PAException("Called getCountry() with Ii == null.");
         }
-        Country bo = null;
-        Session session = null;
-        try {
-            session = PaHibernateUtil.getCurrentSession();
-            bo = (Country) session.get(Country.class, IiConverter.convertToLong(ii));
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in getCountry().", hbe);
-        }
+        Session session = PaHibernateUtil.getCurrentSession();
+        Country bo = (Country) session.get(Country.class, IiConverter.convertToLong(ii));
         if (bo == null) {
             throw new PAException("Country not found.");
         }
@@ -135,35 +128,25 @@ public class CountryBean implements CountryService {
     @SuppressWarnings("unchecked")
     public List<Country> getCountries() throws PAException {
         List<Country> countryDtos = new ArrayList<Country>();
-        Session session = null;
-        try {
-            Set<String> dupCountryFilter = new HashSet<String>();
-            session = PaHibernateUtil.getCurrentSession();
-            List<Country> results = session.createQuery(
-                    "select country from RegulatoryAuthority as ra "
-                            + "order by ra.country.name ").list();
-            for (int i = 0; i < results.size(); i++) {
-                Country resCountry = results.get(i);
-                if (dupCountryFilter.add(resCountry.getAlpha3())) {
-                    countryDtos.add(resCountry);
-                }
+        Session  session = PaHibernateUtil.getCurrentSession();
+        Set<String> dupCountryFilter = new HashSet<String>();
+        List<Country> results = session.createQuery("select country from RegulatoryAuthority as ra "
+                + "order by ra.country.name ").list();
+        for (int i = 0; i < results.size(); i++) {
+            Country resCountry = results.get(i);
+            if (dupCountryFilter.add(resCountry.getAlpha3())) {
+                countryDtos.add(resCountry);
             }
-        } catch (HibernateException hbe) {
-            throw new PAException("Exception at getDistinctCountryNames", hbe);
         }
         return countryDtos;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public Country getByCode(String code) throws PAException {
         Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(Country.class);
         criteria.add(Restrictions.eq("alpha2", code));
-        try {
-            return (Country) criteria.uniqueResult();
-        } catch (HibernateException e) {
-            throw new PAException("Error retrieving country for code: " + code, e);
-        }
+        return (Country) criteria.uniqueResult();
     }
 }

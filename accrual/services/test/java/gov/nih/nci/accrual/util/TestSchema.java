@@ -87,6 +87,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Patient;
 import gov.nih.nci.pa.domain.PerformedSubjectMilestone;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.domain.SDCDisease;
 import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
@@ -573,6 +574,16 @@ public class TestSchema {
         ru.setPoPersonId(IiConverter.convertToLong(MockPoPersonEntityService.personList.get(0).getIdentifier()));
         ru.setState("MD");
         addUpdObject(ru);
+        
+        RegulatoryAuthority ra = new RegulatoryAuthority();
+        ra.setAuthorityName("Food and Drug Administration");
+        ra.setCountry(c);
+        addUpdObject(ra);
+        
+        ra = new RegulatoryAuthority();
+        ra.setAuthorityName("CIA");
+        ra.setCountry(c);
+        addUpdObject(ra);
 
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();

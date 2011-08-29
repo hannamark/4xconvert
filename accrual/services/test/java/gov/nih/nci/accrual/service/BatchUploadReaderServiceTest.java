@@ -180,7 +180,7 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         BatchFile batchFile = getBatchFile(file);
         List<BatchValidationResults> validationResults = readerService.validateBatchData(batchFile);
         readerService.sendValidationErrorEmail(validationResults, batchFile);
-        assertEquals(2, validationResults.size());
+        assertEquals(3, validationResults.size());
         for (BatchValidationResults result : validationResults) {
             assertTrue(result.isPassedValidation());
             assertTrue(StringUtils.isEmpty(result.getErrors().toString()));
@@ -269,15 +269,23 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
 
         List<BatchImportResults> importResults = readerService.importBatchData(batchFile);
         readerService.sendConfirmationEmail(importResults, batchFile);
-        assertEquals(2, importResults.size());
-        assertEquals(72, importResults.get(0).getTotalImports());
-        assertEquals("CDUS_Abbreviated.txt", importResults.get(0).getFileName());
-        assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
-
-        assertEquals(24, importResults.get(1).getTotalImports());
-        assertEquals("CDUS_Complete.txt", importResults.get(1).getFileName());
+        
+        assertEquals(24, importResults.get(0).getTotalImports());
+        assertEquals("CDUS_Complete.txt", importResults.get(0).getFileName());
         assertEquals(24, studySubjectService.getByStudyProtocol(completeIi).size());
+        
+        assertEquals(3, importResults.size());
+        assertEquals(72, importResults.get(1).getTotalImports());
+        assertEquals("CDUS_Abbreviated.txt", importResults.get(1).getFileName());
+        assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
+        
+        assertEquals(72, importResults.get(2).getTotalImports());
+        assertEquals("cdus-abbreviated-prevention-study.txt", importResults.get(2).getFileName());
+        assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
+        
         verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+        
+        
     }
     
 

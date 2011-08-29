@@ -154,7 +154,7 @@ public final class BatchFileIndex {
     /**
      * patient registering institution id index.
      */
-    public static final int PATIENT_REG_INST_ID_INDEX = 10;
+    public static final int PATIENT_REG_INST_ID_INDEX = 11;
 
     /**
      * patient disease index.
