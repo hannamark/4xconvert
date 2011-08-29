@@ -272,91 +272,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
         addErrors(err);
         validateDocuments();
     }
-
-    /**
-     * @param response servletResponse
-     */
-    public void setServletResponse(HttpServletResponse response) {
-        this.servletResponse = response;
-    }
-
-    /**
-     * @return servletResponse
-     */
-    public HttpServletResponse getServletResponse() {
-        return servletResponse;
-    }
-
-    /**
-     * @return id
-     */
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * @param id id
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * @return cbValue
-     */
-    public Long getCbValue() {
-        return cbValue;
-    }
-
-    /**
-     * @param cbValue cbValue
-     */
-    public void setCbValue(Long cbValue) {
-        this.cbValue = cbValue;
-    }
-
-    /**
-     * @return page
-     */
-    public String getPage() {
-        return page;
-    }
-
-    /**
-     * @param page page
-     */
-    public void setPage(String page) {
-        this.page = page;
-    }
-
-    /**
-     * @param trialAction the trialAction to set
-     */
-    public void setTrialAction(String trialAction) {
-        this.trialAction = trialAction;
-    }
-
-    /**
-     * @return the trialAction
-     */
-    public String getTrialAction() {
-        return trialAction;
-    }
-
-    /**
-     * @return the trialDTO
-     */
-    public TrialDTO getTrialDTO() {
-        return trialDTO;
-    }
-
-    /**
-     * @param trialDTO the trialDTO to set
-     */
-    public void setTrialDTO(TrialDTO trialDTO) {
-        this.trialDTO = trialDTO;
-    }
-
+   
     /**
      *
      * @return s
@@ -533,6 +449,101 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
         return REDIRECT_TO_SEARCH;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
+    public void prepare() throws Exception {
+        if (this.trialDTO != null) {
+            this.trialDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
+                    .lookupPrimaryPurposeAdditionalQualifierCode(this.trialDTO.getPrimaryPurposeCode()));
+        }
+    }
+    
+    /**
+     * @param response servletResponse
+     */
+    public void setServletResponse(HttpServletResponse response) {
+        this.servletResponse = response;
+    }
+
+    /**
+     * @return servletResponse
+     */
+    public HttpServletResponse getServletResponse() {
+        return servletResponse;
+    }
+
+    /**
+     * @return id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * @param id id
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
+     * @return cbValue
+     */
+    public Long getCbValue() {
+        return cbValue;
+    }
+
+    /**
+     * @param cbValue cbValue
+     */
+    public void setCbValue(Long cbValue) {
+        this.cbValue = cbValue;
+    }
+
+    /**
+     * @return page
+     */
+    public String getPage() {
+        return page;
+    }
+
+    /**
+     * @param page page
+     */
+    public void setPage(String page) {
+        this.page = page;
+    }
+
+    /**
+     * @param trialAction the trialAction to set
+     */
+    public void setTrialAction(String trialAction) {
+        this.trialAction = trialAction;
+    }
+
+    /**
+     * @return the trialAction
+     */
+    public String getTrialAction() {
+        return trialAction;
+    }
+
+    /**
+     * @return the trialDTO
+     */
+    public TrialDTO getTrialDTO() {
+        return trialDTO;
+    }
+
+    /**
+     * @param trialDTO the trialDTO to set
+     */
+    public void setTrialDTO(TrialDTO trialDTO) {
+        this.trialDTO = trialDTO;
+    }
+    
 
     /**
      * @param sum4FundingCatCode the sum4FundingCatCode to set
@@ -549,14 +560,5 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
          return sum4FundingCatCode;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public void prepare() throws Exception {
-        if (this.trialDTO != null) {
-            this.trialDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
-                    .lookupPrimaryPurposeAdditionalQualifierCode(this.trialDTO.getPrimaryPurposeCode()));
-        }
-    }
+
 }

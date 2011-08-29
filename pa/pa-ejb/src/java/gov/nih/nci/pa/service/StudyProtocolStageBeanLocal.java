@@ -486,9 +486,8 @@ public class StudyProtocolStageBeanLocal extends AbstractBaseSearchBean<StudyPro
         fileName.append(File.separator).append(docDTO.getIdentifier().getExtension()).append('-').append(
                 docDTO.getFileName().getValue());
         File fileToUpload = new File(folderPath + File.separator + fileName);
-        try {
-            FileUtils.deleteQuietly(fileToUpload);
-            FileUtils.writeStringToFile(fileToUpload, docDTO.getText().getData().toString());
+        try {            
+            FileUtils.writeByteArrayToFile(fileToUpload, docDTO.getText().getData());           
         } catch (IOException e) {
                 throw new PAException("save draft - Error during uploading file.", e);
         }
