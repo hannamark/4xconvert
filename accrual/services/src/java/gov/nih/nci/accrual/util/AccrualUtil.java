@@ -97,8 +97,6 @@ import java.util.Date;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import com.fiveamsolutions.nci.commons.util.UsernameHolder;
-
 /**
  *
  * @author Hugh Reinhart
@@ -227,7 +225,7 @@ public class AccrualUtil {
      */
     public static boolean isUserAllowedAccrualAccess(Ii studySiteIi)
         throws PAException {
-        User user = AccrualCsmUtil.getInstance().getCSMUser(UsernameHolder.getUser());
+        User user = AccrualCsmUtil.getInstance().getCSMUser(CaseSensitiveUsernameHolder.getUser());
 
         RegistryUser regUser = PaServiceLocator.getInstance()
             .getRegistryUserService().getUser(user.getLoginName());

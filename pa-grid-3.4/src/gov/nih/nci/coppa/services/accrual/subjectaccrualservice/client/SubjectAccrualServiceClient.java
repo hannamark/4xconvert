@@ -9,6 +9,7 @@ import gov.nih.nci.coppa.services.pa.Ed;
 import gov.nih.nci.coppa.services.pa.client.util.ClientParameterHelper;
 import gov.nih.nci.coppa.services.pa.faults.PAFault;
 import gov.nih.nci.coppa.services.pa.grid.ISOUtils;
+import gov.nih.nci.iso21090.extensions.Id;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
@@ -97,6 +98,10 @@ public class SubjectAccrualServiceClient extends SubjectAccrualServiceClientBase
     @GridTestMethod
     private static void manageSubjectAccruals(SubjectAccrualServiceClient client) throws RemoteException, PAFault, IndexedInputValidationFault {
         System.out.println("Managing Subject Accruals");
+        ClientUtils.print(getManageAccrualResult(client));
+    }
+
+    private static StudySubject[] getManageAccrualResult(SubjectAccrualServiceClient client) throws PAFault, IndexedInputValidationFault, RemoteException {
         TS birthDate = new TS();
         birthDate.setValue("20110101000000.0000-0500");
 
@@ -131,9 +136,17 @@ public class SubjectAccrualServiceClient extends SubjectAccrualServiceClientBase
         subject = results[0];
         subject.setAssignedIdentifier(ISOUtils.buildST("Grid-Subject-1-Edit"));
         studySubjects = new StudySubject[] {subject};
-        client.manageSubjectAccruals(studySubjects);
-        ClientUtils.print(results);
+        return client.manageSubjectAccruals(studySubjects);
     }
+
+    @GridTestMethod
+    private static void deleteSubjectAccruals(SubjectAccrualServiceClient client) throws RemoteException, PAFault, IndexedInputValidationFault {
+        System.out.println("Delete Subject Accruals");
+        StudySubject[] result = getManageAccrualResult(client);
+        Id deleteIi = new Id();
+        deleteIi.setExtension(result[0].getIdentifier().getExtension());
+        client.deleteSubjectAccrual(deleteIi);
+     }
 
     @GridTestMethod
     private static void submitBataData(SubjectAccrualServiceClient client) throws RemoteException, IOException, PAFault {
@@ -149,6 +162,7 @@ public class SubjectAccrualServiceClient extends SubjectAccrualServiceClientBase
         client.submitBatchData(batchData);
     }
 
+    @Override
     public gov.nih.nci.coppa.services.accrual.StudySubject[] manageSubjectAccruals(gov.nih.nci.coppa.services.accrual.StudySubject[] studySubjects) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault, gov.nih.nci.coppa.services.accrual.faults.IndexedInputValidationFault {
         synchronized(portTypeMutex){
             configureStubSecurity((Stub)portType,"manageSubjectAccruals");
@@ -161,6 +175,7 @@ public class SubjectAccrualServiceClient extends SubjectAccrualServiceClientBase
         }
     }
 
+    @Override
     public void deleteSubjectAccrual(gov.nih.nci.iso21090.extensions.Id subjectAccrualdenfier) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         synchronized(portTypeMutex){
             configureStubSecurity((Stub)portType,"deleteSubjectAccrual");
@@ -172,6 +187,7 @@ public class SubjectAccrualServiceClient extends SubjectAccrualServiceClientBase
         }
     }
 
+    @Override
     public void submitBatchData(gov.nih.nci.coppa.services.pa.Ed batchData) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         synchronized(portTypeMutex){
             configureStubSecurity((Stub)portType,"submitBatchData");
@@ -183,6 +199,7 @@ public class SubjectAccrualServiceClient extends SubjectAccrualServiceClientBase
         }
     }
 
+    @Override
     public gov.nih.nci.coppa.services.accrual.StudySubject[] search(gov.nih.nci.iso21090.extensions.Id studyProtocolIdentifer,gov.nih.nci.iso21090.extensions.Id participatingSiteIdentifier,gov.nih.nci.coppa.services.accrual.Ts startDate,gov.nih.nci.coppa.services.accrual.Ts endDate,gov.nih.nci.coppa.common.LimitOffset pagingParams) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault, gov.nih.nci.coppa.common.faults.TooManyResultsFault {
         synchronized(portTypeMutex){
             configureStubSecurity((Stub)portType,"search");
@@ -207,6 +224,7 @@ public class SubjectAccrualServiceClient extends SubjectAccrualServiceClientBase
         }
     }
 
+    @Override
     public void updateSubjectAccrualCount(gov.nih.nci.iso21090.extensions.Id participatingSiteIdentifier,gov.nih.nci.coppa.services.accrual.Integer accrualCount) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
         synchronized(portTypeMutex){
             configureStubSecurity((Stub)portType,"updateSubjectAccrualCount");

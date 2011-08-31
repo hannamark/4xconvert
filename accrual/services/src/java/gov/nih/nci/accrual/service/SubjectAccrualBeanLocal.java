@@ -188,6 +188,10 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         }
         List<SubjectAccrualDTO> results = new ArrayList<SubjectAccrualDTO>();
         for (SubjectAccrualDTO subject : subjects) {
+            if (!AccrualUtil.isUserAllowedAccrualAccess(subject.getParticipatingSiteIdentifier())) {
+                throw new PAException("User does not have accrual access to site " 
+                        + subject.getParticipatingSiteIdentifier().getExtension());
+            }
             if (ISOUtil.isIiNull(subject.getIdentifier())) {
                 results.add(create(subject));
             } else {

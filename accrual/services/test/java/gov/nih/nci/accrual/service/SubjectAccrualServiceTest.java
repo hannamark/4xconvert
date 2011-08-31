@@ -208,24 +208,25 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
 
     }
+    
+    @Test 
+    public void manageSubjectAccrualsUserAuthFailure() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("User does not have accrual access to site 1"); 
+        SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(
+                TestSchema.participatingSites.get(0).getId()),
+                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));        
+        bean.manageSubjectAccruals(Arrays.asList(dto));
+    }
 
     @Test
     public void manageSubjectAccruals() throws Exception {
         List<SubjectAccrualDTO> results = bean.manageSubjectAccruals(new ArrayList<SubjectAccrualDTO>());
         assertTrue(results.isEmpty());
         
-        SubjectAccrualDTO dto = new SubjectAccrualDTO();
-        dto.setAssignedIdentifier(StConverter.convertToSt("Patient-1"));
-        dto.setBirthDate(AccrualUtil.yearMonthStringToTs("01/2000"));
-        dto.setGender(CdConverter.convertToCd(PatientGenderCode.MALE));
-        dto.setEthnicity(CdConverter.convertToCd(PatientEthnicityCode.NOT_HISPANIC));
-        dto.setRace(DSetConverter.convertCdListToDSet(Arrays.asList(CdConverter.convertToCd(PatientRaceCode.AMERICAN_INDIAN))));
-        dto.setCountryCode(CdConverter.convertStringToCd(TestSchema.countries.get(0).getAlpha2()));
-        dto.setZipCode(StConverter.convertToSt("22222"));
-        dto.setRegistrationDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/01/2000")));
-        dto.setPaymentMethod(CdConverter.convertToCd(PaymentMethodCode.MEDICAID));
-        dto.setDiseaseIdentifier(IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
-        dto.setParticipatingSiteIdentifier(IiConverter.convertToIi(TestSchema.participatingSites.get(0).getId()));
+        StudySite ss = createAccessibleStudySite(); 
+        SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
+                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));        
         
         results = bean.manageSubjectAccruals(Arrays.asList(dto));
         assertEquals(1, results.size());
