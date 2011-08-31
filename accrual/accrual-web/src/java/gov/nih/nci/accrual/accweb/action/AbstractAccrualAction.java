@@ -80,6 +80,7 @@ import gov.nih.nci.accrual.accweb.util.AccrualConstants;
 import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectService;
+import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.service.batch.BatchFileService;
 import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
@@ -121,6 +122,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     private PlannedActivityServiceRemote plannedActivitySvc;
     private CdusBatchUploadReaderServiceLocal cdusBatchUploadReaderSvc;
     private BatchFileService batchFileSvc;
+    private SubjectAccrualServiceLocal subjectAccrualSvc;
 
     /**
      * {@inheritDoc}
@@ -138,6 +140,7 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
         icd9DiseaseSvc = PaServiceLocator.getInstance().getICD9DiseaseService();
         plannedActivitySvc = PaServiceLocator.getInstance().getPlannedActivityService();
         batchFileSvc = AccrualServiceLocator.getInstance().getBatchFileService();
+        subjectAccrualSvc = AccrualServiceLocator.getInstance().getSubjectAccrualService();
     }
     /**
      * Default execute method for action classes.
@@ -268,4 +271,12 @@ public abstract class AbstractAccrualAction extends ActionSupport implements Pre
     public BatchFileService getBatchFileSvc() {
         return batchFileSvc;
     }
+    
+    /**
+     * @return the subjectAccrualSvc
+     */
+    public SubjectAccrualServiceLocal getSubjectAccrualSvc() {
+        return subjectAccrualSvc;
+    }    
+    
 }

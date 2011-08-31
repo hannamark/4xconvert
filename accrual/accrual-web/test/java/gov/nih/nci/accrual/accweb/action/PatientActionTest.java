@@ -83,6 +83,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
 
 import gov.nih.nci.accrual.accweb.dto.util.DiseaseWebDTO;
 import gov.nih.nci.accrual.accweb.dto.util.PatientWebDto;
@@ -93,6 +94,7 @@ import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
+import gov.nih.nci.pa.iso.util.IiConverter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -189,6 +191,13 @@ public class PatientActionTest extends AbstractAccrualActionTest {
     public void deleteTest() throws Exception {
         action.setSelectedRowIdentifier("1");
         assertEquals(ActionSupport.SUCCESS,action.delete());
+    }
+    
+    @Test
+    public void deleteTestDeleteInvoke() throws Exception {              
+        action.setSelectedRowIdentifier("1");        
+        action.delete();               
+        verify(action.getSubjectAccrualSvc()).deleteSubjectAccrual(IiConverter.convertToIi("1"));      
     }
 
     @Override

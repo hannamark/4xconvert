@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.util;
 import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectService;
+import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.service.batch.BatchFileService;
 import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
@@ -137,4 +138,9 @@ public interface ServiceLocatorAccInterface {
      * @return the batch file service
      */
     BatchFileService getBatchFileService();
+    
+    /**
+     * @return the Subject Accrual Service
+     */
+    SubjectAccrualServiceLocal getSubjectAccrualService();
 }

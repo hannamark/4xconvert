@@ -77,9 +77,11 @@
 package gov.nih.nci.accrual.accweb.util;
 
 import static org.mockito.Mockito.mock;
+
 import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectService;
+import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.service.batch.BatchFileService;
 import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
@@ -105,6 +107,7 @@ public class MockServiceLocator implements ServiceLocatorAccInterface {
         mock(CdusBatchUploadReaderServiceLocal.class);
     private final SubjectAccrualCountService subjectAccrualCountService = mock(SubjectAccrualCountService.class);
     private final BatchFileService batchFileSvc = mock(BatchFileService.class);
+    private final SubjectAccrualServiceLocal subjectAccrualServiceLocal = mock(SubjectAccrualServiceLocal.class);
     
     /**
      * {@inheritDoc}
@@ -169,4 +172,13 @@ public class MockServiceLocator implements ServiceLocatorAccInterface {
     public BatchFileService getBatchFileService() {
         return batchFileSvc;
     }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SubjectAccrualServiceLocal getSubjectAccrualService() {
+        return subjectAccrualServiceLocal;
+    }
+    
+    
 }

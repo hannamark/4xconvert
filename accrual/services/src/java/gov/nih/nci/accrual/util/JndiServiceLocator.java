@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.util;
 import gov.nih.nci.accrual.service.PatientService;
 import gov.nih.nci.accrual.service.PerformedActivityService;
 import gov.nih.nci.accrual.service.StudySubjectService;
+import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.service.batch.BatchFileService;
 import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
 import gov.nih.nci.accrual.service.util.CountryService;
@@ -164,4 +165,14 @@ public class JndiServiceLocator implements ServiceLocatorAccInterface {
     public BatchFileService getBatchFileService() {
         return (BatchFileService) JNDIUtil.lookup("accrual/BatchFileServiceBeanLocal/local");
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SubjectAccrualServiceLocal getSubjectAccrualService() {
+        return (SubjectAccrualServiceLocal) JNDIUtil.lookup("accrual/SubjectAccrualBeanLocal/local");
+    }
+    
+    
 }

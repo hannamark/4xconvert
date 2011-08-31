@@ -100,11 +100,9 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.ISOUtil;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -242,10 +240,11 @@ public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> 
      */
     @Override
     public String delete() throws PAException {
-        StudySubjectDto dto = getStudySubjectSvc().get(IiConverter.convertToIi(getSelectedRowIdentifier()));
-        dto.setStatusCode(CdConverter.convertStringToCd(deletedStatusCode));
-        dto.getStatusDateRange().setHigh(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        getStudySubjectSvc().update(dto);
+        try {
+            getSubjectAccrualSvc().deleteSubjectAccrual(IiConverter.convertToIi(getSelectedRowIdentifier()));
+        } catch (PAException e) {
+            LOG.error("Error in PatientAction.delete().", e);
+        }
         return super.delete();
     }
 

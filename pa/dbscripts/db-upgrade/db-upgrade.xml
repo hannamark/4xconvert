@@ -750,4 +750,8 @@
         <comment>Update draft responsible party types from pi to PI.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3955.sql"/>
      </changeSet>
+     <changeSet id="PO-3975" author="merenkoi">
+        <comment>Accrual Web Interface - delete subject doesn't delete subject.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3975.sql"/>
+     </changeSet>
 </databaseChangeLog>
