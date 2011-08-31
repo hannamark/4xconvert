@@ -161,11 +161,19 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     private SubjectAccrualBeanLocal bean;
-    public SubjectAccrualCountService accCountSvc;
-    public StudySiteServiceRemote studySiteSvc;
+    private SubjectAccrualCountService accCountSvc;
+    private StudySiteServiceRemote studySiteSvc;
+    private StudySite participatingSite;
     
     @Before
     public void setUp() throws Exception {
+        participatingSite = new StudySite();
+        participatingSite.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        participatingSite.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        participatingSite.setStudyProtocol(TestSchema.studyProtocols.get(0));
+        participatingSite.setHealthCareFacility(TestSchema.healthCareFacilities.get(2));
+        TestSchema.addUpdObject(participatingSite);
+        
         RegistryUserServiceRemote regSvc = mock(RegistryUserServiceRemote.class);
         when(regSvc.getUser(any(String.class))).thenReturn(TestSchema.registryUsers.get(0));
         when(paSvcLocator.getRegistryUserService()).thenReturn(regSvc);
@@ -192,10 +200,9 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         bean.setPerformedActivityService(performedActivitySvc);
         bean.setCountryService(new CountryBean());
         bean.setBatchFileService(new BatchFileServiceBeanLocal());
-        bean.setBatchService(readerService);
         
         studySiteSvc = mock(StudySiteServiceRemote.class);
-        when(studySiteSvc.get(any(Ii.class))).thenReturn(Converters.get(StudySiteConverter.class).convertFromDomainToDto(TestSchema.participatingSites.get(0)));        
+        when(studySiteSvc.get(any(Ii.class))).thenReturn(Converters.get(StudySiteConverter.class).convertFromDomainToDto(participatingSite));        
         
         ICD9DiseaseServiceRemote icd9DiseaseSvc = mock(ICD9DiseaseServiceRemote.class);
         
@@ -203,7 +210,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         when(paSvcLocator.getStudySiteService()).thenReturn(studySiteSvc);
         ServiceLocatorAccInterface accSvcLocator = mock(ServiceLocatorAccInterface.class);
         when(accSvcLocator.getPerformedActivityService()).thenReturn(performedActivitySvc);
-        
+        when(accSvcLocator.getBatchUploadReaderService()).thenReturn(readerService);
         AccrualServiceLocator.getInstance().setServiceLocator(accSvcLocator);
         PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
 
@@ -451,7 +458,35 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
                     TsConverter.convertToTs(startDate), TsConverter.convertToTs(endDate), pagingParams);
         verify(studySubjectService).search(studyIdentifier, participatingSiteIdentifier, startDate, endDate,
                                            pagingParams);
-
+    }
+        
+    @Test
+    public void deleteAll() throws Exception {
+        List<SubjectAccrualDTO> sas = new ArrayList<SubjectAccrualDTO>();
+        StudySite ss = createAccessibleStudySite();
+        SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
+                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
+        sas.add(dto);
+        dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
+                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
+        sas.add(dto);
+        
+        dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
+                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
+        sas.add(dto);
+        
+        List<SubjectAccrualDTO> results = bean.manageSubjectAccruals(sas);
+        assertEquals(3, results.size());
+        
+        LimitOffset pagingParams = new LimitOffset(100, 0);
+        Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(ss.getStudyProtocol().getId());
+        Ii studySiteIi = IiConverter.convertToStudySiteIi(ss.getId());
+        results = bean.search(studyProtocolIi, studySiteIi, null, null, pagingParams);
+        assertEquals(3, results.size());
+        
+        bean.deleteAll(studySiteIi);
+        results = bean.search(studyProtocolIi, studySiteIi, null, null, pagingParams);
+        assertEquals(0, results.size());
     }
     
     private void validateSubjectAccrualDTO(SubjectAccrualDTO expected, SubjectAccrualDTO given) {

@@ -83,6 +83,7 @@
 package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.service.PAException;
 
 import javax.ejb.Local;
@@ -108,5 +109,12 @@ public interface SubjectAccrualServiceLocal extends SubjectAccrualServiceRemote 
      * @throws PAException on error
      */
     SubjectAccrualDTO update(SubjectAccrualDTO dto) throws PAException;
-
+    
+    
+    /**
+     * Deletes all the subject accruals accrued to the give study site.
+     * @param studySiteIi the identifier of the study site
+     * @throws PAException on error
+     */
+    void deleteAll(Ii studySiteIi) throws PAException;
 }

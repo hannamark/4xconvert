@@ -86,22 +86,25 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.service.PatientBeanLocal;
 import gov.nih.nci.accrual.service.PerformedActivityBean;
 import gov.nih.nci.accrual.service.StudySubjectBean;
 import gov.nih.nci.accrual.service.StudySubjectServiceLocal;
+import gov.nih.nci.accrual.service.SubjectAccrualBeanLocal;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.service.util.CountryBean;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.accrual.service.util.POPatientBean;
+import gov.nih.nci.accrual.service.util.SearchStudySiteBean;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
+import gov.nih.nci.accrual.service.util.SubjectAccrualCountBean;
 import gov.nih.nci.accrual.util.AbstractAccrualHibernateTestCase;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.accrual.util.PoServiceLocator;
+import gov.nih.nci.accrual.util.ServiceLocatorAccInterface;
 import gov.nih.nci.accrual.util.ServiceLocatorPaInterface;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.iso21090.Ad;
@@ -109,17 +112,23 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.iso.convert.Converters;
+import gov.nih.nci.pa.iso.convert.StudySiteConverter;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.EnPnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
@@ -211,9 +220,9 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
                 return dto;
             }
         });
+        when(spSvc.getStudyProtocol(any(Ii.class))).thenReturn(new StudyProtocolDTO());
 
-        SearchStudySiteService sssSvc = mock(SearchStudySiteService.class);
-        when(sssSvc.getStudySiteByOrg(any(Ii.class), any(Ii.class))).thenReturn(new SearchStudySiteResultDto());
+        SearchStudySiteService sssSvc = new SearchStudySiteBean();
         readerService.setSearchStudySiteService(sssSvc);
         cdusBatchUploadDataValidator.setSearchStudySiteService(sssSvc);
 
@@ -268,17 +277,45 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
                 return null;
             }
         });
-
+        
+        ICD9DiseaseServiceRemote icd9DiseaseSvc = mock(ICD9DiseaseServiceRemote.class);
+        
+        SubjectAccrualBeanLocal subjectAccrualSvc = new SubjectAccrualBeanLocal();
+        subjectAccrualSvc.setBatchFileService(new BatchFileServiceBeanLocal());
+        subjectAccrualSvc.setCountryService(countryService);
+        subjectAccrualSvc.setPatientService(patientBean);
+        subjectAccrualSvc.setPerformedActivityService(new PerformedActivityBean());
+        subjectAccrualSvc.setStudySubjectService(studySubjectService);
+        subjectAccrualSvc.setSubjectAccrualCountSvc(new SubjectAccrualCountBean());
+        readerService.setSubjectAccrualService(subjectAccrualSvc);
+        
         RegistryUserServiceRemote registryUserService = mock(RegistryUserServiceRemote.class);
         RegistryUser user = new RegistryUser();
         user.setId(1L);
         user.setEmailAddress("test@example.com");
         when(registryUserService.getUser(anyString())).thenReturn(user);
+        
+        StudySiteServiceRemote studySiteSvc = mock(StudySiteServiceRemote.class);
+        when(studySiteSvc.get(any(Ii.class))).thenAnswer(new Answer<StudySiteDTO>() {
+            public StudySiteDTO answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                Ii ii = (Ii) args[0];
+                for (StudySite ss : TestSchema.studySites) {
+                    if (ss.getId().equals(IiConverter.convertToLong(ii))) {
+                        return Converters.get(StudySiteConverter.class).convertFromDomainToDto(ss);
+                    }
+                }
+                return null;
+            }
+        });
 
         paSvcLocator = mock(ServiceLocatorPaInterface.class);
         when(paSvcLocator.getStudyProtocolService()).thenReturn(spSvc);
         when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
         when(paSvcLocator.getDiseaseService()).thenReturn(diseaseSvc);
+        when(paSvcLocator.getICD9DiseaseService()).thenReturn(icd9DiseaseSvc);
+        when(paSvcLocator.getStudySiteService()).thenReturn(studySiteSvc);
+                
         when(paSvcLocator.getRegistryUserService()).thenReturn(registryUserService);
 
         PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
@@ -340,6 +377,9 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         when(poServiceLoc.getPersonEntityService()).thenReturn(poPersonSvc);
         when(poServiceLoc.getIdentifiedOrganizationCorrelationService()).thenReturn(identifiedOrgCorrelationSvc);
         when(poServiceLoc.getOrganizationEntityService()).thenReturn(orgSvc);
+        
+        ServiceLocatorAccInterface accSvcLocator = mock(ServiceLocatorAccInterface.class);
+        when(accSvcLocator.getBatchUploadReaderService()).thenReturn(readerService);
     }
     
     protected List<HealthCareFacilityDTO> createListOfHealthCareFacilityDTO() {

@@ -134,7 +134,6 @@ public class TestSchema {
     public static List<SDCDisease> diseases;
     public static List<StudyProtocol> studyProtocols;
     public static List<StudySite> studySites;
-    public static List<StudySite> participatingSites;
     public static List<StudyDisease> studyDiseases;
     public static List<Patient> patients;
     public static List<StudySubject> studySubjects;
@@ -172,7 +171,6 @@ public class TestSchema {
         studyProtocols = new ArrayList<StudyProtocol>();
         studyOverallStatuses = new ArrayList<StudyOverallStatus>();
         studySites = new ArrayList<StudySite>();
-        participatingSites = new ArrayList<StudySite>();
         patients = new ArrayList<Patient>();
         studySubjects = new ArrayList<StudySubject>();
         performedSubjectMilestones = new ArrayList<PerformedSubjectMilestone>();
@@ -211,6 +209,17 @@ public class TestSchema {
         org.setStatusCode(EntityStatusCode.ACTIVE);
         addUpdObject(org);
         organizations.add(org);
+        
+        org = new Organization();
+        org.setCity("city3");
+        org.setCountryName("country name3");
+        org.setIdentifier("3");
+        org.setName("orga name3");
+        org.setPostalCode("22345");
+        org.setState("MD");
+        org.setStatusCode(EntityStatusCode.ACTIVE);
+        addUpdObject(org);
+        organizations.add(org);
 
         // HealthcareFacility
         HealthCareFacility hcf = new HealthCareFacility();
@@ -224,6 +233,14 @@ public class TestSchema {
         hcf = new HealthCareFacility();
         hcf.setIdentifier("po hcf id1");
         hcf.setOrganization(organizations.get(1));
+        hcf.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        hcf.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        addUpdObject(hcf);
+        healthCareFacilities.add(hcf);
+        
+        hcf = new HealthCareFacility();
+        hcf.setIdentifier("po hcf id2");
+        hcf.setOrganization(organizations.get(2));
         hcf.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         hcf.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         addUpdObject(hcf);
@@ -249,14 +266,6 @@ public class TestSchema {
         addUpdObject(sp);
         studyProtocols.add(sp);
         
-        StudySite participatingSite = new StudySite();
-        participatingSite.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
-        participatingSite.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
-        participatingSite.setStudyProtocol(sp);
-        participatingSite.setHealthCareFacility(hcf);
-        addUpdObject(participatingSite);
-        participatingSites.add(participatingSite);
-
         sp = new StudyProtocol();
         sp.setOfficialTitle("A Phase II/III Randomized, Placebo-Controlled Double-Blind Clinical Trial of Ginger");
         sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2009"));
@@ -416,7 +425,24 @@ public class TestSchema {
         ss.setStudyProtocol(studyProtocols.get(2));
         addUpdObject(ss);
         studySites.add(ss);
-
+        
+        
+        ss = new StudySite();
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        ss.setHealthCareFacility(healthCareFacilities.get(0));
+        ss.setStudyProtocol(studyProtocols.get(3));
+        addUpdObject(ss);
+        studySites.add(ss);
+        
+        ss = new StudySite();
+        ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        ss.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        ss.setHealthCareFacility(healthCareFacilities.get(1));
+        ss.setStudyProtocol(studyProtocols.get(3));
+        addUpdObject(ss);
+        studySites.add(ss);
+        
         // StudySiteAccrualAccess
         RegistryUser registryUser = getRegistryUser();
         registryUsers.add(registryUser);

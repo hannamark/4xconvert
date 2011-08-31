@@ -5,6 +5,10 @@
 <!-- ====================================================================== -->
 
 <project name="accrual.services" default="jar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+    <property name="services.coverage.line" value="87"/>
+    <property name="services.coverage.branch" value="85"/>
+    <property name="services.pmd.maxerrors" value="1"/>
+    
     <property file="${basedir}/../build.properties"/>
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="common.dir" value="${basedir}/../../build-pa/common"/>
@@ -30,9 +34,6 @@
     <property name="services.build.coberturaOutputDir" value="${services.build.dir}/generated-classes"/>
     <property name="services.test.reports" value="${services.report.dir}/test-reports"/>
     <property name="services.coverage.reports" value="${services.report.dir}/coverage-reports"/>
-    <property name="services.coverage.line" value="86"/>
-    <property name="services.coverage.branch" value="85"/>
-    <property name="services.pmd.maxerrors" value="1"/>
 
     <property name="ivy.file" value="ivy-2.0.0.jar" />
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />

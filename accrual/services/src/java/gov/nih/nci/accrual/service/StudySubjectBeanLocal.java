@@ -202,7 +202,7 @@ public class StudySubjectBeanLocal extends
             StudySubject studySubject = it.next();
             boolean found = false;
             for (StudySiteAccrualAccess access : studySubject.getStudySite().getStudySiteAccrualAccess()) {
-                if (access.getRegistryUser().getId() == userId) {
+                if (access.getRegistryUser().getId().equals(userId)) {
                     found = true;
                     break;
                 }

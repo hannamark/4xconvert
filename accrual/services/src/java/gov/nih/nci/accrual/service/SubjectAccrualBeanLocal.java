@@ -95,6 +95,7 @@ import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
+import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
@@ -145,6 +146,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 /**
@@ -168,8 +170,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     private SubjectAccrualCountService subjectAccrualCountSvc;
     @EJB
     private BatchFileService batchFileService;
-    @EJB
-    private CdusBatchUploadReaderServiceLocal batchService;
+    
     private static final String REQUIRED_MSG = "%s is a required field.\n";
     private static final String INVALID_VALUE = "%s is not a valid value for %s.\n";
     /**
@@ -351,12 +352,19 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         return patientDTO;    
     }
 
-    private StudySubjectDto populateStudySubjectDTO(SubjectAccrualDTO dto, StudySubjectDto studySubjectDTO)  {
-        studySubjectDTO.setDiseaseIdentifier(dto.getDiseaseIdentifier());
+    private StudySubjectDto populateStudySubjectDTO(SubjectAccrualDTO dto, StudySubjectDto studySubjectDTO) 
+        throws PAException {
         studySubjectDTO.setAssignedIdentifier(dto.getAssignedIdentifier());
         studySubjectDTO.setPaymentMethodCode(dto.getPaymentMethod());
         studySubjectDTO.setStudySiteIdentifier(dto.getParticipatingSiteIdentifier());
         studySubjectDTO.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
+        if (dto.getDiseaseIdentifier() != null) {
+            if (PaServiceLocator.getInstance().getDiseaseService().get(dto.getDiseaseIdentifier()) != null) {
+                studySubjectDTO.setDiseaseIdentifier(dto.getDiseaseIdentifier());
+            } else {
+                studySubjectDTO.setIcd9DiseaseIdentifier(dto.getDiseaseIdentifier());
+            }
+        }
         return studySubjectDTO;
     }
     
@@ -467,11 +475,12 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      * @throws PAException on error
      */
     private boolean validateBatchFile(BatchFile file) throws PAException {
-        List<BatchValidationResults> validationResults = getBatchService().validateBatchData(file);
+        CdusBatchUploadReaderServiceLocal cdusSvc = AccrualServiceLocator.getInstance().getBatchUploadReaderService();
+        List<BatchValidationResults> validationResults = cdusSvc.validateBatchData(file);
         boolean passed = true;
         for (BatchValidationResults result : validationResults) {
             if (!result.isPassedValidation()) {
-                getBatchService().sendValidationErrorEmail(validationResults, file);
+                cdusSvc.sendValidationErrorEmail(validationResults, file);
                 passed = false;
                 break;
             }
@@ -493,6 +502,21 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
                     TsConverter.convertToTimestamp(startDate), TsConverter.convertToTimestamp(endDate), pagingParams);
 
         return convertStudySubjectDtoToSubjectAccrualDTOList(studySubjectDtoList);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public void deleteAll(Ii studySubjectIi) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        Criteria crit = session.createCriteria(StudySubject.class)
+            .add(Restrictions.eq("studySite.id", IiConverter.convertToLong(studySubjectIi)));
+        List<StudySubject> subjects = crit.list();
+        for (StudySubject ss : subjects) {
+            getPatientService().nullifyPOPatient(IiConverter.convertToIi(ss.getPatient().getId()));
+            session.delete(ss);
+        }
     }
 
     List<SubjectAccrualDTO> convertStudySubjectDtoToSubjectAccrualDTOList(List<StudySubjectDto> studySubjectDtoList) {
@@ -588,20 +612,5 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      */
     public void setBatchFileService(BatchFileService batchFileService) {
         this.batchFileService = batchFileService;
-    }
-
-
-    /**
-     * @return the batchService
-     */
-    public CdusBatchUploadReaderServiceLocal getBatchService() {
-        return batchService;
-    }
-
-    /**
-     * @param batchService the batchService to set
-     */
-    public void setBatchService(CdusBatchUploadReaderServiceLocal batchService) {
-        this.batchService = batchService;
     }
 }

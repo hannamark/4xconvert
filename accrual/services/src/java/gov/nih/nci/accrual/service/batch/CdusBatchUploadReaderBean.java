@@ -82,27 +82,21 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
-import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
-import gov.nih.nci.accrual.dto.StudySubjectDto;
-import gov.nih.nci.accrual.dto.util.PatientDto;
+import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.enums.CDUSPatientEthnicityCode;
 import gov.nih.nci.accrual.enums.CDUSPatientGenderCode;
 import gov.nih.nci.accrual.enums.CDUSPatientRaceCode;
 import gov.nih.nci.accrual.enums.CDUSPaymentMethodCode;
+import gov.nih.nci.accrual.service.SubjectAccrualServiceLocal;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.BatchFile;
-import gov.nih.nci.pa.domain.Country;
-import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
-import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -111,9 +105,10 @@ import gov.nih.nci.pa.util.ISOUtil;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Local;
@@ -136,6 +131,9 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
     
     @EJB
     private CdusBatchUploadDataValidatorLocal cdusBatchUploadDataValidator;
+    @EJB
+    private SubjectAccrualServiceLocal subjectAccrualService;
+    
 
     /**
      * {@inheritDoc}
@@ -195,110 +193,93 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         
         String studyProtocolId = studyLine[1];
         StudyProtocolDTO spDto = getStudyProtocol(studyProtocolId);
-       
-        int count = createStudySubjects(lines, spDto);
+        
+        List<String[]> patientLines = BatchUploadUtils.getPatientInfo(lines);
+        Map<String, List<String>> raceMap = BatchUploadUtils.getPatientRaceInfo(lines);
+        List<SubjectAccrualDTO> subjects = generateSubjectAccruals(patientLines, raceMap, spDto);
+        
+        int count = 0;
+        for (SubjectAccrualDTO sa : subjects) {
+            subjectAccrualService.create(sa);
+            count++;
+        }
         importResults.setTotalImports(count);
         return importResults;
     }
 
-    /**
-     * Handles creation of patients and study subjects.
-     * @param lines the parsed lines
-     * @param spDto the study protocol
-     * @return the total number of create study subjects
-     * @throws PAException on error
-     */
-    private int createStudySubjects(List<String[]> lines, StudyProtocolDTO spDto) throws PAException {
-        //Create patients, then the study subjects
-        List<String[]> patientsLines = BatchUploadUtils.getPatientInfo(lines);
-        Map<String, List<String>> raceMap = BatchUploadUtils.getPatientRaceInfo(lines);
-        int count = 0;
-        for (String[] p : patientsLines) {
+    private List<SubjectAccrualDTO> generateSubjectAccruals(List<String[]> patientLines, 
+            Map<String, List<String>> raceMap,  StudyProtocolDTO spDto) throws PAException {
+        List<SubjectAccrualDTO> subjectAccruals = new ArrayList<SubjectAccrualDTO>();
+        Set<Ii> studySiteIdentifiers = new HashSet<Ii>();
+        
+        for (String[] p : patientLines) {
             List<String> races = raceMap.get(p[BatchFileIndex.PATIENT_ID_INDEX]);
             //We're assuming this is the assigned identifier for the organization associated with the health care 
             //facility of the study site.
             Ii studySiteOrgIi = getOrganizationIi(p[BatchFileIndex.PATIENT_REG_INST_ID_INDEX]);
             SearchStudySiteResultDto studySite = 
                 getSearchStudySiteService().getStudySiteByOrg(spDto.getIdentifier(), studySiteOrgIi);
+            SubjectAccrualDTO saDTO = parserSubjectAccrual(p, races, 
+                    studySite != null ? studySite.getStudySiteIi() : null);
+            subjectAccruals.add(saDTO);
             
-            PatientDto patient = getPatientService().create(parsePatient(p, races, studySite != null 
-                    ? studySite.getOrganizationIi() : null));
-            StudySubjectDto studySubject = getStudySubjectService().create(parseStudySubject(p, spDto.getIdentifier(),  
-                    patient.getIdentifier(), studySite != null ? studySite.getStudySiteIi() : null));
-
-            Date regDate = BatchUploadUtils.getDate(p[BatchFileIndex.PATIENT_REG_DATE_INDEX]);
-            PerformedSubjectMilestoneDto psm = new PerformedSubjectMilestoneDto();
-            psm.setStudySubjectIdentifier(studySubject.getIdentifier());
-            psm.setStudyProtocolIdentifier(spDto.getIdentifier());
-            psm.setRegistrationDate(TsConverter.convertToTs(new Timestamp(regDate.getTime())));
-            getPerformedActivityService().createPerformedSubjectMilestone(psm);
-            count++;
+            studySiteIdentifiers.add(studySite.getStudySiteIi());
         }
-        return count;
+        
+        for (Ii ii : studySiteIdentifiers) {
+            subjectAccrualService.deleteAll(ii);
+        }
+        
+        return subjectAccruals;
     }
-
-   
-
-    private PatientDto parsePatient(String[] line, List<String> races, Ii orgIi) throws PAException {
-        PatientDto patient = new PatientDto();
-        patient.setZip(StConverter.convertToSt(line[BatchFileIndex.PATIENT_ZIP_INDEX]));
-        patient.setBirthDate(TsConverter.convertToTs(new Timestamp(
+    
+    private SubjectAccrualDTO parserSubjectAccrual(String[] line, List<String> races, Ii studySiteIi) 
+        throws PAException {
+        SubjectAccrualDTO saDTO = new SubjectAccrualDTO();
+        saDTO.setRegistrationDate(
+                TsConverter.convertToTs(BatchUploadUtils.getDate(line[BatchFileIndex.PATIENT_REG_DATE_INDEX])));
+        saDTO.setZipCode(StConverter.convertToSt(line[BatchFileIndex.PATIENT_ZIP_INDEX]));
+        saDTO.setBirthDate(TsConverter.convertToTs(new Timestamp(
                 BatchUploadUtils.getPatientDOB(line[BatchFileIndex.PATIENT_DOB_INDEX]).getTime())));
-        patient.setGenderCode(CdConverter.convertToCd(
+        saDTO.setGender(CdConverter.convertToCd(
                 CDUSPatientGenderCode.getByCode(line[BatchFileIndex.PATIENT_GENDER_INDEX]).getValue()));
-        patient.setEthnicCode(CdConverter.convertToCd(
+        saDTO.setEthnicity(CdConverter.convertToCd(
                 CDUSPatientEthnicityCode.getByCode(line[BatchFileIndex.PATIENT_ETHNICITY_INDEX]).getValue()));
         if (CollectionUtils.isNotEmpty(races)) {
-            patient.setRaceCode(DSetEnumConverter.convertSetToDSet(
-                    CDUSPatientRaceCode.getCodesByCdusCodes(races)));
+            saDTO.setRace(DSetEnumConverter.convertSetToDSet(CDUSPatientRaceCode.getCodesByCdusCodes(races)));
         }
-        patient.setStatusCode(CdConverter.convertToCd(StructuralRoleStatusCode.PENDING));
-        patient.setStatusDateRangeLow(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        patient.setOrganizationIdentifier(orgIi);
         
         //Default to United States if no country code is provided
         String countryCode = StringUtils.isEmpty(line[BatchFileIndex.PATIENT_COUNTRY_CODE_INDEX]) ? "US" 
                 : line[BatchFileIndex.PATIENT_COUNTRY_CODE_INDEX];
-        Country country = getCountryService().getByCode(countryCode);
-        patient.setCountryIdentifier(IiConverter.convertToCountryIi(country.getId()));
-        return patient;
-    }
-
-    private StudySubjectDto parseStudySubject(String[] line, Ii spIi, Ii patientIi, Ii studySiteIi) throws PAException {
-        StudySubjectDto studySubject = new StudySubjectDto();
-        studySubject.setStudyProtocolIdentifier(spIi);
-        studySubject.setPatientIdentifier(patientIi);
-        studySubject.setAssignedIdentifier(StConverter.convertToSt(line[BatchFileIndex.PATIENT_ID_INDEX]));
+        saDTO.setCountryCode(CdConverter.convertStringToCd(countryCode));
+        saDTO.setAssignedIdentifier(StConverter.convertToSt(line[BatchFileIndex.PATIENT_ID_INDEX]));
         CDUSPaymentMethodCode pmc = CDUSPaymentMethodCode.getByCode(line[BatchFileIndex.PATIENT_PAYMENT_METHOD_INDEX]);
         if (pmc != null) {
-            studySubject.setPaymentMethodCode(CdConverter.convertToCd(pmc.getValue()));
+            saDTO.setPaymentMethod(CdConverter.convertToCd(pmc.getValue()));
         }
         if (!ISOUtil.isIiNull(studySiteIi)) {
-            studySubject.setStudySiteIdentifier(studySiteIi);
+            saDTO.setParticipatingSiteIdentifier(studySiteIi);
         }
 
-        String diseaseCode = line[BatchFileIndex.PATIENT_DISEASE_INDEX];
+        parseSubjectDisease(line, saDTO);
+        return saDTO;
+    }
 
+    private void parseSubjectDisease(String[] line, SubjectAccrualDTO saDTO) throws PAException {
+        String diseaseCode = line[BatchFileIndex.PATIENT_DISEASE_INDEX];
         if (StringUtils.isNotEmpty(diseaseCode)) {
             SDCDiseaseDTO disease = PaServiceLocator.getInstance().getDiseaseService().getByCode(diseaseCode);
             if (disease != null) {
-                studySubject.setDiseaseIdentifier(disease.getIdentifier());
+                saDTO.setDiseaseIdentifier(disease.getIdentifier());
             } else {
                 ICD9DiseaseDTO icd9Disease = PaServiceLocator.getInstance().getICD9DiseaseService()
                     .getByCode(diseaseCode);
-                studySubject.setIcd9DiseaseIdentifier(icd9Disease.getIdentifier());
+                saDTO.setDiseaseIdentifier(icd9Disease.getIdentifier());
             }
         }
-        
-
-        studySubject.setStatusCode(CdConverter.convertToCd(FunctionalRoleStatusCode.PENDING));
-        studySubject.setStatusDateRange(
-                IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
-        return studySubject;
     }
-
     
-
     /**
      * {@inheritDoc}
      */
@@ -358,5 +339,10 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
         this.cdusBatchUploadDataValidator = cdusBatchUploadDataValidator;
     }
     
-    
+    /**
+     * @param subjectAccrualService the subject accrual service to set
+     */
+    public void setSubjectAccrualService(SubjectAccrualServiceLocal subjectAccrualService) {
+        this.subjectAccrualService = subjectAccrualService;
+    }
 }
