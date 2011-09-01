@@ -81,6 +81,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
@@ -177,7 +178,7 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         ServletActionContext.getRequest().getSession().setAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB, tab);
 
         ar = act.facilitySave();
-        assertEquals(ParticipatingOrganizationsAction.ACT_FACILITY_SAVE, ar);
+        assertEquals("facilitySave", ar);
         assertFalse(act.hasFieldErrors());
 
         // confirmation message displayed
@@ -218,13 +219,13 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         getRequest().setupAddParameter("tel", "1");
         assertEquals("error_prim_contacts",act.saveStudyParticipationPrimContact());
         getRequest().setupAddParameter("tel", "111-222-3333 ext 1");
-        assertEquals("display_primContacts",act.saveStudyParticipationPrimContact());
+        assertEquals("refreshPrimaryContact",act.saveStudyParticipationPrimContact());
         getRequest().setupAddParameter("tel", "111-222-3333");
-        assertEquals("display_primContacts",act.saveStudyParticipationPrimContact());
+        assertEquals("refreshPrimaryContact",act.saveStudyParticipationPrimContact());
         getRequest().setupAddParameter("tel", "111-222-3333x12345");
-        assertEquals("display_primContacts",act.saveStudyParticipationPrimContact());
+        assertEquals("refreshPrimaryContact",act.saveStudyParticipationPrimContact());
         getRequest().setupAddParameter("tel", "111-222-3333extn12345");
-        assertEquals("display_primContacts",act.saveStudyParticipationPrimContact());
+        assertEquals("refreshPrimaryContact",act.saveStudyParticipationPrimContact());
         getRequest().setupAddParameter("email", "example.com");
         getRequest().setupAddParameter("tel", "111-222-3333extn12345");
         assertEquals("error_prim_contacts",act.saveStudyParticipationPrimContact());
@@ -235,7 +236,7 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         tab.setFacilityOrganization(org);
         getRequest().setupAddParameter("email", "example@example.com");
         getRequest().setupAddParameter("tel", "111-222-3333 ext 1");
-        assertEquals("display_primContacts",act.saveStudyParticipationPrimContact());
+        assertEquals("refreshPrimaryContact",act.saveStudyParticipationPrimContact());
     }
 
 }

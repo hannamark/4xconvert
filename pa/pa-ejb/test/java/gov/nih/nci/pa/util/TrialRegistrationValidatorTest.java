@@ -85,6 +85,7 @@ package gov.nih.nci.pa.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
@@ -602,13 +603,17 @@ public class TrialRegistrationValidatorTest {
      */
     @Test
     public void testvalidateSummary4SponsorAndCategoryNoOrganization() throws PAException {
-        thrown.expect(PAException.class);
-        thrown.expectMessage("Validation Exception Summary Four Organization cannot be null, ");
         validator = mock(TrialRegistrationValidator.class);
         doCallRealMethod().when(validator).validateSummary4SponsorAndCategory(studyProtocolDTO, null, null);
-        validator.validateSummary4SponsorAndCategory(studyProtocolDTO, null, null);
-        verify(validator).validateSummary4Resourcing(eq(studyProtocolDTO), (StudyResourcingDTO) isNull(),
-                                                     any(StringBuilder.class));
+        try {
+            validator.validateSummary4SponsorAndCategory(studyProtocolDTO, null, null);
+            fail("PAException should have been thrown");
+        } catch (PAException e) {
+            assertEquals("Wrong exception message", "Validation Exception Summary Four Organization cannot be null, ",
+                         e.getMessage());
+            verify(validator).validateSummary4Resourcing(eq(studyProtocolDTO), (StudyResourcingDTO) isNull(),
+                                                         any(StringBuilder.class));
+        }
     }
 
     /**
@@ -626,8 +631,6 @@ public class TrialRegistrationValidatorTest {
         verify(validator).validateSummary4Resourcing(eq(studyProtocolDTO), eq(studyResourcingDTO),
                                                      any(StringBuilder.class));
     }
-    
-    
     
     /**
      * test the validateSummary4Resourcing method with no studyResourcing

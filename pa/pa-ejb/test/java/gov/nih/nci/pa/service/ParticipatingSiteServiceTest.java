@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.Ii;
@@ -74,14 +75,14 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
         bean.setStudySiteService(studySiteService);
         bean.setStudySiteContactService(studySiteContactService);
         bean.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
-        bean.setOcsr(ocsr);
+        bean.setOrganizationCorrelationService(ocsr);
         localBean = bean;
 
         rBean.setStudyProtocolService(studyProtocolService);
         rBean.setStudySiteService(studySiteService);
         rBean.setStudySiteContactService(studySiteContactService);
         rBean.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
-        rBean.setOcsr(ocsr);
+        rBean.setOrganizationCorrelationService(ocsr);
         remoteBean = rBean;
     }
 

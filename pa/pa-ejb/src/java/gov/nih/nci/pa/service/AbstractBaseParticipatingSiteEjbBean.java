@@ -93,12 +93,16 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.po.data.CurationException;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.AbstractRoleDTO;
+import gov.nih.nci.services.correlation.ClinicalResearchStaffCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
+import gov.nih.nci.services.correlation.HealthCareProviderCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareProviderDTO;
+import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.person.PersonDTO;
+import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.util.HashMap;
 import java.util.List;
@@ -114,81 +118,24 @@ import org.springframework.util.CollectionUtils;
  *
  */
 public class AbstractBaseParticipatingSiteEjbBean {
-    @EJB private StudyProtocolServiceLocal studyProtocolService = null;
-    @EJB private StudySiteServiceLocal studySiteService = null;
-    @EJB private StudySiteContactServiceLocal studySiteContactService = null;
-    @EJB private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = null;
-    @EJB private OrganizationCorrelationServiceRemote ocsr = null;
-
-    private final CorrelationUtils corrUtils = new CorrelationUtils();
-    /**
-     * @return the studyProtocolService
-     */
-    protected StudyProtocolServiceLocal getStudyProtocolService() {
-        return studyProtocolService;
-    }
-    /**
-     * @param studyProtocolService the studyProtocolService to set
-     */
-    protected void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
-        this.studyProtocolService = studyProtocolService;
-    }
-
-    /**
-     * @return the studySiteService
-     */
-    protected StudySiteServiceLocal getStudySiteService() {
-        return studySiteService;
-    }
-    /**
-     * @param studySiteService the studySiteService to set
-     */
-    protected void setStudySiteService(StudySiteServiceLocal studySiteService) {
-        this.studySiteService = studySiteService;
-    }
-    /**
-     * @return the studySiteContactService
-     */
-    protected StudySiteContactServiceLocal getStudySiteContactService() {
-        return studySiteContactService;
-    }
-    /**
-     * @param studySiteContactService the studySiteContactService to set
-     */
-    protected void setStudySiteContactService(StudySiteContactServiceLocal studySiteContactService) {
-        this.studySiteContactService = studySiteContactService;
-    }
-    /**
-     * @return the studySiteAccrualStatusService
-     */
-    protected StudySiteAccrualStatusServiceLocal getStudySiteAccrualStatusService() {
-        return studySiteAccrualStatusService;
-    }
-    /**
-     * @param studySiteAccrualStatusService the studySiteAccrualStatusService to set
-     */
-    protected void setStudySiteAccrualStatusService(StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService) {
-        this.studySiteAccrualStatusService = studySiteAccrualStatusService;
-    }
-
-    /**
-     * @return the ocsr
-     */
-    protected OrganizationCorrelationServiceRemote getOcsr() {
-        return ocsr;
-    }
-    /**
-     * @param ocsr the ocsr to set
-     */
-    protected void setOcsr(OrganizationCorrelationServiceRemote ocsr) {
-        this.ocsr = ocsr;
-    }
-    /**
-     * @return the corrUtils
-     */
-    public CorrelationUtils getCorrUtils() {
-        return corrUtils;
-    }
+    private ClinicalResearchStaffCorrelationServiceRemote clinicalResearchStaffCorrelationService = PoRegistry
+        .getClinicalResearchStaffCorrelationService();
+    private CorrelationUtils corrUtils = new CorrelationUtils();
+    private HealthCareProviderCorrelationServiceRemote healthCareProviderCorrelationService = PoRegistry
+        .getHealthCareProviderCorrelationService();
+    private IdentifiedPersonCorrelationServiceRemote identifiedPersonCorrelationService = PoRegistry
+        .getIdentifiedPersonEntityService();
+    @EJB
+    private OrganizationCorrelationServiceRemote organizationCorrelationService;
+    private PersonEntityServiceRemote personEntityService = PoRegistry.getPersonEntityService();
+    @EJB
+    private StudyProtocolServiceLocal studyProtocolService;
+    @EJB
+    private StudySiteServiceLocal studySiteService;
+    @EJB
+    private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
+    @EJB
+    private StudySiteContactServiceLocal studySiteContactService;
 
     /**
      * generateCrsAndHcpFromCtepIdOrNewPerson.
@@ -202,8 +149,8 @@ public class AbstractBaseParticipatingSiteEjbBean {
      * @throws PAException when error
      */
     protected Map<String, Ii> generateCrsAndHcpFromCtepIdOrNewPerson(PersonDTO investigatorDTO,
-            ClinicalResearchStaffDTO crsDTO, HealthCareProviderDTO hcpDTO, Ii orgIi)
-        throws EntityValidationException, CurationException, PAException {
+            ClinicalResearchStaffDTO crsDTO, HealthCareProviderDTO hcpDTO, Ii orgIi) throws EntityValidationException,
+            CurationException, PAException {
 
         Ii someCrsIi = extractIdentifer(crsDTO);
         Ii someHcpIi = extractIdentifer(hcpDTO);
@@ -221,20 +168,19 @@ public class AbstractBaseParticipatingSiteEjbBean {
 
     }
 
-    private void loadPersonInMapByHcp(Ii someHcpIi, Map<String, Ii> myMap)
-        throws PAException, EntityValidationException, CurationException {
+    private void loadPersonInMapByHcp(Ii someHcpIi, Map<String, Ii> myMap) throws PAException,
+            EntityValidationException, CurationException {
         if (someHcpIi != null) {
             if (IiConverter.HEALTH_CARE_PROVIDER_ROOT.equals(someHcpIi.getRoot())) {
                 myMap.put(IiConverter.HEALTH_CARE_PROVIDER_ROOT, someHcpIi);
             }
             try {
-                HealthCareProviderDTO freshHcpDTO = PoRegistry.getHealthCareProviderCorrelationService().getCorrelation(
-                        someHcpIi);
+                HealthCareProviderDTO freshHcpDTO = healthCareProviderCorrelationService.getCorrelation(someHcpIi);
                 if (freshHcpDTO != null) {
                     myMap.put(IiConverter.PERSON_ROOT, freshHcpDTO.getPlayerIdentifier());
                 } else {
-                    throw new PAException("Could not find a Health Care Provider with id = "
-                            + someHcpIi.getExtension() + " in PO db.");
+                    throw new PAException("Could not find a Health Care Provider with id = " + someHcpIi.getExtension()
+                            + " in PO db.");
                 }
             } catch (NullifiedRoleException e) {
                 throw new PAException(PAUtil.handleNullifiedRoleException(e));
@@ -242,25 +188,25 @@ public class AbstractBaseParticipatingSiteEjbBean {
         }
     }
 
-    private void loadPersonInMapByCrs(Ii someCrsIi, Map<String, Ii> myMap)
-        throws PAException, EntityValidationException, CurationException {
+    private void loadPersonInMapByCrs(Ii someCrsIi, Map<String, Ii> myMap) throws PAException,
+            EntityValidationException, CurationException {
         if (someCrsIi != null) {
             if (IiConverter.CLINICAL_RESEARCH_STAFF_ROOT.equals(someCrsIi.getRoot())) {
                 myMap.put(IiConverter.CLINICAL_RESEARCH_STAFF_ROOT, someCrsIi);
             }
             try {
-                ClinicalResearchStaffDTO freshCrsDTO = PoRegistry.getClinicalResearchStaffCorrelationService()
-                .getCorrelation(someCrsIi);
+                ClinicalResearchStaffDTO freshCrsDTO = clinicalResearchStaffCorrelationService
+                    .getCorrelation(someCrsIi);
                 if (freshCrsDTO != null) {
                     myMap.put(IiConverter.PERSON_ROOT, freshCrsDTO.getPlayerIdentifier());
                 } else {
                     throw new PAException("Could not find a Clinical Research Staff with id = "
                             + someCrsIi.getExtension() + " in PO db.");
                 }
-             } catch (NullifiedRoleException e) {
-                 throw new PAException(PAUtil.handleNullifiedRoleException(e));
-             }
-         }
+            } catch (NullifiedRoleException e) {
+                throw new PAException(PAUtil.handleNullifiedRoleException(e));
+            }
+        }
     }
 
     private Ii extractIdentifer(AbstractRoleDTO abstractRoleDTO) {
@@ -290,14 +236,14 @@ public class AbstractBaseParticipatingSiteEjbBean {
         }
     }
 
-    private Ii getPoPersonIiFromPoPersonDTO(PersonDTO investigatorDTO)
-    throws EntityValidationException, CurationException, PAException {
+    private Ii getPoPersonIiFromPoPersonDTO(PersonDTO investigatorDTO) throws EntityValidationException,
+            CurationException, PAException {
         Ii poPersonIi = null;
         if (!ISOUtil.isIiNull(investigatorDTO.getIdentifier())
                 && IiConverter.PERSON_ROOT.equals(investigatorDTO.getIdentifier().getRoot())) {
             PersonDTO personDTO = null;
             try {
-                personDTO = PoRegistry.getPersonEntityService().getPerson(investigatorDTO.getIdentifier());
+                personDTO = personEntityService.getPerson(investigatorDTO.getIdentifier());
             } catch (NullifiedEntityException e) {
                 throw new PAException(PAUtil.handleNullifiedEntityException(e));
             }
@@ -310,23 +256,22 @@ public class AbstractBaseParticipatingSiteEjbBean {
         } else if (!ISOUtil.isIiNull(investigatorDTO.getIdentifier())) {
             IdentifiedPersonDTO idP = new IdentifiedPersonDTO();
             idP.setAssignedId(investigatorDTO.getIdentifier());
-            List<IdentifiedPersonDTO> idps =
-                PoRegistry.getIdentifiedPersonEntityService().search(idP);
+            List<IdentifiedPersonDTO> idps = identifiedPersonCorrelationService.search(idP);
             if (idps.isEmpty()) {
-                throw new PAException(
-                        " Cannot find Identified Person for root / extension: "
-                        + investigatorDTO.getIdentifier().getRoot()
-                        + " / " + investigatorDTO.getIdentifier().getExtension());
+                throw new PAException(" Cannot find Identified Person for root / extension: "
+                        + investigatorDTO.getIdentifier().getRoot() + " / "
+                        + investigatorDTO.getIdentifier().getExtension());
             } else if (idps.size() > 1) {
                 throw new PAException("more than 1 Identified Person found for given ID: "
                         + investigatorDTO.getIdentifier().getExtension());
             }
             poPersonIi = idps.get(0).getPlayerIdentifier();
         } else {
-            poPersonIi = PoRegistry.getPersonEntityService().createPerson(investigatorDTO);
+            poPersonIi = personEntityService.createPerson(investigatorDTO);
         }
         return poPersonIi;
     }
+    
     private Ii createPoCrs(Ii personIi, Ii orgIi, ClinicalResearchStaffDTO toStoreDTO) throws PAException {
         Ii poCrsIi = null;
         ClinicalResearchStaffDTO crsDTO = null;
@@ -351,19 +296,16 @@ public class AbstractBaseParticipatingSiteEjbBean {
         return poCrsIi;
     }
 
-    private Ii checkExistingCrs(ClinicalResearchStaffDTO crsDTO)
-    throws PAException, EntityValidationException, CurationException, NullifiedRoleException {
-        List<ClinicalResearchStaffDTO> crsList =
-            PoRegistry.getClinicalResearchStaffCorrelationService().search(crsDTO);
-        ClinicalResearchStaffDTO freshDTO =  null;
+    private Ii checkExistingCrs(ClinicalResearchStaffDTO crsDTO) throws PAException, EntityValidationException,
+            CurationException, NullifiedRoleException {
+        List<ClinicalResearchStaffDTO> crsList = clinicalResearchStaffCorrelationService.search(crsDTO);
+        ClinicalResearchStaffDTO freshDTO = null;
         if (CollectionUtils.isEmpty(crsList)) {
-            Ii ii = PoRegistry.getClinicalResearchStaffCorrelationService().createCorrelation(crsDTO);
-            freshDTO = PoRegistry.getClinicalResearchStaffCorrelationService().getCorrelation(ii);
+            Ii ii = clinicalResearchStaffCorrelationService.createCorrelation(crsDTO);
+            freshDTO = clinicalResearchStaffCorrelationService.getCorrelation(ii);
         } else if (crsList.size() > 1) {
-            throw new PAException("For a given Person id "
-                    + crsDTO.getPlayerIdentifier().getExtension()
-                    + " and Organization id "
-                    + crsDTO.getScoperIdentifier()
+            throw new PAException("For a given Person id " + crsDTO.getPlayerIdentifier().getExtension()
+                    + " and Organization id " + crsDTO.getScoperIdentifier()
                     + " more than 1 clinical research staff were found.");
         } else {
             freshDTO = crsList.get(0);
@@ -371,19 +313,16 @@ public class AbstractBaseParticipatingSiteEjbBean {
         return DSetConverter.convertToIi(freshDTO.getIdentifier());
     }
 
-    private Ii checkExistingHcp(HealthCareProviderDTO hcpDTO)
-    throws PAException, EntityValidationException, CurationException, NullifiedRoleException {
-        List<HealthCareProviderDTO> hcpList =
-            PoRegistry.getHealthCareProviderCorrelationService().search(hcpDTO);
-        HealthCareProviderDTO freshDTO =  null;
+    private Ii checkExistingHcp(HealthCareProviderDTO hcpDTO) throws PAException, EntityValidationException,
+            CurationException, NullifiedRoleException {
+        List<HealthCareProviderDTO> hcpList = healthCareProviderCorrelationService.search(hcpDTO);
+        HealthCareProviderDTO freshDTO = null;
         if (CollectionUtils.isEmpty(hcpList)) {
-            Ii ii = PoRegistry.getHealthCareProviderCorrelationService().createCorrelation(hcpDTO);
-            freshDTO = PoRegistry.getHealthCareProviderCorrelationService().getCorrelation(ii);
+            Ii ii = healthCareProviderCorrelationService.createCorrelation(hcpDTO);
+            freshDTO = healthCareProviderCorrelationService.getCorrelation(ii);
         } else if (hcpList.size() > 1) {
-            throw new PAException("For a given Person id "
-                    + hcpDTO.getPlayerIdentifier().getExtension()
-                    + " and Organization id "
-                    + hcpDTO.getScoperIdentifier()
+            throw new PAException("For a given Person id " + hcpDTO.getPlayerIdentifier().getExtension()
+                    + " and Organization id " + hcpDTO.getScoperIdentifier()
                     + " more than 1 health care provider were found.");
         } else {
             freshDTO = hcpList.get(0);
@@ -413,5 +352,149 @@ public class AbstractBaseParticipatingSiteEjbBean {
         }
 
         return poHcpIi;
+    }
+    
+    /**
+     * @return the clinicalResearchStaffCorrelationService
+     */
+    protected ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService() {
+        return clinicalResearchStaffCorrelationService;
+    }
+
+    /**
+     * @param clinicalResearchStaffCorrelationService the clinicalResearchStaffCorrelationService to set
+     */
+    protected void setClinicalResearchStaffCorrelationService(
+            ClinicalResearchStaffCorrelationServiceRemote clinicalResearchStaffCorrelationService) {
+        this.clinicalResearchStaffCorrelationService = clinicalResearchStaffCorrelationService;
+    }
+
+    /**
+     * @return the corrUtils
+     */
+    protected CorrelationUtils getCorrUtils() {
+        return corrUtils;
+    }
+
+    /**
+     * @param corrUtils the corrUtils to set
+     */
+    protected void setCorrUtils(CorrelationUtils corrUtils) {
+        this.corrUtils = corrUtils;
+    }
+
+    /**
+     * @return the healthCareProviderCorrelationService
+     */
+    protected HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() {
+        return healthCareProviderCorrelationService;
+    }
+
+    /**
+     * @param healthCareProviderCorrelationService the healthCareProviderCorrelationService to set
+     */
+    protected void setHealthCareProviderCorrelationService(
+            HealthCareProviderCorrelationServiceRemote healthCareProviderCorrelationService) {
+        this.healthCareProviderCorrelationService = healthCareProviderCorrelationService;
+    }
+
+    /**
+     * @return the identifiedPersonCorrelationService
+     */
+    protected IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonCorrelationService() {
+        return identifiedPersonCorrelationService;
+    }
+
+    /**
+     * @param identifiedPersonCorrelationService the identifiedPersonCorrelationService to set
+     */
+    protected void setIdentifiedPersonCorrelationService(
+            IdentifiedPersonCorrelationServiceRemote identifiedPersonCorrelationService) {
+        this.identifiedPersonCorrelationService = identifiedPersonCorrelationService;
+    }
+
+    /**
+     * @return the organizationCorrelationServiceRemote
+     */
+    protected OrganizationCorrelationServiceRemote getOrganizationCorrelationService() {
+        return organizationCorrelationService;
+    }
+
+    /**
+     * @param organizationCorrelationService the organizationCorrelationService to set
+     */
+    protected void setOrganizationCorrelationService(
+            OrganizationCorrelationServiceRemote organizationCorrelationService) {
+        this.organizationCorrelationService = organizationCorrelationService;
+    }
+
+    /**
+     * @return the personEntityService
+     */
+    protected PersonEntityServiceRemote getPersonEntityService() {
+        return personEntityService;
+    }
+
+    /**
+     * @param personEntityService the personEntityService to set
+     */
+    protected void setPersonEntityService(PersonEntityServiceRemote personEntityService) {
+        this.personEntityService = personEntityService;
+    }
+
+    /**
+     * @return the studyProtocolService
+     */
+    protected StudyProtocolServiceLocal getStudyProtocolService() {
+        return studyProtocolService;
+    }
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    protected void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
+    }
+
+    /**
+     * @return the studySiteService
+     */
+    protected StudySiteServiceLocal getStudySiteService() {
+        return studySiteService;
+    }
+
+    /**
+     * @param studySiteService the studySiteService to set
+     */
+    protected void setStudySiteService(StudySiteServiceLocal studySiteService) {
+        this.studySiteService = studySiteService;
+    }
+
+    /**
+     * @return the studySiteAccrualStatusService
+     */
+    protected StudySiteAccrualStatusServiceLocal getStudySiteAccrualStatusService() {
+        return studySiteAccrualStatusService;
+    }
+
+    /**
+     * @param studySiteAccrualStatusService the studySiteAccrualStatusService to set
+     */
+    protected void setStudySiteAccrualStatusService(StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService) {
+        this.studySiteAccrualStatusService = studySiteAccrualStatusService;
+    }
+
+    /**
+     * @return the studySiteContactService
+     */
+    protected StudySiteContactServiceLocal getStudySiteContactService() {
+        return studySiteContactService;
+    }
+
+    /**
+     * @param studySiteContactService the studySiteContactService to set
+     */
+    protected void setStudySiteContactService(StudySiteContactServiceLocal studySiteContactService) {
+        this.studySiteContactService = studySiteContactService;
     }
 }

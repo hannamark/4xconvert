@@ -115,7 +115,6 @@ import java.util.Map;
 public abstract class AbstractParticipatingSitesBean
     extends AbstractBaseParticipatingSiteBean {
 
-
     /**
      * createStudySiteAccrualStatus.
      * @param studySiteIi ii
@@ -172,27 +171,21 @@ public abstract class AbstractParticipatingSitesBean
      * @param srMap ii map
      * @throws PAException when error
      */
-    protected void createPersonContactRecord(StudySiteContactDTO participationContactDTO,
-            String trialType, Map<String, Ii> srMap) throws PAException {
-
-        if (srMap != null
-                && srMap.containsKey(IiConverter.CLINICAL_RESEARCH_STAFF_ROOT)) {
-
+    protected void createPersonContactRecord(StudySiteContactDTO participationContactDTO, String trialType,
+            Map<String, Ii> srMap) throws PAException {
+        if (srMap != null && srMap.containsKey(IiConverter.CLINICAL_RESEARCH_STAFF_ROOT)) {
             Long clinicalStfid = new ClinicalResearchStaffCorrelationServiceBean()
-            .createClinicalResearchStaffCorrelationsWithExistingPoCrs(
-                    srMap.get(IiConverter.CLINICAL_RESEARCH_STAFF_ROOT));
+                .createClinicalResearchStaffCorrelationsWithExistingPoCrs(srMap
+                    .get(IiConverter.CLINICAL_RESEARCH_STAFF_ROOT));
             participationContactDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(clinicalStfid));
         }
 
-        if (srMap != null
-                && srMap.containsKey(IiConverter.HEALTH_CARE_PROVIDER_ROOT)
+        if (srMap != null && srMap.containsKey(IiConverter.HEALTH_CARE_PROVIDER_ROOT)
                 && trialType.startsWith("Interventional")) {
-
-                Long healthCareProviderIi = new HealthCareProviderCorrelationBean()
-                    .createHealthCareProviderCorrelationsWithExistingPoHcp(
-                            srMap.get(IiConverter.HEALTH_CARE_PROVIDER_ROOT));
-                participationContactDTO.setHealthCareProviderIi(
-                        IiConverter.convertToIi(healthCareProviderIi));
+            Ii hcpIi = srMap.get(IiConverter.HEALTH_CARE_PROVIDER_ROOT);
+            Long healthCareProviderIi = new HealthCareProviderCorrelationBean()
+                .createHealthCareProviderCorrelationsWithExistingPoHcp(hcpIi);
+            participationContactDTO.setHealthCareProviderIi(IiConverter.convertToIi(healthCareProviderIi));
         }
     }
 
@@ -202,14 +195,13 @@ public abstract class AbstractParticipatingSitesBean
      * @param studySiteIi ii
      * @throws PAException when error
      */
-    protected void recreatePrimaryContactRecord(StudySiteContactDTO participationContactDTO,
-            Ii studySiteIi) throws PAException {
-     // if a old record exists delete it and create a new one
+    protected void recreatePrimaryContactRecord(StudySiteContactDTO participationContactDTO, Ii studySiteIi)
+            throws PAException {
+        // if a old record exists delete it and create a new one
         StudySiteContactDTO siteConDto = new StudySiteContactDTO();
         List<StudySiteContactDTO> siteContactDtos = getStudySiteContactService().getByStudySite(studySiteIi);
         for (StudySiteContactDTO cDto : siteContactDtos) {
-            if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().
-                    equalsIgnoreCase(cDto.getRoleCode().getCode())) {
+            if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equalsIgnoreCase(cDto.getRoleCode().getCode())) {
                 siteConDto = cDto;
             }
         }
@@ -218,7 +210,7 @@ public abstract class AbstractParticipatingSitesBean
         }
         getStudySiteContactService().create(participationContactDTO);
     }
-
+    
     /**
      * createStudyParticationContactRecord.
      * @param studySiteDTO dto.
@@ -229,68 +221,53 @@ public abstract class AbstractParticipatingSitesBean
      * @return bool
      * @throws PAException when error.
      */
-    protected boolean createStudyParticationContactRecord(StudySiteDTO studySiteDTO,
-            Map<String, Ii> srMap, boolean isPrimaryContact, String roleCode, DSet<Tel> telecom)
-        throws PAException {
+    protected boolean createStudyParticationContactRecord(StudySiteDTO studySiteDTO, Map<String, Ii> srMap,
+            boolean isPrimaryContact, String roleCode, DSet<Tel> telecom) throws PAException {
         StudyProtocolDTO studyProtocolDTO = PaRegistry.getStudyProtocolService()
             .getStudyProtocol(studySiteDTO.getStudyProtocolIdentifier());
 
-        StudySiteContactDTO participationContactDTO = new StudySiteContactDTO();
+        StudySiteContactDTO newContactDTO = new StudySiteContactDTO();
 
-        createPersonContactRecord(participationContactDTO,
-                StConverter.convertToString(studyProtocolDTO.getStudyProtocolType()),
-                srMap);
-        createGenericContactRecord(participationContactDTO, srMap);
+        createPersonContactRecord(newContactDTO, StConverter.convertToString(studyProtocolDTO.getStudyProtocolType()),
+                                  srMap);
+        createGenericContactRecord(newContactDTO, srMap);
 
         if (!isPrimaryContact) {
-            participationContactDTO.setRoleCode(CdConverter.convertStringToCd(roleCode));
+            newContactDTO.setRoleCode(CdConverter.convertStringToCd(roleCode));
         } else {
-            participationContactDTO.setRoleCode(CdConverter.convertToCd(
-                    StudySiteContactRoleCode.PRIMARY_CONTACT));
+            newContactDTO.setRoleCode(CdConverter.convertToCd(StudySiteContactRoleCode.PRIMARY_CONTACT));
         }
-        participationContactDTO.setStudyProtocolIdentifier(studySiteDTO.getStudyProtocolIdentifier());
-        participationContactDTO.setStatusCode(CdConverter.convertStringToCd(
-                FunctionalRoleStatusCode.PENDING.getCode()));
-        participationContactDTO.setStudySiteIi(studySiteDTO.getIdentifier());
-        participationContactDTO.setTelecomAddresses(telecom);
+        newContactDTO.setStudyProtocolIdentifier(studySiteDTO.getStudyProtocolIdentifier());
+        newContactDTO.setStatusCode(CdConverter.convertStringToCd(FunctionalRoleStatusCode.PENDING.getCode()));
+        newContactDTO.setStudySiteIi(studySiteDTO.getIdentifier());
+        newContactDTO.setTelecomAddresses(telecom);
         if (isPrimaryContact) {
-            recreatePrimaryContactRecord(participationContactDTO, studySiteDTO.getIdentifier());
+            recreatePrimaryContactRecord(newContactDTO, studySiteDTO.getIdentifier());
         }
         if (!isPrimaryContact
                 && srMap.containsKey(IiConverter.PERSON_ROOT)
-                && !doesSPCRecordExistforPerson(Long.valueOf(
-                        srMap.get(IiConverter.PERSON_ROOT).getExtension()), studySiteDTO.getIdentifier())) {
-            getStudySiteContactService().create(participationContactDTO);
+                && !doesSPCRecordExistforPerson(Long.valueOf(srMap.get(IiConverter.PERSON_ROOT).getExtension()),
+                                                studySiteDTO.getIdentifier())) {
+            getStudySiteContactService().create(newContactDTO);
         }
         return true;
     }
 
-
-
-
     private boolean iterateSubInvresults(Long persid, List<PaPersonDTO> subInvresults) throws PAException {
-
-        for (int i = 0; i < subInvresults.size(); i++) {
-            if (subInvresults.get(i).getPaPersonId() != null
-                    && subInvresults.get(i).getPaPersonId().equals(persid)) {
+        for (PaPersonDTO paPersonDTO : subInvresults) {
+            if (paPersonDTO.getPaPersonId() != null && paPersonDTO.getPaPersonId().equals(persid)) {
                 return true;
             }
         }
-
         return false;
     }
 
-    private boolean iteratePrincipalInvresults(Long persid, List<PaPersonDTO> principalInvresults)
-    throws PAException {
-
-        for (int i = 0; i < principalInvresults.size(); i++) {
-
-            if (principalInvresults.get(i).getSelectedPersId() != null
-                && principalInvresults.get(i).getSelectedPersId().equals(persid)) {
+    private boolean iteratePrincipalInvresults(Long persid, List<PaPersonDTO> principalInvresults) throws PAException {
+        for (PaPersonDTO paPersonDTO : principalInvresults) {
+            if (paPersonDTO.getSelectedPersId() != null && paPersonDTO.getSelectedPersId().equals(persid)) {
                 return true;
             }
         }
-
         return false;
     }
 

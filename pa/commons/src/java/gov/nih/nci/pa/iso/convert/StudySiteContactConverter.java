@@ -169,6 +169,7 @@ public class StudySiteContactConverter extends AbstractConverter<StudySiteContac
      * @param bo StudySiteContact
      * @throws PAException PAException
      */
+    @Override
     public void convertFromDtoToDomain(StudySiteContactDTO dto, StudySiteContact bo) throws PAException {
 
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
