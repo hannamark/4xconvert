@@ -127,5 +127,6 @@
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/commons-validator-1.3.0.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/poi-3.2-FINAL.jar"/>
 	<classpathentry kind="var" path="ACCRUAL_LIB/services/compile/coppa-commons-1.3.7.jar"/>
+	<classpathentry kind="var" path="ACCRUAL_LIB/services/test/junit-4.8.2.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

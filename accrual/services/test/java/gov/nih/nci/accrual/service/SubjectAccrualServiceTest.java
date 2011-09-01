@@ -220,8 +220,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     public void manageSubjectAccrualsUserAuthFailure() throws PAException {
         thrown.expect(PAException.class);
         thrown.expectMessage("User does not have accrual access to site 1"); 
-        SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(
-                TestSchema.participatingSites.get(0).getId()),
+        SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(participatingSite.getId()),
                 IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));        
         bean.manageSubjectAccruals(Arrays.asList(dto));
     }

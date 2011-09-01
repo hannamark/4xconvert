@@ -369,9 +369,18 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
           <filterset refid="embedded.filterset"/>
       </copy>
       
+      <delete file="${temp.dir}/accrual-ear/META-INF/security-config.xml"/>
+      <copy todir="${temp.dir}/accrual-ear/META-INF" filtering="true">
+          <fileset dir="${jboss-conf.dir.dest}">
+               <include name="accrual-security-config.xml"/>
+          </fileset>
+          <filterset refid="embedded.filterset"/>
+      </copy>
+      <move file="${temp.dir}/accrual-ear/META-INF/accrual-security-config.xml" tofile="${temp.dir}/accrual-ear/META-INF/security-config.xml"/>
+      
       <!-- Filter contents of the files below to be based on install time properties. Paths below are paths witin the ear. -->
       <var name="file.list"
-        value="accrual-services-jar/jndi.properties,accrual-services-jar/pa.jndi.properties,accrual-services-jar/po.jndi.properties,accrual-ear/META-INF/security-config.xml"/>
+        value="accrual-services-jar/jndi.properties,accrual-services-jar/pa.jndi.properties,accrual-services-jar/po.jndi.properties"/>
 
       <for list="${file.list}" param="file.relative.name">
         <sequential>
