@@ -124,7 +124,7 @@ import org.apache.struts2.ServletActionContext;
 public final class MilestoneAction extends AbstractListEditAction {
 
     private static final long serialVersionUID = -2837652488778559394L;
-    
+
     private MailManagerServiceLocal mailManagerService;
     private ProtocolQueryServiceLocal protocolQueryService;
     private StudyMilestoneServicelocal studyMilestoneService;
@@ -168,13 +168,23 @@ public final class MilestoneAction extends AbstractListEditAction {
         return accessHelper.getAllowedMilestones();
     }
 
+    private Ii getTrialIiBySubmissionNumber() {
+        Ii spIi = null;
+        if (amendmentMap.isEmpty()) {
+            spIi = getSpIi();
+        } else {
+            spIi = amendmentMap.get(submissionNumber).getIdentifier();
+        }
+        return spIi;
+    }
+
     /**
      * @throws PAException exception
      */
     @Override
     protected void loadListForm() throws PAException {
         loadAmendmentMap();
-        Ii spIi = amendmentMap.get(submissionNumber).getIdentifier();
+        Ii spIi = getTrialIiBySubmissionNumber();
         addAllowed = spIi.getExtension().equals(getSpIi().getExtension()) && !computeAllowedMilestones().isEmpty();
         List<StudyMilestoneDTO> smList = studyMilestoneService.getByStudyProtocol(spIi);
         milestoneList = new ArrayList<MilestoneWebDTO>();

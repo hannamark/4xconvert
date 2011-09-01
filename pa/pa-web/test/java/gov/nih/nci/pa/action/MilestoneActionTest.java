@@ -10,7 +10,6 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.pa.dto.MilestoneWebDTO;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -40,9 +39,9 @@ import org.mockito.stubbing.Answer;
 public class MilestoneActionTest extends AbstractPaActionTest {
     MilestoneAction action;
     SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-    
+
     @Before
-    public void prepare() throws PAException {    
+    public void prepare() throws PAException {
         action = new MilestoneAction();
         action.prepare();
     }
@@ -77,6 +76,15 @@ public class MilestoneActionTest extends AbstractPaActionTest {
     }
 
     @Test
+    public void testLoadListFormWithRejectedStatus() throws PAException {
+        action.setSpIi(IiConverter.convertToStudyProtocolIi(1L));
+        action.loadListForm();
+        assertNotNull("No milestone list", action.getMilestoneList());
+        assertNotNull("No amendment map", action.getAmendmentMap());
+        assertEquals("Wrong size of amendment map", 0, action.getAmendmentMap().size());
+    }
+
+    @Test
     public void testAddThrowsEx() throws PAException {
         MilestoneWebDTO webDTO = new MilestoneWebDTO();
         webDTO.setComment("comment");
@@ -102,7 +110,7 @@ public class MilestoneActionTest extends AbstractPaActionTest {
         String result = action.add();
         assertEquals("Wrong result from add action", "list", result);
     }
-    
+
     @Test
     public void testDateCheckPastDate() throws PAException {
         MilestoneWebDTO webDTO = new MilestoneWebDTO();
@@ -113,9 +121,9 @@ public class MilestoneActionTest extends AbstractPaActionTest {
         setUpDateCheckForTodayOnMilestone();
         setUpAmendmentSearch();
         action.add();
-        assertEquals("date does not match", action.getActionErrors().iterator().next());       
+        assertEquals("date does not match", action.getActionErrors().iterator().next());
     }
-    
+
     @Test
     public void testDateCheckCurrentDate() throws PAException {
         String clientDate = sdf.format(new Timestamp((new Date()).getTime() + 2000000));
@@ -127,9 +135,9 @@ public class MilestoneActionTest extends AbstractPaActionTest {
         setUpDateCheckForTodayOnMilestone();
         setUpAmendmentSearch();
         String result = action.add();
-        assertEquals("Wrong result from add action", "list", result);       
+        assertEquals("Wrong result from add action", "list", result);
     }
-    
+
     private void setUpAmendmentSearch() {
         action.setStudyProtocolService(new MockStudyProtocolService() {
             @Override
@@ -141,7 +149,7 @@ public class MilestoneActionTest extends AbstractPaActionTest {
         });
         action.setSpIi(IiConverter.convertToStudyProtocolIi(1L));
     }
-    
+
     private void setUpDateCheckForTodayOnMilestone() throws PAException {
         StudyMilestoneServicelocal svcMil = mock(StudyMilestoneServicelocal.class);
         action.setStudyMilestoneService(svcMil);
