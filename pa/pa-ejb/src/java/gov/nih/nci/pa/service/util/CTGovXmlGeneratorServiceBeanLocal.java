@@ -251,8 +251,8 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                 getStudyOutcomeMeasureService().getByStudyProtocol(spDTO.getIdentifier());
             createPrimaryOutcome(somDtos, doc, root);
             createSecondaryOutcome(somDtos, doc, root);
-            createCondition(studyProtocolIi, doc, root);
-            createSubGroups(studyProtocolIi, doc, root);
+            createCondition(spDTO.getIdentifier(), doc, root);
+            createSubGroups(spDTO.getIdentifier(), doc, root);
             XmlGenHelper.appendElement(root,
                     XmlGenHelper.createElementWithTextblock("enrollment", IvlConverter.convertInt().convertLowToString(
                     spDTO.getTargetAccrualNumber()), doc));
@@ -272,7 +272,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             Ts tsVerificationDate = spDTO.getRecordVerificationDate();
             if (ISOUtil.isTsNull(tsVerificationDate))  {
                 DocumentWorkflowStatusDTO dto = getDocumentWorkflowStatusService()
-                        .getCurrentByStudyProtocol(studyProtocolIi);
+                        .getCurrentByStudyProtocol(spDTO.getIdentifier());
                 tsVerificationDate = TsConverter.convertToTs(IvlConverter.convertTs().convertLow(
                         dto.getStatusDateRange()));
             }

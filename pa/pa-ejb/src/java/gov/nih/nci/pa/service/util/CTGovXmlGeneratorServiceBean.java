@@ -152,8 +152,9 @@ public class CTGovXmlGeneratorServiceBean extends CTGovXmlGeneratorServiceBeanLo
      * {@inheritDoc}
      */
     public Ed getCTGovXml(Ii studyProtocolIi) throws PAException {
+        StudyProtocolDTO spDTO = null;
         try {
-            StudyProtocolDTO spDTO = assertValidStudyProtocol(studyProtocolIi);
+            spDTO = assertValidStudyProtocol(studyProtocolIi);
             PAUtil.checkUserIsTrialOwnerOrAbstractor(getEjbContext(), spDTO);
         } catch (PAException userValidationException) {
             if (userValidationException.getMessage().contains("is not a trial owner for trial id")) {
@@ -163,10 +164,10 @@ public class CTGovXmlGeneratorServiceBean extends CTGovXmlGeneratorServiceBeanLo
                 throw userValidationException;
             }
         }
-        enforceAbstractionRules(studyProtocolIi);
+        enforceAbstractionRules(spDTO.getIdentifier());
         Ed ed = new Ed();
         try {
-            ed.setValue(generateCTGovXml(studyProtocolIi));
+            ed.setValue(generateCTGovXml(spDTO.getIdentifier()));
         } catch (PAException xmlGenError) {
             throw new PAException(ErrorCode.PA_XML_001, xmlGenError.getMessage(), xmlGenError);
         }

@@ -130,6 +130,25 @@ public class CTGovXmlGenRemoteServiceTest extends AbstractHibernateTestCase {
     }
 
     @Test
+    public void testNCIAssignedIdentifier() throws PAException {
+        setupRegUserMock(true);
+        Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(1L);
+        DocumentWorkflowStatusDTO dwDto = new DocumentWorkflowStatusDTO();
+        dwDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE));
+        DocumentWorkflowStatusServiceLocal dwSvc = mock(DocumentWorkflowStatusServiceLocal.class);
+        when(dwSvc.getCurrentByStudyProtocol(studyProtocolIi)).thenReturn(dwDto);
+        bean.setDocumentWorkflowStatusService(dwSvc);
+        StudyProtocolDTO dto = new StudyProtocolDTO();
+        dto.setIdentifier(studyProtocolIi);
+        Ii nciAssignedIdentifier = new Ii();
+        nciAssignedIdentifier.setExtension("NCI-2011-00001");
+        nciAssignedIdentifier.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        nciAssignedIdentifier.setIdentifierName(IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
+        when(studyProtocolService.getStudyProtocol(any(Ii.class))).thenReturn(dto);
+        assertEquals("xml string", bean.getCTGovXml(nciAssignedIdentifier).getValue());
+    }
+
+    @Test
     public void testOutErrorOnBadIiRootAndId() throws PAException {
         StudyProtocolBeanLocal spBean = new StudyProtocolBeanLocal();
         bean.setStudyProtocolService(spBean);
