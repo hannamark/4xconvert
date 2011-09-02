@@ -4,6 +4,7 @@
 package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertNotNull;
+
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
@@ -120,6 +121,7 @@ public abstract class AbstractRegWebTest {
         trialDTO.setReason("");
         trialDTO.setSummaryFourOrgIdentifier("1");
         trialDTO.setSummaryFourFundingCategoryCode("summaryFourFundingCategoryCode");
+        trialDTO.setSummaryFourOrgName("SummaryFourOrgName");
         trialDTO.setNctIdentifier("nctIdentifier");
         trialDTO.setLeadOrganizationName("leadOrganizationName");
         trialDTO.setPiName("piName");

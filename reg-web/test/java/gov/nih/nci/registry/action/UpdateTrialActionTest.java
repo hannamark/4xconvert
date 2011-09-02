@@ -4,17 +4,27 @@
 package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -22,6 +32,7 @@ import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
 import org.junit.Test;
+import org.mockito.InOrder;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpSession;
@@ -515,5 +526,121 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         request.setSession(session);
         ServletActionContext.setRequest(request);
         assertEquals("redirect_to_search", action.update());
+    }
+    
+    @Test 
+    public void validateRespPartyInfoValidationPassed() {
+        TrialDTO trial = getMockTrialDTO();
+        action.setTrialDTO(trial);
+        assertTrue(action.validateRespPartyInfo());
+    }
+    
+    @Test 
+    public void validateRespPartyInfoIncorrectSponsorIdentifier() {
+        TrialDTO trial = getMockTrialDTO();
+        trial.setSponsorIdentifier(null);
+        action.setTrialDTO(trial);
+        assertFalse(action.validateRespPartyInfo());
+    }
+    
+    @Test 
+    public void validateRespPartyInfoIncorrectResponsiblePartyType() {
+        TrialDTO trial = getMockTrialDTO();
+        trial.setResponsiblePartyType(null);
+        action.setTrialDTO(trial);
+        assertFalse(action.validateRespPartyInfo());
+    }
+    
+    @Test 
+    public void validateRespPartyInfoIncorrectResponsiblePartyTypePI() {
+        TrialDTO trial = getMockTrialDTO();
+        trial.setResponsiblePartyType("not PI");
+        action.setTrialDTO(trial);
+        assertFalse(action.validateRespPartyInfo());
+    }
+    
+    @Test 
+    public void validateRespPartyInfoIncorrectContactPhone() {
+        TrialDTO trial = getMockTrialDTO();
+        trial.setContactPhone(null);
+        action.setTrialDTO(trial);
+        assertFalse(action.validateRespPartyInfo());
+    }
+    
+    @Test 
+    public void validateRespPartyInfoIncorrectContactEmail() {
+        TrialDTO trial = getMockTrialDTO();
+        trial.setContactEmail(null);
+        action.setTrialDTO(trial);
+        assertFalse(action.validateRespPartyInfo());
+    }
+    
+    @Test 
+    public void validateSummaryFourInfoValidationPassed() {
+        TrialDTO trial = getMockTrialDTO();
+        action.setTrialDTO(trial);
+        assertTrue(action.validateSummaryFourInfo());
+    }
+    
+    @Test 
+    public void  validateSummaryFourInfoIncorrectSummaryFourFundingCategoryCode() {
+        TrialDTO trial = getMockTrialDTO();
+        trial.setSummaryFourFundingCategoryCode(null);
+        action.setTrialDTO(trial);
+        assertFalse(action. validateSummaryFourInfo());
+    }
+    
+    @Test 
+    public void  validateSummaryFourInfoIncorrectSummaryFourOrgName() {
+        TrialDTO trial = getMockTrialDTO();
+        trial.setSummaryFourOrgName(null);
+        action.setTrialDTO(trial);
+        assertFalse(action. validateSummaryFourInfo());
+    }
+    
+    @Test
+    public void validateTrialNotUpdatableFieldsFailed() throws PAException, IOException {
+        UpdateTrialAction action = mock(UpdateTrialAction.class);
+        doCallRealMethod().when(action).validateTrial();
+        when(action.validateRespPartyInfo()).thenReturn(false);
+
+        String errorMessage = action.validateTrial();
+
+        assertEquals("Required fields are missing. You may not complete an update. Please submit an amendment instead.",
+                     errorMessage);
+    }
+
+    @Test
+    public void validateTrialBusinessRulesFailed() throws PAException, IOException {
+        UpdateTrialAction action = mock(UpdateTrialAction.class);
+        doCallRealMethod().when(action).validateTrial();
+        when(action.validateRespPartyInfo()).thenReturn(true);
+        when(action.validateSummaryFourInfo()).thenReturn(true);
+        when(action.hasFieldErrors()).thenReturn(true);
+        doNothing().when(action).enforceBusinessRules();
+
+        String errorMessage = action.validateTrial();
+
+        assertEquals("The form has errors and could not be submitted, please check the fields highlighted below",
+                     errorMessage);
+    }
+
+    @Test
+    public void validateTrial() throws PAException, IOException {
+        UpdateTrialAction action = mock(UpdateTrialAction.class);
+        doCallRealMethod().when(action).validateTrial();
+        when(action.validateRespPartyInfo()).thenReturn(true);
+        when(action.validateSummaryFourInfo()).thenReturn(true);
+        when(action.hasFieldErrors()).thenReturn(true);
+        doNothing().when(action).enforceBusinessRules();
+
+        action.validateTrial();
+
+        InOrder inOrder = inOrder(action);
+        inOrder.verify(action).clearErrorsAndMessages();
+        inOrder.verify(action).validateRespPartyInfo();
+        inOrder.verify(action).validateSummaryFourInfo();
+        inOrder.verify(action).enforceBusinessRules();
+        inOrder.verify(action).hasFieldErrors();
     }
 }

@@ -417,13 +417,10 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     public String reviewUpdate() {
         HttpSession session = ServletActionContext.getRequest().getSession();
         try {
-            clearErrorsAndMessages();
-            enforceBusinessRules();
-            if (hasFieldErrors()) {
-                ServletActionContext.getRequest().setAttribute(
-                                                               "failureMessage",
-                                                               "The form has errors and could not be submitted, "
-                                                                       + "please check the fields highlighted below");
+            String failureMessage = validateTrial();
+            if (failureMessage != null) {
+                ServletActionContext.getRequest().setAttribute("failureMessage", failureMessage);
+
                 TrialValidator.addSessionAttributes(trialDTO);
                 trialUtil.populateRegulatoryList(trialDTO);
                 synchActionWithDTO();
@@ -473,6 +470,22 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         return "review";
     }
 
+    String validateTrial() throws PAException, IOException {
+        clearErrorsAndMessages();
+        String failureMessage = null;
+        if (!validateRespPartyInfo() || !validateSummaryFourInfo()) {
+            failureMessage = "Required fields are missing. You may not complete an update. "
+                    + "Please submit an amendment instead.";
+        } else {
+            enforceBusinessRules();
+            if (hasFieldErrors()) {
+                failureMessage = "The form has errors and could not be submitted, please check the "
+                        + "fields highlighted below";
+            }
+        }
+        return failureMessage;
+    }
+
     /**
      * Edit the trial.
      * 
@@ -480,7 +493,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
      */
     public String edit() {
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession()
-                .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
+            .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
         setDocumentsInSession(trialDTO);
         synchActionWithDTO();
         trialUtil.populateRegulatoryList(trialDTO);
@@ -495,7 +508,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
      */
     public String update() {
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession()
-                .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
+            .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
         if (trialDTO == null) {
             synchActionWithDTO();
             return ERROR;
@@ -514,7 +527,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             StudyOverallStatusDTO sosDto = getOverallStatusForUpdate(util);
 
             List<DocumentDTO> documentDTOs = util.convertToISODocument(trialDTO.getDocDtos(), studyProtocolIi);
-            
+
             // indide updates and adds
             List<StudyIndldeDTO> studyIndldeDTOList = new ArrayList<StudyIndldeDTO>();
             // updated
@@ -524,7 +537,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             // newly added
             if (CollectionUtils.isNotEmpty(trialDTO.getIndIdeAddDtos())) {
                 List<StudyIndldeDTO> studyIndldeDTOs = util.convertISOINDIDEList(trialDTO.getIndIdeAddDtos(),
-                        studyProtocolIi);
+                                                                                 studyProtocolIi);
                 studyIndldeDTOList.addAll(studyIndldeDTOs);
             }
             // funding updates and adds
@@ -536,20 +549,20 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             }
             // newly added
             if (trialDTO.getFundingAddDtos() != null && trialDTO.getFundingAddDtos().size() > 0) {
-                List<StudyResourcingDTO> studyResourcingAddDTOs = util.convertISOGrantsList(
-                        trialDTO.getFundingAddDtos(), studyProtocolIi);
+                List<StudyResourcingDTO> studyResourcingAddDTOs = util.convertISOGrantsList(trialDTO
+                    .getFundingAddDtos(), studyProtocolIi);
                 studyResourcingDTOs.addAll(studyResourcingAddDTOs);
             }
 
             // ps update- send the participating sites list
             List<StudySiteAccrualStatusDTO> pssDTOList = getParticipatingSitesForUpdate(trialDTO
-                    .getParticipatingSites());
+                .getParticipatingSites());
 
             // list of studysite dtos with updated program code
             List<StudySiteDTO> prgCdUpdatedList = getStudySiteToUpdateProgramCode(trialDTO.getParticipatingSites());
 
             updateId = studyProtocolIi;
-           
+
             // call the service to invoke the update method
             PaRegistry.getTrialRegistrationService().update(spDTO, sosDto, studyResourcingDTOs, documentDTOs,
                                                             pssDTOList, prgCdUpdatedList,
@@ -583,7 +596,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
      * @throws PAException the PA exception
      * @throws IOException on document error
      */
-    private void enforceBusinessRules() throws PAException, IOException {
+    void enforceBusinessRules() throws PAException, IOException {
         addErrors(new TrialValidator().validateTrial(trialDTO));
         validateStatusAndDate();
         validateCollaborators();
@@ -617,13 +630,14 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             }
         }
     }
+
     private void validateIndIdeInfo() {
         int ind = 0;
         if (CollectionUtils.isNotEmpty(getIndIdeUpdateDtos())) {
             for (TrialIndIdeDTO indide : getIndIdeUpdateDtos()) {
                 addFieldErrorIfEmptyValue(indide.getGrantor(), "updindideGrantor" + ind, "Grantor should not be null");
                 addFieldErrorIfEmptyValue(indide.getNumber(), "updindideNumber" + ind,
-                        "IND/IDE Number should not be null");
+                                          "IND/IDE Number should not be null");
                 validateIndIndHolderType(ind, indide);
                 validateIndIneExpandedAccessValue(ind, indide);
                 ind++;
@@ -633,28 +647,27 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     private void validateIndIndHolderType(int ind, TrialIndIdeDTO indide) {
         addFieldErrorIfEmptyValue(indide.getHolderType(), "updindideHolderType" + ind,
-                "Ind/IDE Holder Type should not be null");
+                                  "Ind/IDE Holder Type should not be null");
         if (StringUtils.isNotEmpty(indide.getHolderType())) {
             validateIndIneHolderTypeValues(ind, indide);
         }
     }
 
     private void validateIndIneExpandedAccessValue(int ind, TrialIndIdeDTO indide) {
-        if (StringUtils.isNotEmpty(indide.getExpandedAccess())
-                && indide.getExpandedAccess().equalsIgnoreCase("yes")) {
+        if (StringUtils.isNotEmpty(indide.getExpandedAccess()) && indide.getExpandedAccess().equalsIgnoreCase("yes")) {
             addFieldErrorIfEmptyValue(indide.getExpandedAccessType(), "updindideExpandedStatus" + ind,
-                    "Expanded Access Status should not be null");
+                                      "Expanded Access Status should not be null");
         }
     }
 
     private void validateIndIneHolderTypeValues(int ind, TrialIndIdeDTO indide) {
         if (indide.getHolderType().equalsIgnoreCase("NIH")) {
             addFieldErrorIfEmptyValue(indide.getNihInstHolder(), "updindideNihInstHolder" + ind,
-                    "NIH Institute holder should not be null");
+                                      "NIH Institute holder should not be null");
         }
         if (indide.getHolderType().equalsIgnoreCase("NCI")) {
             addFieldErrorIfEmptyValue(indide.getNciDivProgHolder(), "updindideNciDivPrgHolder" + ind,
-                    "NCI Division Program holder should not be null");
+                                      "NCI Division Program holder should not be null");
         }
     }
 
@@ -663,13 +676,13 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         if (CollectionUtils.isNotEmpty(getFundingDtos())) {
             for (TrialFundingWebDTO fm : getFundingDtos()) {
                 addFieldErrorIfEmptyValue(fm.getFundingMechanismCode(), "updfundingMechanismCode" + ind,
-                        "Funding Mechanism Code should not be null");
+                                          "Funding Mechanism Code should not be null");
                 addFieldErrorIfEmptyValue(fm.getNciDivisionProgramCode(), "updnciDivisionProgramCode" + ind,
-                        "NCI Division Code should not be null");
+                                          "NCI Division Code should not be null");
                 addFieldErrorIfEmptyValue(fm.getNihInstitutionCode(), "updnihInstitutionCode" + ind,
-                        "NIH Institution Code  should not be null");
+                                          "NIH Institution Code  should not be null");
                 addFieldErrorIfEmptyValue(fm.getSerialNumber(), "updserialNumber" + ind,
-                        "Serial Number should not be null");
+                                          "Serial Number should not be null");
                 ind++;
             }
         }
@@ -686,9 +699,9 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         if (CollectionUtils.isNotEmpty(getParticipatingSitesList())) {
             for (PaOrganizationDTO ps : getParticipatingSitesList()) {
                 addFieldErrorIfEmptyValue(ps.getRecruitmentStatus(), "participatingsite.recStatus" + ind,
-                        "Recruitment Status should not be null");
+                                          "Recruitment Status should not be null");
                 addFieldErrorIfEmptyValue(ps.getRecruitmentStatusDate(), "participatingsite.recStatusDate" + ind,
-                        "Recruitment Status date should not be null");
+                                          "Recruitment Status date should not be null");
                 ind++;
             }
         }
@@ -699,7 +712,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         if (CollectionUtils.isNotEmpty(getCollaborators())) {
             for (PaOrganizationDTO coll : getCollaborators()) {
                 addFieldErrorIfEmptyValue(coll.getFunctionalRole(), "collaborator.functionalCode" + ind,
-                        "Functional role should not be null");
+                                          "Functional role should not be null");
                 ind++;
             }
         }
@@ -716,19 +729,18 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     private StudyResourcingDTO convertToStudyResourcingDTO(TrialFundingWebDTO trialFundingWebDTO, Ii studyProtocolIi)
             throws PAException {
         StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();
-        studyResoureDTO = PaRegistry.getStudyResourcingService().getStudyResourcingById(
-                IiConverter.convertToIi(Long.parseLong(trialFundingWebDTO.getId())));
+        studyResoureDTO = PaRegistry.getStudyResourcingService()
+            .getStudyResourcingById(IiConverter.convertToIi(Long.parseLong(trialFundingWebDTO.getId())));
         studyResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
         studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(trialFundingWebDTO
-                .getFundingMechanismCode()));
+            .getFundingMechanismCode()));
         studyResoureDTO.setNciDivisionProgramCode(CdConverter.convertToCd(NciDivisionProgramCode
-                .getByCode(trialFundingWebDTO.getNciDivisionProgramCode())));
+            .getByCode(trialFundingWebDTO.getNciDivisionProgramCode())));
         studyResoureDTO
-                .setNihInstitutionCode(CdConverter.convertStringToCd(trialFundingWebDTO.getNihInstitutionCode()));
+            .setNihInstitutionCode(CdConverter.convertStringToCd(trialFundingWebDTO.getNihInstitutionCode()));
         studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
         return studyResoureDTO;
     }
-
 
     /**
      * Gets the participating sites for update.
@@ -744,7 +756,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         List<StudySiteAccrualStatusDTO> ssaDTO = new ArrayList<StudySiteAccrualStatusDTO>();
         for (PaOrganizationDTO dto : ps) {
             StudySiteAccrualStatusDTO ssasOld = PaRegistry.getStudySiteAccrualStatusService()
-                    .getCurrentStudySiteAccrualStatusByStudySite(IiConverter.convertToIi(dto.getId()));
+                .getCurrentStudySiteAccrualStatusByStudySite(IiConverter.convertToIi(dto.getId()));
 
             StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
             ssas.setStudySiteIi(ssasOld.getStudySiteIi());
@@ -777,16 +789,17 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
      */
     private StudyOverallStatusDTO getOverallStatusForUpdate(TrialUtil util) throws PAException {
         StudyOverallStatusDTO sosDto = null;
-        StudyProtocolQueryDTO spqDTO = PaRegistry.getProtocolQueryService().getTrialSummaryByStudyProtocolId(
-                Long.parseLong(trialDTO.getIdentifier()));
+        StudyProtocolQueryDTO spqDTO = PaRegistry.getProtocolQueryService()
+            .getTrialSummaryByStudyProtocolId(Long.parseLong(trialDTO.getIdentifier()));
 
         // original submission
         if (spqDTO.getDocumentWorkflowStatusCode() != null
                 && spqDTO.getDocumentWorkflowStatusCode().getCode().equalsIgnoreCase("SUBMITTED")
                 && IntConverter.convertToInteger(IntConverter.convertToInt(trialDTO.getSubmissionNumber())) == 1) {
 
-            sosDto = PaRegistry.getStudyOverallStatusService().getCurrentByStudyProtocol(
-                    IiConverter.convertToIi(trialDTO.getIdentifier()));
+            sosDto = PaRegistry.getStudyOverallStatusService().getCurrentByStudyProtocol(IiConverter
+                                                                                             .convertToIi(trialDTO
+                                                                                                 .getIdentifier()));
 
         } else {
             sosDto = new StudyOverallStatusDTO();
@@ -818,7 +831,43 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     public void prepare() throws Exception {
         if (this.trialDTO != null) {
             this.trialDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
-                    .lookupPrimaryPurposeAdditionalQualifierCode(this.trialDTO.getPrimaryPurposeCode()));
+                .lookupPrimaryPurposeAdditionalQualifierCode(this.trialDTO.getPrimaryPurposeCode()));
         }
+    }
+
+    boolean validateRespPartyInfo() {
+        if (StringUtils.isEmpty(trialDTO.getResponsiblePartyType())) {
+            return false;
+        }
+        if (StringUtils.isEmpty(trialDTO.getSponsorIdentifier())) {
+            return false;
+        }
+
+        if (!TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equalsIgnoreCase(trialDTO.getResponsiblePartyType())) {
+            return false;
+        }
+
+        if (StringUtils.isEmpty(trialDTO.getContactPhone())) {
+            return false;
+        }
+        
+        if (StringUtils.isEmpty(trialDTO.getContactEmail())) {
+            return false;
+        }
+
+        return true;
+    }   
+   
+    
+    boolean validateSummaryFourInfo() {
+        if (StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode())) {
+            return false;
+        }
+        
+        if (StringUtils.isEmpty(trialDTO.getSummaryFourOrgName())) {
+            return false;
+        }
+
+        return true;
     }
 }
