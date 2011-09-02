@@ -132,6 +132,7 @@ import gov.nih.nci.services.person.PersonDTO;
 
 import java.text.MessageFormat;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -593,7 +594,8 @@ public class TrialRegistrationValidator {
     void validateOtherIdentifiers(StudyProtocolDTO studyProtocolDTO, StringBuilder errorMsg) throws PAException {
         StudyProtocolDTO saved = studyProtocolService.getStudyProtocol(studyProtocolDTO.getIdentifier());
         Set<Ii> savedIdentifiers = saved.getSecondaryIdentifiers().getItem();
-        Set<Ii> newIdentifiers = studyProtocolDTO.getSecondaryIdentifiers().getItem();
+        Set<Ii> newIdentifiers = (studyProtocolDTO.getSecondaryIdentifiers() == null) ? new HashSet<Ii>()
+                : studyProtocolDTO.getSecondaryIdentifiers().getItem();
         if (!CollectionUtils.isSubCollection(savedIdentifiers, newIdentifiers)) {
             errorMsg.append("Other identifiers cannot be modified or deleted as part of an amendment.");
         }

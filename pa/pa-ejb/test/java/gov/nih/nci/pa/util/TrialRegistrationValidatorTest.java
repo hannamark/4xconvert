@@ -803,6 +803,43 @@ public class TrialRegistrationValidatorTest {
     }
     
     /**
+     * test the validateOtherIdentifiers method with null SecondaryIdentifiers data
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testValidateOtherIdentifiersValidNullSecondaryIdentifiers() throws PAException {
+        Ii spIi = IiConverter.convertToIi(1L);
+        studyProtocolDTO.setIdentifier(spIi);       
+        StudyProtocolDTO savedStudy = new StudyProtocolDTO();
+        DSet<Ii> saved = new DSet<Ii>();
+        saved.setItem(new HashSet<Ii>());        
+        savedStudy.setSecondaryIdentifiers(saved);
+        when(studyProtocolService.getStudyProtocol(spIi)).thenReturn(savedStudy);
+        validator.validateOtherIdentifiers(studyProtocolDTO, errorMsg);
+        verify(studyProtocolService).getStudyProtocol(spIi);
+        checkErrorMsg("");
+    }
+    
+    /**
+     * test the validateOtherIdentifiers method with null SecondaryIdentifiers data
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testValidateOtherIdentifiersInvalidNullSecondaryIdentifiers() throws PAException {
+        Ii spIi = IiConverter.convertToIi(1L);
+        studyProtocolDTO.setIdentifier(spIi);       
+        StudyProtocolDTO savedStudy = new StudyProtocolDTO();
+        DSet<Ii> saved = new DSet<Ii>();
+        saved.setItem(new HashSet<Ii>());
+        saved.getItem().add(IiConverter.convertToIi(1L));
+        savedStudy.setSecondaryIdentifiers(saved);
+        when(studyProtocolService.getStudyProtocol(spIi)).thenReturn(savedStudy);
+        validator.validateOtherIdentifiers(studyProtocolDTO, errorMsg);
+        verify(studyProtocolService).getStudyProtocol(spIi);
+        checkErrorMsg("Other identifiers cannot be modified or deleted as part of an amendment.");
+    }
+    
+    /**
      * test the validateOtherIdentifiers method with invalid data
      * @throws PAException if an error occurs
      */
