@@ -92,6 +92,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * CDUS Patient Race Code mapping.
  * 
@@ -99,29 +101,32 @@ import java.util.Set;
  */
 public enum CDUSPatientRaceCode implements CodedEnum<String> {
     /** White. */
-    WHITE("01", PatientRaceCode.WHITE),
+    WHITE("01", PatientRaceCode.WHITE.getCode(), PatientRaceCode.WHITE),
     /** Black or African American. */
-    BLACK("03", PatientRaceCode.BLACK),
+    BLACK("03", PatientRaceCode.BLACK.getCode(), PatientRaceCode.BLACK),
     /** Native Hawaiian or Other Pacific Islander. */
-    HAWAIIAN("04", PatientRaceCode.HAWAIIAN),
+    HAWAIIAN("04", PatientRaceCode.HAWAIIAN.getCode(), PatientRaceCode.HAWAIIAN),
     /** Asian. */
-    ASIAN("05", PatientRaceCode.ASIAN),
+    ASIAN("05", PatientRaceCode.ASIAN.getCode(), PatientRaceCode.ASIAN),
     /** American Indian or Alaska Native. */
-    AMERICAN_INDIAN("06", PatientRaceCode.AMERICAN_INDIAN),
+    AMERICAN_INDIAN("06", PatientRaceCode.AMERICAN_INDIAN.getCode(), PatientRaceCode.AMERICAN_INDIAN),
     /** Not Reported. */
-    NOT_REPORTED("98", PatientRaceCode.NOT_REPORTED),
+    NOT_REPORTED("98", PatientRaceCode.NOT_REPORTED.getCode(), PatientRaceCode.NOT_REPORTED),
     /** Unknown. */
-    UNKNOWN("99", PatientRaceCode.UNKNOWN);
+    UNKNOWN("99", PatientRaceCode.UNKNOWN.getCode(), PatientRaceCode.UNKNOWN);
     
     private String cdusCode;
+    private String crfCode;
     private PatientRaceCode value;
     
     /**
      * @param cdusCode the cdus representation
+     * @param crfCode the crf representation
      * @param value the system representation
      */
-    private CDUSPatientRaceCode(String cdusCode, PatientRaceCode value) {
+    private CDUSPatientRaceCode(String cdusCode, String crfCode, PatientRaceCode value) {
         this.cdusCode = cdusCode;
+        this.crfCode = crfCode;
         this.value = value;
         register(this);
     }
@@ -138,6 +143,11 @@ public enum CDUSPatientRaceCode implements CodedEnum<String> {
      * @return the cdus race code
      */
     public static CDUSPatientRaceCode getByCode(String code) {
+        for (CDUSPatientRaceCode race : values()) {
+            if (StringUtils.equals(race.getCdusCode(), code)) {
+                return race;
+            }
+        }
         return getByClassAndCode(CDUSPatientRaceCode.class, code);
     }
     
@@ -161,7 +171,7 @@ public enum CDUSPatientRaceCode implements CodedEnum<String> {
      * @return the code
      */
     public String getCode() {
-        return cdusCode;
+        return crfCode;
     }
     
     /**
@@ -176,5 +186,12 @@ public enum CDUSPatientRaceCode implements CodedEnum<String> {
      */
     public PatientRaceCode getValue() {
         return value;
+    }
+
+    /**
+     * @return the cdusCode
+     */
+    public String getCdusCode() {
+        return cdusCode;
     }
 }

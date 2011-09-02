@@ -172,8 +172,20 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertFalse(results.get(0).getValidatedLines().isEmpty());
         verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
     }
-
-
+    
+    @Test
+    public void crfValuesBatchValidation() throws URISyntaxException, PAException {
+        File file = new File(this.getClass().getResource("/cdus-abbreviated-with-crf-values.txt").toURI());
+        BatchFile batchFile = getBatchFile(file);
+        List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+        readerService.sendValidationErrorEmail(results, batchFile);
+        assertEquals(1, results.size());
+        assertTrue(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
+        assertFalse(results.get(0).getValidatedLines().isEmpty());
+        verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+    }
+    
     @Test
     public void archiveBatchValidation() throws URISyntaxException, PAException {
         File file = new File(this.getClass().getResource("/CDUS.zip").toURI());
@@ -305,6 +317,20 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
     }
     
+    @Test
+    public void crfValuesFileImport() throws Exception {
+        assertEquals(2, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
+        
+        File file = new File(this.getClass().getResource("/cdus-abbreviated-with-crf-values.txt").toURI());
+        BatchFile batchFile = getBatchFile(file);
+        List<BatchImportResults> importResults = readerService.importBatchData(batchFile);
+        readerService.sendConfirmationEmail(importResults, batchFile);
+        assertEquals(1, importResults.size());
+        assertEquals(72, importResults.get(0).getTotalImports());
+        assertEquals("cdus-abbreviated-with-crf-values.txt", importResults.get(0).getFileName());
+        assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
+        verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+    }
 
     @Test
     public void testIncorrectOrganizationId() throws Exception {

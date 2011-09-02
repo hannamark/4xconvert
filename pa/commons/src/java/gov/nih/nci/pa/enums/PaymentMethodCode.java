@@ -107,10 +107,6 @@ public enum PaymentMethodCode  implements CodedEnum<String> {
     VETERANS("Veterans Sponsored"),
     /** Self pay (no insurance). */
     SELF("Self-Pay (No Insurance)"),
-    /** Self pay (no insurance). */
-    MANAGED_CARE_MEDICARE("Managed Care/Medicare"),
-    /** Self pay (no insurance). */
-    STATE_SUPPLEMENTAL("State Supplemental Health Insurance"),
     /** No means of payment (no insurance). */
     NO_MEANS_OF_PAYMENT("No Means of Payment (No Insurance)"),
     /** Other. */

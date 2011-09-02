@@ -88,6 +88,8 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * CDUS Patient Gender Code mapping.
  * 
@@ -96,21 +98,24 @@ import gov.nih.nci.pa.enums.PatientGenderCode;
 public enum CDUSPatientGenderCode implements CodedEnum<String> {
     
     /** Male. */
-    MALE("1", PatientGenderCode.MALE),
+    MALE("1", PatientGenderCode.MALE.getCode(), PatientGenderCode.MALE),
     /** Female. */
-    FEMALE("2", PatientGenderCode.FEMALE),
+    FEMALE("2", PatientGenderCode.FEMALE.getCode(), PatientGenderCode.FEMALE),
     /** Unknown. */
-    UNKNOWN("9", PatientGenderCode.UNKNOWN);
+    UNKNOWN("9", PatientGenderCode.UNKNOWN.getCode(), PatientGenderCode.UNKNOWN);
     
     private String cdusCode;
+    private String crfCode;
     private PatientGenderCode value;
     
     /**
      * @param cdusCode the cdus representation
+     * @param crfCode the crf representation
      * @param value the system representation
      */
-    private CDUSPatientGenderCode(String cdusCode, PatientGenderCode value) {
+    private CDUSPatientGenderCode(String cdusCode, String crfCode, PatientGenderCode value) {
         this.cdusCode = cdusCode;
+        this.crfCode = crfCode;
         this.value = value;
         register(this);
     }
@@ -127,6 +132,11 @@ public enum CDUSPatientGenderCode implements CodedEnum<String> {
      * @return the cdus patient gender code
      */
     public static CDUSPatientGenderCode getByCode(String code) {
+        for (CDUSPatientGenderCode gender : values()) {
+            if (StringUtils.equals(gender.getCdusCode(), code)) {
+                return gender;
+            }
+        }
         return getByClassAndCode(CDUSPatientGenderCode.class, code);
     }
 
@@ -134,7 +144,7 @@ public enum CDUSPatientGenderCode implements CodedEnum<String> {
      * @return the code
      */
     public String getCode() {
-        return cdusCode;
+        return crfCode;
     }
     
     /**
@@ -149,5 +159,12 @@ public enum CDUSPatientGenderCode implements CodedEnum<String> {
      */
     public PatientGenderCode getValue() {
         return value;
+    }
+
+    /**
+     * @return the cdusCode
+     */
+    public String getCdusCode() {
+        return cdusCode;
     }
 }

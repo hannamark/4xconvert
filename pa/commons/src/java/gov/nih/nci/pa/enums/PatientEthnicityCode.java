@@ -93,11 +93,11 @@ import java.util.TreeMap;
 public enum PatientEthnicityCode implements CodedEnum<String> {
 
     /** Hispanic. */
-    HISPANIC("Hispanic_or_Latino"),
+    HISPANIC("Hispanic or Latino"),
     /** Not Hispanic. */
-    NOT_HISPANIC("Not_Hispanic_or_Latino"),
+    NOT_HISPANIC("Not Hispanic or Latino"),
     /** Not Reported. */
-    NOT_REPORTED("Not_Reported"),
+    NOT_REPORTED("Not Reported"),
     /** Unknown. */
     UNKNOWN("Unknown");
 
@@ -159,7 +159,7 @@ public enum PatientEthnicityCode implements CodedEnum<String> {
     public String getNameByCode(String str) {
         return getByCode(str).name();
     }
-    
+
     /**
      * Gets the display map.
      * @return the display map
@@ -168,7 +168,7 @@ public enum PatientEthnicityCode implements CodedEnum<String> {
         PatientEthnicityCode[] l = PatientEthnicityCode.values();
         Map<String, String> a = new TreeMap<String, String>();
         for (int i = 0; i < l.length; i++) {
-            String value = l[i].getCode().replace('_', ' ');
+            String value = l[i].getCode();
            a.put(l[i].getCode(), value);
         }
         return a;

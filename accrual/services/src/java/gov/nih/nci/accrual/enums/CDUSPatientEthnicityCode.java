@@ -88,6 +88,8 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * CDUS Patient Ethnicity Code mapping.
  * 
@@ -95,23 +97,26 @@ import gov.nih.nci.pa.enums.PatientEthnicityCode;
  */
 public enum CDUSPatientEthnicityCode implements CodedEnum<String> {
     /** Hispanic. */
-    HISPANIC("1", PatientEthnicityCode.HISPANIC),
+    HISPANIC("1", PatientEthnicityCode.HISPANIC.getCode(), PatientEthnicityCode.HISPANIC),
     /** Not Hispanic. */
-    NOT_HISPANIC("2", PatientEthnicityCode.NOT_HISPANIC),
+    NOT_HISPANIC("2", PatientEthnicityCode.NOT_HISPANIC.getCode(), PatientEthnicityCode.NOT_HISPANIC),
     /** Not Reported. */
-    NOT_REPORTED("8", PatientEthnicityCode.NOT_REPORTED),
+    NOT_REPORTED("8", PatientEthnicityCode.NOT_REPORTED.getCode(), PatientEthnicityCode.NOT_REPORTED),
     /** Unknown. */
-    UNKNOWN("9", PatientEthnicityCode.UNKNOWN);
+    UNKNOWN("9", PatientEthnicityCode.UNKNOWN.getCode(), PatientEthnicityCode.UNKNOWN);
     
     private String cdusCode;
+    private String crfCode;
     private PatientEthnicityCode value;
     
     /**
      * @param cdusCode the cdus representation
+     * @param crfCode the crf representation
      * @param value the system representation
      */
-    private CDUSPatientEthnicityCode(String cdusCode, PatientEthnicityCode value) {
+    private CDUSPatientEthnicityCode(String cdusCode, String crfCode, PatientEthnicityCode value) {
         this.cdusCode = cdusCode;
+        this.crfCode = crfCode;
         this.value = value;
         register(this);
     }
@@ -128,6 +133,11 @@ public enum CDUSPatientEthnicityCode implements CodedEnum<String> {
      * @return the cdus patient ethnicity code
      */
     public static CDUSPatientEthnicityCode getByCode(String code) {
+        for (CDUSPatientEthnicityCode pec : values()) {
+            if (StringUtils.equals(pec.getCdusCode(), code)) {
+                return pec;
+            }
+        }
         return getByClassAndCode(CDUSPatientEthnicityCode.class, code);
     }
 
@@ -135,7 +145,7 @@ public enum CDUSPatientEthnicityCode implements CodedEnum<String> {
      * @return the code
      */
     public String getCode() {
-        return cdusCode;
+        return crfCode;
     }
     
     /**
@@ -150,5 +160,12 @@ public enum CDUSPatientEthnicityCode implements CodedEnum<String> {
      */
     public PatientEthnicityCode getValue() {
         return value;
+    }
+
+    /**
+     * @return the cdusCode
+     */
+    public String getCdusCode() {
+        return cdusCode;
     }
 }

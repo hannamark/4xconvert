@@ -91,6 +91,9 @@ import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.enums.PatientEthnicityCode;
+import gov.nih.nci.pa.enums.PatientGenderCode;
+import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -158,6 +161,7 @@ public class BaseBatchUploadReader {
     protected static final List<String> PATIENT_GENDER = new ArrayList<String>();
     static {
         PATIENT_GENDER.addAll(Arrays.asList("1", "2", "9"));
+        PATIENT_GENDER.addAll(Arrays.asList(PatientGenderCode.getDisplayNames()));
     }
     /**
      * patient ethnicity.
@@ -165,6 +169,7 @@ public class BaseBatchUploadReader {
     protected static final List<String> PATIENT_ETHNICITY = new ArrayList<String>();
     static {
         PATIENT_ETHNICITY.addAll(Arrays.asList("1", "2", "8", "9"));
+        PATIENT_ETHNICITY.addAll(Arrays.asList(PatientEthnicityCode.getDisplayNames()));
     }
     /**
      * patient race code index.
@@ -180,6 +185,7 @@ public class BaseBatchUploadReader {
     protected static final int ACCURAL_COUNT_INDEX = 1;
     static {
         PATIENT_RACE_CODE.addAll(Arrays.asList("01", "03", "04", "05", "06", "98", "99"));
+        PATIENT_RACE_CODE.addAll(Arrays.asList(PatientRaceCode.getDisplayNames()));
     }
     
     private static final int PATIENT_ID_INDEX = 1;

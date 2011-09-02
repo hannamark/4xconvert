@@ -113,7 +113,7 @@ public class CDUSPatientRaceCodeTest {
         Set<String> races = CDUSPatientRaceCode.getCodesByCdusCodes(Arrays.asList("01","03","05"));
         assertEquals(3, races.size());
         assertTrue(races.contains("White"));
-        assertTrue(races.contains("Black_or_African_American"));
+        assertTrue(races.contains("Black or African American"));
         assertTrue(races.contains("Asian"));
     }
 }

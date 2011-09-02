@@ -88,6 +88,8 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.PaymentMethodCode;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * CDUS Payment Code mapping.
  * 
@@ -95,39 +97,43 @@ import gov.nih.nci.pa.enums.PaymentMethodCode;
  */
 public enum CDUSPaymentMethodCode implements CodedEnum<String> {
     /** Private Insurance. */
-    PRIVATE("1", PaymentMethodCode.PRIVATE),
+    PRIVATE("1", PaymentMethodCode.PRIVATE.getCode(), PaymentMethodCode.PRIVATE),
     /** Medicare. */
-    MEDICARE("2", PaymentMethodCode.MEDICARE),
+    MEDICARE("2", PaymentMethodCode.MEDICARE.getCode(), PaymentMethodCode.MEDICARE),
     /** Medicare and Private Insurance. */
-    MEDICARE_AND_PRIVATE("3", PaymentMethodCode.MEDICARE_AND_PRIVATE),
+    MEDICARE_AND_PRIVATE("3", PaymentMethodCode.MEDICARE_AND_PRIVATE.getCode(), PaymentMethodCode.MEDICARE_AND_PRIVATE),
     /** Medicaid. */
-    MEDICAID("4", PaymentMethodCode.MEDICAID),
+    MEDICAID("4", PaymentMethodCode.MEDICAID.getCode(), PaymentMethodCode.MEDICAID),
     /** Medicaid and Medicare. */
-    MEDICAID_AND_MEDICARE("5", PaymentMethodCode.MEDICAID_AND_MEDICARE),
+    MEDICAID_AND_MEDICARE("5", PaymentMethodCode.MEDICAID_AND_MEDICARE.getCode(),  
+            PaymentMethodCode.MEDICAID_AND_MEDICARE),
     /** Military or Veterans Sponsored, Not Otherwise Specified (NOS). */
-    MILITARY_OR_VETERANS("6", PaymentMethodCode.MILITARY_OR_VETERANS),
+    MILITARY_OR_VETERANS("6", PaymentMethodCode.MILITARY_OR_VETERANS.getCode(), PaymentMethodCode.MILITARY_OR_VETERANS),
     /** Military Sponsored (including CHAMPUS or TRICARE). */
-    MILITARY("6A", PaymentMethodCode.MILITARY),
+    MILITARY("6A", PaymentMethodCode.MILITARY.getCode(), PaymentMethodCode.MILITARY),
     /** Veterans Sponsored. */
-    VETERANS("6B", PaymentMethodCode.VETERANS),
+    VETERANS("6B", PaymentMethodCode.VETERANS.getCode(), PaymentMethodCode.VETERANS),
     /** Self pay (no insurance). */
-    SELF("7", PaymentMethodCode.SELF),
+    SELF("7", PaymentMethodCode.SELF.getCode(), PaymentMethodCode.SELF),
     /** Self pay (no insurance). */
-    MANAGED_CARE_MEDICARE("8", PaymentMethodCode.NO_MEANS_OF_PAYMENT),
+    MANAGED_CARE_MEDICARE("8", PaymentMethodCode.NO_MEANS_OF_PAYMENT.getCode(), PaymentMethodCode.NO_MEANS_OF_PAYMENT),
     /** Other. */
-    OTHER("98", PaymentMethodCode.OTHER),
+    OTHER("98", PaymentMethodCode.OTHER.getCode(), PaymentMethodCode.OTHER),
     /** Unknown. */
-    UNKNOWN("99", PaymentMethodCode.UNKNOWN);
+    UNKNOWN("99", PaymentMethodCode.UNKNOWN.getCode(), PaymentMethodCode.UNKNOWN);
     
     private String cdusCode;
+    private String crfCode;
     private PaymentMethodCode value;
     
     /**
      * @param cdusCode the cdus representation
+     * @param crf the crf representation
      * @param value the system representation
      */
-    private CDUSPaymentMethodCode(String cdusCode, PaymentMethodCode value) {
+    private CDUSPaymentMethodCode(String cdusCode, String crf, PaymentMethodCode value) {
         this.cdusCode = cdusCode;
+        this.crfCode = crf;
         this.value = value;
         register(this);
     }
@@ -144,6 +150,11 @@ public enum CDUSPaymentMethodCode implements CodedEnum<String> {
      * @return the cdus payment method code
      */
     public static CDUSPaymentMethodCode getByCode(String code) {
+        for (CDUSPaymentMethodCode pmc : values()) {
+            if (StringUtils.equals(pmc.getCdusCode(), code)) {
+                return pmc;
+            }
+        }
         return getByClassAndCode(CDUSPaymentMethodCode.class, code);
     }
 
@@ -151,6 +162,13 @@ public enum CDUSPaymentMethodCode implements CodedEnum<String> {
      * @return the code
      */
     public String getCode() {
+        return crfCode;
+    }
+    
+    /**
+     * @return the crfCode
+     */
+    public String getCdusCode() {
         return cdusCode;
     }
     
@@ -167,5 +185,4 @@ public enum CDUSPaymentMethodCode implements CodedEnum<String> {
     public PaymentMethodCode getValue() {
         return value;
     }
-
 }

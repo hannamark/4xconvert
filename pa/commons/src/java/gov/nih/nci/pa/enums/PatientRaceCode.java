@@ -95,21 +95,21 @@ public enum PatientRaceCode implements CodedEnum<String>  {
     /** White. */
     WHITE("White", false),
     /** American Indian or Alaska Native. */
-    AMERICAN_INDIAN("American_Indian_or_Alaska_Native", false),
+    AMERICAN_INDIAN("American Indian or Alaska Native", false),
     /** Asian. */
     ASIAN("Asian", false),
     /** Black or African American. */
-    BLACK("Black_or_African_American", false),
+    BLACK("Black or African American", false),
     /** Native Hawaiian or Other Pacific Islander. */
-    HAWAIIAN("Native_Hawaiian_or_Other_Pacific_Islander", false),
+    HAWAIIAN("Native Hawaiian or Other Pacific Islander", false),
     /** Not Reported. */
-    NOT_REPORTED("Not_Reported", true),
+    NOT_REPORTED("Not Reported", true),
     /** Unknown. */
     UNKNOWN("Unknown", true);
 
     private final String code;
     private final boolean unique;
-    
+
     /**
      *
      * @param code
@@ -125,7 +125,7 @@ public enum PatientRaceCode implements CodedEnum<String>  {
     public boolean isUnique() {
        return unique;
     }
-    
+
     /**
      * @return unique code
      */
@@ -168,14 +168,14 @@ public enum PatientRaceCode implements CodedEnum<String>  {
         }
         return a;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public String getNameByCode(String str) {
         return getByCode(str).name();
     }
-    
+
     /**
      * Gets the display map.
      * @return the display map
@@ -184,8 +184,8 @@ public enum PatientRaceCode implements CodedEnum<String>  {
         PatientRaceCode[] l = PatientRaceCode.values();
         Map<String, String> a = new TreeMap<String, String>();
         for (int i = 0; i < l.length; i++) {
-            String value = l[i].getCode().replace('_', ' ');
-           a.put(l[i].getCode(), value);
+            String value = l[i].getCode();
+            a.put(l[i].getCode(), value);
         }
         return a;
     }
