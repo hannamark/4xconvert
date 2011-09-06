@@ -224,6 +224,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             <filter token="mock.po" value="${mock.po}"/>
             <filter token="wikiHelp.baseUrl.pa" value="${wikiHelp.baseUrl.pa}" />
             <filter token="wikiHelp.baseUrl.registry" value="${wikiHelp.baseUrl.registry}" />
+            <filter token="wikiHelp.baseUrl.accrual" value="${wikiHelp.baseUrl.accrual}" />
+            <filter token="wikiHelp.baseUrl.viewer" value="${wikiHelp.baseUrl.viewer}" />
             <!-- end paear.properties -->
             <filter token="database.url" value="${database.url}"/>
             <filter token="database.user" value="${database.user}"/>
