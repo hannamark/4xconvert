@@ -88,6 +88,7 @@ import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.po.util.EmailLogger;
 
 import java.io.StringReader;
+import java.text.MessageFormat;
 
 import javax.ejb.EJB;
 import javax.jms.JMSException;
@@ -98,6 +99,9 @@ import javax.jms.TextMessage;
 import org.apache.commons.digester.Digester;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.validator.InvalidStateException;
+import org.hibernate.validator.InvalidValue;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -181,6 +185,7 @@ public class CtepMessageBean implements MessageListener {
     }
 
     private static final Logger LOG = Logger.getLogger(CtepMessageBean.class);
+    private static final String INVALID_STATE_MSG = "Invalid value (property={0}, value={1}, message={2})";
     private CtepImportService ctepImportService;
 
     /**
@@ -217,8 +222,22 @@ public class CtepMessageBean implements MessageListener {
                 LOG.error(ex);
             }
         }
+        handleInvalidStateException(err, sb);
         EmailLogger.LOG.error(sb.toString(), err);
         LOG.error(sb.toString(), err);
+    }
+
+    private void handleInvalidStateException(Exception err, StringBuffer sb) {
+        if (err instanceof SAXException && ((SAXException) err).getException() != null
+                && ((SAXException) err).getException().getCause() instanceof InvalidStateException) {
+            InvalidStateException e = (InvalidStateException) ((SAXException) err).getException().getCause();
+            
+            for (InvalidValue invalidValue : e.getInvalidValues()) {
+                String errorMessage = MessageFormat.format(INVALID_STATE_MSG, invalidValue.getPropertyName(),
+                        invalidValue.getValue(), invalidValue.getMessage());
+                sb.append(errorMessage).append('\n');
+            }
+        }
     }
 
     /**

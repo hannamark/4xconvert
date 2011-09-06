@@ -97,6 +97,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,6 +107,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.validation.SkipValidation;
+import org.hibernate.validator.InvalidStateException;
+import org.hibernate.validator.InvalidValue;
+import org.jboss.tm.JBossRollbackException;
 
 import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 import com.fiveamsolutions.nci.commons.web.struts2.action.ActionHelper;
@@ -119,6 +123,7 @@ import com.opensymphony.xwork2.ActionSupport;
 @SuppressWarnings("PMD.TooManyMethods")
 public class CtepImportAction extends ActionSupport {
     private static final Logger LOG = Logger.getLogger(CtepImportAction.class);
+    private static final String INVALID_STATE_MSG = "Invalid value (property={0}, value={1}, message={2})";
     private static final long serialVersionUID = 1L;
     private File file;
     private String ctepId;
@@ -286,13 +291,8 @@ public class CtepImportAction extends ActionSupport {
                                 skippedRecords.add(line);
                             }
                         } catch (Exception e) {
-                            // Validation errors cause the transaction to be closed, so close and re-open the session
-                            // to import the rest of the lines
-                            HibernateHelper hh = PoHibernateUtil.getHibernateHelper();
-                            hh.unbindAndCleanupSession();
-                            hh.openAndBindSession();
-                            LOG.error("Error importing " + callback.getType() + " with id:  " +  line, e);
-                            erroredRecords.add(line);
+                            handleInvalidStateExceptions(e);
+                            handleValidationExceptions(callback, line, erroredRecords, e);
                         }
                     }
                     line = reader.readLine();
@@ -306,6 +306,32 @@ public class CtepImportAction extends ActionSupport {
             } finally  {
                 addMessages(passedRecords, skippedRecords, erroredRecords);
             }
+        }
+
+        private void handleInvalidStateExceptions(Exception e) {
+            if (e.getCause() instanceof JBossRollbackException
+                    && ((JBossRollbackException) e.getCause()).getNested() 
+                        instanceof InvalidStateException) {
+                InvalidStateException exception = 
+                    (InvalidStateException) ((JBossRollbackException) e.getCause()).getNested();
+                for (InvalidValue invalidValue : exception.getInvalidValues()) {
+                    LOG.error(MessageFormat.format(INVALID_STATE_MSG, invalidValue.getPropertyName(),
+                            invalidValue.getValue(), invalidValue.getMessage()));
+                }
+            }
+        }
+
+        /**
+         * Validation errors cause the transaction to be closed, so close and re-open the session
+         * to import the rest of the lines.
+         */
+        private void handleValidationExceptions(Importer callback, String line, List<String> erroredRecords, 
+                Exception e) {
+            HibernateHelper hh = PoHibernateUtil.getHibernateHelper();
+            hh.unbindAndCleanupSession();
+            hh.openAndBindSession();
+            LOG.error("Error importing " + callback.getType() + " with id:  " +  line, e);
+            erroredRecords.add(line);
         }
 
         private BufferedReader getReader() throws FileNotFoundException {
