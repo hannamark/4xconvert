@@ -142,61 +142,12 @@ public enum StudyStatusCode implements CodedEnum<String> {
      * Complete.
      */
     COMPLETE("Complete");
-
-    private String code;
-
-    /**
-     * Constructor for TrialStatusCode.
-     * @param code
-     */
-
-    private StudyStatusCode(String code) {
-        this.code = code;
-        register(this);
-    }
-
-    /**
-     * @return code coded value of enum
-     */
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     *@return String DisplayName
-     */
-    public String getDisplayName() {
-        return sentenceCasedName(this);
-    }
-
-    /**
-     * @return String display name
-     */
-    public String getName() {
-        return name();
-    }
-
-    /**
-     * @param code code
-     * @return TrialStatusCode
-     */
-    public static StudyStatusCode getByCode(String code) {
-        return getByClassAndCode(StudyStatusCode.class, code);
-    }
-
-    /**
-     * construct a array of display names for Study Status coded Enum.
-     * @return String[] display names for StudyStatusCode
-     */
-    public static String[] getDisplayNames() {
-        StudyStatusCode[] studyStatusCodes = StudyStatusCode.values();
-        String[] codedNames = new String[studyStatusCodes.length];
-        for (int i = 0; i < studyStatusCodes.length; i++) {
-            codedNames[i] = studyStatusCodes[i].getCode();
-        }
-        return codedNames;
-    }
-
+    
+    private static final Set<StudyStatusCode> REASON_REQUIRED = EnumSet
+        .of(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL,
+            StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION, StudyStatusCode.WITHDRAWN,
+            StudyStatusCode.ADMINISTRATIVELY_COMPLETE);
+    
     private static final Map<StudyStatusCode, Set<StudyStatusCode>> TRANSITIONS;
 
     static {
@@ -237,6 +188,70 @@ public enum StudyStatusCode implements CodedEnum<String> {
         TRANSITIONS = Collections.unmodifiableMap(tmp);
     }
 
+    private String code;
+
+    /**
+     * Constructor for TrialStatusCode.
+     * @param code
+     */
+
+    private StudyStatusCode(String code) {
+        this.code = code;
+        register(this);
+    }
+    
+    /**
+     * @param code code
+     * @return TrialStatusCode
+     */
+    public static StudyStatusCode getByCode(String code) {
+        return getByClassAndCode(StudyStatusCode.class, code);
+    }
+
+    /**
+     * construct a array of display names for Study Status coded Enum.
+     * @return String[] display names for StudyStatusCode
+     */
+    public static String[] getDisplayNames() {
+        StudyStatusCode[] studyStatusCodes = StudyStatusCode.values();
+        String[] codedNames = new String[studyStatusCodes.length];
+        for (int i = 0; i < studyStatusCodes.length; i++) {
+            codedNames[i] = studyStatusCodes[i].getCode();
+        }
+        return codedNames;
+    }
+    
+    /**
+     * construct a array of display names for Study Status coded Enum for amend.
+     * @return String[] display names for StudyStatusCode
+     */
+    public static String[] getDisplayNamesForAmend() {
+        return getDisplayNames();
+    }
+
+    /**
+     * @return code coded value of enum
+     */
+    @Override
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     *@return String DisplayName
+     */
+    @Override
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
+
+    /**
+     * @return String display name
+     */
+    public String getName() {
+        return name();
+    }
+
     /**
      * Helper method that indicates whether a transition to the new entity status is allowed.
      * 
@@ -248,17 +263,19 @@ public enum StudyStatusCode implements CodedEnum<String> {
     }
 
     /**
-     * construct a array of display names for Study Status coded Enum for amend.
-     * @return String[] display names for StudyStatusCode
-     */
-    public static String[] getDisplayNamesForAmend() {
-        return getDisplayNames();
-    }
-
-    /**
      * {@inheritDoc}
      */
+    @Override
     public String getNameByCode(String str) {
         return getByCode(str).name();
     }
+    
+    /**
+     * Test if this status requires a reason text.
+     * @return true if this status requires a reason text.
+     */
+    public boolean requiresReasonText() {
+        return REASON_REQUIRED.contains(this);
+    }
+ 
 }

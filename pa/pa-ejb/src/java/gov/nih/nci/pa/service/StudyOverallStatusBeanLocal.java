@@ -84,6 +84,7 @@ import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.interceptor.ProprietaryTrialInterceptor;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
@@ -100,16 +101,14 @@ import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
-import gov.nih.nci.pa.util.PaRegistry;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -131,23 +130,14 @@ public class StudyOverallStatusBeanLocal extends
 
     /** Standard error message for empty methods to be overridden. */
     private static final String ERR_MSG_METHOD_NOT_IMPLEMENTED = "Method not yet implemented.";
-    private static final Set<String> REASON_REQ_STATUS = new HashSet<String>();
-    static {
-        REASON_REQ_STATUS.add(StudyStatusCode.WITHDRAWN.getCode());
-        REASON_REQ_STATUS.add(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode());
-        REASON_REQ_STATUS.add(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION.getCode());
-        REASON_REQ_STATUS.add(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode());
-    }
 
-
+    @EJB 
+    private DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService;
+    @EJB 
+    private StudyProtocolServiceLocal studyProtocolService;
+    
     /**
-     * Method used to update the StudyOverallStatus and StudyRecruitmentStatus.
-     * Note that this is the only method which does this.  StudyRecruitmentStatusService
-     * is used for reporting only.
-     *
-     * @param dto studyOverallStatusDTO
-     * @return StudyOverallStatusDTO
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
     @Override
     @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
@@ -184,7 +174,7 @@ public class StudyOverallStatusBeanLocal extends
 
         // update
         session.saveOrUpdate(bo);
-        StudyRecruitmentStatus srs = StudyRecruitmentStatusBeanLocal.create(bo);
+        StudyRecruitmentStatus srs = createStudyRecruitmentStatus(bo);
         if (srs != null) {
             session.saveOrUpdate(srs);
         }
@@ -229,11 +219,28 @@ public class StudyOverallStatusBeanLocal extends
         }
         for (StudyOverallStatus status : intermediateStatuses) {
             PaHibernateUtil.getCurrentSession().saveOrUpdate(status);
-            StudyRecruitmentStatus srs = StudyRecruitmentStatusBeanLocal.create(status);
+            StudyRecruitmentStatus srs = createStudyRecruitmentStatus(status);
             if (srs != null) {
                 PaHibernateUtil.getCurrentSession().saveOrUpdate(srs);
             }
         }
+    }
+    
+    /**
+     * Creates a recruitment status for the given StudyOverallStatus.
+     * @param bo the StudyOverallStatus domain object.
+     * @return the recruitment status domain object.
+     */
+    StudyRecruitmentStatus createStudyRecruitmentStatus(StudyOverallStatus bo) {
+        // automatically update StudyRecruitmentStatus for applicable overall status code's
+        if (bo != null && bo.getStatusCode() != null) {
+            StudyRecruitmentStatus srsBo = new StudyRecruitmentStatus();
+            srsBo.setStatusCode(RecruitmentStatusCode.getByCode(bo.getStatusCode().getCode()));
+            srsBo.setStatusDate(bo.getStatusDate());
+            srsBo.setStudyProtocol(bo.getStudyProtocol());
+            return srsBo;
+        }
+        return null;
     }
 
     private StudyOverallStatus getSystemStudyOverallStatus(StudyOverallStatusDTO newStatus, StudyStatusCode statusCode)
@@ -254,42 +261,28 @@ public class StudyOverallStatusBeanLocal extends
      */
     private void validateStatusCodeAndDate(StudyStatusCode oldCode, StudyStatusCode newCode, Timestamp oldDate,
             Timestamp newDate) throws PAException {
-        if (newCode == null) {
-            throw new PAException("Study status must be set.");
+        checkCondition(newCode == null, "Study status must be set.");
+        checkCondition(newDate == null, "Study status date must be set.");
+        if (oldCode != null) {
+            checkCondition(!oldCode.canTransitionTo(newCode),
+                           "Invalid study status transition from " + oldCode.getCode() + " to " + newCode.getCode()
+                                   + ".");
         }
-        if (newDate == null) {
-            throw new PAException("Study status date must be set.");
-        }
-        if (oldCode != null && !oldCode.canTransitionTo(newCode)) {
-            throw new PAException("Invalid study status transition from " + oldCode.getCode() + " to "
-                    + newCode.getCode() + ".");
-        }
-        if (oldDate != null && newDate.before(oldDate)) {
-            throw new PAException("New current status date should be bigger/same as old date.");
-        }
+        checkCondition(oldDate != null && newDate.before(oldDate),
+                       "New current status date should be bigger/same as old date.");
     }
 
     /**
-     * @param dto dto
-     * @return null
-     * @throws PAException exception
+     * {@inheritDoc}
      */
     @Override
     @RolesAllowed({SUBMITTER_ROLE, ADMIN_ABSTRACTOR_ROLE })
     public StudyOverallStatusDTO update(StudyOverallStatusDTO dto) throws PAException {
-        StudyStatusCode newCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode());
-        Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
-        if (newCode == null) {
-            throw new PAException("Study status must be set.  ");
-        }
-        if (newDate == null) {
-            throw new PAException("Study status date must be set.  ");
-        }
-        StudyProtocolDTO studyProtocolDto =
-            PaRegistry.getStudyProtocolService().getStudyProtocol(dto.getStudyProtocolIdentifier());
-        if (IntConverter.convertToInteger(studyProtocolDto.getSubmissionNumber()) > 1) {
-            throw new PAException("Study status Cannot be updated.  ");
-        }
+        checkCondition(StudyStatusCode.getByCode(dto.getStatusCode().getCode()) == null, "Study status must be set.");
+        checkCondition(TsConverter.convertToTimestamp(dto.getStatusDate()) == null, "Study status date must be set.");
+        StudyProtocolDTO studyProtocolDto = studyProtocolService.getStudyProtocol(dto.getStudyProtocolIdentifier());
+        checkCondition(IntConverter.convertToInteger(studyProtocolDto.getSubmissionNumber()) > 1,
+                       "Study status Cannot be updated.");
         validateReasonText(dto);
         return super.update(dto);
     }
@@ -303,50 +296,45 @@ public class StudyOverallStatusBeanLocal extends
     public void delete(Ii ii) throws PAException {
         throw new PAException(ERR_MSG_METHOD_NOT_IMPLEMENTED);
     }
+
     /**
-     *
-     * @param newStatusDto dto
-     * @param studyProtocolIi study protocol ii
-     * @return s
-     * @throws PAException e
+     * {@inheritDoc}
      */
+    @Override
     public boolean isTrialStatusOrDateChanged(StudyOverallStatusDTO newStatusDto, Ii studyProtocolIi)
-    throws PAException {
-        DocumentWorkflowStatusDTO dwsDTO =
-            PaRegistry.getDocumentWorkflowStatusService().getCurrentByStudyProtocol(studyProtocolIi);
-        StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            throws PAException {
+        DocumentWorkflowStatusDTO dwsDTO = documentWorkFlowStatusService.getCurrentByStudyProtocol(studyProtocolIi);
+        StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
         boolean statusOrDateChanged = true;
-        //original submission
+        // original submission
         DocumentWorkflowStatusCode currentDwfStatus =
-            DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dwsDTO.getStatusCode()));
+                DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dwsDTO.getStatusCode()));
         if (DocumentWorkflowStatusCode.SUBMITTED == currentDwfStatus
                 && IntConverter.convertToInteger(spDTO.getSubmissionNumber()) == 1) {
             statusOrDateChanged = false;
         }
-        StudyOverallStatusDTO  currentDBdto = getCurrentByStudyProtocol(studyProtocolIi);
+        StudyOverallStatusDTO currentDBdto = getCurrentByStudyProtocol(studyProtocolIi);
         StudyStatusCode currentStatusCode = StudyStatusCode.getByCode(currentDBdto.getStatusCode().getCode());
         Timestamp currentStatusDate = TsConverter.convertToTimestamp(currentDBdto.getStatusDate());
 
-        StudyStatusCode newStatusCode =  StudyStatusCode.getByCode(newStatusDto.getStatusCode().getCode());
+        StudyStatusCode newStatusCode = StudyStatusCode.getByCode(newStatusDto.getStatusCode().getCode());
         Timestamp newStatusDate = TsConverter.convertToTimestamp(newStatusDto.getStatusDate());
-        boolean codeChanged = (newStatusCode == null)
-        ? (currentStatusCode != null) : !newStatusCode.equals(currentStatusCode);
-        boolean statusDateChanged = (currentStatusDate == null)
-        ? (newStatusDate != null) : !currentStatusDate.equals(newStatusDate);
+        boolean codeChanged =
+                (newStatusCode == null) ? (currentStatusCode != null) : !newStatusCode.equals(currentStatusCode);
+        boolean statusDateChanged =
+                (currentStatusDate == null) ? (newStatusDate != null) : !currentStatusDate.equals(newStatusDate);
         if (!codeChanged && !statusDateChanged) {
             statusOrDateChanged = false;
         }
         return statusOrDateChanged;
     }
 
-    /**
-     *
-     * @param statusDto sDto
-     * @param studyProtocolDTO protocolDto
-     * @throws PAException e
-     */
+   /**
+    * {@inheritDoc}
+    */
+    @Override
     public void validate(StudyOverallStatusDTO statusDto, StudyProtocolDTO studyProtocolDTO) throws PAException {
-        StringBuffer errorMsg = new StringBuffer();
+        StringBuilder errorMsg = new StringBuilder();
         if (statusDto == null) {
             errorMsg.append("Study Overall Status cannot be null. ");
         } else {
@@ -363,24 +351,35 @@ public class StudyOverallStatusBeanLocal extends
     }
 
     private void validateReasonText(StudyOverallStatusDTO statusDto) throws PAException {
-        StringBuffer errorMsg = new StringBuffer();
-        if (!ISOUtil.isCdNull(statusDto.getStatusCode())
-                && REASON_REQ_STATUS.contains(CdConverter.convertCdToString(statusDto.getStatusCode()))) {
+        StringBuilder errorMsg = new StringBuilder();
+        StudyStatusCode status = StudyStatusCode.getByCode(CdConverter.convertCdToString(statusDto.getStatusCode()));
+        if (status != null && status.requiresReasonText()) {
             if (ISOUtil.isStNull(statusDto.getReasonText())) {
                 errorMsg.append("A reason must be entered when the study status is set to "
                         + CdConverter.convertCdToString(statusDto.getStatusCode()) + ".");
             }
-            if (StringUtils.length(StConverter.convertToString(statusDto.getReasonText()))
+            if (StringUtils.length(StConverter.convertToString(statusDto.getReasonText())) 
                     > PAAttributeMaxLen.LEN_2000) {
                 errorMsg.append("Reason must be less than 2000 characters.");
-             }
+            }
         } else {
             statusDto.setReasonText(StConverter.convertToSt(null));
         }
         if (StringUtils.isNotEmpty(errorMsg.toString())) {
             throw new PAValidationException("Validation Exception " + errorMsg.toString());
         }
+    }
 
+    /**
+     * Checks the given condition and generates a PAException accordingly.
+     * @param condition The condition that must cause a PAException
+     * @param msg The message in the exception
+     * @throws PAException thrown if the given condition is true.
+     */
+    private void checkCondition(boolean condition, String msg) throws PAException {
+        if (condition) {
+            throw new PAException(msg);
+        }
     }
 
     /**
@@ -540,5 +539,19 @@ public class StudyOverallStatusBeanLocal extends
         }
 
         return errors;
+    }
+
+    /**
+     * @param documentWorkFlowStatusService the documentWorkFlowStatusService to set
+     */
+    public void setDocumentWorkFlowStatusService(DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService) {
+        this.documentWorkFlowStatusService = documentWorkFlowStatusService;
+    }
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
     }
 }

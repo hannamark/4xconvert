@@ -235,6 +235,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     /**
      * {@inheritDoc}
      */
+    @Override
     // CHECKSTYLE:OFF More than 7 Parameters
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Ii amend(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
@@ -388,6 +389,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     /**
      * {@inheritDoc}
      */
+    @Override
     // CHECKSTYLE:OFF More than 7 Parameters
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Ii createCompleteInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
@@ -475,6 +477,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     /**
      * {@inheritDoc}
      */
+    @Override
     // CHECKSTYLE:OFF More than 7 Parameters
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Ii createAbbreviatedInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
@@ -753,6 +756,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
      * @param rejectionReason rejectionReason
      * @throws PAException on error
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void reject(Ii studyProtocolIi, St rejectionReason) throws PAException {
         try {
@@ -779,6 +783,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
                 List<StudyProtocolDTO> spList = studyProtocolService.search(studyToSearch, limit);
                 if (CollectionUtils.isNotEmpty(spList)) {
                     Collections.sort(spList, new Comparator<StudyProtocolDTO>() {
+                        @Override
                         public int compare(StudyProtocolDTO o1, StudyProtocolDTO o2) {
                             return o1.getSubmissionNumber().getValue().compareTo(o2.getSubmissionNumber().getValue());
                         }
@@ -938,6 +943,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
      * @param isBatchMode to identify if batch is caller
      * @throws PAException on error
      */
+    @Override
     // CHECKSTYLE:OFF More than 7 Parameters
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void update(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
@@ -1026,6 +1032,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     /**
      * {@inheritDoc}
      */
+    @Override
     public void update(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
             List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
             List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs, List<StudySiteDTO> studySiteDTOs, Bl batchMode)

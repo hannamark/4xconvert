@@ -82,13 +82,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
+import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyOverallStatusConverter;
@@ -104,8 +105,6 @@ import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
@@ -122,17 +121,20 @@ import org.junit.Test;
  *
  */
 public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
+    private DocumentWorkflowStatusServiceLocal documentWorkflowStatusService = new DocumentWorkflowStatusBeanLocal();
+    private StudyProtocolServiceLocal studyProtocolService =  new StudyProtocolServiceBean();
     private final StudyOverallStatusServiceBean bean = new StudyOverallStatusServiceBean();
     private Ii spIi;
-
+    
+    /**
+     * Initialization method.
+     */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         CSMUserService.setRegistryUserService(new MockCSMUserService());
 
-        ServiceLocator paSvcLoc = mock(ServiceLocator.class);
-        PaRegistry.getInstance().setServiceLocator(paSvcLoc);
-        when(paSvcLoc.getDocumentWorkflowStatusService()).thenReturn(new DocumentWorkflowStatusBeanLocal());
-        when(paSvcLoc.getStudyProtocolService()).thenReturn(new StudyProtocolServiceBean());
+        bean.setDocumentWorkFlowStatusService(documentWorkflowStatusService);
+        bean.setStudyProtocolService(studyProtocolService);
 
         TestSchema.primeData();
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
@@ -192,7 +194,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         InterventionalStudyProtocol sp = createStudyProtocol();
         StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
 
-        StudyOverallStatus active = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        StudyOverallStatus active = createStudyOverallStatusobj(sp);
         active.setStatusCode(StudyStatusCode.ACTIVE);
         bean.create(statusConverter.convertFromDomainToDto(active));
 
@@ -209,7 +211,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         assertEquals("Approved and In Review should have the same status date", active.getStatusDate(),
                 approved.getStatusDate());
 
-        StudyOverallStatus closedToAccrualAndIntervention = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        StudyOverallStatus closedToAccrualAndIntervention = createStudyOverallStatusobj(sp);
         closedToAccrualAndIntervention.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION);
         bean.create(statusConverter.convertFromDomainToDto(closedToAccrualAndIntervention));
 
@@ -238,7 +240,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         InterventionalStudyProtocol sp = createStudyProtocol();
         StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
 
-        StudyOverallStatus enrollingByInvitation = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        StudyOverallStatus enrollingByInvitation = createStudyOverallStatusobj(sp);
         enrollingByInvitation.setStatusCode(StudyStatusCode.ENROLLING_BY_INVITATION);
         bean.create(statusConverter.convertFromDomainToDto(enrollingByInvitation));
 
@@ -266,11 +268,11 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         InterventionalStudyProtocol sp = createStudyProtocol();
         StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
 
-        StudyOverallStatus enrollingByInvitation = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        StudyOverallStatus enrollingByInvitation = createStudyOverallStatusobj(sp);
         enrollingByInvitation.setStatusCode(StudyStatusCode.ENROLLING_BY_INVITATION);
         bean.create(statusConverter.convertFromDomainToDto(enrollingByInvitation));
 
-        StudyOverallStatus closeToAandI = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        StudyOverallStatus closeToAandI = createStudyOverallStatusobj(sp);
         closeToAandI.setStatusCode(StudyStatusCode.CLOSED_TO_ACCRUAL_AND_INTERVENTION);
         bean.create(statusConverter.convertFromDomainToDto(closeToAandI));
 
@@ -298,11 +300,11 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         InterventionalStudyProtocol sp = createStudyProtocol();
         StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
 
-        StudyOverallStatus enrollingByInvitation = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        StudyOverallStatus enrollingByInvitation = createStudyOverallStatusobj(sp);
         enrollingByInvitation.setStatusCode(StudyStatusCode.ENROLLING_BY_INVITATION);
         bean.create(statusConverter.convertFromDomainToDto(enrollingByInvitation));
 
-        StudyOverallStatus completed = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        StudyOverallStatus completed = createStudyOverallStatusobj(sp);
         completed.setStatusCode(StudyStatusCode.COMPLETE);
         bean.create(statusConverter.convertFromDomainToDto(completed));
 
@@ -343,16 +345,16 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         InterventionalStudyProtocol sp = createStudyProtocol();
         StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
 
-        StudyOverallStatus active = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        StudyOverallStatus active = createStudyOverallStatusobj(sp);
         active.setStatusCode(StudyStatusCode.ACTIVE);
         bean.create(statusConverter.convertFromDomainToDto(active));
 
-        StudyOverallStatus temporarilyClosedToAccrual = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        StudyOverallStatus temporarilyClosedToAccrual = createStudyOverallStatusobj(sp);
         temporarilyClosedToAccrual.setStatusCode(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL);
         temporarilyClosedToAccrual.setCommentText("Setting to Temporarily Closed to Accrual.");
         bean.create(statusConverter.convertFromDomainToDto(temporarilyClosedToAccrual));
 
-        StudyOverallStatus administrativelyComplete = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        StudyOverallStatus administrativelyComplete = createStudyOverallStatusobj(sp);
         administrativelyComplete.setStatusCode(StudyStatusCode.ADMINISTRATIVELY_COMPLETE);
         administrativelyComplete.setCommentText("Setting to Administratively Complete.");
         bean.create(statusConverter.convertFromDomainToDto(administrativelyComplete));
@@ -383,11 +385,11 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         InterventionalStudyProtocol sp = createStudyProtocol();
         StudyOverallStatusConverter statusConverter = Converters.get(StudyOverallStatusConverter.class);
 
-        StudyOverallStatus active = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        StudyOverallStatus active = createStudyOverallStatusobj(sp);
         active.setStatusCode(StudyStatusCode.ACTIVE);
         bean.create(statusConverter.convertFromDomainToDto(active));
 
-        StudyOverallStatus complete = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        StudyOverallStatus complete = createStudyOverallStatusobj(sp);
         complete.setStatusCode(StudyStatusCode.COMPLETE);
         bean.create(statusConverter.convertFromDomainToDto(complete));
 
@@ -430,7 +432,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(docWorkflow);
 
         Ii spId = IiConverter.convertToStudyProtocolIi(sp.getId());
-        StudyOverallStatus inReview = StudyOverallStatusServiceTest.createStudyOverallStatusobj(sp);
+        StudyOverallStatus inReview = createStudyOverallStatusobj(sp);
         inReview.setStatusCode(StudyStatusCode.IN_REVIEW);
         bean.create(Converters.get(StudyOverallStatusConverter.class).convertFromDomainToDto(inReview));
         assertEquals(bean.getByStudyProtocol(spId).size(), 1);
@@ -535,8 +537,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
     @Test
     public void validateWithBadStatusCode() throws Exception {
         TestSchema.addAbstractedWorkflowStatus(IiConverter.convertToLong(spIi));
-        StudyProtocolDTO spDto = PaRegistry.getStudyProtocolService()
-            .getStudyProtocol(spIi);
+        StudyProtocolDTO spDto = studyProtocolService.getStudyProtocol(spIi);
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
         dto.setStatusCode(CdConverter.convertStringToCd("bad status code"));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("1/1/1999")));
@@ -544,13 +545,13 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         dto.setStudyProtocolIdentifier(spIi);
         dto.setIdentifier(null);
         try {
-             bean.validate(dto, spDto);
-        } catch(PAException e) {
+            bean.validate(dto, spDto);
+        } catch (PAException e) {
             assertTrue(e.getMessage().startsWith("Validation Exception Invalid new study status: 'bad status code'."));
         }
     }
 
-    public static StudyOverallStatus createStudyOverallStatusobj(StudyProtocol sp) {
+    private StudyOverallStatus createStudyOverallStatusobj(StudyProtocol sp) {
         StudyOverallStatus create = new StudyOverallStatus();
         Timestamp now = new Timestamp(new Date().getTime());
         create.setStudyProtocol(sp);
@@ -559,5 +560,24 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         create.setUserLastUpdated(TestSchema.getUser());
         create.setDateLastUpdated(now);
         return create;
+    }
+    
+    /**
+     * test the createStudyRecruitmentStatus method.
+     */
+    @Test
+    public void testCreateStudyRecruitmentStatus() {
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(1L);
+        StudyOverallStatus bo = new StudyOverallStatus();
+        bo.setStatusCode(StudyStatusCode.ACTIVE);
+        bo.setStatusDate(PAUtil.dateStringToTimestamp("1/1/2001"));
+        bo.setStudyProtocol(sp);
+        bo.setCommentText(null);
+        StudyRecruitmentStatus srs = bean.createStudyRecruitmentStatus(bo);
+        assertNotNull("No result returned", srs);
+        assertEquals("Wrong status code", RecruitmentStatusCode.ACTIVE, srs.getStatusCode());
+        assertEquals("Wrong status date", PAUtil.dateStringToTimestamp("1/1/2001"),bo.getStatusDate());
+        assertEquals("Wrong strudy protocol", sp,bo.getStudyProtocol());
     }
 }
