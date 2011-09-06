@@ -102,7 +102,7 @@ import org.apache.struts2.ServletActionContext;
  */
 public class UpdateTrialStatusAction extends UpdateTrialAction {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -5720501246071254426L;
     private static final Logger LOG = Logger.getLogger(UpdateTrialStatusAction.class);
 
     /**
@@ -139,16 +139,19 @@ public class UpdateTrialStatusAction extends UpdateTrialAction {
             }
             TrialDTO savedDTO = loadTrialFromDB();
             loadStatusValuesToSession(savedDTO);
-            super.update();
-            addActionMessage("Trial status successfully updated.");
-            return SUCCESS;
+            String result = super.update();
+            if (!result.equals(ERROR)) {
+                addActionMessage("Trial status successfully updated.");
+                return SUCCESS;
+            }
         } catch (Exception e) {
             if (!RegistryUtil.setFailureMessage(e)) {
                 addActionError("Error occured, please try again");
             }
             LOG.error("Exception occured while querying trial " + e);
-            return ERROR;
+
         }
+        return ERROR;
     }
 
     /**

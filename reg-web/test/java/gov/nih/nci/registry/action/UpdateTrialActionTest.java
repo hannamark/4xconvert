@@ -9,7 +9,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -31,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
@@ -43,6 +43,13 @@ import com.mockrunner.mock.web.MockHttpSession;
  */
 public class UpdateTrialActionTest extends AbstractRegWebTest {
     private final UpdateTrialAction action = new UpdateTrialAction();
+    /**
+     * Initialization method.
+     */
+    @Before
+    public void init() {
+        action.prepare();
+    }
     @Test
     public void testTrialActionProperty(){
        assertNull(action.getTrialAction());
@@ -603,11 +610,10 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         UpdateTrialAction action = mock(UpdateTrialAction.class);
         doCallRealMethod().when(action).validateTrial();
         when(action.validateRespPartyInfo()).thenReturn(false);
-
-        String errorMessage = action.validateTrial();
-
-        assertEquals("Required fields are missing. You may not complete an update. Please submit an amendment instead.",
-                     errorMessage);
+        String result = action.validateTrial();
+        assertEquals("Wrong error message returned",
+                     "Required fields are missing. You may not complete an update. Please submit an amendment instead.",
+                     result);
     }
 
     @Test
@@ -617,12 +623,10 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         when(action.validateRespPartyInfo()).thenReturn(true);
         when(action.validateSummaryFourInfo()).thenReturn(true);
         when(action.hasFieldErrors()).thenReturn(true);
-        doNothing().when(action).enforceBusinessRules();
-
-        String errorMessage = action.validateTrial();
-
-        assertEquals("The form has errors and could not be submitted, please check the fields highlighted below",
-                     errorMessage);
+        String result = action.validateTrial();
+        assertEquals("Wrong error message returned",
+                     "The form has errors and could not be submitted, please check the fields highlighted below",
+                     result);
     }
 
     @Test
@@ -632,7 +636,6 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
         when(action.validateRespPartyInfo()).thenReturn(true);
         when(action.validateSummaryFourInfo()).thenReturn(true);
         when(action.hasFieldErrors()).thenReturn(true);
-        doNothing().when(action).enforceBusinessRules();
 
         action.validateTrial();
 

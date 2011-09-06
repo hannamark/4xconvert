@@ -19,6 +19,13 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
+import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.TrialDTO;
@@ -52,298 +59,71 @@ import com.opensymphony.xwork2.util.Element;
  */
 public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -1295113563440080699L;
 
     private static final Logger LOG = Logger.getLogger(UpdateTrialAction.class);
-
-    private TrialDTO trialDTO = new TrialDTO();
-    private String trialAction = null;
-    private String studyProtocolId = null;
-
+    
+    private ProtocolQueryServiceLocal protocolQueryService;
+    private StudyOverallStatusServiceLocal studyOverallStatusService;
+    private StudyProtocolServiceLocal studyProtocolService;
+    private StudyResourcingServiceLocal studyResourcingService;
+    private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
+    private StudySiteServiceLocal studySiteService;
+    private TrialRegistrationServiceLocal trialRegistrationService;
     private final TrialUtil trialUtil = new TrialUtil();
+    
+    private TrialDTO trialDTO = new TrialDTO();
+    private String trialAction;
+    private String studyProtocolId;
 
     // for update
     @CreateIfNull(value = true)
     @Element(value = gov.nih.nci.pa.dto.PaOrganizationDTO.class)
     private List<PaOrganizationDTO> collaborators = new ArrayList<PaOrganizationDTO>();
-
+    
+    @CreateIfNull(value = true)
+    @Element(value = gov.nih.nci.registry.dto.TrialFundingWebDTO.class)
+    private List<TrialFundingWebDTO> fundingAddDtos = new ArrayList<TrialFundingWebDTO>();
+    
+    @CreateIfNull(value = true)
+    @Element(value = gov.nih.nci.registry.dto.TrialFundingWebDTO.class)
+    private List<TrialFundingWebDTO> fundingDtos = new ArrayList<TrialFundingWebDTO>();
+    
+    @CreateIfNull(value = true)
+    @Element(value = gov.nih.nci.registry.dto.TrialIndIdeDTO.class)
+    private List<TrialIndIdeDTO> indIdeAddDtos = new ArrayList<TrialIndIdeDTO>();
+    
+    @CreateIfNull(value = true)
+    @Element(value = gov.nih.nci.registry.dto.TrialIndIdeDTO.class)
+    private List<TrialIndIdeDTO> indIdeUpdateDtos = new ArrayList<TrialIndIdeDTO>();
+    
     @CreateIfNull(value = true)
     @Element(value = gov.nih.nci.pa.dto.PaOrganizationDTO.class)
     private List<PaOrganizationDTO> participatingSitesList = new ArrayList<PaOrganizationDTO>();
 
-    @CreateIfNull(value = true)
-    @Element(value = gov.nih.nci.registry.dto.TrialIndIdeDTO.class)
-    private List<TrialIndIdeDTO> indIdeUpdateDtos = new ArrayList<TrialIndIdeDTO>();
-
-    @CreateIfNull(value = true)
-    @Element(value = gov.nih.nci.registry.dto.TrialFundingWebDTO.class)
-    private List<TrialFundingWebDTO> fundingAddDtos = new ArrayList<TrialFundingWebDTO>();
-
-    @CreateIfNull(value = true)
-    @Element(value = gov.nih.nci.registry.dto.TrialIndIdeDTO.class)
-    private List<TrialIndIdeDTO> indIdeAddDtos = new ArrayList<TrialIndIdeDTO>();
-
-    @CreateIfNull(value = true)
-    @Element(value = gov.nih.nci.registry.dto.TrialFundingWebDTO.class)
-    private List<TrialFundingWebDTO> fundingDtos = new ArrayList<TrialFundingWebDTO>();
-
-    private String programcodenihselectedvalue;
     private String programcodenciselectedvalue;
+    private String programcodenihselectedvalue;
     private PaOrganizationDTO paOrganizationDTO;
     private TrialFundingWebDTO trialFundingDTO;
     private TrialIndIdeDTO trialIndIdeDTO;
     private int indIdeUpdateDtosLen = 0;
-
+    
     /**
-     * Gets the trial funding dto.
-     * 
-     * @return the trialFundingDTO
+     * {@inheritDoc}
      */
-    public TrialFundingWebDTO getTrialFundingDTO() {
-        return trialFundingDTO;
-    }
-
-    /**
-     * Sets the trial funding dto.
-     * 
-     * @param trialFundingDTO the trialFundingDTO to set
-     */
-    public void setTrialFundingDTO(TrialFundingWebDTO trialFundingDTO) {
-        this.trialFundingDTO = trialFundingDTO;
-    }
-
-    /**
-     * Gets the trial ind ide dto.
-     * 
-     * @return the trialIndIdeDTO
-     */
-    public TrialIndIdeDTO getTrialIndIdeDTO() {
-        return trialIndIdeDTO;
-    }
-
-    /**
-     * Sets the trial ind ide dto.
-     * 
-     * @param trialIndIdeDTO the trialIndIdeDTO to set
-     */
-    public void setTrialIndIdeDTO(TrialIndIdeDTO trialIndIdeDTO) {
-        this.trialIndIdeDTO = trialIndIdeDTO;
-    }
-
-    /**
-     * Gets the pa organization dto.
-     * 
-     * @return the paOrganizationDTO
-     */
-    public PaOrganizationDTO getPaOrganizationDTO() {
-        return paOrganizationDTO;
-    }
-
-    /**
-     * Sets the pa organization dto.
-     * 
-     * @param paOrganizationDTO the paOrganizationDTO to set
-     */
-    public void setPaOrganizationDTO(PaOrganizationDTO paOrganizationDTO) {
-        this.paOrganizationDTO = paOrganizationDTO;
-    }
-
-    /**
-     * Gets the trial dto.
-     * 
-     * @return the trialDTO
-     */
-    public TrialDTO getTrialDTO() {
-        return trialDTO;
-    }
-
-    /**
-     * Sets the trial dto.
-     * 
-     * @param trialDTO the trialDTO to set
-     */
-    public void setTrialDTO(TrialDTO trialDTO) {
-        this.trialDTO = trialDTO;
-    }
-
-    /**
-     * Gets the trial action.
-     * 
-     * @return the trialAction
-     */
-    public String getTrialAction() {
-        return trialAction;
-    }
-
-    /**
-     * Sets the trial action.
-     * 
-     * @param trialAction the trialAction to set
-     */
-    public void setTrialAction(String trialAction) {
-        this.trialAction = trialAction;
-    }
-
-    /**
-     * Gets the study protocol id.
-     * 
-     * @return the studyProtocolId
-     */
-    public String getStudyProtocolId() {
-        return studyProtocolId;
-    }
-
-    /**
-     * Sets the study protocol id.
-     * 
-     * @param studyProtocolId the studyProtocolId to set
-     */
-    public void setStudyProtocolId(String studyProtocolId) {
-        this.studyProtocolId = studyProtocolId;
-    }
-
-    /**
-     * Gets the collaborators.
-     * 
-     * @return the collaborators
-     */
-    public List<PaOrganizationDTO> getCollaborators() {
-        return collaborators;
-    }
-
-    /**
-     * Sets the collaborators.
-     * 
-     * @param collaborators the collaborators to set
-     */
-    public void setCollaborators(List<PaOrganizationDTO> collaborators) {
-        this.collaborators = collaborators;
-    }
-
-    /**
-     * Gets the participating sites.
-     * 
-     * @return the participatingSites
-     */
-    public List<PaOrganizationDTO> getParticipatingSitesList() {
-        return participatingSitesList;
-    }
-
-    /**
-     * Sets the participating sites.
-     * 
-     * @param participatingSites the participatingSites to set
-     */
-    public void setParticipatingSitesList(List<PaOrganizationDTO> participatingSites) {
-        this.participatingSitesList = participatingSites;
-    }
-
-    /**
-     * Gets the ind ide update dtos.
-     * 
-     * @return the indIdeUpdateDtos
-     */
-    public List<TrialIndIdeDTO> getIndIdeUpdateDtos() {
-        return indIdeUpdateDtos;
-    }
-
-    /**
-     * Sets the ind ide update dtos.
-     * 
-     * @param indIdeUpdateDtos the indIdeUpdateDtos to set
-     */
-    public void setIndIdeUpdateDtos(List<TrialIndIdeDTO> indIdeUpdateDtos) {
-        this.indIdeUpdateDtos = indIdeUpdateDtos;
-    }
-
-    /**
-     * Gets the funding add dtos.
-     * 
-     * @return the fundingAddDtos
-     */
-    public List<TrialFundingWebDTO> getFundingAddDtos() {
-        return fundingAddDtos;
-    }
-
-    /**
-     * Sets the funding add dtos.
-     * 
-     * @param fundingAddDtos the fundingAddDtos to set
-     */
-    public void setFundingAddDtos(List<TrialFundingWebDTO> fundingAddDtos) {
-        this.fundingAddDtos = fundingAddDtos;
-    }
-
-    /**
-     * Gets the ind ide add dtos.
-     * 
-     * @return the indIdeAddDtos
-     */
-    public List<TrialIndIdeDTO> getIndIdeAddDtos() {
-        return indIdeAddDtos;
-    }
-
-    /**
-     * Sets the ind ide add dtos.
-     * 
-     * @param indIdeAddDtos the indIdeAddDtos to set
-     */
-    public void setIndIdeAddDtos(List<TrialIndIdeDTO> indIdeAddDtos) {
-        this.indIdeAddDtos = indIdeAddDtos;
-    }
-
-    /**
-     * Gets the programcodenihselectedvalue.
-     * 
-     * @return the programcodenihselectedvalue
-     */
-    public String getProgramcodenihselectedvalue() {
-        return programcodenihselectedvalue;
-    }
-
-    /**
-     * Sets the programcodenihselectedvalue.
-     * 
-     * @param programcodenihselectedvalue the programcodenihselectedvalue to set
-     */
-    public void setProgramcodenihselectedvalue(String programcodenihselectedvalue) {
-        this.programcodenihselectedvalue = programcodenihselectedvalue;
-    }
-
-    /**
-     * Gets the programcodenciselectedvalue.
-     * 
-     * @return the programcodenciselectedvalue
-     */
-    public String getProgramcodenciselectedvalue() {
-        return programcodenciselectedvalue;
-    }
-
-    /**
-     * Sets the programcodenciselectedvalue.
-     * 
-     * @param programcodenciselectedvalue the programcodenciselectedvalue to set
-     */
-    public void setProgramcodenciselectedvalue(String programcodenciselectedvalue) {
-        this.programcodenciselectedvalue = programcodenciselectedvalue;
-    }
-
-    /**
-     * Gets the funding dtos.
-     * 
-     * @return the fundingDtos
-     */
-    public List<TrialFundingWebDTO> getFundingDtos() {
-        return fundingDtos;
-    }
-
-    /**
-     * Sets the funding dtos.
-     * 
-     * @param fundingDtos the fundingDtos to set
-     */
-    public void setFundingDtos(List<TrialFundingWebDTO> fundingDtos) {
-        this.fundingDtos = fundingDtos;
+    @Override
+    public void prepare()  {
+        protocolQueryService = PaRegistry.getProtocolQueryService();
+        studyOverallStatusService = PaRegistry.getStudyOverallStatusService();
+        studyProtocolService = PaRegistry.getStudyProtocolService();
+        studyResourcingService = PaRegistry.getStudyResourcingService();
+        studySiteAccrualStatusService = PaRegistry.getStudySiteAccrualStatusService();
+        studySiteService = PaRegistry.getStudySiteService();
+        trialRegistrationService = PaRegistry.getTrialRegistrationService();
+        if (trialDTO != null) {
+            trialDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
+                    .lookupPrimaryPurposeAdditionalQualifierCode(trialDTO.getPrimaryPurposeCode()));
+        }
     }
 
     /**
@@ -470,17 +250,25 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         return "review";
     }
 
+    /**
+     * Validates the trial.
+     * @return a failure message if necessary
+     * @throws PAException If an error occurs
+     * @throws IOException If an error occurs
+     */
     String validateTrial() throws PAException, IOException {
         clearErrorsAndMessages();
         String failureMessage = null;
         if (!validateRespPartyInfo() || !validateSummaryFourInfo()) {
-            failureMessage = "Required fields are missing. You may not complete an update. "
-                    + "Please submit an amendment instead.";
+            failureMessage =
+                    "Required fields are missing. You may not complete an update. "
+                            + "Please submit an amendment instead.";
         } else {
             enforceBusinessRules();
             if (hasFieldErrors()) {
-                failureMessage = "The form has errors and could not be submitted, please check the "
-                        + "fields highlighted below";
+                failureMessage =
+                        "The form has errors and could not be submitted, please check the "
+                                + "fields highlighted below";
             }
         }
         return failureMessage;
@@ -493,7 +281,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
      */
     public String edit() {
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession()
-            .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
+                .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
         setDocumentsInSession(trialDTO);
         synchActionWithDTO();
         trialUtil.populateRegulatoryList(trialDTO);
@@ -508,7 +296,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
      */
     public String update() {
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession()
-            .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
+                .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
         if (trialDTO == null) {
             synchActionWithDTO();
             return ERROR;
@@ -518,7 +306,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         try {
             Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(Long.parseLong(trialDTO.getIdentifier()));
             // get the studyProtocol DTO
-            StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+            StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
             util.addSecondaryIdentifiers(spDTO, trialDTO);
             util.updateStudyProtcolDTO(spDTO, trialDTO);
             spDTO.setUserLastCreated(StConverter.convertToSt(UsernameHolder.getUser()));
@@ -527,7 +315,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             StudyOverallStatusDTO sosDto = getOverallStatusForUpdate(util);
 
             List<DocumentDTO> documentDTOs = util.convertToISODocument(trialDTO.getDocDtos(), studyProtocolIi);
-
+            
             // indide updates and adds
             List<StudyIndldeDTO> studyIndldeDTOList = new ArrayList<StudyIndldeDTO>();
             // updated
@@ -549,22 +337,22 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             }
             // newly added
             if (trialDTO.getFundingAddDtos() != null && trialDTO.getFundingAddDtos().size() > 0) {
-                List<StudyResourcingDTO> studyResourcingAddDTOs = util.convertISOGrantsList(trialDTO
-                    .getFundingAddDtos(), studyProtocolIi);
+                List<StudyResourcingDTO> studyResourcingAddDTOs = util.convertISOGrantsList(
+                        trialDTO.getFundingAddDtos(), studyProtocolIi);
                 studyResourcingDTOs.addAll(studyResourcingAddDTOs);
             }
 
             // ps update- send the participating sites list
             List<StudySiteAccrualStatusDTO> pssDTOList = getParticipatingSitesForUpdate(trialDTO
-                .getParticipatingSites());
+                    .getParticipatingSites());
 
             // list of studysite dtos with updated program code
             List<StudySiteDTO> prgCdUpdatedList = getStudySiteToUpdateProgramCode(trialDTO.getParticipatingSites());
 
             updateId = studyProtocolIi;
-
+           
             // call the service to invoke the update method
-            PaRegistry.getTrialRegistrationService().update(spDTO, sosDto, studyResourcingDTOs, documentDTOs,
+            trialRegistrationService.update(spDTO, sosDto, studyResourcingDTOs, documentDTOs,
                                                             pssDTOList, prgCdUpdatedList,
                                                             BlConverter.convertToBl(Boolean.FALSE));
             TrialValidator.removeSessionAttributes();
@@ -630,14 +418,14 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             }
         }
     }
-
+    
     private void validateIndIdeInfo() {
         int ind = 0;
         if (CollectionUtils.isNotEmpty(getIndIdeUpdateDtos())) {
             for (TrialIndIdeDTO indide : getIndIdeUpdateDtos()) {
                 addFieldErrorIfEmptyValue(indide.getGrantor(), "updindideGrantor" + ind, "Grantor should not be null");
                 addFieldErrorIfEmptyValue(indide.getNumber(), "updindideNumber" + ind,
-                                          "IND/IDE Number should not be null");
+                        "IND/IDE Number should not be null");
                 validateIndIndHolderType(ind, indide);
                 validateIndIneExpandedAccessValue(ind, indide);
                 ind++;
@@ -647,27 +435,28 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     private void validateIndIndHolderType(int ind, TrialIndIdeDTO indide) {
         addFieldErrorIfEmptyValue(indide.getHolderType(), "updindideHolderType" + ind,
-                                  "Ind/IDE Holder Type should not be null");
+                "Ind/IDE Holder Type should not be null");
         if (StringUtils.isNotEmpty(indide.getHolderType())) {
             validateIndIneHolderTypeValues(ind, indide);
         }
     }
 
     private void validateIndIneExpandedAccessValue(int ind, TrialIndIdeDTO indide) {
-        if (StringUtils.isNotEmpty(indide.getExpandedAccess()) && indide.getExpandedAccess().equalsIgnoreCase("yes")) {
+        if (StringUtils.isNotEmpty(indide.getExpandedAccess())
+                && indide.getExpandedAccess().equalsIgnoreCase("yes")) {
             addFieldErrorIfEmptyValue(indide.getExpandedAccessType(), "updindideExpandedStatus" + ind,
-                                      "Expanded Access Status should not be null");
+                    "Expanded Access Status should not be null");
         }
     }
 
     private void validateIndIneHolderTypeValues(int ind, TrialIndIdeDTO indide) {
         if (indide.getHolderType().equalsIgnoreCase("NIH")) {
             addFieldErrorIfEmptyValue(indide.getNihInstHolder(), "updindideNihInstHolder" + ind,
-                                      "NIH Institute holder should not be null");
+                    "NIH Institute holder should not be null");
         }
         if (indide.getHolderType().equalsIgnoreCase("NCI")) {
             addFieldErrorIfEmptyValue(indide.getNciDivProgHolder(), "updindideNciDivPrgHolder" + ind,
-                                      "NCI Division Program holder should not be null");
+                    "NCI Division Program holder should not be null");
         }
     }
 
@@ -676,13 +465,13 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         if (CollectionUtils.isNotEmpty(getFundingDtos())) {
             for (TrialFundingWebDTO fm : getFundingDtos()) {
                 addFieldErrorIfEmptyValue(fm.getFundingMechanismCode(), "updfundingMechanismCode" + ind,
-                                          "Funding Mechanism Code should not be null");
+                        "Funding Mechanism Code should not be null");
                 addFieldErrorIfEmptyValue(fm.getNciDivisionProgramCode(), "updnciDivisionProgramCode" + ind,
-                                          "NCI Division Code should not be null");
+                        "NCI Division Code should not be null");
                 addFieldErrorIfEmptyValue(fm.getNihInstitutionCode(), "updnihInstitutionCode" + ind,
-                                          "NIH Institution Code  should not be null");
+                        "NIH Institution Code  should not be null");
                 addFieldErrorIfEmptyValue(fm.getSerialNumber(), "updserialNumber" + ind,
-                                          "Serial Number should not be null");
+                        "Serial Number should not be null");
                 ind++;
             }
         }
@@ -699,9 +488,9 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         if (CollectionUtils.isNotEmpty(getParticipatingSitesList())) {
             for (PaOrganizationDTO ps : getParticipatingSitesList()) {
                 addFieldErrorIfEmptyValue(ps.getRecruitmentStatus(), "participatingsite.recStatus" + ind,
-                                          "Recruitment Status should not be null");
+                        "Recruitment Status should not be null");
                 addFieldErrorIfEmptyValue(ps.getRecruitmentStatusDate(), "participatingsite.recStatusDate" + ind,
-                                          "Recruitment Status date should not be null");
+                        "Recruitment Status date should not be null");
                 ind++;
             }
         }
@@ -712,7 +501,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         if (CollectionUtils.isNotEmpty(getCollaborators())) {
             for (PaOrganizationDTO coll : getCollaborators()) {
                 addFieldErrorIfEmptyValue(coll.getFunctionalRole(), "collaborator.functionalCode" + ind,
-                                          "Functional role should not be null");
+                        "Functional role should not be null");
                 ind++;
             }
         }
@@ -729,15 +518,15 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     private StudyResourcingDTO convertToStudyResourcingDTO(TrialFundingWebDTO trialFundingWebDTO, Ii studyProtocolIi)
             throws PAException {
         StudyResourcingDTO studyResoureDTO = new StudyResourcingDTO();
-        studyResoureDTO = PaRegistry.getStudyResourcingService()
-            .getStudyResourcingById(IiConverter.convertToIi(Long.parseLong(trialFundingWebDTO.getId())));
+        studyResoureDTO = studyResourcingService.getStudyResourcingById(
+                IiConverter.convertToIi(Long.parseLong(trialFundingWebDTO.getId())));
         studyResoureDTO.setStudyProtocolIdentifier(studyProtocolIi);
         studyResoureDTO.setFundingMechanismCode(CdConverter.convertStringToCd(trialFundingWebDTO
-            .getFundingMechanismCode()));
+                .getFundingMechanismCode()));
         studyResoureDTO.setNciDivisionProgramCode(CdConverter.convertToCd(NciDivisionProgramCode
-            .getByCode(trialFundingWebDTO.getNciDivisionProgramCode())));
+                .getByCode(trialFundingWebDTO.getNciDivisionProgramCode())));
         studyResoureDTO
-            .setNihInstitutionCode(CdConverter.convertStringToCd(trialFundingWebDTO.getNihInstitutionCode()));
+                .setNihInstitutionCode(CdConverter.convertStringToCd(trialFundingWebDTO.getNihInstitutionCode()));
         studyResoureDTO.setSerialNumber(StConverter.convertToSt(trialFundingWebDTO.getSerialNumber()));
         return studyResoureDTO;
     }
@@ -755,9 +544,8 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             throws PAException {
         List<StudySiteAccrualStatusDTO> ssaDTO = new ArrayList<StudySiteAccrualStatusDTO>();
         for (PaOrganizationDTO dto : ps) {
-            StudySiteAccrualStatusDTO ssasOld = PaRegistry.getStudySiteAccrualStatusService()
-                .getCurrentStudySiteAccrualStatusByStudySite(IiConverter.convertToIi(dto.getId()));
-
+            StudySiteAccrualStatusDTO ssasOld = studySiteAccrualStatusService
+                    .getCurrentStudySiteAccrualStatusByStudySite(IiConverter.convertToIi(dto.getId()));
             StudySiteAccrualStatusDTO ssas = new StudySiteAccrualStatusDTO();
             ssas.setStudySiteIi(ssasOld.getStudySiteIi());
             ssas.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.getByCode(dto.getRecruitmentStatus())));
@@ -770,7 +558,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     private List<StudySiteDTO> getStudySiteToUpdateProgramCode(List<PaOrganizationDTO> ps) throws PAException {
         List<StudySiteDTO> ssDTO = new ArrayList<StudySiteDTO>();
         for (PaOrganizationDTO dto : ps) {
-            StudySiteDTO sp = PaRegistry.getStudySiteService().get(IiConverter.convertToIi(dto.getId()));
+            StudySiteDTO sp = studySiteService.get(IiConverter.convertToIi(dto.getId()));
             sp.setProgramCodeText(StConverter.convertToSt(dto.getProgramCode()));
             ssDTO.add(sp);
         }
@@ -789,25 +577,315 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
      */
     private StudyOverallStatusDTO getOverallStatusForUpdate(TrialUtil util) throws PAException {
         StudyOverallStatusDTO sosDto = null;
-        StudyProtocolQueryDTO spqDTO = PaRegistry.getProtocolQueryService()
-            .getTrialSummaryByStudyProtocolId(Long.parseLong(trialDTO.getIdentifier()));
+        Long spId = Long.parseLong(trialDTO.getIdentifier());
+        Ii spIi = IiConverter.convertToIi(trialDTO.getIdentifier());
+        StudyProtocolQueryDTO spqDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(spId);
 
         // original submission
         if (spqDTO.getDocumentWorkflowStatusCode() != null
                 && spqDTO.getDocumentWorkflowStatusCode().getCode().equalsIgnoreCase("SUBMITTED")
                 && IntConverter.convertToInteger(IntConverter.convertToInt(trialDTO.getSubmissionNumber())) == 1) {
-
-            sosDto = PaRegistry.getStudyOverallStatusService().getCurrentByStudyProtocol(IiConverter
-                                                                                             .convertToIi(trialDTO
-                                                                                                 .getIdentifier()));
-
+            sosDto = studyOverallStatusService.getCurrentByStudyProtocol(spIi);
         } else {
             sosDto = new StudyOverallStatusDTO();
             sosDto.setIdentifier(IiConverter.convertToIi((Long) null));
-            sosDto.setStudyProtocolIdentifier(IiConverter.convertToIi(trialDTO.getIdentifier()));
+            sosDto.setStudyProtocolIdentifier(spIi);
         }
         util.convertToStudyOverallStatusDTO(trialDTO, sosDto);
         return sosDto;
+    }
+   
+    /**
+     * Validates the responsible party info.
+     * @return true if the responsible party info is valid
+     */
+    boolean validateRespPartyInfo() {
+        if (StringUtils.isEmpty(trialDTO.getResponsiblePartyType())) {
+            return false;
+        }
+        if (StringUtils.isEmpty(trialDTO.getSponsorIdentifier())) {
+            return false;
+        }
+
+        if (!TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equalsIgnoreCase(trialDTO.getResponsiblePartyType())) {
+            return false;
+        }
+
+        if (StringUtils.isEmpty(trialDTO.getContactPhone())) {
+            return false;
+        }
+
+        if (StringUtils.isEmpty(trialDTO.getContactEmail())) {
+            return false;
+        }
+
+        return true;
+    }
+   
+    /**
+     * Validates the summary four info.
+     * @return true if the summary four info is valid
+     */
+    boolean validateSummaryFourInfo() {
+        if (StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode())) {
+            return false;
+        }
+        if (StringUtils.isEmpty(trialDTO.getSummaryFourOrgName())) {
+            return false;
+        }
+        return true;
+    }
+    
+    /**
+     * Gets the trial dto.
+     * 
+     * @return the trialDTO
+     */
+    public TrialDTO getTrialDTO() {
+        return trialDTO;
+    }
+
+    /**
+     * Sets the trial dto.
+     * 
+     * @param trialDTO the trialDTO to set
+     */
+    public void setTrialDTO(TrialDTO trialDTO) {
+        this.trialDTO = trialDTO;
+    }
+
+    /**
+     * Gets the trial action.
+     * 
+     * @return the trialAction
+     */
+    public String getTrialAction() {
+        return trialAction;
+    }
+
+    /**
+     * Sets the trial action.
+     * 
+     * @param trialAction the trialAction to set
+     */
+    public void setTrialAction(String trialAction) {
+        this.trialAction = trialAction;
+    }
+
+    /**
+     * Gets the study protocol id.
+     * 
+     * @return the studyProtocolId
+     */
+    public String getStudyProtocolId() {
+        return studyProtocolId;
+    }
+
+    /**
+     * Sets the study protocol id.
+     * 
+     * @param studyProtocolId the studyProtocolId to set
+     */
+    public void setStudyProtocolId(String studyProtocolId) {
+        this.studyProtocolId = studyProtocolId;
+    }
+
+    /**
+     * Gets the collaborators.
+     * 
+     * @return the collaborators
+     */
+    public List<PaOrganizationDTO> getCollaborators() {
+        return collaborators;
+    }
+
+    /**
+     * Sets the collaborators.
+     * 
+     * @param collaborators the collaborators to set
+     */
+    public void setCollaborators(List<PaOrganizationDTO> collaborators) {
+        this.collaborators = collaborators;
+    }
+
+    /**
+     * Gets the funding add dtos.
+     * 
+     * @return the fundingAddDtos
+     */
+    public List<TrialFundingWebDTO> getFundingAddDtos() {
+        return fundingAddDtos;
+    }
+
+    /**
+     * Sets the funding add dtos.
+     * 
+     * @param fundingAddDtos the fundingAddDtos to set
+     */
+    public void setFundingAddDtos(List<TrialFundingWebDTO> fundingAddDtos) {
+        this.fundingAddDtos = fundingAddDtos;
+    }
+
+    /**
+     * Gets the funding dtos.
+     * 
+     * @return the fundingDtos
+     */
+    public List<TrialFundingWebDTO> getFundingDtos() {
+        return fundingDtos;
+    }
+
+    /**
+     * Sets the funding dtos.
+     * 
+     * @param fundingDtos the fundingDtos to set
+     */
+    public void setFundingDtos(List<TrialFundingWebDTO> fundingDtos) {
+        this.fundingDtos = fundingDtos;
+    }
+
+    /**
+     * Gets the ind ide add dtos.
+     * 
+     * @return the indIdeAddDtos
+     */
+    public List<TrialIndIdeDTO> getIndIdeAddDtos() {
+        return indIdeAddDtos;
+    }
+
+    /**
+     * Sets the ind ide add dtos.
+     * 
+     * @param indIdeAddDtos the indIdeAddDtos to set
+     */
+    public void setIndIdeAddDtos(List<TrialIndIdeDTO> indIdeAddDtos) {
+        this.indIdeAddDtos = indIdeAddDtos;
+    }
+
+    /**
+     * Gets the ind ide update dtos.
+     * 
+     * @return the indIdeUpdateDtos
+     */
+    public List<TrialIndIdeDTO> getIndIdeUpdateDtos() {
+        return indIdeUpdateDtos;
+    }
+
+    /**
+     * Sets the ind ide update dtos.
+     * 
+     * @param indIdeUpdateDtos the indIdeUpdateDtos to set
+     */
+    public void setIndIdeUpdateDtos(List<TrialIndIdeDTO> indIdeUpdateDtos) {
+        this.indIdeUpdateDtos = indIdeUpdateDtos;
+    }
+
+    /**
+     * Gets the participating sites.
+     * 
+     * @return the participatingSites
+     */
+    public List<PaOrganizationDTO> getParticipatingSitesList() {
+        return participatingSitesList;
+    }
+
+    /**
+     * Sets the participating sites.
+     * 
+     * @param participatingSites the participatingSites to set
+     */
+    public void setParticipatingSitesList(List<PaOrganizationDTO> participatingSites) {
+        this.participatingSitesList = participatingSites;
+    }
+
+    /**
+     * Gets the programcodenciselectedvalue.
+     * 
+     * @return the programcodenciselectedvalue
+     */
+    public String getProgramcodenciselectedvalue() {
+        return programcodenciselectedvalue;
+    }
+
+    /**
+     * Sets the programcodenciselectedvalue.
+     * 
+     * @param programcodenciselectedvalue the programcodenciselectedvalue to set
+     */
+    public void setProgramcodenciselectedvalue(String programcodenciselectedvalue) {
+        this.programcodenciselectedvalue = programcodenciselectedvalue;
+    }
+
+    /**
+     * Gets the programcodenihselectedvalue.
+     * 
+     * @return the programcodenihselectedvalue
+     */
+    public String getProgramcodenihselectedvalue() {
+        return programcodenihselectedvalue;
+    }
+
+    /**
+     * Sets the programcodenihselectedvalue.
+     * 
+     * @param programcodenihselectedvalue the programcodenihselectedvalue to set
+     */
+    public void setProgramcodenihselectedvalue(String programcodenihselectedvalue) {
+        this.programcodenihselectedvalue = programcodenihselectedvalue;
+    }
+
+    /**
+     * Gets the pa organization dto.
+     * 
+     * @return the paOrganizationDTO
+     */
+    public PaOrganizationDTO getPaOrganizationDTO() {
+        return paOrganizationDTO;
+    }
+
+    /**
+     * Sets the pa organization dto.
+     * 
+     * @param paOrganizationDTO the paOrganizationDTO to set
+     */
+    public void setPaOrganizationDTO(PaOrganizationDTO paOrganizationDTO) {
+        this.paOrganizationDTO = paOrganizationDTO;
+    }
+
+    /**
+     * Gets the trial funding dto.
+     * 
+     * @return the trialFundingDTO
+     */
+    public TrialFundingWebDTO getTrialFundingDTO() {
+        return trialFundingDTO;
+    }
+
+    /**
+     * Sets the trial funding dto.
+     * 
+     * @param trialFundingDTO the trialFundingDTO to set
+     */
+    public void setTrialFundingDTO(TrialFundingWebDTO trialFundingDTO) {
+        this.trialFundingDTO = trialFundingDTO;
+    }
+
+    /**
+     * Gets the trial ind ide dto.
+     * 
+     * @return the trialIndIdeDTO
+     */
+    public TrialIndIdeDTO getTrialIndIdeDTO() {
+        return trialIndIdeDTO;
+    }
+
+    /**
+     * Sets the trial ind ide dto.
+     * 
+     * @param trialIndIdeDTO the trialIndIdeDTO to set
+     */
+    public void setTrialIndIdeDTO(TrialIndIdeDTO trialIndIdeDTO) {
+        this.trialIndIdeDTO = trialIndIdeDTO;
     }
 
     /**
@@ -825,49 +903,52 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     }
 
     /**
-     * {@inheritDoc}
+     * @param protocolQueryService the protocolQueryService to set
      */
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public void prepare() throws Exception {
-        if (this.trialDTO != null) {
-            this.trialDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
-                .lookupPrimaryPurposeAdditionalQualifierCode(this.trialDTO.getPrimaryPurposeCode()));
-        }
+    public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
     }
 
-    boolean validateRespPartyInfo() {
-        if (StringUtils.isEmpty(trialDTO.getResponsiblePartyType())) {
-            return false;
-        }
-        if (StringUtils.isEmpty(trialDTO.getSponsorIdentifier())) {
-            return false;
-        }
-
-        if (!TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equalsIgnoreCase(trialDTO.getResponsiblePartyType())) {
-            return false;
-        }
-
-        if (StringUtils.isEmpty(trialDTO.getContactPhone())) {
-            return false;
-        }
-        
-        if (StringUtils.isEmpty(trialDTO.getContactEmail())) {
-            return false;
-        }
-
-        return true;
-    }   
-   
-    
-    boolean validateSummaryFourInfo() {
-        if (StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode())) {
-            return false;
-        }
-        
-        if (StringUtils.isEmpty(trialDTO.getSummaryFourOrgName())) {
-            return false;
-        }
-
-        return true;
+    /**
+     * @param studyOverallStatusService the studyOverallStatusService to set
+     */
+    public void setStudyOverallStatusService(StudyOverallStatusServiceLocal studyOverallStatusService) {
+        this.studyOverallStatusService = studyOverallStatusService;
     }
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
+    }
+
+    /**
+     * @param studyResourcingService the studyResourcingService to set
+     */
+    public void setStudyResourcingService(StudyResourcingServiceLocal studyResourcingService) {
+        this.studyResourcingService = studyResourcingService;
+    }
+
+    /**
+     * @param studySiteAccrualStatusService the studySiteAccrualStatusService to set
+     */
+    public void setStudySiteAccrualStatusService(StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService) {
+        this.studySiteAccrualStatusService = studySiteAccrualStatusService;
+    }
+
+    /**
+     * @param studySiteService the studySiteService to set
+     */
+    public void setStudySiteService(StudySiteServiceLocal studySiteService) {
+        this.studySiteService = studySiteService;
+    }
+
+    /**
+     * @param trialRegistrationService the trialRegistrationService to set
+     */
+    public void setTrialRegistrationService(TrialRegistrationServiceLocal trialRegistrationService) {
+        this.trialRegistrationService = trialRegistrationService;
+    }
+
 }
