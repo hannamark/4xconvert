@@ -185,6 +185,7 @@ import gov.nih.nci.pa.service.StudySiteContactServiceLocal;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
@@ -262,6 +263,7 @@ public class AbstractMockitoTest {
     protected IdentifiedPersonCorrelationServiceRemote poIpSvc;
     protected StratumGroupServiceLocal stratumGroupSvc;
     protected PlannedMarkerServiceLocal plannedMarkerSvc;
+    protected MailManagerServiceLocal mailManagerSvc;
 
     protected Ii spId;
     protected StudyProtocolDTO spDto;
@@ -780,6 +782,7 @@ public class AbstractMockitoTest {
         setupPoSvc();
         setupStudyResSvc();
         setupDocSvc();
+        setupMailMgrSvc();
 
         setupPaRegistry();
 
@@ -825,6 +828,10 @@ public class AbstractMockitoTest {
     private void setupDocSvc() throws PAException {
         documentSvc = mock(DocumentServiceLocal.class);
         when(documentSvc.getDocumentsByStudyProtocol(any(Ii.class))).thenReturn(null);
+    }
+
+    private void setupMailMgrSvc() {
+        mailManagerSvc = mock(MailManagerServiceLocal.class);
     }
 
     private void setupPoSvc() throws NullifiedEntityException, PAException, NullifiedRoleException {

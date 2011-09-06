@@ -148,7 +148,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     MailManagerBeanLocal bean = new MailManagerBeanLocal();
     ProtocolQueryServiceBean protocolQrySrv = new ProtocolQueryServiceBean();
     RegistryUserServiceLocal registryUserSrv = new RegistryUserServiceBean();
-    CTGovXmlGeneratorServiceLocal ctGovXmlSrv = new CTGovXmlGeneratorServiceBeanLocal();
+    CTGovXmlGeneratorServiceBeanLocal ctGovXmlSrv = new CTGovXmlGeneratorServiceBeanLocal();
     TSRReportGeneratorServiceRemote tsrReptSrv = new TSRReportGeneratorServiceBean();
     LookUpTableServiceRemote lookUpTableSrv = new LookUpTableServiceBean();
     DocumentWorkflowStatusServiceLocal docWrkStatSrv = new DocumentWorkflowStatusServiceBean();
@@ -178,7 +178,10 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         bean.setTsrReportGeneratorService(tsrReptSrv);
         bean.setLookUpTableService(lookUpTableSrv);
         bean.setDocWrkflStatusSrv(docWrkStatSrv);
-        bean.setStudySiteService(studySiteService);      
+        bean.setStudySiteService(studySiteService); 
+        
+        ctGovXmlSrv.setMailManagerService(bean);
+        
 
         //setup owners for both prop/nonprop trials.
         RegistryUser owner1 = new RegistryUser();
