@@ -281,6 +281,12 @@ public class IiConverter {
 
     /** The ii root value. */
     public static final String STUDY_REGULATORY_AUTHORITY_ROOT = "2.16.840.1.113883.3.26.4.4.9";
+
+    /** The ii root value.*/
+    public static final String SUBJECT_ACCRUAL_ROOT = "2.16.840.1.113883.3.26.4.4.10";
+    /** The identifier name for subject accruals. */
+    public static final String SUBJECT_ACCRUAL_IDENTIFIER_NAME = "Subject Accrual entity identifier";
+
     /** The identifier name for. */
     public static final String PERSON_RESOURCE_PROVIDER_IDENTIFIER_NAME = "Person Resource Provider identifier";
 
@@ -363,7 +369,6 @@ public class IiConverter {
     private static final String PO_PATIENT_IDENTIFIER_NAME = "PO Patient identifier";
 
     private static final String PO_PATIENT_ROOT = "2.16.840.1.113883.3.26.4.5.6";
-
 
 
     /**
@@ -934,6 +939,18 @@ public class IiConverter {
         Ii ii = convertToIi(identifier);
         ii.setIdentifierName(STUDY_PROTOCOL_OTHER_IDENTIFIER_NAME);
         ii.setRoot(STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT);
+        return ii;
+    }
+
+    /**
+     * Converts to a subject accrual ii.
+     * @param id the id to convert
+     * @return the the converted id
+     */
+    public static Ii convertToSubjectAccrualIi(Long id) {
+        Ii ii = convertToIi(id);
+        ii.setIdentifierName(SUBJECT_ACCRUAL_IDENTIFIER_NAME);
+        ii.setRoot(SUBJECT_ACCRUAL_ROOT);
         return ii;
     }
 }

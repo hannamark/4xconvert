@@ -194,4 +194,11 @@ public class IiConverterTest {
         assertNull(IiConverter.convertToString(IiConverter.convertToPoOversightCommitteeIi(id)));
     }
 
+    @Test
+    public void convertToSubjectAccrualIi() {
+        Ii ii = IiConverter.convertToSubjectAccrualIi(1L);
+        assertEquals(IiConverter.SUBJECT_ACCRUAL_IDENTIFIER_NAME, ii.getIdentifierName());
+        assertEquals(IiConverter.SUBJECT_ACCRUAL_ROOT, ii.getRoot());
+        assertEquals("1", ii.getExtension());
+    }
 }

@@ -81,3 +81,5 @@ gridgrouper.url=https\://grouper.training.cagrid.org\:8443/wsrf/services/cagrid/
 # Base URLs for wiki-based help
 wikiHelp.baseUrl.pa=https://wiki.nci.nih.gov/x/5IdQAg#NCICTRPProtocolAbstractionHelpTopics-
 wikiHelp.baseUrl.registry=https://wiki.nci.nih.gov/x/SYZQAg#NCICTRPRegistrationSiteHelpTopics-
+wikiHelp.baseUrl.accrual=https://wiki.nci.nih.gov/x/yALTAg#NCICTRPAccrualHelpTopics-
+wikiHelp.baseUrl.viewer=https://wiki.nci.nih.gov/x/xgLTAg#NCICTRPViewerHelpTopics-

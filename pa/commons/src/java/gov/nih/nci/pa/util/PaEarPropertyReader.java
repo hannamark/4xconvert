@@ -110,6 +110,8 @@ public class PaEarPropertyReader {
     private static final String INVALID_DIRECTORY_ERROR_MSG = " is not a valid directory.";
     private static final String PA_HELP_URL = "wikiHelp.baseUrl.pa";
     private static final String REGISTRY_HELP_URL = "wikiHelp.baseUrl.registry";
+    private static final String ACCRUAL_HELP_URL = "wikiHelp.baseUrl.accrual";
+    private static final String VIEWER_HELP_URL = "wikiHelp.baseUrl.viewer";
 
     private static final String NO_VALUE = "does not have a value in paear.properties";
 
@@ -122,7 +124,6 @@ public class PaEarPropertyReader {
             throw new IllegalStateException(e);
         }
     }
-
 
     /**
     *
@@ -226,12 +227,30 @@ public class PaEarPropertyReader {
     }
 
     /**
-     * Returns the base URL of the wiki-based help for PA.
+     * Returns the base URL of the wiki-based help for Registry.
      * @return url
      * @throws PAException if the property is missing
      */
     public static String getRegistryHelpUrl() throws PAException {
         return getPropTemplate(REGISTRY_HELP_URL);
+    }
+
+    /**
+     * Returns the base URL of the wiki-based help for Accrual.
+     * @return url
+     * @throws PAException if the property is missing
+     */
+    public static String getAccrualHelpUrl() throws PAException {
+        return getPropTemplate(ACCRUAL_HELP_URL);
+    }
+
+    /**
+     * Returns the base URL of the wiki-based help for Viewer.
+     * @return url
+     * @throws PAException if the property is missing
+     */
+    public static String getViewerHelpUrl() throws PAException {
+        return getPropTemplate(VIEWER_HELP_URL);
     }
 
     /**

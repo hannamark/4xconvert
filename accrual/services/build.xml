@@ -134,6 +134,7 @@
         <copy todir="${services.build.outputDir}" filtering="true" overwrite="true">
             <filterset begintoken="$${" endtoken="}" >
                 <filter token="accrual.batch.upload.filepath.loc" value="${accrual.batch.upload.filepath.loc}"/>
+                <filter token="wikiHelp.baseUrl.accrual" value="${wikiHelp.baseUrl.accrual}" />
             </filterset>
             <fileset file="${software.dir}/pa/pa-ejb/src/resources/paear.properties"/>
         </copy>

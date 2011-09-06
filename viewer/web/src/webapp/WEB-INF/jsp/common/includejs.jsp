@@ -3,8 +3,6 @@
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/showhide.js"/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/Help.js'/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/wwhapi.js'/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/wwhbaseurl.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/control.tabs.js'/>"> </script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
@@ -18,6 +16,7 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/ajax/ajaxtags_controls.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/ajax/ajaxtags_parser.js'/>"></script> 
 <script type="text/javascript" language="javascript">
+    Help.url = '<s:property value="@gov.nih.nci.pa.util.PaEarPropertyReader@getViewerHelpUrl()" />';
     var contextPath = '<%=request.getContextPath()%>';
 </script>
 

@@ -116,7 +116,7 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
     public StudySubjectDto convertFromDomainToDto(StudySubject bo) {
         StudySubjectDto dto = new StudySubjectDto();
         dto.setAssignedIdentifier(StConverter.convertToSt(bo.getAssignedIdentifier()));
-        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setIdentifier(IiConverter.convertToSubjectAccrualIi(bo.getId()));
         dto.setPatientIdentifier(IiConverter.convertToIi(bo.getPatient().getId()));
         dto.setPaymentMethodCode(CdConverter.convertToCd(bo.getPaymentMethodCode()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
@@ -171,7 +171,7 @@ public class StudySubjectConverter extends AbstractConverter<StudySubjectDto, St
      */
     public SubjectAccrualDTO convertFromDomainToSubjectDTO(StudySubject bo) {
         SubjectAccrualDTO dto = new SubjectAccrualDTO();
-        dto.setIdentifier(IiConverter.convertToIi(bo.getId()));
+        dto.setIdentifier(IiConverter.convertToSubjectAccrualIi(bo.getId()));
         dto.setAssignedIdentifier(StConverter.convertToSt(bo.getAssignedIdentifier()));
         
         convertPatient(bo, dto);
