@@ -434,7 +434,7 @@
                             </td>
                             <s:set name="recruitmentStatusValues" value="@gov.nih.nci.pa.enums.RecruitmentStatusCode@getDisplayNames()" />
                             <td>
-                                <s:select headerKey="" headerValue="--Select--" name="trialDTO.siteStatusCode" list="#recruitmentStatusValues"  value="trialDTO.siteStatusCode" cssStyle="width:206px" />
+                                <s:select headerKey="" headerValue="--Select--" name="trialDTO.siteStatusCode" list="#recruitmentStatusValues"  value="trialDTO.siteStatusCode" />
                                 <span class="formErrorMsg">
                                     <s:fielderror>
                                         <s:param>trialDTO.siteStatusCode</s:param>
