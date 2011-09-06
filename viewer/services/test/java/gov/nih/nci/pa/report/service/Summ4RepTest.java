@@ -181,13 +181,13 @@ public class Summ4RepTest
         String query = new Summ4ReportBean().generateSqlQuery(criteria).toString();
         assertTrue(query.contains(orgNameClause.toString()));
     }
-    
+
     @Test
     public void testOrgSearch() throws Exception  {
         List<String> orgs =  bean.searchPoOrgNames("OrgName", 10);
         assertEquals(5, orgs.size());
     }
-    
+
     @Test
     public void testGetOrganizations() throws Exception  {
         assertEquals(0, bean.getOrganizations("0", 10).size());
@@ -219,9 +219,8 @@ public class Summ4RepTest
             + "sp.phase_code, "
             + "sp.primary_purpose_code, "
             + "sp.public_tittle, "
-            + "sp.max_target_accrual_num, "
-            + "sp.identifier, sp.identifier, "
-            + "sp.study_protocol_type,"
+            + "sp.min_target_accrual_num, "
+            + "sp.identifier, sp.identifier,"
             + "sp.public_description, "
             + "sp.identifier, "
             + "sp.study_protocol_type, "
@@ -235,10 +234,6 @@ public class Summ4RepTest
             + "and ss.study_protocol_identifier = sp.identifier "
             + "and :LOW <= now() "
             + "and :HIGH <= now() "
-            + "and 'Agent/Device' = :AGENT_DEVICE "
-            + "and 'Other Intervention' = :OTHER_INTERVENTION "
-            + "and 'Epidemiologic/Other/Outcome' = :EPIDEM_OTHER_OUTCOME "
-            + "and 'Ancillary/Correlative' = :ANCILLARY_CORRELATIVE "
             + "and '" + IiConverter.STUDY_PROTOCOL_ROOT+ "' = :NCI_II_ROOT");
             return sql;
         }

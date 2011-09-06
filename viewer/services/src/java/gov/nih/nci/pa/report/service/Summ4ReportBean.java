@@ -87,7 +87,6 @@ import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.MilestoneCode;
-import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -149,27 +148,14 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     private static final int TRG_IDX = 9;
     private static final int AC12_IDX = 10;
     private static final int ACTD_IDX = 11;
-    private static final int SC_IDX = 12;
-    private static final int SSC_IDX = 13;
-    private static final int TRIAL_IDX = 14;
-    private static final int NCI_ID_IDX = 15;
-    private static final int LEAD_ORG_IDX = 16;
-    private static final int NCT_IDX = 17;
-    private static final int CTEP_IDX = 18;
-    private static final int HCFORG_IDX = 19;
-    private static final int ROORG_IDX = 20;
-    private static final String SP_PROP_TRIAL_CLAUSE
-        = "WHEN sp.proprietary_trial_indicator = FALSE AND ss.functional_code = '";
-
-
-    /** Db returned value for Epidemiologic/Other/Outcome. */
-    public static final String EPIDEM_OUTCOME = "Epidemiologic/Other/Outcome";
-    /** Db returned value for Agent/Device. */
-    public static final String AGENT_DEVICE = "Agent/Device";
-    /** Db returned value for Other Intervention. */
-    public static final String OTHER_INTERVENTION = "Other Intervention";
-    /** Db returned value for Ancillary/Correlative. */
-    public static final String ANCILLARY_CORRELATIVE = "Ancillary/Correlative";
+    private static final int SSC_IDX = 12;
+    private static final int TRIAL_IDX = 13;
+    private static final int NCI_ID_IDX = 14;
+    private static final int LEAD_ORG_IDX = 15;
+    private static final int NCT_IDX = 16;
+    private static final int CTEP_IDX = 17;
+    private static final int HCFORG_IDX = 18;
+    private static final int ROORG_IDX = 19;
 
     /**
      * @return the studyProtocolService
@@ -177,6 +163,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     public StudyProtocolServiceLocal getStudyProtocolService() {
         return studyProtocolService;
     }
+
     /**
      * @param studyProtocolService the studyProtocolService to set
      */
@@ -197,54 +184,22 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "trial_list.Proto_Id, "
         + "trial_list.Pi, "
         + "trial_list.program_code, "
-        + "trial_list.open_date, "
-        + "trial_list.closed_date, "
-        + "trial_list.phase, "
+        + "trial_list.open_date, ");
+        sql.append(getLatestClosedAccrualDate());
+        sql.append("trial_list.phase, "
         + "trial_list.type, "
-        + "trial_list.tittle, "
-        + "trial_list.target, "
-        + "(select count(sub1.patient_identifier) from study_subject sub1 "
-        + "inner join performed_activity AS perAct ON perAct.study_subject_identifier = sub1.identifier "
-        + "AND perAct.study_protocol_identifier = sub1.study_protocol_identifier "
-        + "where sub1.study_site_identifier = trial_list.Study_Site_id "
-        + "and sub1.study_protocol_identifier = trial_list.trial_id "
-        + "and sub1.status_code <> 'PENDING' ");
-        sql.append(dateRangeSql(criteria, "perAct.registration_date"));
-        String accrualCenterToDate = ") as accrual_center_12m, "
-            + "(select count(sub1.patient_identifier) from study_subject sub1  "
-            + "inner join performed_activity AS perAct ON perAct.study_subject_identifier = sub1.identifier  "
-            + "AND perAct.study_protocol_identifier = sub1.study_protocol_identifier "
-            + "where sub1.study_site_identifier = trial_list.Study_Site_id  "
-            + "and sub1.study_protocol_identifier = trial_list.trial_id "
-            + "and sub1.status_code <> 'PENDING'  "
-            + "and perAct.registration_date <= now() "
-            + ") as accrual_center_todate, ";
-        sql.append(accrualCenterToDate
-        + "trial_list.sort_category, "
-        + "trial_list.sort_sub_category, "
+        + "trial_list.official_title, "
+        + "trial_list.target, ");
+        sql.append(getAccrualCenter12m(criteria));
+        sql.append(getAccrualCenterToDate());
+        sql.append("(select distinct type_code from study_resourcing where study_protocol_identifier = trial_id and "
+        + "summ_4_rept_indicator = true) as sort_sub_category, "
         + "trial_list.trial_id, "
-        + "trial_list.NciIdentifier, "
-        + "(select org_lo.name from study_site ss_lo, research_organization ro_lo, organization org_lo "
-        + "where ss_lo.research_organization_identifier = ro_lo.identifier "
-        + "AND ro_lo.organization_identifier = org_lo.identifier "
-        + "AND ss_lo.functional_code = '" + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName()
-        + "' AND ss_lo.study_protocol_identifier = trial_list.trial_id "
-        + ") as lead_org_name, "
-        + "(select ss_nct.local_sp_indentifier from study_site ss_nct, research_organization ro_nct, "
-        + "organization org_nct where ss_nct.research_organization_identifier = ro_nct.identifier "
-        + "AND ro_nct.organization_identifier = org_nct.identifier "
-        + "AND ss_nct.functional_code = '" + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getName()
-        + "' AND ss_nct.study_protocol_identifier = trial_list.trial_id "
-        + "AND org_nct.name = 'ClinicalTrials.gov' "
-        + ") as nct_identifier, "
-        + "(select ss_ctep.local_sp_indentifier from study_site ss_ctep, research_organization ro_ctep, "
-        + "organization org_ctep where ss_ctep.research_organization_identifier = ro_ctep.identifier "
-        + "AND ro_ctep.organization_identifier = org_ctep.identifier "
-        + "AND ss_ctep.functional_code = '" + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getName()
-        + "' AND ss_ctep.study_protocol_identifier = trial_list.trial_id "
-        + "AND org_ctep.name = 'Cancer Therapy Evaluation Program' "
-        + ") as ctep_identifier, "
-        + "trial_list.hcf_org_name,  "
+        + "trial_list.NciIdentifier, ");
+        sql.append(getLeadOrgName());
+        sql.append(getNctId());
+        sql.append(getCtepId());
+        sql.append("trial_list.hcf_org_name,  "
         + "trial_list.ro_org_name  "
         + "from  "
         + "(select distinct "
@@ -254,50 +209,104 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "ss.identifier as Study_Site_Id, "
         + "ss.local_sp_indentifier as Proto_Id, "
         + "ss.functional_code as Func_Code, "
-        + "CASE WHEN sp.study_protocol_type='InterventionalStudyProtocol' THEN hcp_p.last_name||', '||hcp_p.first_name "
-        + "WHEN sp.study_protocol_type='ObservationalStudyProtocol' "
-        + "THEN crs_p.last_name||', '||crs_p.first_name END as Pi, "
+        + "hcp_p.last_name||', '||hcp_p.first_name as Pi, "
         + "sp.program_code_text as program_code,  "
-        + "CASE  "
-        + "WHEN sp.proprietary_trial_indicator = TRUE AND ss.functional_code = '"
-        + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName()
-        + "' THEN null WHEN sp.proprietary_trial_indicator = TRUE AND ss.functional_code = '"
-        + StudySiteFunctionalCode.TREATING_SITE.getName() + "' THEN ss.accrual_date_range_low "
-        + SP_PROP_TRIAL_CLAUSE
-        + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "' THEN sp.start_date "
-        + SP_PROP_TRIAL_CLAUSE
-        + StudySiteFunctionalCode.TREATING_SITE.getName() + "' and "
-        + "(ssAs.status_code = '" + RecruitmentStatusCode.ACTIVE.getName() + "' or ssAs.status_code = '"
-        + RecruitmentStatusCode.ENROLLING_BY_INVITATION.getName() + "')  THEN ssAs.status_date "
-        + "END as open_date, "
-        + "CASE WHEN sp.proprietary_trial_indicator = TRUE AND ss.functional_code = '"
-        + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "' THEN null "
-        + "WHEN sp.proprietary_trial_indicator = TRUE AND ss.functional_code = '"
-        + StudySiteFunctionalCode.TREATING_SITE.getName() + "' THEN "
-        + "ss.accrual_date_range_high "
-        + SP_PROP_TRIAL_CLAUSE
-        + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "' AND "
-        + "ssOv.status_code = '" + StudyStatusCode.CLOSED_TO_ACCRUAL.getName() + "' THEN ssOv.status_date "
-        + SP_PROP_TRIAL_CLAUSE
-        + StudySiteFunctionalCode.TREATING_SITE.getName() + "' AND "
-        + "ssAs.status_code = '" + RecruitmentStatusCode.CLOSED_TO_ACCRUAL.getName() + "' THEN ssAs.status_date "
-        + "END as closed_date, "
-        + "sp.phase_code as phase, "
-        + "sp.primary_purpose_code as type, "
-        + "sp.public_tittle as tittle, "
-        + "sp.max_target_accrual_num as target, "
-        + "CASE WHEN sindide.indlde_type_code = 'IDE' OR sindide.indlde_type_code = 'IND' THEN :AGENT_DEVICE  "
-        + "WHEN plnAct.category_code = 'INTERVENTION' THEN :OTHER_INTERVENTION  "
-        + "WHEN sp.primary_purpose_code = 'EPIDEMIOLOGIC' OR sp.primary_purpose_code = 'OTHER' OR "
-        + "sp.primary_purpose_code = 'OUTCOME' THEN :EPIDEM_OTHER_OUTCOME "
-        + "WHEN sp.primary_purpose_code = 'ANCILLARY' OR sp.primary_purpose_code = 'CORRELATIVE' "
-        + "THEN :ANCILLARY_CORRELATIVE "
-        + "END as sort_category, "
-        + "sr.type_code as sort_sub_category, "
+        + "sp.phase_code as phase, ");
+        sql.append(getEarliestOpenAccrualDate());
+        sql.append("sp.primary_purpose_code as type, "
+        + "sp.official_title as official_title, "
+        + "sp.min_target_accrual_num as target, "
         + "hcf_org.name as hcf_org_name, "
         + "ro_org.name as ro_org_name "
-        + "from study_protocol sp  "
-        + "inner JOIN document_workflow_status AS dws ON sp.identifier = dws.study_protocol_identifier "
+        + "from study_protocol sp  ");
+        sql.append(getJoinTables());
+        sql.append("where sp.status_code = '" + StudyStatusCode.ACTIVE.getName() + "'  "
+        + "and sm.milestone_code = '" + MilestoneCode.SUBMISSION_ACCEPTED.getName() + "' "
+        + "and ss.functional_code in ('" + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "', '"
+        + StudySiteFunctionalCode.TREATING_SITE.getName() + "') ");
+        sql.append(generateOrgClause(criteria));
+        sql.append(") trial_list where char_length(trim(both ' ' from Proto_id)) > 0 "
+                + "and char_length(trim(both ' ' from Sponsor)) > 0 "
+                + "and char_length(trim(both ' ' from Pi)) > 0 "
+        + "order by sort_sub_category, nciIdentifier, Pi");
+        return sql;
+    }
+
+    private String getLatestClosedAccrualDate() {
+       return "( "
+        + "select max(trial_closed_table.closed_date) from "
+        + "(select "
+        + "CASE "
+        + "WHEN closed_table.cDspPropInd = TRUE THEN closed_table.cDssAccDateHigh "
+        + "WHEN closed_table.cDspPropInd = FALSE THEN closed_table.cDssOverallDate "
+        + "END as closed_date "
+        + "from ( "
+        + "select cDsp.proprietary_trial_indicator as cDspPropInd, cDss.accrual_date_range_high as cDssAccDateHigh, "
+        + "cDssOv.status_date as cDssOverallDate "
+        + "from study_protocol cDsp inner join study_site cDss on cDsp.identifier = cDss.study_protocol_identifier "
+        + "left join study_site_overall_status cDssOv on cDssOv.study_site_identifier = cDss.identifier "
+        + "AND cDssOv.status_code = 'CLOSED_TO_ACCRUAL' "
+        + "where cDsp.identifier = trial_list.trial_id) as closed_table) as trial_closed_table "
+        + "), ";
+    }
+
+    private String getEarliestOpenAccrualDate() {
+        return "(CASE "
+        + "WHEN sp.proprietary_trial_indicator = TRUE THEN ss.accrual_date_range_low "
+        + "WHEN sp.proprietary_trial_indicator = FALSE THEN sp.start_date END) as open_date, ";
+    }
+
+
+    private String getLeadOrgName() {
+        return "(select org_lo.name from study_site ss_lo, research_organization ro_lo, organization org_lo "
+        + "where ss_lo.research_organization_identifier = ro_lo.identifier "
+        + "AND ro_lo.organization_identifier = org_lo.identifier "
+        + "AND ss_lo.functional_code = '" + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName()
+        + "' AND ss_lo.study_protocol_identifier = trial_list.trial_id "
+        + ") as lead_org_name, ";
+    }
+
+    private String getNctId() {
+        return  "(select ss_nct.local_sp_indentifier from study_site ss_nct, research_organization ro_nct, "
+        + "organization org_nct where ss_nct.research_organization_identifier = ro_nct.identifier "
+        + "AND ro_nct.organization_identifier = org_nct.identifier "
+        + "AND ss_nct.functional_code = '" + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getName()
+        + "' AND ss_nct.study_protocol_identifier = trial_list.trial_id "
+        + "AND org_nct.name = 'ClinicalTrials.gov' "
+        + ") as nct_identifier, ";
+    }
+
+    private String getCtepId() {
+        return  "(select ss_ctep.local_sp_indentifier from study_site ss_ctep, research_organization ro_ctep, "
+        + "organization org_ctep where ss_ctep.research_organization_identifier = ro_ctep.identifier "
+        + "AND ro_ctep.organization_identifier = org_ctep.identifier "
+        + "AND ss_ctep.functional_code = '" + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getName()
+        + "' AND ss_ctep.study_protocol_identifier = trial_list.trial_id "
+        + "AND org_ctep.name = 'Cancer Therapy Evaluation Program' "
+        + ") as ctep_identifier, ";
+    }
+
+    private String getAccrualCenterToDate() {
+        return "(select count(sub1.patient_identifier) from study_subject sub1  "
+        + "inner join performed_activity AS perAct ON perAct.study_subject_identifier = sub1.identifier  "
+        + "AND perAct.study_protocol_identifier = sub1.study_protocol_identifier "
+        + "where sub1.study_protocol_identifier = trial_list.trial_id "
+        + "and perAct.registration_date <= now() "
+        + ") as accrual_center_todate, ";
+    }
+
+    private String getAccrualCenter12m(Summ4RepCriteriaDto criteria) {
+        StringBuffer sb = new StringBuffer("(select count(sub1.patient_identifier) from study_subject sub1 "
+        + "inner join performed_activity AS perAct ON perAct.study_subject_identifier = sub1.identifier "
+        + "AND perAct.study_protocol_identifier = sub1.study_protocol_identifier "
+        + "where sub1.study_protocol_identifier = trial_list.trial_id ");
+        sb.append(dateRangeSql(criteria, "perAct.registration_date"));
+        sb.append(") as accrual_center_12m, ");
+        return sb.toString();
+    }
+
+    private String getJoinTables() {
+        return "inner JOIN document_workflow_status AS dws ON sp.identifier = dws.study_protocol_identifier "
         + "inner JOIN study_milestone AS sm ON sp.identifier = sm.study_protocol_identifier  "
         + "inner JOIN study_resourcing AS sr ON sp.identifier = sr.study_protocol_identifier  "
         + "inner JOIN study_otheridentifiers sOi ON sp.identifier = sOi.study_protocol_id "
@@ -308,29 +317,11 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "left JOIN healthcare_facility AS hcf ON ss.healthcare_facility_identifier = hcf.identifier "
         + "left JOIN organization AS hcf_org ON hcf.organization_identifier = hcf_org.identifier "
         + "left JOIN study_contact AS sc ON sc.study_protocol_identifier = sp.identifier "
-        + "left JOIN clinical_research_staff AS crs ON sc.clinical_research_staff_identifier = crs.identifier "
-        + "left JOIN person AS crs_p ON crs.person_identifier = crs_p.identifier "
         + "left JOIN healthcare_provider AS hcp ON sc.healthcare_provider_identifier = hcp.identifier "
         + "left JOIN person AS hcp_p ON hcp.person_identifier = hcp_p.identifier "
-        + "left JOIN study_site_overall_status AS ssOv ON ssOv.study_site_identifier = ss.identifier "
-        + "left join study_site_accrual_status ssAs ON ssAs.study_site_identifier = ss.identifier "
         + "left join organization as sponsor_org ON sponsor_org.identifier = "
         + "CAST(sr.organization_identifier AS INTEGER)  "
-        + "left join study_indlde AS sindide ON sp.identifier = sindide.study_protocol_identifier "
-        + "left join planned_activity AS plnAct ON sp.identifier = plnAct.study_protocol_identifier "
-        + "left join study_site AS ss2 ON ss2.functional_code = '"
-        + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "' and "
-        + "ss2.identifier = ss.identifier  "
-        + "where sp.status_code = '" + StudyStatusCode.ACTIVE.getName() + "'  "
-        + "and sm.milestone_code = '" + MilestoneCode.READY_FOR_TSR.getName() + "' "
-        + "and ss.functional_code in ('" + StudySiteFunctionalCode.LEAD_ORGANIZATION.getName() + "', '"
-        + StudySiteFunctionalCode.TREATING_SITE.getName() + "') ");
-        sql.append(generateOrgClause(criteria));
-        sql.append("and sp.start_date >= :LOW "
-        + "and sp.pri_compl_date <= :HIGH "
-        + ") trial_list  "
-        + "order by sort_category, sort_sub_category, pi");
-        return sql;
+        + "left join planned_activity AS plnAct ON sp.identifier = plnAct.study_protocol_identifier ";
     }
 
     private String generateOrgClause(Summ4RepCriteriaDto criteria) {
@@ -350,6 +341,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<Summ4RepResultDto> get(Summ4RepCriteriaDto criteria) throws PAException {
         AbstractStandardCriteriaDto.validate(criteria);
         try {
@@ -383,11 +375,6 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         for (int i = 0; i < criteria.getOrgNames().size(); i++) {
             query.setString("ORG_NAME" + i, StConverter.convertToString(criteria.getOrgNames().get(i)));
         }
-
-        query.setString("EPIDEM_OTHER_OUTCOME", EPIDEM_OUTCOME);
-        query.setString("AGENT_DEVICE", AGENT_DEVICE);
-        query.setString("OTHER_INTERVENTION", OTHER_INTERVENTION);
-        query.setString("ANCILLARY_CORRELATIVE", ANCILLARY_CORRELATIVE);
         query.setString("NCI_II_ROOT", IiConverter.STUDY_PROTOCOL_ROOT);
     }
 
@@ -408,7 +395,6 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
             rdto.setTarget(IntConverter.convertToInt(convertToInteger(q[TRG_IDX])));
             rdto.setAccrualCenter12m(IntConverter.convertToInt(convertToInteger(q[AC12_IDX])));
             rdto.setAccrualCenterToDate(IntConverter.convertToInt(convertToInteger(q[ACTD_IDX])));
-            rdto.setSortCriteria(StConverter.convertToSt((String) q[SC_IDX]));
             rdto.setSubSortCriteria(StConverter.convertToSt((String) q[SSC_IDX]));
             rdto.setNciIdentifier(StConverter.convertToSt((String) q[NCI_ID_IDX]));
             rdto.setLeadOrgName(StConverter.convertToSt((String) q[LEAD_ORG_IDX]));
@@ -443,6 +429,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<String> searchPoOrgNames(String partial, int maxLimit) throws PAException,
         TooManyResultsException {
 
@@ -464,6 +451,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     /**
      * {@inheritDoc}
      */
+    @Override
     public Map<String, String> getFamilies(int maxLimit) throws TooManyResultsException {
         FamilyDTO familyDTO = new FamilyDTO();
         familyDTO.setStatusCode(CdConverter.convertStringToCd("ACTIVE"));
@@ -479,6 +467,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     /**
      * {@inheritDoc}
      */
+    @Override
     public Map<String, String> getOrganizations(String familyId, int maxLimit) throws TooManyResultsException {
         Map<String, String> returnMap = new TreeMap<String, String>();
         LimitOffset limit = new LimitOffset(maxLimit, 0);

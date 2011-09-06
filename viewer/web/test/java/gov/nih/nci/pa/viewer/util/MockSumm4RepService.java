@@ -88,7 +88,6 @@ import gov.nih.nci.pa.report.dto.criteria.Summ4RepCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.Summ4RepResultDto;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
 import gov.nih.nci.pa.report.service.Summ4RepLocal;
-import gov.nih.nci.pa.report.service.Summ4ReportBean;
 import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
@@ -138,20 +137,22 @@ public class MockSumm4RepService extends MockService implements Summ4RepLocal {
         return dto;
     }
 
+    @Override
     public List<Summ4RepResultDto> get(Summ4RepCriteriaDto criteria) throws PAException {
         List<Summ4RepResultDto> rList = new ArrayList<Summ4RepResultDto>();
-        rList.add(generateDto(Summ4ReportBean.AGENT_DEVICE, ViewerConstants.NATIONAL));
-        rList.add(generateDto(Summ4ReportBean.AGENT_DEVICE, ViewerConstants.INSTITUTIONAL));
-        rList.add(generateDto(Summ4ReportBean.AGENT_DEVICE, ViewerConstants.EXTERNALLY_PEER_REVIEWED));
-        rList.add(generateDto(Summ4ReportBean.AGENT_DEVICE, ViewerConstants.INDUSTRIAL));
-        rList.add(generateDto(Summ4ReportBean.OTHER_INTERVENTION, ViewerConstants.NATIONAL));
-        rList.add(generateDto(Summ4ReportBean.OTHER_INTERVENTION, ViewerConstants.INSTITUTIONAL));
-        rList.add(generateDto(Summ4ReportBean.OTHER_INTERVENTION, ViewerConstants.EXTERNALLY_PEER_REVIEWED));
-        rList.add(generateDto(Summ4ReportBean.EPIDEM_OUTCOME, "n/a"));
-        rList.add(generateDto(Summ4ReportBean.ANCILLARY_CORRELATIVE, "n/a"));
+        rList.add(generateDto(null, ViewerConstants.NATIONAL));
+        rList.add(generateDto(null, ViewerConstants.INSTITUTIONAL));
+        rList.add(generateDto(null, ViewerConstants.EXTERNALLY_PEER_REVIEWED));
+        rList.add(generateDto(null, ViewerConstants.INDUSTRIAL));
+        rList.add(generateDto(null, ViewerConstants.NATIONAL));
+        rList.add(generateDto(null, ViewerConstants.INSTITUTIONAL));
+        rList.add(generateDto(null, ViewerConstants.EXTERNALLY_PEER_REVIEWED));
+        rList.add(generateDto(null, "n/a"));
+        rList.add(generateDto(null, "n/a"));
         return rList;
     }
 
+    @Override
     public List<String> searchPoOrgNames(String partial, int maxLimit) throws PAException {
         List<String> returnList = new ArrayList<String>();
         returnList.add("org1");
@@ -159,6 +160,7 @@ public class MockSumm4RepService extends MockService implements Summ4RepLocal {
         return returnList;
     }
 
+    @Override
     public Map<String, String> getFamilies(int maxLimit) throws TooManyResultsException {
         Map<String, String> returnList = new TreeMap<String, String>();
         returnList.put("1", "Family1");
@@ -169,6 +171,7 @@ public class MockSumm4RepService extends MockService implements Summ4RepLocal {
         return returnList;
     }
 
+    @Override
     public Map<String, String> getOrganizations(String familyName, int maxLimit) throws TooManyResultsException {
         Map<String, String> returnList = new TreeMap<String, String>();
         returnList.put("org1", "org1 (CONTRACTUAL)");

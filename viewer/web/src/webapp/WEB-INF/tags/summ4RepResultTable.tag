@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://displaytag.sf.net" prefix="display"%> 
 <%@ taglib uri="http://ctrp.nci.nih.gov/taglib/utility-functions" prefix="func" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="viewer" %>
@@ -14,11 +15,9 @@
     <display:column titleKey="report.result.sponsor" property="sponsor" />
     <display:column titleKey="report.result.cancerSite" media="html">
         <c:set var="row" value="<%=jspContext.findAttribute((String)jspContext.findAttribute("uid")) %>" />
-        <ol>
             <c:forEach var="siteName" items="${row.anatomicSites}">
-                <li><c:out value="${siteName}" /></li>
+                <c:out value="${siteName}" />
             </c:forEach>
-        </ol>
     </display:column>
     <display:column titleKey="report.result.cancerSite" media="excel"><c:set var="row" value="<%=jspContext.findAttribute((String)jspContext.findAttribute("uid")) %>" />${func:join(row.anatomicSites, ', ')}</display:column>
     <display:column titleKey="report.result.nciIdentifier" property="nciIdentifier" />
@@ -28,11 +27,15 @@
     <display:column titleKey="report.result.pi" property="pi" />
     <display:column titleKey="report.result.leadOrgName" property="leadOrgName" />
     <display:column titleKey="report.result.programCode" property="programCode" />
-    <display:column titleKey="report.result.openDate" format="{0,date,dd-MM-yyyy}" property="openDate" />
-    <display:column titleKey="report.result.closedDate" format="{0,date,dd-MM-yyyy}" property="closedDate" />
+    <display:column titleKey="report.result.openDate">
+        <fmt:formatDate value="${row.openDate}" pattern="MM/dd/yyyy"/>
+    </display:column>
+    <display:column titleKey="report.result.closedDate">
+        <fmt:formatDate value="${row.closedDate}" pattern="MM/dd/yyyy"/>
+    </display:column>
     <display:column titleKey="report.result.phase" property="phase" />
     <display:column titleKey="report.result.type" property="type" />
-    <display:column titleKey="report.result.title" property="title" />
+    <display:column titleKey="report.result.title"  maxLength= "200" property="title" />
     <display:column titleKey="report.result.target" property="target" />
     <display:column titleKey="report.result.accrualCenter12m" property="accrualCenter12m" />
     <display:column titleKey="report.result.accrualCenterToDate" property="accrualCenterToDate" />
