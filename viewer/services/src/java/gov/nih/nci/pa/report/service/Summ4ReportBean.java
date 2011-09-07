@@ -122,7 +122,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -154,8 +153,6 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     private static final int LEAD_ORG_IDX = 15;
     private static final int NCT_IDX = 16;
     private static final int CTEP_IDX = 17;
-    private static final int HCFORG_IDX = 18;
-    private static final int ROORG_IDX = 19;
 
     /**
      * @return the studyProtocolService
@@ -199,9 +196,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         sql.append(getLeadOrgName());
         sql.append(getNctId());
         sql.append(getCtepId());
-        sql.append("trial_list.hcf_org_name,  "
-        + "trial_list.ro_org_name  "
-        + "from  "
+        sql.append("from  "
         + "(select distinct "
         + "sOi.extension as NciIdentifier, "
         + "sponsor_org.name as Sponsor, "
@@ -283,7 +278,7 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "AND ss_ctep.functional_code = '" + StudySiteFunctionalCode.IDENTIFIER_ASSIGNER.getName()
         + "' AND ss_ctep.study_protocol_identifier = trial_list.trial_id "
         + "AND org_ctep.name = 'Cancer Therapy Evaluation Program' "
-        + ") as ctep_identifier, ";
+        + ") as ctep_identifier ";
     }
 
     private String getAccrualCenterToDate() {
@@ -405,14 +400,6 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
             StudyProtocolDTO spDTO = studyProtocolService
             .getStudyProtocol(studyProtocolIi);
             rdto.setAnatomicSiteCodes(spDTO.getSummary4AnatomicSites());
-
-
-            // Either HCF Org Name is set or RO Org Name, but not both.
-            // if func_code = lead_org then, then ro org name is set,
-            // else if func_code = treating site, then hcf org name is set
-            String orgMember = (StringUtils.isBlank((String) q[HCFORG_IDX]) ? (String) q[ROORG_IDX]
-                    : (String) q[HCFORG_IDX]);
-            rdto.setOrgMember(StConverter.convertToSt(orgMember));
             rList.add(rdto);
         }
         return rList;
