@@ -618,31 +618,24 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         return sp.getIdentifier();
     }
 
-    private Ii createStudySiteContact(Ii studySiteIi, Ii studyProtocolIi, OrganizationDTO siteDto, PersonDTO piDto,
+    private void createStudySiteContact(Ii studySiteIi, Ii studyProtocolIi, OrganizationDTO siteDto, PersonDTO piDto,
             StudyTypeCode studyTypeCode) throws PAException {
-        Ii studySiteContactIi = null;
         String orgPoIdentifier = siteDto.getIdentifier().getExtension();
         String perIdentifier = piDto.getIdentifier().getExtension();
         StudySiteContactDTO studySiteContactDTO = new StudySiteContactDTO();
         studySiteContactDTO.setStudySiteIi(studySiteIi);
-        Long clinicalStfid = new ClinicalResearchStaffCorrelationServiceBean().createClinicalResearchStaffCorrelations(
-                orgPoIdentifier, perIdentifier);
-        Long healthCareProviderIi = null;
-        if (studyTypeCode.equals(StudyTypeCode.INTERVENTIONAL)) {
-            healthCareProviderIi = new HealthCareProviderCorrelationBean().createHealthCareProviderCorrelationBeans(
-                    orgPoIdentifier, perIdentifier);
-        }
+        Long clinicalStfid = new ClinicalResearchStaffCorrelationServiceBean()
+            .createClinicalResearchStaffCorrelations(orgPoIdentifier, perIdentifier);
         studySiteContactDTO.setClinicalResearchStaffIi(IiConverter.convertToIi(clinicalStfid));
-        if (healthCareProviderIi != null) {
+        if (studyTypeCode == StudyTypeCode.INTERVENTIONAL) {
+            Long healthCareProviderIi = new HealthCareProviderCorrelationBean()
+                .createHealthCareProviderCorrelationBeans(orgPoIdentifier, perIdentifier);
             studySiteContactDTO.setHealthCareProviderIi(IiConverter.convertToIi(healthCareProviderIi));
         }
         studySiteContactDTO.setRoleCode(CdConverter.convertToCd(StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR));
-
         studySiteContactDTO.setStudyProtocolIdentifier(studyProtocolIi);
         studySiteContactDTO.setStatusCode(CdConverter.convertStringToCd(FunctionalRoleStatusCode.PENDING.getCode()));
-
         studySiteContactService.create(studySiteContactDTO);
-        return studySiteContactIi;
     }
 
     private List<String> deleteAndReplace(Ii sourceIi, Ii targetIi) {

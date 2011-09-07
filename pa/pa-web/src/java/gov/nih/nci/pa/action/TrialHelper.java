@@ -116,8 +116,8 @@ public class TrialHelper {
      * @throws NullifiedRoleException nre
      * @throws NullifiedEntityException ne
      */
-    public void saveTrial(Ii studyProtocolIi, GeneralTrialDesignWebDTO  gtdDTO, String operation) throws PAException,
-        NullifiedEntityException, NullifiedRoleException   {
+    public void saveTrial(Ii studyProtocolIi, GeneralTrialDesignWebDTO gtdDTO, String operation) throws PAException,
+            NullifiedEntityException, NullifiedRoleException {
         updateStudyProtocol(studyProtocolIi, gtdDTO);
 
         StudySiteDTO identifierDTO;
@@ -125,21 +125,23 @@ public class TrialHelper {
         identifierDTO.setStudyProtocolIdentifier(studyProtocolIi);
         identifierDTO.setLocalStudyProtocolIdentifier(StConverter.convertToSt(gtdDTO.getLocalProtocolIdentifier()));
         identifierDTO.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION));
-        PaRegistry.getOrganizationCorrelationService().createResearchOrganizationCorrelations(
-               gtdDTO.getLeadOrganizationIdentifier());
-        identifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService().
-                    getPoResearchOrganizationByEntityIdentifier(IiConverter.convertToPoOrganizationIi(
-                        gtdDTO.getLeadOrganizationIdentifier())));
+        PaRegistry.getOrganizationCorrelationService()
+            .createResearchOrganizationCorrelations(gtdDTO.getLeadOrganizationIdentifier());
+        identifierDTO.setResearchOrganizationIi(PaRegistry.getOrganizationCorrelationService()
+            .getPoResearchOrganizationByEntityIdentifier(IiConverter.convertToPoOrganizationIi(gtdDTO
+                                                             .getLeadOrganizationIdentifier())));
         getPaServiceUtils().manageStudyIdentifiers(identifierDTO);
-        manageLeadOrgAndPI(studyProtocolIi, gtdDTO);
+        if (!BooleanUtils.toBoolean(gtdDTO.getProprietarytrialindicator())) {
+            manageLeadOrgAndPI(studyProtocolIi, gtdDTO);
+        }
         manageCtGovElement(studyProtocolIi, gtdDTO);
         if (ABSTRACTION.equalsIgnoreCase(operation)) {
             createOrUpdateCentralContact(studyProtocolIi, gtdDTO);
         }
         saveSummary4Information(studyProtocolIi, gtdDTO);
-        //nct
+        // nct
         saveOtherTrialIdentifier(studyProtocolIi, gtdDTO.getNctIdentifier(), PAConstants.NCT_IDENTIFIER_TYPE);
-        //copied from trial identification screen
+        // copied from trial identification screen
         if (!BooleanUtils.toBoolean(gtdDTO.getProprietarytrialindicator())) {
             saveOtherTrialIdentifier(studyProtocolIi, gtdDTO.getCtepIdentifier(), PAConstants.CTEP_IDENTIFIER_TYPE);
             saveOtherTrialIdentifier(studyProtocolIi, gtdDTO.getDcpIdentifier(), PAConstants.DCP_IDENTIFIER_TYPE);
