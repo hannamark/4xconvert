@@ -85,7 +85,6 @@ package gov.nih.nci.pa.service;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Country;
@@ -116,7 +115,6 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceBeanLocal;
-import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceBean;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
@@ -172,16 +170,15 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
         CSMUserService.setRegistryUserService(new MockCSMUserService());
 
+        ctGovXmlSrv.setLookUpTableService(lookUpTableSrv);
+
         bean.setCtGovXmlGeneratorService(ctGovXmlSrv);
         bean.setProtocolQueryService(protocolQrySrv);
         bean.setRegistryUserService(registryUserSrv);
         bean.setTsrReportGeneratorService(tsrReptSrv);
         bean.setLookUpTableService(lookUpTableSrv);
         bean.setDocWrkflStatusSrv(docWrkStatSrv);
-        bean.setStudySiteService(studySiteService); 
-        
-        ctGovXmlSrv.setMailManagerService(bean);
-        
+        bean.setStudySiteService(studySiteService);
 
         //setup owners for both prop/nonprop trials.
         RegistryUser owner1 = new RegistryUser();

@@ -138,6 +138,7 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -189,9 +190,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
 
     @EJB
     private LookUpTableServiceRemote lookUpTableService;
-    @EJB
-    private MailManagerServiceLocal mailManagerService;
-    
+
     private static final Logger LOG = Logger.getLogger(CTGovXmlGeneratorServiceBeanLocal.class);
     private static final String YYYYMMDD = "yyyy-MM-dd";
     private static final String YYYYMM = "yyyy-MM";
@@ -354,7 +353,10 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
     private void sendErrorEmail(String mailBody) {
         try {
             String mailTo = lookUpTableService.getPropertyValue("ctrp.support.email");
-            mailManagerService.sendMailWithAttachment(mailTo, "Error while generating CT.GOV.xml", mailBody, null);
+            //We have to use the registry lookup instead of a directly injected EJB here because the mail service
+            //depends on this bean as well, causing a circular dependency error if directly injected.
+            PaRegistry.getMailManagerService()
+                .sendMailWithAttachment(mailTo, "Error while generating CT.GOV.xml", mailBody, null);
         } catch (PAException e) {
             LOG.error("Error sending error email during CTGov.xml generation.", e);
         }
@@ -1545,13 +1547,6 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         }
         DateFormat formatter1 = new SimpleDateFormat(YYYYMMDD, Locale.getDefault());
         return formatter1.format(ts);
-    }
-
-    /**
-     * @param mailManagerService the mailManagerService to set
-     */
-    public void setMailManagerService(MailManagerServiceLocal mailManagerService) {
-        this.mailManagerService = mailManagerService;
     }
 
     /**

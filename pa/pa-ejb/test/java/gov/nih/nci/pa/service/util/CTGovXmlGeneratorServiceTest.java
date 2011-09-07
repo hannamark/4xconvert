@@ -155,7 +155,7 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
         getBean().setRegistryUserService(regUserSvc);
         getBean().setStudySiteService(studySiteSvc);
         getBean().setStudyProtocolService(spSvc);
-        getBean().setMailManagerService(mailManagerSvc);
+        getBean().setLookUpTableService(lookupSvc);
     }
 
     @Test(expected=PAException.class)

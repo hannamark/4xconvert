@@ -822,6 +822,7 @@ public class AbstractMockitoTest {
         when(paRegSvcLoc.getLookUpTableService()).thenReturn(lookupSvc);
         when(paRegSvcLoc.getStudyResoucringService()).thenReturn(studyResourcingSvc);
         when(paRegSvcLoc.getStratumGroupService()).thenReturn(stratumGroupSvc);
+        when(paRegSvcLoc.getMailManagerService()).thenReturn(mailManagerSvc);
         PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
     }
 
