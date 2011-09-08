@@ -81,6 +81,7 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -95,10 +96,12 @@ import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.RegistryUserService;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
@@ -117,6 +120,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -128,13 +132,13 @@ import com.opensymphony.xwork2.Preparable;
 */
 public class TrialValidationAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = -6587531774808791496L;
-    
+
     private static final String EDIT = "edit";
     private static final String SPONSOR = "sponsor";
     private static final String UNDEFINED = "undefined";
     private static final String REJECT_OPERATION = "Reject";
     private static final int MAXIMUM_CHAR = 200;
-    
+
     private LookUpTableServiceRemote lookUpTableService;
     private MailManagerServiceLocal mailManagerService;
     private OrganizationalContactCorrelationServiceRemote organizationalContactCorrelationService;
@@ -142,11 +146,23 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
     private PersonEntityServiceRemote personEntityService;
     private ProtocolQueryServiceLocal protocolQueryService;
     private TrialRegistrationServiceLocal trialRegistrationService;
-    
+
     private GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
     private OrganizationDTO selectedLeadOrg;
     private List<PaPersonDTO> persons = new ArrayList<PaPersonDTO>();
     private List<Country> countryList = new ArrayList<Country>();
+
+    private static final Logger LOG = Logger.getLogger(TrialValidationAction.class);
+
+    private static Long rssUserId;
+
+    private static RegistryUserService regUserSvc = null;
+
+    private TrialHelper trialHelper = new TrialHelper();
+
+    static {
+        setRegistryUserService(PaRegistry.getRegistryUserService());
+    }
 
     /**
      * {@inheritDoc}
@@ -184,7 +200,7 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * 
+     *
      * @return String
      */
     public String update() {
@@ -202,7 +218,7 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * 
+     *
      * @return String
      */
     public String accept() {
@@ -231,7 +247,7 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * 
+     *
      * @return String
      */
     public String reject() {
@@ -290,7 +306,7 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
 
     /**
      * Creates the milestones.
-     * 
+     *
      * @param msc the msc
      * @throws PAException e
      */
@@ -310,10 +326,15 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
     private void save(String operation) throws PAException, NullifiedEntityException, NullifiedRoleException {
         HttpSession session = ServletActionContext.getRequest().getSession();
         Ii studyProtocolIi = (Ii) session.getAttribute(Constants.STUDY_PROTOCOL_II);
-        TrialHelper helper = new TrialHelper();
-        helper.saveTrial(studyProtocolIi, gtdDTO, "Validation");
+        trialHelper.saveTrial(studyProtocolIi, gtdDTO, "Validation");
         if (StringUtils.equalsIgnoreCase(operation, "accept")) {
             createMilestones(MilestoneCode.SUBMISSION_ACCEPTED);
+            if (rssUserId == null) {
+                ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE,
+                        "Unable to find ctep-rss user and assign as owner");
+            } else if (trialHelper.shouldRssOwnTrial(studyProtocolIi)) {
+                regUserSvc.assignOwnership(rssUserId, Long.valueOf(studyProtocolIi.getExtension()));
+            }
         }
         StudyProtocolQueryDTO studyProtocolQueryDTO =
                 protocolQueryService.getTrialSummaryByStudyProtocolId(Long.valueOf(studyProtocolIi.getExtension()));
@@ -327,7 +348,7 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
                                                                       PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE));
         session.setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
         session.setAttribute(Constants.DOC_WFS_MENU,
-                             helper.setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
+                             trialHelper.setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
         query();
     }
 
@@ -389,7 +410,7 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * 
+     *
      * @return result
      */
     public String displayLeadOrganization() {
@@ -405,13 +426,13 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
             gtdDTO.setLeadOrganizationName(selectedLeadOrg.getName().getPart().get(0).getValue());
             gtdDTO.setLeadOrganizationIdentifier(selectedLeadOrg.getIdentifier().getExtension());
         } catch (Exception e) {
-            return "display_lead_org";
+            LOG.error(e.getMessage());
         }
         return "display_lead_org";
     }
 
     /**
-     * 
+     *
      * @return result
      */
     public String displayLeadPrincipalInvestigator() {
@@ -428,13 +449,13 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
                     PADomainUtils.convertToPaPersonDTO(selectedLeadPrincipalInvestigator);
             gtdDTO.setPiName(personDTO.getLastName() + "," + personDTO.getFirstName());
         } catch (Exception e) {
-            return "display_lead_prinicipal_inv";
+            LOG.error(e.getMessage());
         }
         return "display_lead_prinicipal_inv";
     }
 
     /**
-     * 
+     *
      * @return result
      */
     public String displaySelectedSponsor() {
@@ -451,13 +472,13 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
             gtdDTO.setSponsorIdentifier(selectedSponsor.getIdentifier().getExtension());
             gtdDTO.setSponsorName(selectedSponsor.getName().getPart().get(0).getValue());
         } catch (Exception e) {
-            return "display_selected_sponsor";
+            LOG.error(e.getMessage());
         }
         return "display_selected_sponsor";
     }
 
     /**
-     * 
+     *
      * @return result
      */
     public String displaySummary4FundingSponsor() {
@@ -474,13 +495,13 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
             gtdDTO.setSummaryFourOrgName(selectedSummary4Sponsor.getName().getPart().get(0).getValue());
             gtdDTO.setSummaryFourOrgIdentifier(selectedSummary4Sponsor.getIdentifier().getExtension());
         } catch (Exception e) {
-            return "display_summary4funding_sponsor";
+            LOG.error(e.getMessage());
         }
         return "display_summary4funding_sponsor";
     }
 
     /**
-     * 
+     *
      * @return result
      */
     public String displayCentralContact() {
@@ -492,13 +513,13 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
             gtdDTO.setCentralContactIdentifier(centralContact.getIdentifier().getExtension());
             gtdDTO.setCentralContactName(personDTO.getLastName() + "," + personDTO.getFirstName());
         } catch (Exception e) {
-            return "central_contact";
+            LOG.error(e.getMessage());
         }
         return "central_contact";
     }
 
     /**
-     * 
+     *
      * @return res
      */
     public String getOrganizationContacts() {
@@ -522,13 +543,12 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
             LOG.error("Exception occured while getting organization contact : " + e);
-            return "display_org_contacts";
         }
         return "display_org_contacts";
     }
 
     /**
-     * 
+     *
      * @return res
      */
     public String createOrganizationContacts() {
@@ -563,7 +583,7 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * 
+     *
      * @return gtdDTO
      */
     public GeneralTrialDesignWebDTO getGtdDTO() {
@@ -571,7 +591,7 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * 
+     *
      * @param gtdDTO gtdDTO
      */
     public void setGtdDTO(GeneralTrialDesignWebDTO gtdDTO) {
@@ -579,7 +599,7 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * 
+     *
      * @return selectedLeadOrg
      */
     public OrganizationDTO getSelectedLeadOrg() {
@@ -587,7 +607,7 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * 
+     *
      * @param selectedLeadOrg selectedLeadOrg
      */
     public void setSelectedLeadOrg(OrganizationDTO selectedLeadOrg) {
@@ -671,4 +691,32 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
     public void setTrialRegistrationService(TrialRegistrationServiceLocal trialRegistrationService) {
         this.trialRegistrationService = trialRegistrationService;
     }
+
+    /**
+     * Injection setter for RegistryUserService.
+     *
+     * @param svc the service to set.
+     */
+    public static void setRegistryUserService(RegistryUserService svc) {
+        regUserSvc = svc;
+        RegistryUser regUser = null;
+        try {
+            regUser = regUserSvc.getUser(PaEarPropertyReader.getRssUser());
+        } catch (PAException e) {
+            LOG.error(e);
+        }
+        if (regUser != null) {
+            rssUserId = regUser.getId();
+        }
+    }
+
+    /**
+     * Injection setter for TrialHelper.
+     *
+     * @param helper the helper to set.
+     */
+    public void setTrialHelper(TrialHelper helper) {
+        this.trialHelper = helper;
+    }
+
 }

@@ -37,8 +37,10 @@ import gov.nih.nci.pa.service.PAExceptionConstants;
 import gov.nih.nci.pa.service.correlation.ClinicalResearchStaffCorrelationServiceBean;
 import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.CorrelationUtilsRemote;
+import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.correlation.PABaseCorrelation;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -57,6 +59,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
@@ -74,6 +77,11 @@ public class TrialHelper {
     private static final String VALIDATION = "Validation";
     private PAServiceUtils paServiceUtils = new PAServiceUtils();
     private CorrelationUtilsRemote correlationUtils = new CorrelationUtils();
+
+    private LookUpTableServiceRemote lookUpTableService = PaRegistry.getLookUpTableService();
+    private OrganizationCorrelationServiceRemote organizationCorrelationService =
+        PaRegistry.getOrganizationCorrelationService();
+
     /**
      *
      * @param studyProtocolIi Ii
@@ -107,6 +115,23 @@ public class TrialHelper {
         copyOtherTrialIdentifiers(spDTO, gtdDTO);
         return gtdDTO;
     }
+
+    /**
+     * @param spIi the protocol id.
+     * @return true if rss should be owner of this trial.
+     * @throws PAException if an exception occurs
+     */
+    public boolean shouldRssOwnTrial(Ii spIi) throws PAException {
+        Cd leadOrgRole = CdConverter.convertStringToCd(StudySiteFunctionalCode.LEAD_ORGANIZATION.getCode());
+        Organization org = organizationCorrelationService.getOrganizationByFunctionRole(spIi, leadOrgRole);
+        String orgName = "";
+        if (org != null) {
+            orgName = org.getName();
+        }
+        String[] rssOrgs = lookUpTableService.getPropertyValue("rss.leadOrgs").split(",");
+        return ArrayUtils.contains(rssOrgs, orgName);
+    }
+
     /**
      *
      * @param studyProtocolIi Ii
@@ -621,4 +646,21 @@ public class TrialHelper {
     public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
         this.paServiceUtils = paServiceUtils;
     }
+
+    /**
+     *Injection setter for lookupTable Service.
+     * @param svc the service
+     */
+    public void setLookupTableService(LookUpTableServiceRemote svc) {
+        this.lookUpTableService = svc;
+    }
+
+    /**
+     * Injection setter for Org Service.
+     * @param svc the service.
+     */
+    public void setOrgService(OrganizationCorrelationServiceRemote svc) {
+        this.organizationCorrelationService = svc;
+    }
+
 }

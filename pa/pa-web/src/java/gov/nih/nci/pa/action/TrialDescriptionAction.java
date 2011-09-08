@@ -248,7 +248,6 @@ public class TrialDescriptionAction extends ActionSupport {
             dto.setIdentifier(IiConverter.convertToIi(getStudyObjectiveIit()));
         }
         saveOrUpdate(dto);
-
     }
 
     /**

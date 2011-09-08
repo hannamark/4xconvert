@@ -85,7 +85,6 @@ package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
@@ -110,14 +109,13 @@ public class AbsCompletionServiceTest extends AbstractMockitoTest {
     @Before
     public void setup() throws Exception {
         bean.setCorrelationUtils(corUtils);
-       
+
         bean.setArmService(armSvc);
         bean.setDocumentService(documentSvc);
         bean.setInterventionService(interventionSvc);
         bean.setOrganizationCorrelationService(orgSvc);
         bean.setPlannedActivityService(plannedActSvc);
         bean.setPlannedMarkerService(plannedMarkerSvc);
-        bean.setRegistryUserService(regUserSvc);
         bean.setStudyContactService(studyContactSvc);
         bean.setStudyDiseaseService(studyDiseaseSvc);
         bean.setStudyIndldeService(studyIndIdeSvc);
@@ -145,34 +143,6 @@ public class AbsCompletionServiceTest extends AbstractMockitoTest {
         }
     }
 
-    @Test
-    public void testEnforceRssOwnershipButRegUserDoesNotExist() throws PAException {
-        org.setName("Cancer Therapy Evaluation Program");
-        when(regUserSvc.getUser(anyString())).thenReturn(null);
-        List<AbstractionCompletionDTO> errList = bean.validateAbstractionCompletion(spId);
-
-        for (AbstractionCompletionDTO error : errList) {
-            if (error.getErrorDescription().startsWith("Contact Support to register that user.")) {
-                return;
-            }
-        }
-        fail("We should have gotten a warning about the missing Registry user.");
-    }
-
-
-    @Test
-    public void testEnforceRssOwnershipFail() throws PAException {
-        org.setName("Cancer Therapy Evaluation Program");
-        when(regUserSvc.isTrialOwner(anyLong(), anyLong())).thenReturn(Boolean.FALSE);
-        List<AbstractionCompletionDTO> errList = bean.validateAbstractionCompletion(spId);
-
-        for (AbstractionCompletionDTO error : errList) {
-            if (error.getComment().contains("as an owner to a CTEP or DCP trial")) {
-                return;
-            }
-        }
-        fail("We did not find the expected abstraction validation error for rss ownership");
-    }
 
     @Test
     public void testEnforceRssOwnershipPass() throws PAException {

@@ -232,7 +232,7 @@ public class MockStudySiteService extends MockAbstractBaseIsoService<StudySiteDT
     /**
      * {@inheritDoc}
      */
-    @Override
+
     public Map<Ii, Ii> copy(Ii fromStudyProtocolii, Ii toStudyProtocolIi) throws PAException {
         return null;
     }
@@ -240,14 +240,13 @@ public class MockStudySiteService extends MockAbstractBaseIsoService<StudySiteDT
     /**
      * {@inheritDoc}
      */
-    @Override
+
     public void cascadeRoleStatus(Ii ii, Cd roleStatusCode) throws PAException {
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
     public List<StudySiteDTO> search(StudySiteDTO dto, LimitOffset pagingParams) throws PAException,
             TooManyResultsException {
         return dtos;
@@ -256,7 +255,6 @@ public class MockStudySiteService extends MockAbstractBaseIsoService<StudySiteDT
     /**
      * {@inheritDoc}
      */
-    @Override
     public Ii getStudySiteIiByTrialAndPoHcfIi(Ii studyProtocolIi, Ii poHcfIi) throws EntityValidationException,
             CurationException, PAException, TooManyResultsException {
         return IiConverter.convertToStudySiteIi(1L);

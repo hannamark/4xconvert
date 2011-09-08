@@ -4,12 +4,17 @@
 package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -42,7 +47,8 @@ public class TrialHelperTest extends AbstractPaActionTest {
         trialHelper = new TrialHelper();
         trialHelper.setCorrelationUtils(new MockCorrelationUtils());
         trialHelper.setPaServiceUtils(svcUtils);
-
+        trialHelper.setOrgService(orgSvc);
+        trialHelper.setLookupTableService(lookupSvc);
 
         getSession().setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(1L));
     }
@@ -50,6 +56,22 @@ public class TrialHelperTest extends AbstractPaActionTest {
     @Test
     public void testGetTrialDTO() throws Exception {
         assertNotNull(trialHelper.getTrialDTO(IiConverter.convertToIi(1L), "Abstraction"));
+    }
+
+    @Test
+    public void testShouldRssOwnTrialYes() throws PAException {
+        Organization rssOrg = new Organization();
+        rssOrg.setName("American College of Surgeons Oncology Trials Group");
+        when(orgSvc.getOrganizationByFunctionRole((Ii)anyObject(), (Cd)anyObject())).thenReturn(rssOrg);
+        assertTrue(trialHelper.shouldRssOwnTrial(spId));
+    }
+
+    @Test
+    public void testShouldRssOwnTrialNo() throws PAException {
+        Organization rssOrg = new Organization();
+        rssOrg.setName("Non Rss Org.");
+        when(orgSvc.getOrganizationByFunctionRole((Ii)anyObject(), (Cd)anyObject())).thenReturn(rssOrg);
+        assertFalse(trialHelper.shouldRssOwnTrial(spId));
     }
 
     @Test

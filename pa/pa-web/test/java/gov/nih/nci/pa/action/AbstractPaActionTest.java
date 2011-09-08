@@ -82,6 +82,7 @@ import static org.junit.Assert.assertNotNull;
 
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.test.util.MockServiceLocator;
+import gov.nih.nci.pa.util.AbstractMockitoTest;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -108,10 +109,10 @@ import com.opensymphony.xwork2.util.ValueStackFactory;
  * @author hreinhart
  *
  */
-public abstract class AbstractPaActionTest {
+public abstract class AbstractPaActionTest extends AbstractMockitoTest {
 
     /**
-     * Creates the action context with a mock request. 
+     * Creates the action context with a mock request.
      */
     public static void initActionContext() {
         ConfigurationManager configurationManager = new ConfigurationManager();

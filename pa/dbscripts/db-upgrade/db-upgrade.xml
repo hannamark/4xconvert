@@ -754,6 +754,10 @@
         <comment>Accrual Web Interface - delete subject doesn't delete subject.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3975.sql"/>
      </changeSet>
+     <changeSet id="PO-3972" author="ludetc">
+        <comment>Add list of Lead Orgs which part sites are managed by RSS</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3972.sql"/>
+     </changeSet>
      <changeSet id="PO-3248" author="moweis">
         <comment>Add email for CTRP Tech Support.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.6/PO-3248.sql"/>

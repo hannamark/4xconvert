@@ -397,24 +397,11 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
         sosDto = sosService.getCurrentByStudyProtocol(spIdIi);
         Timestamp tsTemp;
         if (spDto != null) {
-            tsTemp = TsConverter.convertToTimestamp(spDto.getStartDate());
-            if (tsTemp != null) {
-                setStartDate(tsTemp.toString());
-            } else {
-                setStartDate(null);
-            }
-
-            tsTemp = TsConverter.convertToTimestamp(spDto.getPrimaryCompletionDate());
-            if (tsTemp != null) {
-                setCompletionDate(tsTemp.toString());
-            } else {
-                setCompletionDate(null);
-            }
-            setStartDateType(spDto.getStartDateTypeCode().getCode());
-            setCompletionDateType(spDto.getPrimaryCompletionDateTypeCode().getCode());
+            setStartDate(spDto);
+            setCompletionDate(spDto);
         } else {
-            setStartDate(null);
-            setCompletionDate(null);
+            setStartDate((String) null);
+            setCompletionDate((String) null);
             setStartDateType(null);
             setCompletionDateType(null);
         }
@@ -434,6 +421,26 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
             setStatusDate(null);
             setStatusReason(null);
         }
+    }
+
+    private void setStartDate(StudyProtocolDTO spDto) {
+        Timestamp tsTemp = TsConverter.convertToTimestamp(spDto.getStartDate());
+        if (tsTemp != null) {
+            setStartDate(tsTemp.toString());
+        } else {
+            setStartDate((String) null);
+        }
+    }
+
+    private void setCompletionDate(StudyProtocolDTO spDto) {
+        Timestamp tsTemp = TsConverter.convertToTimestamp(spDto.getPrimaryCompletionDate());
+        if (tsTemp != null) {
+            setCompletionDate(tsTemp.toString());
+        } else {
+            setCompletionDate((String) null);
+        }
+        setStartDateType(spDto.getStartDateTypeCode().getCode());
+        setCompletionDateType(spDto.getPrimaryCompletionDateTypeCode().getCode());
     }
 
 }

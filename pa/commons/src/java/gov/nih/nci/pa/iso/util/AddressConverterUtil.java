@@ -179,17 +179,7 @@ public class AddressConverterUtil {
         List<Adxp> adxpList = ad.getPart();
         StringBuffer sb = new StringBuffer();
         for (Adxp adxp : adxpList) {
-
-            if (adxp instanceof AdxpAl) {
-                sb.append(adxp.getValue()).append(", ");
-            }
-            if (adxp instanceof AdxpCty) {
-                sb.append(adxp.getValue()).append(", ");
-            }
-            if (adxp instanceof AdxpSta) {
-                sb.append(adxp.getValue()).append(", ");
-            }
-            if (adxp instanceof AdxpZip) {
+            if (isNextToLastAdxp(adxp)) {
                 sb.append(adxp.getValue()).append(", ");
             }
             if (adxp instanceof AdxpCnt) {
@@ -200,6 +190,13 @@ public class AddressConverterUtil {
             sb.deleteCharAt(sb.lastIndexOf(","));
         }
         return sb.toString();
+    }
+
+    private static boolean isNextToLastAdxp(Adxp adxp) {
+        return (adxp instanceof AdxpAl
+                || adxp instanceof AdxpCty
+                || adxp instanceof AdxpSta
+                || adxp instanceof AdxpZip);
     }
 
     private static Adxp createAddressPart(AddressPartType type) {

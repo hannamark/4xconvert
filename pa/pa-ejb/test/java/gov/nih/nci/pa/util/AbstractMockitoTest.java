@@ -811,6 +811,7 @@ public class AbstractMockitoTest {
         when(lookupSvc.getCountries()).thenReturn(countryList);
         when(lookupSvc.getCountryByName(anyString())).thenReturn(cnt);
         when(lookupSvc.searchCountry(any(Country.class))).thenReturn(countryList);
+        when(lookupSvc.getPropertyValue("rss.leadOrgs")).thenReturn("American College of Surgeons Oncology Trials Group");
         PDQXmlGeneratorServiceRemote pdqXmlGeneratorSvc = mock(PDQXmlGeneratorServiceRemote.class);
         when(pdqXmlGeneratorSvc.generatePdqXml(any(Ii.class))).thenReturn("<pdq></pdq>");
 

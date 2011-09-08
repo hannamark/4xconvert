@@ -79,10 +79,8 @@ package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Bl;
-import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.RegulatoryAuthority;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
@@ -146,7 +144,6 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
-import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.util.ArrayList;
@@ -165,8 +162,6 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * service bean for validating the Abstraction.
@@ -178,8 +173,7 @@ import org.apache.log4j.Logger;
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class AbstractionCompletionServiceBean implements AbstractionCompletionServiceRemote {
-    
-    private static final Logger LOG = Logger.getLogger(AbstractionCompletionServiceBean.class);
+
     private static final String SELECT_INT_TRIAL_DESIGN_DETAILS_MSG = "Select Design Details from Interventional Trial"
             + " Design under Scientific Data menu.";
     private static final String SELECT_OBS_TRIAL_DESIGN_DETAILS_MSG = "Select Design Details from Observational Trial"
@@ -188,7 +182,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     private static final String SELECT_TRIAL_DETAILS = "Select General Trial Details from Administrative Data menu.";
     private static final String YES = "Yes";
     private static final String NO = "No";
-    
+
     private CorrelationUtils correlationUtils = new CorrelationUtils();
     private PAServiceUtils paServiceUtil = new PAServiceUtils();
     @EJB
@@ -203,8 +197,6 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     private PlannedActivityServiceLocal plannedActivityService;
     @EJB
     private PlannedMarkerServiceLocal plannedMarkerService;
-    @EJB
-    private RegistryUserServiceLocal registryUserService;
     @EJB
     private RegulatoryInformationServiceRemote regulatoryInformationService;
     @EJB
@@ -231,11 +223,10 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
     @EJB
     private StudySiteContactServiceLocal studySiteContactService;
-   
+
     /**
      * {@inheritDoc}
      */
-    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<AbstractionCompletionDTO> validateAbstractionCompletion(Ii studyProtocolIi) throws PAException {
         if (studyProtocolIi == null) {
@@ -314,47 +305,9 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
             enforceEligibility(studyProtocolIi, messages);
             enforceCollaborator(studyProtocolIi, messages);
             enforceSummary4OrgNullification(studyProtocolIi, messages);
-            enforceRssOwnershipOfCollaborativeTrials(studyProtocolIi, messages);
             enforcePlannedMarkerStatus(studyProtocolIi, messages);
         }
         return messages.getMessages();
-    }
-
-    private void enforceRssOwnershipOfCollaborativeTrials(Ii spIi, AbstractionMessageCollection messages)
-            throws PAException {
-        if (isCollaborativeTrial(spIi)) {
-            // Is ctep-rss a trial owner?
-            String rssUser = PaEarPropertyReader.getRssUser();
-            RegistryUser regUser = registryUserService.getUser(rssUser);
-            String rssUserCN = rssUser.substring(rssUser.lastIndexOf("=") + 1);
-            if (regUser == null) {
-                messages.addWarning("Could not find " + rssUserCN + " user in registered users ",
-                                    "Contact Support to register that user.");
-                LOG.error("User : " + PaEarPropertyReader.getRssUser() + " must exist for "
-                        + " proper validation of Collaborative trials");
-            } else if (!registryUserService.isTrialOwner(regUser.getId(), Long.valueOf(spIi.getExtension()))) {
-                messages.addError("Must assign " + rssUserCN + " as an owner to a CTEP or DCP trial "
-                                          + "to allow the RSS system to submit participating sites data",
-                                  "Select Assign Ownership from the Trial Overview menu");
-            }
-        }
-    }
-
-    /**
-     * @param studyProtocolIi
-     * @return
-     * @throws PAException
-     * @throws NumberFormatException
-     */
-    private boolean isCollaborativeTrial(Ii spIi) throws PAException {
-        Cd sponsorRole = CdConverter.convertStringToCd(StudySiteFunctionalCode.SPONSOR.getCode());
-        Organization org = organizationCorrelationService.getOrganizationByFunctionRole(spIi, sponsorRole);
-        String orgName = "";
-        if (org != null) {
-            orgName = org.getName();
-        }
-        return StringUtils.equals(PAConstants.DCP_ORG_NAME, orgName)
-                || StringUtils.equals(PAConstants.CTEP_ORG_NAME, orgName);
     }
 
     private void abstractionCompletionRuleForProprietary(StudyProtocolDTO studyProtocolDTO,
@@ -1088,7 +1041,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
     }
 
-    private void enforceTrialDescriptionDetails(StudyProtocolDTO studyProtocolDTO, 
+    private void enforceTrialDescriptionDetails(StudyProtocolDTO studyProtocolDTO,
             AbstractionMessageCollection messages) {
         if (studyProtocolDTO.getPublicTitle().getValue() == null) {
             messages.addError(SELECT_TRIAL_DESCRIPTION, "Brief Title must be Entered");
@@ -1179,7 +1132,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
     }
 
-    private void enforceArmInterventional(Ii studyProtocolIi, AbstractionMessageCollection messages) 
+    private void enforceArmInterventional(Ii studyProtocolIi, AbstractionMessageCollection messages)
             throws PAException {
         List<PlannedActivityDTO> paList = plannedActivityService.getByStudyProtocol(studyProtocolIi);
         HashMap<String, String> intervention = new HashMap<String, String>();
@@ -1317,7 +1270,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         }
         return BooleanUtils.isTrue(bl.getValue()) ? YES : NO;
     }
-    
+
     /**
      * Sets the CorrelationUtils Service.
      * @param corUtils The service to set
@@ -1325,7 +1278,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     public void setCorrelationUtils(CorrelationUtils corUtils) {
         this.correlationUtils = corUtils;
     }
-    
+
     /**
      * @return the paServiceUtil
      */
@@ -1380,13 +1333,6 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
      */
     public void setPlannedMarkerService(PlannedMarkerServiceLocal plannedMarkerService) {
         this.plannedMarkerService = plannedMarkerService;
-    }
-
-    /**
-     * @param registryUserService the registryUserService to set
-     */
-    public void setRegistryUserService(RegistryUserServiceLocal registryUserService) {
-        this.registryUserService = registryUserService;
     }
 
     /**
