@@ -265,6 +265,27 @@ public class CSMUserService implements CSMUserUtil {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    public boolean isUserInGroup(String loginName, String groupName) throws PAException {
+        try {
+            User user = getCSMUser(loginName);
+            UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
+            Set<Group> groups = upManager.getGroups(String.valueOf(user.getUserId()));
+            for (Group group : groups) {
+                if (StringUtils.equals(group.getGroupName(), groupName)) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            throw new PAException("CSM Exception while checking " + loginName + " for membership in the " + groupName
+                    + " group.", e);
+        }
+    }
+
+    /**
      * Extract the userName.  Used in case, there are multiple userNames passed in of the form:
      * 'userName1||userName2' or just 'userName'.  The first version userName1 is grid account userName,
      * and userName2 is the actual userName of interest.  In both scenarios, we want to use the userName
@@ -302,5 +323,4 @@ public class CSMUserService implements CSMUserUtil {
     public static CSMUserUtil getRegistryUserService() {
         return registryUserService;
     }
-
 }

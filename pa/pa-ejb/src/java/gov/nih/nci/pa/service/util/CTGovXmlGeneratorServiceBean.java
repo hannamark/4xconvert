@@ -94,9 +94,7 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
-import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -117,17 +115,6 @@ public class CTGovXmlGeneratorServiceBean extends CTGovXmlGeneratorServiceBeanLo
 
     //TODO need to figure out how to throw the error code PRSXML001 when "The user is not an authorized CTRP user"
     //TODO since this happens in role validation.
-
-    @Resource
-    private SessionContext ejbContext;
-
-    /**
-     * Getter for ejb context.
-     * @return ejb context.
-     */
-    protected SessionContext getEjbContext() {
-        return ejbContext;
-    }
 
     private StudyProtocolDTO assertValidStudyProtocol(Ii studyProtocolIi) throws PAException {
         StudyProtocolDTO spDTO = null;
@@ -155,7 +142,7 @@ public class CTGovXmlGeneratorServiceBean extends CTGovXmlGeneratorServiceBeanLo
         StudyProtocolDTO spDTO = null;
         try {
             spDTO = assertValidStudyProtocol(studyProtocolIi);
-            PAUtil.checkUserIsTrialOwnerOrAbstractor(getEjbContext(), spDTO);
+            PAUtil.checkUserIsTrialOwnerOrAbstractor(spDTO);
         } catch (PAException userValidationException) {
             if (userValidationException.getMessage().contains("is not a trial owner for trial id")) {
                 throw new PAException(ErrorCode.PA_USER_002, userValidationException.getMessage(),

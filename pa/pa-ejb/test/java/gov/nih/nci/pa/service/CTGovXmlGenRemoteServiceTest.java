@@ -22,8 +22,6 @@ import gov.nih.nci.pa.util.MockPaRegistryServiceLocator;
 import gov.nih.nci.pa.util.PAExceptionAssertHelper;
 import gov.nih.nci.pa.util.PaRegistry;
 
-import javax.ejb.SessionContext;
-
 import org.junit.Before;
 import org.junit.Test;
 public class CTGovXmlGenRemoteServiceTest extends AbstractHibernateTestCase {
@@ -36,13 +34,6 @@ public class CTGovXmlGenRemoteServiceTest extends AbstractHibernateTestCase {
             } else {
                 return "xml string";
             }
-        }
-
-        @Override
-        protected SessionContext getEjbContext() {
-            SessionContext ejbContext = mock(SessionContext.class);
-            when(ejbContext.isCallerInRole(any(String.class))).thenReturn(false);
-            return ejbContext;
         }
     };
     private final StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);

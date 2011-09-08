@@ -143,8 +143,6 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.ejb.SessionContext;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -1239,23 +1237,21 @@ public class PAUtil {
 
     /**
      * Check that the user is a trial owner or abstractor.
-     * @param ejbContext ejb context
      * @param spDTO trial dto
      * @throws PAException on error
      */
-    public static void checkUserIsTrialOwnerOrAbstractor(SessionContext ejbContext, StudyProtocolDTO spDTO)
-        throws PAException {
-        if (ejbContext.isCallerInRole(ADMIN_ABSTRACTOR_ROLE) || ejbContext.isCallerInRole(CLIENT_ROLE)) {
+    public static void checkUserIsTrialOwnerOrAbstractor(StudyProtocolDTO spDTO) throws PAException {
+        CSMUserUtil userService = CSMUserService.getInstance();
+        String userName = UsernameHolder.getUser();
+        if (userService.isUserInGroup(userName, ADMIN_ABSTRACTOR_ROLE)
+                || userService.isUserInGroup(userName, CLIENT_ROLE)) {
             return;
         }
-        CSMUserUtil userService = CSMUserService.getInstance();
-        User user = userService.getCSMUser(UsernameHolder.getUser());
-
+        User user = userService.getCSMUser(userName);
         RegistryUser userId = PaRegistry.getRegistryUserService().getUser(user.getLoginName());
-        if (!PaRegistry.getRegistryUserService().isTrialOwner(userId.getId(),
-                Long.valueOf(spDTO.getIdentifier().getExtension()))) {
-            throw new PAException("User " + user.getLoginName() + " is not a trial owner for trial id "
-                    + Long.valueOf(spDTO.getIdentifier().getExtension()));
+        Long trialId = IiConverter.convertToLong(spDTO.getIdentifier());
+        if (!PaRegistry.getRegistryUserService().isTrialOwner(userId.getId(), trialId)) {
+            throw new PAException("User " + user.getLoginName() + " is not a trial owner for trial id " + trialId);
         }
     }
 }

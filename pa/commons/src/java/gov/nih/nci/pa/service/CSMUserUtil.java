@@ -147,4 +147,13 @@ public interface CSMUserUtil {
      * @throws PAException on error
      */
     void assignUserToGroup(String loginName, String groupName) throws PAException;
+
+    /**
+     * Checks to see if the given user is a part of the given group.
+     * @param loginName the user
+     * @param groupName the group
+     * @return true iff the user is member of the given group
+     * @throws PAException on error
+     */
+    boolean isUserInGroup(String loginName, String groupName) throws PAException;
 }

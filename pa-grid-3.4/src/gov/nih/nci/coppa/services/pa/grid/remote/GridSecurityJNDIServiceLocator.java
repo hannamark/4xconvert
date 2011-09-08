@@ -90,6 +90,7 @@ import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
+import gov.nih.nci.pa.iso.dto.ParticipatingSiteDTO;
 import gov.nih.nci.pa.iso.dto.PlannedActivityDTO;
 import gov.nih.nci.pa.iso.dto.RegulatoryAuthorityDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
@@ -198,6 +199,7 @@ public class GridSecurityJNDIServiceLocator implements ServiceLocator {
             values.put(PDQDiseaseDTO.class, this.getClass().getMethod("getPdqDiseaseService"));
             values.put(InterventionDTO.class, this.getClass().getMethod("getInterventionService"));
             values.put(RegulatoryAuthorityDTO.class, this.getClass().getMethod("getRegulatoryAuthorityService"));
+            values.put(ParticipatingSiteDTO.class, this.getClass().getMethod("getParticipatingSiteService"));
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }

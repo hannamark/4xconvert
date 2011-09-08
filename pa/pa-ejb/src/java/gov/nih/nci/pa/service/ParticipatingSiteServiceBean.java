@@ -85,7 +85,6 @@ package gov.nih.nci.pa.service;
 
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.ABSTRACTOR_ROLE;
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
-
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
@@ -120,9 +119,7 @@ import gov.nih.nci.services.person.PersonDTO;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -142,8 +139,6 @@ import org.jboss.annotation.security.SecurityDomain;
 @SecurityDomain("pa")
 @RolesAllowed({CLIENT_ROLE, ABSTRACTOR_ROLE })
 public class ParticipatingSiteServiceBean extends ParticipatingSiteBeanLocal implements ParticipatingSiteServiceRemote {
-    @Resource
-    private SessionContext ejbContext;
 
     /**
      * {@inheritDoc}
@@ -175,15 +170,17 @@ public class ParticipatingSiteServiceBean extends ParticipatingSiteBeanLocal imp
     List<ParticipatingSiteDTO> convertStudySiteDTOsToParticipatingSiteDTOs(List<StudySiteDTO> dtos)
             throws PAException {
         List<Long> ids = new ArrayList<Long>();
+        List<StudySite> results = new ArrayList<StudySite>();
         if (CollectionUtils.isNotEmpty(dtos)) {
             for (StudySiteDTO dto : dtos) {
                 ids.add(IiConverter.convertToLong(dto.getIdentifier()));
             }
+            Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(StudySite.class);
+            criteria.add(Restrictions.in("id", ids));
+            results = criteria.list();
         }
-        Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(StudySite.class);
-        criteria.add(Restrictions.in("id", ids));
         ParticipatingSiteConverter converter = new ParticipatingSiteConverter();
-        return converter.convertFromDomainToDtos(criteria.list());
+        return converter.convertFromDomainToDtos(results);
     }
 
     /**
@@ -194,7 +191,7 @@ public class ParticipatingSiteServiceBean extends ParticipatingSiteBeanLocal imp
             StudySiteAccrualStatusDTO currentStatusDTO, OrganizationDTO orgDTO, HealthCareFacilityDTO hcfDTO,
             List<ParticipatingSiteContactDTO> participatingSiteContactDTOList) throws PAException {
         checkStudyProtocol(studySiteDTO.getStudyProtocolIdentifier());
-        ParticipatingSiteDTO participatingSiteDTO = createStudySiteParticipant(studySiteDTO, currentStatusDTO, orgDTO, 
+        ParticipatingSiteDTO participatingSiteDTO = createStudySiteParticipant(studySiteDTO, currentStatusDTO, orgDTO,
                                                                                hcfDTO);
         updateStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
         return getParticipatingSite(participatingSiteDTO.getIdentifier());
@@ -226,7 +223,7 @@ public class ParticipatingSiteServiceBean extends ParticipatingSiteBeanLocal imp
         updateStudySiteContacts(participatingSiteContactDTOList, participatingSiteDTO);
         return getParticipatingSite(participatingSiteDTO.getIdentifier());
     }
-    
+
     /**
      * Check that the study protocol with the given Ii exist and that the current user can access it.
      * @param studyProtocolIi The study protocil Ii
@@ -237,7 +234,7 @@ public class ParticipatingSiteServiceBean extends ParticipatingSiteBeanLocal imp
         if (studyProtocolDTO == null || ISOUtil.isIiNull(studyProtocolDTO.getIdentifier())) {
             throw new PAException("Trial id " + studyProtocolIi.getExtension() + " does not exist.");
         }
-        PAUtil.checkUserIsTrialOwnerOrAbstractor(ejbContext, studyProtocolDTO);
+        PAUtil.checkUserIsTrialOwnerOrAbstractor(studyProtocolDTO);
     }
 
     /**
@@ -303,7 +300,7 @@ public class ParticipatingSiteServiceBean extends ParticipatingSiteBeanLocal imp
         }
         return code;
     }
-    
+
     /**
      * Gets the Participating site with the given Ii.
      * @param studySiteIi The study site Ii
@@ -318,12 +315,4 @@ public class ParticipatingSiteServiceBean extends ParticipatingSiteBeanLocal imp
         participatingSiteDTO.setStudySiteContacts(getStudySiteContactService().getByStudySite(studySiteIi));
         return participatingSiteDTO;
     }
-
-    /**
-     * @param ejbContext the ejbContext to set
-     */
-    public void setEjbContext(SessionContext ejbContext) {
-        this.ejbContext = ejbContext;
-    }
-
 }

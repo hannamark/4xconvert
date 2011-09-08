@@ -93,8 +93,6 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
-import gov.nih.nci.security.SecurityServiceProvider;
-import gov.nih.nci.security.UserProvisioningManager;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.ArrayList;
@@ -205,27 +203,18 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     public RegistryUser getUser(String loginName) throws PAException {
         RegistryUser registryUser = null;
         try {
-            // /first get the CSM user
-            UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
-            User csmUser = upManager.getUser(loginName);
+            User csmUser = CSMUserService.getInstance().getCSMUser(loginName);
 
-            // if csm user exists retrieve the registry user
             if (csmUser != null) {
                 Session session = PaHibernateUtil.getCurrentSession();
-
-                // HQL query
-                String hql = "select reguser from RegistryUser reguser where reguser.csmUserId = :csmuserId ";
-
-                // construct query object
+                String hql = "select reguser from RegistryUser reguser where reguser.csmUserId = :csmuserId";
                 Query query = session.createQuery(hql);
                 query.setParameter("csmuserId", csmUser.getUserId());
                 registryUser = (RegistryUser) query.uniqueResult();
             }
-
         } catch (Exception cse) {
             throw new PAException("CSM exception while retrieving user: " + loginName, cse);
         }
-
         return registryUser;
     }
 

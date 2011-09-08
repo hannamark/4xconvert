@@ -122,14 +122,23 @@ public class MockCSMUserService implements CSMUserUtil {
         users.add(user);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public User createCSMUser(RegistryUser user, String loginName, String password) throws PAException {
         return new User();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public User updateCSMUser(RegistryUser user, String loginName, String password) throws PAException {
         return new User();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public User getCSMUser(String loginName) throws PAException {
         for (User user : users) {
             if (user.getLoginName().equals(loginName)) {
@@ -141,17 +150,33 @@ public class MockCSMUserService implements CSMUserUtil {
         return user;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Set<User> getCSMUsers() throws PAException {
         Set<User> userSet = new HashSet<User>();
         userSet.addAll(users);
         return userSet;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void assignUserToGroup(String loginName, String groupName) throws PAException {
         throw new NotImplementedException();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public User getCSMUserById(Long id) throws PAException {
         return users.get(0);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isUserInGroup(String loginName, String groupName) throws PAException {
+        return false;
     }
 }

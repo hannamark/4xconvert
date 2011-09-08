@@ -86,7 +86,6 @@ package gov.nih.nci.pa.service;
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROLE;
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.SUBMITTER_ROLE;
-
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.DSet;
@@ -231,7 +230,9 @@ implements ParticipatingSiteServiceLocal {
     public void addStudySitePrimaryContact(Ii studySiteIi, ClinicalResearchStaffDTO poCrsDTO,
             HealthCareProviderDTO poHcpDTO, PersonDTO personDTO, DSet<Tel> telecom) throws PAException {
         try {
-            checkStudySiteContactTelecom(telecom);
+            if (ISOUtil.isDSetEmpty(telecom)) {
+                throw new PAException("Study Site Contacts must have telecom address info for primary contact.");
+            }
             StudySiteDTO studySiteDTO = getStudySiteService().get(studySiteIi);
             Ii orgIi = getCorrUtils().getPoOrgIiFromPaHcfIi(studySiteDTO.getHealthcareFacilityIi());
             Map<String, Ii> myMap = generateCrsAndHcpFromCtepIdOrNewPerson(personDTO, poCrsDTO, poHcpDTO, orgIi);
@@ -402,11 +403,4 @@ implements ParticipatingSiteServiceLocal {
         return (StudySite) PaHibernateUtil.getCurrentSession().get(StudySite.class,
                                                                    IiConverter.convertToLong(studySiteIi));
     }
-
-    private void checkStudySiteContactTelecom(DSet<Tel> telecom) throws PAException {
-        if (ISOUtil.isDSetEmpty(telecom)) {
-            throw new PAException("Study Site Contacts must have telecom address info for primary contact.");
-        }
-    }
-
 }
