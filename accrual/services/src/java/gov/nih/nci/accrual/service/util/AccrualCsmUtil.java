@@ -188,12 +188,7 @@ public class AccrualCsmUtil implements CsmUtil {
     }
     
     /**
-     * Extract the userName.  Used in case, there are multiple userNames passed in of the form:
-     * 'userName1||userName2' or just 'userName'.  The first version userName1 is grid account userName,
-     * and userName2 is the actual userName of interest.  In both scenarios, we want to use the userName
-     * at the end (e.g. 'userName2','userName').
-     * @param userName the username to extract
-     * @return the extracted username
+     * {@inheritDoc}
      */
     public String extractUserName(String userName) {
         if (StringUtils.isEmpty(userName)) {

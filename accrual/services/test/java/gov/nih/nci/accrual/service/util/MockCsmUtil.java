@@ -131,4 +131,14 @@ public class MockCsmUtil implements CsmUtil {
         }
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String extractUserName(String userName) {
+        return null;
+    }
+    
+    
 }

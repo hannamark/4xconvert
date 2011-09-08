@@ -84,6 +84,7 @@ package gov.nih.nci.accrual.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.pa.domain.RegistryUser;
 
@@ -136,10 +137,22 @@ public class AccrualCsmUtilTest extends AbstractServiceTest<AccrualCsmUtil> {
     }
     
     @Test
-    public void extractUsername() throws Exception {
-        assertNull(bean.extractUserName(null));
-        assertNull(bean.extractUserName(""));
-        assertEquals("testUser", bean.extractUserName("testUser"));
+    public void extractUsernameNullValue() throws Exception {
+        assertNull(bean.extractUserName(null));        
+    }
+    
+    @Test
+    public void extractUsernameEmptyValue() throws Exception {     
+        assertNull(bean.extractUserName(""));      
+    }
+    
+    @Test
+    public void extractUsernameOneUser() throws Exception {       
+        assertEquals("testUser", bean.extractUserName("testUser"));       
+    }
+    
+    @Test
+    public void extractUsernameTwoUsers() throws Exception {        
         assertEquals("testUser", bean.extractUserName("ejbclient||testUser"));
     }
 }

@@ -81,6 +81,7 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.convert.StudySubjectConverter;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
+import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.coppa.services.LimitOffset;
@@ -193,8 +194,8 @@ public class StudySubjectBeanLocal extends
     }
     
     Long getUserId() throws PAException {
-        return PaServiceLocator.getInstance().getRegistryUserService().getUser(CaseSensitiveUsernameHolder.getUser())
-            .getId();
+        return PaServiceLocator.getInstance().getRegistryUserService()
+                .getUser(AccrualCsmUtil.getInstance().extractUserName(CaseSensitiveUsernameHolder.getUser())).getId();
     }
     
     void calculateAccessibleStudySubjects(List<StudySubject> studySubjects, Long userId) {
