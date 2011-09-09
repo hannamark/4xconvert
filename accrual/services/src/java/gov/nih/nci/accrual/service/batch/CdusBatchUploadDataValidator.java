@@ -82,8 +82,8 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
+import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
-import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -138,12 +138,13 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private static final Logger LOG = Logger.getLogger(CdusBatchUploadDataValidator.class); 
     private OrganizationEntityServiceRemote organizationEntityService = null;
     private HealthCareFacilityCorrelationServiceRemote healthCareFacilityCorrelationService = null;
-    
+    private RegistryUser ru;
     /**
      * {@inheritDoc}
      */
     @Override
-    public BatchValidationResults validateSingleBatchData(File file)  {
+    public BatchValidationResults validateSingleBatchData(File file, RegistryUser user)  {
+        ru = user;
         StringBuffer errMsg = new StringBuffer();
         BatchValidationResults results = new BatchValidationResults();
         results.setFileName(file.getName());
@@ -187,7 +188,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      * {@inheritDoc}
      */
     @Override
-    public List<BatchValidationResults> validateArchiveBatchData(File archiveFile) {
+    public List<BatchValidationResults> validateArchiveBatchData(File archiveFile, RegistryUser user) {
         List<BatchValidationResults> results = new ArrayList<BatchValidationResults>();
         try {
             ZipFile zip = new ZipFile(archiveFile, ZipFile.OPEN_READ);
@@ -196,7 +197,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 ZipEntry entry = files.nextElement();
                 File file = File.createTempFile(StringUtils.substringBefore(entry.getName(), "."), ".txt");
                 IOUtils.copy(zip.getInputStream(entry), FileUtils.openOutputStream(file));
-                BatchValidationResults result = validateSingleBatchData(file);
+                BatchValidationResults result = validateSingleBatchData(file, user);
                 result.setFileName(entry.getName());
                 results.add(result);
             }
@@ -227,6 +228,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         }
         validateProtocolNumber(key, values, errMsg, lineNumber, expectedProtocolId);
         validatePatientID(key, values, errMsg, lineNumber);
+        validateStudySiteAccrualAccessCode(key, values, errMsg, lineNumber);
         validatePatientsMandatoryData(key, values, errMsg, lineNumber, getStudyProtocol(expectedProtocolId));
         validateRegisteringInstitutionCode(key, values, errMsg, lineNumber);
         validatePatientRaceData(key, values, errMsg, lineNumber);
@@ -253,6 +255,20 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                     return;
                 }
                 validatePatientTreatingSite(registeringInstitutionID, errMsg, values, lineNumber);
+            }
+        }
+    }
+    
+    private void validateStudySiteAccrualAccessCode(String key, List<String> values, StringBuffer errMsg,
+            long lineNumber) {
+        if (StringUtils.equals("ACCRUAL_COUNT", key)) {
+            String studySiteID = StringUtils
+                .trim(values.get(BatchFileIndex.ACCRUAL_COUNT_STUDY_SITE_ID_INDEX - 1));
+            if (!StringUtils.isEmpty(studySiteID)) {
+                if (!isCorrectOrganizationId(studySiteID, errMsg)) {
+                    return;
+                }
+                validateTreatingSiteAndAccrualAccess(studySiteID, errMsg, values, lineNumber);
             }
         }
     }
@@ -320,24 +336,82 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private void validatePatientTreatingSite(String regInstID, StringBuffer errMsg, List<String> values, 
             long lineNumber) {
         Ii studySiteOrgIi = getOrganizationIi(regInstID, errMsg);
+        if (!isValidTreatingSite(studySiteOrgIi, values)) {
+            addUpPatientRegisteringInstitutionCode(values, errMsg, lineNumber);           
+        }        
+    }
+    
+    private boolean isValidTreatingSite(Ii studySiteOrgIi, List<String> values) {
+        
         StudyProtocolDTO spDto = getStudyProtocol(values.get(BatchFileIndex.COLLECTION_PROTOCOL_INDEX).trim());
         if (spDto == null) {
-            return;
+            return false;
         }
         
         try {
             if (ISOUtil.isIiNull(studySiteOrgIi)            
                 || getSearchStudySiteService().getStudySiteByOrg(spDto.getIdentifier(), studySiteOrgIi) == null) {
-                addUpPatienRegisteringInstitutionCode(values, errMsg, lineNumber);
+                return false;
             }
         } catch (PAException e) {
-            addUpPatienRegisteringInstitutionCode(values, errMsg, lineNumber);           
-        }        
+            return false;
+        }
+        return true;
+    
     }
     
-    private void addUpPatienRegisteringInstitutionCode(List<String> values, StringBuffer errMsg, 
+    /**
+     * Test that the treating site ctep id exists for the particular trial being used. 
+     * And that the user has accrual access to the site.
+     * Do not validate if trial cannot be found as that validation is already being done 
+     * on the COLLECTION line.
+     * @throws PAException 
+     */
+    private void validateTreatingSiteAndAccrualAccess(String regInstID, StringBuffer errMsg, List<String> values, 
+            long lineNumber) {
+        Ii studySiteOrgIi = getOrganizationIi(regInstID, errMsg);
+        if (!isValidTreatingSite(studySiteOrgIi, values)) {
+            addAccrualSiteValidationError(values, errMsg, lineNumber);  
+            return;
+        }  
+        assertUserAllowedSiteAccess(studySiteOrgIi, regInstID, errMsg, lineNumber);
+    }
+    
+    /**
+     * Assert batch submitter has accrual access to sites.
+     * @param studySiteOrgIi site ii
+     * @param regInstID site ID provided in file.
+     * @param errMsg msg buffer
+     * @param lineNumber location of input
+     */
+    protected void assertUserAllowedSiteAccess(Ii studySiteOrgIi, String regInstID, 
+            StringBuffer errMsg, long lineNumber) {
+        try {
+            if (!AccrualUtil.isUserAllowedAccrualAccess(studySiteOrgIi, ru)) {
+                addAccrualAccessBySiteError(regInstID, errMsg, lineNumber);
+            }
+        } catch (PAException e) {
+            addAccrualAccessBySiteError(regInstID, errMsg, lineNumber);
+        }
+    }
+    
+    private void addUpPatientRegisteringInstitutionCode(List<String> values, StringBuffer errMsg, 
             long lineNumber) {
         errMsg.append("Patient Registering Institution Code is invalid for patient ID ").append(getPatientId(values))
+        .append(appendLineNumber(lineNumber)).append('\n');
+    }
+    
+    private void addAccrualAccessBySiteError(String studySiteID, StringBuffer errMsg, 
+            long lineNumber) {
+        errMsg.append("User " + ru.getFirstName() + " " + ru.getLastName() 
+                + " does not have accrual access to Study Site ID " + studySiteID)
+        .append(appendLineNumber(lineNumber)).append('\n');
+    }
+    
+    private void addAccrualSiteValidationError(List<String> values, StringBuffer errMsg, 
+            long lineNumber) {
+        errMsg.append("Accrual study site ").append(getAccrualCountStudySiteId(values))
+        .append(" is not valid")
         .append(appendLineNumber(lineNumber)).append('\n');
     }
 
@@ -391,8 +465,6 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private boolean hasAccrualAccess(Ii spIi) {
         String user = CaseSensitiveUsernameHolder.getUser();
         try {
-            RegistryUser ru = 
-                PaServiceLocator.getInstance().getRegistryUserService().getUser(user);
             Bl hasAccess = getSearchTrialService().isAuthorized(spIi, IiConverter.convertToIi(ru.getId()));
             return BlConverter.convertToBool(hasAccess);
         } catch (Exception e) {

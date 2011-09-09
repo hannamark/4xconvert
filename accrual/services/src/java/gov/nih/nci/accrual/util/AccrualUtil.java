@@ -230,6 +230,18 @@ public class AccrualUtil {
         RegistryUser regUser = PaServiceLocator.getInstance()
             .getRegistryUserService().getUser(user.getLoginName());
        
+        return isUserAllowedAccrualAccess(studySiteIi, regUser);
+    }
+    
+    /**
+     * Checks that user has accrual access to site with id provided.
+     * @param studySiteIi site ii
+     * @param regUser user
+     * @return boolean
+     * @throws PAException on error.
+     */
+    public static boolean isUserAllowedAccrualAccess(Ii studySiteIi, RegistryUser regUser)
+        throws PAException {
         Integer result = 
             (Integer) PaHibernateUtil.getCurrentSession().createCriteria(StudySiteAccrualAccess.class)
             .add(Restrictions.eq("studySite.id", Long.parseLong(studySiteIi.getExtension())))

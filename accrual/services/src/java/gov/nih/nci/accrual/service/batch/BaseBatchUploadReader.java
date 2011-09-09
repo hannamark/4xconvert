@@ -89,7 +89,6 @@ import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SearchStudySiteService;
 import gov.nih.nci.accrual.service.util.SearchTrialService;
 import gov.nih.nci.accrual.util.PaServiceLocator;
-import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
@@ -100,9 +99,6 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
-import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
-import gov.nih.nci.services.entity.NullifiedEntityException;
-import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -112,7 +108,6 @@ import java.util.Map;
 
 import javax.ejb.EJB;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -126,7 +121,7 @@ public class BaseBatchUploadReader {
     private static final int COLLECTION_ELEMENT_SIZE = 10;
     private static final int PATIENTS_ELEMENT_SIZE = 23;
     private static final int PATIENT_RACES_ELEMENT_SIZE = 3;
-    private static final int ACCRUAL_COUNT_ELEMENT_SIZE = 2;    
+    private static final int ACCRUAL_COUNT_ELEMENT_SIZE = 3;    
     /**
      * List of elements.
      */
@@ -179,16 +174,24 @@ public class BaseBatchUploadReader {
      * patient race code.
      */
     protected static final List<String> PATIENT_RACE_CODE = new ArrayList<String>();
+    private static final int PATIENT_ID_INDEX = 1;
+    /**
+     * accrual count study index.
+     */
+    protected static final int ACCRUAL_COUNT_STUDY_INDEX = 0;
+    /**
+     * accrual study site index.
+     */
+    protected static final int ACCURAL_STUDY_SITE_INDEX = 1;
     /**
      * accrual count index.
      */
-    protected static final int ACCURAL_COUNT_INDEX = 1;
+    protected static final int ACCURAL_COUNT_INDEX = 2;
     static {
         PATIENT_RACE_CODE.addAll(Arrays.asList("01", "03", "04", "05", "06", "98", "99"));
         PATIENT_RACE_CODE.addAll(Arrays.asList(PatientRaceCode.getDisplayNames()));
     }
-    
-    private static final int PATIENT_ID_INDEX = 1;
+    private static final int ACCRUAL_COUNT_STUDY_SITE_ID_INDEX = 1;
     /**
      * key with patients ids.
      */
@@ -283,7 +286,7 @@ public class BaseBatchUploadReader {
     protected Ii getOrganizationIi(String orgIdentifier, StringBuffer errMsg) {
         Ii resultingIi = null;
         try {
-            resultingIi = getOrganizationIi(orgIdentifier);
+            resultingIi = BatchUploadUtils.getOrganizationIi(orgIdentifier);
         } catch (Exception e) {
             LOG.error("Error retrieving study site organization." , e);
             errMsg.append("Unable to load an organization with the id ").append(orgIdentifier)
@@ -291,35 +294,6 @@ public class BaseBatchUploadReader {
         }
         return resultingIi;
     }
-
-    /**
-     * Retrieves the PO identifier of the organization related with the given identifier.
-     * @param orgIdentifier the CTEP/DCP identifier or the po id of the org
-     * @return the po identifier of the org
-     * @throws PAException on error
-     */
-    protected Ii getOrganizationIi(String orgIdentifier) throws PAException {
-        Ii resultingIi = null;
-        //Look up via other identifiers first in case a CTEP/DCP id is being passed
-        IdentifiedOrganizationDTO identifiedOrg = new IdentifiedOrganizationDTO();
-        identifiedOrg.setAssignedId(IiConverter.convertToIdentifiedOrgEntityIi(orgIdentifier));
-        List<IdentifiedOrganizationDTO> results = 
-            PoRegistry.getIdentifiedOrganizationCorrelationService().search(identifiedOrg);
-        //If any results are found, select the first one and get the org id from there.
-        //Otherwise assume that the identifier given is the po id and just return that.
-        if (CollectionUtils.isNotEmpty(results)) {
-            resultingIi = results.get(0).getPlayerIdentifier();
-        } else {
-            try {
-                OrganizationDTO org = PoRegistry.getOrganizationEntityService().getOrganization(
-                        IiConverter.convertToPoOrganizationIi(orgIdentifier));
-                resultingIi = org != null ? org.getIdentifier() : null;
-            } catch (NullifiedEntityException e) {
-                LOG.error("The organization that is attempting to be loaded is nullified.");
-            }
-        }       
-        return resultingIi;
-    }    
     
     /**
      * 
@@ -329,6 +303,24 @@ public class BaseBatchUploadReader {
     protected String getPatientId(List<String> values) {
         return values.get(PATIENT_ID_INDEX).trim();
     }   
+    
+    /**
+     * 
+     * @param values values
+     * @return err if any
+     */
+    protected String getAccrualCountStudySiteId(List<String> values) {
+        return values.get(ACCRUAL_COUNT_STUDY_SITE_ID_INDEX).trim();
+    }   
+    
+    /**
+     * 
+     * @param lineNumber line Number
+     * @return string
+     */
+    protected String appendLineNumber(long lineNumber) {
+        return " at line " + lineNumber + " ";
+    }
     
     /**
      * @return the studySubjectService

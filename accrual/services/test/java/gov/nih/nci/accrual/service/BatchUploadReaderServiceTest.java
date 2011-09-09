@@ -94,11 +94,15 @@ import static org.mockito.Mockito.when;
 import gov.nih.nci.accrual.service.batch.AbstractBatchUploadReaderTest;
 import gov.nih.nci.accrual.service.batch.BatchImportResults;
 import gov.nih.nci.accrual.service.batch.BatchValidationResults;
+import gov.nih.nci.accrual.service.util.SubjectAccrualCountBean;
+import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
 import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.accrual.util.TestSchema;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.BatchFile;
+import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
@@ -120,7 +124,7 @@ import org.junit.Test;
  * @author vrushali
  */
 public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest {
-
+    
     @Test
     public void completeBatchValidation() throws URISyntaxException, PAException {
         File file = new File(this.getClass().getResource("/CDUS_Complete-modified.txt").toURI());
@@ -152,6 +156,36 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         File file = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
         BatchFile batchFile = getBatchFile(file);
         List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+        readerService.sendValidationErrorEmail(results, batchFile);
+        assertEquals(1, results.size());
+        assertTrue(results.get(0).isPassedValidation());
+        assertTrue(StringUtils.isEmpty(results.get(0).getErrors().toString()));
+        assertFalse(results.get(0).getValidatedLines().isEmpty());
+        verify(mailService, times(0)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+    }
+    
+    @Test
+    public void accrualCountBatchValidation() throws URISyntaxException, PAException {
+        File file = new File(this.getClass().getResource("/accrual-count-invalid-batch-file.txt").toURI());
+        BatchFile batchFile = getBatchFile(file);
+        List<BatchValidationResults> results = readerService.validateBatchData(batchFile);
+        readerService.sendValidationErrorEmail(results, batchFile);
+        assertEquals(1, results.size());
+        assertFalse(results.get(0).isPassedValidation());
+        String errorMsg = results.get(0).getErrors().toString();
+        assertTrue(StringUtils.contains(errorMsg, "Accrual count has been provided for a non Industrial study. This is not allowed."));
+        assertTrue(StringUtils.contains(errorMsg, "Accrual count is missing at line 2"));
+        assertTrue(StringUtils.contains(errorMsg, "Accrual study site is missing at line 3"));
+        assertTrue(StringUtils.contains(errorMsg, "Accrual study site notvalidcode is not valid at line 4"));
+        assertTrue(results.get(0).getValidatedLines().isEmpty());
+        verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+        
+        mailService = mock(MailManagerServiceRemote.class);
+        when(paSvcLocator.getMailManagerService()).thenReturn(mailService);
+        
+        file = new File(this.getClass().getResource("/accrual-count-batch-file.txt").toURI());
+        batchFile = getBatchFile(file);
+        results = readerService.validateBatchData(batchFile);
         readerService.sendValidationErrorEmail(results, batchFile);
         assertEquals(1, results.size());
         assertTrue(results.get(0).isPassedValidation());
@@ -330,6 +364,26 @@ public class BatchUploadReaderServiceTest extends AbstractBatchUploadReaderTest 
         assertEquals("cdus-abbreviated-with-crf-values.txt", importResults.get(0).getFileName());
         assertEquals(74, studySubjectService.getByStudyProtocol(abbreviatedIi).size());
         verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+    }
+    
+    @Test
+    public void accrualCountBatchFileImport() throws Exception {
+        File file = new File(this.getClass().getResource("/accrual-count-batch-file.txt").toURI());
+        BatchFile batchFile = getBatchFile(file);
+        List<BatchImportResults> importResults = readerService.importBatchData(batchFile);
+        readerService.sendConfirmationEmail(importResults, batchFile);
+        assertEquals(1, importResults.size());
+        assertEquals("accrual-count-batch-file.txt", importResults.get(0).getFileName());
+        assertEquals(2, importResults.get(0).getTotalImports());
+        verify(mailService, times(1)).sendMailWithAttachment(anyString(), anyString(), anyString(), any(File[].class));
+        
+        SubjectAccrualCountService countSvc = new SubjectAccrualCountBean();
+        StudySiteSubjectAccrualCount count = 
+            countSvc.getCountByStudySiteId(IiConverter.convertToStudySiteIi(TestSchema.studySites.get(7).getId()));
+        assertEquals(10, count.getAccrualCount().intValue());
+        count = 
+            countSvc.getCountByStudySiteId(IiConverter.convertToStudySiteIi(TestSchema.studySites.get(8).getId()));
+        assertEquals(20, count.getAccrualCount().intValue());
     }
 
     @Test

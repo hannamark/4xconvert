@@ -412,9 +412,12 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         if (!AccrualUtil.isUserAllowedAccrualAccess(participatingSiteIi)) {
             throw new PAException("User does not have accrual access to site.");
         }
-        
+        doUpdateToSubjectAccrual(participatingSiteIi, count);
+    }
+    
+    private void doUpdateToSubjectAccrual(Ii participatingSiteIi, Int count) throws PAException {
         StudySiteSubjectAccrualCount ssAccCount = getSubjectAccrualCountSvc()
-            .getCountByStudySiteId(participatingSiteIi);
+        .getCountByStudySiteId(participatingSiteIi);
         if (ssAccCount == null) {
             StudySiteDTO ssDto = PaServiceLocator.getInstance().getStudySiteService().get(participatingSiteIi);
             StudySite ss = new StudySiteConverter().convertFromDtoToDomain(ssDto);
@@ -426,6 +429,19 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         List<StudySiteSubjectAccrualCount> counts = new ArrayList<StudySiteSubjectAccrualCount>();
         counts.add(ssAccCount);
         getSubjectAccrualCountSvc().save(counts);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void updateSubjectAccrualCount(Ii participatingSiteIi, Int count, RegistryUser user) throws PAException {
+        if (ISOUtil.isIiNull(participatingSiteIi)) {
+            throw new PAException("Study Site Ii cannot be null.");
+        }
+        if (!AccrualUtil.isUserAllowedAccrualAccess(participatingSiteIi, user)) {
+            throw new PAException("User does not have accrual access to site.");
+        }
+        doUpdateToSubjectAccrual(participatingSiteIi, count);
     }
 
     /**

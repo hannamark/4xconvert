@@ -119,16 +119,11 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
 
     @Test
     public void searchUser1() throws Exception {
-        search(TestSchema.registryUsers.get(0).getId(), true);
+        search(TestSchema.registryUsers.get(1).getId(), true);
     }
 
     @Test
     public void searchUser2() throws Exception {
-        search(TestSchema.registryUsers.get(0).getId(), true);
-    }
-
-    @Test
-    public void searchUser3() throws Exception {
         search(0L, false);
     }
 

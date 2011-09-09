@@ -86,11 +86,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.accrual.util.PoRegistry;
+import gov.nih.nci.accrual.util.PoServiceLocator;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Int;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
 
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -101,6 +112,8 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -111,14 +124,37 @@ import au.com.bytecode.opencsv.CSVReader;
  */
 public class BatchUploadUtilsTest {
     private List<String[]> batchFile = new ArrayList<String[]>();
+    private List<String[]> countBatchFile = new ArrayList<String[]>();
     private List<String[]> someFile = new ArrayList<String[]>();
     
     @Before
     public void setUp() throws Exception {
         File abbreviatedBatchFile = new File(this.getClass().getResource("/CDUS_Abbreviated.txt").toURI());
         batchFile = new CSVReader(new FileReader(abbreviatedBatchFile)).readAll();
+        
+        File countFile = new File(this.getClass().getResource("/accrual-count-batch-file.txt").toURI());
+        countBatchFile = new CSVReader(new FileReader(countFile)).readAll();
+        
         String[] someStrings = {"1", "2", "3", "4"};
         someFile.add(someStrings);
+        PoServiceLocator poServiceLoc = mock(PoServiceLocator.class);
+        PoRegistry.getInstance().setPoServiceLocator(poServiceLoc);
+        List<IdentifiedOrganizationDTO> results = new ArrayList<IdentifiedOrganizationDTO>();
+        IdentifiedOrganizationDTO idOrgDto = new IdentifiedOrganizationDTO();
+        idOrgDto.setPlayerIdentifier(IiConverter.convertToIi(1L));
+        results.add(idOrgDto);
+        IdentifiedOrganizationCorrelationServiceRemote identifiedOrgCorrelationSvc
+        = mock(IdentifiedOrganizationCorrelationServiceRemote.class);
+        when(identifiedOrgCorrelationSvc.search(any(IdentifiedOrganizationDTO.class))).thenAnswer(new Answer<List<IdentifiedOrganizationDTO>>() {
+            public List<IdentifiedOrganizationDTO> answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                IdentifiedOrganizationDTO org = (IdentifiedOrganizationDTO) args[0];
+                IdentifiedOrganizationDTO result = new IdentifiedOrganizationDTO();
+                result.setPlayerIdentifier(org.getAssignedId());
+                return Arrays.asList(result);
+            }
+        });
+        when(poServiceLoc.getIdentifiedOrganizationCorrelationService()).thenReturn(identifiedOrgCorrelationSvc);
     }
     
     @Test
@@ -157,13 +193,13 @@ public class BatchUploadUtilsTest {
         String[] results = BatchUploadUtils.getStudyLine(someFile);
         assertTrue(ArrayUtils.isEmpty(results));
     }
-    
+  
     @Test
-    public void testGetTotalNumberOfAccruals() {
-        Integer totalNumberOfAccruals = BatchUploadUtils.getTotalNumberOfAccruals(batchFile);
-        assertNull(totalNumberOfAccruals);
+    public void testGetAccrualCounts() throws PAException {
+        Map<Ii, Int> acMap = BatchUploadUtils.getAccrualCounts(countBatchFile);
+        assertEquals(2, acMap.size());
     }    
-    
+   
     
     @Test
     public void testGetPatientInfo() {

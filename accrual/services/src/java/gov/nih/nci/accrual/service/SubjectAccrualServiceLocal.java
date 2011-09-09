@@ -84,6 +84,8 @@ package gov.nih.nci.accrual.service;
 
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Int;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.service.PAException;
 
 import javax.ejb.Local;
@@ -117,4 +119,14 @@ public interface SubjectAccrualServiceLocal extends SubjectAccrualServiceRemote 
      * @throws PAException on error
      */
     void deleteAll(Ii studySiteIi) throws PAException;
+    
+    /**
+     * Updates the given participating site with the given count. Only valid for participating sites that belong
+     * to Industrial studies. Checks that the user provided has accrual access to this site.
+     * @param participatingSiteIi the ii of the participating site
+     * @param count the total subject accrual count
+     * @param user user.
+     * @throws PAException on error
+     */
+    void updateSubjectAccrualCount(Ii participatingSiteIi, Int count, RegistryUser user) throws PAException;
 }

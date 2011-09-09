@@ -80,6 +80,7 @@ import gov.nih.nci.pa.service.ICD9DiseaseServiceRemote;
 import gov.nih.nci.pa.service.PlannedActivityServiceRemote;
 import gov.nih.nci.pa.service.SDCDiseaseServiceRemote;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
+import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
@@ -118,7 +119,11 @@ public interface ServiceLocatorPaInterface {
     
     /**
      * @return the study site service;
-     * @return
      */
     StudySiteServiceRemote getStudySiteService();
+    
+    /**
+     * @return the study resourcing service
+     */
+    StudyResourcingServiceRemote getStudyResourcingService();
 }

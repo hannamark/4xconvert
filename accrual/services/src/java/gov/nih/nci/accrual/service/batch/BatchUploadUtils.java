@@ -82,6 +82,16 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
+import gov.nih.nci.accrual.util.PoRegistry;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Int;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
+import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.organization.OrganizationDTO;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -92,6 +102,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -113,9 +124,13 @@ public class BatchUploadUtils {
      */
     private static final int LINE_IDENTIFIER_INDEX = 0;
     /**
-     * The total number accruals from an ACCRUAL_COUNT line.
+     * The study site from an ACCRUAL_COUNT line.
      */
-    private static final int  ACCRUAL_COUNT_INDEX = 2;
+    private static final int ACCRUAL_COUNT_STUDY_SITE_INDEX = 2;
+    /**
+     * The accrual counts from an ACCRUAL_COUNT line.
+     */
+    private static final int ACCRUAL_COUNT_INDEX = 3;
     /**
      * The unique identifier of a patient on a PATIENT_RACE line.
      */
@@ -167,19 +182,53 @@ public class BatchUploadUtils {
     }
     
     /**
-     * Returns the total number of accruals from the batch file.
+     * Returns a list of all accrual count lines from the batch file.
      * @param batchFile the batch file as a list
-     * @return the total number of accruals or null if the element isn't found
-     */
-    public static Integer getTotalNumberOfAccruals(List<String[]> batchFile) {
-        Integer results = null;
+     * @return the list of accrual counts
+     * @throws PAException when error.
+     */ 
+    public static Map<Ii, Int> getAccrualCounts(List<String[]> batchFile) throws PAException {
+        Map<Ii, Int> accrualCounts = new HashMap<Ii, Int>();
         for (String[] line : batchFile) {
             if (StringUtils.equals("ACCRUAL_COUNT", line[LINE_IDENTIFIER_INDEX])) {
-                results = Integer.valueOf(line[ACCRUAL_COUNT_INDEX]);
+                Integer count = Integer.valueOf(line[ACCRUAL_COUNT_INDEX]);
+                // assume validator has already vetted all invalid part sites.
+                Ii partSiteIi = getOrganizationIi(line[ACCRUAL_COUNT_STUDY_SITE_INDEX]);
+                accrualCounts.put(partSiteIi, IntConverter.convertToInt(count));
             }
         }
-        return results;
+        return accrualCounts;
     }
+    
+    /**
+    * Retrieves the PO identifier of the organization related with the given identifier.
+    * @param orgIdentifier the CTEP/DCP identifier or the po id of the org
+    * @return the po identifier of the org
+    * @throws PAException on error
+    */
+   public static Ii getOrganizationIi(String orgIdentifier) throws PAException {
+       Ii resultingIi = null;
+       //Look up via other identifiers first in case a CTEP/DCP id is being passed
+       IdentifiedOrganizationDTO identifiedOrg = new IdentifiedOrganizationDTO();
+       identifiedOrg.setAssignedId(IiConverter.convertToIdentifiedOrgEntityIi(orgIdentifier));
+       List<IdentifiedOrganizationDTO> results = 
+           PoRegistry.getIdentifiedOrganizationCorrelationService().search(identifiedOrg);
+       //If any results are found, select the first one and get the org id from there.
+       //Otherwise assume that the identifier given is the po id and just return that.
+       if (CollectionUtils.isNotEmpty(results)) {
+           resultingIi = results.get(0).getPlayerIdentifier();
+       } else {
+           try {
+               OrganizationDTO org = PoRegistry.getOrganizationEntityService().getOrganization(
+                       IiConverter.convertToPoOrganizationIi(orgIdentifier));
+               resultingIi = org != null ? org.getIdentifier() : null;
+           } catch (NullifiedEntityException e) {
+               LOG.error("The organization with the identifier " + orgIdentifier 
+                       +  " that is attempting to be loaded is nullified.");
+           }
+       }       
+       return resultingIi;
+   }    
     
     /**
      * Returns a list of all the patient lines from the batch file.

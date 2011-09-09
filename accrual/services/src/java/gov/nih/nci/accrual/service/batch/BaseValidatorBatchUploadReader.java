@@ -82,9 +82,13 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
+import gov.nih.nci.accrual.util.PaServiceLocator;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.service.PAException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,14 +111,36 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      */
     protected void validateAccuralCount(String key, List<String> values, StringBuffer errMsg, long lineNumber) {
         if (StringUtils.equalsIgnoreCase("ACCRUAL_COUNT", key)) {
-            String accrualCOunt = StringUtils.trim(values.get(ACCURAL_COUNT_INDEX));
-            if (StringUtils.isEmpty(accrualCOunt)) {
-                errMsg.append("Accrual count is missing.").append(appendLineNumber(lineNumber));
+            String protocolId = StringUtils.trim(values.get(ACCRUAL_COUNT_STUDY_INDEX));
+            StudyProtocolDTO sp = getStudyProtocol(protocolId);
+            validateStudyType(errMsg, protocolId, sp);
+            String accrualStudySite = StringUtils.trim(values.get(ACCURAL_STUDY_SITE_INDEX));
+            if (StringUtils.isEmpty(accrualStudySite)) {
+                errMsg.append("Accrual study site is missing").append(appendLineNumber(lineNumber)).append('\n');
+            }
+            String accrualCount = StringUtils.trim(values.get(ACCURAL_COUNT_INDEX));
+            if (StringUtils.isEmpty(accrualCount)) {
+                errMsg.append("Accrual count is missing").append(appendLineNumber(lineNumber)).append('\n');
+            }
+        }
+    }
+
+
+    private void validateStudyType(StringBuffer errMsg, String protocolId, StudyProtocolDTO sp) {
+        if (sp != null) {
+            try {
+                StudyResourcingDTO sr = PaServiceLocator.getInstance().getStudyResourcingService()
+                    .getSummary4ReportedResourcing(sp.getIdentifier());
+                if (SummaryFourFundingCategoryCode.getByCode(sr.getTypeCode().getCode()) 
+                        != SummaryFourFundingCategoryCode.INDUSTRIAL) {
+                    errMsg.append("Accrual count has been provided for a non Industrial study. This is not allowed.\n");
+                }
+            } catch (PAException e) {
+                errMsg.append("Unable to determine study type for study with identifier " + protocolId + " \n");
             }
         }
     }
     
-
     /**
      * 
      * @param key key
@@ -160,7 +186,6 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
                 errMsg.append("Patient race code is not valid for patient ID ").append(getPatientId(values))
                     .append(appendLineNumber(lineNumber)).append('\n');
             }
-
         }
     }
 
@@ -251,14 +276,5 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
             patientsIdList.add(patId);
         }
     }  
-    
-    /**
-     * 
-     * @param lineNumber line Number
-     * @return string
-     */
-    protected String appendLineNumber(long lineNumber) {
-        return " at line " + lineNumber + " ";
-    }
 
 }

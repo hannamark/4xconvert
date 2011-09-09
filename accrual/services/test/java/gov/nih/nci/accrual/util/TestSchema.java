@@ -305,6 +305,7 @@ public class TestSchema {
 
         StudyResourcing sr = new StudyResourcing();
         sr.setTypeCode(SummaryFourFundingCategoryCode.INDUSTRIAL);
+        sr.setSummary4ReportedResourceIndicator(Boolean.TRUE);
         sr.setStudyProtocol(sp);
         addUpdObject(sr);
 
@@ -466,6 +467,22 @@ public class TestSchema {
         ssaa = new StudySiteAccrualAccess();
         ssaa.setRegistryUser(registryUser);
         ssaa.setStudySite(studySites.get(4));
+        ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
+        ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        addUpdObject(ssaa);
+        studySiteAccrualAccess.add(ssaa);
+        
+        ssaa = new StudySiteAccrualAccess();
+        ssaa.setRegistryUser(registryUser);
+        ssaa.setStudySite(studySites.get(7));
+        ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
+        ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
+        addUpdObject(ssaa);
+        studySiteAccrualAccess.add(ssaa);
+        
+        ssaa = new StudySiteAccrualAccess();
+        ssaa.setRegistryUser(registryUser);
+        ssaa.setStudySite(studySites.get(8));
         ssaa.setStatusCode(ActiveInactiveCode.ACTIVE);
         ssaa.setStatusDateRangeLow(new Timestamp(new Date().getTime()));
         addUpdObject(ssaa);

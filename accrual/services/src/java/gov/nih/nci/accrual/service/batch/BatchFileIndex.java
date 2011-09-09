@@ -155,6 +155,16 @@ public final class BatchFileIndex {
      * patient registering institution id index.
      */
     public static final int PATIENT_REG_INST_ID_INDEX = 11;
+    
+    /**
+     * accrual count study site id index.
+     */
+    public static final int ACCRUAL_COUNT_STUDY_SITE_ID_INDEX = 2;
+    
+    /**
+     * accrual count index.
+     */
+    public static final int ACCRUAL_COUNT_ID_INDEX = 3;
 
     /**
      * patient disease index.

@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
+import gov.nih.nci.pa.domain.RegistryUser;
+
 import java.io.File;
 import java.util.List;
 
@@ -96,15 +98,17 @@ public interface CdusBatchUploadDataValidatorLocal {
     /**
      * Validates a single batch file, returning the results.
      * @param file the file to validate
+     * @param user user submitting batch file
      * @return the validation results
      */
-    BatchValidationResults validateSingleBatchData(File file);
+    BatchValidationResults validateSingleBatchData(File file, RegistryUser user);
 
     /**
      * Validates all the files in an zip file.
      * @param archiveFile the zip file
+     * @param user user submitting batch file
      * @return a list of all validation results
      */
-    List<BatchValidationResults> validateArchiveBatchData(File archiveFile);
+    List<BatchValidationResults> validateArchiveBatchData(File archiveFile, RegistryUser user);
 
 }
