@@ -78,33 +78,144 @@
 */
 package gov.nih.nci.pa.iso.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+
+import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 
 import org.junit.Test;
+/**
+ * Tests for the CdConverter class.
+ * 
+ * @author Michael Visee
+ */
+public class CdConverterTest {
+    /**
+     * Test the ConvertToCd method with a null argument
+     */
+    @Test
+    public void testConvertToCdNull() {
+        Cd result = CdConverter.convertToCd(null);
+        checkNullCd(result);
+    }
 
-public class CdConverterTest {    
+    /**
+     * Test the ConvertToCd method with a not null argument
+     */
     @Test
-    public void studyStatusCodeTest () {
-        assertNull(CdConverter.convertToCd(null).getCode());
-        for (StudyStatusCode xxx : StudyStatusCode.values()) {
-            assertTrue(xxx.getCode().equals(CdConverter.convertToCd(xxx).getCode()));
-        }
+    public void testConvertToCdNotNull() {
+        StudyStatusCode input = StudyStatusCode.ACTIVE;
+        Cd result = CdConverter.convertToCd(input);
+        checkNotNullCd(result, input.getDisplayName(), input.getCode());
     }
+
+    /**
+     * Test the ConvertStringToCd method with a null argument
+     */
     @Test
-    public void actualAnticipatedTypeCodeTest () {
-        assertNull(CdConverter.convertToCd(null).getCode());
-        for (ActualAnticipatedTypeCode xxx : ActualAnticipatedTypeCode.values()) {
-            assertTrue(xxx.getCode().equals(CdConverter.convertToCd(xxx).getCode()));
-        }
+    public void testStringConvertToCdNull() {
+        Cd result = CdConverter.convertStringToCd(null);
+        checkNullCd(result);
     }
-    
+
+    /**
+     * Test the ConvertStringToCd method with a not null argument
+     */
     @Test
-	public void testConvertToEnOn() {
-		
-		String str=null;
-		assertNull(CdConverter.convertCdToString(CdConverter.convertToCd(null)));
-	}
+    public void testConvertStringToCdNotNull() {
+        String input = "Input String";
+        Cd result = CdConverter.convertStringToCd(input);
+        checkNotNullCd(result, input, input);
+    }
+
+    private void checkNullCd(Cd cd) {
+        assertNotNull("No result returned", cd);
+        assertEquals("Null flavor incorrectly set", NullFlavor.NI, cd.getNullFlavor());
+    }
+
+    private void checkNotNullCd(Cd cd, String displayName, String code) {
+        assertNotNull("No result returned", cd);
+        assertNull("Null flavor incorrectly set", cd.getNullFlavor());
+        assertEquals("Display name incorrectly set", displayName, cd.getDisplayName().getValue());
+        assertEquals("Code incorrectly set", code, cd.getCode());
+    }
+
+    /**
+     * Test the convertCdToString method with a null argument
+     */
+    @Test
+    public void testConvertCdToStringNullCd() {
+        String result = CdConverter.convertCdToString(null);
+        assertNull("No result should be returned", result);
+    }
+
+    /**
+     * Test the convertCdToString method with a nullified argument
+     */
+    @Test
+    public void testConvertCdToStringNullifiedCd() {
+        Cd cd = new Cd();
+        cd.setNullFlavor(NullFlavor.NI);
+        String result = CdConverter.convertCdToString(cd);
+        assertNull("No result should be returned", result);
+    }
+
+    /**
+     * Test the convertCdToString method with a valid argument
+     */
+    @Test
+    public void testConvertCdToStringNotNullCd() {
+        String input = "code";
+        Cd cd = new Cd();
+        cd.setCode(input);
+        String result = CdConverter.convertCdToString(cd);
+        assertEquals("Wrong result", input, result);
+    }
+
+    /**
+     * Test the convertCdToEnum method with a null argument
+     */
+    @Test
+    public void testConvertCdToEnumNullCd() {
+        StudyStatusCode result = CdConverter.convertCdToEnum(StudyStatusCode.class, null);
+        assertNull("No result should be returned", result);
+    }
+
+    /**
+     * Test the convertCdToEnum method with a nullified argument
+     */
+    @Test
+    public void testConvertCdToEnumNullifiedCd() {
+        Cd cd = new Cd();
+        cd.setNullFlavor(NullFlavor.NI);
+        StudyStatusCode result = CdConverter.convertCdToEnum(StudyStatusCode.class, cd);
+        assertNull("No result should be returned", result);
+    }
+
+    /**
+     * Test the convertCdToEnum method with a valid enum code
+     */
+    @Test
+    public void testConvertCdToEnumValid() {
+        StudyStatusCode input = StudyStatusCode.ACTIVE;
+        Cd cd = new Cd();
+        cd.setCode(input.getCode());
+        StudyStatusCode result = CdConverter.convertCdToEnum(StudyStatusCode.class, cd);
+        assertEquals("Wrong result", input, result);
+    }
+
+    /**
+     * Test the convertCdToEnum method with an invalid enum code
+     */
+    @Test
+    public void testConvertCdToEnumInvalid() {
+        Cd cd = new Cd();
+        cd.setCode("Invalid StudyStatusCode code");
+        StudyStatusCode result = CdConverter.convertCdToEnum(StudyStatusCode.class, cd);
+        assertNull("No result should be returned", result);
+    }
+
 }

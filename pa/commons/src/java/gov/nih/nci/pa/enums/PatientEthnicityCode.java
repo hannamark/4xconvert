@@ -93,39 +93,54 @@ import java.util.TreeMap;
 public enum PatientEthnicityCode implements CodedEnum<String> {
 
     /** Hispanic. */
-    HISPANIC("Hispanic or Latino"),
+    HISPANIC("Hispanic or Latino", "HISPANIC_OR_LATINO"),
     /** Not Hispanic. */
-    NOT_HISPANIC("Not Hispanic or Latino"),
+    NOT_HISPANIC("Not Hispanic or Latino", "NOT_HISPANIC_OR_LATINO"),
     /** Not Reported. */
-    NOT_REPORTED("Not Reported"),
+    NOT_REPORTED("Not Reported", "NOT_REPORTED"),
     /** Unknown. */
-    UNKNOWN("Unknown");
+    UNKNOWN("Unknown", "UNKNOWN");
 
     private String code;
+    private String personEthnicGroup;
+
     /**
-     *
-     * @param code
+     * Constructor.
+     * @param code The code of this enumeration value
+     * @param personEthnicGroup The name of the corresponding value in the PO PersonEthnicGroup enumeration
      */
-    private PatientEthnicityCode(String code) {
+    PatientEthnicityCode(String code, String personEthnicGroup) {
         this.code = code;
+        this.personEthnicGroup = personEthnicGroup;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * Gets the name of the corresponding value in the PO PersonEthnicGroup enumeration.
+     * @return The name of the corresponding value in the PO PersonEthnicGroup enumeration
      */
+    public String getPersonEthnicGroup() {
+        return personEthnicGroup;
+    }
+
+    /**
+     * @return String DisplayName
+     */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -133,7 +148,7 @@ public enum PatientEthnicityCode implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return PatientEthnicityCode
      */
@@ -144,7 +159,7 @@ public enum PatientEthnicityCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         PatientEthnicityCode[] l = PatientEthnicityCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -156,6 +171,7 @@ public enum PatientEthnicityCode implements CodedEnum<String> {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getNameByCode(String str) {
         return getByCode(str).name();
     }
@@ -169,7 +185,7 @@ public enum PatientEthnicityCode implements CodedEnum<String> {
         Map<String, String> a = new TreeMap<String, String>();
         for (int i = 0; i < l.length; i++) {
             String value = l[i].getCode();
-           a.put(l[i].getCode(), value);
+            a.put(l[i].getCode(), value);
         }
         return a;
     }

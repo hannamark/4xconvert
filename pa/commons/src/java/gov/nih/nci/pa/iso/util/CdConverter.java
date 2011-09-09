@@ -82,6 +82,7 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.enums.CodedEnum;
+import gov.nih.nci.pa.enums.CodedEnumHelper;
 
 
 /**
@@ -102,15 +103,10 @@ public class CdConverter {
      */
     public static Cd convertToCd(CodedEnum<?> ce) {
         Cd cd = new Cd();
-        St st = new St();
         if (ce == null) {
             cd.setNullFlavor(NullFlavor.NI);
         } else {
-            // set display name
-            st.setValue(ce.getDisplayName().toString());
-            cd.setDisplayName(st);
-            // set code
-            cd.setCode(ce.getCode().toString());
+            fillCd(cd, ce.getDisplayName().toString(), ce.getCode().toString());
         }
         return cd;
     }
@@ -122,17 +118,25 @@ public class CdConverter {
      */
     public static Cd convertStringToCd(String code) {
         Cd cd = new Cd();
-        St st = new St();
         if (code == null) {
             cd.setNullFlavor(NullFlavor.NI);
         } else {
-            // set display name
-            st.setValue(code);
-            cd.setDisplayName(st);
-            // set code
-            cd.setCode(code);
+            fillCd(cd, code, code);
         }
         return cd;
+    }
+    
+    /**
+     * Fills the display name and code of the given cd.
+     * @param cd The cd to fill
+     * @param displayName the display name
+     * @param code The code
+     */
+    private static void fillCd(Cd cd, String displayName, String code) {
+        St st = new St();
+        st.setValue(displayName);
+        cd.setDisplayName(st);
+        cd.setCode(code);
     }
 
     /**
@@ -141,13 +145,24 @@ public class CdConverter {
      * @return String
      */
     public static String convertCdToString(Cd cd) {
-        if (cd == null) {
-            return null;
-        } else if (cd.getNullFlavor() != null && cd.getNullFlavor().equals(NullFlavor.NI)) {
+        if (cd == null || (cd.getNullFlavor() != null && cd.getNullFlavor().equals(NullFlavor.NI))) {
             return null;
         } else {
-            // set display name
             return cd.getCode();
         }
+    }
+
+    /**
+     * Converts a Cd to a CodedEnum.
+     * @param <T> The type of CodedEnum
+     * @param enumClass The class of CodedEnum
+     * @param cd The Cd to convert
+     * @return The value of the given CodedEnum having the given Cd as code.
+     */
+    public static <T extends Enum<T> & CodedEnum<String>> T convertCdToEnum(Class<T> enumClass, Cd cd) {
+        if (cd == null || (cd.getNullFlavor() != null && cd.getNullFlavor().equals(NullFlavor.NI))) {
+            return null;
+        }
+        return CodedEnumHelper.getByClassAndCode(enumClass, cd.getCode());
     }
 }

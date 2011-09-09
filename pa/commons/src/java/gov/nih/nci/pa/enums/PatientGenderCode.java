@@ -97,30 +97,42 @@ public enum PatientGenderCode implements CodedEnum<String> {
     UNKNOWN("Unknown");
 
     private String code;
+
     /**
-     *
-     * @param code
+     * Constructor.
+     * @param code The code of this enumeration value
      */
-    private PatientGenderCode(String code) {
+    PatientGenderCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * Gets the corresponding PersonSex name in PO.
+     * @return The corresponding PersonSex name in PO.
      */
+    public String getPersonSex() {
+        return name();
+    }
+
+    /**
+     * @return String DisplayName
+     */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -128,7 +140,7 @@ public enum PatientGenderCode implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return PatientGenderCode
      */
@@ -139,7 +151,7 @@ public enum PatientGenderCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         PatientGenderCode[] l = PatientGenderCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -147,10 +159,11 @@ public enum PatientGenderCode implements CodedEnum<String> {
         }
         return a;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getNameByCode(String str) {
         return getByCode(str).name();
     }

@@ -93,55 +93,70 @@ import java.util.TreeMap;
 public enum PatientRaceCode implements CodedEnum<String>  {
 
     /** White. */
-    WHITE("White", false),
+    WHITE("White", false, "WHITE"),
     /** American Indian or Alaska Native. */
-    AMERICAN_INDIAN("American Indian or Alaska Native", false),
+    AMERICAN_INDIAN("American Indian or Alaska Native", false, "AMERICAN_INDIAN_OR_ALASKA_NATIVE"),
     /** Asian. */
-    ASIAN("Asian", false),
+    ASIAN("Asian", false, "ASIAN"),
     /** Black or African American. */
-    BLACK("Black or African American", false),
+    BLACK("Black or African American", false, "BLACK_OR_AFRICAN_AMERICAN"),
     /** Native Hawaiian or Other Pacific Islander. */
-    HAWAIIAN("Native Hawaiian or Other Pacific Islander", false),
+    HAWAIIAN("Native Hawaiian or Other Pacific Islander", false, "NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER"),
     /** Not Reported. */
-    NOT_REPORTED("Not Reported", true),
+    NOT_REPORTED("Not Reported", true, "NOT_REPORTED"),
     /** Unknown. */
-    UNKNOWN("Unknown", true);
+    UNKNOWN("Unknown", true, "UNKNOWN");
 
     private final String code;
     private final boolean unique;
+    private final String personRace;
 
     /**
-     *
-     * @param code
+     * Constructor.
+     * @param code The code of this enumeration value
+     * @param unique True if this value must be unique for a patient
+     * @param personRace The name of the corresponding value in the PO PersonRace enumeration
      */
-    private PatientRaceCode(String code, boolean unique) {
+    PatientRaceCode(String code, boolean unique, String personRace) {
         this.code = code;
         this.unique = unique;
+        this.personRace = personRace;
         register(this);
-    }
-    /**
-      * @return unique unique
-      */
-    public boolean isUnique() {
-       return unique;
     }
 
     /**
      * @return unique code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * @return unique unique
      */
+    public boolean isUnique() {
+        return unique;
+    }
+
+    /**
+     * Gets the name of the corresponding value in the PO PersonRace enumeration.
+     * @return The name of the corresponding value in the PO PersonRace enumeration
+     */
+    public String getPersonRace() {
+        return personRace;
+    }
+
+    /**
+     * @return String DisplayName
+     */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -149,7 +164,7 @@ public enum PatientRaceCode implements CodedEnum<String>  {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return PatientRaceCode
      */
@@ -160,7 +175,7 @@ public enum PatientRaceCode implements CodedEnum<String>  {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         PatientRaceCode[] l = PatientRaceCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -172,6 +187,7 @@ public enum PatientRaceCode implements CodedEnum<String>  {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getNameByCode(String str) {
         return getByCode(str).name();
     }
