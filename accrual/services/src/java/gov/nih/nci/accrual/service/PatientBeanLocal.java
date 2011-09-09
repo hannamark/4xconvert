@@ -88,17 +88,17 @@ import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.iso21090.Ad;
-import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.Patient;
+import gov.nih.nci.pa.enums.PatientEthnicityCode;
+import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.util.AddressConverterUtil;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.DSetEnumConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -108,13 +108,13 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.person.PersonDTO;
 import gov.nih.nci.services.person.PersonEntityServiceRemote;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.ejb.EJB;
@@ -145,6 +145,7 @@ public class PatientBeanLocal implements PatientServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PatientDto create(PatientDto dto) throws PAException {
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Update method should be used to modify existing.");
@@ -153,8 +154,9 @@ public class PatientBeanLocal implements PatientServiceLocal {
     }
     
     /**
-     * @param dto
-     * @throws PAException
+     * Enforce the business rules for the Patient creation and update.
+     * @param dto The new patientDto
+     * @throws PAException If the patient is not valid.
      */
     void enforceBusinessRules(PatientDto dto) throws PAException {
         Set<String> raceCodes = DSetEnumConverter.convertDSetToSet(dto.getRaceCode());
@@ -173,6 +175,7 @@ public class PatientBeanLocal implements PatientServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PatientDto get(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
             throw new PAException("Called get() with Ii == null.");
@@ -196,6 +199,7 @@ public class PatientBeanLocal implements PatientServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PatientDto update(PatientDto dto) throws PAException {
         if (ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Create method should be used to create new.");
@@ -251,26 +255,43 @@ public class PatientBeanLocal implements PatientServiceLocal {
     }
 
     private void updatePOPatientDetails(PatientDto dto) {
-        gov.nih.nci.services.person.PersonDTO poPersonDTO = new gov.nih.nci.services.person.PersonDTO();
+        PersonEntityServiceRemote peService = PoRegistry.getPersonEntityService();
+        PersonDTO poPersonDTO = new PersonDTO();
         try {
-            PersonEntityServiceRemote peService = PoRegistry.getPersonEntityService();
-             Ii personID = IiConverter.convertToPoPersonIi(dto.getPersonIdentifier().getExtension());
-             poPersonDTO = peService.getPerson(personID);
+            Ii personID = IiConverter.convertToPoPersonIi(dto.getPersonIdentifier().getExtension());
+            poPersonDTO = peService.getPerson(personID);
         } catch (NullifiedEntityException e) {
             LOG.info("This Person is nullified " + dto.getPersonIdentifier().getExtension());
         }
-
-        poPersonDTO.setBirthDate(dto.getBirthDate());
-        poPersonDTO.setRaceCode(dto.getRaceCode());
-        poPersonDTO.setSexCode(dto.getGenderCode());
-        List<Cd> cds = new ArrayList<Cd>();
-        cds.add(dto.getEthnicCode());
-        poPersonDTO.setEthnicGroupCode(DSetConverter.convertCdListToDSet(cds));
-       try {
-            PoRegistry.getPersonEntityService().updatePerson(poPersonDTO);
+        poPersonDTO = mergePOPatientDetails(dto, poPersonDTO);
+        try {
+            peService.updatePerson(poPersonDTO);
         } catch (EntityValidationException e) {
             LOG.info("EntityValidationException in updatePOPatientDetails:  " + e.getMessage());
         }
+    }
+    
+    private PersonDTO mergePOPatientDetails(PatientDto dto, PersonDTO poPersonDTO) {
+        poPersonDTO.setBirthDate(dto.getBirthDate());
+        Set<String> personRaces = new HashSet<String>();
+        for (String raceCode : DSetEnumConverter.convertDSetToSet(dto.getRaceCode())) {
+            PatientRaceCode race = PatientRaceCode.getByCode(raceCode);
+            if (race != null) {
+                personRaces.add(race.getPersonRace());
+            }
+        }
+        poPersonDTO.setRaceCode(DSetEnumConverter.convertSetToDSet(personRaces));
+        PatientGenderCode gender = CdConverter.convertCdToEnum(PatientGenderCode.class, dto.getGenderCode());
+        if (gender != null) {
+            poPersonDTO.setSexCode(CdConverter.convertStringToCd(gender.getPersonSex()));
+        }
+        Set<String> personEthnicities = new HashSet<String>();
+        PatientEthnicityCode ethnicity = CdConverter.convertCdToEnum(PatientEthnicityCode.class, dto.getEthnicCode());
+        if (ethnicity != null) {
+            personEthnicities.add(ethnicity.getPersonEthnicGroup());
+        }
+        poPersonDTO.setEthnicGroupCode(DSetEnumConverter.convertSetToDSet(personEthnicities));
+        return poPersonDTO;
     }
     
     private void updatePOPatientCorrelation(PatientDto dto) throws PAException {

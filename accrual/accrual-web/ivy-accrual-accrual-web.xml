@@ -48,7 +48,7 @@
     <dependency org="jboss"                  name="log4j"                   rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa"      name="coppa-commons"           rev="1.3.7"           conf="compile->master"/>
     <dependency org="gov.nih.nci.iso-datatypes" name="iso-datatypes"        rev="2.0.0-alpha1"    conf="compile->master"/>
-    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="3.6-alpha13"      conf="compile->master"/>
+    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="3.6-alpha14"      conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa.pa"   name="pa-ejb-client"           rev="3.6-alpha8"      conf="compile->master"/>
     <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="3.2.0-m10"  force="true"   conf="compile->master"/>
     <dependency org="ncicb"                  name="security"                rev="4.2"             conf="compile->master"/>
@@ -61,7 +61,7 @@
     <!-- test -->
     <dependency org="junit"                  name="junit"                   rev="4.8.2"             conf="test->master"/>
     <dependency org="com.mockrunner"         name="mockrunner"              rev="0.4.1"           conf="test->master"/>
-    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="3.6-alpha13"      conf="test->test"/>
+    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="3.6-alpha14"      conf="test->test"/>
     <dependency org="org.mockito"            name="mockito-all"             rev="1.8.4"           conf="test->master"/>
 
     <!-- other test targets -->
@@ -72,7 +72,7 @@
 
     <dependency org="junit"                  name="junit"                   rev="4.4"             conf="selenium->master"/>
     <dependency org="gov.nih.nci.coppa"      name="coppa-commons"           rev="1.3.7"           conf="selenium->test"/>
-    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="3.6-alpha13"      conf="selenium->test"/>
+    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="3.6-alpha14"      conf="selenium->test"/>
     <dependency org="org.seleniumhq.selenium.client-drivers" name="selenium-java-client-driver"    rev="1.0.2" conf="selenium->master"/>
     <dependency org="org.seleniumhq.selenium.server" name="selenium-server-coreless" rev="1.0.3"               conf="selenium->compile,master">
         <artifact name="selenium-server-coreless" type="jar"/>

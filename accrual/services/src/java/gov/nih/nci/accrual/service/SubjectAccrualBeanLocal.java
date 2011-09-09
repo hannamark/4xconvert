@@ -182,6 +182,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<SubjectAccrualDTO> manageSubjectAccruals(List<SubjectAccrualDTO> subjects) throws PAException {
         for (int i = 0; i < subjects.size(); i++) {
@@ -224,6 +225,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public SubjectAccrualDTO create(SubjectAccrualDTO dto) throws PAException {
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Cannot create a subject accrual with an identifier set. Please use update().");
@@ -318,6 +320,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public SubjectAccrualDTO update(SubjectAccrualDTO dto) throws PAException {
         if (ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Cannot update a subject accrual without an identifier set. Please use create().");
@@ -343,13 +346,13 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
 
     private PatientDto populatePatientDTO(SubjectAccrualDTO dto, PatientDto patientDTO) throws PAException {
         Country country = getCountryService().getByCode(CdConverter.convertCdToString(dto.getCountryCode()));
-        patientDTO.setBirthDate(dto.getBirthDate());        
+        patientDTO.setBirthDate(dto.getBirthDate());
         patientDTO.setCountryIdentifier(IiConverter.convertToIi(country.getId()));
         patientDTO.setEthnicCode(dto.getEthnicity());
         patientDTO.setGenderCode(dto.getGender());
         patientDTO.setRaceCode(dto.getRace());
         patientDTO.setZip(dto.getZipCode());
-        return patientDTO;    
+        return patientDTO;
     }
 
     private StudySubjectDto populateStudySubjectDTO(SubjectAccrualDTO dto, StudySubjectDto studySubjectDTO) 
@@ -378,6 +381,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void deleteSubjectAccrual(Ii subjectAccrualIi) throws PAException {
         if (ISOUtil.isIiNull(subjectAccrualIi)) {
             throw new PAException("Study Subject Ii must be valid.");
@@ -400,6 +404,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void updateSubjectAccrualCount(Ii participatingSiteIi, Int count) throws PAException {
         if (ISOUtil.isIiNull(participatingSiteIi)) {
             throw new PAException("Study Site Ii must be valid.");
@@ -426,6 +431,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void submitBatchData(Ed batchFile) throws PAException {
         if (ISOUtil.isEdNull(batchFile)) {
             throw new PAException("Null batch files are not allowed. Please provide a valid batch file.");
@@ -491,6 +497,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<SubjectAccrualDTO> search(Ii studyIdentifier, Ii participatingSiteIdentifier, Ts startDate, Ts endDate,
             LimitOffset pagingParams) throws PAException {
         if (ISOUtil.isIiNull(studyIdentifier)) {
@@ -507,6 +514,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void deleteAll(Ii studySubjectIi) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
@@ -519,11 +527,13 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
         }
     }
 
-    List<SubjectAccrualDTO> convertStudySubjectDtoToSubjectAccrualDTOList(List<StudySubjectDto> studySubjectDtoList) {
+    private List<SubjectAccrualDTO> convertStudySubjectDtoToSubjectAccrualDTOList(
+            List<StudySubjectDto> studySubjectDtoList) {
         List<SubjectAccrualDTO> result = new ArrayList<SubjectAccrualDTO>();
         for (StudySubjectDto studySubjectDto : studySubjectDtoList) {
-            StudySubject studySubject = (StudySubject) PaHibernateUtil.getCurrentSession()
-                .get(StudySubject.class, IiConverter.convertToLong(studySubjectDto.getIdentifier()));
+            Long studySubjectId = IiConverter.convertToLong(studySubjectDto.getIdentifier());
+            StudySubject studySubject =
+                    (StudySubject) PaHibernateUtil.getCurrentSession().get(StudySubject.class, studySubjectId);
             result.add(Converters.get(StudySubjectConverter.class).convertFromDomainToSubjectDTO(studySubject));
 
         }
