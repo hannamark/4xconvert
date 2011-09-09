@@ -278,16 +278,21 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
      */
     private boolean isCorrectOrganizationId(String registeringInstitutionID, StringBuffer errMsg) {
         try {
-            OrganizationDTO poOrganization = getOrganizationEntityService()
-                .getOrganization(IiConverter.convertToPoOrganizationIi(registeringInstitutionID));
-            if (poOrganization != null) {
-                return true;
+            if (StringUtils.isNumeric(registeringInstitutionID)) {
+                OrganizationDTO poOrganization = getOrganizationEntityService()
+                    .getOrganization(IiConverter.convertToPoOrganizationIi(registeringInstitutionID));
+                if (poOrganization != null) {
+                    return true;
+                }
             }
 
         } catch (NullifiedEntityException e) {
             errMsg.append("The Registering Institution Code must be a valid PO or CTEP ID. Code: ")
-            .append(registeringInstitutionID);
+                .append(registeringInstitutionID);
+
             return false;
+        } catch (Exception e) {
+            LOG.debug(e.getMessage());
         }
 
         try {
