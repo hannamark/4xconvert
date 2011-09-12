@@ -325,6 +325,26 @@ public class TrialInboxCommentsGeneratorTest {
                 ssasList, studyIndList, null);
         assertFalse(helper.getInboxProcessingComments().contains(GRANT_INFORMATION_UPDATED));
     }
+    
+    /**
+     * Test checkParticipatingSitesRecruitmentStatusDate when no current study site accrual status for the study site
+     * @throws PAException
+     */
+    @Test
+    public void testNoCurrentStudySiteAccrualStatusByStudySite() throws PAException {
+        StudySiteAccrualStatusDTO acSiteDto = new StudySiteAccrualStatusDTO();
+        acSiteDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.CLOSED_TO_ACCRUAL));
+        acSiteDto.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        when(studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(any(Ii.class))).thenReturn(acSiteDto);     
+        ssasList.add(acSiteDto);
+        when(studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(any(Ii.class))).thenReturn(null);
+        
+        helper.checkForInboxProcessingComments(spDto, null, null, ssasList, null, null);
+        String comments = helper.getInboxProcessingComments();         
+
+        assertFalse(comments.contains(RECRUITMENT_STATUS_DATE_UPDATED));
+
+    }
 
     private void setupMocks() throws PAException {
         DocumentWorkflowStatusDTO dwsDto = new DocumentWorkflowStatusDTO();

@@ -243,8 +243,9 @@ public class TrialInboxCommentsGenerator {
             for (StudySiteAccrualStatusDTO ssDto : participatingSites) {
                 StudySiteAccrualStatusDTO dto = studySiteAccrualStatusService
                         .getCurrentStudySiteAccrualStatusByStudySite(ssDto.getStudySiteIi());
-                if (!ssDto.getStatusCode().equals(dto.getStatusCode())
-                        || !ssDto.getStatusDate().equals(dto.getStatusDate())) {
+                if (dto != null
+                        && (!ssDto.getStatusCode().equals(dto.getStatusCode()) || !ssDto.getStatusDate()
+                            .equals(dto.getStatusDate()))) {
                     inboxProcessingComments.add(RECRUITMENT_STATUS_DATE_UPDATED);
                     return;
                 }
