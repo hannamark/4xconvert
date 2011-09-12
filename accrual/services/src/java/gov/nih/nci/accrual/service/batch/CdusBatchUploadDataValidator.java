@@ -84,6 +84,7 @@ package gov.nih.nci.accrual.service.batch;
 
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
+import gov.nih.nci.accrual.util.PoRegistry;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -95,12 +96,9 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.ISOUtil;
-import gov.nih.nci.pa.util.PoRegistry;
-import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
-import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
 
 import java.io.File;
 import java.io.IOException;
@@ -136,8 +134,6 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         CdusBatchUploadDataValidatorLocal {
     
     private static final Logger LOG = Logger.getLogger(CdusBatchUploadDataValidator.class); 
-    private OrganizationEntityServiceRemote organizationEntityService = null;
-    private HealthCareFacilityCorrelationServiceRemote healthCareFacilityCorrelationService = null;
     private RegistryUser ru;
     /**
      * {@inheritDoc}
@@ -279,13 +275,12 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     private boolean isCorrectOrganizationId(String registeringInstitutionID, StringBuffer errMsg) {
         try {
             if (StringUtils.isNumeric(registeringInstitutionID)) {
-                OrganizationDTO poOrganization = getOrganizationEntityService()
+                OrganizationDTO poOrganization = PoRegistry.getOrganizationEntityService()
                     .getOrganization(IiConverter.convertToPoOrganizationIi(registeringInstitutionID));
                 if (poOrganization != null) {
                     return true;
                 }
             }
-
         } catch (NullifiedEntityException e) {
             errMsg.append("The Registering Institution Code must be a valid PO or CTEP ID. Code: ")
                 .append(registeringInstitutionID);
@@ -305,9 +300,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
 
         errMsg.append("The Registering Institution Code must be a valid PO or CTEP ID. Code: ")
             .append(registeringInstitutionID);
-
         return false;
-
     }
 
     /**
@@ -320,7 +313,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         HealthCareFacilityDTO criteria = new HealthCareFacilityDTO();
         criteria.setIdentifier(DSetConverter.convertIiToDset(ctepHcfIi));
         List<HealthCareFacilityDTO> hcfs =
-            getHealthCareFacilityCorrelationService().search(criteria);
+            PoRegistry.getHealthCareFacilityCorrelationService().search(criteria);
         if (hcfs.isEmpty()) {
             throw new PAException("Provided HCF CTEP ID: "
                     + ctepHcfIi.getExtension()
@@ -329,7 +322,6 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             throw new PAException("more than 1 HCF found for given CTEP ID: "
                     + ctepHcfIi.getExtension());
         }
-
         return DSetConverter.convertToIi(hcfs.get(0).getIdentifier());
     }
     
@@ -347,7 +339,6 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
     }
     
     private boolean isValidTreatingSite(Ii studySiteOrgIi, List<String> values) {
-        
         StudyProtocolDTO spDto = getStudyProtocol(values.get(BatchFileIndex.COLLECTION_PROTOCOL_INDEX).trim());
         if (spDto == null) {
             return false;
@@ -362,7 +353,6 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             return false;
         }
         return true;
-    
     }
     
     /**
@@ -484,41 +474,4 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
                 .append(" must contain a patient identifier that is unique within the study.\n");
         }
     }
-
-    /**
-     * @return the organizationEntityService
-     */
-    private OrganizationEntityServiceRemote getOrganizationEntityService() {
-        if (organizationEntityService == null) {
-            organizationEntityService = PoRegistry.getOrganizationEntityService();
-        }
-        return organizationEntityService;
-    }
-
-    /**
-     * @param organizationEntityService the organizationEntityService to set
-     */
-    public void setOrganizationEntityService(OrganizationEntityServiceRemote organizationEntityService) {
-        this.organizationEntityService = organizationEntityService;
-    }
-
-    /**
-     * @return the healthCareFacilityCorrelationService
-     */
-    private HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() {
-        if (healthCareFacilityCorrelationService == null) {
-            healthCareFacilityCorrelationService =  PoRegistry.getHealthCareFacilityCorrelationService();
-        }
-        return healthCareFacilityCorrelationService;
-    }
-
-    /**
-     * @param healthCareFacilityCorrelationService the healthCareFacilityCorrelationService to set
-     */
-    public void setHealthCareFacilityCorrelationService(
-            HealthCareFacilityCorrelationServiceRemote healthCareFacilityCorrelationService) {
-        this.healthCareFacilityCorrelationService = healthCareFacilityCorrelationService;
-    }  
-    
-
 }

@@ -1,5 +1,6 @@
 package gov.nih.nci.accrual.util;
 
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -72,5 +73,12 @@ public final class PoRegistry {
      */
     public static IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationCorrelationService() {
         return getInstance().getPoServiceLocator().getIdentifiedOrganizationCorrelationService();
+    }
+    
+    /**
+     * @return the health care facility correlation service
+     */
+    public static HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() {
+        return getInstance().getPoServiceLocator().getHealthCareFacilityCorrelationService();
     }
 }

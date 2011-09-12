@@ -93,9 +93,11 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 import gov.nih.nci.pa.enums.PatientRaceCode;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
@@ -293,6 +295,23 @@ public class BaseBatchUploadReader {
             .append(" from the database.\n");
         }
         return resultingIi;
+    }
+    
+    /**
+     * Returns the study's summary four funding category, IE. Institutional, Industrial, National,
+     *  Externally Peer-Reviewed
+     * @param sp the study protocol
+     * @return the study type or null if one cannot be found
+     * @throws PAException on error
+     */
+    protected SummaryFourFundingCategoryCode getSummaryFourFundingCategory(StudyProtocolDTO sp) throws PAException {
+        SummaryFourFundingCategoryCode studyType = null;
+        if (sp != null) {
+                StudyResourcingDTO sr = PaServiceLocator.getInstance().getStudyResourcingService()
+                    .getSummary4ReportedResourcing(sp.getIdentifier());
+                studyType = SummaryFourFundingCategoryCode.getByCode(sr.getTypeCode().getCode()); 
+        }
+        return studyType;
     }
     
     /**

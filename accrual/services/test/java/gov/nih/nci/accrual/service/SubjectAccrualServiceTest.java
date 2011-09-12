@@ -460,7 +460,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
     }
         
     @Test
-    public void deleteAll() throws Exception {
+    public void deleteByStudyIdentifier() throws Exception {
         List<SubjectAccrualDTO> sas = new ArrayList<SubjectAccrualDTO>();
         StudySite ss = createAccessibleStudySite();
         SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
@@ -483,7 +483,36 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         results = bean.search(studyProtocolIi, studySiteIi, null, null, pagingParams);
         assertEquals(3, results.size());
         
-        bean.deleteAll(studySiteIi);
+        bean.deleteByStudyIdentifier(studyProtocolIi);
+        results = bean.search(studyProtocolIi, studySiteIi, null, null, pagingParams);
+        assertEquals(0, results.size());
+    }
+    
+    @Test
+    public void deleteByStudySiteIdentifier() throws Exception {
+        List<SubjectAccrualDTO> sas = new ArrayList<SubjectAccrualDTO>();
+        StudySite ss = createAccessibleStudySite();
+        SubjectAccrualDTO dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
+                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
+        sas.add(dto);
+        dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
+                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
+        sas.add(dto);
+        
+        dto = loadStudyAccrualDto(IiConverter.convertToStudySiteIi(ss.getId()),
+                IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
+        sas.add(dto);
+        
+        List<SubjectAccrualDTO> results = bean.manageSubjectAccruals(sas);
+        assertEquals(3, results.size());
+        
+        LimitOffset pagingParams = new LimitOffset(100, 0);
+        Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(ss.getStudyProtocol().getId());
+        Ii studySiteIi = IiConverter.convertToStudySiteIi(ss.getId());
+        results = bean.search(studyProtocolIi, studySiteIi, null, null, pagingParams);
+        assertEquals(3, results.size());
+        
+        bean.deleteByStudySiteIdentifier(studySiteIi);
         results = bean.search(studyProtocolIi, studySiteIi, null, null, pagingParams);
         assertEquals(0, results.size());
     }

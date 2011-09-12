@@ -1,5 +1,6 @@
 package gov.nih.nci.accrual.util;
 
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -33,4 +34,9 @@ public interface PoServiceLocator {
      * @return the identified organization correlation service
      */
     IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationCorrelationService();
+    
+    /**
+     * @return the health care facility correlation service
+     */
+    HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService();
 }

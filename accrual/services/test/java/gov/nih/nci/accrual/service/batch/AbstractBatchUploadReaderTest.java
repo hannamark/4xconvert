@@ -135,10 +135,13 @@ import gov.nih.nci.pa.service.StudyResourcingServiceRemote;
 import gov.nih.nci.pa.service.StudySiteServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceRemote;
 import gov.nih.nci.pa.service.util.RegistryUserServiceRemote;
+import gov.nih.nci.po.data.CurationException;
+import gov.nih.nci.po.service.EntityValidationException;
 import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationDTO;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PatientDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -164,6 +167,7 @@ import org.mockito.stubbing.Answer;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHibernateTestCase {
+    protected PoServiceLocator poServiceLoc;
     protected Ii abbreviatedIi;
     protected Ii completeIi;
     protected Ii inactiveIi;
@@ -254,16 +258,6 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         readerService.setSearchTrialService(searchTrialSvc);
         cdusBatchUploadDataValidator.setSearchTrialService(searchTrialSvc);
 
-        OrganizationEntityServiceRemote organizationEntityService = mock(OrganizationEntityServiceRemote.class);
-        when(organizationEntityService.getOrganization(any(Ii.class))).thenReturn(new OrganizationDTO());
-        cdusBatchUploadDataValidator.setOrganizationEntityService(organizationEntityService);
-
-        HealthCareFacilityCorrelationServiceRemote healthCareFacilityCorrelationService = 
-            mock(HealthCareFacilityCorrelationServiceRemote.class);
-        when(healthCareFacilityCorrelationService.search(any(HealthCareFacilityDTO.class)))
-            .thenReturn(createListOfHealthCareFacilityDTO());
-        cdusBatchUploadDataValidator.setHealthCareFacilityCorrelationService(healthCareFacilityCorrelationService);
-
         final SDCDiseaseDTO disease = new SDCDiseaseDTO();
         disease.setIdentifier(IiConverter.convertToIi(TestSchema.diseases.get(0).getId()));
         SDCDiseaseServiceRemote diseaseSvc = mock(SDCDiseaseServiceRemote.class);
@@ -344,9 +338,18 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         when(paSvcLocator.getStudyResourcingService()).thenReturn(studyResourcingSvc);
         PaServiceLocator.getInstance().setServiceLocator(paSvcLocator);
 
-        PoServiceLocator poServiceLoc = mock(PoServiceLocator.class);
+        
+        poServiceLoc = mock(PoServiceLocator.class);
         PoRegistry.getInstance().setPoServiceLocator(poServiceLoc);
+        setUpPoRegistry();
+        
+        ServiceLocatorAccInterface accSvcLocator = mock(ServiceLocatorAccInterface.class);
+        when(accSvcLocator.getBatchUploadReaderService()).thenReturn(readerService);
+        when(accSvcLocator.getSubjectAccrualCountService()).thenReturn(accrualCountSvc);
+    }
 
+    protected void setUpPoRegistry() throws NullifiedEntityException, NullifiedRoleException, EntityValidationException,
+            CurationException {
         IdentifiedOrganizationCorrelationServiceRemote identifiedOrgCorrelationSvc
         = mock(IdentifiedOrganizationCorrelationServiceRemote.class);
         when(identifiedOrgCorrelationSvc.search(any(IdentifiedOrganizationDTO.class))).thenAnswer(new Answer<List<IdentifiedOrganizationDTO>>() {
@@ -380,6 +383,14 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
                 return org;
             }
         });
+        
+        OrganizationEntityServiceRemote organizationEntityService = mock(OrganizationEntityServiceRemote.class);
+        when(organizationEntityService.getOrganization(any(Ii.class))).thenReturn(new OrganizationDTO());
+        
+        HealthCareFacilityCorrelationServiceRemote healthCareFacilityCorrelationService = 
+            mock(HealthCareFacilityCorrelationServiceRemote.class);
+        when(healthCareFacilityCorrelationService.search(any(HealthCareFacilityDTO.class)))
+            .thenReturn(createListOfHealthCareFacilityDTO());
 
         PatientCorrelationServiceRemote poPatientSvc = mock(PatientCorrelationServiceRemote.class);
 
@@ -403,10 +414,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
         when(poServiceLoc.getPersonEntityService()).thenReturn(poPersonSvc);
         when(poServiceLoc.getIdentifiedOrganizationCorrelationService()).thenReturn(identifiedOrgCorrelationSvc);
         when(poServiceLoc.getOrganizationEntityService()).thenReturn(orgSvc);
-        
-        ServiceLocatorAccInterface accSvcLocator = mock(ServiceLocatorAccInterface.class);
-        when(accSvcLocator.getBatchUploadReaderService()).thenReturn(readerService);
-        when(accSvcLocator.getSubjectAccrualCountService()).thenReturn(accrualCountSvc);
+        when(poServiceLoc.getHealthCareFacilityCorrelationService()).thenReturn(healthCareFacilityCorrelationService);
     }
     
     protected List<HealthCareFacilityDTO> createListOfHealthCareFacilityDTO() {

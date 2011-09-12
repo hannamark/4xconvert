@@ -125,7 +125,6 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
         }
     }
 
-
     private void validateStudyType(StringBuffer errMsg, String protocolId, StudyProtocolDTO sp) {
         if (sp != null) {
             try {

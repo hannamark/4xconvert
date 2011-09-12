@@ -88,7 +88,6 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.TestSchema;
@@ -173,7 +172,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         Date birthDate = AccrualUtil.yearMonthStringToTimestamp("07/1963");
         List<StudySubjectDto> results = bean.getStudySubjects("", TestSchema.studySites.get(0).getId(), birthDate, 
                 FunctionalRoleStatusCode.PENDING);
-        assertEquals(2, results.size());
+        assertEquals(1, results.size());
         
         results = bean.getStudySubjects("001", TestSchema.studySites.get(0).getId(), birthDate, 
                 FunctionalRoleStatusCode.PENDING);
@@ -181,7 +180,7 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
         
         results = bean.getStudySubjects("002", TestSchema.studySites.get(0).getId(), birthDate, 
                 FunctionalRoleStatusCode.PENDING);
-        assertEquals(1, results.size());
+        assertEquals(0, results.size());
         
         results = bean.getStudySubjects("004", TestSchema.studySites.get(0).getId(), birthDate, 
                 FunctionalRoleStatusCode.ACTIVE);
@@ -359,13 +358,6 @@ public class StudySubjectServiceTest extends AbstractServiceTest<StudySubjectSer
 
         try {
             bean.delete(null);
-            fail();
-        } catch (PAException ex) {
-            // expected
-        }
-
-        try {
-            bean.delete(ii);
             fail();
         } catch (PAException ex) {
             // expected

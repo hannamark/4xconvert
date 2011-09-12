@@ -104,6 +104,5 @@
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/test/commons-beanutils-1.8.0.jar"/>
 	<classpathentry kind="var" path="PA_LIB/pa-ejb/test/mockito-all-1.8.4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/PAServices-3.4/build/lib/pa-commons-3.6-alpha5.jar"/>
 	<classpathentry kind="output" path="eclipse-out"/>
 </classpath>

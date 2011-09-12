@@ -532,7 +532,23 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public void deleteAll(Ii studySubjectIi) throws PAException {
+    public void deleteByStudyIdentifier(Ii studyIdentifier) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        Criteria crit = session.createCriteria(StudySubject.class)
+            .add(Restrictions.eq("studyProtocol.id", IiConverter.convertToLong(studyIdentifier)));
+        List<StudySubject> subjects = crit.list();
+        for (StudySubject ss : subjects) {
+            getPatientService().nullifyPOPatient(IiConverter.convertToIi(ss.getPatient().getId()));
+            session.delete(ss);
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public void deleteByStudySiteIdentifier(Ii studySubjectIi) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
         Criteria crit = session.createCriteria(StudySubject.class)
             .add(Restrictions.eq("studySite.id", IiConverter.convertToLong(studySubjectIi)));

@@ -4,6 +4,7 @@ import static org.mockito.Mockito.mock;
 import gov.nih.nci.accrual.service.MockPoOrganizationEntityService;
 import gov.nih.nci.accrual.service.MockPoPersonEntityService;
 import gov.nih.nci.accrual.service.util.MockPatientCorrelationServiceRemote;
+import gov.nih.nci.services.correlation.HealthCareFacilityCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedOrganizationCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.PatientCorrelationServiceRemote;
 import gov.nih.nci.services.organization.OrganizationEntityServiceRemote;
@@ -15,6 +16,8 @@ public class MockPoServiceLocator implements PoServiceLocator {
     private final OrganizationEntityServiceRemote organizationEntityService = new MockPoOrganizationEntityService();
     private final IdentifiedOrganizationCorrelationServiceRemote identifiedOrgCorrelationSvc
         = mock(IdentifiedOrganizationCorrelationServiceRemote.class);
+    private final HealthCareFacilityCorrelationServiceRemote healthCareCorrelationSvc =
+        mock(HealthCareFacilityCorrelationServiceRemote.class);
     
     /**
      * {@inheritDoc}
@@ -42,5 +45,12 @@ public class MockPoServiceLocator implements PoServiceLocator {
      */
     public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationCorrelationService() {
         return identifiedOrgCorrelationSvc;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() {
+        return healthCareCorrelationSvc;
     }
 }

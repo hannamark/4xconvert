@@ -504,7 +504,7 @@ public class TestSchema {
         p.setBirthDate(PAUtil.dateStringToTimestamp("7/1/1963"));
         p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.HISPANIC);
-        p.setIdentifier("PO PATIENT ID 01");
+        p.setIdentifier("1");
         p.setPersonIdentifier("1");
         p.setRaceCode(PatientRaceCode.AMERICAN_INDIAN.getName());
         p.setSexCode(PatientGenderCode.FEMALE);
@@ -519,7 +519,7 @@ public class TestSchema {
         p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
         p.setIdentifier("2");
-        p.setPersonIdentifier("PO PERSON ID 02");
+        p.setPersonIdentifier("2");
         p.setRaceCode(PatientRaceCode.WHITE.getName());
         p.setSexCode(PatientGenderCode.MALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
@@ -533,7 +533,7 @@ public class TestSchema {
         p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.NOT_HISPANIC);
         p.setIdentifier("3");
-        p.setPersonIdentifier("PO PERSON ID 03");
+        p.setPersonIdentifier("3");
         p.setRaceCode(PatientRaceCode.WHITE.getName());
         p.setSexCode(PatientGenderCode.FEMALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
@@ -547,7 +547,7 @@ public class TestSchema {
         p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.NOT_REPORTED);
         p.setIdentifier("4");
-        p.setPersonIdentifier("PO PERSON ID 04");
+        p.setPersonIdentifier("4");
         p.setRaceCode(PatientRaceCode.NOT_REPORTED.getName());
         p.setSexCode(PatientGenderCode.MALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
@@ -561,7 +561,7 @@ public class TestSchema {
         p.setCountry(countries.get(0));
         p.setEthnicCode(PatientEthnicityCode.UNKNOWN);
         p.setIdentifier("5");
-        p.setPersonIdentifier("PO PERSON ID 05");
+        p.setPersonIdentifier("5");
         p.setRaceCode(PatientRaceCode.UNKNOWN.getName());
         p.setSexCode(PatientGenderCode.FEMALE);
         p.setStatusCode(StructuralRoleStatusCode.ACTIVE);
@@ -584,7 +584,7 @@ public class TestSchema {
         studySubjects.add(subj);
 
         subj = new StudySubject();
-        subj.setPatient(patients.get(0));
+        subj.setPatient(patients.get(1));
         subj.setAssignedIdentifier("002");
         subj.setStatusCode(FunctionalRoleStatusCode.PENDING);
         subj.setStatusDateRangeLow(PAUtil.dateStringToTimestamp("1/1/2009"));

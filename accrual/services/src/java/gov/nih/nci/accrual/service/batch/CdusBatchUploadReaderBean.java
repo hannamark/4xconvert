@@ -94,6 +94,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.pa.domain.BatchFile;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
 import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -224,7 +225,7 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             Map<String, List<String>> raceMap,  StudyProtocolDTO spDto) throws PAException {
         List<SubjectAccrualDTO> subjectAccruals = new ArrayList<SubjectAccrualDTO>();
         Set<Ii> studySiteIdentifiers = new HashSet<Ii>();
-        
+        SummaryFourFundingCategoryCode studyType = getSummaryFourFundingCategory(spDto);
         for (String[] p : patientLines) {
             List<String> races = raceMap.get(p[BatchFileIndex.PATIENT_ID_INDEX]);
             //We're assuming this is the assigned identifier for the organization associated with the health care 
@@ -235,14 +236,16 @@ public class CdusBatchUploadReaderBean extends BaseBatchUploadReader implements 
             SubjectAccrualDTO saDTO = parserSubjectAccrual(p, races, 
                     studySite != null ? studySite.getStudySiteIi() : null);
             subjectAccruals.add(saDTO);
-            
-            studySiteIdentifiers.add(studySite.getStudySiteIi());
         }
         
-        for (Ii ii : studySiteIdentifiers) {
-            subjectAccrualService.deleteAll(ii);
+        if (studyType == SummaryFourFundingCategoryCode.INDUSTRIAL) {
+            for (Ii ii : studySiteIdentifiers) {
+                subjectAccrualService.deleteByStudySiteIdentifier(ii);
+            }
+        } else {
+            //Delete all previous subject accruals before creating new ones
+            subjectAccrualService.deleteByStudyIdentifier(spDto.getIdentifier());
         }
-        
         return subjectAccruals;
     }
     

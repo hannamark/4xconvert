@@ -118,7 +118,14 @@ public interface SubjectAccrualServiceLocal extends SubjectAccrualServiceRemote 
      * @param studySiteIi the identifier of the study site
      * @throws PAException on error
      */
-    void deleteAll(Ii studySiteIi) throws PAException;
+    void deleteByStudySiteIdentifier(Ii studySiteIi) throws PAException;
+    
+    /**
+     * Deletes all the subject accruals associated with the give study.
+     * @param studyIdentifier the db identifier of the study
+     * @throws PAException on error
+     */
+    void deleteByStudyIdentifier(Ii studyIdentifier) throws PAException;
     
     /**
      * Updates the given participating site with the given count. Only valid for participating sites that belong
