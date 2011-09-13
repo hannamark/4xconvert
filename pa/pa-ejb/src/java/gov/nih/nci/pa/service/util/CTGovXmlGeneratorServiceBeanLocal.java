@@ -915,37 +915,22 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                 }
             } else if (descriptionText != null) {
                 if (incIndicator == null) {
-                    nullCrit.append(XmlGenHelper.TAB);
-                    nullCrit.append(XmlGenHelper.DASH);
-                    nullCrit.append(descriptionText);
-                    nullCrit.append('\n');
+                    nullCrit.append(createDescriptionTextString(descriptionText));                  
                 } else if (incIndicator) {
-                    incCrit.append(XmlGenHelper.TAB);
-                    incCrit.append(XmlGenHelper.DASH);
-                    incCrit.append(descriptionText);
-                    incCrit.append('\n');
+                    incCrit.append(createDescriptionTextString(descriptionText));                 
                 } else {
-                    exCrit.append(XmlGenHelper.TAB);
-                    exCrit.append(XmlGenHelper.DASH);
-                    exCrit.append(descriptionText);
-                    exCrit.append('\n');
+                    exCrit.append(createDescriptionTextString(descriptionText));                   
                 }
             } else {
                 value = pq.getLow().getValue();
                 unit = pq.getLow().getUnit();
                 operator = (!ISOUtil.isStNull(paEC.getOperator())) ? paEC.getOperator().getValue() : "";
                 if (incIndicator == null) {
-                    nullCrit.append(XmlGenHelper.TAB).append(
-                            XmlGenHelper.DASH).append(criterionName).append(' ').append(value).append(' ')
-                            .append(operator).append(' ').append(unit).append('\n');
+                    nullCrit.append(createValueUnitOperatorString(criterionName, value, unit, operator));
                 } else if (incIndicator) {
-                    incCrit.append(XmlGenHelper.TAB).append(
-                            XmlGenHelper.DASH).append(criterionName).append(' ').append(value).append(' ')
-                            .append(operator).append(' ').append(unit).append('\n');
+                    incCrit.append(createValueUnitOperatorString(criterionName, value, unit, operator));
                 } else {
-                    exCrit.append(XmlGenHelper.TAB).append(
-                            XmlGenHelper.DASH).append(criterionName).append(' ').append(value).append(' ').append(
-                            operator).append(' ').append(unit).append('\n');
+                    exCrit.append(createValueUnitOperatorString(criterionName, value, unit, operator));
                 }
             }
 
@@ -976,6 +961,40 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
 
         XmlGenHelper.appendElement(root, eligibility);
 
+    }
+    
+     /**
+     * @param text Description text
+     * @return formatted String with description text
+     */
+    String createDescriptionTextString(String text) {
+        StringBuilder str = new StringBuilder();
+        str.append(XmlGenHelper.TAB);                   
+        str.append(text);
+        str.append('\n');
+        return str.toString();
+    }
+    
+    
+    /**
+     * @param criterionName criterionName
+     * @param value value
+     * @param unit unit
+     * @param operator operator
+     * @return formatted string
+     */
+    String createValueUnitOperatorString(String criterionName, BigDecimal value, String unit,  String operator) {
+        StringBuilder str = new StringBuilder();
+        str.append(XmlGenHelper.TAB);
+        str.append(criterionName);
+        str.append(' ');
+        str.append(value);
+        str.append(' ');
+        str.append(operator);
+        str.append(' ');
+        str.append(unit);
+        str.append('\n');
+        return str.toString();
     }
 
     private void createArmGroup(StudyProtocolDTO spDTO, Document doc, Element root) throws PAException {

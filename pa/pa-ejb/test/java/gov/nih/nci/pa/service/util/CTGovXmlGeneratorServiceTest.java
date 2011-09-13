@@ -78,12 +78,14 @@
 */
 package gov.nih.nci.pa.service.util;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
@@ -112,6 +114,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -736,5 +739,30 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
 
         accrualStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE));
         assertTrue(getBean().generateCTGovXml(spId).contains("<status>Terminated</status>"));
+    }
+    
+    @Test
+    public void createDescriptionTextString() {
+        String text = "text";
+        
+        String result = bean.createDescriptionTextString(text);
+        
+        String expected = "     text\n";
+        assertEquals(expected, result);
+        
+    }
+    
+    @Test
+    public void createValueUnitOperatorString() {
+        String criterionName = "criteria"; 
+        BigDecimal value = new BigDecimal(3); 
+        String unit = "unit"; 
+        String operator = "operator";
+        
+        String result = bean.createValueUnitOperatorString(criterionName, value, unit, operator);
+        
+        String expected = "     criteria 3 operator unit\n";        
+        assertEquals(expected, result);
+        
     }
 }
