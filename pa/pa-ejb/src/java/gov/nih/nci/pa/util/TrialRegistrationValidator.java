@@ -748,13 +748,11 @@ public class TrialRegistrationValidator {
             check(ISOUtil.isBlNull(studyProtocolDTO.getFdaRegulatedIndicator()),
                   "FDA Regulated Intervention Indicator is required field.\n", errorMsg);
 
-            String fdaRegulatedIndicator = BlConverter.convertBLToString(studyProtocolDTO.getFdaRegulatedIndicator());
-            boolean fdaRegulated = PAConstants.YES.equalsIgnoreCase(fdaRegulatedIndicator);
+            boolean fdaRegulated = BlConverter.convertToBool(studyProtocolDTO.getFdaRegulatedIndicator());
             check(fdaRegulated && ISOUtil.isBlNull(studyProtocolDTO.getSection801Indicator()),
                   "Section 801 is required if FDA Regulated indicator is true.\n", errorMsg);
 
-            String section801Indicator = (BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()));
-            boolean section801 = PAConstants.YES.equalsIgnoreCase(section801Indicator);
+            boolean section801 = BlConverter.convertToBool(studyProtocolDTO.getSection801Indicator());
             check(section801 && ISOUtil.isBlNull(studyProtocolDTO.getDelayedpostingIndicator()),
                   "Delayed posting Indicator is required if Section 801 is true.\n", errorMsg);
 

@@ -728,7 +728,7 @@ public class TSRReportGeneratorServiceBean implements TSRReportGeneratorServiceR
             }
             indIde.setExpandedAccess(getValue(indDto.getExpandedAccessIndicator()));
             indIde.setExpandedAccessStatus(getValue(indDto.getExpandedAccessStatusCode()));
-            indIde.setExemptIndicator(BlConverter.convertBLToString(indDto.getExemptIndicator()));
+            indIde.setExemptIndicator(BlConverter.convertBlToYesNoString(indDto.getExemptIndicator()));
             indIdes.add(indIde);
         }
         tsrReportGenerator.setIndIdes(indIdes);

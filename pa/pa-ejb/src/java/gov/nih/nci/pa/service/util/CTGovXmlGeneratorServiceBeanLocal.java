@@ -205,6 +205,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
     /**
      * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String generateCTGovXml(Ii studyProtocolIi) throws PAException {
         if (studyProtocolIi == null) {
@@ -226,17 +227,14 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             if (spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
                 XmlGenHelper
                     .createElement("is_fda_regulated",
-                            BlConverter.convertBLToString(spDTO.getFdaRegulatedIndicator()), doc,
+                            BlConverter.convertBlToYesNoString(spDTO.getFdaRegulatedIndicator()), doc,
                         root);
-                XmlGenHelper
-                    .createElement("is_section_801", BlConverter.convertBLToString(spDTO.getSection801Indicator()), doc,
-                        root);
+                String section801 = BlConverter.convertBlToYesNoString(spDTO.getSection801Indicator());
+                XmlGenHelper.createElement("is_section_801", section801, doc, root);
                 if (BlConverter.convertToBool(spDTO.getSection801Indicator())) {
                     // device doesn't matter
-                    XmlGenHelper
-                        .createElement("delayed_posting",
-                                BlConverter.convertBLToString(spDTO.getDelayedpostingIndicator()),
-                            doc, root);
+                    String delayedPosting = BlConverter.convertBlToYesNoString(spDTO.getDelayedpostingIndicator());
+                    XmlGenHelper.createElement("delayed_posting", delayedPosting, doc, root);
                 }
             }
             createIndInfo(spDTO, doc, root);
@@ -431,6 +429,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                 }
             }
             Collections.sort(diseases, new Comparator<PDQDiseaseDTO>() {
+                @Override
                 public int compare(PDQDiseaseDTO o1, PDQDiseaseDTO o2) {
                     return o1.getPreferredName().getValue().compareToIgnoreCase(o2.getPreferredName().getValue());
                 }
@@ -561,7 +560,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         if (spDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue()) {
             XmlGenHelper.appendElement(overSightInfo, createRegulatoryAuthority(spDTO, doc));
             XmlGenHelper.appendElement(overSightInfo,
-                    XmlGenHelper.createElementWithTextblock("has_dmc", BlConverter.convertBLToString(spDTO
+                    XmlGenHelper.createElementWithTextblock("has_dmc", BlConverter.convertBlToYesNoString(spDTO
                     .getDataMonitoringCommitteeAppointedIndicator()), doc));
         }
 
@@ -826,7 +825,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                 XmlGenHelper.createElementWithTextblock("ind_number",
                         StConverter.convertToString(ideDTO.getIndldeNumber()), doc));
         XmlGenHelper.appendElement(idInfo,
-                XmlGenHelper.createElementWithTextblock("has_expanded_access", BlConverter.convertBLToString(ideDTO
+                XmlGenHelper.createElementWithTextblock("has_expanded_access", BlConverter.convertBlToYesNoString(ideDTO
                 .getExpandedAccessIndicator()), doc));
 
         if (idInfo.hasChildNodes()) {
@@ -891,6 +890,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         String operator;
         // sorts the list on display order
         Collections.sort(paECs, new Comparator<PlannedEligibilityCriterionDTO>() {
+            @Override
             public int compare(PlannedEligibilityCriterionDTO o1, PlannedEligibilityCriterionDTO o2) {
                 return (!ISOUtil.isIntNull(o1.getDisplayOrder()) && !ISOUtil.isIntNull(o2.getDisplayOrder())) ? o1
                         .getDisplayOrder().getValue().compareTo(o2.getDisplayOrder().getValue()) : 0;
@@ -966,7 +966,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                     eligibility);
         }
         XmlGenHelper.appendElement(eligibility,
-                XmlGenHelper.createElementWithTextblock("healthy_volunteers", BlConverter.convertBLToString(spDTO
+                XmlGenHelper.createElementWithTextblock("healthy_volunteers", BlConverter.convertBlToYesNoString(spDTO
                 .getAcceptHealthyVolunteersIndicator()), doc));
         XmlGenHelper.appendElement(eligibility, XmlGenHelper.createElementWithTextblock("gender", genderCode, doc));
         XmlGenHelper.appendElement(eligibility,
@@ -1042,6 +1042,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                 }
 
                 Collections.sort(interventionNames, new Comparator<InterventionAlternateNameDTO>() {
+                    @Override
                     public int compare(InterventionAlternateNameDTO o1, InterventionAlternateNameDTO o2) {
                         return o1.getName().getValue().compareToIgnoreCase(o2.getName().getValue());
                     }
@@ -1189,7 +1190,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                 }
                 XmlGenHelper.appendElement(po,
                         XmlGenHelper.createElementWithTextblock(
-                                "outcome_safety_issue", BlConverter.convertBLToString(smDTO
+                                "outcome_safety_issue", BlConverter.convertBlToYesNoString(smDTO
                         .getSafetyIndicator()), doc));
                 XmlGenHelper.appendElement(po,
                         XmlGenHelper.createElementWithTextblock(
@@ -1216,7 +1217,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                         PAAttributeMaxLen.LEN_254), doc));
                 XmlGenHelper.appendElement(om,
                         XmlGenHelper.createElementWithTextblock(
-                                "outcome_safety_issue", BlConverter.convertBLToString(smDTO
+                                "outcome_safety_issue", BlConverter.convertBlToYesNoString(smDTO
                         .getSafetyIndicator()), doc));
                 XmlGenHelper.appendElement(om,
                         XmlGenHelper.createElementWithTextblock(

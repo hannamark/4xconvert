@@ -82,6 +82,7 @@ import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.util.CommonsConstant;
 
+import org.apache.axis.utils.StringUtils;
 import org.apache.commons.lang.BooleanUtils;
 
 
@@ -164,13 +165,36 @@ public class BlConverter {
      * @param bl BL
      * @return string Yes/No
      */
-    public static String convertBLToString(Bl bl) {
-        if (bl == null) {
+    public static String convertBlToYesNoString(Bl bl) {
+        if (bl == null || bl.getValue() == null
+                || (bl.getNullFlavor() != null && bl.getNullFlavor().equals(NullFlavor.NI))) {
             return null;
         }
         if (BooleanUtils.isTrue(bl.getValue())) {
             return CommonsConstant.YES;
         }
         return CommonsConstant.NO;
+    }
+    
+    /**
+     * Converts the given Yes/No string to a Bl.
+     * @param yesNoString The string to convert
+     * @return The corresponding Bl value
+     */
+    public static Bl convertYesNoStringToBl(String yesNoString) {
+        Bl bl = new Bl();
+        if (StringUtils.isEmpty(yesNoString)) {
+            bl.setNullFlavor(NullFlavor.NI);
+            return bl;
+        }
+        if (CommonsConstant.YES.equalsIgnoreCase(yesNoString)) {
+            bl.setValue(true);
+            return bl;
+        }
+        if (CommonsConstant.NO.equalsIgnoreCase(yesNoString)) {
+            bl.setValue(false);
+            return bl;
+        }
+        throw new IllegalArgumentException("Invalid Yes/No String");
     }
 }

@@ -189,6 +189,10 @@ public class BasePdqXmlGeneratorBean extends CTGovXmlGeneratorServiceBeanLocal {
         EligibilityComponentHelper eligHelper = new EligibilityComponentHelper();
         // sorts the list on display order
         Collections.sort(paECs, new Comparator<PlannedEligibilityCriterionDTO>() {
+            /**
+             * {@inheritDoc}
+             */
+            @Override
             public int compare(PlannedEligibilityCriterionDTO o1, PlannedEligibilityCriterionDTO o2) {
                 return (!ISOUtil.isIntNull(o1.getDisplayOrder()) && !ISOUtil.isIntNull(o2.getDisplayOrder())) ? o1
                         .getDisplayOrder().getValue().compareTo(o2.getDisplayOrder().getValue()) : 0;
@@ -200,10 +204,9 @@ public class BasePdqXmlGeneratorBean extends CTGovXmlGeneratorServiceBeanLocal {
         }
 
         BaseXmlGenHelper.appendElement(eligibility, criteriaElt);
-
+        String healthy = BlConverter.convertBlToYesNoString(spDTO.getAcceptHealthyVolunteersIndicator());
         BaseXmlGenHelper.appendElement(eligibility,
-                BaseXmlGenHelper.createElementWithTextblock("healthy_volunteers", BlConverter.convertBLToString(spDTO
-                .getAcceptHealthyVolunteersIndicator()), doc));
+                                       BaseXmlGenHelper.createElementWithTextblock("healthy_volunteers", healthy, doc));
         BaseXmlGenHelper.appendElement(eligibility,
                 BaseXmlGenHelper.createElementWithTextblock("gender", eligHelper.getGenderCode(), doc));
         BaseXmlGenHelper.appendElement(eligibility,
@@ -233,6 +236,7 @@ public class BasePdqXmlGeneratorBean extends CTGovXmlGeneratorServiceBeanLocal {
                 }
             }
             Collections.sort(diseases, new Comparator<PDQDiseaseDTO>() {
+                @Override
                 public int compare(PDQDiseaseDTO o1, PDQDiseaseDTO o2) {
                     return o1.getPreferredName().getValue().compareToIgnoreCase(o2.getPreferredName().getValue());
                 }
@@ -269,7 +273,7 @@ public class BasePdqXmlGeneratorBean extends CTGovXmlGeneratorServiceBeanLocal {
                                 ideDTO.getNciDivProgHolderCode().getCode(), doc));
                 BaseXmlGenHelper.appendElement(idInfo,
                         BaseXmlGenHelper.createElementWithTextblock("has_expanded_access",
-                                BlConverter.convertBLToString(ideDTO.getExpandedAccessIndicator()), doc));
+                                BlConverter.convertBlToYesNoString(ideDTO.getExpandedAccessIndicator()), doc));
                 if (!ISOUtil.isBlNull(spDTO.getExpandedAccessIndicator())) {
                     if (ideDTO.getExpandedAccessIndicator().getValue()) {
                         BaseXmlGenHelper.appendElement(root,
@@ -281,10 +285,9 @@ public class BasePdqXmlGeneratorBean extends CTGovXmlGeneratorServiceBeanLocal {
                                         "No longer available", doc));
                     }
                 }
+                String exempt = BlConverter.convertBlToYesNoString(ideDTO.getExemptIndicator());
                 BaseXmlGenHelper.appendElement(idInfo,
-                        BaseXmlGenHelper.createElementWithTextblock("is_exempt", BlConverter.convertBLToString(ideDTO
-                        .getExemptIndicator()), doc));
-
+                                               BaseXmlGenHelper.createElementWithTextblock("is_exempt", exempt, doc));
                 if (idInfo.hasChildNodes()) {
                     BaseXmlGenHelper.appendElement(trialIndIdeElement, idInfo);
                 }

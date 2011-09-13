@@ -134,10 +134,6 @@ public class PAConstants {
     /** Pa Internal. **/
     public static final String PA_INTERNAL = "PA-InternalIdentifier";
 
-    /** yes. */
-    public static final String YES = "Yes";
-    /** no. */
-    public static final String NO = "No";
     /**
      * Responsible Party.
      */

@@ -138,6 +138,7 @@ import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.service.correlation.HealthCareProviderCorrelationBean;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
 import gov.nih.nci.pa.service.correlation.PARelationServiceBean;
+import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
@@ -952,19 +953,19 @@ public class PAServiceUtils {
             if (ISOUtil.isBlNull(studyProtocolDTO.getFdaRegulatedIndicator())) {
                  errMsg.append("FDA Regulated Intervention Indicator is required field.\n");
             }
-            if (PAConstants.YES.equalsIgnoreCase(
-                BlConverter.convertBLToString(studyProtocolDTO.getFdaRegulatedIndicator()))
+            if (CommonsConstant.YES.equalsIgnoreCase(
+                BlConverter.convertBlToYesNoString(studyProtocolDTO.getFdaRegulatedIndicator()))
                 && ISOUtil.isBlNull(studyProtocolDTO.getSection801Indicator())) {
                  errMsg.append("Section 801 is required if FDA Regulated indicator is true.");
             }
-            if (PAConstants.YES.equalsIgnoreCase(
-                 BlConverter.convertBLToString(studyProtocolDTO.getSection801Indicator()))
+            if (CommonsConstant.YES.equalsIgnoreCase(
+                 BlConverter.convertBlToYesNoString(studyProtocolDTO.getSection801Indicator()))
                  && ISOUtil.isBlNull(studyProtocolDTO.getDelayedpostingIndicator())) {
                    errMsg.append("Delayed posting Indicator is required if Section 801 is true.");
             }
 
             if (containsNonExemptInds(studyIndldeDTOs)) {
-                     if (PAConstants.NO.equalsIgnoreCase(BlConverter.convertBLToString(
+                     if (CommonsConstant.NO.equalsIgnoreCase(BlConverter.convertBlToYesNoString(
                         studyProtocolDTO.getFdaRegulatedIndicator()))) {
                          errMsg.append("FDA Regulated Intervention Indicator must be Yes "
                       +                       " since it has Trial IND/IDE records.\n");
