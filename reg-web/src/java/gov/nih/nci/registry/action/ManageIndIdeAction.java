@@ -108,26 +108,12 @@ public class ManageIndIdeAction extends ActionSupport {
     private String expandedAccessType;
     private String holderType;
     private String indIde;
-    private Boolean exemptIndicator;
+    private String exemptIndicator;
     private String uuid;
 
     /**
-     * @return the uuid
-     */
-    public String getUuid() {
-        return uuid;
-    }
-
-    /**
-     * @param uuid the uuid to set
-     */
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    /**
      * Sets the ind ide information in the collection.
-     *
+     * 
      * @return result
      */
     public String addIdeIndIndicator() {
@@ -166,7 +152,7 @@ public class ManageIndIdeAction extends ActionSupport {
 
     /**
      * Sets the ind ide information in the collection.
-     *
+     * 
      * @return result
      */
     public String addIdeIndIndicatorForUpdate() {
@@ -182,12 +168,13 @@ public class ManageIndIdeAction extends ActionSupport {
     }
 
     /**
-     *
+     * 
      * @return result
      */
     public String deleteIndIde() {
-        List<TrialIndIdeDTO> sessionList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest().getSession()
-            .getAttribute(Constants.INDIDE_LIST);
+        List<TrialIndIdeDTO> sessionList =
+                (List<TrialIndIdeDTO>) ServletActionContext.getRequest().getSession()
+                    .getAttribute(Constants.INDIDE_LIST);
         TrialIndIdeDTO holder;
         for (int i = 0; i < sessionList.size(); i++) {
             holder = sessionList.get(i);
@@ -200,12 +187,13 @@ public class ManageIndIdeAction extends ActionSupport {
     }
 
     /**
-     *
+     * 
      * @return result
      */
     public String deleteIndIdeForUpdate() {
-        List<TrialIndIdeDTO> sessionList = (List<TrialIndIdeDTO>) ServletActionContext.getRequest().getSession()
-            .getAttribute(Constants.INDIDE_ADD_LIST);
+        List<TrialIndIdeDTO> sessionList =
+                (List<TrialIndIdeDTO>) ServletActionContext.getRequest().getSession()
+                    .getAttribute(Constants.INDIDE_ADD_LIST);
         TrialIndIdeDTO holder;
         for (int i = 0; i < sessionList.size(); i++) {
             holder = sessionList.get(i);
@@ -242,21 +230,21 @@ public class ManageIndIdeAction extends ActionSupport {
      * @param number the number to set
      */
     public void setNumber(String number) {
-         this.number = number;
+        this.number = number;
     }
 
     /**
      * @return the grantor
      */
     public String getGrantor() {
-         return grantor;
+        return grantor;
     }
 
     /**
      * @param grantor the grantor to set
      */
     public void setGrantor(String grantor) {
-          this.grantor = grantor;
+        this.grantor = grantor;
     }
 
     /**
@@ -270,21 +258,21 @@ public class ManageIndIdeAction extends ActionSupport {
      * @param programCode the programCode to set
      */
     public void setProgramCode(String programCode) {
-         this.programCode = programCode;
+        this.programCode = programCode;
     }
 
     /**
      * @return the expandedAccess
      */
     public String getExpandedAccess() {
-         return expandedAccess;
+        return expandedAccess;
     }
 
     /**
      * @param expandedAccess the expandedAccess to set
      */
     public void setExpandedAccess(String expandedAccess) {
-         this.expandedAccess = expandedAccess;
+        this.expandedAccess = expandedAccess;
     }
 
     /**
@@ -312,7 +300,7 @@ public class ManageIndIdeAction extends ActionSupport {
      * @param holderType the holderType to set
      */
     public void setHolderType(String holderType) {
-         this.holderType = holderType;
+        this.holderType = holderType;
     }
 
     /**
@@ -332,15 +320,29 @@ public class ManageIndIdeAction extends ActionSupport {
     /**
      * @return the exemptIndicator
      */
-    public Boolean getExemptIndicator() {
+    public String getExemptIndicator() {
         return exemptIndicator;
     }
 
     /**
      * @param exemptIndicator the exemptIndicator to set
      */
-    public void setExemptIndicator(Boolean exemptIndicator) {
-         this.exemptIndicator = exemptIndicator;
+    public void setExemptIndicator(String exemptIndicator) {
+        this.exemptIndicator = exemptIndicator;
+    }
+
+    /**
+     * @return the uuid
+     */
+    public String getUuid() {
+        return uuid;
+    }
+
+    /**
+     * @param uuid the uuid to set
+     */
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
 }

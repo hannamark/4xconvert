@@ -87,6 +87,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
@@ -105,6 +106,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceRemote;
+import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.action.AbstractRegWebTest;
 import gov.nih.nci.registry.dto.TrialDTO;
@@ -196,7 +198,7 @@ public class TrialConvertUtilsTest extends AbstractRegWebTest {
         assertEquals(trialDTO.getHolderType(), "Investigator");
         assertEquals(trialDTO.getExpandedAccess(), "Yes");
         assertEquals(trialDTO.getExpandedAccessType(), "Available");
-        assertEquals(trialDTO.getExemptIndicator(), Boolean.FALSE);
+        assertEquals(trialDTO.getExemptIndicator(), CommonsConstant.NO);
     }
 
 }

@@ -730,7 +730,7 @@ public class TrialConvertUtils {
            if (StringUtils.isNotEmpty(dto.getIndIdeId())) {
                isoDTO.setIdentifier(IiConverter.convertToIi(dto.getIndIdeId()));
            }
-           isoDTO.setExemptIndicator(BlConverter.convertToBl(dto.getExemptIndicator()));
+           isoDTO.setExemptIndicator(BlConverter.convertYesNoStringToBl(dto.getExemptIndicator()));
            studyIndldeDTOList.add(isoDTO);
        }
        return studyIndldeDTOList;
@@ -1271,9 +1271,10 @@ public class TrialConvertUtils {
        if (!"-".equalsIgnoreCase(indDto.getExpandedAccessType())) {
            isoDTO.setExpandedAccessStatusCode(CdConverter.convertStringToCd(indDto.getExpandedAccessType()));
        }
-       isoDTO.setExemptIndicator(BlConverter.convertToBl(indDto.getExemptIndicator()));
+       isoDTO.setExemptIndicator(BlConverter.convertYesNoStringToBl(indDto.getExemptIndicator()));
        return isoDTO;
    }
+   
    /**
     *
     * @param isoDto isoDto
@@ -1282,14 +1283,8 @@ public class TrialConvertUtils {
    public TrialIndIdeDTO convertToTrialIndIdeDTO(StudyIndIdeStageDTO isoDto) {
        TrialIndIdeDTO webDto = new TrialIndIdeDTO();
        webDto.setExpandedAccessType(CdConverter.convertCdToString(isoDto.getExpandedAccessStatusCode()));
-       if (isoDto.getExpandedAccessIndicator().getValue() != null) {
-           if (isoDto.getExpandedAccessIndicator().getValue()) {
-               webDto.setExpandedAccess("Yes");
-           } else {
-               webDto.setExpandedAccess("No");
-           }
-       }
-       webDto.setExemptIndicator(BlConverter.convertToBoolean(isoDto.getExemptIndicator()));
+       webDto.setExpandedAccess(BlConverter.convertBlToYesNoString(isoDto.getExpandedAccessIndicator()));
+       webDto.setExemptIndicator(BlConverter.convertBlToYesNoString(isoDto.getExemptIndicator()));
        webDto.setGrantor(CdConverter.convertCdToString(isoDto.getGrantorCode()));
        webDto.setHolderType(CdConverter.convertCdToString(isoDto.getHolderTypeCode()));
        if (!ISOUtil.isCdNull(isoDto.getNihInstHolderCode())) {
@@ -1400,10 +1395,10 @@ public class TrialConvertUtils {
                orgDto.getName());
    }
 
-/**
- * @return the paServiceUtil
- */
-public PAServiceUtils getPaServiceUtil() {
-    return paServiceUtil;
-}
+    /**
+     * @return the paServiceUtil
+     */
+    public PAServiceUtils getPaServiceUtil() {
+        return paServiceUtil;
+    }
 }

@@ -14,6 +14,7 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.OrganizationBatchDTO;
@@ -758,131 +759,131 @@ public class TrialBatchDataValidator {
         }
         return isMultiple;
     }
+    
     /**
-     *
+     * 
      * @param dto d
      * @return list
      */
     public List<TrialIndIdeDTO> convertIndsToList(StudyProtocolBatchDTO dto) {
         List<TrialIndIdeDTO> indIdeList = new ArrayList<TrialIndIdeDTO>();
-            if (isMultipleIndIde(dto)) {
-                Map <Integer, String> indTypeMap = convertToMap(dto.getIndType());
-                Map <Integer, String> indNumbereMap = convertToMap(dto.getIndNumber());
-                Map <Integer, String> indGrantorMap = convertToMap(dto.getIndGrantor());
-                Map <Integer, String> indHolderTypeMap = convertToMap(dto.getIndHolderType());
-                Map <Integer, String> indNIHInstitutionMap = convertToMap(dto.getIndNIHInstitution());
-                Map <Integer, String> indNCIDivisionMap = convertToMap(dto.getIndNCIDivision());
-                Map <Integer, String> indHasExpandedAccessMap = convertToMap(dto.getIndHasExpandedAccess());
-                Map <Integer, String> indHasExpandedAccessStatusMap = convertToMap(dto.getIndExpandedAccessStatus());
-                Map <Integer, String> indExemptIndicator = convertToMap(dto.getExemptIndicator());
-                //get the map with highest size
-                int maxSize = indTypeMap.size();
-                if (maxSize < indNumbereMap.size()) {
-                    maxSize = indNumbereMap.size();
-                }
-                if (maxSize < indGrantorMap.size()) {
-                    maxSize = indGrantorMap.size();
-                }
-                if (maxSize < indHolderTypeMap.size()) {
-                    maxSize = indHolderTypeMap.size();
-                }
-                if (maxSize < indNIHInstitutionMap.size()) {
-                    maxSize = indNIHInstitutionMap.size();
-                }
-                if (maxSize < indNCIDivisionMap.size()) {
-                    maxSize = indNCIDivisionMap.size();
-                }
-                if (maxSize < indHasExpandedAccessMap.size()) {
-                    maxSize = indHasExpandedAccessMap.size();
-                }
-                if (maxSize < indHasExpandedAccessStatusMap.size()) {
-                    maxSize = indHasExpandedAccessStatusMap.size();
-                }
-                if (maxSize < indExemptIndicator.size()) {
-                   maxSize = indExemptIndicator.size();
-                }
-                for (int i = 0; i < maxSize; i++) {
-                    TrialIndIdeDTO indldeDTO = new TrialIndIdeDTO();
-                    if (StringUtils.isNotEmpty(indTypeMap.get(i))) {
-                        indldeDTO.setIndIde(indTypeMap.get(i).trim());
-                    } else {
-                        indldeDTO.setIndIde("");
-                    }
-                    if (StringUtils.isNotEmpty(indNumbereMap.get(i))) {
-                        indldeDTO.setNumber(indNumbereMap.get(i).trim());
-                    } else {
-                        indldeDTO.setNumber("");
-                    }
-                    if (StringUtils.isNotEmpty(indGrantorMap.get(i))) {
-                        indldeDTO.setGrantor(indGrantorMap.get(i).trim());
-                    } else {
-                        indldeDTO.setGrantor("");
-                    }
-                    if (StringUtils.isNotEmpty(indHolderTypeMap.get(i))) {
-                        indldeDTO.setHolderType(indHolderTypeMap.get(i).trim());
-                    } else {
-                        indldeDTO.setHolderType("");
-                    }
-                    String naString = "NA";
-                    if (indldeDTO.getHolderType() != null) {
-                        if (indldeDTO.getHolderType().equalsIgnoreCase("NIH")
-                                && StringUtils.isNotEmpty(indNIHInstitutionMap.get(i))) {
-                            indldeDTO.setProgramCode(indNIHInstitutionMap.get(i).trim());
-                        }
-                        if (indldeDTO.getHolderType().equalsIgnoreCase("NCI")
-                                && StringUtils.isNotEmpty(indNCIDivisionMap.get(i))) {
-                            indldeDTO.setProgramCode(indNCIDivisionMap.get(i).trim());
-                        }
-                    }
-                    if (StringUtils.isNotEmpty(indHasExpandedAccessMap.get(i))) {
-                        indldeDTO.setExpandedAccess(indHasExpandedAccessMap.get(i).trim());
-                    } else {
-                        indldeDTO.setExpandedAccess("");
-                    }
-                    if (StringUtils.isNotEmpty(indHasExpandedAccessStatusMap.get(i))
-                            && !indHasExpandedAccessStatusMap.get(i).trim().equalsIgnoreCase(naString)) {
-                        indldeDTO.setExpandedAccessType(indHasExpandedAccessStatusMap.get(i).trim());
-                    } else {
-                        indldeDTO.setExpandedAccessType("");
-                    }
-                    if (StringUtils.isNotEmpty(indExemptIndicator.get(i))
-                          && StringUtils.endsWithIgnoreCase("Yes", indExemptIndicator.get(i))) {
-                        indldeDTO.setExemptIndicator(true);
-                    } else {
-                        indldeDTO.setExemptIndicator(false);
-                    }
-                    indIdeList.add(indldeDTO);
-                }
-            } else {
-                if (!isIndIdeEmpty(dto)) {
-                    TrialIndIdeDTO indldeDTO = new TrialIndIdeDTO();
-                    indldeDTO.setIndIde(dto.getIndType().trim());
-                    indldeDTO.setNumber(dto.getIndNumber().trim());
-                    indldeDTO.setGrantor(dto.getIndGrantor().trim());
-                    indldeDTO.setHolderType(dto.getIndHolderType().trim());
-                    if (dto.getIndHolderType().equalsIgnoreCase("NIH")) {
-                        indldeDTO.setProgramCode(dto.getIndNIHInstitution().trim());
-                    }
-                    if (dto.getIndHolderType().equalsIgnoreCase("NCI")) {
-                        indldeDTO.setProgramCode(dto.getIndNCIDivision().trim());
-                    }
-                    indldeDTO.setExpandedAccess(dto.getIndHasExpandedAccess().trim());
-                    if (StringUtils.isNotEmpty(dto.getIndExpandedAccessStatus())) {
-                        indldeDTO.setExpandedAccessType(dto.getIndExpandedAccessStatus().trim());
-                    } else {
-                        indldeDTO.setExpandedAccessType("");
-                    }
-                    if (StringUtils.isNotEmpty(dto.getExemptIndicator())
-                            && StringUtils.endsWithIgnoreCase("Yes", dto.getExemptIndicator())) {
-                          indldeDTO.setExemptIndicator(true);
-                      } else {
-                          indldeDTO.setExemptIndicator(false);
-                      }
-                    indIdeList.add(indldeDTO);
-                }
+        if (isMultipleIndIde(dto)) {
+            Map<Integer, String> indTypeMap = convertToMap(dto.getIndType());
+            Map<Integer, String> indNumbereMap = convertToMap(dto.getIndNumber());
+            Map<Integer, String> indGrantorMap = convertToMap(dto.getIndGrantor());
+            Map<Integer, String> indHolderTypeMap = convertToMap(dto.getIndHolderType());
+            Map<Integer, String> indNIHInstitutionMap = convertToMap(dto.getIndNIHInstitution());
+            Map<Integer, String> indNCIDivisionMap = convertToMap(dto.getIndNCIDivision());
+            Map<Integer, String> indHasExpandedAccessMap = convertToMap(dto.getIndHasExpandedAccess());
+            Map<Integer, String> indHasExpandedAccessStatusMap = convertToMap(dto.getIndExpandedAccessStatus());
+            Map<Integer, String> indExemptIndicator = convertToMap(dto.getExemptIndicator());
+            // get the map with highest size
+            int maxSize = indTypeMap.size();
+            if (maxSize < indNumbereMap.size()) {
+                maxSize = indNumbereMap.size();
             }
+            if (maxSize < indGrantorMap.size()) {
+                maxSize = indGrantorMap.size();
+            }
+            if (maxSize < indHolderTypeMap.size()) {
+                maxSize = indHolderTypeMap.size();
+            }
+            if (maxSize < indNIHInstitutionMap.size()) {
+                maxSize = indNIHInstitutionMap.size();
+            }
+            if (maxSize < indNCIDivisionMap.size()) {
+                maxSize = indNCIDivisionMap.size();
+            }
+            if (maxSize < indHasExpandedAccessMap.size()) {
+                maxSize = indHasExpandedAccessMap.size();
+            }
+            if (maxSize < indHasExpandedAccessStatusMap.size()) {
+                maxSize = indHasExpandedAccessStatusMap.size();
+            }
+            if (maxSize < indExemptIndicator.size()) {
+                maxSize = indExemptIndicator.size();
+            }
+            for (int i = 0; i < maxSize; i++) {
+                TrialIndIdeDTO indldeDTO = new TrialIndIdeDTO();
+                if (StringUtils.isNotEmpty(indTypeMap.get(i))) {
+                    indldeDTO.setIndIde(indTypeMap.get(i).trim());
+                } else {
+                    indldeDTO.setIndIde("");
+                }
+                if (StringUtils.isNotEmpty(indNumbereMap.get(i))) {
+                    indldeDTO.setNumber(indNumbereMap.get(i).trim());
+                } else {
+                    indldeDTO.setNumber("");
+                }
+                if (StringUtils.isNotEmpty(indGrantorMap.get(i))) {
+                    indldeDTO.setGrantor(indGrantorMap.get(i).trim());
+                } else {
+                    indldeDTO.setGrantor("");
+                }
+                if (StringUtils.isNotEmpty(indHolderTypeMap.get(i))) {
+                    indldeDTO.setHolderType(indHolderTypeMap.get(i).trim());
+                } else {
+                    indldeDTO.setHolderType("");
+                }
+                String naString = "NA";
+                if (indldeDTO.getHolderType() != null) {
+                    if (indldeDTO.getHolderType().equalsIgnoreCase("NIH")
+                            && StringUtils.isNotEmpty(indNIHInstitutionMap.get(i))) {
+                        indldeDTO.setProgramCode(indNIHInstitutionMap.get(i).trim());
+                    }
+                    if (indldeDTO.getHolderType().equalsIgnoreCase("NCI")
+                            && StringUtils.isNotEmpty(indNCIDivisionMap.get(i))) {
+                        indldeDTO.setProgramCode(indNCIDivisionMap.get(i).trim());
+                    }
+                }
+                if (StringUtils.isNotEmpty(indHasExpandedAccessMap.get(i))) {
+                    indldeDTO.setExpandedAccess(indHasExpandedAccessMap.get(i).trim());
+                } else {
+                    indldeDTO.setExpandedAccess("");
+                }
+                if (StringUtils.isNotEmpty(indHasExpandedAccessStatusMap.get(i))
+                        && !indHasExpandedAccessStatusMap.get(i).trim().equalsIgnoreCase(naString)) {
+                    indldeDTO.setExpandedAccessType(indHasExpandedAccessStatusMap.get(i).trim());
+                } else {
+                    indldeDTO.setExpandedAccessType("");
+                }
+                if (StringUtils.isNotEmpty(indExemptIndicator.get(i))) {
+                    indldeDTO.setExemptIndicator(indExemptIndicator.get(i).trim());
+                } else {
+                    indldeDTO.setExemptIndicator(CommonsConstant.NO);
+                }
+                indIdeList.add(indldeDTO);
+            }
+        } else {
+            if (!isIndIdeEmpty(dto)) {
+                TrialIndIdeDTO indldeDTO = new TrialIndIdeDTO();
+                indldeDTO.setIndIde(dto.getIndType().trim());
+                indldeDTO.setNumber(dto.getIndNumber().trim());
+                indldeDTO.setGrantor(dto.getIndGrantor().trim());
+                indldeDTO.setHolderType(dto.getIndHolderType().trim());
+                if (dto.getIndHolderType().equalsIgnoreCase("NIH")) {
+                    indldeDTO.setProgramCode(dto.getIndNIHInstitution().trim());
+                }
+                if (dto.getIndHolderType().equalsIgnoreCase("NCI")) {
+                    indldeDTO.setProgramCode(dto.getIndNCIDivision().trim());
+                }
+                indldeDTO.setExpandedAccess(dto.getIndHasExpandedAccess().trim());
+                if (StringUtils.isNotEmpty(dto.getIndExpandedAccessStatus())) {
+                    indldeDTO.setExpandedAccessType(dto.getIndExpandedAccessStatus().trim());
+                } else {
+                    indldeDTO.setExpandedAccessType("");
+                }
+                if (StringUtils.isNotEmpty(dto.getExemptIndicator())) {
+                    indldeDTO.setExemptIndicator(dto.getExemptIndicator().trim());
+                } else {
+                    indldeDTO.setExemptIndicator(CommonsConstant.NO);
+                }
+                indIdeList.add(indldeDTO);
+            }
+        }
         return indIdeList;
     }
+    
     private boolean isIndIdeEmpty(StudyProtocolBatchDTO dto) {
         boolean retValue = true;
         if (StringUtils.isNotEmpty(dto.getIndType()) && StringUtils.isNotEmpty(dto.getIndNumber())
@@ -892,25 +893,27 @@ public class TrialBatchDataValidator {
         }
         return retValue;
     }
+
     private Map<Integer, String> convertToMap(String commaSeparated) {
-        Map <Integer, String> map = new HashMap<Integer, String>();
+        Map<Integer, String> map = new HashMap<Integer, String>();
         Integer key = 0;
         if (commaSeparated == null) {
-            map.put(key++ , "");
+            map.put(key++, "");
             return map;
         }
         StringTokenizer tokenizer = new StringTokenizer(commaSeparated, DELEMITOR);
         if (commaSeparated.startsWith(DELEMITOR)) {
-            map.put(key++ , "");
+            map.put(key++, "");
         }
         while (tokenizer.hasMoreTokens()) {
-            map.put(key++ , tokenizer.nextToken());
+            map.put(key++, tokenizer.nextToken());
         }
         if (commaSeparated.endsWith(DELEMITOR)) {
-            map.put(key++ , "");
+            map.put(key++, "");
         }
         return map;
     }
+    
     /**
      *
      * @param dto batch

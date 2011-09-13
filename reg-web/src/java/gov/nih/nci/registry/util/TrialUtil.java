@@ -500,17 +500,17 @@ public class TrialUtil extends TrialConvertUtils {
     private void setRegulatoryIndicatorInfo(Ii studyProtocolIi, TrialDTO trialDTO) throws PAException {
         StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
         if (spDTO.getSection801Indicator().getValue() != null) {
-            trialDTO.setSection801Indicator(BlConverter.convertBLToString(spDTO.getSection801Indicator()));
+            trialDTO.setSection801Indicator(BlConverter.convertBlToYesNoString(spDTO.getSection801Indicator()));
         }
         if (spDTO.getFdaRegulatedIndicator().getValue() != null) {
-            trialDTO.setFdaRegulatoryInformationIndicator(BlConverter.convertBLToString(spDTO
+            trialDTO.setFdaRegulatoryInformationIndicator(BlConverter.convertBlToYesNoString(spDTO
                     .getFdaRegulatedIndicator()));
         }
         if (spDTO.getDelayedpostingIndicator().getValue() != null) {
-            trialDTO.setDelayedPostingIndicator(BlConverter.convertBLToString(spDTO.getDelayedpostingIndicator()));
+            trialDTO.setDelayedPostingIndicator(BlConverter.convertBlToYesNoString(spDTO.getDelayedpostingIndicator()));
         }
         if (spDTO.getDataMonitoringCommitteeAppointedIndicator().getValue() != null) {
-            trialDTO.setDataMonitoringCommitteeAppointedIndicator((BlConverter.convertBLToString(spDTO
+            trialDTO.setDataMonitoringCommitteeAppointedIndicator((BlConverter.convertBlToYesNoString(spDTO
                     .getDataMonitoringCommitteeAppointedIndicator())));
         }
     }

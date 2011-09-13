@@ -631,7 +631,7 @@
                             </td>
                             <s:set name="statusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
                             <td>
-                                <s:select headerKey="" headerValue="--Select--" name="trialDTO.statusCode" list="#statusCodeValues"
+                                <s:select headerKey="" headerValue="--Select--" id="submitTrial_trialDTO_statusCode" name="trialDTO.statusCode" list="#statusCodeValues"
                                     value="trialDTO.statusCode" onchange="displayTrialStatusDefinition('submitTrial_trialDTO_statusCode');" />
                                 <span class="formErrorMsg">
                                     <s:fielderror>
