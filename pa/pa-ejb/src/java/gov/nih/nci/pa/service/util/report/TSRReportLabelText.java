@@ -601,7 +601,7 @@ public class TSRReportLabelText {
     /**
      * Time Frame.
      */
-    public static final String SOM_TIMEFRAME = "TimeFrame";
+    public static final String SOM_TIMEFRAME = "Time Frame";
     /**
      * Is Safety Issue.
      */
