@@ -82,7 +82,6 @@
  */
 package gov.nih.nci.pa.iso.util;
 
-import gov.nih.nci.iso21090.IdentifierReliability;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.util.CommonsConstant;
@@ -91,19 +90,16 @@ import gov.nih.nci.pa.util.CommonsConstant;
 
 /**
  * utility method for converting Ii and Id.
- *
- * @author Naveen Amiruddin
- * @since 08/26/2008
  */
 public class IiConverter {
 
-    /** Study Protocol Root. * */
+    /** Study Protocol Root. */
     public static final String STUDY_PROTOCOL_ROOT = "2.16.840.1.113883.3.26.4.3";
 
     /** Study Protocol Identifier. */
     public static final String STUDY_PROTOCOL_IDENTIFIER_NAME = "NCI study protocol entity identifier";
 
-    /** Study Protocol Other identifier Root. * */
+    /** Study Protocol Other identifier Root. */
     public static final String STUDY_PROTOCOL_OTHER_IDENTIFIER_ROOT = "2.16.840.1.113883.19";
 
     /** Study Protocol Other Identifier. */
@@ -121,55 +117,55 @@ public class IiConverter {
     /** The ii root value CTEP identifier. */
     public static final String CTEP_STUDY_PROTOCOL_ROOT = "2.16.840.1.113883.3.26.4.3.17.4";
 
-    /** Study Outcome Measure Root. * */
+    /** Study Outcome Measure Root. */
     public static final String STUDY_OUTCOME_MEASURE_ROOT = "2.16.840.1.113883.3.26.4.3.1";
 
     /** Study Outcome Measure Identifier. */
     public static final String STUDY_OUTCOME_MEASURE_IDENTIFIER_NAME = "NCI study outcome measure entity identifier";
 
-    /** Study Ind Ide Root. * */
+    /** Study IND/IDE Root. */
     public static final String STUDY_IND_IDE_ROOT = "2.16.840.1.113883.3.26.4.3.2";
 
-    /** Study Ind Ide Identifier. */
+    /** Study IND/IDE Identifier. */
     public static final String STUDY_IND_IDE_IDENTIFIER_NAME = "NCI study ind ide entity identifier";
 
-    /** Arm Root. * */
+    /** Arm Root. */
     public static final String ARM_ROOT = "2.16.840.1.113883.3.26.4.3.3";
 
     /** Arm Identifier. */
     public static final String ARM_IDENTIFIER_NAME = "NCI arm entity identifier";
 
-    /** Stratum Group Root. * */
+    /** Stratum Group Root. */
     public static final String STRATUM_GROUP_ROOT = "2.16.840.1.113883.3.26.4.3.4";
 
     /** Stratum Group Identifier. */
     public static final String STRATUM_GROUP_IDENTIFIER_NAME = "NCI stratum group entity identifier";
 
-    /** Study Overall Status Root. * */
+    /** Study Overall Status Root. */
     public static final String STUDY_OVERALL_STATUS_ROOT = "2.16.840.1.113883.3.26.4.3.5";
 
     /** Study Overall Status Identifier. */
     public static final String STUDY_OVERALL_STATUS_IDENTIFIER_NAME = "NCI study overall status entity identifier";
 
-    /** Activity Root. * */
+    /** Activity Root. */
     public static final String ACTIVITY_ROOT = "2.16.840.1.113883.3.26.4.3.6";
 
     /** Activity Identifier. */
     public static final String ACTIVITY_IDENTIFIER_NAME = "NCI activity entity identifier";
 
-    /** Study Resourcing Root. * */
+    /** Study Resourcing Root. */
     public static final String STUDY_RESOURCING_ROOT = "2.16.840.1.113883.3.26.4.3.7";
 
     /** Study Resourcing Identifier. */
     public static final String STUDY_RESOURCING_IDENTIFIER_NAME = "NCI study resourcing entity identifier";
 
-    /** Document Root. * */
+    /** Document Root. */
     public static final String DOCUMENT_ROOT = "2.16.840.1.113883.3.26.4.3.8";
 
     /** Document Identifier. */
     public static final String DOCUMENT_WORKFLOW_STATUS_IDENTIFIER_NAME = "NCI document work flow status identifier";
 
-    /** Document Root. * */
+    /** Document Root. */
     public static final String DOCUMENT_WORKFLOW_STATUS_ROOT = "2.16.840.1.113883.3.26.4.3.9";
 
     /** Document Identifier. */
@@ -308,8 +304,14 @@ public class IiConverter {
     /** The CTEP Person ii root value. */
     public static final String CTEP_PERSON_IDENTIFIER_ROOT = "2.16.840.1.113883.3.26.6.1";
 
+    /** The CTEP Person identifier name. */
+    public static final String CTEP_PERSON_IDENTIFIER_NAME = "CTEP Person identifier";
+
     /** The CTEP Organization ii root value. */
     public static final String CTEP_ORG_IDENTIFIER_ROOT = "2.16.840.1.113883.3.26.6.2";
+
+    /** The CTEP Organization identifier name. */
+    public static final String CTEP_ORG_IDENTIFIER_NAME = "CTEP Person identifier";
 
     /** The Constant STUDY_CONTACT_IDENTIFIER_NAME. */
     public static final String STUDY_CONTACT_IDENTIFIER_NAME = "Study Contact identifier";
@@ -329,14 +331,11 @@ public class IiConverter {
     /** The Constant STUDY_SITE_CONTACT_ROOT. */
     public static final String STUDY_SITE_CONTACT_ROOT = "2.16.840.1.113883.3.26.4.5.3";
 
+    /** The Constant STUDY_SITE_ACCRUAL_STATUS_IDENTIFIER_NAME. */
+    public static final String STUDY_SITE_ACCRUAL_STATUS_IDENTIFIER_NAME = "Study site accrual status identifier";
 
-    /** The Constant STUDY_SITE_ACCURAL_STATUS_IDENTIFIER_NAME. */
-    public static final String STUDY_SITE_ACCURAL_STATUS_IDENTIFIER_NAME = "Study site accural status identifier";
-
-
-    /** The Constant STUDY_SITE_ACCURAL_STATUS_ROOT. */
-    public static final String STUDY_SITE_ACCURAL_STATUS_ROOT = "2.16.840.1.113883.3.26.4.5.4";
-
+    /** The Constant STUDY_SITE_ACCRUAL_STATUS_ROOT. */
+    public static final String STUDY_SITE_ACCRUAL_STATUS_ROOT = "2.16.840.1.113883.3.26.4.5.4";
 
     /** The identifier name for. */
     public static final String STUDY_OBJECTIVE_IDENTIFIER_NAME = "Study Objective identifier";
@@ -362,20 +361,34 @@ public class IiConverter {
     /** The ii root value. */
     public static final String COUNTRY_ROOT = "2.16.840.1.113883.3.26.4.4.18";
 
-    private static final String STUDY_SITE_OVERALL_STATUS_IDENTIFIER_NAME = "Study site overall status identifier";
+    /**
+     * SSOS Identifier Name.
+     */
+    public static final String STUDY_SITE_OVERALL_STATUS_IDENTIFIER_NAME = "Study site overall status identifier";
 
-    private static final String STUDY_SITE_OVERALL_STATUS_ROOT = "2.16.840.1.113883.3.26.4.5.5";
+    /**
+     * SSOS Root.
+     */
+    public static final String STUDY_SITE_OVERALL_STATUS_ROOT = "2.16.840.1.113883.3.26.4.5.5";
 
-    private static final String PO_PATIENT_IDENTIFIER_NAME = "PO Patient identifier";
+    /**
+     * Patient identifier name.
+     */
+    public static final String PO_PATIENT_IDENTIFIER_NAME = "PO Patient identifier";
 
-    private static final String PO_PATIENT_ROOT = "2.16.840.1.113883.3.26.4.5.6";
+    /**
+     * Patient root.
+     */
+    public static final String PO_PATIENT_ROOT = "2.16.840.1.113883.3.26.4.5.6";
 
 
     /**
      * Convert to ii.
      * @param id id
      * @return Ii ii
+     * @deprecated Creating a generic Ii is deprecated in favor of creating an Ii specific to the identified object
      */
+    @Deprecated
     public static Ii convertToIi(Long id) {
         return convertObjectToIi(id);
     }
@@ -384,7 +397,9 @@ public class IiConverter {
      * Convert to ii.
      * @param extension string
      * @return Ii
+     * @deprecated Creating a generic Ii is deprecated in favor of creating an Ii specific to the identified object
      */
+    @Deprecated
     public static Ii convertToIi(String extension) {
         return convertObjectToIi(extension);
     }
@@ -410,13 +425,14 @@ public class IiConverter {
      * @return long
      */
     public static Long convertToLong(Ii ii) {
-        if (ii == null || ii.getNullFlavor() != null) {
-            return null;
-        }
-        if (ii.getExtension() == null) {
+        if (isIdentifierNull(ii)) {
             return null;
         }
         return Long.valueOf(ii.getExtension());
+    }
+
+    private static boolean isIdentifierNull(Ii ii) {
+        return ii == null || ii.getNullFlavor() != null || ii.getExtension() == null;
     }
 
     /**
@@ -552,8 +568,6 @@ public class IiConverter {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(PERSON_IDENTIFIER_NAME);
         ii.setRoot(PERSON_ROOT);
-        // We don't know if this ID actually exists in PO, so its reliability is unverified (UNV)
-        ii.setReliability(IdentifierReliability.UNV);
         return ii;
     }
 
@@ -576,7 +590,7 @@ public class IiConverter {
      */
     public static Ii convertToPoFamilyIi(String id) {
         Ii ii = convertToIi(id);
-        ii.setIdentifierName(ORG_IDENTIFIER_NAME);
+        ii.setIdentifierName(FAMILY_IDENTIFIER_NAME);
         ii.setRoot(FAMILY_ROOT);
         return ii;
     }
@@ -590,8 +604,6 @@ public class IiConverter {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(ORG_IDENTIFIER_NAME);
         ii.setRoot(ORG_ROOT);
-        // We don't know if this ID actually exists in PO, so its reliability is unverified (UNV)
-        ii.setReliability(IdentifierReliability.UNV);
         return ii;
     }
 
@@ -600,22 +612,10 @@ public class IiConverter {
      * @param id id
      * @return Ii
      */
-    public static Ii convertToPaOrganizationIi(long id) {
+    public static Ii convertToPaOrganizationIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(ORG_PA_IDENTIFIER_NAME);
         ii.setRoot(ORG_ROOT);
-        return ii;
-    }
-
-    /**
-     * converts to Po Org Ii Ii.
-     * @param id id
-     * @return Ii
-     */
-    public static Ii convertToIdentifiedEntityIi(String id) {
-        Ii ii = convertToIi(id);
-        //ii.setIdentifierName(CTEP_IDENTIFIED_NAME);
-        ii.setRoot("Cancer Therapy Evaluation Program");
         return ii;
     }
 
@@ -627,6 +627,7 @@ public class IiConverter {
     public static Ii convertToIdentifiedOrgEntityIi(String id) {
         Ii ii = convertToIi(id);
         ii.setRoot(CTEP_ORG_IDENTIFIER_ROOT);
+        ii.setIdentifierName(CTEP_ORG_IDENTIFIER_NAME);
         return ii;
     }
 
@@ -638,6 +639,7 @@ public class IiConverter {
     public static Ii convertToIdentifiedPersonEntityIi(String id) {
         Ii ii = convertToIi(id);
         ii.setRoot(CTEP_PERSON_IDENTIFIER_ROOT);
+        ii.setIdentifierName(CTEP_PERSON_IDENTIFIER_NAME);
         return ii;
     }
 
@@ -670,7 +672,7 @@ public class IiConverter {
      * @param id id
      * @return Ii
      */
-    public static Ii convertToPoHealtcareProviderIi(String id) {
+    public static Ii convertToPoHealthcareProviderIi(String id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(HEALTH_CARE_PROVIDER_IDENTIFIER_NAME);
         ii.setRoot(HEALTH_CARE_PROVIDER_ROOT);
@@ -812,14 +814,14 @@ public class IiConverter {
     }
 
     /**
-     * Convert to study site accural status ii.
+     * Convert to study site accrual status ii.
      * @param id the id
      * @return the ii
      */
-    public static Ii convertToStudySiteAccuralStatusIi(Long id) {
+    public static Ii convertToStudySiteAccrualStatusIi(Long id) {
         Ii ii = convertToIi(id);
-        ii.setIdentifierName(STUDY_SITE_ACCURAL_STATUS_IDENTIFIER_NAME);
-        ii.setRoot(STUDY_SITE_ACCURAL_STATUS_ROOT);
+        ii.setIdentifierName(STUDY_SITE_ACCRUAL_STATUS_IDENTIFIER_NAME);
+        ii.setRoot(STUDY_SITE_ACCRUAL_STATUS_ROOT);
         return ii;
     }
 
@@ -911,7 +913,7 @@ public class IiConverter {
      * @param id the id
      * @return the ii
      */
-    public static Ii convertToPOPatientIi(Long id) {
+    public static Ii convertToPoPatientIi(Long id) {
         Ii ii = convertToIi(id);
         ii.setIdentifierName(PO_PATIENT_IDENTIFIER_NAME);
         ii.setRoot(PO_PATIENT_ROOT);

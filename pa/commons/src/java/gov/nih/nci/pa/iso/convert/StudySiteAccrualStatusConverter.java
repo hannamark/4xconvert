@@ -110,7 +110,7 @@ public class StudySiteAccrualStatusConverter extends
     @Override
     public StudySiteAccrualStatusDTO convertFromDomainToDto(StudySiteAccrualStatus bo) {
         StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
-        dto.setIdentifier(IiConverter.convertToStudySiteAccuralStatusIi(bo.getId()));
+        dto.setIdentifier(IiConverter.convertToStudySiteAccrualStatusIi(bo.getId()));
         dto.setStatusCode(CdConverter.convertToCd(bo.getStatusCode()));
         dto.setStatusDate(TsConverter.convertToTs(bo.getStatusDate()));
         dto.setStudySiteIi(IiConverter.convertToIi(bo.getStudySite().getId()));

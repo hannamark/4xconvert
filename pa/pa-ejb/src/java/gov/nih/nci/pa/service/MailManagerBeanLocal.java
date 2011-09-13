@@ -150,13 +150,12 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.xml.serialize.LineSeparator;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import com.sun.org.apache.xml.internal.serialize.LineSeparator;
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 /**
  * @author asharma
@@ -199,6 +198,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void sendTSREmail(Ii studyProtocolIi) throws PAException {
         try {
             StudyProtocolQueryDTO spDTO =
@@ -320,6 +320,62 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         return xmlFile;
     }
 
+    private String format(String unformattedXml) {
+        Writer out = new StringWriter();
+        try {
+            final Document document = parseXmlFile(unformattedXml);
+
+            OutputFormat format = new OutputFormat(document);
+            format.setLineWidth(LINE_WIDTH);
+            format.setEncoding("UTF-8");
+            format.setIndenting(true);
+            format.setIndent(2);
+            format.setLineSeparator(LineSeparator.Web);
+            XMLSerializer serializer = new XMLSerializer(out, format);
+            serializer.serialize(document);
+
+        } catch (IOException e) {
+            LOG.error(e.getLocalizedMessage());
+        }
+        return out.toString();
+    }
+
+    private Document parseXmlFile(String in) {
+        DocumentBuilder db = null;
+        Document doc = null;
+        InputSource is = null;
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            db = dbf.newDocumentBuilder();
+            is = new InputSource(new StringReader(in));
+            doc = db.parse(is);
+        } catch (ParserConfigurationException e) {
+            LOG.error(e.getLocalizedMessage());
+        } catch (SAXException e) {
+            LOG.error(e.getLocalizedMessage());
+        } catch (IOException e) {
+            LOG.error(e.getLocalizedMessage());
+        }
+        return doc;
+    }
+
+    /**
+     *
+     * @param mailTo mailTo
+     * @param subject subject
+     * @param mailBody mailBody
+     * @param attachments File attachments
+     */
+    @Override
+    public void sendMailWithAttachment(String mailTo, String subject, String mailBody, File[] attachments) {
+        try {
+            String mailFrom = lookUpTableService.getPropertyValue("fromaddress");
+            sendMailWithAttachment(mailTo, mailFrom, subject, mailBody, attachments);
+        } catch (Exception e) {
+            LOG.error("Send Mail error", e);
+        }
+    }
+
     private void sendMailWithAttachment(String mailTo, String mailFrom, String subject, String mailBody,
             File[] attachments) {
         try {
@@ -362,26 +418,11 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     }
 
     /**
-     *
-     * @param mailTo mailTo
-     * @param subject subject
-     * @param mailBody mailBody
-     * @param attachments File attachments
-     */
-    public void sendMailWithAttachment(String mailTo, String subject, String mailBody, File[] attachments) {
-        try {
-            String mailFrom = lookUpTableService.getPropertyValue("fromaddress");
-            sendMailWithAttachment(mailTo, mailFrom, subject, mailBody, attachments);
-        } catch (Exception e) {
-            LOG.error("Send Mail error", e);
-        }
-    }
-
-    /**
      * Sends an email notifying the submitter that the protocol is amended in the system.
      * @param studyProtocolIi ii
      * @throws PAException ex
      */
+    @Override
     public void sendAmendNotificationMail(Ii studyProtocolIi) throws PAException {
 
         StudyProtocolQueryDTO spDTO = protocolQueryService
@@ -410,6 +451,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      * @param studyProtocolIi ii
      * @throws PAException ex
      */
+    @Override
     public void sendAmendAcceptEmail(Ii studyProtocolIi) throws PAException {
         StudyProtocolQueryDTO spDTO = protocolQueryService
             .getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(studyProtocolIi));
@@ -434,6 +476,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      * @param studyProtocolIi ii
      * @throws PAException ex
      */
+    @Override
     public void sendNotificationMail(Ii studyProtocolIi) throws PAException {
         StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter
             .convertToLong(studyProtocolIi));
@@ -493,6 +536,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      * @param rejectReason rr
      * @throws PAException ex
      */
+    @Override
     public void sendAmendRejectEmail(Ii studyProtocolIi, String rejectReason) throws PAException {
         StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter
             .convertToLong(studyProtocolIi));
@@ -519,6 +563,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      * @param studyProtocolIi studyProtocolIi
      * @throws PAException ex
      */
+    @Override
     public void sendRejectionEmail(Ii studyProtocolIi) throws PAException {
         String commentText = "";
         StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter
@@ -559,6 +604,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      * @param studyProtocolIi ii
      * @throws PAException ex
      */
+    @Override
     public void sendAcceptEmail(Ii studyProtocolIi) throws PAException {
         StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter
             .convertToLong(studyProtocolIi));
@@ -573,56 +619,11 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     }
 
     /**
-     * Format.
-     *
-     * @param unformattedXml the unformatted xml
-     *
-     * @return the string
-     */
-    private String format(String unformattedXml) {
-        Writer out = new StringWriter();
-        try {
-            final Document document = parseXmlFile(unformattedXml);
-
-            OutputFormat format = new OutputFormat(document);
-            format.setLineWidth(LINE_WIDTH);
-            format.setEncoding("UTF-8");
-            format.setIndenting(true);
-            format.setIndent(2);
-            format.setLineSeparator(LineSeparator.Web);
-            XMLSerializer serializer = new XMLSerializer(out, format);
-            serializer.serialize(document);
-
-        } catch (IOException e) {
-            LOG.error(e.getLocalizedMessage());
-        }
-        return out.toString();
-    }
-
-    private Document parseXmlFile(String in) {
-        DocumentBuilder db = null;
-        Document doc = null;
-        InputSource is = null;
-        try {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            db = dbf.newDocumentBuilder();
-            is = new InputSource(new StringReader(in));
-            doc = db.parse(is);
-        } catch (ParserConfigurationException e) {
-            LOG.error(e.getLocalizedMessage());
-        } catch (SAXException e) {
-            LOG.error(e.getLocalizedMessage());
-        } catch (IOException e) {
-            LOG.error(e.getLocalizedMessage());
-        }
-        return doc;
-    }
-
-    /**
      * Sends an email notifying the submitter that the protocol is updated in the system.
      * @param studyProtocolIi ii
      * @throws PAException ex
      */
+    @Override
     public void sendUpdateNotificationMail(Ii studyProtocolIi) throws PAException {
 
         StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter
@@ -645,6 +646,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      * @param mailFrom the mail from
      * @param mailBody the mail body
      */
+    @Override
     public void sendCDERequestMail(String mailFrom, String mailBody) {
         try {
             // get system properties
@@ -679,6 +681,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void sendMarkerCDERequestMail(Ii studyProtocolIi, String from, PlannedMarkerDTO marker,
             String markerText) throws PAException {
         try {
@@ -720,6 +723,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void sendXMLAndTSREmail(String fullName, String mailTo, Ii studyProtocolIi) throws PAException {
         try {
             StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter
@@ -796,6 +800,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     /**
      * @param userId userid
      */
+    @Override
     public void sendAdminAcceptanceEmail(Long userId) {
         sendAdminAcceptanceRejectionEmail(userId, "trial.admin.accept.body", "");
     }
@@ -804,6 +809,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      * @param userId id
      * @param reason reason
      */
+    @Override
     public void sendAdminRejectionEmail(Long userId, String reason) {
         String rejectReason = "No Reason Provided.";
         if (StringUtils.isNotEmpty(reason)) {

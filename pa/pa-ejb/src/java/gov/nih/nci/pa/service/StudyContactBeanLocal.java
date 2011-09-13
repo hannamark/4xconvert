@@ -121,7 +121,7 @@ public class StudyContactBeanLocal extends AbstractRoleIsoService<StudyContactDT
                     dto.getClinicalResearchStaffIi().getExtension()));
         }
         if (!ISOUtil.isIiNull(dto.getHealthCareProviderIi())) {
-            sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoHealtcareProviderIi(
+            sr = paServiceUtil.getStructuralRole(IiConverter.convertToPoHealthcareProviderIi(
                     dto.getHealthCareProviderIi().getExtension()));
         }
         if (!ISOUtil.isIiNull(dto.getOrganizationalContactIi())) {

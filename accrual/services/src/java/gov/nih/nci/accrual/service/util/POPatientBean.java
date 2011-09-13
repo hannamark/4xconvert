@@ -136,7 +136,7 @@ public class POPatientBean implements POPatientService {
         POPatientDTO createdDTO = null;
         try {
             Ii newId = pcsr.createCorrelation(patient);
-            createdDTO = get(IiConverter.convertToPOPatientIi(IiConverter.convertToLong(newId)));
+            createdDTO = get(IiConverter.convertToPoPatientIi(IiConverter.convertToLong(newId)));
         } catch (CurationException ex) {
             throw new PAException(ex.toString(), ex);
         } catch (EntityValidationException ex) {
@@ -185,7 +185,7 @@ public class POPatientBean implements POPatientService {
         POPatientDTO updatedDTO = null;
         try {
             pcsr.updateCorrelation(patient);
-            updatedDTO = get(IiConverter.convertToPOPatientIi(IiConverter.convertToLong(dto.getIdentifier())));
+            updatedDTO = get(IiConverter.convertToPoPatientIi(IiConverter.convertToLong(dto.getIdentifier())));
         } catch (EntityValidationException ex) {
             throw new PAException(ex.toString(), ex);
         }

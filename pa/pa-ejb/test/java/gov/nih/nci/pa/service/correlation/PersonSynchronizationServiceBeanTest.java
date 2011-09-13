@@ -100,7 +100,7 @@ public class PersonSynchronizationServiceBeanTest extends AbstractHibernateTestC
 
     @Test
     public void synchronizeHealthCareProviderUpdateTest() throws Exception {
-        Ii hcpIi = IiConverter.convertToPoHealtcareProviderIi("abc");
+        Ii hcpIi = IiConverter.convertToPoHealthcareProviderIi("abc");
         remoteEjb.synchronizeHealthCareProvider(hcpIi);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to
         // do assert with the changed values
@@ -108,7 +108,7 @@ public class PersonSynchronizationServiceBeanTest extends AbstractHibernateTestC
 
     @Test
     public void synchronizeHealthCareProviderNulllifyTest() throws Exception {
-        Ii hcpIi = IiConverter.convertToPoHealtcareProviderIi("abc");
+        Ii hcpIi = IiConverter.convertToPoHealthcareProviderIi("abc");
         hcpIi.setNullFlavor(NullFlavor.NA);
         remoteEjb.synchronizeHealthCareProvider(hcpIi);
         // todo : somehow the update is happening in a different session and the changes are not committed, so unable to

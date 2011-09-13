@@ -892,23 +892,23 @@ public class PAServiceUtils {
             boolean recruiting = false;
             StudySiteAccrualStatusDTO latestDTO = null;
             List<StudySiteAccrualStatusDTO> participatingSitesOld = null;
-            for (StudySiteAccrualStatusDTO studySiteAccuralStatus : participatingSites) {
-                if (!ISOUtil.isIiNull(studySiteAccuralStatus.getStudySiteIi())
-                        && !isIiExistInPA(IiConverter.convertToStudySiteIi(Long.valueOf(studySiteAccuralStatus
+            for (StudySiteAccrualStatusDTO studySiteAccrualStatus : participatingSites) {
+                if (!ISOUtil.isIiNull(studySiteAccrualStatus.getStudySiteIi())
+                        && !isIiExistInPA(IiConverter.convertToStudySiteIi(Long.valueOf(studySiteAccrualStatus
                             .getStudySiteIi().getExtension())))) {
-                    errorMsg.append("Study Site Id " + studySiteAccuralStatus.getStudySiteIi().getExtension()
+                    errorMsg.append("Study Site Id " + studySiteAccrualStatus.getStudySiteIi().getExtension()
                             + " does not exit");
                 }
-                Long latestId = IiConverter.convertToLong(studySiteAccuralStatus.getIdentifier());
+                Long latestId = IiConverter.convertToLong(studySiteAccrualStatus.getIdentifier());
                 RecruitmentStatusCode recruimentStatus =
-                    RecruitmentStatusCode.getByCode(studySiteAccuralStatus.getStatusCode().getCode());
+                    RecruitmentStatusCode.getByCode(studySiteAccrualStatus.getStatusCode().getCode());
                 // base condition if one of the newly changed status is recruiting ;then break
                 if (latestId == null && recruimentStatus.isRecruiting()) {
                     recruiting = true;
                     break;
                 } else {
                     participatingSitesOld = new ArrayList<StudySiteAccrualStatusDTO>();
-                    participatingSitesOld.add(studySiteAccuralStatus);
+                    participatingSitesOld.add(studySiteAccrualStatus);
                 }
             }
             if (CollectionUtils.isNotEmpty(participatingSitesOld)) {

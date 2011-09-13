@@ -159,6 +159,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
      * @throws PAException on error
      */
 
+    @Override
     public void synchronizePerson(final Ii perIdentifier) throws PAException {
 
         PersonDTO personDto = null;
@@ -175,6 +176,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
      * @param crsIdentifier po ClinicalResearchStaff identifier
      * @throws PAException on error
      */
+    @Override
     public void synchronizeClinicalResearchStaff(final Ii crsIdentifier) throws PAException {
         ClinicalResearchStaffDTO crsDto = null;
         try {
@@ -190,6 +192,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
      * @param hcpIdentifier po HealthCareProvider identifier
      * @throws PAException on error
      */
+    @Override
     public void synchronizeHealthCareProvider(final Ii hcpIdentifier) throws PAException {
         HealthCareProviderDTO hcpDto = null;
         try {
@@ -207,6 +210,7 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
      * @param ocIdentifier oc HealthCareProvider identifier
      * @throws PAException on error
      */
+    @Override
     public  void synchronizeOrganizationalContact(final Ii ocIdentifier) throws PAException {
         OrganizationalContactDTO ocDto = null;
         try {
@@ -340,11 +344,9 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
             throws PAException {
         gov.nih.nci.pa.util.CorrelationUtils commonsCorrUtils = new gov.nih.nci.pa.util.CorrelationUtils();
         HealthCareProvider hcp = commonsCorrUtils.getStructuralRoleByIi(hcpIdentifier);
-        Session session = null;
-        StructuralRoleStatusCode newRoleCode = null;
         if (hcp != null) {
-            // process only if pa has any clinical research staff records
-            session = PaHibernateUtil.getCurrentSession();
+            Session session = PaHibernateUtil.getCurrentSession();
+            StructuralRoleStatusCode newRoleCode = null;
             if (hcpDto == null) {
                 // this is a nullified, so treat it in a special manner
                 // step 1: get the po person,org identifier (player)
@@ -357,7 +359,6 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                 PersonDTO personDto = getPoPerson(poPerId);
                 OrganizationDTO organizationDto = getPoOrganization(poOrgId);
                 if (personDto != null && organizationDto != null) {
-                    // create a new crs
                     HealthCareProviderCorrelationBean hcpBean = new HealthCareProviderCorrelationBean();
                     duplicateHcpId = hcpBean.createHealthCareProviderCorrelationBeans(
                             organizationDto.getIdentifier().getExtension(), personDto.getIdentifier().getExtension());
@@ -366,12 +367,12 @@ public class PersonSynchronizationServiceBean implements PersonSynchronizationSe
                     dupHcp = cUtils.getStructuralRole(dupHcp);
                     newRoleCode = dupHcp.getStatusCode();
                     // replace the old, with the new change identifiers
-                    replaceStudyContactIdentifiers(
-                                IiConverter.convertToPoHealtcareProviderIi(hcp.getId().toString()),
-                                IiConverter.convertToPoHealtcareProviderIi(duplicateHcpId.toString()) , STUDY_CONTACT);
-                    replaceStudyContactIdentifiers(
-                            IiConverter.convertToPoHealtcareProviderIi(hcp.getId().toString()),
-                            IiConverter.convertToPoHealtcareProviderIi(duplicateHcpId.toString()) , STUDY_SITE_CONTACT);
+                    replaceStudyContactIdentifiers(IiConverter.convertToPoHealthcareProviderIi(hcp.getId().toString()),
+                                                   IiConverter.convertToPoHealthcareProviderIi(duplicateHcpId
+                                                       .toString()), STUDY_CONTACT);
+                    replaceStudyContactIdentifiers(IiConverter.convertToPoHealthcareProviderIi(hcp.getId().toString()),
+                                                   IiConverter.convertToPoHealthcareProviderIi(duplicateHcpId
+                                                       .toString()), STUDY_SITE_CONTACT);
                     // nullify the current
                     hcp.setStatusCode(StructuralRoleStatusCode.NULLIFIED);
                 } else {

@@ -1306,7 +1306,7 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
             personContactWebDTO.setFullName(per.getFullName());
 
             StudySiteAccrualStatusDTO status = studySiteAccrualStatusService
-            .getCurrentStudySiteAccrualStatusByStudySite(IiConverter.convertToStudySiteAccuralStatusIi(
+            .getCurrentStudySiteAccrualStatusByStudySite(IiConverter.convertToStudySiteAccrualStatusIi(
                     studySiteIdentifier));
             if (status != null) {
                 this.setRecStatus(status.getStatusCode().getCode());

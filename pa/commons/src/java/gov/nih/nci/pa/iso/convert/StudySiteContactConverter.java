@@ -130,7 +130,7 @@ public class StudySiteContactConverter extends AbstractConverter<StudySiteContac
             dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
         }
         if (bo.getHealthCareProvider() != null) {
-            dto.setHealthCareProviderIi(IiConverter.convertToPoHealtcareProviderIi(
+            dto.setHealthCareProviderIi(IiConverter.convertToPoHealthcareProviderIi(
                     bo.getHealthCareProvider().getIdentifier()));
         }
         if (bo.getClinicalResearchStaff() != null) {

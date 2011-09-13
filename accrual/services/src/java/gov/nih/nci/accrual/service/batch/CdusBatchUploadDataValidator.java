@@ -228,7 +228,7 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
         validatePatientsMandatoryData(key, values, errMsg, lineNumber, getStudyProtocol(expectedProtocolId));
         validateRegisteringInstitutionCode(key, values, errMsg, lineNumber);
         validatePatientRaceData(key, values, errMsg, lineNumber);
-        validateAccuralCount(key, values, errMsg, lineNumber);
+        validateAccrualCount(key, values, errMsg, lineNumber);
         return errMsg.toString();
     }
     

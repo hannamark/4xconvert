@@ -79,36 +79,12 @@
 package gov.nih.nci.pa.iso.util;
 
 import gov.nih.nci.iso21090.Ad;
-import gov.nih.nci.iso21090.AddressPartType;
 import gov.nih.nci.iso21090.Adxp;
 import gov.nih.nci.iso21090.AdxpAdl;
 import gov.nih.nci.iso21090.AdxpAl;
-import gov.nih.nci.iso21090.AdxpBnn;
-import gov.nih.nci.iso21090.AdxpBnr;
-import gov.nih.nci.iso21090.AdxpBns;
-import gov.nih.nci.iso21090.AdxpCar;
-import gov.nih.nci.iso21090.AdxpCen;
 import gov.nih.nci.iso21090.AdxpCnt;
-import gov.nih.nci.iso21090.AdxpCpa;
 import gov.nih.nci.iso21090.AdxpCty;
-import gov.nih.nci.iso21090.AdxpDal;
-import gov.nih.nci.iso21090.AdxpDel;
-import gov.nih.nci.iso21090.AdxpDinst;
-import gov.nih.nci.iso21090.AdxpDinsta;
-import gov.nih.nci.iso21090.AdxpDinstq;
-import gov.nih.nci.iso21090.AdxpDir;
-import gov.nih.nci.iso21090.AdxpDmod;
-import gov.nih.nci.iso21090.AdxpDmodid;
-import gov.nih.nci.iso21090.AdxpInt;
-import gov.nih.nci.iso21090.AdxpPob;
-import gov.nih.nci.iso21090.AdxpPre;
-import gov.nih.nci.iso21090.AdxpSal;
 import gov.nih.nci.iso21090.AdxpSta;
-import gov.nih.nci.iso21090.AdxpStb;
-import gov.nih.nci.iso21090.AdxpStr;
-import gov.nih.nci.iso21090.AdxpSttyp;
-import gov.nih.nci.iso21090.AdxpUnid;
-import gov.nih.nci.iso21090.AdxpUnit;
 import gov.nih.nci.iso21090.AdxpZip;
 
 import java.util.ArrayList;
@@ -125,14 +101,6 @@ import org.springframework.util.CollectionUtils;
  *
  */
 public class AddressConverterUtil {
-    private static void setValue(List<Adxp> l, String s, AddressPartType addressPartType) {
-        Adxp x;
-        if (StringUtils.isNotBlank(s)) {
-            x = createAddressPart(addressPartType);
-            x.setValue(s);
-            l.add(x);
-        }
-    }
 
     /**
      * @param streetAddressLine street address
@@ -146,25 +114,31 @@ public class AddressConverterUtil {
     public static Ad create(String streetAddressLine, String deliveryAddressLine, String cityOrMunicipality,
             String stateOrProvince, String postalCode, String countryAlpha3) {
         Ad iso = new Ad();
-        List<Adxp> l = new ArrayList<Adxp>();
-        iso.setPart(l);
-        setValue(l, streetAddressLine, AddressPartType.AL);
+        List<Adxp> addressParts = new ArrayList<Adxp>();
+        iso.setPart(addressParts);
+        setValue(addressParts, streetAddressLine, new AdxpAl());
         if (StringUtils.isNotBlank(deliveryAddressLine)) {
-            setValue(l, deliveryAddressLine, AddressPartType.ADL);
+            setValue(addressParts, deliveryAddressLine, new AdxpAdl());
         }
-        setValue(l, cityOrMunicipality, AddressPartType.CTY);
-        setValue(l, stateOrProvince, AddressPartType.STA);
-        setValue(l, postalCode, AddressPartType.ZIP);
+        setValue(addressParts, cityOrMunicipality, new AdxpCty());
+        setValue(addressParts, stateOrProvince, new AdxpSta());
+        setValue(addressParts, postalCode, new AdxpZip());
 
         if (countryAlpha3 != null) {
-            Adxp x;
-            x = createAddressPart(AddressPartType.CNT);
-            x.setCode(countryAlpha3);
-            x.setValue("adxp.value is required");
-            x.setCodeSystem("ISO 3166-1 alpha-3 code");
-            l.add(x);
+            Adxp country = new AdxpCnt();
+            country.setCode(countryAlpha3);
+            country.setValue(countryAlpha3);
+            country.setCodeSystem("ISO 3166-1 alpha-3 code");
+            addressParts.add(country);
         }
         return iso;
+    }
+
+    private static void setValue(List<Adxp> addressParts, String value, Adxp addressPart) {
+        if (StringUtils.isNotBlank(value)) {
+            addressPart.setValue(value);
+            addressParts.add(addressPart);
+        }
     }
 
     /**
@@ -197,47 +171,6 @@ public class AddressConverterUtil {
                 || adxp instanceof AdxpCty
                 || adxp instanceof AdxpSta
                 || adxp instanceof AdxpZip);
-    }
-
-    private static Adxp createAddressPart(AddressPartType type) {
-        if (type == null) {
-            return new Adxp();
-        }
-
-        switch (type) {
-            case ADL: return new AdxpAdl();
-            case AL : return new AdxpAl();
-            case BNN: return new AdxpBnn();
-            case BNR: return new AdxpBnr();
-            case BNS: return new AdxpBns();
-            case CAR: return new AdxpCar();
-            case CEN: return new AdxpCen();
-            case CNT: return new AdxpCnt();
-            case CPA: return new AdxpCpa();
-            case CTY: return new AdxpCty();
-            case DAL: return new AdxpDal();
-            case DEL: return new AdxpDel();
-            case DINST: return new AdxpDinst();
-            case DINSTA: return new AdxpDinsta();
-            case DINSTQ: return new AdxpDinstq();
-            case DIR: return new AdxpDir();
-            case DMOD: return new AdxpDmod();
-            case DMODID: return new AdxpDmodid();
-            case INT: return new AdxpInt();
-            case POB: return new AdxpPob();
-            case PRE: return new AdxpPre();
-            case SAL: return new AdxpSal();
-            case STA: return new AdxpSta();
-            case STB: return new AdxpStb();
-            case STR: return new AdxpStr();
-            case STTYP: return new AdxpSttyp();
-            case UNID: return new AdxpUnid();
-            case UNIT: return new AdxpUnit();
-            case ZIP: return new AdxpZip();
-
-            // there must be a new type added
-            default: throw new UnsupportedOperationException(type.name());
-        }
     }
 
     /**

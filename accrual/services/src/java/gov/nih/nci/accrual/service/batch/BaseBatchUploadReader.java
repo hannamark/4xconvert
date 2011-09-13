@@ -184,11 +184,11 @@ public class BaseBatchUploadReader {
     /**
      * accrual study site index.
      */
-    protected static final int ACCURAL_STUDY_SITE_INDEX = 1;
+    protected static final int ACCRUAL_STUDY_SITE_INDEX = 1;
     /**
      * accrual count index.
      */
-    protected static final int ACCURAL_COUNT_INDEX = 2;
+    protected static final int ACCRUAL_COUNT_INDEX = 2;
     static {
         PATIENT_RACE_CODE.addAll(Arrays.asList("01", "03", "04", "05", "06", "98", "99"));
         PATIENT_RACE_CODE.addAll(Arrays.asList(PatientRaceCode.getDisplayNames()));

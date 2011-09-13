@@ -199,7 +199,7 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
         HealthCareProviderCorrelationServiceRemote hcpSvc = mock(HealthCareProviderCorrelationServiceRemote.class);
         try {
             HealthCareProviderDTO hcpDTO = new HealthCareProviderDTO();
-            hcpDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoHealtcareProviderIi("7")));
+            hcpDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoHealthcareProviderIi("7")));
             hcpDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
             hcpDTO.setStatus(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
             when(hcpSvc.getCorrelation(any(Ii.class))).thenReturn(hcpDTO);
@@ -207,7 +207,7 @@ public class MockPoJndiServiceLocator implements PoServiceLocator {
                  .thenReturn(Arrays.asList(hcpDTO));
             when(hcpSvc.search(any(HealthCareProviderDTO.class))).thenReturn(Arrays.asList(hcpDTO));
             when(hcpSvc.createCorrelation(any(HealthCareProviderDTO.class))).thenReturn(
-                    IiConverter.convertToPoHealtcareProviderIi("8"));
+                    IiConverter.convertToPoHealthcareProviderIi("8"));
         } catch (Exception e) {
             LOG.error(ERROR_MSG, e);
         }

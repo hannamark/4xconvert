@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The po
+ * source code form and machine readable, binary, object code form. The pa
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This po Software License (the License) is between NCI and You. You (or
+ * This pa Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the po Software to (i) use, install, access, operate,
+ * its rights in the pa Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the po Software; (ii) distribute and
- * have distributed to and by third parties the po Software and any
+ * and prepare derivative works of the pa Software; (ii) distribute and
+ * have distributed to and by third parties the pa Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,43 +80,81 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.po.service;
+package gov.nih.nci.pa.filter;
 
-import gov.nih.nci.po.util.PoHibernateUtil;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.servlet.FilterChain;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.mockrunner.mock.web.MockFilterChain;
+import com.mockrunner.mock.web.MockHttpServletRequest;
+import com.mockrunner.mock.web.MockHttpServletResponse;
+import com.mockrunner.mock.web.MockHttpSession;
+import com.mockrunner.mock.web.MockServletContext;
 
 /**
- * Common methods for admin-related entity services.  These are for entities that do not require curation,
- * and only require standard persistence (create/update) support.
- * @author moweis
- * @param <T>
- *
+ * Tests the CGMMAuthSourceRequestFilter.
  */
-public class AbstractAdminServiceBean<T extends PersistentObject> extends AbstractBaseServiceBean<T> {
+public class CGMMAuthSourceRequestFilterTest {
+    CGMMAuthSourceRequestFilter filter;
+    HttpServletRequest request;
+    HttpServletResponse response;
+    FilterChain chain;
 
-    /**
-     * Save the object.
-     * @param obj the object
-     * @return the id
-     */
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public long create(T obj) {
-        if (obj.getId() != null) {
-            throw new IllegalArgumentException("id must be null on calls to create!");
-        }
-        return ((Long) PoHibernateUtil.getCurrentSession().save(obj)).longValue();
+    @Before
+    public void setup() throws Exception {
+        filter = new CGMMAuthSourceRequestFilter();
+        filter.init(null);
+        request = setupRequest();
+        response = new MockHttpServletResponse();
+        chain = new MockFilterChain();
     }
 
-    /**
-     * Update entity.
-     * @param updated The structural role to update.
-     */
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void update(T updated) {
-        PoHibernateUtil.getCurrentSession().update(updated);
+    private HttpServletRequest setupRequest() {
+        HttpSession session = setupSession();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setSession(session);
+        return request;
+    }
+
+    private HttpSession setupSession() {
+        MockHttpSession session = new MockHttpSession();
+        session.setupServletContext(new MockServletContext());
+        return session;
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        filter.destroy();
+    }
+
+    @Test
+    public void testFilterWithNoAuthSourceMap() throws Exception {
+        assertNull(request.getAttribute(CGMMAuthSourceRequestFilter.AUTH_SOURCE_MAP));
+        assertNull(request.getSession().getAttribute(CGMMAuthSourceRequestFilter.AUTH_SOURCE_MAP));
+
+        filter.doFilter(request, response, chain);
+        assertNull(request.getAttribute(CGMMAuthSourceRequestFilter.AUTH_SOURCE_MAP));
+        assertNull(request.getSession().getServletContext().getAttribute(CGMMAuthSourceRequestFilter.AUTH_SOURCE_MAP));
+    }
+
+    @Test
+    public void testFilterWithAuthSourceMap() throws Exception {
+        Object authSourceMap = new Object();
+        request.setAttribute(CGMMAuthSourceRequestFilter.AUTH_SOURCE_MAP, authSourceMap);
+        assertNull(request.getSession().getServletContext().getAttribute(CGMMAuthSourceRequestFilter.AUTH_SOURCE_MAP));
+
+        filter.doFilter(request, response, chain);
+        assertNotNull(request.getAttribute(CGMMAuthSourceRequestFilter.AUTH_SOURCE_MAP));
+        assertNotNull(request.getSession().getServletContext()
+            .getAttribute(CGMMAuthSourceRequestFilter.AUTH_SOURCE_MAP));
     }
 }

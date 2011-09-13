@@ -172,8 +172,7 @@ public class POPatientServiceTest extends AbstractServiceTest<POPatientBean>{
 
     @Test
     public void get() throws Exception {
-        POPatientDTO dto = bean.get(IiConverter.convertToPOPatientIi(
-                IiConverter.convertToLong(ii)));
+        POPatientDTO dto = bean.get(IiConverter.convertToPoPatientIi(IiConverter.convertToLong(ii)));
         assertNotNull(dto);
     }
 
@@ -202,8 +201,7 @@ public class POPatientServiceTest extends AbstractServiceTest<POPatientBean>{
 
     @Test
     public void update() throws Exception {
-        POPatientDTO dto = bean.get(IiConverter.convertToPOPatientIi(
-                IiConverter.convertToLong(ii)));
+        POPatientDTO dto = bean.get(IiConverter.convertToPoPatientIi(IiConverter.convertToLong(ii)));
         Cd status = dto.getStatus();
         status.setCode("active");
         bean.update(dto);

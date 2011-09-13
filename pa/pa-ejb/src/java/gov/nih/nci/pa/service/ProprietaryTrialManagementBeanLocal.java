@@ -165,6 +165,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
      * @param studySiteAccrualDTOs list of study site Accrual status
      * @throws PAException on error
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     @SuppressWarnings("PMD.ExcessiveParameterList")
     // CHECKSTYLE:OFF More than 7 Parameters
@@ -187,7 +188,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
             StudyResourcingDTO summary4StudyResourcingDTO = new StudyResourcingDTO();
             summary4StudyResourcingDTO.setTypeCode(summary4TypeCode);
             TrialRegistrationValidator validator = new TrialRegistrationValidator();
-            validator.validateSummary4SponsorAndCategory(studyProtocolDTO, summary4OrganizationDTO, 
+            validator.validateSummary4SponsorAndCategory(studyProtocolDTO, summary4OrganizationDTO,
                                                             summary4StudyResourcingDTO);
             // the validation are done, proceed to update
             Ii studyProtocolIi = studyProtocolDTO.getIdentifier();
@@ -356,7 +357,7 @@ public class ProprietaryTrialManagementBeanLocal extends AbstractTrialRegistrati
                 continue;
             }
             if (studySiteMap.get(ssasDto.getStudySiteIi().getExtension()) == null) {
-                errorMsg.append(" Study site identifier not found in Study Site Accural Status DTO ").append(
+                errorMsg.append(" Study site identifier not found in Study Site Accrual Status DTO ").append(
                         ssasDto.getStudySiteIi().getExtension());
             }
         }

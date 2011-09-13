@@ -311,7 +311,7 @@ public class PatientBeanLocal implements PatientServiceLocal {
 
         POPatientDTO poPatientDTO = null;
             if (dto.getAssignedIdentifier() != null && dto.getAssignedIdentifier().getExtension() != null) {
-                poPatientDTO = patientCorrelationSvc.get(IiConverter.convertToPOPatientIi(
+                poPatientDTO = patientCorrelationSvc.get(IiConverter.convertToPoPatientIi(
                     IiConverter.convertToLong(dto.getAssignedIdentifier())));
                 poPatientDTO.setScoperIdentifier(scoper);
                 poPatientDTO.setPostalAddress(popDTO.getPostalAddress());
@@ -346,7 +346,7 @@ public class PatientBeanLocal implements PatientServiceLocal {
             .load(Patient.class, Long.parseLong(ii.getExtension()));
         try {
             PoRegistry.getPatientCorrelationService().updateCorrelationStatus(IiConverter
-                    .convertToPOPatientIi(Long.parseLong(pat.getIdentifier())), 
+                    .convertToPoPatientIi(Long.parseLong(pat.getIdentifier())), 
                     CdConverter.convertToCd(StructuralRoleStatusCode.NULLIFIED));
         } catch (EntityValidationException e) {
             throw new PAException(e);

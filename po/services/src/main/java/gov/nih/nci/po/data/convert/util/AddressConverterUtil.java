@@ -19,12 +19,6 @@ import org.apache.commons.lang.StringUtils;
  *
  */
 public class AddressConverterUtil {
-    private static void setValue(List<Adxp> l, String s, Adxp x) {
-        if (StringUtils.isNotBlank(s)) {
-            x.setValue(s);
-            l.add(x);
-        }
-    }
 
     /**
      * @param streetAddressLine street address
@@ -56,5 +50,12 @@ public class AddressConverterUtil {
         x.setCodeSystem("ISO 3166-1 alpha-3 code");
         l.add(x);
         return iso;
+    }
+
+    private static void setValue(List<Adxp> l, String s, Adxp x) {
+        if (StringUtils.isNotBlank(s)) {
+            x.setValue(s);
+            l.add(x);
+        }
     }
 }

@@ -322,7 +322,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         org.setPostalAddress(AddressConverterUtil.create("2115 Executive Blvd.", "", "Rockville", "MD", "27852", "USA"));
 
         HealthCareProviderDTO hcpDTO = new HealthCareProviderDTO();
-        hcpDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoHealtcareProviderIi("1")));
+        hcpDTO.setIdentifier(DSetConverter.convertIiToDset(IiConverter.convertToPoHealthcareProviderIi("1")));
         hcpDTO.setPlayerIdentifier(IiConverter.convertToPoOrganizationIi("1"));
 
         PersonDTO person = new PersonDTO();

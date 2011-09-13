@@ -128,7 +128,7 @@ public class StudyContactConverter extends gov.nih.nci.pa.iso.convert.AbstractCo
 
         if (bo.getHealthCareProvider() != null) {
             dto.setHealthCareProviderIi(
-                    IiConverter.convertToPoHealtcareProviderIi(bo.getHealthCareProvider().getIdentifier()));
+                    IiConverter.convertToPoHealthcareProviderIi(bo.getHealthCareProvider().getIdentifier()));
         }
         if (bo.getClinicalResearchStaff() != null) {
             dto.setClinicalResearchStaffIi(IiConverter.convertToPoClinicalResearchStaffIi(

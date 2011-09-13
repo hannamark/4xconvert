@@ -109,16 +109,16 @@ public class BaseValidatorBatchUploadReader extends BaseBatchUploadReader {
      * @param errMsg if any
      * @param lineNumber line Number
      */
-    protected void validateAccuralCount(String key, List<String> values, StringBuffer errMsg, long lineNumber) {
+    protected void validateAccrualCount(String key, List<String> values, StringBuffer errMsg, long lineNumber) {
         if (StringUtils.equalsIgnoreCase("ACCRUAL_COUNT", key)) {
             String protocolId = StringUtils.trim(values.get(ACCRUAL_COUNT_STUDY_INDEX));
             StudyProtocolDTO sp = getStudyProtocol(protocolId);
             validateStudyType(errMsg, protocolId, sp);
-            String accrualStudySite = StringUtils.trim(values.get(ACCURAL_STUDY_SITE_INDEX));
+            String accrualStudySite = StringUtils.trim(values.get(ACCRUAL_STUDY_SITE_INDEX));
             if (StringUtils.isEmpty(accrualStudySite)) {
                 errMsg.append("Accrual study site is missing").append(appendLineNumber(lineNumber)).append('\n');
             }
-            String accrualCount = StringUtils.trim(values.get(ACCURAL_COUNT_INDEX));
+            String accrualCount = StringUtils.trim(values.get(ACCRUAL_COUNT_INDEX));
             if (StringUtils.isEmpty(accrualCount)) {
                 errMsg.append("Accrual count is missing").append(appendLineNumber(lineNumber)).append('\n');
             }

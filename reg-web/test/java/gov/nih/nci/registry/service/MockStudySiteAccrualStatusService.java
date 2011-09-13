@@ -29,7 +29,7 @@ public class MockStudySiteAccrualStatusService extends AbstractBaseSearchBean<St
     static {
         dtoList = new ArrayList<StudySiteAccrualStatusDTO>();
         StudySiteAccrualStatusDTO dto = new StudySiteAccrualStatusDTO();
-        dto.setIdentifier(IiConverter.convertToStudySiteAccuralStatusIi(1L));
+        dto.setIdentifier(IiConverter.convertToStudySiteAccrualStatusIi(1L));
         dto.setStatusCode(CdConverter.convertStringToCd("PENDING"));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("12/16/2009")));
         dto.setStudySiteIi(IiConverter.convertToStudySiteIi(1L));
