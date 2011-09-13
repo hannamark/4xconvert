@@ -84,6 +84,7 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.File;
@@ -100,32 +101,46 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 
 /**
  * @author vrushali
  *
  */
-public class PDQAction extends ActionSupport implements ServletResponseAware {
+public class PDQAction extends ActionSupport implements Preparable, ServletResponseAware {
 
-    private static final long serialVersionUID = -4570439686638519291L;
+    private static final long serialVersionUID = -1336481874691716853L;
+
+    private PDQUpdateGeneratorTaskServiceLocal pdqUpdateGeneratorTaskService;
+
     private HttpServletResponse servletResponse;
     private String date;
-    private List<String> listOfFileNames = new ArrayList<String>();;
+    private List<String> listOfFileNames = new ArrayList<String>();
+
     /**
-    *
-    * @return success
-    */
-   public String getAvailableFiles() {
-       try {
-           listOfFileNames = PaRegistry.getPDQUpdateGeneratorTaskService().getListOfFileNames();
-       } catch (PAException e) {
-           addActionError(e.getMessage());
-       }
-       ServletActionContext.getRequest().setAttribute("listOfFileNames", listOfFileNames);
-       return SUCCESS;
-   }
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() {
+        pdqUpdateGeneratorTaskService = PaRegistry.getPDQUpdateGeneratorTaskService();
+    }
+
     /**
-     *
+     * 
+     * @return success
+     */
+    public String getAvailableFiles() {
+        try {
+            listOfFileNames = pdqUpdateGeneratorTaskService.getListOfFileNames();
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+        }
+        ServletActionContext.getRequest().setAttribute("listOfFileNames", listOfFileNames);
+        return SUCCESS;
+    }
+
+    /**
+     * 
      * @return success
      */
     public String getFileByDate() {
@@ -133,7 +148,7 @@ public class PDQAction extends ActionSupport implements ServletResponseAware {
             return ERROR;
         }
         try {
-            File downloadFile = new File(PaRegistry.getPDQUpdateGeneratorTaskService().getRequestedFileName(date));
+            File downloadFile = new File(pdqUpdateGeneratorTaskService.getRequestedFileName(date));
             servletResponse = ServletActionContext.getResponse();
             servletResponse.setContentType("application/x-unknown");
             FileInputStream fileToDownload = new FileInputStream(downloadFile);
@@ -155,21 +170,7 @@ public class PDQAction extends ActionSupport implements ServletResponseAware {
         }
         return SUCCESS;
     }
-    /**
-     * @return String
-     *
-     */
-    public String startProcess() {
-        try {
-            PaRegistry.getPDQUpdateGeneratorTaskService().performTask();
-        } catch (PAException e) {
-            addActionError(e.getMessage());
-            return ERROR;
-        }
-        ServletActionContext.getRequest().setAttribute("showButton", "no");
-        addActionMessage("Process has been started...");
-        return SUCCESS;
-    }
+
     /**
      * @return the servletResponse
      */
@@ -180,31 +181,44 @@ public class PDQAction extends ActionSupport implements ServletResponseAware {
     /**
      * @param response servletResponse
      */
+    @Override
     public void setServletResponse(HttpServletResponse response) {
         this.servletResponse = response;
     }
+
     /**
      * @param date the date to set
      */
     public void setDate(String date) {
         this.date = date;
     }
+
     /**
      * @return the date
      */
     public String getDate() {
         return date;
     }
+
     /**
      * @param listOffileName the listOffileName to set
      */
     public void setListOffileName(List<String> listOffileName) {
         this.listOfFileNames = listOffileName;
     }
+
     /**
      * @return the listOffileName
      */
     public List<String> getListOffileName() {
         return listOfFileNames;
     }
+
+    /**
+     * @param pdqUpdateGeneratorTaskService the pdqUpdateGeneratorTaskService to set
+     */
+    public void setPdqUpdateGeneratorTaskService(PDQUpdateGeneratorTaskServiceLocal pdqUpdateGeneratorTaskService) {
+        this.pdqUpdateGeneratorTaskService = pdqUpdateGeneratorTaskService;
+    }
+
 }

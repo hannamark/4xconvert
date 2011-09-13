@@ -89,6 +89,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -106,9 +107,10 @@ import com.mockrunner.mock.web.MockHttpServletResponse;
  *
  */
 public class PDQActionTest extends AbstractPaActionTest {
-    PDQAction action = new PDQAction();
+    private PDQAction action = new PDQAction();
     private ServiceLocator paSvcLoc;
     private PDQUpdateGeneratorTaskServiceLocal pdqUpdateGeneratorTaskService;
+    
     @Before
     public void setup() throws PAException {
         paSvcLoc = mock (ServiceLocator.class);
@@ -117,7 +119,9 @@ public class PDQActionTest extends AbstractPaActionTest {
         when(paSvcLoc.getPDQUpdateGeneratorTaskService()).thenReturn(pdqUpdateGeneratorTaskService);
         when(pdqUpdateGeneratorTaskService.getListOfFileNames()).thenReturn(new ArrayList<String>());
         when(pdqUpdateGeneratorTaskService.getRequestedFileName(anyString())).thenReturn("fileName");
+        action.prepare();
     }
+    
     @Test
     public void testProperties() {
         assertNull(action.getServletResponse());
@@ -133,10 +137,12 @@ public class PDQActionTest extends AbstractPaActionTest {
         assertNull(action.getListOffileName());
 
     }
+    
     @Test
     public void testGetAvailableFiles() {
         assertNotNull(action.getAvailableFiles());
     }
+    
     @Test
     public void testGetFileByDate() {
         assertEquals("error", action.getFileByDate());

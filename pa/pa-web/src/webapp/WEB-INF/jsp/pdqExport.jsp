@@ -5,15 +5,6 @@
     <head>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
-        <script type="text/javascript" language="javascript">
-            function run() {
-                $('actionsRow').hide();
-                $('runMessageRow').show();
-                var url = "<c:url value="/pdqstartProcess.action"/>";
-                var aj = callAjaxPost(null, url, {});
-                return false;
-            }
-        </script>
     </head>
     <body>
         <s:form name="pdq">
@@ -22,28 +13,12 @@
                     <s:actionerror/>
                 </div>
             </s:if>
-        <s:actionmessage/>
-        <display:table class="data" sort="list" pagesize="200" id="row" name="${requestScope.listOfFileNames}" export="false">
-            <display:column class="title" title="File Name" sortable="true" headerScope="col" scope="row">
-                <a href="pdqgetFileByDate.action?date=${row}">${row}</a>
-            </display:column>
-        </display:table>
-        <c:if test="${empty requestScope.showButton}">
-            <div id="actionsRow" class="actionsrow">
-                <del class="btnwrapper">
-                    <ul class="btnrow">
-                        <li>
-                            <a href="#" class="btn" onclick="return run();">
-                                <span class="btn_img"><span class="save"><fmt:message key="${pagePrefix}button.run"/></span></span>
-                            </a>
-                        </li>
-                    </ul>   
-                </del>
-            </div>
-            <div id="runMessageRow" class="actionsrow" style="display:none">
-                <fmt:message key="${pagePrefix}launched"/>
-            </div>
-        </c:if>
+            <s:actionmessage/>
+            <display:table class="data" sort="list" pagesize="200" id="row" name="${requestScope.listOfFileNames}" export="false">
+                <display:column class="title" title="File Name" sortable="true" headerScope="col" scope="row">
+                    <a href="pdqgetFileByDate.action?date=${row}">${row}</a>
+                </display:column>
+            </display:table>
         </s:form> 
     </body>
 </html>
