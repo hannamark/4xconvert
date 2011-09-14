@@ -177,7 +177,7 @@ public enum StudyStatusCode implements CodedEnum<String> {
 
         tmp.put(ADMINISTRATIVELY_COMPLETE, emptySet);
 
-        tmpSet = EnumSet.of(CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+        tmpSet = EnumSet.of(CLOSED_TO_ACCRUAL_AND_INTERVENTION, ADMINISTRATIVELY_COMPLETE);
         tmp.put(CLOSED_TO_ACCRUAL, Collections.unmodifiableSet(tmpSet));
 
         tmpSet = EnumSet.of(ADMINISTRATIVELY_COMPLETE, COMPLETE);
