@@ -63,7 +63,7 @@
     <dependency org="jboss"                  name="jboss-jaxrpc"            rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="jboss"                  name="jbossall-client"         rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="junit"                  name="junit"                   rev="4.8.2"             conf="test->master"/>
-    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="3.6.1-alpha1"      conf="test->test"/>
+    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="3.6.1-alpha2"      conf="test->test"/>
     <dependency org="antlr"                  name="antlr"                   rev="2.7.6"           conf="test->master"/>
     <dependency org="ncicb"                  name="security"                rev="4.2"             conf="test->master"/>
 
