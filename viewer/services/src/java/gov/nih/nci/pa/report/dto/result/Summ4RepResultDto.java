@@ -24,8 +24,10 @@ public class Summ4RepResultDto {
     private St type = new St();
     private St title = new St();
     private Int target = new Int();
-    private Int accrualCenter12m = new Int();
-    private Int accrualCenterToDate = new Int();
+    private Int accrualCenterLeadOrg12m = new Int();
+    private Int accrualCenterLeadOrgToDate = new Int();
+    private Int accrualCenterTreatOrg12m = new Int();
+    private Int accrualCenterTreatOrgToDate = new Int();
     private St sortCriteria = new St();
     private St subSortCriteria = new St();
     private DSet<Cd> anatomicSiteCodes = new DSet<Cd>();
@@ -33,7 +35,7 @@ public class Summ4RepResultDto {
     private St nctIdentifier = new St();
     private St ctepIdentifier = new St();
     private St leadOrgName = new St();
-    
+
     /**
      * @return the sponsor
      */
@@ -82,14 +84,14 @@ public class Summ4RepResultDto {
     public void setProgramCode(St programCode) {
         this.programCode = programCode;
     }
-  
+
     /**
      * @return the orgMember
      */
     public St getOrgMember() {
         return orgMember;
     }
-    
+
     /**
      * @param orgMember the orgMember to set
      */
@@ -172,28 +174,28 @@ public class Summ4RepResultDto {
     /**
      * @return the accrualCenter12m
      */
-    public Int getAccrualCenter12m() {
-        return accrualCenter12m;
+    public Int getAccrualCenterLeadOrg12m() {
+        return accrualCenterLeadOrg12m;
     }
     /**
      * @param accrualCenter12m the accrualCenter12m to set
      */
-    public void setAccrualCenter12m(Int accrualCenter12m) {
-        this.accrualCenter12m = accrualCenter12m;
+    public void setAccrualCenterLeadOrg12m(Int accrualCenter12m) {
+        this.accrualCenterLeadOrg12m = accrualCenter12m;
     }
     /**
      * @return the accrualCenterToDate
      */
-    public Int getAccrualCenterToDate() {
-        return accrualCenterToDate;
+    public Int getAccrualCenterLeadOrgToDate() {
+        return accrualCenterLeadOrgToDate;
     }
     /**
      * @param accrualCenterToDate the accrualCenterToDate to set
      */
-    public void setAccrualCenterToDate(Int accrualCenterToDate) {
-        this.accrualCenterToDate = accrualCenterToDate;
+    public void setAccrualCenterLeadOrgToDate(Int accrualCenterToDate) {
+        this.accrualCenterLeadOrgToDate = accrualCenterToDate;
     }
-    
+
     /**
      * @return the sortCriteria
      */
@@ -206,7 +208,7 @@ public class Summ4RepResultDto {
     public St getSubSortCriteria() {
         return subSortCriteria;
     }
-    
+
     /**
      * @param sortCriteria the sortCriteria to set
      */
@@ -219,7 +221,7 @@ public class Summ4RepResultDto {
     public void setSubSortCriteria(St subSortCriteria) {
         this.subSortCriteria = subSortCriteria;
     }
-    
+
     /**
      * @param siteCodes the anatomic site codes to set
      */
@@ -279,5 +281,29 @@ public class Summ4RepResultDto {
      */
     public St getLeadOrgName() {
         return this.leadOrgName;
+    }
+    /**
+     * @param accrualCenterTreatOrg12m the accrualCenterTreatOrg12m to set
+     */
+    public void setAccrualCenterTreatOrg12m(Int accrualCenterTreatOrg12m) {
+        this.accrualCenterTreatOrg12m = accrualCenterTreatOrg12m;
+    }
+    /**
+     * @return the accrualCenterTreatOrg12m
+     */
+    public Int getAccrualCenterTreatOrg12m() {
+        return accrualCenterTreatOrg12m;
+    }
+    /**
+     * @param accrualCenterTreatOrgToDate the accrualCenterTreatOrgToDate to set
+     */
+    public void setAccrualCenterTreatOrgToDate(Int accrualCenterTreatOrgToDate) {
+        this.accrualCenterTreatOrgToDate = accrualCenterTreatOrgToDate;
+    }
+    /**
+     * @return the accrualCenterTreatOrgToDate
+     */
+    public Int getAccrualCenterTreatOrgToDate() {
+        return accrualCenterTreatOrgToDate;
     }
 }

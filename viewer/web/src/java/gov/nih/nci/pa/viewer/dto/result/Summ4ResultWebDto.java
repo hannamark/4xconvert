@@ -28,8 +28,10 @@ public final class Summ4ResultWebDto {
     private String type = "";
     private String title = "";
     private Integer target = null;
-    private Integer accrualCenter12m = null;
-    private Integer accrualCenterToDate = null;
+    private Integer accrualCenterLO12m = null;
+    private Integer accrualCenterTS12m = null;
+    private Integer accrualCenterLOToDate = null;
+    private Integer accrualCenterTSToDate = null;
     private String sortCriteria = "";
     private String subSortCriteria = "";
     private List<String> anatomicSites = null;
@@ -61,8 +63,10 @@ public final class Summ4ResultWebDto {
         type = StConverter.convertToString(dto.getType());
         title = StConverter.convertToString(dto.getTitle());
         target = IntConverter.convertToInteger(dto.getTarget());
-        accrualCenter12m = IntConverter.convertToInteger(dto.getAccrualCenter12m());
-        accrualCenterToDate = IntConverter.convertToInteger(dto.getAccrualCenterToDate());
+        accrualCenterLO12m = IntConverter.convertToInteger(dto.getAccrualCenterLeadOrg12m());
+        accrualCenterLOToDate = IntConverter.convertToInteger(dto.getAccrualCenterLeadOrgToDate());
+        accrualCenterTS12m = IntConverter.convertToInteger(dto.getAccrualCenterTreatOrg12m());
+        accrualCenterTSToDate = IntConverter.convertToInteger(dto.getAccrualCenterTreatOrgToDate());
         sortCriteria = StConverter.convertToString(dto.getSortCriteria());
         subSortCriteria = StConverter.convertToString(dto.getSubSortCriteria());
         anatomicSites = DSetConverter.convertDSetCdToList(dto.getAnatomicSiteCodes());
@@ -71,7 +75,7 @@ public final class Summ4ResultWebDto {
         leadOrgName = StConverter.convertToString(dto.getLeadOrgName());
         ctepIdentifier = StConverter.convertToString(dto.getCtepIdentifier());
     }
-    
+
     /**
      * @return the nciIdentifier
      */
@@ -100,7 +104,7 @@ public final class Summ4ResultWebDto {
         return leadOrgName;
     }
 
-    
+
     /**
      * @return the sponsor
      */
@@ -179,17 +183,31 @@ public final class Summ4ResultWebDto {
     }
 
     /**
-     * @return the accrualCenter12m
+     * @return the accrualCenterLo12m
      */
-    public Integer getAccrualCenter12m() {
-        return accrualCenter12m;
+    public Integer getAccrualCenterLO12m() {
+        return accrualCenterLO12m;
     }
 
     /**
-     * @return the accrualCenterToDate
+     * @return the accrualCenterLoToDate
      */
-    public Integer getAccrualCenterToDate() {
-        return accrualCenterToDate;
+    public Integer getAccrualCenterLOToDate() {
+        return accrualCenterLOToDate;
+    }
+
+    /**
+     * @return the accrualCenterTs12m
+     */
+    public Integer getAccrualCenterTS12m() {
+        return accrualCenterTS12m;
+    }
+
+    /**
+     * @return the accrualCenterTsToDate
+     */
+    public Integer getAccrualCenterTSToDate() {
+        return accrualCenterTSToDate;
     }
 
     /**
@@ -215,7 +233,7 @@ public final class Summ4ResultWebDto {
 
     /**
      * Static method for generating a list of web dto's from a list of service dto's.
-     * 
+     *
      * @param serviceDtoList service dto list
      * @return web dto list
      */
@@ -227,4 +245,5 @@ public final class Summ4ResultWebDto {
         }
         return resultList;
     }
+
 }

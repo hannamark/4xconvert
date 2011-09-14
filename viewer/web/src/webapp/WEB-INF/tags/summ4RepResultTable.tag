@@ -37,6 +37,8 @@
     <display:column titleKey="report.result.type" property="type" />
     <display:column titleKey="report.result.title"  maxLength= "200" property="title" />
     <display:column titleKey="report.result.target" property="target" />
-    <display:column titleKey="report.result.accrualCenter12m" property="accrualCenter12m" />
-    <display:column titleKey="report.result.accrualCenterToDate" property="accrualCenterToDate" />
+    <display:column titleKey="report.result.accrualCenterLO12m" property="accrualCenterLO12m" />
+    <display:column titleKey="report.result.accrualCenterLOToDate" property="accrualCenterLOToDate" />
+    <display:column titleKey="report.result.accrualCenterTS12m" property="accrualCenterTS12m" />
+    <display:column titleKey="report.result.accrualCenterTSToDate" property="accrualCenterTSToDate" />
 </display:table>

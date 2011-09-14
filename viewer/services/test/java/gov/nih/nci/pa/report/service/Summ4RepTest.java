@@ -220,7 +220,7 @@ public class Summ4RepTest
             + "sp.primary_purpose_code, "
             + "sp.public_tittle, "
             + "sp.min_target_accrual_num, "
-            + "sp.identifier, sp.identifier,"
+            + "sp.identifier, sp.identifier, sp.identifier, sp.identifier,"
             + "sp.public_description, "
             + "sp.identifier, "
             + "sp.study_protocol_type, "

@@ -145,14 +145,16 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
     private static final int TYP_IDX = 7;
     private static final int TTL_IDX = 8;
     private static final int TRG_IDX = 9;
-    private static final int AC12_IDX = 10;
-    private static final int ACTD_IDX = 11;
-    private static final int SSC_IDX = 12;
-    private static final int TRIAL_IDX = 13;
-    private static final int NCI_ID_IDX = 14;
-    private static final int LEAD_ORG_IDX = 15;
-    private static final int NCT_IDX = 16;
-    private static final int CTEP_IDX = 17;
+    private static final int ACLO12_IDX = 10;
+    private static final int ACTS12_IDX = 11;
+    private static final int ACLOTD_IDX = 12;
+    private static final int ACTSTD_IDX = 13;
+    private static final int SSC_IDX = 14;
+    private static final int TRIAL_IDX = 15;
+    private static final int NCI_ID_IDX = 16;
+    private static final int LEAD_ORG_IDX = 17;
+    private static final int NCT_IDX = 18;
+    private static final int CTEP_IDX = 19;
 
     /**
      * @return the studyProtocolService
@@ -187,8 +189,10 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + "trial_list.type, "
         + "trial_list.official_title, "
         + "trial_list.target, ");
-        sql.append(getAccrualCenter12m(criteria));
-        sql.append(getAccrualCenterToDate());
+        sql.append(getAccrualCenterLeadOrg12m(criteria));
+        sql.append(getAccrualCenterTreatOrg12m(criteria));
+        sql.append(getAccrualCenterLeadOrgToDate());
+        sql.append(getAccrualCenterTreatOrgToDate());
         sql.append("(select distinct type_code from study_resourcing where study_protocol_identifier = trial_id and "
         + "summ_4_rept_indicator = true) as sort_sub_category, "
         + "trial_list.trial_id, "
@@ -247,7 +251,9 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
 
     private String getEarliestOpenAccrualDate() {
         return "(CASE "
-        + "WHEN sp.proprietary_trial_indicator = TRUE THEN ss.accrual_date_range_low "
+        + "WHEN sp.proprietary_trial_indicator = TRUE THEN "
+        + "(select min(oDss.accrual_date_range_low) from study_site oDss where "
+        + "oDss.study_protocol_identifier = sp.identifier) "
         + "WHEN sp.proprietary_trial_indicator = FALSE THEN sp.start_date END) as open_date, ";
     }
 
@@ -281,22 +287,49 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
         + ") as ctep_identifier ";
     }
 
-    private String getAccrualCenterToDate() {
-        return "(select count(sub1.patient_identifier) from study_subject sub1  "
-        + "inner join performed_activity AS perAct ON perAct.study_subject_identifier = sub1.identifier  "
-        + "AND perAct.study_protocol_identifier = sub1.study_protocol_identifier "
-        + "where sub1.study_protocol_identifier = trial_list.trial_id "
-        + "and perAct.registration_date <= now() "
-        + ") as accrual_center_todate, ";
-    }
-
-    private String getAccrualCenter12m(Summ4RepCriteriaDto criteria) {
-        StringBuffer sb = new StringBuffer("(select count(sub1.patient_identifier) from study_subject sub1 "
+    private String getAccrualCenterSelectClause() {
+        StringBuffer sb = new StringBuffer("(select count(sub1.patient_identifier) "
+        + "from study_subject sub1 "
+        + "inner join study_site as ac12mSs ON sub1.study_site_identifier = ac12mSs.identifier "
+        + "AND ac12mSs.functional_code = 'TREATING_SITE' "
+        + "inner join healthcare_facility as treatHcf ON treatHcf.identifier = ac12mSs.healthcare_facility_identifier "
+        + "inner join study_site as leadOrgSs ON leadOrgSs.study_protocol_identifier = sub1.study_protocol_identifier "
+        + "AND leadOrgSs.functional_code = 'LEAD_ORGANIZATION' "
+        + "inner join research_organization as leadOrgRo ON "
+        + "leadOrgSs.research_organization_identifier = leadOrgRo.identifier "
         + "inner join performed_activity AS perAct ON perAct.study_subject_identifier = sub1.identifier "
         + "AND perAct.study_protocol_identifier = sub1.study_protocol_identifier "
         + "where sub1.study_protocol_identifier = trial_list.trial_id ");
+        return sb.toString();
+    }
+
+    private String getAccrualCenterTreatOrgToDate() {
+        StringBuffer sb = new StringBuffer(getAccrualCenterSelectClause());
+        sb.append("and treatHcf.organization_identifier !=  leadOrgRo.organization_identifier and "
+        + "perAct.registration_date <= now() ) as accrual_center_treatorg_todate, ");
+        return sb.toString();
+    }
+
+    private String getAccrualCenterLeadOrgToDate() {
+        StringBuffer sb = new StringBuffer(getAccrualCenterSelectClause());
+        sb.append("and treatHcf.organization_identifier =  leadOrgRo.organization_identifier and "
+        + "perAct.registration_date <= now() ) as accrual_center_leadorg_todate, ");
+        return sb.toString();
+    }
+
+    private String getAccrualCenterTreatOrg12m(Summ4RepCriteriaDto criteria) {
+        StringBuffer sb = new StringBuffer(getAccrualCenterSelectClause());
+        sb.append("and treatHcf.organization_identifier !=  leadOrgRo.organization_identifier ");
         sb.append(dateRangeSql(criteria, "perAct.registration_date"));
-        sb.append(") as accrual_center_12m, ");
+        sb.append(") as accrual_center_treatorg_12m, ");
+        return sb.toString();
+    }
+
+    private String getAccrualCenterLeadOrg12m(Summ4RepCriteriaDto criteria) {
+        StringBuffer sb = new StringBuffer(getAccrualCenterSelectClause());
+        sb.append("and treatHcf.organization_identifier =  leadOrgRo.organization_identifier ");
+        sb.append(dateRangeSql(criteria, "perAct.registration_date"));
+        sb.append(") as accrual_center_leadorg_12m, ");
         return sb.toString();
     }
 
@@ -388,8 +421,10 @@ public class Summ4ReportBean extends AbstractStandardReportBean<Summ4RepCriteria
             rdto.setTitle(StConverter.convertToSt((String) q[TTL_IDX]));
 
             rdto.setTarget(IntConverter.convertToInt(convertToInteger(q[TRG_IDX])));
-            rdto.setAccrualCenter12m(IntConverter.convertToInt(convertToInteger(q[AC12_IDX])));
-            rdto.setAccrualCenterToDate(IntConverter.convertToInt(convertToInteger(q[ACTD_IDX])));
+            rdto.setAccrualCenterLeadOrg12m(IntConverter.convertToInt(convertToInteger(q[ACLO12_IDX])));
+            rdto.setAccrualCenterTreatOrg12m(IntConverter.convertToInt(convertToInteger(q[ACTS12_IDX])));
+            rdto.setAccrualCenterLeadOrgToDate(IntConverter.convertToInt(convertToInteger(q[ACLOTD_IDX])));
+            rdto.setAccrualCenterTreatOrgToDate(IntConverter.convertToInt(convertToInteger(q[ACTSTD_IDX])));
             rdto.setSubSortCriteria(StConverter.convertToSt((String) q[SSC_IDX]));
             rdto.setNciIdentifier(StConverter.convertToSt((String) q[NCI_ID_IDX]));
             rdto.setLeadOrgName(StConverter.convertToSt((String) q[LEAD_ORG_IDX]));

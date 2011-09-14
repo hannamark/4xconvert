@@ -117,8 +117,10 @@ public class MockSumm4RepService extends MockService implements Summ4RepLocal {
 
     private  Summ4RepResultDto generateDto(String sort, String subSort) {
         Summ4RepResultDto dto = new Summ4RepResultDto();
-        dto.setAccrualCenter12m(IntConverter.convertToInt(TEST_INT));
-        dto.setAccrualCenterToDate(IntConverter.convertToInt(TEST_INT));
+        dto.setAccrualCenterLeadOrg12m(IntConverter.convertToInt(TEST_INT));
+        dto.setAccrualCenterLeadOrgToDate(IntConverter.convertToInt(TEST_INT));
+        dto.setAccrualCenterTreatOrg12m(IntConverter.convertToInt(TEST_INT));
+        dto.setAccrualCenterTreatOrgToDate(IntConverter.convertToInt(TEST_INT));
         dto.setClosedDate(TsConverter.convertToTs(TEST_TS));
         dto.setOpenDate(TsConverter.convertToTs(TEST_TS));
         dto.setPhase(StConverter.convertToSt(TEST_STR));

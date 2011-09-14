@@ -107,12 +107,12 @@ public class Summ4RepActionTest extends AbstractReportActionTest<Summ4RepAction>
         // user selects type of report
         assertEquals(Action.SUCCESS, action.getReport());
         assertTrue(action.getActionErrors().size() > 0);
-        
+
         action.getCriteria().getOrgNames().add("Duke");
         assertEquals(Action.SUCCESS, action.getReport());
         assertTrue(action.getActionErrors().size() > 0);
     }
-    
+
     @Test
     public void noCriteriaEndDateReportTest() {
         // user selects type of report
@@ -122,7 +122,7 @@ public class Summ4RepActionTest extends AbstractReportActionTest<Summ4RepAction>
         assertEquals(Action.SUCCESS, action.getReport());
         assertTrue(action.getActionErrors().size() > 0);
     }
-    
+
     @Test
     public void noCriteriaStartDateReportTest() {
         // user selects type of report
@@ -132,15 +132,15 @@ public class Summ4RepActionTest extends AbstractReportActionTest<Summ4RepAction>
         assertEquals(Action.SUCCESS, action.getReport());
         assertTrue(action.getActionErrors().size() > 0);
     }
-    
+
     @Test
     public void executeTest() {
         // user selects type of report
         assertEquals(Action.SUCCESS, action.execute());
         assertEquals(0, action.getActionErrors().size());
     }
-    
-    @Test 
+
+    @Test
     public void autoCompleteTest() throws PAException {
         action.getCriteria().setOrgName("Duke");
         assertEquals(Action.SUCCESS, action.getAutoComplete());
@@ -174,10 +174,12 @@ public class Summ4RepActionTest extends AbstractReportActionTest<Summ4RepAction>
                 ServletActionContext.getRequest().getSession().getAttribute(ViewerConstants.RESULT_LIST);
         assertTrue(resultList.size() > 0);
         Summ4ResultWebDto item = resultList.get(0);
-        
-        
-        assertEquals(MockService.TEST_INT, item.getAccrualCenter12m());
-        assertEquals(MockService.TEST_INT, item.getAccrualCenterToDate());
+
+
+        assertEquals(MockService.TEST_INT, item.getAccrualCenterLO12m());
+        assertEquals(MockService.TEST_INT, item.getAccrualCenterLOToDate());
+        assertEquals(MockService.TEST_INT, item.getAccrualCenterTS12m());
+        assertEquals(MockService.TEST_INT, item.getAccrualCenterTSToDate());
         assertEquals(MockService.TEST_TS, item.getClosedDate());
         assertEquals(MockService.TEST_TS, item.getOpenDate());
         assertEquals(MockService.TEST_STR, item.getPhase());
@@ -189,18 +191,18 @@ public class Summ4RepActionTest extends AbstractReportActionTest<Summ4RepAction>
         assertEquals(MockService.TEST_STR, item.getTitle());
         assertEquals(MockService.TEST_STR, item.getType());
         assertEquals(MockService.TEST_STR, item.getAnatomicSites().get(0));
-        
-        assertEquals(2, action.getAgentDeviceMap().get("NATIONAL").size());  
+
+        assertEquals(2, action.getAgentDeviceMap().get("NATIONAL").size());
         assertEquals(1, action.getAgentDeviceMap().get("INDUSTRIAL").size());
         assertEquals(2, action.getAgentDeviceMap().get("EXTERNALLY_PEER_REVIEWED").size());
         assertEquals(2, action.getAgentDeviceMap().get("INSTITUTIONAL").size());
-        
+
         assertEquals(0, action.getAnciCorrList().size());
         assertEquals(0, action.getEpidemOutcomeList().size());
         assertEquals(0, action.getOtherInterventionMap().size());
     }
-    
-    
+
+
     @Test
     public void testLoadOrg() {
         // user selects type of report
