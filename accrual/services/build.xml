@@ -6,7 +6,7 @@
 
 <project name="accrual.services" default="jar" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <property name="services.coverage.line" value="87"/>
-    <property name="services.coverage.branch" value="85"/>
+    <property name="services.coverage.branch" value="86"/>
     <property name="services.pmd.maxerrors" value="1"/>
     
     <property file="${basedir}/../build.properties"/>

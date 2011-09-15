@@ -176,13 +176,7 @@ public abstract class AbstractBatchUploadReaderTest extends AbstractAccrualHiber
     protected CountryService countryService = new CountryBean();
     protected CdusBatchUploadReaderBean readerService;
     protected StudySubjectServiceLocal studySubjectService = new StudySubjectBean();
-    protected CdusBatchUploadDataValidator cdusBatchUploadDataValidator = new CdusBatchUploadDataValidator() {
-      @Override
-      protected void assertUserAllowedSiteAccess(Ii studySiteOrgIi, String regInstID, 
-              StringBuffer errMsg, long lineNumber) {
-          //NOOP
-      }
-    };
+    protected CdusBatchUploadDataValidator cdusBatchUploadDataValidator = new CdusBatchUploadDataValidator();
     protected MailManagerServiceRemote mailService;
     
     @Before

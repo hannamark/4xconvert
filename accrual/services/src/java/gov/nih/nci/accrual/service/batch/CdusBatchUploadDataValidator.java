@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.accrual.service.batch;
 
+import gov.nih.nci.accrual.dto.util.SearchStudySiteResultDto;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
 import gov.nih.nci.accrual.util.PoRegistry;
@@ -96,6 +97,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.ISOUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -113,6 +115,7 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -128,6 +131,7 @@ import au.com.bytecode.opencsv.CSVParser;
  */
 @Stateless
 @Local(CdusBatchUploadDataValidatorLocal.class)
+@Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @SuppressWarnings("PMD.TooManyMethods")
 public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader implements
@@ -369,20 +373,24 @@ public class CdusBatchUploadDataValidator extends BaseValidatorBatchUploadReader
             addAccrualSiteValidationError(values, errMsg, lineNumber);  
             return;
         }  
-        assertUserAllowedSiteAccess(studySiteOrgIi, regInstID, errMsg, lineNumber);
+        StudyProtocolDTO spDto = getStudyProtocol(values.get(BatchFileIndex.COLLECTION_PROTOCOL_INDEX).trim());
+        assertUserAllowedSiteAccess(spDto.getIdentifier(), studySiteOrgIi, regInstID, errMsg, lineNumber);
     }
     
     /**
      * Assert batch submitter has accrual access to sites.
+     * @param studyProtocolIi the study protocol ii
      * @param studySiteOrgIi site ii
      * @param regInstID site ID provided in file.
      * @param errMsg msg buffer
      * @param lineNumber location of input
      */
-    protected void assertUserAllowedSiteAccess(Ii studySiteOrgIi, String regInstID, 
+    protected void assertUserAllowedSiteAccess(Ii studyProtocolIi, Ii studySiteOrgIi, String regInstID, 
             StringBuffer errMsg, long lineNumber) {
         try {
-            if (!AccrualUtil.isUserAllowedAccrualAccess(studySiteOrgIi, ru)) {
+            SearchStudySiteResultDto ss = 
+                getSearchStudySiteService().getStudySiteByOrg(studyProtocolIi, studySiteOrgIi);
+            if (!AccrualUtil.isUserAllowedAccrualAccess(ss.getStudySiteIi(), ru)) {
                 addAccrualAccessBySiteError(regInstID, errMsg, lineNumber);
             }
         } catch (PAException e) {
