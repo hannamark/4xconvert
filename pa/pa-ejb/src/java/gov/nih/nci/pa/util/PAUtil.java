@@ -80,6 +80,7 @@ package gov.nih.nci.pa.util;
 
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROLE;
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
+
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
@@ -93,7 +94,6 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.dto.MilestonesDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
@@ -588,25 +588,6 @@ public class PAUtil {
         }
         return true;
    }
-
-    /**
-     * Checks if the documentWorkflowStatus code is abstracted and above.
-     *
-     * @param documentWorkFlowStatusCode the document work flow status code
-     *
-     * @return true, if is abstracted and above
-     */
-    public static boolean isAbstractedAndAbove(Cd documentWorkFlowStatusCode) {
-      boolean retValue = false;
-      String dwfs = documentWorkFlowStatusCode.getCode();
-      if (dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTED.getCode())
-              || dwfs.equals(DocumentWorkflowStatusCode.VERIFICATION_PENDING.getCode())
-            || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode())
-            || dwfs.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode())) {
-        retValue = true;
-      }
-      return retValue;
-    }
 
     /**
      * @param value value

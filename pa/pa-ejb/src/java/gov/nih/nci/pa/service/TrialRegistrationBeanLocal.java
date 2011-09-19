@@ -1051,8 +1051,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             validator.validateUpdate(spDTO, overallStatusDTO, studyResourcingDTOs, documentDTOs,
                                      studySiteAccrualStatusDTOs);
             TrialInboxCommentsGenerator icGenerator = new TrialInboxCommentsGenerator(documentWorkFlowStatusService,
-                    abstractionCompletionService, studyProtocolService, studyOverallStatusService,
-                    studySiteAccrualStatusService, studyIndldeService, studyResourcingService);
+                    abstractionCompletionService, studyOverallStatusService, studySiteAccrualStatusService, 
+                    studyIndldeService, studyResourcingService);
             icGenerator.checkForInboxProcessingComments(studyProtocolDTO, documentDTOs, overallStatusDTO,
                                                         studySiteAccrualStatusDTOs, null, studyResourcingDTOs);
 

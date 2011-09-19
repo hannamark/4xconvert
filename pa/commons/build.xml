@@ -6,7 +6,7 @@
 
 <project name="commons" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <property name="commons.coverage.line" value="52"/>
-    <property name="commons.coverage.branch" value="42"/>
+    <property name="commons.coverage.branch" value="43"/>
     <property name="commons.pmd.maxerrors" value="31"/>
 
     <property name="software.dir" value="${basedir}/../.."/>

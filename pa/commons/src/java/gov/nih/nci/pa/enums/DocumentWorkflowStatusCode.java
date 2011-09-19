@@ -84,8 +84,8 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -102,36 +102,79 @@ import java.util.Set;
 public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
 
     /** Submitted. */
-    SUBMITTED("Submitted", false),
+    SUBMITTED("Submitted", false, false, false),
     /** Amendment Submitted. */
-    AMENDMENT_SUBMITTED("Amendment Submitted", false),
+    AMENDMENT_SUBMITTED("Amendment Submitted", false, false, false),
     /** Accepted. */
-    ACCEPTED("Accepted", false),
+    ACCEPTED("Accepted", false, false, true),
     /** Rejected. */
-    REJECTED("Rejected", false),
+    REJECTED("Rejected", false, false, false),
     /** Abstracted. */
-    ABSTRACTED("Abstracted", false),
+    ABSTRACTED("Abstracted", false, true, true),
     /** Verification Pending. */
-    VERIFICATION_PENDING("Verification Pending", false),
+    VERIFICATION_PENDING("Verification Pending", false, true, true),
     /** Abstraction Verified Response. */
-    ABSTRACTION_VERIFIED_RESPONSE("Abstraction Verified Response", true),
+    ABSTRACTION_VERIFIED_RESPONSE("Abstraction Verified Response", true, true, true),
     /** Abstraction Verified No Response. */
-    ABSTRACTION_VERIFIED_NORESPONSE("Abstraction Verified No Response", true);
+    ABSTRACTION_VERIFIED_NORESPONSE("Abstraction Verified No Response", true, true, true);
 
     private String code;
     private boolean eligibleForAccrual;
+    private boolean abstractedOrAbove;
+    private boolean acceptedOrAbove;
+   
+    private static final Map<DocumentWorkflowStatusCode, Set<DocumentWorkflowStatusCode>> TRANSITIONS;
+
+    static {
+        Map<DocumentWorkflowStatusCode, Set<DocumentWorkflowStatusCode>> tmp =
+                new HashMap<DocumentWorkflowStatusCode, Set<DocumentWorkflowStatusCode>>();
+
+        Set<DocumentWorkflowStatusCode> tmpSet = EnumSet.of(ACCEPTED, REJECTED);
+        tmp.put(SUBMITTED, Collections.unmodifiableSet(tmpSet));
+        tmp.put(AMENDMENT_SUBMITTED, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = EnumSet.of(ABSTRACTED, REJECTED);
+        tmp.put(ACCEPTED, Collections.unmodifiableSet(tmpSet));
+        
+        tmpSet = EnumSet.noneOf(DocumentWorkflowStatusCode.class);
+        tmp.put(REJECTED, Collections.unmodifiableSet(tmpSet));
+        
+        tmpSet = EnumSet.of(REJECTED, VERIFICATION_PENDING, ABSTRACTION_VERIFIED_RESPONSE,
+                            ABSTRACTION_VERIFIED_NORESPONSE);
+        tmp.put(ABSTRACTED, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = EnumSet.of(REJECTED, ABSTRACTION_VERIFIED_RESPONSE, ABSTRACTION_VERIFIED_NORESPONSE);
+        tmp.put(VERIFICATION_PENDING, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = EnumSet.of(REJECTED, ABSTRACTION_VERIFIED_NORESPONSE);
+        tmp.put(ABSTRACTION_VERIFIED_RESPONSE, Collections.unmodifiableSet(tmpSet));
+
+        tmpSet = EnumSet.of(REJECTED, ABSTRACTION_VERIFIED_RESPONSE);
+        tmp.put(ABSTRACTION_VERIFIED_NORESPONSE, Collections.unmodifiableSet(tmpSet));
+
+        TRANSITIONS = Collections.unmodifiableMap(tmp);
+    }
 
     /**
-     * @param code
+     * Constructor.
+     * @param code The DocumentWorkflowStatus code
+     * @param eligibleForAccrual true if the statues is eligible for accrual
+     * @param abstractedOrAbove true if the status is abstracted or above
+     * @param acceptedOrAbove true if the status is accepted or above
      */
-    private DocumentWorkflowStatusCode(String code, boolean eligibleForAccrual) {
+    DocumentWorkflowStatusCode(String code, boolean eligibleForAccrual, boolean abstractedOrAbove,
+            boolean acceptedOrAbove) {
         this.code = code;
         this.eligibleForAccrual = eligibleForAccrual;
+        this.abstractedOrAbove = abstractedOrAbove;
+        this.acceptedOrAbove = acceptedOrAbove;
         register(this);
     }
+    
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
@@ -139,12 +182,12 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
     /**
      *@return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
      * @return String name
      */
     public String getName() {
@@ -152,7 +195,6 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
     }
 
     /**
-     *
      * @param code code
      * @return DocumentWorkFlowStatusCode
      */
@@ -172,52 +214,14 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
         return a;
     }
 
-    private static final Map<DocumentWorkflowStatusCode, Set<DocumentWorkflowStatusCode>> TRANSITIONS;
-
-    static {
-        Map<DocumentWorkflowStatusCode, Set<DocumentWorkflowStatusCode>> tmp =
-                            new HashMap<DocumentWorkflowStatusCode, Set<DocumentWorkflowStatusCode>>();
-
-        Set<DocumentWorkflowStatusCode> tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(ACCEPTED);
-        tmpSet.add(REJECTED);
-        tmp.put(SUBMITTED, Collections.unmodifiableSet(tmpSet));
-        
-        tmpSet.add(ACCEPTED);
-        tmpSet.add(REJECTED);
-        tmp.put(AMENDMENT_SUBMITTED, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(ABSTRACTED);
-        tmpSet.add(REJECTED);
-        tmp.put(ACCEPTED, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(REJECTED);
-        tmpSet.add(VERIFICATION_PENDING);
-        tmpSet.add(ABSTRACTION_VERIFIED_RESPONSE);
-        tmpSet.add(ABSTRACTION_VERIFIED_NORESPONSE);
-        tmp.put(ABSTRACTED, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(REJECTED);
-        tmpSet.add(ABSTRACTION_VERIFIED_RESPONSE);
-        tmpSet.add(ABSTRACTION_VERIFIED_NORESPONSE);
-        tmp.put(VERIFICATION_PENDING, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(REJECTED);
-        tmpSet.add(ABSTRACTION_VERIFIED_NORESPONSE);
-        tmp.put(ABSTRACTION_VERIFIED_RESPONSE, Collections.unmodifiableSet(tmpSet));
-
-        tmpSet = new HashSet<DocumentWorkflowStatusCode>();
-        tmpSet.add(REJECTED);
-        tmpSet.add(ABSTRACTION_VERIFIED_RESPONSE);
-        tmp.put(ABSTRACTION_VERIFIED_NORESPONSE, Collections.unmodifiableSet(tmpSet));
-
-        TRANSITIONS = Collections.unmodifiableMap(tmp);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getNameByCode(String str) {
+        return getByCode(str).name();
     }
-
+    
     /**
      * Helper method that indicates whether a transition to the new entity status
      * is allowed.
@@ -228,7 +232,7 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
     public boolean canTransitionTo(DocumentWorkflowStatusCode newStatus) {
         return TRANSITIONS.get(this).contains(newStatus);
     }
-
+    
     /**
      * @return the eligibleForAccrual
      */
@@ -237,22 +241,18 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
     }
     
     /**
-     * {@inheritDoc}
+     * Test if this status is abstracted or above. 
+     * @return true if this status is abstracted or above. 
      */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
+    public boolean isAbstractedOrAbove() {
+        return abstractedOrAbove;
     }
     
     /**
-     * Checks if is status accepted or above.
-     * @param dwStatus the dw status
-     * @return true, if is status accepted or above
+     * Checks if this status is accepted or above.
+     * @return true if this status accepted or above
      */
-    public static boolean isStatusAcceptedOrAbove(DocumentWorkflowStatusCode dwStatus) {
-        return dwStatus.equals(DocumentWorkflowStatusCode.ACCEPTED)
-        || dwStatus.equals(DocumentWorkflowStatusCode.ABSTRACTED)
-        || dwStatus.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE)
-        || dwStatus.equals(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE)
-        || dwStatus.equals(DocumentWorkflowStatusCode.VERIFICATION_PENDING);
+    public boolean isAcceptedOrAbove() {
+        return acceptedOrAbove;
     }
 }

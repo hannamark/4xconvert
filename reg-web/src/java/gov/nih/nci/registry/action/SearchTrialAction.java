@@ -234,12 +234,12 @@ public class SearchTrialAction extends ActionSupport {
 
     private boolean isUpdateableProprietaryTrial(StudyProtocolQueryDTO queryDto, DocumentWorkflowStatusCode dwfs) {
         return dwfs != null && queryDto.isProprietaryTrial()
-                && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs) && queryDto.isSearcherTrialOwner();
+                && dwfs.isAcceptedOrAbove() && queryDto.isSearcherTrialOwner();
     }
 
     private boolean isUpdateableNonProperietaryTrial(StudyProtocolQueryDTO queryDto, DocumentWorkflowStatusCode dwfs,
             StudyStatusCode statusCode) {
-        return dwfs != null && statusCode != null && DocumentWorkflowStatusCode.isStatusAcceptedOrAbove(dwfs)
+        return dwfs != null && statusCode != null && dwfs.isAcceptedOrAbove()
                 && queryDto.isSearcherTrialOwner() && !UPDATEABLE_STATUS.contains(statusCode);
     }
 

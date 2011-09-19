@@ -80,6 +80,7 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.convert.StudyInboxConverter;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
@@ -148,8 +149,9 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
      * @param studyProtocolIi studyProtocol Identifier
      * @throws PAException on any error
      */
+    @Override
     public void create(List<DocumentDTO> documentDTOs, Ii studyProtocolIi) throws PAException {
-        StringBuffer comments = new StringBuffer();
+        StringBuilder comments = new StringBuilder();
         if (ISOUtil.isIiNull(studyProtocolIi)) {
             throw new PAException(" Study Protocol Identifier cannot be null");
         }
@@ -187,6 +189,7 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<StudyInboxDTO> getOpenInboxEntries(Ii studyProtocolIi) throws PAException {
         Criteria crit =
             PaHibernateUtil.getCurrentSession().createCriteria(StudyInbox.class).add(Restrictions.isNull("closeDate"))
@@ -235,8 +238,8 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
         }
     }
 
-    private StringBuffer createComments(List<DocumentDTO> documentDTOs) {
-        StringBuffer comments = new StringBuffer();
+    private StringBuilder createComments(List<DocumentDTO> documentDTOs) {
+        StringBuilder comments = new StringBuilder();
         if (CollectionUtils.isNotEmpty(documentDTOs)) {
             for (DocumentDTO doc : documentDTOs) {
                 comments.append(CdConverter.convertCdToString(doc.getTypeCode())).append(" Document was uploaded <br>");
@@ -245,16 +248,18 @@ public class StudyInboxServiceBean extends AbstractStudyIsoService<StudyInboxDTO
         return comments;
     }
 
-    private StringBuffer createComments(DocumentWorkflowStatusDTO dws, Ii studyProtocolIi) throws PAException {
-        StringBuffer comments = new StringBuffer();
-        if (PAUtil.isAbstractedAndAbove(dws.getStatusCode())) {
-            List<AbstractionCompletionDTO> errorList = abstractionCompletionService
-                .validateAbstractionCompletion(studyProtocolIi);
+    private StringBuilder createComments(DocumentWorkflowStatusDTO dws, Ii studyProtocolIi) throws PAException {
+        StringBuilder comments = new StringBuilder();
+        DocumentWorkflowStatusCode statusCode =
+                CdConverter.convertCdToEnum(DocumentWorkflowStatusCode.class, dws.getStatusCode());
+        if (statusCode != null && statusCode.isAbstractedOrAbove()) {
+            List<AbstractionCompletionDTO> errorList =
+                    abstractionCompletionService.validateAbstractionCompletion(studyProtocolIi);
             if (!errorList.isEmpty()) {
                 comments.append("<b>Type :</b>  <b>Description :</b> <b>Comments :</b><br>");
                 for (AbstractionCompletionDTO abDTO : errorList) {
                     comments.append(abDTO.getErrorType()).append(" : ").append(abDTO.getErrorDescription())
-                            .append(" : ").append(abDTO.getComment()).append("<br>");
+                        .append(" : ").append(abDTO.getComment()).append("<br>");
                 }
             }
         }

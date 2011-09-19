@@ -82,19 +82,18 @@
  */
 package gov.nih.nci.pa.util;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.enums.PrimaryPurposeCode;
-import gov.nih.nci.pa.enums.RecruitmentStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -110,20 +109,16 @@ import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
-import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.mockito.InOrder;
 
 /**
  * @author ludetc
@@ -131,262 +126,606 @@ import org.junit.rules.ExpectedException;
  */
 public class TrialInboxCommentsGeneratorTest {
 
-    private final DocumentWorkflowStatusServiceLocal docWrkFlowStatusService = mock(DocumentWorkflowStatusServiceLocal.class);
-    private final AbstractionCompletionServiceRemote abstractionCompletionService = mock(AbstractionCompletionServiceRemote.class);
-    private final StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);
-    private final StudyOverallStatusServiceLocal studyOverallStatusService = mock(StudyOverallStatusServiceLocal.class);
-    private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService = mock(StudySiteAccrualStatusServiceLocal.class);
-    private final StudyIndldeServiceLocal studyIndldeService = mock(StudyIndldeServiceLocal.class);
-    private final StudyResourcingServiceLocal studyResourcingService = mock(StudyResourcingServiceLocal.class);
-
-    private final List<DocumentDTO> irbDocs = new ArrayList<DocumentDTO>();
-    private final List<StudySiteAccrualStatusDTO> ssasList = new ArrayList<StudySiteAccrualStatusDTO>();
-    private final List<StudyIndldeDTO> studyIndList = new ArrayList<StudyIndldeDTO>();
-    private final List<StudyResourcingDTO> studyResList = new ArrayList<StudyResourcingDTO>();
-
-    private final StudyProtocolDTO spDto = new StudyProtocolDTO();
-
-    private TrialInboxCommentsGenerator helper;
-
     private static final String IRB_DOCUMENT_UPDATED = "IRB Document was updated.";
     private static final String PARTICIPATING_DOCUMENT_UPDATED = "Participating Document was updated.";
-    private static final String PRIMARY_PURPOSE_UPDATED = "Primary Purpose was updated.";
-    private static final String STATUS_DATES_UPDATED = "Status & Dates were updated.";
-    private static final String RECRUITMENT_STATUS_DATE_UPDATED = "Participating Sites Recruitment Status "
-            + "and Date was updated.";
+    private static final String STATUS_DATES_UPDATED = "Status & Dates were updated. ";
+    private static final String RECRUITMENT_STATUS_DATE_UPDATED = "Participating Sites Recruitment Status and Date"
+            + " was updated.";
     private static final String IND_IDE_UPDATED = "Ind Ide was updated.";
     private static final String GRANT_INFORMATION_UPDATED = "Grant information was updated.";
 
-    @Rule public ExpectedException thrown = ExpectedException.none();
+    private AbstractionCompletionServiceRemote abstractionCompletionService =
+            mock(AbstractionCompletionServiceRemote.class);
+    private DocumentWorkflowStatusServiceLocal documentWorkflowStatusService =
+            mock(DocumentWorkflowStatusServiceLocal.class);
+    private StudyIndldeServiceLocal studyIndldeService = mock(StudyIndldeServiceLocal.class);
+    private StudyOverallStatusServiceLocal studyOverallStatusService = mock(StudyOverallStatusServiceLocal.class);
+    private StudyResourcingServiceLocal studyResourcingService = mock(StudyResourcingServiceLocal.class);
+    private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService =
+            mock(StudySiteAccrualStatusServiceLocal.class);
+    private TrialInboxCommentsGenerator sut;
 
-    @Before
-    public void setup() throws PAException {
-        setupArgs();
-
-        setupMocks();
-
-        helper = new TrialInboxCommentsGenerator(docWrkFlowStatusService, abstractionCompletionService,
-                studyProtocolService, studyOverallStatusService, studySiteAccrualStatusService,
-                studyIndldeService, studyResourcingService);
-
+    /**
+     * Creates a real TrialInboxCommentsGenerator and inject the mock services in it.
+     * @return A real TrialInboxCommentsGenerator with mock services injected.
+     */
+    private TrialInboxCommentsGenerator createTrialInboxCommentsGenerator() {
+        TrialInboxCommentsGenerator service =
+                new TrialInboxCommentsGenerator(documentWorkflowStatusService, abstractionCompletionService,
+                        studyOverallStatusService, studySiteAccrualStatusService, studyIndldeService,
+                        studyResourcingService);
+        return service;
     }
 
-    private void setupArgs() {
-        DocumentDTO irbDocDto = new DocumentDTO();
-        irbDocDto.setTypeCode(CdConverter.convertStringToCd(DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getCode()));
-        DocumentDTO partSiteDocDto = new DocumentDTO();
-        partSiteDocDto.setTypeCode(CdConverter.convertStringToCd(DocumentTypeCode.PARTICIPATING_SITES.getCode()));
-        irbDocs.add(partSiteDocDto);
-        irbDocs.add(irbDocDto);
-
-        spDto.setPrimaryPurposeCode(CdConverter.convertStringToCd(PrimaryPurposeCode.DIAGNOSTIC.getCode()));
-
-        StudySiteAccrualStatusDTO ssasDto = new StudySiteAccrualStatusDTO();
-        ssasDto.setStatusCode(CdConverter.convertStringToCd(RecruitmentStatusCode.ACTIVE.getCode()));
-        ssasDto.setStatusDate(new Ts());
-        ssasList.add(ssasDto);
-
-        StudyIndldeDTO siiDto = new StudyIndldeDTO();
-        siiDto.setIdentifier(IiConverter.convertToStudyIndIdeIi(1L));
-        siiDto.setIndldeTypeCode(CdConverter.convertStringToCd("indCode"));
-        siiDto.setIndldeNumber(StConverter.convertToSt("indNumber"));
-        siiDto.setGrantorCode(CdConverter.convertStringToCd("grantorCode"));
-        studyIndList.add(siiDto);
-
-        siiDto = new StudyIndldeDTO();
-        studyIndList.add(siiDto);
-
-        StudyResourcingDTO sResDto = new StudyResourcingDTO();
-        sResDto.setIdentifier(IiConverter.convertToStudyResourcingIi(1L));
-        sResDto.setFundingMechanismCode(CdConverter.convertStringToCd("Funding Mech"));
-        sResDto.setNihInstitutionCode(CdConverter.convertStringToCd("Nih inst code"));
-        sResDto.setSerialNumber(StConverter.convertToSt("serial"));
-        sResDto.setNciDivisionProgramCode(CdConverter.convertStringToCd("nci code"));
-        studyResList.add(sResDto);
-
+    /**
+     * Creates a mock TrialInboxCommentsGenerator and inject the mock services in it.
+     * @return A mock TrialInboxCommentsGenerator with mock services injected.
+     */
+    private TrialInboxCommentsGenerator createTrialInboxCommentsGeneratorMock() {
+        TrialInboxCommentsGenerator service = mock(TrialInboxCommentsGenerator.class);
+        doCallRealMethod().when(service).setAbstractionCompletionService(abstractionCompletionService);
+        doCallRealMethod().when(service).setDocumentWorkFlowStatusService(documentWorkflowStatusService);
+        doCallRealMethod().when(service).setStudyIndldeService(studyIndldeService);
+        doCallRealMethod().when(service).setStudyOverallStatusService(studyOverallStatusService);
+        doCallRealMethod().when(service).setStudyResourcingService(studyResourcingService);
+        doCallRealMethod().when(service).setStudySiteAccrualStatusService(studySiteAccrualStatusService);
+        setDependencies(service);
+        return service;
     }
 
+    /**
+     * Inject the mock services in the given TrialInboxCommentsGenerator.
+     * @param service The TrialInboxCommentsGenerator to setup with mock services
+     */
+    private void setDependencies(TrialInboxCommentsGenerator service) {
+        service.setAbstractionCompletionService(abstractionCompletionService);
+        service.setDocumentWorkFlowStatusService(documentWorkflowStatusService);
+        service.setStudyIndldeService(studyIndldeService);
+        service.setStudyOverallStatusService(studyOverallStatusService);
+        service.setStudyResourcingService(studyResourcingService);
+        service.setStudySiteAccrualStatusService(studySiteAccrualStatusService);
+    }
+
+    /**
+     * Test the checkForInboxProcessingComments method.
+     * @throws PAException if an error occurs
+     * 
+     */
     @Test
     public void testCheckForInboxProcessingComments() throws PAException {
-        helper.checkForInboxProcessingComments(spDto, irbDocs, new StudyOverallStatusDTO(),
-                ssasList, studyIndList, studyResList);
-
-        String comments = helper.getInboxProcessingComments();
-
-        assertTrue(comments.contains(PARTICIPATING_DOCUMENT_UPDATED));
-        assertTrue(comments.contains(IND_IDE_UPDATED));
-        assertTrue(comments.contains(IRB_DOCUMENT_UPDATED));
-        assertTrue(comments.contains(RECRUITMENT_STATUS_DATE_UPDATED));
-        assertTrue(comments.contains(STATUS_DATES_UPDATED));
-        assertTrue(comments.contains(PRIMARY_PURPOSE_UPDATED));
-        assertFalse(helper.getInboxProcessingComments().contains(GRANT_INFORMATION_UPDATED));
+        sut = createTrialInboxCommentsGeneratorMock();
+        StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
+        List<DocumentDTO> documentDTOs = new ArrayList<DocumentDTO>();
+        StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
+        List<StudySiteAccrualStatusDTO> participatingSites = new ArrayList<StudySiteAccrualStatusDTO>();
+        List<StudyIndldeDTO> studyIndIdeDTOs = new ArrayList<StudyIndldeDTO>();
+        List<StudyResourcingDTO> studyResourcingDTOs = new ArrayList<StudyResourcingDTO>();
+        doCallRealMethod().when(sut).checkForInboxProcessingComments(studyProtocolDTO, documentDTOs, overallStatusDTO,
+                                                                     participatingSites, studyIndIdeDTOs,
+                                                                     studyResourcingDTOs);
+        doCallRealMethod().when(sut).getInboxProcessingComments();
+        sut.checkForInboxProcessingComments(studyProtocolDTO, documentDTOs, overallStatusDTO, participatingSites,
+                                            studyIndIdeDTOs, studyResourcingDTOs);
+        assertEquals("Wrong comment returned", "", sut.getInboxProcessingComments());
+        InOrder inOrder = inOrder(sut);
+        inOrder.verify(sut).checkDocumentUpdates(documentDTOs, DocumentTypeCode.IRB_APPROVAL_DOCUMENT,
+                                                 IRB_DOCUMENT_UPDATED);
+        inOrder.verify(sut).checkDocumentUpdates(documentDTOs, DocumentTypeCode.PARTICIPATING_SITES,
+                                                 PARTICIPATING_DOCUMENT_UPDATED);
+        inOrder.verify(sut).checkTrialUpdateForReview(studyProtocolDTO);
+        inOrder.verify(sut).checkStatusDatesUpdates(studyProtocolDTO, overallStatusDTO);
+        inOrder.verify(sut).checkParticipatingSitesRecruitmentStatusDate(participatingSites);
+        inOrder.verify(sut).checkIndIdeUpdates(studyIndIdeDTOs);
+        inOrder.verify(sut).checkGrantUpdates(studyResourcingDTOs);
     }
 
     /**
-     * @throws PAException
+     * test the checkDocumentUpdates method with no document.
      */
     @Test
-    public void testNoInboxProccessingComments() throws PAException {
-        String comments;
-        irbDocs.clear();
-        DocumentDTO otherDocDTO = new DocumentDTO();
-        otherDocDTO.setTypeCode(CdConverter.convertStringToCd(DocumentTypeCode.OTHER.getCode()));
-
-        spDto.setPrimaryPurposeCode(CdConverter.convertStringToCd(PrimaryPurposeCode.PREVENTION.getCode()));
-        when(studyOverallStatusService.isTrialStatusOrDateChanged(any(StudyOverallStatusDTO.class), any(Ii.class)))
-             .thenReturn(false);
-
-        StudySiteAccrualStatusDTO acSiteDto = new StudySiteAccrualStatusDTO();
-        acSiteDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.CLOSED_TO_ACCRUAL));
-        acSiteDto.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        when(studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(any(Ii.class))).thenReturn(acSiteDto);
-        ssasList.clear();
-        ssasList.add(acSiteDto);
-        helper.checkForInboxProcessingComments(spDto, irbDocs, new StudyOverallStatusDTO(),
-                ssasList, null, studyResList);
-
-        comments = helper.getInboxProcessingComments();
-
-        assertFalse(comments.contains(PARTICIPATING_DOCUMENT_UPDATED));
-        assertFalse(comments.contains(IND_IDE_UPDATED));
-        assertFalse(comments.contains(IRB_DOCUMENT_UPDATED));
-        assertFalse(comments.contains(RECRUITMENT_STATUS_DATE_UPDATED));
-        assertFalse(comments.contains(STATUS_DATES_UPDATED));
-        assertFalse(comments.contains(PRIMARY_PURPOSE_UPDATED));
-        assertFalse(helper.getInboxProcessingComments().contains(GRANT_INFORMATION_UPDATED));
+    public void testCheckDocumentUpdates() {
+        sut = createTrialInboxCommentsGenerator();
+        List<DocumentDTO> documentDTOs = new ArrayList<DocumentDTO>();
+        sut.checkDocumentUpdates(documentDTOs, DocumentTypeCode.IRB_APPROVAL_DOCUMENT, "comment");
+        assertEquals("Wrong comment returned", "", sut.getInboxProcessingComments());
     }
 
     /**
-     * @throws PAException
+     * test the checkDocumentUpdates method with a document updated.
      */
     @Test
-    public void testNullForInboxProcessingComments() throws PAException {
-        String comments;
-        helper.checkForInboxProcessingComments(spDto, null, new StudyOverallStatusDTO(),
-                null, null, null);
-        comments = helper.getInboxProcessingComments();
-        assertFalse(comments.contains(PARTICIPATING_DOCUMENT_UPDATED));
-        assertFalse(comments.contains(IND_IDE_UPDATED));
-        assertFalse(comments.contains(IRB_DOCUMENT_UPDATED));
-        assertFalse(comments.contains(RECRUITMENT_STATUS_DATE_UPDATED));
-        assertTrue(comments.contains(STATUS_DATES_UPDATED));
-        assertTrue(comments.contains(PRIMARY_PURPOSE_UPDATED));
-        assertFalse(helper.getInboxProcessingComments().contains(GRANT_INFORMATION_UPDATED));
+    public void testCheckDocumentUpdatesUpdate() {
+        sut = createTrialInboxCommentsGenerator();
+        List<DocumentDTO> documentDTOs = createDocumentList(DocumentTypeCode.IRB_APPROVAL_DOCUMENT);
+        sut.checkDocumentUpdates(documentDTOs, DocumentTypeCode.IRB_APPROVAL_DOCUMENT, IRB_DOCUMENT_UPDATED);
+        assertEquals("Wrong comment returned", IRB_DOCUMENT_UPDATED + " ", sut.getInboxProcessingComments());
     }
 
-    @Test
-    public void testStudyIndNullId() throws PAException {
-        studyIndList.clear();
-        studyIndList.add(new StudyIndldeDTO());
-
-        helper.checkForInboxProcessingComments(spDto, irbDocs, new StudyOverallStatusDTO(),
-                ssasList, studyIndList, studyResList);
-
-        assertTrue(helper.getInboxProcessingComments().contains(IND_IDE_UPDATED));
-
-        helper.checkForInboxProcessingComments(spDto, irbDocs, new StudyOverallStatusDTO(),
-                ssasList, null, studyResList);
-        assertFalse(helper.getInboxProcessingComments().contains(IND_IDE_UPDATED));
-
-    }
-
-    @Test
-    public void testNullStudyResId() throws PAException {
-        studyResList.clear();
-        studyResList.add(new StudyResourcingDTO());
-
-        helper.checkForInboxProcessingComments(spDto, irbDocs, new StudyOverallStatusDTO(),
-                ssasList, studyIndList, studyResList);
-
-        assertTrue(helper.getInboxProcessingComments().contains(GRANT_INFORMATION_UPDATED));
-
-        helper.checkForInboxProcessingComments(spDto, irbDocs, new StudyOverallStatusDTO(),
-                ssasList, studyIndList, null);
-        assertFalse(helper.getInboxProcessingComments().contains(GRANT_INFORMATION_UPDATED));
-
-    }
-
-    @Test
-    public void testGrantUpdated() throws PAException {
-        studyResList.clear();
-        StudyResourcingDTO sResDto = new StudyResourcingDTO();
-        sResDto.setIdentifier(IiConverter.convertToStudyResourcingIi(1L));
-        sResDto.setFundingMechanismCode(CdConverter.convertStringToCd("Funding Mech2"));
-        sResDto.setNihInstitutionCode(CdConverter.convertStringToCd("Nih inst code"));
-        sResDto.setSerialNumber(StConverter.convertToSt("serial"));
-        sResDto.setNciDivisionProgramCode(CdConverter.convertStringToCd("nci code"));
-        studyResList.add(sResDto);
-        helper.checkForInboxProcessingComments(spDto, irbDocs, new StudyOverallStatusDTO(),
-                ssasList, studyIndList, studyResList);
-
-        assertTrue(helper.getInboxProcessingComments().contains(GRANT_INFORMATION_UPDATED));
-
-        helper.checkForInboxProcessingComments(spDto, irbDocs, new StudyOverallStatusDTO(),
-                ssasList, studyIndList, null);
-        assertFalse(helper.getInboxProcessingComments().contains(GRANT_INFORMATION_UPDATED));
-    }
-    
     /**
-     * Test checkParticipatingSitesRecruitmentStatusDate when no current study site accrual status for the study site
-     * @throws PAException
+     * test the checkDocumentUpdates method with a document of another type.
      */
     @Test
-    public void testNoCurrentStudySiteAccrualStatusByStudySite() throws PAException {
-        StudySiteAccrualStatusDTO acSiteDto = new StudySiteAccrualStatusDTO();
-        acSiteDto.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.CLOSED_TO_ACCRUAL));
-        acSiteDto.setStatusDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
-        when(studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(any(Ii.class))).thenReturn(acSiteDto);     
-        ssasList.add(acSiteDto);
-        when(studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(any(Ii.class))).thenReturn(null);
-        
-        helper.checkForInboxProcessingComments(spDto, null, null, ssasList, null, null);
-        String comments = helper.getInboxProcessingComments();         
-
-        assertFalse(comments.contains(RECRUITMENT_STATUS_DATE_UPDATED));
-
+    public void testCheckDocumentUpdatesNoUpdate() {
+        sut = createTrialInboxCommentsGenerator();
+        List<DocumentDTO> documentDTOs = createDocumentList(DocumentTypeCode.PARTICIPATING_SITES);
+        sut.checkDocumentUpdates(documentDTOs, DocumentTypeCode.IRB_APPROVAL_DOCUMENT, IRB_DOCUMENT_UPDATED);
+        assertEquals("Wrong comment returned", "", sut.getInboxProcessingComments());
     }
 
-    private void setupMocks() throws PAException {
-        DocumentWorkflowStatusDTO dwsDto = new DocumentWorkflowStatusDTO();
-        dwsDto.setStatusCode(CdConverter.convertStringToCd(DocumentWorkflowStatusCode.ABSTRACTED.getCode()));
-
-        when(docWrkFlowStatusService.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(dwsDto);
-
-        AbstractionCompletionDTO absCompDto = new AbstractionCompletionDTO();
-        absCompDto.setErrorType("some type");
-        absCompDto.setErrorDescription("some desc");
-        absCompDto.setComment("some comment");
-
-        List<AbstractionCompletionDTO> absCompList = new ArrayList<AbstractionCompletionDTO>();
-        absCompList.add(absCompDto);
-
-        when(abstractionCompletionService.validateAbstractionCompletion(any(Ii.class))).thenReturn(absCompList);
-
-        StudyProtocolDTO spDto = new StudyProtocolDTO();
-        spDto.setPrimaryPurposeCode(CdConverter.convertStringToCd(PrimaryPurposeCode.PREVENTION.getCode()));
-
-        when(studyProtocolService.getStudyProtocol(any(Ii.class))).thenReturn(spDto);
-
-        when(studyOverallStatusService.isTrialStatusOrDateChanged(any(StudyOverallStatusDTO.class), any(Ii.class))).thenReturn(true);
-
-        StudySiteAccrualStatusDTO acSiteDto = new StudySiteAccrualStatusDTO();
-        when(studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(any(Ii.class))).thenReturn(acSiteDto);
-
-        StudyIndldeDTO siDto = new StudyIndldeDTO();
-        siDto.setIndldeTypeCode(CdConverter.convertStringToCd("indCode2"));
-        siDto.setIndldeNumber(StConverter.convertToSt("indNumber"));
-        siDto.setGrantorCode(CdConverter.convertStringToCd("grantorCode"));
-        when(studyIndldeService.get(any(Ii.class))).thenReturn(siDto);
-
-        StudyResourcingDTO sResDto = new StudyResourcingDTO();
-        sResDto.setFundingMechanismCode(CdConverter.convertStringToCd("Funding Mech"));
-        sResDto.setNihInstitutionCode(CdConverter.convertStringToCd("Nih inst code"));
-        sResDto.setSerialNumber(StConverter.convertToSt("serial"));
-        sResDto.setNciDivisionProgramCode(CdConverter.convertStringToCd("nci code"));
-        when(studyResourcingService.get(any(Ii.class))).thenReturn(sResDto);
-
+    /**
+     * Creates a list of documents with one document of the given type.
+     * @param docTypeCode The document type
+     * @return a list of documents with one document of the given type.
+     */
+    private List<DocumentDTO> createDocumentList(DocumentTypeCode docTypeCode) {
+        List<DocumentDTO> documentDTOs = new ArrayList<DocumentDTO>();
+        DocumentDTO document = new DocumentDTO();
+        document.setTypeCode(CdConverter.convertToCd(docTypeCode));
+        documentDTOs.add(document);
+        return documentDTOs;
     }
 
-   
+    /**
+     * Test the checkTrialUpdateForReview method with no document workflow status.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCheckTrialUpdateForReviewNoStatus() throws PAException {
+        sut = createTrialInboxCommentsGenerator();
+        StudyProtocolDTO studyProtocolDTO = setupDocumentWorkflowStatusService(null);
+        sut.checkTrialUpdateForReview(studyProtocolDTO);
+        assertEquals("Wrong comment returned", "", sut.getInboxProcessingComments());
+        verify(documentWorkflowStatusService).getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
+    }
+
+    /**
+     * Test the checkTrialUpdateForReview method with a non abstracted document workflow status.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCheckTrialUpdateForReviewNotAbstracted() throws PAException {
+        sut = createTrialInboxCommentsGenerator();
+        StudyProtocolDTO studyProtocolDTO = setupDocumentWorkflowStatusService(DocumentWorkflowStatusCode.SUBMITTED);
+        sut.checkTrialUpdateForReview(studyProtocolDTO);
+        assertEquals("Wrong comment returned", "", sut.getInboxProcessingComments());
+        verify(documentWorkflowStatusService).getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
+    }
+
+    /**
+     * Test the checkTrialUpdateForReview method with a abstracted document workflow status and no abstraction
+     * validation error.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCheckTrialUpdateForReviewAbstractedNoError() throws PAException {
+        sut = createTrialInboxCommentsGenerator();
+        StudyProtocolDTO studyProtocolDTO = setupDocumentWorkflowStatusService(DocumentWorkflowStatusCode.ABSTRACTED);
+        sut.checkTrialUpdateForReview(studyProtocolDTO);
+        assertEquals("Wrong comment returned", "", sut.getInboxProcessingComments());
+        verify(documentWorkflowStatusService).getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
+        verify(abstractionCompletionService).validateAbstractionCompletion(studyProtocolDTO.getIdentifier());
+    }
+
+    /**
+     * Test the checkTrialUpdateForReview method with a abstracted document workflow status and abstraction validation
+     * error.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCheckTrialUpdateForReviewAbstractedError() throws PAException {
+        sut = createTrialInboxCommentsGenerator();
+        StudyProtocolDTO studyProtocolDTO = setupDocumentWorkflowStatusService(DocumentWorkflowStatusCode.ABSTRACTED);
+        List<AbstractionCompletionDTO> errors = createErrorList();
+        when(abstractionCompletionService.validateAbstractionCompletion(studyProtocolDTO.getIdentifier()))
+            .thenReturn(errors);
+        sut.checkTrialUpdateForReview(studyProtocolDTO);
+        assertEquals("Wrong comment returned", "<b>Type :</b>  <b>Description :</b> <b>Comments :</b><br>"
+                + "errorType:errorDescription:errorComment<br> ", sut.getInboxProcessingComments());
+        verify(documentWorkflowStatusService).getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
+        verify(abstractionCompletionService).validateAbstractionCompletion(studyProtocolDTO.getIdentifier());
+    }
+
+    private StudyProtocolDTO setupDocumentWorkflowStatusService(DocumentWorkflowStatusCode dwfs) throws PAException {
+        StudyProtocolDTO studyProtocolDTO = createStudyProtocolDTO();
+        DocumentWorkflowStatusDTO documentWorkflowStatusDTO = new DocumentWorkflowStatusDTO();
+        if (dwfs != null) {
+            documentWorkflowStatusDTO.setStatusCode(CdConverter.convertToCd(dwfs));
+        }
+        when(documentWorkflowStatusService.getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier()))
+            .thenReturn(documentWorkflowStatusDTO);
+        return studyProtocolDTO;
+    }
+
+    private StudyProtocolDTO createStudyProtocolDTO() {
+        StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
+        studyProtocolDTO.setIdentifier(IiConverter.convertToStudyProtocolIi(1L));
+        return studyProtocolDTO;
+    }
+
+    private List<AbstractionCompletionDTO> createErrorList() {
+        List<AbstractionCompletionDTO> errors = new ArrayList<AbstractionCompletionDTO>();
+        AbstractionCompletionDTO error = new AbstractionCompletionDTO();
+        error.setErrorType("errorType");
+        error.setErrorDescription("errorDescription");
+        error.setComment("errorComment");
+        errors.add(error);
+        return errors;
+    }
+
+    /**
+     * Test the checkStatusDatesUpdates method with no status dates changes.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCheckStatusDatesUpdatesNoUpdate() throws PAException {
+        sut = createTrialInboxCommentsGenerator();
+        StudyProtocolDTO studyProtocolDTO = createStudyProtocolDTO();
+        StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
+        when(studyOverallStatusService.isTrialStatusOrDateChanged(overallStatusDTO, studyProtocolDTO.getIdentifier()))
+            .thenReturn(false);
+        sut.checkStatusDatesUpdates(studyProtocolDTO, overallStatusDTO);
+        assertEquals("Wrong comment returned", "", sut.getInboxProcessingComments());
+        verify(studyOverallStatusService)
+            .isTrialStatusOrDateChanged(overallStatusDTO, studyProtocolDTO.getIdentifier());
+    }
+
+    /**
+     * Test the checkStatusDatesUpdates method with status dates changes.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCheckStatusDatesUpdatesUpdate() throws PAException {
+        sut = createTrialInboxCommentsGenerator();
+        StudyProtocolDTO studyProtocolDTO = createStudyProtocolDTO();
+        StudyOverallStatusDTO overallStatusDTO = new StudyOverallStatusDTO();
+        when(studyOverallStatusService.isTrialStatusOrDateChanged(overallStatusDTO, studyProtocolDTO.getIdentifier()))
+            .thenReturn(true);
+        sut.checkStatusDatesUpdates(studyProtocolDTO, overallStatusDTO);
+        assertEquals("Wrong comment returned", STATUS_DATES_UPDATED, sut.getInboxProcessingComments());
+        verify(studyOverallStatusService)
+            .isTrialStatusOrDateChanged(overallStatusDTO, studyProtocolDTO.getIdentifier());
+    }
+
+    /**
+     * Test the checkParticipatingSitesRecruitmentStatusDate method with an empty input
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCheckParticipatingSitesRecruitmentStatusDateEmpty() throws PAException {
+        sut = createTrialInboxCommentsGenerator();
+        List<StudySiteAccrualStatusDTO> participatingSites = new ArrayList<StudySiteAccrualStatusDTO>();
+        sut.checkParticipatingSitesRecruitmentStatusDate(participatingSites);
+        assertEquals("Wrong comment returned", "", sut.getInboxProcessingComments());
+    }
+
+    /**
+     * Test the checkParticipatingSitesRecruitmentStatusDate method with no existing site
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCheckParticipatingSitesRecruitmentStatusDateNoExistingSite() throws PAException {
+        sut = createTrialInboxCommentsGenerator();
+        List<StudySiteAccrualStatusDTO> participatingSites = new ArrayList<StudySiteAccrualStatusDTO>();
+        participatingSites.add(createParticipatingSite());
+        sut.checkParticipatingSitesRecruitmentStatusDate(participatingSites);
+        assertEquals("Wrong comment returned", "", sut.getInboxProcessingComments());
+        verify(studySiteAccrualStatusService).getCurrentStudySiteAccrualStatusByStudySite(participatingSites.get(0)
+                                                                                              .getStudySiteIi());
+    }
+
+    /**
+     * Test the checkParticipatingSitesRecruitmentStatusDate method with no update
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCheckParticipatingSitesRecruitmentStatusDateNoUpdate() throws PAException {
+        sut = createTrialInboxCommentsGenerator();
+        List<StudySiteAccrualStatusDTO> participatingSites = new ArrayList<StudySiteAccrualStatusDTO>();
+        participatingSites.add(createParticipatingSite());
+        StudySiteAccrualStatusDTO existingSite = createParticipatingSite();
+        when(studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(existingSite.getStudySiteIi()))
+            .thenReturn(existingSite);
+        sut.checkParticipatingSitesRecruitmentStatusDate(participatingSites);
+        assertEquals("Wrong comment returned", "", sut.getInboxProcessingComments());
+        verify(studySiteAccrualStatusService)
+            .getCurrentStudySiteAccrualStatusByStudySite(existingSite.getStudySiteIi());
+    }
+
+    /**
+     * Test the checkParticipatingSitesRecruitmentStatusDate method with an update
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCheckParticipatingSitesRecruitmentStatusDateUpdate() throws PAException {
+        sut = createTrialInboxCommentsGenerator();
+        List<StudySiteAccrualStatusDTO> participatingSites = new ArrayList<StudySiteAccrualStatusDTO>();
+        participatingSites.add(createParticipatingSite());
+        StudySiteAccrualStatusDTO existingSite = createParticipatingSite();
+        existingSite.setStatusCode(CdConverter.convertStringToCd("other status code"));
+        when(studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(existingSite.getStudySiteIi()))
+            .thenReturn(existingSite);
+        sut.checkParticipatingSitesRecruitmentStatusDate(participatingSites);
+        assertEquals("Wrong comment returned", RECRUITMENT_STATUS_DATE_UPDATED + " ", sut.getInboxProcessingComments());
+        verify(studySiteAccrualStatusService)
+            .getCurrentStudySiteAccrualStatusByStudySite(existingSite.getStudySiteIi());
+    }
+
+    private StudySiteAccrualStatusDTO createParticipatingSite() {
+        StudySiteAccrualStatusDTO site = new StudySiteAccrualStatusDTO();
+        site.setStudySiteIi(IiConverter.convertToStudySiteIi(1L));
+        site.setStatusCode(CdConverter.convertStringToCd("statusCode"));
+        site.setStatusDate(TsConverter.convertToTs(new Date(0)));
+        return site;
+    }
+
+    /**
+     * Test the isParticipatingSiteUpdated method without existing site
+     */
+    @Test
+    public void testIsParticipatingSiteUpdatedNoExisting() {
+        sut = createTrialInboxCommentsGenerator();
+        assertFalse(sut.isParticipatingSiteUpdated(null, createParticipatingSite()));
+    }
+
+    /**
+     * Test the isParticipatingSiteUpdated method with the same sites
+     */
+    @Test
+    public void testIsParticipatingSiteUpdatedEqual() {
+        sut = createTrialInboxCommentsGenerator();
+        assertFalse(sut.isParticipatingSiteUpdated(createParticipatingSite(), createParticipatingSite()));
+    }
+
+    /**
+     * Test the isParticipatingSiteUpdated method with an updated status code
+     */
+    @Test
+    public void testIsParticipatingSiteUpdatedStatusCodeUpdated() {
+        sut = createTrialInboxCommentsGenerator();
+        StudySiteAccrualStatusDTO updated = createParticipatingSite();
+        updated.setStatusCode(CdConverter.convertStringToCd("other status code"));
+        assertTrue(sut.isParticipatingSiteUpdated(createParticipatingSite(), updated));
+    }
+
+    /**
+     * Test the isParticipatingSiteUpdated method with an updated status date
+     */
+    @Test
+    public void testIsParticipatingSiteUpdatedStatusDateUpdated() {
+        sut = createTrialInboxCommentsGenerator();
+        StudySiteAccrualStatusDTO updated = createParticipatingSite();
+        updated.setStatusDate(TsConverter.convertToTs(new Date(1)));
+        assertTrue(sut.isParticipatingSiteUpdated(createParticipatingSite(), updated));
+    }
+
+    /**
+     * Test the checkIndIdeUpdates method with an empty input
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCheckIndIdeUpdatesEmpty() throws PAException {
+        sut = createTrialInboxCommentsGenerator();
+        List<StudyIndldeDTO> studyIndIdeDTOs = new ArrayList<StudyIndldeDTO>();
+        sut.checkIndIdeUpdates(studyIndIdeDTOs);
+        assertEquals("Wrong comment returned", "", sut.getInboxProcessingComments());
+    }
+
+    /**
+     * Test the checkIndIdeUpdates method with a new input.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCheckIndIdeUpdatesNew() throws PAException {
+        sut = createTrialInboxCommentsGenerator();
+        List<StudyIndldeDTO> studyIndIdeDTOs = new ArrayList<StudyIndldeDTO>();
+        StudyIndldeDTO studyIndldeDTO = createStudyIndldeDTO();
+        studyIndldeDTO.setIdentifier(null);
+        studyIndIdeDTOs.add(studyIndldeDTO);
+        sut.checkIndIdeUpdates(studyIndIdeDTOs);
+        assertEquals("Wrong comment returned", IND_IDE_UPDATED + " ", sut.getInboxProcessingComments());
+    }
+
+    /**
+     * Test the checkIndIdeUpdates method with a not updated input.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCheckIndIdeUpdatesNoUpdate() throws PAException {
+        sut = createTrialInboxCommentsGenerator();
+        List<StudyIndldeDTO> studyIndIdeDTOs = new ArrayList<StudyIndldeDTO>();
+        studyIndIdeDTOs.add(createStudyIndldeDTO());
+        StudyIndldeDTO existing = createStudyIndldeDTO();
+        when(studyIndldeService.get(existing.getIdentifier())).thenReturn(existing);
+        sut.checkIndIdeUpdates(studyIndIdeDTOs);
+        assertEquals("Wrong comment returned", "", sut.getInboxProcessingComments());
+    }
+
+    /**
+     * Test the checkIndIdeUpdates method with an updated input.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCheckIndIdeUpdatesUpdate() throws PAException {
+        sut = createTrialInboxCommentsGenerator();
+        List<StudyIndldeDTO> studyIndIdeDTOs = new ArrayList<StudyIndldeDTO>();
+        studyIndIdeDTOs.add(createStudyIndldeDTO());
+        StudyIndldeDTO existing = createStudyIndldeDTO();
+        existing.setIndldeTypeCode(CdConverter.convertStringToCd("Another IndldeTypeCode"));
+        when(studyIndldeService.get(existing.getIdentifier())).thenReturn(existing);
+        sut.checkIndIdeUpdates(studyIndIdeDTOs);
+        assertEquals("Wrong comment returned", IND_IDE_UPDATED + " ", sut.getInboxProcessingComments());
+    }
+
+    private StudyIndldeDTO createStudyIndldeDTO() {
+        StudyIndldeDTO studyIndldeDTO = new StudyIndldeDTO();
+        studyIndldeDTO.setIdentifier(IiConverter.convertToStudyIndIdeIi(1L));
+        studyIndldeDTO.setIndldeTypeCode(CdConverter.convertStringToCd("IndldeTypeCode"));
+        studyIndldeDTO.setIndldeNumber(StConverter.convertToSt("IndldeNumber"));
+        studyIndldeDTO.setGrantorCode(CdConverter.convertStringToCd("grantorCode"));
+        return studyIndldeDTO;
+    }
+
+    /**
+     * test the isIndUpdated method with equal inputs.
+     */
+    @Test
+    public void testIsIndUpdatedEqual() {
+        sut = createTrialInboxCommentsGenerator();
+        assertFalse(sut.isIndUpdated(createStudyIndldeDTO(), createStudyIndldeDTO()));
+    }
+
+    /**
+     * test the isIndUpdated method with the IndldeTypeCode updated.
+     */
+    @Test
+    public void testIsIndUpdatedIndldeTypeCodeUpdated() {
+        sut = createTrialInboxCommentsGenerator();
+        StudyIndldeDTO updated = createStudyIndldeDTO();
+        updated.setIndldeTypeCode(CdConverter.convertStringToCd("Another IndldeTypeCode"));
+        assertTrue(sut.isIndUpdated(createStudyIndldeDTO(), updated));
+    }
+
+    /**
+     * test the isIndUpdated method with the IndldeNumber updated.
+     */
+    @Test
+    public void testIsIndUpdatedIndldeNumberUpdated() {
+        sut = createTrialInboxCommentsGenerator();
+        StudyIndldeDTO updated = createStudyIndldeDTO();
+        updated.setIndldeNumber(StConverter.convertToSt("Another number"));
+        assertTrue(sut.isIndUpdated(createStudyIndldeDTO(), updated));
+    }
+
+    /**
+     * test the isIndUpdated method with the GrantorCode updated.
+     */
+    @Test
+    public void testIsIndUpdatedGrantorCodeUpdated() {
+        sut = createTrialInboxCommentsGenerator();
+        StudyIndldeDTO updated = createStudyIndldeDTO();
+        updated.setGrantorCode(CdConverter.convertStringToCd("Another Granto Code"));
+        assertTrue(sut.isIndUpdated(createStudyIndldeDTO(), updated));
+    }
+
+    /**
+     * Test the checkGrantUpdates method with an empty input.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCheckGrantUpdatesEmpty() throws PAException {
+        sut = createTrialInboxCommentsGenerator();
+        List<StudyResourcingDTO> studyResourcingDTOs = new ArrayList<StudyResourcingDTO>();
+        sut.checkGrantUpdates(studyResourcingDTOs);
+        assertEquals("Wrong comment returned", "", sut.getInboxProcessingComments());
+    }
+
+    /**
+     * Test the checkGrantUpdates method with an new input.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCheckGrantUpdatesNew() throws PAException {
+        sut = createTrialInboxCommentsGenerator();
+        List<StudyResourcingDTO> studyResourcingDTOs = new ArrayList<StudyResourcingDTO>();
+        StudyResourcingDTO studyResourcingDTO = createStudyResourcingDTO();
+        studyResourcingDTO.setIdentifier(null);
+        studyResourcingDTOs.add(studyResourcingDTO);
+        sut.checkGrantUpdates(studyResourcingDTOs);
+        assertEquals("Wrong comment returned", GRANT_INFORMATION_UPDATED + " ", sut.getInboxProcessingComments());
+    }
+
+    /**
+     * Test the checkGrantUpdates method with a not updated input.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCheckGrantUpdatesNoUpdate() throws PAException {
+        sut = createTrialInboxCommentsGenerator();
+        List<StudyResourcingDTO> studyResourcingDTOs = new ArrayList<StudyResourcingDTO>();
+        studyResourcingDTOs.add(createStudyResourcingDTO());
+        StudyResourcingDTO existing = createStudyResourcingDTO();
+        when(studyResourcingService.get(existing.getIdentifier())).thenReturn(existing);
+        sut.checkGrantUpdates(studyResourcingDTOs);
+        assertEquals("Wrong comment returned", "", sut.getInboxProcessingComments());
+    }
+
+    /**
+     * Test the checkGrantUpdates method with an updated input.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testCheckGrantUpdatesUpdate() throws PAException {
+        sut = createTrialInboxCommentsGenerator();
+        List<StudyResourcingDTO> studyResourcingDTOs = new ArrayList<StudyResourcingDTO>();
+        studyResourcingDTOs.add(createStudyResourcingDTO());
+        StudyResourcingDTO existing = createStudyResourcingDTO();
+        existing.setFundingMechanismCode(CdConverter.convertStringToCd("Another Funding Mechanism Code"));
+        when(studyResourcingService.get(existing.getIdentifier())).thenReturn(existing);
+        sut.checkGrantUpdates(studyResourcingDTOs);
+        assertEquals("Wrong comment returned", GRANT_INFORMATION_UPDATED + " ", sut.getInboxProcessingComments());
+    }
+
+    private StudyResourcingDTO createStudyResourcingDTO() {
+        StudyResourcingDTO dto = new StudyResourcingDTO();
+        dto.setIdentifier(IiConverter.convertToStudyResourcingIi(1L));
+        dto.setFundingMechanismCode(CdConverter.convertStringToCd("fundingMechanismCode"));
+        dto.setNihInstitutionCode(CdConverter.convertStringToCd("nihInstitutionCode"));
+        dto.setSerialNumber(StConverter.convertToSt("serialNumber"));
+        dto.setNciDivisionProgramCode(CdConverter.convertStringToCd("nciDivisionProgramCode"));
+        return dto;
+    }
+
+    /**
+     * Test the isGrantUpdated method with equal inputs.
+     */
+    @Test
+    public void testisGrantUpdatedEqual() {
+        sut = createTrialInboxCommentsGenerator();
+        assertFalse(sut.isGrantUpdated(createStudyResourcingDTO(), createStudyResourcingDTO()));
+    }
+
+    /**
+     * Test the isGrantUpdated method with FundingMechanismCode updated.
+     */
+    @Test
+    public void testisGrantUpdatedFundingMechanismCodeUpdated() {
+        sut = createTrialInboxCommentsGenerator();
+        StudyResourcingDTO updated = createStudyResourcingDTO();
+        updated.setFundingMechanismCode(CdConverter.convertStringToCd("Another Funding mechanism code"));
+        assertTrue(sut.isGrantUpdated(createStudyResourcingDTO(), updated));
+    }
+
+    /**
+     * Test the isGrantUpdated method with NihInstitutionCode updated.
+     */
+    @Test
+    public void testisGrantUpdatedNihInstitutionCodeUpdated() {
+        sut = createTrialInboxCommentsGenerator();
+        StudyResourcingDTO updated = createStudyResourcingDTO();
+        updated.setNihInstitutionCode(CdConverter.convertStringToCd("Another NihInstitutionCode"));
+        assertTrue(sut.isGrantUpdated(createStudyResourcingDTO(), updated));
+    }
+
+    /**
+     * Test the isGrantUpdated method with SerialNumber updated.
+     */
+    @Test
+    public void testisGrantUpdatedSerialNumberUpdated() {
+        sut = createTrialInboxCommentsGenerator();
+        StudyResourcingDTO updated = createStudyResourcingDTO();
+        updated.setSerialNumber(StConverter.convertToSt("Another SerialNumber"));
+        assertTrue(sut.isGrantUpdated(createStudyResourcingDTO(), updated));
+    }
+
+    /**
+     * Test the isGrantUpdated method with NciDivisionProgramCode updated.
+     */
+    @Test
+    public void testisGrantUpdatedNciDivisionProgramCodeUpdated() {
+        sut = createTrialInboxCommentsGenerator();
+        StudyResourcingDTO updated = createStudyResourcingDTO();
+        updated.setNciDivisionProgramCode(CdConverter.convertStringToCd("Another NciDivisionProgramCode"));
+        assertTrue(sut.isGrantUpdated(createStudyResourcingDTO(), updated));
+    }
 
 }

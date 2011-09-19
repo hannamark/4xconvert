@@ -86,6 +86,7 @@ package gov.nih.nci.pa.util;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -98,7 +99,6 @@ import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyIndldeServiceLocal;
 import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
-import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.StudyResourcingServiceLocal;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
@@ -113,31 +113,36 @@ import org.apache.commons.collections.CollectionUtils;
  *
  * @author kkanchinadam
  */
-
 public class TrialInboxCommentsGenerator {
-    private final List<String> inboxProcessingComments = new ArrayList<String>();
-    private final AbstractionCompletionServiceRemote abstractionCompletionService;
-    private final DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService;
-    private final StudyIndldeServiceLocal studyIndldeService;
-    private final StudyOverallStatusServiceLocal studyOverallStatusService;
-    private final StudyProtocolServiceLocal studyProtocolService;
-    private final StudyResourcingServiceLocal studyResourcingService;
-    private final StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
-
+    
     private static final String SPACE = " ";
     private static final String IRB_DOCUMENT_UPDATED = "IRB Document was updated.";
     private static final String PARTICIPATING_DOCUMENT_UPDATED = "Participating Document was updated.";
-    private static final String PRIMARY_PURPOSE_UPDATED = "Primary Purpose was updated.";
     private static final String STATUS_DATES_UPDATED = "Status & Dates were updated.";
     private static final String RECRUITMENT_STATUS_DATE_UPDATED = "Participating Sites Recruitment Status "
             + "and Date was updated.";
     private static final String IND_IDE_UPDATED = "Ind Ide was updated.";
     private static final String GRANT_INFORMATION_UPDATED = "Grant information was updated.";
     
+    private AbstractionCompletionServiceRemote abstractionCompletionService;
+    private DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService;
+    private StudyIndldeServiceLocal studyIndldeService;
+    private StudyOverallStatusServiceLocal studyOverallStatusService;
+    private StudyResourcingServiceLocal studyResourcingService;
+    private StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService;
+    private List<String> inboxProcessingComments = new ArrayList<String>(); 
+    
     /**
+     * Default constructor.
+     */
+    public TrialInboxCommentsGenerator() {
+        super();
+    }
+    
+    /**
+     * Constructor.
      * @param documentWorkFlowStatusService document workflow status service
      * @param abstractionCompletionService abstraction completion service
-     * @param studyProtocolService study protocol service
      * @param studyOverallStatusService study overall status service
      * @param studySiteAccrualStatusService study site accrual status service
      * @param studyIndldeService study ind ide service
@@ -146,12 +151,11 @@ public class TrialInboxCommentsGenerator {
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public TrialInboxCommentsGenerator(DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService,
             AbstractionCompletionServiceRemote abstractionCompletionService,
-            StudyProtocolServiceLocal studyProtocolService, StudyOverallStatusServiceLocal studyOverallStatusService,
+            StudyOverallStatusServiceLocal studyOverallStatusService,
             StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService,
             StudyIndldeServiceLocal studyIndldeService, StudyResourcingServiceLocal studyResourcingService) {
         this.documentWorkFlowStatusService = documentWorkFlowStatusService;
         this.abstractionCompletionService = abstractionCompletionService;
-        this.studyProtocolService = studyProtocolService;
         this.studyOverallStatusService = studyOverallStatusService;
         this.studySiteAccrualStatusService = studySiteAccrualStatusService;
         this.studyIndldeService = studyIndldeService;
@@ -159,7 +163,7 @@ public class TrialInboxCommentsGenerator {
     }
 
     /**
-     *
+     * Checks all the modifications of a study protocol.
      * @param studyProtocolDTO study protocol dto
      * @param documentDTOs document dto
      * @param overallStatusDTO overall status dto
@@ -172,11 +176,10 @@ public class TrialInboxCommentsGenerator {
     public void checkForInboxProcessingComments(StudyProtocolDTO studyProtocolDTO, List<DocumentDTO> documentDTOs,
             StudyOverallStatusDTO overallStatusDTO, List<StudySiteAccrualStatusDTO> participatingSites,
             List<StudyIndldeDTO> studyIndIdeDTOs, List<StudyResourcingDTO> studyResourcingDTOs) throws PAException {
-        inboxProcessingComments.clear();
+        inboxProcessingComments = new ArrayList<String>();
         checkDocumentUpdates(documentDTOs, DocumentTypeCode.IRB_APPROVAL_DOCUMENT, IRB_DOCUMENT_UPDATED);
         checkDocumentUpdates(documentDTOs, DocumentTypeCode.PARTICIPATING_SITES, PARTICIPATING_DOCUMENT_UPDATED);
         checkTrialUpdateForReview(studyProtocolDTO);
-        checkPrimaryPurposeUpdates(studyProtocolDTO);
         checkStatusDatesUpdates(studyProtocolDTO, overallStatusDTO);
         checkParticipatingSitesRecruitmentStatusDate(participatingSites);
         checkIndIdeUpdates(studyIndIdeDTOs);
@@ -193,8 +196,14 @@ public class TrialInboxCommentsGenerator {
         }
         return sb.toString();
     }
-    
-    private void checkDocumentUpdates(List<DocumentDTO> documentDTOs, DocumentTypeCode docTypeCode, String comment) {
+
+    /**
+     * Check the document updates.
+     * @param documentDTOs The document dtos.
+     * @param docTypeCode The document type to check
+     * @param comment The update comment
+     */
+    void checkDocumentUpdates(List<DocumentDTO> documentDTOs, DocumentTypeCode docTypeCode, String comment) {
         if (CollectionUtils.isNotEmpty(documentDTOs)) {
             String codeString = docTypeCode.getCode();
             for (DocumentDTO doc : documentDTOs) {
@@ -205,14 +214,21 @@ public class TrialInboxCommentsGenerator {
             }
         }
     }
-
-    private void checkTrialUpdateForReview(StudyProtocolDTO studyProtocolDTO) throws PAException {
+    
+    /**
+     * Validates the abstraction completion.
+     * @param studyProtocolDTO The study protocol dto
+     * @throws PAException if an error occurs
+     */
+    void checkTrialUpdateForReview(StudyProtocolDTO studyProtocolDTO) throws PAException {
         Ii spIi = studyProtocolDTO.getIdentifier();
         DocumentWorkflowStatusDTO isoDocWrkStatus = documentWorkFlowStatusService.getCurrentByStudyProtocol(spIi);
-        if (PAUtil.isAbstractedAndAbove(isoDocWrkStatus.getStatusCode())) {
+        DocumentWorkflowStatusCode statusCode =
+                CdConverter.convertCdToEnum(DocumentWorkflowStatusCode.class, isoDocWrkStatus.getStatusCode());
+        if (statusCode != null && statusCode.isAbstractedOrAbove()) {
             List<AbstractionCompletionDTO> errorList = abstractionCompletionService.validateAbstractionCompletion(spIi);
             if (!errorList.isEmpty()) {
-                StringBuffer sbuf = new StringBuffer();
+                StringBuilder sbuf = new StringBuilder();
                 sbuf.append("<b>Type :</b>  <b>Description :</b> <b>Comments :</b><br>");
                 for (AbstractionCompletionDTO abDTO : errorList) {
                     sbuf.append(abDTO.getErrorType()).append(':').append(abDTO.getErrorDescription()).append(':')
@@ -223,29 +239,32 @@ public class TrialInboxCommentsGenerator {
         }
     }
 
-    private void checkPrimaryPurposeUpdates(StudyProtocolDTO studyProtocolDTO) throws PAException {
-        StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolDTO.getIdentifier());
-        if (!studyProtocolDTO.getPrimaryPurposeCode().equals(spDTO.getPrimaryPurposeCode())) {
-            inboxProcessingComments.add(PRIMARY_PURPOSE_UPDATED);
-        }
-    }
-
-    private void checkStatusDatesUpdates(StudyProtocolDTO studyProtocolDTO,
-            StudyOverallStatusDTO overallStatusDTO) throws PAException {
+    /**
+     * Check the status dates updates.
+     * @param studyProtocolDTO The study protocol dto
+     * @param overallStatusDTO The overall status dto
+     * @throws PAException if an error occurs
+     */
+    void checkStatusDatesUpdates(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO)
+            throws PAException {
         if (studyOverallStatusService.isTrialStatusOrDateChanged(overallStatusDTO, studyProtocolDTO.getIdentifier())) {
             inboxProcessingComments.add(STATUS_DATES_UPDATED);
         }
     }
 
-    private void checkParticipatingSitesRecruitmentStatusDate(List<StudySiteAccrualStatusDTO> participatingSites)
-        throws PAException {
+    /**
+     * Checks the participating sites updates.
+     * @param participatingSites The participating sites
+     * @throws PAException if an error occurs
+     */
+    void checkParticipatingSitesRecruitmentStatusDate(List<StudySiteAccrualStatusDTO> participatingSites)
+            throws PAException {
         if (CollectionUtils.isNotEmpty(participatingSites)) {
             for (StudySiteAccrualStatusDTO ssDto : participatingSites) {
-                StudySiteAccrualStatusDTO dto = studySiteAccrualStatusService
-                        .getCurrentStudySiteAccrualStatusByStudySite(ssDto.getStudySiteIi());
-                if (dto != null
-                        && (!ssDto.getStatusCode().equals(dto.getStatusCode()) || !ssDto.getStatusDate()
-                            .equals(dto.getStatusDate()))) {
+                StudySiteAccrualStatusDTO dto =
+                        studySiteAccrualStatusService.getCurrentStudySiteAccrualStatusByStudySite(ssDto
+                            .getStudySiteIi());
+                if (isParticipatingSiteUpdated(dto, ssDto)) {
                     inboxProcessingComments.add(RECRUITMENT_STATUS_DATE_UPDATED);
                     return;
                 }
@@ -253,7 +272,24 @@ public class TrialInboxCommentsGenerator {
         }
     }
 
-    private void checkIndIdeUpdates(List<StudyIndldeDTO> studyIndIdeDTOs) throws PAException {
+    /**
+     * Test if a participating site has been updated.
+     * @param existing The existing participating site
+     * @param updated The possibly updated participating site
+     * @return true if the participating site has been updated
+     */
+    boolean isParticipatingSiteUpdated(StudySiteAccrualStatusDTO existing, StudySiteAccrualStatusDTO updated) {
+        return existing != null
+                && (!existing.getStatusCode().equals(updated.getStatusCode()) || !existing.getStatusDate()
+                    .equals(updated.getStatusDate()));
+    }
+
+    /**
+     * checks the indide updates.
+     * @param studyIndIdeDTOs the study indide dtos
+     * @throws PAException if an error occurs
+     */
+    void checkIndIdeUpdates(List<StudyIndldeDTO> studyIndIdeDTOs) throws PAException {
         if (CollectionUtils.isNotEmpty(studyIndIdeDTOs)) {
             for (StudyIndldeDTO indIdeDto : studyIndIdeDTOs) {
                 if (ISOUtil.isIiNull(indIdeDto.getIdentifier())) {
@@ -261,7 +297,7 @@ public class TrialInboxCommentsGenerator {
                     return;
                 }
                 StudyIndldeDTO dto = studyIndldeService.get(indIdeDto.getIdentifier());
-                if (isIndUpdated(indIdeDto, dto)) {
+                if (isIndUpdated(dto, indIdeDto)) {
                     inboxProcessingComments.add(IND_IDE_UPDATED);
                     return;
                 }
@@ -270,17 +306,23 @@ public class TrialInboxCommentsGenerator {
     }
 
     /**
-     * @param indIdeDto
-     * @param dto
-     * @return
+     * test if a StudyIndldeDTO has been updated.
+     * @param existing The existing StudyIndldeDTO
+     * @param updated The possibly updated StudyIndldeDTO
+     * @return true if the StudyIndldeDTO has been updated.
      */
-    private boolean isIndUpdated(StudyIndldeDTO indIdeDto, StudyIndldeDTO dto) {
-        return !(indIdeDto.getIndldeTypeCode().getCode().equals(dto.getIndldeTypeCode().getCode()))
-                || !(indIdeDto.getIndldeNumber().getValue().equals(dto.getIndldeNumber().getValue()))
-                || !(indIdeDto.getGrantorCode().getCode().equals(dto.getGrantorCode().getCode()));
+    boolean isIndUpdated(StudyIndldeDTO existing, StudyIndldeDTO updated) {
+        return !(existing.getIndldeTypeCode().getCode().equals(updated.getIndldeTypeCode().getCode()))
+                || !(existing.getIndldeNumber().getValue().equals(updated.getIndldeNumber().getValue()))
+                || !(existing.getGrantorCode().getCode().equals(updated.getGrantorCode().getCode()));
     }
 
-    private void checkGrantUpdates(List<StudyResourcingDTO> studyResourcingDTOs) throws PAException {
+    /**
+     * Checks the grant updates.
+     * @param studyResourcingDTOs The studyResourcingDTOs
+     * @throws PAException if an error occurs
+     */
+    void checkGrantUpdates(List<StudyResourcingDTO> studyResourcingDTOs) throws PAException {
         if (CollectionUtils.isNotEmpty(studyResourcingDTOs)) {
             for (StudyResourcingDTO grantDto : studyResourcingDTOs) {
                 if (ISOUtil.isIiNull(grantDto.getIdentifier())) {
@@ -288,7 +330,7 @@ public class TrialInboxCommentsGenerator {
                     return;
                 }
                 StudyResourcingDTO dto = studyResourcingService.get(grantDto.getIdentifier());
-                if (isGrantUpdated(grantDto, dto)) {
+                if (isGrantUpdated(dto, grantDto)) {
                     inboxProcessingComments.add(GRANT_INFORMATION_UPDATED);
                     return;
                 }
@@ -296,12 +338,60 @@ public class TrialInboxCommentsGenerator {
         }
     }
 
-    private boolean isGrantUpdated(StudyResourcingDTO grantDto, StudyResourcingDTO dto) {
-        return !(grantDto.getFundingMechanismCode().getCode().equals(dto.getFundingMechanismCode().getCode()))
-        || !(grantDto.getNihInstitutionCode().getCode().equals(dto.getNihInstitutionCode().getCode()))
-        || !(grantDto.getSerialNumber().getValue().equals(dto.getSerialNumber().getValue()))
-        || !(grantDto.getNciDivisionProgramCode().getCode().equals(dto.getNciDivisionProgramCode()
-                .getCode()));
+    /**
+     * Test if a grant has been updated.
+     * @param existing The existing grant
+     * @param updated The possibly updated grant
+     * @return true if the grant has been updated
+     */
+    boolean isGrantUpdated(StudyResourcingDTO existing, StudyResourcingDTO updated) {
+        return !(existing.getFundingMechanismCode().getCode().equals(updated.getFundingMechanismCode().getCode()))
+                || !(existing.getNihInstitutionCode().getCode().equals(updated.getNihInstitutionCode().getCode()))
+                || !(existing.getSerialNumber().getValue().equals(updated.getSerialNumber().getValue()))
+                || !(existing.getNciDivisionProgramCode().getCode().equals(updated.getNciDivisionProgramCode()
+                    .getCode()));
     }
-   
+
+    /**
+     * @param abstractionCompletionService the abstractionCompletionService to set
+     */
+    public void setAbstractionCompletionService(AbstractionCompletionServiceRemote abstractionCompletionService) {
+        this.abstractionCompletionService = abstractionCompletionService;
+    }
+
+    /**
+     * @param documentWorkFlowStatusService the documentWorkFlowStatusService to set
+     */
+    public void setDocumentWorkFlowStatusService(DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService) {
+        this.documentWorkFlowStatusService = documentWorkFlowStatusService;
+    }
+
+    /**
+     * @param studyIndldeService the studyIndldeService to set
+     */
+    public void setStudyIndldeService(StudyIndldeServiceLocal studyIndldeService) {
+        this.studyIndldeService = studyIndldeService;
+    }
+
+    /**
+     * @param studyOverallStatusService the studyOverallStatusService to set
+     */
+    public void setStudyOverallStatusService(StudyOverallStatusServiceLocal studyOverallStatusService) {
+        this.studyOverallStatusService = studyOverallStatusService;
+    }
+
+    /**
+     * @param studyResourcingService the studyResourcingService to set
+     */
+    public void setStudyResourcingService(StudyResourcingServiceLocal studyResourcingService) {
+        this.studyResourcingService = studyResourcingService;
+    }
+
+    /**
+     * @param studySiteAccrualStatusService the studySiteAccrualStatusService to set
+     */
+    public void setStudySiteAccrualStatusService(StudySiteAccrualStatusServiceLocal studySiteAccrualStatusService) {
+        this.studySiteAccrualStatusService = studySiteAccrualStatusService;
+    }
+
 }

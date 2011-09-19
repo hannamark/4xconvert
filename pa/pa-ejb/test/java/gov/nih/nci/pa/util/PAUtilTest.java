@@ -8,6 +8,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
@@ -15,7 +16,6 @@ import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.dto.MilestonesDTO;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
 import gov.nih.nci.pa.iso.dto.StudyDTO;
@@ -281,27 +281,6 @@ public class PAUtilTest {
         assertFalse(PAUtil.isValidDate("abcbs"));
         assertTrue(PAUtil.isValidDate("01/01/2010"));
         assertFalse(PAUtil.isValidDate("31/01/2010"));
-    }
-
-    /**
-     * Test method for {@link gov.nih.nci.pa.util.PAUtil#isAbstractedAndAbove(gov.nih.nci.iso21090.Cd)}.
-     */
-    @Test
-    public void testIsAbstractedAndAbove() {
-        assertTrue(
-          PAUtil.isAbstractedAndAbove(CdConverter.convertStringToCd(DocumentWorkflowStatusCode.ABSTRACTED.getCode())));
-        assertTrue(
-                PAUtil.isAbstractedAndAbove(CdConverter.convertStringToCd(
-                        DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode())));
-        assertTrue(
-                PAUtil.isAbstractedAndAbove(CdConverter.convertStringToCd(
-                        DocumentWorkflowStatusCode.VERIFICATION_PENDING.getCode())));
-        assertTrue(
-                PAUtil.isAbstractedAndAbove(CdConverter.convertStringToCd(
-                        DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode())));
-        assertFalse(
-                  PAUtil.isAbstractedAndAbove(CdConverter.convertStringToCd(
-                          DocumentWorkflowStatusCode.ACCEPTED.getCode())));
     }
 
     /**
