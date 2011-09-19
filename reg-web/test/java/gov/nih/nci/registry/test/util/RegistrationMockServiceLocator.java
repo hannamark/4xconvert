@@ -3,6 +3,7 @@ package gov.nih.nci.registry.test.util;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Tel;
@@ -79,6 +80,7 @@ import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PDQTrialAbstractionServiceBeanRemote;
 import gov.nih.nci.pa.service.util.PDQTrialRegistrationServiceBeanRemote;
+import gov.nih.nci.pa.service.util.PDQTrialUploadService;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -572,6 +574,14 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
      */
     public TSRReportGeneratorServiceRemote getTSRReportGeneratorService() {
         return mock(TSRReportGeneratorServiceRemote.class);
+    }   
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PDQTrialUploadService getPDQTrialUploadService() {
+        return mock(PDQTrialUploadService.class);
     }
 
     /**
