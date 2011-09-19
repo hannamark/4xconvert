@@ -82,11 +82,12 @@
  */
 package gov.nih.nci.pa.action;
 
-import gov.nih.nci.iso21090.Ii;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
-import gov.nih.nci.pa.service.util.PDQTrialAbstractionServiceBean;
-import gov.nih.nci.pa.service.util.PDQTrialRegistrationServiceBean;
+import gov.nih.nci.pa.service.util.PDQTrialUploadBean;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,13 +98,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.any;
-
 /**
  * @author ludetc
  *
@@ -112,20 +106,16 @@ public class PDQTrialLoadActionTest extends AbstractPaActionTest {
 
     private final URL testZipFile = this.getClass().getResource("/CDR65658.xml.zip");
     private MailManagerServiceLocal mailSvc = null;
-    private PDQTrialRegistrationServiceBean regSvc = null;
-    private PDQTrialAbstractionServiceBean abstractionSvc = null;
+    private PDQTrialUploadBean uploadSvc = null;  
     private final PDQTrialLoadAction action = new PDQTrialLoadAction();
 
 
     @Before
     public void setup() throws PAException, IOException {
         mailSvc = mock(MailManagerServiceLocal.class);
-        regSvc = mock(PDQTrialRegistrationServiceBean.class);
-        abstractionSvc = mock(PDQTrialAbstractionServiceBean.class);
-        when(regSvc.loadRegistrationElementFromPDQXml(any(URL.class), anyString())).thenReturn(new Ii());
+        uploadSvc = mock(PDQTrialUploadBean.class);   
 
-        action.setPdqAbstractionService(abstractionSvc);
-        action.setPdqRegistrationService(regSvc);
+        action.setPdqTrialUploadService(uploadSvc);
         action.setMailManagerService(mailSvc);
 
         action.setMailDestination("sample@exmaple.com");
@@ -162,22 +152,5 @@ public class PDQTrialLoadActionTest extends AbstractPaActionTest {
         Collection<String> errors = action.getActionErrors();
         assert(errors.contains("Please select a valid ZIP file to upload"));
     }
-
-
-    @Test
-    public void testExceptionInRegistration() throws Exception {
-        File input = new File(testZipFile.toURI());
-        action.setUpload(input);
-
-        when(regSvc.loadRegistrationElementFromPDQXml(any(URL.class), anyString()))
-            .thenThrow(new NullPointerException("This is a good exception"));
-
-
-        action.execute();
-        Collection<String> errors = action.getActionErrors();
-        assertEquals(1, errors.size());
-        assert(errors.iterator().next().startsWith("Unable to load"));
-    }
-
 
 }

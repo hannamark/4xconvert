@@ -147,8 +147,6 @@ import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -164,7 +162,6 @@ import org.apache.log4j.Logger;
 */
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class PDQTrialAbstractionServiceBean extends AbstractPDQTrialServiceHelper
             implements PDQTrialAbstractionServiceBeanRemote {
     @EJB

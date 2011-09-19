@@ -82,11 +82,9 @@
  */
 package gov.nih.nci.pa.action;
 
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
-import gov.nih.nci.pa.service.util.PDQTrialAbstractionServiceBeanRemote;
-import gov.nih.nci.pa.service.util.PDQTrialRegistrationServiceBeanRemote;
+import gov.nih.nci.pa.service.util.PDQTrialUploadService;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaRegistry;
 
@@ -125,8 +123,7 @@ public class PDQTrialLoadAction extends ActionSupport {
     private static final int BYTE_SIZE = 1024;
 
     private MailManagerServiceLocal mailSvc = null;
-    private PDQTrialRegistrationServiceBeanRemote pdqRegistrationService = null;
-    private PDQTrialAbstractionServiceBeanRemote pdqAbstractionService = null;
+    private PDQTrialUploadService pdqTrialUploadService = null;   
     private String uploadFileName = null;
 
     private MessageFormat htmlBody = null;
@@ -137,8 +134,7 @@ public class PDQTrialLoadAction extends ActionSupport {
 
     private void initServices() {
         mailSvc = PaRegistry.getMailManagerService();
-        pdqRegistrationService = PaRegistry.getPDQTrialRegistrationServiceRemote();
-        pdqAbstractionService = PaRegistry.getPDQTrialAbstractionServiceRemote();
+        pdqTrialUploadService = PaRegistry.getPDQTrialUploadService();        
     }
 
     @Override
@@ -214,28 +210,8 @@ public class PDQTrialLoadAction extends ActionSupport {
 
     private void processFiles(String username, List<File> xmlFiles, Map<File, List<String>> reportMap) {
         for (File xmlFile : xmlFiles) {
-            List<String> report = new ArrayList<String>();
-            try {
-                LOG.info("Starting File: " + xmlFile.getPath());
-                Ii studyProtocolIi = pdqRegistrationService
-                    .loadRegistrationElementFromPDQXml(xmlFile.toURL(), username);
-                report.add("Registration Complete");
-                LOG.info("Registration Complete");
-                pdqAbstractionService.loadAbstractionElementFromPDQXml(xmlFile.toURL(), studyProtocolIi);
-                LOG.info("Abstraction Complete");
-                report.add("Abstraction Complete");
-            } catch (PAException e) {
-                String prettyErrorMessage = "Unable to load file: " + xmlFile.getPath();
-                addActionError(prettyErrorMessage);
-                report.add(prettyErrorMessage);
-                report.add(e.getMessage());
-                LOG.error(prettyErrorMessage, e);
-            } catch (Exception e) {
-                String prettyErrorMessage = "Unable to load file: " + xmlFile.getPath();
-                addActionError(prettyErrorMessage);
-                report.add(prettyErrorMessage);
-                LOG.error(prettyErrorMessage, e);
-            }
+            List<String> report = new ArrayList<String>();       
+            report = pdqTrialUploadService.uploadTrialFromPDQXml(xmlFile, username);            
             reportMap.put(xmlFile, report);
         }
     }
@@ -323,22 +299,15 @@ public class PDQTrialLoadAction extends ActionSupport {
      */
     public void setMailManagerService(MailManagerServiceLocal service) {
         mailSvc = service;
-    }
+    }   
 
     /**
-     * Setter for registration service.
-     * @param service the service.
+     * @param pdqTrialUploadService the pdqTrialUploadService to set
      */
-    public void setPdqRegistrationService(PDQTrialRegistrationServiceBeanRemote service) {
-        pdqRegistrationService = service;
+    void setPdqTrialUploadService(PDQTrialUploadService pdqTrialUploadService) {
+        this.pdqTrialUploadService = pdqTrialUploadService;
     }
 
-    /**
-     * Setter for abstraction service.
-     * @param service the service.
-     */
-    public void setPdqAbstractionService(PDQTrialAbstractionServiceBeanRemote service) {
-        pdqAbstractionService = service;
-    }
+    
 }
 

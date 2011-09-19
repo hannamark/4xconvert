@@ -131,8 +131,6 @@ import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -147,7 +145,6 @@ import org.apache.log4j.Logger;
  */
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelper
     implements PDQTrialRegistrationServiceBeanRemote {
     @EJB
@@ -180,8 +177,7 @@ public class PDQTrialRegistrationServiceBean extends AbstractPDQTrialServiceHelp
      * @return Ii
      *@throws PAException on error
      * @throws IOException on error
-     */
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+     */   
     public Ii loadRegistrationElementFromPDQXml(URL xmlUrl, String userName) throws PAException, IOException {
         PDQRegistrationXMLParser parser = new PDQRegistrationXMLParser();
         parser.setUrl(xmlUrl);

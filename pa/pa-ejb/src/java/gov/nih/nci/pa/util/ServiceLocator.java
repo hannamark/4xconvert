@@ -125,6 +125,7 @@ import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PDQTrialAbstractionServiceBeanRemote;
 import gov.nih.nci.pa.service.util.PDQTrialRegistrationServiceBeanRemote;
+import gov.nih.nci.pa.service.util.PDQTrialUploadService;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -433,5 +434,10 @@ public interface ServiceLocator {
     * @return the audit history service
     */
    AuditTrailServiceLocal getAuditTrailService();
+   
+   /**
+    * @return the PDQ trial upload service
+    */
+   PDQTrialUploadService  getPDQTrialUploadService();
 }
 

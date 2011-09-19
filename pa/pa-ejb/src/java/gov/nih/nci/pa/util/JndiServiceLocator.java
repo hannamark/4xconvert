@@ -125,6 +125,7 @@ import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.PAPersonServiceRemote;
 import gov.nih.nci.pa.service.util.PDQTrialAbstractionServiceBeanRemote;
 import gov.nih.nci.pa.service.util.PDQTrialRegistrationServiceBeanRemote;
+import gov.nih.nci.pa.service.util.PDQTrialUploadService;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
 import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -532,4 +533,14 @@ public class JndiServiceLocator implements ServiceLocator {
     public AuditTrailServiceLocal getAuditTrailService() {
         return (AuditTrailServiceLocal) JNDIUtil.lookupPa("/pa/AuditTrailServiceBean/local");
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PDQTrialUploadService getPDQTrialUploadService() {
+        return (PDQTrialUploadService) JNDIUtil.lookupPa("/pa/PDQTrialUploadBean/remote");
+    }
+    
+    
 }
