@@ -91,93 +91,100 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 * copyright holder, NCI. 
 */
 public enum NciDivisionProgramCode implements CodedEnum<String> {
-  /** CCR-Center for Cancer Research. */
-  CCR("CCR"), 
-  /** CIP-Cancer Imaging Program. */
-  CIP("CIP") ,
-  /** CDP-Cancer Diagnosis Program. */
-  CDP("CDP") ,
-  /** CTEP-Cancer Therapy Evaluation Program. */
-  CTEP("CTEP") , 
-  /** DCB-Division of Cancer Biology. */
-  DCB("DCB") ,
-  /** DCCPS-Division of Cancer Control and Population Sciences. */
-  DCCPS("DCCPS") , 
-  /** DCEG-Division of Cancer Epidemiology and Genetics. */
-  DCEG("DCEG") ,
-  /** DCP-Division of Cancer Prevention. */
-  DCP("DCP") ,
-  /** DEA-Division of Extramural Activities. */
-  DEA("DEA"),
-  /** DTP-Developmental Therapeutics Program. */
-  DTP("DTP") ,
-  /** OD-Office of the Director, NCI, NIH. */
-  OD("OD") ,
-  /** OSB/SPOREs -Organ Systems Branch (OSB) /Specialized Programs of Research Excellence (SPOREs). */
-  OSB_SPOREs("OSB/SPOREs") ,
-  /** TRP-Translational Research Program. */
-  TRP("TRP") ,
-  /** RRP-Radiation Research Program. */
-  RRP("RRP") ,     
-  /*** . */
-  NA("N/A");
+    /** CCR-Center for Cancer Research. */
+    CCR("CCR"),
+    /** Center for Cancer Training / Cancer Training Branch. */
+    CCT_CTB("CCT/CTB"),
+    /** CIP-Cancer Imaging Program. */
+    CIP("CIP"),
+    /** CDP-Cancer Diagnosis Program. */
+    CDP("CDP"),
+    /** CTEP-Cancer Therapy Evaluation Program. */
+    CTEP("CTEP"),
+    /** DCB-Division of Cancer Biology. */
+    DCB("DCB"),
+    /** DCCPS-Division of Cancer Control and Population Sciences. */
+    DCCPS("DCCPS"),
+    /** DCEG-Division of Cancer Epidemiology and Genetics. */
+    DCEG("DCEG"),
+    /** DCP-Division of Cancer Prevention. */
+    DCP("DCP"),
+    /** DEA-Division of Extramural Activities. */
+    DEA("DEA"),
+    /** DTP-Developmental Therapeutics Program. */
+    DTP("DTP"),
+    /** OD-Office of the Director, NCI, NIH. */
+    OD("OD"),
+    /** OSB/SPOREs -Organ Systems Branch (OSB) /Specialized Programs of Research Excellence (SPOREs). */
+    OSB_SPOREs("OSB/SPOREs"),
+    /** TRP-Translational Research Program. */
+    TRP("TRP"),
+    /** RRP-Radiation Research Program. */
+    RRP("RRP"),
+    /*** . */
+    NA("N/A");
 
- private String code;
- /**
-  * 
-  * @param code
-  */
- private NciDivisionProgramCode(String code) {
-     this.code = code;
-     register(this);
- }
- /**
-  * @return code code
-  */
- public String getCode() {
-     return code;
- }
+    private String code;
 
- /**
-  *@return String DisplayName 
-  */
- public String getDisplayName() {
-     return sentenceCasedName(this);
- }
+    /**
+     * Constructor.
+     * @param code The code of this NciDivisionProgramCode
+     */
+    NciDivisionProgramCode(String code) {
+        this.code = code;
+        register(this);
+    }
 
- /**
-  * 
-  * @return String name
-  */
- public String getName() {
-     return name();
- }
+    /**
+     * @return code code
+     */
+    @Override
+    public String getCode() {
+        return code;
+    }
 
- /**
-  * 
-  * @param code code
-  * @return NciDivisionProgramCode 
-  */
- public static NciDivisionProgramCode getByCode(String code) {
-     return getByClassAndCode(NciDivisionProgramCode.class, code);
- }
+    /**
+     * @return String DisplayName
+     */
+    @Override
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
 
- /**
-  * @return String[] display names of enums
-  */
- public static String[]  getDisplayNames() {
-   NciDivisionProgramCode[] l = NciDivisionProgramCode.values();
-     String[] a = new String[l.length];
-     for (int i = 0; i < l.length; i++) {
-         a[i] = l[i].getCode();
-     }
-     return a;
- }
- 
- /**
-  * {@inheritDoc}
-  */
- public String getNameByCode(String str) {
-     return getByCode(str).name();
- }
+    /**
+     * 
+     * @return String name
+     */
+    public String getName() {
+        return name();
+    }
+
+    /**
+     * 
+     * @param code code
+     * @return NciDivisionProgramCode
+     */
+    public static NciDivisionProgramCode getByCode(String code) {
+        return getByClassAndCode(NciDivisionProgramCode.class, code);
+    }
+
+    /**
+     * @return String[] display names of enums
+     */
+    public static String[] getDisplayNames() {
+        NciDivisionProgramCode[] l = NciDivisionProgramCode.values();
+        String[] a = new String[l.length];
+        for (int i = 0; i < l.length; i++) {
+            a[i] = l[i].getCode();
+        }
+        return a;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getNameByCode(String str) {
+        return getByCode(str).name();
+    }
 }
