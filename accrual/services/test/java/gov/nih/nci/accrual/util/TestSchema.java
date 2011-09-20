@@ -266,6 +266,12 @@ public class TestSchema {
         addUpdObject(sp);
         studyProtocols.add(sp);
         
+        StudyResourcing sr = new StudyResourcing();
+        sr.setTypeCode(SummaryFourFundingCategoryCode.NATIONAL);
+        sr.setSummary4ReportedResourceIndicator(Boolean.TRUE);
+        sr.setStudyProtocol(sp);
+        addUpdObject(sr);
+        
         sp = new StudyProtocol();
         sp.setOfficialTitle("A Phase II/III Randomized, Placebo-Controlled Double-Blind Clinical Trial of Ginger");
         sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2009"));
@@ -284,6 +290,12 @@ public class TestSchema {
         sp.setProprietaryTrialIndicator(false);
         addUpdObject(sp);
         studyProtocols.add(sp);
+        
+        sr = new StudyResourcing();
+        sr.setTypeCode(SummaryFourFundingCategoryCode.NATIONAL);
+        sr.setSummary4ReportedResourceIndicator(Boolean.TRUE);
+        sr.setStudyProtocol(sp);
+        addUpdObject(sr);
 
         sp = new StudyProtocol();
         sp.setOfficialTitle("A Phase II/III Randomized, Placebo-Controlled Double-Blind Clinical Trial of Ginger");
@@ -303,7 +315,7 @@ public class TestSchema {
         sp.setProprietaryTrialIndicator(false);
         addUpdObject(sp);
 
-        StudyResourcing sr = new StudyResourcing();
+        sr = new StudyResourcing();
         sr.setTypeCode(SummaryFourFundingCategoryCode.INDUSTRIAL);
         sr.setSummary4ReportedResourceIndicator(Boolean.TRUE);
         sr.setStudyProtocol(sp);
@@ -340,6 +352,12 @@ public class TestSchema {
         sp.setProprietaryTrialIndicator(false);
         addUpdObject(sp);
         studyProtocols.add(sp);
+        
+        sr = new StudyResourcing();
+        sr.setTypeCode(SummaryFourFundingCategoryCode.NATIONAL);
+        sr.setSummary4ReportedResourceIndicator(Boolean.TRUE);
+        sr.setStudyProtocol(sp);
+        addUpdObject(sr);
         
         // StudyOverallStatus
         StudyOverallStatus sos = new StudyOverallStatus();
@@ -426,7 +444,6 @@ public class TestSchema {
         ss.setStudyProtocol(studyProtocols.get(2));
         addUpdObject(ss);
         studySites.add(ss);
-        
         
         ss = new StudySite();
         ss.setStatusCode(FunctionalRoleStatusCode.ACTIVE);

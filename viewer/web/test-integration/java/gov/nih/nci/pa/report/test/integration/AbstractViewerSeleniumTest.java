@@ -166,7 +166,7 @@ public abstract class AbstractViewerSeleniumTest extends AbstractSeleneseTestCas
     }
 
     public void loginAsAbstractor() {
-        login("abstractor", "Coppa#12345");
+        login("abstractor-ci", "Coppa#12345");
     }
 
     protected boolean isLoggedIn() {

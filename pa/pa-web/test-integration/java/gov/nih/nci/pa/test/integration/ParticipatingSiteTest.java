@@ -84,6 +84,7 @@ package gov.nih.nci.pa.test.integration;
 
 import java.util.Date;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -91,6 +92,7 @@ import org.junit.Test;
  *
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
+@Ignore
 public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
     private String today = MONTH_DAY_YEAR_FMT.format(new Date());
 
@@ -117,7 +119,7 @@ public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
         waitForElementById("row", 15);
         selenium.click("//table[@id='row']/tbody/tr[1]/td[8]/a");
         waitForPageToLoad();
-        selenium.selectFrame("relative=up");
+        selenium.selectWindow(null);
 
         clickAndWait("link=Save");
         assertTrue(selenium.isTextPresent("Please select a status"));
@@ -140,7 +142,7 @@ public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
         clickAndWaitAjax("link=Search");
         waitForElementById("row", 15);
         clickAndWaitAjax("//table[@id='row']/tbody/tr[1]/td[8]/a");
-        selenium.selectFrame("relative=up");
+        selenium.selectWindow(null);
         assertTrue(selenium.isTextPresent("One item found"));
 
         selenium.click("link=Contact");
@@ -153,7 +155,7 @@ public class ParticipatingSiteTest extends AbstractPaSeleniumTest {
         clickAndWaitAjax("link=Search");
         waitForElementById("row", 15);
         clickAndWaitAjax("//table[@id='row']/tbody/tr[1]/td[5]/a");
-        selenium.selectFrame("relative=up");
+        selenium.selectWindow(null);
         clickAndWaitAjax("link=Save");
         assertFalse(selenium.isTextPresent("Please enter either an email address or phone number"));
     }

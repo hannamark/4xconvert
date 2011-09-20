@@ -76,6 +76,9 @@
 */
 
 package gov.nih.nci.accrual.accweb.action;
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.service.PAException;
+
 import org.apache.struts2.ServletActionContext;
 
 /**
@@ -85,7 +88,13 @@ import org.apache.struts2.ServletActionContext;
 public class DisclaimerAction extends AbstractAccrualAction {
 
     private static final long serialVersionUID = 5729242514602833613L;
-
+    
+    
+    @Override
+    public void setSpIi(Ii spIi) throws PAException {
+        //Purposefully left empty
+    }
+    
     /**
      * {@inheritDoc}
      */

@@ -79,10 +79,8 @@
 package gov.nih.nci.accrual.service.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.accrual.dto.util.SearchTrialCriteriaDto;
 import gov.nih.nci.accrual.dto.util.SearchTrialResultDto;
@@ -195,16 +193,6 @@ public class SearchTrialServiceTest extends AbstractServiceTest<SearchTrialServi
         } catch (PAException e) {
             // expected behavior
         }
-    }
-
-    @Test
-    public void isIndustrial() throws Exception {
-        SearchTrialBean bean = new SearchTrialBean();
-        Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(0).getId());
-        assertFalse(bean.isIndustrial(studyProtocolIi));
-
-        studyProtocolIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocols.get(2).getId());
-        assertTrue(bean.isIndustrial(studyProtocolIi));
     }
 
     @Test

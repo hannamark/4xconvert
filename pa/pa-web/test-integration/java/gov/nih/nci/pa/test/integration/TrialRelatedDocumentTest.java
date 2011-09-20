@@ -99,6 +99,8 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
     public void testListDocuments() {
         loginAsAdminAbstractor();
         searchAndSelectTrial("PA Test Trial created by Selenium.");
+        checkOutTrialAsAdminAbstractor();
+        verifyTrialAccepted();
 
         clickAndWait("link=Trial Related Documents");
         assertTrue(selenium.isTextPresent("2 items found"));

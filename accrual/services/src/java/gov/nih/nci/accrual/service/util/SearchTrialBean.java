@@ -100,6 +100,8 @@ import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -108,6 +110,7 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -129,6 +132,7 @@ public class SearchTrialBean implements SearchTrialService {
     private static final int SP_ID_IDX = 4;
     private static final int SOS_STATUS_IDX = 5;
     private static final int PERSON_IDX = 6;
+    private static final int TYPE_CODE_IDX = 7;
 
     private static final String UNCHECKED = "unchecked";
 
@@ -139,19 +143,14 @@ public class SearchTrialBean implements SearchTrialService {
     public List<SearchTrialResultDto> search(SearchTrialCriteriaDto criteria,  Ii authorizedUser) throws PAException {
         List<SearchTrialResultDto> result = new ArrayList<SearchTrialResultDto>();
         if (criteria != null && !ISOUtil.isIiNull(authorizedUser)) {
-            Session session = null;
             try {
-                session = PaHibernateUtil.getCurrentSession();
-                Query query = null;
+                Session session = PaHibernateUtil.getCurrentSession();
                 String hql = generateStudyProtocolQuery(criteria);
-                query = session.createQuery(hql);
+                Query query = session.createQuery(hql);
                 List<Long> queryList = query.list();
                 Set<Long> authIds = getAuthorizedTrials(authorizedUser);
-                for (Long id : queryList) {
-                    if (authIds.contains(id)) {
-                        result.add(getTrialSummaryByStudyProtocolIi(IiConverter.convertToStudyProtocolIi(id)));
-                    }
-                }
+                Collection<Long> searchIds = CollectionUtils.intersection(queryList, authIds);
+                return getTrialSummariesByStudyProtocolIdentifiers(searchIds);
             } catch (HibernateException hbe) {
                 throw new PAException("Hibernate exception in SearchTrialBean.search().", hbe);
             }
@@ -170,75 +169,73 @@ public class SearchTrialBean implements SearchTrialService {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings(UNCHECKED)
     public SearchTrialResultDto getTrialSummaryByStudyProtocolIi(Ii studyProtocolIi) throws PAException {
-        SearchTrialResultDto result = new SearchTrialResultDto();
-        Session session = null;
         try {
-            session = PaHibernateUtil.getCurrentSession();
-            Query query = null;
-            String hql =
-                " select oi.extension, org.name, ss.localStudyProtocolIdentifier, sp.officialTitle, "
-                + "      sp.id, sos.statusCode, per "
-                + "from StudyProtocol as sp "
-                + "left outer join sp.studyOverallStatuses as sos "
-                + "left outer join sp.studyContacts as sc "
-                + "left outer join sc.clinicalResearchStaff as hcp "
-                + "left outer join hcp.person as per "
-                + "left outer join sp.studySites as ss  "
-                + "left outer join ss.researchOrganization as ro "
-                + "left outer join ro.organization as org "
-                + "left outer join sp.otherIdentifiers as oi "
-                + "where sp.id = " + IiConverter.convertToString(studyProtocolIi)
-                + "  and (ss.functionalCode ='" + StudySiteFunctionalCode.LEAD_ORGANIZATION + "' "
-                + "       or ss.functionalCode is null) "
-                + "  and (sc.roleCode ='" + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "' "
-                + "       or sc.roleCode is null) "
-                + "  and (sos.id in (select max(id) from StudyOverallStatus as sos1 "
-                + "                where sos.studyProtocol = sos1.studyProtocol ) "
-                + "       or sos.id is null)"
-                + "  and (oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' "
-                + "       and oi.identifierName = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "')";
-            query = session.createQuery(hql);
-            List<Object> queryList = query.list();
-            if (queryList.size() < 1) {
+            List<SearchTrialResultDto> results = getTrialSummariesByStudyProtocolIdentifiers(
+                    Arrays.asList(IiConverter.convertToLong(studyProtocolIi)));
+            if (results.isEmpty()) {
                 throw new PAException("Trial not found in SearchTrialBean.getTrialSummaryByStudyProtocolIi().");
             }
-            Object[] qArr = (Object[]) queryList.get(0);
-            result.setAssignedIdentifier(StConverter.convertToSt((String) qArr[SP_IDENTIFIER_IDX]));
-            result.setLeadOrgName(StConverter.convertToSt((String) qArr[ORG_NAME_IDX]));
-            result.setLeadOrgTrialIdentifier(StConverter.convertToSt((String) qArr[SS_IDENTIFIER]));
-            result.setOfficialTitle(StConverter.convertToSt((String) qArr[SP_TITLE_IDX]));
-            result.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi((Long) qArr[SP_ID_IDX]));
-            result.setStudyStatusCode(CdConverter.convertToCd((StudyStatusCode) qArr[SOS_STATUS_IDX]));
-            result.setIdentifier(studyProtocolIi);
-            result.setIndustrial(BlConverter.convertToBl(isIndustrial(studyProtocolIi)));
-            Person person = (Person) qArr[PERSON_IDX];
-            result.setPrincipalInvestigator(StConverter.convertToSt(person == null ? null : person.getFullName()));
+            return results.get(0);
         } catch (HibernateException hbe) {
             throw new PAException("Hibernate exception in SearchTrialBean.getTrialSummaryByStudyProtocolIi().", hbe);
         }
-        return result;
     }
-
-    /**
-     * Check if Trial is Industrial.
-     * 
-     * @param studyProtocolIi study protocol ii
-     * @return true if industrial, false otherwise
-     * @throws PAException on error
-     */
-    protected Boolean isIndustrial(Ii studyProtocolIi) throws PAException {
-        Session session = null;
-        try {
-            session = PaHibernateUtil.getCurrentSession();
-            Query query = session.createQuery("from StudyResourcing sr where sr.typeCode = '"
-                    + SummaryFourFundingCategoryCode.INDUSTRIAL + "' and sr.studyProtocol.id="
-                    + IiConverter.convertToString(studyProtocolIi));
-            return query.list().size() == 1;
-        } catch (HibernateException hbe) {
-            throw new PAException("Hibernate exception in SearchTrialBean.getTrialSummaryByStudyProtocolIi().", hbe);
+    
+    @SuppressWarnings(UNCHECKED)
+    private List<SearchTrialResultDto> getTrialSummariesByStudyProtocolIdentifiers(Collection<Long> identifiers) {
+        List<SearchTrialResultDto> results = new ArrayList<SearchTrialResultDto>();
+        if (CollectionUtils.isEmpty(identifiers)) {
+            return results;
         }
+        Session session = PaHibernateUtil.getCurrentSession();
+        String hql =
+            " select oi.extension, org.name, ss.localStudyProtocolIdentifier, sp.officialTitle, "
+            + "      sp.id, sos.statusCode, per, sr.typeCode "
+            + "from StudyProtocol as sp "
+            + "left outer join sp.studyOverallStatuses as sos "
+            + "left outer join sp.studyContacts as sc "
+            + "left outer join sc.clinicalResearchStaff as hcp "
+            + "left outer join hcp.person as per "
+            + "left outer join sp.studySites as ss  "
+            + "left outer join ss.researchOrganization as ro "
+            + "left outer join ro.organization as org "
+            + "left outer join sp.otherIdentifiers as oi "
+            + "left outer join sp.studyResourcings as sr "
+            + "where sp.id in (:studyProtocolIdentifiers) "
+            + "  and (ss.functionalCode ='" + StudySiteFunctionalCode.LEAD_ORGANIZATION + "' "
+            + "       or ss.functionalCode is null) "
+            + "  and (sc.roleCode ='" + StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR + "' "
+            + "       or sc.roleCode is null) "
+            + "  and (sos.id in (select max(id) from StudyOverallStatus as sos1 "
+            + "                where sos.studyProtocol = sos1.studyProtocol ) "
+            + "       or sos.id is null)"
+            + "  and (oi.root = '" + IiConverter.STUDY_PROTOCOL_ROOT + "' "
+            + "       and oi.identifierName = '" + IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME + "') "
+            + "  and sr.typeCode is not null";
+        Query query = session.createQuery(hql);
+        query.setParameterList("studyProtocolIdentifiers", identifiers);
+        List<Object[]> queryList = query.list();
+        for (Object[] trialInfo : queryList) {
+            results.add(convertToDto(trialInfo));
+        }
+        return results;
+    }
+    
+    private SearchTrialResultDto convertToDto(Object[] obj) {
+        SearchTrialResultDto trial = new SearchTrialResultDto();
+        trial.setAssignedIdentifier(StConverter.convertToSt((String) obj[SP_IDENTIFIER_IDX]));
+        trial.setLeadOrgName(StConverter.convertToSt((String) obj[ORG_NAME_IDX]));
+        trial.setLeadOrgTrialIdentifier(StConverter.convertToSt((String) obj[SS_IDENTIFIER]));
+        trial.setOfficialTitle(StConverter.convertToSt((String) obj[SP_TITLE_IDX]));
+        trial.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi((Long) obj[SP_ID_IDX]));
+        trial.setStudyStatusCode(CdConverter.convertToCd((StudyStatusCode) obj[SOS_STATUS_IDX]));
+        trial.setIdentifier(trial.getStudyProtocolIdentifier());
+        SummaryFourFundingCategoryCode studyType = (SummaryFourFundingCategoryCode) obj[TYPE_CODE_IDX];
+        trial.setIndustrial(BlConverter.convertToBl(studyType == SummaryFourFundingCategoryCode.INDUSTRIAL));
+        Person person = (Person) obj[PERSON_IDX];
+        trial.setPrincipalInvestigator(StConverter.convertToSt(person == null ? null : person.getFullName()));
+        return trial;
     }
 
     @SuppressWarnings(UNCHECKED)

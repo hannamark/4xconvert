@@ -147,7 +147,7 @@ public abstract class AbstractAccrualSeleniumTest extends AbstractSeleneseTestCa
 
     protected void disclaimer(boolean accept) {
         if (accept) {
-            clickAndWait("id=acceptDisclaimer");
+            clickAndWaitAjax("id=acceptDisclaimer");
         } else {
             clickAndWait("id=rejectDisclaimer");
             verifyHomePage();

@@ -9,6 +9,7 @@ function setCheckbox(index) {
     }
 }
 </script>
+<c:set var="topic" scope="request" value="accrual_count"/>
 <h1>
     <fmt:message key="participatingsite.accrual.count.title" />
 </h1>
