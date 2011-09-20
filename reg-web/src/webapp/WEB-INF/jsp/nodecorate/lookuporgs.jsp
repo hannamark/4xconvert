@@ -34,7 +34,7 @@
         		var params = {
                     cityName: $("orgCitySearch").value,
                     countryName: $("orgCountrySearch").value,
-                    ctepid: $("orgCtepIdSearch").value,
+                    ctepId: $("orgCtepIdSearch").value,
                     orgName: $("orgNameSearch").value,
                     familyName: $("orgFamilyNameSearch").value,
                     stateName: $("orgStateSearch").value,
