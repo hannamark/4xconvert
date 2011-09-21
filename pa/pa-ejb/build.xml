@@ -5,7 +5,7 @@
 <!-- ====================================================================== -->
 
 <project name="pa-ejb" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
-    <property name="pa-ejb.coverage.line" value="72"/>
+    <property name="pa-ejb.coverage.line" value="71"/>
     <property name="pa-ejb.coverage.branch" value="57"/>
     <property name="pa-ejb.pmd.maxerrors" value="346"/>
 

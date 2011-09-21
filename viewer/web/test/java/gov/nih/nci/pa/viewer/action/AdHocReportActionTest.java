@@ -109,7 +109,7 @@ import com.mockrunner.mock.web.MockHttpServletResponse;
 import com.mockrunner.mock.web.MockHttpSession;
 
 public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportAction> {
-    
+
     StudyProtocolQueryCriteria criteria;
 
     @Before
@@ -132,7 +132,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         protListItem.getInterventionTypes().add("Drug");
         protListItem.setSumm4FundingSrcCategory("NATIONAL");
         protList.add(protListItem);
-        when(protQuerySvc.getStudyProtocolByCriteria(any(StudyProtocolQueryCriteria.class))).thenReturn(protList);
+        when(protQuerySvc.getStudyProtocolByCriteriaForReporting(any(StudyProtocolQueryCriteria.class))).thenReturn(protList);
         TSRReportGeneratorServiceRemote tsrSvcRemote = mock(TSRReportGeneratorServiceRemote.class);
         ServiceLocator svcLoc = mock(ServiceLocator.class);
         PaRegistry.getInstance().setServiceLocator(svcLoc);
@@ -149,17 +149,17 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         criteria = new StudyProtocolQueryCriteria();
         action.setCriteria(criteria);
     }
-    
+
     @Test
-    public void testExecute() throws PAException {       
+    public void testExecute() throws PAException {
         assertEquals("success", action.execute());
     }
-    
+
     @Test
-    public void testFillDiseaseId() throws PAException {       
+    public void testFillDiseaseId() throws PAException {
         assertEquals("success", action.fillInDiseaseId());
     }
-    
+
     @Test
     public void testQueryTypeButNoIdentifier() throws PAException {
         action.setCriteria(new StudyProtocolQueryCriteria());
@@ -167,7 +167,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         assertEquals("success", action.getReport());
         assertEquals("error.studyProtocol.identifier", action.getFieldErrors().get("identifier").get(0));
     }
-    
+
     @Test
     public void testQueryIdentifierNoType() throws PAException {
         action.setCriteria(new StudyProtocolQueryCriteria());
@@ -175,35 +175,35 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         assertEquals("success", action.getReport());
         assertEquals("error.studyProtocol.identifierType", action.getFieldErrors().get("criteria.identifierType").get(0));
     }
-    
+
     @Test
     public void testQueryIdentifierTypes() throws PAException {
         action.setCriteria(new StudyProtocolQueryCriteria());
         action.setIdentifier("anything");
         action.getCriteria().setIdentifierType(IdentifierType.NCI.getCode());
         assertEquals("success", action.getReport());
-        assertEquals(1, action.getResultList().size());    
+        assertEquals(1, action.getResultList().size());
         action.getCriteria().setIdentifierType(IdentifierType.NCT.getCode());
         assertEquals("success", action.getReport());
-        assertEquals(1, action.getResultList().size());    
+        assertEquals(1, action.getResultList().size());
         action.getCriteria().setIdentifierType(IdentifierType.CTEP.getCode());
         assertEquals("success", action.getReport());
-        assertEquals(1, action.getResultList().size());    
+        assertEquals(1, action.getResultList().size());
         action.getCriteria().setIdentifierType(IdentifierType.DCP.getCode());
         assertEquals("success", action.getReport());
-        assertEquals(1, action.getResultList().size());    
+        assertEquals(1, action.getResultList().size());
         action.getCriteria().setIdentifierType(IdentifierType.LEAD_ORG.getCode());
         assertEquals("success", action.getReport());
-        assertEquals(1, action.getResultList().size());    
+        assertEquals(1, action.getResultList().size());
         action.getCriteria().setIdentifierType(IdentifierType.OTHER_IDENTIFIER.getCode());
         assertEquals("success", action.getReport());
-        assertEquals(1, action.getResultList().size());    
-        
+        assertEquals(1, action.getResultList().size());
+
         assertEquals("cancer", action.getResultList().get(0).getDiseaseNames().iterator().next());
         assertEquals("Drug", action.getResultList().get(0).getInterventionTypes().iterator().next());
         assertEquals("NATIONAL", action.getResultList().get(0).getSumm4FundingSrcCategory());
     }
-        
+
     @Test
     public void testViewTSR() throws PAException {
         getRequest().setupAddParameter("studyProtocolId", "1");
@@ -215,7 +215,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         assertEquals(1, action.getLeadOrgList().size());
         assertEquals(1, action.getSumm4FunsingSponsorsList().size());
     }
- 
+
     /**
      * @return MockHttpServletRequest
      */

@@ -50,6 +50,7 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(
             StudyProtocolQueryCriteria sc) throws PAException {
         if(sc.getOfficialTitle() != null && sc.getOfficialTitle().equalsIgnoreCase("ThrowException")) {
@@ -68,6 +69,7 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(
             Long studyProtocolId) throws PAException {
 
@@ -86,7 +88,18 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<StudyProtocol> getStudyProtocolByOrgIdentifier(Long orgIdentifier) throws PAException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal#getStudyProtocolByCriteriaForReporting(gov.nih.nci.pa.dto.StudyProtocolQueryCriteria)
+     */
+    @Override
+    public List<StudyProtocolQueryDTO> getStudyProtocolByCriteriaForReporting(StudyProtocolQueryCriteria pSc)
+            throws PAException {
         // TODO Auto-generated method stub
         return null;
     }

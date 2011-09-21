@@ -72,6 +72,7 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal#getStudyProtocolByCriteria(gov.nih.nci.pa.dto.StudyProtocolQueryCriteria)
      */
+    @Override
     public List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(
             StudyProtocolQueryCriteria sc) throws PAException {
         if(sc.getOfficialTitle() != null && sc.getOfficialTitle().equalsIgnoreCase("ThrowException")) {
@@ -97,6 +98,7 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal#getTrialSummaryByStudyProtocolId(java.lang.Long)
      */
+    @Override
     public StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(
             Long studyProtocolId) throws PAException {
 
@@ -111,6 +113,7 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal#getStudyProtocolByOrgIdentifier(java.lang.Long)
      */
+    @Override
     public List<StudyProtocol> getStudyProtocolByOrgIdentifier(Long orgIdentifier) throws PAException {
         List<StudyProtocol> returnList = new ArrayList<StudyProtocol>();
         for (StudyProtocolQueryDTO spDto : list) {
@@ -133,6 +136,16 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
             }
         }
         return returnList;
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal#getStudyProtocolByCriteriaForReporting(gov.nih.nci.pa.dto.StudyProtocolQueryCriteria)
+     */
+    @Override
+    public List<StudyProtocolQueryDTO> getStudyProtocolByCriteriaForReporting(StudyProtocolQueryCriteria pSc)
+            throws PAException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

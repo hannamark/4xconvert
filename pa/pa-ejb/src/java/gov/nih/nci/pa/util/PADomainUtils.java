@@ -224,7 +224,7 @@ public class PADomainUtils {
         displayElement = new PaOrganizationDTO();
         displayElement.setId(poOrgDto.getIdentifier().getExtension().toString());
         displayElement.setName(poOrgDto.getName().getPart().get(0).getValue());
-        
+
         List<Adxp> addressList = poOrgDto.getPostalAddress().getPart();
         Iterator<Adxp> addressIte = addressList.iterator();
         while (addressIte.hasNext()) {
@@ -358,7 +358,7 @@ public class PADomainUtils {
         }
         return results;
     }
-    
+
     /**
      * Returns a listing of a disease names associated with a studyProtocol.
      * @param sp the study protocol to get the diseases for
@@ -366,14 +366,12 @@ public class PADomainUtils {
      */
     public static Set<String> getDiseaseNames(StudyProtocol sp) {
         Set<String> results = new TreeSet<String>();
-        if (CollectionUtils.isNotEmpty(sp.getStudyDiseases())) {
-            for (StudyDisease sd : sp.getStudyDiseases()) {
+        for (StudyDisease sd : sp.getStudyDiseases()) {
                 results.add(sd.getDisease().getPreferredName());
-            }
         }
         return results;
     }
-    
+
     /**
      * Returns a listing of a intervention type names associated with a studyProtocol.
      * @param sp the study protocol to get the intervention types for
@@ -381,11 +379,9 @@ public class PADomainUtils {
      */
     public static Set<String> getInterventionTypes(StudyProtocol sp) {
         Set<String> results = new TreeSet<String>();
-        if (CollectionUtils.isNotEmpty(sp.getPlannedActivities())) {
-            for (PlannedActivity pa : sp.getPlannedActivities()) {
-                if (pa.getIntervention() != null) { 
-                    results.add(pa.getIntervention().getTypeCode().getCode());
-                }
+        for (PlannedActivity pa : sp.getPlannedActivities()) {
+            if (pa.getIntervention() != null) {
+                results.add(pa.getIntervention().getTypeCode().getCode());
             }
         }
         return results;
@@ -436,16 +432,16 @@ public class PADomainUtils {
         ro.setOrganization(org);
         return ro;
     }
-    
+
     /**
      * Search PO organizations by name, address or ctep id.
      * @param orgSearchCriteria criteria
      * @return PO org list.
      * @throws TooManyResultsException when too many exceptions.
-     */ 
-    public static List<OrganizationDTO> orgSearchByNameAddressCtepId(PaOrganizationDTO orgSearchCriteria) 
+     */
+    public static List<OrganizationDTO> orgSearchByNameAddressCtepId(PaOrganizationDTO orgSearchCriteria)
             throws TooManyResultsException {
-        
+
         OrganizationDTO criteria = new OrganizationDTO();
         if (StringUtils.isNotBlank(orgSearchCriteria.getCtepId())) {
             IdentifiedOrganizationDTO identifiedOrganizationDTO = new IdentifiedOrganizationDTO();
@@ -459,13 +455,13 @@ public class PADomainUtils {
         } else {
             criteria.setName(EnOnConverter.convertToEnOn(orgSearchCriteria.getName()));
             criteria.setPostalAddress(AddressConverterUtil.create(
-                    null, null, orgSearchCriteria.getCity(), orgSearchCriteria.getState(), 
+                    null, null, orgSearchCriteria.getCity(), orgSearchCriteria.getState(),
                         orgSearchCriteria.getZip(), orgSearchCriteria.getCountry()));
         }
         return searchOrgEntityByCriteria(criteria, orgSearchCriteria);
     }
-    
-    private static List<OrganizationDTO> searchOrgEntityByCriteria(OrganizationDTO criteria, 
+
+    private static List<OrganizationDTO> searchOrgEntityByCriteria(OrganizationDTO criteria,
             PaOrganizationDTO orgSearchCriteria) throws TooManyResultsException {
         List<OrganizationDTO> orgSearchResults = new ArrayList<OrganizationDTO>();
         if (criteria.getIdentifier() != null
@@ -478,6 +474,6 @@ public class PADomainUtils {
         }
         return orgSearchResults;
     }
-    
+
 
 }
