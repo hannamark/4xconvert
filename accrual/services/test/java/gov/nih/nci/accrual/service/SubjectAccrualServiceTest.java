@@ -92,6 +92,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.accrual.dto.PerformedSubjectMilestoneDto;
 import gov.nih.nci.accrual.dto.StudySubjectDto;
 import gov.nih.nci.accrual.dto.SubjectAccrualDTO;
@@ -103,6 +104,7 @@ import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
 import gov.nih.nci.accrual.service.util.CountryBean;
 import gov.nih.nci.accrual.service.util.POPatientService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
+import gov.nih.nci.accrual.service.util.SubjectAccrualValidatorBean;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.PaServiceLocator;
@@ -193,6 +195,10 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         PerformedActivityBean performedActivitySvc = new PerformedActivityBean();
         accCountSvc = mock(SubjectAccrualCountService.class);
         
+        SubjectAccrualValidatorBean validator = new SubjectAccrualValidatorBean();
+        validator.setCountryService(countryService);
+        validator.setStudySubjectService(studySubjectService);
+        
         bean = new SubjectAccrualServiceBean();
         bean.setSubjectAccrualCountSvc(accCountSvc);
         bean.setPatientService(patientService);
@@ -200,6 +206,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         bean.setPerformedActivityService(performedActivitySvc);
         bean.setCountryService(new CountryBean());
         bean.setBatchFileService(new BatchFileServiceBeanLocal());
+        bean.setSubjectAccrualValidator(validator);
         
         studySiteSvc = mock(StudySiteServiceRemote.class);
         when(studySiteSvc.get(any(Ii.class))).thenReturn(Converters.get(StudySiteConverter.class).convertFromDomainToDto(participatingSite));        
@@ -515,7 +522,7 @@ public class SubjectAccrualServiceTest extends AbstractBatchUploadReaderTest {
         bean.deleteByStudySiteIdentifier(studySiteIi);
         results = bean.search(studyProtocolIi, studySiteIi, null, null, pagingParams);
         assertEquals(0, results.size());
-    }
+    }     
     
     private void validateSubjectAccrualDTO(SubjectAccrualDTO expected, SubjectAccrualDTO given) {
         assertEquals(StConverter.convertToString(expected.getAssignedIdentifier()), StConverter.convertToString(given.getAssignedIdentifier()));

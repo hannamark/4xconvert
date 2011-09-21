@@ -91,10 +91,10 @@ import gov.nih.nci.accrual.dto.util.PatientDto;
 import gov.nih.nci.accrual.service.batch.BatchFileService;
 import gov.nih.nci.accrual.service.batch.BatchValidationResults;
 import gov.nih.nci.accrual.service.batch.CdusBatchUploadReaderServiceLocal;
-import gov.nih.nci.accrual.service.exception.IndexedInputValidationException;
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.accrual.service.util.CountryService;
 import gov.nih.nci.accrual.service.util.SubjectAccrualCountService;
+import gov.nih.nci.accrual.service.util.SubjectAccrualValidator;
 import gov.nih.nci.accrual.util.AccrualServiceLocator;
 import gov.nih.nci.accrual.util.AccrualUtil;
 import gov.nih.nci.accrual.util.CaseSensitiveUsernameHolder;
@@ -111,12 +111,8 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteSubjectAccrualCount;
 import gov.nih.nci.pa.domain.StudySubject;
-import gov.nih.nci.pa.enums.PatientGenderCode;
-import gov.nih.nci.pa.enums.PaymentMethodCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
 import gov.nih.nci.pa.iso.convert.StudySiteConverter;
-import gov.nih.nci.pa.iso.dto.ICD9DiseaseDTO;
-import gov.nih.nci.pa.iso.dto.SDCDiseaseDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -142,9 +138,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -169,10 +163,11 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     @EJB
     private SubjectAccrualCountService subjectAccrualCountSvc;
     @EJB
-    private BatchFileService batchFileService;
+    private BatchFileService batchFileService;    
+    @EJB 
+    private SubjectAccrualValidator subjectAccrualValidator;
     
-    private static final String REQUIRED_MSG = "%s is a required field.\n";
-    private static final String INVALID_VALUE = "%s is not a valid value for %s.\n";
+   
     /**
      * The 1st 4 bytes of a byte of a file that indicates a zip file. Used to determine if the information
      * passed in to the submitBatchData method is a zip file. 
@@ -185,9 +180,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public List<SubjectAccrualDTO> manageSubjectAccruals(List<SubjectAccrualDTO> subjects) throws PAException {
-        for (int i = 0; i < subjects.size(); i++) {
-            validateRequiredFields(subjects.get(i), i);
-        }
+        subjectAccrualValidator.validate(subjects);
         List<SubjectAccrualDTO> results = new ArrayList<SubjectAccrualDTO>();
         for (SubjectAccrualDTO subject : subjects) {
             if (!AccrualUtil.isUserAllowedAccrualAccess(subject.getParticipatingSiteIdentifier())) {
@@ -204,24 +197,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     }
 
 
-    private void validateRequiredFields(SubjectAccrualDTO subjectAccrual, int index) 
-    throws PAException {
-        StringBuffer errors = new StringBuffer();
-        if (ISOUtil.isStNull(subjectAccrual.getAssignedIdentifier())) {
-            errors.append(String.format(REQUIRED_MSG, "Assigned Identifier"));
-        }
-        validateDatesAndPaymentMethod(subjectAccrual, errors);
-        validateGenderAndEthnicity(subjectAccrual, errors);
-        if (subjectAccrual.getRace() == null || CollectionUtils.isEmpty(subjectAccrual.getRace().getItem())) {
-            errors.append(String.format(REQUIRED_MSG, "Race"));
-        }
-        validateCountry(subjectAccrual, errors);        
-        validateDiseaseAndParticipatingSite(subjectAccrual, errors);
-        if (errors.length() != 0) {
-            throw new IndexedInputValidationException(errors.toString(), index);
-        }
-    }
-    
+   
     /**
      * {@inheritDoc}
      */
@@ -254,68 +230,6 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     }
     
 
-    private void validateDatesAndPaymentMethod(SubjectAccrualDTO dto, StringBuffer errMsg) {
-        if (ISOUtil.isTsNull(dto.getBirthDate())) {
-            errMsg.append(String.format(REQUIRED_MSG, "Birth Date"));
-        }
-        if (ISOUtil.isTsNull(dto.getRegistrationDate())) {
-            errMsg.append(String.format(REQUIRED_MSG, "Registration Date"));
-        }
-        String code = CdConverter.convertCdToString(dto.getPaymentMethod());
-        if (code != null && PaymentMethodCode.getByCode(code) == null) {
-            errMsg.append(String.format(INVALID_VALUE, code, "Payment Method Code"));
-        }
-    }
-    
-    private void validateCountry(SubjectAccrualDTO dto, StringBuffer errMsg) throws PAException {
-        String code = CdConverter.convertCdToString(dto.getCountryCode());
-        if (ISOUtil.isCdNull(dto.getCountryCode())) {
-            errMsg.append(String.format(REQUIRED_MSG, "Country Code"));
-        } else if (getCountryService().getByCode(code) == null) {
-            errMsg.append(String.format(INVALID_VALUE, code, "Country Code"));
-        } else if (StringUtils.equals("US", code) && ISOUtil.isStNull(dto.getZipCode())) {
-            errMsg.append("Zip Code must be specified when the subject's country is the US.");
-        }
-    }
-    
-    private void validateGenderAndEthnicity(SubjectAccrualDTO subjectAccrual, StringBuffer errMsg) {
-        String gender = CdConverter.convertCdToString(subjectAccrual.getGender());
-        if (StringUtils.isEmpty(gender)) {
-            errMsg.append(String.format(REQUIRED_MSG, "Gender"));
-        } else if (PatientGenderCode.getByCode(gender) == null) {
-            errMsg.append(String.format(INVALID_VALUE, gender, "Gender"));
-        }
-        String ethnicity = CdConverter.convertCdToString(subjectAccrual.getEthnicity());
-        if (StringUtils.isEmpty(ethnicity)) {
-            errMsg.append(String.format(REQUIRED_MSG, "Ethnicity"));
-        } else if (PatientGenderCode.getByCode(gender) == null) {
-            errMsg.append(String.format(INVALID_VALUE, ethnicity, "Ethnicity"));
-        }
-    }
-
-    private void validateDiseaseAndParticipatingSite(SubjectAccrualDTO subjectAccrual, StringBuffer errMsg) 
-        throws PAException {
-        if (ISOUtil.isIiNull(subjectAccrual.getDiseaseIdentifier())) {
-            errMsg.append(String.format(REQUIRED_MSG, "Disease Identifier"));
-        } else {
-            SDCDiseaseDTO sdc = 
-                PaServiceLocator.getInstance().getDiseaseService().get(subjectAccrual.getDiseaseIdentifier());
-            ICD9DiseaseDTO icd9 = 
-                PaServiceLocator.getInstance().getICD9DiseaseService().get(subjectAccrual.getDiseaseIdentifier());
-            if (sdc == null && icd9 == null) {
-                errMsg.append(String.format(INVALID_VALUE, subjectAccrual.getDiseaseIdentifier().getExtension(), 
-                    "Disease Identifier"));
-            }
-        }
-
-        if (ISOUtil.isIiNull(subjectAccrual.getParticipatingSiteIdentifier())) {
-            errMsg.append(String.format(REQUIRED_MSG, "Participating Site Identifier"));
-        } else if (PaServiceLocator.getInstance().getStudySiteService()
-                .get(subjectAccrual.getParticipatingSiteIdentifier()) == null) {
-            errMsg.append(String.format(INVALID_VALUE, subjectAccrual.getParticipatingSiteIdentifier().getExtension(), 
-            "Participating Site Identifier"));
-        }
-    }
     
     /**
      * {@inheritDoc}
@@ -434,6 +348,7 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void updateSubjectAccrualCount(Ii participatingSiteIi, Int count, RegistryUser user) throws PAException {
         if (ISOUtil.isIiNull(participatingSiteIi)) {
             throw new PAException("Study Site Ii cannot be null.");
@@ -655,4 +570,12 @@ public class SubjectAccrualBeanLocal implements SubjectAccrualServiceLocal {
     public void setBatchFileService(BatchFileService batchFileService) {
         this.batchFileService = batchFileService;
     }
+
+    /**
+     * @param subjectAccrualValidator the subjectAccrualValidator to set
+     */
+    public void setSubjectAccrualValidator(SubjectAccrualValidator subjectAccrualValidator) {
+        this.subjectAccrualValidator = subjectAccrualValidator;
+    }
+    
 }
