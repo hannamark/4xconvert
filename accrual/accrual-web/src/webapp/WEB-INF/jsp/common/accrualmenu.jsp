@@ -29,15 +29,25 @@
                                 <li><a href="patients.action" >Study Subject Search</a></li>
                             </c:otherwise>
                         </c:choose>
+                    </c:when>
+                    <c:when test="${sessionScope.studyProtocolIi != null && sessionScope.trialSummary.industrial.value}">
                         <c:choose>
-                            <c:when test="${requestScope.topic == 'batch_upload'}">
-                                <li><a href="batchUpload.action" class="selected">Batch Upload</a></li> 
+                            <c:when test="${(requestScope.topic == 'accrual_count')}">
+                                <li><a href="industrialPatients.action" class="selected">Record Accrual Count</a></li> 
                             </c:when>
                             <c:otherwise>
-                                <li><a href="batchUpload.action" >Batch Upload</a></li>
+                                <li><a href="industrialPatients.action" >Record Accrual Count</a></li>
                             </c:otherwise>
                         </c:choose>
                     </c:when>
+                </c:choose>
+                <c:choose>
+                    <c:when test="${requestScope.topic == 'batch_upload'}">
+                        <li><a href="batchUpload.action" class="selected">Batch Upload</a></li> 
+                    </c:when>
+                    <c:otherwise>
+                        <li><a href="batchUpload.action" >Batch Upload</a></li>
+                    </c:otherwise>
                 </c:choose>
                 <li><a href="/accrual/logout.action" >Log Out</a></li>
             </c:when>
