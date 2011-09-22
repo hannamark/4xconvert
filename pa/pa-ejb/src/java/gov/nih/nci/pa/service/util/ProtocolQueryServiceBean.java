@@ -86,17 +86,14 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.Intervention;
-import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
-import gov.nih.nci.pa.domain.StudyCheckout;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyDisease;
-import gov.nih.nci.pa.domain.StudyInbox;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
@@ -115,23 +112,21 @@ import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
-import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
+import gov.nih.nci.pa.iso.convert.StudyProtocolQueryConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.search.StudyProtocolBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyProtocolOptions;
 import gov.nih.nci.pa.service.search.StudyProtocolQueryBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyProtocolSortCriterion;
-import gov.nih.nci.pa.util.CsmUserUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -183,7 +178,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         }
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
         List<StudyProtocol> queryList = getStudyProtocolQueryResults(spsc);
-        pdtos = convertToStudyProtocolDTO(queryList, spsc.getUserId(), BooleanUtils.toBoolean(spsc.isMyTrialsOnly()));
+        pdtos = convertToStudyProtocolDTO(queryList, spsc.getUserId(),
+                BooleanUtils.toBoolean(spsc.isMyTrialsOnly()), false);
         if (CollectionUtils.isNotEmpty(pdtos)) {
             pdtos = appendOnHold(pdtos);
         }
@@ -202,8 +198,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         }
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
         List<StudyProtocol> queryList = getStudyProtocolQueryResults(spsc);
-        pdtos = convertToStudyProtocolDTOForReporting(queryList, spsc.getUserId(),
-                BooleanUtils.toBoolean(spsc.isMyTrialsOnly()));
+        pdtos = convertToStudyProtocolDTO(queryList, spsc.getUserId(),
+                BooleanUtils.toBoolean(spsc.isMyTrialsOnly()), true);
         if (CollectionUtils.isNotEmpty(pdtos)) {
             pdtos = appendOnHold(pdtos);
         }
@@ -233,7 +229,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         if (queryList == null) {
             throw new PAException(" Study protocol was not found for id " + studyProtocolId);
         }
-        List<StudyProtocolQueryDTO> trialSummaries = convertToStudyProtocolDTO(queryList, null, false);
+        List<StudyProtocolQueryDTO> trialSummaries = convertToStudyProtocolDTO(queryList, null, false, false);
 
         if (trialSummaries == null || trialSummaries.size() <= 0) {
             throw new PAException(" Could not be converted to DTO for id " + studyProtocolId);
@@ -249,207 +245,27 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
      * @return a list of StudyProtocolQueryDTOs
      * @throws PAException on error
      */
-    private List<StudyProtocolQueryDTO> convertToStudyProtocolDTO(List<StudyProtocol> protocolQueryResult, Long userId,
-            boolean myTrialsOnly)
+    private List<StudyProtocolQueryDTO> convertToStudyProtocolDTO(List<StudyProtocol> protocolQueryResult,
+            Long userId, boolean myTrialsOnly, boolean isReporting)
         throws PAException {
+        StudyProtocolQueryConverter studyProtocolQueryConverter =
+            new StudyProtocolQueryConverter(getRegistryUserService(), getPaServiceUtils());
         List<StudyProtocolQueryDTO> studyProtocolDtos = new ArrayList<StudyProtocolQueryDTO>();
-        RegistryUser potentialOwner = userId == null ? null : registryUserService.getUserById(userId);
+        RegistryUser potentialOwner = getPotentialOwner(userId);
         try {
             for (StudyProtocol studyProtocol : protocolQueryResult) {
-                StudyProtocolQueryDTO studyProtocolDto = new StudyProtocolQueryDTO();
 
-                // get documentWorkflowStatus
-                DocumentWorkflowStatus documentWorkflowStatus = studyProtocol.getDocumentWorkflowStatuses().isEmpty()
-                        ? null : studyProtocol.getDocumentWorkflowStatuses().iterator().next();
-
-                // get studyOverallStatus
-                StudyOverallStatus studyOverallStatus = studyProtocol.getStudyOverallStatuses().isEmpty() ? null
-                        : studyProtocol.getStudyOverallStatuses().iterator().next();
-                // get the person
-                StudyContact sc = studyProtocol.getStudyContacts().isEmpty() ? null
-                        : studyProtocol.getStudyContacts().iterator().next();
-                Person person = (sc != null) ? sc.getClinicalResearchStaff().getPerson() : null;
-
-                // study site and organization
-                StudySite studySite = studyProtocol.getStudySites().isEmpty() ? null
-                        : studyProtocol.getStudySites().iterator().next();
-                Organization organization = (studySite != null) ? studySite.getResearchOrganization().getOrganization()
-                        : null;
-                // get the StudyInbox
-                StudyInbox studyInbox = studyProtocol.getStudyInbox().isEmpty() ? null
-                        : studyProtocol.getStudyInbox().iterator().next();
-                StudyResourcing studyResourcing = findSumm4FundingSrc(studyProtocol);
-
-                // transfer protocol to studyProtocolDto
-                if (documentWorkflowStatus != null) {
-                    studyProtocolDto.setDocumentWorkflowStatusCode(documentWorkflowStatus.getStatusCode());
-                    studyProtocolDto.setDocumentWorkflowStatusDate(documentWorkflowStatus.getStatusDateRangeLow());
-                }
-                if (studyProtocol instanceof ObservationalStudyProtocol) {
-                    studyProtocolDto.setStudyProtocolType("ObservationalStudyProtocol");
+                StudyProtocolQueryDTO studyProtocolDto = null;
+                if (isReporting) {
+                    studyProtocolDto = studyProtocolQueryConverter.convertToStudyProtocolDtoForReporting(
+                            studyProtocol, myTrialsOnly, potentialOwner);
                 } else {
-                    studyProtocolDto.setStudyProtocolType("InterventionalStudyProtocol");
+                    studyProtocolDto = studyProtocolQueryConverter.convertToStudyProtocolDto(
+                            studyProtocol, myTrialsOnly, potentialOwner);
                 }
-                studyProtocolDto.setOfficialTitle(studyProtocol.getOfficialTitle());
-                studyProtocolDto.setStudyProtocolId(studyProtocol.getId());
-                studyProtocolDto.setNciIdentifier(PADomainUtils.getAssignedIdentifierExtension(studyProtocol));
-                studyProtocolDto.setOtherIdentifiers(PADomainUtils.getOtherIdentifierExtensions(studyProtocol));
-                studyProtocolDto.setDiseaseNames(PADomainUtils.getDiseaseNames(studyProtocol));
-                studyProtocolDto.setInterventionType(PADomainUtils.getInterventionTypes(studyProtocol));
-                studyProtocolDto.setStudyTypeCode(StudyTypeCode.INTERVENTIONAL);
-                studyProtocolDto.setPhaseCode(studyProtocol.getPhaseCode());
-                studyProtocolDto.setPhaseAdditionalQualifier(studyProtocol.getPhaseAdditionalQualifierCode());
-                if (studyProtocol.getUserLastCreated() != null) {
-                    studyProtocolDto.getLastCreated().setUserLastCreated(
-                                                                         studyProtocol.getUserLastCreated()
-                                                                             .getLoginName());
-
-                    studyProtocolDto.getLastCreated().setUserLastDisplayName(
-                                                                             CsmUserUtil
-                                                                                 .getDisplayUsername(studyProtocol
-                                                                                     .getUserLastCreated()));
-                }
-                if (studyProtocol.getPrimaryPurposeCode() != null) {
-                    studyProtocolDto.setPrimaryPurpose(studyProtocol.getPrimaryPurposeCode().getCode());
-                }
-                studyProtocolDto.getLastCreated().setDateLastCreated(studyProtocol.getDateLastCreated());
-                studyProtocolDto.setSumm4FundingSrcCategory(studyResourcing != null
-                        && studyResourcing.getTypeCode() != null ? studyResourcing.getTypeCode().getCode() : null);
-                if (studyInbox != null && studyInbox.getCloseDate() == null) {
-                    //Studies are considered updated if they have a study inbox entry without a closed date
-                    studyProtocolDto.setSubmissionTypeCode(SubmissionTypeCode.U);
-                } else if (studyProtocol.getSubmissionNumber() != null
-                        &&  studyProtocol.getSubmissionNumber().intValue() > 1) {
-                    // return amendment number and date only for amended trials
-                    studyProtocolDto.setAmendmentNumber(studyProtocol.getAmendmentNumber());
-                    studyProtocolDto.setAmendmentDate(studyProtocol.getAmendmentDate());
-                    studyProtocolDto.setSubmissionTypeCode(SubmissionTypeCode.A);
-                } else if (studyProtocol.getSubmissionNumber() != null
-                        &&  studyProtocol.getSubmissionNumber().intValue() == 1) {
-                    studyProtocolDto.setSubmissionTypeCode(SubmissionTypeCode.O);
-                }
-                studyProtocolDto.setProprietaryTrial(
-                        BooleanUtils.toBoolean(studyProtocol.getProprietaryTrialIndicator()));
-                studyProtocolDto.setRecordVerificationDate(studyProtocol.getRecordVerificationDate());
-                studyProtocolDto.setCtgovXmlRequiredIndicator(
-                        BooleanUtils.toBoolean(studyProtocol.getCtgovXmlRequiredIndicator()));
-                PAUtil.convertMilestonesToDTO(studyProtocolDto.getMilestones(),
-                        studyProtocol.getStudyMilestones());
-                if (studyOverallStatus != null) {
-                    studyProtocolDto.setStudyStatusCode(studyOverallStatus.getStatusCode());
-                    studyProtocolDto.setStudyStatusDate(studyOverallStatus.getStatusDate());
-                }
-                if (organization != null) {
-                    studyProtocolDto.setLeadOrganizationName(organization.getName());
-                    studyProtocolDto.setLeadOrganizationId(organization.getId());
-                }
-                if (person != null) {
-                    studyProtocolDto.setPiFullName(person.getFullName());
-                    studyProtocolDto.setPiId(person.getId());
-                }
-                if (studySite != null) {
-                    studyProtocolDto.setLocalStudyProtocolIdentifier(studySite.getLocalStudyProtocolIdentifier());
-                }
-                if (studyInbox != null) {
-                    studyProtocolDto.setStudyInboxId(studyInbox.getId());
-                    studyProtocolDto.setUpdatedComments(studyInbox.getComments());
-                    studyProtocolDto.setUpdatedDate(studyInbox.getOpenDate());
-                }
-                if (CollectionUtils.isNotEmpty(studyProtocol.getStudyCheckout())) {
-                    for (StudyCheckout studyCheckout : studyProtocol.getStudyCheckout()) {
-                        switch (studyCheckout.getCheckOutType()) {
-                        case ADMINISTRATIVE:
-                            studyProtocolDto.getAdminCheckout().setCheckoutBy(studyCheckout.getUserIdentifier());
-                            studyProtocolDto.getAdminCheckout().setCheckoutId(studyCheckout.getId());
-                            break;
-                        case SCIENTIFIC:
-                            studyProtocolDto.getScientificCheckout().setCheckoutBy(studyCheckout.getUserIdentifier());
-                            studyProtocolDto.getScientificCheckout().setCheckoutId(studyCheckout.getId());
-                            break;
-                        default:
-                            break;
-                        }
-                    }
-                }
-                if (potentialOwner != null) {
-                    studyProtocolDto.setSearcherTrialOwner(registryUserService.hasTrialAccess(potentialOwner,
-                            studyProtocol.getId()));
-                }
-
-                List<DocumentWorkflowStatusCode> nonViewableMilestones = new ArrayList<DocumentWorkflowStatusCode>();
-                nonViewableMilestones.add(DocumentWorkflowStatusCode.SUBMITTED);
-                nonViewableMilestones.add(DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED);
-                nonViewableMilestones.add(DocumentWorkflowStatusCode.REJECTED);
-                studyProtocolDto.setViewTSR(!nonViewableMilestones.contains(documentWorkflowStatus));
-
-                String nctNumber = getPaServiceUtils().getStudyIdentifier(
-                                                                          IiConverter
-                                                                              .convertToStudyProtocolIi(studyProtocol
-                                                                                  .getId()),
-                                                                          PAConstants.NCT_IDENTIFIER_TYPE);
-                studyProtocolDto.setNctNumber(nctNumber);
-
-                if ((myTrialsOnly && studyProtocolDto.isSearcherTrialOwner()) || !myTrialsOnly) {
+                if (studyProtocolDto != null) {
                     studyProtocolDtos.add(studyProtocolDto);
                 }
-
-
-            }
-        } catch (Exception e) {
-            throw new PAException("General error in while converting to StudyProtocolQueryDTO", e);
-        }
-        return studyProtocolDtos;
-    }
-    @SuppressWarnings("PMD")
-    private List<StudyProtocolQueryDTO> convertToStudyProtocolDTOForReporting(List<StudyProtocol> protocolQueryResult,
-            Long userId, boolean myTrialsOnly)
-        throws PAException {
-        List<StudyProtocolQueryDTO> studyProtocolDtos = new ArrayList<StudyProtocolQueryDTO>();
-        RegistryUser potentialOwner = userId == null ? null : registryUserService.getUserById(userId);
-        try {
-            for (StudyProtocol studyProtocol : protocolQueryResult) {
-                // short circuit code
-                if (myTrialsOnly && potentialOwner != null
-                        && !registryUserService.hasTrialAccess(potentialOwner,
-                                studyProtocol.getId())) {
-                    continue;
-                }
-                // not taking an extra trip to the db for these as is
-                StudyProtocolQueryDTO studyProtocolDto = new StudyProtocolQueryDTO();
-                if (studyProtocol instanceof ObservationalStudyProtocol) {
-                    studyProtocolDto.setStudyProtocolType("ObservationalStudyProtocol");
-                } else {
-                    studyProtocolDto.setStudyProtocolType("InterventionalStudyProtocol");
-                }
-                studyProtocolDto.setOfficialTitle(studyProtocol.getOfficialTitle());
-                studyProtocolDto.setStudyProtocolId(studyProtocol.getId());
-                studyProtocolDto.setPhaseCode(studyProtocol.getPhaseCode());
-                if (studyProtocol.getPrimaryPurposeCode() != null) {
-                    studyProtocolDto.setPrimaryPurpose(studyProtocol.getPrimaryPurposeCode().getCode());
-                }
-                studyProtocolDto.setProprietaryTrial(
-                        BooleanUtils.toBoolean(studyProtocol.getProprietaryTrialIndicator()));
-                studyProtocolDto.setRecordVerificationDate(studyProtocol.getRecordVerificationDate());
-                studyProtocolDto.setCtgovXmlRequiredIndicator(
-                        BooleanUtils.toBoolean(studyProtocol.getCtgovXmlRequiredIndicator()));
-                // worth keeping as is because of complexity
-                PAUtil.convertMilestonesToDTO(studyProtocolDto.getMilestones(),
-                        studyProtocol.getStudyMilestones());
-                // modified to use sql queries
-                findTrialSummaryFields(studyProtocolDto, studyProtocol);
-
-                studyProtocolDto.setNciIdentifier(PADomainUtils.getAssignedIdentifierExtension(studyProtocol));
-
-                studyProtocolDto.setDiseaseNames(PADomainUtils.getDiseaseNames(studyProtocol));
-                studyProtocolDto.setInterventionType(PADomainUtils.getInterventionTypes(studyProtocol));
-
-                List<DocumentWorkflowStatusCode> nonViewableMilestones = new ArrayList<DocumentWorkflowStatusCode>();
-                nonViewableMilestones.add(DocumentWorkflowStatusCode.SUBMITTED);
-                nonViewableMilestones.add(DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED);
-                nonViewableMilestones.add(DocumentWorkflowStatusCode.REJECTED);
-                studyProtocolDto.setViewTSR(!nonViewableMilestones.contains(
-                        studyProtocolDto.getDocumentWorkflowStatusCode()));
-                studyProtocolDtos.add(studyProtocolDto);
             }
         } catch (Exception e) {
             throw new PAException("General error in while converting to StudyProtocolQueryDTO", e);
@@ -457,96 +273,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         return studyProtocolDtos;
     }
 
-    private StudyResourcing findSumm4FundingSrc(StudyProtocol studyProtocol) {
-
-        for (StudyResourcing item : studyProtocol.getStudyResourcings()) {
-            if (item.getSummary4ReportedResourceIndicator()) {
-                return item;
-            }
-        }
-
-        return null;
+    private RegistryUser getPotentialOwner(Long userId) throws PAException {
+        return userId == null ? null : registryUserService.getUserById(userId);
     }
-
-    /**
-     * Generate reporting sql.
-     * @return sql.
-     */
-    protected StringBuilder generateReportingSql() {
-        StringBuilder sql = new StringBuilder();
-        sql.append("select crs_p.last_name, crs_p.first_name, crs_p.identifier, ro_org.name, ro_org.identifier, "
-        + "ss.LOCAL_SP_INDENTIFIER, sr.type_code, sos.sosSc, sos.sosSd, dws.dwsSc, "
-        + "dws.dwsSd, si.siId, si.siCm, si.siOd, si.siCd "
-        + "from study_site AS ss "
-        + "left JOIN research_organization AS ro ON ss.research_organization_identifier = ro.identifier "
-        + "left JOIN organization AS ro_org ON ro.organization_identifier = ro_org.identifier "
-        + "inner JOIN study_contact AS sc ON sc.study_protocol_identifier = ss.study_protocol_identifier "
-        + "and sc.role_code = :piRole "
-        + "left JOIN clinical_research_staff AS crs ON sc.clinical_research_staff_identifier = crs.identifier "
-        + "left JOIN person AS crs_p ON crs.person_identifier = crs_p.identifier "
-        + "left JOIN study_resourcing AS sr ON sr.study_protocol_identifier = ss.study_protocol_identifier and "
-        + "sr.SUMM_4_REPT_INDICATOR = true "
-        + "left join (select status_code as sosSc, status_date as sosSd, study_protocol_identifier as sosSpi from "
-        + "study_overall_status where study_protocol_identifier = :spId order by identifier desc limit 1) AS sos "
-        + "ON sos.sosSpi = ss.study_protocol_identifier "
-        + "left join (select status_code as dwsSc, status_date_range_low as dwsSd, study_protocol_identifier as dwsSpi "
-        + "from document_workflow_status where study_protocol_identifier = :spId order by identifier desc limit 1) "
-        + "AS dws ON dws.dwsSpi = ss.study_protocol_identifier "
-        + "left join (select identifier as siId, comments as siCm, open_date as siOd, close_date as siCd, "
-        + "study_protocol_identifier as siSpi from study_inbox "
-        + "where study_protocol_identifier = :spId order by identifier desc limit 1) AS si "
-        + "ON si.siSpi = ss.study_protocol_identifier "
-        + "where ss.study_protocol_identifier = :spId and ss.functional_code = :leadOrgRole");
-        return sql;
-    }
-
-    //CHECKSTYLE:OFF
-    @SuppressWarnings("PMD")
-    private void findTrialSummaryFields(StudyProtocolQueryDTO spDto, StudyProtocol studyProtocol) {
-        StringBuilder sql = generateReportingSql();
-        Query query = PaHibernateUtil.getCurrentSession().createSQLQuery(sql.toString());
-        query.setLong("spId", studyProtocol.getId());
-        query.setString("leadOrgRole", StudySiteFunctionalCode.LEAD_ORGANIZATION.name());
-        query.setString("piRole", StudyContactRoleCode.STUDY_PRINCIPAL_INVESTIGATOR.name());
-        Object[] piData = (Object[]) query.uniqueResult();
-        if (piData != null) {
-
-            if (piData[1] == null) {
-                spDto.setPiFullName((String) piData[0]);
-            } else {
-                spDto.setPiFullName((String) piData[0] + ", " + (String) piData[1]);
-            }
-            spDto.setPiId(((Integer) piData[2]).longValue());
-            spDto.setLeadOrganizationName((String) piData[3]);
-            spDto.setLeadOrganizationId(((Integer) piData[4]).longValue());
-            spDto.setLocalStudyProtocolIdentifier((String) piData[5]);
-            spDto.setSumm4FundingSrcCategory((String) piData[6]);
-            spDto.setStudyStatusCode(StudyStatusCode.valueOf((String) piData[7]));
-            spDto.setStudyStatusDate((Timestamp) piData[8]);
-            spDto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.valueOf((String) piData[9]));
-            spDto.setDocumentWorkflowStatusDate((Timestamp) piData[10]);
-            if (piData[11] != null) {
-                spDto.setStudyInboxId(((Integer) piData[11]).longValue());
-            }
-            spDto.setUpdatedComments((String) piData[12]);
-            spDto.setUpdatedDate((Timestamp) piData[13]);
-            Timestamp closedDate = (Timestamp) piData[14];
-            if (closedDate == null) {
-                //Studies are considered updated if they have a study inbox entry without a closed date
-                spDto.setSubmissionTypeCode(SubmissionTypeCode.U);
-            } else if (studyProtocol.getSubmissionNumber() != null
-                    &&  studyProtocol.getSubmissionNumber().intValue() > 1) {
-                // return amendment number and date only for amended trials
-                spDto.setAmendmentNumber(studyProtocol.getAmendmentNumber());
-                spDto.setAmendmentDate(studyProtocol.getAmendmentDate());
-                spDto.setSubmissionTypeCode(SubmissionTypeCode.A);
-            } else if (studyProtocol.getSubmissionNumber() != null
-                    &&  studyProtocol.getSubmissionNumber().intValue() == 1) {
-                spDto.setSubmissionTypeCode(SubmissionTypeCode.O);
-            }
-        }
-    }
-    //CHECKSTYLE:ON
 
     @SuppressWarnings("unchecked")
     private List<StudyProtocolQueryDTO> appendOnHold(List<StudyProtocolQueryDTO> spDtos) throws PAException {

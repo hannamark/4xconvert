@@ -138,8 +138,8 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
         return returnList;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal#getStudyProtocolByCriteriaForReporting(gov.nih.nci.pa.dto.StudyProtocolQueryCriteria)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public List<StudyProtocolQueryDTO> getStudyProtocolByCriteriaForReporting(StudyProtocolQueryCriteria pSc)
