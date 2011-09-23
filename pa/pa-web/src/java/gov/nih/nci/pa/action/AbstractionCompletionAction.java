@@ -81,20 +81,26 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 
 /**
  * @author Kalpana Guthikonda
@@ -102,30 +108,48 @@ import com.opensymphony.xwork2.ActionSupport;
  *        be used without the express written permission of the copyright
  *        holder, NCI.
  */
-public class AbstractionCompletionAction extends ActionSupport implements ServletResponseAware {
+public class AbstractionCompletionAction extends ActionSupport implements Preparable, ServletResponseAware {
 
-    private static final long serialVersionUID = 3504378270162991585L;
-    private List<AbstractionCompletionDTO> abstractionList = null;
-    private boolean abstractionError = false;
-    private Long studyProtocolId = null;
+    private static final long serialVersionUID = -8931205246262355662L;
+    private static final Logger LOG  = Logger.getLogger(AbstractionCompletionAction.class);
+    
+    private static final int MAXIMUM_RANDOM_FILE_NUMBER = 1000;
     private static final String DISPLAY_XML = "displayXML";
-    private HttpServletResponse servletResponse;
     private static final String TSR = "TSR_";
     private static final String EXTENSION_RTF = ".rtf";
+    private static final String ABSTRACTION_ERROR = "An error happened during abstraction: ";
+    
+    private AbstractionCompletionServiceRemote abstractionCompletionService;
+    private CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorService;
+    private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
+    
+    private List<AbstractionCompletionDTO> abstractionList;
+    private boolean abstractionError;
+    private Long studyProtocolId;
+    private HttpServletResponse servletResponse;
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() {
+        abstractionCompletionService = PaRegistry.getAbstractionCompletionService();
+        ctGovXmlGeneratorService = PaRegistry.getCTGovXmlGeneratorService();
+        tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorService();
+    }
 
     /**
     * @return result
     */
     public String query() {
         try {
-            Ii studyProtocolIi =
-                (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
-
-            abstractionList =
-                PaRegistry.getAbstractionCompletionService().validateAbstractionCompletion(studyProtocolIi);
+            HttpSession session = ServletActionContext.getRequest().getSession();
+            Ii studyProtocolIi = (Ii) session.getAttribute(Constants.STUDY_PROTOCOL_II);
+            abstractionList = abstractionCompletionService.validateAbstractionCompletion(studyProtocolIi);
             abstractionError = errorExists();
         } catch (Exception e) {
-            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
+            LOG.error(ABSTRACTION_ERROR, e);
+            ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, ABSTRACTION_ERROR + e);
         }
         return SUCCESS;
     }
@@ -139,13 +163,12 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
             if (pId == null) {
                 return DISPLAY_XML;
             }
-
-            String xmlData = PaRegistry.getCTGovXmlGeneratorService().generateCTGovXml(IiConverter
-                    .convertToIi(studyProtocolId));
+            String xmlData =
+                    ctGovXmlGeneratorService.generateCTGovXml(IiConverter.convertToStudyProtocolIi(studyProtocolId));
             servletResponse.setContentType("application/xml");
             servletResponse.setCharacterEncoding("UTF-8");
             servletResponse.setContentLength(xmlData.getBytes("UTF-8").length);
-            PrintWriter writer = servletResponse.getWriter();
+            OutputStreamWriter writer = new OutputStreamWriter(servletResponse.getOutputStream(), "UTF-8");
             writer.write(xmlData);
             writer.flush();
             writer.close();
@@ -159,33 +182,25 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
      * @return res
      */
     public String viewTSR() {
-      try {
-        Ii studyProtocolIi =
-            (Ii) ServletActionContext.getRequest().getSession().getAttribute(Constants.STUDY_PROTOCOL_II);
-
-          ByteArrayOutputStream reportData =
-              PaRegistry.getTSRReportGeneratorService().generateRtfTsrReport(studyProtocolIi);
-
-        final int i = 1000;
-        Random randomGenerator = new Random();
-        int randomInt = randomGenerator.nextInt(i);
-
-        String fileName = TSR + randomInt + studyProtocolIi.getExtension() + EXTENSION_RTF;
-
-        servletResponse.setContentType("application/rtf;");
-        servletResponse.setContentLength(reportData.size());
-        servletResponse.setHeader("Content-Disposition", "attachment; filename=\""  + fileName + "\"");
-        servletResponse.setHeader("Pragma", "public");
-        servletResponse.setHeader("Cache-Control", "max-age=0");
-
-        reportData.writeTo(servletResponse.getOutputStream());
-        reportData.flush();
-        servletResponse.getOutputStream().flush();
-        servletResponse.getOutputStream().close();
-      } catch (Exception e) {
-        return SUCCESS;
-      }
-      return NONE;
+        try {
+            HttpSession session = ServletActionContext.getRequest().getSession();
+            Ii studyProtocolIi = (Ii) session.getAttribute(Constants.STUDY_PROTOCOL_II);
+            ByteArrayOutputStream reportData = tsrReportGeneratorService.generateRtfTsrReport(studyProtocolIi);
+            int randomInt = new Random().nextInt(MAXIMUM_RANDOM_FILE_NUMBER);
+            String fileName = TSR + randomInt + studyProtocolIi.getExtension() + EXTENSION_RTF;
+            servletResponse.setContentType("application/rtf");
+            servletResponse.setContentLength(reportData.size());
+            servletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+            servletResponse.setHeader("Pragma", "public");
+            servletResponse.setHeader("Cache-Control", "max-age=0");
+            reportData.writeTo(servletResponse.getOutputStream());
+            reportData.flush();
+            servletResponse.getOutputStream().flush();
+            servletResponse.getOutputStream().close();
+        } catch (Exception e) {
+            return SUCCESS;
+        }
+        return NONE;
     }
 
     /**
@@ -212,9 +227,13 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
       this.abstractionList = abstractionList;
     }
 
-    private boolean errorExists() {
+    /**
+     * Test if the abstraction list contains errors.
+     * @return true if the abstraction list contains errors
+     */
+    boolean errorExists() {
         boolean errorExist = false;
-        for (AbstractionCompletionDTO  absDto : abstractionList) {
+        for (AbstractionCompletionDTO absDto : abstractionList) {
             if (absDto.getErrorType().equalsIgnoreCase("error")) {
                 errorExist = true;
                 break;
@@ -263,11 +282,33 @@ public class AbstractionCompletionAction extends ActionSupport implements Servle
     }
 
     /**
-     * @param response
-     *            servletResponse
+     * {@inheritDoc}
      */
+    @Override
     public void setServletResponse(HttpServletResponse response) {
         this.servletResponse = response;
     }
+
+    /**
+     * @param abstractionCompletionService the abstractionCompletionService to set
+     */
+    public void setAbstractionCompletionService(AbstractionCompletionServiceRemote abstractionCompletionService) {
+        this.abstractionCompletionService = abstractionCompletionService;
+    }
+
+    /**
+     * @param ctGovXmlGeneratorService the ctGovXmlGeneratorService to set
+     */
+    public void setCtGovXmlGeneratorService(CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorService) {
+        this.ctGovXmlGeneratorService = ctGovXmlGeneratorService;
+    }
+
+    /**
+     * @param tsrReportGeneratorService the tsrReportGeneratorService to set
+     */
+    public void setTsrReportGeneratorService(TSRReportGeneratorServiceRemote tsrReportGeneratorService) {
+        this.tsrReportGeneratorService = tsrReportGeneratorService;
+    }
+
 }
 

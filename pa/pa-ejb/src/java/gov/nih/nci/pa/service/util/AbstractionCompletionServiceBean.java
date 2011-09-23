@@ -227,6 +227,7 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
     /**
      * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<AbstractionCompletionDTO> validateAbstractionCompletion(Ii studyProtocolIi) throws PAException {
         if (studyProtocolIi == null) {
@@ -944,9 +945,13 @@ public class AbstractionCompletionServiceBean implements AbstractionCompletionSe
         for (StudySiteContactDTO dto : spContactDtos) {
             if (StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getCode().equalsIgnoreCase(dto.getRoleCode().getCode())
                     || StudySiteContactRoleCode.SUB_INVESTIGATOR.getCode()
-                            .equalsIgnoreCase(dto.getRoleCode().getCode())) {
-                piList.add(dto.getHealthCareProviderIi().getExtension()
-                        + dto.getClinicalResearchStaffIi().getExtension());
+                        .equalsIgnoreCase(dto.getRoleCode().getCode())) {
+                if (dto.getClinicalResearchStaffIi() != null) {
+                    piList.add(dto.getClinicalResearchStaffIi().getExtension());
+                }
+                if (dto.getHealthCareProviderIi() != null) {
+                    piList.add(dto.getHealthCareProviderIi().getExtension());
+                }
             }
         }
         return piList;

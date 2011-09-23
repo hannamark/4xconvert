@@ -110,27 +110,26 @@ import org.hibernate.Session;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemote {
     private static final int THREE = 3;
+    private static final String PERSON_BY_STUDY_SITE_ID_QUERY = "select sp, spc, hcp, p from StudySite as sp  "
+            + " join sp.studySiteContacts as spc join spc.clinicalResearchStaff as hcp "
+            + " join hcp.person as p where sp.id = :id and spc.roleCode = :roleCode";
+
+    private static final String IDENTIFIER_BY_SPC_ID_QUERY = "select spc, hcp from StudySiteContact as spc"
+            + " join spc.clinicalResearchStaff as hcp"
+            + " where spc.id = :id and spc.roleCode <> :roleCode";
 
     /**
-     *
-     * @param id to search
-     * @param roleCd to search
-     * @return List of personWebDTO
-     * @throws PAException on error
+     * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PaPersonDTO> getPersonsByStudySiteId(Long id, String roleCd) throws PAException {
-        Session session = null;
-        session = PaHibernateUtil.getCurrentSession();
-        List<Object> queryList = new ArrayList<Object>();
-        Query query = null;
-        String queryStr = "select sp , spc , hcp , p from StudySite as sp  "
-            + " join sp.studySiteContacts as spc " + " join spc.clinicalResearchStaff as hcp "
-            + " join hcp.person as p " + " where sp.id = " + id + " and spc.roleCode = '" + roleCd + "'";
-        query = session.createQuery(queryStr);
-        queryList = query.list();
-        return createPersonWebDTO(queryList);
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query = session.createQuery(PERSON_BY_STUDY_SITE_ID_QUERY);
+        query.setLong("id", id);
+        query.setString("roleCode", roleCd);
+        return createPersonWebDTO(query.list());
     }
 
     private List<PaPersonDTO> createPersonWebDTO(List<Object> queryList) {
@@ -150,7 +149,6 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
             personWebDTO.setRoleName((((StudySiteContact) searchResult[1]).getRoleCode()));
             personWebDTO.setTelephone((((StudySiteContact) searchResult[1]).getPhone()));
             personWebDTO.setEmail((((StudySiteContact) searchResult[1]).getEmail()));
-            //personWebDTO.setSelectedPersId(Long.valueOf(((HealthCareProvider) searchResult[TWO]).getIdentifier()));
             personWebDTO.setSelectedPersId(Long.valueOf(((Person) searchResult[THREE]).getIdentifier()));
             personWebDTO.setPaPersonId(Long.valueOf(((Person) searchResult[THREE]).getIdentifier()));
             personWebDTO.setStatusCode((((StudySiteContact) searchResult[1]).getStatusCode()));
@@ -160,30 +158,20 @@ public class PAHealthCareProviderServiceBean implements PAHealthCareProviderRemo
     }
 
     /**
-     *
-     * @param id the study Site id
-     * @return PersonWebDTO
-     * @throws PAException on error
+     * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public PaPersonDTO getIdentifierBySPCId(Long id) throws PAException {
-        Session session = null;
-        //HealthCareProvider
+        // HealthCareProvider
         ClinicalResearchStaff careProvider = null;
         PaPersonDTO personWebDTO = new PaPersonDTO();
-        session = PaHibernateUtil.getCurrentSession();
-        List<Object> queryList = new ArrayList<Object>();
-        Query query = null;
-        String queryStr = "select spc , hcp from StudySiteContact as spc"
-            + " join spc.clinicalResearchStaff as hcp"
-            + " where spc.id = " + id
-            + " and spc.roleCode <> 'STUDY_PRIMARY_CONTACT'";
-        query = session.createQuery(queryStr);
-        queryList = query.list();
-        Object[] searchResult = null;
-        for (int i = 0; i < queryList.size();) {
-            searchResult = (Object[]) queryList.get(i);
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query = session.createQuery(IDENTIFIER_BY_SPC_ID_QUERY);
+        query.setLong("id", id);
+        query.setString("roleCode", "STUDY_PRIMARY_CONTACT");
+        for (Object[] searchResult : (List<Object[]>) query.list()) {
             if (searchResult == null) {
                 return null;
             }

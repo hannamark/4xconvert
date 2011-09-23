@@ -154,7 +154,7 @@ public class ClinicalResearchStaff  extends StructuralRole {
      *
      * @return studyContacts studyContacts
      */
-    @OneToMany(mappedBy = "healthCareProvider")
+    @OneToMany(mappedBy = "clinicalResearchStaff")
     public List<StudyContact> getStudyContacts() {
         return studyContacts;
     }
@@ -168,7 +168,7 @@ public class ClinicalResearchStaff  extends StructuralRole {
     /**
      * @return the studyPartContacts
      */
-    @OneToMany(mappedBy = "healthCareProvider")
+    @OneToMany(mappedBy = "clinicalResearchStaff")
     public List<StudySiteContact> getStudyPartContacts() {
         return studyPartContacts;
     }
