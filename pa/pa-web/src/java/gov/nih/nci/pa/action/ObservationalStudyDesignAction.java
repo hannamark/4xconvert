@@ -106,6 +106,7 @@ public class ObservationalStudyDesignAction extends ActionSupport {
     private static final long serialVersionUID = -3532986378452861444L;
     private OSDesignDetailsWebDTO webDTO =  new OSDesignDetailsWebDTO();
     private static final int MAXIMUM_CHAR = 200;
+
     /**
      * @return res
      */
@@ -163,65 +164,72 @@ public class ObservationalStudyDesignAction extends ActionSupport {
     }
 
     private void enforceBusinessRules() {
+        validateStudyModelCode();
+        validateTimePerspective();
+        validateBiospecimenRetentionCode();
+        validateNumberOfGroups();
+        validateMinTargetAccrual();
+    }
+
+    private void validateBiospecimenRetentionCode() {
+        if (StringUtils.isEmpty(webDTO.getBiospecimenRetentionCode())) {
+            addFieldError("webDTO.biospecimenRetentionCode", getText("error.biospecimenRetentionCode"));
+        }
+    }
+
+    private void validateStudyModelCode() {
         if (StringUtils.isEmpty(webDTO.getStudyModelCode())) {
-            addFieldError("webDTO.studyModelCode",
-                    getText("error.studyModelCode"));
+            addFieldError("webDTO.studyModelCode", getText("error.studyModelCode"));
         }
         if (webDTO.getStudyModelCode().equalsIgnoreCase("Other")
                 && StringUtils.isEmpty(webDTO.getStudyModelOtherText())) {
-            addFieldError("webDTO.studyModelOtherText",
-                    getText("error.studyModelOtherText"));
+            addFieldError("webDTO.studyModelOtherText", getText("error.studyModelOtherText"));
         }
-
         if (StringUtils.isNotEmpty(webDTO.getStudyModelOtherText())
-            && webDTO.getStudyModelOtherText().length() > MAXIMUM_CHAR) {
-          addFieldError("webDTO.studyModelOtherText",
-              getText("error.spType.other.maximumChar"));
+                && webDTO.getStudyModelOtherText().length() > MAXIMUM_CHAR) {
+            addFieldError("webDTO.studyModelOtherText", getText("error.spType.other.maximumChar"));
         }
+    }
 
-        if (StringUtils.isEmpty(webDTO.getTimePerspectiveCode())) {
-            addFieldError("webDTO.timePerspectiveCode",
-                    getText("error.timePerspectiveCode"));
-        }
-        if (webDTO.getTimePerspectiveCode().equalsIgnoreCase("Other")
-                && StringUtils.isEmpty(webDTO.getTimePerspectiveOtherText())) {
-            addFieldError("webDTO.timePerspectiveOtherText",
-                    getText("error.timePerspectiveOtherText"));
-        }
-
-        if (StringUtils.isNotEmpty(webDTO.getTimePerspectiveOtherText())
-            && webDTO.getTimePerspectiveOtherText().length() > MAXIMUM_CHAR) {
-          addFieldError("webDTO.timePerspectiveOtherText",
-              getText("error.spType.other.maximumChar"));
-        }
-
-        if (StringUtils.isEmpty(webDTO.getBiospecimenRetentionCode())) {
-            addFieldError("webDTO.biospecimenRetentionCode",
-                    getText("error.biospecimenRetentionCode"));
-        }
-        if (StringUtils.isEmpty(webDTO.getNumberOfGroups())) {
-            addFieldError("webDTO.numberOfGroups",
-                    getText("error.numberOfGroups"));
-        }
-        if (StringUtils.isNotEmpty(webDTO.getNumberOfGroups())) {
-            try {
-                Integer.valueOf(webDTO.getNumberOfGroups());
-            } catch (NumberFormatException e) {
-                addFieldError("webDTO.numberOfGroups",
-                        getText("error.numeric"));
-            }
-        }
+    private void validateMinTargetAccrual() {
         if (StringUtils.isEmpty(webDTO.getMinimumTargetAccrualNumber())) {
-            addFieldError("webDTO.minimumTargetAccrualNumber",
-                    getText("error.target.enrollment"));
-        }
-        if (StringUtils.isNotEmpty(webDTO.getMinimumTargetAccrualNumber())) {
+            addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.target.enrollment"));
+        } else {
             try {
                 Integer.valueOf(webDTO.getMinimumTargetAccrualNumber());
             } catch (NumberFormatException e) {
-                addFieldError("webDTO.minimumTargetAccrualNumber",
-                        getText("error.numeric"));
+                addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.numeric"));
             }
+        }
+    }
+
+    private void validateNumberOfGroups() {
+        if (StringUtils.isEmpty(webDTO.getNumberOfGroups())) {
+            addFieldError("webDTO.numberOfGroups", getText("error.numberOfGroups"));
+        } else {
+            try {
+                Integer.valueOf(webDTO.getNumberOfGroups());
+            } catch (NumberFormatException e) {
+                addFieldError("webDTO.numberOfGroups", getText("error.numeric"));
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    private void validateTimePerspective() {
+        if (StringUtils.isEmpty(webDTO.getTimePerspectiveCode())) {
+            addFieldError("webDTO.timePerspectiveCode", getText("error.timePerspectiveCode"));
+        }
+        if (webDTO.getTimePerspectiveCode().equalsIgnoreCase("Other")
+                && StringUtils.isEmpty(webDTO.getTimePerspectiveOtherText())) {
+            addFieldError("webDTO.timePerspectiveOtherText", getText("error.timePerspectiveOtherText"));
+        }
+
+        if (StringUtils.isNotEmpty(webDTO.getTimePerspectiveOtherText())
+                && webDTO.getTimePerspectiveOtherText().length() > MAXIMUM_CHAR) {
+            addFieldError("webDTO.timePerspectiveOtherText", getText("error.spType.other.maximumChar"));
         }
     }
 
@@ -229,18 +237,11 @@ public class ObservationalStudyDesignAction extends ActionSupport {
      * @param ispDTO InterventionalStudyProtocolDTO
      * @return DesignDetailsWebDTO
      */
-    private OSDesignDetailsWebDTO setDesignDetailsDTO(
-            ObservationalStudyProtocolDTO ospDTO) {
+    private OSDesignDetailsWebDTO setDesignDetailsDTO(ObservationalStudyProtocolDTO ospDTO) {
         OSDesignDetailsWebDTO dto = new OSDesignDetailsWebDTO();
         if (ospDTO != null) {
 
-            if (ospDTO.getStudyModelCode() != null) {
-                dto.setStudyModelCode(ospDTO.getStudyModelCode().getCode());
-            }
-
-            if (ospDTO.getTimePerspectiveCode() != null) {
-                dto.setTimePerspectiveCode(ospDTO.getTimePerspectiveCode().getCode());
-            }
+            convertTimePerspective(ospDTO, dto);
 
             if (ospDTO.getBiospecimenRetentionCode() != null) {
                 dto.setBiospecimenRetentionCode(ospDTO.getBiospecimenRetentionCode().getCode());
@@ -254,20 +255,38 @@ public class ObservationalStudyDesignAction extends ActionSupport {
                 dto.setNumberOfGroups(ospDTO.getNumberOfGroups().getValue().toString());
             }
 
-            if (ospDTO.getTargetAccrualNumber() != null  && ospDTO.getTargetAccrualNumber().getLow() != null
-                && ospDTO.getTargetAccrualNumber().getLow().getValue() != null) {
-                dto.setMinimumTargetAccrualNumber(ospDTO.getTargetAccrualNumber().getLow().getValue().toString());
-            }
+            convertMinTargetAccrual(ospDTO, dto);
 
-            if (ospDTO.getStudyModelOtherText() != null) {
-                dto.setStudyModelOtherText(ospDTO.getStudyModelOtherText().getValue());
-            }
+            convertStudyModelCode(ospDTO, dto);
 
-            if (ospDTO.getTimePerspectiveOtherText() != null) {
-                dto.setTimePerspectiveOtherText(ospDTO.getTimePerspectiveOtherText().getValue());
-            }
         }
         return dto;
+    }
+
+    private void convertTimePerspective(ObservationalStudyProtocolDTO ospDTO, OSDesignDetailsWebDTO dto) {
+        if (ospDTO.getTimePerspectiveCode() != null) {
+            dto.setTimePerspectiveCode(ospDTO.getTimePerspectiveCode().getCode());
+        }
+        if (ospDTO.getTimePerspectiveOtherText() != null) {
+            dto.setTimePerspectiveOtherText(ospDTO.getTimePerspectiveOtherText().getValue());
+        }
+    }
+
+    private void convertMinTargetAccrual(ObservationalStudyProtocolDTO ospDTO, OSDesignDetailsWebDTO dto) {
+        if (ospDTO.getTargetAccrualNumber() != null && ospDTO.getTargetAccrualNumber().getLow() != null
+                && ospDTO.getTargetAccrualNumber().getLow().getValue() != null) {
+            dto.setMinimumTargetAccrualNumber(ospDTO.getTargetAccrualNumber().getLow().getValue().toString());
+        }
+    }
+
+    private void convertStudyModelCode(ObservationalStudyProtocolDTO ospDTO, OSDesignDetailsWebDTO dto) {
+        if (ospDTO.getStudyModelCode() != null) {
+            dto.setStudyModelCode(ospDTO.getStudyModelCode().getCode());
+        }
+
+        if (ospDTO.getStudyModelOtherText() != null) {
+            dto.setStudyModelOtherText(ospDTO.getStudyModelOtherText().getValue());
+        }
     }
 
     /**

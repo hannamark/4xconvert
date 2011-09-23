@@ -85,6 +85,7 @@ import gov.nih.nci.iso21090.AdxpCty;
 import gov.nih.nci.iso21090.AdxpSta;
 import gov.nih.nci.iso21090.AdxpZip;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.pa.domain.Organization;
@@ -108,7 +109,6 @@ import gov.nih.nci.pa.service.correlation.OrganizationCorrelationServiceBean;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -116,6 +116,9 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -151,17 +154,17 @@ public class IrbAction extends ActionSupport implements Preparable {
     private String newOrgName;
 
     /**
-     * @throws Exception exception
+     * {@inheritDoc}
      */
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")  // Method signature is inherited from Struts
-    public void prepare() throws Exception {
+    @Override
+    public void prepare() {
         sProtService = PaRegistry.getStudyProtocolService();
         sPartService = PaRegistry.getStudySiteService();
         orgCorrService = new OrganizationCorrelationServiceBean();
         correlationUtils = new CorrelationUtils();
-        StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
-            .getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY);
-        spIdIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) session.getAttribute(Constants.TRIAL_SUMMARY);
+        spIdIi = IiConverter.convertToStudyProtocolIi(spDTO.getStudyProtocolId());
       }
 
     /**
@@ -346,30 +349,42 @@ public class IrbAction extends ActionSupport implements Preparable {
             if (getContactAffiliation() == null) {
                 addActionError("Must Enter a Board Affliation.  ");
             }
-            if (getContactAffiliation() != null
-                    && PAUtil
-                        .isGreaterThan(StConverter.convertToSt(getContactAffiliation()), PAAttributeMaxLen.LEN_200)) {
+            if (StringUtils.length(getContactAffiliation()) > PAAttributeMaxLen.LEN_200) {
                 addActionError("Board Affiliation must not be more than 200 characters. ");
             }
             if (StringUtils.isEmpty(ct.getName())) {
                 addActionError("The organziation name must be selected.  ");
             } else {
-                if (StringUtils.isEmpty(ct.getAddress())) {
-                    addActionError("Address must be set; use PO Curation tool.  ");
-                }
-                if (StringUtils.isEmpty(ct.getCity())) {
-                    addActionError("City must be set; use PO Curation tool.  ");
-                }
-                if (StringUtils.isEmpty(ct.getZip())) {
-                    addActionError("Zip/postal code must be set; use PO Curation tool.  ");
-                }
-                if (StringUtils.isEmpty(ct.getCountry())) {
-                    addActionError("Country must be set; use PO Curation tool.  ");
-                }
-                if (StringUtils.isEmpty(ct.getEmail())) {
-                    addActionError("A contact e-mail address must be set; use PO Curation tool.  ");
-                }
+                validateAddress();
+                validateEmail();
             }
+        }
+    }
+
+    /**
+     *
+     */
+    private void validateEmail() {
+        if (StringUtils.isEmpty(ct.getEmail())) {
+            addActionError("A contact e-mail address must be set; use PO Curation tool.  ");
+        }
+    }
+
+    /**
+     *
+     */
+    private void validateAddress() {
+        if (StringUtils.isEmpty(ct.getAddress())) {
+            addActionError("Address must be set; use PO Curation tool.  ");
+        }
+        if (StringUtils.isEmpty(ct.getCity())) {
+            addActionError("City must be set; use PO Curation tool.  ");
+        }
+        if (StringUtils.isEmpty(ct.getZip())) {
+            addActionError("Zip/postal code must be set; use PO Curation tool.  ");
+        }
+        if (StringUtils.isEmpty(ct.getCountry())) {
+            addActionError("Country must be set; use PO Curation tool.  ");
         }
     }
 
@@ -444,9 +459,11 @@ public class IrbAction extends ActionSupport implements Preparable {
 
     private void loadForm() throws PAException, NullifiedEntityException  {
         StudyProtocolDTO study = sProtService.getStudyProtocol(spIdIi);
-        Boolean b = BlConverter.convertToBoolean(study.getReviewBoardApprovalRequiredIndicator());
-        if (BooleanUtils.isNotTrue(b)) {
-            setApprovalStatus((b == null) ? null : ReviewBoardApprovalStatusCode.SUBMISSION_NOT_REQUIRED.getCode());
+        Boolean reviewBoardApprovalRequired = BlConverter.convertToBoolean(study
+            .getReviewBoardApprovalRequiredIndicator());
+        if (BooleanUtils.isNotTrue(reviewBoardApprovalRequired)) {
+            setApprovalStatus((reviewBoardApprovalRequired == null) ? null
+                    : ReviewBoardApprovalStatusCode.SUBMISSION_NOT_REQUIRED.getCode());
             setApprovalNumber(null);
             setContactAffiliation(null);
             ct.setName(null);
@@ -495,44 +512,61 @@ public class IrbAction extends ActionSupport implements Preparable {
         ct = new ContactWebDTO();
         ct.setId(newOrgId);
         ct.setName(newOrgName);
-        List<Adxp> adxpList = poOrg.getPostalAddress().getPart();
-        for (Adxp adxp : adxpList) {
-            if (adxp instanceof AdxpAl) {
-                ct.setAddress(adxp.getValue());
-            }
-            if (adxp instanceof AdxpCty) {
-                ct.setCity(adxp.getValue());
-            }
-            if (adxp instanceof AdxpSta) {
-                ct.setState(adxp.getValue());
-            }
-            if (adxp instanceof AdxpZip) {
-                ct.setZip(adxp.getValue());
-            }
-            if (adxp instanceof AdxpCnt) {
-                ct.setCountry(adxp.getCode());
-            }
-        }
+        convertAddress(poOrg);
         getEmailAndPhone(poOrg);
     }
 
+    private void convertAddress(OrganizationDTO poOrg) {
+        List<Adxp> addressParts = poOrg.getPostalAddress().getPart();
+        for (Adxp addressPart : addressParts) {
+            convertAddressPart(addressPart);
+        }
+    }
+
+    private void convertAddressPart(Adxp adxp) {
+        if (adxp instanceof AdxpAl) {
+            ct.setAddress(adxp.getValue());
+        }
+        if (adxp instanceof AdxpCty) {
+            ct.setCity(adxp.getValue());
+        }
+        if (adxp instanceof AdxpSta) {
+            ct.setState(adxp.getValue());
+        }
+        if (adxp instanceof AdxpZip) {
+            ct.setZip(adxp.getValue());
+        }
+        if (adxp instanceof AdxpCnt) {
+            ct.setCountry(adxp.getCode());
+        }
+    }
+
     private void getEmailAndPhone(OrganizationDTO poOrg) {
-        Object[] telList = poOrg.getTelecomAddress().getItem().toArray();
+        Set<Tel> telList = poOrg.getTelecomAddress().getItem();
         boolean eMailSet = false;
         boolean phoneSet = false;
-        for (Object tel : telList) {
-            if (!eMailSet && tel instanceof TelEmail) {
+        for (Tel tel : telList) {
+            if (shouldSetEmail(eMailSet, tel)) {
                 ct.setEmail(((TelEmail) tel).getValue().getSchemeSpecificPart());
                 eMailSet = true;
             }
-            if (!phoneSet && tel instanceof TelPhone) {
-                String schema = ((TelPhone) tel).getValue().getScheme();
+            if (shouldSetPhone(phoneSet, tel)) {
+                TelPhone phone = (TelPhone) tel;
+                String schema = phone.getValue().getScheme();
                 if ("tel".equals(schema)) {
-                    ct.setPhone(((TelPhone) tel).getValue().getSchemeSpecificPart());
+                    ct.setPhone(phone.getValue().getSchemeSpecificPart());
                     phoneSet = true;
                 }
             }
         }
+    }
+
+    private boolean shouldSetPhone(boolean phoneSet, Tel tel) {
+        return !phoneSet && tel instanceof TelPhone;
+    }
+
+    private boolean shouldSetEmail(boolean eMailSet, Tel tel) {
+        return !eMailSet && tel instanceof TelEmail;
     }
 
     private ReviewBoardApprovalStatusCode getApprovalStatusEnum() {

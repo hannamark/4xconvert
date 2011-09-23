@@ -397,10 +397,10 @@ public class PAUtil {
         return criteria.replace('*', '%');
     }
     /**
-     * util method to find if the lenght is more than len parameter.
+     * Check if the given string is longer than <code>len</code>.
      * @param st String data
-     * @param len length to trim
-     * @return trimmed data
+     * @param len length to compare against
+     * @return true iff st is longer than len
      */
     public static boolean isGreaterThan(St st, int len) {
         boolean ret = false;
@@ -418,13 +418,13 @@ public class PAUtil {
     }
 
     /**
-     * util method to find if the length is between min and max.
+     * Check if the length of a String is between min and max.
      * @param st String data
      * @param min minimum numbers of characters
      * @param max maximim numbers of characters
-     * @return trimmed data
+     * @return true if string length is within the giving range
      */
-    public static boolean isWithinRange(St st , int min , int max) {
+    public static boolean isWithinRange(St st, int min, int max) {
         boolean ret = false;
         String str = null;
         if (st == null) {

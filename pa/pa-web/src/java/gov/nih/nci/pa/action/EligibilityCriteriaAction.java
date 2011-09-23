@@ -371,23 +371,23 @@ public class EligibilityCriteriaAction extends ActionSupport {
         String cdeid = ServletActionContext.getRequest().getParameter("cdeid");
         boolean isSpecialLabTestCase = false;
         try {
-          ApplicationService appService = ApplicationServiceProvider.getApplicationService();
-          DataElement de = new DataElement();
-          de.setId(cdeid);
+            ApplicationService appService = ApplicationServiceProvider.getApplicationService();
+            DataElement de = new DataElement();
+            de.setId(cdeid);
 
-          Collection<Object> collResult = appService.search(DataElement.class, de);
+            Collection<Object> collResult = appService.search(DataElement.class, de);
 
-          cdeResult = (DataElement) collResult.iterator().next();
+            cdeResult = (DataElement) collResult.iterator().next();
 
-          if (labTestPubId.equals(cdeResult.getPublicID())) {
-              isSpecialLabTestCase = true;
-          }
+            if (labTestPubId.equals(cdeResult.getPublicID())) {
+                isSpecialLabTestCase = true;
+            }
 
-          webDTO.setCriterionName(getPreferredQuestionText(cdeResult));
-          permValues = null;
-          List<String> labTestNameValues = null;
-          List<String> labTestUoMValues = null;
-          ValueDomain vd = cdeResult.getValueDomain();
+            webDTO.setCriterionName(getPreferredQuestionText(cdeResult));
+            permValues = null;
+            List<String> labTestNameValues = null;
+            List<String> labTestUoMValues = null;
+            ValueDomain vd = cdeResult.getValueDomain();
             if (vd instanceof EnumeratedValueDomain) {
                 EnumeratedValueDomain evd = (EnumeratedValueDomain) vd;
 
@@ -409,10 +409,8 @@ public class EligibilityCriteriaAction extends ActionSupport {
             webDTO.setCdePublicIdentifier(Long.toString(vd.getPublicID()));
             webDTO.setCdeVersionNumber(Float.toString(vd.getVersion()));
             webDTO.setCdeCategoryCode(getCdeCategoryCode());
-            ServletActionContext.getRequest().getSession()
-                .setAttribute(LAB_TEST_VALUES, labTestNameValues);
-            ServletActionContext.getRequest().getSession()
-                .setAttribute(LAB_TEST_UOM_VALUES, labTestUoMValues);
+            ServletActionContext.getRequest().getSession().setAttribute(LAB_TEST_VALUES, labTestNameValues);
+            ServletActionContext.getRequest().getSession().setAttribute(LAB_TEST_UOM_VALUES, labTestUoMValues);
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getMessage());
         }
@@ -927,7 +925,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
         return retMaxVal;
     }
 
-    private void enforceEligibilityBusinessRules() throws PAException {        
+    private void enforceEligibilityBusinessRules() throws PAException {
         String ruleError = rulesForDisplayOrder(webDTO.getDisplayOrder());
         if (ruleError.length() > 0) {
             addFieldError("webDTO.displayOrder", ruleError);
@@ -936,7 +934,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
                 && webDTO.getTextDescription().length() > MAXIMUM_CHAR_DESCRIPTION) {
             addFieldError("webDTO.TextDescription", getText("error.spType.description.maximumChar"));
         }
-        
+
         validateStructuredTypeRules();
 
         HashSet<String> order = new HashSet<String>();
@@ -946,7 +944,7 @@ public class EligibilityCriteriaAction extends ActionSupport {
             addFieldError("webDTO.displayOrder", mesg + dispOrder);
         }
     }
-    
+
     private void validateStructuredTypeRules() {
         if (StringUtils.isNotEmpty(webDTO.getStructuredType())) {
             if (STRUCTURED.equalsIgnoreCase(webDTO.getStructuredType())) {

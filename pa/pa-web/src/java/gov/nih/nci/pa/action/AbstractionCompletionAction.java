@@ -104,30 +104,27 @@ import com.opensymphony.xwork2.Preparable;
 
 /**
  * @author Kalpana Guthikonda
- * @since 11/22/2008 copyright NCI 2008. All rights reserved. This code may not
- *        be used without the express written permission of the copyright
- *        holder, NCI.
  */
 public class AbstractionCompletionAction extends ActionSupport implements Preparable, ServletResponseAware {
 
     private static final long serialVersionUID = -8931205246262355662L;
     private static final Logger LOG  = Logger.getLogger(AbstractionCompletionAction.class);
-    
+
     private static final int MAXIMUM_RANDOM_FILE_NUMBER = 1000;
     private static final String DISPLAY_XML = "displayXML";
     private static final String TSR = "TSR_";
     private static final String EXTENSION_RTF = ".rtf";
     private static final String ABSTRACTION_ERROR = "An error happened during abstraction: ";
-    
+
     private AbstractionCompletionServiceRemote abstractionCompletionService;
     private CTGovXmlGeneratorServiceLocal ctGovXmlGeneratorService;
     private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
-    
+
     private List<AbstractionCompletionDTO> abstractionList;
     private boolean abstractionError;
     private Long studyProtocolId;
     private HttpServletResponse servletResponse;
-    
+
     /**
      * {@inheritDoc}
      */

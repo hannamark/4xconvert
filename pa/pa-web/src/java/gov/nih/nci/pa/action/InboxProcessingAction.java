@@ -92,6 +92,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -200,12 +201,11 @@ public class InboxProcessingAction extends ActionSupport implements ServletRespo
             // put an entry in the session and store StudyProtocolQueryDTO
             studyProtocolQueryDTO.setOfficialTitle(StringUtils.abbreviate(studyProtocolQueryDTO.getOfficialTitle(),
                     PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE));
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    Constants.STUDY_PROTOCOL_II, IiConverter.convertToIi(studyProtocolId));
-            ServletActionContext.getRequest().getSession().setAttribute(
-                    Constants.DOC_WFS_MENU, setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
+            HttpSession session = ServletActionContext.getRequest().getSession();
+            session.setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
+            session.setAttribute(Constants.STUDY_PROTOCOL_II, IiConverter.convertToStudyProtocolIi(studyProtocolId));
+            session.setAttribute(Constants.DOC_WFS_MENU,
+                                 setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
 
             return "view";
         } catch (PAException e) {
@@ -238,6 +238,7 @@ public class InboxProcessingAction extends ActionSupport implements ServletRespo
      * @param response
      *            servletResponse
      */
+    @Override
     public void setServletResponse(HttpServletResponse response) {
         this.servletResponse = response;
     }

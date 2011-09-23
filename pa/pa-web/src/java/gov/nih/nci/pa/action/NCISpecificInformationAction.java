@@ -304,24 +304,31 @@ public class NCISpecificInformationAction extends ActionSupport {
 
     private NCISpecificInformationWebDTO setNCISpecificDTO(StudyProtocolDTO spDTO, StudyResourcingDTO srDTO) {
         NCISpecificInformationWebDTO nciSpDTO = new NCISpecificInformationWebDTO();
-        // Step2 : Assign the values to the action form
         if (spDTO != null) {
-            if (spDTO.getAccrualReportingMethodCode() != null) {
-                nciSpDTO.setAccrualReportingMethodCode(spDTO.getAccrualReportingMethodCode().getCode());
-            }
-            if (spDTO.getProgramCodeText() != null) {
-                nciSpDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
-            }
+            convertStudyProtocolDto(spDTO, nciSpDTO);
         }
         if (srDTO != null) {
-            if (srDTO.getTypeCode() != null) {
-                nciSpDTO.setSummaryFourFundingCategoryCode(srDTO.getTypeCode().getCode());
-            }
-            if (srDTO.getOrganizationIdentifier() != null) {
-                nciSpDTO.setOrganizationIi(srDTO.getOrganizationIdentifier().getExtension());
-            }
+            convertStudyResourcingDto(srDTO, nciSpDTO);
         }
         return nciSpDTO;
+    }
+
+    private void convertStudyResourcingDto(StudyResourcingDTO srDTO, NCISpecificInformationWebDTO nciSpDTO) {
+        if (srDTO.getTypeCode() != null) {
+            nciSpDTO.setSummaryFourFundingCategoryCode(srDTO.getTypeCode().getCode());
+        }
+        if (srDTO.getOrganizationIdentifier() != null) {
+            nciSpDTO.setOrganizationIi(srDTO.getOrganizationIdentifier().getExtension());
+        }
+    }
+
+    private void convertStudyProtocolDto(StudyProtocolDTO spDTO, NCISpecificInformationWebDTO nciSpDTO) {
+        if (spDTO.getAccrualReportingMethodCode() != null) {
+            nciSpDTO.setAccrualReportingMethodCode(spDTO.getAccrualReportingMethodCode().getCode());
+        }
+        if (spDTO.getProgramCodeText() != null) {
+            nciSpDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
+        }
     }
 
     /**

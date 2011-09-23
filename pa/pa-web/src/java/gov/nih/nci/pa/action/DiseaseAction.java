@@ -110,9 +110,9 @@ import com.opensymphony.xwork2.Preparable;
  *        holder, NCI.
  */
 public class DiseaseAction extends AbstractListEditAction implements Preparable {
-   
+
     private static final long serialVersionUID = 9154119501160489767L;
-    
+
     private PDQDiseaseParentServiceRemote pdqDiseaseParentService;
     private PDQDiseaseServiceLocal pdqDiseaseService;
     private StudyDiseaseServiceLocal studyDiseaseService;
@@ -235,7 +235,7 @@ public class DiseaseAction extends AbstractListEditAction implements Preparable 
      */
     @Override
     protected void loadEditForm() throws PAException {
-        if ((disease == null) || StringUtils.isEmpty(disease.getDiseaseIdentifier())) {
+        if (disease == null || StringUtils.isEmpty(disease.getDiseaseIdentifier())) {
             disease = new DiseaseWebDTO();
         } else {
             Ii ii = IiConverter.convertToIi(disease.getDiseaseIdentifier());

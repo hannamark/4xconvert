@@ -81,6 +81,7 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.ISDesignDetailsWebDTO;
+import gov.nih.nci.pa.dto.OutcomeMeasureWebDTO;
 import gov.nih.nci.pa.enums.AllocationCode;
 import gov.nih.nci.pa.enums.BlindingRoleCode;
 import gov.nih.nci.pa.enums.BlindingSchemaCode;
@@ -120,13 +121,13 @@ import com.opensymphony.xwork2.Preparable;
 public class InterventionalStudyDesignAction extends ActionSupport implements Preparable {
 
     /**
-     * Maximum length for Outcome name and time frame. 
+     * Maximum length for Outcome name and time frame.
      */
-    public static final int MAXIMUM_CHAR_OUTCOME_NAME = 254;
+    static final int MAXIMUM_CHAR_OUTCOME_NAME = 254;
     /**
-     * Maximum length for Outcome description. 
+     * Maximum length for Outcome description.
      */
-    public static final int MAXIMUM_CHAR_OUTCOME_DESC = 600;
+    static final int MAXIMUM_CHAR_OUTCOME_DESC = 600;
     private static final long serialVersionUID = -8139821069851279621L;
     private static final String OUTCOME = "outcome";
     private static final String FALSE = "false";
@@ -258,9 +259,6 @@ public class InterventionalStudyDesignAction extends ActionSupport implements Pr
        }
     }
 
-    /**
-     *
-     */
     private void validateTragetAccrualNumber() {
         try {
             Integer tarAccrual = NumberUtils.createInteger(webDTO.getMinimumTargetAccrualNumber());
@@ -271,75 +269,111 @@ public class InterventionalStudyDesignAction extends ActionSupport implements Pr
                 addFieldError("webDTO.minimumTargetAccrualNumber", getText("error.numeric"));
         }
     }
+
     private void addErrors(String fieldValue, String fieldName, String errMsg) {
         if (StringUtils.isEmpty(fieldValue)) {
             addFieldError(fieldName, getText(errMsg));
         }
      }
-    /**
-     * @param ispDTO InterventionalStudyProtocolDTO
-     * @return DesignDetailsWebDTO
-     */
+
     private ISDesignDetailsWebDTO setDesignDetailsDTO(InterventionalStudyProtocolDTO ispDTO) {
         ISDesignDetailsWebDTO dto = new ISDesignDetailsWebDTO();
         if (ispDTO != null) {
-            if (ispDTO.getPhaseCode() != null) {
-                dto.setPhaseCode(ispDTO.getPhaseCode().getCode());
-            }
-            if (ispDTO.getPrimaryPurposeCode() != null) {
-                dto.setPrimaryPurposeCode(ispDTO.getPrimaryPurposeCode().getCode());
-            }
-            if (ispDTO.getBlindingSchemaCode() != null) {
-                dto.setBlindingSchemaCode(ispDTO.getBlindingSchemaCode().getCode());
-            }
-            if (ispDTO.getDesignConfigurationCode() != null) {
-                dto.setDesignConfigurationCode(ispDTO.getDesignConfigurationCode().getCode());
-            }
-            if (ispDTO.getAllocationCode() != null) {
-                dto.setAllocationCode(ispDTO.getAllocationCode().getCode());
-            }
-            if (ispDTO.getNumberOfInterventionGroups().getValue() != null) {
-                dto.setNumberOfInterventionGroups(ispDTO.getNumberOfInterventionGroups().getValue().toString());
-            }
-            if (ispDTO.getPhaseAdditionalQualifierCode() != null) {
-                dto.setPhaseAdditionalQualifierCode(ispDTO.getPhaseAdditionalQualifierCode().getCode());
-            }
-            if (ispDTO.getPrimaryPurposeAdditionalQualifierCode() != null) {
-                dto.setPrimaryPurposeAdditionalQualifierCode(ispDTO.getPrimaryPurposeAdditionalQualifierCode()
-                        .getCode());
-            }
-            if (ispDTO.getPrimaryPurposeOtherText() != null) {
-                dto.setPrimaryPurposeOtherText(StConverter.convertToString(ispDTO.getPrimaryPurposeOtherText()));
-            }
-            List<Cd> cds =  DSetConverter.convertDsetToCdList(ispDTO.getBlindedRoleCode());
-            for (Cd cd : cds) {
-                if (BlindingRoleCode.CAREGIVER.getCode().equals(cd.getCode())) {
-                    this.caregiver = BlindingRoleCode.CAREGIVER.getCode();
-                    continue;
-                }
-                if (BlindingRoleCode.INVESTIGATOR.getCode().equals(cd.getCode())) {
-                    this.investigator = BlindingRoleCode.INVESTIGATOR.getCode();
-                    continue;
-                }
-                if (BlindingRoleCode.OUTCOMES_ASSESSOR.getCode().equals(cd.getCode())) {
-                    this.outcomesassessor = BlindingRoleCode.OUTCOMES_ASSESSOR.getCode();
-                    continue;
-                }
-                if (BlindingRoleCode.SUBJECT.getCode().equals(cd.getCode())) {
-                    this.subject = BlindingRoleCode.SUBJECT.getCode();
-                    continue;
-                }
-            }
-            if (ispDTO.getTargetAccrualNumber().getLow().getValue() != null) {
-                dto.setMinimumTargetAccrualNumber(
-                        ispDTO.getTargetAccrualNumber().getLow().getValue().toString());
-            }
-            if (ispDTO.getStudyClassificationCode() != null) {
-                dto.setStudyClassificationCode(ispDTO.getStudyClassificationCode().getCode());
-            }
+            convertPhase(ispDTO, dto);
+            convertPrimaryPurpose(ispDTO, dto);
+            convertBlindingShemaCode(ispDTO, dto);
+            convertDesignConfigurationCode(ispDTO, dto);
+            convertAllocationCode(ispDTO, dto);
+            convertNumInterventionGroups(ispDTO, dto);
+            convertBlindedRoleCodes(ispDTO);
+            convertTargetAccrualNumber(ispDTO, dto);
+            convertStudyClassificationCode(ispDTO, dto);
         }
         return dto;
     }
+
+    private void convertStudyClassificationCode(InterventionalStudyProtocolDTO ispDTO, ISDesignDetailsWebDTO dto) {
+        if (ispDTO.getStudyClassificationCode() != null) {
+            dto.setStudyClassificationCode(ispDTO.getStudyClassificationCode().getCode());
+        }
+    }
+
+    private void convertTargetAccrualNumber(InterventionalStudyProtocolDTO ispDTO, ISDesignDetailsWebDTO dto) {
+        if (ispDTO.getTargetAccrualNumber().getLow().getValue() != null) {
+            dto.setMinimumTargetAccrualNumber(
+                    ispDTO.getTargetAccrualNumber().getLow().getValue().toString());
+        }
+    }
+
+    private void convertNumInterventionGroups(InterventionalStudyProtocolDTO ispDTO, ISDesignDetailsWebDTO dto) {
+        if (ispDTO.getNumberOfInterventionGroups().getValue() != null) {
+            dto.setNumberOfInterventionGroups(ispDTO.getNumberOfInterventionGroups().getValue().toString());
+        }
+    }
+
+    private void convertAllocationCode(InterventionalStudyProtocolDTO ispDTO, ISDesignDetailsWebDTO dto) {
+        if (ispDTO.getAllocationCode() != null) {
+            dto.setAllocationCode(ispDTO.getAllocationCode().getCode());
+        }
+    }
+
+    private void convertDesignConfigurationCode(InterventionalStudyProtocolDTO ispDTO, ISDesignDetailsWebDTO dto) {
+        if (ispDTO.getDesignConfigurationCode() != null) {
+            dto.setDesignConfigurationCode(ispDTO.getDesignConfigurationCode().getCode());
+        }
+    }
+
+    private void convertBlindingShemaCode(InterventionalStudyProtocolDTO ispDTO, ISDesignDetailsWebDTO dto) {
+        if (ispDTO.getBlindingSchemaCode() != null) {
+            dto.setBlindingSchemaCode(ispDTO.getBlindingSchemaCode().getCode());
+        }
+    }
+
+    private void convertPrimaryPurpose(InterventionalStudyProtocolDTO ispDTO, ISDesignDetailsWebDTO dto) {
+        if (ispDTO.getPrimaryPurposeCode() != null) {
+            dto.setPrimaryPurposeCode(ispDTO.getPrimaryPurposeCode().getCode());
+        }
+        if (ispDTO.getPrimaryPurposeAdditionalQualifierCode() != null) {
+            dto.setPrimaryPurposeAdditionalQualifierCode(ispDTO.getPrimaryPurposeAdditionalQualifierCode()
+                                                         .getCode());
+        }
+        if (ispDTO.getPrimaryPurposeOtherText() != null) {
+            dto.setPrimaryPurposeOtherText(StConverter.convertToString(ispDTO.getPrimaryPurposeOtherText()));
+        }
+    }
+
+    private void convertPhase(InterventionalStudyProtocolDTO ispDTO, ISDesignDetailsWebDTO dto) {
+        if (ispDTO.getPhaseCode() != null) {
+            dto.setPhaseCode(ispDTO.getPhaseCode().getCode());
+        }
+        if (ispDTO.getPhaseAdditionalQualifierCode() != null) {
+            dto.setPhaseAdditionalQualifierCode(ispDTO.getPhaseAdditionalQualifierCode().getCode());
+        }
+    }
+
+    private void convertBlindedRoleCodes(InterventionalStudyProtocolDTO ispDTO) {
+        List<Cd> blindedRoleCodes =  DSetConverter.convertDsetToCdList(ispDTO.getBlindedRoleCode());
+        for (Cd blindedRoleCode : blindedRoleCodes) {
+            String codeValue = blindedRoleCode.getCode();
+            if (BlindingRoleCode.CAREGIVER.getCode().equals(codeValue)) {
+                this.caregiver = BlindingRoleCode.CAREGIVER.getCode();
+                continue;
+            }
+            if (BlindingRoleCode.INVESTIGATOR.getCode().equals(codeValue)) {
+                this.investigator = BlindingRoleCode.INVESTIGATOR.getCode();
+                continue;
+            }
+            if (BlindingRoleCode.OUTCOMES_ASSESSOR.getCode().equals(codeValue)) {
+                this.outcomesassessor = BlindingRoleCode.OUTCOMES_ASSESSOR.getCode();
+                continue;
+            }
+            if (BlindingRoleCode.SUBJECT.getCode().equals(codeValue)) {
+                this.subject = BlindingRoleCode.SUBJECT.getCode();
+                continue;
+            }
+        }
+    }
+
     /**
      * @return result
      */
@@ -407,7 +441,7 @@ public class InterventionalStudyDesignAction extends ActionSupport implements Pr
     public String outcomeedit() {
         try {
             StudyOutcomeMeasureDTO  sgDTO =
-                PaRegistry.getStudyOutcomeMeasurService().get(IiConverter.convertToIi(id));
+                PaRegistry.getStudyOutcomeMeasurService().get(IiConverter.convertToStudyOutcomeMeasureIi(id));
             webDTO = setOutcomeMeasureDTO(sgDTO);
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
@@ -426,15 +460,16 @@ public class InterventionalStudyDesignAction extends ActionSupport implements Pr
         try {
             Ii studyProtocolIi = (Ii) ServletActionContext.getRequest().getSession().
             getAttribute(Constants.STUDY_PROTOCOL_II);
-            StudyOutcomeMeasureDTO  sgDTO = new StudyOutcomeMeasureDTO();
-            sgDTO.setIdentifier(IiConverter.convertToIi(id));
-            sgDTO.setStudyProtocolIdentifier(studyProtocolIi);
-            sgDTO.setName(StConverter.convertToSt(webDTO.getOutcomeMeasure().getName()));
-            sgDTO.setDescription(StConverter.convertToSt(webDTO.getOutcomeMeasure().getDescription()));
-            sgDTO.setPrimaryIndicator(BlConverter.convertToBl(webDTO.getOutcomeMeasure().getPrimaryIndicator()));
-            sgDTO.setSafetyIndicator(BlConverter.convertToBl(webDTO.getOutcomeMeasure().getSafetyIndicator()));
-            sgDTO.setTimeFrame(StConverter.convertToSt(webDTO.getOutcomeMeasure().getTimeFrame()));
-            PaRegistry.getStudyOutcomeMeasurService().update(sgDTO);
+            StudyOutcomeMeasureDTO studyOutcomeMeasure = new StudyOutcomeMeasureDTO();
+            studyOutcomeMeasure.setIdentifier(IiConverter.convertToStudyOutcomeMeasureIi(id));
+            studyOutcomeMeasure.setStudyProtocolIdentifier(studyProtocolIi);
+            OutcomeMeasureWebDTO webOutcomeMeasure = webDTO.getOutcomeMeasure();
+            studyOutcomeMeasure.setName(StConverter.convertToSt(webOutcomeMeasure.getName()));
+            studyOutcomeMeasure.setDescription(StConverter.convertToSt(webOutcomeMeasure.getDescription()));
+            studyOutcomeMeasure.setPrimaryIndicator(BlConverter.convertToBl(webOutcomeMeasure.getPrimaryIndicator()));
+            studyOutcomeMeasure.setSafetyIndicator(BlConverter.convertToBl(webOutcomeMeasure.getSafetyIndicator()));
+            studyOutcomeMeasure.setTimeFrame(StConverter.convertToSt(webOutcomeMeasure.getTimeFrame()));
+            PaRegistry.getStudyOutcomeMeasurService().update(studyOutcomeMeasure);
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
             outcomeQuery();
         } catch (Exception e) {
@@ -455,7 +490,7 @@ public class InterventionalStudyDesignAction extends ActionSupport implements Pr
         if (StringUtils.length(webDTO.getOutcomeMeasure().getDescription()) > MAXIMUM_CHAR_OUTCOME_DESC) {
           addFieldError("webDTO.outcomeMeasure.description", getText("error.maximumChar.600"));
         }
-        addErrors(webDTO.getOutcomeMeasure().getTimeFrame(), "webDTO.outcomeMeasure.timeFrame", 
+        addErrors(webDTO.getOutcomeMeasure().getTimeFrame(), "webDTO.outcomeMeasure.timeFrame",
                 "error.outcome.timeFrame");
         if (StringUtils.length(webDTO.getOutcomeMeasure().getTimeFrame()) > MAXIMUM_CHAR_OUTCOME_NAME) {
           addFieldError("webDTO.outcomeMeasure.timeFrame", getText("error.maximumChar.254"));
@@ -470,7 +505,7 @@ public class InterventionalStudyDesignAction extends ActionSupport implements Pr
      */
     public String outcomedelete()  {
         try {
-            PaRegistry.getStudyOutcomeMeasurService().delete(IiConverter.convertToIi(id));
+            PaRegistry.getStudyOutcomeMeasurService().delete(IiConverter.convertToStudyOutcomeMeasureIi(id));
             outcomeQuery();
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
         } catch (Exception e) {
@@ -620,20 +655,15 @@ public class InterventionalStudyDesignAction extends ActionSupport implements Pr
      * @return boolean value
      */
     public boolean isInvestigatorChecked() {
-        if (BlindingRoleCode.INVESTIGATOR.getCode().equals(this.investigator)) {
-            return true;
-        }
-        return false;
+        return BlindingRoleCode.INVESTIGATOR.getCode().equals(this.investigator);
     }
+
     /**
      *
      * @return boolean value
      */
     public boolean isOutcomesAssessorChecked() {
-        if (BlindingRoleCode.OUTCOMES_ASSESSOR.getCode().equals(this.outcomesassessor)) {
-            return true;
-        }
-        return false;
+        return BlindingRoleCode.OUTCOMES_ASSESSOR.getCode().equals(this.outcomesassessor);
     }
 
     /**
@@ -641,18 +671,15 @@ public class InterventionalStudyDesignAction extends ActionSupport implements Pr
      * @return boolean value
      */
     public boolean isSubjectChecked() {
-        if (BlindingRoleCode.SUBJECT.getCode().equals(this.subject)) {
-            return true;
-        }
-        return false;
+        return BlindingRoleCode.SUBJECT.getCode().equals(this.subject);
     }
 
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public void prepare() throws Exception {
+    @Override
+    public void prepare() {
         if (this.webDTO != null) {
             this.webDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
                     .lookupPrimaryPurposeAdditionalQualifierCode(this.webDTO.getPrimaryPurposeCode()));

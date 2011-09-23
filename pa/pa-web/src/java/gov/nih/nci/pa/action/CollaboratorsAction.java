@@ -106,6 +106,8 @@ import gov.nih.nci.services.organization.OrganizationDTO;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
@@ -160,8 +162,8 @@ public class CollaboratorsAction extends ActionSupport implements Preparable {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")  // Method signature is inherited from Struts
-    public void prepare() throws Exception {
+    @Override
+    public void prepare() {
         sPartService = PaRegistry.getStudySiteService();
         ocService = PaRegistry.getOrganizationCorrelationService();
         correlationUtils = new CorrelationUtils();
@@ -169,7 +171,7 @@ public class CollaboratorsAction extends ActionSupport implements Preparable {
         StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext.getRequest().getSession()
             .getAttribute(Constants.TRIAL_SUMMARY);
 
-        spIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
+        spIi = IiConverter.convertToStudyProtocolIi(spDTO.getStudyProtocolId());
     }
 
     /**
@@ -197,8 +199,9 @@ public class CollaboratorsAction extends ActionSupport implements Preparable {
     public String facilitySave() throws PAException {
         clearErrorsAndMessages();
 
-        ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO)
-                ServletActionContext.getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
+        HttpServletRequest request = ServletActionContext.getRequest();
+        ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) request.getSession()
+            .getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         if (tab == null) {
             addActionError("You must select an organization.");
             setCurrentAction(ACT_CREATE);
@@ -226,7 +229,7 @@ public class CollaboratorsAction extends ActionSupport implements Preparable {
             setCurrentAction(ACT_CREATE);
             return ACT_CREATE;
         }
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
+        request.setAttribute(Constants.SUCCESS_MESSAGE, Constants.CREATE_MESSAGE);
         loadForm();
         return ACT_FACILITY_SAVE;
     }
@@ -238,19 +241,20 @@ public class CollaboratorsAction extends ActionSupport implements Preparable {
     public String facilityUpdate() throws PAException {
         clearErrorsAndMessages();
 
-        ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) ServletActionContext
-                .getRequest().getSession().getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
+        HttpServletRequest request = ServletActionContext.getRequest();
+        ParticipatingOrganizationsTabWebDTO tab = (ParticipatingOrganizationsTabWebDTO) request.getSession()
+            .getAttribute(Constants.PARTICIPATING_ORGANIZATIONS_TAB);
         if (tab == null) {
             loadForm();
             addActionError("System error getting participating orgainzation data from session.");
             return SUCCESS;
         }
-        if ((getFunctionalCode() == null) || (getFunctionalCode().trim().length() < 1)) {
+        if (StringUtils.isBlank(getFunctionalCode())) {
             addActionError("You must select a functional role.");
             setCurrentAction(ACT_EDIT);
             return ACT_EDIT;
         }
-        StudySiteDTO sp = sPartService.get(IiConverter.convertToIi(tab.getStudyParticipationId()));
+        StudySiteDTO sp = sPartService.get(IiConverter.convertToStudySiteIi(tab.getStudyParticipationId()));
         sp.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.getByCode(functionalCode)));
         try {
             sp = sPartService.update(sp);
@@ -258,7 +262,7 @@ public class CollaboratorsAction extends ActionSupport implements Preparable {
             addActionError(e.getMessage());
             return SUCCESS;
         }
-        ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
+        request.setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         loadForm();
         return ACT_FACILITY_SAVE;
     }
@@ -269,7 +273,7 @@ public class CollaboratorsAction extends ActionSupport implements Preparable {
      */
     public String edit() throws PAException {
         setCurrentAction(ACT_EDIT);
-        StudySiteDTO spDto = sPartService.get(IiConverter.convertToIi(cbValue));
+        StudySiteDTO spDto = sPartService.get(IiConverter.convertToStudySiteIi(cbValue));
         Organization editOrg = correlationUtils.getPAOrganizationByIi(spDto.getResearchOrganizationIi());
         orgFromPO.setCity(editOrg.getCity());
         orgFromPO.setCountry(editOrg.getCountryName());
@@ -296,7 +300,7 @@ public class CollaboratorsAction extends ActionSupport implements Preparable {
     public String delete() throws PAException {
         clearErrorsAndMessages();
 
-        sPartService.delete(IiConverter.convertToIi(cbValue));
+        sPartService.delete(IiConverter.convertToStudySiteIi(cbValue));
 
         ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.DELETE_MESSAGE);
         loadForm();
