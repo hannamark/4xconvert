@@ -69,18 +69,15 @@
         <s:set name="trialOwners" value="trialOwners" scope="request"/>
         <s:label key="trialOwners.title"/>
         <div class="box">
-            <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" pagesize="10" 
-                           id="row" name="trialOwners" requestURI="assignOwnershipsearch.action" export="false">
-                <display:column escapeXml="true" titleKey="pending.userFirstName" sortable="true" 
-                                headerClass="sortable" >
+            <display:table class="data" pagesize="10" id="row" name="trialOwners" requestURI="assignOwnershipsearch.action" export="false">
+                <display:column titleKey="pending.userFirstName" sortable="true" headerClass="sortable">
                     <c:out value="${row.firstName}"/> 
                     <c:out value="${row.lastName}"/>
                 </display:column>
                 <display:column titleKey="pending.emailAddress" sortable="true" headerClass="sortable">
                     <a href="<c:out value="${row.emailAddress}"/>"><c:out value="${row.emailAddress}"/></a>
                 </display:column>
-                <display:column escapeXml="true" titleKey="user.phone" property="phone" sortable="true" 
-                                headerClass="sortable" />       
+                <display:column titleKey="user.phone" property="phone" sortable="true" headerClass="sortable" />       
                 <display:column titleKey="user.address" sortable="true" headerClass="sortable" >
                     <c:out value="${row.addressLine}"/><br/>
                     <c:out value="${row.city}"/>
@@ -179,8 +176,7 @@
                 <s:if test="users != null">
                     <h2 id="search_results">Search Results</h2>
                     <s:hidden name="currentAction" />
-                    <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" pagesize="10" id="results"
-                                   name="users" requestURI="assignOwnershipsearch.action" export="false">
+                    <display:table class="data" pagesize="10" id="results" name="users" requestURI="assignOwnershipsearch.action" export="false">
                         <display:column escapeXml="true" titleKey="pending.userFirstName" property="regUser.firstName"
                                         sortable="true" headerClass="sortable" />
                         <display:column escapeXml="true" titleKey="pending.userLastName" property="regUser.lastName" sortable="true"

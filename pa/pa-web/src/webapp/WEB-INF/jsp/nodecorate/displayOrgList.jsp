@@ -8,7 +8,9 @@
         <display:setProperty name="basic.msg.empty_list"
             value="No Organizations found. Please verify search criteria and/or broaden your search by removing one or more search criteria." />
         <display:column escapeXml="true" title="PO-ID" property="id" headerClass="sortable" />
-        <display:column escapeXml="true" title="Organization Name" property="name" headerClass="sortable" />
+        <display:column title="Organization Name" headerClass="sortable">
+            <c:out value="${row.name}"/>
+        </display:column>
         <display:column escapeXml="false" title="Family Name" sortable="false">
             <c:forEach items="${row.families}" var="family">
                 <c:out value="${family.value}" />

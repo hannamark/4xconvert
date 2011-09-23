@@ -50,7 +50,9 @@
                             <display:table name="milestoneList" id="row" class="data" sort="list" pagesize="200" requestURI="milestone.action">
                                 <display:column escapeXml="true" property="milestone" sortable="false" titleKey="milestone.milestone" />
                                 <display:column escapeXml="true" property="date" sortable="false" titleKey="milestone.date" />
-                                <display:column escapeXml="true" property="comment" sortable="false" titleKey="milestone.comment" />
+                                <display:column sortable="false" titleKey="milestone.comment">
+                                    <c:out value="${row.comment}"/>
+                                </display:column>
                                 <display:column escapeXml="true" property="creator" sortable="false" titleKey="milestone.creator" />
                                 <display:column escapeXml="true" property="creationDate" sortable="false" titleKey="milestone.creationDate" />
                             </display:table>
