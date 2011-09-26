@@ -711,8 +711,8 @@ gov.nih.nci.security.cgmm.login.config.file=@{cgmm.conf.dest.dir}/cgmm.login.con
                         <property name="@{grid.dorian.name.property.name}" value="QA"/>
                     </case>
                     <case value="training-1.3">
-                        <property name="@{grid.auth.service.url.property.name}" value=""/>
-                        <property name="@{grid.auth.service.name.property.name}" value=""/>
+                        <property name="@{grid.auth.service.url.property.name}" value="https://cagrid-auth.nci.nih.gov:8443/wsrf/services/cagrid/AuthenticationService"/>
+                        <property name="@{grid.auth.service.name.property.name}" value="National Cancer Institute"/>
                         <property name="@{grid.dorian.name.property.name}" value="Training"/>
                    </case>
                     <default>
