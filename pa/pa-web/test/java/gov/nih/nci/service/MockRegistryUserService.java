@@ -37,6 +37,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public RegistryUser createUser(RegistryUser user) throws PAException {
         return null;
     }
@@ -44,6 +45,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public RegistryUser getUser(String loginName) throws PAException {
         if (StringUtils.equals(loginName, "exceptionName")) {
             throw new PAException("test");
@@ -70,6 +72,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public RegistryUser updateUser(RegistryUser user) throws PAException {
         return null;
     }
@@ -77,6 +80,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<RegistryUser> getUserByUserOrgType(UserOrgType userType) throws PAException {
         List<RegistryUser> userTypeList = new ArrayList<RegistryUser>();
         for (RegistryUser regUser : usrList) {
@@ -90,6 +94,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public RegistryUser getUserById(Long userId) throws PAException {
         for (RegistryUser regUser : usrList) {
             if (userId != null && userId == 4) {
@@ -105,6 +110,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<RegistryUser> search(RegistryUser regUser) throws PAException {
         return new ArrayList<RegistryUser>();
     }
@@ -112,6 +118,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean hasTrialAccess(String loginName, Long studyProtocolId) throws PAException {
         return false;
     }
@@ -119,6 +126,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean hasTrialAccess(RegistryUser user, Long studyProtocolId) throws PAException {
         return false;
     }
@@ -126,6 +134,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void assignOwnership(Long userId, Long studyProtocolId) throws PAException {
 
     }
@@ -133,6 +142,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void removeOwnership(Long userId, Long studyProtocolId) throws PAException {
 
     }
@@ -140,6 +150,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isTrialOwner(Long userId, Long studyProtocolId) throws PAException {
         return false;
     }
@@ -147,6 +158,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<DisplayTrialOwnershipInformation> searchTrialOwnership(
             DisplayTrialOwnershipInformation trialOwnershipInfo, Long affiliatedOrgId) throws PAException {
         return new ArrayList<DisplayTrialOwnershipInformation>();
@@ -155,6 +167,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean doesRegistryUserExist(String loginName) {
         return false;
     }
@@ -162,6 +175,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<String> getTrialOwnerNames(Long studyProtocolId) throws PAException {
         return null;
     }
@@ -169,8 +183,16 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Set<RegistryUser> getAllTrialOwners(Long studyProtocolId) throws PAException {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<String> getLoginNamesByEmailAddress(String emailAddress) {
+        return null;
+    }
 }

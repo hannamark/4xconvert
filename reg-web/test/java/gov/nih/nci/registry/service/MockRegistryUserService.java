@@ -68,123 +68,134 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         dto.setAffiliatedOrgUserType(UserOrgType.MEMBER);
         userList.add(dto);
     }
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#createUser(gov.nih.nci.pa.domain.RegistryUser)
+
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public RegistryUser createUser(RegistryUser user) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#getUser(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public RegistryUser getUser(String loginName) throws PAException {
-        if(loginName != null && loginName.equals("throwException")) {
+        if (loginName != null && loginName.equals("throwException")) {
             throw new PAException("testing");
         }
-        for(RegistryUser usrDto :userList){
-            if(usrDto.getFirstName().equals(loginName)){
+        for (RegistryUser usrDto : userList) {
+            if (usrDto.getFirstName().equals(loginName)) {
                 return usrDto;
             }
         }
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserServiceRemote#updateUser(gov.nih.nci.pa.domain.RegistryUser)
-     */
-    public RegistryUser updateUser(RegistryUser user) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    /**
-     *
-     */
-    public List<RegistryUser> getUserByUserOrgType(UserOrgType userType)
-			throws PAException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-    /**
-     *
-     */
-	public RegistryUser getUserById(Long userId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<RegistryUser> search(RegistryUser regUser) throws PAException {
-       List<RegistryUser> returnList = new ArrayList<RegistryUser>();
-       for(RegistryUser usrDto :userList){
-           if (regUser.getAffiliatedOrgUserType() != null) {
-               if(usrDto.getAffiliatedOrganizationId().equals(regUser.getAffiliatedOrganizationId())
-                       && usrDto.getAffiliatedOrgUserType().equals(UserOrgType.ADMIN)){
-                       returnList.add(usrDto);
-                  }
-           } else {
-               if(usrDto.getAffiliatedOrganizationId().equals(regUser.getAffiliatedOrganizationId())) {
-                   returnList.add(usrDto);
-               }
-           }
-
-        }
-		return returnList;
-	}
-
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserService#hasTrialAccess(java.lang.String, java.lang.Long)
-     */
-    public boolean hasTrialAccess(String loginName, Long studyProtocolId) throws PAException {
-        if (loginName != null && loginName.equalsIgnoreCase("userLastCreated")
-              && studyProtocolId != null && studyProtocolId == 1) {
-              return true;
-        }
-        return false;
-    }
     /**
      * {@inheritDoc}
      */
+    @Override
+    public RegistryUser updateUser(RegistryUser user) throws PAException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<RegistryUser> getUserByUserOrgType(UserOrgType userType) throws PAException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public RegistryUser getUserById(Long userId) {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<RegistryUser> search(RegistryUser regUser) throws PAException {
+        List<RegistryUser> returnList = new ArrayList<RegistryUser>();
+        for (RegistryUser usrDto : userList) {
+            if (regUser.getAffiliatedOrgUserType() != null) {
+                if (usrDto.getAffiliatedOrganizationId().equals(regUser.getAffiliatedOrganizationId())
+                        && usrDto.getAffiliatedOrgUserType().equals(UserOrgType.ADMIN)) {
+                    returnList.add(usrDto);
+                }
+            } else {
+                if (usrDto.getAffiliatedOrganizationId().equals(regUser.getAffiliatedOrganizationId())) {
+                    returnList.add(usrDto);
+                }
+            }
+
+        }
+        return returnList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean hasTrialAccess(String loginName, Long studyProtocolId) throws PAException {
+        if (loginName != null && loginName.equalsIgnoreCase("userLastCreated") && studyProtocolId != null
+                && studyProtocolId == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean hasTrialAccess(RegistryUser user, Long studyProtocolId) throws PAException {
         return false;
     }
-	/**
-     * {@inheritDoc}
-     */
-    public void assignOwnership(Long userId, Long studyProtocolId)
-			throws PAException {
-		// TODO Auto-generated method stub
 
-	}
     /**
      * {@inheritDoc}
      */
-	public void removeOwnership(Long userId, Long studyProtocolId)
-			throws PAException {
-		// TODO Auto-generated method stub
+    @Override
+    public void assignOwnership(Long userId, Long studyProtocolId) throws PAException {
 
-	}
+    }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserService#isTrialOwner(java.lang.Long, java.lang.Long)
+    /**
+     * {@inheritDoc}
      */
+    @Override
+    public void removeOwnership(Long userId, Long studyProtocolId) throws PAException {
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean isTrialOwner(Long userId, Long studyProtocolId) throws PAException {
-        // TODO Auto-generated method stub
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.util.RegistryUserService#searchTrialOwnership(gov.nih.nci.pa.util.DisplayTrialOwnershipInformation, java.lang.Long)
+    /**
+     * {@inheritDoc}
      */
+    @Override
     public List<DisplayTrialOwnershipInformation> searchTrialOwnership(
             DisplayTrialOwnershipInformation trialOwnershipInfo, Long affiliatedOrgId) throws PAException {
-        // TODO Auto-generated method stub
         return new ArrayList<DisplayTrialOwnershipInformation>();
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean doesRegistryUserExist(String loginName) {
         return false;
     }
@@ -192,16 +203,24 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<String> getTrialOwnerNames(Long studyProtocolId) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public Set<RegistryUser> getAllTrialOwners(Long studyProtocolId) throws PAException {
-        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<String> getLoginNamesByEmailAddress(String emailAddress) {
         return null;
     }
 

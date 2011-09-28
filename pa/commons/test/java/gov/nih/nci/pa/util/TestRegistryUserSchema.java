@@ -159,6 +159,7 @@ public class TestRegistryUserSchema {
         randomUser.setCsmUserId(csmUserRandom.getUserId());
         randomUser.setLastName("random");
         randomUser.setFirstName("random");
+        randomUser.setEmailAddress("username@nci.nih.gov");
         addUpdObject(randomUser);
         randomUserId = randomUser.getId();
 

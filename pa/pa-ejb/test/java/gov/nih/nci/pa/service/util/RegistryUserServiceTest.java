@@ -82,6 +82,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
@@ -101,35 +102,57 @@ import org.junit.Test;
  * @author NAmiruddin
  *
  */
-public class RegistryUserServiceTest  extends AbstractHibernateTestCase {
-    private final RegistryUserServiceRemote remoteEjb = new MockRegistryUserServiceBean();
+public class RegistryUserServiceTest extends AbstractHibernateTestCase {
 
+    private RegistryUserServiceRemote remoteEjb = new MockRegistryUserServiceBean();
+
+    /**
+     * Initialization method.
+     */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         TestRegistryUserSchema.primeData();
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
     }
 
+    /**
+     * Test the createUser method.
+     * @throws PAException if an error occurs
+     */
     @Test
-    public void createUserTest() throws Exception {
+    public void createUserTest() throws PAException {
         RegistryUser create = createRegisterUserObj();
         RegistryUser saved = remoteEjb.createUser(create);
-        assertRegistryUser(create , saved);
+        assertRegistryUser(create, saved);
     }
 
+    /**
+     * Test the updateUser method.
+     * @throws PAException if an error occurs
+     */
     @Test
-    public void updateUserTest() throws Exception {
+    public void updateUserTest() throws PAException {
         RegistryUser create = createRegisterUserObj();
         remoteEjb.createUser(create);
         create.setFirstName("firstnamechanged");
         RegistryUser saved = remoteEjb.updateUser(create);
-        assertRegistryUser(create , saved);
+        assertRegistryUser(create, saved);
     }
+
+    /**
+     * Test the getUserById method.
+     * @throws PAException if an error occurs
+     */
     @Test
     public void getUserById() throws PAException {
         RegistryUser usr = remoteEjb.getUserById(TestRegistryUserSchema.randomUserId);
         assertNotNull(usr);
     }
+
+    /**
+     * Test the getUserByUserOrgType method.
+     * @throws PAException if an error occurs
+     */
     @Test
     public void getUserByUserOrgType() throws PAException {
         List<RegistryUser> usrLst = remoteEjb.getUserByUserOrgType(UserOrgType.PENDING_ADMIN);
@@ -138,6 +161,10 @@ public class RegistryUserServiceTest  extends AbstractHibernateTestCase {
         assertTrue(usrLst.size() >= 1);
     }
 
+    /**
+     * Test the hasTrialAccess method.
+     * @throws PAException if an error occurs
+     */
     @Test
     public void hasTrialAccess() throws PAException {
         Long spId = TestRegistryUserSchema.studyProtocolId;
@@ -146,6 +173,10 @@ public class RegistryUserServiceTest  extends AbstractHibernateTestCase {
         assertFalse(remoteEjb.hasTrialAccess("randomUserTest", spId));
     }
 
+    /**
+     * Test the hasTrialAccess method.
+     * @throws PAException if an error occurs
+     */
     @Test
     public void getTrialOwnerNames() throws PAException {
         Long spId = TestRegistryUserSchema.studyProtocolId;
@@ -155,6 +186,10 @@ public class RegistryUserServiceTest  extends AbstractHibernateTestCase {
         assertTrue(list.contains("random random"));
     }
 
+    /**
+     * Test the getAllTrialOwners method.
+     * @throws PAException if an error occurs
+     */
     @Test
     public void getTrialOwners() throws PAException {
         Long spId = TestRegistryUserSchema.studyProtocolId;
@@ -165,22 +200,34 @@ public class RegistryUserServiceTest  extends AbstractHibernateTestCase {
         assertEquals("owner", regUsers.iterator().next().getLastName());
     }
 
+    /**
+     * Test the search method.
+     * @throws PAException if an error occurs
+     */
     @Test
-    public void search() throws PAException{
+    public void search() throws PAException {
         List<RegistryUser> usrLst = remoteEjb.search(new RegistryUser());
         assertNotNull(usrLst);
     }
 
+    /**
+     * Test the assignOwnership method.
+     * @throws PAException if an error occurs
+     */
     @Test
-    public void assignOwnership() throws PAException{
+    public void assignOwnership() throws PAException {
         Long spId = TestRegistryUserSchema.studyProtocolId;
         Long userId = TestRegistryUserSchema.randomUserId;
         remoteEjb.assignOwnership(userId, spId);
         assertTrue(remoteEjb.isTrialOwner(userId, spId));
     }
 
+    /**
+     * Test the removeOwnership method.
+     * @throws PAException if an error occurs
+     */
     @Test
-    public void removeOwnership() throws PAException{
+    public void removeOwnership() throws PAException {
         Long spId = TestRegistryUserSchema.studyProtocolId;
         Long userId = TestRegistryUserSchema.randomUserId;
         remoteEjb.removeOwnership(userId, spId);
@@ -207,19 +254,33 @@ public class RegistryUserServiceTest  extends AbstractHibernateTestCase {
         return create;
     }
 
-    private void assertRegistryUser(RegistryUser create , RegistryUser saved) {
+    private void assertRegistryUser(RegistryUser create, RegistryUser saved) {
         assertNotNull(saved);
         assertNotNull(create);
-        assertEquals("Address does not match  " , create.getAddressLine(), saved.getAddressLine());
-        assertEquals("Affliate Org not match  " , create.getAffiliateOrg(), saved.getAffiliateOrg());
-        assertEquals("City does not match  " , create.getCity(), saved.getCity());
-        assertEquals("Country does not match  " , create.getCountry(), saved.getCountry());
-        assertEquals("CSM User id does not match  " , create.getCsmUserId(), saved.getCsmUserId());
-        assertEquals("First name does not match  " , create.getFirstName(), saved.getFirstName());
-        assertEquals("Last name does not match  " , create.getLastName(), saved.getLastName());
-        assertEquals("Middle name does not match  " , create.getMiddleName(), saved.getMiddleName());
-        assertEquals("Phone does not match  " , create.getPhone(), saved.getPhone());
-        assertEquals("Postal code does not match  " , create.getPostalCode(), saved.getPostalCode());
-        assertEquals("User Org Type does not match ", create.getAffiliatedOrgUserType(), saved.getAffiliatedOrgUserType());
+        assertEquals("Address does not match  ", create.getAddressLine(), saved.getAddressLine());
+        assertEquals("Affliate Org not match  ", create.getAffiliateOrg(), saved.getAffiliateOrg());
+        assertEquals("City does not match  ", create.getCity(), saved.getCity());
+        assertEquals("Country does not match  ", create.getCountry(), saved.getCountry());
+        assertEquals("CSM User id does not match  ", create.getCsmUserId(), saved.getCsmUserId());
+        assertEquals("First name does not match  ", create.getFirstName(), saved.getFirstName());
+        assertEquals("Last name does not match  ", create.getLastName(), saved.getLastName());
+        assertEquals("Middle name does not match  ", create.getMiddleName(), saved.getMiddleName());
+        assertEquals("Phone does not match  ", create.getPhone(), saved.getPhone());
+        assertEquals("Postal code does not match  ", create.getPostalCode(), saved.getPostalCode());
+        assertEquals("User Org Type does not match ", create.getAffiliatedOrgUserType(),
+                     saved.getAffiliatedOrgUserType());
     }
+    
+    /**
+     * Test the getLoginNamesByEmailAddress method.
+     */
+    @Test
+    public void testGetLoginNamesByEmailAddress() {
+        String emailAddress = "username@nci.nih.gov";
+        List<String> loginNames = remoteEjb.getLoginNamesByEmailAddress(emailAddress);
+        assertNotNull("No result returned", loginNames);
+        assertEquals("Wrong result size", 1, loginNames.size());
+        assertEquals("Wrong name returned", "randomUserTest", loginNames.get(0));
+    }
+
 }

@@ -77,6 +77,10 @@
             </result>
             <result name="existingGridAccount">/WEB-INF/jsp/existingGridAccount.jsp</result>
         </action>
+        <action name="searchUser*" class="gov.nih.nci.registry.action.SearchUserAction" method="{1}">
+            <result>/WEB-INF/jsp/searchUserForm.jsp</result>
+            <result name="mailSent">/WEB-INF/jsp/searchUserMailSent.jsp</result>
+        </action>
         <action name="login">
            <result>/WEB-INF/jsp/login.jsp</result>
         </action>

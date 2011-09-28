@@ -89,7 +89,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
-import java.util.ArrayList;
+import java.text.MessageFormat;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -97,6 +97,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -108,100 +109,85 @@ import org.hibernate.criterion.Restrictions;
 *
 * @author Naveen Amiruddin
 */
+@SuppressWarnings("unchecked")
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
-@SuppressWarnings("unchecked")
 public class LookUpTableServiceBean implements LookUpTableServiceRemote {
 
+    private static final String ALL_FUNDING_MECHANISMS_QUERY = "select fm from FundingMechanism fm "
+            + "order by fundingMechanismCode";
+    private static final String ALL_NIH_INSTITUES_QUERY = "select nih from NIHinstitute nih order by nihInstituteCode";
+    private static final String ALL_COUNTRIES_QUERY = "select c from Country c order by name";
+    private static final String COUNTRY_BY_NAME_QUERY = "select c from Country c where c.name = :name";
+    private static final String PAPROPERTY_BY_NAME_QUERY = "select p from PAProperties p where p.name = :name";
+    private static final String ALL_ANATOMIC_SITES_QUERY = "select items from AnatomicSite items order by code";
+    private static final String LOOKUP_BY_CODE_QUERY = "select item from {0} item where item.code = :code";
+
     /**
-     *
-     * @return fmList  FundingMechanism
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<FundingMechanism> getFundingMechanisms() throws PAException {
-        Session session = null;
-        List<FundingMechanism> fmList = new ArrayList<FundingMechanism>();
-        session = PaHibernateUtil.getCurrentSession();
-        Query query = null;
-        String hql = "select fm from FundingMechanism fm order by fundingMechanismCode";
-        query = session.createQuery(hql);
-        fmList = query.list();
-        return fmList;
-    }
-
-    /**
-     *
-     * @return nihList  FundingMechanism
-     * @throws PAException PAException
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<NIHinstitute> getNihInstitutes() throws PAException {
-        Session session = null;
-        List<NIHinstitute> nihList = new ArrayList<NIHinstitute>();
-        session = PaHibernateUtil.getCurrentSession();
-        Query query = null;
-        String hql = "select nih from NIHinstitute nih order by nihInstituteCode";
-        query = session.createQuery(hql);
-        nihList = query.list();
-        return nihList;
-    }
-
-    /**
-     *
-     * @return country  Country
-     * @throws PAException PAException
-     */
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<Country> getCountries() throws PAException {
-        Session session = null;
-        List<Country> countries = new ArrayList<Country>();
-        session = PaHibernateUtil.getCurrentSession();
-        Query query = session.createQuery("select c from Country c order by name");
-        countries = query.list();
-        return countries;
+        return executeQuery(ALL_FUNDING_MECHANISMS_QUERY);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<NIHinstitute> getNihInstitutes() throws PAException {
+        return executeQuery(ALL_NIH_INSTITUES_QUERY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public List<Country> getCountries() throws PAException {
+        return executeQuery(ALL_COUNTRIES_QUERY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public Country getCountryByName(String name) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
-        Query query = session.createQuery("select c from Country c where c.name = :name");
+        Query query = session.createQuery(COUNTRY_BY_NAME_QUERY);
         query.setParameter("name", name);
         return (Country) query.uniqueResult();
     }
 
     /**
-     * @param name name
-     * @return value  val
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public String getPropertyValue(String name) throws PAException {
-        Session session = null;
-        String value = "";
-        List<PAProperties> paProperties = new ArrayList<PAProperties>();
-        session = PaHibernateUtil.getCurrentSession();
-        Query query = session.createQuery("select p from PAProperties p where p.name = '" + name + "'");
-        paProperties =  query.list();
-        if (paProperties == null || paProperties.isEmpty()) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query = session.createQuery(PAPROPERTY_BY_NAME_QUERY);
+        query.setString("name", name);
+        List<PAProperties> paProperties = query.list();
+        if (CollectionUtils.isEmpty(paProperties)) {
             throw new PAException("PA_PROPERTIES does not have entry for  " + name);
         }
-        value = paProperties.get(0).getValue();
-        return value;
+        return paProperties.get(0).getValue();
     }
+
     /**
      * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<Country> searchCountry(Country country) throws PAException {
         if (country == null) {
             throw new PAException("country cannot be null");
         }
-        List<Country> countryList = new ArrayList<Country>();
         Session session = PaHibernateUtil.getCurrentSession();
         Criteria criteria = session.createCriteria(Country.class, "country");
         if (StringUtils.isNotEmpty(country.getName())) {
@@ -213,29 +199,38 @@ public class LookUpTableServiceBean implements LookUpTableServiceRemote {
         if (StringUtils.isNotEmpty(country.getAlpha3())) {
             criteria.add(Restrictions.eq("country.alpha3", country.getAlpha3()));
         }
-        countryList = criteria.list();
-        return countryList;
+        return criteria.list();
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<AnatomicSite> getAnatomicSites() throws PAException {
-        return PaHibernateUtil.getCurrentSession()
-            .createQuery("select items from AnatomicSite items order by code").list();
+        return executeQuery(ALL_ANATOMIC_SITES_QUERY);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public <T extends AbstractLookUpEntity> T getLookupEntityByCode(Class<T> clazz, String code) throws PAException {
-        StringBuffer hql = new StringBuffer("select item from ").append(clazz.getName())
-        .append(" item where item.code = :code");
-        return (T) PaHibernateUtil.getCurrentSession()
-            .createQuery(hql.toString())
-            .setString("code", code)
-            .uniqueResult();
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query = session.createQuery(MessageFormat.format(LOOKUP_BY_CODE_QUERY, clazz.getName()));
+        query.setString("code", code);
+        return (T) query.uniqueResult();
+    }
+
+    /**
+     * Execute the given hql query (without parameter).
+     * @param hql The hql query
+     * @return The result of the query
+     */
+    private <T> List<T> executeQuery(String hql) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query = session.createQuery(hql);
+        return query.list();
     }
 }

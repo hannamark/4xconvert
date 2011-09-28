@@ -81,7 +81,7 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -95,13 +95,11 @@ import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
-import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
-import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
-import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
-import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
-import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
+import gov.nih.nci.pa.util.CsmUserUtil;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
@@ -146,6 +144,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -179,6 +178,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private static final String TRIAL_TITLE = "${trialTitle}";
     private static final String AMENDMENT_NUMBER = "${amendmentNumber}";
     private static final String AMENDMENT_DATE = "${amendmentDate}";
+    private static final String USERNAME_SEARCH_BODY_PROPERTY = "user.usernameSearch.body";
+    private static final String USERNAME_SEARCH_SUBJECT_PROPERTY = "user.usernameSearch.subject";
 
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
@@ -833,6 +834,50 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         } catch (PAException e) {
             LOG.error("Error attempting to send email to ", e);
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean sendSearchUsernameEmail(String emailAddress) throws PAException {
+        if (!PAUtil.isValidEmail(emailAddress)) {
+            throw new PAException("Validation Exception: A valid email address must be provided");
+        }
+        List<String> loginNames = registryUserService.getLoginNamesByEmailAddress(emailAddress);
+        if (CollectionUtils.isNotEmpty(loginNames)) {
+            List<String> userNames = getGridIdentityUsernames(loginNames);
+            sendSearchUsernameEmail(emailAddress, userNames);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * get the CN from the given grid identities.
+     * @param gridIdentities The List of grid identities.
+     * @return The list of CN extracted from the given identities.
+     */
+    List<String> getGridIdentityUsernames(List<String> gridIdentities) {
+        List<String> userNames = new ArrayList<String>();
+        for (String name : gridIdentities) {
+            userNames.add(CsmUserUtil.getGridIdentityUsername(name));
+        }
+        return userNames;
+    }
+
+    /**
+     * Send the user name search email.
+     * @param emailAddress The e-mail address to which the mail must be send
+     * @param userNames The list of user names with that email address
+     * @throws PAException If an error occurs.
+     */
+    void sendSearchUsernameEmail(String emailAddress, List<String> userNames) throws PAException {
+        String subject = lookUpTableService.getPropertyValue(USERNAME_SEARCH_SUBJECT_PROPERTY);
+        String body = lookUpTableService.getPropertyValue(USERNAME_SEARCH_BODY_PROPERTY);
+        String userNamesString = StringUtils.join(userNames, ", ");
+        body = body.replace("${userNames}", userNamesString);
+        sendMailWithAttachment(emailAddress, subject, body, null);
     }
 
     /**

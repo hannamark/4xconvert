@@ -79,7 +79,6 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
-import gov.nih.nci.pa.service.MailManagerBeanLocal;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import javax.annotation.security.RolesAllowed;

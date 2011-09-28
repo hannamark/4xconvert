@@ -43,9 +43,11 @@ import java.util.List;
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.junit.After;
 import org.junit.Before;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
+import com.mockrunner.mock.web.MockHttpServletResponse;
 import com.mockrunner.mock.web.MockHttpSession;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.config.Configuration;
@@ -61,20 +63,12 @@ import com.opensymphony.xwork2.util.ValueStackFactory;
  */
 public abstract class AbstractRegWebTest {
     private final static int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
+    
     /**
-     * Set up services.
+     * Creates the action context with a mock request.
      */
-    @Before
-    public void setUpServices() {
-        PaRegistry.getInstance().setServiceLocator(new RegistrationMockServiceLocator());
-        PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
-    }
-    /**
-     * Initialize the mock request.
-     */
-    @Before
-    public void initMockrequest() {
-    	ConfigurationManager configurationManager = new ConfigurationManager();
+    public static void initActionContext() {
+        ConfigurationManager configurationManager = new ConfigurationManager();
         configurationManager.addContainerProvider(new XWorkConfigurationProvider());
         Configuration config = configurationManager.getConfiguration();
         Container container = config.getContainer();
@@ -88,6 +82,33 @@ public abstract class AbstractRegWebTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         ServletActionContext.setRequest(request);
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        ServletActionContext.setResponse(response);
+    }
+    
+    /**
+     * Set up services.
+     */
+    @Before
+    public void setUpServices() {
+        PaRegistry.getInstance().setServiceLocator(new RegistrationMockServiceLocator());
+        PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
+    }
+    /**
+     * Initialize the mock request.
+     */
+    @Before
+    public void initMockrequest() {
+        initActionContext();
+    }
+    
+    /**
+     * Clean out the action context to ensure one test does not impact another.
+     */
+    @After
+    public void cleanUpActionContext() {
+        ActionContext.setContext(null);
     }
 
     protected TrialDTO getMockTrialDTO() {

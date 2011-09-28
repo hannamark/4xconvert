@@ -131,6 +131,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public DocumentServiceLocal getDocumentService() {
         List<DocumentDTO> results = new ArrayList<DocumentDTO>();
 
@@ -162,6 +163,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public LookUpTableServiceRemote getLookUpTableService() {
         return lookUpTableService;
     }
@@ -169,6 +171,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public MailManagerServiceLocal getMailManagerService() {
         return mock(MailManagerServiceLocal.class);
     }
@@ -176,6 +179,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public OrganizationCorrelationServiceRemote getOrganizationCorrelationService() {
         return organizationCorrelationService;
     }
@@ -183,6 +187,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PAOrganizationServiceRemote getPAOrganizationService() {
         return paOrganizationService;
     }
@@ -190,6 +195,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PAPersonServiceRemote getPAPersonService() {
         return mock(PAPersonServiceRemote.class);
     }
@@ -197,6 +203,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ProtocolQueryServiceLocal getProtocolQueryService() {
         return protocolQueryService;
     }
@@ -204,6 +211,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public RegulatoryInformationServiceRemote getRegulatoryInformationService() {
         RegulatoryInformationServiceRemote svc = mock(RegulatoryInformationServiceRemote.class);
         try {
@@ -219,6 +227,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyContactServiceLocal getStudyContactService() {
         return mock(StudyContactServiceLocal.class);
     }
@@ -226,6 +235,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyIndldeServiceLocal getStudyIndldeService() {
         StudyIndldeDTO dto = new StudyIndldeDTO();
         dto.setIndldeTypeCode(CdConverter.convertStringToCd("IND"));
@@ -251,6 +261,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyOverallStatusServiceLocal getStudyOverallStatusService() {
         StudyOverallStatusServiceLocal svc = mock(StudyOverallStatusServiceLocal.class);
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
@@ -269,6 +280,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudySiteContactServiceLocal getStudySiteContactService() {
         StudySiteContactDTO dto = new StudySiteContactDTO();
         dto.setRoleCode(CdConverter.convertToCd(StudySiteContactRoleCode.RESPONSIBLE_PARTY_SPONSOR_CONTACT));
@@ -296,6 +308,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudySiteServiceLocal getStudySiteService() {
         return studySiteService;
     }
@@ -303,6 +316,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyProtocolServiceLocal getStudyProtocolService() {
         final StudyProtocol sp = new InterventionalStudyProtocol();
         sp.setId(1L);
@@ -324,6 +338,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         StudyProtocolServiceLocal svc = mock(StudyProtocolServiceLocal.class);
         try {
             when(svc.getStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
+                @Override
                 public StudyProtocolDTO answer(InvocationOnMock invocation) throws Throwable {
                     StudyProtocolDTO dto = null;
                     Object[] args = invocation.getArguments();
@@ -340,6 +355,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
             when(svc.createInterventionalStudyProtocol(any(InterventionalStudyProtocolDTO.class)))
                 .thenReturn(IiConverter.convertToIi(2L));
             when(svc.getInterventionalStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
+                @Override
                 public InterventionalStudyProtocolDTO answer(InvocationOnMock invocation) throws Throwable {
                     InterventionalStudyProtocolDTO dto = null;
                     Object[] args = invocation.getArguments();
@@ -360,6 +376,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyRegulatoryAuthorityServiceLocal getStudyRegulatoryAuthorityService() {
         StudyRegulatoryAuthorityServiceLocal svc = mock(StudyRegulatoryAuthorityServiceLocal.class);
         StudyRegulatoryAuthorityDTO dto = new StudyRegulatoryAuthorityDTO();
@@ -376,6 +393,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyResourcingServiceLocal getStudyResoucringService() {
         return studyResourcingService;
     }
@@ -383,6 +401,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudySiteAccrualStatusServiceLocal getStudySiteAccrualStatusService() {
         return studySiteAccrualStatusService;
     }
@@ -390,6 +409,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public TrialRegistrationServiceLocal getTrialRegistrationService() {
         return trialRegistrationService;
     }
@@ -397,6 +417,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public AbstractionCompletionServiceRemote getAbstractionCompletionService() {
         return mock(AbstractionCompletionServiceRemote.class);
     }
@@ -404,6 +425,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ArmServiceLocal getArmService() {
         return mock(ArmServiceLocal.class);
     }
@@ -411,6 +433,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public CTGovXmlGeneratorServiceLocal getCTGovXmlGeneratorService() {
         return mock(CTGovXmlGeneratorServiceLocal.class);
     }
@@ -418,6 +441,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PDQDiseaseAlternameServiceLocal getDiseaseAlternameService() {
         return mock(PDQDiseaseAlternameServiceLocal.class);
     }
@@ -425,6 +449,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PDQDiseaseParentServiceRemote getDiseaseParentService() {
         return mock(PDQDiseaseParentServiceRemote.class);
     }
@@ -432,6 +457,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PDQDiseaseServiceLocal getDiseaseService() {
         return mock(PDQDiseaseServiceLocal.class);
     }
@@ -439,6 +465,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public DocumentWorkflowStatusServiceLocal getDocumentWorkflowStatusService() {
         return mock(DocumentWorkflowStatusServiceLocal.class);
     }
@@ -446,6 +473,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public InterventionAlternateNameServiceRemote getInterventionAlternateNameService() {
         return mock(InterventionAlternateNameServiceRemote.class);
     }
@@ -453,6 +481,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public InterventionServiceLocal getInterventionService() {
         return mock(InterventionServiceLocal.class);
     }
@@ -460,6 +489,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PAHealthCareProviderRemote getPAHealthCareProviderService() {
         return mock(PAHealthCareProviderRemote.class);
     }
@@ -467,6 +497,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedActivityServiceLocal getPlannedActivityService() {
         return mock(PlannedActivityServiceLocal.class);
     }
@@ -474,6 +505,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedSubstanceAdministrationServiceRemote getPlannedSubstanceAdministrationService() {
         return mock(PlannedSubstanceAdministrationServiceRemote.class);
     }
@@ -481,6 +513,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public RegistryUserServiceLocal getRegistryUserService() {
         return registryUserService;
     }
@@ -488,6 +521,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StratumGroupServiceLocal getStratumGroupService() {
         return mock(StratumGroupServiceLocal.class);
     }
@@ -495,6 +529,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyCheckoutServiceLocal getStudyCheckoutService() {
         return mock(StudyCheckoutServiceLocal.class);
     }
@@ -502,6 +537,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyDiseaseServiceLocal getStudyDiseaseService() {
         return mock(StudyDiseaseServiceLocal.class);
     }
@@ -509,6 +545,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyInboxServiceLocal getStudyInboxService() {
         return mock(StudyInboxServiceLocal.class);
     }
@@ -516,6 +553,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyMilestoneServicelocal getStudyMilestoneService() {
         return mock(StudyMilestoneServicelocal.class);
     }
@@ -523,6 +561,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyMilestoneTasksServiceLocal getStudyMilestoneTasksService() {
         return mock(StudyMilestoneTasksServiceLocal.class);
     }
@@ -530,6 +569,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyObjectiveServiceLocal getStudyObjectiveService() {
         return mock(StudyObjectiveServiceLocal.class);
     }
@@ -537,6 +577,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyOnholdServiceLocal getStudyOnholdService() {
         return mock(StudyOnholdServiceLocal.class);
     }
@@ -544,6 +585,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyRecruitmentStatusServiceLocal getStudyRecruitmentStatusService() {
         return mock(StudyRecruitmentStatusServiceLocal.class);
     }
@@ -551,6 +593,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyRelationshipServiceLocal getStudyRelationshipService() {
         return mock(StudyRelationshipServiceLocal.class);
     }
@@ -558,6 +601,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudySiteAccrualAccessServiceLocal getStudySiteAccrualAccessService() {
         return mock(StudySiteAccrualAccessServiceLocal.class);
     }
@@ -565,6 +609,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudySiteOverallStatusServiceLocal getStudySiteOverallStatusService() {
         return mock(StudySiteOverallStatusServiceLocal.class);
     }
@@ -572,6 +617,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public TSRReportGeneratorServiceRemote getTSRReportGeneratorService() {
         return mock(TSRReportGeneratorServiceRemote.class);
     }   
@@ -587,6 +633,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyProtocolStageServiceLocal getStudyProtocolStageService() {
         return studyProtocolStageService;
     }
@@ -594,6 +641,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public GridAccountServiceRemote getGridAccountService() {
         GridAccountServiceRemote svc = mock(GridAccountServiceRemote.class);
         try {
@@ -612,6 +660,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         when(svc.authenticateUser(any(String.class), any(String.class), any(String.class))).thenReturn(results);
         when(svc.getFullyQualifiedUsername(any(String.class), any(String.class),
                 any(String.class))).thenAnswer(new Answer<String>() {
+                    @Override
                     public String answer(InvocationOnMock invocation) throws Throwable {
                         Object[] args = invocation.getArguments();
                         String username = (String) args[0];
@@ -621,6 +670,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return svc;
     }
 
+    @Override
     public ProprietaryTrialManagementServiceLocal getProprietaryTrialService() {
         return mock(ProprietaryTrialManagementServiceLocal.class);
     }
@@ -628,6 +678,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ParticipatingSiteServiceLocal getParticipatingSiteService() {
         return mock(ParticipatingSiteServiceLocal.class);
     }
@@ -635,6 +686,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyOutcomeMeasureServiceLocal getOutcomeMeasureService() {
         return mock(StudyOutcomeMeasureServiceLocal.class);
     }
@@ -642,6 +694,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PDQXmlGeneratorServiceRemote getPDQXmlGeneratorService() {
         return mock(PDQXmlGeneratorServiceRemote.class);
     }
@@ -649,6 +702,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PDQUpdateGeneratorTaskServiceLocal getPDQUpdateGeneratorTaskService() {
         return mock(PDQUpdateGeneratorTaskServiceLocal.class);
     }
@@ -656,6 +710,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PDQTrialAbstractionServiceBeanRemote getPDQTrialAbstractionServiceRemote() {
         return mock(PDQTrialAbstractionServiceBeanRemote.class);
     }
@@ -663,6 +718,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PDQTrialRegistrationServiceBeanRemote getPDQTrialRegistrationServiceRemote() {
         return mock(PDQTrialRegistrationServiceBeanRemote.class);
     }
@@ -670,6 +726,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PlannedMarkerServiceLocal getPlannedMarkerService() {
         PlannedMarkerDTO dto = new PlannedMarkerDTO();
         dto.setIdentifier(IiConverter.convertToIi(1L));
@@ -689,6 +746,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public AuditTrailServiceLocal getAuditTrailService() {
         return mock(AuditTrailServiceLocal.class);
     }

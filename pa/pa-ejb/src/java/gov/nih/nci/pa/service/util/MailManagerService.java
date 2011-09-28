@@ -98,27 +98,30 @@ public interface MailManagerService {
      * @throws PAException PAException
      */
     void sendTSREmail(Ii studyProtocolIi) throws PAException;
+
     /**
-     *
+     * 
      * @param studyProtocolIi ii
      * @throws PAException ex
      */
     void sendAmendAcceptEmail(Ii studyProtocolIi) throws PAException;
 
     /**
-     *
+     * 
      * @param studyProtocolIi ii
      * @throws PAException ex
      */
     void sendAmendNotificationMail(Ii studyProtocolIi) throws PAException;
+
     /**
-     *
+     * 
      * @param studyProtocolIi ii
      * @throws PAException ex
      */
     void sendNotificationMail(Ii studyProtocolIi) throws PAException;
+
     /**
-     *
+     * 
      * @param studyProtocolIi ii
      * @param rejectReason re
      * @throws PAException ex
@@ -126,20 +129,21 @@ public interface MailManagerService {
     void sendAmendRejectEmail(Ii studyProtocolIi, String rejectReason) throws PAException;
 
     /**
-     *
+     * 
      * @param studyProtocolIi ii
      * @throws PAException ex
      */
     void sendRejectionEmail(Ii studyProtocolIi) throws PAException;
+
     /**
-     *
+     * 
      * @param studyProtocolIi ii
      * @throws PAException e
      */
     void sendAcceptEmail(Ii studyProtocolIi) throws PAException;
 
     /**
-     *
+     * 
      * @param studyProtocolIi ii
      * @throws PAException ex
      */
@@ -147,10 +151,10 @@ public interface MailManagerService {
 
     /**
      * Send cde request mail.
-     *
+     * 
      * @param mailFrom the mail from
      * @param mailBody the mail body
-     *
+     * 
      * @throws PAException the PA exception
      */
     void sendCDERequestMail(String mailFrom, String mailBody) throws PAException;
@@ -163,11 +167,11 @@ public interface MailManagerService {
      * @param markerText the marker text as written in the proposal
      * @throws PAException on error
      */
-    void sendMarkerCDERequestMail(Ii studyProtocolIi, String from, PlannedMarkerDTO marker,
-            String markerText) throws PAException;
+    void sendMarkerCDERequestMail(Ii studyProtocolIi, String from, PlannedMarkerDTO marker, String markerText)
+            throws PAException;
 
     /**
-     *
+     * 
      * @param mailTo to
      * @param subject subject
      * @param mailBody body
@@ -177,23 +181,34 @@ public interface MailManagerService {
 
     /**
      * Send xml and tsr email.
-     *
+     * 
      * @param fullName name of the recepient
      * @param mailTo who to send the xml and tsr email to
      * @param studyProtocolIi the study protocol ii
-     *
+     * 
      * @throws PAException the PA exception
      */
     void sendXMLAndTSREmail(String fullName, String mailTo, Ii studyProtocolIi) throws PAException;
+
     /**
-     *
+     * 
      * @param userId userId
      */
     void sendAdminAcceptanceEmail(Long userId);
+
     /**
-     *
+     * 
      * @param userId user
      * @param reason rejection reason
      */
     void sendAdminRejectionEmail(Long userId, String reason);
+    
+    /**
+     * Search a registry user by email and send the username e-mail.
+     * @param emailAddress The e-mail address to search for and to which the e-mail must be sent.
+     * @return true if a user name was found.
+     * @throws PAException when an error occurs.
+     */
+    boolean sendSearchUsernameEmail(String emailAddress) throws PAException;
+
 }

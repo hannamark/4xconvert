@@ -113,14 +113,13 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
-
 /**
  * @author aevansel@5amsolutions.com
  */
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
+public class RegistryUserBeanLocal implements RegistryUserServiceLocal { 
     private static final Logger LOG = Logger.getLogger(RegistryUserBeanLocal.class);
     private static final int INDEX_USER_ID = 0;
     private static final int INDEX_FIRST_NAME = 1;
@@ -130,11 +129,13 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     private static final int INDEX_NCI_IDENTIFIER = 5;
     private static final int INDEX_ORG_ID = 6;
     private static final int INDEX_LEAD_ID = 7;
-
-
+    private static final String SEARCH_USER_BY_EMAIL_QUERY = "select csmu.loginName from RegistryUser as ru, "
+          + " User as csmu where ru.csmUserId = csmu.userId and ru.emailAddress = :emailAddress";
+    
     /**
      * {@inheritDoc}
      */
+    @Override
     public RegistryUser createUser(RegistryUser user) throws PAException {
         PaHibernateUtil.getCurrentSession().saveOrUpdate(user);
         return user;
@@ -143,6 +144,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public RegistryUser updateUser(RegistryUser user) throws PAException {
         PaHibernateUtil.getCurrentSession().update(user);
         return user;
@@ -151,6 +153,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean hasTrialAccess(String loginName, Long studyProtocolId) throws PAException {
         RegistryUser myUser = getUser(loginName);
         return hasTrialAccess(myUser, studyProtocolId);
@@ -159,6 +162,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isTrialOwner(Long userId, Long studyProtocolId) throws PAException {
         RegistryUser myUser = getUserById(userId);
         StudyProtocol studyProtocol =
@@ -172,6 +176,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean hasTrialAccess(RegistryUser user, Long studyProtocolId) throws PAException {
         StudyProtocol studyProtocol =
             (StudyProtocol) PaHibernateUtil.getCurrentSession().get(StudyProtocol.class, studyProtocolId);
@@ -199,6 +204,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public RegistryUser getUser(String loginName) throws PAException {
         RegistryUser registryUser = null;
@@ -221,6 +227,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public RegistryUser getUserById(Long userId) throws PAException {
         RegistryUser registryUser = null;
         if (userId != null) {
@@ -237,6 +244,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("unchecked")
     public List<RegistryUser> getUserByUserOrgType(UserOrgType userType) throws PAException {
         if (userType == null) {
@@ -259,6 +267,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean doesRegistryUserExist(String loginName) {
         RegistryUser registryUser = null;
         try {
@@ -275,6 +284,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * @return list of user
      * @throws PAException on error
      */
+    @Override
     @SuppressWarnings("unchecked")
     public List<RegistryUser> search(RegistryUser regUser) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
@@ -305,6 +315,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * @return list of trial ownership information objects.
      * @throws PAException on error.
      */
+    @Override
     @SuppressWarnings("unchecked")
     public List<DisplayTrialOwnershipInformation> searchTrialOwnership(DisplayTrialOwnershipInformation
             trialOwnershipInfo, Long affiliatedOrgId) throws PAException {
@@ -389,6 +400,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * @param studyProtocolId study protocol id
      * @throws PAException on error
      */
+    @Override
     public void assignOwnership(Long userId, Long studyProtocolId) throws PAException {
         RegistryUser usr = getUser(userId, studyProtocolId);
         StudyProtocol sp = new StudyProtocol();
@@ -404,6 +416,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      * @param studyProtocolId study protocol id
      * @throws PAException on error
      */
+    @Override
     public void removeOwnership(Long userId, Long studyProtocolId) throws PAException {
         RegistryUser usr = getUser(userId, studyProtocolId);
         Set<StudyProtocol> studyProtocols = usr.getStudyProtocols();
@@ -435,6 +448,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<String> getTrialOwnerNames(Long studyProtocolId) throws PAException {
         List<String> names = new ArrayList<String>();
         StudyProtocol studyProtocol =
@@ -450,10 +464,24 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Set<RegistryUser> getAllTrialOwners(Long studyProtocolId) throws PAException {
         return ((StudyProtocol) PaHibernateUtil.getCurrentSession()
                 .get(StudyProtocol.class, studyProtocolId)).getStudyOwners();
     }
 
+    /**
+     * Gets the login names of registry users having the given e-mail address.
+     * @param emailAddress The e-mail address
+     * @return The login names of registry users having the given e-mail address
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<String> getLoginNamesByEmailAddress(String emailAddress) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query = session.createQuery(SEARCH_USER_BY_EMAIL_QUERY);
+        query.setString("emailAddress", emailAddress);
+        return query.list();
+    }
 
 }

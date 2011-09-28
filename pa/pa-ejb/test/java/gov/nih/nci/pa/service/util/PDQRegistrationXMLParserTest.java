@@ -91,6 +91,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -264,7 +265,7 @@ public class PDQRegistrationXMLParserTest {
         rXMLParser.setUrl(this.getClass().getResource("/sample-missing-prim-completion-date-type.xml"));
         rXMLParser.parse();
         StudyProtocolDTO spDto = rXMLParser.getStudyProtocolDTO();
-        assertEquals("09/27/2011", TsConverter.convertToString(spDto.getPrimaryCompletionDate()));
+        assertEquals("09/27/2030", TsConverter.convertToString(spDto.getPrimaryCompletionDate()));
         assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), spDto.getPrimaryCompletionDateTypeCode()
             .getCode());
     }

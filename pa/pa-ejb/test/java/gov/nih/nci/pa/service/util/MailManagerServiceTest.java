@@ -81,10 +81,17 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package gov.nih.nci.pa.service;
+package gov.nih.nci.pa.service.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Country;
@@ -113,16 +120,12 @@ import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceBeanLocal;
-import gov.nih.nci.pa.service.util.LookUpTableServiceBean;
-import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
-import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.service.util.ProtocolQueryServiceBean;
-import gov.nih.nci.pa.service.util.RegistryUserServiceBean;
-import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
-import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceBean;
-import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceBean;
+import gov.nih.nci.pa.service.DocumentWorkflowStatusServiceLocal;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceBean;
+import gov.nih.nci.pa.service.StudySiteBeanLocal;
+import gov.nih.nci.pa.service.StudySiteServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -130,8 +133,10 @@ import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
@@ -142,7 +147,15 @@ import org.junit.Test;
  *
  */
 public class MailManagerServiceTest extends AbstractHibernateTestCase {
-
+    private static String email1 = "example1@example.com";
+    private static String email2 = "example2@example.com";
+    private static String smtpHost = "";
+    private static String fromAddress = "fromAddress@example.com";
+    
+    private LookUpTableServiceRemote lookUpTableService = mock(LookUpTableServiceRemote.class);
+    private RegistryUserServiceLocal registryUserService = mock(RegistryUserServiceLocal.class);
+    private MailManagerBeanLocal sut;
+    
     MailManagerBeanLocal bean = new MailManagerBeanLocal();
     ProtocolQueryServiceBean protocolQrySrv = new ProtocolQueryServiceBean();
     RegistryUserServiceLocal registryUserSrv = new RegistryUserServiceBean();
@@ -154,11 +167,6 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
 
     Ii nonProprietaryTrialIi;
     Ii proprietaryTrialIi;
-
-    private static String email1 = "example1@example.com";
-    private static String email2 = "example2@example.com";
-    private static String smtpHost = "";
-    private static String fromAddress = "fromAddress@example.com";
 
     @Before
     public void setUp() throws Exception {
@@ -340,6 +348,25 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         prop.setName("CDE_REQUEST_TO_EMAIL");
         prop.setValue("to@example.com");
         TestSchema.addUpdObject(prop);
+    }
+    
+    private MailManagerBeanLocal createMailManagerServiceBean() {
+        MailManagerBeanLocal service = new MailManagerBeanLocal();
+        setDependencies(service);
+        return service;
+    }
+
+    private MailManagerBeanLocal createMailManagerServiceMock() {
+        MailManagerBeanLocal service = mock(MailManagerBeanLocal.class);
+        doCallRealMethod().when(service).setLookUpTableService(lookUpTableService);
+        doCallRealMethod().when(service).setRegistryUserService(registryUserService);
+        setDependencies(service);
+        return service;
+    }
+
+    private void setDependencies(MailManagerBeanLocal service) {
+        service.setLookUpTableService(lookUpTableService);
+        service.setRegistryUserService(registryUserService);
     }
 
     @Test (expected=PAException.class)
@@ -573,5 +600,91 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         sp.setProprietaryTrialIndicator(Boolean.TRUE);
         sp.setCtgovXmlRequiredIndicator(Boolean.FALSE);
         return sp;
+    }
+    
+    /**
+     * Test the sendSearchUsernameEmail method with an invalid email.
+     * @throws PAException if an error occurs
+     */
+    @Test(expected = PAException.class)
+    public void testSendSearchUsernameEmailInvalid() throws PAException {
+        sut = createMailManagerServiceBean();
+        sut.sendSearchUsernameEmail("abcd");
+    }
+
+    /**
+     * Test the sendSearchUsernameEmail method with no user.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testSendSearchUsernameEmailNotFound() throws PAException {
+        sut = createMailManagerServiceMock();
+        String emailAddress = "username@nci.nih.gov";
+        doCallRealMethod().when(sut).sendSearchUsernameEmail(emailAddress);
+        List<String> loginNames = new ArrayList<String>();
+        when(registryUserService.getLoginNamesByEmailAddress(emailAddress)).thenReturn(loginNames);
+        boolean result = sut.sendSearchUsernameEmail(emailAddress);
+        assertFalse("Wrong result returned", result);
+        verify(registryUserService).getLoginNamesByEmailAddress(emailAddress);
+    }
+
+    /**
+     * Test the sendSearchUsernameEmail method with one user.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testSendSearchUsernameEmailFound() throws PAException {
+        sut = createMailManagerServiceMock();
+        String emailAddress = "username@nci.nih.gov";
+        doCallRealMethod().when(sut).sendSearchUsernameEmail(emailAddress);
+        List<String> loginNames = new ArrayList<String>();
+        loginNames.add("/CN=username");
+        when(registryUserService.getLoginNamesByEmailAddress(emailAddress)).thenReturn(loginNames);
+        List<String> userNames = new ArrayList<String>();
+        userNames.add("username");
+        when(sut.getGridIdentityUsernames(loginNames)).thenReturn(userNames);
+        boolean result = sut.sendSearchUsernameEmail(emailAddress);
+        assertTrue("Wrong result returned", result);
+        verify(registryUserService).getLoginNamesByEmailAddress(emailAddress);
+        verify(sut).getGridIdentityUsernames(loginNames);
+        verify(sut).sendSearchUsernameEmail(emailAddress, userNames);
+    }
+
+    /**
+     * Test the getGridIdentityUsernames method.
+     */
+    @Test
+    public void testGetGridIdentityUsernames() {
+        sut = createMailManagerServiceBean();
+        List<String> loginNames = new ArrayList<String>();
+        loginNames.add("/CN=username1");
+        loginNames.add("username2");
+        List<String> result = sut.getGridIdentityUsernames(loginNames);
+        assertNotNull("No result returned", result);
+        assertEquals("Wrong result size", 2, result.size());
+        assertEquals("Wrong username in position 0", "username1", result.get(0));
+        assertEquals("Wrong username in position 1", "username2", result.get(1));
+    }
+
+    /**
+     * Test the sendUsernameSearchEmail method.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testSendSearchUsernameEmail() throws PAException {
+        sut = createMailManagerServiceMock();
+        String emailAddress = "username@nci.nih.gov";
+        List<String> userNames = new ArrayList<String>();
+        userNames.add("username1");
+        userNames.add("username2");
+        doCallRealMethod().when(sut).sendSearchUsernameEmail(emailAddress, userNames);
+        String body = "body ${userNames} end";
+        String subject = "subject";
+        when(lookUpTableService.getPropertyValue("user.usernameSearch.body")).thenReturn(body);
+        when(lookUpTableService.getPropertyValue("user.usernameSearch.subject")).thenReturn(subject);
+        sut.sendSearchUsernameEmail(emailAddress, userNames);
+        verify(lookUpTableService).getPropertyValue("user.usernameSearch.body");
+        verify(lookUpTableService).getPropertyValue("user.usernameSearch.subject");
+        verify(sut).sendMailWithAttachment(emailAddress, subject, "body username1, username2 end", null);
     }
 }
