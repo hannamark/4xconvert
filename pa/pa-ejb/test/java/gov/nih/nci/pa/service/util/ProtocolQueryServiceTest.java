@@ -264,7 +264,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         criteria.setStudyMilestone("Submission Acceptance Date");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
-        assertEquals(MilestoneCode.SUBMISSION_ACCEPTED, 
+        assertEquals(MilestoneCode.SUBMISSION_ACCEPTED,
                 results.get(0).getMilestones().getStudyMilestone().getMilestone());
         criteria.setStudyMilestone(null);
 
@@ -473,7 +473,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         localEjb.getTrialSummaryByStudyProtocolId(Long.valueOf(1000));
     }
 
-    private StudyProtocol createStudyProtocol(String orgId, boolean createRejected, Boolean isPropTrial,
+    public StudyProtocol createStudyProtocol(String orgId, boolean createRejected, Boolean isPropTrial,
             boolean onHold, boolean adminCheckout, boolean scientificCheckout, boolean amendment, boolean update) {
         StudyProtocol sp = TestSchema.createStudyProtocolObj();
         sp.setProprietaryTrialIndicator(isPropTrial);

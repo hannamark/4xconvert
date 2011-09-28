@@ -114,7 +114,8 @@ import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
-import gov.nih.nci.pa.iso.convert.StudyProtocolQueryConverter;
+import gov.nih.nci.pa.iso.convert.ReportStudyProtocolQueryConverter;
+import gov.nih.nci.pa.iso.convert.TrialSearchStudyProtocolQueryConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.search.StudyProtocolBeanSearchCriteria;
@@ -129,6 +130,7 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -179,7 +181,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
         List<StudyProtocol> queryList = getStudyProtocolQueryResults(spsc);
         pdtos = convertToStudyProtocolDTO(queryList, spsc.getUserId(),
-                BooleanUtils.toBoolean(spsc.isMyTrialsOnly()), false);
+                BooleanUtils.toBoolean(spsc.isMyTrialsOnly()));
         if (CollectionUtils.isNotEmpty(pdtos)) {
             pdtos = appendOnHold(pdtos);
         }
@@ -197,9 +199,13 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             throw new PAException("At least one criteria is required.");
         }
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
-        List<StudyProtocol> queryList = getStudyProtocolQueryResults(spsc);
-        pdtos = convertToStudyProtocolDTO(queryList, spsc.getUserId(),
-                BooleanUtils.toBoolean(spsc.isMyTrialsOnly()), true);
+        Iterator<StudyProtocol> iter = getStudyProtocolQueryResultIterator(spsc);
+        List<Long> spIdList = new ArrayList<Long>();
+        while (iter.hasNext()) {
+            spIdList.add(iter.next().getId());
+        }
+        pdtos = convertToStudyProtocolDTOById(spIdList, spsc.getUserId(),
+                BooleanUtils.toBoolean(spsc.isMyTrialsOnly()));
         if (CollectionUtils.isNotEmpty(pdtos)) {
             pdtos = appendOnHold(pdtos);
         }
@@ -229,7 +235,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         if (queryList == null) {
             throw new PAException(" Study protocol was not found for id " + studyProtocolId);
         }
-        List<StudyProtocolQueryDTO> trialSummaries = convertToStudyProtocolDTO(queryList, null, false, false);
+        List<StudyProtocolQueryDTO> trialSummaries = convertToStudyProtocolDTO(queryList, null, false);
 
         if (trialSummaries == null || trialSummaries.size() <= 0) {
             throw new PAException(" Could not be converted to DTO for id " + studyProtocolId);
@@ -246,23 +252,42 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
      * @throws PAException on error
      */
     private List<StudyProtocolQueryDTO> convertToStudyProtocolDTO(List<StudyProtocol> protocolQueryResult,
-            Long userId, boolean myTrialsOnly, boolean isReporting)
+            Long userId, boolean myTrialsOnly)
         throws PAException {
-        StudyProtocolQueryConverter studyProtocolQueryConverter =
-            new StudyProtocolQueryConverter(getRegistryUserService(), getPaServiceUtils());
+        TrialSearchStudyProtocolQueryConverter studyProtocolQueryConverter =
+            new TrialSearchStudyProtocolQueryConverter(getRegistryUserService(), getPaServiceUtils());
         List<StudyProtocolQueryDTO> studyProtocolDtos = new ArrayList<StudyProtocolQueryDTO>();
         RegistryUser potentialOwner = getPotentialOwner(userId);
         try {
             for (StudyProtocol studyProtocol : protocolQueryResult) {
 
-                StudyProtocolQueryDTO studyProtocolDto = null;
-                if (isReporting) {
-                    studyProtocolDto = studyProtocolQueryConverter.convertToStudyProtocolDtoForReporting(
+                StudyProtocolQueryDTO studyProtocolDto = studyProtocolQueryConverter.convertToStudyProtocolDto(
                             studyProtocol, myTrialsOnly, potentialOwner);
-                } else {
-                    studyProtocolDto = studyProtocolQueryConverter.convertToStudyProtocolDto(
-                            studyProtocol, myTrialsOnly, potentialOwner);
+
+                if (studyProtocolDto != null) {
+                    studyProtocolDtos.add(studyProtocolDto);
                 }
+            }
+        } catch (Exception e) {
+            throw new PAException("General error in while converting to StudyProtocolQueryDTO", e);
+        }
+        return studyProtocolDtos;
+    }
+
+    private List<StudyProtocolQueryDTO> convertToStudyProtocolDTOById(List<Long> protocolQueryResult,
+            Long userId, boolean myTrialsOnly)
+        throws PAException {
+        ReportStudyProtocolQueryConverter studyProtocolQueryConverter =
+            new ReportStudyProtocolQueryConverter(getRegistryUserService(), getPaServiceUtils());
+        List<StudyProtocolQueryDTO> studyProtocolDtos = new ArrayList<StudyProtocolQueryDTO>();
+        RegistryUser potentialOwner = getPotentialOwner(userId);
+        try {
+            for (Long spId : protocolQueryResult) {
+
+                StudyProtocolQueryDTO studyProtocolDto =
+                    studyProtocolQueryConverter.convertToStudyProtocolDtoForReporting(
+                            spId, myTrialsOnly, potentialOwner);
+
                 if (studyProtocolDto != null) {
                     studyProtocolDtos.add(studyProtocolDto);
                 }
@@ -354,16 +379,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         return pids;
     }
 
-    /**
-     *
-     * @param criteria
-     *            studyProtocolQueryCriteria
-     * @return List queryList
-     * @throws PAException
-     *             paException
-     */
-    private List<StudyProtocol> getStudyProtocolQueryResults(StudyProtocolQueryCriteria criteria)
-    throws PAException {
+    private StudyProtocolQueryBeanSearchCriteria getExampleCriteria(StudyProtocolQueryCriteria criteria) {
         StudyProtocol example = new StudyProtocol();
         StudyProtocolOptions options = new StudyProtocolOptions();
         options.setUserId(criteria.getUserId());
@@ -380,7 +396,12 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setInboxProcessing(BooleanUtils.isTrue(criteria.isInBoxProcessing()));
 
         populateExample(criteria, example);
-        StudyProtocolQueryBeanSearchCriteria crit = new StudyProtocolQueryBeanSearchCriteria(example, options);
+        return new StudyProtocolQueryBeanSearchCriteria(example, options);
+    }
+
+    private List<StudyProtocol> getStudyProtocolQueryResults(StudyProtocolQueryCriteria criteria)
+    throws PAException {
+        StudyProtocolQueryBeanSearchCriteria crit = getExampleCriteria(criteria);
         List<StudyProtocol> results = new ArrayList<StudyProtocol>();
         try {
             results = search(crit);
@@ -391,6 +412,21 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             throw new PAException("Results exceed more than 500.  Please refine the search criteria.");
         }
         return results;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Iterator<StudyProtocol> getStudyProtocolQueryResultIterator(StudyProtocolQueryCriteria criteria)
+    throws PAException {
+        StudyProtocolQueryBeanSearchCriteria crit = getExampleCriteria(criteria);
+        try {
+            validateSearchCriteria(crit);
+            String orderBy = "";
+            String joinClause = "";
+            return crit.getQuery(orderBy, joinClause, false).iterate();
+        } catch (Exception e) {
+            throw new PAException("An error has occurred when searching for trials.", e);
+        }
+
     }
 
     private void populateExampleStudyProtocol(StudyProtocolQueryCriteria crit, StudyProtocol sp) {

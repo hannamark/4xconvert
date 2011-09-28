@@ -80,7 +80,6 @@ package gov.nih.nci.pa.util;
 
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROLE;
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
-
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
@@ -132,6 +131,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1175,7 +1175,7 @@ public class PAUtil {
      * @param studyMilestones list of trial milestones
      */
     public static void convertMilestonesToDTO(MilestonesDTO milestonesDto,
-            Set<StudyMilestone> studyMilestones) {
+            Collection<StudyMilestone> studyMilestones) {
         Set<StudyMilestone> copy = new TreeSet<StudyMilestone>(new LastCreatedComparator());
         copy.addAll(studyMilestones);
         convertMilestonesCopyToDTO(milestonesDto, copy);
