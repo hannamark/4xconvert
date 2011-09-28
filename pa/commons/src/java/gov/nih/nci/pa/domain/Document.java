@@ -84,6 +84,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
@@ -109,6 +110,7 @@ public class Document extends AbstractDocument implements Auditable {
     @JoinColumn(name = "STUDY_PROTOCOL_IDENTIFIER", updatable = false)
     @NotNull
     @Searchable(nested = true)
+    @Index(name = "document_study_protocol_idx")
     public StudyProtocol getStudyProtocol() {
         return studyProtocol;
     }

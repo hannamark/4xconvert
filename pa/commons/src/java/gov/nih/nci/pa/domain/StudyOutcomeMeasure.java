@@ -84,6 +84,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
@@ -176,6 +177,7 @@ public class StudyOutcomeMeasure extends AbstractEntity implements Auditable {
     @ManyToOne
     @JoinColumn(name = "STUDY_PROTOCOL_IDENTIFIER", updatable = false)
     @NotNull
+    @Index(name = "study_outcome_measure_study_protocol_idx")
     public StudyProtocol getStudyProtocol() {
         return studyProtocol;
     }

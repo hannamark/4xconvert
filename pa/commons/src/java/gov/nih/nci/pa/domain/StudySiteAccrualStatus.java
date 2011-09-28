@@ -90,6 +90,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
@@ -151,6 +152,7 @@ public class StudySiteAccrualStatus extends AbstractEntity implements Auditable 
     @JoinColumn(name = "STUDY_SITE_IDENTIFIER", updatable = false)
     @NotNull
     @Searchable(nested = true)
+    @Index(name = "study_site_accrual_status_study_site_idx")
     public StudySite getStudySite() {
         return studySite;
     }

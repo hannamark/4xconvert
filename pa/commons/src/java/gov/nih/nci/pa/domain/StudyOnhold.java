@@ -89,6 +89,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Past;
@@ -101,6 +102,9 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
  */
 @Entity
 @Table(name = "STUDY_ONHOLD")
+@org.hibernate.annotations.Table(appliesTo = "STUDY_ONHOLD", indexes = 
+                                 {@Index(name = "study_onhold_study_protocol_idx", 
+                                 columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }) })
 public class StudyOnhold extends AbstractStudyEntity implements Auditable {
   private static final long serialVersionUID = 1234509870L;
 
@@ -166,5 +170,5 @@ public class StudyOnhold extends AbstractStudyEntity implements Auditable {
    */
   public void setOffholdDate(Timestamp offholdDate) {
     this.offholdDate = offholdDate;
-  }
+  }  
 }

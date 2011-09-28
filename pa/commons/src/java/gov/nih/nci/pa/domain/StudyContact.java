@@ -89,6 +89,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 
@@ -101,6 +103,9 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @Table(name =  "STUDY_CONTACT")
+@org.hibernate.annotations.Table(appliesTo = "STUDY_CONTACT", indexes = 
+                                 {@Index(name = "study_contact_study_protocol_idx", 
+                                 columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }) })
 public class StudyContact extends PersonFunctionalRole {
 
     private static final long serialVersionUID = 1234567890L;
@@ -296,5 +301,4 @@ public class StudyContact extends PersonFunctionalRole {
     public void setOrganizationalContact(OrganizationalContact organizationalContact) {
         this.organizationalContact = organizationalContact;
     }
-
 }

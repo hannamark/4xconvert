@@ -90,6 +90,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
 /**
@@ -99,6 +101,9 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "PLANNED_ACTIVITY")
+@org.hibernate.annotations.Table(appliesTo = "PLANNED_ACTIVITY", indexes = 
+                                 {@Index(name = "planned_activity_study_protocol_idx", 
+                                 columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }) })
 public class PlannedActivity extends Activity {
     private static final long serialVersionUID = 1239781890L;
 
@@ -151,5 +156,5 @@ public class PlannedActivity extends Activity {
      */
     public void setArms(Collection<Arm> arms) {
         this.arms = arms;
-    }
+    }    
 }

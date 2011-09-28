@@ -89,6 +89,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
@@ -100,6 +101,9 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @Table(name = "STUDY_MILESTONE")
+@org.hibernate.annotations.Table(appliesTo = "STUDY_MILESTONE", indexes = 
+                                 {@Index(name = "study_milestone_study_protocol_idx", 
+                                 columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }) })
 public class StudyMilestone extends AbstractStudyEntity {
     private static final long serialVersionUID = 1234509870L;
 
@@ -150,5 +154,5 @@ public class StudyMilestone extends AbstractStudyEntity {
      */
     public void setMilestoneDate(Timestamp milestoneDate) {
         this.milestoneDate = milestoneDate;
-    }
+    }    
 }

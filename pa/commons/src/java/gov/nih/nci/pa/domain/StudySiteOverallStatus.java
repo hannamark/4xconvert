@@ -13,6 +13,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
@@ -25,6 +26,9 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
  */
 @Entity
 @Table(name = "STUDY_SITE_OVERALL_STATUS")
+@org.hibernate.annotations.Table(appliesTo = "STUDY_SITE_OVERALL_STATUS", indexes = 
+                                 {@Index(name = "study_site_overall_status_study_site_idx", 
+                                  columnNames = { "STUDY_SITE_IDENTIFIER" }) })
 public class StudySiteOverallStatus extends AbstractSiteEntity implements Auditable {
 
     /**
@@ -63,5 +67,4 @@ public class StudySiteOverallStatus extends AbstractSiteEntity implements Audita
     public void setStatusDate(Timestamp statusDate) {
         this.statusDate = statusDate;
     }
-
 }

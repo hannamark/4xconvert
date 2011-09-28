@@ -88,6 +88,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
@@ -212,6 +213,7 @@ public class StudyRelationship extends AbstractEntity implements Auditable {
    @JoinColumn(name = "SOURCE_STUDY_PROTOCOL_IDENTIFIER")
    @NotNull
    @Searchable(nested = true)
+   @Index(name = "study_relationship_source_study_protocol_idx")
    public StudyProtocol getSourceStudyProtocol() {
        return sourceStudyProtocol;
    }
@@ -234,6 +236,7 @@ public class StudyRelationship extends AbstractEntity implements Auditable {
     @JoinColumn(name = "TARGET_STUDY_PROTOCOL_IDENTIFIER")
     @NotNull
     @Searchable(nested = true)
+    @Index(name = "study_relationship_target_study_protocol_idx")
     public StudyProtocol getTargetStudyProtocol() {
         return targetStudyProtocol;
     }

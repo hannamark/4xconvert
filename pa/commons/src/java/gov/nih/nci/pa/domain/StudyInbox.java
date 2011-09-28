@@ -86,6 +86,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.hibernate.validator.Past;
@@ -98,6 +99,9 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
  */
 @Entity
 @Table(name = "STUDY_INBOX")
+@org.hibernate.annotations.Table(appliesTo = "STUDY_INBOX", indexes = 
+                                 {@Index(name = "study_inbox_study_protocol_idx", 
+                                 columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }) })
 public class StudyInbox extends AbstractStudyEntity implements Auditable {
   private static final long serialVersionUID = 1234509870L;
 

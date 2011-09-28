@@ -87,6 +87,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
@@ -98,6 +99,9 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
  */
 @Entity
 @Table(name = "STUDY_OBJECTIVE")
+@org.hibernate.annotations.Table(appliesTo = "STUDY_OBJECTIVE", indexes = 
+                                 {@Index(name = "study_objective_study_protocol_idx", 
+                                 columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }) })
 public class StudyObjective extends AbstractStudyEntity implements Auditable {
 
   private static final long serialVersionUID = 1234509870L;
@@ -138,5 +142,5 @@ public class StudyObjective extends AbstractStudyEntity implements Auditable {
   public void setStudyObjectiveTypeCode(
         StudyObjectiveTypeCode studyObjectiveTypeCode) {
     this.studyObjectiveTypeCode = studyObjectiveTypeCode;
-  }
+  }  
 }

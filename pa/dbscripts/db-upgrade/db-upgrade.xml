@@ -766,4 +766,8 @@
         <comment>Add email for registry username search.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.6.1/PO-4084.sql"/>
      </changeSet>
+      <changeSet id="PO-4122" author="merenkoi">
+        <comment>Add email for CTRP Tech Support.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.6.1/PO-4122.sql"/>
+     </changeSet>
 </databaseChangeLog>

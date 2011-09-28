@@ -95,6 +95,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
 /**
  * @author Hugh Reinhart
  * @since 08/12/2009
@@ -103,6 +105,9 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "performed_activity_type", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "performed_activity")
+@org.hibernate.annotations.Table(appliesTo = "performed_activity", indexes = 
+                                 {@Index(name = "performed_activity_study_protocol_idx", 
+                                 columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }) })
 public class PerformedActivity extends Activity {
 
     private static final long serialVersionUID = 8294885421919695669L;
@@ -241,4 +246,5 @@ public class PerformedActivity extends Activity {
     public void setIntervention(Intervention intervention) {
         this.intervention = intervention;
     }
+    
 }

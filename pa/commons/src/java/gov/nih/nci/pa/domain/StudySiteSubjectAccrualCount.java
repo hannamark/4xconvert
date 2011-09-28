@@ -88,6 +88,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
 import com.fiveamsolutions.nci.commons.audit.Auditable;
 
 /**
@@ -96,6 +98,9 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
  */
 @Entity
 @Table(name = "STUDY_SITE_SUBJECT_ACCRUAL_COUNT")
+@org.hibernate.annotations.Table(appliesTo = "STUDY_SITE_SUBJECT_ACCRUAL_COUNT", indexes = 
+                                 {@Index(name = "study_site_subject_accrual_count_study_protocol_idx", 
+                                 columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }) })
 public class StudySiteSubjectAccrualCount extends AbstractStudyEntity implements Auditable  {
     private static final long serialVersionUID = 1L;
 
@@ -114,6 +119,7 @@ public class StudySiteSubjectAccrualCount extends AbstractStudyEntity implements
      */
     @ManyToOne
     @JoinColumn(name = "study_site_identifier", updatable = false)
+    @Index(name = "study_site_subject_accrual_count_study_site_idx")
     public StudySite getStudySite() {
         return studySite;
     }

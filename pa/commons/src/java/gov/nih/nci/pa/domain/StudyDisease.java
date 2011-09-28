@@ -84,6 +84,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.audit.Auditable;
@@ -95,6 +96,9 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @Table(name = "STUDY_DISEASE")
+@org.hibernate.annotations.Table(appliesTo = "STUDY_DISEASE", indexes = 
+                                {@Index(name = "study_disease_study_protocol_idx", 
+                                columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }) })
 public class StudyDisease extends AbstractStudyEntity implements Auditable {
     private static final long serialVersionUID = 1898967890L;
 
@@ -133,5 +137,4 @@ public class StudyDisease extends AbstractStudyEntity implements Auditable {
     public void setCtGovXmlIndicator(Boolean ctGovXmlIndicator) {
         this.ctGovXmlIndicator = ctGovXmlIndicator;
     }
-
 }

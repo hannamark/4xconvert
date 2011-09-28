@@ -92,6 +92,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
@@ -104,6 +105,8 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @Table(name = "ARM")
+@org.hibernate.annotations.Table(appliesTo = "ARM", indexes = {@Index(name = "arm_study_protocol_idx", 
+                                 columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }) })
 public class Arm extends AbstractStudyEntity implements Auditable {
     private static final long serialVersionUID = 1237144890L;
 
@@ -178,5 +181,6 @@ public class Arm extends AbstractStudyEntity implements Auditable {
      */
     public void setInterventions(Collection<PlannedActivity> interventions) {
         this.interventions = interventions;
-    }
+    }   
+   
 }

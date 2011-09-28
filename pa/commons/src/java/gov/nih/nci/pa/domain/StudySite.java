@@ -96,6 +96,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Sort;
@@ -110,6 +111,11 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @Table(name = "STUDY_SITE")
+@org.hibernate.annotations.Table(appliesTo = "STUDY_SITE", indexes = 
+                                 {@Index(name = "study_site_study_protocol_idx", 
+                                 columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }),
+                                 @Index(name = "study_site_functional_code_idx", 
+                                 columnNames = { "FUNCTIONAL_CODE" }) })
 public class StudySite extends OrganizationFunctionalRole {
     private static final long serialVersionUID = 1234567890L;
     private static final String MAPPED_BY_SS = "studySite";
@@ -154,6 +160,7 @@ public class StudySite extends OrganizationFunctionalRole {
      */
     @Column(name = "LOCAL_SP_INDENTIFIER")
     @Searchable(matchMode = Searchable.MATCH_MODE_CONTAINS)
+    @Index(name = "study_site_upper_local_sp_indentifier_idx")
     public String getLocalStudyProtocolIdentifier() {
         return localStudyProtocolIdentifier;
     }
@@ -258,6 +265,7 @@ public class StudySite extends OrganizationFunctionalRole {
     @ManyToOne(optional = true)
     @JoinColumn(name = "RESEARCH_ORGANIZATION_IDENTIFIER", nullable = true)
     @Searchable(nested = true)
+    @Index(name = "research_org_idx")
     public ResearchOrganization getResearchOrganization() {
         return researchOrganization;
     }

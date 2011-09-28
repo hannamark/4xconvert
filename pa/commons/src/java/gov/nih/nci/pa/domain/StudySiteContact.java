@@ -88,6 +88,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
 import com.fiveamsolutions.nci.commons.search.Searchable;
@@ -271,6 +272,7 @@ public class StudySiteContact extends PersonFunctionalRole {
     @JoinColumn(name = "STUDY_SITE_IDENTIFIER")
     @NotNull
     @Searchable(nested = true)
+    @Index(name = "study_site_contact_study_site_idx")
     public StudySite getStudySite() {
         return studySite;
     }

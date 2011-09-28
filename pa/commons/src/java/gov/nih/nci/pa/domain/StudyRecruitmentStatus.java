@@ -88,6 +88,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
 import com.fiveamsolutions.nci.commons.audit.Auditable;
 
 /**
@@ -98,6 +100,9 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
  */
 @Entity
 @Table(name = "STUDY_RECRUITMENT_STATUS")
+@org.hibernate.annotations.Table(appliesTo = "STUDY_RECRUITMENT_STATUS", indexes = 
+                                 {@Index(name = "study_recruitment_status_study_protocol_idx", 
+                                 columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }) })
 public class StudyRecruitmentStatus extends AbstractStudyEntity implements Auditable {
     private static final long serialVersionUID = 1234568364L;
 
@@ -135,5 +140,5 @@ public class StudyRecruitmentStatus extends AbstractStudyEntity implements Audit
      */
     public void setStatusDate(Timestamp statusDate) {
         this.statusDate = statusDate;
-    }
+    }    
 }

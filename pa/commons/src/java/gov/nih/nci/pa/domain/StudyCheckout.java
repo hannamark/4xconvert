@@ -87,6 +87,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
@@ -100,6 +101,9 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
  */
 @Entity
 @Table(name = "STUDY_CHECKOUT")
+@org.hibernate.annotations.Table(appliesTo = "STUDY_CHECKOUT", indexes = 
+                                 {@Index(name = "study_checkout_study_protocol_idx", 
+                                 columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }) })
 public class StudyCheckout extends AbstractStudyEntity implements Auditable {
 
     /** The Constant serialVersionUID. */
@@ -147,5 +151,4 @@ public class StudyCheckout extends AbstractStudyEntity implements Auditable {
     public void setUserIdentifier(String userIdentifier) {
         this.userIdentifier = userIdentifier;
     }
-
 }

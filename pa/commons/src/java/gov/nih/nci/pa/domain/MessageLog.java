@@ -94,6 +94,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
 /**
@@ -288,6 +289,7 @@ public class MessageLog implements Serializable {
      * @uml.property  name="studyProtocol"
      */
     @Column(name = "STUDY_PROTOCOL_IDENTIFIER")
+    @Index(name = "messages_log_study_protocol_idx")
     public Long getStudyProtocol() {
         return studyProtocol;
     }

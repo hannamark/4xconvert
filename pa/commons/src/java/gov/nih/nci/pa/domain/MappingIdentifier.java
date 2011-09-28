@@ -84,6 +84,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
@@ -95,6 +96,9 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
  */
 @Entity
 @Table(name = "MAPPING_IDENTIFIER")
+@org.hibernate.annotations.Table(appliesTo = "MAPPING_IDENTIFIER", indexes = 
+                                 {@Index(name = "mapping_identifier_study_protocol_idx", 
+                                 columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }) })
 public class MappingIdentifier extends AbstractStudyEntity implements Auditable {
   private static final long serialVersionUID = 1234509870L;
 
@@ -145,4 +149,5 @@ public class MappingIdentifier extends AbstractStudyEntity implements Auditable 
   public void setToIdentifier(Long toIdentifier) {
     this.toIdentifier = toIdentifier;
   }
+  
 }

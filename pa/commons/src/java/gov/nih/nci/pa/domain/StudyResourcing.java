@@ -87,6 +87,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
 import com.fiveamsolutions.nci.commons.audit.Auditable;
 import com.fiveamsolutions.nci.commons.search.Searchable;
 
@@ -102,6 +104,9 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @Entity
 @Table(name =  "STUDY_RESOURCING")
+@org.hibernate.annotations.Table(appliesTo = "STUDY_RESOURCING", indexes = 
+                                 {@Index(name = "study_resourcing_study_protocol_idx", 
+                                 columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }) })
 public class StudyResourcing extends AbstractStudyEntity implements Auditable {
 
     private static final long serialVersionUID = 4862154740562809004L;
@@ -260,5 +265,4 @@ public class StudyResourcing extends AbstractStudyEntity implements Auditable {
     public void setInactiveCommentText(String inactiveCommentText) {
         this.inactiveCommentText = inactiveCommentText;
     }
-
 }

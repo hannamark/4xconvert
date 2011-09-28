@@ -87,6 +87,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -100,6 +101,9 @@ import org.hibernate.annotations.OnDeleteAction;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "PERFORMED_OBSERVATION_RESULT_TYPE", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "PERFORMED_OBSERVATION_RESULT")
+@org.hibernate.annotations.Table(appliesTo = "PERFORMED_OBSERVATION_RESULT", indexes = 
+                                 {@Index(name = "performed_observation_result_study_protocol_idx", 
+                                 columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }) })
 public class PerformedObservationResult extends ObservationResult {
     private static final long serialVersionUID = 1L;
 

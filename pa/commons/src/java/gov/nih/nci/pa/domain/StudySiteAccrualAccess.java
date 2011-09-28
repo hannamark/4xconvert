@@ -87,6 +87,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
 /**
@@ -136,6 +137,7 @@ public class StudySiteAccrualAccess extends AbstractEntityWithStatusCode<ActiveI
     @ManyToOne
     @JoinColumn(name = "STUDY_SITE_IDENTIFIER", updatable = false)
     @NotNull
+    @Index(name = "study_site_accrual_access_study_site_idx")
     public StudySite getStudySite() {
         return studySite;
     }

@@ -4,6 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
 import com.fiveamsolutions.nci.commons.audit.Auditable;
 
 /**
@@ -23,6 +25,7 @@ public class MessageLogAudit extends AbstractEntity implements Auditable {
      * @return the studyProtocolIdentifier
      */
     @Column(name = "study_protocol_identifier")
+    @Index(name = "messages_log_audit_study_protocol_idx")
     public Long getStudyProtocolIdentifier() {
         return studyProtocolIdentifier;
     }

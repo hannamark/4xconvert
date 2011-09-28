@@ -88,6 +88,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
 import org.hibernate.validator.NotNull;
 
 /**
@@ -108,6 +109,7 @@ public class BatchFile extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "registry_user_id")
     @NotNull
+    @Index(name = "batch_file_registry_user_idx")
     public RegistryUser getSubmitter() {
         return submitter;
     }

@@ -95,6 +95,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.NotNull;
@@ -106,6 +107,9 @@ import org.hibernate.validator.NotNull;
  */
 @Entity
 @Table(name = "study_subject")
+@org.hibernate.annotations.Table(appliesTo = "study_subject", indexes = 
+                                 {@Index(name = "study_subject_study_protocol_idx", 
+                                 columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }) })
 public class StudySubject extends Subject {
 
     private static final long serialVersionUID = -6946617177385690791L;
@@ -154,6 +158,7 @@ public class StudySubject extends Subject {
     @NotNull
     @Cascade({org.hibernate.annotations.CascadeType.DELETE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     //@OnDelete(action = OnDeleteAction.CASCADE)
+    @Index(name = "study_subject_patient_idx")
     public Patient getPatient() {
         return patient;
     }
@@ -168,6 +173,7 @@ public class StudySubject extends Subject {
      */
     @ManyToOne
     @JoinColumn(name = "study_site_identifier")
+    @Index(name = "study_subject_study_site_idx")
     public StudySite getStudySite() {
         return studySite;
     }
