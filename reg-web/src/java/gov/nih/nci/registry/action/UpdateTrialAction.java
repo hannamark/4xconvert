@@ -54,7 +54,7 @@ import com.opensymphony.xwork2.util.Element;
 
 /**
  * The Class UpdateTrialAction.
- * 
+ *
  * @author Vrushali
  */
 public class UpdateTrialAction extends ManageFileAction implements Preparable {
@@ -62,7 +62,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     private static final long serialVersionUID = -1295113563440080699L;
 
     private static final Logger LOG = Logger.getLogger(UpdateTrialAction.class);
-    
+
     private ProtocolQueryServiceLocal protocolQueryService;
     private StudyOverallStatusServiceLocal studyOverallStatusService;
     private StudyProtocolServiceLocal studyProtocolService;
@@ -71,7 +71,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     private StudySiteServiceLocal studySiteService;
     private TrialRegistrationServiceLocal trialRegistrationService;
     private final TrialUtil trialUtil = new TrialUtil();
-    
+
     private TrialDTO trialDTO = new TrialDTO();
     private String trialAction;
     private String studyProtocolId;
@@ -80,23 +80,23 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     @CreateIfNull(value = true)
     @Element(value = gov.nih.nci.pa.dto.PaOrganizationDTO.class)
     private List<PaOrganizationDTO> collaborators = new ArrayList<PaOrganizationDTO>();
-    
+
     @CreateIfNull(value = true)
     @Element(value = gov.nih.nci.registry.dto.TrialFundingWebDTO.class)
     private List<TrialFundingWebDTO> fundingAddDtos = new ArrayList<TrialFundingWebDTO>();
-    
+
     @CreateIfNull(value = true)
     @Element(value = gov.nih.nci.registry.dto.TrialFundingWebDTO.class)
     private List<TrialFundingWebDTO> fundingDtos = new ArrayList<TrialFundingWebDTO>();
-    
+
     @CreateIfNull(value = true)
     @Element(value = gov.nih.nci.registry.dto.TrialIndIdeDTO.class)
     private List<TrialIndIdeDTO> indIdeAddDtos = new ArrayList<TrialIndIdeDTO>();
-    
+
     @CreateIfNull(value = true)
     @Element(value = gov.nih.nci.registry.dto.TrialIndIdeDTO.class)
     private List<TrialIndIdeDTO> indIdeUpdateDtos = new ArrayList<TrialIndIdeDTO>();
-    
+
     @CreateIfNull(value = true)
     @Element(value = gov.nih.nci.pa.dto.PaOrganizationDTO.class)
     private List<PaOrganizationDTO> participatingSitesList = new ArrayList<PaOrganizationDTO>();
@@ -107,7 +107,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     private TrialFundingWebDTO trialFundingDTO;
     private TrialIndIdeDTO trialIndIdeDTO;
     private int indIdeUpdateDtosLen = 0;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -128,7 +128,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * View the trial.
-     * 
+     *
      * @return res
      */
     public String view() {
@@ -155,14 +155,22 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         if (CollectionUtils.isNotEmpty(trialDTO.getParticipatingSites())) {
             setParticipatingSitesList(trialDTO.getParticipatingSites());
         }
+        syncIndIdesToDTO();
+        syncFundingToDTO();
+    }
+
+    private void syncIndIdesToDTO() {
         if (CollectionUtils.isNotEmpty(trialDTO.getIndIdeUpdateDtos())) {
             setIndIdeUpdateDtos(trialDTO.getIndIdeUpdateDtos());
         }
-        if (CollectionUtils.isNotEmpty(trialDTO.getFundingDtos())) {
-            setFundingDtos(trialDTO.getFundingDtos());
-        }
         if (CollectionUtils.isNotEmpty(trialDTO.getIndIdeAddDtos())) {
             setIndIdeAddDtos(trialDTO.getIndIdeAddDtos());
+        }
+    }
+
+    private void syncFundingToDTO() {
+        if (CollectionUtils.isNotEmpty(trialDTO.getFundingDtos())) {
+            setFundingDtos(trialDTO.getFundingDtos());
         }
         if (CollectionUtils.isNotEmpty(trialDTO.getFundingAddDtos())) {
             setFundingAddDtos(trialDTO.getFundingAddDtos());
@@ -178,7 +186,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Clears the session variables and redirect to search.
-     * 
+     *
      * @return s
      */
     public String cancel() {
@@ -190,7 +198,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Review update.
-     * 
+     *
      * @return s
      */
     @SuppressWarnings("unchecked")
@@ -276,7 +284,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Edit the trial.
-     * 
+     *
      * @return s
      */
     public String edit() {
@@ -291,7 +299,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Update the trial.
-     * 
+     *
      * @return s
      */
     public String update() {
@@ -315,7 +323,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             StudyOverallStatusDTO sosDto = getOverallStatusForUpdate(util);
 
             List<DocumentDTO> documentDTOs = util.convertToISODocument(trialDTO.getDocDtos(), studyProtocolIi);
-            
+
             // indide updates and adds
             List<StudyIndldeDTO> studyIndldeDTOList = new ArrayList<StudyIndldeDTO>();
             // updated
@@ -350,7 +358,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             List<StudySiteDTO> prgCdUpdatedList = getStudySiteToUpdateProgramCode(trialDTO.getParticipatingSites());
 
             updateId = studyProtocolIi;
-           
+
             // call the service to invoke the update method
             trialRegistrationService.update(spDTO, sosDto, studyResourcingDTOs, documentDTOs,
                                                             pssDTOList, prgCdUpdatedList,
@@ -380,7 +388,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * validate the submit trial form elements.
-     * 
+     *
      * @throws PAException the PA exception
      * @throws IOException on document error
      */
@@ -418,7 +426,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             }
         }
     }
-    
+
     private void validateIndIdeInfo() {
         int ind = 0;
         if (CollectionUtils.isNotEmpty(getIndIdeUpdateDtos())) {
@@ -509,10 +517,10 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Convert to study resourcing dto.
-     * 
+     *
      * @param trialFundingWebDTO the trial funding web dto
      * @param studyProtocolIi the study protocol ii
-     * 
+     *
      * @return the study resourcing dto
      */
     private StudyResourcingDTO convertToStudyResourcingDTO(TrialFundingWebDTO trialFundingWebDTO, Ii studyProtocolIi)
@@ -533,11 +541,11 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Gets the participating sites for update.
-     * 
+     *
      * @param ps the ps
-     * 
+     *
      * @return the participating sites for update
-     * 
+     *
      * @throws PAException the PA exception
      */
     private List<StudySiteAccrualStatusDTO> getParticipatingSitesForUpdate(List<PaOrganizationDTO> ps)
@@ -568,11 +576,11 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Gets the overall status for update.
-     * 
+     *
      * @param util the util
-     * 
+     *
      * @return the overall status for update
-     * 
+     *
      * @throws PAException the PA exception
      */
     private StudyOverallStatusDTO getOverallStatusForUpdate(TrialUtil util) throws PAException {
@@ -594,7 +602,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         util.convertToStudyOverallStatusDTO(trialDTO, sosDto);
         return sosDto;
     }
-   
+
     /**
      * Validates the responsible party info.
      * @return true if the responsible party info is valid
@@ -621,7 +629,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
         return true;
     }
-   
+
     /**
      * Validates the summary four info.
      * @return true if the summary four info is valid
@@ -635,10 +643,10 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         }
         return true;
     }
-    
+
     /**
      * Gets the trial dto.
-     * 
+     *
      * @return the trialDTO
      */
     public TrialDTO getTrialDTO() {
@@ -647,7 +655,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Sets the trial dto.
-     * 
+     *
      * @param trialDTO the trialDTO to set
      */
     public void setTrialDTO(TrialDTO trialDTO) {
@@ -656,7 +664,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Gets the trial action.
-     * 
+     *
      * @return the trialAction
      */
     public String getTrialAction() {
@@ -665,7 +673,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Sets the trial action.
-     * 
+     *
      * @param trialAction the trialAction to set
      */
     public void setTrialAction(String trialAction) {
@@ -674,7 +682,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Gets the study protocol id.
-     * 
+     *
      * @return the studyProtocolId
      */
     public String getStudyProtocolId() {
@@ -683,7 +691,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Sets the study protocol id.
-     * 
+     *
      * @param studyProtocolId the studyProtocolId to set
      */
     public void setStudyProtocolId(String studyProtocolId) {
@@ -692,7 +700,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Gets the collaborators.
-     * 
+     *
      * @return the collaborators
      */
     public List<PaOrganizationDTO> getCollaborators() {
@@ -701,7 +709,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Sets the collaborators.
-     * 
+     *
      * @param collaborators the collaborators to set
      */
     public void setCollaborators(List<PaOrganizationDTO> collaborators) {
@@ -710,7 +718,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Gets the funding add dtos.
-     * 
+     *
      * @return the fundingAddDtos
      */
     public List<TrialFundingWebDTO> getFundingAddDtos() {
@@ -719,7 +727,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Sets the funding add dtos.
-     * 
+     *
      * @param fundingAddDtos the fundingAddDtos to set
      */
     public void setFundingAddDtos(List<TrialFundingWebDTO> fundingAddDtos) {
@@ -728,7 +736,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Gets the funding dtos.
-     * 
+     *
      * @return the fundingDtos
      */
     public List<TrialFundingWebDTO> getFundingDtos() {
@@ -737,7 +745,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Sets the funding dtos.
-     * 
+     *
      * @param fundingDtos the fundingDtos to set
      */
     public void setFundingDtos(List<TrialFundingWebDTO> fundingDtos) {
@@ -746,7 +754,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Gets the ind ide add dtos.
-     * 
+     *
      * @return the indIdeAddDtos
      */
     public List<TrialIndIdeDTO> getIndIdeAddDtos() {
@@ -755,7 +763,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Sets the ind ide add dtos.
-     * 
+     *
      * @param indIdeAddDtos the indIdeAddDtos to set
      */
     public void setIndIdeAddDtos(List<TrialIndIdeDTO> indIdeAddDtos) {
@@ -764,7 +772,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Gets the ind ide update dtos.
-     * 
+     *
      * @return the indIdeUpdateDtos
      */
     public List<TrialIndIdeDTO> getIndIdeUpdateDtos() {
@@ -773,7 +781,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Sets the ind ide update dtos.
-     * 
+     *
      * @param indIdeUpdateDtos the indIdeUpdateDtos to set
      */
     public void setIndIdeUpdateDtos(List<TrialIndIdeDTO> indIdeUpdateDtos) {
@@ -782,7 +790,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Gets the participating sites.
-     * 
+     *
      * @return the participatingSites
      */
     public List<PaOrganizationDTO> getParticipatingSitesList() {
@@ -791,7 +799,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Sets the participating sites.
-     * 
+     *
      * @param participatingSites the participatingSites to set
      */
     public void setParticipatingSitesList(List<PaOrganizationDTO> participatingSites) {
@@ -800,7 +808,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Gets the programcodenciselectedvalue.
-     * 
+     *
      * @return the programcodenciselectedvalue
      */
     public String getProgramcodenciselectedvalue() {
@@ -809,7 +817,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Sets the programcodenciselectedvalue.
-     * 
+     *
      * @param programcodenciselectedvalue the programcodenciselectedvalue to set
      */
     public void setProgramcodenciselectedvalue(String programcodenciselectedvalue) {
@@ -818,7 +826,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Gets the programcodenihselectedvalue.
-     * 
+     *
      * @return the programcodenihselectedvalue
      */
     public String getProgramcodenihselectedvalue() {
@@ -827,7 +835,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Sets the programcodenihselectedvalue.
-     * 
+     *
      * @param programcodenihselectedvalue the programcodenihselectedvalue to set
      */
     public void setProgramcodenihselectedvalue(String programcodenihselectedvalue) {
@@ -836,7 +844,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Gets the pa organization dto.
-     * 
+     *
      * @return the paOrganizationDTO
      */
     public PaOrganizationDTO getPaOrganizationDTO() {
@@ -845,7 +853,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Sets the pa organization dto.
-     * 
+     *
      * @param paOrganizationDTO the paOrganizationDTO to set
      */
     public void setPaOrganizationDTO(PaOrganizationDTO paOrganizationDTO) {
@@ -854,7 +862,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Gets the trial funding dto.
-     * 
+     *
      * @return the trialFundingDTO
      */
     public TrialFundingWebDTO getTrialFundingDTO() {
@@ -863,7 +871,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Sets the trial funding dto.
-     * 
+     *
      * @param trialFundingDTO the trialFundingDTO to set
      */
     public void setTrialFundingDTO(TrialFundingWebDTO trialFundingDTO) {
@@ -872,7 +880,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Gets the trial ind ide dto.
-     * 
+     *
      * @return the trialIndIdeDTO
      */
     public TrialIndIdeDTO getTrialIndIdeDTO() {
@@ -881,7 +889,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     /**
      * Sets the trial ind ide dto.
-     * 
+     *
      * @param trialIndIdeDTO the trialIndIdeDTO to set
      */
     public void setTrialIndIdeDTO(TrialIndIdeDTO trialIndIdeDTO) {

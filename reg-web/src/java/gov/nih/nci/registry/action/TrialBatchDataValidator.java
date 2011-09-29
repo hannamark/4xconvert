@@ -167,8 +167,7 @@ public class TrialBatchDataValidator {
 
     private StringBuffer validateUpdate(StudyProtocolBatchDTO batchDto) {
         StringBuffer fieldErr = new StringBuffer();
-        if (StringUtils.isNotEmpty(batchDto.getSubmissionType())
-                && batchDto.getSubmissionType().equalsIgnoreCase("U")) {
+        if (isUpdate(batchDto)) {
             if (StringUtils.isEmpty(batchDto.getNciTrialIdentifier())) {
                 fieldErr.append("NCI Trial Identifier is required. \n");
             }
@@ -181,6 +180,11 @@ public class TrialBatchDataValidator {
             }
         }
         return fieldErr;
+    }
+
+    private boolean isUpdate(StudyProtocolBatchDTO batchDto) {
+        return StringUtils.isNotEmpty(batchDto.getSubmissionType())
+                && batchDto.getSubmissionType().equalsIgnoreCase("U");
     }
 
     private StringBuffer validateOversightInfo(StudyProtocolBatchDTO batchDto) {
@@ -759,9 +763,9 @@ public class TrialBatchDataValidator {
         }
         return isMultiple;
     }
-    
+
     /**
-     * 
+     *
      * @param dto d
      * @return list
      */
@@ -883,7 +887,7 @@ public class TrialBatchDataValidator {
         }
         return indIdeList;
     }
-    
+
     private boolean isIndIdeEmpty(StudyProtocolBatchDTO dto) {
         boolean retValue = true;
         if (StringUtils.isNotEmpty(dto.getIndType()) && StringUtils.isNotEmpty(dto.getIndNumber())
@@ -913,7 +917,7 @@ public class TrialBatchDataValidator {
         }
         return map;
     }
-    
+
     /**
      *
      * @param dto batch

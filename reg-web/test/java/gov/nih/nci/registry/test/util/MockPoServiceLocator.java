@@ -47,10 +47,11 @@ public class MockPoServiceLocator implements PoServiceLocator {
     private final OrganizationalContactCorrelationServiceRemote orgContact = new MockOrganizationalContactCorrelationService();
     private final IdentifiedOrganizationCorrelationServiceRemote identifiedOrganizationCorrelationService = new MockIdentifiedOrganizationCorrelationService();
     private final IdentifiedPersonCorrelationServiceRemote identifiedPersonCorrelationService = new MockIdentifiedPersonCorrelationService();
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public OrganizationEntityServiceRemote getOrganizationEntityService() {
         return orgEntityServiceRemote;
     }
@@ -58,6 +59,7 @@ public class MockPoServiceLocator implements PoServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public HealthCareFacilityCorrelationServiceRemote getHealthCareFacilityCorrelationService() {
         return hcfService;
     }
@@ -65,6 +67,7 @@ public class MockPoServiceLocator implements PoServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ResearchOrganizationCorrelationServiceRemote getResearchOrganizationCorrelationService()  {
         return roService ;
     }
@@ -72,6 +75,7 @@ public class MockPoServiceLocator implements PoServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public OversightCommitteeCorrelationServiceRemote getOversightCommitteeCorrelationService() {
         return ocService;
     }
@@ -79,6 +83,7 @@ public class MockPoServiceLocator implements PoServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ClinicalResearchStaffCorrelationServiceRemote getClinicalResearchStaffCorrelationService() {
         return crsService;
     }
@@ -86,6 +91,7 @@ public class MockPoServiceLocator implements PoServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public HealthCareProviderCorrelationServiceRemote getHealthCareProviderCorrelationService() {
         return hcpService;
     }
@@ -93,6 +99,7 @@ public class MockPoServiceLocator implements PoServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public OrganizationalContactCorrelationServiceRemote getOrganizationalContactCorrelationService() {
         return orgContact;
     }
@@ -100,6 +107,7 @@ public class MockPoServiceLocator implements PoServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public PersonEntityServiceRemote getPersonEntityService() {
         return personEntityService;
     }
@@ -107,6 +115,7 @@ public class MockPoServiceLocator implements PoServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IdentifiedOrganizationCorrelationServiceRemote getIdentifiedOrganizationEntityService() {
         return identifiedOrganizationCorrelationService;
     }
@@ -114,6 +123,7 @@ public class MockPoServiceLocator implements PoServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public IdentifiedPersonCorrelationServiceRemote getIdentifiedPersonEntityService() {
         return identifiedPersonCorrelationService;
     }
@@ -121,10 +131,12 @@ public class MockPoServiceLocator implements PoServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
+    @SuppressWarnings("unchecked")
     public FamilyServiceRemote getFamilyService() {
         FamilyServiceRemote svc = mock(FamilyServiceRemote.class);
         Map<Ii, FamilyDTO> results = new HashMap<Ii, FamilyDTO>();
-        when(svc.getFamilies(any(Set.class))).thenReturn(results);   
+        when(svc.getFamilies(any(Set.class))).thenReturn(results);
         return svc;
     }
 }

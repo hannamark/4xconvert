@@ -97,7 +97,9 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
             action.setEmailAddress("dGhyb3dFeGNlcHRpb24=");
             assertEquals("applicationError", action.activate());
         }
+
         @Test
+        @SuppressWarnings("unchecked")
         public void testShowMyAccountErr(){
             action = new RegisterUserAction();
             MockHttpServletRequest request = new MockHttpServletRequest();
@@ -188,9 +190,9 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
             // trying to update w/ no id but same info.
             registryUserWebDTO.setId(null);
             action.setRegistryUserWebDTO(registryUserWebDTO);
-            assertEquals("applicationError", action.updateAccount());            
+            assertEquals("applicationError", action.updateAccount());
         }
-        
+
         @Test
         public void testUpdateAccountErr(){
             action = new RegisterUserAction();
@@ -281,7 +283,7 @@ public class RegisterUserActionTest extends AbstractRegWebTest{
         action.setRegistryUserWebDTO(registryUserWebDTO);
         assertEquals("myAccount", action.registerExistingGridAccount());
     }
-    
+
     @Test
     public void testExistingGridAccount() {
         action = new RegisterUserAction();

@@ -553,7 +553,7 @@ public class TrialConvertUtils {
     * @throws PAException ex
     */
     public List<DocumentDTO> convertToISODocumentList(List<TrialDocumentWebDTO> docList) throws PAException {
-        List<DocumentDTO> studyDocDTOList = new ArrayList<DocumentDTO>();        
+        List<DocumentDTO> studyDocDTOList = new ArrayList<DocumentDTO>();
         for (TrialDocumentWebDTO dto : docList) {
             DocumentDTO isoDTO = convertTrialDocumentDTOToDocumentDTO(dto);
             studyDocDTOList.add(isoDTO);
@@ -578,12 +578,12 @@ public class TrialConvertUtils {
 
     /**
      * Convert to iso irb document .
-     * 
+     *
      * @param docList the doc list
      * @param studyProtocolIi the study protocol ii
-     * 
+     *
      * @return isoDTOList
-     * 
+     *
      * @throws PAException the PA exception
      */
     public List<DocumentDTO> convertToISODocument(List<TrialDocumentWebDTO> docList, Ii studyProtocolIi)
@@ -608,16 +608,16 @@ public class TrialConvertUtils {
         return studyDocDTOList;
     }
 
-    private DocumentDTO findDocumentByType(List<DocumentDTO> docs, String typeCode) {       
+    private DocumentDTO findDocumentByType(List<DocumentDTO> docs, String typeCode) {
         for (DocumentDTO doc : docs) {
             if (typeCode.equals(CdConverter.convertCdToString(doc.getTypeCode()))
                     && !DocumentTypeCode.OTHER.getCode().equals(CdConverter.convertCdToString(doc.getTypeCode()))) {
-                return doc;                
+                return doc;
             }
         }
        return null;
     }
-  
+
    /**
     * Convert to document dto.
     *
@@ -1032,8 +1032,7 @@ public class TrialConvertUtils {
    public BaseTrialDTO convertToTrialDTO(StudyProtocolStageDTO spStageDTO)
        throws NullifiedRoleException, PAException {
        BaseTrialDTO trialDto = new BaseTrialDTO();
-       if (!ISOUtil.isBlNull(spStageDTO.getProprietaryTrialIndicator())
-               && BlConverter.convertToBoolean(spStageDTO.getProprietaryTrialIndicator())) {
+       if (isProprietary(spStageDTO)) {
            trialDto = convertToPropTrialDTO(spStageDTO);
        } else {
            trialDto = convertToNonPropTrialDTO(spStageDTO);
@@ -1041,22 +1040,7 @@ public class TrialConvertUtils {
        trialDto.setStudyProtocolId(IiConverter.convertToString(spStageDTO.getIdentifier()));
        trialDto.setNctIdentifier(StConverter.convertToString(spStageDTO.getNctIdentifier()));
        trialDto.setOfficialTitle(StConverter.convertToString(spStageDTO.getOfficialTitle()));
-       if (!ISOUtil.isCdNull(spStageDTO.getPhaseCode())) {
-           trialDto.setPhaseCode(PhaseCode.getByCode(
-                   CdConverter.convertCdToString(spStageDTO.getPhaseCode())).getCode());
-       }
-       if (!ISOUtil.isCdNull(spStageDTO.getPhaseAdditionalQualifierCode())) {
-            trialDto.setPhaseAdditionalQualifier(PhaseAdditionalQualifierCode.getByCode(
-                            CdConverter.convertCdToString(spStageDTO.getPhaseAdditionalQualifierCode())).getCode());
-       }
-       if (!ISOUtil.isCdNull(spStageDTO.getPrimaryPurposeCode())) {
-           trialDto.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(
-               spStageDTO.getPrimaryPurposeCode())).getCode());
-       }
-       if (!ISOUtil.isCdNull(spStageDTO.getPrimaryPurposeAdditionalQualifierCode())) {
-            trialDto.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.getByCode(
-             CdConverter.convertCdToString(spStageDTO.getPrimaryPurposeAdditionalQualifierCode())).getCode());
-       }
+       convertPhaseAndPurposeToTrialDTO(spStageDTO, trialDto);
        trialDto.setPrimaryPurposeOtherText(StConverter.convertToString(spStageDTO.getPrimaryPurposeOtherText()));
        trialDto.setLeadOrgTrialIdentifier(StConverter.convertToString(spStageDTO.getLocalProtocolIdentifier()));
        trialDto.setLeadOrganizationIdentifier(IiConverter.convertToString(spStageDTO.getLeadOrganizationIdentifier()));
@@ -1068,6 +1052,31 @@ public class TrialConvertUtils {
        }
        return trialDto;
    }
+
+   private boolean isProprietary(StudyProtocolStageDTO spStageDTO) {
+       return !ISOUtil.isBlNull(spStageDTO.getProprietaryTrialIndicator())
+               && BlConverter.convertToBoolean(spStageDTO.getProprietaryTrialIndicator());
+   }
+
+    private void convertPhaseAndPurposeToTrialDTO(StudyProtocolStageDTO spStageDTO, BaseTrialDTO trialDto) {
+        if (!ISOUtil.isCdNull(spStageDTO.getPhaseCode())) {
+            trialDto.setPhaseCode(PhaseCode.getByCode(CdConverter.convertCdToString(spStageDTO.getPhaseCode()))
+                .getCode());
+        }
+        if (!ISOUtil.isCdNull(spStageDTO.getPhaseAdditionalQualifierCode())) {
+            trialDto.setPhaseAdditionalQualifier(PhaseAdditionalQualifierCode
+                .getByCode(CdConverter.convertCdToString(spStageDTO.getPhaseAdditionalQualifierCode())).getCode());
+        }
+        if (!ISOUtil.isCdNull(spStageDTO.getPrimaryPurposeCode())) {
+            trialDto.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(spStageDTO
+                                                                            .getPrimaryPurposeCode())).getCode());
+        }
+        if (!ISOUtil.isCdNull(spStageDTO.getPrimaryPurposeAdditionalQualifierCode())) {
+            trialDto.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode
+                .getByCode(CdConverter.convertCdToString(spStageDTO.getPrimaryPurposeAdditionalQualifierCode()))
+                .getCode());
+        }
+    }
 
    private ProprietaryTrialDTO convertToPropTrialDTO(StudyProtocolStageDTO spStageDTO) {
        ProprietaryTrialDTO trialDto = new ProprietaryTrialDTO();
@@ -1274,7 +1283,7 @@ public class TrialConvertUtils {
        isoDTO.setExemptIndicator(BlConverter.convertYesNoStringToBl(indDto.getExemptIndicator()));
        return isoDTO;
    }
-   
+
    /**
     *
     * @param isoDto isoDto
