@@ -131,6 +131,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         clickAndWait("link=Log In");
         selenium.type("j_username", username);
         selenium.type("j_password", password);
+        selenium.select("id=authenticationServiceURL", "label=Training");
         clickAndWait("id=loginButton");
         verifyDisclaimerPage();
     }
@@ -142,7 +143,7 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
     public void loginAsSubmitter() {
         login("submitter-ci", "Coppa#12345");
     }
-    
+
     public void verifyDisclaimer() {
         loginAsAbstractor();
         handleDisclaimer(false);

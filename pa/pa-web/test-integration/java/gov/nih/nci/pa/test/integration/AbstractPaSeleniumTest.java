@@ -122,6 +122,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         verifyLoginPage();
         selenium.type("j_username", username);
         selenium.type("j_password", password);
+        selenium.select("id=authenticationServiceURL", "label=Training");
         clickAndWait("id=loginLink");
         assertTrue(selenium.isElementPresent("link=Logout"));
         verifyDisclaimerPage();
@@ -336,7 +337,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         verifyTrialAccepted();
     }
 
-    protected String searchAndSelectTrialWithMilestoneCheck(String trialTitle, String currMilestone, 
+    protected String searchAndSelectTrialWithMilestoneCheck(String trialTitle, String currMilestone,
             String adminMilestone, String scientificMilestone) {
         verifyTrialSearchPage();
 
@@ -354,7 +355,7 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
         return nciTrialId;
     }
-    
+
     protected String searchAndSelectTrial(String trialTitle) {
         return searchAndSelectTrialWithMilestoneCheck(trialTitle, "", "", "");
     }

@@ -122,6 +122,7 @@ public abstract class AbstractViewerSeleniumTest extends AbstractSeleneseTestCas
         clickAndWait("link=Log In");
         selenium.type("j_username", username);
         selenium.type("j_password", password);
+        selenium.select("id=authenticationServiceURL", "label=Training");
         clickAndWait("id=loginButton");
         verifyDisclaimerPage();
     }

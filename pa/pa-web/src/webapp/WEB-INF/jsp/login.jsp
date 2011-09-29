@@ -65,7 +65,7 @@ else
                      <div class="fieldrow">
                          <label for="authenticationServiceURL">Account Source:</label>
                          <div class="fieldbox_m required">
-                            <select name="authenticationServiceURL" size="1">
+                            <select name="authenticationServiceURL" id="authenticationServiceURL" size="1">
                               <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
                                 <c:choose>
                                     <c:when test="${fn:contains(item.value,'AuthenticationService')}">
