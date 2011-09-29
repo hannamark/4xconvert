@@ -3,10 +3,13 @@
     <ul>
         <c:choose>
            <c:when test="${requestScope.topic == 'run_reports'}">
-              <li><a href="welcome.action" class="selected">Home</a></li>
+              <li><a href="/viewer/home.action" class="selected">Home</a></li>
            </c:when>
            <c:when test="${requestScope.topic == 'login'}">
               <li><a href="/viewer/logout.action">Home</a></li>
+           </c:when>
+           <c:when test="${requestScope.topic == 'disclaimer'}">
+              <li><a href="welcome.action" class="selected">Home</a></li>
            </c:when>
            <c:otherwise>
               <li><a href="welcome.action">Home</a></li>
