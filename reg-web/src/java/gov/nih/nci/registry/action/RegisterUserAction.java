@@ -121,13 +121,7 @@ public class RegisterUserAction extends ActionSupport {
      * @return String
      */
     public String activate() {
-        String decodedEmailAddress = null;
-
-        // decode only if the value is not null, since user can select my account link
-        if (emailAddress != null) {
-            decodedEmailAddress =  new EncoderDecoder().decodeString(emailAddress);
-            setEmailAddress(decodedEmailAddress);
-        }
+        String decodedEmailAddress = decodeAndSetEmailAddress();
 
         RegistryUser registryUser = null;
         User csmUser = null;
@@ -138,12 +132,29 @@ public class RegisterUserAction extends ActionSupport {
             if (registryUser != null && registryUser.getCsmUserId() != null) {
                 csmUser = CSMUserService.getInstance().getCSMUserById(registryUser.getCsmUserId());
             }
-
         } catch (Exception ex) {
             LOG.error("error while activating user :" + decodedEmailAddress);
             return Constants.APPLICATION_ERROR;
         }
 
+        setupWebDto(decodedEmailAddress, registryUser, csmUser);
+
+        // show the My Account page
+        return Constants.MY_ACCOUNT;
+    }
+
+    private String decodeAndSetEmailAddress() {
+        String decodedEmailAddress = null;
+
+        // decode only if the value is not null, since user can select my account link
+        if (emailAddress != null) {
+            decodedEmailAddress =  new EncoderDecoder().decodeString(emailAddress);
+            setEmailAddress(decodedEmailAddress);
+        }
+        return decodedEmailAddress;
+    }
+
+    private void setupWebDto(String decodedEmailAddress, RegistryUser registryUser, User csmUser) {
         if (registryUser != null) {
             registryUserWebDTO = new RegistryUserWebDTO(registryUser, csmUser == null ? "" : csmUser.getLoginName(),
                     csmUser == null ? "" : csmUser.getPassword());
@@ -153,9 +164,6 @@ public class RegisterUserAction extends ActionSupport {
         } else {
             registryUserWebDTO.setEmailAddress(decodedEmailAddress);
         }
-
-        // show the My Account page
-        return Constants.MY_ACCOUNT;
     }
 
     /**
@@ -172,16 +180,13 @@ public class RegisterUserAction extends ActionSupport {
             registryUser = PaRegistry.getRegistryUserService().getUser(loginName);
             csmUser = CSMUserService.getInstance().getCSMUser(loginName);
         } catch (Exception ex) {
-            LOG.error("error while displaying My Account page for user :" + loginName);
+            LOG.error("error while displaying My Account page for user: " + loginName);
             return Constants.APPLICATION_ERROR;
         }
 
         if (registryUser != null && csmUser != null) {
             registryUserWebDTO = new RegistryUserWebDTO(registryUser, loginName, csmUser.getPassword());
-            if (registryUser.getAffiliatedOrganizationId() != null
-                 && registryUser.getAffiliatedOrgUserType() != null
-                 && !(registryUser.getAffiliatedOrgUserType().equals(UserOrgType.PENDING_ADMIN)
-                         || registryUser.getAffiliatedOrgUserType().equals(UserOrgType.ADMIN))) {
+            if (registryUser.getAffiliatedOrganizationId() != null && isAdminOrPendingAdmin(registryUser)) {
                 loadAdminUsers(registryUser.getAffiliatedOrganizationId());
             }
             registryUserWebDTO.setPasswordEditingAllowed(isPasswordEditingAllowed(loginName));
@@ -193,6 +198,12 @@ public class RegisterUserAction extends ActionSupport {
     private boolean isPasswordEditingAllowed(String loginName) {
       return StringUtils.indexOfAny(loginName, PaEarPropertyReader.getProperties()
                .getProperty("idps.allow.password.editing", "").split(",")) >= 0;
+    }
+
+    private boolean isAdminOrPendingAdmin(RegistryUser registryUser) {
+        return registryUser.getAffiliatedOrgUserType() != null
+                && !(registryUser.getAffiliatedOrgUserType().equals(UserOrgType.PENDING_ADMIN) || registryUser
+                    .getAffiliatedOrgUserType().equals(UserOrgType.ADMIN));
     }
 
     /**
@@ -232,7 +243,6 @@ public class RegisterUserAction extends ActionSupport {
         boolean isExistingUser = registryUserWebDTO.getId() != null && registryUserWebDTO.getId() != 0;
         UserOrgType currentUserOrgType = null;
         boolean affiliatedOrgUpdated = false;
-        boolean adminAccessRequested = registryUserWebDTO.isRequestAdminAccess();
         if (isExistingUser) {
             try {
                 registryUser = PaRegistry.getRegistryUserService().getUserById(registryUserWebDTO.getId());
@@ -256,16 +266,7 @@ public class RegisterUserAction extends ActionSupport {
            LOG.error("ERROR COPYING PROPERTIES.", e);
            return Constants.APPLICATION_ERROR;
         }
-        if (adminAccessRequested) {
-            // new user requests admin access, or existing user updates affiliated org and requests admin access.
-            registryUser.setAffiliatedOrgUserType(UserOrgType.PENDING_ADMIN);
-        } else {
-            if (isExistingUser && !affiliatedOrgUpdated) {
-                registryUser.setAffiliatedOrgUserType(currentUserOrgType);
-            } else {
-                registryUser.setAffiliatedOrgUserType(UserOrgType.MEMBER);
-            }
-        }
+        updateOrgUserType(registryUser, isExistingUser, currentUserOrgType, affiliatedOrgUpdated);
 
         if (isExistingUser) {
             try {
@@ -288,10 +289,25 @@ public class RegisterUserAction extends ActionSupport {
 
         if (ServletActionContext.getRequest().getRemoteUser() != null) {
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE,
-                    "Your account was successfully updated");
+                                                           "Your account was successfully updated");
         }
 
         return redirectPage;
+    }
+
+    private void updateOrgUserType(RegistryUser registryUser, boolean isExistingUser, UserOrgType currentUserOrgType,
+            boolean affiliatedOrgUpdated) {
+        boolean adminAccessRequested = registryUserWebDTO.isRequestAdminAccess();
+        if (adminAccessRequested) {
+            // new user requests admin access, or existing user updates affiliated org and requests admin access.
+            registryUser.setAffiliatedOrgUserType(UserOrgType.PENDING_ADMIN);
+        } else {
+            if (isExistingUser && !affiliatedOrgUpdated) {
+                registryUser.setAffiliatedOrgUserType(currentUserOrgType);
+            } else {
+                registryUser.setAffiliatedOrgUserType(UserOrgType.MEMBER);
+            }
+        }
     }
 
     private String updateExistingUser(RegistryUser registryUser) throws PAException {
@@ -527,6 +543,7 @@ public class RegisterUserAction extends ActionSupport {
             }
         }
     }
+
     /**
      * @return the registryUserWebDTO
      */
@@ -554,7 +571,8 @@ public class RegisterUserAction extends ActionSupport {
     public void setUserAction(String userAction) {
         this.userAction = userAction;
     }
-/**
+
+    /**
      * @return the identity providers
      */
     public Map<String, String> getIdentityProviders() {

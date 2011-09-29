@@ -361,18 +361,12 @@ public class IrbAction extends ActionSupport implements Preparable {
         }
     }
 
-    /**
-     *
-     */
     private void validateEmail() {
         if (StringUtils.isEmpty(ct.getEmail())) {
             addActionError("A contact e-mail address must be set; use PO Curation tool.  ");
         }
     }
 
-    /**
-     *
-     */
     private void validateAddress() {
         if (StringUtils.isEmpty(ct.getAddress())) {
             addActionError("Address must be set; use PO Curation tool.  ");

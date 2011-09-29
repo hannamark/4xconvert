@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<web-app id="PA" version="2.4"
-         xmlns="http://java.sun.com/xml/ns/j2ee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+<web-app id="PA" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
     <display-name>PA</display-name>
 
@@ -58,7 +56,7 @@
         <filter-name>csmUserFilter</filter-name>
         <filter-class>gov.nih.nci.pa.filter.CsmUserFilter</filter-class>
     </filter>
-    <!--  See http://displaytag.sourceforge.net/1.2/export_filter.html -->
+    <!-- See http://displaytag.sourceforge.net/1.2/export_filter.html -->
     <filter>
         <filter-name>ResponseOverrideFilter</filter-name>
         <filter-class>org.displaytag.filter.ResponseOverrideFilter</filter-class>
@@ -100,7 +98,7 @@
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
-    <!--  This filter has to be before the sitemesh filter or sitemesh will try to decorate the file exported from displaytag -->
+    <!-- This filter has to be before the sitemesh filter or sitemesh will try to decorate the file exported from displaytag -->
     <filter-mapping>
         <filter-name>ResponseOverrideFilter</filter-name>
         <url-pattern>*.action</url-pattern>
@@ -125,21 +123,11 @@
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
-    <!-- Registry session-timeout-->
+    <!-- Registry session-timeout -->
     <session-config>
-        <session-timeout>
-            120
-        </session-timeout>
+        <session-timeout>120</session-timeout>
     </session-config>
 
-    <!-- Listeners
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>-->
-
-  <!--   <listener>
-        <listener-class>gov.nih.nci.pa.filter.CSMSyncListener</listener-class>
-    </listener>  -->
     <!-- Servlets -->
     <servlet>
         <servlet-name>jspSupportServlet</servlet-name>
@@ -174,7 +162,7 @@
     <login-config>
         <auth-method>CAGRIDFORM</auth-method>
         <form-login-config>
-           <form-login-page>/login.action</form-login-page>
+            <form-login-page>/login.action</form-login-page>
             <form-error-page>/login.action?failedLogin=true</form-error-page>
         </form-login-config>
     </login-config>

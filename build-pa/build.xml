@@ -338,7 +338,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </target>
 
     <target name="ivy:clean" description="Clean">
-        <ivy:settings file="${bda-download.dir}/${ivy.bda.settings.file}" />
+    	<ivy:settings file="${bda-download.dir}/${ivy.bda.settings.file}" />
         <ivy:cleancache />
         <ant inheritAll="false" inheritRefs="false"
             antfile="bda-ivy-2.0.0-build.xml"
@@ -351,36 +351,28 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </target>
 
     <target name="ivy-get" description="Get dependencies">
-        <ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.build.file}"
-                        dir="${pa-ear.base.dir}" >
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-ear.build.file}" dir="${pa-ear.base.dir}" >
             <target name="ivy-get"/>
         </ant>
-        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}"
-            dir="${accrual-ear.base.dir}" >
+        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}" dir="${accrual-ear.base.dir}" >
             <target name="ivy-get"/>
         </ant>
-        <ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}"
-            dir="${pa-web.base.dir}" >
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-web.build.file}" dir="${pa-web.base.dir}" >
             <target name="ivy-get"/>
         </ant>
-        <ant inheritAll="false" inheritRefs="false" antfile="${reg-web.build.file}"
-            dir="${reg-web.base.dir}" >
+        <ant inheritAll="false" inheritRefs="false" antfile="${reg-web.build.file}" dir="${reg-web.base.dir}" >
             <target name="ivy-get"/>
         </ant>
-        <ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}"
-                    dir="${pa-commons.base.dir}" >
-                    <target name="ivy-get"/>
-                </ant>
-        <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
-            dir="${pa-ejb.base.dir}" >
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}" dir="${pa-commons.base.dir}" >
             <target name="ivy-get"/>
         </ant>
-        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
-            dir="${viewer-services.base.dir}" >
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}" dir="${pa-ejb.base.dir}" >
             <target name="ivy-get"/>
         </ant>
-        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-web.build.file}"
-            dir="${viewer-web.base.dir}" >
+        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}" dir="${viewer-services.base.dir}" >
+            <target name="ivy-get"/>
+        </ant>
+        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-web.build.file}" dir="${viewer-web.base.dir}" >
             <target name="ivy-get"/>
         </ant>
     </target>

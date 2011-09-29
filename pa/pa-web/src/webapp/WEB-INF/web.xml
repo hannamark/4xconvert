@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<web-app id="PA" version="2.4"
-         xmlns="http://java.sun.com/xml/ns/j2ee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+<web-app id="PA" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
     <display-name>PA</display-name>
 
-    <!-- Abstraction session-timeout-->
+    <!-- Abstraction session-timeout -->
     <session-config>
         <session-timeout>240</session-timeout>
     </session-config>
@@ -224,4 +222,4 @@
         <local>gov.nih.nci.pa.service.util.StudyMilestoneTasksServiceLocal</local>
         <ejb-link>pa/StudyMilestoneTasksServiceBean/local</ejb-link>
     </ejb-local-ref>
- </web-app>
+</web-app>

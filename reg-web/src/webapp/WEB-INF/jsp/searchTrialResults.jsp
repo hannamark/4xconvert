@@ -7,8 +7,8 @@
     <c:when test="${requestScope.partialSubmission != null}">
         <h2 id="search_results">Saved Draft Search Results</h2>
         <display:table class="data" summary="This table contains your trial search results. Please use column headers to sort results"
-                    decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="row"
-                      name="records" requestURI="searchTrialgetMyPartiallySavedTrial.action" export="true">
+                       decorator="gov.nih.nci.registry.decorator.RegistryDisplayTagDecorator" sort="list" pagesize="10" id="row"
+                       name="records" requestURI="searchTrialgetMyPartiallySavedTrial.action" export="true">
             <display:setProperty name="export.xml" value="false"/>
             <display:setProperty name="export.excel.filename" value="resultsSavedDraftSearch.xls"/>
             <display:setProperty name="export.excel.include_header" value="true"/>

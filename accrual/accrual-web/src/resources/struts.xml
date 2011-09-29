@@ -5,37 +5,34 @@
     "http://struts.apache.org/dtds/struts-2.0.dtd">
 
 <struts>
- <constant name="struts.devMode" value="true" />
+    <constant name="struts.devMode" value="false" />
     <package name="default" extends="struts-default">
         <interceptors>
             <interceptor name="showDisclaimer" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ShowSplashPageInterceptor">
                 <param name="splashPageActionName">disclaimerAction</param>
                 <param name="sessionFlagName">disclaimerAccepted</param>
             </interceptor>
-            <interceptor name="parameterTrim"
-               class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
-            <interceptor name="maliciousInput"
-               class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor">
-               <param name="filterSymbols">false</param>
-               <param name="filterControlChars">true</param>
+            <interceptor name="parameterTrim" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
+            <interceptor name="servletConfig" class="org.apache.struts2.interceptor.ServletConfigInterceptor" />
+            <interceptor name="maliciousInput" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor">
+                <param name="filterSymbols">false</param>
+                <param name="filterControlChars">true</param>
             </interceptor>
             <interceptor-stack name="methodValidationStack">
-                <interceptor-ref name="showDisclaimer"/>
+                <interceptor-ref name="showDisclaimer" />
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
                 <!-- The fileUpload interceptor must occur before the params interceptor. -->
-                <interceptor-ref name="fileUpload"/>
+                <interceptor-ref name="fileUpload" />
                 <interceptor-ref name="params">
-                <!--
-                  Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s)
-                -->
-                <param name="excludeParams">
-                 _,d-\d+?-[sop]
-                </param>
+                    <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
+                    <param name="excludeParams">
+                        _,d-\d+?-[sop]
+                    </param>
                 </interceptor-ref>
-                <interceptor-ref name="maliciousInput"/>
+                <interceptor-ref name="maliciousInput" />
                 <interceptor-ref name="servletConfig" />
-                <interceptor-ref name="prepare"/>
+                <interceptor-ref name="prepare" />
                 <interceptor-ref name="i18n" />
                 <interceptor-ref name="chain" />
 
@@ -47,7 +44,7 @@
                     <param name="trimToNull">true</param>
                     <param name="trimFromFront">true</param>
                 </interceptor-ref>
-              </interceptor-stack>
+            </interceptor-stack>
         </interceptors>
 
         <global-results>
@@ -59,7 +56,7 @@
             <result name="disclaimerAction">disClaimerAction.action</result>
         </global-results>
         <action name="login">
-           <result>/WEB-INF/jsp/login.jsp</result>
+            <result>/WEB-INF/jsp/login.jsp</result>
         </action>
         <action name="logout" class="gov.nih.nci.accrual.accweb.action.LogoutAction" method="logout">
             <result>/index.jsp</result>
@@ -68,24 +65,24 @@
             <result>/WEB-INF/jsp/accrualHome.jsp</result>
         </action>
         <action name="contact">
-           <result>/WEB-INF/jsp/accrualContact.jsp</result>
+            <result>/WEB-INF/jsp/accrualContact.jsp</result>
         </action>
     </package>
 
     <package name="protected" namespace="/protected" extends="default">
-        <default-interceptor-ref name="methodValidationStack"/>
-        
+        <default-interceptor-ref name="methodValidationStack" />
+
         <action name="welcome" class="gov.nih.nci.accrual.accweb.action.WelcomeAction">
-            <interceptor-ref name="defaultStack"/>
+            <interceptor-ref name="defaultStack" />
             <result>viewTrials.action</result>
         </action>
 
         <action name="disClaimerAction*" class="gov.nih.nci.accrual.accweb.action.DisclaimerAction" method="{1}">
-            <interceptor-ref name="defaultStack"/>
+            <interceptor-ref name="defaultStack" />
             <result>/WEB-INF/jsp/disclaimer.jsp</result>
             <result name="acceptView" type="redirectAction">viewTrials.action</result>
         </action>
-        
+
         <action name="viewTrials*" class="gov.nih.nci.accrual.accweb.action.ViewTrialsAction">
             <result>/WEB-INF/jsp/searchTrials.jsp</result>
         </action>
@@ -95,7 +92,7 @@
             <result name="detail">/WEB-INF/jsp/searchPatientsDetail.jsp</result>
             <result name="invalid">/WEB-INF/jsp/searchTrials.jsp</result>
         </action>
-        
+
         <action name="industrialPatients*" class="gov.nih.nci.accrual.accweb.action.IndustrialPatientAction" method="{1}">
             <result>/WEB-INF/jsp/industrialPatientCount.jsp</result>
             <result name="input">/WEB-INF/jsp/industrialPatientCount.jsp</result>

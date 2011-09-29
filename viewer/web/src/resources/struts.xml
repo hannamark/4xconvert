@@ -5,29 +5,28 @@
     "http://struts.apache.org/dtds/struts-2.0.dtd">
 
 <struts>
- <constant name="struts.devMode" value="true" />
+    <constant name="struts.devMode" value="false" />
     <package name="default" extends="struts-default">
         <interceptors>
             <interceptor name="showDisclaimer" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ShowSplashPageInterceptor">
                 <param name="splashPageActionName">disclaimerAction</param>
                 <param name="sessionFlagName">disclaimerAccepted</param>
             </interceptor>
-            <interceptor name="parameterTrim"
-                class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
-            <interceptor name="maliciousInput"
-                class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor">
-               <param name="filterSymbols">false</param>
-               <param name="filterControlChars">true</param>
+            <interceptor name="parameterTrim" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
+            <interceptor name="servletConfig" class="org.apache.struts2.interceptor.ServletConfigInterceptor" />
+            <interceptor name="maliciousInput" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor">
+                <param name="filterSymbols">false</param>
+                <param name="filterControlChars">true</param>
             </interceptor>
             <interceptor-stack name="methodValidationStack">
                 <interceptor-ref name="showDisclaimer" />
                 <interceptor-ref name="exception" />
                 <interceptor-ref name="alias" />
                 <interceptor-ref name="servletConfig" />
-                <interceptor-ref name="prepare"/>
+                <interceptor-ref name="prepare" />
                 <interceptor-ref name="i18n" />
                 <interceptor-ref name="chain" />
-                <interceptor-ref name="fileUpload"/>
+                <interceptor-ref name="fileUpload" />
                 <interceptor-ref name="params">
                     <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
                     <param name="excludeParams">
@@ -55,9 +54,9 @@
                 <param name="actionName">logout</param>
             </result>
             <result name="disclaimerAction">disClaimerAction.action</result>
-        </global-results> 
+        </global-results>
         <action name="login">
-           <result>/WEB-INF/jsp/login.jsp</result>
+            <result>/WEB-INF/jsp/login.jsp</result>
         </action>
         <action name="logout" class="gov.nih.nci.pa.viewer.action.LogoutAction" method="logout">
             <result>/index.jsp</result>
@@ -66,13 +65,13 @@
             <result>/WEB-INF/jsp/viewerHome.jsp</result>
         </action>
         <action name="disClaimerAction*" class="gov.nih.nci.pa.viewer.action.DisclaimerAction" method="{1}">
-            <interceptor-ref name="defaultStack"/>
+            <interceptor-ref name="defaultStack" />
             <result>/WEB-INF/jsp/disclaimer.jsp</result>
             <result name="acceptView" type="redirectAction">ctro/welcome.action</result>
         </action>
     </package>
     <package name="public" namespace="/public" extends="default">
-        <default-interceptor-ref name="showDisclaimer"/>
+        <default-interceptor-ref name="showDisclaimer" />
         <action name="welcome" class="gov.nih.nci.pa.viewer.action.WelcomeAction">
             <result name="publicWelcome">/WEB-INF/jsp/publicWelcome.jsp</result>
             <result name="ctroWelcome" type="redirectAction">
@@ -87,72 +86,72 @@
         </action>
         <action name="criteria*" class="gov.nih.nci.pa.viewer.action.{1}Action">
             <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/{1}.jsp</result> 
+            <result>/WEB-INF/jsp/{1}.jsp</result>
         </action>
         <action name="results*" class="gov.nih.nci.pa.viewer.action.{1}Action" method="getReport">
             <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/{1}.jsp</result> 
-        </action>     
-        <action name="popupDis*" class="gov.nih.nci.pa.viewer.action.PopUpDisAction"  method="{1}">
+            <result>/WEB-INF/jsp/{1}.jsp</result>
+        </action>
+        <action name="popupDis*" class="gov.nih.nci.pa.viewer.action.PopUpDisAction" method="{1}">
             <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
-        </action>  
+        </action>
         <action name="ajaxptpDiseasedisplay" class="gov.nih.nci.pa.viewer.action.AdHocReportAction" method="fillInDiseaseId">
             <interceptor-ref name="methodValidationStack" />
             <result name="success">/WEB-INF/jsp/nodecorate/selectedDiseaseDetails.jsp</result>
         </action>
     </package>
-    
+
     <package name="ctroajax" namespace="/ctro/ajax" extends="public">
         <action name="refreshAncCorResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
             <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepAncillaryCorrelativeResult.jsp</result> 
+            <result>/WEB-INF/jsp/nodecorate/summ4RepAncillaryCorrelativeResult.jsp</result>
         </action>
         <action name="refreshEpidemResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
             <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepEpidemOutcomeResult.jsp</result> 
+            <result>/WEB-INF/jsp/nodecorate/summ4RepEpidemOutcomeResult.jsp</result>
         </action>
         <!-- agency/device -->
         <action name="refreshAgencyDeviceNationalResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
             <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceNationalResult.jsp</result> 
+            <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceNationalResult.jsp</result>
         </action>
         <action name="refreshAgencyDeviceEPPResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
             <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceEPPResult.jsp</result> 
+            <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceEPPResult.jsp</result>
         </action>
         <action name="refreshAgencyDeviceInstitutionalResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
             <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceInstitutionalResult.jsp</result> 
+            <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceInstitutionalResult.jsp</result>
         </action>
         <action name="refreshAgencyDeviceIndustrialResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
             <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceIndustrialResult.jsp</result> 
+            <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceIndustrialResult.jsp</result>
         </action>
         <!-- other interventions -->
         <action name="refreshOtherIntEPPResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
             <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepOtherInterventionEPPResult.jsp</result> 
+            <result>/WEB-INF/jsp/nodecorate/summ4RepOtherInterventionEPPResult.jsp</result>
         </action>
         <action name="refreshOtherIntNationalResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
             <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepOtherInterventionNationalResult.jsp</result> 
+            <result>/WEB-INF/jsp/nodecorate/summ4RepOtherInterventionNationalResult.jsp</result>
         </action>
         <action name="refreshOtherIntInstitutionalResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
             <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepOtherInterventionInstitutionalResult.jsp</result> 
+            <result>/WEB-INF/jsp/nodecorate/summ4RepOtherInterventionInstitutionalResult.jsp</result>
         </action>
-        
+
         <action name="refreshAutocompleteResults*" class="gov.nih.nci.pa.viewer.action.{1}Action" method="getAutoComplete">
             <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepAutoCompleteResult.jsp</result> 
+            <result>/WEB-INF/jsp/nodecorate/summ4RepAutoCompleteResult.jsp</result>
         </action>
         <action name="refreshOrganizations*" class="gov.nih.nci.pa.viewer.action.{1}Action" method="loadOrganizations">
             <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepOrganizationsResult.jsp</result> 
+            <result>/WEB-INF/jsp/nodecorate/summ4RepOrganizationsResult.jsp</result>
         </action>
         <action name="resultsAdHocReportviewTSR" class="gov.nih.nci.pa.viewer.action.AdHocReportAction" method="viewTSR">
             <interceptor-ref name="methodValidationStack" />
-        </action>  
+        </action>
     </package>
 </struts>
