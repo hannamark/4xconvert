@@ -34,7 +34,7 @@
 
 	<!-- Compiles all the .java files in the test directory -->
 	<target name="compile-tests" depends="init" description="compiles all .java files in test directory ">
-		<javac destdir="${test.classes.dir}" srcdir="${test.source.dir}" classpathref="lib.path.id" debug="true" />
+		<javac destdir="${test.classes.dir}" srcdir="${test.source.dir}" classpathref="lib.path.id" debug="true" includeantruntime="false"/>
 	</target>
 
   <target name="test" depends="compile-tests">
