@@ -1,6 +1,5 @@
 package gov.nih.nci.pa.viewer.dto.result;
 
-import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -34,7 +33,7 @@ public final class Summ4ResultWebDto {
     private Integer accrualCenterTSToDate = null;
     private String sortCriteria = "";
     private String subSortCriteria = "";
-    private List<String> anatomicSites = null;
+    private String anatomicSites = "";
     private String nciIdentifier = "";
     private String nctIdentifier = "";
     private String ctepIdentifier = "";
@@ -69,7 +68,7 @@ public final class Summ4ResultWebDto {
         accrualCenterTSToDate = IntConverter.convertToInteger(dto.getAccrualCenterTreatOrgToDate());
         sortCriteria = StConverter.convertToString(dto.getSortCriteria());
         subSortCriteria = StConverter.convertToString(dto.getSubSortCriteria());
-        anatomicSites = DSetConverter.convertDSetCdToList(dto.getAnatomicSiteCodes());
+        anatomicSites = StConverter.convertToString(dto.getAnatomicSiteCodes());
         nciIdentifier = StConverter.convertToString(dto.getNciIdentifier());
         nctIdentifier = StConverter.convertToString(dto.getNctIdentifier());
         leadOrgName = StConverter.convertToString(dto.getLeadOrgName());
@@ -223,12 +222,12 @@ public final class Summ4ResultWebDto {
     public String getSubSortCriteria() {
         return subSortCriteria;
     }
-
+    
     /**
      * @return the anatomicSite
      */
-    public List<String> getAnatomicSites() {
-        return this.anatomicSites;
+    public String getAnatomicSites() {
+        return anatomicSites;
     }
 
     /**

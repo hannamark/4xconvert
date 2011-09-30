@@ -120,19 +120,6 @@ public class Summ4RepTest
     public void setUp() throws Exception {
         bean = new Summ4RepBeanExtenderForTest();
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
-        StudyProtocolServiceLocal spSvcLocal = mock(StudyProtocolServiceLocal.class);
-        bean.setStudyProtocolService(spSvcLocal);
-        StudyProtocolDTO spDto = new StudyProtocolDTO();
-        DSet<Cd> dSetCd = new DSet<Cd>();
-        dSetCd.setItem(new HashSet<Cd>());
-        Cd cd1 = new Cd();
-        cd1.setCode("anatomicSite1");
-        Cd cd2 = new Cd();
-        cd2.setCode("anatomicSite2");
-        dSetCd.getItem().add(cd1);
-        dSetCd.getItem().add(cd2);
-        spDto.setSummary4AnatomicSites(dSetCd);
-        when(spSvcLocal.getStudyProtocol(any(Ii.class))).thenReturn(spDto);
     }
 
     @Override
@@ -154,12 +141,16 @@ public class Summ4RepTest
         criteria.setTimeInterval(wrk);
         List<Summ4RepResultDto> resultList = bean.get(criteria);
         assertEquals(resultList.size(), TestSchema.studySite.size());
-        assertEquals(2, resultList.get(0).getAnatomicSiteCodes().getItem().size());
         assertEquals("StudyProtocol", resultList.get(0).getLeadOrgName().getValue());
         assertEquals("StudyProtocol", resultList.get(0).getNciIdentifier().getValue());
         assertEquals("StudyProtocol", resultList.get(0).getNctIdentifier().getValue());
-        assertEquals("StudyProtocol", resultList.get(0).getCtepIdentifier().getValue());
+        assertEquals("StudyProtocol", resultList.get(0).getCtepIdentifier().getValue());        
     }
+    
+//    @Test (expected=PAException.class)
+//    public void getTestWithNullCriteria() throws Exception {    
+//        List<Summ4RepResultDto> resultList = bean.get(null);
+//    }
 
     @Test
     public void testOrgClause() throws Exception  {
@@ -170,14 +161,10 @@ public class Summ4RepTest
         criteria.getOrgNames().add(StConverter.convertToSt("Duke3"));
         criteria.getOrgNames().add(StConverter.convertToSt("Duke4"));
         StringBuffer orgNameClause = new StringBuffer();
-        orgNameClause.append(" ((ro_org.name = :ORG_NAME0 or hcf_org.name = :ORG_NAME0)");
-        orgNameClause.append(" or ");
-        orgNameClause.append("(ro_org.name = :ORG_NAME1 or hcf_org.name = :ORG_NAME1)");
-        orgNameClause.append(" or ");
-        orgNameClause.append("(ro_org.name = :ORG_NAME2 or hcf_org.name = :ORG_NAME2)");
-        orgNameClause.append(" or ");
-        orgNameClause.append("(ro_org.name = :ORG_NAME3 or hcf_org.name = :ORG_NAME3)");
-        orgNameClause.append(") ");
+        orgNameClause.append("(roo.name = :ORG_NAME0 OR hfo.name = :ORG_NAME0) OR ");
+        orgNameClause.append("(roo.name = :ORG_NAME1 OR hfo.name = :ORG_NAME1) OR ");
+        orgNameClause.append("(roo.name = :ORG_NAME2 OR hfo.name = :ORG_NAME2) OR ");
+        orgNameClause.append("(roo.name = :ORG_NAME3 OR hfo.name = :ORG_NAME3)");
         String query = new Summ4ReportBean().generateSqlQuery(criteria).toString();
         assertTrue(query.contains(orgNameClause.toString()));
     }
@@ -199,6 +186,13 @@ public class Summ4RepTest
         Map<String, String> families =  bean.getFamilies(10);
         assertEquals(5, families.size());
     }
+    
+    @Test
+    public void testConvertToInteger() throws Exception  {
+        assertEquals(null, bean.convertToInteger(null));
+        assertEquals(new Integer(1), bean.convertToInteger("1"));
+    }
+   
 
     private class Summ4RepBeanExtenderForTest extends Summ4ReportBean {
         /**
@@ -223,6 +217,7 @@ public class Summ4RepTest
             + "sp.identifier, sp.identifier, sp.identifier, sp.identifier,"
             + "sp.public_description, "
             + "sp.identifier, "
+            + "sp.study_protocol_type, "
             + "sp.study_protocol_type, "
             + "sp.study_protocol_type, "
             + "sp.study_protocol_type, "

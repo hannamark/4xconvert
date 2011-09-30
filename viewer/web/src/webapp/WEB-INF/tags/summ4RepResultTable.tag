@@ -13,13 +13,7 @@
     <display:setProperty name="export.excel" value="true" />
     <viewer:displayTagProperties />
     <display:column titleKey="report.result.sponsor" property="sponsor" />
-    <display:column titleKey="report.result.cancerSite" media="html">
-        <c:set var="row" value="<%=jspContext.findAttribute((String)jspContext.findAttribute("uid")) %>" />
-            <c:forEach var="siteName" items="${row.anatomicSites}">
-                <c:out value="${siteName}" />
-            </c:forEach>
-    </display:column>
-    <display:column titleKey="report.result.cancerSite" media="excel"><c:set var="row" value="<%=jspContext.findAttribute((String)jspContext.findAttribute("uid")) %>" />${func:join(row.anatomicSites, ', ')}</display:column>
+    <display:column titleKey="report.result.cancerSite" property="anatomicSites" />
     <display:column titleKey="report.result.nciIdentifier" property="nciIdentifier" />
     <display:column titleKey="report.result.nctIdentifier" property="nctIdentifier" />
     <display:column titleKey="report.result.ctepIdentifier" property="ctepIdentifier" />

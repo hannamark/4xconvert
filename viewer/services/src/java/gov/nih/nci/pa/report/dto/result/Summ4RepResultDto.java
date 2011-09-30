@@ -1,7 +1,5 @@
 package gov.nih.nci.pa.report.dto.result;
 
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
@@ -30,7 +28,7 @@ public class Summ4RepResultDto {
     private Int accrualCenterTreatOrgToDate = new Int();
     private St sortCriteria = new St();
     private St subSortCriteria = new St();
-    private DSet<Cd> anatomicSiteCodes = new DSet<Cd>();
+    private St anatomicSiteCodes = new St();
     private St nciIdentifier = new St();
     private St nctIdentifier = new St();
     private St ctepIdentifier = new St();
@@ -221,19 +219,20 @@ public class Summ4RepResultDto {
     public void setSubSortCriteria(St subSortCriteria) {
         this.subSortCriteria = subSortCriteria;
     }
-
+    
     /**
-     * @param siteCodes the anatomic site codes to set
+     * @param siteCodes the anatomicSiteCodes to set
      */
-    public void setAnatomicSiteCodes(DSet<Cd> siteCodes) {
+    public void setAnatomicSiteCodes(St siteCodes) {
         this.anatomicSiteCodes = siteCodes;
     }
     /**
-     * @return dset of natomic site codes.
+     * @return the anatomicSiteCodes
      */
-    public DSet<Cd> getAnatomicSiteCodes() {
+    public St getAnatomicSiteCodes() {
         return this.anatomicSiteCodes;
-    }
+    }    
+    
     /**
      * @param nciIdentifier the nciIdentifier to set
      */

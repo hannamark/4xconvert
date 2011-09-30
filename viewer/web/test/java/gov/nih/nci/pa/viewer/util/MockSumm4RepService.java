@@ -135,7 +135,7 @@ public class MockSumm4RepService extends MockService implements Summ4RepLocal {
         dto.setType(StConverter.convertToSt(TEST_STR));
         List<Cd> cdList = new ArrayList<Cd>();
         cdList.add(CdConverter.convertStringToCd(TEST_STR));
-        dto.setAnatomicSiteCodes(DSetConverter.convertCdListToDSet(cdList));
+        dto.setAnatomicSiteCodes(StConverter.convertToSt(TEST_STR));
         return dto;
     }
 
