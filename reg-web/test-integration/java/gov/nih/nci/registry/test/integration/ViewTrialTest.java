@@ -97,7 +97,7 @@ public class ViewTrialTest extends AbstractRegistrySeleniumTest {
     public void testAssignOwnership() {
         loginAndAcceptDisclaimer();
         clickAndWait("id=manageTrialOwnershipMenuOption");
-        selenium.click("id=chk2");
+        selenium.click("//table[@id='regUserRow']/tbody/tr[1]/td[4]/input");
         selenium.click("//table[@id='studyProtocolRow']/tbody/tr[1]/td[3]/input");
 
         clickAndWait("link=Assign Ownership");

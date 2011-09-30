@@ -116,6 +116,7 @@ public class PAUIApplication extends AbstractRegistrySeleniumTest {
         openAndWait("/pa");
         selenium.type("j_username", username);
         selenium.type("j_password", password);
+        selenium.select("id=authenticationServiceURL", "label=Training");
         clickAndWait("id=loginLink");
     }
 
