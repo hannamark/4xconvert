@@ -21,12 +21,8 @@
     <display:column titleKey="report.result.pi" property="pi" />
     <display:column titleKey="report.result.leadOrgName" property="leadOrgName" />
     <display:column titleKey="report.result.programCode" property="programCode" />
-    <display:column titleKey="report.result.openDate">
-        <fmt:formatDate value="${row.openDate}" pattern="MM/dd/yyyy"/>
-    </display:column>
-    <display:column titleKey="report.result.closedDate">
-        <fmt:formatDate value="${row.closedDate}" pattern="MM/dd/yyyy"/>
-    </display:column>
+    <display:column titleKey="report.result.openDate" format="{0,date,MM-dd-yyyy}" property="openDate" />
+    <display:column titleKey="report.result.closedDate" format="{0,date,MM-dd-yyyy}" property="closedDate" />
     <display:column titleKey="report.result.phase" property="phase" />
     <display:column titleKey="report.result.type" property="type" />
     <display:column titleKey="report.result.title"  maxLength= "200" property="title" />
