@@ -92,7 +92,7 @@
                                     <label for="authenticationServiceURL">Account Source:</label>
                                 </td>
                                 <td class="value">
-                                    <select name="authenticationServiceURL" id="authenticiationServiceURL" size="1">
+                                    <select name="authenticationServiceURL" id="authenticationServiceURL" size="1">
                                         <c:forEach var="item" items="${applicationScope.AUTHENTICATION_SOURCE_MAP}">
                                             <c:choose>
                                                 <c:when test="${fn:contains(item.value,'Dorian')}">
