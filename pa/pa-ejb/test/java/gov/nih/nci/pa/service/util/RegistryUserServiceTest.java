@@ -90,6 +90,7 @@ import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestRegistryUserSchema;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.List;
 import java.util.Set;
@@ -121,7 +122,8 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
      */
     @Test
     public void createUserTest() throws PAException {
-        RegistryUser create = createRegisterUserObj();
+        User csmUser = createCsmUser(TestRegistryUserSchema.csmUserId);
+        RegistryUser create = createRegisterUser(csmUser);
         RegistryUser saved = remoteEjb.createUser(create);
         assertRegistryUser(create, saved);
     }
@@ -132,7 +134,8 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
      */
     @Test
     public void updateUserTest() throws PAException {
-        RegistryUser create = createRegisterUserObj();
+        User csmUser = createCsmUser(TestRegistryUserSchema.csmUserId);
+        RegistryUser create = createRegisterUser(csmUser);
         remoteEjb.createUser(create);
         create.setFirstName("firstnamechanged");
         RegistryUser saved = remoteEjb.updateUser(create);
@@ -234,14 +237,19 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
         assertFalse(remoteEjb.isTrialOwner(userId, spId));
     }
 
-    private RegistryUser createRegisterUserObj() {
+    private User createCsmUser(Long userId) {
+        User user = new User();
+        user.setUserId(userId);
+        return user;
+    }
+    
+    private RegistryUser createRegisterUser(User csmUser) {
         RegistryUser create = new RegistryUser();
         create.setAddressLine("xxxxx");
-
         create.setAffiliateOrg("aff");
         create.setCity("city");
         create.setCountry("country");
-        create.setCsmUserId(Long.valueOf(1));
+        create.setCsmUser(csmUser);
         create.setFirstName("firstname");
         create.setLastName("lastname");
         create.setMiddleName("middlename");
@@ -261,7 +269,7 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
         assertEquals("Affliate Org not match  ", create.getAffiliateOrg(), saved.getAffiliateOrg());
         assertEquals("City does not match  ", create.getCity(), saved.getCity());
         assertEquals("Country does not match  ", create.getCountry(), saved.getCountry());
-        assertEquals("CSM User id does not match  ", create.getCsmUserId(), saved.getCsmUserId());
+        assertEquals("CSM User id does not match  ", create.getCsmUser().getUserId(), saved.getCsmUser().getUserId());
         assertEquals("First name does not match  ", create.getFirstName(), saved.getFirstName());
         assertEquals("Last name does not match  ", create.getLastName(), saved.getLastName());
         assertEquals("Middle name does not match  ", create.getMiddleName(), saved.getMiddleName());
@@ -277,10 +285,10 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
     @Test
     public void testGetLoginNamesByEmailAddress() {
         String emailAddress = "username@nci.nih.gov";
-        List<String> loginNames = remoteEjb.getLoginNamesByEmailAddress(emailAddress);
+        List<RegistryUser> loginNames = remoteEjb.getLoginNamesByEmailAddress(emailAddress);
         assertNotNull("No result returned", loginNames);
         assertEquals("Wrong result size", 1, loginNames.size());
-        assertEquals("Wrong name returned", "randomUserTest", loginNames.get(0));
+        assertEquals("Wrong name returned", "randomUserTest", loginNames.get(0).getCsmUser().getLoginName());
     }
 
 }

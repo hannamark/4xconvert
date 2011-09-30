@@ -220,6 +220,6 @@ public interface RegistryUserService {
      * @param emailAddress The e-mail address
      * @return The list of login names of the registry users having the given email address.
      */
-    List<String> getLoginNamesByEmailAddress(String emailAddress);
+    List<RegistryUser> getLoginNamesByEmailAddress(String emailAddress);
 
 }

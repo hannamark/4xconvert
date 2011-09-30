@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.UserOrgType;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -91,10 +92,13 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.fiveamsolutions.nci.commons.audit.Auditable;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
+import com.fiveamsolutions.nci.commons.audit.Auditable;
 /**
  * @author Bala Nair
  *
@@ -113,7 +117,7 @@ public class RegistryUser extends AbstractEntity implements Auditable {
     private String country;
     private String phone;
     private String affiliateOrg;
-    private Long csmUserId;
+    private User csmUser;
     private String prsOrgName;
     private Long poOrganizationId;
     private Long poPersonId;
@@ -123,18 +127,20 @@ public class RegistryUser extends AbstractEntity implements Auditable {
     private UserOrgType affiliatedOrgUserType;
 
     /**
-     * @return the csmUserId
+     * @return the csmUser
      */
-    @Column(name = "CSM_USER_ID")
-    public Long getCsmUserId() {
-        return csmUserId;
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "CSM_USER_ID", updatable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    public User getCsmUser() {
+        return csmUser;
     }
 
     /**
-     * @param csmUserId the csmUserId to set
+     * @param csmUser the csmUser to set
      */
-    public void setCsmUserId(Long csmUserId) {
-        this.csmUserId = csmUserId;
+    public void setCsmUser(User csmUser) {
+        this.csmUser = csmUser;
     }
 
     /**

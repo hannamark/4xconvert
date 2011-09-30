@@ -479,56 +479,43 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      */
     @Override
     public void sendNotificationMail(Ii studyProtocolIi) throws PAException {
-        StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter
-            .convertToLong(studyProtocolIi));
-
-        String submissionMailBody = "";
-        String subOrgTrialIdentifier = "";
-        if (!spDTO.isProprietaryTrial()) {
-            submissionMailBody = lookUpTableService.getPropertyValue("trial.register.body");
-        } else {
-            submissionMailBody = lookUpTableService.getPropertyValue("proprietarytrial.register.body");
+        Long studyProtocolId = IiConverter.convertToLong(studyProtocolIi);
+        StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(studyProtocolId);
+        RegistryUser user = registryUserService.getUser(spDTO.getLastCreated().getUserLastCreated());
+        if (user == null) {
+            LOG.error("Registry User does not exist: " + spDTO.getLastCreated().getUserLastCreated());
+            return;
+        }
+        String propertyPrefix = (spDTO.isProprietaryTrial()) ? "proprietarytrial" : "trial";
+        String mailBody = lookUpTableService.getPropertyValue(propertyPrefix + ".register.body");
+        String mailSubject = lookUpTableService.getPropertyValue(propertyPrefix + ".register.subject");
+        if (spDTO.isProprietaryTrial()) {
+            String subOrgTrialIdentifier = "";
             PAServiceUtils serviceUtil = new PAServiceUtils();
-            List<StudySiteDTO> siteList = studySiteService.getByStudyProtocol(studyProtocolIi,
-                                                                              new ArrayList<StudySiteDTO>());
+            List<StudySiteDTO> siteList =
+                    studySiteService.getByStudyProtocol(studyProtocolIi, new ArrayList<StudySiteDTO>());
             for (StudySiteDTO dto : siteList) {
                 if (dto.getFunctionalCode().getCode().equals(StudySiteFunctionalCode.TREATING_SITE.getCode())) {
                     subOrgTrialIdentifier = dto.getLocalStudyProtocolIdentifier().getValue();
-                    submissionMailBody = submissionMailBody.replace("${subOrgTrialIdentifier}", subOrgTrialIdentifier);
-                    submissionMailBody = submissionMailBody.replace("${subOrg}", serviceUtil
-                        .getOrCreatePAOrganizationByIi(dto.getHealthcareFacilityIi()).getName());
+                    mailBody = mailBody.replace("${subOrgTrialIdentifier}", subOrgTrialIdentifier);
+                    String subOrgName =
+                            serviceUtil.getOrCreatePAOrganizationByIi(dto.getHealthcareFacilityIi()).getName();
+                    mailBody = mailBody.replace("${subOrg}", subOrgName);
                 }
             }
-        }
-        submissionMailBody = submissionMailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
-        submissionMailBody = submissionMailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER,
-                                                        spDTO.getLocalStudyProtocolIdentifier());
-        submissionMailBody = submissionMailBody.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
-        submissionMailBody = submissionMailBody.replace("${leadOrgName}", spDTO.getLeadOrganizationName());
-        submissionMailBody = submissionMailBody.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
-
-        String mailSubject = "";
-        if (!spDTO.isProprietaryTrial()) {
-            mailSubject = lookUpTableService.getPropertyValue("trial.register.subject");
-        } else {
-            mailSubject = lookUpTableService.getPropertyValue("proprietarytrial.register.subject");
             mailSubject = mailSubject.replace("${subOrgTrialIdentifier}", subOrgTrialIdentifier);
         }
-        // for registration, assumption made is submitter gets email as transaction is not complete won't get owners
-        submissionMailBody = submissionMailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER,
-                                                        spDTO.getLocalStudyProtocolIdentifier());
-        submissionMailBody = submissionMailBody.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
-        RegistryUser user = registryUserService.getUser(spDTO.getLastCreated().getUserLastCreated());
+        mailBody = mailBody.replace(CURRENT_DATE, getFormatedCurrentDate());
+        mailBody = mailBody.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
+        mailBody = mailBody.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
+        mailBody = mailBody.replace("${leadOrgName}", spDTO.getLeadOrganizationName());
+        mailBody = mailBody.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
+        String regUserName = user.getFirstName() + " " + user.getLastName();
+        mailBody = mailBody.replace(OWNER_NAME, regUserName);
+
         mailSubject = mailSubject.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
         mailSubject = mailSubject.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());
-
-        if (user != null) {
-            String regUserName = user.getFirstName() + " " + user.getLastName();
-            submissionMailBody = submissionMailBody.replace(OWNER_NAME, regUserName);
-            sendMailWithAttachment(user.getEmailAddress(), mailSubject, submissionMailBody, null);
-        } else {
-            LOG.error("Registry User does not exist: " + spDTO.getLastCreated().getUserLastCreated());
-        }
+        sendMailWithAttachment(user.getEmailAddress(), mailSubject, mailBody, null);
     }
 
     /**
@@ -588,7 +575,11 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         sendEmail(spDTO, body, null, mailSubject);
     }
 
-    private String getFormatedCurrentDate() {
+    /**
+     * Gets the current date properly formatted.
+     * @return The current date properly formatted.
+     */
+    String getFormatedCurrentDate() {
         Calendar calendar = new GregorianCalendar();
         Date date = calendar.getTime();
         DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
@@ -844,24 +835,23 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         if (!PAUtil.isValidEmail(emailAddress)) {
             throw new PAException("Validation Exception: A valid email address must be provided");
         }
-        List<String> loginNames = registryUserService.getLoginNamesByEmailAddress(emailAddress);
-        if (CollectionUtils.isNotEmpty(loginNames)) {
-            List<String> userNames = getGridIdentityUsernames(loginNames);
-            sendSearchUsernameEmail(emailAddress, userNames);
+        List<RegistryUser> users = registryUserService.getLoginNamesByEmailAddress(emailAddress);
+        if (CollectionUtils.isNotEmpty(users)) {
+            sendSearchUsernameEmail(emailAddress, users);
             return true;
         }
         return false;
     }
 
     /**
-     * get the CN from the given grid identities.
-     * @param gridIdentities The List of grid identities.
+     * get the login names of a list of registry users.
+     * @param users The List of registry users.
      * @return The list of CN extracted from the given identities.
      */
-    List<String> getGridIdentityUsernames(List<String> gridIdentities) {
+    List<String> getGridIdentityUsernames(List<RegistryUser> users) {
         List<String> userNames = new ArrayList<String>();
-        for (String name : gridIdentities) {
-            userNames.add(CsmUserUtil.getGridIdentityUsername(name));
+        for (RegistryUser user : users) {
+            userNames.add(CsmUserUtil.getGridIdentityUsername(user.getCsmUser().getLoginName()));
         }
         return userNames;
     }
@@ -869,13 +859,16 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     /**
      * Send the user name search email.
      * @param emailAddress The e-mail address to which the mail must be send
-     * @param userNames The list of user names with that email address
+     * @param users The list of users with that email address
      * @throws PAException If an error occurs.
      */
-    void sendSearchUsernameEmail(String emailAddress, List<String> userNames) throws PAException {
+    void sendSearchUsernameEmail(String emailAddress, List<RegistryUser> users) throws PAException {
         String subject = lookUpTableService.getPropertyValue(USERNAME_SEARCH_SUBJECT_PROPERTY);
         String body = lookUpTableService.getPropertyValue(USERNAME_SEARCH_BODY_PROPERTY);
-        String userNamesString = StringUtils.join(userNames, ", ");
+        RegistryUser user = users.get(0);
+        body = body.replace("${firstName}", user.getFirstName());
+        body = body.replace("${lastName}", user.getLastName());
+        String userNamesString = StringUtils.join(getGridIdentityUsernames(users), ", ");
         body = body.replace("${userNames}", userNamesString);
         sendMailWithAttachment(emailAddress, subject, body, null);
     }

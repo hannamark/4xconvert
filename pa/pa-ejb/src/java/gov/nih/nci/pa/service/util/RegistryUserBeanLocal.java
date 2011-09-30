@@ -129,9 +129,9 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     private static final int INDEX_NCI_IDENTIFIER = 5;
     private static final int INDEX_ORG_ID = 6;
     private static final int INDEX_LEAD_ID = 7;
-    private static final String SEARCH_USER_BY_EMAIL_QUERY = "select csmu.loginName from RegistryUser as ru, "
-          + " User as csmu where ru.csmUserId = csmu.userId and ru.emailAddress = :emailAddress";
-    
+    private static final String SEARCH_USER_BY_EMAIL_QUERY = "select ru from RegistryUser as ru "
+            + "join fetch ru.csmUser as csmu where ru.emailAddress = :emailAddress";
+
     /**
      * {@inheritDoc}
      */
@@ -210,10 +210,9 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         RegistryUser registryUser = null;
         try {
             User csmUser = CSMUserService.getInstance().getCSMUser(loginName);
-
             if (csmUser != null) {
                 Session session = PaHibernateUtil.getCurrentSession();
-                String hql = "select reguser from RegistryUser reguser where reguser.csmUserId = :csmuserId";
+                String hql = "from RegistryUser where csmUser.id = :csmuserId";
                 Query query = session.createQuery(hql);
                 query.setParameter("csmuserId", csmUser.getUserId());
                 registryUser = (RegistryUser) query.uniqueResult();
@@ -299,8 +298,9 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             addCriteria(criteria, regUser.getAffiliatedOrganizationId(), "regUser.affiliatedOrganizationId");
             addCriteria(criteria, regUser.getPoOrganizationId(), "regUser.poOrganizationId");
             addCriteria(criteria, regUser.getPoPersonId(), "regUser.poPersonId");
-            addCriteria(criteria, regUser.getCsmUserId(), "regUser.csmUserId");
-
+            if (regUser.getCsmUser() != null) {
+                addCriteria(criteria, regUser.getCsmUser().getUserId(), "regUser.csmUser.id");
+            }
             addCriteria(criteria, regUser.getEmailAddress(), "regUser.emailAddress");
             addCriteria(criteria, regUser.getPrsOrgName(), "regUser.prsOrgName");
             addCriteria(criteria, regUser.getFirstName(), "regUser.firstName");
@@ -477,7 +477,7 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public List<String> getLoginNamesByEmailAddress(String emailAddress) {
+    public List<RegistryUser> getLoginNamesByEmailAddress(String emailAddress) {
         Session session = PaHibernateUtil.getCurrentSession();
         Query query = session.createQuery(SEARCH_USER_BY_EMAIL_QUERY);
         query.setString("emailAddress", emailAddress);

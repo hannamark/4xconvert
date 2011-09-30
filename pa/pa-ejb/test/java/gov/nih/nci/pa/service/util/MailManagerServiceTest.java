@@ -87,8 +87,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -107,6 +113,8 @@ import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudySite;
+import gov.nih.nci.pa.dto.LastCreatedDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
@@ -116,7 +124,9 @@ import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -131,7 +141,9 @@ import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -141,6 +153,7 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 /**
  * @author Vrushali
@@ -151,9 +164,25 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     private static String email2 = "example2@example.com";
     private static String smtpHost = "";
     private static String fromAddress = "fromAddress@example.com";
-    
+
+    private static final String NOTFICATION_SUBJECT_KEY = "trial.register.subject";
+    private static final String NOTFICATION_SUBJECT_VALUE = "trial.register.subject - ${leadOrgTrialIdentifier},"
+            + " ${nciTrialIdentifier}.";
+    private static final String NOTFICATION_BODY_KEY = "trial.register.body";
+    private static final String NOTFICATION_BODY_VALUE = "${CurrentDate} ${SubmitterName} ${nciTrialIdentifier},"
+            + " ${leadOrgTrialIdentifier}, ${leadOrgName}, ${trialTitle}.";
+
+    private static final String PROP_NOTFICATION_SUBJECT_KEY = "proprietarytrial.register.subject";
+    private static final String PROP_NOTFICATION_SUBJECT_VALUE = "proprietarytrial.register.subject - "
+            + "${leadOrgTrialIdentifier}, ${nciTrialIdentifier} ${subOrgTrialIdentifier}.";
+    private static final String PROP_NOTFICATION_BODY_KEY = "proprietarytrial.register.body";
+    private static final String PROP_NOTFICATION_BODY_VALUE = "${CurrentDate} ${SubmitterName} ${nciTrialIdentifier},"
+            + " ${leadOrgTrialIdentifier}, ${leadOrgName}, ${trialTitle}, ${subOrgTrialIdentifier}, ${subOrg}.";
+            
     private LookUpTableServiceRemote lookUpTableService = mock(LookUpTableServiceRemote.class);
+    private ProtocolQueryServiceLocal protocolQueryService = mock(ProtocolQueryServiceLocal.class);
     private RegistryUserServiceLocal registryUserService = mock(RegistryUserServiceLocal.class);
+    private StudySiteServiceLocal studySiteService = mock(StudySiteServiceLocal.class);
     private MailManagerBeanLocal sut;
     
     MailManagerBeanLocal bean = new MailManagerBeanLocal();
@@ -163,7 +192,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     TSRReportGeneratorServiceRemote tsrReptSrv = new TSRReportGeneratorServiceBean();
     LookUpTableServiceRemote lookUpTableSrv = new LookUpTableServiceBean();
     DocumentWorkflowStatusServiceLocal docWrkStatSrv = new DocumentWorkflowStatusServiceBean();
-    StudySiteServiceLocal studySiteService = new StudySiteBeanLocal();
+    StudySiteServiceLocal studySiteSrv = new StudySiteBeanLocal();
 
     Ii nonProprietaryTrialIi;
     Ii proprietaryTrialIi;
@@ -186,19 +215,25 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         bean.setTsrReportGeneratorService(tsrReptSrv);
         bean.setLookUpTableService(lookUpTableSrv);
         bean.setDocWrkflStatusSrv(docWrkStatSrv);
-        bean.setStudySiteService(studySiteService);
+        bean.setStudySiteService(studySiteSrv);
 
         //setup owners for both prop/nonprop trials.
+        User csmOwner1 = createUser("loginName1", "fname1", "lname1");
+        TestSchema.addUpdObject(csmOwner1);
         RegistryUser owner1 = new RegistryUser();
         owner1.setLastName("fname1");
         owner1.setFirstName("lname1");
         owner1.setEmailAddress(email1);
+        owner1.setCsmUser(csmOwner1);
         TestSchema.addUpdObject(owner1);
 
+        User csmOwner2 = createUser("loginName2", "fname2", "lname2");
+        TestSchema.addUpdObject(csmOwner2);
         RegistryUser owner2 = new RegistryUser();
         owner2.setLastName("fname2");
         owner2.setFirstName("lname2");
         owner2.setEmailAddress(email2);
+        owner2.setCsmUser(csmOwner2);
         TestSchema.addUpdObject(owner2);
 
         Organization o = TestSchema.createOrganizationObj();
@@ -276,11 +311,14 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(docWrk);
         propTrial.getDocumentWorkflowStatuses().add(docWrk);
         TestSchema.addUpdObject(propTrial);
-
+        
+        User csmUser = createUser("loginName", "firstName", "lastName");
+        TestSchema.addUpdObject(csmUser);
         RegistryUser registryUser = new RegistryUser();
         registryUser.setFirstName("firstName");
         registryUser.setLastName("lastName");
         registryUser.setUserLastCreated(TestSchema.getUser());
+        registryUser.setCsmUser(csmUser);
         TestSchema.addUpdObject(registryUser);
 
         // properties
@@ -350,6 +388,15 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(prop);
     }
     
+    private User createUser(String loginName, String firstName, String lastName) {
+        User user = new User();
+        user.setLoginName(loginName);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setUpdateDate(new Date());
+        return user;
+    }
+    
     private MailManagerBeanLocal createMailManagerServiceBean() {
         MailManagerBeanLocal service = new MailManagerBeanLocal();
         setDependencies(service);
@@ -359,14 +406,18 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     private MailManagerBeanLocal createMailManagerServiceMock() {
         MailManagerBeanLocal service = mock(MailManagerBeanLocal.class);
         doCallRealMethod().when(service).setLookUpTableService(lookUpTableService);
+        doCallRealMethod().when(service).setProtocolQueryService(protocolQueryService);
         doCallRealMethod().when(service).setRegistryUserService(registryUserService);
+        doCallRealMethod().when(service).setStudySiteService(studySiteService);
         setDependencies(service);
         return service;
     }
 
     private void setDependencies(MailManagerBeanLocal service) {
         service.setLookUpTableService(lookUpTableService);
+        service.setProtocolQueryService(protocolQueryService);
         service.setRegistryUserService(registryUserService);
+        service.setStudySiteService(studySiteService);
     }
 
     @Test (expected=PAException.class)
@@ -386,11 +437,14 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     }
 
     private void testSendAdminAcceptanceOrRejectionEmail(boolean accept,String reason) throws PAException {
+        User csmUser = createUser("LoginName", "FirstName", "LastName");
+        TestSchema.addUpdObject(csmUser);
         RegistryUser user = new RegistryUser();
         user.setLastName("LastName");
         user.setFirstName("FirstName");
         user.setEmailAddress(email1);
         user.setAffiliateOrg("Affiliated Organization");
+        user.setCsmUser(csmUser);
         TestSchema.addUpdObject(user);
 
         PAProperties prop = new PAProperties();
@@ -475,21 +529,6 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         bean.sendAmendRejectEmail(nonProprietaryTrialIi, "rejectReason");
     }
 
-    @Test (expected=PAException.class)
-    public void testSendNotificationMail() throws PAException {
-        PAProperties prop = new PAProperties();
-        prop.setName("trial.register.body");
-        prop.setValue("${CurrentDate} ${SubmitterName} ${nciTrialIdentifier}, ${leadOrgTrialIdentifier}, ${leadOrgName}, ${trialTitle}.");
-        TestSchema.addUpdObject(prop);
-
-        prop = new PAProperties();
-        prop.setName("trial.register.subject");
-        prop.setValue("trial.register.subject - ${leadOrgTrialIdentifier}, ${nciTrialIdentifier}.");
-        TestSchema.addUpdObject(prop);
-
-        bean.sendNotificationMail(nonProprietaryTrialIi);
-    }
-
     @Test
     public void testSendRejectionEmail() throws PAException {
         PAProperties prop = new PAProperties();
@@ -523,20 +562,6 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(prop);
 
         bean.sendUpdateNotificationMail(nonProprietaryTrialIi);
-    }
-
-    @Test (expected=PAException.class)
-    public void testSendNotificationMailProprietary() throws PAException {
-        PAProperties prop = new PAProperties();
-        prop.setName("proprietarytrial.register.body");
-        prop.setValue("${CurrentDate} ${SubmitterName} ${nciTrialIdentifier}, ${leadOrgTrialIdentifier}, ${leadOrgName}, ${trialTitle}, ${subOrgTrialIdentifier}, ${subOrg}.");
-        TestSchema.addUpdObject(prop);
-
-        prop = new PAProperties();
-        prop.setName("proprietarytrial.register.subject");
-        prop.setValue("proprietarytrial.register.subject - ${leadOrgTrialIdentifier}, ${nciTrialIdentifier}.");
-        TestSchema.addUpdObject(prop);
-        bean.sendNotificationMail(proprietaryTrialIi);
     }
 
     @Test
@@ -603,6 +628,123 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     }
     
     /**
+     * Test the sendNotificationMail method.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testSendNotificationMail() throws PAException {
+        sut = createMailManagerServiceMock();
+        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        doCallRealMethod().when(sut).sendNotificationMail(spIi);
+        when(sut.getFormatedCurrentDate()).thenReturn("Current Date");
+        when(lookUpTableService.getPropertyValue(NOTFICATION_SUBJECT_KEY)).thenReturn(NOTFICATION_SUBJECT_VALUE);
+        when(lookUpTableService.getPropertyValue(NOTFICATION_BODY_KEY)).thenReturn(NOTFICATION_BODY_VALUE);
+
+        StudyProtocolQueryDTO spDTO = new StudyProtocolQueryDTO();
+        spDTO.setProprietaryTrial(false);
+        spDTO.setLocalStudyProtocolIdentifier("localStudyProtocolIdentifier");
+        spDTO.setNciIdentifier("nciIdentifier");
+        spDTO.setLeadOrganizationName("leadOrganizationName");
+        spDTO.setOfficialTitle("officialTitle");
+        LastCreatedDTO lastCreated = new LastCreatedDTO();
+        lastCreated.setUserLastCreated("loginName");
+        spDTO.setLastCreated(lastCreated);
+
+        when(protocolQueryService.getTrialSummaryByStudyProtocolId(1L)).thenReturn(spDTO);
+        RegistryUser user = new RegistryUser();
+        user.setFirstName("firstName");
+        user.setLastName("lastName");
+        user.setEmailAddress("emailAddress");
+        when(registryUserService.getUser("loginName")).thenReturn(user);
+        sut.sendNotificationMail(spIi);
+        verify(protocolQueryService).getTrialSummaryByStudyProtocolId(1L);
+        verify(registryUserService).getUser("loginName");
+        ArgumentCaptor<String> mailSubjectCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> mailBodyCaptor = ArgumentCaptor.forClass(String.class);
+        verify(sut).sendMailWithAttachment(eq("emailAddress"), mailSubjectCaptor.capture(), mailBodyCaptor.capture(),
+                                           (File[])isNull());
+        assertEquals("Wrong mail subject", "trial.register.subject - localStudyProtocolIdentifier, nciIdentifier.",
+                     mailSubjectCaptor.getValue());
+        assertEquals("Wrong mail body", "Current Date firstName lastName nciIdentifier, localStudyProtocolIdentifier, "
+                + "leadOrganizationName, officialTitle.", mailBodyCaptor.getValue());
+    }
+    
+    /**
+     * Test the sendNotificationMail method for a proprietary study protocol.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testSendNotificationMailProprietary() throws PAException {
+        sut = createMailManagerServiceMock();
+        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        doCallRealMethod().when(sut).sendNotificationMail(spIi);
+        when(sut.getFormatedCurrentDate()).thenReturn("Current Date");
+        when(lookUpTableService.getPropertyValue(PROP_NOTFICATION_SUBJECT_KEY)).thenReturn(PROP_NOTFICATION_SUBJECT_VALUE);
+        when(lookUpTableService.getPropertyValue(PROP_NOTFICATION_BODY_KEY)).thenReturn(PROP_NOTFICATION_BODY_VALUE);
+
+        StudyProtocolQueryDTO spDTO = new StudyProtocolQueryDTO();
+        spDTO.setProprietaryTrial(true);
+        spDTO.setLocalStudyProtocolIdentifier("localStudyProtocolIdentifier");
+        spDTO.setNciIdentifier("nciIdentifier");
+        spDTO.setLeadOrganizationName("leadOrganizationName");
+        spDTO.setOfficialTitle("officialTitle");
+        LastCreatedDTO lastCreated = new LastCreatedDTO();
+        lastCreated.setUserLastCreated("loginName");
+        spDTO.setLastCreated(lastCreated);
+
+        when(protocolQueryService.getTrialSummaryByStudyProtocolId(1L)).thenReturn(spDTO);
+        RegistryUser user = new RegistryUser();
+        user.setFirstName("firstName");
+        user.setLastName("lastName");
+        user.setEmailAddress("emailAddress");
+        when(registryUserService.getUser("loginName")).thenReturn(user);
+        
+        List<StudySiteDTO> studySites = new ArrayList<StudySiteDTO>();
+        StudySiteDTO site = new StudySiteDTO();
+        site.setLocalStudyProtocolIdentifier(StConverter.convertToSt("siteLocalStudyProtocolIdentifier"));
+        site.setFunctionalCode(CdConverter.convertToCd(StudySiteFunctionalCode.TREATING_SITE));
+        site.setHealthcareFacilityIi(IiConverter.convertToPoHealthCareFacilityIi("1"));
+        studySites.add(site);
+        when(studySiteService.getByStudyProtocol(eq(spIi), anyListOf(StudySiteDTO.class))).thenReturn(studySites);
+        sut.sendNotificationMail(spIi);
+        verify(protocolQueryService).getTrialSummaryByStudyProtocolId(1L);
+        verify(registryUserService).getUser("loginName");
+        verify(studySiteService).getByStudyProtocol(eq(spIi), anyListOf(StudySiteDTO.class));
+        ArgumentCaptor<String> mailSubjectCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> mailBodyCaptor = ArgumentCaptor.forClass(String.class);
+        verify(sut).sendMailWithAttachment(eq("emailAddress"), mailSubjectCaptor.capture(), mailBodyCaptor.capture(),
+                                           (File[])isNull());
+        assertEquals("Wrong mail subject", "proprietarytrial.register.subject - localStudyProtocolIdentifier, "
+                + "nciIdentifier siteLocalStudyProtocolIdentifier.", mailSubjectCaptor.getValue());
+        assertEquals("Wrong mail body", "Current Date firstName lastName nciIdentifier, localStudyProtocolIdentifier,"
+                             + " leadOrganizationName, officialTitle, siteLocalStudyProtocolIdentifier,"
+                             + " Mayo University.",
+                     mailBodyCaptor.getValue());
+    }
+    
+    /**
+     * Test the sendNotificationMail method when the user does not exist.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testSendNotificationMailNoUser() throws PAException {
+        sut = createMailManagerServiceMock();
+        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        doCallRealMethod().when(sut).sendNotificationMail(spIi);
+
+        StudyProtocolQueryDTO spDTO = new StudyProtocolQueryDTO();
+        LastCreatedDTO lastCreated = new LastCreatedDTO();
+        lastCreated.setUserLastCreated("loginName");
+        spDTO.setLastCreated(lastCreated);
+        when(protocolQueryService.getTrialSummaryByStudyProtocolId(1L)).thenReturn(spDTO);
+        
+        sut.sendNotificationMail(spIi);
+        verify(protocolQueryService).getTrialSummaryByStudyProtocolId(1L);
+        verify(registryUserService).getUser("loginName");
+        verify(sut,never()).sendMailWithAttachment(anyString(), anyString(), anyString(), (File[])any());
+    }
+
+    /**
      * Test the sendSearchUsernameEmail method with an invalid email.
      * @throws PAException if an error occurs
      */
@@ -621,8 +763,8 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         sut = createMailManagerServiceMock();
         String emailAddress = "username@nci.nih.gov";
         doCallRealMethod().when(sut).sendSearchUsernameEmail(emailAddress);
-        List<String> loginNames = new ArrayList<String>();
-        when(registryUserService.getLoginNamesByEmailAddress(emailAddress)).thenReturn(loginNames);
+        List<RegistryUser> users = new ArrayList<RegistryUser>();
+        when(registryUserService.getLoginNamesByEmailAddress(emailAddress)).thenReturn(users);
         boolean result = sut.sendSearchUsernameEmail(emailAddress);
         assertFalse("Wrong result returned", result);
         verify(registryUserService).getLoginNamesByEmailAddress(emailAddress);
@@ -637,17 +779,17 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         sut = createMailManagerServiceMock();
         String emailAddress = "username@nci.nih.gov";
         doCallRealMethod().when(sut).sendSearchUsernameEmail(emailAddress);
-        List<String> loginNames = new ArrayList<String>();
-        loginNames.add("/CN=username");
-        when(registryUserService.getLoginNamesByEmailAddress(emailAddress)).thenReturn(loginNames);
+        List<RegistryUser> users = new ArrayList<RegistryUser>();
+        RegistryUser registryUser = new RegistryUser();
+        users.add(registryUser);
+        when(registryUserService.getLoginNamesByEmailAddress(emailAddress)).thenReturn(users);
         List<String> userNames = new ArrayList<String>();
         userNames.add("username");
-        when(sut.getGridIdentityUsernames(loginNames)).thenReturn(userNames);
+        when(sut.getGridIdentityUsernames(users)).thenReturn(userNames);
         boolean result = sut.sendSearchUsernameEmail(emailAddress);
         assertTrue("Wrong result returned", result);
         verify(registryUserService).getLoginNamesByEmailAddress(emailAddress);
-        verify(sut).getGridIdentityUsernames(loginNames);
-        verify(sut).sendSearchUsernameEmail(emailAddress, userNames);
+        verify(sut).sendSearchUsernameEmail(emailAddress, users);
     }
 
     /**
@@ -656,10 +798,10 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     @Test
     public void testGetGridIdentityUsernames() {
         sut = createMailManagerServiceBean();
-        List<String> loginNames = new ArrayList<String>();
-        loginNames.add("/CN=username1");
-        loginNames.add("username2");
-        List<String> result = sut.getGridIdentityUsernames(loginNames);
+        List<RegistryUser> users = new ArrayList<RegistryUser>();
+        users.add(createRegistryUser("/CN=username1"));
+        users.add(createRegistryUser("username2"));
+        List<String> result = sut.getGridIdentityUsernames(users);
         assertNotNull("No result returned", result);
         assertEquals("Wrong result size", 2, result.size());
         assertEquals("Wrong username in position 0", "username1", result.get(0));
@@ -674,17 +816,31 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     public void testSendSearchUsernameEmail() throws PAException {
         sut = createMailManagerServiceMock();
         String emailAddress = "username@nci.nih.gov";
-        List<String> userNames = new ArrayList<String>();
-        userNames.add("username1");
-        userNames.add("username2");
-        doCallRealMethod().when(sut).sendSearchUsernameEmail(emailAddress, userNames);
-        String body = "body ${userNames} end";
+        List<RegistryUser> users = new ArrayList<RegistryUser>();
+        RegistryUser user = createRegistryUser("/CN=username1");
+        user.setFirstName("firstName");
+        user.setLastName("lastName");
+        users.add(user);
+        users.add(createRegistryUser("username2"));
+        doCallRealMethod().when(sut).sendSearchUsernameEmail(emailAddress, users);
+        doCallRealMethod().when(sut).getGridIdentityUsernames(users);
+        String body = "body ${firstName} ${lastName} ${userNames} end";
         String subject = "subject";
         when(lookUpTableService.getPropertyValue("user.usernameSearch.body")).thenReturn(body);
         when(lookUpTableService.getPropertyValue("user.usernameSearch.subject")).thenReturn(subject);
-        sut.sendSearchUsernameEmail(emailAddress, userNames);
+        sut.sendSearchUsernameEmail(emailAddress, users);
         verify(lookUpTableService).getPropertyValue("user.usernameSearch.body");
         verify(lookUpTableService).getPropertyValue("user.usernameSearch.subject");
-        verify(sut).sendMailWithAttachment(emailAddress, subject, "body username1, username2 end", null);
+        verify(sut).getGridIdentityUsernames(users);
+        String expectedBody = "body firstName lastName username1, username2 end";
+        verify(sut).sendMailWithAttachment(emailAddress, subject, expectedBody, null);
+    }
+    
+    private RegistryUser createRegistryUser(String loginName) {
+        RegistryUser registryUser = new RegistryUser();
+        User csmUser = new User();
+        csmUser.setLoginName(loginName);
+        registryUser.setCsmUser(csmUser);
+        return registryUser;
     }
 }

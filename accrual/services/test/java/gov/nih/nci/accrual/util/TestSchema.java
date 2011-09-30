@@ -78,7 +78,6 @@ package gov.nih.nci.accrual.util;
 
 import gov.nih.nci.accrual.service.MockPoOrganizationEntityService;
 import gov.nih.nci.accrual.service.MockPoPersonEntityService;
-import gov.nih.nci.accrual.service.util.MockCsmUtil;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.Country;
@@ -626,7 +625,7 @@ public class TestSchema {
         ru.setAffiliateOrg("affiliateOrg");
         ru.setCity("city");
         ru.setCountry(countries.get(0).getAlpha3());
-        ru.setCsmUserId(MockCsmUtil.users.get(0).getUserId());
+        ru.setCsmUser(createUser());
         ru.setFirstName("fname");
         ru.setLastName("lname");
         ru.setPhone("1234567890");
@@ -673,7 +672,7 @@ public class TestSchema {
         ru.setLastName("User");
         ru.setEmailAddress("test@example.com");
         ru.setPhone("123-456-7890");
-        ru.setCsmUserId(user.getUserId());
+        ru.setCsmUser(user);
         TestSchema.addUpdObject(ru);
         return ru;
     }

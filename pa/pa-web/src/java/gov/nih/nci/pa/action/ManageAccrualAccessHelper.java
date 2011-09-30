@@ -90,7 +90,6 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.exception.PADuplicateException;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
-import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.List;
 import java.util.Map;
@@ -107,13 +106,14 @@ public class ManageAccrualAccessHelper {
      * Place holder id for "all sites" drop down item.
      */
     public static final long ALL_TREATING_SITES_ID = -1L;
-    private final StudySiteAccrualAccessServiceLocal accrualAccessSvc;
+    private final StudySiteAccrualAccessServiceLocal accrualAccessService;
 
     /**
      * Constructor taking accrual access service.
+     * @param accrualAccessService The StudySiteAccrualAccessServiceLocal
      */
-    public ManageAccrualAccessHelper() {
-        accrualAccessSvc = PaRegistry.getStudySiteAccrualAccessService();
+    public ManageAccrualAccessHelper(StudySiteAccrualAccessServiceLocal accrualAccessService) {
+        this.accrualAccessService = accrualAccessService;
     }
     /**
      * Add multiple instances of study site accrual access.
@@ -138,7 +138,7 @@ public class ManageAccrualAccessHelper {
 
     private void updateExistingSiteAccessDuringMultiSiteAdd(StudySiteAccrualAccessWebDTO webDto)
     throws PAException {
-        List<StudySiteAccrualAccessDTO> ssDtos = accrualAccessSvc.getByStudySite(webDto.getStudySiteId());
+        List<StudySiteAccrualAccessDTO> ssDtos = accrualAccessService.getByStudySite(webDto.getStudySiteId());
         for (StudySiteAccrualAccessDTO oldDto : ssDtos) {
             if (StringUtils.equals(oldDto.getStudySiteIdentifier().getExtension(), webDto.getStudySiteId().toString())
                  && StringUtils.equals(oldDto.getRegistryUserIdentifier()
@@ -158,7 +158,7 @@ public class ManageAccrualAccessHelper {
     public void addTreatingSiteAccess(StudySiteAccrualAccessWebDTO webDto)
         throws PAException {
         StudySiteAccrualAccessDTO dto = populateDTO(webDto);
-        accrualAccessSvc.create(dto);
+        accrualAccessService.create(dto);
     }
 
     /**
@@ -168,7 +168,7 @@ public class ManageAccrualAccessHelper {
      */
     public void updateTreatingSiteAccess(StudySiteAccrualAccessWebDTO webDto) throws PAException {
         StudySiteAccrualAccessDTO dto = populateDTO(webDto);
-        accrualAccessSvc.update(dto);
+        accrualAccessService.update(dto);
     }
 
     private StudySiteAccrualAccessDTO populateDTO(StudySiteAccrualAccessWebDTO webDTO) {

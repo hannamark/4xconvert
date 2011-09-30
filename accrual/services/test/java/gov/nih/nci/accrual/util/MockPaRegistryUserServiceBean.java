@@ -27,10 +27,10 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceLocal {
     public RegistryUser createUser(RegistryUser user) throws PAException {
         RegistryUser regUser = null;
         for (User userBean : MockCsmUtil.users) {
-            if (user.getCsmUserId().equals(userBean.getUserId())) {
+            if (user.getCsmUser().getUserId().equals(userBean.getUserId())) {
                 regUser = new RegistryUser();
                 regUser.setState("Texas");
-                regUser.setCsmUserId(userBean.getUserId());
+                regUser.setCsmUser(userBean);
                 regUser.setFirstName("firstName");
                 regUser.setMiddleName("middleName");
                 regUser.setLastName("lastName");
@@ -66,7 +66,7 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceLocal {
                 regUser.setCity("city");
                 regUser.setCountry("USA");
                 regUser.setState("Texas");
-                regUser.setCsmUserId(user.getUserId());
+                regUser.setCsmUser(user);
                 regUser.setUserLastCreated(TestSchema.createUser());
                 regUser.setUserLastUpdated(TestSchema.createUser());
             }
@@ -81,10 +81,10 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceLocal {
     public RegistryUser updateUser(RegistryUser user) throws PAException {
         RegistryUser regUser = null;
         for (User userBean : MockCsmUtil.users) {
-            if (user.getCsmUserId().equals(userBean.getUserId())) {
+            if (user.getCsmUser().getUserId().equals(userBean.getUserId())) {
                 regUser = new RegistryUser();
                 regUser.setState("Texas");
-                regUser.setCsmUserId(userBean.getUserId());
+                regUser.setCsmUser(userBean);
                 regUser.setFirstName("firstName");
                 regUser.setMiddleName("middleName");
                 regUser.setLastName("lastName");
@@ -205,7 +205,7 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceLocal {
      * {@inheritDoc}
      */
     @Override
-    public List<String> getLoginNamesByEmailAddress(String emailAddress) {
+    public List<RegistryUser> getLoginNamesByEmailAddress(String emailAddress) {
         return null;
     }
 

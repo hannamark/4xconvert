@@ -59,7 +59,9 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         regUser.setLastName("User");
         regUser.setCity("city");
         regUser.setCountry("country");
-        regUser.setCsmUserId(1L);
+        User csmUser = new User();
+        csmUser.setUserId(1L);
+        regUser.setCsmUser(csmUser);
         User userLastCreated = new User();
         userLastCreated.setLoginName("userLastCreated");
         regUser.setUserLastCreated(userLastCreated);
@@ -192,7 +194,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
      * {@inheritDoc}
      */
     @Override
-    public List<String> getLoginNamesByEmailAddress(String emailAddress) {
+    public List<RegistryUser> getLoginNamesByEmailAddress(String emailAddress) {
         return null;
     }
 }

@@ -45,9 +45,11 @@ public class RegistryUserWebDTO {
     *
     * @param registryUser registryUser
     */
-   public RegistryUserWebDTO(RegistryUser registryUser) {
-       this.id = registryUser.getId();
-       this.csmUserId = registryUser.getCsmUserId();
+    public RegistryUserWebDTO(RegistryUser registryUser) {
+        this.id = registryUser.getId();
+        if (registryUser.getCsmUser() != null) {
+            this.csmUserId = registryUser.getCsmUser().getUserId();
+        }
        this.firstName = registryUser.getFirstName();
        this.lastName =  registryUser.getLastName();
        this.middleName =  registryUser.getMiddleName();

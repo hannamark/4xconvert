@@ -87,6 +87,7 @@ import static org.junit.Assert.assertNull;
 
 import gov.nih.nci.accrual.service.util.AccrualCsmUtil;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -114,7 +115,9 @@ public class AccrualCsmUtilTest extends AbstractServiceTest<AccrualCsmUtil> {
             RegistryUser dto = new RegistryUser();
             dto.setFirstName("firstName");
             dto.setLastName("lastName");
-            dto.setCsmUserId(1L);
+            User csmUser = new User();
+            csmUser.setUserId(1L);
+            dto.setCsmUser(csmUser);
             dto.setId(1L);
             bean.updateCSMUser(dto, "loginName");
         } catch (Exception cse) {
@@ -128,7 +131,9 @@ public class AccrualCsmUtilTest extends AbstractServiceTest<AccrualCsmUtil> {
             RegistryUser dto = new RegistryUser();
             dto.setFirstName("firstName");
             dto.setLastName("lastName");
-            dto.setCsmUserId(1L);
+            User csmUser = new User();
+            csmUser.setUserId(1L);
+            dto.setCsmUser(csmUser);
             dto.setId(1L);
             bean.createCSMUser(dto, "loginName");
         } catch (Exception cse) {

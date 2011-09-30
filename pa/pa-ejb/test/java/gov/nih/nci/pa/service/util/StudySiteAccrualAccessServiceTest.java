@@ -83,6 +83,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
@@ -142,7 +143,7 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         TestSchema.primeData();
         ssId = TestSchema.studySiteIds.get(0);
         spId = TestSchema.studyProtocolIds.get(0);
-        REGISTRY_USER_IDENTIFIER = IiConverter.convertToIi(TestSchema.getRegistryUser().getId());
+        REGISTRY_USER_IDENTIFIER = IiConverter.convertToIi(TestSchema.registryUserIds.get(0));
      }
 
     @Test

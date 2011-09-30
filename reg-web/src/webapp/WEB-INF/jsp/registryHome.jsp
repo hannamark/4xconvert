@@ -27,7 +27,6 @@
                         <li>Search registered trials by Title, Phase, Trial Identifiers and Organizations</li>
                     </menu>
                 </li>
-                <li><a href="/registry/searchUser.action">Lookup user name</a> to lookup you user name using your e-mail address</li>
             </ul>
             <p class="padme2">
                 Want to learn more about the Reporting Program? Visit the <a href="http://www.cancer.gov/clinicaltrials/conducting/ncictrp/main"  target="new1">NCI Clinical Trials Reporting Program</a> website

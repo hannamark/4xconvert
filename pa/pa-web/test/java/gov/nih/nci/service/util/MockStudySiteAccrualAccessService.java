@@ -116,12 +116,16 @@ public class MockStudySiteAccrualAccessService extends MockAbstractBaseIsoServic
 
         RegistryUser ru = new RegistryUser();
         ru.setId(1L);
-        ru.setCsmUserId(1L);
+        User csmUser = new User();
+        csmUser.setUserId(1L);
+        ru.setCsmUser(csmUser);
         regUsers.add(ru);
 
         ru = new RegistryUser();
         ru.setId(2L);
-        ru.setCsmUserId(2L);
+        csmUser = new User();
+        csmUser.setUserId(2L);
+        ru.setCsmUser(csmUser);
         regUsers.add(ru);
     }
 

@@ -124,20 +124,15 @@ public class RegisterUserAction extends ActionSupport {
         String decodedEmailAddress = decodeAndSetEmailAddress();
 
         RegistryUser registryUser = null;
-        User csmUser = null;
         try {
             // check if user already exists
             registryUser = PaRegistry.getRegistryUserService().getUser(decodedEmailAddress);
-
-            if (registryUser != null && registryUser.getCsmUserId() != null) {
-                csmUser = CSMUserService.getInstance().getCSMUserById(registryUser.getCsmUserId());
-            }
         } catch (Exception ex) {
             LOG.error("error while activating user :" + decodedEmailAddress);
             return Constants.APPLICATION_ERROR;
         }
 
-        setupWebDto(decodedEmailAddress, registryUser, csmUser);
+        setupWebDto(decodedEmailAddress, registryUser);
 
         // show the My Account page
         return Constants.MY_ACCOUNT;
@@ -153,9 +148,10 @@ public class RegisterUserAction extends ActionSupport {
         }
         return decodedEmailAddress;
     }
-
-    private void setupWebDto(String decodedEmailAddress, RegistryUser registryUser, User csmUser) {
+    
+    private void setupWebDto(String decodedEmailAddress, RegistryUser registryUser) {
         if (registryUser != null) {
+            User csmUser = registryUser.getCsmUser();
             registryUserWebDTO = new RegistryUserWebDTO(registryUser, csmUser == null ? "" : csmUser.getLoginName(),
                     csmUser == null ? "" : csmUser.getPassword());
             if (registryUser.getAffiliatedOrganizationId() != null) {
@@ -165,6 +161,7 @@ public class RegisterUserAction extends ActionSupport {
             registryUserWebDTO.setEmailAddress(decodedEmailAddress);
         }
     }
+
 
     /**
      * Show My Account Page.
@@ -326,7 +323,8 @@ public class RegisterUserAction extends ActionSupport {
                     registryUserWebDTO.getOldPassword(), registryUserWebDTO.getPassword());
         }
         // first update the CSM user
-        CSMUserService.getInstance().updateCSMUser(registryUser, registryUserWebDTO.getUsername(), null);
+        User csmUser = CSMUserService.getInstance().updateCSMUser(registryUser, registryUserWebDTO.getUsername(), null);
+        registryUser.setCsmUser(csmUser);
         //now update the RegistryUser
         PaRegistry.getRegistryUserService().updateUser(registryUser);
         return redirectPage;
@@ -368,7 +366,7 @@ public class RegisterUserAction extends ActionSupport {
                 csmUserService
                         .assignUserToGroup(csmUser.getLoginName(), PaEarPropertyReader.getCSMSubmitterGroup());
             }
-            registryUser.setCsmUserId(csmUser.getUserId());
+            registryUser.setCsmUser(csmUser);
 
             //Then add the user to the correct grid grouper group.
             gridService.addGridUserToGroup(username, GridAccountServiceBean.GRIDGROUPER_SUBMITTER_GROUP);

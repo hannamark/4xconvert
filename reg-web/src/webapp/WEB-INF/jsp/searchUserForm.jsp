@@ -8,7 +8,7 @@
         <s:head/>
         <script type="text/javascript" language="javascript">
             function cancelAction() {
-                submitForm("${pageContext.request.contextPath}/home.action");
+                submitForm("${pageContext.request.contextPath}/protected/disClaimerAction.action?actionName=searchTrial.action");
             }
             function searchAction() {
                 submitForm("${pageContext.request.contextPath}/searchUsersearch.action");

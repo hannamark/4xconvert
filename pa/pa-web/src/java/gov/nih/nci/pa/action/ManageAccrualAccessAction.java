@@ -87,7 +87,6 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudySiteAccrualStatusServiceLocal;
-import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceBean;
 import gov.nih.nci.pa.service.util.StudySiteAccrualAccessServiceLocal;
@@ -118,18 +117,17 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     private RegistryUserServiceLocal registryUserService;
     private StudySiteAccrualAccessServiceLocal accrualAccessService;
     private StudySiteAccrualStatusServiceLocal accrualStatusService;
+    private ManageAccrualAccessHelper accrualAccessHelper;
 
     private List<StudySiteAccrualAccessWebDTO> accessList;
     private StudySiteAccrualAccessWebDTO access = new StudySiteAccrualAccessWebDTO();
-    private Map<Long, RegistryUser> regUsers = null;
-    private List<LabelValueBean> regUserNames = null;
-    private Map<Long, String> sites = null;
+    private Map<Long, RegistryUser> regUsers;
+    private List<LabelValueBean> regUserNames;
+    private Map<Long, String> sites;
     private String email;
     private String phone;
     private String siteRecruitmentStatus;
     private Long registryUserId;
-    private final ManageAccrualAccessHelper accAccHelper = new ManageAccrualAccessHelper();
-
 
     /**
      * {@inheritDoc}
@@ -140,6 +138,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
         registryUserService = PaRegistry.getRegistryUserService();
         accrualAccessService = PaRegistry.getStudySiteAccrualAccessService();
         accrualStatusService = PaRegistry.getStudySiteAccrualStatusService();
+        accrualAccessHelper = new ManageAccrualAccessHelper(accrualAccessService);
     }
 
     /**
@@ -161,10 +160,10 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     public String add() throws PAException {
         try {
             if (ManageAccrualAccessHelper.ALL_TREATING_SITES_ID == getAccess().getStudySiteId().longValue()) {
-                accAccHelper.addMultipleTreatingSitesAccess(getAccess(), getSites());
+                accrualAccessHelper.addMultipleTreatingSitesAccess(getAccess(), getSites());
                 getAccess().setStudySiteId(ManageAccrualAccessHelper.ALL_TREATING_SITES_ID);
             } else {
-                accAccHelper.addTreatingSiteAccess(getAccess());
+                accrualAccessHelper.addTreatingSiteAccess(getAccess());
             }
         } catch (PAException e) {
             addActionError(e.getMessage());
@@ -181,7 +180,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     @Override
     public String update() throws PAException {
         try {
-            accAccHelper.updateTreatingSiteAccess(getAccess());
+            accrualAccessHelper.updateTreatingSiteAccess(getAccess());
         } catch (PAException e) {
             addActionError(e.getMessage());
             return AR_EDIT;
@@ -374,12 +373,10 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
         webDTO.setRequestDetails(StConverter.convertToString(dto.getRequestDetails()));
         webDTO.setStatusCode(CdConverter.convertCdToString(dto.getStatusCode()));
         try {
-            RegistryUser ru = PaRegistry.getRegistryUserService().getUserById(webDTO.getRegistryUserId());
+            RegistryUser ru = registryUserService.getUserById(webDTO.getRegistryUserId());
             webDTO.setEmailAddress(ru.getEmailAddress());
             webDTO.setPhoneNumber(ru.getPhone());
-
-            User csmUser = CSMUserService.getInstance().getCSMUserById(ru.getCsmUserId());
-            webDTO.setUserName(CsmUserUtil.getGridIdentityUsername(csmUser.getLoginName()));
+            webDTO.setUserName(CsmUserUtil.getGridIdentityUsername(ru.getCsmUser().getLoginName()));
         } catch (PAException e) {
             LOG.error("Error retrieving registry user with id " + webDTO.getRegistryUserId() + ".");
         }
@@ -480,5 +477,12 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
      */
     public void setAccrualStatusService(StudySiteAccrualStatusServiceLocal accrualStatusService) {
         this.accrualStatusService = accrualStatusService;
+    }
+
+    /**
+     * @param accrualAccessHelper the accrualAccessHelper to set
+     */
+    public void setAccrualAccessHelper(ManageAccrualAccessHelper accrualAccessHelper) {
+        this.accrualAccessHelper = accrualAccessHelper;
     }
 }

@@ -160,14 +160,11 @@ public class AccrualCsmUtil implements CsmUtil {
         User createdCSMUser = null;
         String userName = extractUserName(loginName);
         try {
-            // create the csm user
-            User csmUser = new User();
             UserProvisioningManager upManager = SecurityServiceProvider.
             getUserProvisioningManager("pa");
-            csmUser = upManager.getUser(userName);
+            User csmUser = upManager.getUser(userName);
 
             // get values from Registry User object and set in CSM User object
-            csmUser.setUserId(user.getCsmUserId());
             csmUser.setLoginName(userName);
             csmUser.setFirstName(user.getFirstName());
             csmUser.setLastName(user.getLastName());

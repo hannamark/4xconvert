@@ -84,6 +84,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.dto.StudySiteAccrualAccessWebDTO;
@@ -100,6 +101,7 @@ import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.service.MockStudySiteService;
 import gov.nih.nci.service.util.MockStudySiteAccrualAccessService;
 
@@ -123,6 +125,7 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
     private final Long testStudySiteId = IiConverter.convertToLong(MockStudySiteService.dtos.get(2).getIdentifier());
     private final String testStatusCode = ActiveInactiveCode.ACTIVE.getCode();
     private final String testRequestDetails = "test request details";
+    private RegistryUserServiceLocal registryUserService = mock(RegistryUserServiceLocal.class); 
     private StudySiteAccrualAccessServiceLocal ssAccSvc = null;
 
     private ManageAccrualAccessAction act;
@@ -133,16 +136,17 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
         MockStudySiteAccrualAccessService.list.clear();
         act = new ManageAccrualAccessAction();
         act.prepare();
-
+        RegistryUser registryUser = new RegistryUser();
+        registryUser.setCsmUser(new User());
+        when(registryUserService.getUserById(any(Long.class))).thenReturn(registryUser);
+        act.setRegistryUserService(registryUserService);
     }
 
     private void loadMocksInPaRegistry() throws PAException {
         ServiceLocator svcLoc = mock(ServiceLocator.class);
-        RegistryUserServiceLocal regSvc = mock(RegistryUserServiceLocal.class);
-        when(regSvc.getUserById(any(Long.class))).thenReturn(new RegistryUser());
         ssAccSvc = mock(StudySiteAccrualAccessServiceLocal.class);
         when(svcLoc.getStudySiteAccrualAccessService()).thenReturn(ssAccSvc);
-        when(svcLoc.getRegistryUserService()).thenReturn(regSvc);
+        when(svcLoc.getRegistryUserService()).thenReturn(registryUserService);
         Map<Long, String> treatingSiteMap = new HashMap<Long, String>();
         treatingSiteMap.put(1L, "Treating Site 1");
         treatingSiteMap.put(2L, "Treating Site 2");

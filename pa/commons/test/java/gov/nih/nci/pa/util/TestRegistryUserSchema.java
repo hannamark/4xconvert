@@ -107,6 +107,7 @@ import java.util.Set;
  *
  */
 public class TestRegistryUserSchema {
+    public static Long csmUserId;
     public static Long studyProtocolId;
     public static Long leadOrgUserId;
     public static Long trialOwnerUserId;
@@ -134,6 +135,14 @@ public class TestRegistryUserSchema {
     }
 
     public static void primeData() {
+        User csmUser = new User();
+        csmUser.setLoginName("loginName");
+        csmUser.setFirstName("firstName");
+        csmUser.setLastName("lastName");
+        csmUser.setUpdateDate(new Date());
+        addUpdObject(csmUser);
+        csmUserId = csmUser.getUserId();
+        
         User csmUserRandom = new User();
         csmUserRandom.setLoginName("randomUserTest");
         csmUserRandom.setFirstName("testR");
@@ -156,7 +165,7 @@ public class TestRegistryUserSchema {
         addUpdObject(csmUserTrialOwner);
 
         RegistryUser randomUser = new RegistryUser();
-        randomUser.setCsmUserId(csmUserRandom.getUserId());
+        randomUser.setCsmUser(csmUserRandom);
         randomUser.setLastName("random");
         randomUser.setFirstName("random");
         randomUser.setEmailAddress("username@nci.nih.gov");
@@ -169,7 +178,7 @@ public class TestRegistryUserSchema {
         org.setIdentifier(String.valueOf(org.getId()));
 
         RegistryUser trialOwner = new RegistryUser();
-        trialOwner.setCsmUserId(csmUserTrialOwner.getUserId());
+        trialOwner.setCsmUser(csmUserTrialOwner);
         trialOwner.setLastName("owner");
         trialOwner.setFirstName("owner");
         trialOwner.setAffiliatedOrganizationId(org.getId());
@@ -206,7 +215,7 @@ public class TestRegistryUserSchema {
         addUpdObject(dws);
 
         RegistryUser leadOrgAdmin = new RegistryUser();
-        leadOrgAdmin.setCsmUserId(csmUserLeadOrg.getUserId());
+        leadOrgAdmin.setCsmUser(csmUserLeadOrg);
         leadOrgAdmin.setLastName("lead");
         leadOrgAdmin.setFirstName("lead");
         leadOrgAdmin.setAffiliatedOrganizationId(org.getId());

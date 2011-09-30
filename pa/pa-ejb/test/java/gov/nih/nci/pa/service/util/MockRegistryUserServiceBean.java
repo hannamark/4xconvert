@@ -116,12 +116,11 @@ public class MockRegistryUserServiceBean extends RegistryUserServiceBean {
             criteria.add(Restrictions.eq("csmUser.loginName",
                     loginName));
             List<User> csmUsers =  criteria.list();
-
             User csmUser = csmUsers.get(csmUsers.size() - 1);
             // if csm user exists retrieve the registry user
             if (csmUser != null) {
                 Criteria criteria2 = session.createCriteria(RegistryUser.class, "regUser");
-                criteria2.add(Restrictions.eq("regUser.csmUserId",
+                criteria2.add(Restrictions.eq("regUser.csmUser.id",
                         csmUser.getUserId()));
                 List<RegistryUser> regUsers =  criteria2.list();
                 return regUsers.get(0);

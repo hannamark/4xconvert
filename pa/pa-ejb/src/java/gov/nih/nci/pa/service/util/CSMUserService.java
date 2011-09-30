@@ -119,6 +119,7 @@ public class CSMUserService implements CSMUserUtil {
     /**
      * {@inheritDoc}
      */
+    @Override
     public User createCSMUser(RegistryUser user, String loginName, String password) throws PAException {
         User createdCSMUser = null;
         try {
@@ -152,17 +153,15 @@ public class CSMUserService implements CSMUserUtil {
     /**
      * {@inheritDoc}
      */
+    @Override
     public User updateCSMUser(RegistryUser user, String loginName, String password) throws PAException {
         User createdCSMUser = null;
         try {
-            // create the csm user
-            User csmUser = new User();
             UserProvisioningManager upManager = SecurityServiceProvider.
             getUserProvisioningManager("pa");
-            csmUser  = upManager.getUser(loginName);
+            User csmUser  = upManager.getUser(loginName);
 
             // get values from Registry User object and set in CSM User object
-            csmUser.setUserId(user.getCsmUserId());
             csmUser.setLoginName(loginName);
             csmUser.setPassword(password);
             csmUser.setFirstName(user.getFirstName());
@@ -187,6 +186,7 @@ public class CSMUserService implements CSMUserUtil {
     /**
      * {@inheritDoc}
      */
+    @Override
     public User getCSMUser(String loginName) throws PAException {
         User csmUser = null;
         try {
@@ -208,6 +208,7 @@ public class CSMUserService implements CSMUserUtil {
     /**
      * {@inheritDoc}
      */
+    @Override
     public User getCSMUserById(Long id) throws PAException {
         User csmUser = null;
         try {
@@ -224,6 +225,7 @@ public class CSMUserService implements CSMUserUtil {
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("unchecked")
     public Set<User> getCSMUsers() throws PAException {
         Set<User> csmUsers = null;
@@ -255,6 +257,7 @@ public class CSMUserService implements CSMUserUtil {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void assignUserToGroup(String loginName, String groupName) throws PAException {
         try {
             UserProvisioningManager upManager = SecurityServiceProvider.getUserProvisioningManager("pa");
@@ -267,6 +270,7 @@ public class CSMUserService implements CSMUserUtil {
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("unchecked")
     public boolean isUserInGroup(String loginName, String groupName) throws PAException {
         try {

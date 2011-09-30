@@ -78,7 +78,12 @@
         </action>
         <action name="searchUser*" class="gov.nih.nci.registry.action.SearchUserAction" method="{1}">
             <result>/WEB-INF/jsp/searchUserForm.jsp</result>
-            <result name="mailSent">/WEB-INF/jsp/searchUserMailSent.jsp</result>
+            <result name="mailSent" type="redirectAction">
+                <param name="actionName">searchTrial.action</param>
+                <param name="namespace">/protected</param>
+                <param name="parse">true</param>
+                <param name="userAction">searchUserMailSent</param>
+            </result>
         </action>
         <action name="login">
             <result>/WEB-INF/jsp/login.jsp</result>

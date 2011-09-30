@@ -188,15 +188,16 @@ import org.hibernate.Session;
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
- *
+ * 
  * @author Hugh
- *
+ * 
  */
 public class TestSchema {
     public static final Timestamp TODAY = new Timestamp(new Date().getTime());
     public static final Timestamp YESTERDAY = new Timestamp(DateUtils.addDays(new Date(), -1).getTime());
     public static final Timestamp TOMMORROW = new Timestamp(DateUtils.addDays(new Date(), 1).getTime());
     public static final Timestamp ONE_YEAR_FROM_TODAY = new Timestamp(DateUtils.addYears(new Date(), 1).getTime());
+    public static List<Long> registryUserIds;
     public static List<Long> studyProtocolIds;
     public static List<Long> studySiteIds;
     public static List<Long> studySiteContactIds;
@@ -221,7 +222,7 @@ public class TestSchema {
     private static User user;
 
     /**
-     *
+     * 
      * @param <T> t
      * @param obj o
      */
@@ -232,7 +233,7 @@ public class TestSchema {
     }
 
     /**
-     *
+     * 
      * @param <T> t
      * @param oList o
      */
@@ -243,6 +244,7 @@ public class TestSchema {
     }
 
     public static void primeData() {
+        registryUserIds = new ArrayList<Long>();
         studyProtocolIds = new ArrayList<Long>();
         studySiteIds = new ArrayList<Long>();
         studySiteContactIds = new ArrayList<Long>();
@@ -283,6 +285,7 @@ public class TestSchema {
         sp.setDelayedpostingIndicator(Boolean.TRUE);
 
         RegistryUser ru = getRegistryUser();
+        registryUserIds.add(ru.getId());
         sp.setUserLastCreated(ru.getUserLastCreated());
         sp.setUserLastUpdated(ru.getUserLastUpdated());
 
@@ -650,25 +653,23 @@ public class TestSchema {
         SDCDisease sdc04 = TestSchema.createSdcDisease("Leg Cancer");
         addUpdObject(sdc04);
         sdcDiseaseIds.add(sdc04.getId());
-        
-        
-        
+
         ICD9Disease icd901 = TestSchema.createICD9Disease("code1", "name1");
         addUpdObject(icd901);
         icd9DiseaseIds.add(icd901.getId());
-        
+
         ICD9Disease icd902 = TestSchema.createICD9Disease("code2", "name2");
         addUpdObject(icd902);
         icd9DiseaseIds.add(icd902.getId());
-        
+
         ICD9Disease icd903 = TestSchema.createICD9Disease("code3", "name3");
         addUpdObject(icd903);
         icd9DiseaseIds.add(icd903.getId());
-        
+
         ICD9Disease icd904 = TestSchema.createICD9Disease("code4", "namedif4");
         addUpdObject(icd904);
         icd9DiseaseIds.add(icd904.getId());
-        
+
         ICD9Disease icd905 = TestSchema.createICD9Disease("code5", "namedif5");
         addUpdObject(icd905);
         icd9DiseaseIds.add(icd905.getId());
@@ -742,11 +743,11 @@ public class TestSchema {
 
         DocumentWorkflowStatus docWrk = TestSchema.createDocumentWorkflowStatus(nonpropTrial);
         TestSchema.addUpdObject(docWrk);
-        
+
         StudyMilestone milestone = TestSchema.createStudyMilestoneObj("READY ", nonpropTrial);
         milestone.setMilestoneCode(MilestoneCode.READY_FOR_TSR);
         TestSchema.addUpdObject(milestone);
-        
+
         // properties
         PAProperties prop = new PAProperties();
         prop.setName("smtp");
@@ -904,7 +905,7 @@ public class TestSchema {
         create.setDateLastUpdated(TODAY);
         return create;
     }
-    
+
     private static ICD9Disease createICD9Disease(String diseaseCode, String name) {
         ICD9Disease create = new ICD9Disease();
         create.setDiseaseCode(diseaseCode);
@@ -1133,11 +1134,13 @@ public class TestSchema {
         RegistryUser newUser = getRegistryUserObj();
         newUser.getStudyProtocols().add(sp);
         sp.getStudyOwners().add(newUser);
+        addUpdObject(newUser.getCsmUser());
         addUpdObject(newUser);
 
         RegistryUser newUser2 = getRegistryUserObj();
         newUser2.getStudyProtocols().add(sp);
         sp.getStudyOwners().add(newUser2);
+        addUpdObject(newUser2.getCsmUser());
         addUpdObject(newUser2);
     }
 
@@ -1148,7 +1151,12 @@ public class TestSchema {
         create.setAffiliateOrg("aff");
         create.setCity("city");
         create.setCountry("country");
-        create.setCsmUserId(Long.valueOf(1));
+        User csmUser = new User();
+        csmUser.setLoginName("loginname" + new Date());
+        csmUser.setFirstName("firstname");
+        csmUser.setLastName("lastname");
+        csmUser.setUpdateDate(new Date());
+        create.setCsmUser(csmUser);
         create.setFirstName("firstname");
         create.setLastName("lastname");
         create.setMiddleName("middlename");
@@ -1194,7 +1202,6 @@ public class TestSchema {
         return create;
     }
 
-
     public static RegistryUser getRegistryUser() {
         User user = getUser();
         RegistryUser ru = new RegistryUser();
@@ -1202,7 +1209,7 @@ public class TestSchema {
         ru.setLastName("User");
         ru.setEmailAddress("test@example.com");
         ru.setPhone("123-456-7890");
-        ru.setCsmUserId(user.getUserId());
+        ru.setCsmUser(user);
         ru.setUserLastCreated(user);
         ru.setUserLastUpdated(user);
         TestSchema.addUpdObject(ru);

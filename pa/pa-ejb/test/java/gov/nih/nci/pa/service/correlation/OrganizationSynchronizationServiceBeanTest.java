@@ -2,6 +2,7 @@ package gov.nih.nci.pa.service.correlation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
@@ -24,7 +25,9 @@ import gov.nih.nci.pa.util.MockPoServiceLocator;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -117,10 +120,17 @@ public class OrganizationSynchronizationServiceBeanTest extends AbstractHibernat
         criteria.add(Expression.eq("identifier", "22"));
         assertTrue("new pa org should not exist yet", criteria.list().size() == 0);
 
+        User csmUser = new User();
+        csmUser.setLoginName("loginName");
+        csmUser.setFirstName("firstName");
+        csmUser.setLastName("lastName");
+        csmUser.setUpdateDate(new Date());
+        session.save(csmUser);
+        
         RegistryUser ru = new RegistryUser();
         ru.setAffiliatedOrganizationId(2L);
         ru.setAffiliateOrg("isNullified");
-
+        ru.setCsmUser(csmUser);
         Long ruId = (Long) session.save(ru);
         session.flush();
         CorrelationUtils cUtils = new CorrelationUtils();
@@ -199,27 +209,6 @@ public class OrganizationSynchronizationServiceBeanTest extends AbstractHibernat
         Session session = PaHibernateUtil.getCurrentSession();
         session.save(org);
         session.flush();
-
-
-//        Organization o  = OrganizationTest.createOrganizationObj();
-//        TestSchema.addUpdObject(o);
-//        assertNotNull(o.getId());
-//
-//        HealthCareFacility hcf = HealthCareFacilityTest.createHealthCareFacilityObj(o);
-//        TestSchema.addUpdObject(hcf);
-////        HealthCareFacility savedhc = (HealthCareFacility) session.load(HealthCareFacility.class, hcf.getId());
-////        createdHcfId = savedhc.getId();
-//
-//        StudyProtocol sp = StudyProtocolTest.createStudyProtocolObj();
-//        TestSchema.addUpdObject(sp);
-//        assertNotNull(sp.getId());
-//
-//        StudySite create = StudySiteTest.createStudySiteObj(sp, hcf) ;
-//        //create.setStatusCode(StatusCode.PENDING);
-//        TestSchema.addUpdObject(create);
-//        assertNotNull(create.getId());
-////        StudySite saved = (StudySite) session.load(StudySite.class, create.getId());
-////        createdSpsId = saved.getId();
     }
 
 }

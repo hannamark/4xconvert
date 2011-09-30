@@ -145,6 +145,7 @@ import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.PoServiceLocator;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
+import gov.nih.nci.security.authorization.domainobjects.User;
 import gov.nih.nci.services.correlation.IdentifiedPersonCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.IdentifiedPersonDTO;
 import gov.nih.nci.services.entity.NullifiedEntityException;
@@ -158,6 +159,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -209,13 +211,20 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         ra2.setAuthorityName("Institutional Review Board");
         ra2.setCountry(c);
         TestSchema.addUpdObject(ra2);
-
+        
+        User csmUser = new User();
+        csmUser.setLoginName("loginName");
+        csmUser.setFirstName("firstName");
+        csmUser.setLastName("lastName");
+        csmUser.setUpdateDate(new Date());
+        TestSchema.addUpdObject(csmUser);
+        
         RegistryUser create = new RegistryUser();
         create.setAddressLine("xxxxx");
         create.setAffiliateOrg("aff");
         create.setCity("city");
         create.setCountry("country");
-        create.setCsmUserId(Long.valueOf(1));
+        create.setCsmUser(csmUser);
         create.setFirstName("firstname");
         create.setLastName("lastname");
         create.setMiddleName("middlename");
@@ -391,7 +400,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
             assertEquals("URL is not set, call setUrl first.", e.getMessage());
         }
 
-        Ii trialIi = bean.loadRegistrationElementFromPDQXml(testXMLUrl, TestSchema.getUser().getLoginName());
+        Ii trialIi = bean.loadRegistrationElementFromPDQXml(testXMLUrl, "loginName");
         assertNotNull("Null identifier returned when registering a trial", trialIi);
 
         Ii oldNciId = PAUtil.getAssignedIdentifier(PaRegistry.getStudyProtocolService().getStudyProtocol(trialIi));
@@ -401,7 +410,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
                 StConverter.convertToSt("Accepted."));
 
         PaHibernateUtil.getCurrentSession().flush();
-        Ii newTrialIi = bean.loadRegistrationElementFromPDQXml(testUpdateXMLUrl, TestSchema.getUser().getLoginName());
+        Ii newTrialIi = bean.loadRegistrationElementFromPDQXml(testUpdateXMLUrl, "loginName");
         Ii newNciId = PAUtil.getAssignedIdentifier(PaRegistry.getStudyProtocolService().getStudyProtocol(trialIi));
         assertNotNull("Null identifier returned when updating a trial.", trialIi);
         assertFalse("Study Protocol id should not be equal.", trialIi.getExtension().equals(newTrialIi.getExtension()));

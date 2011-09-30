@@ -81,6 +81,7 @@ package gov.nih.nci.pa.action;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.pa.dto.StudySiteAccrualAccessWebDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualAccessDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -114,7 +115,7 @@ public class ManageAccrualAccessHelperTest extends AbstractPaActionTest {
         ssAccSvc = mock(StudySiteAccrualAccessServiceLocal.class);
         when(svcLoc.getStudySiteAccrualAccessService()).thenReturn(ssAccSvc);
         PaRegistry.getInstance().setServiceLocator(svcLoc);
-        accHelp = new ManageAccrualAccessHelper();
+        accHelp = new ManageAccrualAccessHelper(ssAccSvc);
     }
 
     @Test(expected = PADuplicateException.class)

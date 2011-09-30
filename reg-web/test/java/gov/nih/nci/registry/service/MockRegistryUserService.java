@@ -220,7 +220,7 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
      * {@inheritDoc}
      */
     @Override
-    public List<String> getLoginNamesByEmailAddress(String emailAddress) {
+    public List<RegistryUser> getLoginNamesByEmailAddress(String emailAddress) {
         return null;
     }
 
