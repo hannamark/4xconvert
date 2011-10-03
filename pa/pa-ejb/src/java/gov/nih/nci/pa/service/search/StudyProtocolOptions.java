@@ -82,7 +82,11 @@
  */
 package gov.nih.nci.pa.service.search;
 
+import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Abraham J. Evans-EL
@@ -100,6 +104,7 @@ public class StudyProtocolOptions {
     private Long participatingSiteId;
     private String lockedUser;
     private boolean inboxProcessing;
+    private List<PhaseCode> phaseCodes = new ArrayList<PhaseCode>();
 
     /**
      * @return excludeRejectedTrials
@@ -242,4 +247,26 @@ public class StudyProtocolOptions {
         this.inboxProcessing = inboxProcessing;
     }
 
+    /**
+     * @return the phaseCodes
+     */
+    public List<PhaseCode> getPhaseCodes() {
+        return phaseCodes;
+    } 
+
+    /**
+     * @param phaseCodes the phaseCodes to set
+     */
+    public void setPhaseCodes(List<PhaseCode> phaseCodes) {
+        this.phaseCodes = phaseCodes;
+    }
+
+    /**
+     * @param phaseCodeValues the phaseCodes to set
+     */
+    public void setPhaseCodesByValues(List<String> phaseCodeValues) {        
+        for (String phaseCode : phaseCodeValues) {
+            this.phaseCodes.add(PhaseCode.getByCode(phaseCode));
+        }
+    }
 }

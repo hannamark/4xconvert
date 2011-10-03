@@ -86,6 +86,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Country;
@@ -135,6 +136,7 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -219,7 +221,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         assertEquals("Cancer for kids", results.get(0).getOfficialTitle());
         criteria.setOfficialTitle(null);
 
-        criteria.setPhaseCode("I");
+        criteria.setPhaseCodes(Arrays.asList(new String[]{"I", "0"}));
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
         assertEquals(PhaseCode.I, results.get(0).getPhaseCode());

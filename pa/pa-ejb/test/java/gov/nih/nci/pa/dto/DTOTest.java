@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.dto;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
 import gov.nih.nci.pa.iso.dto.StudyObjectiveDTO;
 
 import java.beans.BeanInfo;
@@ -24,8 +25,7 @@ public class DTOTest {
     public void testProperties() {
         createDefaultArguments();
         assertGetterSetterBehavior(new AbstractionCompletionDTO());
-        assertGetterSetterBehavior(new PaOrganizationDTO());
-        assertGetterSetterBehavior(new StudyProtocolQueryCriteria());
+        assertGetterSetterBehavior(new PaOrganizationDTO());       
         assertGetterSetterBehavior(new CountryRegAuthorityDTO());
         assertGetterSetterBehavior(new RegulatoryAuthOrgDTO());
         assertGetterSetterBehavior(new StudyObjectiveDTO());

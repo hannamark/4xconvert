@@ -107,7 +107,6 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
-import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
@@ -394,6 +393,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setTrialSubmissionType(SubmissionTypeCode.getByCode(criteria.getSubmissionType()));
         options.setSearchOnHoldTrials(criteria.isSearchOnHold());
         options.setInboxProcessing(BooleanUtils.isTrue(criteria.isInBoxProcessing()));
+        options.setPhaseCodesByValues(criteria.getPhaseCodes());
 
         populateExample(criteria, example);
         return new StudyProtocolQueryBeanSearchCriteria(example, options);
@@ -431,8 +431,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
 
     private void populateExampleStudyProtocol(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
         sp.setId(crit.getStudyProtocolId());
-        sp.setOfficialTitle(crit.getOfficialTitle());
-        sp.setPhaseCode(PhaseCode.getByCode(crit.getPhaseCode()));
+        sp.setOfficialTitle(crit.getOfficialTitle());      
         sp.setPhaseAdditionalQualifierCode(
                 PhaseAdditionalQualifierCode.getByCode(crit.getPhaseAdditionalQualifierCode()));
         if (StringUtils.equalsIgnoreCase(crit.getTrialCategory(), "p")) {
@@ -593,8 +592,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && StringUtils.isEmpty(criteria.getLeadOrganizationId())
                 && StringUtils.isEmpty(criteria.getLeadOrganizationTrialIdentifier())
                 && StringUtils.isEmpty(criteria.getPrincipalInvestigatorId())
-                && StringUtils.isEmpty(criteria.getPrimaryPurposeCode())
-                && StringUtils.isEmpty(criteria.getPhaseCode())
+                && StringUtils.isEmpty(criteria.getPrimaryPurposeCode())               
                 && StringUtils.isEmpty(criteria.getPhaseAdditionalQualifierCode())
                 && StringUtils.isEmpty(criteria.getStudyStatusCode())
                 && StringUtils.isEmpty(criteria.getDocumentWorkflowStatusCode())
@@ -604,6 +602,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && StringUtils.isEmpty(criteria.getDcpIdentifier())
                 && StringUtils.isEmpty(criteria.getCtepIdentifier())
                 && StringUtils.isEmpty(criteria.getParticipatingSiteId())
+                && CollectionUtils.isEmpty(criteria.getPhaseCodes())
                 && !criteria.isSearchOnHold()
                 && !criteria.isStudyLockedBy()
                 && StringUtils.isEmpty(criteria.getSubmissionType())

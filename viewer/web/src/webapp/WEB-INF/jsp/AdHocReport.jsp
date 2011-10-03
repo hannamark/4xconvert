@@ -21,7 +21,7 @@
             document.getElementById("identifierType").value="";
             document.getElementById("identifier").value="";
             document.getElementById("principalInvestigatorId").value="";
-            document.getElementById("phaseCode").value="";
+            document.getElementById("phaseCodes").value="";
             document.getElementById("primaryPurpose").value="";
             document.getElementById("studyStatusCode").value="";
             document.getElementById("documentWorkflowStatusCode").value="";
@@ -104,7 +104,7 @@
                 </td>
                 <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
                 <td>
-                    <s:select headerKey="" id="phaseCode" headerValue="All" name="criteria.phaseCode" list="#phaseCodeValues"  value="criteria.phaseCode" cssStyle="width:206px" />
+                    <s:select headerKey="" id="phaseCodes" headerValue="All" name="criteria.phaseCodes" list="#phaseCodeValues"  value="criteria.phaseCodes" cssStyle="width:206px" multiple="true" />
                 </td>
                 <td scope="row" class="label">
                     <label for="diseaseConditionId"> <fmt:message key="studyProtocol.diseaseCondition"/></label>

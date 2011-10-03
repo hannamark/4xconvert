@@ -79,6 +79,10 @@
 package gov.nih.nci.pa.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -112,8 +116,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String leadOrganizationId;
     private String otherIdentifier;
     private String participatingSiteId;
-    private String leadOrganizationTrialIdentifier;
-    private String phaseCode;
+    private String leadOrganizationTrialIdentifier;   
     private String phaseAdditionalQualifierCode;
     private String studyStatusCode;
     private String documentWorkflowStatusCode;
@@ -139,6 +142,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private Long diseaseConditionId;
     private String interventionType;
     private String summ4FundingSourceTypeCode;
+    private List<String> phaseCodes = new ArrayList<String>();
+    
     /**
      * @return the inBoxProcessing
      */
@@ -250,19 +255,15 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public String getParticipatingSiteId() {
         return participatingSiteId;
     }
-    /**
-     *
-     * @return phaseCode
-     */
-    public String getPhaseCode() {
-        return phaseCode;
-    }
+    
     /**
      *
      * @param phaseCode phaseCode
      */
     public void setPhaseCode(String phaseCode) {
-        this.phaseCode = phaseCode;
+        List<String> code = new ArrayList<String>();
+        code.add(phaseCode);
+        setPhaseCodes(code);
     }
     /**
      *
@@ -557,4 +558,21 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public void setSumm4FundingSourceTypeCode(String summ4FundingSourceTypeCode) {
         this.summ4FundingSourceTypeCode = summ4FundingSourceTypeCode;
     }
+    /**
+     * @return the phaseCodes
+     */
+    public List<String> getPhaseCodes() {
+        return phaseCodes;
+    }
+
+    /**
+     * @param phaseCodes the phaseCodes to set
+     */
+    public void setPhaseCodes(List<String> phaseCodes) {
+        for (String code : phaseCodes) {
+            if (StringUtils.isNotBlank(code)) {
+                this.phaseCodes.add(code);
+            }
+        }
+    }    
 }

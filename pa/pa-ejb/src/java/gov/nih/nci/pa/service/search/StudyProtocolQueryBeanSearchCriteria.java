@@ -158,6 +158,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String STUDY_OWNER_TYPE_PARAM = "studyOwnerTypeParam";
         private static final String STUDY_OWNER_DWS_PARAM = "studyOwnerDWSParam";
         private static final String STUDY_OWNER_SITE_PARAM = "studyOwnerSiteFunctionalCodeParam";
+        private static final String STUDY_PHASE_CODE_PARAM = "studyPhaseCodeParam";
 
         public StudyProtocolHelper(StudyProtocol sp, StudyProtocolOptions spo) {
             this.sp = sp;
@@ -203,6 +204,13 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 whereClause.append(String.format(" and dws.id = (select max(id) from %s.documentWorkflowStatuses)",
                         SearchableUtils.ROOT_OBJ_ALIAS));
                 params.put(REJECTED_DWS_PARAM, DocumentWorkflowStatusCode.REJECTED);
+            }
+            
+            if (CollectionUtils.isNotEmpty(this.spo.getPhaseCodes())) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(" %s %s.phaseCode  in (:%s) ", operator,
+                                                 SearchableUtils.ROOT_OBJ_ALIAS, STUDY_PHASE_CODE_PARAM));
+                params.put(STUDY_PHASE_CODE_PARAM, this.spo.getPhaseCodes());
             }
 
             handleOtherIdentifiersAndOwnership(whereClause, params);
