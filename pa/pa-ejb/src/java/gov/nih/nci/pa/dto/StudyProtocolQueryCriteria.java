@@ -142,7 +142,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private Long diseaseConditionId;
     private String interventionType;
     private String summ4FundingSourceTypeCode;
-    private List<String> phaseCodes = new ArrayList<String>();
+    private final List<String> phaseCodes = new ArrayList<String>();
     
     /**
      * @return the inBoxProcessing
