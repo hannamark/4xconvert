@@ -72,7 +72,7 @@ function handleReset(){
                         <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Run report</span></span></s:a>  
                     </li>
                     <li>
-                        <s:a href="#" cssClass="btn" onclick="handleReset()"><span class="btn_img"><span class="back">Reset</span></span></s:a>  
+                        <s:a href="#" cssClass="btn" onclick="handleReset()"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>  
                     </li>
                 </ul>   
             </del>

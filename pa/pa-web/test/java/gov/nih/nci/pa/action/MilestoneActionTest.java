@@ -10,6 +10,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.pa.dto.MilestoneWebDTO;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTimeUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -44,6 +47,11 @@ public class MilestoneActionTest extends AbstractPaActionTest {
     public void prepare() throws PAException {
         action = new MilestoneAction();
         action.prepare();
+    }
+    
+    @After
+    public void tearDown() {
+        DateTimeUtils.setCurrentMillisSystem();
     }
 
     @Test
@@ -126,7 +134,9 @@ public class MilestoneActionTest extends AbstractPaActionTest {
 
     @Test
     public void testDateCheckCurrentDate() throws PAException {
-        String clientDate = sdf.format(new Timestamp((new Date()).getTime() + 2000000));
+        Long now = DateTimeUtils.currentTimeMillis();
+        DateTimeUtils.setCurrentMillisFixed(now);
+        String clientDate = sdf.format(new Timestamp(now));
         MilestoneWebDTO webDTO = new MilestoneWebDTO();
         webDTO.setComment("comment");
         getRequest().setupAddParameter("date", clientDate);

@@ -104,7 +104,6 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -117,6 +116,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.struts2.ServletActionContext;
+import org.joda.time.DateTime;
 /**
 * @author Hugh Reinhart
 * @since 1/16/2009
@@ -227,8 +227,9 @@ public final class MilestoneAction extends AbstractListEditAction {
         String date = ServletActionContext.getRequest().getParameter("date");
         dto.setCommentText(StConverter.convertToSt(milestone.getComment()));
         dto.setMilestoneCode(CdConverter.convertStringToCd(milestone.getMilestone()));
-        if (DateUtils.isSameDay(new Date(), PAUtil.dateStringToDateTime(date))) {
-            dto.setMilestoneDate(TsConverter.convertToTs(new Timestamp(new Date().getTime())));
+        Date now = new DateTime().toDate();
+        if (DateUtils.isSameDay(now, PAUtil.dateStringToDateTime(date))) {
+            dto.setMilestoneDate(TsConverter.convertToTs(now));
         } else {
             dto.setMilestoneDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(date)));
         }
