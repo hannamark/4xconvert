@@ -93,8 +93,8 @@ import org.junit.runners.Suite.SuiteClasses;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 @RunWith(Suite.class)
-@SuiteClasses(value = {LoginTest.class, RegisterTrialTest.class, TrialSearchTest.class, SetupPaTrialData.class,
-        ViewTrialTest.class, UpdateTrialStatusTest.class})
+@SuiteClasses(value = {SearchUserTest.class, LoginTest.class, RegisterTrialTest.class, TrialSearchTest.class,
+        SetupPaTrialData.class, ViewTrialTest.class, UpdateTrialStatusTest.class })
 public class AllSeleniumTests {
 
 }
