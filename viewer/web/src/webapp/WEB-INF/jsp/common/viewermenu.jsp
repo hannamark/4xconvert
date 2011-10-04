@@ -27,43 +27,11 @@
                     </c:otherwise>
                 </c:choose>
                 <c:choose>
-                    <c:when test="${requestScope.topic == 'run_trial_process'}">
-                       <li><a href="criteriaTrialProcessing.action" class="selected">Trial Processing</a></li> 
-                    </c:when>
-                    <c:otherwise>
-                       <li><a href="criteriaTrialProcessing.action" >Trial Processing</a></li>
-                    </c:otherwise>
-                </c:choose>
-                <c:choose>
-                    <c:when test="${requestScope.topic == 'run_portfolio_average'}">
-                       <li><a href="criteriaAverageMilestone.action" class="selected">Portfolio Average Milestone</a></li> 
-                    </c:when>
-                    <c:otherwise>
-                       <li><a href="criteriaAverageMilestone.action" >Portfolio Average Milestone</a></li>
-                    </c:otherwise>
-                </c:choose>
-                <c:choose>
-                    <c:when test="${requestScope.topic == 'run_submitted_date'}">
-                       <li><a href="criteriaSubmissionByDate.action" class="selected">Trials Submitted by Date</a></li> 
-                    </c:when>
-                    <c:otherwise>
-                       <li><a href="criteriaSubmissionByDate.action" >Trials Submitted by Date</a></li>
-                    </c:otherwise>
-                </c:choose>
-                <c:choose>
                     <c:when test="${requestScope.topic == 'run_submitted_institution'}">
                        <li><a href="criteriaSubmissionByInstitution.action" class="selected">Trials Submitted by Institution</a></li> 
                     </c:when>
                     <c:otherwise>
                        <li><a href="criteriaSubmissionByInstitution.action" >Trials Submitted by Institution</a></li>
-                    </c:otherwise>
-                </c:choose>
-                <c:choose>
-                    <c:when test="${requestScope.topic == 'run_current_milestone'}">
-                       <li><a href="criteriaCurrentMilestone.action" class="selected">Current Milestone</a></li> 
-                    </c:when>
-                    <c:otherwise>
-                       <li><a href="criteriaCurrentMilestone.action" >Current Milestone</a></li>
                     </c:otherwise>
                 </c:choose>
                 <c:choose>

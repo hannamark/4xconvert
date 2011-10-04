@@ -143,11 +143,7 @@ public abstract class AbstractViewerSeleniumTest extends AbstractSeleneseTestCas
 
     private void verifyReportsMenu() {
         assertTrue(selenium.isElementPresent("link=Summary of Submission"));
-        assertTrue(selenium.isElementPresent("link=Trial Processing"));
-        assertTrue(selenium.isElementPresent("link=Portfolio Average Milestone"));
-        assertTrue(selenium.isElementPresent("link=Trials Submitted by Date"));
         assertTrue(selenium.isElementPresent("link=Trials Submitted by Institution"));
-        assertTrue(selenium.isElementPresent("link=Current Milestone"));
         assertTrue(selenium.isElementPresent("link=Summary 4 Type"));
         assertTrue(selenium.isElementPresent("link=Log Out"));
     }

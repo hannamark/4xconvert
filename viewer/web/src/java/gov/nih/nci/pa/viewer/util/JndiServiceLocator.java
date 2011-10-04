@@ -78,12 +78,10 @@
 */
 package gov.nih.nci.pa.viewer.util;
 
-import gov.nih.nci.pa.report.service.AverageMilestoneLocal;
 import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
 import gov.nih.nci.pa.report.service.Summ4RepLocal;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
 import gov.nih.nci.pa.report.service.TrialListLocal;
-import gov.nih.nci.pa.report.service.TrialProcessingLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.JNDIUtil;
 
@@ -105,20 +103,6 @@ public class JndiServiceLocator implements ServiceLocator {
      */
     public TrialListLocal getTrialListReportService() {
         return (TrialListLocal) JNDIUtil.lookupPa("pa/TrialListReportBean/local");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public TrialProcessingLocal getTrialProcessingReportService() {
-        return (TrialProcessingLocal) JNDIUtil.lookupPa("pa/TrialProcessingReportBean/local");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public AverageMilestoneLocal getAverageMilestoneReportService() {
-        return (AverageMilestoneLocal) JNDIUtil.lookupPa("pa/AverageMilestoneReportBean/local");
     }
 
     /**

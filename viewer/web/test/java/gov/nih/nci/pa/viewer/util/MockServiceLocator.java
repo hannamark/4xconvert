@@ -77,26 +77,18 @@
 package gov.nih.nci.pa.viewer.util;
 
 import static org.mockito.Mockito.mock;
-import gov.nih.nci.pa.report.service.AverageMilestoneLocal;
 import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
 import gov.nih.nci.pa.report.service.Summ4RepLocal;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
 import gov.nih.nci.pa.report.service.TrialListLocal;
-import gov.nih.nci.pa.report.service.TrialProcessingLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 public class MockServiceLocator implements ServiceLocator {
 
-    private final AverageMilestoneLocal averageMilestone = new MockAverageMilestoneService();
     private final SubmitterOrganizationLocal submitterOrganization = new MockSubmitterOrganizationService();
     private final TrialCountsLocal trialCounts = new MockTrialCountsService();
     private final TrialListLocal trialList = new MockTrialListService();
-    private final TrialProcessingLocal trialProcessing = new MockTrialProcessingService();
     private final Summ4RepLocal summ4Rep = new MockSumm4RepService();
     private final ProtocolQueryServiceLocal protocolQuery = mock(ProtocolQueryServiceLocal.class);
-    public AverageMilestoneLocal getAverageMilestoneReportService() {
-        return averageMilestone;
-    }
-
     public SubmitterOrganizationLocal getSubmitterOrganizationReportService() {
         return submitterOrganization;
     }
@@ -107,10 +99,6 @@ public class MockServiceLocator implements ServiceLocator {
 
     public TrialListLocal getTrialListReportService() {
         return trialList;
-    }
-
-    public TrialProcessingLocal getTrialProcessingReportService() {
-        return trialProcessing;
     }
 
     public Summ4RepLocal getSumm4ReportService() {

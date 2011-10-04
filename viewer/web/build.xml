@@ -30,8 +30,8 @@
     <property name="viewer.build.testResourceDir.0" value="${basedir}/test/resources"/>
     <property name="viewer.test.reports" value="${reportDir}/test-reports"/>
     <property name="viewer.coverage.reports" value="${reportDir}/coverage-reports"/>
-    <property name="viewer.coverage.line" value="74"/>
-    <property name="viewer.coverage.branch" value="77"/>
+    <property name="viewer.coverage.line" value="61"/>
+    <property name="viewer.coverage.branch" value="68"/>
     <property name="viewer.pmd.maxerrors" value="1"/>
     <property name="viewer.reporting.outputDirectory" value="${reportDir}/site"/>
     <property name="viewer.war" value="${viewer.build.finalName}.war"/>
