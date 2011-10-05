@@ -1,8 +1,6 @@
-<!DOCTYPE html PUBLIC   
-    "-//W3C//DTD XHTML 1.1 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <title><fmt:message key="trialStatus.title" /></title>
@@ -16,12 +14,12 @@
         <script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
         <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
         <script type="text/javascript" src="<c:url value="/scripts/js/showhide.js"/>"></script>
-        <c:url value="/protected/studyOverallStatushistorypopup.action" var="lookupUrl" />
+        <c:url value="/protected/studyOverallStatusHistorypopup.action" var="lookupUrl" />
         
         <script type="text/javascript">
             addCalendar("Cal1", "Select Date", "statusDate", "studyoverallstatus");
             addCalendar("Cal2", "Select Date", "startDate", "studyoverallstatus");
-            addCalendar("Cal3", "Select Date", "completionDate", "studyoverallstatus");
+            addCalendar("Cal3", "Select Date", "primaryCompletionDate", "studyoverallstatus");
             setWidth(90, 1, 15, 1);
             setFormat("mm/dd/yyyy");
         
@@ -29,9 +27,11 @@
             function callOnloadFunctions() {
                 setFocusToFirstControl();         
             }
+            
             function lookup() {
                 showPopup('${lookupUrl}', null, 'Status History');
-            }   
+            } 
+            
             function statusChange() {
                 var newStatus = $('currentTrialStatus').value;
                 if((newStatus == "Administratively Complete")
@@ -45,6 +45,7 @@
                   $('statusReason').readonly=true;
                 }
             }
+            
             function handleAction() {
                 input_box=confirm("Click OK to save changes or Cancel to Abort.");
                 if (input_box == true){
@@ -157,17 +158,17 @@
                                 </tr>
                                 <tr>
                                     <td class="label">
-                                        <s:label for="completionDate">
+                                        <s:label for="primaryCompletionDate">
                                             <fmt:message key="trialStatus.primary.completion.date" />
                                         </s:label>
                                         <span class="required">*</span>
                                     </td>
                                     <td  colspan="2" class="value">
-                                        <s:textfield name="completionDate" id="completionDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                                        <s:textfield name="primaryCompletionDate" id="primaryCompletionDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                                         <a href="javascript:showCal('Cal3')">
                                             <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
                                         </a> 
-                                        <s:radio name="completionDateType" id="completionDateType" list="dateTypeList" />
+                                        <s:radio name="primaryCompletionDateType" id="primaryCompletionDateType" list="dateTypeList" />
                                     </td>
                                 </tr>
                             </table>

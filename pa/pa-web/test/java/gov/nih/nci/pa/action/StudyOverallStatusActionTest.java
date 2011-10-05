@@ -80,95 +80,453 @@ package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.pa.dto.StudyOverallStatusWebDTO;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
 
-import java.util.List;
+import java.util.Date;
 
 import org.apache.struts2.ServletActionContext;
-import org.junit.Before;
+import org.joda.time.DateTime;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 /**
  * @author hreinhart
  *
  */
 public class StudyOverallStatusActionTest extends AbstractPaActionTest {
-    private StudyOverallStatusAction testAction;
-    StudyProtocolQueryDTO spDTO;
+    private ProtocolQueryServiceLocal protocolQueryService = mock(ProtocolQueryServiceLocal.class);
+    private StudyOverallStatusServiceLocal studyOverallStatusService = mock(StudyOverallStatusServiceLocal.class);
+    private StudyProtocolServiceLocal studyProtocolService = mock(StudyProtocolServiceLocal.class);
+    private StudyOverallStatusAction sut;
 
-    @Before 
-    public void setupStudyOverallStatusActionTests() throws Exception {
-        testAction = new StudyOverallStatusAction();
-        testAction.prepare();
+    /**
+     * Creates a real StudyOverallStatusAction and inject the mock services in it.
+     * @return A real StudyOverallStatusAction with mock services injected.
+     */
+    private StudyOverallStatusAction createStudyOverallStatusAction() {
+        StudyOverallStatusAction action = new StudyOverallStatusAction();
+        setDependencies(action);
+        return action;
     }
 
+    /**
+     * Creates a mock StudyOverallStatusAction and inject the mock services in it.
+     * @return A mock StudyOverallStatusAction with mock services injected.
+     */
+    private StudyOverallStatusAction createStudyOverallStatusActionMock() {
+        StudyOverallStatusAction action = mock(StudyOverallStatusAction.class);
+        doCallRealMethod().when(action).setProtocolQueryService(protocolQueryService);
+        doCallRealMethod().when(action).setStudyOverallStatusService(studyOverallStatusService);
+        doCallRealMethod().when(action).setStudyProtocolService(studyProtocolService);
+        setDependencies(action);
+        return action;
+    }
+
+    /**
+     * Inject the mock services in the given StudyOverallStatusAction.
+     * @param action The StudyOverallStatusAction to setup with mock services
+     */
+    private void setDependencies(StudyOverallStatusAction action) {
+        action.setProtocolQueryService(protocolQueryService);
+        action.setStudyOverallStatusService(studyOverallStatusService);
+        action.setStudyProtocolService(studyProtocolService);
+    }
+
+    /**
+     * test the execute method in the success case.
+     * @throws PAException if an error occurs
+     */
     @Test
-    public void testDisplayStatus() throws Exception {
-        testAction.execute();
-        assertEquals(ActualAnticipatedTypeCode.ACTUAL.getCode(), testAction.getStartDateType());
-        assertEquals("01/01/2000" , testAction.getStartDate());
-        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED.getCode(), testAction.getCompletionDateType());
-        assertEquals("04/15/2010" , testAction.getCompletionDate());
-        assertEquals(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getCode(), testAction.getCurrentTrialStatus());
-        assertEquals("02/01/2008", testAction.getStatusDate());
+    public void testExecuteSuccess() throws PAException {
+        sut = createStudyOverallStatusActionMock();
+        doCallRealMethod().when(sut).execute();
+        String result = sut.execute();
+        assertEquals("Wrong result returned", "success", result);
+        
+        verify(sut).loadForm();
+        
+        verify(sut, never()).addActionError(anyString());
+    }
+
+    /**
+     * test the execute method in the failure case.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testExecuteFailure() throws PAException {
+        sut = createStudyOverallStatusActionMock();
+        doCallRealMethod().when(sut).execute();
+        doThrow(new PAException("PAException")).when(sut).loadForm();
+        
+        String result = sut.execute();
+        
+        assertEquals("Wrong result returned", "success", result);
+        verify(sut).loadForm();
+        verify(sut).addActionError("PAException");
+    }
+
+    /**
+     * Test the loadForm method with data.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testLoadFormWithData() throws PAException {
+        sut = createStudyOverallStatusAction();
+        sut.prepareData();
+        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        StudyProtocolDTO studyProtocolDTO = createStudyProtocolDTO();
+        when(studyProtocolService.getStudyProtocol(spIi)).thenReturn(studyProtocolDTO);
+        StudyOverallStatusDTO studyOverallStatusDTO = createStudyOverallStatusDTO();
+        when(studyOverallStatusService.getCurrentByStudyProtocol(spIi)).thenReturn(studyOverallStatusDTO);
+        
+        sut.loadForm();
+        
+        assertEquals("Wrong startDate", TsConverter.convertToString(studyProtocolDTO.getStartDate()),
+                     sut.getStartDate());
+        assertEquals("Wrong primaryCompletionDate",
+                     TsConverter.convertToString(studyProtocolDTO.getPrimaryCompletionDate()),
+                     sut.getPrimaryCompletionDate());
+        assertEquals("Wrong startDateType", studyProtocolDTO.getStartDateTypeCode().getCode(), sut.getStartDateType());
+        assertEquals("Wrong primaryCompletionDateType", studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode(),
+                     sut.getPrimaryCompletionDateType());
+        assertEquals("Wrong status code", studyOverallStatusDTO.getStatusCode().getCode(), sut.getCurrentTrialStatus());
+        assertEquals("Wrong status Date", TsConverter.convertToString(studyOverallStatusDTO.getStatusDate()),
+                     sut.getStatusDate());
+        assertEquals("Wrong status reason", StConverter.convertToString(studyOverallStatusDTO.getReasonText()),
+                     sut.getStatusReason());
+    }
+
+    /**
+     * Test the loadForm method with no data.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testLoadFormNoData() throws PAException {
+        sut = createStudyOverallStatusAction();
+        sut.prepareData();
+        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        when(studyProtocolService.getStudyProtocol(spIi)).thenReturn(null);
+        when(studyOverallStatusService.getCurrentByStudyProtocol(spIi)).thenReturn(null);
+        
+        sut.loadForm();
+        
+        assertNull("Wrong startDate", sut.getStartDate());
+        assertNull("Wrong primaryCompletionDate", sut.getPrimaryCompletionDate());
+        assertNull("Wrong startDateType", sut.getStartDateType());
+        assertNull("Wrong primaryCompletionDateType", sut.getPrimaryCompletionDateType());
+        assertNull("Wrong status code", sut.getCurrentTrialStatus());
+        assertNull("Wrong status Date", sut.getStatusDate());
+        assertNull("Wrong status reason", sut.getStatusReason());
     }
     
-    @Test
-    public void testDisplayHistory() throws Exception {
-        testAction.execute();
-        testAction.historypopup();
-        List<StudyOverallStatusWebDTO> rslt = testAction.getOverallStatusList();
-        assertEquals(2, rslt.size());
-        assertEquals(StudyStatusCode.APPROVED.getDisplayName(), rslt.get(0).getStatusCode());
-        assertEquals("01/01/2008", rslt.get(0).getStatusDate());
-        assertEquals(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL.getDisplayName(), rslt.get(1).getStatusCode());
-        assertEquals("02/01/2008", rslt.get(1).getStatusDate());
+    private StudyProtocolDTO createStudyProtocolDTO() {
+        StudyProtocolDTO dto = new StudyProtocolDTO();
+        DateTime now = new DateTime();
+        dto.setStartDate(TsConverter.convertToTs(now.minusDays(2).toDate()));
+        dto.setPrimaryCompletionDate(TsConverter.convertToTs(now.minusDays(1).toDate()));
+        dto.setStartDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ACTUAL));
+        dto.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ACTUAL));
+        return dto;
     }
     
-    @Test
-    public void testTransitionToAdministrativelyComplete() throws Exception {
-        String tracker18328 = "Current Trial Status Date and Primary Completion Date must be the same when " +
-                "Current Trial Status is 'Administratively Complete'.";
-        testAction.execute();
-        
-        // completion date != status date
-        testAction.setCurrentTrialStatus(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode());
-        testAction.setStatusDate("3/1/2008");
-        testAction.setStatusReason("statusReason");
-        testAction.setCompletionDate("3/2/2008");
-        testAction.setCompletionDateType("Actual");
-        testAction.update();
-        assertNotNull(ServletActionContext.getRequest().getAttribute(Constants.SUCCESS_MESSAGE));
-        //assertTrue(testAction.getActionErrors().contains(tracker18328));
-        
-        // anticipated completion date 
-        testAction.setCompletionDate("3/1/2008");
-        testAction.setCompletionDateType("Anticipated");
-        testAction.update();
-        assertNotNull(ServletActionContext.getRequest().getAttribute(Constants.SUCCESS_MESSAGE));
-        
-        // successful update
-        testAction.setCompletionDateType("Actual");
-        testAction.update();
-        assertEquals(Constants.UPDATE_MESSAGE, ServletActionContext.getRequest().getAttribute(Constants.SUCCESS_MESSAGE));
+    private StudyOverallStatusDTO createStudyOverallStatusDTO(){
+        StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.IN_REVIEW));
+        dto.setStatusDate(TsConverter.convertToTs(new DateTime().toDate()));
+        dto.setReasonText(StConverter.convertToSt("reason"));
+        return dto;
     }
     
+    /**
+     * Test the update method in the success case.
+     * @throws PAException if an error occurs
+     */
     @Test
-    public void testTransitionValidationsOccurFirst() throws Exception {
-        testAction.execute();
+    public void testUpdateSuccess() throws PAException {
+        sut = createStudyOverallStatusActionMock();
+        doCallRealMethod().when(sut).update();
+        StudyOverallStatusDTO statusDto = new StudyOverallStatusDTO();
+        when(sut.getStudyOverallStatus()).thenReturn(statusDto);
+        when(sut.hasActionErrors()).thenReturn(false);
         
-        // Invalid transition plus date error
-        testAction.setCurrentTrialStatus(StudyStatusCode.APPROVED.getCode());
-        testAction.setStatusDate("3/1/2008");
-        testAction.setCompletionDate("3/1/2008");
-        testAction.setCompletionDateType("Actual");
-        testAction.update();
-        assertTrue(testAction.hasActionErrors());
-        String errs = testAction.getActionErrors().toString();
-        assertTrue(errs.contains("Invalid study status transition"));
-     }
+        String result = sut.update();
+        
+        assertEquals("Wrong result returned", "success", result);
+        InOrder inOrder = inOrder(sut);
+        inOrder.verify(sut).clearErrorsAndMessages();
+        inOrder.verify(sut).getStudyOverallStatus();
+        inOrder.verify(sut).validateOverallStatus(statusDto);
+        inOrder.verify(sut).insertOrUpdateStudyOverallStatus(statusDto);
+        inOrder.verify(sut).updateStudyProtocol();
+        inOrder.verify(sut).loadForm();
+        assertEquals("Wrong success message", Constants.UPDATE_MESSAGE,
+                     ServletActionContext.getRequest().getAttribute(Constants.SUCCESS_MESSAGE));
+    }
+    
+    /**
+     * Test the update method in the error case.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testUpdateError() throws PAException {
+        sut = createStudyOverallStatusActionMock();
+        doCallRealMethod().when(sut).update();
+        StudyOverallStatusDTO statusDto = new StudyOverallStatusDTO();
+        when(sut.getStudyOverallStatus()).thenReturn(statusDto);
+        when(sut.hasActionErrors()).thenReturn(true);
+        
+        String result = sut.update();
+        
+        assertEquals("Wrong result returned", "success", result);
+        InOrder inOrder = inOrder(sut);
+        inOrder.verify(sut).clearErrorsAndMessages();
+        inOrder.verify(sut).getStudyOverallStatus();
+        inOrder.verify(sut).validateOverallStatus(statusDto);
+        inOrder.verify(sut).insertOrUpdateStudyOverallStatus(statusDto);
+        inOrder.verify(sut).updateStudyProtocol();
+        inOrder.verify(sut, never()).loadForm();
+        assertNull("Wrong success message", ServletActionContext.getRequest().getAttribute(Constants.SUCCESS_MESSAGE));
+    }
+    
+    /**
+     * Test the update method in the exception case.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testUpdateException() throws PAException {
+        sut = createStudyOverallStatusActionMock();
+        doCallRealMethod().when(sut).update();
+        StudyOverallStatusDTO statusDto = new StudyOverallStatusDTO();
+        when(sut.getStudyOverallStatus()).thenReturn(statusDto);
+        doThrow(new PAException("PAException")).when(sut).validateOverallStatus(statusDto);
+        
+        String result = sut.update();
+        
+        assertEquals("Wrong result returned", "success", result);
+        InOrder inOrder = inOrder(sut);
+        inOrder.verify(sut).clearErrorsAndMessages();
+        inOrder.verify(sut).getStudyOverallStatus();
+        inOrder.verify(sut).validateOverallStatus(statusDto);
+        inOrder.verify(sut).addActionError("PAException");
+    }
+
+    /**
+     * Test the getStudyOverallStatus method.
+     */
+    @Test
+    public void testGetStudyOverallStatus() {
+        sut = createStudyOverallStatusAction();
+        sut.prepareData();
+        sut.setStatusReason("reason");
+        sut.setCurrentTrialStatus(StudyStatusCode.ACTIVE.getCode());
+        String now = TsConverter.convertToString(TsConverter.convertToTs(new Date()));
+        sut.setStatusDate(now);
+        
+        StudyOverallStatusDTO status = sut.getStudyOverallStatus();
+        
+        assertNotNull("No result returned", status);
+        assertNotNull("status identifier is null", status.getIdentifier());
+        assertEquals("Wrong status identifier", NullFlavor.NI, status.getIdentifier().getNullFlavor());
+        assertNotNull("status reason is null", status.getReasonText());
+        assertEquals("Wrong status reason", "reason", status.getReasonText().getValue());
+        assertNotNull("status code is null", status.getStatusCode());
+        assertEquals("Wrong status code", StudyStatusCode.ACTIVE.getCode(), status.getStatusCode().getCode());
+        assertNotNull("status date is null", status.getStatusDate());
+        assertEquals("Wrong status date", now, TsConverter.convertToString(status.getStatusDate()));
+        assertEquals("Wrong study protocol Ii", IiConverter.convertToStudyProtocolIi(1L),
+                     status.getStudyProtocolIdentifier());
+    }
+
+    /**
+     * Test the validateOverallStatus method.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testValidateOverallStatus() throws PAException {
+        sut = createStudyOverallStatusActionMock();
+        StudyOverallStatusDTO statusDto = new StudyOverallStatusDTO();
+        doCallRealMethod().when(sut).prepareData();
+        doCallRealMethod().when(sut).validateOverallStatus(statusDto);
+        sut.prepareData();
+
+        sut.validateOverallStatus(statusDto);
+
+        ArgumentCaptor<StudyProtocolDTO> studyProtocolCaptor1 = ArgumentCaptor.forClass(StudyProtocolDTO.class);
+        verify(sut).getStudyProtocolDates(studyProtocolCaptor1.capture());
+        ArgumentCaptor<StudyProtocolDTO> studyProtocolCaptor2 = ArgumentCaptor.forClass(StudyProtocolDTO.class);
+        verify(studyOverallStatusService).validate(eq(statusDto), studyProtocolCaptor2.capture());
+        StudyProtocolDTO studyProtocolDTO = studyProtocolCaptor2.getValue();
+        assertEquals("Wrong study protocol", studyProtocolCaptor1.getValue(), studyProtocolDTO);
+        assertNotNull("No study protocol", studyProtocolDTO);
+        assertEquals("Wrong study protocol Ii", IiConverter.convertToStudyProtocolIi(1L),
+                     studyProtocolDTO.getIdentifier());
+    }
+
+    /**
+     * Test the getStudyProtocolDates method.
+     */
+    @Test
+    public void testGetStudyProtocolDates() {
+        sut = createStudyOverallStatusAction();
+        String startDate = TsConverter.convertToString(TsConverter.convertToTs(new Date()));
+        sut.setStartDate(startDate);
+        sut.setStartDateType(ActualAnticipatedTypeCode.ACTUAL.getCode());
+        String primaryCompletionDate = TsConverter.convertToString(TsConverter.convertToTs(new Date()));
+        sut.setPrimaryCompletionDate(primaryCompletionDate);
+        sut.setPrimaryCompletionDateType(ActualAnticipatedTypeCode.ANTICIPATED.getCode());
+        StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
+
+        sut.getStudyProtocolDates(studyProtocolDTO);
+
+        assertNotNull("Start Date Type is null", studyProtocolDTO.getStartDateTypeCode());
+        assertEquals("Wrong Start Date Type", ActualAnticipatedTypeCode.ACTUAL.getCode(), studyProtocolDTO
+            .getStartDateTypeCode().getCode());
+        assertNotNull("Start Date is null", studyProtocolDTO.getStartDate());
+        assertEquals("Wrong Start Date", startDate, TsConverter.convertToString(studyProtocolDTO.getStartDate()));
+        assertNotNull("Primary Completion Date Type is null", studyProtocolDTO.getPrimaryCompletionDateTypeCode());
+        assertEquals("Wrong Primary Completion Date Type", ActualAnticipatedTypeCode.ANTICIPATED.getCode(),
+                     studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode());
+        assertNotNull("Primary Completion Date is null", studyProtocolDTO.getPrimaryCompletionDate());
+        assertEquals("Wrong Primary Completion Date", primaryCompletionDate,
+                     TsConverter.convertToString(studyProtocolDTO.getPrimaryCompletionDate()));
+    }
+    
+    /**
+     * Test the insertOrUpdateStudyOverallStatus in the update case.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testInsertOrUpdateStudyOverallStatusUpdate() throws PAException {
+        sut = createStudyOverallStatusAction();
+        sut.prepareData();
+        sut.setCurrentTrialStatus(StudyStatusCode.ACTIVE.getCode());
+        String statusDate = TsConverter.convertToString(TsConverter.convertToTs(new Date()));
+        sut.setStatusDate(statusDate);
+        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        StudyProtocolQueryDTO studyProtocolQueryDTO = new StudyProtocolQueryDTO();
+        studyProtocolQueryDTO.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.SUBMITTED);
+        when(protocolQueryService.getTrialSummaryByStudyProtocolId(1L)).thenReturn(studyProtocolQueryDTO);
+        StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
+        studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt(1));
+        when(studyProtocolService.getStudyProtocol(spIi)).thenReturn(studyProtocolDTO);
+        StudyOverallStatusDTO existingStatus = new StudyOverallStatusDTO();
+        Ii statusIi = IiConverter.convertToStudyOverallStatusIi(2L);
+        existingStatus.setIdentifier(statusIi);
+        when(studyOverallStatusService.getCurrentByStudyProtocol(spIi)).thenReturn(existingStatus);
+        StudyOverallStatusDTO statusDto = new StudyOverallStatusDTO();
+        
+        sut.insertOrUpdateStudyOverallStatus(statusDto);
+        
+        InOrder inOrder = inOrder(protocolQueryService, studyOverallStatusService, studyProtocolService);
+        inOrder.verify(protocolQueryService).getTrialSummaryByStudyProtocolId(1L);
+        inOrder.verify(studyProtocolService).getStudyProtocol(spIi);
+        inOrder.verify(studyOverallStatusService).update(statusDto);
+        assertEquals("Wrong status id", statusIi, statusDto.getIdentifier());
+        assertEquals("Wrong study status code", StudyStatusCode.ACTIVE,studyProtocolQueryDTO.getStudyStatusCode());
+        assertEquals("Wrong study status date", statusDate, 
+                     TsConverter.convertToString(TsConverter.convertToTs(studyProtocolQueryDTO.getStudyStatusDate())));
+        assertEquals("Wrong study protocol in session", studyProtocolQueryDTO, 
+                     ServletActionContext.getRequest().getSession().getAttribute(Constants.TRIAL_SUMMARY));
+
+    }
+    
+    /**
+     * Test the insertOrUpdateStudyOverallStatus in the create case.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testInsertOrUpdateStudyOverallStatusCreate() throws PAException {
+        sut = createStudyOverallStatusAction();
+        sut.prepareData();
+        sut.setCurrentTrialStatus(StudyStatusCode.ACTIVE.getCode());
+        String statusDate = TsConverter.convertToString(TsConverter.convertToTs(new Date()));
+        sut.setStatusDate(statusDate);
+        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        StudyProtocolQueryDTO studyProtocolQueryDTO = new StudyProtocolQueryDTO();
+        when(protocolQueryService.getTrialSummaryByStudyProtocolId(1L)).thenReturn(studyProtocolQueryDTO);
+        StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
+        when(studyProtocolService.getStudyProtocol(spIi)).thenReturn(studyProtocolDTO);
+        StudyOverallStatusDTO statusDto = new StudyOverallStatusDTO();
+
+        sut.insertOrUpdateStudyOverallStatus(statusDto);
+
+        InOrder inOrder = inOrder(protocolQueryService, studyOverallStatusService, studyProtocolService);
+        inOrder.verify(protocolQueryService).getTrialSummaryByStudyProtocolId(1L);
+        inOrder.verify(studyProtocolService).getStudyProtocol(spIi);
+        inOrder.verify(studyOverallStatusService).create(statusDto);
+        assertEquals("Wrong study status code", StudyStatusCode.ACTIVE, studyProtocolQueryDTO.getStudyStatusCode());
+        assertEquals("Wrong study status date", statusDate,
+                     TsConverter.convertToString(TsConverter.convertToTs(studyProtocolQueryDTO.getStudyStatusDate())));
+        assertEquals("Wrong study protocol in session", studyProtocolQueryDTO, ServletActionContext.getRequest()
+            .getSession().getAttribute(Constants.TRIAL_SUMMARY));
+    }
+
+    /**
+     * Test the updateStudyProtocol method in the success case.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testUpdateStudyProtocol() throws PAException {
+        sut = createStudyOverallStatusActionMock();
+        doCallRealMethod().when(sut).prepareData();
+        doCallRealMethod().when(sut).updateStudyProtocol();
+        sut.prepareData();
+        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
+        when(studyProtocolService.getStudyProtocol(spIi)).thenReturn(studyProtocolDTO);
+
+        sut.updateStudyProtocol();
+        
+        InOrder inOrder = inOrder(studyProtocolService, sut);
+        inOrder.verify(studyProtocolService).getStudyProtocol(spIi);
+        inOrder.verify(sut).getStudyProtocolDates(studyProtocolDTO);
+        inOrder.verify(studyProtocolService).updateStudyProtocol(studyProtocolDTO);
+    }
+
+    /**
+     * Test the updateStudyProtocol method in the eception case.
+     * @throws PAException if an error occurs
+     */
+    @Test
+    public void testUpdateStudyProtocolException() throws PAException {
+        sut = createStudyOverallStatusActionMock();
+        doCallRealMethod().when(sut).prepareData();
+        doCallRealMethod().when(sut).updateStudyProtocol();
+        sut.prepareData();
+        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        when(studyProtocolService.getStudyProtocol(spIi)).thenThrow(new PAException("PAException"));
+
+        sut.updateStudyProtocol();
+
+        verify(studyProtocolService).getStudyProtocol(spIi);
+        verify(sut).addActionError("PAException");
+    }
 }

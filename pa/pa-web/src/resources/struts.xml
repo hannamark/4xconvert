@@ -201,10 +201,13 @@
         <action name="home">
             <result>studyProtocolshowCriteria.action</result>
         </action>
+        <action name="studyOverallStatusHistorypopup" class="gov.nih.nci.pa.action.StudyOverallStatusHistoryAction">
+            <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <result>/WEB-INF/jsp/nodecorate/statusHistory.jsp</result>
+        </action>
         <action name="studyOverallStatus*" class="gov.nih.nci.pa.action.StudyOverallStatusAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <result>/WEB-INF/jsp/administrative/studyOverallStatus.jsp</result>
-            <result name="historypopup">/WEB-INF/jsp/nodecorate/statusHistory.jsp</result>
         </action>
         <action name="participatingOrganizations*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />

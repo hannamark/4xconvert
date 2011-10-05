@@ -79,7 +79,6 @@
 package gov.nih.nci.pa.action;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
@@ -95,14 +94,13 @@ import gov.nih.nci.pa.service.StudyOverallStatusServiceLocal;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.Constants;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -118,51 +116,65 @@ import com.opensymphony.xwork2.Preparable;
  * @since 08/20/2008
  */
 public class StudyOverallStatusAction extends ActionSupport implements Preparable {
-    private static final long serialVersionUID = 1L;
-    private static final String ACTION_HISTORY = "historypopup";
-    private static String actualString = "Actual";
-    private static String anticipatedString = "Anticipated";
+   
+    private static final long serialVersionUID = -3647758169522163514L;
 
-    private Map<String, String>  dateTypeList;
-    private StudyProtocolServiceLocal spService;
-    private StudyOverallStatusServiceLocal sosService;
-    private ProtocolQueryServiceLocal spqService;
+    private Map<String, String> dateTypeList;
+    private ProtocolQueryServiceLocal protocolQueryService;
+    private StudyOverallStatusServiceLocal studyOverallStatusService;
+    private StudyProtocolServiceLocal studyProtocolService;
+
     private Ii spIdIi;
     private String currentTrialStatus;
     private String statusDate;
     private String statusReason;
     private String startDate;
+    private String primaryCompletionDate;
     private String completionDate;
     private String startDateType;
+    private String primaryCompletionDateType;
     private String completionDateType;
-    private List<StudyOverallStatusWebDTO> overallStatusList;
+    
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public void prepare() throws Exception {
-        dateTypeList = new HashMap<String, String>();
-        dateTypeList.put(actualString, actualString);
-        dateTypeList.put(anticipatedString, anticipatedString);
+    @Override
+    public void prepare() {
+        prepareServices();
+        prepareData();
+    }
 
-        spService = PaRegistry.getStudyProtocolService();
-        sosService = PaRegistry.getStudyOverallStatusService();
-        spqService = PaRegistry.getProtocolQueryService();
-        StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) ServletActionContext
-                .getRequest().getSession()
-                .getAttribute(Constants.TRIAL_SUMMARY);
-        spIdIi = IiConverter.convertToIi(spDTO.getStudyProtocolId());
-        spDTO = spqService.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(spIdIi));
+    /**
+     * Initialize the services used by this action.
+     */
+    void prepareServices() {
+        protocolQueryService = PaRegistry.getProtocolQueryService();
+        studyOverallStatusService = PaRegistry.getStudyOverallStatusService();
+        studyProtocolService = PaRegistry.getStudyProtocolService();
+    }
+
+    /**
+     * Initialize the data used by this action.
+     */
+    void prepareData() {
+        dateTypeList = new HashMap<String, String>();
+        String code = ActualAnticipatedTypeCode.ACTUAL.getCode();
+        dateTypeList.put(code, code);
+        code = ActualAnticipatedTypeCode.ANTICIPATED.getCode();
+        dateTypeList.put(code, code);
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        StudyProtocolQueryDTO spDTO = (StudyProtocolQueryDTO) session.getAttribute(Constants.TRIAL_SUMMARY);
+        spIdIi = IiConverter.convertToStudyProtocolIi(spDTO.getStudyProtocolId());
     }
 
     /**
      * @return Action result.
      */
     @Override
-    public String execute()  {
+    public String execute() {
         try {
-        loadForm();
+            loadForm();
         } catch (PAException e) {
             addActionError(e.getMessage());
         }
@@ -174,146 +186,126 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
      */
     public String update() {
         clearErrorsAndMessages();
-
         try {
-            StudyOverallStatusDTO statusDto = new StudyOverallStatusDTO();
-            statusDto.setIdentifier(IiConverter.convertToIi((Long) null));
-            statusDto.setReasonText(StConverter.convertToSt(this.getStatusReason()));
-            statusDto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(currentTrialStatus)));
-            statusDto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(statusDate)));
-            statusDto.setStudyProtocolIdentifier(spIdIi);
-
-            StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
-            studyProtocolDTO.setIdentifier(spIdIi);
-            studyProtocolDTO.setStartDateTypeCode(CdConverter.convertStringToCd(startDateType));
-            studyProtocolDTO.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(startDate)));
-            studyProtocolDTO.setPrimaryCompletionDate(TsConverter.convertToTs(
-                    PAUtil.dateStringToTimestamp(completionDate)));
-            studyProtocolDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertStringToCd(completionDateType));
-            sosService.validate(statusDto, studyProtocolDTO);
-
-            insertOrUpdateStudyOverallStatus();
+            StudyOverallStatusDTO statusDto = getStudyOverallStatus();
+            validateOverallStatus(statusDto);
+            insertOrUpdateStudyOverallStatus(statusDto);
             updateStudyProtocol();
-
             if (!hasActionErrors()) {
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
                 loadForm();
             }
         } catch (PAException e) {
-          addActionError(e.getMessage());
+            addActionError(e.getMessage());
         }
         return Action.SUCCESS;
     }
 
     /**
-     * @return result
-     * @throws PAException exception
+     * Loads the form data for display.
+     * @throws PAException if an error occurs
      */
-    public String historypopup() throws PAException {
-        overallStatusList = new ArrayList<StudyOverallStatusWebDTO>();
-        List<StudyOverallStatusDTO> isoList = sosService.getByStudyProtocol(spIdIi);
-        for (StudyOverallStatusDTO iso : isoList) {
-            overallStatusList.add(new StudyOverallStatusWebDTO(iso));
+    void loadForm() throws PAException {
+        StudyProtocolDTO spDto = studyProtocolService.getStudyProtocol(spIdIi);
+        if (spDto != null) {
+            setStartDate(TsConverter.convertToString(spDto.getStartDate()));
+            setPrimaryCompletionDate(TsConverter.convertToString(spDto.getPrimaryCompletionDate()));
+            setStartDateType(spDto.getStartDateTypeCode().getCode());
+            setPrimaryCompletionDateType(spDto.getPrimaryCompletionDateTypeCode().getCode());
+        } else {
+            setStartDate((String) null);
+            setPrimaryCompletionDate((String) null);
+            setStartDateType(null);
+            setPrimaryCompletionDateType(null);
         }
-        return ACTION_HISTORY;
+        StudyOverallStatusDTO sosDto = studyOverallStatusService.getCurrentByStudyProtocol(spIdIi);
+        if (sosDto != null) {
+            setCurrentTrialStatus((sosDto.getStatusCode() != null) ? sosDto.getStatusCode().getCode() : null);
+            setStatusDate(TsConverter.convertToString(sosDto.getStatusDate()));
+            setStatusReason(StConverter.convertToString(sosDto.getReasonText()));
+        } else {
+            setCurrentTrialStatus(null);
+            setStatusDate(null);
+            setStatusReason(null);
+        }
     }
 
     /**
-     * @return the startDateType
+     * Extract the StudyOverallStatusDTO from the submitted data.
+     * @return The StudyOverallStatusDTO extracted from the form submitted data
      */
-    public String getStartDateType() {
-        return startDateType;
+    StudyOverallStatusDTO getStudyOverallStatus() {
+        StudyOverallStatusDTO statusDto = new StudyOverallStatusDTO();
+        statusDto.setIdentifier(IiConverter.convertToStudyOverallStatusIi((Long) null));
+        statusDto.setReasonText(StConverter.convertToSt(getStatusReason()));
+        statusDto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(currentTrialStatus)));
+        statusDto.setStatusDate(TsConverter.convertToTs(ISOUtil.dateStringToTimestamp(statusDate)));
+        statusDto.setStudyProtocolIdentifier(spIdIi);
+        return statusDto;
     }
 
     /**
-     * @param startDateType the startDateType to set
+     * Validates the overallStatus.
+     * @param statusDto The StudyOverallStatusDTO to validate.
+     * @throws PAException If an error occurs.
      */
-    public void setStartDateType(String startDateType) {
-        this.startDateType = startDateType;
+    void validateOverallStatus(StudyOverallStatusDTO statusDto) throws PAException {
+        StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
+        studyProtocolDTO.setIdentifier(spIdIi);
+        getStudyProtocolDates(studyProtocolDTO);
+        studyOverallStatusService.validate(statusDto, studyProtocolDTO);
     }
 
     /**
-     * @return the completionDateType
+     * Fills the dates in the given study protocol.
+     * @param dto The study protocol dto to fill.
      */
-    public String getCompletionDateType() {
-        return completionDateType;
+    void getStudyProtocolDates(StudyProtocolDTO dto) {
+        dto.setStartDateTypeCode(CdConverter.convertStringToCd(startDateType));
+        dto.setStartDate(TsConverter.convertToTs(ISOUtil.dateStringToTimestamp(startDate)));
+        dto.setPrimaryCompletionDate(TsConverter.convertToTs(ISOUtil.dateStringToTimestamp(primaryCompletionDate)));
+        dto.setPrimaryCompletionDateTypeCode(CdConverter.convertStringToCd(primaryCompletionDateType));
     }
 
     /**
-     * @param completionDateType the completionDateType to set
+     * Insert or updates the given status.
+     * @param statusDto The status to insert or update
+     * @throws PAException If an error occurs
      */
-    public void setCompletionDateType(String completionDateType) {
-        this.completionDateType = completionDateType;
+    void insertOrUpdateStudyOverallStatus(StudyOverallStatusDTO statusDto) throws PAException {
+        if (currentTrialStatus != null) {
+            StudyProtocolQueryDTO spqDTO =
+                    protocolQueryService.getTrialSummaryByStudyProtocolId(IiConverter.convertToLong(spIdIi));
+            StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(spIdIi);
+            // original submission
+            if (spqDTO.getDocumentWorkflowStatusCode() != null
+                    && spqDTO.getDocumentWorkflowStatusCode().getCode().equalsIgnoreCase("SUBMITTED")
+                    && IntConverter.convertToInteger(spDTO.getSubmissionNumber()) == 1) {
+                StudyOverallStatusDTO sosDto = studyOverallStatusService.getCurrentByStudyProtocol(spIdIi);
+                statusDto.setIdentifier(sosDto.getIdentifier());
+                studyOverallStatusService.update(statusDto);
+            } else {
+                studyOverallStatusService.create(statusDto);
+            }
+            // set the current date and status to the session
+            spqDTO.setStudyStatusCode(StudyStatusCode.getByCode(currentTrialStatus));
+            spqDTO.setStudyStatusDate(ISOUtil.dateStringToTimestamp(statusDate));
+            // set the nee object back to session
+            ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, spqDTO);
+        }
     }
-
+    
     /**
-     * @return Trial completion date.
+     * Updates the study protocol dates.
      */
-    public Map<String, String> getPrimaryCompletionDate() {
-        return dateTypeList;
-    }
-
-    /**
-     * @return the startDate
-     */
-    public String getStartDate() {
-        return startDate;
-    }
-
-    /**
-     * @param startDate the startDate to set
-     */
-    public void setStartDate(String startDate) {
-        this.startDate = PAUtil.normalizeDateString(startDate);
-    }
-
-    /**
-     * @return the completionDate
-     */
-    public String getCompletionDate() {
-        return completionDate;
-    }
-
-    /**
-     * @param completionDate the completionDate to set
-     */
-    public void setCompletionDate(String completionDate) {
-        this.completionDate = PAUtil.normalizeDateString(completionDate);
-    }
-
-    /**
-     * @return the dateTypeList
-     */
-    public Map<String, String> getDateTypeList() {
-        return dateTypeList;
-    }
-
-    /**
-     * @return the statusDate
-     */
-    public String getStatusDate() {
-        return statusDate;
-    }
-
-    /**
-     * @param statusDate the statusDate to set
-     */
-    public void setStatusDate(String statusDate) {
-        this.statusDate = PAUtil.normalizeDateString(statusDate);
-    }
-
-    /**
-     * @return the statusReason
-     */
-    public String getStatusReason() {
-        return statusReason;
-    }
-
-    /**
-     * @param statusReason the statusReason to set
-     */
-    public void setStatusReason(String statusReason) {
-        this.statusReason = statusReason;
+    void updateStudyProtocol() {
+        try {
+            StudyProtocolDTO dto = studyProtocolService.getStudyProtocol(spIdIi);
+            getStudyProtocolDates(dto);
+            studyProtocolService.updateStudyProtocol(dto);
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+        }
     }
 
     /**
@@ -331,116 +323,143 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
     }
 
     /**
-     * @return the overallStatusList
+     * @return the statusDate
      */
-    public List<StudyOverallStatusWebDTO> getOverallStatusList() {
-        return overallStatusList;
+    public String getStatusDate() {
+        return statusDate;
     }
 
     /**
-     * @param overallStatusList the overallStatusList to set
+     * @param statusDate the statusDate to set
      */
-    public void setOverallStatusList(List<StudyOverallStatusWebDTO> overallStatusList) {
-        this.overallStatusList = overallStatusList;
-    }
-    private void insertOrUpdateStudyOverallStatus() throws PAException {
-        if (currentTrialStatus != null) {
-            StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
-            dto.setIdentifier(IiConverter.convertToIi((Long) null));
-            dto.setReasonText(StConverter.convertToSt(this.getStatusReason()));
-            dto.setStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(currentTrialStatus)));
-            dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(statusDate)));
-            dto.setStudyProtocolIdentifier(spIdIi);
-
-            StudyProtocolQueryDTO spqDTO = spqService.getTrialSummaryByStudyProtocolId(
-                        IiConverter.convertToLong(spIdIi));
-
-            StudyProtocolDTO spDTO = spService.getStudyProtocol(spIdIi);
-                //original submission
-                if (spqDTO.getDocumentWorkflowStatusCode() != null
-                        && spqDTO.getDocumentWorkflowStatusCode().getCode().equalsIgnoreCase("SUBMITTED")
-                && IntConverter.convertToInteger(spDTO.getSubmissionNumber()) == 1) {
-                    StudyOverallStatusDTO sosDto = null;
-                    sosDto = sosService.getCurrentByStudyProtocol(spIdIi);
-                    dto.setIdentifier(sosDto.getIdentifier());
-                    sosService.update(dto);
-                } else {
-                    sosService.create(dto);
-                }
-                // set the current date and status to the session
-                spqDTO.setStudyStatusCode(StudyStatusCode.getByCode(currentTrialStatus));
-                spqDTO.setStudyStatusDate(PAUtil.dateStringToTimestamp(statusDate));
-                // set the nee object back to session
-                ServletActionContext.getRequest().getSession().setAttribute(
-                        Constants.TRIAL_SUMMARY, spqDTO);
-        }
+    public void setStatusDate(String statusDate) {
+        this.statusDate = ISOUtil.normalizeDateString(statusDate);
     }
 
-    private void updateStudyProtocol() {
-        StudyProtocolDTO dto;
-        try {
-            dto = spService.getStudyProtocol(spIdIi);
-            dto.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(startDate)));
-            dto.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(completionDate)));
-            dto.setStartDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.getByCode(startDateType)));
-            dto.setPrimaryCompletionDateTypeCode(CdConverter
-                    .convertToCd(ActualAnticipatedTypeCode.getByCode(completionDateType)));
-            spService.updateStudyProtocol(dto);
-        } catch (PAException e) {
-            addActionError(e.getMessage());
-        }
+    /**
+     * @return the statusReason
+     */
+    public String getStatusReason() {
+        return statusReason;
     }
 
-    private void loadForm() throws PAException  {
-        StudyProtocolDTO spDto = spService.getStudyProtocol(spIdIi);
-        StudyOverallStatusDTO sosDto = null;
-        sosDto = sosService.getCurrentByStudyProtocol(spIdIi);
-        Timestamp tsTemp;
-        if (spDto != null) {
-            setStartDate(spDto);
-            setCompletionDate(spDto);
-        } else {
-            setStartDate((String) null);
-            setCompletionDate((String) null);
-            setStartDateType(null);
-            setCompletionDateType(null);
-        }
-
-        if (sosDto != null) {
-            setCurrentTrialStatus((sosDto.getStatusCode() != null)
-                    ? sosDto.getStatusCode().getCode() : null);
-            tsTemp = TsConverter.convertToTimestamp(sosDto.getStatusDate());
-            if (tsTemp != null) {
-                setStatusDate(tsTemp.toString());
-            } else {
-                setStatusDate(null);
-            }
-            setStatusReason(StConverter.convertToString(sosDto.getReasonText()));
-        } else {
-            setCurrentTrialStatus(null);
-            setStatusDate(null);
-            setStatusReason(null);
-        }
+    /**
+     * @param statusReason the statusReason to set
+     */
+    public void setStatusReason(String statusReason) {
+        this.statusReason = statusReason;
     }
 
-    private void setStartDate(StudyProtocolDTO spDto) {
-        Timestamp tsTemp = TsConverter.convertToTimestamp(spDto.getStartDate());
-        if (tsTemp != null) {
-            setStartDate(tsTemp.toString());
-        } else {
-            setStartDate((String) null);
-        }
+    /**
+     * @return the startDate
+     */
+    public String getStartDate() {
+        return startDate;
     }
 
-    private void setCompletionDate(StudyProtocolDTO spDto) {
-        Timestamp tsTemp = TsConverter.convertToTimestamp(spDto.getPrimaryCompletionDate());
-        if (tsTemp != null) {
-            setCompletionDate(tsTemp.toString());
-        } else {
-            setCompletionDate((String) null);
-        }
-        setStartDateType(spDto.getStartDateTypeCode().getCode());
-        setCompletionDateType(spDto.getPrimaryCompletionDateTypeCode().getCode());
+    /**
+     * @param startDate the startDate to set
+     */
+    public void setStartDate(String startDate) {
+        this.startDate = ISOUtil.normalizeDateString(startDate);
+    }
+
+    /**
+     * @return the primaryCompletionDate
+     */
+    public String getPrimaryCompletionDate() {
+        return primaryCompletionDate;
+    }
+
+    /**
+     * @param primaryCompletionDate the primaryCompletionDate to set
+     */
+    public void setPrimaryCompletionDate(String primaryCompletionDate) {
+        this.primaryCompletionDate = ISOUtil.normalizeDateString(primaryCompletionDate);
+    }
+
+    /**
+     * @return the completionDate
+     */
+    public String getCompletionDate() {
+        return completionDate;
+    }
+
+    /**
+     * @param completionDate the completionDate to set
+     */
+    public void setCompletionDate(String completionDate) {
+        this.completionDate = ISOUtil.normalizeDateString(completionDate);
+    }
+
+    /**
+     * @return the startDateType
+     */
+    public String getStartDateType() {
+        return startDateType;
+    }
+
+    /**
+     * @param startDateType the startDateType to set
+     */
+    public void setStartDateType(String startDateType) {
+        this.startDateType = startDateType;
+    }
+
+    /**
+     * @return the primaryCompletionDateType
+     */
+    public String getPrimaryCompletionDateType() {
+        return primaryCompletionDateType;
+    }
+
+    /**
+     * @param primaryCompletionDateType the primaryCompletionDateType to set
+     */
+    public void setPrimaryCompletionDateType(String primaryCompletionDateType) {
+        this.primaryCompletionDateType = primaryCompletionDateType;
+    }
+
+    /**
+     * @return the completionDateType
+     */
+    public String getCompletionDateType() {
+        return completionDateType;
+    }
+
+    /**
+     * @param completionDateType the completionDateType to set
+     */
+    public void setCompletionDateType(String completionDateType) {
+        this.completionDateType = completionDateType;
+    }
+
+    /**
+     * @return the dateTypeList
+     */
+    public Map<String, String> getDateTypeList() {
+        return dateTypeList;
+    }
+
+    /**
+     * @param protocolQueryService the protocolQueryService to set
+     */
+    public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
+    }
+
+    /**
+     * @param studyOverallStatusService the studyOverallStatusService to set
+     */
+    public void setStudyOverallStatusService(StudyOverallStatusServiceLocal studyOverallStatusService) {
+        this.studyOverallStatusService = studyOverallStatusService;
+    }
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
     }
 
 }
