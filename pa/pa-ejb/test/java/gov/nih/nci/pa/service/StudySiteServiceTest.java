@@ -131,7 +131,7 @@ public class StudySiteServiceTest extends AbstractHibernateTestCase {
 
     @Before
     public void init() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         studyId = TestSchema.studyProtocolIds.get(0);
         studyIi = IiConverter.convertToStudyProtocolIi(studyId);

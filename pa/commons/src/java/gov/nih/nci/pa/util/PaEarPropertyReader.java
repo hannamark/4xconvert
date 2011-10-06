@@ -96,7 +96,6 @@ public class PaEarPropertyReader {
     private static final Logger LOG = Logger.getLogger(PaEarPropertyReader.class);
     private static final String RESOURCE_NAME = "paear.properties";
     private static final Properties PROPS;
-    // Property names in the properties file
     private static final String DOC_UPLOAD_PATH = "doc.upload.path";
     private static final String PDQ_UPLOAD_PATH = "pdq.upload.path";
     private static final String ACCRUAL_BATCH_UPLOAD_PATH = "accrual.batch.upload.path";
@@ -112,6 +111,7 @@ public class PaEarPropertyReader {
     private static final String REGISTRY_HELP_URL = "wikiHelp.baseUrl.registry";
     private static final String ACCRUAL_HELP_URL = "wikiHelp.baseUrl.accrual";
     private static final String VIEWER_HELP_URL = "wikiHelp.baseUrl.viewer";
+    private static final String NCI_LDAP_PREFIX = "nci.ldap.prefix";
 
     private static final String NO_VALUE = "does not have a value in paear.properties";
 
@@ -251,6 +251,15 @@ public class PaEarPropertyReader {
      */
     public static String getViewerHelpUrl() throws PAException {
         return getPropTemplate(VIEWER_HELP_URL);
+    }
+
+    /**
+     * Returns the NCI LDAP Prefix.
+     * @return a DN.
+     * @throws PAException if the property is missing.
+     */
+    public static String getNciLdapPrefix() throws PAException {
+        return getPropTemplate(NCI_LDAP_PREFIX);
     }
 
     /**

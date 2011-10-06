@@ -82,12 +82,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.MockPoServiceLocator;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 import gov.nih.nci.pa.util.TestRegistryUserSchema;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -95,8 +102,15 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 
 /**
  *
@@ -104,16 +118,81 @@ import org.junit.Test;
  *
  */
 public class RegistryUserServiceTest extends AbstractHibernateTestCase {
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
-    private RegistryUserServiceRemote remoteEjb = new MockRegistryUserServiceBean();
+
+    private final RegistryUserServiceRemote remoteEjb = new MockRegistryUserServiceBean();
+    private final CSMUserService csmSvc = mock(CSMUserService.class);
+    private final RegistryUserBeanLocal bean = new RegistryUserBeanLocal();
+    private final RegistryUser regUser = new RegistryUser();
+    private final HibernateHelper hibernateHelper = mock(HibernateHelper.class);
+
+    private HibernateHelper paHibernateHelper;
 
     /**
      * Initialization method.
+     * @throws PAException
      */
     @Before
-    public void setUp() {
+    public void setUp() throws PAException {
         TestRegistryUserSchema.primeData();
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
+
+        User csmUser = new User();
+
+        when(csmSvc.getCSMUserById(anyLong())).thenReturn(csmUser);
+        when(csmSvc.getCSMUser(anyString())).thenReturn(csmUser);
+        when(csmSvc.createCSMUser((RegistryUser)anyObject(), anyString(), anyString())).thenReturn(csmUser);
+
+        CSMUserService.setInstance(csmSvc);
+
+        paHibernateHelper = PaHibernateUtil.getHibernateHelper();
+    }
+
+    @Test
+    public void testDoesRegistryUserExistFalse() throws PAException {
+        when(csmSvc.getCSMUser(anyString())).thenReturn(null);
+        assertFalse(bean.doesRegistryUserExist("myusername"));
+    }
+
+    @Test
+    public void testDoesRegistryUserExistException() throws PAException {
+        when(csmSvc.getCSMUser(anyString())).thenThrow(new PAException());
+        assertFalse(bean.doesRegistryUserExist("myusername"));
+    }
+
+    @Test
+    public void testActivateAccount() throws PAException {
+        PaHibernateUtil.setHibernateHelper(hibernateHelper);
+
+        Criteria criteria = mock(Criteria.class);
+        when(criteria.uniqueResult()).thenReturn(regUser);
+
+        Session session = mock(Session.class);
+        when(session.createCriteria(RegistryUser.class)).thenReturn(criteria);
+
+        when(hibernateHelper.getCurrentSession()).thenReturn(session);
+
+        bean.activateAccount("email@sample.com", "myusername");
+
+        verify(session).update(anyObject());
+        PaHibernateUtil.setHibernateHelper(paHibernateHelper);
+
+    }
+
+    @Test
+    public void testActivateAccountNotFound() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Unable to find user with email email@sample.com .Unable to activate account.");
+        bean.activateAccount("email@sample.com", "myusername");
+    }
+
+    @Test
+    public void testActivateAccountNoEmail() throws PAException {
+        thrown.expect(PAException.class);
+        thrown.expectMessage("Cannot activate account with empty email.");
+        bean.activateAccount("", "");
     }
 
     /**
@@ -242,7 +321,7 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
         user.setUserId(userId);
         return user;
     }
-    
+
     private RegistryUser createRegisterUser(User csmUser) {
         RegistryUser create = new RegistryUser();
         create.setAddressLine("xxxxx");
@@ -278,7 +357,7 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
         assertEquals("User Org Type does not match ", create.getAffiliatedOrgUserType(),
                      saved.getAffiliatedOrgUserType());
     }
-    
+
     /**
      * Test the getLoginNamesByEmailAddress method.
      */

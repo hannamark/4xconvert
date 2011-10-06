@@ -76,7 +76,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         HttpServletResponse response = new MockHttpServletResponse();
         ServletActionContext.setResponse(response);
 
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
     }
 
     @Test

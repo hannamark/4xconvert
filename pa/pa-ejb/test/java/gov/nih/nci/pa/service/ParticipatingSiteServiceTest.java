@@ -68,7 +68,7 @@ public class ParticipatingSiteServiceTest extends AbstractHibernateTestCase {
 
     @Before
     public void init() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
         PaRegistry.getInstance().setServiceLocator(new MockPaRegistryServiceLocator());
         bean.setStudyProtocolService(studyProtocolService);

@@ -110,7 +110,7 @@ public class DocumentServiceBeanTest extends AbstractHibernateTestCase {
     public void init() throws Exception {
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
     }
 
     @Test

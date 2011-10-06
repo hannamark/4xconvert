@@ -107,7 +107,7 @@ public class StudyOutcomeMeasureServiceBeanTest extends AbstractHibernateTestCas
 
     @Before
     public void setUp() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         outComesid=IiConverter.convertToIi(TestSchema.outcomeIds.get(0));

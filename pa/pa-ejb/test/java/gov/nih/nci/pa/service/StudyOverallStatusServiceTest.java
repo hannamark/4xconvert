@@ -121,17 +121,17 @@ import org.junit.Test;
  *
  */
 public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
-    private DocumentWorkflowStatusServiceLocal documentWorkflowStatusService = new DocumentWorkflowStatusBeanLocal();
-    private StudyProtocolServiceLocal studyProtocolService =  new StudyProtocolServiceBean();
+    private final DocumentWorkflowStatusServiceLocal documentWorkflowStatusService = new DocumentWorkflowStatusBeanLocal();
+    private final StudyProtocolServiceLocal studyProtocolService =  new StudyProtocolServiceBean();
     private final StudyOverallStatusServiceBean bean = new StudyOverallStatusServiceBean();
     private Ii spIi;
-    
+
     /**
      * Initialization method.
      */
     @Before
     public void setUp() {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
 
         bean.setDocumentWorkFlowStatusService(documentWorkflowStatusService);
         bean.setStudyProtocolService(studyProtocolService);
@@ -561,7 +561,7 @@ public class StudyOverallStatusServiceTest extends AbstractHibernateTestCase {
         create.setDateLastUpdated(now);
         return create;
     }
-    
+
     /**
      * test the createStudyRecruitmentStatus method.
      */

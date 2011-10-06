@@ -38,6 +38,7 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
         assertEquals("viewResults", action.view());
     }
 
+    @Test
 	public void testSetRegUser() throws PAException {
         action = new ManageTrialOwnershipAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -52,6 +53,7 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
         action.setRegUser();
     }
 
+    @Test
     public void testSetTrial() throws PAException {
         action = new ManageTrialOwnershipAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -81,6 +83,7 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
         }
     }
 
+    @Test
     public void testAssignOwnership() throws PAException {
         action = new ManageTrialOwnershipAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -100,6 +103,7 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
         assertEquals("viewResults", action.assignOwnership());
     }
 
+    @Test
     public void testUnAssignOwnershipException() throws PAException {
         action = new ManageTrialOwnershipAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -114,6 +118,7 @@ public class ManageTrialOwnershipActionTest extends AbstractRegWebTest {
         }
     }
 
+    @Test
     public void testUnAssignOwnership() throws PAException {
         action = new ManageTrialOwnershipAction();
         MockHttpServletRequest request = new MockHttpServletRequest();

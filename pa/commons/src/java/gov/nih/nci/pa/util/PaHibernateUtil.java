@@ -94,11 +94,11 @@ import com.fiveamsolutions.nci.commons.util.HibernateHelper;
  */
 public class PaHibernateUtil {
     private static final AuditLogInterceptor AUDIT_LOG_INTERCEPTOR = new AuditLogInterceptor(null);
-    private static final HibernateHelper HIBERNATE_HELPER = new CsmEnabledHibernateHelper(null, AUDIT_LOG_INTERCEPTOR,
+    private static HibernateHelper hibernateHelper = new CsmEnabledHibernateHelper(null, AUDIT_LOG_INTERCEPTOR,
             null);
     static {
-        HIBERNATE_HELPER.initialize();
-        AUDIT_LOG_INTERCEPTOR.setHibernateHelper(HIBERNATE_HELPER);
+        hibernateHelper.initialize();
+        AUDIT_LOG_INTERCEPTOR.setHibernateHelper(hibernateHelper);
     }
 
     /**
@@ -106,7 +106,7 @@ public class PaHibernateUtil {
      * @return the helper.
      */
     public static HibernateHelper getHibernateHelper() {
-        return HIBERNATE_HELPER;
+        return hibernateHelper;
     }
 
     /**
@@ -115,6 +115,15 @@ public class PaHibernateUtil {
      */
     public static Session getCurrentSession() {
         return getHibernateHelper().getCurrentSession();
+    }
+
+    /**
+     * Injects Hibernate Helper.
+     * @param helper the helper.
+     *
+     */
+    public static void setHibernateHelper(HibernateHelper helper) {
+        hibernateHelper = helper;
     }
 
 }

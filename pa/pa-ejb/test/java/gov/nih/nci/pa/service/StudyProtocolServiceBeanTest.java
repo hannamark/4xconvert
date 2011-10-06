@@ -160,7 +160,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
     private final StudyProtocolServiceLocal remoteEjb = bean;
     @Before
     public void setUp() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         UsernameHolder.setUser(TestSchema.getUser().getLoginName());
         AnatomicSite as = new AnatomicSite();
         as.setCode("Lung");

@@ -4,290 +4,265 @@
 package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.enums.UserOrgType;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.util.MockCSMUserService;
+import gov.nih.nci.pa.service.util.RegistryUserService;
 import gov.nih.nci.registry.dto.RegistryUserWebDTO;
+import gov.nih.nci.registry.dto.UserWebDTO;
+import gov.nih.nci.registry.util.Constants;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
-import javax.servlet.http.HttpSession;
 
-import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.mockrunner.mock.web.MockHttpServletRequest;
-import com.mockrunner.mock.web.MockHttpSession;
-import com.mockrunner.mock.web.MockServletContext;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyObject;
+
 
 /**
  * @author Vrushali
  *
  */
-public class RegisterUserActionTest extends AbstractRegWebTest{
-        private RegisterUserAction action;
-        @Before
-        public void setup() {
-            CSMUserService.getInstance();
-            CSMUserService.setRegistryUserService(new MockCSMUserService());
-        }
-        @Test
-        public void testUserActionProperty(){
+public class RegisterUserActionTest extends AbstractRegWebTest {
+    private RegisterUserAction action;
+    private final RegistryUserService regUserSvc = mock(RegistryUserService.class);
+    private final CSMUserService csmSvc = mock(CSMUserService.class);
+
+    private final RegistryUser regUser = new RegistryUser();
+    private final RegistryUserWebDTO regDto = new RegistryUserWebDTO();
+
+    private final UserWebDTO userDto = new UserWebDTO();
+
+
+    @Before
+    public void setup() throws PAException {
+        User csmUser = new User();
+
+        when(csmSvc.getCSMUserById(anyLong())).thenReturn(csmUser);
+        when(csmSvc.getCSMUser(anyString())).thenReturn(csmUser);
+        when(csmSvc.createCSMUser((RegistryUser)anyObject(), anyString(), anyString())).thenReturn(csmUser);
+
+        CSMUserService.setInstance(csmSvc);
+
+        try {
             action = new RegisterUserAction();
-            assertNull(action.getUserAction());
-            action.setUserAction("userAction");
-            assertNotNull(action.getUserAction());
-        }
-        @Test
-        public void testRegistryUserWebDTOProperty (){
-            action = new RegisterUserAction();
-            assertNotNull(action.getRegistryUserWebDTO());
-            action.setRegistryUserWebDTO(null);
-            assertNull(action.getRegistryUserWebDTO());
-        }
-        @Test
-        public void testSendMailErr(){
-            action = new RegisterUserAction();
-            assertEquals("registerUserError",action.sendMail());
-        }
-        @Test
-        public void testSendMail(){
-            action = new RegisterUserAction();
-            RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
-            registryUserWebDTO.setUsername("testuser");
-            registryUserWebDTO.setEmailAddress("test@test.com");
-            registryUserWebDTO.setPassword("password");
-            registryUserWebDTO.setRetypePassword("password");
-            action.setRegistryUserWebDTO(registryUserWebDTO);
-            assertEquals("confirmation",action.sendMail());
-        }
-        @Test
-        public void testSendMailErrPasswordEmail(){
-            action = new RegisterUserAction();
-            RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
-            registryUserWebDTO.setUsername("testuser");
-            registryUserWebDTO.setEmailAddress("test.test.com");
-            registryUserWebDTO.setPassword("pass");
-            registryUserWebDTO.setRetypePassword("1234");
-            action.setRegistryUserWebDTO(registryUserWebDTO);
-            assertEquals("registerUserError",action.sendMail());
-        }
-        @Test
-        public void testActivateisNewUser(){
-            action = new RegisterUserAction();
-            assertEquals("myAccount", action.activate());
-        }
-        @Test
-        public void testActivateUserExist(){
-            action = new RegisterUserAction();
-            action.setEmailAddress("Zmlyc3ROYW1l");
-            action.setAffiliatedOrgId("testOrg");
-            assertEquals("myAccount", action.activate());
-            assertEquals("firstName", action.getEmailAddress());
-            assertEquals("testOrg", action.getAffiliatedOrgId());
-            assertNull(action.getAction());
-        }
-        @Test
-        public void testActivateException(){
-            action = new RegisterUserAction();
-            action.setEmailAddress("dGhyb3dFeGNlcHRpb24=");
-            assertEquals("applicationError", action.activate());
+        } catch (Exception e) {
         }
 
-        @Test
-        @SuppressWarnings("unchecked")
-        public void testShowMyAccountErr(){
-            action = new RegisterUserAction();
-            MockHttpServletRequest request = new MockHttpServletRequest();
-            HttpSession sess = new MockHttpSession();
-            request.setRemoteUser("firstName");
-            request.setSession(sess);
-            ServletActionContext.setRequest(request);
-            assertEquals("myAccount", action.showMyAccount());
-            List<RegistryUser> lst = (List<RegistryUser>) sess.getAttribute("adminUsers");
-            assertEquals(0, lst.size());
-            request = new MockHttpServletRequest();
-            sess = new MockHttpSession();
-            request.setRemoteUser("affiliated Org");
-            request.setSession(sess);
-            ServletActionContext.setRequest(request);
-            assertEquals("myAccount", action.showMyAccount());
-            lst = (List<RegistryUser>) sess.getAttribute("adminUsers");
-            assertNull(lst);
-        }
-        @Test
-        public void testUpdateAccount(){
-            action = new RegisterUserAction();
-            RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
-            registryUserWebDTO.setId(1L);
-            registryUserWebDTO.setUsername("testuser");
-            registryUserWebDTO.setEmailAddress("test@test.com");
-            registryUserWebDTO.setOldPassword("Testing@01");
-            registryUserWebDTO.setPassword("Mvedjbtp123!!!");
-            registryUserWebDTO.setRetypePassword("Mvedjbtp123!!!");
-            registryUserWebDTO.setFirstName("firstName");
-            registryUserWebDTO.setLastName("lastName");
-            registryUserWebDTO.setAddressLine("123 Fake St.");
-            registryUserWebDTO.setCity("Here");
-            registryUserWebDTO.setPostalCode("11111");
-            registryUserWebDTO.setState("None");
-            registryUserWebDTO.setCountry("country");
-            registryUserWebDTO.setPhone("phone");
-            registryUserWebDTO.setAffiliatedOrganizationId(2L);
-            action.setRegistryUserWebDTO(registryUserWebDTO);
-            assertEquals("myAccountError", action.updateAccount());
-            action.setAffiliatedOrgId("1");
-            action.clearFieldErrors();
-            assertEquals("myAccountError", action.updateAccount());
-        }
-        @Test
-        public void testUpdateAccountExitsingAcc(){
-            action = new RegisterUserAction();
-            RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
-            registryUserWebDTO.setId(1L);
-            registryUserWebDTO.setUsername("testuser");
-            registryUserWebDTO.setEmailAddress("test@test.com");
-            registryUserWebDTO.setFirstName("firstName");
-            registryUserWebDTO.setLastName("lastName");
-            registryUserWebDTO.setAddressLine("123 Fake St.");
-            registryUserWebDTO.setCity("Here");
-            registryUserWebDTO.setPostalCode("11111");
-            registryUserWebDTO.setState("None");
-            registryUserWebDTO.setCountry("country");
-            registryUserWebDTO.setPhone("phone");
-            registryUserWebDTO.setAffiliateOrg("affiliateOrg");
-            registryUserWebDTO.setAffiliatedOrganizationId(2L);
-            registryUserWebDTO.setId(1L);
-            registryUserWebDTO.setCsmUserId(1L);
-            action.setRegistryUserWebDTO(registryUserWebDTO);
-            assertEquals("redirect_to_login", action.updateAccount());
-            registryUserWebDTO.setPassword("Mvedjbtp123!!!");
-            registryUserWebDTO.setRetypePassword("Mvedjbtp123!!!");
-            action.setRegistryUserWebDTO(registryUserWebDTO);
-            assertEquals("myAccountError", action.updateAccount());
-            action = new RegisterUserAction();
-            registryUserWebDTO.setPassword("");
-            registryUserWebDTO.setOldPassword("Testing@01");
-            registryUserWebDTO.setRetypePassword("Mvedjbtp123!!!");
-            action.setRegistryUserWebDTO(registryUserWebDTO);
-            assertEquals("myAccountError", action.updateAccount());
-            action = new RegisterUserAction();
-            registryUserWebDTO.setPassword("Mvedjbtp123!!!");
-            registryUserWebDTO.setOldPassword("Testing@01");
-            registryUserWebDTO.setRetypePassword("");
-            action.setRegistryUserWebDTO(registryUserWebDTO);
-            assertEquals("myAccountError", action.updateAccount());
-            action = new RegisterUserAction();
-            registryUserWebDTO.setPassword("Mvedjbtp123!!!");
-            registryUserWebDTO.setOldPassword("Testing@01");
-            registryUserWebDTO.setRetypePassword("Mvedjbtp123!!!");
-            action.setRegistryUserWebDTO(registryUserWebDTO);
-            assertEquals("redirect_to_login", action.updateAccount());
-            // trying to update w/ no id but same info.
-            registryUserWebDTO.setId(null);
-            action.setRegistryUserWebDTO(registryUserWebDTO);
-            assertEquals("applicationError", action.updateAccount());
-        }
+        Map<String, String> idps = new HashMap<String, String>();
+        idps.put("dorian", "/O=caBIG/OU=Dorian");
+        action.setIdentityProviders(idps);
 
-        @Test
-        public void testUpdateAccountErr(){
-            action = new RegisterUserAction();
-            RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
-            registryUserWebDTO.setUsername("testuser");
-            registryUserWebDTO.setEmailAddress("test@test.com");
-            registryUserWebDTO.setPassword("password");
-            registryUserWebDTO.setRetypePassword("password");
-            registryUserWebDTO.setState("None");
-            registryUserWebDTO.setCountry("United States");
-            action.setRegistryUserWebDTO(registryUserWebDTO);
-            assertEquals("myAccountError", action.updateAccount());
-        }
-        @Test
-        public void testUpdateAccountErrStateCountry(){
-            action = new RegisterUserAction();
-            RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
-            registryUserWebDTO.setUsername("testuser");
-            registryUserWebDTO.setEmailAddress("test@test.com");
-            registryUserWebDTO.setPassword("password");
-            registryUserWebDTO.setRetypePassword("password");
-            action.setRegistryUserWebDTO(registryUserWebDTO);
-            assertEquals("myAccountError", action.updateAccount());
-        }
+        regUser.setCsmUser(csmUser);
+        regUser.setAffiliatedOrganizationId(1L);
 
-    @Test
-    public void testWebDto() {
-        action = new RegisterUserAction();
-        RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
-        registryUserWebDTO.setId(1L);
-        registryUserWebDTO.setUsername("testuser");
-        registryUserWebDTO.setEmailAddress("test@test.com");
-        registryUserWebDTO.setOldPassword("Testing@01");
-        registryUserWebDTO.setPassword("Mvedjbtp123!!!");
-        registryUserWebDTO.setRetypePassword("Mvedjbtp123!!!");
-        registryUserWebDTO.setFirstName("firstName");
-        registryUserWebDTO.setMiddleName("MiddleName");
-        registryUserWebDTO.setLastName("lastName");
-        registryUserWebDTO.setAddressLine("123 Fake St.");
-        registryUserWebDTO.setCity("Here");
-        registryUserWebDTO.setPostalCode("11111");
-        registryUserWebDTO.setState("None");
-        registryUserWebDTO.setCountry("country");
-        registryUserWebDTO.setPhone("phone");
-        registryUserWebDTO.setAffiliatedOrganizationId(2L);
-        registryUserWebDTO.setPrsOrgName("prsorgname");
-        registryUserWebDTO.setTreatmentSiteId(1L);
-        registryUserWebDTO.setHasExistingGridAccount(true);
-        registryUserWebDTO.setRequestAdminAccess(true);
-        registryUserWebDTO.setAdminForAffiliatedOrg(true);
-        registryUserWebDTO.setPhysicianId(1L);
-        action.setRegistryUserWebDTO(registryUserWebDTO);
-        assertNotNull(registryUserWebDTO.getDisplayUsername());
-        assertNotNull(registryUserWebDTO.getPrsOrgName());
-        assertNotNull(registryUserWebDTO.getTreatmentSiteId());
-        assertNotNull(registryUserWebDTO.getPhysicianId());
-        assertNotNull(registryUserWebDTO.isAdminForAffiliatedOrg());
-        action.setSelectedIdentityProvider("Test");
-        assertNotNull(action.getSelectedIdentityProvider());
-        action.setIdentityProviders(new HashMap<String, String>());
-        assertNotNull(action.getIdentityProviders());
+        when(regUserSvc.getUser(anyString())).thenReturn(regUser);
+        when(regUserSvc.getUserById(anyLong())).thenReturn(regUser);
+
+        action.setRegistryUserService(regUserSvc);
+
+        regDto.setEmailAddress("sample@example.com");
+        regDto.setState("MD");
+        regDto.setCountry("United States");
+        regDto.setFirstName("Jo");
+        regDto.setLastName("Smith");
+        regDto.setAffiliateOrg("MyOrg");
+        regDto.setPhone("111-222-3333");
+        regDto.setAddressLine("street");
+        regDto.setCity("city");
+        regDto.setPostalCode("12345");
+        regDto.setAffiliatedOrganizationId(1L);
+        regDto.setId(1L);
+        action.setRegistryUserWebDTO(regDto);
+
+        userDto.setUsername("myuser");
+        action.setUserWebDTO(userDto);
     }
 
     @Test
-    public void testloadAdminUsers() {
-        action = new RegisterUserAction();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setSession(new MockHttpSession());
-        request.setRemoteUser("RegUser");
-        action.setAffiliatedOrgId("3");
-        action.setAction("viewUsers");
-        ServletActionContext.setServletContext(new MockServletContext());
-        ServletActionContext.setRequest(request);
-        assertEquals("viewAdminUser", action.loadAdminUsers());
-        action.clearFieldErrors();
-        action.setAffiliatedOrgId(null);
-        action.setAction("nonViewUsers");
+    public void testUserWebDTO() {
+        assertEquals(userDto, action.getUserWebDTO());
+    }
+
+    @Test
+    public void testRegistryUserWebDTO() {
+        assertEquals(regDto, action.getRegistryUserWebDTO());
+    }
+
+    @Test
+    public void testRequestAccount() {
+        assertEquals(Constants.CREATE_ACCOUNT, action.requestAccount());
+    }
+
+    @Test
+    public void testRequestAccountException() throws PAException {
+        when(regUserSvc.getUser(anyString())).thenThrow(new PAException());
+        assertEquals(Constants.APPLICATION_ERROR, action.requestAccount());
+    }
+
+    @Test
+    public void testRequestAccountNoAffOrg() throws PAException {
+        regUser.setAffiliatedOrganizationId(null);
+        assertEquals(Constants.CREATE_ACCOUNT, action.requestAccount());
+    }
+
+    @Test
+    public void testVerifyEmailExistingRegUser() {
+        // this causes an error because regUser has to be null
+        assertEquals(Constants.CREATE_ACCOUNT, action.verifyEmail());
+    }
+
+    @Test
+    public void testVerifyEmailAllGood() throws PAException {
+        when(regUserSvc.getUser(anyString())).thenReturn(null);
+        assertEquals(Constants.CREATE_ACCOUNT, action.verifyEmail());
+    }
+
+    @Test
+    public void testVerifyEmailNoEmail() throws PAException {
+        regDto.setEmailAddress("");
+        assertEquals(Constants.REGISTER_USER_ERROR, action.verifyEmail());
+        assertTrue(action.getFieldErrors().keySet().contains("registryUserWebDTO.emailAddress"));
+    }
+
+    @Test
+    public void testVerifyEmailInvalidEmail() throws PAException {
+        regDto.setEmailAddress("Oops!");
+        assertEquals(Constants.REGISTER_USER_ERROR, action.verifyEmail());
+        assertTrue(action.getFieldErrors().keySet().contains("registryUserWebDTO.emailAddress"));
+    }
+
+    @Test
+    public void testActivateMissingEmail() {
+        regDto.setEmailAddress("");
+        assertEquals("activation", action.activate());
+        assertTrue(action.getActionMessages().contains("Invalid call of activate"));
+    }
+
+    @Test
+    public void testActivateMissingUsername() {
+        userDto.setUsername("");
+        assertEquals("activation", action.activate());
+        assertTrue(action.getActionMessages().contains("Invalid call of activate"));
+    }
+
+    @Test
+    public void testActivate() {
+        assertEquals("activation", action.activate());
+        assertTrue(action.getActionMessages().contains("Your account was successfully activated"));
+    }
+
+    @Test
+    public void testShowMyAccount() {
+        assertEquals(Constants.MY_ACCOUNT, action.showMyAccount());
+    }
+
+    @Test
+    public void testShowMyAccountAndLoadAdminUser() {
+        regUser.setAffiliatedOrgUserType(UserOrgType.MEMBER);
+        assertEquals(Constants.MY_ACCOUNT, action.showMyAccount());
+    }
+
+    @Test
+    public void testCreateAccount() {
+        assertEquals("confirmation", action.createAccount());
+    }
+
+    @Test
+    public void testCreateAccountWithAdmin() {
+        regDto.setRequestAdminAccess(true);
+        assertEquals("confirmation", action.createAccount());
+    }
+
+    @Test
+    public void testCreateAccountGridAccountButNoCSM() throws PAException {
+        when(csmSvc.getCSMUser(anyString())).thenReturn(null);
+        assertEquals("confirmation", action.createAccount());
+        verify(csmSvc).createCSMUser((RegistryUser)anyObject(), anyString(), anyString());
+    }
+
+    @Test
+    public void testCreateAccountNoGridAccount() throws PAException {
+        userDto.setUsername("");
+        assertEquals("confirmation", action.createAccount());
+    }
+
+    @Test
+    public void testCreateAccountMissingField() {
+        regDto.setState(null);
+        assertEquals(Constants.CREATE_ACCOUNT, action.createAccount());
+        assertTrue(action.getFieldErrors().keySet().contains("registryUserWebDTO.state"));
+    }
+
+    @Test
+    public void testCreateAccountInvalidUSState() {
+        regDto.setState("None");
+        assertEquals(Constants.CREATE_ACCOUNT, action.createAccount());
+        assertTrue(action.getFieldErrors().keySet().contains("registryUserWebDTO.state"));
+    }
+
+    @Test
+    public void testCreateAccountInvalidNonUSState() {
+        regDto.setCountry("France");
+        assertEquals(Constants.CREATE_ACCOUNT, action.createAccount());
+        assertTrue(action.getFieldErrors().keySet().contains("registryUserWebDTO.state"));
+    }
+
+    @Test
+    public void testCreateAccountMissingOrg() {
+        regDto.setAffiliatedOrganizationId(null);
+        assertEquals(Constants.CREATE_ACCOUNT, action.createAccount());
+        assertTrue(action.getFieldErrors().keySet().contains("registryUserWebDTO.affiliateOrg"));
+    }
+
+    @Test
+    public void testUpdateAccount() {
+        assertEquals("confirmation", action.updateAccount());
+    }
+
+    @Test
+    public void testUpdateAccountAdminRequest() {
+        regDto.setRequestAdminAccess(true);
+        assertEquals("confirmation", action.updateAccount());
+    }
+
+    @Test
+    public void testUpdateAccountNoRegUser() throws PAException {
+        when(regUserSvc.getUserById(anyLong())).thenReturn(null);
+        assertEquals("confirmation", action.updateAccount());
+    }
+
+    @Test
+    public void testUpdateAccountException() throws PAException {
+        when(regUserSvc.getUserById(anyLong())).thenThrow(new PAException());
+        assertEquals(Constants.APPLICATION_ERROR, action.updateAccount());
+    }
+
+    @Test
+    public void testUpdateAccountFieldError() {
+        regDto.setCountry("France");
+        assertEquals(Constants.MY_ACCOUNT_ERROR, action.updateAccount());
+    }
+
+    @Test
+    public void testLoadAdminUser() {
         assertEquals("loadAdminList", action.loadAdminUsers());
     }
 
     @Test
-    public void testRegisterExistingGridAccount() {
-        action = new RegisterUserAction();
-        RegistryUserWebDTO registryUserWebDTO = new RegistryUserWebDTO();
-        registryUserWebDTO.setEmailAddress("test@test.com");
-        registryUserWebDTO.setFirstName("firstName");
-        registryUserWebDTO.setLastName("lastName");
-        action.setRegistryUserWebDTO(registryUserWebDTO);
-        assertEquals("myAccount", action.registerExistingGridAccount());
+    public void testViewAdminUser() {
+        assertEquals("viewAdminUser", action.viewAdminUsers());
     }
 
-    @Test
-    public void testExistingGridAccount() {
-        action = new RegisterUserAction();
-        assertEquals("existingGridAccount", action.existingGridAccount());
-    }
 }
-

@@ -120,7 +120,7 @@ public class ArmServiceTest extends AbstractHibernateTestCase {
 
     @Before
     public void init() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         remoteEjb = new ArmBeanLocal();
         paRemoteEjb = new PlannedActivityBeanLocal();
         paRemoteEjb.setInterventionSrv(new InterventionServiceBean());

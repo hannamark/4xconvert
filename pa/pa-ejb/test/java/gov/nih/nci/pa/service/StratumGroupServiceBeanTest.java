@@ -97,12 +97,12 @@ import org.junit.Test;
 
 public class StratumGroupServiceBeanTest extends AbstractHibernateTestCase {
 
-    private StratumGroupServiceLocal remoteEjb = new StratumGroupBeanLocal();;
+    private final StratumGroupServiceLocal remoteEjb = new StratumGroupBeanLocal();;
     Ii pid;
 
     @Before
     public void setUp() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
     }

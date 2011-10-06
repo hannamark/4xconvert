@@ -108,13 +108,13 @@ import org.junit.Test;
  *
  */
 public class InterventionServiceTest extends AbstractHibernateTestCase {
-    private InterventionServiceLocal remoteEjb = new InterventionBeanLocal();
-    private InterventionAlternateNameServiceRemote ianService = new InterventionAlternateNameServiceBean();
+    private final InterventionServiceLocal remoteEjb = new InterventionBeanLocal();
+    private final InterventionAlternateNameServiceRemote ianService = new InterventionAlternateNameServiceBean();
     private Ii ii;
 
     @Before
     public void init() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         ii = IiConverter.convertToIi(TestSchema.interventionIds.get(0));
      }

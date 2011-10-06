@@ -134,7 +134,7 @@ public class StudySiteContactServiceTest extends AbstractHibernateTestCase {
     @Before
     public void setUp() throws Exception {
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         protocolId = TestSchema.studyProtocolIds.get(0);
         protocolIi = IiConverter.convertToStudyProtocolIi(protocolId);

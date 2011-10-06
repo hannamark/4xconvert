@@ -38,7 +38,7 @@ public class PersonSynchronizationServiceBeanTest extends AbstractHibernateTestC
 
     @Before
     public void setUp() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
         bean.setSpcLocal(spcService);
         bean.setScLocal(scService);

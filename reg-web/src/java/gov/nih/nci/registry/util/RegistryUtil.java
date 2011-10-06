@@ -26,7 +26,7 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 
 /**
- * @author Bala Nair
+ * Utility Class for Registry.
  *
  */
 public class RegistryUtil {
@@ -142,7 +142,7 @@ public class RegistryUtil {
                 mailManager.sendMailWithAattchement(emailTo, null, emailBody, emailSubject, attachFileName);
             } else {
                 // Send the batch upload Error to the submitter
-                mailManager.sendMail(emailTo, null, emailBody, emailSubject);
+                mailManager.sendMail(emailTo, emailBody, emailSubject);
             }
 
         } catch (PAException e) {
@@ -186,7 +186,7 @@ public class RegistryUtil {
           registryUser = PaRegistry.getRegistryUserService().getUser(loginName);
           csmUser = CSMUserService.getInstance().getCSMUser(loginName);
           if (registryUser != null && csmUser != null) {
-              regUserWebDto = new RegistryUserWebDTO(registryUser, loginName, csmUser.getPassword());
+              regUserWebDto = new RegistryUserWebDTO(registryUser);
           }
       } catch (Exception ex) {
           LOG.error("Error getting the csm user for login name = " + loginName);

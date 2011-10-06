@@ -122,7 +122,7 @@ public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
 
     @Before
     public void setUp() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         spId = TestSchema.studyProtocolIds.get(0);
         spIi = IiConverter.convertToStudyProtocolIi(spId);

@@ -165,6 +165,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     private static String smtpHost = "";
     private static String fromAddress = "fromAddress@example.com";
 
+
     private static final String NOTFICATION_SUBJECT_KEY = "trial.register.subject";
     private static final String NOTFICATION_SUBJECT_VALUE = "trial.register.subject - ${leadOrgTrialIdentifier},"
             + " ${nciTrialIdentifier}.";
@@ -178,13 +179,13 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     private static final String PROP_NOTFICATION_BODY_KEY = "proprietarytrial.register.body";
     private static final String PROP_NOTFICATION_BODY_VALUE = "${CurrentDate} ${SubmitterName} ${nciTrialIdentifier},"
             + " ${leadOrgTrialIdentifier}, ${leadOrgName}, ${trialTitle}, ${subOrgTrialIdentifier}, ${subOrg}.";
-            
-    private LookUpTableServiceRemote lookUpTableService = mock(LookUpTableServiceRemote.class);
-    private ProtocolQueryServiceLocal protocolQueryService = mock(ProtocolQueryServiceLocal.class);
-    private RegistryUserServiceLocal registryUserService = mock(RegistryUserServiceLocal.class);
-    private StudySiteServiceLocal studySiteService = mock(StudySiteServiceLocal.class);
+
+    private final LookUpTableServiceRemote lookUpTableService = mock(LookUpTableServiceRemote.class);
+    private final ProtocolQueryServiceLocal protocolQueryService = mock(ProtocolQueryServiceLocal.class);
+    private final RegistryUserServiceLocal registryUserService = mock(RegistryUserServiceLocal.class);
+    private final StudySiteServiceLocal studySiteService = mock(StudySiteServiceLocal.class);
     private MailManagerBeanLocal sut;
-    
+
     MailManagerBeanLocal bean = new MailManagerBeanLocal();
     ProtocolQueryServiceBean protocolQrySrv = new ProtocolQueryServiceBean();
     RegistryUserServiceLocal registryUserSrv = new RegistryUserServiceBean();
@@ -205,7 +206,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         PAServiceUtils paServiceUtils = mock(PAServiceUtils.class);
         protocolQrySrv.setPaServiceUtils(paServiceUtils);
 
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
 
         ctGovXmlSrv.setLookUpTableService(lookUpTableSrv);
 
@@ -311,7 +312,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(docWrk);
         propTrial.getDocumentWorkflowStatuses().add(docWrk);
         TestSchema.addUpdObject(propTrial);
-        
+
         User csmUser = createUser("loginName", "firstName", "lastName");
         TestSchema.addUpdObject(csmUser);
         RegistryUser registryUser = new RegistryUser();
@@ -387,7 +388,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         prop.setValue("to@example.com");
         TestSchema.addUpdObject(prop);
     }
-    
+
     private User createUser(String loginName, String firstName, String lastName) {
         User user = new User();
         user.setLoginName(loginName);
@@ -396,7 +397,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         user.setUpdateDate(new Date());
         return user;
     }
-    
+
     private MailManagerBeanLocal createMailManagerServiceBean() {
         MailManagerBeanLocal service = new MailManagerBeanLocal();
         setDependencies(service);
@@ -626,7 +627,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         sp.setCtgovXmlRequiredIndicator(Boolean.FALSE);
         return sp;
     }
-    
+
     /**
      * Test the sendNotificationMail method.
      * @throws PAException if an error occurs
@@ -668,7 +669,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         assertEquals("Wrong mail body", "Current Date firstName lastName nciIdentifier, localStudyProtocolIdentifier, "
                 + "leadOrganizationName, officialTitle.", mailBodyCaptor.getValue());
     }
-    
+
     /**
      * Test the sendNotificationMail method for a proprietary study protocol.
      * @throws PAException if an error occurs
@@ -698,7 +699,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         user.setLastName("lastName");
         user.setEmailAddress("emailAddress");
         when(registryUserService.getUser("loginName")).thenReturn(user);
-        
+
         List<StudySiteDTO> studySites = new ArrayList<StudySiteDTO>();
         StudySiteDTO site = new StudySiteDTO();
         site.setLocalStudyProtocolIdentifier(StConverter.convertToSt("siteLocalStudyProtocolIdentifier"));
@@ -721,7 +722,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
                              + " Mayo University.",
                      mailBodyCaptor.getValue());
     }
-    
+
     /**
      * Test the sendNotificationMail method when the user does not exist.
      * @throws PAException if an error occurs
@@ -737,7 +738,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         lastCreated.setUserLastCreated("loginName");
         spDTO.setLastCreated(lastCreated);
         when(protocolQueryService.getTrialSummaryByStudyProtocolId(1L)).thenReturn(spDTO);
-        
+
         sut.sendNotificationMail(spIi);
         verify(protocolQueryService).getTrialSummaryByStudyProtocolId(1L);
         verify(registryUserService).getUser("loginName");
@@ -835,7 +836,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         String expectedBody = "body firstName lastName username1, username2 end";
         verify(sut).sendMailWithAttachment(emailAddress, subject, expectedBody, null);
     }
-    
+
     private RegistryUser createRegistryUser(String loginName) {
         RegistryUser registryUser = new RegistryUser();
         User csmUser = new User();

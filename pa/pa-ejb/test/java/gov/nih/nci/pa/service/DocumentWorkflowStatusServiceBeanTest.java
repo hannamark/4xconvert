@@ -102,14 +102,14 @@ import org.junit.Test;
 
 public class DocumentWorkflowStatusServiceBeanTest extends AbstractHibernateTestCase {
 
-    private DocumentWorkflowStatusBeanLocal bean = new DocumentWorkflowStatusBeanLocal();
-    private DocumentWorkflowStatusServiceLocal remoteEjb = bean;
+    private final DocumentWorkflowStatusBeanLocal bean = new DocumentWorkflowStatusBeanLocal();
+    private final DocumentWorkflowStatusServiceLocal remoteEjb = bean;
 
     Ii spIi;
 
     @Before
     public void init() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         final Long spId = TestSchema.studyProtocolIds.get(0);
         TestSchema.addAbstractedWorkflowStatus(spId);

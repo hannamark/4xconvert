@@ -36,7 +36,7 @@ public class SiteAdministrationActionTest extends AbstractRegWebTest {
     @Before
     public void setup() {
         CSMUserService.getInstance();
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
     }
 
     @SuppressWarnings("unchecked")

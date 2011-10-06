@@ -110,7 +110,7 @@ public class StudySiteContactServiceBeanTest extends AbstractHibernateTestCase {
 
     @Before
     public void setUp() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         studySiteId = IiConverter.convertToIi(TestSchema.studySiteIds.get(0));

@@ -113,10 +113,10 @@ import org.junit.Test;
  */
 public class PlannedActivityServiceTest extends AbstractHibernateTestCase {
 
-    private PlannedActivityBeanLocal remoteBean = new PlannedActivityBeanLocal();
-    private PlannedActivityServiceLocal remoteEjb = remoteBean;
-    private ArmServiceLocal remoteArmEjb = new ArmServiceBean();
-    private InterventionServiceLocal remoteIntervention = new InterventionBeanLocal();
+    private final PlannedActivityBeanLocal remoteBean = new PlannedActivityBeanLocal();
+    private final PlannedActivityServiceLocal remoteEjb = remoteBean;
+    private final ArmServiceLocal remoteArmEjb = new ArmServiceBean();
+    private final InterventionServiceLocal remoteIntervention = new InterventionBeanLocal();
 
     private Ii ii;
     private Ii spIi;
@@ -124,7 +124,7 @@ public class PlannedActivityServiceTest extends AbstractHibernateTestCase {
 
     @Before
     public void setUp() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         ii = IiConverter.convertToIi(TestSchema.plannedActivityIds.get(0));
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));

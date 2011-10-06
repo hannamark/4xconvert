@@ -101,12 +101,12 @@ import org.junit.Test;
 
 public class StudyResourcingServiceBeanTest extends AbstractHibernateTestCase {
 
-    private StudyResourcingServiceLocal remoteEjb = new StudyResourcingBeanLocal();
+    private final StudyResourcingServiceLocal remoteEjb = new StudyResourcingBeanLocal();
     Ii pid;
 
     @Before
     public void setUp() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
     }

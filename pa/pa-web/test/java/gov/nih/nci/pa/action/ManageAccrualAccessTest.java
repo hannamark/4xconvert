@@ -132,7 +132,7 @@ public class ManageAccrualAccessTest extends AbstractPaActionTest {
 
     @Before
     public void prepare() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         MockStudySiteAccrualAccessService.list.clear();
         act = new ManageAccrualAccessAction();
         act.prepare();

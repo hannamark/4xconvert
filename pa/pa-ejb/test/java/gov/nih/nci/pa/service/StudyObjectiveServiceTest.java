@@ -99,16 +99,16 @@ import org.junit.Test;
  *
  */
 public class StudyObjectiveServiceTest extends AbstractHibernateTestCase {
-    private StudyObjectiveServiceLocal remote = new StudyObjectiveBeanLocal();
+    private final StudyObjectiveServiceLocal remote = new StudyObjectiveBeanLocal();
     private Long spId;
     private Ii spIi;
 
-    private String description = "primary description";
-    private StudyObjectiveTypeCode studyObjTypeCode = StudyObjectiveTypeCode.PRIMARY;
+    private final String description = "primary description";
+    private final StudyObjectiveTypeCode studyObjTypeCode = StudyObjectiveTypeCode.PRIMARY;
 
     @Before
     public void setUp() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         spId = TestSchema.studyProtocolIds.get(0);
         spIi = IiConverter.convertToStudyProtocolIi(spId);

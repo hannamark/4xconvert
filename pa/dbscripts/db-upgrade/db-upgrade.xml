@@ -774,4 +774,12 @@
         <comment>Add email for registry username search.(fix registry user table)</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.6.1/PO-4084-2.sql"/>
      </changeSet>
+     <changeSet id="PO-4082" author="ludetc">
+        <comment>Adding properties for PO-4082</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.6.1/PO-4082.sql"/>
+     </changeSet>
+     <changeSet id="PO-4082-2" author="ludetc">
+        <comment>Backs out contraint in PO-4084-2</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.6.1/PO-4082-2.sql"/>
+     </changeSet>
 </databaseChangeLog>

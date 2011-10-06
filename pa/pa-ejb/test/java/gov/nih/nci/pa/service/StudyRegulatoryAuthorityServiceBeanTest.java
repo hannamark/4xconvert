@@ -97,13 +97,13 @@ import org.junit.Test;
 
 public class StudyRegulatoryAuthorityServiceBeanTest extends AbstractHibernateTestCase {
 
-    private StudyRegulatoryAuthorityServiceLocal remoteEjb = new StudyRegulatoryAuthorityBeanLocal();;
+    private final StudyRegulatoryAuthorityServiceLocal remoteEjb = new StudyRegulatoryAuthorityBeanLocal();;
     Ii pid;
     RegulatoryAuthority ra;
 
     @Before
     public void setUp() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         Country c = TestSchema.createCountryObj();

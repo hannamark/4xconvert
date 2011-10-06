@@ -208,6 +208,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/pa-ear/trunk/software/install.xml $
             <filter token="accrual.batch.upload.filepath.loc" value="${accrual.batch.upload.filepath.loc}"/>
             <filter token="batch.upload.filepath.loc" value="${batch.upload.filepath.loc}"/>
             <filter token="tooltips.filepath.loc" value="${tooltips.filepath.loc}"/>
+            <filter token="nci.ldap.prefix" value="${nci.ldap.prefix}"/>            
             <filter token="po.server.name" value="${po.server.name}"/>
             <filter token="po.port.number" value="${po.port.number}"/>
             <filter token="po.topic.serverName" value="${po.topic.serverName}"/>

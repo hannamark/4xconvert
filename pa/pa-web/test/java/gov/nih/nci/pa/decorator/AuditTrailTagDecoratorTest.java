@@ -114,9 +114,9 @@ public class AuditTrailTagDecoratorTest extends AbstractPaActionTest {
 
     @Before
     public void setUpCsmService() throws PAException {
-        oldCSMUserUtil = CSMUserService.getRegistryUserService();
+        oldCSMUserUtil = CSMUserService.getInstance();
         CSMUserUtil mockCsmUtil = mock(CSMUserUtil.class);
-        CSMUserService.setRegistryUserService(mockCsmUtil);
+        CSMUserService.setInstance(mockCsmUtil);
         User abstractor = new User();
         abstractor.setFirstName("Test");
         abstractor.setLastName("Abstractor");
@@ -124,6 +124,7 @@ public class AuditTrailTagDecoratorTest extends AbstractPaActionTest {
         when(mockCsmUtil.getCSMUser("nullRegistryUser")).thenReturn(abstractor);
     }
 
+    @Override
     @Before
     public void setUp() {
         decorator = new AuditTrailTagDecorator();
@@ -135,7 +136,7 @@ public class AuditTrailTagDecoratorTest extends AbstractPaActionTest {
 
     @After
     public void cleanUpCsmService() {
-        CSMUserService.setRegistryUserService(oldCSMUserUtil);
+        CSMUserService.setInstance(oldCSMUserUtil);
     }
 
     /**

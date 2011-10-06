@@ -79,7 +79,6 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.RegistryUser;
-import gov.nih.nci.pa.iso.convert.AbstractStudyProtocolConverter;
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
@@ -106,15 +105,11 @@ public class CSMUserService implements CSMUserUtil {
 
     private static final String CSM_LOOKUP_ERR_MSG = "CSM exception while retrieving CSM user: ";
     private static final Logger LOG  = Logger.getLogger(CSMUserService.class);
-    private static CSMUserUtil registryUserService = null;
+    private static CSMUserUtil instance = new CSMUserService();
     /**
      * Based on gridServicePrincipalSeparator used in security-config.xml.  Escaped for regular expression support.
      */
     private static final String PRINCIPAL_SEPARATOR = "\\|\\|";
-
-    static {
-        setRegistryUserService(new CSMUserService());
-    }
 
     /**
      * {@inheritDoc}
@@ -202,7 +197,6 @@ public class CSMUserService implements CSMUserUtil {
         }
 
         return csmUser;
-
     }
 
     /**
@@ -310,21 +304,15 @@ public class CSMUserService implements CSMUserUtil {
      * @return RegistryUserService
      */
     public static CSMUserUtil getInstance() {
-        return  getRegistryUserService();
+        return  instance;
     }
 
     /**
-     * @param registryUserService the registryUserService to set
+     * This method should be removed. Used for unit testing.
+     * @param service service to test
      */
-    public static void setRegistryUserService(CSMUserUtil registryUserService) {
-        CSMUserService.registryUserService = registryUserService;
-        AbstractStudyProtocolConverter.setCsmUserUtil(CSMUserService.registryUserService);
+    public static void setInstance(CSMUserUtil service) {
+        instance = service;
     }
 
-    /**
-     * @return the registryUserService
-     */
-    public static CSMUserUtil getRegistryUserService() {
-        return registryUserService;
-    }
 }

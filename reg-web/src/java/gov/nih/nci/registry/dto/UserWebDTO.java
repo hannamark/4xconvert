@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The pa
+ * source code form and machine readable, binary, object code form. The reg-web
  * Software was developed in conjunction with the National Cancer Institute
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent
  * government employees are authors, any rights in such works shall be subject
  * to Title 17 of the United States Code, section 105.
  *
- * This pa Software License (the License) is between NCI and You. You (or
+ * This reg-web Software License (the License) is between NCI and You. You (or
  * Your) shall mean a person or an entity, and all other entities that control,
  * are controlled by, or are under common control with the entity. Control for
  * purposes of this definition means (i) the direct or indirect power to cause
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up,
  * no-charge, irrevocable, transferable and royalty-free right and license in
- * its rights in the pa Software to (i) use, install, access, operate,
+ * its rights in the reg-web Software to (i) use, install, access, operate,
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the pa Software; (ii) distribute and
- * have distributed to and by third parties the pa Software and any
+ * and prepare derivative works of the reg-web Software; (ii) distribute and
+ * have distributed to and by third parties the reg-web Software and any
  * modifications and derivative works thereof; and (iii) sublicense the
  * foregoing rights set out in (i) and (ii) to third parties, including the
  * right to license such rights to further third parties. For sake of clarity,
@@ -80,82 +80,58 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.service;
+package gov.nih.nci.registry.dto;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
-import gov.nih.nci.pa.enums.AssayPurposeCode;
-import gov.nih.nci.pa.enums.AssayTypeCode;
-import gov.nih.nci.pa.enums.AssayUseCode;
-import gov.nih.nci.pa.enums.TissueCollectionMethodCode;
-import gov.nih.nci.pa.enums.TissueSpecimenTypeCode;
-import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.util.CSMUserService;
-import gov.nih.nci.pa.util.AbstractHibernateTestCase;
-import gov.nih.nci.pa.util.MockCSMUserService;
-import gov.nih.nci.pa.util.TestSchema;
-
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.validator.NotEmpty;
 
 /**
- * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
+ * @author ludetc
+ *
  */
-public class PlannedMarkerServiceTest extends AbstractHibernateTestCase {
-    private final PlannedMarkerServiceLocal bean = new PlannedMarkerServiceBean();
-    private Ii spIi;
+public class UserWebDTO {
+    private String username;
+    private String password;
 
-    @Before
-    public void setUp() throws Exception {
-        CSMUserService.setInstance(new MockCSMUserService());
-        TestSchema.primeData();
-        spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
-     }
-
-    @Test
-    public void managePlannedMarker()  throws Exception {
-        //Checking to make sure the 2 primed planned markers are present.
-        List<PlannedMarkerDTO> dtos = bean.getByStudyProtocol(spIi);
-        assertEquals(2, dtos.size());
-
-        PlannedMarkerDTO markerDTO = bean.create(constructPlannedMarker());
-        assertNotNull(markerDTO);
-        assertNotNull(markerDTO.getIdentifier());
-
-        dtos = bean.getByStudyProtocol(spIi);
-        assertEquals(3, dtos.size());
-
-        try {
-            bean.create(constructPlannedMarker());
-            fail();
-        } catch (PAException e) {
-           //expected, testing duplication
-        }
+    /**
+     * username getter.
+     * @return the username
+     */
+    @NotEmpty (message = "error.register.username")
+    public String getUsername() {
+        return username;
     }
 
-    private PlannedMarkerDTO constructPlannedMarker() {
-        PlannedMarkerDTO markerDTO = new PlannedMarkerDTO();
-        markerDTO.setStudyProtocolIdentifier(spIi);
-        markerDTO.setName(StConverter.convertToSt("Biomarker"));
-        markerDTO.setLongName(StConverter.convertToSt("Biomarker long name"));
-        markerDTO.setHugoBiomarkerCode(CdConverter.convertStringToCd("HUGO Biomarker Code"));
-        markerDTO.setAssayTypeCode(CdConverter.convertToCd(AssayTypeCode.OTHER));
-        markerDTO.setAssayTypeOtherText(StConverter.convertToSt("Assay Type Other Text"));
-        markerDTO.setAssayUseCode(CdConverter.convertToCd(AssayUseCode.RESEARCH));
-        markerDTO.setAssayPurposeCode(CdConverter.convertToCd(AssayPurposeCode.OTHER));
-        markerDTO.setAssayPurposeOtherText(StConverter.convertToSt("Assay Purpose Other Text"));
-        markerDTO.setTissueSpecimenTypeCode(CdConverter.convertToCd(TissueSpecimenTypeCode.TISSUE));
-        markerDTO.setTissueCollectionMethodCode(CdConverter.convertToCd(TissueCollectionMethodCode.MANDATORY));
-        markerDTO.setStatusCode(CdConverter.convertToCd(ActiveInactivePendingCode.PENDING));
-        return markerDTO;
+    /**
+     * returns the CN part of the DN.
+     * @return displayUsername the CN.
+     */
+    public String getDisplayUsername() {
+        return StringUtils.contains(username, "CN=") ? username.split("CN=")[1] : username;
     }
 
+    /**
+     * username setter.
+     * @param username username
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    /**
+     * password setter.
+     * @return the password.
+     */
+    @NotEmpty (message = "error.register.password")
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * password setter.
+     * @param password password.
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

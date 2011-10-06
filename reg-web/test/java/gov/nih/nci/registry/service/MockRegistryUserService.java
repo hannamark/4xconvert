@@ -220,6 +220,9 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
      * {@inheritDoc}
      */
     @Override
+    public void activateAccount(String email, String username) throws PAException {
+    }
+
     public List<RegistryUser> getLoginNamesByEmailAddress(String emailAddress) {
         return null;
     }

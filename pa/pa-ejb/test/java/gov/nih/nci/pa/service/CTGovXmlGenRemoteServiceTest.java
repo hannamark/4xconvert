@@ -40,7 +40,7 @@ public class CTGovXmlGenRemoteServiceTest extends AbstractHibernateTestCase {
 
     @Before
     public void init() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         bean.setStudyProtocolService(studyProtocolService);
     }
 

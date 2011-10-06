@@ -91,6 +91,7 @@ import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.DisplayTrialOwnershipInformation;
+import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -109,6 +110,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Property;
@@ -119,7 +121,7 @@ import org.hibernate.criterion.Restrictions;
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
-public class RegistryUserBeanLocal implements RegistryUserServiceLocal { 
+public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     private static final Logger LOG = Logger.getLogger(RegistryUserBeanLocal.class);
     private static final int INDEX_USER_ID = 0;
     private static final int INDEX_FIRST_NAME = 1;
@@ -131,7 +133,6 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
     private static final int INDEX_LEAD_ID = 7;
     private static final String SEARCH_USER_BY_EMAIL_QUERY = "select ru from RegistryUser as ru "
             + "join fetch ru.csmUser as csmu where ru.emailAddress = :emailAddress";
-
     /**
      * {@inheritDoc}
      */
@@ -212,9 +213,9 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             User csmUser = CSMUserService.getInstance().getCSMUser(loginName);
             if (csmUser != null) {
                 Session session = PaHibernateUtil.getCurrentSession();
-                String hql = "from RegistryUser where csmUser.id = :csmuserId";
+                String hql = "from RegistryUser where csmUser = :csmuser";
                 Query query = session.createQuery(hql);
-                query.setParameter("csmuserId", csmUser.getUserId());
+                query.setParameter("csmuser", csmUser);
                 registryUser = (RegistryUser) query.uniqueResult();
             }
         } catch (Exception cse) {
@@ -443,6 +444,41 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
             throw new PAException("user not found.");
         }
         return usr;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void activateAccount(String email, String username) throws PAException {
+        if (StringUtils.isEmpty(email)) {
+            throw new PAException("Cannot activate account with empty email.");
+        }
+
+        Session session = PaHibernateUtil.getCurrentSession();
+        Criteria criteria = session.createCriteria(RegistryUser.class);
+        criteria.add(Restrictions.eq("emailAddress", email));
+        criteria.add(Restrictions.isNull("csmUser"));
+
+        RegistryUser regUser = null;
+        try {
+            regUser = (RegistryUser) criteria.uniqueResult();
+        } catch (HibernateException e) {
+            throw new PAException("Multiple registry accounts for the same email address were found.");
+        }
+        if (regUser == null) {
+            throw new PAException("Unable to find user with email " + email
+                    + " .Unable to activate account.");
+        }
+
+        String loginName = PaEarPropertyReader.getNciLdapPrefix() + username;
+        User csmUser = CSMUserService.getInstance().getCSMUser(loginName);
+        if (csmUser == null) {
+            throw new PAException("Your account is not ready for activation");
+        }
+
+        regUser.setCsmUser(csmUser);
+        session.update(regUser);
+
     }
 
     /**

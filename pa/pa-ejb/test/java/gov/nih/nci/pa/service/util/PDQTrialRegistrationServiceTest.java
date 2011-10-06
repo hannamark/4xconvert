@@ -242,7 +242,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
      *
      */
     private void setUpPaSvc() throws PAException, IOException {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
 
         paSvcLoc = mock (ServiceLocator.class);
         PaRegistry.getInstance().setServiceLocator(paSvcLoc);

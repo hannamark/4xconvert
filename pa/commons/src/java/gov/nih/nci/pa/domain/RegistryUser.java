@@ -129,7 +129,7 @@ public class RegistryUser extends AbstractEntity implements Auditable {
     /**
      * @return the csmUser
      */
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CSM_USER_ID", updatable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     public User getCsmUser() {

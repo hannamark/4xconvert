@@ -197,4 +197,13 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
     public List<RegistryUser> getLoginNamesByEmailAddress(String emailAddress) {
         return null;
     }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.RegistryUserService#activateAccount(java.lang.String, java.lang.String)
+     */
+    @Override
+    public void activateAccount(String email, String username) throws PAException {
+        // TODO Auto-generated method stub
+
+    }
 }

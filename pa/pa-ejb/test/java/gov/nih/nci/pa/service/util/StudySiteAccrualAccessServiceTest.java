@@ -154,7 +154,7 @@ public class StudySiteAccrualAccessServiceTest extends AbstractHibernateTestCase
         dto.setStudySiteIdentifier(IiConverter.convertToIi(ssId));
         dto.setStatusCode(CdConverter.convertToCd(ActiveInactiveCode.ACTIVE));
         assertNull(dto.getIdentifier());
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         StudySiteAccrualAccessDTO r = bean.create(dto);
         assertNotNull(r);
         identifier = r.getIdentifier();

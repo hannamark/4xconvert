@@ -12,7 +12,7 @@
 <SCRIPT LANGUAGE="JavaScript">
 function handleAction(){
     document.forms[0].page.value = "Submit";
-    document.forms[0].action="registerUsersendMail.action";
+    document.forms[0].action="registerUserverifyEmail.action";
     document.forms[0].submit();
 }
 </SCRIPT>
@@ -25,32 +25,29 @@ function handleAction(){
     <s:form name="registerUser" validate="true" method="POST" ><s:actionerror />
         <s:hidden name="page" />
         <p>Create account to register trials with NCI Clinical Trials Reporting Program. </p>
-        <table class="form">
-            <tr>
-                <s:url id="existingGridAccountUrl" action="registerUserexistingGridAccount.action"/>
-                <td colspan="2" class="space">
-                    <h3>If you already have an NIH or caGrid account, click <s:a href="%{existingGridAccountUrl}">here.</s:a></h3>
-                </td>
-            </tr>
-          <tr>
-                <td scope="row" class="label">
-                    <label for="registerUser_registryUserWebDTO_emailAddress"><fmt:message key="register.user.emailAddress"/><span class="required">*</span></label>
-                </td>
-                <td>
-                    <s:textfield name="registryUserWebDTO.emailAddress"  maxlength="200" size="100"  cssStyle="width:200px" />
-                    <span class="formErrorMsg">
-                        <s:fielderror>
-                        <s:param>registryUserWebDTO.emailAddress</s:param>
-                       </s:fielderror>
-                     </span>
-                </td>
-          </tr>
-         </table>
-        <div class="actionsrow">
+    <table class="form">
+        <tr>
+            <s:url id="existingGridAccountUrl" action="registerUserexistingGridAccount.action" />
+            <td colspan="2" class="space">
+            <h3>If you already have an NIH account, click <s:a href="%{existingGridAccountUrl}">here.</s:a></h3>
+            </td>
+        </tr>
+        <tr>
+            <td scope="row" class="label"><label for="registerUser_registryUserWebDTO_emailAddress">
+            <fmt:message
+                key="register.user.emailAddress" /><span class="required">*</span></label></td>
+            <td><s:textfield name="registryUserWebDTO.emailAddress" maxlength="200" size="100"
+                cssStyle="width:200px" /> <span class="formErrorMsg"> <s:fielderror>
+                <s:param>registryUserWebDTO.emailAddress</s:param>
+            </s:fielderror> </span></td>
+        </tr>
+    </table>
+    <div class="actionsrow">
             <del class="btnwrapper">
                 <ul class="btnrow">
                     <li>
-                        <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="login">Submit</span></span></s:a>
+                        <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img">
+                        <span class="login">Submit</span></span></s:a>
                     </li>
                 </ul>
             </del>

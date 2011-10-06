@@ -106,14 +106,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class StudyContactServiceBeanTest extends AbstractHibernateTestCase {
-    private StudyContactServiceLocal remoteEjb = new StudyContactBeanLocal();
+    private final StudyContactServiceLocal remoteEjb = new StudyContactBeanLocal();
     Ii pid;
     Ii clinicalResearchStaffId;
 
     @Before
     public void setUp() throws Exception {
         PoRegistry.getInstance().setPoServiceLocator(new MockPoServiceLocator());
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         pid = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         clinicalResearchStaffId = IiConverter.convertToIi(TestSchema.clinicalResearchStaffIds.get(0));

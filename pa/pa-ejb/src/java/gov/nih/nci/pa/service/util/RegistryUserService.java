@@ -214,12 +214,20 @@ public interface RegistryUserService {
      * @throws PAException when an error occurs.
      */
     Set<RegistryUser> getAllTrialOwners(Long studyProtocolId) throws PAException;
-    
+
     /**
      * Gets the login names of the registry users having the given email address.
      * @param emailAddress The e-mail address
      * @return The list of login names of the registry users having the given email address.
      */
     List<RegistryUser> getLoginNamesByEmailAddress(String emailAddress);
+
+    /**
+     * Links a CSM and registryUser using the email address.
+     * @param email registry user email.
+     * @param username CN.
+     * @throws PAException when an error occurs.
+     */
+    void activateAccount(String email, String username) throws PAException;
 
 }

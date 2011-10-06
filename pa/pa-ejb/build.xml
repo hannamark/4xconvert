@@ -7,7 +7,7 @@
 <project name="pa-ejb" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <property name="pa-ejb.coverage.line" value="72"/>
     <property name="pa-ejb.coverage.branch" value="57"/>
-    <property name="pa-ejb.pmd.maxerrors" value="339"/>
+    <property name="pa-ejb.pmd.maxerrors" value="341"/>
 
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>
@@ -178,6 +178,7 @@
                 <filter token="cteprss.user" value="${cteprss.user}"/>
                 <filter token="default.user.name" value="${default.user.name}" />
                 <filter token="mock.po" value="${mock.po}" />
+                <filter token="nci.ldap.prefix" value="${nci.ldap.prefix}" />
                 <filter token="wikiHelp.baseUrl.pa" value="${wikiHelp.baseUrl.pa}" />
                 <filter token="wikiHelp.baseUrl.registry" value="${wikiHelp.baseUrl.registry}" />
                 <filter token="wikiHelp.baseUrl.accrual" value="${wikiHelp.baseUrl.accrual}" />

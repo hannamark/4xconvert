@@ -84,15 +84,6 @@ package gov.nih.nci.registry.util;
  */
 public class Constants {
 
-    /**
-     * @USERNAME_REQ_ERROR an error message that is fired during login when user not insert userName
-     */
-    public static final String USERNAME_REQ_ERROR = "User Name is required field";
-    /**
-     * @PASSWORD_REQ_ERROR an error message that is fired during login when user not insert password
-     */
-    public static final String PASSWORD_REQ_ERROR = "Password is required field";
-
     /** logged user name is stored in session using loggerUserName variable . */
     public static final String LOGGED_USER_NAME = "loggedUserName";
 
@@ -139,6 +130,9 @@ public class Constants {
 
     /** My Account Page. */
     public static final String MY_ACCOUNT = "myAccount";
+
+    /** Create Account Page. */
+    public static final String CREATE_ACCOUNT = "createAccount";
 
     /** Register User Email Confirmation. */
     public static final String CONFIRMATION = "confirmation";
@@ -232,9 +226,6 @@ public class Constants {
 
     /** SECONDARY_IDENTIFIERS_LIST. */
     public static final String SECONDARY_IDENTIFIERS_LIST = "secondaryIdentifiersList";
-
-    /** Study Protocol Root. * */
-    public static final String STUDY_PROTOCOL_ROOT = "2.16.840.1.113883.3.26.4.3";
 
     /** Redirect to Login. **/
     public static final String REDIRECT_TO_LOGIN = "redirect_to_login";

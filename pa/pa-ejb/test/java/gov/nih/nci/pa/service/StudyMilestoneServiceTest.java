@@ -137,14 +137,14 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE,
         MilestoneCode.SCIENTIFIC_READY_FOR_QC, MilestoneCode.SCIENTIFIC_QC_START,
         MilestoneCode.SCIENTIFIC_QC_COMPLETE};
-    
-    private StudyMilestoneBeanLocal bean = new StudyMilestoneBeanLocal();
-    private AbstractionCompletionServiceBean abstractionCompletionSerivce = new AbstractionCompletionServiceBean();
-    private DocumentWorkflowStatusBeanLocal dws = new DocumentWorkflowStatusBeanLocal();
-    private MailManagerBeanLocal mailSrc = new MailManagerBeanLocal();
-    private StudyInboxServiceLocal sis = new StudyInboxServiceBean();
-    private StudyOnholdServiceLocal ohs = new StudyOnholdServiceBean();
-    private StudyProtocolServiceLocal sps = new StudyProtocolServiceBean();
+
+    private final StudyMilestoneBeanLocal bean = new StudyMilestoneBeanLocal();
+    private final AbstractionCompletionServiceBean abstractionCompletionSerivce = new AbstractionCompletionServiceBean();
+    private final DocumentWorkflowStatusBeanLocal dws = new DocumentWorkflowStatusBeanLocal();
+    private final MailManagerBeanLocal mailSrc = new MailManagerBeanLocal();
+    private final StudyInboxServiceLocal sis = new StudyInboxServiceBean();
+    private final StudyOnholdServiceLocal ohs = new StudyOnholdServiceBean();
+    private final StudyProtocolServiceLocal sps = new StudyProtocolServiceBean();
 
     private Ii spIi;
     private Ii spAmendIi;
@@ -154,7 +154,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
 
     @Before
     public void setUp() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
 
         bean.setAbstractionCompletionService(abstractionCompletionSerivce);
         bean.setDocumentWorkflowStatusService(dws);
@@ -162,10 +162,10 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.setStudyInboxService(sis);
         bean.setStudyOnholdService(ohs);
         bean.setStudyProtocolService(sps);
-        
+
         mailSrc.setProtocolQueryService(new ProtocolQueryServiceBean());
         bean.setValidateAbstractions(false);
-        
+
         TestSchema.primeData();
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         spAmendIi = TestSchema.createAmendStudyProtocol();

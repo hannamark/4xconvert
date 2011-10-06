@@ -20,14 +20,14 @@ import org.junit.Test;
 
 public class StudyCheckoutServiceBeanTest extends AbstractHibernateTestCase {
 
-    private StudyCheckoutServiceLocal localEjb = new StudyCheckoutServiceBean();
+    private final StudyCheckoutServiceLocal localEjb = new StudyCheckoutServiceBean();
     Ii pid;
 
     @Before
     public void setUp() throws Exception {
       TestSchema.primeData();
       pid = IiConverter.convertToIi(TestSchema.studyProtocolIds.get(0));
-      CSMUserService.setRegistryUserService(new MockCSMUserService());
+      CSMUserService.setInstance(new MockCSMUserService());
     }
 
     @Test

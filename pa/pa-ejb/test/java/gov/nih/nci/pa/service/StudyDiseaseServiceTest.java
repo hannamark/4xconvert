@@ -108,26 +108,26 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 /**
  * @author hreinhart
- * 
+ *
  */
 public class StudyDiseaseServiceTest extends AbstractHibernateTestCase {
-    
+
     /**
-     * Rule for exception. 
+     * Rule for exception.
      */
     @Rule
     public ExpectedException thrown = ExpectedException.none();
- 
+
     private StudyDiseaseBeanLocal bean = new StudyDiseaseBeanLocal();
     private PDQDiseaseServiceLocal pdqDiseaseServiceLocal = new PDQDiseaseBeanLocal();
-    private StringBuilder errorMsg = new StringBuilder();
-    
+    private final StringBuilder errorMsg = new StringBuilder();
+
     /**
      * Initialization method.
      */
     @Before
     public void setUp() {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         bean.setPdqDiseaseServiceLocal(pdqDiseaseServiceLocal);
     }
@@ -205,14 +205,14 @@ public class StudyDiseaseServiceTest extends AbstractHibernateTestCase {
         assertEquals("Wrong number of StudyDisease found", 1, dtoList.size());
         assertStudyDiseaseDTO(studyDiseaseDTO, dtoList.get(0));
     }
-    
+
     private void assertStudyDiseaseDTO(StudyDiseaseDTO expected, StudyDiseaseDTO actual) {
         assertEquals("Wrong study protocol Ii", expected.getStudyProtocolIdentifier(),
                      actual.getStudyProtocolIdentifier());
         assertEquals("Wrong disease Ii", expected.getDiseaseIdentifier(), actual.getDiseaseIdentifier());
         assertEquals("Wrong ctgov Xml Indicator", expected.getCtGovXmlIndicator(), actual.getCtGovXmlIndicator());
     }
-    
+
     /**
      * test that the create method with invalid data.
      * @throws PAException if an error occurs
@@ -228,7 +228,7 @@ public class StudyDiseaseServiceTest extends AbstractHibernateTestCase {
         studyDiseaseDTO.setCtGovXmlIndicator(BlConverter.convertToBl(true));
         bean.create(studyDiseaseDTO);
     }
-    
+
     /**
      * Test the update methodwith valid data.
      * @throws PAException if an error occurs
@@ -277,7 +277,7 @@ public class StudyDiseaseServiceTest extends AbstractHibernateTestCase {
         dtoList = bean.getByStudyProtocol(spIi);
         assertEquals(oldSize - 1, dtoList.size());
     }
-    
+
     /**
      * test the businessRules method with no disease identifier.
      * @throws PAException if an error occurs
@@ -289,7 +289,7 @@ public class StudyDiseaseServiceTest extends AbstractHibernateTestCase {
         StudyDiseaseDTO dto = new StudyDiseaseDTO();
         bean.businessRules(dto);
     }
-    
+
     /**
      * test the businessRules method with valid data.
      * @throws PAException if an error occurs
@@ -304,7 +304,7 @@ public class StudyDiseaseServiceTest extends AbstractHibernateTestCase {
         verify(bean).validateDisease(eq(dto.getDiseaseIdentifier()), any(StringBuilder.class));
         verify(bean).validateNoduplicate(eq(dto), any(StringBuilder.class));
     }
-    
+
     /**
      * Test the validateDisease with valid data.
      * @throws PAException if an error occurs
@@ -321,7 +321,7 @@ public class StudyDiseaseServiceTest extends AbstractHibernateTestCase {
         verify(pdqDiseaseServiceLocal).get(diseaseIi);
         checkErrorMsg("");
     }
-    
+
     /**
      * Test the validateDisease with valid data.
      * @throws PAException if an error occurs
@@ -337,7 +337,7 @@ public class StudyDiseaseServiceTest extends AbstractHibernateTestCase {
         verify(pdqDiseaseServiceLocal).get(diseaseIi);
         checkErrorMsg("Diseases without a menu display name are not suitable for reporting.  ");
     }
-    
+
     private void checkErrorMsg(String expectedMessage) {
         assertEquals("Wrong error message", expectedMessage, errorMsg.toString());
     }

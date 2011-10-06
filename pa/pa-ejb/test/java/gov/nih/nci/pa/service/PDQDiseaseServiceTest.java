@@ -112,7 +112,7 @@ public class PDQDiseaseServiceTest extends AbstractHibernateTestCase {
 
     @Before
     public void setUp() throws Exception {
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
         ii = IiConverter.convertToIi(TestSchema.pdqDiseaseIds.get(0));
      }

@@ -27,7 +27,7 @@ public class DisclaimerActionTest extends AbstractRegWebTest {
     @Before
     public void setup() {
         CSMUserService.getInstance();
-        CSMUserService.setRegistryUserService(new MockCSMUserService());
+        CSMUserService.setInstance(new MockCSMUserService());
     }
 
     @Test
