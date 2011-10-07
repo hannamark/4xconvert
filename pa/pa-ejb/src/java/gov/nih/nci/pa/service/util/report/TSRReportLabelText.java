@@ -579,7 +579,7 @@ public class TSRReportLabelText {
     /**
      * Time Frame.
      */
-    public static final String POM_TIMEFRAME = "TimeFrame";
+    public static final String POM_TIMEFRAME = "Time Frame";
     /**
      * Is Safety Issue.
      */
