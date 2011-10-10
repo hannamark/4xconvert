@@ -85,6 +85,7 @@ package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
+
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.TrialUtil;
 
@@ -158,8 +159,8 @@ public class UpdateTrialStatusActionTest extends AbstractRegWebTest {
         trialUpdatedWithStatInfo.setStatusCode("Inactive");
         trialUpdatedWithStatInfo.setStatusDate("07/25/2011");
         trialUpdatedWithStatInfo.setReason("A temp reason");
-        trialUpdatedWithStatInfo.setCompletionDate("07/25/2011");
-        trialUpdatedWithStatInfo.setCompletionDateType("Something else");
+        trialUpdatedWithStatInfo.setPrimaryCompletionDate("07/25/2011");
+        trialUpdatedWithStatInfo.setPrimaryCompletionDateType("Something else");
         return trialUpdatedWithStatInfo;
     }
 
@@ -169,8 +170,8 @@ public class UpdateTrialStatusActionTest extends AbstractRegWebTest {
         assertEquals(trialUpdatedWithStatInfo.getStatusCode(), savedTrial.getStatusCode());
         assertEquals(trialUpdatedWithStatInfo.getStatusDate(), savedTrial.getStatusDate());
         assertEquals(trialUpdatedWithStatInfo.getReason(), savedTrial.getReason());
-        assertEquals(trialUpdatedWithStatInfo.getCompletionDate(), savedTrial.getCompletionDate());
-        assertEquals(trialUpdatedWithStatInfo.getCompletionDateType(), savedTrial.getCompletionDateType());
+        assertEquals(trialUpdatedWithStatInfo.getPrimaryCompletionDate(), savedTrial.getPrimaryCompletionDate());
+        assertEquals(trialUpdatedWithStatInfo.getPrimaryCompletionDateType(), savedTrial.getPrimaryCompletionDateType());
     }
 
     private void assertStatusValuesNotSame(TrialDTO savedTrial, TrialDTO trialUpdatedWithStatInfo) {
@@ -179,7 +180,8 @@ public class UpdateTrialStatusActionTest extends AbstractRegWebTest {
         assertNotSame(trialUpdatedWithStatInfo.getStatusCode(), savedTrial.getStatusCode());
         assertNotSame(trialUpdatedWithStatInfo.getStatusDate(), savedTrial.getStatusDate());
         assertNotSame(trialUpdatedWithStatInfo.getReason(), savedTrial.getReason());
-        assertNotSame(trialUpdatedWithStatInfo.getCompletionDate(), savedTrial.getCompletionDate());
-        assertNotSame(trialUpdatedWithStatInfo.getCompletionDateType(), savedTrial.getCompletionDateType());
+        assertNotSame(trialUpdatedWithStatInfo.getPrimaryCompletionDate(), savedTrial.getPrimaryCompletionDate());
+        assertNotSame(trialUpdatedWithStatInfo.getPrimaryCompletionDateType(),
+                      savedTrial.getPrimaryCompletionDateType());
     }
 }

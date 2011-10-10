@@ -413,7 +413,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
 
     private boolean doStatusDatesRequireBusinessRuleValidation() throws PAException {
         return StringUtils.isNotEmpty(trialDTO.getStatusCode()) && RegistryUtil.isValidDate(trialDTO.getStatusDate())
-                && RegistryUtil.isValidDate(trialDTO.getCompletionDate())
+                && RegistryUtil.isValidDate(trialDTO.getPrimaryCompletionDate())
                 && RegistryUtil.isValidDate(trialDTO.getStartDate())
                 && new TrialValidator().isTrialStatusOrDateChanged(trialDTO);
     }

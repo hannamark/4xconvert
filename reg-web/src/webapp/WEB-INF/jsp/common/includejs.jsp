@@ -5,6 +5,6 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/Help.js'/>"></script>
 <script type="text/javascript" language="javascript">
     Help.url = '<s:property value="@gov.nih.nci.pa.util.PaEarPropertyReader@getRegistryHelpUrl()" />';
-    var contextPath = '<%=request.getContextPath()%>';
+    var contextPath = '${pageContext.request.contextPath}';
 </script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/overlib.js'/>"></script>

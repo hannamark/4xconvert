@@ -92,6 +92,10 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyInboxServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -127,26 +131,36 @@ import com.opensymphony.xwork2.Preparable;
  * @author Vrushali
  */
 public class AmendmentTrialAction extends ManageFileAction implements ServletResponseAware, Preparable {
-    private static final long serialVersionUID = 1L;
-    private HttpServletResponse servletResponse;
+
+    private static final long serialVersionUID = 613144140270457242L;
+    
     private static final Logger LOG = Logger.getLogger(AmendmentTrialAction.class);
+    
+    private HttpServletResponse servletResponse;
+    
+    private LookUpTableServiceRemote lookUpTableService;
+    private StudyInboxServiceLocal studyInboxService;
+    private StudyProtocolServiceLocal studyProtocolService;
+    private TrialRegistrationServiceLocal trialRegistrationService;
+    
     private TrialDTO trialDTO;
-    private String trialAction = null;
-    private String studyProtocolId = null;
+    private String trialAction;
+    private Long studyProtocolId;
     private final TrialUtil trialUtil = new TrialUtil();
-
+    
     /**
-     * @param response servletResponse
+     * {@inheritDoc}
      */
-    public void setServletResponse(HttpServletResponse response) {
-        this.servletResponse = response;
-    }
-
-    /**
-     * @return servletResponse
-     */
-    public HttpServletResponse getServletResponse() {
-        return servletResponse;
+    @Override
+    public void prepare() {
+        lookUpTableService = PaRegistry.getLookUpTableService();
+        studyInboxService = PaRegistry.getStudyInboxService();
+        studyProtocolService = PaRegistry.getStudyProtocolService();
+        trialRegistrationService = PaRegistry.getTrialRegistrationService();
+        if (trialDTO != null) {
+            trialDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
+                .lookupPrimaryPurposeAdditionalQualifierCode(trialDTO.getPrimaryPurposeCode()));
+        }
     }
 
     /**
@@ -157,11 +171,11 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
         // clear the session
         TrialValidator.removeSessionAttributes();
         try {
-            Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
+            Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(studyProtocolId);
             //Trials that have open updates cannot be amended.
-            if (CollectionUtils.isNotEmpty(PaRegistry.getStudyInboxService().getOpenInboxEntries(studyProtocolIi))) {
-                StudyProtocolDTO spDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
-                String ctroAddress = PaRegistry.getLookUpTableService().getPropertyValue("fromaddress");
+            if (CollectionUtils.isNotEmpty(studyInboxService.getOpenInboxEntries(studyProtocolIi))) {
+                StudyProtocolDTO spDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
+                String ctroAddress = lookUpTableService.getPropertyValue("fromaddress");
                 addActionError(getText("error.amend.openUpdates",
                         new String[] {PAUtil.getAssignedIdentifierExtension(spDTO), ctroAddress}));
                 return "unamendable";
@@ -180,19 +194,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
         return SUCCESS;
     }
 
-    /**
-     * @return the trialDTO
-     */
-    public TrialDTO getTrialDTO() {
-        return trialDTO;
-    }
-
-    /**
-     * @param trialDTO the trialDTO to set
-     */
-    public void setTrialDTO(TrialDTO trialDTO) {
-        this.trialDTO = trialDTO;
-    }
+   
 
     /**
      * Clears the session variables and redirect to search.
@@ -362,11 +364,13 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
                 studyRegAuthDTO = util.getStudyRegAuth(null, trialDTO);
             }
             amendId =
-                    PaRegistry.getTrialRegistrationService().amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                            studyResourcingDTOs, documentDTOs, leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO,
-                            leadOrgSiteIdDTO, studyIdentifierDTOs, studyContactDTO, studySiteContactDTO,
-                            summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO,
-                            BlConverter.convertToBl(Boolean.FALSE));
+                    trialRegistrationService.amend(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
+                                                   studyResourcingDTOs, documentDTOs, leadOrgDTO,
+                                                   principalInvestigatorDTO, sponsorOrgDTO, leadOrgSiteIdDTO,
+                                                   studyIdentifierDTOs, studyContactDTO, studySiteContactDTO,
+                                                   summary4orgDTO, summary4studyResourcingDTO,
+                                                   responsiblePartyContactIi, studyRegAuthDTO,
+                                                   BlConverter.convertToBl(Boolean.FALSE));
             TrialValidator.removeSessionAttributes();
             ServletActionContext.getRequest().getSession().setAttribute("protocolId", amendId.getExtension());
             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", amendId);
@@ -422,7 +426,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
 
     private boolean doStatusDatesRequireBusinessRuleValidation() throws PAException {
         return StringUtils.isNotBlank(trialDTO.getStatusCode()) && RegistryUtil.isValidDate(trialDTO.getStatusDate())
-                && RegistryUtil.isValidDate(trialDTO.getCompletionDate())
+                && RegistryUtil.isValidDate(trialDTO.getPrimaryCompletionDate())
                 && RegistryUtil.isValidDate(trialDTO.getStartDate())
                 && new TrialValidator().isTrialStatusOrDateChanged(trialDTO);
     }
@@ -445,7 +449,19 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
                     + " current trial status 'In-Review' with 'Approved'");
         }
     }
-    
+    /**
+     * @return the trialDTO
+     */
+    public TrialDTO getTrialDTO() {
+        return trialDTO;
+    }
+
+    /**
+     * @param trialDTO the trialDTO to set
+     */
+    public void setTrialDTO(TrialDTO trialDTO) {
+        this.trialDTO = trialDTO;
+    }
     /**
      * @return the trialAction
      */
@@ -463,26 +479,58 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
     /**
      * @return the studyProtocolId
      */
-    public String getStudyProtocolId() {
+    public Long getStudyProtocolId() {
         return studyProtocolId;
     }
 
     /**
      * @param studyProtocolId the studyProtocolId to set
      */
-    public void setStudyProtocolId(String studyProtocolId) {
+    public void setStudyProtocolId(Long studyProtocolId) {
         this.studyProtocolId = studyProtocolId;
     }
 
+    /**
+     * @return servletResponse
+     */
+    public HttpServletResponse getServletResponse() {
+        return servletResponse;
+    }
 
     /**
-     * {@inheritDoc}
+     * @param response servletResponse
      */
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public void prepare() throws Exception {
-        if (this.trialDTO != null) {
-            this.trialDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
-                    .lookupPrimaryPurposeAdditionalQualifierCode(this.trialDTO.getPrimaryPurposeCode()));
-        }
+    @Override
+    public void setServletResponse(HttpServletResponse response) {
+        this.servletResponse = response;
     }
+
+    /**
+     * @param lookUpTableService the lookUpTableService to set
+     */
+    public void setLookUpTableService(LookUpTableServiceRemote lookUpTableService) {
+        this.lookUpTableService = lookUpTableService;
+    }
+
+    /**
+     * @param studyInboxService the studyInboxService to set
+     */
+    public void setStudyInboxService(StudyInboxServiceLocal studyInboxService) {
+        this.studyInboxService = studyInboxService;
+    }
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
+    }
+
+    /**
+     * @param trialRegistrationService the trialRegistrationService to set
+     */
+    public void setTrialRegistrationService(TrialRegistrationServiceLocal trialRegistrationService) {
+        this.trialRegistrationService = trialRegistrationService;
+    }
+
 }

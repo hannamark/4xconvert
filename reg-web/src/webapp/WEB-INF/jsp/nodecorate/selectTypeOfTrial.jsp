@@ -10,7 +10,7 @@
             }
             
             function loadSelectedTrialType() {
-            	var action = '<%=request.getContextPath()%>';   
+            	var action = '${pageContext.request.contextPath}';   
             	var sum4FundingCatCode = document.getElementById('summaryFourFundingCategoryCode').value;
             	if (sum4FundingCatCode == '' ) {
                 	alert('Please Select Summary Four Funding Category');

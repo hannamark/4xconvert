@@ -145,7 +145,7 @@ public class UpdateTrialStatusTest extends AbstractRegistrySeleniumTest {
     private void updateStatusViaPopup() {
         clickAndWaitAjax(UPDATE_STATUS_LINK_LOCATOR);
         selenium.selectFrame("popupFrame");
-        waitForElementById("updateTrialStatusForm_trialDTO_completionDateTypeAnticipated", 60);
+        waitForElementById("updateTrialStatusForm_trialDTO_primaryCompletionDateTypeAnticipated", 60);
         assertUpdateStatusPageFieldsArePresent();
         updateStatus();
         selenium.selectWindow(null);
@@ -170,9 +170,9 @@ public class UpdateTrialStatusTest extends AbstractRegistrySeleniumTest {
         assertTrue(selenium.isElementPresent("id=updateTrialStatusForm_trialDTO_startDate"));
         assertTrue(selenium.isElementPresent("id=updateTrialStatusForm_trialDTO_startDateTypeActual"));
         assertTrue(selenium.isElementPresent("id=updateTrialStatusForm_trialDTO_startDateTypeAnticipated"));
-        assertTrue(selenium.isElementPresent("id=updateTrialStatusForm_trialDTO_completionDate"));
-        assertTrue(selenium.isElementPresent("id=updateTrialStatusForm_trialDTO_completionDateTypeActual"));
-        assertTrue(selenium.isElementPresent("id=updateTrialStatusForm_trialDTO_completionDateTypeAnticipated"));
+        assertTrue(selenium.isElementPresent("id=updateTrialStatusForm_trialDTO_primaryCompletionDate"));
+        assertTrue(selenium.isElementPresent("id=updateTrialStatusForm_trialDTO_primaryCompletionDateTypeActual"));
+        assertTrue(selenium.isElementPresent("id=updateTrialStatusForm_trialDTO_primaryCompletionDateTypeAnticipated"));
         assertTrue(selenium.isElementPresent("link=Save"));
         assertTrue(selenium.isElementPresent("link=Close"));
     }

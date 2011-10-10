@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.registry.dto.TrialDTO;
@@ -95,8 +96,8 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         TrialDTO dto = getMockTrialDTO();
         dto.setStatusDate("01/20/2009");
         dto.setStatusCode("Administratively Complete");
-        dto.setCompletionDateType("Anticipated");
-        dto.setCompletionDate("01/20/2009");
+        dto.setPrimaryCompletionDateType("Anticipated");
+        dto.setPrimaryCompletionDate("01/20/2009");
         dto.setStartDateType("Anticipated");
         dto.setStartDate("01/20/2008");
         dto.setReason("reason");
@@ -161,7 +162,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         dto.setContactEmail("dhh");
         dto.setContactPhone("");
         dto.setStartDate("startDate");
-        dto.setCompletionDate("completionDate");
+        dto.setPrimaryCompletionDate("completionDate");
         dto.setStatusDate("statusDate");
         dto.setResponsiblePartyType("");
         dto.setPrimaryPurposeCode("Other");
@@ -368,11 +369,11 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
         dto.setStartDate("");
-        dto.setCompletionDate("");
+        dto.setPrimaryCompletionDate("");
         dto.setStatusDate("");
         dto.setStatusCode("");
         dto.setStartDateType("");
-        dto.setCompletionDateType("");
+        dto.setPrimaryCompletionDateType("");
         submitAction.setTrialDTO(dto);
         assertEquals("error", submitAction.review());
     }
@@ -418,25 +419,26 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         assertTrue(submitAction.getFieldErrors().containsKey("trialDTO.startDate"));
     }
     @Test
-    public void testValidateTrialDatesRule20ActualFail(){
+    public void testValidateTrialDatesRule20ActualFail() {
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
-        dto.setCompletionDate(getTomorrowDate());
-        dto.setCompletionDateType("Actual");
+        dto.setPrimaryCompletionDate(getTomorrowDate());
+        dto.setPrimaryCompletionDateType("Actual");
         submitAction.setTrialDTO(dto);
         assertEquals("error", submitAction.review());
-        assertTrue(submitAction.getFieldErrors().containsKey("trialDTO.completionDate"));
-        assertEquals("Please enter a valid date", submitAction.getFieldErrors().get("trialDTO.completionDate").get(0));
+        assertTrue(submitAction.getFieldErrors().containsKey("trialDTO.primaryCompletionDate"));
+        assertEquals("Please enter a valid date", submitAction.getFieldErrors().get("trialDTO.primaryCompletionDate")
+            .get(0));
     }
     @Test
     public void testValidateTrialDatesRule20AnticipatedFail(){
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
-        dto.setCompletionDate("02/22/2000");
-        dto.setCompletionDateType("Anticipated");
+        dto.setPrimaryCompletionDate("02/22/2000");
+        dto.setPrimaryCompletionDateType("Anticipated");
         submitAction.setTrialDTO(dto);
         assertEquals("error", submitAction.review());
-        assertTrue(submitAction.getFieldErrors().containsKey("trialDTO.completionDate"));
+        assertTrue(submitAction.getFieldErrors().containsKey("trialDTO.primaryCompletionDate"));
     }
     @Test
     public void testValidateTrialDatesRule22ApprovedFail(){
@@ -463,7 +465,7 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
         dto.setStartDate("01/22/2010");
-        dto.setCompletionDate("01/22/2009");
+        dto.setPrimaryCompletionDate("01/22/2009");
         submitAction.setTrialDTO(dto);
         assertEquals("error", submitAction.review());
         assertTrue(submitAction.getFieldErrors().containsKey("trialDTO.startDate"));

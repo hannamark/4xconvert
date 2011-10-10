@@ -12,7 +12,7 @@
         <h1><fmt:message key="registry.home.title" /></h1>
         <c:set var="topic" scope="request" value="registryhelp"/>
         <div class="homepage" style="width:600px">
-            <div class="homebanner"><img src="<%=request.getContextPath()%>/images/banner_ctrp.jpg" width="599" height="140" alt="" /></div>
+            <div class="homebanner"><img src="${pageContext.request.contextPath}/images/banner_ctrp.jpg" width="599" height="140" alt="" /></div>
             <h1>CTRP Home</h1>
             <p class="padme2">
                 This site enables you to register a trial with NCI&#39;s Clinical Trials Reporting Program. You can

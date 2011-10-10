@@ -11,18 +11,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title><decorator:title default="Registration"/></title>     
-    <link href="<%=request.getContextPath()%>/styles/style.css" rel="stylesheet" type="text/css" media="all"/>
-    <link href="<%=request.getContextPath()%>/styles/displayStyles.css" rel="stylesheet" type="text/css" media="all"/>
-    <link href="<%=request.getContextPath()%>/struts/niftycorners/niftyCorners.css" rel="stylesheet" type="text/css"/>
-    <link href="<%=request.getContextPath()%>/struts/niftycorners/niftyPrint.css" rel="stylesheet" type="text/css" media="print"/>
+    <link href="${pageContext.request.contextPath}/styles/style.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="${pageContext.request.contextPath}/styles/displayStyles.css" rel="stylesheet" type="text/css" media="all"/>
+    <link href="${pageContext.request.contextPath}/struts/niftycorners/niftyCorners.css" rel="stylesheet" type="text/css"/>
+    <link href="${pageContext.request.contextPath}/struts/niftycorners/niftyPrint.css" rel="stylesheet" type="text/css" media="print"/>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/ajax/ajaxtags.js"/>"></script>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/ajax/ajaxtags_controls.js"/>"></script>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/ajax/ajaxtags_parser.js"/>"></script>
     <script type="text/javascript" src="<c:url value="/scripts/js/calendarpopup.js"/>"></script>        
     
-    <link rel="address bar icon" href="<%=request.getContextPath()%>/images/favicon.ico" />
-    <link rel="icon" href="<%=request.getContextPath()%>/images/favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="<%=request.getContextPath()%>/images/favicon.ico" type="image/x-icon" />
+    <link rel="address bar icon" href="${pageContext.request.contextPath}/images/favicon.ico" />
+    <link rel="icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="${pageContext.request.contextPath}/images/favicon.ico" type="image/x-icon" />
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/showhide.js"/>"></script>
     <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>

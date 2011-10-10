@@ -20,12 +20,12 @@ import org.hibernate.validator.NotEmpty;
 public class TrialDTO extends BaseTrialDTO {
     
     /**
-     * PI responsible party type. 
+     * PI responsible party type.
      */
     public static final String RESPONSIBLE_PARTY_TYPE_PI = "PI";
-    
+
     /**
-     * Sponsor responsible party type. 
+     * Sponsor responsible party type.
      */
     public static final String RESPONSIBLE_PARTY_TYPE_SPONSOR = "sponsor";
 
@@ -44,23 +44,23 @@ public class TrialDTO extends BaseTrialDTO {
     private String statusDate;
     private String reason;
     private String startDate;
-    private String completionDate;
+    private String primaryCompletionDate;
     private String startDateType;
-    private String completionDateType;
+    private String primaryCompletionDateType;
     private String localAmendmentNumber;
     private String amendmentDate;
     private String programCodeText;
     private String responsibleGenericContactName;
 
-    private List<PaOrganizationDTO> collaborators;
-    private List<PaOrganizationDTO> participatingSites;
+    private List<PaOrganizationDTO> collaborators = new ArrayList<PaOrganizationDTO>();
+    private List<PaOrganizationDTO> participatingSites = new ArrayList<PaOrganizationDTO>();
     private List<CountryRegAuthorityDTO> countryList = new ArrayList<CountryRegAuthorityDTO>();
     private List<RegulatoryAuthOrgDTO> regIdAuthOrgList = new ArrayList<RegulatoryAuthOrgDTO>();
-    private List<TrialIndIdeDTO> indIdeUpdateDtos;
-    private List<TrialFundingWebDTO> fundingAddDtos;
-    private List<TrialIndIdeDTO> indIdeAddDtos;
-    private String lst = null;
-    private String selectedRegAuth = null;
+    private List<TrialIndIdeDTO> indIdeUpdateDtos = new ArrayList<TrialIndIdeDTO>();
+    private List<TrialFundingWebDTO> fundingAddDtos = new ArrayList<TrialFundingWebDTO>();
+    private List<TrialIndIdeDTO> indIdeAddDtos = new ArrayList<TrialIndIdeDTO>();
+    private String lst;
+    private String selectedRegAuth;
 
     private String fdaRegulatoryInformationIndicator;
     private String section801Indicator;
@@ -74,23 +74,9 @@ public class TrialDTO extends BaseTrialDTO {
     private String trialOversgtAuthCountryName;
     private String trialOversgtAuthOrgName;
     private boolean xmlRequired = true;
-    private List<Ii> secondaryIdentifierList;
-    private List<Ii> secondaryIdentifierAddList;
+    private List<Ii> secondaryIdentifierList = new ArrayList<Ii>();
+    private List<Ii> secondaryIdentifierAddList = new ArrayList<Ii>();
     private String assignedIdentifier;
-
-    /**
-     * Constructor.
-     */
-    public TrialDTO() {
-        super();
-        collaborators = new ArrayList<PaOrganizationDTO>();
-        participatingSites = new ArrayList<PaOrganizationDTO>();
-        indIdeUpdateDtos = new ArrayList<TrialIndIdeDTO>();
-        fundingAddDtos = new ArrayList<TrialFundingWebDTO>();
-        indIdeAddDtos = new ArrayList<TrialIndIdeDTO>();
-        secondaryIdentifierList = new ArrayList<Ii>();
-        secondaryIdentifierAddList = new ArrayList<Ii>();
-    }
 
     /**
      * @return the accrualReportingMethodCode
@@ -293,18 +279,18 @@ public class TrialDTO extends BaseTrialDTO {
     }
 
     /**
-     * @return the completionDate
+     * @return the primaryCompletionDate
      */
-    @NotEmpty(message = "error.submit.completionDate")
-    public String getCompletionDate() {
-        return completionDate;
+    @NotEmpty(message = "error.submit.primaryCompletionDate")
+    public String getPrimaryCompletionDate() {
+        return primaryCompletionDate;
     }
 
     /**
-     * @param completionDate the completionDate to set
+     * @param primaryCompletionDate the primaryCompletionDate to set
      */
-    public void setCompletionDate(String completionDate) {
-        this.completionDate = completionDate;
+    public void setPrimaryCompletionDate(String primaryCompletionDate) {
+        this.primaryCompletionDate = primaryCompletionDate;
     }
 
     /**
@@ -323,18 +309,18 @@ public class TrialDTO extends BaseTrialDTO {
     }
 
     /**
-     * @return the completionDateType
+     * @return the primaryCompletionDateType
      */
     @NotEmpty(message = "error.submit.dateType")
-    public String getCompletionDateType() {
-        return completionDateType;
+    public String getPrimaryCompletionDateType() {
+        return primaryCompletionDateType;
     }
 
     /**
-     * @param completionDateType the completionDateType to set
+     * @param primaryCompletionDateType the primaryCompletionDateType to set
      */
-    public void setCompletionDateType(String completionDateType) {
-        this.completionDateType = completionDateType;
+    public void setPrimaryCompletionDateType(String primaryCompletionDateType) {
+        this.primaryCompletionDateType = primaryCompletionDateType;
     }
 
     /**
@@ -716,7 +702,7 @@ public class TrialDTO extends BaseTrialDTO {
     public void setSecondaryIdentifierAddList(List<Ii> secondaryIdentifierAddList) {
         this.secondaryIdentifierAddList = secondaryIdentifierAddList;
     }
-    
+
     /**
      * Returns the regulatory authority country.
      * @return the regulatory authority country.

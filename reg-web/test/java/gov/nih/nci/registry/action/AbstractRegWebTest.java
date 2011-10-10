@@ -130,13 +130,13 @@ public abstract class AbstractRegWebTest {
         trialDTO.setContactPhone("contact Phone ");
         trialDTO.setStatusDate("01/20/2008");
         trialDTO.setStatusCode("Active");
-        trialDTO.setCompletionDateType("Anticipated");
+        trialDTO.setPrimaryCompletionDateType("Anticipated");
 
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         String futureDate = dateFormat.format(date.getTime() + MILLIS_IN_DAY);
 
-        trialDTO.setCompletionDate(futureDate);
+        trialDTO.setPrimaryCompletionDate(futureDate);
         trialDTO.setStartDateType("Actual");
         trialDTO.setStartDate("01/20/2008");
         trialDTO.setReason("");

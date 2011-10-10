@@ -99,12 +99,10 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setPrimaryPurposeOtherText(spDTO.getPrimaryPurposeOtherText().getValue());
         trialDTO.setTrialType(spDTO.getStudyProtocolType().getValue());
         trialDTO.setIdentifier(spDTO.getIdentifier().getExtension());
-        trialDTO.setStartDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(spDTO.getStartDate())
-                .toString()));
+        trialDTO.setStartDate(TsConverter.convertToString(spDTO.getStartDate()));
         trialDTO.setStartDateType(spDTO.getStartDateTypeCode().getCode());
-        trialDTO.setCompletionDate(PAUtil.normalizeDateString(TsConverter.convertToTimestamp(
-                spDTO.getPrimaryCompletionDate()).toString()));
-        trialDTO.setCompletionDateType(spDTO.getPrimaryCompletionDateTypeCode().getCode());
+        trialDTO.setPrimaryCompletionDate(TsConverter.convertToString(spDTO.getPrimaryCompletionDate()));
+        trialDTO.setPrimaryCompletionDateType(spDTO.getPrimaryCompletionDateTypeCode().getCode());
         trialDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
         trialDTO.setSubmissionNumber(IntConverter.convertToString(spDTO.getSubmissionNumber()));
         trialDTO.setXmlRequired(!ISOUtil.isBlNull(spDTO.getCtgovXmlRequiredIndicator())
@@ -527,8 +525,8 @@ public class TrialUtil extends TrialConvertUtils {
         copyTo.setStatusDate(copyFrom.getStatusDate());
         copyTo.setStartDate(copyFrom.getStartDate());
         copyTo.setStartDateType(copyFrom.getStartDateType());
-        copyTo.setCompletionDate(copyFrom.getCompletionDate());
-        copyTo.setCompletionDateType(copyFrom.getCompletionDateType());
+        copyTo.setPrimaryCompletionDate(copyFrom.getPrimaryCompletionDate());
+        copyTo.setPrimaryCompletionDateType(copyFrom.getPrimaryCompletionDateType());
         copyTo.setReason(copyFrom.getReason());
     }
 

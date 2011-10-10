@@ -1,15 +1,14 @@
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <!DOCTYPE html PUBLIC
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
     <head>
         <title><fmt:message key="submit.trial.page.title"/></title>
         <s:head/>
         <!-- po integration -->
-        <link href="<%=request.getContextPath()%>/styles/subModalstyle.css" rel="stylesheet" type="text/css" media="all"/>
-        <link href="<%=request.getContextPath()%>/styles/subModal.css" rel="stylesheet" type="text/css" media="all"/>
+        <link href="${pageContext.request.contextPath}/styles/subModalstyle.css" rel="stylesheet" type="text/css" media="all"/>
+        <link href="${pageContext.request.contextPath}/styles/subModal.css" rel="stylesheet" type="text/css" media="all"/>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
@@ -18,7 +17,7 @@
         <script type="text/javascript" language="javascript">
                 addCalendar("Cal1", "Select Date", "trialDTO.statusDate", "submitTrial");
                 addCalendar("Cal2", "Select Date", "trialDTO.startDate", "submitTrial");
-                addCalendar("Cal3", "Select Date", "trialDTO.completionDate", "submitTrial");
+                addCalendar("Cal3", "Select Date", "trialDTO.primaryCompletionDate", "submitTrial");
                 setWidth(90, 1, 15, 1);
                 setFormat("mm/dd/yyyy");
         </script>
@@ -364,29 +363,14 @@
                             <s:radio name="trialDTO.xmlRequired" id="xmlRequired"  list="#{true:'Yes', false:'No'}" onclick="toggledisplayDivs(this);"/>
                         </td>
                     </tr>
-                    <tr>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                    </tr>
+                    <reg-web:spaceRow/>
+                    <reg-web:spaceRow/>
                     <%@ include file="/WEB-INF/jsp/nodecorate/trialIdentifiers.jsp" %>
-                    <tr>
-                        <th colspan="2">
-                            <fmt:message key="submit.trial.otherIdentifiers"/>
-                        </th>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="label">
-                            <reg-web:displayTooltip tooltip="tooltip.other_identifier">
-                                <label for="submitTrial_protocolWebDTO_otherIdentifiers"> <fmt:message key="submit.trial.otherIdentifier"/></label>
-                            </reg-web:displayTooltip>
-                        </td>
-                        <td>
-                            <input type="text" name="otherIdentifierOrg" id="otherIdentifierOrg" value=""/>&nbsp; 
-                            <input type="button" id="otherIdbtnid" value="Add Other Identifier" onclick="addOtherIdentifier();" />
-                        </td>
-                    </tr>
+                    <reg-web:titleRow titleKey="submit.trial.otherIdentifiers"/>
+                    <reg-web:valueRow labelFor="submitTrial_protocolWebDTO_otherIdentifiers" labelKey="submit.trial.otherIdentifier" tooltip="tooltip.other_identifier">
+                        <input type="text" name="otherIdentifierOrg" id="otherIdentifierOrg" value=""/>&nbsp; 
+                        <input type="button" id="otherIdbtnid" value="Add Other Identifier" onclick="addOtherIdentifier();" />
+                    </reg-web:valueRow>
                     <tr>
                         <td colspan="2" class="space">
                             <div id="otherIdentifierdiv">
@@ -394,65 +378,32 @@
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <th colspan="2"><fmt:message key="submit.trial.trialDetails"/></th>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="label">
-                            <reg-web:displayTooltip tooltip="tooltip.title">
-                                <label for="submitTrial_protocolWebDTO_trialTitle"> <fmt:message key="submit.trial.title"/><span class="required">*</span></label>
-                            </reg-web:displayTooltip>
-                        </td>
-                        <td>
-                            <s:textarea name="trialDTO.officialTitle"  cols="75" rows="4" />
-                            <span class="info">Max 4000 characters</span>
-                            <span class="formErrorMsg">
-                                <s:fielderror>
-                                    <s:param>trialDTO.officialTitle</s:param>
-                                </s:fielderror>
-                            </span>
-                        </td>
-                    </tr>
+                    <reg-web:titleRow titleKey="submit.trial.trialDetails"/>
+                    <reg-web:valueRow labelFor="submitTrial_protocolWebDTO_trialTitle" labelKey="submit.trial.title" required="true" tooltip="tooltip.title">
+                        <s:textarea name="trialDTO.officialTitle"  cols="75" rows="4" />
+                        <span class="info">Max 4000 characters</span>
+                        <span class="formErrorMsg">
+                            <s:fielderror>
+                                <s:param>trialDTO.officialTitle</s:param>
+                            </s:fielderror>
+                        </span>
+                    </reg-web:valueRow>
                     <%@ include file="/WEB-INF/jsp/nodecorate/phasePurpose.jsp" %>
-                    <tr>
-                        <td colspan="2" class="space">&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <th colspan="2">
-                            <fmt:message key="submit.trial.leadOrgInvestigator"/>
-                        </th>
-                    </tr>
-                    <tr>
-                        <td colspan="2" class="space">&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="label">
-                            <reg-web:displayTooltip tooltip="tooltip.lead_organization">
-                                <label for="submitTrial_selectedLeadOrg_name_part_0__value"><fmt:message key="submit.trial.leadOrganization"/><span class="required">*</span></label>
-                            </reg-web:displayTooltip>
-                        </td>
-                        <td class="value">
-                            <div id="loadOrgField">
-                                <%@ include file="/WEB-INF/jsp/nodecorate/trialLeadOrganization.jsp" %>
-                            </div>
-                        </td>
-                    </tr>
+                    <reg-web:spaceRow/>
+                    <reg-web:titleRow titleKey="submit.trial.leadOrgInvestigator"/>
+                    <reg-web:spaceRow/>
+                    <reg-web:valueRow labelFor="submitTrial_selectedLeadOrg_name_part_0__value" labelKey="submit.trial.leadOrganization" required="true" tooltip="tooltip.lead_organization">
+                        <div id="loadOrgField">
+                            <%@ include file="/WEB-INF/jsp/nodecorate/trialLeadOrganization.jsp" %>
+                        </div>
+                    </reg-web:valueRow>
                     <!-- include po person jsp -->
-                    <tr>
-                        <td scope="row" class="label">
-                            <reg-web:displayTooltip tooltip="tooltip.pi">
-                                <label for="submitTrial_poLeadPiFullName"><fmt:message key="submit.trial.principalInvestigator"/><span class="required">*</span></label>
-                            </reg-web:displayTooltip>
-                        </td>
-                        <td class="value">
-                            <div id="loadPersField">
-                                <%@ include file="/WEB-INF/jsp/nodecorate/trialLeadPrincipalInvestigator.jsp" %>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" class="space">&nbsp;</td>
-                    </tr>
+                    <reg-web:valueRow labelFor="submitTrial_poLeadPiFullName" labelKey="submit.trial.principalInvestigator" required="true" tooltip="tooltip.pi">
+                        <div id="loadPersField">
+                            <%@ include file="/WEB-INF/jsp/nodecorate/trialLeadPrincipalInvestigator.jsp" %>
+                        </div>
+                    </reg-web:valueRow>
+                    <reg-web:spaceRow/>
                     <tr> 
                         <td colspan="2" class="space">
                             <s:if test="%{trialDTO.xmlRequired == true}">
@@ -467,80 +418,46 @@
                             </s:else>
                         </td>
                     </tr>
-                    <tr>
-                        <td colspan="2" class="space">&nbsp;</td>
-                    </tr>
+                    <reg-web:spaceRow/>
                     <!--  summary4 information -->
-                    <tr>
-                        <th colspan="2">Summary 4 Information (for trials at NCI-designated cancer centers)</th>
-                    </tr>
-                    <tr>
-                        <td colspan="2" class="space">&nbsp;</td>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="label">
-                            <reg-web:displayTooltip tooltip="tooltip.summary_4_funding_sponsor_type">
-                                <label for="submitTrial_summary4FundingCategory">Trial Submission Category:</label>
-                            </reg-web:displayTooltip>
-                        </td>
+                    <reg-web:titleRow titleKey="update.proprietary.trial.summary4Info"/>
+                    <reg-web:spaceRow/>
+                    <reg-web:valueRow labelFor="submitTrial_summary4FundingCategory" labelKey="update.proprietary.trial.summary4FundingCategory" tooltip="tooltip.summary_4_funding_sponsor_type">
                         <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
-                        <td class="value">
-                             <s:select headerKey="" headerValue="--Select--"
+                        <s:select headerKey="" headerValue="--Select--"
                                     name="trialDTO.summaryFourFundingCategoryCode"
                                     list="#summaryFourFundingCategoryCodeValues"
                                     cssStyle="width:206px" disabled="true"/>
-                             <span class="formErrorMsg">
-                                 <s:fielderror>
-                                     <s:param>trialDTO.summaryFourFundingCategoryCode</s:param>
-                                 </s:fielderror>
-                             </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="label">
-                            <reg-web:displayTooltip tooltip="tooltip.summary_4_funding_source">
-                                <label for="submitTrial_selectedSummary4Sponsor_name_part_0__value"> Summary 4 Funding Sponsor:<span class="required">*</span></label>
-                            </reg-web:displayTooltip>
-                        </td>
-                        <td class="value">
-                            <div id="loadSummary4FundingSponsorField">
-                                <%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsor.jsp" %>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="label">
-                            <reg-web:displayTooltip tooltip="tooltip.summary_4_program_code">
-                                <label for="summary4ProgramCode"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
-                            </reg-web:displayTooltip>
-                        </td>
-                        <td class="value">
-                            <s:textfield name="trialDTO.programCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
-                            <span class="formErrorMsg">
-                                <s:fielderror>
-                                    <s:param>trialDTO.programCodeText</s:param>
-                                </s:fielderror>
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>  
-                        <td colspan="2" class="space">&nbsp;</td>
-                    </tr>
+                         <span class="formErrorMsg">
+                             <s:fielderror>
+                                 <s:param>trialDTO.summaryFourFundingCategoryCode</s:param>
+                             </s:fielderror>
+                         </span>
+                    </reg-web:valueRow>
+                    <reg-web:valueRow labelFor="submitTrial_selectedSummary4Sponsor_name_part_0__value" labelKey="update.proprietary.trial.summary4Sponsor" 
+                                      required="true" tooltip="tooltip.summary_4_funding_source">
+                        <div id="loadSummary4FundingSponsorField">
+                            <%@ include file="/WEB-INF/jsp/nodecorate/trialSummary4FundingSponsor.jsp" %>
+                        </div>
+                    </reg-web:valueRow>
+                    <reg-web:valueRow labelFor="summary4ProgramCode" labelKey="studyProtocol.summaryFourPrgCode" tooltip="tooltip.summary_4_program_code">
+                        <s:textfield name="trialDTO.programCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
+                        <span class="formErrorMsg">
+                            <s:fielderror>
+                                <s:param>trialDTO.programCodeText</s:param>
+                            </s:fielderror>
+                        </span>
+                    </reg-web:valueRow>
+                    <reg-web:spaceRow/>
                     <table class="data2">
-                        <tr>
-                            <th colspan="2"><fmt:message key="submit.trial.grantInfo"/></th>
-                        </tr>
-                        <tr>
-                            <td colspan="2" class="space">&nbsp;</td>
-                        </tr>
+                        <reg-web:titleRow titleKey="submit.trial.grantInfo"/>
+                        <reg-web:spaceRow/>
                         <tr>
                             <td colspan="2">
                                <fmt:message key="submit.trial.grantInstructionalText"/>
                             </td>
                         </tr>
-                        <tr>
-                            <td colspan="2" class="space">&nbsp;</td>
-                        </tr>
+                        <reg-web:spaceRow/>
                         <tr>
                             <td colspan="3">
                                 <table class="form">
@@ -613,139 +530,91 @@
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td colspan="2" class="space">&nbsp;</td>
-                    </tr>
+                    <reg-web:spaceRow/>
                     <table class="form">
-                        <tr>
-                            <th colspan="2"><fmt:message key="submit.trial.statusDates"/></th>
-                        </tr>
-                        <tr>
-                            <td colspan="2" class="space">&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td scope="row" class="label">
-                                <reg-web:displayTooltip tooltip="tooltip.current_trial_status">
-                                    <label for="submitTrial_overallStatusWebDTO_statusCode"> <fmt:message key="submit.trial.currentTrialStatus"/><span class="required">*</span></label>
-                                </reg-web:displayTooltip>
-                            </td>
-                            <s:set name="statusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
-                            <td>
-                                <s:select headerKey="" headerValue="--Select--" id="submitTrial_trialDTO_statusCode" name="trialDTO.statusCode" list="#statusCodeValues"
-                                    value="trialDTO.statusCode" onchange="displayTrialStatusDefinition('submitTrial_trialDTO_statusCode');" />
-                                <span class="formErrorMsg">
-                                    <s:fielderror>
-                                        <s:param>trialDTO.statusCode</s:param>
-                                    </s:fielderror>
-                                </span>
-                            </td>
-                        </tr>
+                        <reg-web:titleRow titleKey="submit.trial.statusDates"/>
+                        <reg-web:spaceRow/>
+                        <reg-web:valueRow labelFor="submitTrial_overallStatusWebDTO_statusCode" labelKey="submit.trial.currentTrialStatus" 
+                                          required="true" tooltip="tooltip.current_trial_status">
+                            <s:set name="statusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />  
+                            <s:select headerKey="" headerValue="--Select--" id="submitTrial_trialDTO_statusCode" name="trialDTO.statusCode" list="#statusCodeValues"
+                                      value="trialDTO.statusCode" onchange="displayTrialStatusDefinition('submitTrial_trialDTO_statusCode');" />
+                            <span class="formErrorMsg">
+                                <s:fielderror>
+                                    <s:param>trialDTO.statusCode</s:param>
+                                </s:fielderror>
+                            </span>                
+                        </reg-web:valueRow>
                         <tr>
                             <td>&nbsp;</td>
                             <td class="info"><%@ include file="/WEB-INF/jsp/nodecorate/trialStatusDefinitions.jsp" %></td>
                         </tr>
-                        <tr>
-                            <td scope="row" class="label">
-                                <reg-web:displayTooltip tooltip="tooltip.why_study_stopped">
-                                    <label for="submitTrial_overallStatusWebDTO_reason"> <fmt:message key="submit.trial.trialStatusReason"/></label>
-                                </reg-web:displayTooltip>
-                            </td>
-                            <td>
-                                <s:textarea name="trialDTO.reason"  cols="50" rows="2" />
-                                <span class="info">Required for Administratively Complete and Temporarily Closed statuses only.</span>
-                                <span class="formErrorMsg">
-                                    <s:fielderror>
-                                        <s:param>trialDTO.reason</s:param>
-                                    </s:fielderror>
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td scope="row" class="label">
-                                <reg-web:displayTooltip tooltip="tooltip.current_trial_status_date">
-                                    <label for="submitTrial_overallStatusWebDTO_statusDate"><fmt:message key="submit.trial.currentTrialStatusDate" /><span class="required">*</span></label>
-                                </reg-web:displayTooltip>
-                            </td>
-                            <td class="value">
-                                <s:textfield name="trialDTO.statusDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
-                                <a href="javascript:showCal('Cal1')">
-                                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
-                                </a> (mm/dd/yyyy)
-                                <span class="formErrorMsg">
-                                    <s:fielderror>
-                                        <s:param>trialDTO.statusDate</s:param>
-                                    </s:fielderror>
-                                </span>
-                            </td>
-                        </tr>
+                        <reg-web:valueRow labelFor="submitTrial_overallStatusWebDTO_reason" labelKey="submit.trial.trialStatusReason" tooltip="tooltip.why_study_stopped">
+                            <s:textarea name="trialDTO.reason"  cols="50" rows="2" />
+                            <span class="info">Required for Administratively Complete and Temporarily Closed statuses only.</span>
+                            <span class="formErrorMsg">
+                                <s:fielderror>
+                                    <s:param>trialDTO.reason</s:param>
+                                </s:fielderror>
+                            </span>
+                        </reg-web:valueRow>
+                        <reg-web:valueRow labelFor="submitTrial_overallStatusWebDTO_statusDate" labelKey="submit.trial.currentTrialStatusDate" required="true" tooltip="tooltip.current_trial_status_date">
+                            <s:textfield name="trialDTO.statusDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                            <a href="javascript:showCal('Cal1')">
+                                <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
+                            </a> (mm/dd/yyyy)
+                            <span class="formErrorMsg">
+                                <s:fielderror>
+                                    <s:param>trialDTO.statusDate</s:param>
+                                </s:fielderror>
+                            </span>
+                        </reg-web:valueRow>
                         <s:set name="dateTypeList" value="@gov.nih.nci.pa.enums.ActualAnticipatedTypeCode@getDisplayNames()" />
-                        <tr>
-                            <td scope="row" class="label">
-                                <reg-web:displayTooltip tooltip="tooltip.trial_start_date">
-                                    <label for="submitTrial_protocolWebDTO_startDate"><fmt:message key="submit.trial.trialStartDate" /><span class="required">*</span></label>
-                                </reg-web:displayTooltip>
-                            </td>
-                            <td class="value">
-                                <s:textfield name="trialDTO.startDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
-                                <a href="javascript:showCal('Cal2')">
-                                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
-                                </a> (mm/dd/yyyy)
-                                <s:radio name="trialDTO.startDateType" list="#dateTypeList" />
-                                <span class="formErrorMsg">
-                                    <s:fielderror>
-                                        <s:param>trialDTO.startDate</s:param>
-                                    </s:fielderror>
-                                </span>
-                                <span class="formErrorMsg">
-                                    <s:fielderror>
-                                        <s:param>trialDTO.startDateType</s:param>
-                                    </s:fielderror>
-                                </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td scope="row" class="label">
-                                <reg-web:displayTooltip tooltip="tooltip.primary_completion_date">
-                                    <label for="submitTrial_protocolWebDTO_completionDate"><fmt:message key="submit.trial.primaryCompletionDate" /><span class="required">*</span></label>
-                                </reg-web:displayTooltip>
-                            </td>
-                            <td class="value">
-                                <s:textfield name="trialDTO.completionDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
-                                <a href="javascript:showCal('Cal3')">
-                                    <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
-                                </a> (mm/dd/yyyy)
-                                <s:radio name="trialDTO.completionDateType" list="#dateTypeList" />
-                                <span class="formErrorMsg">
-                                    <s:fielderror>
-                                        <s:param>trialDTO.completionDate</s:param>
-                                    </s:fielderror>
-                                </span>
-                                <span class="formErrorMsg">
-                                    <s:fielderror>
-                                       <s:param>trialDTO.completionDateType</s:param>
-                                    </s:fielderror>
-                                </span>
-                            </td>
-                        </tr>
+                        <reg-web:valueRow labelFor="submitTrial_protocolWebDTO_startDate" labelKey="submit.trial.trialStartDate" required="true" tooltip="tooltip.trial_start_date">
+                            <s:textfield name="trialDTO.startDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                            <a href="javascript:showCal('Cal2')">
+                                <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
+                            </a> (mm/dd/yyyy)
+                            <s:radio name="trialDTO.startDateType" list="#dateTypeList" />
+                            <span class="formErrorMsg">
+                                <s:fielderror>
+                                    <s:param>trialDTO.startDate</s:param>
+                                </s:fielderror>
+                            </span>
+                            <span class="formErrorMsg">
+                                <s:fielderror>
+                                    <s:param>trialDTO.startDateType</s:param>
+                                </s:fielderror>
+                            </span>
+                        </reg-web:valueRow>
+                        <reg-web:valueRow labelFor="submitTrial_protocolWebDTO_primaryCompletionDate" labelKey="submit.trial.primaryCompletionDate" required="true" tooltip="tooltip.primary_completion_date">
+                            <s:textfield name="trialDTO.primaryCompletionDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                            <a href="javascript:showCal('Cal3')">
+                                <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
+                            </a> (mm/dd/yyyy)
+                            <s:radio name="trialDTO.primaryCompletionDateType" list="#dateTypeList" />
+                            <span class="formErrorMsg">
+                                <s:fielderror>
+                                    <s:param>trialDTO.primaryCompletionDate</s:param>
+                                </s:fielderror>
+                            </span>
+                            <span class="formErrorMsg">
+                                <s:fielderror>
+                                   <s:param>trialDTO.primaryCompletionDateType</s:param>
+                                </s:fielderror>
+                            </span>
+                        </reg-web:valueRow>
                     </table>
-                    <tr>
-                        <td colspan="2" class="space">&nbsp;</td>
-                    </tr>
+                    <reg-web:spaceRow/>
                     <table class="data2">
-                        <tr>
-                            <th colspan="2">FDA IND/IDE Information for applicable trials</th>
-                        </tr>
-                        <tr>
-                            <td colspan="2" class="space">&nbsp;</td>
-                        </tr>
+                        <reg-web:titleRow titleKey="submit.trial.indInfo"/>
+                        <reg-web:spaceRow/>
                         <tr>
                             <td colspan="2">
                                <fmt:message key="submit.trial.indInstructionalText"/>
                             </td>
                         </tr>
-                        <tr>
-                            <td colspan="2" class="space">&nbsp;</td>
-                        </tr>
+                        <reg-web:spaceRow/>
                         <tr>
                             <td colspan="2" class="space">
                                 <%@ include file="/WEB-INF/jsp/nodecorate/indide.jsp" %>
@@ -771,9 +640,7 @@
                             <%@ include file="/WEB-INF/jsp/nodecorate/regulatoryInformation.jsp" %>
                         </div>
                     </s:else>
-                    <tr>
-                        <td colspan="2" class="space">&nbsp;</td>
-                    </tr>
+                    <reg-web:spaceRow/>
                 </table>
                 <div id="uploadDocDiv">
                     <%@ include file="/WEB-INF/jsp/nodecorate/uploadDocuments.jsp" %>

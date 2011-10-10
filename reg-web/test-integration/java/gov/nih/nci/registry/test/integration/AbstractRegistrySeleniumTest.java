@@ -281,8 +281,8 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         selenium.type("submitTrial_trialDTO_statusDate", today);
         selenium.type("submitTrial_trialDTO_startDate", tommorrow);
         selenium.click("submitTrial_trialDTO_startDateTypeAnticipated");
-        selenium.click("submitTrial_trialDTO_completionDateTypeAnticipated");
-        selenium.type("submitTrial_trialDTO_completionDate", oneYearFromToday);
+        selenium.click("submitTrial_trialDTO_primaryCompletionDateTypeAnticipated");
+        selenium.type("submitTrial_trialDTO_primaryCompletionDate", oneYearFromToday);
 
         //Regulator Information
         selenium.select("countries", "label=United States");
@@ -387,8 +387,8 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
         selenium.type("submitTrial_trialDTO_statusDate", today);
         selenium.type("submitTrial_trialDTO_startDate", tommorrow);
         selenium.click("submitTrial_trialDTO_startDateTypeAnticipated");
-        selenium.click("submitTrial_trialDTO_completionDateTypeAnticipated");
-        selenium.type("submitTrial_trialDTO_completionDate", oneYearFromToday);
+        selenium.click("submitTrial_trialDTO_primaryCompletionDateTypeAnticipated");
+        selenium.type("submitTrial_trialDTO_primaryCompletionDate", oneYearFromToday);
 
         //Regulator Information
         selenium.select("countries", "label=United States");

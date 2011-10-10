@@ -171,8 +171,8 @@ public class TrialStatusTest extends AbstractPaSeleniumTest {
         }
 
         if (completionDateActual) {
-            selenium.click("id=completionDateTypeActual");
-            selenium.type("id=completionDate", today);
+            selenium.click("id=primaryCompletionDateTypeActual");
+            selenium.type("id=primaryCompletionDate", today);
         }
 
         if (StringUtils.isNotEmpty(statusReason)) {

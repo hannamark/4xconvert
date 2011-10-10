@@ -1,17 +1,16 @@
 <%@ page import="gov.nih.nci.registry.util.Constants" %>
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <!DOCTYPE html PUBLIC
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <c:set var="updateOrAmendMode" value="${true}" />
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
     <head>
         <title><fmt:message key="update.trial.page.title"/></title>
         <s:head/>
         <!-- po integration -->
-        <link href="<%=request.getContextPath()%>/styles/subModalstyle.css" rel="stylesheet" type="text/css" media="all"/>
-        <link href="<%=request.getContextPath()%>/styles/subModal.css" rel="stylesheet" type="text/css" media="all"/>
+        <link href="${pageContext.request.contextPath}/styles/subModalstyle.css" rel="stylesheet" type="text/css" media="all"/>
+        <link href="${pageContext.request.contextPath}/styles/subModal.css" rel="stylesheet" type="text/css" media="all"/>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
@@ -23,20 +22,20 @@
         <script type="text/javascript">
             addCalendar("Cal1", "Select Date", "trialDTO.statusDate", "updateTrial");
             addCalendar("Cal2", "Select Date", "trialDTO.startDate", "updateTrial");
-            addCalendar("Cal3", "Select Date", "trialDTO.completionDate", "updateTrial");
+            addCalendar("Cal3", "Select Date", "trialDTO.primaryCompletionDate", "updateTrial");
             setWidth(90, 1, 15, 1);
             setFormat("mm/dd/yyyy");
         </script>
         <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
         <c:url value="/protected/popuplookuppersons.action" var="lookupPersUrl"/>
         <c:url value="/protected/ajaxorganizationContactgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
-        <c:url value="/protected/ajaxManageGrantsActionshowWaitDialog.action" var="reviewProtocol"/>
+        <c:url value="/protected/ajaxManageGrantsActionshowWaitDialog.action" var="reviewProtocolUrl"/>
         <c:url value="/protected/ajaxorganizationGenericContactlookupByTitle.action" var="lookupOrgGenericContactsUrl"/>
         <script type="text/javascript" language="javascript">
             
             function reviewProtocolUpdate() {
                 submitFirstForm("save", "updateTrialreviewUpdate.action");
-                showPopWin('${reviewProtocol}', 600, 200, '', 'Review Register Trial');
+                showPopWin('${reviewProtocolUrl}', 600, 200, '', 'Review Register Trial');
             }
             
             function cancelProtocol(){

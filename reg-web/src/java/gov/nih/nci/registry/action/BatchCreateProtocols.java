@@ -163,24 +163,21 @@ public class BatchCreateProtocols {
      * @param userName name
      * @return map
      */
-    public Map<String, String> createProtocols(List<StudyProtocolBatchDTO> dtoList,
-            String folderPath, String userName) {
+    public Map<String, String> createProtocols(List<StudyProtocolBatchDTO> dtoList, String folderPath, 
+                                               String userName) {
         HashMap<String, String> map = new HashMap<String, String>();
         if (dtoList == null || dtoList.size() < 1) {
             map.put("Failed Trial Count", String.valueOf(failedCount));
             map.put("Success Trial Count", String.valueOf(sucessCount));
             return map;
         }
-        Iterator<StudyProtocolBatchDTO> iterator = dtoList.iterator();
-        StringBuffer result = new StringBuffer();
-        TrialBatchDataValidator validator = null;
-        while (iterator.hasNext()) {
-            StudyProtocolBatchDTO batchDto = iterator.next();
+        StringBuilder result = new StringBuilder();
+        for (StudyProtocolBatchDTO batchDto : dtoList) {
             // check if the record qualifies to be added
             // validate the record
-            if (batchDto != null) { // && batchDto.isValidRecord()) {
-                result = new StringBuffer();
-                validator = new TrialBatchDataValidator();
+            if (batchDto != null) {
+                result = new StringBuilder();
+                TrialBatchDataValidator validator = new TrialBatchDataValidator();
                 result.append(validator.validateBatchDTO(batchDto));
                 if (result.length() < 1) {
                     result.append(buildProtocol(batchDto, folderPath, userName));
@@ -338,8 +335,8 @@ public class BatchCreateProtocols {
         trialDTO.setStartDateType(batchDto.getStudyStartDateType());
         trialDTO.setStatusCode(batchDto.getCurrentTrialStatus());
         trialDTO.setStatusDate(batchDto.getCurrentTrialStatusDate());
-        trialDTO.setCompletionDate(batchDto.getPrimaryCompletionDate());
-        trialDTO.setCompletionDateType(batchDto.getPrimaryCompletionDateType());
+        trialDTO.setPrimaryCompletionDate(batchDto.getPrimaryCompletionDate());
+        trialDTO.setPrimaryCompletionDateType(batchDto.getPrimaryCompletionDateType());
         OrganizationBatchDTO summ4Sponsor = dataValidator.buildSummary4Sponsor(batchDto); // Summary 4 Info
         Ii summary4Sponsor = null;
         if (!dataValidator.orgDTOIsEmpty(summ4Sponsor)) {
@@ -651,8 +648,8 @@ public class BatchCreateProtocols {
             NullifiedEntityException, PAException, URISyntaxException, EntityValidationException, CurationException {
 
         TrialDTO trialDTO = new TrialDTO();
-        trialDTO.setCompletionDate(batchDTO.getPrimaryCompletionDate());
-        trialDTO.setCompletionDateType(batchDTO.getPrimaryCompletionDateType());
+        trialDTO.setPrimaryCompletionDate(batchDTO.getPrimaryCompletionDate());
+        trialDTO.setPrimaryCompletionDateType(batchDTO.getPrimaryCompletionDateType());
         trialDTO.setLeadOrgTrialIdentifier(batchDTO.getLocalProtocolIdentifier());
         trialDTO.setNctIdentifier(batchDTO.getNctNumber());
         trialDTO.setOfficialTitle(batchDTO.getTitle());
