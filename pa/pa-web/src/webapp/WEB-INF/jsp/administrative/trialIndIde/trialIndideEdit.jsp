@@ -26,7 +26,8 @@ function checkAll(){
 			addOption(document.getElementById('SubCat'),"CDER", "CDER");
 			addOption(document.getElementById('SubCat'),"CBER", "CBER");
 		} else {
-			addOption(document.getElementById('SubCat'),"CDRH", "CDRH");
+		    addOption(document.getElementById('SubCat'),"CDRH", "CDRH");
+            addOption(document.getElementById('SubCat'),"CBER", "CBER");
 		}
 		if (document.getElementById('holderType').value == 'NIH'){
 			showRow(document.getElementById('programcodenihid'));
@@ -138,6 +139,7 @@ function SelectSubCat(i){
 		}
 		if(i.value == 'IDE'){
 			addOption(document.getElementById('SubCat'),"CDRH", "CDRH");
+		    addOption(document.getElementById('SubCat'),"CBER", "CBER");
 		}
 }
 function handleAction(){
@@ -213,7 +215,7 @@ function tooltip() {
 							<s:if test="%{studyIndldeWebDTO.grantor == 'IND'}">
 								<SELECT id="SubCat" name="studyIndldeWebDTO.grantor" list="#{'CDER':'CDER', 'CBER':'CBER'}" cssStyle="width:150px"></SELECT>
 							</s:if><s:else>
-								<SELECT id="SubCat" name="studyIndldeWebDTO.grantor" list="#{'CDRH':'CDRH'}" cssStyle="width:150px"></SELECT>
+								<SELECT id="SubCat" name="studyIndldeWebDTO.grantor" list="#{'CDRH':'CDRH', 'CBER':'CBER'}" cssStyle="width:150px"></SELECT>
 							</s:else>
 							<span class="formErrorMsg"> 
                                 <s:fielderror>

@@ -74,6 +74,7 @@
                 }
                 if (i.value == 'IDE') {
                     addOption(document.getElementById('SubCat'),"CDRH", "CDRH");
+                    addOption(document.getElementById('SubCat'),"CBER", "CBER");
                 }
             }
         </script>

@@ -106,7 +106,8 @@ public class StudyIndldeBeanLocal extends AbstractStudyIsoService<StudyIndldeDTO
         return !(!ISOUtil.isCdNull(studyIndldeDTO.getIndldeTypeCode())
             && IndldeTypeCode.IDE.getCode().equals(studyIndldeDTO.getIndldeTypeCode().getCode())
             && !ISOUtil.isCdNull(studyIndldeDTO.getGrantorCode())
-            && !GrantorCode.CDRH.getCode().equals(studyIndldeDTO.getGrantorCode().getCode()));
+            && !GrantorCode.CDRH.getCode().equals(studyIndldeDTO.getGrantorCode().getCode())
+            && !GrantorCode.CBER.getCode().equals(studyIndldeDTO.getGrantorCode().getCode()));
 
     }
 
