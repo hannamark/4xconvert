@@ -120,6 +120,9 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         this.spo = spo;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasOneCriterionSpecified() {
         return true;
@@ -147,8 +150,12 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
      * Helper that adds synonym checks to the searches.
      */
     private static class StudyProtocolHelper implements SearchableUtils.AfterIterationHelper {
-        private final StudyProtocol sp;
-        private final StudyProtocolOptions spo;
+       
+        private static final String CITY_PARAM = "city";       
+        private static final String STATES_PARAM = "states";        
+        private static final String COUNTRY_NAME_PARAM = "countryName";      
+        private static final String LEAD_ORGANIZATION_FUNCTIONAL_CODE_PARAM = "leadOrganizationFunctionalCode";
+        private static final String PARTICIPATING_SITE_FUNCTIONAL_CODE_PARAM = "participatingSitefunctionalCode";
         private static final String SOS_PARAM = "studyOverallStatusParam";
         private static final String DWS_PARAM = "documentWorkflowStatusParam";
         private static final String REJECTED_DWS_PARAM = "rejectedDocumentWorkflowStatusParam";
@@ -159,6 +166,10 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String STUDY_OWNER_DWS_PARAM = "studyOwnerDWSParam";
         private static final String STUDY_OWNER_SITE_PARAM = "studyOwnerSiteFunctionalCodeParam";
         private static final String STUDY_PHASE_CODE_PARAM = "studyPhaseCodeParam";
+        
+        private final StudyProtocol sp;
+        private final StudyProtocolOptions spo;
+       
 
         public StudyProtocolHelper(StudyProtocol sp, StudyProtocolOptions spo) {
             this.sp = sp;
@@ -212,9 +223,83 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                                                  SearchableUtils.ROOT_OBJ_ALIAS, STUDY_PHASE_CODE_PARAM));
                 params.put(STUDY_PHASE_CODE_PARAM, this.spo.getPhaseCodes());
             }
+            
+            if (this.spo.isByLocation()) {
+                generateLocationWhereClause(whereClause, params);
+            }
 
             handleOtherIdentifiersAndOwnership(whereClause, params);
             handleAdditionalCriteria(whereClause, params);
+        }
+
+        
+        private void generateLocationWhereClause(StringBuffer whereClause, Map<String, Object> params) {
+
+            String operator = determineOperator(whereClause);
+            whereClause.append(" " + operator + "(");
+            createWhereClauseForLeadOrganization(whereClause);
+            whereClause.append(" or ");
+            createWhereClauseForParticipatingSite(whereClause);
+            whereClause.append(" )");
+            setLocationParams(params);
+
+        }        
+       
+
+        private void createWhereClauseForLeadOrganization(StringBuffer whereClause) {
+            whereClause.append("exists (select sslo.id from StudySite sslo where sslo.studyProtocol.id = "
+                    + SearchableUtils.ROOT_OBJ_ALIAS + ".id and sslo.functionalCode = :"
+                    + LEAD_ORGANIZATION_FUNCTIONAL_CODE_PARAM);
+
+            if (StringUtils.isNotBlank(this.spo.getCountryName())) {
+                whereClause.append(" and  sslo.researchOrganization.organization.countryName = :" + COUNTRY_NAME_PARAM);
+            }
+
+            if (CollectionUtils.isNotEmpty(this.spo.getStates())) {
+                whereClause.append(" and  sslo.researchOrganization.organization.state in (:" + STATES_PARAM + ")");
+            }
+
+            if (StringUtils.isNotBlank(this.spo.getCity())) {
+                whereClause.append(" and  sslo.researchOrganization.organization.city like :" + CITY_PARAM);
+            }
+
+            whereClause.append(" )");
+        }
+
+        private void createWhereClauseForParticipatingSite(StringBuffer whereClause) {
+            whereClause.append("exists (select sslh.id from StudySite sslh where sslh.studyProtocol.id = "
+                    + SearchableUtils.ROOT_OBJ_ALIAS + ".id and sslh.functionalCode = :"
+                    + PARTICIPATING_SITE_FUNCTIONAL_CODE_PARAM);
+
+            if (StringUtils.isNotBlank(this.spo.getCountryName())) {
+                whereClause.append(" and sslh.healthCareFacility.organization.countryName = :" + COUNTRY_NAME_PARAM);
+            }
+
+            if (CollectionUtils.isNotEmpty(this.spo.getStates())) {
+                whereClause.append(" and sslh.healthCareFacility.organization.state in (:" + STATES_PARAM + ")");
+            }
+
+            if (StringUtils.isNotBlank(this.spo.getCity())) {
+                whereClause.append(" and sslh.healthCareFacility.organization.city like :" + CITY_PARAM);
+            }
+
+            whereClause.append(" )");
+        }
+        
+        private void setLocationParams(Map<String, Object> params) {
+            params.put(LEAD_ORGANIZATION_FUNCTIONAL_CODE_PARAM, StudySiteFunctionalCode.LEAD_ORGANIZATION);
+            params.put(PARTICIPATING_SITE_FUNCTIONAL_CODE_PARAM, StudySiteFunctionalCode.TREATING_SITE);
+            if (StringUtils.isNotBlank(this.spo.getCountryName())) {              
+                params.put(COUNTRY_NAME_PARAM, this.spo.getCountryName());
+            }
+
+            if (CollectionUtils.isNotEmpty(this.spo.getStates())) {              
+                params.put(STATES_PARAM, this.spo.getStates());
+            }
+            
+            if (StringUtils.isNotBlank(this.spo.getCity())) {                
+                params.put(CITY_PARAM, "%" + this.spo.getCity() + "%");
+            }
         }
 
         private void handleAdditionalCriteria(StringBuffer whereClause, Map<String, Object> params) {

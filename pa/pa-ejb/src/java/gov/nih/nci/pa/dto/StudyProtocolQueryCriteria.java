@@ -82,6 +82,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 
@@ -104,7 +105,12 @@ import org.apache.commons.lang.StringUtils;
  * @author Hugh Reinhart
  * @author Naveen Amiruddin
  */
+@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength" })
 public class StudyProtocolQueryCriteria implements Serializable {
+    
+    /**
+     * serialVersionUID.
+     */
     static final long serialVersionUID = 252345L;
 
     private Long studyProtocolId;
@@ -143,6 +149,10 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String interventionType;
     private String summ4FundingSourceTypeCode;
     private final List<String> phaseCodes = new ArrayList<String>();
+    
+    private String countryName;   
+    private final List<String> states = new ArrayList<String>();
+    private String city;
     
     /**
      * @return the inBoxProcessing
@@ -574,5 +584,55 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 this.phaseCodes.add(code);
             }
         }
-    }    
+    }
+    /**
+     * @return the countryName
+     */
+    public String getCountryName() {
+        return countryName;
+    }
+    /**
+     * @param countryName the countryName to set
+     */
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
+    }
+    /**
+     * @return the states
+     */
+    public List<String> getStates() {
+        return states;
+    }
+    /**
+     * @param states the states to set
+     */
+    public void setStates(List<String> states) {
+        for (String state : states) {
+            if (StringUtils.isNotBlank(state)) {
+                this.states.add(state);
+            }
+        }
+    }
+    /**
+     * @return the city
+     */
+    public String getCity() {
+        return city;
+    }
+    /**
+     * @param city the city to set
+     */
+    public void setCity(String city) {
+        this.city = city;
+    }   
+    
+    /**
+     * return true if criteria contains location data.
+     * @return boolean
+     */
+    public boolean isByLocation() {
+        return (StringUtils.isNotBlank(getCountryName()) || StringUtils.isNotBlank(getCity()) 
+                || CollectionUtils.isNotEmpty(getStates()));
+    }
+    
 }

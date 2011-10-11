@@ -88,6 +88,9 @@ import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author Abraham J. Evans-EL
  *
@@ -105,6 +108,9 @@ public class StudyProtocolOptions {
     private String lockedUser;
     private boolean inboxProcessing;
     private List<PhaseCode> phaseCodes = new ArrayList<PhaseCode>();
+    private String countryName;   
+    private List<String> states = new ArrayList<String>();
+    private String city;
 
     /**
      * @return excludeRejectedTrials
@@ -269,4 +275,56 @@ public class StudyProtocolOptions {
             this.phaseCodes.add(PhaseCode.getByCode(phaseCode));
         }
     }
+
+    /**
+     * @return the countryName
+     */
+    public String getCountryName() {
+        return countryName;
+    }
+
+    /**
+     * @param countryName the countryName to set
+     */
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
+    }
+
+    /**
+     * @return the states
+     */
+    public List<String> getStates() {
+        return states;
+    }
+
+    /**
+     * @param states the states to set
+     */
+    public void setStates(List<String> states) {
+        this.states = states;
+    }
+
+    /**
+     * @return the city
+     */
+    public String getCity() {
+        return city;
+    }
+
+    /**
+     * @param city the city to set
+     */
+    public void setCity(String city) {
+        this.city = city;
+    }
+    
+    /**
+     * return true if criteria contains location data.
+     * @return boolean
+     */
+    public boolean isByLocation() {
+        return (StringUtils.isNotBlank(getCountryName()) || StringUtils.isNotBlank(getCity()) 
+                || CollectionUtils.isNotEmpty(getStates()));
+    }
+    
 }

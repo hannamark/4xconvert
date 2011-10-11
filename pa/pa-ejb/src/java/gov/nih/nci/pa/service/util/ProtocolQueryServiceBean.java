@@ -129,7 +129,6 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -158,6 +157,7 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(PaHibernateSessionInterceptor.class)
+@SuppressWarnings("PMD.TooManyMethods")
 public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtocol>
     implements ProtocolQueryServiceLocal {
 
@@ -192,24 +192,29 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
      */
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
-    public List<StudyProtocolQueryDTO> getStudyProtocolByCriteriaForReporting(StudyProtocolQueryCriteria spsc)
+    public List<StudyProtocolQueryDTO> getStudyProtocolByCriteriaForReporting(StudyProtocolQueryCriteria criteria)
             throws PAException {
-        if (isCriteriaEmpty(spsc)) {
+        if (isCriteriaEmpty(criteria)) {
             throw new PAException("At least one criteria is required.");
         }
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
-        Iterator<StudyProtocol> iter = getStudyProtocolQueryResultIterator(spsc);
-        List<Long> spIdList = new ArrayList<Long>();
-        while (iter.hasNext()) {
-            spIdList.add(iter.next().getId());
-        }
-        pdtos = convertToStudyProtocolDTOById(spIdList, spsc.getUserId(),
-                BooleanUtils.toBoolean(spsc.isMyTrialsOnly()));
+        List<StudyProtocol> studies = getStudyProtocolQueryResultList(criteria);            
+        List<Long> spIdList = convertProtocolListToIdList(studies);
+        pdtos = convertToStudyProtocolDTOById(spIdList, criteria.getUserId(),
+                                              BooleanUtils.toBoolean(criteria.isMyTrialsOnly()));
         if (CollectionUtils.isNotEmpty(pdtos)) {
             pdtos = appendOnHold(pdtos);
         }
         return pdtos;
     }
+    
+    private List<Long> convertProtocolListToIdList(List<StudyProtocol> studyProtocols) {
+        List<Long> result = new ArrayList<Long>();
+        for (StudyProtocol studyProtocol : studyProtocols) {
+            result.add(studyProtocol.getId());
+        }
+        return result;
+    }    
 
     /**
      * {@inheritDoc}
@@ -394,6 +399,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setSearchOnHoldTrials(criteria.isSearchOnHold());
         options.setInboxProcessing(BooleanUtils.isTrue(criteria.isInBoxProcessing()));
         options.setPhaseCodesByValues(criteria.getPhaseCodes());
+        options.setCountryName(criteria.getCountryName());
+        options.setStates(criteria.getStates());
+        options.setCity(criteria.getCity());
 
         populateExample(criteria, example);
         return new StudyProtocolQueryBeanSearchCriteria(example, options);
@@ -413,16 +421,20 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         }
         return results;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     @SuppressWarnings("unchecked")
-    private Iterator<StudyProtocol> getStudyProtocolQueryResultIterator(StudyProtocolQueryCriteria criteria)
-    throws PAException {
+    public List<StudyProtocol> getStudyProtocolQueryResultList(StudyProtocolQueryCriteria criteria)
+            throws PAException {
         StudyProtocolQueryBeanSearchCriteria crit = getExampleCriteria(criteria);
         try {
             validateSearchCriteria(crit);
             String orderBy = "";
             String joinClause = "";
-            return crit.getQuery(orderBy, joinClause, false).iterate();
+            return crit.getQuery(orderBy, joinClause, false).list();
         } catch (Exception e) {
             throw new PAException("An error has occurred when searching for trials.", e);
         }
@@ -602,6 +614,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && StringUtils.isEmpty(criteria.getDcpIdentifier())
                 && StringUtils.isEmpty(criteria.getCtepIdentifier())
                 && StringUtils.isEmpty(criteria.getParticipatingSiteId())
+                && StringUtils.isEmpty(criteria.getCountryName())
+                && StringUtils.isEmpty(criteria.getCity())
+                && CollectionUtils.isEmpty(criteria.getStates())
                 && CollectionUtils.isEmpty(criteria.getPhaseCodes())
                 && !criteria.isSearchOnHold()
                 && !criteria.isStudyLockedBy()

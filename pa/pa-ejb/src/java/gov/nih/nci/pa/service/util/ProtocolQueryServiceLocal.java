@@ -112,6 +112,15 @@ public interface ProtocolQueryServiceLocal {
      */
     List<StudyProtocolQueryDTO> getStudyProtocolByCriteriaForReporting(StudyProtocolQueryCriteria pSc)
         throws PAException;
+    
+    /**
+     * Gets study protocols matching the given criteria. Returns an empty list (not null) if no matching study protocols
+     * are found.
+     * @param criteria StudyProtocolSearchCriteria
+     * @return list protocol vo
+     * @throws PAException on error
+     */
+    List<StudyProtocol> getStudyProtocolQueryResultList(StudyProtocolQueryCriteria criteria) throws PAException;
 
     /**
      *

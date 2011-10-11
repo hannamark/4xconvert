@@ -33,6 +33,11 @@
             document.getElementById("summ4Sponsor").value="";
             document.getElementById("interventionType").value="";
             document.getElementById("summ4FundingSourceTypeCode").value="";
+            document.getElementById("interventionType").value="";
+            document.getElementById("summ4FundingSourceTypeCode").value="";
+            document.getElementById("country").value="";
+            document.getElementById("city").value="";
+            document.getElementById("states").value="";
         }
         
         function lookup() {
@@ -221,6 +226,42 @@
                 <s:set name="milestoneCodes" value="@gov.nih.nci.pa.enums.MilestoneCode@getDisplayNames()" />
                 <td>
                    <s:select headerKey="" headerValue="All" id="studyMilestone" name="criteria.studyMilestone" list="#milestoneCodes"  value="criteria.studyMilestone" cssStyle="width:206px" />
+                </td>
+            </tr>
+             <tr>
+                <td scope="row" class="label">
+                    <label for="country"> <fmt:message key="studyProtocol.country"/></label>
+                </td>
+                
+                <s:set name="countries"  value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getCountries()" />
+                <td>
+                    <s:select headerKey="" headerValue="All" id="country" name="criteria.countryName"  list="#countries"  listKey="alpha3"  listValue="name"  value="criteria.countryName"    cssStyle="width:206px" />
+                <td scope="row" class="label">
+                    <label for="city"> <fmt:message key="studyProtocol.city"/></label>
+                </td>
+               
+                <td>
+                  <s:textfield id="city" name="criteria.city" maxlength="200" size="100" cssStyle="width:200px"  />
+                </td>
+            </tr>
+            <tr>
+                <td scope="row" class="label">
+                    <label for="state"> <fmt:message key="studyProtocol.state"/></label>
+                </td>
+                
+                
+                <td>
+                  <s:set name="stateCodeValues" value="@gov.nih.nci.pa.enums.USStateCode@values()" />
+                  <s:select headerKey="" headerValue="All" id="states" name="criteria.states" list="#stateCodeValues" listKey="name"  listValue="code" value="criteria.states" cssStyle="width:206px" multiple="true"/>
+                           
+                </td>
+                   
+                <td scope="row" class="label">
+                  
+                </td>
+               
+                <td>
+               
                 </td>
             </tr>
         </table>

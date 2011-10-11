@@ -423,6 +423,7 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     @OneToMany(mappedBy = STUDY_PROTOCOL_MAPPING)
     @Sort(type = SortType.COMPARATOR, comparator = StudySiteComparator.class)
     @Searchable(nested = true)
+    @Fetch(FetchMode.SUBSELECT)
     public Set<StudySite> getStudySites() {
         return studySites;
     }

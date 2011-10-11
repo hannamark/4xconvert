@@ -96,6 +96,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -347,6 +349,7 @@ public class StudySite extends OrganizationFunctionalRole {
      */
     @OneToMany(mappedBy = MAPPED_BY_SS)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @Fetch(FetchMode.SUBSELECT)
     public List<StudySiteContact> getStudySiteContacts() {
         return studySiteContacts;
     }

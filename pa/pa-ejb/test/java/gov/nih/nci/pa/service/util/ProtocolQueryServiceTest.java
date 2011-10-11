@@ -118,6 +118,7 @@ import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
 import gov.nih.nci.pa.enums.CheckOutType;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
@@ -133,12 +134,16 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
+import gov.nih.nci.pa.util.StudySiteComparator;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -146,9 +151,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 /**
- *
+ * 
  * @author NAmiruddin
- *
+ * 
  */
 public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
     @Rule
@@ -221,7 +226,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         assertEquals("Cancer for kids", results.get(0).getOfficialTitle());
         criteria.setOfficialTitle(null);
 
-        criteria.setPhaseCodes(Arrays.asList(new String[]{"I", "0"}));
+        criteria.setPhaseCodes(Arrays.asList(new String[]{"I", "0" }));
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
         assertEquals(PhaseCode.I, results.get(0).getPhaseCode());
@@ -266,8 +271,8 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         criteria.setStudyMilestone("Submission Acceptance Date");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
-        assertEquals(MilestoneCode.SUBMISSION_ACCEPTED,
-                results.get(0).getMilestones().getStudyMilestone().getMilestone());
+        assertEquals(MilestoneCode.SUBMISSION_ACCEPTED, results.get(0).getMilestones().getStudyMilestone()
+            .getMilestone());
         criteria.setStudyMilestone(null);
 
         criteria.setLeadOrganizationId("123");
@@ -475,8 +480,8 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         localEjb.getTrialSummaryByStudyProtocolId(Long.valueOf(1000));
     }
 
-    public StudyProtocol createStudyProtocol(String orgId, boolean createRejected, Boolean isPropTrial,
-            boolean onHold, boolean adminCheckout, boolean scientificCheckout, boolean amendment, boolean update) {
+    public StudyProtocol createStudyProtocol(String orgId, boolean createRejected, Boolean isPropTrial, boolean onHold,
+            boolean adminCheckout, boolean scientificCheckout, boolean amendment, boolean update) {
         StudyProtocol sp = TestSchema.createStudyProtocolObj();
         sp.setProprietaryTrialIndicator(isPropTrial);
 
@@ -747,4 +752,225 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         create.setDateLastUpdated(now);
         return create;
     }
+
+    @Test
+    public void getStudyProtocolQueryResultListByLeadOrganizationCountry() throws PAException {
+        List<Long> data = createStudyProtocolList();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setCountryName("UKR");
+        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(1, result.size());
+        List<Long> expectedResult = Arrays.asList(new Long[]{data.get(1) });
+        assertTrue(expectedResult.contains(result.get(0).getId()));
+    }
+
+    @Test
+    public void getStudyProtocolQueryResultListByParticipatingSiteCountry() throws PAException {
+        List<Long> data = createStudyProtocolList();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setCountryName("RUS");
+        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(1, result.size());
+        List<Long> expectedResult = Arrays.asList(new Long[]{data.get(3) });
+        assertTrue(expectedResult.contains(result.get(0).getId()));
+    }
+
+    @Test
+    public void getStudyProtocolQueryResultListByLeadOrganizationState() throws PAException {
+        List<Long> data = createStudyProtocolList();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setStates(Arrays.asList(new String[]{"TX" }));
+        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(2, result.size());
+        List<Long> expectedResult = Arrays.asList(new Long[]{data.get(3), data.get(4) });
+        assertTrue(expectedResult.contains(result.get(0).getId()));
+        assertTrue(expectedResult.contains(result.get(1).getId()));
+    }
+
+    @Test
+    public void getStudyProtocolQueryResultListByTreatingOrtganizationState() throws PAException {
+        List<Long> data = createStudyProtocolList();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setStates(Arrays.asList(new String[]{"MD", "CA" }));
+        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(4, result.size());
+        List<Long> expectedResult = Arrays.asList(new Long[]{data.get(0), data.get(1), data.get(2), data.get(4) });
+        assertTrue(expectedResult.contains(result.get(0).getId()));
+        assertTrue(expectedResult.contains(result.get(1).getId()));
+        assertTrue(expectedResult.contains(result.get(2).getId()));
+        assertTrue(expectedResult.contains(result.get(3).getId()));
+    }
+
+    @Test
+    public void getStudyProtocolQueryResultListByLeadOrganizationCity() throws PAException {
+        List<Long> data = createStudyProtocolList();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setCity("Arlin");
+        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(3, result.size());
+        List<Long> expectedResult = Arrays.asList(new Long[]{data.get(0), data.get(2), data.get(4) });
+        assertTrue(expectedResult.contains(result.get(0).getId()));
+        assertTrue(expectedResult.contains(result.get(1).getId()));
+        assertTrue(expectedResult.contains(result.get(2).getId()));
+    }
+
+    @Test
+    public void getStudyProtocolQueryResultListByPArticipatingSiteCity() throws PAException {
+        List<Long> data = createStudyProtocolList();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setCity("ville");
+        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(4, result.size());
+        List<Long> expectedResult = Arrays.asList(new Long[]{data.get(0), data.get(1), data.get(2), data.get(3) });
+        assertTrue(expectedResult.contains(result.get(0).getId()));
+        assertTrue(expectedResult.contains(result.get(1).getId()));
+        assertTrue(expectedResult.contains(result.get(2).getId()));
+        assertTrue(expectedResult.contains(result.get(3).getId()));
+    }
+
+    @Test
+    public void getStudyProtocolQueryResultListByAllParametrs() throws PAException {
+        List<Long> data = createStudyProtocolList();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setCountryName("USA");
+        criteria.setStates(Arrays.asList(new String[]{"MD", "TX" }));
+        criteria.setCity("Balt");
+        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(2, result.size());
+        List<Long> expectedResult = Arrays.asList(new Long[]{data.get(3), data.get(4) });
+        assertTrue(expectedResult.contains(result.get(0).getId()));
+        assertTrue(expectedResult.contains(result.get(1).getId()));
+    }
+
+    @Test
+    public void getStudyProtocolQueryResultListEmptyReturn() throws PAException {
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setCity("notExistingCity");
+        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(0, result.size());
+    }
+
+    private List<Long> createStudyProtocolList() {
+        List<Long> result = Arrays.asList(new Long[]{0L, 0L, 0L, 0L, 0L });
+
+        StudyProtocol studyProtocol1 = createStudyProtocol();
+        result.set(0, studyProtocol1.getId());
+
+        StudyProtocol studyProtocol2 = createStudyProtocol();
+        Iterator<StudySite> it2 = studyProtocol2.getStudySites().iterator();
+        StudySite leadStudySite2 = it2.next();
+        leadStudySite2.getResearchOrganization().getOrganization().setCountryName("UKR");
+        leadStudySite2.getResearchOrganization().getOrganization().setState("");
+        leadStudySite2.getResearchOrganization().getOrganization().setCity("Kiev");
+        TestSchema.addUpdObject(leadStudySite2.getResearchOrganization().getOrganization());
+        result.set(1, studyProtocol2.getId());
+
+        StudyProtocol studyProtocol3 = createStudyProtocol();
+        Iterator<StudySite> it3 = studyProtocol3.getStudySites().iterator();
+        it3.next();
+
+        StudySite treatingStudySite3 = it3.next();
+        treatingStudySite3.getHealthCareFacility().getOrganization().setCity("Poolsville");
+        TestSchema.addUpdObject(treatingStudySite3.getHealthCareFacility().getOrganization());
+        result.set(2, studyProtocol3.getId());
+
+        StudyProtocol studyProtocol4 = createStudyProtocol();
+        Iterator<StudySite> it4 = studyProtocol4.getStudySites().iterator();
+        StudySite leadStudySite4 = it4.next();
+        leadStudySite4.getResearchOrganization().getOrganization().setState("TX");
+        leadStudySite4.getResearchOrganization().getOrganization().setCity("Baltville");
+        TestSchema.addUpdObject(leadStudySite4.getResearchOrganization().getOrganization());
+
+        StudySite treatingStudySite4 = it4.next();
+        treatingStudySite4.getHealthCareFacility().getOrganization().setCountryName("RUS");
+        treatingStudySite4.getHealthCareFacility().getOrganization().setState("");
+        treatingStudySite4.getHealthCareFacility().getOrganization().setCity("Moscow");
+        TestSchema.addUpdObject(treatingStudySite4.getHealthCareFacility().getOrganization());
+        result.set(3, studyProtocol4.getId());
+
+        StudyProtocol studyProtocol5 = createStudyProtocol();
+        Iterator<StudySite> it5 = studyProtocol5.getStudySites().iterator();
+        StudySite leadStudySite5 = it5.next();
+        leadStudySite5.getResearchOrganization().getOrganization().setState("TX");
+        leadStudySite5.getResearchOrganization().getOrganization().setCity("Arlinburg");
+        TestSchema.addUpdObject(leadStudySite5.getResearchOrganization().getOrganization());
+
+        StudySite treatingStudySite5 = it5.next();
+        treatingStudySite5.getHealthCareFacility().getOrganization().setCity("Baltimore");
+        TestSchema.addUpdObject(treatingStudySite5.getHealthCareFacility().getOrganization());
+
+        result.set(4, studyProtocol5.getId());
+
+        return result;
+    }
+
+    private StudyProtocol createStudyProtocol() {
+        StudyProtocol result = TestSchema.createStudyProtocolObj();
+        SortedSet<StudySite> studySites = new TreeSet<StudySite>(new StudySiteComparator());
+        StudySite leadOrganizationStudySite = createLeadOrganizationStudySite(result);
+        leadOrganizationStudySite.setStudyProtocol(result);
+        TestSchema.addUpdObject(leadOrganizationStudySite);
+        StudySite treatingStudySite = createTreatingSiteStudySite(result);
+        treatingStudySite.setStudyProtocol(result);
+        TestSchema.addUpdObject(treatingStudySite);
+        studySites.add(leadOrganizationStudySite);
+        studySites.add(treatingStudySite);
+        result.setStudySites(studySites);
+        TestSchema.addUpdObject(result);
+        return result;
+    }
+
+    private StudySite createLeadOrganizationStudySite(StudyProtocol sp) {
+        StudySite result = TestSchema.createStudySiteObj(sp, null);
+        
+        result.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        result.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        result.setResearchOrganization(createResearchOrganization());
+        List<StudySite> studySites = Arrays.asList(new StudySite[]{result });
+        result.getResearchOrganization().setStudySites(studySites);
+        TestSchema.addUpdObject(result.getResearchOrganization());
+        TestSchema.addUpdObject(result);
+        return result;
+    }
+
+    private StudySite createTreatingSiteStudySite(StudyProtocol sp) {
+        StudySite result = TestSchema.createStudySiteObj(sp, createHealthCareFacility());
+        List<StudySite> studySites = Arrays.asList(new StudySite[]{result });
+        result.getHealthCareFacility().setStudySites(studySites);
+        TestSchema.addUpdObject(result.getHealthCareFacility());
+        result.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        TestSchema.addUpdObject(result);
+        return result;
+    }
+
+    private HealthCareFacility createHealthCareFacility() {
+        Organization org = createOrganization();
+        org.setCountryName("USA");
+        org.setState("MD");
+        org.setCity("Rockville");
+        TestSchema.addUpdObject(org);
+        HealthCareFacility result = TestSchema.createHealthCareFacilityObj(org);
+        TestSchema.addUpdObject(result);
+        return result;
+    }
+
+    private ResearchOrganization createResearchOrganization() {
+        ResearchOrganization result = new ResearchOrganization();
+        Organization org = createOrganization();
+        result.setOrganization(org);
+        result.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        result.setIdentifier("abc" + org.getId());
+        TestSchema.addUpdObject(result);
+        return result;
+    }
+
+    private Organization createOrganization() {
+        Organization result = TestSchema.createOrganizationObj();
+        result.setCountryName("USA");
+        result.setState("VA");
+        result.setCity("Arlington");
+        TestSchema.addUpdObject(result);
+        return result;
+    }
+
 }
