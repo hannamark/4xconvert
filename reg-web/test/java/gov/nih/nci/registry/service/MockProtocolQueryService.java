@@ -148,4 +148,14 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<StudyProtocol> getStudyProtocolQueryResultList(StudyProtocolQueryCriteria criteria) throws PAException {
+        return null;
+    }
+    
+    
+
 }
