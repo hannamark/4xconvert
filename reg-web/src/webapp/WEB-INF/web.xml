@@ -141,10 +141,15 @@
         <welcome-file>default.jsp</welcome-file>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
+
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>protected</web-resource-name>
             <url-pattern>/protected/*</url-pattern>
+            <http-method>POST</http-method>
+            <http-method>GET</http-method>
+            <http-method>PUT</http-method>
+            <http-method>HEAD</http-method>
         </web-resource-collection>
         <auth-constraint>
             <role-name>Submitter</role-name>
@@ -152,13 +157,38 @@
     </security-constraint>
     <security-constraint>
         <web-resource-collection>
+            <web-resource-name>protected</web-resource-name>
+            <url-pattern>/protected/*</url-pattern>
+            <http-method>DELETE</http-method>
+            <http-method>OPTIONS</http-method>
+            <http-method>TRACE</http-method>
+        </web-resource-collection>
+        <auth-constraint />
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
             <web-resource-name>admin</web-resource-name>
             <url-pattern>/admin/*</url-pattern>
+            <http-method>POST</http-method>
+            <http-method>GET</http-method>
+            <http-method>PUT</http-method>
+            <http-method>HEAD</http-method>
         </web-resource-collection>
         <auth-constraint>
             <role-name>RegAdmin</role-name>
         </auth-constraint>
     </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>admin</web-resource-name>
+            <url-pattern>/admin/*</url-pattern>
+            <http-method>DELETE</http-method>
+            <http-method>OPTIONS</http-method>
+            <http-method>TRACE</http-method>
+        </web-resource-collection>
+        <auth-constraint />
+    </security-constraint>
+    
     <login-config>
         <auth-method>CAGRIDFORM</auth-method>
         <form-login-config>
