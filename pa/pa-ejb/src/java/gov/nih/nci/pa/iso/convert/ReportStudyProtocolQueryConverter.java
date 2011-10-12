@@ -254,7 +254,9 @@ public class ReportStudyProtocolQueryConverter extends BaseStudyProtocolQueryCon
 
     private void loadStudyProtocolDto(Object[] piData, StudyProtocolQueryDTO spDto) {
         loadPiAndLeadOrgIntoStudyProtocolDto(piData, spDto);
-        spDto.setStudyStatusCode(StudyStatusCode.valueOf((String) piData[SUMM_FIELD_STATUS_CODE]));
+        if (piData[SUMM_FIELD_STATUS_CODE] != null) {
+            spDto.setStudyStatusCode(StudyStatusCode.valueOf((String) piData[SUMM_FIELD_STATUS_CODE]));
+        }
         spDto.setStudyStatusDate((Timestamp) piData[SUMM_FIELD_STATUS_DATE]);
         if (piData[SUMM_FIELD_DOC_WORKFLOW_STATUS] != null) {
             spDto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.valueOf(
@@ -334,12 +336,12 @@ public class ReportStudyProtocolQueryConverter extends BaseStudyProtocolQueryCon
         + "sp.RECORD_VERIFICATION_DATE, sp.CTGOV_XML_REQUIRED_INDICATOR, sp.PHASE_ADDITIONAL_QUALIFIER_CODE, "
         + "sp.DATE_LAST_CREATED, sp.AMENDMENT_NUMBER, sp.AMENDMENT_DATE, sp.SUBMISSION_NUMBER, "
         + "sp.STUDY_PROTOCOL_TYPE, sOi.extension "
-        + "from study_protocol AS sp inner join study_site AS ss ON sp.identifier = ss.study_protocol_identifier "
-        + "inner JOIN study_otheridentifiers sOi ON sp.identifier = sOi.study_protocol_id "
+        + "from study_protocol AS sp left join study_site AS ss ON sp.identifier = ss.study_protocol_identifier "
+        + "left JOIN study_otheridentifiers sOi ON sp.identifier = sOi.study_protocol_id "
         + "AND sOi.root = :NCI_II_ROOT "
         + "left JOIN research_organization AS ro ON ss.research_organization_identifier = ro.identifier "
         + "left JOIN organization AS ro_org ON ro.organization_identifier = ro_org.identifier "
-        + "inner JOIN study_contact AS sc ON sc.study_protocol_identifier = ss.study_protocol_identifier "
+        + "left JOIN study_contact AS sc ON sc.study_protocol_identifier = ss.study_protocol_identifier "
         + "and sc.role_code = :piRole "
         + "left JOIN clinical_research_staff AS crs ON sc.clinical_research_staff_identifier = crs.identifier "
         + "left JOIN person AS crs_p ON crs.person_identifier = crs_p.identifier "
