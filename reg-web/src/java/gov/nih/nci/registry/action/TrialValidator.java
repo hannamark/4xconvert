@@ -78,40 +78,31 @@
 */
 package gov.nih.nci.registry.action;
 
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
-import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
-import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyOverallStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.registry.dto.StudyOverallStatusWebDTO;
 import gov.nih.nci.registry.dto.TrialDTO;
-import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
-import gov.nih.nci.registry.util.TrialUtil;
 
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
 import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
 
@@ -125,7 +116,6 @@ public class TrialValidator {
     private static final String PRIMARY_COMPLETION_DATE_TYPE = "trialDTO.primaryCompletionDateType";
     private static final String ACTUAL_DATETYPE = "Actual";
     private static final String ANTICIPATED_DATETYPE = "Anticipated";
-    private static final Logger LOG = Logger.getLogger(TrialValidator.class);
     private static final Set<String> TRIAL_STATUS_REQ_SET = new HashSet<String>();
     static {
         TRIAL_STATUS_REQ_SET.add(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode());
@@ -141,7 +131,7 @@ public class TrialValidator {
     protected static String getText(String messageKey) {
         return ResourceBundle.getBundle("ApplicationResources").getString(messageKey);
     }
-    
+
     /**
      *
      * @param trialDto dto
@@ -158,7 +148,7 @@ public class TrialValidator {
         validateSummaryFourInfo(trialDto, addFieldError);
         return addFieldError;
     }
-    
+
     private void validateStudyStatusReason(TrialDTO trialDto, Map<String, String> addFieldError) {
         if (StringUtils.isNotEmpty(trialDto.getStatusCode())
               && TRIAL_STATUS_REQ_SET.contains(trialDto.getStatusCode())) {
@@ -168,14 +158,14 @@ public class TrialValidator {
             addFieldError.put("trialDTO.reason", getText("error.reason.maxLength"));
          }
     }
-    
+
     private void validatePrimaryPurposeOtherText(TrialDTO trialDto, Map<String, String> addFieldError) {
         if (PAUtil.isPrimaryPurposeOtherTextReq(trialDto.getPrimaryPurposeCode(),
                trialDto.getPrimaryPurposeAdditionalQualifierCode(), trialDto.getPrimaryPurposeOtherText())) {
               addFieldError.put("trialDTO.primaryPurposeOtherText", getText("error.submit.otherPurposeText"));
         }
     }
-    
+
     private void validatePrimaryPurposeAdditionalQualifier(TrialDTO trialDto, Map<String, String> addFieldError) {
         if (PAUtil.isPrimaryPurposeOtherCodeReq(trialDto.getPrimaryPurposeCode(),
                 trialDto.getPrimaryPurposeAdditionalQualifierCode())) {
@@ -209,7 +199,7 @@ public class TrialValidator {
         return StringUtils.isNotEmpty(code) && RegistryUtil.isValidDate(strDate);
     }
 
-    private void addErrorForDate(String fieldValue, String fieldName, String errMsg, 
+    private void addErrorForDate(String fieldValue, String fieldName, String errMsg,
             Map<String, String> fieldErrorMap) {
         if (!RegistryUtil.isValidDate(fieldValue)) {
             fieldErrorMap.put(fieldName, errMsg);
@@ -298,19 +288,10 @@ public class TrialValidator {
                     oldStatusCode);
             validateStartDateType(trialDto, addActionError, newCode);
             validateStudyStatusForCompleteOrAdminComplete(trialDto, addActionError, newCode);
-            validatePrimaryCompletionDateType(trialDto, newCode, addActionError);
         }
         return addActionError;
     }
 
-    private void validatePrimaryCompletionDateType(TrialDTO trialDto, StudyStatusCode newCode,
-            Collection<String> addActionError) {
-        if (!(StudyStatusCode.COMPLETE == newCode || StudyStatusCode.ADMINISTRATIVELY_COMPLETE == newCode)
-                && !ANTICIPATED_DATETYPE.equals(trialDto.getPrimaryCompletionDateType())) {
-            addActionError.add("Trial primary completion date must be 'Anticipated' when the status is "
-                    + "not 'Complete' or 'Administratively Complete'.");
-        }
-    }
     private void validateStartDateType(TrialDTO trialDto, Collection<String> addActionError, StudyStatusCode newCode) {
         if (!StudyStatusCode.APPROVED.getCode().equals(newCode.getCode()) && !StudyStatusCode.WITHDRAWN.getCode()
          .equals(newCode.getCode()) && ANTICIPATED_DATETYPE.equals(trialDto.getStartDateType())) {
@@ -368,113 +349,7 @@ public class TrialValidator {
         }
         return webDTO;
     }
-    
-    /**
-     * Removes the session attributes.
-     */
-    public static void removeSessionAttributes() {
-        ServletActionContext.getRequest().getSession().removeAttribute("indIdeList");
-        ServletActionContext.getRequest().getSession().removeAttribute("grantList");
-        ServletActionContext.getRequest().getSession().removeAttribute("secondaryIdentifiersList");
-        ServletActionContext.getRequest().getSession().removeAttribute("PoLeadOrg");
-        ServletActionContext.getRequest().getSession().removeAttribute("PoLeadPI");
-        ServletActionContext.getRequest().getSession().removeAttribute("PoSponsor");
-        ServletActionContext.getRequest().getSession().removeAttribute("Sponsorselected");
-        ServletActionContext.getRequest().getSession().removeAttribute("PoResponsibleContact");
-        ServletActionContext.getRequest().getSession().removeAttribute("PoSummary4Sponsor");
-        ServletActionContext.getRequest().getSession().removeAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
-        ServletActionContext.getRequest().getSession().removeAttribute("spidfromviewresults");
-        ServletActionContext.getRequest().getSession().removeAttribute("indIdeUpdateList");
-        ServletActionContext.getRequest().getSession().removeAttribute("collaboratorsList");
-        ServletActionContext.getRequest().getSession().removeAttribute("participatingSitesList");
-        ServletActionContext.getRequest().getSession().removeAttribute(
-                DocumentTypeCode.PROTOCOL_DOCUMENT.getShortName());
-        ServletActionContext.getRequest().getSession().removeAttribute(
-                DocumentTypeCode.IRB_APPROVAL_DOCUMENT.getShortName());
-        ServletActionContext.getRequest().getSession().removeAttribute(
-                DocumentTypeCode.PARTICIPATING_SITES.getShortName());
-        ServletActionContext.getRequest().getSession().removeAttribute(
-                DocumentTypeCode.INFORMED_CONSENT_DOCUMENT.getShortName());
-        ServletActionContext.getRequest().getSession().removeAttribute(DocumentTypeCode.OTHER.getShortName());
-        ServletActionContext.getRequest().getSession().removeAttribute(
-                DocumentTypeCode.CHANGE_MEMO_DOCUMENT.getShortName());
-        ServletActionContext.getRequest().getSession().removeAttribute(
-                DocumentTypeCode.PROTOCOL_HIGHLIGHTED_DOCUMENT.getShortName());
-    }
 
-    /**
-     * Add trial information to the session.  Elements (possibly) added:
-     * <ul>
-     * <li>IND/IDEs
-     * <li>Grants
-     * <li>Secondary Identifiers
-     * <li>protocol documents
-     * <li>study protocol II
-     * </ul>
-     * @param tDTO trial DTO from which to populate the session
-     */
-    public static void addSessionAttributes(TrialDTO tDTO) {
-        if (tDTO == null) {
-            return;
-        }
-        addToSession(tDTO.getIndIdeDtos(), Constants.INDIDE_LIST);
-        addToSession(tDTO.getFundingDtos(), Constants.GRANT_LIST);
-        if (StringUtils.isNotEmpty(tDTO.getAssignedIdentifier())) {
-            addToSession(tDTO.getSecondaryIdentifierAddList(), Constants.SECONDARY_IDENTIFIERS_LIST);
-        } else {
-            addToSession(tDTO.getSecondaryIdentifierList(), Constants.SECONDARY_IDENTIFIERS_LIST);
-        }
-
-        final Ii spII = IiConverter.convertToIi(tDTO.getIdentifier());
-        if (!ISOUtil.isIiNull(spII)) {
-            try {
-                List<DocumentDTO> documentISOList = PaRegistry.getDocumentService().getDocumentsByStudyProtocol(spII);
-                if (!documentISOList.isEmpty()) {
-                    ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
-                }
-            } catch (PAException e) {
-                LOG.info("Swallowed an exception adding trial session attributes", e);
-            }
-            ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", spII);
-        }
-    }
-
-    private static void addToSession(List<?> list, String sessionAttributeName) {
-        if (!list.isEmpty()) {
-            ServletActionContext.getRequest().getSession().setAttribute(sessionAttributeName, list);
-        }
-    }
-
-    /**
-     * @param tDTO dto
-     */
-    public static void addSessionAttributesForUpdate(TrialDTO tDTO) {
-        if (tDTO == null) {
-            return;
-        }
-        addToSession(tDTO.getIndIdeUpdateDtos(), Constants.INDIDE_UPDATE_LIST);
-        addToSession(tDTO.getFundingDtos(), Constants.GRANT_LIST);
-        addToSession(tDTO.getIndIdeAddDtos(), Constants.INDIDE_ADD_LIST);
-        addToSession(tDTO.getFundingAddDtos(), Constants.GRANT_ADD_LIST);
-        addToSession(tDTO.getCollaborators(), Constants.COLLABORATORS_LIST);
-        addToSession(tDTO.getCountryList(), Constants.COUNTRY_LIST);
-        addToSession(tDTO.getRegIdAuthOrgList(), Constants.REG_AUTH_LIST);
-        addToSession(tDTO.getParticipatingSites(), Constants.PARTICIPATING_SITES_LIST);
-        addToSession(tDTO.getSecondaryIdentifierAddList(), Constants.SECONDARY_IDENTIFIERS_LIST);
-        List<DocumentDTO> documentISOList;
-        final Ii spII = IiConverter.convertToIi(tDTO.getIdentifier());
-        if (ISOUtil.isIiNull(spII)) {
-            try {
-                documentISOList = PaRegistry.getDocumentService().getDocumentsByStudyProtocol(spII);
-                if (!(documentISOList.isEmpty())) {
-                    ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
-                }
-            } catch (PAException e) {
-                LOG.info("Swallowed an exception adding trial session attributes for update", e);
-            }
-            ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", spII);
-        }
-    }
     /**
      * validate the submit trial dates.
      */
@@ -585,24 +460,16 @@ public class TrialValidator {
     }
 
     /**
-     * Constraint/Rule: 22 If Current Trial Status is 'Approved', Trial Start Date must have 'anticipated' type. Trial
-     * Start Date must have 'actual' type for any other Current Trial Status value besides 'Approved'.
+     * Trial Start Date must have 'actual' type for any other Current Trial Status value besides 'Approved'.
      */
     private void enforceRuleForStatusApproved(TrialDTO trialDto, Map<String, String> addFieldError) {
-        if (StringUtils.isNotEmpty(trialDto.getStatusCode()) && StringUtils.isNotEmpty(trialDto.getStartDateType())) {
-            Set<String> statusCode = new HashSet<String>();
-            statusCode.add(StudyStatusCode.APPROVED.getCode());
-            statusCode.add(StudyStatusCode.IN_REVIEW.getCode());
-            statusCode.add(StudyStatusCode.WITHDRAWN.getCode());
-            if (statusCode.contains(trialDto.getStatusCode())) {
-                if (!trialDto.getStartDateType().equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
-                    addFieldError.put("trialDTO.startDateType", getText("error.submit.invalidStartDateTypeApproved"));
-                }
-            } else {
-                if (!trialDto.getStartDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                    addFieldError.put("trialDTO.startDateType", getText("error.submit.invalidStartDateTypeOther"));
-                }
-            }
+        Set<String> statusCode = new HashSet<String>();
+        statusCode.add(StudyStatusCode.APPROVED.getCode());
+        statusCode.add(StudyStatusCode.IN_REVIEW.getCode());
+        statusCode.add(StudyStatusCode.WITHDRAWN.getCode());
+        if (!statusCode.contains(trialDto.getStatusCode())
+                && !ActualAnticipatedTypeCode.ACTUAL.getCode().equals(trialDto.getStartDateType())) {
+            addFieldError.put("trialDTO.startDateType", getText("error.submit.invalidStartDateTypeOther"));
         }
     }
 
@@ -616,17 +483,9 @@ public class TrialValidator {
         Set<String> statusCode = new HashSet<String>();
         statusCode.add(StudyStatusCode.COMPLETE.getCode());
         statusCode.add(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode());
-        if (statusCode.contains(trialDto.getStatusCode())) {
-            if (!trialDto.getPrimaryCompletionDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-                addFieldError.put(PRIMARY_COMPLETION_DATE_TYPE,
-                                  getText("error.submit.invalidPrimaryCompletionDateType"));
-            }
-        } else {
-            if (StringUtils.isNotEmpty(trialDto.getPrimaryCompletionDateType())
-                && !trialDto.getPrimaryCompletionDateType().equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
-                addFieldError.put(PRIMARY_COMPLETION_DATE_TYPE,
-                                  getText("error.submit.invalidPrimaryCompletionDateTypeOther"));
-            }
+        if (statusCode.contains(trialDto.getStatusCode())
+                && !trialDto.getPrimaryCompletionDateType().equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
+            addFieldError.put(PRIMARY_COMPLETION_DATE_TYPE, getText("error.submit.invalidPrimaryCompletionDateType"));
         }
     }
 

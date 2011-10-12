@@ -105,6 +105,7 @@ import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 import gov.nih.nci.registry.dto.SubmittedOrganizationDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.util.RegistryUtil;
+import gov.nih.nci.registry.util.TrialSessionUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
@@ -144,7 +145,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
      * @return res
      */
     public String view() {
-        TrialValidator.removeSessionAttributes();
+        TrialSessionUtil.removeSessionAttributes();
         try {
             String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
             Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(Long.parseLong(pId));
@@ -196,7 +197,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
      * @return s
      */
     public String cancel() {
-        TrialValidator.removeSessionAttributes();
+        TrialSessionUtil.removeSessionAttributes();
         return "redirect_to_search";
     }
 
@@ -251,7 +252,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
                     nctIdentifier, summary4TypeCode, documentDTOs, siteDTOList, siteAccrualStatusDTOList);
             StudyProtocolDTO protocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(
                     IiConverter.convertToStudyProtocolIi(Long.parseLong(trialDTO.getIdentifier())));
-            TrialValidator.removeSessionAttributes();
+            TrialSessionUtil.removeSessionAttributes();
             ServletActionContext.getRequest().getSession().setAttribute("protocolId",
                     protocolDTO.getIdentifier().getExtension());
         } catch (PAException e) {

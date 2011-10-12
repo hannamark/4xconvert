@@ -3,7 +3,7 @@
     <th colspan="2"><fmt:message key="submit.trial.otherIdentifiers"/></th>
 </tr>
        
-<c:set var="rootConstant" value="<%=Constants.STUDY_PROTOCOL_ROOT%>"/>
+<c:set var="rootConstant" value="<%=gov.nih.nci.pa.iso.util.IiConverter.STUDY_PROTOCOL_ROOT%>"/>
 <s:iterator id="trialDTO.secondaryIdentifierList" value="trialDTO.secondaryIdentifierList" status="sstats">
     <tr>
         <s:if test="root != rootConstant || root == null" >

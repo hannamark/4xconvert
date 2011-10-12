@@ -305,21 +305,25 @@ public class CorrelationUtils implements CorrelationUtilsRemote {
         paOrg.setIdentifier(poOrg.getIdentifier().getExtension());
         List<Adxp> partList = poOrg.getPostalAddress().getPart();
         for (Adxp part : partList) {
-            if (part instanceof AdxpCty) {
-                paOrg.setCity(part.getValue());
-            }
-            if (part instanceof AdxpZip) {
-                paOrg.setPostalCode(part.getValue());
-            }
-            if (part instanceof AdxpCnt) {
-                paOrg.setCountryName(part.getCode());
-            }
-            if (part instanceof AdxpSta) {
-                paOrg.setState(part.getValue());
-            }
+            copyAdxp(paOrg, part);
         }
         return paOrg;
+    }
 
+
+    private void copyAdxp(Organization paOrg, Adxp part) {
+        if (part instanceof AdxpCty) {
+            paOrg.setCity(part.getValue());
+        }
+        if (part instanceof AdxpZip) {
+            paOrg.setPostalCode(part.getValue());
+        }
+        if (part instanceof AdxpCnt) {
+            paOrg.setCountryName(part.getCode());
+        }
+        if (part instanceof AdxpSta) {
+            paOrg.setState(part.getValue());
+        }
     }
 
     /**

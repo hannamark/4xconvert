@@ -104,6 +104,7 @@ import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
+import gov.nih.nci.registry.util.TrialSessionUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
@@ -169,7 +170,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
      */
     public String view() {
         // clear the session
-        TrialValidator.removeSessionAttributes();
+        TrialSessionUtil.removeSessionAttributes();
         try {
             Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(studyProtocolId);
             //Trials that have open updates cannot be amended.
@@ -183,7 +184,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
             TrialUtil util = new TrialUtil();
             trialDTO = new TrialDTO();
             util.getTrialDTOFromDb(studyProtocolIi, trialDTO);
-            TrialValidator.addSessionAttributes(trialDTO);
+            TrialSessionUtil.addSessionAttributes(trialDTO);
             ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
             setPageFrom("amendTrial");
             LOG.info("Trial retrieved: " + trialDTO.getOfficialTitle());
@@ -202,7 +203,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
      * @return s
      */
     public String cancel() {
-        TrialValidator.removeSessionAttributes();
+        TrialSessionUtil.removeSessionAttributes();
         return "redirect_to_search";
     }
 
@@ -242,7 +243,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
             addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
             return ERROR;
         }
-        TrialValidator.removeSessionAttributes();
+        TrialSessionUtil.removeSessionAttributes();
         ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
         LOG.info("Calling the review page...");
         return "review";
@@ -272,12 +273,12 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
         if (hasFieldErrors()) {
             ServletActionContext.getRequest().setAttribute("failureMessage",
                     "The form has errors and could not be submitted, please check the fields highlighted below");
-            TrialValidator.addSessionAttributes(trialDTO);
+            TrialSessionUtil.addSessionAttributes(trialDTO);
             trialUtil.populateRegulatoryList(trialDTO);
             return ERROR;
         }
         if (hasActionErrors()) {
-            TrialValidator.addSessionAttributes(trialDTO);
+            TrialSessionUtil.addSessionAttributes(trialDTO);
             trialUtil.populateRegulatoryList(trialDTO);
             return ERROR;
         }
@@ -292,7 +293,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession()
                 .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
         trialUtil.populateRegulatoryList(trialDTO);
-        TrialValidator.addSessionAttributes(trialDTO);
+        TrialSessionUtil.addSessionAttributes(trialDTO);
         setDocumentsInSession(trialDTO);
         return "edit";
     }
@@ -371,7 +372,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
                                                    summary4orgDTO, summary4studyResourcingDTO,
                                                    responsiblePartyContactIi, studyRegAuthDTO,
                                                    BlConverter.convertToBl(Boolean.FALSE));
-            TrialValidator.removeSessionAttributes();
+            TrialSessionUtil.removeSessionAttributes();
             ServletActionContext.getRequest().getSession().setAttribute("protocolId", amendId.getExtension());
             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", amendId);
         } catch (PAException e) {
@@ -379,7 +380,7 @@ public class AmendmentTrialAction extends ManageFileAction implements ServletRes
                 addActionError("Error occurred, please try again");
             }
             LOG.error("Exception occurred while amending trial", e);
-            TrialValidator.addSessionAttributes(trialDTO);
+            TrialSessionUtil.addSessionAttributes(trialDTO);
             ServletActionContext.getRequest().getSession().removeAttribute("secondaryIdentifiersList");
             trialDTO.setSecondaryIdentifierAddList(null);
             trialUtil.removeAssignedIdentifierFromSecondaryIds(trialDTO);

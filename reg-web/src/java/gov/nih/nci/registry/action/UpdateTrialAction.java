@@ -33,6 +33,7 @@ import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
+import gov.nih.nci.registry.util.TrialSessionUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 
 import java.io.IOException;
@@ -132,12 +133,12 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
      * @return res
      */
     public String view() {
-        TrialValidator.removeSessionAttributes();
+        TrialSessionUtil.removeSessionAttributes();
         try {
             Ii studyProtocolIi = IiConverter.convertToStudyProtocolIi(Long.parseLong(studyProtocolId));
             trialUtil.getTrialDTOFromDb(studyProtocolIi, trialDTO);
             synchActionWithDTO();
-            TrialValidator.addSessionAttributesForUpdate(trialDTO);
+            TrialSessionUtil.addSessionAttributesForUpdate(trialDTO);
             setIndIdeUpdateDtosLen(trialDTO.getIndIdeUpdateDtos().size());
             ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
             setPageFrom("updateTrial");
@@ -190,7 +191,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
      * @return s
      */
     public String cancel() {
-        TrialValidator.removeSessionAttributes();
+        TrialSessionUtil.removeSessionAttributes();
         ServletActionContext.getRequest().getSession().removeAttribute("grantAddList");
         ServletActionContext.getRequest().getSession().removeAttribute("indIdeAddList");
         return "redirect_to_search";
@@ -209,13 +210,13 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             if (failureMessage != null) {
                 ServletActionContext.getRequest().setAttribute("failureMessage", failureMessage);
 
-                TrialValidator.addSessionAttributes(trialDTO);
+                TrialSessionUtil.addSessionAttributes(trialDTO);
                 trialUtil.populateRegulatoryList(trialDTO);
                 synchActionWithDTO();
                 return ERROR;
             }
             if (hasActionErrors()) {
-                TrialValidator.addSessionAttributes(trialDTO);
+                TrialSessionUtil.addSessionAttributes(trialDTO);
                 synchActionWithDTO();
                 trialUtil.populateRegulatoryList(trialDTO);
                 return ERROR;
@@ -253,7 +254,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             trialUtil.populateRegulatoryList(trialDTO);
             return ERROR;
         }
-        TrialValidator.removeSessionAttributes();
+        TrialSessionUtil.removeSessionAttributes();
         session.setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
         return "review";
     }
@@ -293,7 +294,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
         setDocumentsInSession(trialDTO);
         synchActionWithDTO();
         trialUtil.populateRegulatoryList(trialDTO);
-        TrialValidator.addSessionAttributes(trialDTO);
+        TrialSessionUtil.addSessionAttributes(trialDTO);
         return "edit";
     }
 
@@ -363,7 +364,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
             trialRegistrationService.update(spDTO, sosDto, studyResourcingDTOs, documentDTOs,
                                                             pssDTOList, prgCdUpdatedList,
                                                             BlConverter.convertToBl(Boolean.FALSE));
-            TrialValidator.removeSessionAttributes();
+            TrialSessionUtil.removeSessionAttributes();
             ServletActionContext.getRequest().getSession().setAttribute("protocolId", updateId.getExtension());
             ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", updateId);
         } catch (PAException e) {
@@ -371,7 +372,7 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
                 addActionError("Error occured, please try again");
             }
             LOG.error("Exception occured while updating trial", e);
-            TrialValidator.addSessionAttributes(trialDTO);
+            TrialSessionUtil.addSessionAttributes(trialDTO);
             trialUtil.populateRegulatoryList(trialDTO);
             synchActionWithDTO();
             ServletActionContext.getRequest().getSession().removeAttribute("secondaryIdentifiersList");

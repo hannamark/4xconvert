@@ -101,6 +101,7 @@ import gov.nih.nci.registry.dto.TrialFundingWebDTO;
 import gov.nih.nci.registry.dto.TrialIndIdeDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
+import gov.nih.nci.registry.util.TrialSessionUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -158,7 +159,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
         trialDTO.setResponsiblePartyType(TrialDTO.RESPONSIBLE_PARTY_TYPE_PI);
         trialDTO.setTrialType("Interventional");
         trialDTO.setPropritaryTrialIndicator(CommonsConstant.NO);
-        TrialValidator.removeSessionAttributes();
+        TrialSessionUtil.removeSessionAttributes();
         trialUtil.populateRegulatoryList(trialDTO);
         trialDTO.setSummaryFourFundingCategoryCode(sum4FundingCatCode);
         setPageFrom("submitTrial");
@@ -219,12 +220,12 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
                     studyIdentifierDTOs, studyContactDTO, studySiteContactDTO,
                     summary4orgDTO, summary4studyResourcingDTO, responsiblePartyContactIi, studyRegAuthDTO,
                     BlConverter.convertToBl(Boolean.FALSE));
-             TrialValidator.removeSessionAttributes();
+             TrialSessionUtil.removeSessionAttributes();
              ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
              ServletActionContext.getRequest().getSession().setAttribute("protocolId", studyProtocolIi.getExtension());
              deleteSavedDraft();
         } catch (Exception e) {
-            TrialValidator.addSessionAttributes(trialDTO);
+            TrialSessionUtil.addSessionAttributes(trialDTO);
             if (!RegistryUtil.setFailureMessage(e)) {
                 addActionError("Error occured, please try again");
             }
@@ -289,7 +290,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             validateForm();
             if (hasFieldErrors()) {
                 ServletActionContext.getRequest().setAttribute("failureMessage", getText("error.fieldErrors"));
-                TrialValidator.addSessionAttributes(trialDTO);
+                TrialSessionUtil.addSessionAttributes(trialDTO);
                 trialUtil.populateRegulatoryList(trialDTO);
                 return ERROR;
             }
@@ -310,7 +311,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
             return ERROR;
         }
-        TrialValidator.removeSessionAttributes();
+        TrialSessionUtil.removeSessionAttributes();
         ServletActionContext.getRequest().getSession().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
         return "review";
     }
@@ -347,7 +348,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
      * @return s
      */
     public String cancel() {
-        TrialValidator.removeSessionAttributes();
+        TrialSessionUtil.removeSessionAttributes();
         setTrialAction("");
         return REDIRECT_TO_SEARCH;
     }
@@ -358,7 +359,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
     public String edit() {
         trialDTO = (TrialDTO) ServletActionContext.getRequest().getSession()
                 .getAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE);
-        TrialValidator.addSessionAttributes(trialDTO);
+        TrialSessionUtil.addSessionAttributes(trialDTO);
         trialUtil.populateRegulatoryList(trialDTO);
         setDocumentsInSession(trialDTO);
         return "edit";
@@ -420,7 +421,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
      * @return s
      */
     public String completePartialSubmission() {
-        TrialValidator.removeSessionAttributes();
+        TrialSessionUtil.removeSessionAttributes();
         String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
         if (StringUtils.isEmpty(pId)) {
             addActionError("study protocol id cannot null.");

@@ -105,7 +105,9 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
@@ -131,11 +133,11 @@ public class StudyOverallStatusBeanLocal extends
     /** Standard error message for empty methods to be overridden. */
     private static final String ERR_MSG_METHOD_NOT_IMPLEMENTED = "Method not yet implemented.";
 
-    @EJB 
+    @EJB
     private DocumentWorkflowStatusServiceLocal documentWorkFlowStatusService;
-    @EJB 
+    @EJB
     private StudyProtocolServiceLocal studyProtocolService;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -225,7 +227,7 @@ public class StudyOverallStatusBeanLocal extends
             }
         }
     }
-    
+
     /**
      * Creates a recruitment status for the given StudyOverallStatus.
      * @param bo the StudyOverallStatus domain object.
@@ -358,7 +360,7 @@ public class StudyOverallStatusBeanLocal extends
                 errorMsg.append("A reason must be entered when the study status is set to "
                         + CdConverter.convertCdToString(statusDto.getStatusCode()) + ".");
             }
-            if (StringUtils.length(StConverter.convertToString(statusDto.getReasonText())) 
+            if (StringUtils.length(StConverter.convertToString(statusDto.getReasonText()))
                     > PAAttributeMaxLen.LEN_2000) {
                 errorMsg.append("Reason must be less than 2000 characters.");
             }
@@ -494,6 +496,17 @@ public class StudyOverallStatusBeanLocal extends
                 && !unknownTrialCompletionDate && currentTimeStamp.after(trialCompletionDate)) {
             errors.append("Anticipated Primary Completion Date must be in future. \n");
         }
+
+
+        Set<String> compareStatusCodes = new HashSet<String>();
+        compareStatusCodes.add(StudyStatusCode.APPROVED.getCode());
+        compareStatusCodes.add(StudyStatusCode.IN_REVIEW.getCode());
+        compareStatusCodes.add(StudyStatusCode.WITHDRAWN.getCode());
+        if (!compareStatusCodes.contains(statusCode)
+                && !ActualAnticipatedTypeCode.ACTUAL.getCode().equals(studyStartDateType)) {
+            errors.append("Trial Start Date must be Actual for any Current Trial Status besides Approved/In Review.\n");
+        }
+
         // Constraint/Rule: 25 If Current Trial Status is 'Active', Trial Start Date must be the same as
         //Current Trial Status Date and have 'actual' type. New Rule added-01/15/09 if start date is smaller
         //than the Current Trial Status Date, replace Current Trial Status date with the actual Start Date.
@@ -503,23 +516,15 @@ public class StudyOverallStatusBeanLocal extends
             errors.append("If Current Trial Status is Active, Trial Start Date must be Actual "
                     + " and same as or smaller than Current Trial Status Date.\n");
         }
-        // Constraint/Rule: 26 If Current Trial Status is 'Approved', Trial Start Date must have 'anticipated' type.
-        //Trial Start Date must have 'actual' type for any other Current Trial Status value besides 'Approved'.
-        if (StudyStatusCode.APPROVED.getCode().equals(statusCode)
-                || StudyStatusCode.IN_REVIEW.getCode().equals(statusCode)
-                || StudyStatusCode.WITHDRAWN.getCode().equals(statusCode)) {
-            if (!studyStartDateType.equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
-                errors.append("If Current Trial Status is " + statusCode + ", Trial Start Date must be Anticipated.\n");
-            }
-        } else if (!studyStartDateType.equals(ActualAnticipatedTypeCode.ACTUAL.getCode())) {
-            errors.append("Trial Start Date must be Actual for any Current Trial Status besides Approved/In Review.\n");
-        }
+
+
         // Constraint/Rule: 27 If Current Trial Status is 'Completed', Primary Completion Date must be the
         // same as Current Trial Status Date and have 'actual' type.
         if (StudyStatusCode.COMPLETE.getCode().equals(statusCode)
                 && (!primaryCompletionDateType.equals(ActualAnticipatedTypeCode.ACTUAL.getCode()))) {
             errors.append("If Current Trial Status is Completed, Primary Completion Date must be Actual ");
         }
+
         // Constraint/Rule: 28 If Current Trial Status is 'Completed' or 'Administratively Completed',
         // Primary Completion Date must have 'actual' type. Primary Completion Date must have 'anticipated' type
         // for any other Current Trial Status value besides 'Completed' or 'Administratively Completed'.
@@ -529,10 +534,8 @@ public class StudyOverallStatusBeanLocal extends
                 errors.append("If Current Trial Status is Complete or Administratively Complete, "
                         + " Primary Completion Date must be  Actual.\n");
             }
-        } else if (!primaryCompletionDateType.equals(ActualAnticipatedTypeCode.ANTICIPATED.getCode())) {
-            errors.append("Primary Completion Date  must be Anticipated for any other Current Trial"
-                    + " Status value besides Complete or Administratively Complete.\n");
         }
+
         // Constraint/Rule:29 Trial Start Date must be same/smaller than Primary Completion Date.
         if (!unknownTrialCompletionDate && trialCompletionDate.before(trialStartDate)) {
             errors.append("Trial Start Date must be same or earlier than Primary Completion Date.\n");

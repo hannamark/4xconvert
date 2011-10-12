@@ -8,7 +8,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.registry.dto.TrialDTO;
 import gov.nih.nci.registry.util.Constants;
@@ -444,8 +446,8 @@ public class SubmitTrialActionTest extends AbstractRegWebTest{
     public void testValidateTrialDatesRule22ApprovedFail(){
         submitAction = new SubmitTrialAction();
         TrialDTO dto = getMockTrialDTO();
-        dto.setStatusCode("Approved");
-        dto.setStartDateType("Actual");
+        dto.setStatusCode(StudyStatusCode.ADMINISTRATIVELY_COMPLETE.getCode());
+        dto.setStartDateType(ActualAnticipatedTypeCode.ANTICIPATED.getCode());
         submitAction.setTrialDTO(dto);
         assertEquals("error", submitAction.review());
         assertTrue(submitAction.getFieldErrors().containsKey("trialDTO.startDateType"));

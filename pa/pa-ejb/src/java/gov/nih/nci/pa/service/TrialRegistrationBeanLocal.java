@@ -203,7 +203,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     private static final String SQL_APPEND = " AND FUNCTIONAL_CODE IN ";
 
     private void addNciOrgAsCollaborator(StudyProtocolDTO studyProtocolDTO, Ii studyProtocolIi)
-            throws TooManyResultsException, PAException {
+            throws PAException {
         StudySiteDTO nCiCollaborator = new StudySiteDTO();
         nCiCollaborator.setStudyProtocolIdentifier(studyProtocolDTO.getIdentifier());
         nCiCollaborator.setStatusCode(CdConverter.convertToCd(StudySiteStatusCode.ACTIVE));
@@ -216,7 +216,11 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         criteria.setStatusCode(CdConverter.convertToCd(EntityStatusCode.ACTIVE));
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         List<OrganizationDTO> listOrgs = new ArrayList<OrganizationDTO>();
-        listOrgs = PoRegistry.getOrganizationEntityService().search(criteria, limit);
+        try {
+            listOrgs = PoRegistry.getOrganizationEntityService().search(criteria, limit);
+        } catch (TooManyResultsException e) {
+            throw new PAException(e);
+        }
         for (OrganizationDTO poOrg : listOrgs) {
             if (EnOnConverter.convertEnOnToString(poOrg.getName()).matches(exactString)) {
                 Long paOrgId = ocsr.createResearchOrganizationCorrelations(poOrg.getIdentifier().getExtension());
@@ -402,14 +406,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             StudyResourcingDTO summary4StudyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode) throws PAException {
         // CHECKSTYLE:ON
-        try {
-            if (CollectionUtils.isNotEmpty(studyResourcingDTOs)) {
-                for (StudyResourcingDTO studyResourcingDTO : studyResourcingDTOs) {
-                    studyResourcingDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.FALSE));
-                    studyResourcingDTO.setOrganizationIdentifier(null);
-                    studyResourcingDTO.setTypeCode(null);
-                }
-            }
+            copyStudyResourcing(studyResourcingDTOs);
             TrialRegistrationValidator validator = createValidator();
             validator.validateCreation(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO, sponsorOrganizationDTO,
                                        studyContactDTO, studySiteContactDTO, summary4OrganizationDTO,
@@ -417,11 +414,11 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
                                        leadOrganizationSiteIdentifierDTO, responsiblePartyContactIi, studyRegAuthDTO,
                                        studyResourcingDTOs, documentDTOs, studyIndldeDTOs);
             PAServiceUtils paServiceUtils = getPAServiceUtils();
-            boolean ctgovXmlRequired = studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue();
             studyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
             List<PoDto> listOfDTOToCreateInPO = new ArrayList<PoDto>();
             listOfDTOToCreateInPO.add(leadOrganizationDTO);
-            // created only if the ctGovXmlRequired is true
+
+            boolean ctgovXmlRequired = studyProtocolDTO.getCtgovXmlRequiredIndicator().getValue().booleanValue();
             if (ctgovXmlRequired) {
                 listOfDTOToCreateInPO.add(sponsorOrganizationDTO);
             }
@@ -429,8 +426,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             OrganizationDTO newSummary4OrganizationDTO = paServiceUtils.findOrCreateEntity(summary4OrganizationDTO);
             listOfDTOToCreateInPO.add(newSummary4OrganizationDTO);
             paServiceUtils.createPoObject(listOfDTOToCreateInPO);
-            if (ctgovXmlRequired && !BlConverter.convertToBool(studyProtocolDTO.getFdaRegulatedIndicator())
-                    && (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty())) {
+            if (shouldDefaultFdaIndicator(studyProtocolDTO, studyIndldeDTOs, ctgovXmlRequired)) {
                 studyProtocolDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.TRUE));
                 studyProtocolDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.FALSE));
             }
@@ -469,9 +465,22 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             saveDocuments(documentDTOs, spIi);
             sendMail(CREATE, isBatchMode, spIi);
             return spIi;
-        } catch (Exception e) {
-            throw new PAException(e.getMessage(), e);
+    }
+
+    private void copyStudyResourcing(List<StudyResourcingDTO> studyResourcingDTOs) {
+        if (CollectionUtils.isNotEmpty(studyResourcingDTOs)) {
+            for (StudyResourcingDTO studyResourcingDTO : studyResourcingDTOs) {
+                studyResourcingDTO.setSummary4ReportedResourceIndicator(BlConverter.convertToBl(Boolean.FALSE));
+                studyResourcingDTO.setOrganizationIdentifier(null);
+                studyResourcingDTO.setTypeCode(null);
+            }
         }
+    }
+
+    private boolean shouldDefaultFdaIndicator(StudyProtocolDTO studyProtocolDTO, List<StudyIndldeDTO> studyIndldeDTOs,
+            boolean ctgovXmlRequired) {
+        return ctgovXmlRequired && !BlConverter.convertToBool(studyProtocolDTO.getFdaRegulatedIndicator())
+                && (studyIndldeDTOs != null && !studyIndldeDTOs.isEmpty());
     }
 
     /**
@@ -1051,7 +1060,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             validator.validateUpdate(spDTO, overallStatusDTO, studyResourcingDTOs, documentDTOs,
                                      studySiteAccrualStatusDTOs);
             TrialInboxCommentsGenerator icGenerator = new TrialInboxCommentsGenerator(documentWorkFlowStatusService,
-                    abstractionCompletionService, studyOverallStatusService, studySiteAccrualStatusService, 
+                    abstractionCompletionService, studyOverallStatusService, studySiteAccrualStatusService,
                     studyIndldeService, studyResourcingService);
             icGenerator.checkForInboxProcessingComments(studyProtocolDTO, documentDTOs, overallStatusDTO,
                                                         studySiteAccrualStatusDTOs, null, studyResourcingDTOs);

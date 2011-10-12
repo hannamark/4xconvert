@@ -26,6 +26,7 @@ import gov.nih.nci.registry.dto.ProprietaryTrialDTO;
 import gov.nih.nci.registry.dto.TrialDocumentWebDTO;
 import gov.nih.nci.registry.util.Constants;
 import gov.nih.nci.registry.util.RegistryUtil;
+import gov.nih.nci.registry.util.TrialSessionUtil;
 import gov.nih.nci.registry.util.TrialUtil;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
@@ -91,7 +92,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
      */
     @Override
     public String execute() {
-        TrialValidator.removeSessionAttributes();
+        TrialSessionUtil.removeSessionAttributes();
 
         if (StringUtils.isEmpty(getSum4FundingCatCode())) {
             setTrialAction("");
@@ -267,7 +268,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
                     BlConverter.convertToBl(Boolean.FALSE));
             StudyProtocolDTO protocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(
                     studyProtocolIi);
-            TrialValidator.removeSessionAttributes();
+            TrialSessionUtil.removeSessionAttributes();
             ServletActionContext.getRequest().setAttribute(TrialUtil.SESSION_TRIAL_ATTRIBUTE, trialDTO);
             ServletActionContext.getRequest().setAttribute("protocolId",
                     PAUtil.getAssignedIdentifier(protocolDTO).getExtension());
@@ -313,7 +314,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
      * @return s
      */
     public String cancel() {
-        TrialValidator.removeSessionAttributes();
+        TrialSessionUtil.removeSessionAttributes();
         return "redirect_to_search";
     }
 
@@ -373,7 +374,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
      * @return str
      */
     public String complete() {
-        TrialValidator.removeSessionAttributes();
+        TrialSessionUtil.removeSessionAttributes();
         String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
         if (StringUtils.isEmpty(pId)) {
             addActionError("study protocol id cannot null.");
