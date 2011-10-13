@@ -46,7 +46,6 @@ function submitForm(btnSelected){
 </tr>
 </table>
 </div>
-<s:hidden name="actionName" id="actionName"/>
  <div class="actionsrow">
  <del class="btnwrapper">
                                         <ul class="btnrow">            

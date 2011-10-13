@@ -1,12 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
 <!DOCTYPE struts PUBLIC
     "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
     "http://struts.apache.org/dtds/struts-2.0.dtd">
 
 <struts>
     <constant name="struts.devMode" value="false" />
-    <package name="default" extends="struts-default">
+      <package name="default" extends="struts-default">
         <interceptors>
             <interceptor name="showDisclaimer" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ShowSplashPageInterceptor">
                 <param name="splashPageActionName">disclaimerAction</param>
@@ -93,9 +91,9 @@
     </package>
     <package name="global" extends="default">
         <action name="disClaimerAction*" class="gov.nih.nci.registry.action.DisclaimerAction" method="{1}">
-            <result name="show_Disclaimer_Page">/WEB-INF/jsp/nodecorate/disclaimer.jsp</result>
+            <result>/WEB-INF/jsp/nodecorate/disclaimer.jsp</result>    
             <result name="redirect_to" type="redirectAction">
-                <param name="actionName">${actionName}</param>
+                <param name="actionName">searchTrial.action</param>
                 <param name="parse">true</param>
                 <param name="failureMessage">${failureMessage}</param>
             </result>
