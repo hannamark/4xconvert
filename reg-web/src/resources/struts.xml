@@ -95,7 +95,6 @@
             <result name="redirect_to" type="redirectAction">
                 <param name="actionName">searchTrial.action</param>
                 <param name="parse">true</param>
-                <param name="failureMessage">${failureMessage}</param>
             </result>
         </action>
         <action name="orgPop*" class="gov.nih.nci.registry.action.PopupAction" method="{1}">
