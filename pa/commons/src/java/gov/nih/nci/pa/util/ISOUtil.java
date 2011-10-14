@@ -99,7 +99,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
 *

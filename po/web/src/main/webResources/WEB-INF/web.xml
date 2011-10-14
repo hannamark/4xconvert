@@ -57,10 +57,7 @@
     </filter>
     <filter>
         <filter-name>struts2</filter-name>
-        <!-- StrutsPrepareAndExecuteFilter is the preferred filter for 2.1.6.
-        However, it gives a StackOverflowError (see https://issues.apache.org/jira/browse/WW-3000) due to changes for PO-3002.
-        FilterDispatcher doesn't give the same error.  PO-3009 created to revert back to StrutsPrepareAndExecuteFilter.-->
-        <filter-class>org.apache.struts2.dispatcher.FilterDispatcher</filter-class>
+        <filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
     </filter>
     <filter>
         <filter-name>sessionFixation</filter-name>
