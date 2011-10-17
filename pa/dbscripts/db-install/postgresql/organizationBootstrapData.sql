@@ -3,7 +3,7 @@ INSERT INTO organization (identifier, assigned_identifier, name, city, postal_co
 INSERT INTO organization (identifier, assigned_identifier, name, city, postal_code, country_name, state, status_code)
     VALUES (2, '2', 'Cancer Therapy Evaluation Program', 'Rockville', '20852', 'USA', 'MD', 'ACTIVE');
 INSERT INTO organization (identifier, assigned_identifier, name, city, postal_code, country_name, state, status_code)
-    VALUES (3, '3', 'Division of Cancer Control and Population Sciences', 'Rockville', '20852', 'USA', 'MD', 'ACTIVE');
+    VALUES (3, '3', 'National Cancer Institute Division of Cancer Prevention', 'Rockville', '20852', 'USA', 'MD', 'ACTIVE');
 INSERT INTO organization (identifier, assigned_identifier, name, city, postal_code, country_name, state, status_code)
     VALUES (4, '4', 'National Cancer Institute', 'Rockville', '20852', 'USA', 'MD', 'ACTIVE');
 

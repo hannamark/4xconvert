@@ -209,4 +209,10 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceLocal {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */    @Override
+    public void activateAccount(String email, String username) throws PAException {
+    }
+
 }

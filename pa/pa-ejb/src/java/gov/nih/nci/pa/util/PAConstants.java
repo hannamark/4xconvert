@@ -95,7 +95,7 @@ public class PAConstants {
 
     /** Organization Type- Lead Organization. */
     public static final String LEAD_ORGANIZATION = "Lead Organization";
-    
+
     /** Summary 4 Sponsor Organization. */
     public static final String SUMM4_SPONSOR = "Summ4 Sponsor";
 
@@ -161,7 +161,7 @@ public class PAConstants {
     /**
      * DCP Org Name.
      */
-    public static final String DCP_ORG_NAME = "Division of Cancer Control and Population Sciences";
+    public static final String DCP_ORG_NAME = "National Cancer Institute Division of Cancer Prevention";
     /**
      * CT.gov Org Name.
      */

@@ -83,6 +83,8 @@
 
 package gov.nih.nci.pa.pdq;
 
+import gov.nih.nci.pa.util.PAConstants;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
@@ -395,9 +397,9 @@ public class PDQTrialLoaderPreprocessor {
         
         String toBe = agency.getText();
         if (StringUtils.isNotEmpty(dcpId)) {
-            toBe = "Division of Cancer Control and Population Sciences";
+            toBe = PAConstants.DCP_ORG_NAME;
         } else if (StringUtils.isNotEmpty(ctepId)) {
-            toBe = "Cancer Therapy Evaluation Program";
+            toBe = PAConstants.CTEP_ORG_NAME;
         }
         
         agency.setText(toBe);        
