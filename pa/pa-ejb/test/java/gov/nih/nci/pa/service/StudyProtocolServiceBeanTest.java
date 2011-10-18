@@ -86,6 +86,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
@@ -96,6 +97,7 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -448,10 +450,11 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
     public void nullInDatesTest() throws Exception {
         StudyProtocol sp = new InterventionalStudyProtocol();
         sp.setOfficialTitle("cacncer for THOLA");
-        sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2009"));
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2009"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setProprietaryTrialIndicator(Boolean.FALSE);
         sp.setSubmissionNumber(Integer.valueOf(1));
         TestSchema.addUpdObject(sp);

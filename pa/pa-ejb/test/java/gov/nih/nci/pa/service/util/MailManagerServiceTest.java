@@ -111,6 +111,7 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.dto.LastCreatedDTO;
@@ -604,15 +605,13 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         sp.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT);
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
         sp.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.CORRELATIVE);
-        sp.setPrimaryCompletionDate(now);
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        
         sp.setPublicDescription("publicDescription");
         sp.setPublicTitle("publicTitle");
         sp.setRecordVerificationDate(now);
         sp.setScientificDescription("scientificDescription");
         sp.setSection801Indicator(Boolean.TRUE);
-        sp.setStartDate(now);
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        
         sp.setDateLastUpdated(new Timestamp(new Date().getTime()));
         sp.setUserLastUpdated(TestSchema.getUser());
         sp.setDateLastCreated(now);
@@ -625,6 +624,11 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         sp.setSubmissionNumber(1);
         sp.setProprietaryTrialIndicator(Boolean.TRUE);
         sp.setCtgovXmlRequiredIndicator(Boolean.FALSE);
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(now);
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        dates.setPrimaryCompletionDate(now);
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         return sp;
     }
 

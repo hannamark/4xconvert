@@ -83,17 +83,16 @@
 package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 
-import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
@@ -108,11 +107,10 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
  */
 @MappedSuperclass
 public abstract class AbstractStudyProtocol extends AbstractEntity {
-    private static final long serialVersionUID = 1234567890L;
-
-    private ActualAnticipatedTypeCode primaryCompletionDateTypeCode;
-    private ActualAnticipatedTypeCode startDateTypeCode;
-    private Timestamp startDate;
+    
+    private static final long serialVersionUID = -4955766661543742428L;
+    
+    private StudyProtocolDates dates = new StudyProtocolDates();
     private Boolean ctgovXmlRequiredIndicator;
     private Boolean dataMonitoringCommitteeAppointedIndicator;
     private Boolean delayedpostingIndicator;
@@ -121,7 +119,7 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
     private Boolean section801Indicator;
     private PhaseCode phaseCode;
     private PhaseAdditionalQualifierCode phaseAdditionalQualifierCode;
-    private Timestamp primaryCompletionDate;
+
     private PrimaryPurposeCode primaryPurposeCode;
     private PrimaryPurposeAdditionalQualifierCode primaryPurposeAdditionalQualifierCode;
     private String primaryPurposeOtherText;
@@ -129,51 +127,20 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
     private String programCodeText;
     private Set<Ii> otherIdentifiers = new HashSet<Ii>();
 
+    
     /**
-     * @return primaryCompletionDateTypeCode
+     * @return the dates
      */
-    @Column(name = "PRI_COMPL_DATE_TYPE_CODE")
-    @Enumerated(EnumType.STRING)
-    public ActualAnticipatedTypeCode getPrimaryCompletionDateTypeCode() {
-        return primaryCompletionDateTypeCode;
+    @Embedded
+    public StudyProtocolDates getDates() {
+        return dates;
     }
 
     /**
-     * @param primaryCompletionDateTypeCode the primaryCompletionDateTypeCode to set
+     * @param dates the dates to set
      */
-    public void setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode primaryCompletionDateTypeCode) {
-        this.primaryCompletionDateTypeCode = primaryCompletionDateTypeCode;
-    }
-
-    /**
-     * @return startDateTypeCode
-     */
-    @Column(name = "START_DATE_TYPE_CODE")
-    @Enumerated(EnumType.STRING)
-    public ActualAnticipatedTypeCode getStartDateTypeCode() {
-        return startDateTypeCode;
-    }
-
-    /**
-     * @param startDateTypeCode the startDateTypeCode to set
-     */
-    public void setStartDateTypeCode(ActualAnticipatedTypeCode startDateTypeCode) {
-        this.startDateTypeCode = startDateTypeCode;
-    }
-
-    /**
-     * @return the startDate
-     */
-    @Column(name = "START_DATE")
-    public Timestamp getStartDate() {
-        return startDate;
-    }
-
-    /**
-     * @param startDate the startDate to set
-     */
-    public void setStartDate(Timestamp startDate) {
-        this.startDate = startDate;
+    public void setDates(StudyProtocolDates dates) {
+        this.dates = dates;
     }
 
     /**
@@ -207,7 +174,7 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
     }
 
     /**
-     *
+     * 
      * @return delayedpostingIndicator
      */
     @Column(name = "DELAYED_POSTING_INDICATOR")
@@ -288,7 +255,7 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
     /**
      * @return the phaseAdditionalQualifierCode
      */
-    @Column (name = "PHASE_ADDITIONAL_QUALIFIER_CODE")
+    @Column(name = "PHASE_ADDITIONAL_QUALIFIER_CODE")
     @Enumerated(EnumType.STRING)
     @Searchable
     public PhaseAdditionalQualifierCode getPhaseAdditionalQualifierCode() {
@@ -298,23 +265,8 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
     /**
      * @param phaseAdditionalQualifierCode the phaseAdditionalQualifierCode to set
      */
-    public void setPhaseAdditionalQualifierCode(
-            PhaseAdditionalQualifierCode phaseAdditionalQualifierCode) {
+    public void setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode phaseAdditionalQualifierCode) {
         this.phaseAdditionalQualifierCode = phaseAdditionalQualifierCode;
-    }
-
-    /**
-     * @return the primaryCompletionDate
-     */
-    @Column (name = "PRI_COMPL_DATE")
-    public Timestamp getPrimaryCompletionDate() {
-        return primaryCompletionDate;
-    }
-    /**
-     * @param primaryCompletionDate the primaryCompletionDate to set
-     */
-    public void setPrimaryCompletionDate(Timestamp primaryCompletionDate) {
-        this.primaryCompletionDate = primaryCompletionDate;
     }
 
     /**
@@ -350,6 +302,7 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
             PrimaryPurposeAdditionalQualifierCode primaryPurposeAdditionalQualifierCode) {
         this.primaryPurposeAdditionalQualifierCode = primaryPurposeAdditionalQualifierCode;
     }
+
     /**
      * @return the officialTitle
      */
@@ -383,7 +336,7 @@ public abstract class AbstractStudyProtocol extends AbstractEntity {
 
     /**
      * Gets the other identifiers.
-     *
+     * 
      * @return the other identifiers
      */
     @Transient

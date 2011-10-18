@@ -103,6 +103,8 @@ public class TrialUtil extends TrialConvertUtils {
         trialDTO.setStartDateType(spDTO.getStartDateTypeCode().getCode());
         trialDTO.setPrimaryCompletionDate(TsConverter.convertToString(spDTO.getPrimaryCompletionDate()));
         trialDTO.setPrimaryCompletionDateType(spDTO.getPrimaryCompletionDateTypeCode().getCode());
+        trialDTO.setCompletionDate(TsConverter.convertToString(spDTO.getCompletionDate()));
+        trialDTO.setCompletionDateType(spDTO.getCompletionDateTypeCode().getCode());
         trialDTO.setProgramCodeText(StConverter.convertToString(spDTO.getProgramCodeText()));
         trialDTO.setSubmissionNumber(IntConverter.convertToString(spDTO.getSubmissionNumber()));
         trialDTO.setXmlRequired(!ISOUtil.isBlNull(spDTO.getCtgovXmlRequiredIndicator())
@@ -527,6 +529,8 @@ public class TrialUtil extends TrialConvertUtils {
         copyTo.setStartDateType(copyFrom.getStartDateType());
         copyTo.setPrimaryCompletionDate(copyFrom.getPrimaryCompletionDate());
         copyTo.setPrimaryCompletionDateType(copyFrom.getPrimaryCompletionDateType());
+        copyTo.setCompletionDate(copyFrom.getCompletionDate());
+        copyTo.setCompletionDateType(copyFrom.getCompletionDateType());
         copyTo.setReason(copyFrom.getReason());
     }
 

@@ -87,16 +87,11 @@
                         <td width="0">
                             <table>
                                 <tr>
-                                    <td class="label">
-                                        <s:label for="currentTrialStatus">
-                                            <fmt:message key="trialStatus.current.trial.status" />
-                                        </s:label>
-                                        <span class="required">*</span></td>
+                                    <pa:valueRow cellOnly="true" labelFor="currentTrialStatus" labelKey="trialStatus.current.trial.status" required="true">
                                         <s:set name="currentTrialStatusValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
-                                    <td class="value">
                                         <s:select onchange="statusChange();displayTrialStatusDefinition('currentTrialStatus');" 
                                                   onfocus="statusChange()" id="currentTrialStatus" name="currentTrialStatus" list="#currentTrialStatusValues" />
-                                    </td>
+                                    </pa:valueRow>
                                     <td>
                                         <ul class="btnrow">            
                                             <li style="padding-left:0">
@@ -110,67 +105,41 @@
                                     <td class="info"><%@ include file="/WEB-INF/jsp/nodecorate/trialStatusDefinitions.jsp" %></td>
                                     <td>&nbsp;</td>
                                 </tr>
-                                <tr>
-                                    <td class="label">
-                                        <s:label for="statusDate">
-                                            <fmt:message key="trialStatus.current.trial.status.date" />
-                                        </s:label>
-                                        <span class="required">*</span>
-                                    </td>
-                                    <td colspan="2" class="value">
-                                        <s:textfield name="statusDate" id="statusDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
-                                        <a href="javascript:showCal('Cal1')">
-                                            <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
-                                        </a>
-                                    </td>
-                                </tr>
+                                <pa:valueRow labelFor="statusDate" labelKey="trialStatus.current.trial.status.date" required="true">
+                                    <s:textfield name="statusDate" id="statusDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                                    <a href="javascript:showCal('Cal1')">
+                                        <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
+                                    </a>
+                                </pa:valueRow>
                                 <tr> 
                                     <td>&nbsp;</td>
                                     <td class="info" colspan="2">Administratively Complete, Withdrawn, and Temporarily Closed statuses only</td>
                                 </tr>
-                                <tr>
-                                    <td class="label">
-                                        <s:label name="statusReasonLabel" for="statusReason">
-                                            <fmt:message key="trialStatus.current.trial.status.reason"/>
-                                        </s:label>
-                                    </td>
-                                    <td colspan="2" class="value">
-                                        <s:textarea name="statusReason" id="statusReason" rows="3" cssStyle="width:280px;float:left" />
-                                    </td>
-                                </tr>        
-                                <tr>
-                                    <td>&nbsp</td>
-                                </tr>
-                                <tr>
-                                    <td class="label">
-                                        <s:label for="startDate">
-                                            <fmt:message key="trialStatus.trial.start.date" />
-                                        </s:label>
-                                        <span class="required">*</span>
-                                    </td>
-                                    <td  colspan="2" class="value">
-                                        <s:textfield name="startDate" id="startDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
-                                        <a href="javascript:showCal('Cal2')">
-                                            <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
-                                        </a> 
-                                        <s:radio name="startDateType" id="startDateType" list="dateTypeList" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="label">
-                                        <s:label for="primaryCompletionDate">
-                                            <fmt:message key="trialStatus.primary.completion.date" />
-                                        </s:label>
-                                        <span class="required">*</span>
-                                    </td>
-                                    <td  colspan="2" class="value">
-                                        <s:textfield name="primaryCompletionDate" id="primaryCompletionDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
-                                        <a href="javascript:showCal('Cal3')">
-                                            <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
-                                        </a> 
-                                        <s:radio name="primaryCompletionDateType" id="primaryCompletionDateType" list="dateTypeList" />
-                                    </td>
-                                </tr>
+                                <pa:valueRow labelFor="statusReasonLabel" labelKey="trialStatus.current.trial.status.reason">
+                                    <s:textarea name="statusReason" id="statusReason" rows="3" cssStyle="width:280px;float:left" />
+                                </pa:valueRow>
+                                <pa:spaceRow/>
+                                <pa:valueRow labelFor="startDate" labelKey="trialStatus.trial.start.date" required="true">
+                                    <s:textfield name="startDate" id="startDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                                    <a href="javascript:showCal('Cal2')">
+                                        <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
+                                    </a> 
+                                    <s:radio name="startDateType" id="startDateType" list="dateTypeList" />
+                                </pa:valueRow>
+                                <pa:valueRow labelFor="primaryCompletionDate" labelKey="trialStatus.primary.completion.date" required="true">
+                                    <s:textfield name="primaryCompletionDate" id="primaryCompletionDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                                    <a href="javascript:showCal('Cal3')">
+                                        <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
+                                    </a> 
+                                    <s:radio name="primaryCompletionDateType" id="primaryCompletionDateType" list="dateTypeList" />
+                                </pa:valueRow>
+                                <pa:valueRow labelFor="completionDate" labelKey="trialStatus.completionDate" required="true">
+                                    <s:textfield name="completionDate" id="completionDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
+                                    <a href="javascript:showCal('Cal3')">
+                                        <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />
+                                    </a> 
+                                    <s:radio name="completionDateType" id="completionDateType" list="dateTypeList" />
+                                </pa:valueRow>
                             </table>
                         </td>
                     </tr>

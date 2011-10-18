@@ -85,6 +85,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
@@ -188,10 +189,11 @@ public class TestRegistryUserSchema {
 
         StudyProtocol sp = new InterventionalStudyProtocol();
         sp.setOfficialTitle("cacncer for THOLA");
-        sp.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        sp.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
         Ii ii = new Ii();
         ii.setExtension("NCI-2009-00001");

@@ -206,17 +206,21 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         when(studyProtocolService.getStudyProtocol(spIi)).thenReturn(studyProtocolDTO);
         StudyOverallStatusDTO studyOverallStatusDTO = createStudyOverallStatusDTO();
         when(studyOverallStatusService.getCurrentByStudyProtocol(spIi)).thenReturn(studyOverallStatusDTO);
-        
+
         sut.loadForm();
-        
+
         assertEquals("Wrong startDate", TsConverter.convertToString(studyProtocolDTO.getStartDate()),
                      sut.getStartDate());
         assertEquals("Wrong primaryCompletionDate",
                      TsConverter.convertToString(studyProtocolDTO.getPrimaryCompletionDate()),
                      sut.getPrimaryCompletionDate());
+        assertEquals("Wrong completionDate", TsConverter.convertToString(studyProtocolDTO.getCompletionDate()),
+                     sut.getCompletionDate());
         assertEquals("Wrong startDateType", studyProtocolDTO.getStartDateTypeCode().getCode(), sut.getStartDateType());
         assertEquals("Wrong primaryCompletionDateType", studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode(),
                      sut.getPrimaryCompletionDateType());
+        assertEquals("Wrong completionDateType", studyProtocolDTO.getCompletionDateTypeCode().getCode(),
+                     sut.getCompletionDateType());
         assertEquals("Wrong status code", studyOverallStatusDTO.getStatusCode().getCode(), sut.getCurrentTrialStatus());
         assertEquals("Wrong status Date", TsConverter.convertToString(studyOverallStatusDTO.getStatusDate()),
                      sut.getStatusDate());
@@ -240,8 +244,10 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         
         assertNull("Wrong startDate", sut.getStartDate());
         assertNull("Wrong primaryCompletionDate", sut.getPrimaryCompletionDate());
+        assertNull("Wrong completionDate", sut.getCompletionDate());
         assertNull("Wrong startDateType", sut.getStartDateType());
         assertNull("Wrong primaryCompletionDateType", sut.getPrimaryCompletionDateType());
+        assertNull("Wrong completionDateType", sut.getCompletionDateType());
         assertNull("Wrong status code", sut.getCurrentTrialStatus());
         assertNull("Wrong status Date", sut.getStatusDate());
         assertNull("Wrong status reason", sut.getStatusReason());
@@ -252,8 +258,10 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         DateTime now = new DateTime();
         dto.setStartDate(TsConverter.convertToTs(now.minusDays(2).toDate()));
         dto.setPrimaryCompletionDate(TsConverter.convertToTs(now.minusDays(1).toDate()));
+        dto.setCompletionDate(TsConverter.convertToTs(now.toDate()));
         dto.setStartDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ACTUAL));
         dto.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ACTUAL));
+        dto.setCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ACTUAL));
         return dto;
     }
     
@@ -402,6 +410,9 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         String primaryCompletionDate = TsConverter.convertToString(TsConverter.convertToTs(new Date()));
         sut.setPrimaryCompletionDate(primaryCompletionDate);
         sut.setPrimaryCompletionDateType(ActualAnticipatedTypeCode.ANTICIPATED.getCode());
+        String completionDate = TsConverter.convertToString(TsConverter.convertToTs(new Date()));
+        sut.setCompletionDate(completionDate);
+        sut.setCompletionDateType(ActualAnticipatedTypeCode.ANTICIPATED.getCode());
         StudyProtocolDTO studyProtocolDTO = new StudyProtocolDTO();
 
         sut.getStudyProtocolDates(studyProtocolDTO);
@@ -417,6 +428,13 @@ public class StudyOverallStatusActionTest extends AbstractPaActionTest {
         assertNotNull("Primary Completion Date is null", studyProtocolDTO.getPrimaryCompletionDate());
         assertEquals("Wrong Primary Completion Date", primaryCompletionDate,
                      TsConverter.convertToString(studyProtocolDTO.getPrimaryCompletionDate()));
+        
+        assertNotNull("Completion Date Type is null", studyProtocolDTO.getCompletionDateTypeCode());
+        assertEquals("Wrong Completion Date Type", ActualAnticipatedTypeCode.ANTICIPATED.getCode(),
+                     studyProtocolDTO.getCompletionDateTypeCode().getCode());
+        assertNotNull("Completion Date is null", studyProtocolDTO.getCompletionDate());
+        assertEquals("Wrong Completion Date", completionDate,
+                     TsConverter.convertToString(studyProtocolDTO.getCompletionDate()));
     }
     
     /**

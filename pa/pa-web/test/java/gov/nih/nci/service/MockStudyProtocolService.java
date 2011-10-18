@@ -83,8 +83,7 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
-import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
-import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.AmendmentReasonCode;
@@ -128,10 +127,11 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
         list = new ArrayList<StudyProtocol>();
         StudyProtocol sp = new StudyProtocol();
         sp.setId(1L);
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
-        sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("4/15/2010"));
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("4/15/2010"));
         sp.setSubmissionNumber(1);
         User userLastCreated = new User();
         userLastCreated.setLoginName("user2@mail.nih.gov");
@@ -140,23 +140,22 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
         isplist = new ArrayList<InterventionalStudyProtocol>();
         InterventionalStudyProtocol isp = new InterventionalStudyProtocol();
         isp.setId(1L);
-        isp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        isp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
-        isp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
-        isp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("4/15/2010"));
+        dates = isp.getDates();
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("4/15/2010"));
         isp.setOfficialTitle("officialTitle");
         User userLastCreated2 = new User();
         userLastCreated.setLoginName("user1@mail.nih.gov");
         isp.setUserLastCreated(userLastCreated2);
         isplist.add(isp);
     }
-    public List<StudyProtocolDTO> search(StudyProtocolDTO spDTO) throws PAException{
-    	return null;
-    }
-
+    
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyProtocolDTO getStudyProtocol(Ii ii) throws PAException {
         return loadStudyProtocol(ii);
     }
@@ -164,6 +163,7 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
     /**
      * {@inheritDoc}
      */
+    @Override
     public StudyProtocolDTO loadStudyProtocol(Ii ii) {
         for (StudyProtocol sp: list) {
             if(sp.getId().equals(IiConverter.convertToLong(ii))) {
@@ -173,69 +173,58 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
         return null;
     }
 
-    public StudyProtocolDTO updateStudyProtocol(
-            StudyProtocolDTO dto) throws PAException {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StudyProtocolDTO updateStudyProtocol(StudyProtocolDTO dto) throws PAException {
         for (StudyProtocol bo : list) {
             if (bo.getId().equals(IiConverter.convertToLong(dto.getIdentifier()))) {
-                bo.setStartDateTypeCode(ActualAnticipatedTypeCode.getByCode(dto.getStartDateTypeCode().getCode()));
-                bo.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.getByCode(dto.getPrimaryCompletionDateTypeCode().getCode()));
-                bo.setStartDate(TsConverter.convertToTimestamp(dto.getStartDate()));
-                bo.setPrimaryCompletionDate(TsConverter.convertToTimestamp(dto.getPrimaryCompletionDate()));
+                StudyProtocolDates dates = bo.getDates();
+                dates.setStartDateTypeCode(ActualAnticipatedTypeCode.getByCode(dto.getStartDateTypeCode().getCode()));
+                dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.getByCode(dto
+                    .getPrimaryCompletionDateTypeCode().getCode()));
+                dates.setStartDate(TsConverter.convertToTimestamp(dto.getStartDate()));
+                dates.setPrimaryCompletionDate(TsConverter.convertToTimestamp(dto.getPrimaryCompletionDate()));
                 return StudyProtocolConverter.convertFromDomainToDTO(bo);
             }
         }
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyProtocolService#getInterventionalStudyProtocol(gov.nih.nci.iso21090.Ii)
+    /**
+     * {@inheritDoc}
      */
-    public InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii ii)
-            throws PAException {
-        for (InterventionalStudyProtocol isp: isplist) {
-            if(isp.getId().equals(IiConverter.convertToLong(ii))) {
+    @Override
+    public InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii ii) throws PAException {
+        for (InterventionalStudyProtocol isp : isplist) {
+            if (isp.getId().equals(IiConverter.convertToLong(ii))) {
                 return InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
             }
         }
-        if(ii.getExtension().equals("9")) {
+        if (ii.getExtension().equals("9")) {
             throw new PAException("test");
         }
 
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyProtocolService#getStudyProtocolByCriteria(gov.nih.nci.pa.dto.StudyProtocolQueryCriteria)
-     */
-    public List<StudyProtocolQueryDTO> getStudyProtocolByCriteria(
-            StudyProtocolQueryCriteria sc) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+   
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyProtocolService#getTrialSummaryByStudyProtocolId(java.lang.Long)
-     */
-    public StudyProtocolQueryDTO getTrialSummaryByStudyProtocolId(
-            Long studyProtocolId) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyProtocolService#updateInterventionalStudyProtocol(gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO)
-     */
+   /**
+    * {@inheritDoc}
+    */
+    @Override
     public InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(
             InterventionalStudyProtocolDTO ispDTO) throws PAException {
-        /*if (ispDTO.getPhaseOtherText() != null && ispDTO.getPhaseOtherText().getValue().equals("ex")) {
-            throw new PAException("test");
-        }*/
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyProtocolService#updateInterventionalStudyProtocol(gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO)
-     */
+   /**
+    * {@inheritDoc}
+    */
+    @Override
     public ObservationalStudyProtocolDTO getObservationalStudyProtocol(Ii ii) throws PAException {
     	    ObservationalStudyProtocolDTO ospDTO = new ObservationalStudyProtocolDTO();
             Timestamp now = new Timestamp((new Date()).getTime());
@@ -254,63 +243,66 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
             ospDTO.setSubmissionNumber(IntConverter.convertToInt(Integer.valueOf(1)));
             return ospDTO;
     }
-    /* (non-Javadoc)
-     * @see gov.nih.nci.pa.service.StudyProtocolService#updateInterventionalStudyProtocol(gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO)
+    /**
+     * {@inheritDoc}
      */
-
+    @Override
     public Ii createInterventionalStudyProtocol(InterventionalStudyProtocolDTO ispDTO)
     throws PAException {
         return null;
     }
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Ii createObservationalStudyProtocol(
             ObservationalStudyProtocolDTO ospDTO) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ObservationalStudyProtocolDTO updateObservationalStudyProtocol(
             ObservationalStudyProtocolDTO ospDTO) throws PAException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * deletes protocol and all of its related classes.
-     * @param ii ii of study Protocol
-     * @throws PAException on any error
-     */
-    public void deleteStudyProtocol(Ii ii) throws PAException {
-     // TODO Auto-generated method stub
-    }
-
-    public List<StudyProtocolDTO> search(StudyProtocolDTO dto, LimitOffset pagingParams) throws PAException,
-            TooManyResultsException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public void validate(StudyProtocolDTO studyProtocolDTO) throws PAException {
-        // TODO Auto-generated method stub
-
-    }
-
-    public void changeOwnership(StudyProtocolDTO studyProtocolDTO)
-            throws PAException {
-        // TODO Auto-generated method stub
-
-    }
-
-    public StudyProtocolDTO getStudyProtocolDTOFromNciId(Ii studyProtocolIi) throws PAException,
-            TooManyResultsException {
-        StudyProtocolDTO returnVal = new StudyProtocolDTO();
-        returnVal.setIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         return null;
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
+    public void deleteStudyProtocol(Ii ii) throws PAException {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<StudyProtocolDTO> search(StudyProtocolDTO dto, LimitOffset pagingParams) throws PAException,
+            TooManyResultsException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void validate(StudyProtocolDTO studyProtocolDTO) throws PAException {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void changeOwnership(StudyProtocolDTO studyProtocolDTO)
+            throws PAException {
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<StudyProtocolDTO> getAbstractedCollaborativeTrials() throws PAException {
         return new ArrayList<StudyProtocolDTO>();
     }

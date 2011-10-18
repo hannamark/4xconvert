@@ -204,26 +204,7 @@
                                     </reg-web:valueRow>
                                     <reg-web:spaceRow/>
                                 </c:if>
-                                <reg-web:titleRow titleKey="view.trial.statusDates"/>
-                                <reg-web:valueRow labelKey="view.trial.currentTrialStatus">
-                                    <c:out value="${trialDTO.statusCode}"/>
-                                </reg-web:valueRow>
-                                <c:if test="${trialDTO.reason != ''}">
-                                    <reg-web:valueRow labelKey="view.trial.trialStatusReason">
-                                        <c:out value="${trialDTO.reason}"/>
-                                    </reg-web:valueRow>
-                                </c:if>
-                                <reg-web:valueRow labelKey="view.trial.currentTrialStatusDate">
-                                    <c:out value="${trialDTO.statusDate}"/>
-                                </reg-web:valueRow>
-                                <reg-web:valueRow labelKey="view.trial.trialStartDate">
-                                    <c:out value="${trialDTO.startDate}"/>
-                                    <c:out value="${trialDTO.startDateType }"/>
-                                </reg-web:valueRow>
-                                <reg-web:valueRow labelKey="view.trial.primaryCompletionDate">
-                                    <c:out value="${trialDTO.primaryCompletionDate}"/>
-                                    <c:out value="${trialDTO.primaryCompletionDateType}"/>
-                                </reg-web:valueRow>
+                                <%@ include file="/WEB-INF/jsp/nodecorate/viewStatusSection.jsp" %>
                             </c:if>
                             <c:if test="${trialDTO.propritaryTrialIndicator != null && trialDTO.propritaryTrialIndicator == 'Yes'}">
                                 <c:if test="${fn:trim(trialDTO.siteProgramCodeText) != ''}">

@@ -116,6 +116,8 @@ public class StudyProtocolBatchDTO {
     private String studyStartDateType;
     private String primaryCompletionDate;
     private String primaryCompletionDateType;
+    private String completionDate;
+    private String completionDateType;
 
     private String indType;
     private String indNumber;
@@ -730,6 +732,34 @@ public class StudyProtocolBatchDTO {
      */
     public void setPrimaryCompletionDateType(String primaryCompletionDateType) {
         this.primaryCompletionDateType = primaryCompletionDateType;
+    }
+
+    /**
+     * @return the completionDate
+     */
+    public String getCompletionDate() {
+        return completionDate;
+    }
+
+    /**
+     * @param completionDate the completionDate to set
+     */
+    public void setCompletionDate(String completionDate) {
+        this.completionDate = completionDate;
+    }
+
+    /**
+     * @return the completionDateType
+     */
+    public String getCompletionDateType() {
+        return completionDateType;
+    }
+
+    /**
+     * @param completionDateType the completionDateType to set
+     */
+    public void setCompletionDateType(String completionDateType) {
+        this.completionDateType = completionDateType;
     }
 
     /**

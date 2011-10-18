@@ -23,6 +23,7 @@
             addCalendar("Cal1", "Select Date", "trialDTO.statusDate", "updateTrial");
             addCalendar("Cal2", "Select Date", "trialDTO.startDate", "updateTrial");
             addCalendar("Cal3", "Select Date", "trialDTO.primaryCompletionDate", "updateTrial");
+            addCalendar("Cal4", "Select Date", "trialDTO.completionDate", "updateTrial");
             setWidth(90, 1, 15, 1);
             setFormat("mm/dd/yyyy");
         </script>
@@ -151,7 +152,7 @@
             }
         
             document.observe("dom:loaded", function() {
-                                               displayTrialStatusDefinition('updateTrial_trialDTO_statusCode');
+                                               displayTrialStatusDefinition('trialDTO_statusCode');
                                            });
         </script>
     </head>
@@ -183,7 +184,7 @@
                     <%@ include file="/WEB-INF/jsp/nodecorate/updateSponsorResponsiblePartySection.jsp" %>
                     <%@ include file="/WEB-INF/jsp/nodecorate/updateSummary4InfoSection.jsp" %>
                     <%@ include file="/WEB-INF/jsp/nodecorate/updateGrantsSection.jsp" %>
-                    <%@ include file="/WEB-INF/jsp/nodecorate/trialStatus.jsp" %>  
+                    <%@ include file="/WEB-INF/jsp/nodecorate/updateStatusSection.jsp" %>  
                     <%@ include file="/WEB-INF/jsp/nodecorate/updateIdeIndIndicatorSection.jsp" %>
                     <%@ include file="/WEB-INF/jsp/nodecorate/updateRegulatoryInformationSection.jsp" %>
                     <%@ include file="/WEB-INF/jsp/nodecorate/updateParticipatingSitesSection.jsp" %>      

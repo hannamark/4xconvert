@@ -1049,6 +1049,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             spDTO.setStartDateTypeCode(studyProtocolDTO.getStartDateTypeCode());
             spDTO.setPrimaryCompletionDate(studyProtocolDTO.getPrimaryCompletionDate());
             spDTO.setPrimaryCompletionDateTypeCode(studyProtocolDTO.getPrimaryCompletionDateTypeCode());
+            spDTO.setCompletionDate(studyProtocolDTO.getCompletionDate());
+            spDTO.setCompletionDateTypeCode(studyProtocolDTO.getCompletionDateTypeCode());
 
             // Even though we are setting UserLastCreated value which came from DB, the value will not be updated in DB.
             // UserLastCreated is used as a place holder to determine the currently logged in user and/or the person
@@ -1098,7 +1100,11 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
         PAServiceUtils paServiceUtils = getPAServiceUtils();
         Ii nullDocumentIi = IiConverter.convertToDocumentIi(null);
         List<DocumentDTO> savedDocs = paServiceUtils.createOrUpdate(documentDTOs, nullDocumentIi, spIi);
-        paServiceUtils.moveDocumentContents(savedDocs, spIi);
+        if (CollectionUtils.isNotEmpty(savedDocs)) {
+            StudyProtocolDTO sp = studyProtocolService.getStudyProtocol(spIi);
+            String assignedIdentifier = PAUtil.getAssignedIdentifierExtension(sp);
+            paServiceUtils.moveDocumentContents(savedDocs, assignedIdentifier);
+        }
     }
 
     private TrialRegistrationValidator createValidator() {

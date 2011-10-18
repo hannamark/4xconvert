@@ -264,6 +264,9 @@ public class TrialConvertUtils {
                 .getPrimaryCompletionDate())));
         isoDto.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode
                 .getByCode(trialDTO.getPrimaryCompletionDateType())));
+        isoDto.setCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDTO.getCompletionDate())));
+        isoDto.setCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.getByCode(trialDTO
+            .getCompletionDateType())));
         isoDto.setStudyProtocolType(StConverter.convertToSt(trialDTO.getTrialType()));
         isoDto.setProgramCodeText(StConverter.convertToSt(trialDTO.getProgramCodeText()));
         if (trialDTO.getFdaRegulatoryInformationIndicator() == null) {
@@ -968,61 +971,64 @@ public class TrialConvertUtils {
        trialDto.setPropritaryTrialIndicator(CommonsConstant.YES);
    }
 
-   private void convertNonPropDtoToStage(TrialDTO trialDto,
-           StudyProtocolStageDTO spStageDTO) {
-       spStageDTO.setPiIdentifier(IiConverter.convertToIi(trialDto.getPiIdentifier()));
-       spStageDTO.setSponsorIdentifier(IiConverter.convertToIi(trialDto.getSponsorIdentifier()));
-       spStageDTO.setResponsiblePartyType(StConverter.convertToSt(trialDto.getResponsiblePartyType()));
-       spStageDTO.setResponsibleIdentifier(IiConverter.convertToIi(trialDto.getResponsiblePersonIdentifier()));
-       spStageDTO.setContactEmail(StConverter.convertToSt(trialDto.getContactEmail()));
-       spStageDTO.setContactPhone(StConverter.convertToSt(trialDto.getContactPhone()));
-       spStageDTO.setProgramCodeText(StConverter.convertToSt(trialDto.getProgramCodeText()));
-       spStageDTO.setTrialStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(trialDto.getStatusCode())));
-       spStageDTO.setTrialStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDto.getStatusDate())));
-       spStageDTO.setStatusReason(StConverter.convertToSt(trialDto.getReason()));
-       spStageDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(
-               trialDto.getPrimaryCompletionDate())));
-       spStageDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(
-               ActualAnticipatedTypeCode.getByCode(trialDto.getPrimaryCompletionDateType())));
-       spStageDTO.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDto.getStartDate())));
-       spStageDTO.setStartDateTypeCode(CdConverter.convertToCd(
-               ActualAnticipatedTypeCode.getByCode(trialDto.getStartDateType())));
-       if (trialDto.getFdaRegulatoryInformationIndicator() == null) {
-           spStageDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(null));
-       } else if  (CommonsConstant.YES.equalsIgnoreCase(trialDto.getFdaRegulatoryInformationIndicator())) {
-           spStageDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.TRUE));
-       } else {
-           spStageDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.FALSE));
-       }
-       if (trialDto.getSection801Indicator() == null) {
-           spStageDTO.setSection801Indicator(BlConverter.convertToBl(null));
-       } else if (CommonsConstant.YES.equalsIgnoreCase(trialDto.getSection801Indicator())) {
-           spStageDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.TRUE));
-       } else {
-           spStageDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.FALSE));
-       }
-       if (trialDto.getDelayedPostingIndicator() == null) {
-           spStageDTO.setDelayedpostingIndicator(BlConverter.convertToBl(null));
-       } else if (CommonsConstant.YES.equalsIgnoreCase(trialDto.getDelayedPostingIndicator())) {
-           spStageDTO.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.TRUE));
-       } else {
-           spStageDTO.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.FALSE));
-       }
-       if (trialDto.getDataMonitoringCommitteeAppointedIndicator() == null) {
-           spStageDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(null));
-       } else if (CommonsConstant.YES.equalsIgnoreCase(trialDto.getDataMonitoringCommitteeAppointedIndicator())) {
-           spStageDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.TRUE));
-       } else {
-           spStageDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.FALSE));
-       }
-       spStageDTO.setOversightAuthorityCountryId(IiConverter.convertToIi(trialDto.getLst()));
-       spStageDTO.setOversightAuthorityOrgId(IiConverter.convertToIi(trialDto.getSelectedRegAuth()));
-       spStageDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
-       trialDto.setPropritaryTrialIndicator(CommonsConstant.NO);
-       spStageDTO.setCtgovXmlRequiredIndicator(trialDto.isXmlRequired()
-               ? BlConverter.convertToBl(Boolean.TRUE) : BlConverter.convertToBl(Boolean.FALSE));
-       spStageDTO.getSecondaryIdentifierList().addAll(trialDto.getSecondaryIdentifierList());
-   }
+    private void convertNonPropDtoToStage(TrialDTO trialDto, StudyProtocolStageDTO spStageDTO) {
+        spStageDTO.setPiIdentifier(IiConverter.convertToIi(trialDto.getPiIdentifier()));
+        spStageDTO.setSponsorIdentifier(IiConverter.convertToIi(trialDto.getSponsorIdentifier()));
+        spStageDTO.setResponsiblePartyType(StConverter.convertToSt(trialDto.getResponsiblePartyType()));
+        spStageDTO.setResponsibleIdentifier(IiConverter.convertToIi(trialDto.getResponsiblePersonIdentifier()));
+        spStageDTO.setContactEmail(StConverter.convertToSt(trialDto.getContactEmail()));
+        spStageDTO.setContactPhone(StConverter.convertToSt(trialDto.getContactPhone()));
+        spStageDTO.setProgramCodeText(StConverter.convertToSt(trialDto.getProgramCodeText()));
+        spStageDTO.setTrialStatusCode(CdConverter.convertToCd(StudyStatusCode.getByCode(trialDto.getStatusCode())));
+        spStageDTO.setTrialStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDto.getStatusDate())));
+        spStageDTO.setStatusReason(StConverter.convertToSt(trialDto.getReason()));
+        spStageDTO.setStartDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDto.getStartDate())));
+        spStageDTO.setStartDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.getByCode(trialDto
+            .getStartDateType())));
+        spStageDTO.setPrimaryCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDto
+            .getPrimaryCompletionDate())));
+        spStageDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode
+            .getByCode(trialDto.getPrimaryCompletionDateType())));
+        spStageDTO
+            .setCompletionDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(trialDto.getCompletionDate())));
+        spStageDTO.setCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.getByCode(trialDto
+            .getCompletionDateType())));
+        if (trialDto.getFdaRegulatoryInformationIndicator() == null) {
+            spStageDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(null));
+        } else if (CommonsConstant.YES.equalsIgnoreCase(trialDto.getFdaRegulatoryInformationIndicator())) {
+            spStageDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        } else {
+            spStageDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        }
+        if (trialDto.getSection801Indicator() == null) {
+            spStageDTO.setSection801Indicator(BlConverter.convertToBl(null));
+        } else if (CommonsConstant.YES.equalsIgnoreCase(trialDto.getSection801Indicator())) {
+            spStageDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.TRUE));
+        } else {
+            spStageDTO.setSection801Indicator(BlConverter.convertToBl(Boolean.FALSE));
+        }
+        if (trialDto.getDelayedPostingIndicator() == null) {
+            spStageDTO.setDelayedpostingIndicator(BlConverter.convertToBl(null));
+        } else if (CommonsConstant.YES.equalsIgnoreCase(trialDto.getDelayedPostingIndicator())) {
+            spStageDTO.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        } else {
+            spStageDTO.setDelayedpostingIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        }
+        if (trialDto.getDataMonitoringCommitteeAppointedIndicator() == null) {
+            spStageDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(null));
+        } else if (CommonsConstant.YES.equalsIgnoreCase(trialDto.getDataMonitoringCommitteeAppointedIndicator())) {
+            spStageDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.TRUE));
+        } else {
+            spStageDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        }
+        spStageDTO.setOversightAuthorityCountryId(IiConverter.convertToIi(trialDto.getLst()));
+        spStageDTO.setOversightAuthorityOrgId(IiConverter.convertToIi(trialDto.getSelectedRegAuth()));
+        spStageDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
+        trialDto.setPropritaryTrialIndicator(CommonsConstant.NO);
+        spStageDTO.setCtgovXmlRequiredIndicator(trialDto.isXmlRequired() ? BlConverter.convertToBl(Boolean.TRUE)
+                : BlConverter.convertToBl(Boolean.FALSE));
+        spStageDTO.getSecondaryIdentifierList().addAll(trialDto.getSecondaryIdentifierList());
+    }
    /**
     * @param spStageDTO isoDto
     * @return webDto
@@ -1138,11 +1144,14 @@ public class TrialConvertUtils {
         }
         trialDto.setStatusDate(TsConverter.convertToString(spStageDTO.getTrialStatusDate()));
         trialDto.setReason(StConverter.convertToString(spStageDTO.getStatusReason()));
+
+        trialDto.setStartDate(TsConverter.convertToString(spStageDTO.getStartDate()));
+        trialDto.setStartDateType(CdConverter.convertCdToString(spStageDTO.getStartDateTypeCode()));
         trialDto.setPrimaryCompletionDate(TsConverter.convertToString(spStageDTO.getPrimaryCompletionDate()));
         trialDto.setPrimaryCompletionDateType(CdConverter.convertCdToString(spStageDTO
             .getPrimaryCompletionDateTypeCode()));
-        trialDto.setStartDate(TsConverter.convertToString(spStageDTO.getStartDate()));
-        trialDto.setStartDateType(CdConverter.convertCdToString(spStageDTO.getStartDateTypeCode()));
+        trialDto.setCompletionDate(TsConverter.convertToString(spStageDTO.getCompletionDate()));
+        trialDto.setCompletionDateType(CdConverter.convertCdToString(spStageDTO.getCompletionDateTypeCode()));
         trialDto.setTrialType(StConverter.convertToString(spStageDTO.getTrialType()));
 
         trialDto.setLst(IiConverter.convertToString(spStageDTO.getOversightAuthorityCountryId()));

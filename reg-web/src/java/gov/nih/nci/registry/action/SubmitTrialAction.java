@@ -93,6 +93,9 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
+import gov.nih.nci.pa.service.TrialRegistrationServiceLocal;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.util.CommonsConstant;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -109,7 +112,6 @@ import gov.nih.nci.services.person.PersonDTO;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -132,16 +134,35 @@ import com.opensymphony.xwork2.Preparable;
 @SuppressWarnings("unchecked")
 public class SubmitTrialAction extends ManageFileAction implements ServletResponseAware, Preparable {
     private static final long serialVersionUID = -7644860242308952142L;
-    private static final String REDIRECT_TO_SEARCH = "redirect_to_search";
     private static final Logger LOG = Logger.getLogger(SubmitTrialAction.class);
+    private static final String REDIRECT_TO_SEARCH = "redirect_to_search";
+    
+    private RegulatoryInformationServiceRemote regulatoryInformationService;
+    private StudyProtocolStageServiceLocal studyProtocolStageService;
+    private TrialRegistrationServiceLocal trialRegistrationService;
+    private final TrialUtil  trialUtil = new TrialUtil();
+    
     private Long cbValue;
     private String page;
-    private Long id = null;
+    private Long id;
     private HttpServletResponse servletResponse;
     private String trialAction = "submit";
     private TrialDTO trialDTO;
-    private final TrialUtil  trialUtil = new TrialUtil();
     private String sum4FundingCatCode;
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() {
+        regulatoryInformationService = PaRegistry.getRegulatoryInformationService();
+        studyProtocolStageService = PaRegistry.getStudyProtocolStageService();
+        trialRegistrationService = PaRegistry.getTrialRegistrationService();
+        if (trialDTO != null) {
+            trialDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
+                    .lookupPrimaryPurposeAdditionalQualifierCode(trialDTO.getPrimaryPurposeCode()));
+        }
+    }
 
     /**
      *
@@ -213,7 +234,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             List<StudyResourcingDTO> studyResourcingDTOs = util.convertISOGrantsList(trialDTO.getFundingDtos());
             StudyRegulatoryAuthorityDTO studyRegAuthDTO = util.getStudyRegAuth(null, trialDTO);
 
-            Ii studyProtocolIi =  PaRegistry.getTrialRegistrationService().
+            Ii studyProtocolIi =  trialRegistrationService.
                 createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
                     studyResourcingDTOs, documentDTOs,
                     leadOrgDTO, principalInvestigatorDTO, sponsorOrgDTO, leadOrgSiteIdDTO,
@@ -239,11 +260,9 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
 
     private void deleteSavedDraft() throws PAException {
         if (StringUtils.isNotEmpty(trialDTO.getStudyProtocolId())) {
-            PaRegistry.getStudyProtocolStageService().delete(IiConverter.convertToIi(
-                    trialDTO.getStudyProtocolId()));
-         }
+            studyProtocolStageService.delete(IiConverter.convertToIi(trialDTO.getStudyProtocolId()));
+        }
     }
-
 
     private void clearDocumentIdentifiers(List<DocumentDTO> documentDTOs) {
         for (DocumentDTO dto : documentDTOs) {
@@ -274,8 +293,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
      */
     private void validateForm() throws IOException {
         TrialValidator validator = new TrialValidator();
-        Map<String, String> err = new HashMap<String, String>();
-        err = validator.validateTrial(trialDTO);
+        Map<String, String> err = validator.validateTrial(trialDTO);
         addErrors(err);
         validateDocuments();
     }
@@ -364,9 +382,10 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
         setDocumentsInSession(trialDTO);
         return "edit";
     }
+
     /**
      * Gets the reg authorities list.
-     *
+     * 
      * @return String success or failure
      */
     public String getTrialOversightAuthorityOrganizationNameList() {
@@ -376,8 +395,8 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
                 trialDTO = new TrialDTO();
             }
             if (countryId != null && !("".equals(countryId))) {
-                trialDTO.setRegIdAuthOrgList(PaRegistry.getRegulatoryInformationService()
-                                    .getRegulatoryAuthorityNameId(Long.valueOf(countryId)));
+                trialDTO.setRegIdAuthOrgList(regulatoryInformationService.getRegulatoryAuthorityNameId(Long
+                    .valueOf(countryId)));
             } else {
                 RegulatoryAuthOrgDTO defaultVal = new RegulatoryAuthOrgDTO();
                 defaultVal.setName("-Select Country-");
@@ -391,8 +410,9 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
         }
         return SUCCESS;
     }
+
     /**
-     *
+     * 
      * @return success or fail
      */
     public String partialSave() {
@@ -416,6 +436,7 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
         }
         return "review";
     }
+    
     /**
      *
      * @return s
@@ -443,11 +464,11 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
         } catch (NullifiedRoleException e) {
             addActionError(e.getMessage());
         }
-        //trialUtil.populateRegulatoryList(trialDTO);
-       return SUCCESS;
+        return SUCCESS;
     }
+
     /**
-     *
+     * 
      * @return string
      */
     public String deletePartialSubmission() {
@@ -457,24 +478,12 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
             return ERROR;
         }
         try {
-            PaRegistry.getStudyProtocolStageService().delete(IiConverter.convertToIi(pId));
+            studyProtocolStageService.delete(IiConverter.convertToIi(pId));
         } catch (PAException e) {
             addActionError(RegistryUtil.removeExceptionFromErrMsg(e.getMessage()));
         }
         setTrialAction("deletePartialSubmission");
         return REDIRECT_TO_SEARCH;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
-    public void prepare() throws Exception {
-        if (this.trialDTO != null) {
-            this.trialDTO.setPrimaryPurposeAdditionalQualifierCode(PAUtil
-                    .lookupPrimaryPurposeAdditionalQualifierCode(this.trialDTO.getPrimaryPurposeCode()));
-        }
     }
 
     /**
@@ -576,6 +585,27 @@ public class SubmitTrialAction extends ManageFileAction implements ServletRespon
      */
     public String getSum4FundingCatCode() {
          return sum4FundingCatCode;
+    }
+
+    /**
+     * @param regulatoryInformationService the regulatoryInformationService to set
+     */
+    public void setRegulatoryInformationService(RegulatoryInformationServiceRemote regulatoryInformationService) {
+        this.regulatoryInformationService = regulatoryInformationService;
+    }
+
+    /**
+     * @param studyProtocolStageService the studyProtocolStageService to set
+     */
+    public void setStudyProtocolStageService(StudyProtocolStageServiceLocal studyProtocolStageService) {
+        this.studyProtocolStageService = studyProtocolStageService;
+    }
+
+    /**
+     * @param trialRegistrationService the trialRegistrationService to set
+     */
+    public void setTrialRegistrationService(TrialRegistrationServiceLocal trialRegistrationService) {
+        this.trialRegistrationService = trialRegistrationService;
     }
 
 

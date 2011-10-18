@@ -145,14 +145,14 @@ public class UpdateTrialStatusTest extends AbstractRegistrySeleniumTest {
     private void updateStatusViaPopup() {
         clickAndWaitAjax(UPDATE_STATUS_LINK_LOCATOR);
         selenium.selectFrame("popupFrame");
-        waitForElementById("updateTrialStatusForm_trialDTO_primaryCompletionDateTypeAnticipated", 60);
+        waitForElementById("trialDTO_primaryCompletionDateTypeAnticipated", 60);
         assertUpdateStatusPageFieldsArePresent();
         updateStatus();
         selenium.selectWindow(null);
     }
 
     private void updateStatus() {
-        selenium.select("id=updateTrial_trialDTO_statusCode", "label=Approved");
+        selenium.select("id=trialDTO_statusCode", "label=Approved");
         clickAndWait("link=Save");
         assertTrue(selenium.isTextPresent("Trial status successfully updated."));
         clickAndWaitAjax("link=Close");
@@ -164,15 +164,18 @@ public class UpdateTrialStatusTest extends AbstractRegistrySeleniumTest {
     }
 
     private void assertUpdateStatusPageFieldsArePresent() {
-        assertTrue(selenium.isElementPresent("id=updateTrial_trialDTO_statusCode"));
-        assertTrue(selenium.isElementPresent("id=updateTrialStatusForm_trialDTO_reason"));
-        assertTrue(selenium.isElementPresent("id=updateTrialStatusForm_trialDTO_statusDate"));
-        assertTrue(selenium.isElementPresent("id=updateTrialStatusForm_trialDTO_startDate"));
-        assertTrue(selenium.isElementPresent("id=updateTrialStatusForm_trialDTO_startDateTypeActual"));
-        assertTrue(selenium.isElementPresent("id=updateTrialStatusForm_trialDTO_startDateTypeAnticipated"));
-        assertTrue(selenium.isElementPresent("id=updateTrialStatusForm_trialDTO_primaryCompletionDate"));
-        assertTrue(selenium.isElementPresent("id=updateTrialStatusForm_trialDTO_primaryCompletionDateTypeActual"));
-        assertTrue(selenium.isElementPresent("id=updateTrialStatusForm_trialDTO_primaryCompletionDateTypeAnticipated"));
+        assertTrue(selenium.isElementPresent("id=trialDTO_statusCode"));
+        assertTrue(selenium.isElementPresent("id=trialDTO_reason"));
+        assertTrue(selenium.isElementPresent("id=trialDTO_statusDate"));
+        assertTrue(selenium.isElementPresent("id=trialDTO_startDate"));
+        assertTrue(selenium.isElementPresent("id=trialDTO_startDateTypeActual"));
+        assertTrue(selenium.isElementPresent("id=trialDTO_startDateTypeAnticipated"));
+        assertTrue(selenium.isElementPresent("id=trialDTO_primaryCompletionDate"));
+        assertTrue(selenium.isElementPresent("id=trialDTO_primaryCompletionDateTypeActual"));
+        assertTrue(selenium.isElementPresent("id=trialDTO_primaryCompletionDateTypeAnticipated"));
+        assertTrue(selenium.isElementPresent("id=trialDTO_completionDate"));
+        assertTrue(selenium.isElementPresent("id=trialDTO_completionDateTypeActual"));
+        assertTrue(selenium.isElementPresent("id=trialDTO_completionDateTypeAnticipated"));
         assertTrue(selenium.isElementPresent("link=Save"));
         assertTrue(selenium.isElementPresent("link=Close"));
     }

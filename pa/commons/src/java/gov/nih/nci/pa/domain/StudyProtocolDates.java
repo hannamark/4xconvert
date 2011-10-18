@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The viewer
+ * source code form and machine readable, binary, object code form. The pa
  * Software was developed in conjunction with the National Cancer Institute 
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent 
  * government employees are authors, any rights in such works shall be subject 
  * to Title 17 of the United States Code, section 105. 
  *
- * This viewer Software License (the License) is between NCI and You. You (or 
+ * This pa Software License (the License) is between NCI and You. You (or 
  * Your) shall mean a person or an entity, and all other entities that control, 
  * are controlled by, or are under common control with the entity. Control for 
  * purposes of this definition means (i) the direct or indirect power to cause 
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described 
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up, 
  * no-charge, irrevocable, transferable and royalty-free right and license in 
- * its rights in the viewer Software to (i) use, install, access, operate, 
+ * its rights in the pa Software to (i) use, install, access, operate, 
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the viewer Software; (ii) distribute and 
- * have distributed to and by third parties the viewer Software and any 
+ * and prepare derivative works of the pa Software; (ii) distribute and 
+ * have distributed to and by third parties the pa Software and any 
  * modifications and derivative works thereof; and (iii) sublicense the 
  * foregoing rights set out in (i) and (ii) to third parties, including the 
  * right to license such rights to further third parties. For sake of clarity, 
@@ -80,52 +80,156 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.report.test.integration;
+package gov.nih.nci.pa.domain;
 
-import org.junit.Test;
+import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
- * @author merenkoi
+ * @author Michael Visee
  */
-public class AdHocReportSeleniumTest extends AbstractViewerSeleniumTest {
-    
+@Embeddable
+public class StudyProtocolDates implements Serializable {
+    private static final long serialVersionUID = 473147934352603518L;
+
+    private Timestamp startDate;
+    private Timestamp primaryCompletionDate;
+    private Timestamp completionDate;
+    private ActualAnticipatedTypeCode startDateTypeCode;
+    private ActualAnticipatedTypeCode primaryCompletionDateTypeCode;
+    private ActualAnticipatedTypeCode completionDateTypeCode;
+
     /**
-     * Tests validation.
+     * @return the startDate
      */
-    @Test
-    public void testValidation() {
-        loginAsAbstractor();
-        disclaimer(true);
-        clickAndWait("link=Ad Hoc");     
-        clickAndWait("css=del.btnwrapper > ul.btnrow > li > #criteriaAdHocReport_ > span.btn_img > span.search");      
-        assertTrue(selenium.isTextPresent("At least one criteria is required."));       
+    @Column(name = "START_DATE")
+    public Timestamp getStartDate() {
+        return startDate;
     }
 
     /**
-     * Tests search by participating site.
+     * @param startDate the startDate to set
      */
-//    @Test
-//    public void testSearchByParticipatingSite() {
-//        loginAsAbstractor();
-//        disclaimer(true);
-//        clickAndWait("link=Ad Hoc");
-//        selenium.select("id=participatingSiteId", "label=ClinicalTrials.gov");
-//        clickAndWait("css=del.btnwrapper > ul.btnrow > li > #criteriaAdHocReport_ > span.btn_img > span.search");      
-//        assertTrue(selenium.isTextPresent("One item found."));       
-//    }
+    public void setStartDate(Timestamp startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * @return the primaryCompletionDate
+     */
+    @Column(name = "PRI_COMPL_DATE")
+    public Timestamp getPrimaryCompletionDate() {
+        return primaryCompletionDate;
+    }
+
+    /**
+     * @param primaryCompletionDate the primaryCompletionDate to set
+     */
+    public void setPrimaryCompletionDate(Timestamp primaryCompletionDate) {
+        this.primaryCompletionDate = primaryCompletionDate;
+    }
+
+    /**
+     * @return the completionDate
+     */
+    @Column(name = "COMPLETION_DATE")
+    public Timestamp getCompletionDate() {
+        return completionDate;
+    }
+
+    /**
+     * @param completionDate the completionDate to set
+     */
+    public void setCompletionDate(Timestamp completionDate) {
+        this.completionDate = completionDate;
+    }
+
+    /**
+     * @return startDateTypeCode
+     */
+    @Column(name = "START_DATE_TYPE_CODE")
+    @Enumerated(EnumType.STRING)
+    public ActualAnticipatedTypeCode getStartDateTypeCode() {
+        return startDateTypeCode;
+    }
+
+    /**
+     * @param startDateTypeCode the startDateTypeCode to set
+     */
+    public void setStartDateTypeCode(ActualAnticipatedTypeCode startDateTypeCode) {
+        this.startDateTypeCode = startDateTypeCode;
+    }
+
+    /**
+     * @return primaryCompletionDateTypeCode
+     */
+    @Column(name = "PRI_COMPL_DATE_TYPE_CODE")
+    @Enumerated(EnumType.STRING)
+    public ActualAnticipatedTypeCode getPrimaryCompletionDateTypeCode() {
+        return primaryCompletionDateTypeCode;
+    }
+
+    /**
+     * @param primaryCompletionDateTypeCode the primaryCompletionDateTypeCode to set
+     */
+    public void setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode primaryCompletionDateTypeCode) {
+        this.primaryCompletionDateTypeCode = primaryCompletionDateTypeCode;
+    }
+
+    /**
+     * @return completionDateTypeCode
+     */
+    @Column(name = "COMPLETION_DATE_TYPE_CODE")
+    @Enumerated(EnumType.STRING)
+    public ActualAnticipatedTypeCode getCompletionDateTypeCode() {
+        return completionDateTypeCode;
+    }
+
+    /**
+     * @param completionDateTypeCode the completionDateTypeCode to set
+     */
+    public void setCompletionDateTypeCode(ActualAnticipatedTypeCode completionDateTypeCode) {
+        this.completionDateTypeCode = completionDateTypeCode;
+    }
     
     /**
-     * Tests search by Location.
+     * {@inheritDoc}
      */
-    @Test
-    public void testSearchByLocation() {
-        loginAsAbstractor();
-        disclaimer(true);
-        clickAndWait("link=Ad Hoc");
-        selenium.select("id=country", "label=United States");
-        selenium.addSelection("id=states", "label=Maryland");
-        selenium.type("id=city", "ville");
-        clickAndWait("css=del.btnwrapper > ul.btnrow > li > #criteriaAdHocReport_ > span.btn_img > span.search");      
-        assertTrue(selenium.isTextPresent("11 items found"));       
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof StudyProtocolDates)) {
+            return false;
+        }
+        StudyProtocolDates other = (StudyProtocolDates) obj;
+        return new EqualsBuilder().append(startDate, other.getStartDate())
+            .append(primaryCompletionDate, other.getPrimaryCompletionDate())
+            .append(completionDate, other.getCompletionDate())
+            .append(startDateTypeCode, other.getStartDateTypeCode())
+            .append(primaryCompletionDateTypeCode, other.getPrimaryCompletionDateTypeCode())
+            .append(completionDateTypeCode, other.getCompletionDateTypeCode()).isEquals();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(startDate).append(primaryCompletionDate).append(completionDate)
+            .append(startDateTypeCode).append(primaryCompletionDateTypeCode).append(completionDateTypeCode)
+            .toHashCode();
+    }
+
 }

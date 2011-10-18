@@ -123,7 +123,7 @@ public class MockPAServiceUtils extends PAServiceUtils {
      * {@inheritDoc}
      */
     @Override
-    public void moveDocumentContents(List<DocumentDTO> docs, Ii spIi) throws PAException {
+    public void moveDocumentContents(List<DocumentDTO> docs, String assignedIdentifier) throws PAException {
         //Intentionally left empty.
     }
 

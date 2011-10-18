@@ -44,7 +44,7 @@
             <s:hidden name="trialDTO.identifier"/>
             <s:hidden name="studyProtocolId"/>
             <table class="form">
-                <%@ include file="/WEB-INF/jsp/nodecorate/trialStatus.jsp" %>
+                <%@ include file="/WEB-INF/jsp/nodecorate/updateStatusSection.jsp" %>
             </table>    
             <div class="actionsrow">
                 <del class="btnwrapper">

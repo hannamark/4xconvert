@@ -91,6 +91,7 @@ import gov.nih.nci.pa.domain.SDCDisease;
 import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.domain.StudySiteAccrualAccess;
@@ -248,10 +249,11 @@ public class TestSchema {
         // StudyProtocol
         StudyProtocol sp = new StudyProtocol();
         sp.setOfficialTitle("Phase II study for Melanoma");
-        sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2009"));
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2009"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
 
         Set<Ii> studySecondaryIdentifiers =  new HashSet<Ii>();
@@ -273,10 +275,11 @@ public class TestSchema {
         
         sp = new StudyProtocol();
         sp.setOfficialTitle("A Phase II/III Randomized, Placebo-Controlled Double-Blind Clinical Trial of Ginger");
-        sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2009"));
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2010"));
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        dates = sp.getDates();
+        dates.setStartDate(PAUtil.dateStringToTimestamp("1/1/2009"));
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2010"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
 
         studySecondaryIdentifiers =  new HashSet<Ii>();
@@ -298,10 +301,11 @@ public class TestSchema {
 
         sp = new StudyProtocol();
         sp.setOfficialTitle("A Phase II/III Randomized, Placebo-Controlled Double-Blind Clinical Trial of Ginger");
-        sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2009"));
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2010"));
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        dates = sp.getDates();
+        dates.setStartDate(PAUtil.dateStringToTimestamp("1/1/2009"));
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2010"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
 
         studySecondaryIdentifiers =  new HashSet<Ii>();
@@ -335,10 +339,11 @@ public class TestSchema {
         
         sp = new StudyProtocol();
         sp.setOfficialTitle("Sample Preventative Study");
-        sp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2009"));
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2010"));
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        dates = sp.getDates();
+        dates.setStartDate(PAUtil.dateStringToTimestamp("1/1/2009"));
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("12/31/2010"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.PREVENTION);
         studySecondaryIdentifiers =  new HashSet<Ii>();

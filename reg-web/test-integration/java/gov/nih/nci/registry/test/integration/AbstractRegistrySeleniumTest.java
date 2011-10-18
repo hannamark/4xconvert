@@ -277,12 +277,14 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
 
         //Trial Status Information
         selenium.selectFrame("relative=up");
-        selenium.select("submitTrial_trialDTO_statusCode", "label=In Review");
-        selenium.type("submitTrial_trialDTO_statusDate", today);
-        selenium.type("submitTrial_trialDTO_startDate", tommorrow);
-        selenium.click("submitTrial_trialDTO_startDateTypeAnticipated");
-        selenium.click("submitTrial_trialDTO_primaryCompletionDateTypeAnticipated");
-        selenium.type("submitTrial_trialDTO_primaryCompletionDate", oneYearFromToday);
+        selenium.select("trialDTO_statusCode", "label=In Review");
+        selenium.type("trialDTO_statusDate", today);
+        selenium.type("trialDTO_startDate", tommorrow);
+        selenium.click("trialDTO_startDateTypeAnticipated");
+        selenium.click("trialDTO_primaryCompletionDateTypeAnticipated");
+        selenium.type("trialDTO_primaryCompletionDate", oneYearFromToday);
+        selenium.click("trialDTO_completionDateTypeAnticipated");
+        selenium.type("trialDTO_completionDate", oneYearFromToday);
 
         //Regulator Information
         selenium.select("countries", "label=United States");
@@ -383,12 +385,14 @@ public abstract class AbstractRegistrySeleniumTest extends AbstractSeleneseTestC
 
         //Trial Status Information
         selenium.selectFrame("relative=up");
-        selenium.select("submitTrial_trialDTO_statusCode", "label=In Review");
-        selenium.type("submitTrial_trialDTO_statusDate", today);
-        selenium.type("submitTrial_trialDTO_startDate", tommorrow);
-        selenium.click("submitTrial_trialDTO_startDateTypeAnticipated");
-        selenium.click("submitTrial_trialDTO_primaryCompletionDateTypeAnticipated");
-        selenium.type("submitTrial_trialDTO_primaryCompletionDate", oneYearFromToday);
+        selenium.select("trialDTO_statusCode", "label=In Review");
+        selenium.type("trialDTO_statusDate", today);
+        selenium.type("trialDTO_startDate", tommorrow);
+        selenium.click("trialDTO_startDateTypeAnticipated");
+        selenium.click("trialDTO_primaryCompletionDateTypeAnticipated");
+        selenium.type("trialDTO_primaryCompletionDate", oneYearFromToday);
+        selenium.click("trialDTO_completionDateTypeAnticipated");
+        selenium.type("trialDTO_completionDate", oneYearFromToday);
 
         //Regulator Information
         selenium.select("countries", "label=United States");

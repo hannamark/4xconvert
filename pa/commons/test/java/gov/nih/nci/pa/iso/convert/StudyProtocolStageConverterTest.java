@@ -84,13 +84,12 @@ package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
-import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudyProtocolStage;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
@@ -112,8 +111,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Test;
-
 /**
  * @author mshestopalov
  */
@@ -121,6 +118,9 @@ public class StudyProtocolStageConverterTest extends
         AbstractConverterTest<StudyProtocolStageConverter, StudyProtocolStageDTO, StudyProtocolStage> {
     private final Timestamp now = new Timestamp(new Date().getTime());
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public StudyProtocolStage makeBo() {
         StudyProtocolStage bo = new StudyProtocolStage();
@@ -139,11 +139,7 @@ public class StudyProtocolStageConverterTest extends
         bo.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
         bo.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.ANCILLARY);
         bo.setPrimaryPurposeOtherText("primaryPurposeOtherText");
-        bo.setPrimaryCompletionDate(now);
-        bo.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         bo.setSection801Indicator(Boolean.TRUE);
-        bo.setStartDate(now);
-        bo.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         User u = new User();
         u.setLoginName("testUser");
         bo.setDateLastUpdated(now);
@@ -153,6 +149,13 @@ public class StudyProtocolStageConverterTest extends
         bo.setProprietaryTrialIndicator(Boolean.FALSE);
         bo.setCtgovXmlRequiredIndicator(Boolean.TRUE);
         bo.setProgramCodeText("program code");
+        StudyProtocolDates dates = bo.getDates();
+        dates.setStartDate(now);
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        dates.setPrimaryCompletionDate(now);
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setCompletionDate(now);
+        dates.setCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         return bo;
     }
 
@@ -179,15 +182,17 @@ public class StudyProtocolStageConverterTest extends
         dto.setPrimaryPurposeAdditionalQualifierCode(CdConverter
             .convertToCd(PrimaryPurposeAdditionalQualifierCode.ANCILLARY));
         dto.setPrimaryPurposeOtherText(StConverter.convertToSt("primaryPurposeOtherText"));
-        final Ts nowTs = TsConverter.convertToTs(now);
-        dto.setPrimaryCompletionDate(nowTs);
-        dto.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ACTUAL));
         dto.setSection801Indicator(trueBl);
-        dto.setStartDate(nowTs);
-        dto.setStartDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ANTICIPATED));
         dto.setProprietaryTrialIndicator(BlConverter.convertToBl(Boolean.FALSE));
         dto.setCtgovXmlRequiredIndicator(trueBl);
         dto.setProgramCodeText(StConverter.convertToSt("program code"));
+        Ts nowTs = TsConverter.convertToTs(now);
+        dto.setStartDate(nowTs);
+        dto.setStartDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ANTICIPATED));
+        dto.setPrimaryCompletionDate(nowTs);
+        dto.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ACTUAL));
+        dto.setCompletionDate(nowTs);
+        dto.setCompletionDateTypeCode(CdConverter.convertToCd(ActualAnticipatedTypeCode.ACTUAL));
         return dto;
     }
 
@@ -209,14 +214,15 @@ public class StudyProtocolStageConverterTest extends
         assertEquals(PrimaryPurposeCode.BASIC_SCIENCE, bo.getPrimaryPurposeCode());
         assertEquals(PrimaryPurposeAdditionalQualifierCode.ANCILLARY, bo.getPrimaryPurposeAdditionalQualifierCode());
         assertEquals("primaryPurposeOtherText", bo.getPrimaryPurposeOtherText());
-        assertEquals(now, bo.getPrimaryCompletionDate());
-        assertEquals(ActualAnticipatedTypeCode.ACTUAL, bo.getPrimaryCompletionDateTypeCode());
         assertTrue(bo.getSection801Indicator());
-        assertEquals(now, bo.getStartDate());
-        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED, bo.getStartDateTypeCode());
         assertFalse(bo.getProprietaryTrialIndicator());
         assertTrue(bo.getCtgovXmlRequiredIndicator());
         assertEquals("program code", bo.getProgramCodeText());
+        StudyProtocolDates dates = bo.getDates();
+        assertEquals(now, dates.getStartDate());
+        assertEquals(ActualAnticipatedTypeCode.ANTICIPATED, dates.getStartDateTypeCode());
+        assertEquals(now, dates.getPrimaryCompletionDate());
+        assertEquals(ActualAnticipatedTypeCode.ACTUAL, dates.getPrimaryCompletionDateTypeCode());
     }
 
     /**
@@ -247,22 +253,4 @@ public class StudyProtocolStageConverterTest extends
         assertEquals("program code", dto.getProgramCodeText().getValue());
     }
 
-    @Test
-    public void testUnknownPrimaryCompletionDateDomainToDto() {
-        StudyProtocolStage sp = makeBo();
-        sp.setPrimaryCompletionDate(null);
-        StudyProtocolStageDTO spDTO = new StudyProtocolStageConverter().convertFromDomainToDto(sp);
-        assertNotNull(spDTO.getPrimaryCompletionDate());
-        assertEquals(NullFlavor.UNK, spDTO.getPrimaryCompletionDate().getNullFlavor());
-    }
-
-    @Test
-    public void testUnknownPrimaryCompletionDateDtoToDomain() {
-        StudyProtocolStageDTO spDTO = makeDto();
-        Ts unknownTs = new Ts();
-        unknownTs.setNullFlavor(NullFlavor.UNK);
-        spDTO.setPrimaryCompletionDate(unknownTs);
-        StudyProtocolStage sp = new StudyProtocolStageConverter().convertFromDtoToDomain(spDTO);
-        assertNull(sp.getPrimaryCompletionDate());
-    }
 }

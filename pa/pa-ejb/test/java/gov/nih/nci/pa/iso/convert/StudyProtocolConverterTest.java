@@ -80,15 +80,13 @@ package gov.nih.nci.pa.iso.convert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
-import gov.nih.nci.iso21090.NullFlavor;
-import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -138,11 +136,6 @@ public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
         assertNotNull(sp.getId());
         StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(sp);
         assertStudyProtocol(sp , spDTO);
-
-        sp.setPrimaryCompletionDate(null);
-        spDTO = StudyProtocolConverter.convertFromDomainToDTO(sp, new StudyProtocolDTO());
-        assertNotNull(spDTO.getPrimaryCompletionDate());
-        assertEquals(NullFlavor.UNK, spDTO.getPrimaryCompletionDate().getNullFlavor());
     }
 
     @Test
@@ -153,11 +146,6 @@ public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
         assertNotNull(sp.getId());
         StudyProtocolDTO spDTO = StudyProtocolConverter.convertFromDomainToDTO(sp , new StudyProtocolDTO());
         assertStudyProtocol(sp , spDTO);
-
-        sp.setPrimaryCompletionDate(null);
-        spDTO = StudyProtocolConverter.convertFromDomainToDTO(sp, new StudyProtocolDTO());
-        assertNotNull(spDTO.getPrimaryCompletionDate());
-        assertEquals(NullFlavor.UNK, spDTO.getPrimaryCompletionDate().getNullFlavor());
     }
 
     /**
@@ -176,12 +164,6 @@ public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
         AbstractStudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
         StudyProtocol sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO);
         assertStudyProtocol(sp , spDTO);
-
-        Ts unknownTs = new Ts();
-        unknownTs.setNullFlavor(NullFlavor.UNK);
-        spDTO.setPrimaryCompletionDate(unknownTs);
-        sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO);
-        assertNull(sp.getPrimaryCompletionDate());
     }
 
     @Test
@@ -195,12 +177,6 @@ public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
         AbstractStudyProtocolConverter.setCsmUserUtil(new MockCSMUserService());
         StudyProtocol sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO, new StudyProtocol());
         assertStudyProtocol(sp , spDTO);
-
-        Ts unknownTs = new Ts();
-        unknownTs.setNullFlavor(NullFlavor.UNK);
-        spDTO.setPrimaryCompletionDate(unknownTs);
-        sp = StudyProtocolConverter.convertFromDTOToDomain(spDTO, new StudyProtocol());
-        assertNull(sp.getPrimaryCompletionDate());
     }
 
     /**
@@ -209,7 +185,9 @@ public class StudyProtocolConverterTest extends AbstractHibernateTestCase {
      * @param spDTO spDTO
      */
     public void assertStudyProtocol(StudyProtocol sp, StudyProtocolDTO spDTO) {
-        new BaseStudyProtocolConverterTest().assertStudyProtocol(sp, spDTO);
+        BaseStudyProtocolConverterTest baseTest = new BaseStudyProtocolConverterTest();
+        baseTest.assertStudyProtocol(sp, spDTO);
+        baseTest.assertStudyProtocolDates(sp, spDTO);
         assertEquals(sp.getAcronym(), spDTO.getAcronym().getValue());
         assertEquals(sp.getAccrualReportingMethodCode().getCode(), spDTO.getAccrualReportingMethodCode().getCode());
         assertEquals(sp.getExpandedAccessIndicator(), spDTO.getExpandedAccessIndicator().getValue());

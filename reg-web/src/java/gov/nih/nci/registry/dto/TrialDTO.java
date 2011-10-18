@@ -45,8 +45,10 @@ public class TrialDTO extends BaseTrialDTO {
     private String reason;
     private String startDate;
     private String primaryCompletionDate;
+    private String completionDate;
     private String startDateType;
     private String primaryCompletionDateType;
+    private String completionDateType;
     private String localAmendmentNumber;
     private String amendmentDate;
     private String programCodeText;
@@ -294,6 +296,20 @@ public class TrialDTO extends BaseTrialDTO {
     }
 
     /**
+     * @return the completionDate
+     */
+    public String getCompletionDate() {
+        return completionDate;
+    }
+
+    /**
+     * @param completionDate the completionDate to set
+     */
+    public void setCompletionDate(String completionDate) {
+        this.completionDate = completionDate;
+    }
+
+    /**
      * @return the startDateType
      */
     @NotEmpty(message = "error.submit.dateType")
@@ -321,6 +337,20 @@ public class TrialDTO extends BaseTrialDTO {
      */
     public void setPrimaryCompletionDateType(String primaryCompletionDateType) {
         this.primaryCompletionDateType = primaryCompletionDateType;
+    }
+
+    /**
+     * @return the completionDateType
+     */
+    public String getCompletionDateType() {
+        return completionDateType;
+    }
+
+    /**
+     * @param completionDateType the completionDateType to set
+     */
+    public void setCompletionDateType(String completionDateType) {
+        this.completionDateType = completionDateType;
     }
 
     /**

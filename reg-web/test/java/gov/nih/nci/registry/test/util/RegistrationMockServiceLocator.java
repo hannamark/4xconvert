@@ -12,6 +12,7 @@ import gov.nih.nci.iso21090.TelPhone;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.dto.CountryRegAuthorityDTO;
 import gov.nih.nci.pa.dto.RegulatoryAuthOrgDTO;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
@@ -139,15 +140,15 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         dto.setFileName(StConverter.convertToSt("fileName"));
         dto.setTypeCode(CdConverter.convertStringToCd("Protocol Document"));
         dto.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
-        dto.setIdentifier(IiConverter.convertToIi("1"));
-        dto.setStudyProtocolIdentifier(IiConverter.convertToIi("1"));
+        dto.setIdentifier(IiConverter.convertToDocumentIi(1L));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         results.add(dto);
         dto = new DocumentDTO();
         dto.setFileName(StConverter.convertToSt("fileName"));
         dto.setTypeCode(CdConverter.convertStringToCd("IRB Approval Document"));
         dto.setText(EdConverter.convertToEd("IRB Approval Document".getBytes()));
-        dto.setIdentifier(IiConverter.convertToIi("2"));
-        dto.setStudyProtocolIdentifier(IiConverter.convertToIi("1"));
+        dto.setIdentifier(IiConverter.convertToDocumentIi(2L));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
         results.add(dto);
 
         DocumentServiceLocal svc = mock(DocumentServiceLocal.class);
@@ -243,11 +244,11 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         dto.setGrantorCode(CdConverter.convertStringToCd("CDER"));
         dto.setHolderTypeCode(CdConverter.convertStringToCd("Investigator"));
         dto.setExpandedAccessIndicator(BlConverter.convertToBl(Boolean.FALSE));
-        dto.setIdentifier(IiConverter.convertToIi("1"));
+        dto.setIdentifier(IiConverter.convertToStudyIndIdeIi(1L));
         dto.setExpandedAccessStatusCode(CdConverter.convertStringToCd("expandedAccessType"));
         dto.setNciDivProgHolderCode(CdConverter.convertStringToCd("programCode"));
         dto.setNihInstHolderCode(CdConverter.convertStringToCd(""));
-        dto.setStudyProtocolIdentifier(IiConverter.convertToIi("1"));
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(1L));
 
         StudyIndldeServiceLocal svc = mock(StudyIndldeServiceLocal.class);
         try {
@@ -265,7 +266,7 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     public StudyOverallStatusServiceLocal getStudyOverallStatusService() {
         StudyOverallStatusServiceLocal svc = mock(StudyOverallStatusServiceLocal.class);
         StudyOverallStatusDTO dto = new StudyOverallStatusDTO();
-        dto.setIdentifier(IiConverter.convertToIi(1L));
+        dto.setIdentifier(IiConverter.convertToStudyOverallStatusIi(1L));
         dto.setStatusCode(CdConverter.convertStringToCd("Active"));
         dto.setStatusDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp("01/20/2008")));
         dto.setReasonText(null);
@@ -320,19 +321,21 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     public StudyProtocolServiceLocal getStudyProtocolService() {
         final StudyProtocol sp = new InterventionalStudyProtocol();
         sp.setId(1L);
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        sp.setStartDate(PAUtil.dateStringToTimestamp("01/20/2008"));
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
-        sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("01/20/2010"));
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setStartDate(PAUtil.dateStringToTimestamp("01/20/2008"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("01/20/2010"));
         sp.setOfficialTitle("officialTitle");
 
 
         final InterventionalStudyProtocol isp = new InterventionalStudyProtocol();
         isp.setId(1L);
-        isp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        isp.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
-        isp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
-        isp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("4/15/2010"));
+        dates = isp.getDates();
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setStartDate(PAUtil.dateStringToTimestamp("1/1/2000"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("4/15/2010"));
         isp.setOfficialTitle("officialTitle");
 
         StudyProtocolServiceLocal svc = mock(StudyProtocolServiceLocal.class);
@@ -347,13 +350,13 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
                         dto = StudyProtocolConverter.convertFromDomainToDTO(sp);
                     } else if (IiConverter.convertToLong(ii).equals(3L)) {
                         dto = StudyProtocolConverter.convertFromDomainToDTO(isp);
-                        dto.setIdentifier(IiConverter.convertToIi(3L));
+                        dto.setIdentifier(IiConverter.convertToStudyProtocolIi(3L));
                     }
                     return dto;
                 }
             });
             when(svc.createInterventionalStudyProtocol(any(InterventionalStudyProtocolDTO.class)))
-                .thenReturn(IiConverter.convertToIi(2L));
+                .thenReturn(IiConverter.convertToStudyProtocolIi(2L));
             when(svc.getInterventionalStudyProtocol(any(Ii.class))).thenAnswer(new Answer<StudyProtocolDTO>() {
                 @Override
                 public InterventionalStudyProtocolDTO answer(InvocationOnMock invocation) throws Throwable {
@@ -380,8 +383,8 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
     public StudyRegulatoryAuthorityServiceLocal getStudyRegulatoryAuthorityService() {
         StudyRegulatoryAuthorityServiceLocal svc = mock(StudyRegulatoryAuthorityServiceLocal.class);
         StudyRegulatoryAuthorityDTO dto = new StudyRegulatoryAuthorityDTO();
-        dto.setIdentifier(IiConverter.convertToIi(1L));
-        dto.setRegulatoryAuthorityIdentifier(IiConverter.convertToIi(1L));
+        dto.setIdentifier(IiConverter.convertToStudyRegulatoryAuthorityIi(1L));
+        dto.setRegulatoryAuthorityIdentifier(IiConverter.convertToStudyRegulatoryAuthorityIi(1L));
         try {
             when(svc.getCurrentByStudyProtocol(any(Ii.class))).thenReturn(dto);
         } catch (PAException e) {
@@ -670,6 +673,9 @@ public class RegistrationMockServiceLocator implements ServiceLocator {
         return svc;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ProprietaryTrialManagementServiceLocal getProprietaryTrialService() {
         return mock(ProprietaryTrialManagementServiceLocal.class);

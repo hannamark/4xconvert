@@ -786,4 +786,8 @@
         <comment>Update COMPLETED overall status status to COMPLETE</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.6.1/PO-4146.sql"/>
      </changeSet>
+     <changeSet id="PO-4187" author="mvisee">
+        <comment>Add the completionDate field to study protocol</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.6.1/PO-4187.sql"/>
+     </changeSet>
 </databaseChangeLog>

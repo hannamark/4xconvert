@@ -9,6 +9,7 @@ import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudyProtocolStage;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
@@ -151,10 +152,11 @@ public class OrganizationSynchronizationServiceBeanTest extends AbstractHibernat
 
         StudyProtocol sp = new InterventionalStudyProtocol();
         sp.setOfficialTitle("cancer for THOLA");
-        sp.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        sp.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
         sp.setStatusCode(ActStatusCode.ACTIVE);
         Set<Ii> studySecondaryIdentifiers = new HashSet<Ii>();

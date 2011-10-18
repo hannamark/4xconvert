@@ -214,6 +214,7 @@ public class PAServiceUtils {
     public static final String LEAD_ORGANIZATION_NULLIFIED = "The Lead Organization has been nullified";
     /**The size of the counter portion of the NCI ID.*/
     protected static final int NCI_ID_SIZE = 5;
+    
     /**
      * Executes an sql.
      * @param sql sql to be executed
@@ -223,6 +224,7 @@ public class PAServiceUtils {
         Session session = PaHibernateUtil.getCurrentSession();
         return session.createSQLQuery(sql).executeUpdate();
     }
+    
     /**
      * Executes an list of sql.
      * @param sqls list of sqls
@@ -232,35 +234,36 @@ public class PAServiceUtils {
             executeSql(sql);
         }
     }
+
     /**
      * does a deep copy of protocol to a new protocol.
      * @param fromStudyProtocolIi study protocol ii
-     * @throws PAException  on error
+     * @throws PAException on error
      * @return ii
      */
     public Ii copy(Ii fromStudyProtocolIi) throws PAException {
-        InterventionalStudyProtocolDTO dto = PaRegistry.getStudyProtocolService().
-                getInterventionalStudyProtocol(fromStudyProtocolIi);
+        InterventionalStudyProtocolDTO dto =
+                PaRegistry.getStudyProtocolService().getInterventionalStudyProtocol(fromStudyProtocolIi);
         dto.setIdentifier(null);
         dto.setStatusCode(CdConverter.convertToCd(ActStatusCode.INACTIVE));
         Ii toIi = PaRegistry.getStudyProtocolService().createInterventionalStudyProtocol(dto);
-        executeCopy(getRemoteService(IiConverter.convertToStudyMilestoneIi(null)), fromStudyProtocolIi , toIi);
-        executeCopy(getRemoteService(IiConverter.convertToDocumentWorkFlowStatusIi(null)), fromStudyProtocolIi , toIi);
-        executeCopy(getRemoteService(IiConverter.convertToStudyIndIdeIi(null)) , fromStudyProtocolIi, toIi);
-        executeCopy(getRemoteService(IiConverter.convertToStudyDiseaseIi(null)) , fromStudyProtocolIi, toIi);
-        executeCopy(getRemoteService(IiConverter.convertToStudyObjectiveIi(null)), fromStudyProtocolIi, toIi);
-        executeCopy(getRemoteService(IiConverter.convertToStratumGroupIi(null)), fromStudyProtocolIi, toIi);
-        executeCopy(getRemoteService(IiConverter.convertToStudyResourcingIi(null)), fromStudyProtocolIi, toIi);
-        executeCopy(getRemoteService(IiConverter.convertToStudyOnHoldIi(null)), fromStudyProtocolIi, toIi);
-        executeCopy(getRemoteService(IiConverter.convertToStudyOverallStatusIi(null)) , fromStudyProtocolIi, toIi);
-        executeCopy(getRemoteService(IiConverter.convertToStudyRecruitmentStatusIi(null)), fromStudyProtocolIi, toIi);
-        executeCopy(getRemoteService(IiConverter.convertToArmIi(null)), fromStudyProtocolIi, toIi);
-        executeCopy(getRemoteService(IiConverter.convertToStudyContactIi(null)) , fromStudyProtocolIi, toIi);
-        executeCopy(getRemoteService(IiConverter.convertToStudySiteIi(null)) , fromStudyProtocolIi, toIi);
-        executeCopy(getRemoteService(IiConverter.convertToStudyOutcomeMeasureIi(null)) , fromStudyProtocolIi, toIi);
-        executeCopy(getRemoteService(IiConverter.convertToStudyRegulatoryAuthorityIi(null)), fromStudyProtocolIi, toIi);
-        executeCopy(getRemoteService(IiConverter.convertToDocumentIi(null)) , fromStudyProtocolIi, toIi);
-        executeCopy(PaRegistry.getPlannedMarkerService(), fromStudyProtocolIi, toIi);
+        getRemoteService(IiConverter.convertToStudyMilestoneIi(null)).copy(fromStudyProtocolIi, toIi);
+        getRemoteService(IiConverter.convertToDocumentWorkFlowStatusIi(null)).copy(fromStudyProtocolIi, toIi);
+        getRemoteService(IiConverter.convertToStudyIndIdeIi(null)).copy(fromStudyProtocolIi, toIi);
+        getRemoteService(IiConverter.convertToStudyDiseaseIi(null)).copy(fromStudyProtocolIi, toIi);
+        getRemoteService(IiConverter.convertToStudyObjectiveIi(null)).copy(fromStudyProtocolIi, toIi);
+        getRemoteService(IiConverter.convertToStratumGroupIi(null)).copy(fromStudyProtocolIi, toIi);
+        getRemoteService(IiConverter.convertToStudyResourcingIi(null)).copy(fromStudyProtocolIi, toIi);
+        getRemoteService(IiConverter.convertToStudyOnHoldIi(null)).copy(fromStudyProtocolIi, toIi);
+        getRemoteService(IiConverter.convertToStudyOverallStatusIi(null)).copy(fromStudyProtocolIi, toIi);
+        getRemoteService(IiConverter.convertToStudyRecruitmentStatusIi(null)).copy(fromStudyProtocolIi, toIi);
+        getRemoteService(IiConverter.convertToArmIi(null)).copy(fromStudyProtocolIi, toIi);
+        getRemoteService(IiConverter.convertToStudyContactIi(null)).copy(fromStudyProtocolIi, toIi);
+        getRemoteService(IiConverter.convertToStudySiteIi(null)).copy(fromStudyProtocolIi, toIi);
+        getRemoteService(IiConverter.convertToStudyOutcomeMeasureIi(null)).copy(fromStudyProtocolIi, toIi);
+        getRemoteService(IiConverter.convertToStudyRegulatoryAuthorityIi(null)).copy(fromStudyProtocolIi, toIi);
+        getRemoteService(IiConverter.convertToDocumentIi(null)).copy(fromStudyProtocolIi, toIi);
+        PaRegistry.getPlannedMarkerService().copy(fromStudyProtocolIi, toIi);
         addNciIdentifierToTrial(toIi);
         return toIi;
     }
@@ -311,9 +314,6 @@ public class PAServiceUtils {
 
         return nciIdentifier.toString();
     }
-    private void executeCopy(StudyPaService sp, Ii from, Ii to) throws PAException {
-        sp.copy(from, to);
-    }
     /**
      * an utility method to create or update.
      * @param <T> the dto
@@ -346,7 +346,7 @@ public class PAServiceUtils {
      * @return any type extending StudyPaService
      * @throws PAException on error
      */
-    public <TYPE extends StudyPaService>  TYPE getRemoteService(Ii isoIi) throws PAException {
+    public <TYPE extends StudyPaService<?>>  TYPE getRemoteService(Ii isoIi) throws PAException {
         if (IiConverter.STUDY_MILESTONE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
             return (TYPE) PaRegistry.getStudyMilestoneService();
         } else if (IiConverter.STUDY_IND_IDE_IDENTIFIER_NAME.equals(isoIi.getIdentifierName())) {
@@ -385,6 +385,7 @@ public class PAServiceUtils {
             throw new PAException(" unknown identifier name provided  : " + isoIi.getIdentifierName());
         }
     }
+    
     /**
      * removes the sponsor contact.
      * @param studyProtocolIi studyPorotocol Ii
@@ -1946,39 +1947,40 @@ public class PAServiceUtils {
           }
           return filteredList;
       }
-      /**
-       * Moves the documents into their proper directories if they have been previously saved in a temporary directory.
-       * @param docs the documents to move if necessary
-       * @param spIi the ii of the study protocol these documents belong to
-       * @throws PAException on error
-       */
-      public void moveDocumentContents(List<DocumentDTO> docs, Ii spIi) throws PAException {
-          StudyProtocolDTO sp = PaRegistry.getStudyProtocolService().getStudyProtocol(spIi);
-          for (DocumentDTO doc : docs) {
-              File tempLocation = new File(PAUtil.getTemporaryDocumentFilePath(doc));
-              File finalLocation = new File(PAUtil.getDocumentFilePath(
-                      IiConverter.convertToLong(doc.getIdentifier()),
-                      StConverter.convertToString(doc.getFileName()), PAUtil.getAssignedIdentifierExtension(sp)));
-              if (tempLocation.exists()) {
-                  try {
-                      FileUtils.copyFile(tempLocation, finalLocation);
-                      FileUtils.deleteQuietly(tempLocation);
-                  } catch (IOException e) {
-                      throw new PAException("Error moving document from " + tempLocation.getAbsolutePath() + " to "
-                              + finalLocation.getAbsolutePath(), e);
-                  }
-              }
-          }
-      }
 
-      /**
-       * Moves trial documents from one trial with an assigned identifier (i.e NCI-2011-00001) to another trial with
-       * another assigned identifier(i.e. NCI-2011-00001).
-       * @param destinationId the assigned id of the trial that will be the final location for the trial documents
-       * @param sourceId the assigned id of the trial for the newly created documents that need to be moved
-       * @throws PAException on error
-       * @throws IOException on file manipulation error
-       */
+    /**
+     * Moves the documents into their proper directories if they have been previously saved in a temporary directory.
+     * @param docs the documents to move if necessary
+     * @param assignedIdentifier the assignedIdentifier of the study protocol these documents belong to
+     * @throws PAException on error
+     */
+    public void moveDocumentContents(List<DocumentDTO> docs, String assignedIdentifier) throws PAException {
+        for (DocumentDTO doc : docs) {
+            File tempLocation = new File(PAUtil.getTemporaryDocumentFilePath(doc));
+            File finalLocation =
+                    new File(PAUtil.getDocumentFilePath(IiConverter.convertToLong(doc.getIdentifier()),
+                                                        StConverter.convertToString(doc.getFileName()),
+                                                        assignedIdentifier));
+            if (tempLocation.exists()) {
+                try {
+                    FileUtils.copyFile(tempLocation, finalLocation);
+                    FileUtils.deleteQuietly(tempLocation);
+                } catch (IOException e) {
+                    throw new PAException("Error moving document from " + tempLocation.getAbsolutePath() + " to "
+                            + finalLocation.getAbsolutePath(), e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Moves trial documents from one trial with an assigned identifier (i.e NCI-2011-00001) to another trial with
+     * another assigned identifier(i.e. NCI-2011-00001).
+     * @param destinationId the assigned id of the trial that will be the final location for the trial documents
+     * @param sourceId the assigned id of the trial for the newly created documents that need to be moved
+     * @throws PAException on error
+     * @throws IOException on file manipulation error
+     */
       public void handleUpdatedTrialDocuments(Ii destinationId, Ii sourceId) throws PAException, IOException {
           String docPath = PaEarPropertyReader.getDocUploadPath();
           File sourceDir  = new File(docPath + File.separator + sourceId.getExtension());

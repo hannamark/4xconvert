@@ -103,8 +103,6 @@ public abstract class AbstractStudyProtocolDTO extends BaseDTO {
     private Bl section801Indicator;
     private Cd phaseCode;
     private Cd phaseAdditionalQualifierCode;
-    private Cd primaryCompletionDateTypeCode;
-    private Cd startDateTypeCode;
     private St officialTitle;
     private Cd primaryPurposeCode;
     private Cd primaryPurposeAdditionalQualifierCode;
@@ -112,8 +110,13 @@ public abstract class AbstractStudyProtocolDTO extends BaseDTO {
     private St programCodeText;
     private St studyProtocolType;
     private St userLastCreated;
-    private Ts primaryCompletionDate;
+
     private Ts startDate;
+    private Ts primaryCompletionDate;
+    private Ts completionDate;
+    private Cd startDateTypeCode;
+    private Cd primaryCompletionDateTypeCode;
+    private Cd completionDateTypeCode;
 
     /**
      * @return the officialTitle
@@ -121,18 +124,21 @@ public abstract class AbstractStudyProtocolDTO extends BaseDTO {
     public St getOfficialTitle() {
         return officialTitle;
     }
+
     /**
      * @param officialTitle the officialTitle to set
      */
     public void setOfficialTitle(St officialTitle) {
         this.officialTitle = officialTitle;
     }
+
     /**
      * @return the phaseCode
      */
     public Cd getPhaseCode() {
         return phaseCode;
     }
+
     /**
      * @param phaseCode the phaseCode to set
      */
@@ -160,192 +166,249 @@ public abstract class AbstractStudyProtocolDTO extends BaseDTO {
     public Cd getPrimaryPurposeCode() {
         return primaryPurposeCode;
     }
+
     /**
      * @param primaryPurposeCode the primaryPurposeCode to set
      */
     public void setPrimaryPurposeCode(Cd primaryPurposeCode) {
         this.primaryPurposeCode = primaryPurposeCode;
     }
+
     /**
      * @return the primaryPurposeAdditionalQualifierCode
      */
     public Cd getPrimaryPurposeAdditionalQualifierCode() {
         return primaryPurposeAdditionalQualifierCode;
     }
+
     /**
      * @param primaryPurposeAdditionalQualifierCode the primaryPurposeAdditionalQualifierCode to set
      */
-    public void setPrimaryPurposeAdditionalQualifierCode(
-            Cd primaryPurposeAdditionalQualifierCode) {
+    public void setPrimaryPurposeAdditionalQualifierCode(Cd primaryPurposeAdditionalQualifierCode) {
         this.primaryPurposeAdditionalQualifierCode = primaryPurposeAdditionalQualifierCode;
     }
+
     /**
      * @return the programCodeText
      */
     public St getProgramCodeText() {
         return programCodeText;
     }
+
     /**
      * @param programCodeText the programCodeText to set
      */
     public void setProgramCodeText(St programCodeText) {
         this.programCodeText = programCodeText;
     }
-    /**
-     * @return the startDate
-     */
-    public Ts getStartDate() {
-        return startDate;
-    }
-    /**
-     * @param startDate the startDate to set
-     */
-    public void setStartDate(Ts startDate) {
-        this.startDate = startDate;
-    }
-    /**
-     * @return the startDateTypeCode
-     */
-    public Cd getStartDateTypeCode() {
-        return startDateTypeCode;
-    }
-    /**
-     * @param startDateTypeCode the startDateTypeCode to set
-     */
-    public void setStartDateTypeCode(Cd startDateTypeCode) {
-        this.startDateTypeCode = startDateTypeCode;
-    }
-    /**
-     * @return the primaryCompletionDate
-     */
-    public Ts getPrimaryCompletionDate() {
-        return primaryCompletionDate;
-    }
-    /**
-     * @param primaryCompletionDate the primaryCompletionDate to set
-     */
-    public void setPrimaryCompletionDate(Ts primaryCompletionDate) {
-        this.primaryCompletionDate = primaryCompletionDate;
-    }
-    /**
-     * @return the primaryCompletionDateTypeCode
-     */
-    public Cd getPrimaryCompletionDateTypeCode() {
-        return primaryCompletionDateTypeCode;
-    }
-    /**
-     * @param primaryCompletionDateTypeCode the primaryCompletionDateTypeCode to set
-     */
-    public void setPrimaryCompletionDateTypeCode(Cd primaryCompletionDateTypeCode) {
-        this.primaryCompletionDateTypeCode = primaryCompletionDateTypeCode;
-    }
+
     /**
      * @return the studyProtocolType
      */
     public St getStudyProtocolType() {
         return studyProtocolType;
     }
+
     /**
      * @param studyProtocolType the studyProtocolType to set
      */
     public void setStudyProtocolType(St studyProtocolType) {
         this.studyProtocolType = studyProtocolType;
     }
+
     /**
      * @return the dataMonitoringCommitteeAppointedIndicator
      */
     public Bl getDataMonitoringCommitteeAppointedIndicator() {
         return dataMonitoringCommitteeAppointedIndicator;
     }
+
     /**
      * @param dataMonitoringCommitteeAppointedIndicator the dataMonitoringCommitteeAppointedIndicator to set
      */
-    public void setDataMonitoringCommitteeAppointedIndicator(
-            Bl dataMonitoringCommitteeAppointedIndicator) {
+    public void setDataMonitoringCommitteeAppointedIndicator(Bl dataMonitoringCommitteeAppointedIndicator) {
         this.dataMonitoringCommitteeAppointedIndicator = dataMonitoringCommitteeAppointedIndicator;
     }
+
     /**
      * @return the fdaRegulatedIndicator
      */
     public Bl getFdaRegulatedIndicator() {
         return fdaRegulatedIndicator;
     }
+
     /**
      * @param fdaRegulatedIndicator the fdaRegulatedIndicator to set
      */
     public void setFdaRegulatedIndicator(Bl fdaRegulatedIndicator) {
         this.fdaRegulatedIndicator = fdaRegulatedIndicator;
     }
+
     /**
      * @return the section801Indicator
      */
     public Bl getSection801Indicator() {
         return section801Indicator;
     }
+
     /**
      * @param section801Indicator the section801Indicator to set
      */
     public void setSection801Indicator(Bl section801Indicator) {
         this.section801Indicator = section801Indicator;
     }
+
     /**
      * @return the delayedpostingIndicator
      */
     public Bl getDelayedpostingIndicator() {
         return delayedpostingIndicator;
     }
+
     /**
      * @param delayedpostingIndicator the delayedpostingIndicator to set
      */
     public void setDelayedpostingIndicator(Bl delayedpostingIndicator) {
         this.delayedpostingIndicator = delayedpostingIndicator;
     }
+
     /**
      * @return the userLastCreated
      */
     public St getUserLastCreated() {
         return userLastCreated;
     }
+
     /**
      * @param userLastCreated the userLastCreated to set
      */
     public void setUserLastCreated(St userLastCreated) {
         this.userLastCreated = userLastCreated;
     }
+
     /**
      * @return the proprietaryTrialIndicator
      */
     public Bl getProprietaryTrialIndicator() {
         return proprietaryTrialIndicator;
     }
+
     /**
      * @param proprietaryTrialIndicator the proprietaryTrialIndicator to set
      */
     public void setProprietaryTrialIndicator(Bl proprietaryTrialIndicator) {
         this.proprietaryTrialIndicator = proprietaryTrialIndicator;
     }
+
     /**
      * @return the ctgovXmlRequiredIndicator
      */
     public Bl getCtgovXmlRequiredIndicator() {
         return ctgovXmlRequiredIndicator;
     }
+
     /**
      * @param ctgovXmlRequiredIndicator the ctgovXmlRequiredIndicator to set
      */
     public void setCtgovXmlRequiredIndicator(Bl ctgovXmlRequiredIndicator) {
         this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
     }
+
     /**
      * @param primaryPurposeOtherText the primaryPurposeOtherText to set
      */
     public void setPrimaryPurposeOtherText(St primaryPurposeOtherText) {
         this.primaryPurposeOtherText = primaryPurposeOtherText;
     }
+
     /**
      * @return the primaryPurposeOtherText
      */
     public St getPrimaryPurposeOtherText() {
         return primaryPurposeOtherText;
+    }
+
+    /**
+     * @return the startDate
+     */
+    public Ts getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * @param startDate the startDate to set
+     */
+    public void setStartDate(Ts startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * @return the primaryCompletionDate
+     */
+    public Ts getPrimaryCompletionDate() {
+        return primaryCompletionDate;
+    }
+
+    /**
+     * @param primaryCompletionDate the primaryCompletionDate to set
+     */
+    public void setPrimaryCompletionDate(Ts primaryCompletionDate) {
+        this.primaryCompletionDate = primaryCompletionDate;
+    }
+
+    /**
+     * @return the completionDate
+     */
+    public Ts getCompletionDate() {
+        return completionDate;
+    }
+
+    /**
+     * @param completionDate the completionDate to set
+     */
+    public void setCompletionDate(Ts completionDate) {
+        this.completionDate = completionDate;
+    }
+
+    /**
+     * @return the startDateTypeCode
+     */
+    public Cd getStartDateTypeCode() {
+        return startDateTypeCode;
+    }
+
+    /**
+     * @param startDateTypeCode the startDateTypeCode to set
+     */
+    public void setStartDateTypeCode(Cd startDateTypeCode) {
+        this.startDateTypeCode = startDateTypeCode;
+    }
+
+    /**
+     * @return the primaryCompletionDateTypeCode
+     */
+    public Cd getPrimaryCompletionDateTypeCode() {
+        return primaryCompletionDateTypeCode;
+    }
+
+    /**
+     * @param primaryCompletionDateTypeCode the primaryCompletionDateTypeCode to set
+     */
+    public void setPrimaryCompletionDateTypeCode(Cd primaryCompletionDateTypeCode) {
+        this.primaryCompletionDateTypeCode = primaryCompletionDateTypeCode;
+    }
+
+    /**
+     * @return the completionDateTypeCode
+     */
+    public Cd getCompletionDateTypeCode() {
+        return completionDateTypeCode;
+    }
+
+    /**
+     * @param completionDateTypeCode the completionDateTypeCode to set
+     */
+    public void setCompletionDateTypeCode(Cd completionDateTypeCode) {
+        this.completionDateTypeCode = completionDateTypeCode;
     }
 }

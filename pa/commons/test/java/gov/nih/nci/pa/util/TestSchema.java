@@ -120,6 +120,7 @@ import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyResourcing;
@@ -272,10 +273,11 @@ public class TestSchema {
 
         StudyProtocol sp = new InterventionalStudyProtocol();
         sp.setOfficialTitle("cancer for THOLA");
-        sp.setStartDate(TODAY);
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        sp.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(TODAY);
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
         sp.setStatusCode(ActStatusCode.ACTIVE);
@@ -793,10 +795,11 @@ public class TestSchema {
     public static Ii createAmendStudyProtocol() {
         StudyProtocol sp = new InterventionalStudyProtocol();
         sp.setOfficialTitle("cancer for THOLA");
-        sp.setStartDate(TODAY);
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        sp.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(TODAY);
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
         Set<Ii> studySecondaryIdentifiers = new HashSet<Ii>();
@@ -1104,15 +1107,12 @@ public class TestSchema {
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
         sp.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.ANCILLARY);
         sp.setPrimaryPurposeOtherText("primaryPurposeOtherText");
-        sp.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         sp.setPublicDescription("publicDescription");
         sp.setPublicTitle("publicTitle");
         sp.setRecordVerificationDate(TODAY);
         sp.setScientificDescription("scientificDescription");
         sp.setSection801Indicator(Boolean.TRUE);
-        sp.setStartDate(TODAY);
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        
         sp.setDateLastUpdated(TODAY);
         sp.setUserLastUpdated(user);
         sp.setDateLastCreated(TODAY);
@@ -1125,6 +1125,13 @@ public class TestSchema {
         sp.setSubmissionNumber(2);
         sp.setProprietaryTrialIndicator(Boolean.FALSE);
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(TODAY);
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        dates.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setCompletionDate(ONE_YEAR_FROM_TODAY);
+        dates.setCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         addUpdObject(sp);
         addOwners(sp);
         return sp;
@@ -1171,10 +1178,11 @@ public class TestSchema {
     }
 
     public static InterventionalStudyProtocol createInterventionalStudyProtocolObj(InterventionalStudyProtocol isp) {
-        isp.setStartDate(TODAY);
-        isp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        isp.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
-        isp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        StudyProtocolDates dates = isp.getDates();
+        dates.setStartDate(TODAY);
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         isp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
         isp.setAllocationCode(AllocationCode.NA);
         isp.setBlindingRoleCodeCaregiver(BlindingRoleCode.CAREGIVER);

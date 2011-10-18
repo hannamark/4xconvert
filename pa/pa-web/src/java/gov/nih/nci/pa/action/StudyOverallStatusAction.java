@@ -210,13 +210,17 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
         if (spDto != null) {
             setStartDate(TsConverter.convertToString(spDto.getStartDate()));
             setPrimaryCompletionDate(TsConverter.convertToString(spDto.getPrimaryCompletionDate()));
+            setCompletionDate(TsConverter.convertToString(spDto.getCompletionDate()));
             setStartDateType(spDto.getStartDateTypeCode().getCode());
             setPrimaryCompletionDateType(spDto.getPrimaryCompletionDateTypeCode().getCode());
+            setCompletionDateType(spDto.getCompletionDateTypeCode().getCode());
         } else {
-            setStartDate((String) null);
-            setPrimaryCompletionDate((String) null);
+            setStartDate(null);
+            setPrimaryCompletionDate(null);
+            setCompletionDate(null);
             setStartDateType(null);
             setPrimaryCompletionDateType(null);
+            setCompletionDateType(null);
         }
         StudyOverallStatusDTO sosDto = studyOverallStatusService.getCurrentByStudyProtocol(spIdIi);
         if (sosDto != null) {
@@ -261,10 +265,12 @@ public class StudyOverallStatusAction extends ActionSupport implements Preparabl
      * @param dto The study protocol dto to fill.
      */
     void getStudyProtocolDates(StudyProtocolDTO dto) {
-        dto.setStartDateTypeCode(CdConverter.convertStringToCd(startDateType));
         dto.setStartDate(TsConverter.convertToTs(ISOUtil.dateStringToTimestamp(startDate)));
+        dto.setStartDateTypeCode(CdConverter.convertStringToCd(startDateType));
         dto.setPrimaryCompletionDate(TsConverter.convertToTs(ISOUtil.dateStringToTimestamp(primaryCompletionDate)));
         dto.setPrimaryCompletionDateTypeCode(CdConverter.convertStringToCd(primaryCompletionDateType));
+        dto.setCompletionDate(TsConverter.convertToTs(ISOUtil.dateStringToTimestamp(completionDate)));
+        dto.setCompletionDateTypeCode(CdConverter.convertStringToCd(completionDateType));
     }
 
     /**

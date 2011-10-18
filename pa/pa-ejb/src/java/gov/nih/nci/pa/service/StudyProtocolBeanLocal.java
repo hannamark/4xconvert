@@ -103,6 +103,7 @@ import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudyRecruitmentStatus;
 import gov.nih.nci.pa.domain.StudyRegulatoryAuthority;
 import gov.nih.nci.pa.domain.StudyRelationship;
@@ -117,6 +118,7 @@ import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.convert.AbstractStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.AnatomicSiteConverter;
 import gov.nih.nci.pa.iso.convert.InterventionalStudyProtocolConverter;
 import gov.nih.nci.pa.iso.convert.ObservationalStudyProtocolConverter;
@@ -130,7 +132,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.search.StudyProtocolBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyProtocolSortCriterion;
 import gov.nih.nci.pa.service.util.CSMUserService;
@@ -143,6 +144,7 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -156,7 +158,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -194,11 +195,9 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     }
 
     /**
-     *
-     * @param studyProtocolDTO studyProtocolDTO
-     * @return StudyProtocolDTO
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
+    @Override
     public StudyProtocolDTO updateStudyProtocol(StudyProtocolDTO studyProtocolDTO) throws PAException {
         // enforce business rules
         if (studyProtocolDTO == null) {
@@ -207,8 +206,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
         enForceBusinessRules(studyProtocolDTO);
         Session session = PaHibernateUtil.getCurrentSession();
-        StudyProtocol sp = (StudyProtocol) session.load(StudyProtocol.class,
-                Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
+        Long studyProtocolId = IiConverter.convertToLong(studyProtocolDTO.getIdentifier());
+        StudyProtocol sp = (StudyProtocol) session.load(StudyProtocol.class, studyProtocolId);
 
         StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, sp);
 
@@ -217,34 +216,28 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         return StudyProtocolConverter.convertFromDomainToDTO(sp);
     }
 
-
-
     /**
-     *
-     * @param ii ii
-     * @return InterventionalStudyProtocolDTO
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public InterventionalStudyProtocolDTO getInterventionalStudyProtocol(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
             throw new PAException("Ii should not be null");
         }
         Session session = PaHibernateUtil.getCurrentSession();
-        InterventionalStudyProtocol isp = (InterventionalStudyProtocol) session.load(InterventionalStudyProtocol.class,
-                    Long.valueOf(ii.getExtension()));
+        Long studyProtocolId = IiConverter.convertToLong(ii);
+        InterventionalStudyProtocol isp =
+                (InterventionalStudyProtocol) session.load(InterventionalStudyProtocol.class, studyProtocolId);
         return InterventionalStudyProtocolConverter.convertFromDomainToDTO(isp);
     }
 
-
     /**
-     *
-     * @param ispDTO studyProtocolDTO
-     * @return InterventionalStudyProtocolDTO
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
-    public InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(
-            InterventionalStudyProtocolDTO ispDTO) throws PAException {
+    @Override
+    public InterventionalStudyProtocolDTO updateInterventionalStudyProtocol(InterventionalStudyProtocolDTO ispDTO)
+            throws PAException {
         // enforce business rules
         int totBlindCodes = 0;
         if (ispDTO == null) {
@@ -265,17 +258,17 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
     private void checkBlindingSchemaCode(InterventionalStudyProtocolDTO ispDTO, int totBlindCodes) throws PAException {
         if (ispDTO.getBlindingSchemaCode() != null) {
-            if (BlindingSchemaCode.OPEN.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
+            if (BlindingSchemaCode.OPEN.getCode().equals(ispDTO.getBlindingSchemaCode().getCode()) 
                     && totBlindCodes > 0) {
                 throw new PAException("Open Blinding Schema code cannot have any Blinded codes.");
             }
             if (BlindingSchemaCode.SINGLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
                     && totBlindCodes > 1) {
-               throw new PAException("Only one masking role must be specified for 'Single Blind' masking.");
+                throw new PAException("Only one masking role must be specified for 'Single Blind' masking.");
             }
             if (BlindingSchemaCode.SINGLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
-                           && totBlindCodes < 1) {
-              throw new PAException("Single Blinding Schema code must have 1 Blinded code.");
+                    && totBlindCodes < 1) {
+                throw new PAException("Single Blinding Schema code must have 1 Blinded code.");
             }
             if (BlindingSchemaCode.DOUBLE_BLIND.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
                     && totBlindCodes < 2) {
@@ -285,11 +278,9 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     }
 
     /**
-     * for creating a new ISP.
-     * @param ispDTO  for isp
-     * @return ii ii
-     * @throws PAException exception
+     * {@inheritDoc}
      */
+    @Override
     public Ii createInterventionalStudyProtocol(InterventionalStudyProtocolDTO ispDTO) throws PAException {
         if (ispDTO == null) {
             throw new PAException("studyProtocolDTO should not be null.");
@@ -307,39 +298,37 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     }
 
     /**
-     *
-     * @param ii ii
-     * @return ObservationalStudyProtocolDTO
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public ObservationalStudyProtocolDTO getObservationalStudyProtocol(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
             throw new PAException("Ii should not be null ");
         }
-        Session  session = PaHibernateUtil.getCurrentSession();
-        ObservationalStudyProtocol osp = (ObservationalStudyProtocol) session.load(ObservationalStudyProtocol.class,
-                Long.valueOf(ii.getExtension()));
+        Session session = PaHibernateUtil.getCurrentSession();
+        Long studyProtocolId = IiConverter.convertToLong(ii);
+        ObservationalStudyProtocol osp =
+                (ObservationalStudyProtocol) session.load(ObservationalStudyProtocol.class, studyProtocolId);
         return ObservationalStudyProtocolConverter.convertFromDomainToDTO(osp);
     }
 
     /**
-     *
-     * @param ospDTO ObservationalStudyProtocolDTO
-     * @return ObservationalStudyProtocolDTO
-     * @throws PAException PAException
+     * {@inheritDoc}
      */
+    @Override
     public ObservationalStudyProtocolDTO updateObservationalStudyProtocol(ObservationalStudyProtocolDTO ospDTO)
-        throws PAException {
+            throws PAException {
         // enforce business rules
         if (ospDTO == null) {
             throw new PAException("studyProtocolDTO should not be null ");
 
         }
-        //enForceBusinessRules(ospDTO);
+        // enForceBusinessRules(ospDTO);
         Session session = PaHibernateUtil.getCurrentSession();
-        ObservationalStudyProtocol osp = (ObservationalStudyProtocol)
-        session.load(ObservationalStudyProtocol.class, Long.valueOf(ospDTO.getIdentifier().getExtension()));
+        Long studyProtocolId = IiConverter.convertToLong(ospDTO.getIdentifier());
+        ObservationalStudyProtocol osp =
+                (ObservationalStudyProtocol) session.load(ObservationalStudyProtocol.class, studyProtocolId);
         ObservationalStudyProtocol upd = ObservationalStudyProtocolConverter.convertFromDTOToDomain(ospDTO);
         setDefaultValues(osp, ospDTO, UPDATE);
         osp = upd;
@@ -348,13 +337,10 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     }
 
     /**
-     * for creating a new OSP.
-     * @param ospDTO  for osp
-     * @return ii ii
-     * @throws PAException exception
+     * {@inheritDoc}
      */
-    public Ii createObservationalStudyProtocol(ObservationalStudyProtocolDTO ospDTO)
-    throws PAException {
+    @Override
+    public Ii createObservationalStudyProtocol(ObservationalStudyProtocolDTO ospDTO) throws PAException {
         if (ospDTO == null) {
             throw new PAException("studyProtocolDTO should not be null ");
 
@@ -364,8 +350,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
         }
         enForceBusinessRules(ospDTO);
-        ObservationalStudyProtocol osp = ObservationalStudyProtocolConverter.
-        convertFromDTOToDomain(ospDTO);
+        ObservationalStudyProtocol osp = ObservationalStudyProtocolConverter.convertFromDTOToDomain(ospDTO);
         Session session = PaHibernateUtil.getCurrentSession();
         setDefaultValues(osp, ospDTO, CREATE);
         session.save(osp);
@@ -373,10 +358,9 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     }
 
     /**
-     * deletes protocol and all of its related classes.
-     * @param ii ii of study Protocol
-     * @throws PAException on any error
+     * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void deleteStudyProtocol(Ii ii) throws PAException {
         if (ISOUtil.isIiNull(ii)) {
@@ -428,14 +412,11 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     }
 
     /**
-     *
-     * @param studyProtocolDTO study protocol Dto
-     * @throws PAException error on any validation
+     * {@inheritDoc}
      */
+    @Override
     public void validate(StudyProtocolDTO studyProtocolDTO) throws PAException {
-        StringBuffer sb = new StringBuffer();
-        sb.append(studyProtocolDTO == null ? "Study Protocol DTO cannot be null, " : "");
-        sb.append(ISOUtil.isStNull(studyProtocolDTO.getOfficialTitle()) ? "Official Title cannot be null, " : "");
+        // Nothing to do
     }
 
     private void enForceBusinessRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
@@ -443,27 +424,25 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
         ActStatusCode ascStatusCode = null;
         if (!ISOUtil.isCdNull(studyProtocolDTO.getStatusCode())) {
-            ascStatusCode  = ActStatusCode.getByCode(studyProtocolDTO.getStatusCode().getCode());
+            ascStatusCode = ActStatusCode.getByCode(studyProtocolDTO.getStatusCode().getCode());
         }
-        if (ISOUtil.isIiNull(studyProtocolDTO.getIdentifier()) &&  ascStatusCode != null
+        if (ISOUtil.isIiNull(studyProtocolDTO.getIdentifier()) && ascStatusCode != null
                 && ascStatusCode.equals(ActStatusCode.ACTIVE)) {
             dateRulesApply = true;
         }
         if (!ISOUtil.isIiNull(studyProtocolDTO.getIdentifier())) {
-            StudyProtocol oldBo = StudyProtocolConverter.convertFromDTOToDomain(
-                    getStudyProtocolById(Long.valueOf(studyProtocolDTO.getIdentifier().getExtension())));
-            boolean isProprietaryTrial = false;
-            if (oldBo.getProprietaryTrialIndicator() != null && oldBo.getProprietaryTrialIndicator()) {
-                isProprietaryTrial = true;
+            Long studyProtocolId = Long.valueOf(studyProtocolDTO.getIdentifier().getExtension());
+            StudyProtocolDTO oldSpDTO = getStudyProtocolById(studyProtocolId);
+            StudyProtocol oldBo = StudyProtocolConverter.convertFromDTOToDomain(oldSpDTO);
+            if (BooleanUtils.isFalse(oldBo.getProprietaryTrialIndicator())) {
+                StudyProtocolDates oldDates = oldBo.getDates();
+                StudyProtocol newBo = StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO);
+                StudyProtocolDates newDates = newBo.getDates();
+                if (!oldDates.equals(newDates)) {
+                    dateRulesApply = true;
+                }
             }
-            StudyProtocol newBo = StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO);
-            if (!isProprietaryTrial
-                    && (!ObjectUtils.equals(oldBo.getPrimaryCompletionDate(), newBo.getPrimaryCompletionDate())
-                    || !oldBo.getPrimaryCompletionDateTypeCode().equals(newBo.getPrimaryCompletionDateTypeCode())
-                    || !oldBo.getStartDate().equals(newBo.getStartDate())
-                    || !oldBo.getStartDateTypeCode().equals(newBo.getStartDateTypeCode()))) {
-                dateRulesApply = true;
-            }
+           
         }
         if (dateRulesApply) {
             enForceDateRules(studyProtocolDTO);
@@ -492,52 +471,58 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     }
 
     private void enForceDateRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
-        Timestamp sDate = TsConverter.convertToTimestamp(studyProtocolDTO.getStartDate());
-        Timestamp cDate = TsConverter.convertToTimestamp(studyProtocolDTO.getPrimaryCompletionDate());
-        boolean unknownPrimaryCompletionDate = studyProtocolDTO.getPrimaryCompletionDate() != null
-            && studyProtocolDTO.getPrimaryCompletionDate().getNullFlavor() == NullFlavor.UNK;
-        ActualAnticipatedTypeCode sCode =  null;
-        ActualAnticipatedTypeCode cCode = null;
-        if (studyProtocolDTO.getStartDateTypeCode() != null) {
-            sCode = ActualAnticipatedTypeCode.getByCode(
-                studyProtocolDTO.getStartDateTypeCode().getCode());
-        }
-        if (studyProtocolDTO.getPrimaryCompletionDateTypeCode() != null) {
-            cCode = ActualAnticipatedTypeCode.getByCode(
-                    studyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode());
-        }
+        StudyProtocolDates dates = AbstractStudyProtocolConverter.convertDatesToDomain(studyProtocolDTO);
+        boolean unknownPrimaryCompletionDate =
+                studyProtocolDTO.getPrimaryCompletionDate() != null
+                        && studyProtocolDTO.getPrimaryCompletionDate().getNullFlavor() == NullFlavor.UNK;
         Timestamp now = new Timestamp((new Date()).getTime());
-        if (sDate == null) {
-            throw new PAException("Start date must be set.  ");
-        }
-        if (cDate == null && !unknownPrimaryCompletionDate) {
-            throw new PAException("Completion date must be set.  ");
-        }
-        if (sCode == null) {
-            throw new PAException("Start date type must be set.  ");
-        }
-        if (cCode == null) {
-            throw new PAException("Completion date type must be set.  ");
-        }
-        if (sCode.equals(ActualAnticipatedTypeCode.ACTUAL) && now.before(sDate)) {
-            throw new PAException("Actual start dates cannot be in the future.  ");
-        }
-        if (!cCode.equals(ActualAnticipatedTypeCode.ANTICIPATED) && unknownPrimaryCompletionDate) {
-            throw new PAException("Unknown primary completion dates must be marked as Anticipated. ");
-        }
-        if (cCode.equals(ActualAnticipatedTypeCode.ACTUAL) && !unknownPrimaryCompletionDate && now.before(cDate)) {
-            throw new PAException("Actual primary completion dates cannot be in the future.  ");
-        }
-        if (sCode.equals(ActualAnticipatedTypeCode.ANTICIPATED)  && !unknownPrimaryCompletionDate && now.after(sDate)) {
-            throw new PAException("Anticipated start dates must be in the future.  ");
-        }
-        if (cCode.equals(ActualAnticipatedTypeCode.ANTICIPATED) && !unknownPrimaryCompletionDate && now.after(cDate)) {
-            throw new PAException("Anticipated primary completion dates must be in the future.  ");
-        }
-        if (!unknownPrimaryCompletionDate && cDate.before(sDate)) {
-            throw new PAException("Primary completion date must be >= start date.");
+        checkRequiredDates(dates, unknownPrimaryCompletionDate);
+        checkDateAndType(now, dates.getStartDate(), dates.getStartDateTypeCode(), "start date");
+        if (unknownPrimaryCompletionDate) {
+            if (dates.getPrimaryCompletionDateTypeCode() != ActualAnticipatedTypeCode.ANTICIPATED) {
+                throw new PAException("Unknown primary completion dates must be marked as Anticipated. ");
+            }
+        } else {
+            checkDateAndType(now, dates.getPrimaryCompletionDate(), dates.getPrimaryCompletionDateTypeCode(),
+                             "primary completion date");
+            if (dates.getPrimaryCompletionDate().before(dates.getStartDate())) {
+                throw new PAException("Primary completion date must be >= start date.");
+            }
+            if (dates.getCompletionDate() != null 
+                && dates.getPrimaryCompletionDate().after(dates.getCompletionDate())) {
+                throw new PAException("Completion date must be >= Primary completion date.");
+            }
         }
     }
+
+    private void checkRequiredDates(StudyProtocolDates dates, boolean unknownPrimaryCompletionDate) throws PAException {
+        if (dates.getStartDate() == null) {
+            throw new PAException("Start date must be set.  ");
+        }
+        if (dates.getPrimaryCompletionDate() == null && !unknownPrimaryCompletionDate) {
+            throw new PAException("Primary Completion date must be set.  ");
+        }
+        if (dates.getStartDateTypeCode() == null) {
+            throw new PAException("Start date type must be set.  ");
+        }
+        if (dates.getPrimaryCompletionDateTypeCode() == null) {
+            throw new PAException("Primary Completion date type must be set.  ");
+        }
+        if (dates.getCompletionDate() != null && dates.getCompletionDateTypeCode() == null) {
+            throw new PAException("Completion date type must be set.  ");
+        }
+    }
+    
+    private void checkDateAndType(Timestamp now, Timestamp date, ActualAnticipatedTypeCode type, String field)
+            throws PAException {
+        if (type == ActualAnticipatedTypeCode.ACTUAL && now.before(date)) {
+            throw new PAException(MessageFormat.format("Actual {0} cannot be in the future.  ", field));
+        }
+        if (type == ActualAnticipatedTypeCode.ANTICIPATED && now.after(date)) {
+            throw new PAException(MessageFormat.format("Anticipated {0} must be in the future.  ", field));
+        }
+    }
+    
 
     private void enForcePrimaryPurposeRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
         if (studyProtocolDTO.getPrimaryPurposeCode() == null) {
@@ -551,14 +536,14 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     }
 
     private void enForcePrimaryPurposeOtherRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
-        if (PrimaryPurposeCode.OTHER.equals(PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(
-                studyProtocolDTO.getPrimaryPurposeCode())))
+        if (PrimaryPurposeCode.OTHER.equals(PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(studyProtocolDTO
+            .getPrimaryPurposeCode())))
                 && StringUtils.isBlank(StConverter.convertToString(studyProtocolDTO.getPrimaryPurposeOtherText()))) {
             throw new PAException("Primary Purpose Other Text is required when Primary Purpose Code is Other.");
-        } else if (PrimaryPurposeCode.OTHER.equals(PrimaryPurposeCode.getByCode(CdConverter.convertCdToString(
-                studyProtocolDTO.getPrimaryPurposeCode())))
-                && PrimaryPurposeAdditionalQualifierCode.getByCode(CdConverter.convertCdToString(
-                        studyProtocolDTO.getPrimaryPurposeAdditionalQualifierCode())) == null) {
+        } else if (PrimaryPurposeCode.OTHER.equals(PrimaryPurposeCode.getByCode(CdConverter
+            .convertCdToString(studyProtocolDTO.getPrimaryPurposeCode())))
+                && PrimaryPurposeAdditionalQualifierCode.getByCode(CdConverter.convertCdToString(studyProtocolDTO
+                    .getPrimaryPurposeAdditionalQualifierCode())) == null) {
             throw new PAException(
                     "Valid Primary Purpose Additional Qualifier Code is required when Primary Purpose Code is Other.");
         }
@@ -575,9 +560,10 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         if (CREATE.equals(operation)) {
             User user = null;
             try {
-                user = spDTO.getUserLastCreated() != null
-                        ? CSMUserService.getInstance().getCSMUser(spDTO.getUserLastCreated().getValue())
-                        : CSMUserService.getInstance().getCSMUser(UsernameHolder.getUser());
+                user =
+                        spDTO.getUserLastCreated() != null ? CSMUserService.getInstance()
+                            .getCSMUser(spDTO.getUserLastCreated().getValue()) : CSMUserService.getInstance()
+                            .getCSMUser(UsernameHolder.getUser());
             } catch (PAException e) {
                 LOG.info("Unable to set User for auditing", e);
             }
@@ -590,6 +576,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     /**
      * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyProtocolDTO> search(StudyProtocolDTO dto, LimitOffset pagingParams) throws PAException,
             TooManyResultsException {
@@ -625,8 +612,9 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         }
 
         int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
-        PageSortParams<StudyProtocol> params = new PageSortParams<StudyProtocol>(maxLimit, pagingParams.getOffset(),
-                StudyProtocolSortCriterion.STUDY_PROTOCOL_ID, false);
+        PageSortParams<StudyProtocol> params =
+                new PageSortParams<StudyProtocol>(maxLimit, pagingParams.getOffset(),
+                        StudyProtocolSortCriterion.STUDY_PROTOCOL_ID, false);
         StudyProtocolBeanSearchCriteria crit = new StudyProtocolBeanSearchCriteria(criteria);
         List<StudyProtocol> results = search(crit, params);
         return convertFromDomainToDTO(results);
@@ -635,16 +623,17 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     /**
      * {@inheritDoc}
      */
+    @Override
     public List<StudyProtocolDTO> getAbstractedCollaborativeTrials() throws PAException {
         List<StudyProtocol> collaborativeTrials = new ArrayList<StudyProtocol>();
         List<DocumentWorkflowStatusCode> statuses =
-            Arrays.asList(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE,
-                DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
-        //Get all DCP trials
+                Arrays.asList(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE,
+                              DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
+        // Get all DCP trials
         StudyProtocolBeanSearchCriteria crit =
-            new StudyProtocolBeanSearchCriteria(getCollaborativeTrialCriteria(PAConstants.DCP_ORG_NAME), statuses);
+                new StudyProtocolBeanSearchCriteria(getCollaborativeTrialCriteria(PAConstants.DCP_ORG_NAME), statuses);
         collaborativeTrials.addAll(search(crit));
-        //Then get all CTEP trials
+        // Then get all CTEP trials
         crit = new StudyProtocolBeanSearchCriteria(getCollaborativeTrialCriteria(PAConstants.CTEP_ORG_NAME), statuses);
         collaborativeTrials.addAll(search(crit));
         return convertFromDomainToDTO(collaborativeTrials);
@@ -663,9 +652,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         return sp;
     }
 
-
     private List<StudyProtocolDTO> convertFromDomainToDTO(List<StudyProtocol> studyProtocolList) {
-        List<StudyProtocolDTO> studyProtocolDTOList =  new ArrayList<StudyProtocolDTO>();
+        List<StudyProtocolDTO> studyProtocolDTOList = new ArrayList<StudyProtocolDTO>();
         for (StudyProtocol sp : studyProtocolList) {
             StudyProtocolDTO studyProtocolDTO = StudyProtocolConverter.convertFromDomainToDTO(sp);
             studyProtocolDTOList.add(studyProtocolDTO);
@@ -676,36 +664,36 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     /**
      * {@inheritDoc}
      */
+    @Override
     public void changeOwnership(StudyProtocolDTO studyProtocolDTO) throws PAException {
         if (studyProtocolDTO == null) {
             LOG.error(" studyProtocolDTO should not be null ");
             throw new PAException(" studyProtocolDTO should not be null ");
 
         }
-        Session session = null;
-        session = PaHibernateUtil.getCurrentSession();
-        StudyProtocol prevStudyProtocol = (StudyProtocol) session.load(StudyProtocol.class,
-                Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
+        Session session = PaHibernateUtil.getCurrentSession();
+        Long studyProtocolId = IiConverter.convertToLong(studyProtocolDTO.getIdentifier());
+        StudyProtocol prevStudyProtocol = (StudyProtocol) session.load(StudyProtocol.class, studyProtocolId);
         String newUserLastCreated = StConverter.convertToString(studyProtocolDTO.getUserLastCreated());
         User prevUserLastCreatedObj = prevStudyProtocol.getUserLastCreated();
         String prevUserLastCreated = prevUserLastCreatedObj != null ? prevUserLastCreatedObj.getLoginName() : null;
         if (StringUtils.isNotEmpty(newUserLastCreated) && StringUtils.isNotEmpty(prevUserLastCreated)
                 && !prevUserLastCreated.equals(newUserLastCreated)) {
             session = PaHibernateUtil.getCurrentSession();
-            String sql = "UPDATE STUDY_PROTOCOL SET USER_LAST_CREATED='" + newUserLastCreated
-                + "' WHERE IDENTIFIER=" + prevStudyProtocol.getId();
+            String sql =
+                    "UPDATE STUDY_PROTOCOL SET USER_LAST_CREATED='" + newUserLastCreated + "' WHERE IDENTIFIER="
+                            + prevStudyProtocol.getId();
             session.createSQLQuery(sql).executeUpdate();
             session.flush();
         }
-        StudyProtocol newSp = (StudyProtocol) session.load(StudyProtocol.class,
-                Long.valueOf(studyProtocolDTO.getIdentifier().getExtension()));
-
+        StudyProtocol newSp = (StudyProtocol) session.load(StudyProtocol.class, studyProtocolId);
         StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, newSp);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyProtocolDTO getStudyProtocol(Ii studyProtocolIi) throws PAException {
         StudyProtocolDTO studyProtocolDTO = null;
@@ -713,29 +701,33 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             throw new PAException("Ii should not be null");
         }
         if (isNonDbStudyProtocolIdentifier(studyProtocolIi)) {
-            LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
-            List<StudyProtocolDTO> spList;
-            try {
-                spList = search(populateStudyProtocolExample(studyProtocolIi), limit);
-            } catch (TooManyResultsException e) {
-                throw new PAException("found too many trials with this identifier " + studyProtocolIi.getExtension()
-                        + " when only 1 expected.", e);
-            }
-            if (spList.isEmpty() || spList.size() > 1) {
-                throw new PAException("could not find unique trial with this identifier "
-                        + studyProtocolIi.getExtension());
-            }
-            studyProtocolDTO = spList.get(0);
+            studyProtocolDTO = searchStudyProtocolByIi(studyProtocolIi);
         } else if (NumberUtils.isNumber(studyProtocolIi.getExtension())) {
             studyProtocolDTO = getStudyProtocolById(Long.valueOf(studyProtocolIi.getExtension()));
         }
-
         return studyProtocolDTO;
+    }
+    
+    private StudyProtocolDTO searchStudyProtocolByIi(Ii studyProtocolIi) throws PAException {
+        LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
+        List<StudyProtocolDTO> spList;
+        try {
+            spList = search(populateStudyProtocolExample(studyProtocolIi), limit);
+        } catch (TooManyResultsException e) {
+            throw new PAException("found too many trials with this identifier " + studyProtocolIi.getExtension()
+                    + " when only 1 expected.", e);
+        }
+        if (spList.isEmpty() || spList.size() > 1) {
+            throw new PAException("could not find unique trial with this identifier "
+                    + studyProtocolIi.getExtension());
+        }
+        return spList.get(0);
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public StudyProtocolDTO loadStudyProtocol(Ii ii) {
         StudyProtocolDTO studyProtocolDTO = null;
@@ -756,8 +748,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                 studyProtocolDTO = getStudyProtocolById(Long.valueOf(ii.getExtension()));
             }
         } catch (Exception e) {
-            LOG.error("An error has occurred while trying to lookup the study protocol ii "
-                    + ii.getExtension() + " with the root " + ii.getRoot(), e);
+            LOG.error("An error has occurred while trying to lookup the study protocol ii " + ii.getExtension()
+                    + " with the root " + ii.getRoot(), e);
         }
         return studyProtocolDTO;
     }
@@ -775,18 +767,18 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     }
 
     /**
-     * Determines whether the given ii is either a DCP id, CTEP Id, NCT id or NCI assigned id. Basically any
-     * id other than the one assigned automatically by the database upon trial creation.
+     * Determines whether the given ii is either a DCP id, CTEP Id, NCT id or NCI assigned id. Basically any id other
+     * than the one assigned automatically by the database upon trial creation.
      * @param studyProtocolIi
      * @return true iff the given ii is not a DB assigned id
      */
     private boolean isNonDbStudyProtocolIdentifier(Ii studyProtocolIi) {
         return studyProtocolIi != null
-        && (StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.DCP_STUDY_PROTOCOL_ROOT)
-        || StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.CTEP_STUDY_PROTOCOL_ROOT)
-        || StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.NCT_STUDY_PROTOCOL_ROOT)
-        || (StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT)
-                && StringUtils.startsWith(studyProtocolIi.getExtension(), "NCI")));
+                && (StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.DCP_STUDY_PROTOCOL_ROOT)
+                        || StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.CTEP_STUDY_PROTOCOL_ROOT)
+                        || StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.NCT_STUDY_PROTOCOL_ROOT) 
+                        || (StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT) 
+                                && StringUtils.startsWith(studyProtocolIi.getExtension(), "NCI")));
     }
 
     /**

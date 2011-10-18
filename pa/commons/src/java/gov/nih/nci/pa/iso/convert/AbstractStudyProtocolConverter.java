@@ -87,6 +87,7 @@ import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.AbstractStudyProtocol;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
@@ -128,132 +129,133 @@ public class AbstractStudyProtocolConverter {
     }
 
     /**
-     *
-     * @param abstractStudyProtocol domain
-     * @param abstractStudyProtocolDTO DTO
-     * @return spDTO
+     * Converts a given AbstractStudyProtocol to a AbstractStudyProtocolDTO.
+     * @param bo The AbstractStudyProtocol business object
+     * @param dto The AbstractStudyProtocolDTO
      */
-    public static AbstractStudyProtocolDTO convertFromDomainToDTO(AbstractStudyProtocol abstractStudyProtocol,
-            AbstractStudyProtocolDTO abstractStudyProtocolDTO) {
-        abstractStudyProtocolDTO.setDataMonitoringCommitteeAppointedIndicator(BlConverter
-            .convertToBl(abstractStudyProtocol.getDataMonitoringCommitteeAppointedIndicator()));
-        abstractStudyProtocolDTO.setDelayedpostingIndicator(BlConverter.convertToBl(abstractStudyProtocol
-            .getDelayedpostingIndicator()));
-        abstractStudyProtocolDTO.setFdaRegulatedIndicator(BlConverter.convertToBl(abstractStudyProtocol
-            .getFdaRegulatedIndicator()));
-        abstractStudyProtocolDTO.setOfficialTitle(StConverter.convertToSt(abstractStudyProtocol.getOfficialTitle()));
-        abstractStudyProtocolDTO.setPhaseCode(CdConverter.convertToCd(abstractStudyProtocol.getPhaseCode()));
-        abstractStudyProtocolDTO.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(abstractStudyProtocol
-            .getPhaseAdditionalQualifierCode()));
-        // Defaulting null inputs to NullFlavor.UNK for PO-2429 to support optional primary completion dates.
-        Ts primaryCompletionDate = TsConverter.convertToTs(abstractStudyProtocol.getPrimaryCompletionDate());
-        if (abstractStudyProtocol.getPrimaryCompletionDate() == null) {
-            primaryCompletionDate.setNullFlavor(NullFlavor.UNK);
-        }
-        abstractStudyProtocolDTO.setPrimaryCompletionDate(primaryCompletionDate);
-        abstractStudyProtocolDTO.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(abstractStudyProtocol
-            .getPrimaryCompletionDateTypeCode()));
-        abstractStudyProtocolDTO.setPrimaryPurposeCode(CdConverter.convertToCd(abstractStudyProtocol
-            .getPrimaryPurposeCode()));
-        abstractStudyProtocolDTO.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(abstractStudyProtocol
-            .getPrimaryPurposeAdditionalQualifierCode()));
-        abstractStudyProtocolDTO.setPrimaryPurposeOtherText(StConverter.convertToSt(abstractStudyProtocol
-            .getPrimaryPurposeOtherText()));
-        abstractStudyProtocolDTO.setSection801Indicator(BlConverter.convertToBl(abstractStudyProtocol
-            .getSection801Indicator()));
-        abstractStudyProtocolDTO.setStartDate(TsConverter.convertToTs(abstractStudyProtocol.getStartDate()));
-        abstractStudyProtocolDTO.setStartDateTypeCode(CdConverter.convertToCd(abstractStudyProtocol
-            .getStartDateTypeCode()));
-        if (abstractStudyProtocol instanceof ObservationalStudyProtocol) {
-            abstractStudyProtocolDTO.setStudyProtocolType(StConverter.convertToSt("ObservationalStudyProtocol"));
-        } else if (abstractStudyProtocol instanceof InterventionalStudyProtocol) {
-            abstractStudyProtocolDTO.setStudyProtocolType(StConverter.convertToSt("InterventionalStudyProtocol"));
+    public static void convertFromDomainToDTO(AbstractStudyProtocol bo, AbstractStudyProtocolDTO dto) {
+        convertDatesToDto(bo.getDates(), dto);
+        convertPrimaryPurposeToDto(bo, dto);
+        dto.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(bo
+            .getDataMonitoringCommitteeAppointedIndicator()));
+        dto.setDelayedpostingIndicator(BlConverter.convertToBl(bo.getDelayedpostingIndicator()));
+        dto.setFdaRegulatedIndicator(BlConverter.convertToBl(bo.getFdaRegulatedIndicator()));
+        dto.setOfficialTitle(StConverter.convertToSt(bo.getOfficialTitle()));
+        dto.setPhaseCode(CdConverter.convertToCd(bo.getPhaseCode()));
+        dto.setPhaseAdditionalQualifierCode(CdConverter.convertToCd(bo.getPhaseAdditionalQualifierCode()));
+        dto.setSection801Indicator(BlConverter.convertToBl(bo.getSection801Indicator()));
+        if (bo instanceof ObservationalStudyProtocol) {
+            dto.setStudyProtocolType(StConverter.convertToSt("ObservationalStudyProtocol"));
+        } else if (bo instanceof InterventionalStudyProtocol) {
+            dto.setStudyProtocolType(StConverter.convertToSt("InterventionalStudyProtocol"));
         } else {
-            abstractStudyProtocolDTO.setStudyProtocolType(StConverter.convertToSt(abstractStudyProtocol.getClass()
-                .getName()));
+            dto.setStudyProtocolType(StConverter.convertToSt(bo.getClass().getName()));
         }
-        if (abstractStudyProtocol.getUserLastCreated() != null) {
-            abstractStudyProtocolDTO.setUserLastCreated(StConverter.convertToSt(abstractStudyProtocol
-                .getUserLastCreated().getLoginName()));
+        if (bo.getUserLastCreated() != null) {
+            dto.setUserLastCreated(StConverter.convertToSt(bo.getUserLastCreated().getLoginName()));
         }
-        abstractStudyProtocolDTO
-            .setProgramCodeText(StConverter.convertToSt(abstractStudyProtocol.getProgramCodeText()));
-        abstractStudyProtocolDTO.setProprietaryTrialIndicator(BlConverter.convertToBl(abstractStudyProtocol
-            .getProprietaryTrialIndicator()));
-        abstractStudyProtocolDTO.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(abstractStudyProtocol
-            .getCtgovXmlRequiredIndicator()));
-        return abstractStudyProtocolDTO;
+        dto.setProgramCodeText(StConverter.convertToSt(bo.getProgramCodeText()));
+        dto.setProprietaryTrialIndicator(BlConverter.convertToBl(bo.getProprietaryTrialIndicator()));
+        dto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(bo.getCtgovXmlRequiredIndicator()));
+    }
+    
+    private static void convertDatesToDto(StudyProtocolDates dates, AbstractStudyProtocolDTO dto) {
+        if (dates != null) {
+            dto.setStartDate(TsConverter.convertToTs(dates.getStartDate()));
+            dto.setStartDateTypeCode(CdConverter.convertToCd(dates.getStartDateTypeCode()));
+            // Defaulting null inputs to NullFlavor.UNK for PO-2429 to support optional primary completion dates.
+            Ts primaryCompletionDate = TsConverter.convertToTs(dates.getPrimaryCompletionDate());
+            if (dates.getPrimaryCompletionDate() == null) {
+                primaryCompletionDate.setNullFlavor(NullFlavor.UNK);
+            }
+            dto.setPrimaryCompletionDate(primaryCompletionDate);
+            dto.setPrimaryCompletionDateTypeCode(CdConverter.convertToCd(dates.getPrimaryCompletionDateTypeCode()));
+            Ts completionDate = TsConverter.convertToTs(dates.getCompletionDate());
+            if (dates.getCompletionDate() == null) {
+                completionDate.setNullFlavor(NullFlavor.UNK);
+            }
+            dto.setCompletionDate(completionDate);
+            dto.setCompletionDateTypeCode(CdConverter.convertToCd(dates.getCompletionDateTypeCode()));
+        }
+    }
+
+    private static void convertPrimaryPurposeToDto(AbstractStudyProtocol bo, AbstractStudyProtocolDTO dto) {
+        dto.setPrimaryPurposeCode(CdConverter.convertToCd(bo.getPrimaryPurposeCode()));
+        dto.setPrimaryPurposeAdditionalQualifierCode(CdConverter.convertToCd(bo
+            .getPrimaryPurposeAdditionalQualifierCode()));
+        dto.setPrimaryPurposeOtherText(StConverter.convertToSt(bo.getPrimaryPurposeOtherText()));
     }
 
     /**
-     *
-     * @param abstractStudyProtocolDTO DTO
-     * @param abstractStudyProtocol domain
-     * @return domain
+     * Converts a given AbstractStudyProtocolDTO to a AbstractStudyProtocol.
+     * @param dto The AbstractStudyProtocolDTO
+     * @param bo The AbstractStudyProtocol business object
      */
-    public static AbstractStudyProtocol convertFromDTOToDomain(AbstractStudyProtocolDTO abstractStudyProtocolDTO,
-            AbstractStudyProtocol abstractStudyProtocol) {
+    public static void convertFromDTOToDomain(AbstractStudyProtocolDTO dto, AbstractStudyProtocol bo) {
+        bo.setDates(convertDatesToDomain(dto));
+        convertPrimaryPurposeToDomain(dto, bo);
 
-        abstractStudyProtocol.setDataMonitoringCommitteeAppointedIndicator(BlConverter
-            .convertToBoolean(abstractStudyProtocolDTO.getDataMonitoringCommitteeAppointedIndicator()));
-        abstractStudyProtocol.setDelayedpostingIndicator(BlConverter.convertToBoolean(abstractStudyProtocolDTO
-            .getDelayedpostingIndicator()));
-        abstractStudyProtocol.setFdaRegulatedIndicator(BlConverter.convertToBoolean(abstractStudyProtocolDTO
-            .getFdaRegulatedIndicator()));
-        abstractStudyProtocol
-            .setOfficialTitle(StConverter.convertToString(abstractStudyProtocolDTO.getOfficialTitle()));
-        if (abstractStudyProtocolDTO.getPhaseCode() != null) {
-            abstractStudyProtocol.setPhaseCode(PhaseCode.getByCode(abstractStudyProtocolDTO.getPhaseCode().getCode()));
+        bo.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBoolean(dto
+            .getDataMonitoringCommitteeAppointedIndicator()));
+        bo.setDelayedpostingIndicator(BlConverter.convertToBoolean(dto.getDelayedpostingIndicator()));
+        bo.setFdaRegulatedIndicator(BlConverter.convertToBoolean(dto.getFdaRegulatedIndicator()));
+        bo.setOfficialTitle(StConverter.convertToString(dto.getOfficialTitle()));
+        if (dto.getPhaseCode() != null) {
+            bo.setPhaseCode(PhaseCode.getByCode(dto.getPhaseCode().getCode()));
         }
-        if (abstractStudyProtocolDTO.getPhaseAdditionalQualifierCode() != null) {
-            abstractStudyProtocol.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode
-                .getByCode(abstractStudyProtocolDTO.getPhaseAdditionalQualifierCode().getCode()));
+        if (dto.getPhaseAdditionalQualifierCode() != null) {
+            bo.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.getByCode(dto
+                .getPhaseAdditionalQualifierCode().getCode()));
         }
-        setPrimaryFields(abstractStudyProtocolDTO, abstractStudyProtocol);
 
-        abstractStudyProtocol.setSection801Indicator(BlConverter.convertToBoolean(abstractStudyProtocolDTO
-            .getSection801Indicator()));
-
-        if (abstractStudyProtocolDTO.getStartDate() != null) {
-            abstractStudyProtocol.setStartDate(TsConverter.convertToTimestamp(abstractStudyProtocolDTO.getStartDate()));
+        bo.setSection801Indicator(BlConverter.convertToBoolean(dto.getSection801Indicator()));
+        if (dto.getProgramCodeText() != null) {
+            bo.setProgramCodeText(StConverter.convertToString(dto.getProgramCodeText()));
         }
-        if (abstractStudyProtocolDTO.getStartDateTypeCode() != null) {
-            abstractStudyProtocol.setStartDateTypeCode(ActualAnticipatedTypeCode.getByCode(abstractStudyProtocolDTO
-                .getStartDateTypeCode().getCode()));
-
-        }
-        if (abstractStudyProtocolDTO.getProgramCodeText() != null) {
-            abstractStudyProtocol.setProgramCodeText(StConverter.convertToString(abstractStudyProtocolDTO
-                .getProgramCodeText()));
-        }
-        abstractStudyProtocol.setProprietaryTrialIndicator(BlConverter.convertToBoolean(abstractStudyProtocolDTO
-            .getProprietaryTrialIndicator()));
-        setUserLastCreated(abstractStudyProtocolDTO, abstractStudyProtocol);
-        abstractStudyProtocol.setCtgovXmlRequiredIndicator(BlConverter.convertToBoolean(abstractStudyProtocolDTO
-            .getCtgovXmlRequiredIndicator()));
-        return abstractStudyProtocol;
+        bo.setProprietaryTrialIndicator(BlConverter.convertToBoolean(dto.getProprietaryTrialIndicator()));
+        setUserLastCreated(dto, bo);
+        bo.setCtgovXmlRequiredIndicator(BlConverter.convertToBoolean(dto.getCtgovXmlRequiredIndicator()));
     }
 
-    private static void setPrimaryFields(AbstractStudyProtocolDTO abstractStudyProtocolDTO,
-            AbstractStudyProtocol abstractStudyProtocol) {
-        if (abstractStudyProtocolDTO.getPrimaryCompletionDate() != null) {
-            abstractStudyProtocol.setPrimaryCompletionDate(TsConverter.convertToTimestamp(abstractStudyProtocolDTO
-                .getPrimaryCompletionDate()));
+    /**
+     * Converts the dates of the dto into a StudyProtocolDates.
+     * @param dto The dto
+     * @return The converted dates in a StudyProtocolDates
+     */
+    public static StudyProtocolDates convertDatesToDomain(AbstractStudyProtocolDTO dto) {
+        StudyProtocolDates dates = new StudyProtocolDates();
+        if (dto.getStartDate() != null) {
+            dates.setStartDate(TsConverter.convertToTimestamp(dto.getStartDate()));
         }
-        if (abstractStudyProtocolDTO.getPrimaryCompletionDateTypeCode() != null) {
-            abstractStudyProtocol.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode
-                .getByCode(abstractStudyProtocolDTO.getPrimaryCompletionDateTypeCode().getCode()));
+        if (dto.getStartDateTypeCode() != null) {
+            dates.setStartDateTypeCode(ActualAnticipatedTypeCode.getByCode(dto.getStartDateTypeCode().getCode()));
         }
-        if (abstractStudyProtocolDTO.getPrimaryPurposeCode() != null) {
-            abstractStudyProtocol.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(abstractStudyProtocolDTO
-                .getPrimaryPurposeCode().getCode()));
+        if (dto.getPrimaryCompletionDate() != null) {
+            dates.setPrimaryCompletionDate(TsConverter.convertToTimestamp(dto.getPrimaryCompletionDate()));
         }
-        if (abstractStudyProtocolDTO.getPrimaryPurposeAdditionalQualifierCode() != null) {
-            abstractStudyProtocol.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode
-                .getByCode(abstractStudyProtocolDTO.getPrimaryPurposeAdditionalQualifierCode().getCode()));
+        if (dto.getPrimaryCompletionDateTypeCode() != null) {
+            dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.getByCode(dto
+                .getPrimaryCompletionDateTypeCode().getCode()));
         }
-        abstractStudyProtocol.setPrimaryPurposeOtherText(StConverter.convertToString(abstractStudyProtocolDTO
-            .getPrimaryPurposeOtherText()));
+        if (dto.getCompletionDate() != null) {
+            dates.setCompletionDate(TsConverter.convertToTimestamp(dto.getCompletionDate()));
+        }
+        if (dto.getCompletionDateTypeCode() != null) {
+            dates.setCompletionDateTypeCode(ActualAnticipatedTypeCode.getByCode(dto.getCompletionDateTypeCode()
+                .getCode()));
+        }
+        return dates;
+    }
+
+    private static void convertPrimaryPurposeToDomain(AbstractStudyProtocolDTO dto, AbstractStudyProtocol bo) {
+        if (dto.getPrimaryPurposeCode() != null) {
+            bo.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(dto.getPrimaryPurposeCode().getCode()));
+        }
+        if (dto.getPrimaryPurposeAdditionalQualifierCode() != null) {
+            bo.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.getByCode(dto
+                .getPrimaryPurposeAdditionalQualifierCode().getCode()));
+        }
+        bo.setPrimaryPurposeOtherText(StConverter.convertToString(dto.getPrimaryPurposeOtherText()));
     }
 
     private static void setUserLastCreated(AbstractStudyProtocolDTO abstractStudyProtocolDTO,

@@ -87,6 +87,7 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyFundingStage;
 import gov.nih.nci.pa.domain.StudyIndIdeStage;
+import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudyProtocolStage;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
@@ -134,10 +135,11 @@ public class MockStudyProtocolStageService extends AbstractBaseSearchBean<StudyP
         list = new ArrayList<StudyProtocolStage>();
         StudyProtocolStage sp = new StudyProtocolStage();
         sp.setId(1L);
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        sp.setStartDate(PAUtil.dateStringToTimestamp("01/20/2008"));
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
-        sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("01/20/2010"));
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setStartDate(PAUtil.dateStringToTimestamp("01/20/2008"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("01/20/2010"));
         sp.setOfficialTitle("officialTitle");
         sp.setLeadOrganizationIdentifier("1");
         sp.setLocalProtocolIdentifier("localProtocolIdentifier");
@@ -153,10 +155,11 @@ public class MockStudyProtocolStageService extends AbstractBaseSearchBean<StudyP
         list.add(sp);
         sp = new StudyProtocolStage();
         sp.setId(2L);
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        sp.setStartDate(PAUtil.dateStringToTimestamp("01/20/2008"));
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
-        sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("01/20/2010"));
+        dates = sp.getDates();
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setStartDate(PAUtil.dateStringToTimestamp("01/20/2008"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("01/20/2010"));
         sp.setOfficialTitle("officialTitle");
         sp.setLeadOrganizationIdentifier("1");
         sp.setLocalProtocolIdentifier("localProtocolIdentifier");
@@ -176,10 +179,11 @@ public class MockStudyProtocolStageService extends AbstractBaseSearchBean<StudyP
         list.add(sp);
         sp = new StudyProtocolStage();
         sp.setId(3L);
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        sp.setStartDate(PAUtil.dateStringToTimestamp("01/20/2008"));
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
-        sp.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("01/20/2010"));
+        dates = sp.getDates();
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setStartDate(PAUtil.dateStringToTimestamp("01/20/2008"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        dates.setPrimaryCompletionDate(PAUtil.dateStringToTimestamp("01/20/2010"));
         sp.setOfficialTitle("officialTitle");
         sp.setLeadOrganizationIdentifier("1");
         sp.setLocalProtocolIdentifier("localProtocolIdentifier");
@@ -231,22 +235,34 @@ public class MockStudyProtocolStageService extends AbstractBaseSearchBean<StudyP
         studyIndIdeList.add(indIde);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void delete(Ii ii) throws PAException {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public StudyProtocolStageDTO get(Ii ii) throws PAException {
-        for (StudyProtocolStage tsp: list) {
-            if(tsp.getId().equals(IiConverter.convertToLong(ii))) {
+        for (StudyProtocolStage tsp : list) {
+            if (tsp.getId().equals(IiConverter.convertToLong(ii))) {
                 return new StudyProtocolStageConverter().convertFromDomainToDto(tsp);
             }
         }
         return new StudyProtocolStageDTO();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<StudyFundingStageDTO> getGrantsByStudyProtocolStage(Ii studyProtocolStageIi) throws PAException {
         List<StudyFundingStageDTO> retList = new ArrayList<StudyFundingStageDTO>();
-        for (StudyFundingStage tsf: studyFundingList) {
+        for (StudyFundingStage tsf : studyFundingList) {
             if (tsf.getStudyProtocolStage().getId().equals(IiConverter.convertToLong(studyProtocolStageIi))) {
                 retList.add(StudyFundingStageConverter.convertFromDomainToDTO(tsf));
             }
@@ -255,6 +271,10 @@ public class MockStudyProtocolStageService extends AbstractBaseSearchBean<StudyP
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<StudyIndIdeStageDTO> getIndIdesByStudyProtocolStage(Ii studyProtocolStageIi) throws PAException {
         List<StudyIndIdeStageDTO> retList = new ArrayList<StudyIndIdeStageDTO>();
         for (StudyIndIdeStage tsf : studyIndIdeList) {
@@ -265,6 +285,10 @@ public class MockStudyProtocolStageService extends AbstractBaseSearchBean<StudyP
         return retList;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<StudyProtocolStageDTO> search(StudyProtocolStageDTO dto, LimitOffset pagingParams) throws PAException,
             TooManyResultsException {
         List<StudyProtocolStageDTO> returnList = new ArrayList<StudyProtocolStageDTO>();
@@ -284,15 +308,27 @@ public class MockStudyProtocolStageService extends AbstractBaseSearchBean<StudyP
         return returnList;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Ii create(StudyProtocolStageDTO ispDTO, List<StudyFundingStageDTO> fundDTOs,
             List<StudyIndIdeStageDTO> indDTOs, List<DocumentDTO> docDTOs) throws PAException {
         return IiConverter.convertToIi("1");
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<DocumentDTO> getDocumentsByStudyProtocolStage(Ii studyProtocolStageIi) throws PAException {
         return new ArrayList<DocumentDTO>();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public StudyProtocolStageDTO update(StudyProtocolStageDTO isoDTO, List<StudyFundingStageDTO> fundDTOs,
             List<StudyIndIdeStageDTO> indDTOs, List<DocumentDTO> docDTOs) throws PAException {
         StudyProtocolStageDTO isoDto = new StudyProtocolStageDTO();

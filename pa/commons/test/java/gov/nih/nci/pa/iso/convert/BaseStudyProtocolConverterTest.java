@@ -85,11 +85,13 @@ package gov.nih.nci.pa.iso.convert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.Ts;
 import gov.nih.nci.pa.domain.AbstractStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.ActualAnticipatedTypeCode;
@@ -102,7 +104,6 @@ import gov.nih.nci.pa.iso.dto.AbstractStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
@@ -120,87 +121,85 @@ public class BaseStudyProtocolConverterTest {
     // AbstractStudyProtocolConverter doesn't extend AbstractConverter, so we can't use the AbstractConverterTest as a
     // base for this test
 
+    /**
+     * Test the convertFromDomainToDTO in the general case.
+     */
     @Test
     public void convertFromDomainToDTOTest() {
-        StudyProtocol sp = makeBo();
-        AbstractStudyProtocolDTO spDTO = AbstractStudyProtocolConverter.convertFromDomainToDTO(sp,
-                                                                                               new StudyProtocolDTO());
+        StudyProtocol sp = createStudyProtocol();
+        User user = createUser();
+        sp.setUserLastCreated(user);
+        AbstractStudyProtocolDTO spDTO = new StudyProtocolDTO();
+        AbstractStudyProtocolConverter.convertFromDomainToDTO(sp, spDTO);
         assertStudyProtocol(sp, spDTO);
-
-        sp.setPrimaryCompletionDate(null);
-        spDTO = AbstractStudyProtocolConverter.convertFromDomainToDTO(sp, new StudyProtocolDTO());
+        assertStudyProtocolDates(sp, spDTO);
+        assertEquals("Wrong user name", user.getLoginName(), spDTO.getUserLastCreated().getValue());
+    }
+    
+    /**
+     * Test the convertFromDomainToDTO for null primaryCompletionDate and null completionDate.
+     */
+    @Test
+    public void convertFromDomainToDTOTestNullCompletionDates() {
+        StudyProtocol sp = createStudyProtocol();
+        StudyProtocolDates dates = sp.getDates();
+        dates.setPrimaryCompletionDate(null);
+        dates.setCompletionDate(null);
+        AbstractStudyProtocolDTO spDTO = new StudyProtocolDTO();
+        AbstractStudyProtocolConverter.convertFromDomainToDTO(sp, spDTO);
+        assertStudyProtocol(sp, spDTO);
+        assertEquals(dates.getStartDate(), TsConverter.convertToTimestamp(spDTO.getStartDate()));
+        assertEquals(dates.getStartDateTypeCode().getCode(), spDTO.getStartDateTypeCode().getCode());
         assertNotNull(spDTO.getPrimaryCompletionDate());
         assertEquals(NullFlavor.UNK, spDTO.getPrimaryCompletionDate().getNullFlavor());
-    }
-
-    @Test
-    public void convertFromDomainToDTOTest2() {
-        StudyProtocol sp = makeBo();
-        sp.setPhaseCode(PhaseCode.I);
-        sp.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT);
-        sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
-        sp.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.ANCILLARY);
-        User user = new User();
-        user.setLoginName("Abstractor: " + new Date());
-        user.setFirstName("Joe");
-        user.setLastName("Smith");
-        user.setUpdateDate(new Date());
-        sp.setUserLastCreated(user);
-        AbstractStudyProtocolDTO spDTO = AbstractStudyProtocolConverter.convertFromDomainToDTO(sp,
-                                                                                               new StudyProtocolDTO());
-        assertStudyProtocol(sp, spDTO);
+        assertEquals(dates.getPrimaryCompletionDateTypeCode().getCode(), spDTO.getPrimaryCompletionDateTypeCode()
+            .getCode());
+        assertNotNull(spDTO.getCompletionDate());
+        assertEquals(NullFlavor.UNK, spDTO.getCompletionDate().getNullFlavor());
+        assertEquals(dates.getCompletionDateTypeCode().getCode(), spDTO.getCompletionDateTypeCode().getCode());
     }
 
     /**
-     * @throws PAException
-     *
+     * Test the convertFromDTOToDomain method in the general case.
      */
     @Test
-    public void convertFromDtoToDomainTest() throws PAException {
-
-        StudyProtocol create = makeBo();
-        create.setPhaseCode(PhaseCode.I);
-        create.setPhaseAdditionalQualifierCode(PhaseAdditionalQualifierCode.PILOT);
-        create.setStartDate(new Timestamp(new Date().getTime()));
-        create.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        create.setProgramCodeText("program code");
-        User user = new User();
-        user.setLoginName("Abstractor: " + new Date());
-        user.setFirstName("Joe");
-        user.setLastName("Smith");
-        user.setUpdateDate(new Date());
-        create.setUserLastCreated(user);
-
-        // convert to DTO
-        AbstractStudyProtocolDTO spDTO = AbstractStudyProtocolConverter.convertFromDomainToDTO(create,
-                                                                                               new StudyProtocolDTO());
-        AbstractStudyProtocol sp = AbstractStudyProtocolConverter.convertFromDTOToDomain(spDTO, new StudyProtocol());
+    public void convertFromDtoToDomainTest() {
+        StudyProtocol sp = createStudyProtocol();
+        User user = createUser();
+        sp.setUserLastCreated(user);
+        AbstractStudyProtocolDTO spDTO = new StudyProtocolDTO();
+        AbstractStudyProtocolConverter.convertFromDomainToDTO(sp, spDTO);
+        sp = new StudyProtocol();
+        AbstractStudyProtocolConverter.convertFromDTOToDomain(spDTO, sp);
         assertStudyProtocol(sp, spDTO);
-
-        Ts unknownTs = new Ts();
-        unknownTs.setNullFlavor(NullFlavor.UNK);
-        spDTO.setPrimaryCompletionDate(unknownTs);
-        sp = AbstractStudyProtocolConverter.convertFromDTOToDomain(spDTO, sp);
-        assertNull(sp.getPrimaryCompletionDate());
+        assertStudyProtocolDates(sp, spDTO);
+        assertEquals("Wrong user name", user.getLoginName(), spDTO.getUserLastCreated().getValue());
     }
-
+    
+    /**
+     * Test the convertFromDTOToDomain method for null primaryCompletionDate and null completionDate.
+     */
     @Test
-    public void convertFromDtoToDomainTest1() throws PAException {
-        StudyProtocol create = makeBo();
-        // convert to DTO
-        AbstractStudyProtocolDTO spDTO = AbstractStudyProtocolConverter.convertFromDomainToDTO(create,
-                                                                                               new StudyProtocolDTO());
-        AbstractStudyProtocol sp = AbstractStudyProtocolConverter.convertFromDTOToDomain(spDTO, new StudyProtocol());
-        assertStudyProtocol(sp, spDTO);
-
+    public void convertFromDtoToDomainTestNullCompletionDates() {
+        StudyProtocol sp = createStudyProtocol();
+        User user = createUser();
+        sp.setUserLastCreated(user);
+        AbstractStudyProtocolDTO spDTO = new StudyProtocolDTO();
+        AbstractStudyProtocolConverter.convertFromDomainToDTO(sp, spDTO);
         Ts unknownTs = new Ts();
         unknownTs.setNullFlavor(NullFlavor.UNK);
         spDTO.setPrimaryCompletionDate(unknownTs);
-        sp = AbstractStudyProtocolConverter.convertFromDTOToDomain(spDTO, new StudyProtocol());
-        assertNull(sp.getPrimaryCompletionDate());
+        spDTO.setCompletionDate(unknownTs);
+        sp = new StudyProtocol();
+        AbstractStudyProtocolConverter.convertFromDTOToDomain(spDTO, sp);
+        assertStudyProtocol(sp, spDTO);
+        assertNull(sp.getDates().getPrimaryCompletionDate());
+        assertNull(sp.getDates().getCompletionDate());
+        assertEquals("Wrong user name", user.getLoginName(), spDTO.getUserLastCreated().getValue());
     }
 
-    public StudyProtocol makeBo() {
+
+    private StudyProtocol createStudyProtocol() {
         Timestamp now = new Timestamp((new java.util.Date()).getTime());
         StudyProtocol sp = new StudyProtocol();
         sp.setAcronym("Acronym .....");
@@ -223,15 +222,13 @@ public class BaseStudyProtocolConverterTest {
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
         sp.setPrimaryPurposeAdditionalQualifierCode(PrimaryPurposeAdditionalQualifierCode.ANCILLARY);
         sp.setPrimaryPurposeOtherText("primaryPurposeOtherText");
-        sp.setPrimaryCompletionDate(now);
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        
         sp.setPublicDescription("publicDescription");
         sp.setPublicTitle("publicTitle");
         sp.setRecordVerificationDate(now);
         sp.setScientificDescription("scientificDescription");
         sp.setSection801Indicator(Boolean.TRUE);
-        sp.setStartDate(now);
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        
         sp.setDateLastUpdated(now);
         sp.setDateLastCreated(now);
         sp.setStatusCode(ActStatusCode.ACTIVE);
@@ -242,12 +239,27 @@ public class BaseStudyProtocolConverterTest {
         sp.setSubmissionNumber(2);
         sp.setProprietaryTrialIndicator(Boolean.FALSE);
         sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
-
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(now);
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        dates.setPrimaryCompletionDate(now);
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setCompletionDate(now);
+        dates.setCompletionDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
         return sp;
+    }
+    
+    private User createUser() {
+        User user = new User();
+        user.setLoginName("Abstractor: " + new Date());
+        user.setFirstName("Joe");
+        user.setLastName("Smith");
+        user.setUpdateDate(new Date());
+        return user;
     }
 
     /**
-     *
+     * Compare the abastractStudyProtocol fields but the dates.
      * @param sp sp
      * @param spDTO spDTO
      */
@@ -259,15 +271,28 @@ public class BaseStudyProtocolConverterTest {
         assertEquals(sp.getOfficialTitle(), spDTO.getOfficialTitle().getValue());
         assertEquals(sp.getPhaseCode().getCode(), spDTO.getPhaseCode().getCode());
         assertEquals(sp.getPhaseAdditionalQualifierCode().getCode(), spDTO.getPhaseAdditionalQualifierCode().getCode());
-        assertEquals(sp.getPrimaryCompletionDate(), TsConverter.convertToTimestamp(spDTO.getPrimaryCompletionDate()));
-        assertEquals(sp.getPrimaryCompletionDateTypeCode().getCode(), spDTO.getPrimaryCompletionDateTypeCode()
-            .getCode());
+
         assertEquals(sp.getPrimaryPurposeCode().getCode(), spDTO.getPrimaryPurposeCode().getCode());
         assertEquals(sp.getPrimaryPurposeAdditionalQualifierCode().getCode(), spDTO
             .getPrimaryPurposeAdditionalQualifierCode().getCode());
         assertEquals(sp.getPrimaryPurposeOtherText(), spDTO.getPrimaryPurposeOtherText().getValue());
         assertEquals(sp.getSection801Indicator(), spDTO.getSection801Indicator().getValue());
-        assertEquals(sp.getStartDate(), TsConverter.convertToTimestamp(spDTO.getStartDate()));
-        assertEquals(sp.getStartDateTypeCode().getCode(), spDTO.getStartDateTypeCode().getCode());
+       
+    }
+    
+    /**
+     * Compare the abastractStudyProtocol dates.
+     * @param sp sp
+     * @param spDTO spDTO
+     */
+    public void assertStudyProtocolDates(AbstractStudyProtocol sp, AbstractStudyProtocolDTO spDTO) {
+        StudyProtocolDates dates = sp.getDates();
+        assertEquals(dates.getStartDate(), TsConverter.convertToTimestamp(spDTO.getStartDate()));
+        assertEquals(dates.getStartDateTypeCode().getCode(), spDTO.getStartDateTypeCode().getCode());
+        assertEquals(dates.getPrimaryCompletionDate(), TsConverter.convertToTimestamp(spDTO.getPrimaryCompletionDate()));
+        assertEquals(dates.getPrimaryCompletionDateTypeCode().getCode(), spDTO.getPrimaryCompletionDateTypeCode()
+            .getCode());
+        assertEquals(dates.getCompletionDate(), TsConverter.convertToTimestamp(spDTO.getCompletionDate()));
+        assertEquals(dates.getCompletionDateTypeCode().getCode(), spDTO.getCompletionDateTypeCode().getCode());
     }
 }

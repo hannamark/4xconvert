@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="reg-web" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="pa" %>
 <%@ tag display-name="valueRow"  description="Generates a table row for a value" %>
 <%@ attribute name="cellOnly" required="false" type="java.lang.Boolean" description="True to generate only the tds" %>
 <%@ attribute name="id" required="false" type="java.lang.String" description="The id of the td" %>
@@ -18,12 +18,12 @@
     <td scope="row" class="label">
         <c:choose>
             <c:when test="${not empty tooltip}">
-                <reg-web:displayTooltip tooltip="${tooltip}">
-                    <reg-web:label labelFor="${labelFor}" labelKey="${labelKey}" required="${required}" strong="${strong}"/>
-                </reg-web:displayTooltip>
+                <pa:displayTooltip tooltip="${tooltip}">
+                    <pa:label labelFor="${labelFor}" labelKey="${labelKey}" required="${required}" strong="${strong}"/>
+                </pa:displayTooltip>
             </c:when>
             <c:otherwise>
-                <reg-web:label labelFor="${labelFor}" labelKey="${labelKey}" required="${required}" strong="${strong}"/>
+                <pa:label labelFor="${labelFor}" labelKey="${labelKey}" required="${required}" strong="${strong}"/>
             </c:otherwise>
         </c:choose>
     </td>

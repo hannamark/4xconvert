@@ -87,6 +87,7 @@ import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.domain.StudyProtocolDates;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.ActStatusCode;
@@ -128,11 +129,12 @@ public class StudyProtocolTestHelper {
         session.saveOrUpdate(user);
 
         StudyProtocol sp = new InterventionalStudyProtocol();
-        sp.setOfficialTitle("cacncer for THOLA");
-        sp.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));
-        sp.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
-        sp.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
-        sp.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setOfficialTitle("cancer for THOLA");
+        StudyProtocolDates dates = sp.getDates();
+        dates.setStartDate(ISOUtil.dateStringToTimestamp("1/1/2000"));
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(ISOUtil.dateStringToTimestamp("12/31/2009"));
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.TREATMENT);
         sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
         Set<Ii> studySecondaryIdentifiers = new HashSet<Ii>();

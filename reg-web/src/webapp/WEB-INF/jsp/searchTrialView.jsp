@@ -265,26 +265,7 @@
                         </c:if>
                         <c:if test="${requestScope.trialSummary.proprietaryTrialIndicator == null
                                     || requestScope.trialSummary.proprietaryTrialIndicator.value == 'false'}">
-                            <reg-web:titleRow titleKey="view.trial.statusDates"/>    
-                            <reg-web:valueRow labelKey="view.trial.currentTrialStatus">
-                                <c:out value="${requestScope.trialDTO.statusCode}"/>
-                            </reg-web:valueRow>    
-                            <c:if test="${requestScope.trialDTO.reason != null}">
-                                <reg-web:valueRow labelKey="view.trial.trialStatusReason">
-                                    <c:out value="${requestScope.trialDTO.reason}"/>
-                                </reg-web:valueRow> 
-                            </c:if>
-                            <reg-web:valueRow labelKey="view.trial.currentTrialStatusDate">
-                                <c:out value="${requestScope.trialDTO.statusDate}"/>
-                            </reg-web:valueRow>    
-                            <reg-web:valueRow labelKey="view.trial.trialStartDate">
-                                <c:out value="${requestScope.trialDTO.startDate }"/>
-                                <c:out value="${requestScope.trialDTO.startDateType }"/>
-                            </reg-web:valueRow>  
-                            <reg-web:valueRow labelKey="view.trial.primaryCompletionDate">
-                                <c:out value="${requestScope.trialDTO.primaryCompletionDate }"/>
-                                <c:out value="${requestScope.trialDTO.primaryCompletionDateType }"/>
-                            </reg-web:valueRow> 
+                            <%@ include file="/WEB-INF/jsp/nodecorate/viewStatusSection.jsp" %>
                         </c:if>
                     </table>
                     <c:if test="${requestScope.studyIndIde != null}">
