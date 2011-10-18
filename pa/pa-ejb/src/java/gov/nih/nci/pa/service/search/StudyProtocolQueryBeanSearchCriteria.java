@@ -303,12 +303,13 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         }
 
         private void handleAdditionalCriteria(StringBuffer whereClause, Map<String, Object> params) {
-            if (spo.isParticipatingSite()) {
+            if (spo.getParticipatingSiteId() != null) {
                 String operator = determineOperator(whereClause);
-                whereClause.append(String.format(" %s %s.id in ( select sp2.id from StudyProtocol as sp2  "
-                        + "left outer join sp2.studySites as sps2 left outer join sps2.healthCareFacility as hcf "
-                        + "left outer join hcf.organization as site where site.id = "
-                        + spo.getParticipatingSiteId() + ")", operator, SearchableUtils.ROOT_OBJ_ALIAS));
+                whereClause.append(String.format(" %s exists (select sps2.id from StudySite sps2 "
+                        + "left outer join sps2.healthCareFacility as hcf "
+                        + "left outer join hcf.organization as site "
+                        + "where sps2.studyProtocol.id = %s.id and site.id = " + spo.getParticipatingSiteId() + ")",
+                        operator, SearchableUtils.ROOT_OBJ_ALIAS));
             }
 
             if (spo.isSearchOnHoldTrials()) {
@@ -319,20 +320,23 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
 
             if (spo.getTrialSubmissionType() == SubmissionTypeCode.A) {
                 String operator = determineOperator(whereClause);
-                whereClause.append(String.format(" %s (%s.submissionNumber > 1 and %s.amendmentDate is not null "
-                        + "and (select count(id) from %s.studyInbox where closeDate is null) = 0)", operator,
-                        SearchableUtils.ROOT_OBJ_ALIAS, SearchableUtils.ROOT_OBJ_ALIAS,
-                        SearchableUtils.ROOT_OBJ_ALIAS));
+                whereClause.append(String
+                    .format(" %s (%s.submissionNumber > 1 and %s.amendmentDate is not null "
+                                    + "and (select count(id) from %s.studyInbox where closeDate is null) = 0)",
+                            operator,
+                            SearchableUtils.ROOT_OBJ_ALIAS, SearchableUtils.ROOT_OBJ_ALIAS,
+                            SearchableUtils.ROOT_OBJ_ALIAS));
             } else if (spo.getTrialSubmissionType() == SubmissionTypeCode.O) {
                 String operator = determineOperator(whereClause);
-                whereClause.append(String.format(" %s (%s.submissionNumber = 1 and %s.amendmentNumber is null "
-                        + "and %s.amendmentDate is null and (select count(id) from %s.studyInbox where "
-                        + "closeDate is null) = 0)", operator, SearchableUtils.ROOT_OBJ_ALIAS,
-                        SearchableUtils.ROOT_OBJ_ALIAS, SearchableUtils.ROOT_OBJ_ALIAS,
-                        SearchableUtils.ROOT_OBJ_ALIAS));
+                whereClause.append(String
+                    .format(" %s (%s.submissionNumber = 1 and %s.amendmentNumber is null "
+                                    + "and %s.amendmentDate is null and (select count(id) from %s.studyInbox where "
+                                    + "closeDate is null) = 0)", operator, SearchableUtils.ROOT_OBJ_ALIAS,
+                            SearchableUtils.ROOT_OBJ_ALIAS, SearchableUtils.ROOT_OBJ_ALIAS,
+                            SearchableUtils.ROOT_OBJ_ALIAS));
             } else if (spo.getTrialSubmissionType() == SubmissionTypeCode.U) {
                 String operator = determineOperator(whereClause);
-                //A trial is considered update when it has at least one study inbox entry without a close date.
+                // A trial is considered update when it has at least one study inbox entry without a close date.
                 whereClause.append(String.format(" %s (select count(id) from %s.studyInbox where closeDate is null) "
                         + "> 0", operator, SearchableUtils.ROOT_OBJ_ALIAS));
             }

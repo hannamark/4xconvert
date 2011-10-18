@@ -77,6 +77,7 @@
 package gov.nih.nci.pa.viewer.action;
 
 import static org.junit.Assert.assertEquals;
+
 import gov.nih.nci.pa.viewer.util.MockServiceLocator;
 import gov.nih.nci.pa.viewer.util.ViewerConstants;
 import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;

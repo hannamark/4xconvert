@@ -99,8 +99,7 @@ public class StudyProtocolOptions {
 
     private boolean excludeRejectedTrials;
     private boolean myTrialsOnly;
-    private boolean searchOnHoldTrials;
-    private boolean participatingSite;
+    private boolean searchOnHoldTrials;   
     private SubmissionTypeCode trialSubmissionType;
     private boolean lockedTrials;
     private Long userId;
@@ -194,21 +193,6 @@ public class StudyProtocolOptions {
      */
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-
-    /**
-     * @return participating site
-     */
-    public boolean isParticipatingSite() {
-        return participatingSite;
-    }
-
-    /**
-     * @param participatingSite whether to search by participating site
-     */
-    public void setParticipatingSite(boolean participatingSite) {
-        this.participatingSite = participatingSite;
     }
 
     /**

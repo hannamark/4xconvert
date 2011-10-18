@@ -79,7 +79,9 @@ package gov.nih.nci.pa.viewer.action;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
@@ -90,6 +92,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
@@ -214,6 +217,16 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     public void testCheckLeadOrgAndSumm4SponsorLists() throws PAException {
         assertEquals(1, action.getLeadOrgList().size());
         assertEquals(1, action.getSumm4FunsingSponsorsList().size());
+    }
+    
+    @Test
+    public void getParticipatingSiteList() throws PAException {
+        ServiceLocator svcLoc = mock(ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(svcLoc);
+        PAOrganizationServiceRemote paOrganizationServiceMock = mock(PAOrganizationServiceRemote.class);       
+        when(svcLoc.getPAOrganizationService()).thenReturn(paOrganizationServiceMock);
+        action.getParticipatingSiteList();
+        verify(paOrganizationServiceMock).getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE);        
     }
 
     /**

@@ -391,10 +391,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setLockedTrials(criteria.isStudyLockedBy());
         options.setLockedUser(criteria.getUserLastCreated());
         options.setMyTrialsOnly(BooleanUtils.isTrue(criteria.isMyTrialsOnly()));
-        options.setParticipatingSite(StringUtils.equals(criteria.getOrganizationType(),
-                PAConstants.PARTICIPATING_SITE));
-        options.setParticipatingSiteId(criteria.getParticipatingSiteId() == null ? null
-                : Long.valueOf(criteria.getParticipatingSiteId()));
+        options.setParticipatingSiteId(StringUtils.isNumeric(criteria.getParticipatingSiteId()) ? Long.valueOf(criteria
+            .getParticipatingSiteId()) : null);
         options.setTrialSubmissionType(SubmissionTypeCode.getByCode(criteria.getSubmissionType()));
         options.setSearchOnHoldTrials(criteria.isSearchOnHold());
         options.setInboxProcessing(BooleanUtils.isTrue(criteria.isInBoxProcessing()));

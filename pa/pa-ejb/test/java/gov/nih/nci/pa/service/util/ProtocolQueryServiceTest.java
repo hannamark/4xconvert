@@ -138,6 +138,7 @@ import gov.nih.nci.pa.util.StudySiteComparator;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
@@ -829,7 +830,7 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
     }
 
     @Test
-    public void getStudyProtocolQueryResultListByAllParametrs() throws PAException {
+    public void getStudyProtocolQueryResultListByAllLocationParametrs() throws PAException {
         List<Long> data = createStudyProtocolList();
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
         criteria.setCountryName("USA");
@@ -848,6 +849,18 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         criteria.setCity("notExistingCity");
         List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
         assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void getStudyProtocolQueryResultListByParticipatingSite() throws PAException {
+        TestBean testBean = createStudyProtocolListForSearchByParticipatingSite();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setParticipatingSiteId(testBean.input.get(0).toString());
+        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(2, result.size());
+        List<Long> expectedResult = Arrays.asList(new Long[]{testBean.output.get(1), testBean.output.get(2)});
+        assertTrue(expectedResult.contains(result.get(0).getId()));
+        assertTrue(expectedResult.contains(result.get(1).getId()));
     }
 
     private List<Long> createStudyProtocolList() {
@@ -900,6 +913,40 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(treatingStudySite5.getHealthCareFacility().getOrganization());
 
         result.set(4, studyProtocol5.getId());
+
+        return result;
+    }
+    
+    private TestBean createStudyProtocolListForSearchByParticipatingSite() {
+        TestBean result = new TestBean();        
+        
+        Organization organization = TestSchema.createOrganizationObj();
+        TestSchema.addUpdObject(organization);
+        result.input.add(organization.getId());
+
+        StudyProtocol studyProtocol1 = createStudyProtocol();
+        result.output.add(studyProtocol1.getId());      
+
+        StudyProtocol studyProtocol2 = createStudyProtocol();
+        Iterator<StudySite> it2 = studyProtocol2.getStudySites().iterator();
+        it2.next();
+
+        StudySite treatingStudySite2 = it2.next();
+        treatingStudySite2.getHealthCareFacility().setOrganization(organization); 
+        TestSchema.addUpdObject(treatingStudySite2.getHealthCareFacility());
+        result.output.add(studyProtocol2.getId());
+
+        StudyProtocol studyProtocol3 = createStudyProtocol();
+        Iterator<StudySite> it3 = studyProtocol3.getStudySites().iterator();
+        it3.next();
+        
+        StudySite treatingStudySite3 = it3.next();         
+        treatingStudySite3.getHealthCareFacility().setOrganization(organization);  
+        TestSchema.addUpdObject(treatingStudySite3.getHealthCareFacility());
+        result.output.add(studyProtocol3.getId());
+
+        StudyProtocol studyProtocol4 = createStudyProtocol();
+        result.output.add(studyProtocol4.getId());
 
         return result;
     }
@@ -971,6 +1018,11 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         result.setCity("Arlington");
         TestSchema.addUpdObject(result);
         return result;
+    }
+    
+    private static class TestBean {
+        List<Long> input = new ArrayList<Long>();
+        List<Long> output = new ArrayList<Long>();
     }
 
 }

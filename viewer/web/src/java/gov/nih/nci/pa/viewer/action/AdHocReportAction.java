@@ -235,6 +235,36 @@ public class AdHocReportAction
           }
           return NONE;
     }
+    
+    /**
+     * Return a list of lead orgs.
+     * @return list of lead orgs.
+     * @throws PAException on error
+     */
+    public List<PaOrganizationDTO> getLeadOrgList() throws PAException {
+        return PaRegistry.getPAOrganizationService()
+            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION);
+    }
+
+    /**
+     * Return a list of summary 4 funding sponsors.
+     * @return list of summary 4 funding sponsors.
+     * @throws PAException on error
+     */
+    public List<PaOrganizationDTO> getSumm4FunsingSponsorsList() throws PAException {
+        return PaRegistry.getPAOrganizationService()
+            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.SUMM4_SPONSOR);
+    }
+    
+    /**
+     * Return a list of participating site orgs.
+     * @return list of participating site orgs.
+     * @throws PAException on error
+     */
+    public List<PaOrganizationDTO> getParticipatingSiteList() throws PAException {
+        return PaRegistry.getPAOrganizationService()
+            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE);
+    }
 
     /**
      * @return the criteria
@@ -291,26 +321,6 @@ public class AdHocReportAction
      */
     public String getDiseaseName() {
         return diseaseName;
-    }
-
-    /**
-     * Return a list of lead orgs.
-     * @return list of lead orgs.
-     * @throws PAException on error
-     */
-    public List<PaOrganizationDTO> getLeadOrgList() throws PAException {
-        return PaRegistry.getPAOrganizationService()
-            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION);
-    }
-
-    /**
-     * Return a list of summary 4 funding sponsors.
-     * @return list of summary 4 funding sponsors.
-     * @throws PAException on error
-     */
-    public List<PaOrganizationDTO> getSumm4FunsingSponsorsList() throws PAException {
-        return PaRegistry.getPAOrganizationService()
-            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.SUMM4_SPONSOR);
-    }
+    }   
 
 }
