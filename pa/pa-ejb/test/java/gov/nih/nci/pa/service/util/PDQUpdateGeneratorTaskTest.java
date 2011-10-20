@@ -110,7 +110,7 @@ import org.junit.Test;
  *
  */
 public class PDQUpdateGeneratorTaskTest extends AbstractMockitoTest {
-    private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd-", Locale.US);
+    private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     private PDQUpdateGeneratorTaskServiceBean taskBean;
 
     /**

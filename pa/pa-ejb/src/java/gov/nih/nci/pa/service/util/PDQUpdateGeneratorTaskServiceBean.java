@@ -127,7 +127,6 @@ import org.apache.log4j.Logger;
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTaskServiceLocal {
     private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-    private final SimpleDateFormat time = new SimpleDateFormat("-HH-mm-ss", Locale.US);
     private static final String ZIP_ARCHIVE_NAME = "CTRP-TRIALS-";
     private static final int MAX_FILE_AGE = -30;
     private static final Logger LOG = Logger.getLogger(PDQUpdateGeneratorTaskServiceBean.class);
@@ -149,13 +148,12 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
         for (File f : filesToDelete) {
             FileUtils.deleteQuietly(f);
         }
-        //Name of the file will be CTRP-TRIALS-YYYY-MM-DD-T-HH-mm-ss.zip
+        //Name of the file will be CTRP-TRIALS-YYYY-MM-DD.zip
         Date now = new Date();
         LOG.info("PDQ trial exporter started.");
-        String zipFilePath = folderPath + File.separator + ZIP_ARCHIVE_NAME + date.format(now) +  "-T"
-        + time.format(now) + ".zip";
+        String zipFilePath = folderPath + File.separator + ZIP_ARCHIVE_NAME + date.format(now) + ".zip";
         //Using the temp path to ensure locking is correctly working.
-        String tempZipFilePath = folderPath + File.separator + ZIP_ARCHIVE_NAME + date.format(now) + ".zip";
+        String tempZipFilePath = folderPath + File.separator + "TEMP-" + ZIP_ARCHIVE_NAME + date.format(now) + ".zip";
         File zipArchive = new File(tempZipFilePath);
         //Delete the temporary archive if it exists
         FileUtils.deleteQuietly(zipArchive);
@@ -165,7 +163,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
             PaRegistry.getStudyProtocolService().getAbstractedCollaborativeTrials();
         generateZipFile(zipArchive, collaborativeTrials, zipFilePath, folderPath);
     }
-    
+
     private void generateZipFile(File zipArchive, List<StudyProtocolDTO> collaborativeTrials, String zipFilePath,
             String folderPath) throws PAException {
         ZipOutputStream zipOutput = null;
