@@ -400,6 +400,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setCountryName(criteria.getCountryName());
         options.setStates(criteria.getStates());
         options.setCity(criteria.getCity());
+        options.setSummary4AnatomicSites(criteria.getSummary4AnatomicSites());
 
         populateExample(criteria, example);
         return new StudyProtocolQueryBeanSearchCriteria(example, options);
@@ -431,12 +432,20 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         try {
             validateSearchCriteria(crit);
             String orderBy = "";
-            String joinClause = "";
+            String joinClause = createJoinClauseByCriteria(criteria);
             return crit.getQuery(orderBy, joinClause, false).list();
         } catch (Exception e) {
             throw new PAException("An error has occurred when searching for trials.", e);
         }
 
+    }
+    
+    private String createJoinClauseByCriteria(StudyProtocolQueryCriteria criteria) {
+        StringBuilder result = new StringBuilder("");
+        if (CollectionUtils.isNotEmpty(criteria.getSummary4AnatomicSites())) {
+            result.append(" left outer join obj.summary4AnatomicSites as ans ");
+        }
+        return result.toString();
     }
 
     private void populateExampleStudyProtocol(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
@@ -616,6 +625,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && StringUtils.isEmpty(criteria.getCity())
                 && CollectionUtils.isEmpty(criteria.getStates())
                 && CollectionUtils.isEmpty(criteria.getPhaseCodes())
+                && CollectionUtils.isEmpty(criteria.getSummary4AnatomicSites())
                 && !criteria.isSearchOnHold()
                 && !criteria.isStudyLockedBy()
                 && StringUtils.isEmpty(criteria.getSubmissionType())

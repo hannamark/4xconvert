@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.viewer.action;
 
+import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -264,6 +265,15 @@ public class AdHocReportAction
     public List<PaOrganizationDTO> getParticipatingSiteList() throws PAException {
         return PaRegistry.getPAOrganizationService()
             .getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE);
+    }
+    
+    /**
+     * Return a list of anatomic sites.
+     * @return ist of anatomic sites.
+     * @throws PAException on error
+     */
+    public List<AnatomicSite> getAnatomicSitesList() throws PAException {
+        return  PaRegistry.getLookUpTableService().getAnatomicSites();
     }
 
     /**

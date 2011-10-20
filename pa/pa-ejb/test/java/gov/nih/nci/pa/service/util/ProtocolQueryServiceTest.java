@@ -88,6 +88,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
@@ -132,6 +133,7 @@ import gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.AnatomicSiteComparator;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.StudySiteComparator;
@@ -143,6 +145,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -862,6 +865,17 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         assertTrue(expectedResult.contains(result.get(0).getId()));
         assertTrue(expectedResult.contains(result.get(1).getId()));
     }
+    
+    @Test
+    public void getStudyProtocolQueryResultListByAnatomicSites() throws PAException {
+        TestBean testBean = createStudyProtocolListForSearchByAnatomicSites();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setSummary4AnatomicSites(testBean.input);
+        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(2, result.size());       
+        assertTrue(testBean.output.contains(result.get(0).getId()));
+        assertTrue(testBean.output.contains(result.get(1).getId()));
+    }
 
     private List<Long> createStudyProtocolList() {
         List<Long> result = Arrays.asList(new Long[]{0L, 0L, 0L, 0L, 0L });
@@ -950,6 +964,28 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
 
         return result;
     }
+    
+    private TestBean createStudyProtocolListForSearchByAnatomicSites() {
+        TestBean result = new TestBean();  
+        
+        createStudyProtocol();            
+
+        StudyProtocol studyProtocol2 = createStudyProtocol();
+        TestSchema.addUpdObject(studyProtocol2);
+        result.input.add(studyProtocol2.getSummary4AnatomicSites().iterator().next().getId());
+        result.output.add(studyProtocol2.getId());
+
+        createStudyProtocol();       
+
+        StudyProtocol studyProtocol4 = createStudyProtocol();
+        AnatomicSite anatomicSite = createAnatomicSite("second");
+        studyProtocol4.getSummary4AnatomicSites().add(anatomicSite);
+        TestSchema.addUpdObject(studyProtocol4);
+        result.input.add(anatomicSite.getId());
+        result.output.add(studyProtocol4.getId());
+
+        return result;
+    }
 
     private StudyProtocol createStudyProtocol() {
         StudyProtocol result = TestSchema.createStudyProtocolObj();
@@ -962,7 +998,10 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         TestSchema.addUpdObject(treatingStudySite);
         studySites.add(leadOrganizationStudySite);
         studySites.add(treatingStudySite);
-        result.setStudySites(studySites);
+        result.setStudySites(studySites);   
+        Set<AnatomicSite> summary4AnatomicSites = new TreeSet<AnatomicSite>(new AnatomicSiteComparator());
+        summary4AnatomicSites.add(createAnatomicSite(result.getId()+"code"));
+        result.setSummary4AnatomicSites(summary4AnatomicSites);
         TestSchema.addUpdObject(result);
         return result;
     }
@@ -1016,6 +1055,12 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         result.setCountryName("USA");
         result.setState("VA");
         result.setCity("Arlington");
+        TestSchema.addUpdObject(result);
+        return result;
+    }
+    
+    private AnatomicSite createAnatomicSite(String preferredName) {
+        AnatomicSite  result = TestSchema.createAnatomicSiteObj(preferredName);       
         TestSchema.addUpdObject(result);
         return result;
     }

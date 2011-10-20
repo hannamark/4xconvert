@@ -166,6 +166,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String STUDY_OWNER_DWS_PARAM = "studyOwnerDWSParam";
         private static final String STUDY_OWNER_SITE_PARAM = "studyOwnerSiteFunctionalCodeParam";
         private static final String STUDY_PHASE_CODE_PARAM = "studyPhaseCodeParam";
+        private static final String  ANATOMIC_SITES_PARAM  = "anatomicSitesParam";
         
         private final StudyProtocol sp;
         private final StudyProtocolOptions spo;
@@ -222,6 +223,12 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 whereClause.append(String.format(" %s %s.phaseCode  in (:%s) ", operator,
                                                  SearchableUtils.ROOT_OBJ_ALIAS, STUDY_PHASE_CODE_PARAM));
                 params.put(STUDY_PHASE_CODE_PARAM, this.spo.getPhaseCodes());
+            }
+            
+            if (CollectionUtils.isNotEmpty(this.spo.getSummary4AnatomicSites())) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(" %s ans.id  in (:%s) ", operator, ANATOMIC_SITES_PARAM));
+                params.put(ANATOMIC_SITES_PARAM, this.spo.getSummary4AnatomicSites());
             }
             
             if (this.spo.isByLocation()) {

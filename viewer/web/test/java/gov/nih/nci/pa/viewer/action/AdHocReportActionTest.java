@@ -89,6 +89,7 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.IdentifierType;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
@@ -221,12 +222,27 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     
     @Test
     public void getParticipatingSiteList() throws PAException {
+        ServiceLocator svcLoc = createServiceLocatorWithMocks();
+        action.getParticipatingSiteList();
+        verify(svcLoc.getPAOrganizationService())
+            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE);
+    }
+
+    @Test
+    public void getAnatomicSitesList() throws PAException {
+        ServiceLocator svcLoc = createServiceLocatorWithMocks();
+        action.getAnatomicSitesList();
+        verify(svcLoc.getLookUpTableService()).getAnatomicSites();
+    }
+
+    private ServiceLocator createServiceLocatorWithMocks() {
         ServiceLocator svcLoc = mock(ServiceLocator.class);
         PaRegistry.getInstance().setServiceLocator(svcLoc);
-        PAOrganizationServiceRemote paOrganizationServiceMock = mock(PAOrganizationServiceRemote.class);       
+        PAOrganizationServiceRemote paOrganizationServiceMock = mock(PAOrganizationServiceRemote.class);
         when(svcLoc.getPAOrganizationService()).thenReturn(paOrganizationServiceMock);
-        action.getParticipatingSiteList();
-        verify(paOrganizationServiceMock).getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE);        
+        LookUpTableServiceRemote lookUpTableServiceRemoteMock = mock(LookUpTableServiceRemote.class);
+        when(svcLoc.getLookUpTableService()).thenReturn(lookUpTableServiceRemoteMock);
+        return svcLoc;
     }
 
     /**

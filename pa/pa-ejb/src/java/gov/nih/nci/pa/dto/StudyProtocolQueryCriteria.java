@@ -153,6 +153,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String countryName;   
     private final List<String> states = new ArrayList<String>();
     private String city;
+    private final List<Long> summary4AnatomicSites = new ArrayList<Long>();
     
     /**
      * @return the inBoxProcessing
@@ -579,6 +580,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
      * @param phaseCodes the phaseCodes to set
      */
     public void setPhaseCodes(List<String> phaseCodes) {
+        this.phaseCodes.clear();
         for (String code : phaseCodes) {
             if (StringUtils.isNotBlank(code)) {
                 this.phaseCodes.add(code);
@@ -607,6 +609,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
      * @param states the states to set
      */
     public void setStates(List<String> states) {
+        this.states.clear();
         for (String state : states) {
             if (StringUtils.isNotBlank(state)) {
                 this.states.add(state);
@@ -624,7 +627,26 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setCity(String city) {
         this.city = city;
-    }   
+    }     
+    
+    /**
+     * @return the summary4AnatomicSites
+     */
+    public List<Long> getSummary4AnatomicSites() {
+        return summary4AnatomicSites;
+    }
+    /**
+     * @param summary4AnatomicSites the summary4AnatomicSites to set
+     */
+    public void setSummary4AnatomicSites(List<Long> summary4AnatomicSites) {
+        this.summary4AnatomicSites.clear();
+        for (Long id : summary4AnatomicSites) {
+            if (id != 0) {
+                this.summary4AnatomicSites.add(id);
+            }
+        }       
+    }
+    
     
     /**
      * return true if criteria contains location data.

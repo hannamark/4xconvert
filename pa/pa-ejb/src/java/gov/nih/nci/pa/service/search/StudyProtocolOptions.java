@@ -110,6 +110,7 @@ public class StudyProtocolOptions {
     private String countryName;   
     private List<String> states = new ArrayList<String>();
     private String city;
+    private List<Long> summary4AnatomicSites = new ArrayList<Long>();
 
     /**
      * @return excludeRejectedTrials
@@ -300,8 +301,23 @@ public class StudyProtocolOptions {
      */
     public void setCity(String city) {
         this.city = city;
-    }
+    }  
     
+    
+    /**
+     * @return the summary4AnatomicSites
+     */
+    public List<Long> getSummary4AnatomicSites() {
+        return summary4AnatomicSites;
+    }
+
+    /**
+     * @param summary4AnatomicSites the summary4AnatomicSites to set
+     */
+    public void setSummary4AnatomicSites(List<Long> summary4AnatomicSites) {
+        this.summary4AnatomicSites = summary4AnatomicSites;
+    }
+
     /**
      * return true if criteria contains location data.
      * @return boolean

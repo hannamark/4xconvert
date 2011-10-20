@@ -39,6 +39,8 @@
             document.getElementById("city").value="";
             document.getElementById("states").value="";
             document.getElementById("participatingSiteId").value="";
+            document.getElementById("anatomicSitesList").value="";
+            
         }
         
         function lookup() {
@@ -108,7 +110,7 @@
                 </td>
                 <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
                 <td>
-                    <s:select headerKey="" id="phaseCodes" headerValue="All" name="criteria.phaseCodes" list="#phaseCodeValues"  value="criteria.phaseCodes" cssStyle="width:206px" multiple="true" />
+                    <s:select headerKey="" id="phaseCodes" headerValue="All" name="criteria.phaseCodes" list="#phaseCodeValues"  value="criteria.phaseCodes" cssStyle="width:206px" multiple="true" size="3" />
                 </td>
                 
                 <td scope="row" class="label">
@@ -133,16 +135,13 @@
                         </s:fielderror>                            
                     </span> 
                 </td>
-                 <td scope="row" class="label">
-                    <label for="diseaseConditionId"> <fmt:message key="studyProtocol.diseaseCondition"/></label>
+                <td scope="row" class="label">
+                    <label for="summary4AnatomicSites"> <fmt:message key="studyProtocol.summary4AnatomicSites"/></label>
                 </td>
                 <td>
-                    <s:form name="diseaseForm">
-                    <div id="loadDetails">
-                        <%@ include file="/WEB-INF/jsp/nodecorate/selectedDiseaseDetails.jsp"%>
-                    </div>
-                    </s:form>
-                </td>                 
+                   <s:select name="criteria.summary4AnatomicSites" id="anatomicSitesList" list="anatomicSitesList" listKey="id"
+                        listValue="displayName" headerKey="0"  headerValue="All" value="criteria.summary4AnatomicSites" multiple="true" size="3"  />
+                </td>                            
             </tr>
 
             <tr>
@@ -164,18 +163,16 @@
                         value="criteria.principalInvestigatorId" />
 
                 </td>
-                <td scope="row" class="label">
-                    <label for="identifier"><fmt:message key="studyProtocol.identifier"/></label>
-                    <br><span class="info">(e.g: NCI-2008-00015; ECOG-1234, etc)</span>
+                  <td scope="row" class="label">
+                    <label for="diseaseConditionId"> <fmt:message key="studyProtocol.diseaseCondition"/></label>
                 </td>
                 <td>
-                    <s:textfield id="identifier" name="identifier" maxlength="200" size="100"  cssStyle="width:200px" />
-                    <span class="formErrorMsg"> 
-                        <s:fielderror>
-                            <s:param>identifier</s:param>
-                       </s:fielderror>                            
-                    </span>  
-                </td>
+                    <s:form name="diseaseForm">
+                    <div id="loadDetails">
+                        <%@ include file="/WEB-INF/jsp/nodecorate/selectedDiseaseDetails.jsp"%>
+                    </div>
+                    </s:form>
+                </td>            
             </tr>
 
             <tr>
@@ -187,12 +184,17 @@
                    <s:select headerKey="" headerValue="All" id="documentWorkflowStatusCode" name="criteria.documentWorkflowStatusCode" list="#documentWorkflowStatusCodeValues"  value="criteria.documentWorkflowStatusCode" cssStyle="width:206px" />
                 </td>
                  <td scope="row" class="label">
-                    <label for="submissionType"> <fmt:message key="studyProtocol.submissionTypeSearch"/></label>
+                    <label for="identifier"><fmt:message key="studyProtocol.identifier"/></label>
+                    <br><span class="info">(e.g: NCI-2008-00015; ECOG-1234, etc)</span>
                 </td>
-                <s:set name="submissionTypeValues" value="@gov.nih.nci.pa.enums.SubmissionTypeCode@getDisplayNames()" />
                 <td>
-                   <s:select headerKey="" headerValue="All" id="submissionType" name="criteria.submissionType" list="#submissionTypeValues"  value="criteria.submissionType" cssStyle="width:206px" />
-                </td>                
+                    <s:textfield id="identifier" name="identifier" maxlength="200" size="100"  cssStyle="width:200px" />
+                    <span class="formErrorMsg"> 
+                        <s:fielderror>
+                            <s:param>identifier</s:param>
+                       </s:fielderror>                            
+                    </span>  
+                </td>                              
             </tr>
             <tr>
                 <td scope="row" class="label">
@@ -202,12 +204,13 @@
                 <td>
                    <s:select headerKey="" headerValue="All" id="interventionType" name="criteria.interventionType" list="#interventionTypeValues"  value="criteria.interventionType" cssStyle="width:206px" />
                 </td>
-                <td scope="row" class="label">
-                    <label for="trialCategory"> <fmt:message key="studyProtocol.trialCategorySearch"/></label>
+                  <td scope="row" class="label">
+                    <label for="submissionType"> <fmt:message key="studyProtocol.submissionTypeSearch"/></label>
                 </td>
+                <s:set name="submissionTypeValues" value="@gov.nih.nci.pa.enums.SubmissionTypeCode@getDisplayNames()" />
                 <td>
-                   <s:select headerKey="" headerValue="Both" id="trialCategory" name="criteria.trialCategory" list="#{'p':'Abbreviated','n':'Complete'}"  value="criteria.trialCategory" cssStyle="width:206px" />
-                </td>                
+                   <s:select headerKey="" headerValue="All" id="submissionType" name="criteria.submissionType" list="#submissionTypeValues"  value="criteria.submissionType" cssStyle="width:206px" />
+                </td>                              
             </tr>
             <tr>
                 <td scope="row" class="label">
@@ -218,13 +221,12 @@
                 <td>
                    <s:select headerKey="" id="studyStatusCode" headerValue="All" name="criteria.studyStatusCode" list="#studyStatusCodeValues"  value="criteria.studyStatusCode" cssStyle="width:206px" />
                 </td>
-                <s:set name="summ4FundingSourceTypeCodes" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
-                <td scope="row" class="label">
-                    <label for="summ4FundingSourceTypeCode"> <fmt:message key="studyProtocol.summ4FundingSourceTypeCode"/></label>
+                 <td scope="row" class="label">
+                    <label for="trialCategory"> <fmt:message key="studyProtocol.trialCategorySearch"/></label>
                 </td>
                 <td>
-                   <s:select headerKey="" headerValue="All" id="summ4FundingSourceTypeCode" name="criteria.summ4FundingSourceTypeCode" list="#summ4FundingSourceTypeCodes"  value="criteria.summ4FundingSourceTypeCode" cssStyle="width:206px" />
-                </td>                
+                   <s:select headerKey="" headerValue="Both" id="trialCategory" name="criteria.trialCategory" list="#{'p':'Abbreviated','n':'Complete'}"  value="criteria.trialCategory" cssStyle="width:206px" />
+                </td>                                 
             </tr>
              <tr>
                 <td scope="row" class="label">
@@ -235,13 +237,13 @@
                 <td>
                     <s:select headerKey="" headerValue="All" id="country" name="criteria.countryName"  list="#countries"  listKey="alpha3"  listValue="name"  value="criteria.countryName"    cssStyle="width:206px" />
                </td>
-               <td scope="row" class="label">
-                    <label for="milestoneCode"> <fmt:message key="studyProtocol.milestone"/></label>
+               <s:set name="summ4FundingSourceTypeCodes" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
+                <td scope="row" class="label">
+                    <label for="summ4FundingSourceTypeCode"> <fmt:message key="studyProtocol.summ4FundingSourceTypeCode"/></label>
                 </td>
-                <s:set name="milestoneCodes" value="@gov.nih.nci.pa.enums.MilestoneCode@getDisplayNames()" />
                 <td>
-                   <s:select headerKey="" headerValue="All" id="studyMilestone" name="criteria.studyMilestone" list="#milestoneCodes"  value="criteria.studyMilestone" cssStyle="width:206px" />
-                </td>               
+                   <s:select headerKey="" headerValue="All" id="summ4FundingSourceTypeCode" name="criteria.summ4FundingSourceTypeCode" list="#summ4FundingSourceTypeCodes"  value="criteria.summ4FundingSourceTypeCode" cssStyle="width:206px" />
+                </td>                             
             </tr>
             <tr>
                 <td scope="row" class="label">
@@ -249,15 +251,15 @@
                 </td>                
                 <td>
                   <s:set name="stateCodeValues" value="@gov.nih.nci.pa.enums.USStateCode@values()" />
-                  <s:select headerKey="" headerValue="All" id="states" name="criteria.states" list="#stateCodeValues" listKey="name"  listValue="code" value="criteria.states" cssStyle="width:206px" multiple="true"/>
-                </td>
-                   
+                  <s:select headerKey="" headerValue="All" id="states" name="criteria.states" list="#stateCodeValues" listKey="name"  listValue="code" value="criteria.states" cssStyle="width:206px" multiple="true" size="3"/>
+                </td>                   
                 <td scope="row" class="label">
-                 
-                </td>               
-                <td>
-                 
+                    <label for="milestoneCode"> <fmt:message key="studyProtocol.milestone"/></label>
                 </td>
+                <s:set name="milestoneCodes" value="@gov.nih.nci.pa.enums.MilestoneCode@getDisplayNames()" />
+                <td>
+                   <s:select headerKey="" headerValue="All" id="studyMilestone" name="criteria.studyMilestone" list="#milestoneCodes"  value="criteria.studyMilestone" cssStyle="width:206px" />
+                </td> 
             </tr>
             <tr>                
                 <td scope="row" class="label">
