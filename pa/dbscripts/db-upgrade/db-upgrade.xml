@@ -790,4 +790,8 @@
         <comment>Add the completionDate field to study protocol</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.6.1/PO-4187.sql"/>
      </changeSet>
+     <changeSet id="PO-3773" author="ludetc">
+        <comment>Correct names of anatomic sites</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.6.1/PO-3773.sql"/>
+     </changeSet>
 </databaseChangeLog>
