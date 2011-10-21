@@ -102,6 +102,8 @@ public class StudyOwnershipTest extends AbstractPaSeleniumTest {
         searchAndSelectTrial("Test Assign Ownership Trial created by Selenium.");
         clickAndWait("link=Assign Ownership");
         assertTrue(selenium.isElementPresent("link=Search"));
+        selenium.type("id=firstName", "Abstractor");
+        selenium.type("id=lastName", "User");
         clickAndWait("link=Search");
         assertEquals(selenium.getText("xpath=//table[@id='results']//tr[1]//td[4]"), "Remove Ownership");
         clickAndWait("link=Remove Ownership");
