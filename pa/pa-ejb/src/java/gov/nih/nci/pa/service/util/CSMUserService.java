@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.service.util;
 
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.iso.convert.AbstractStudyProtocolConverter;
 import gov.nih.nci.pa.service.CSMUserUtil;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
@@ -110,6 +111,10 @@ public class CSMUserService implements CSMUserUtil {
      * Based on gridServicePrincipalSeparator used in security-config.xml.  Escaped for regular expression support.
      */
     private static final String PRINCIPAL_SEPARATOR = "\\|\\|";
+
+    static {
+        AbstractStudyProtocolConverter.setCsmUserUtil(instance);
+    }
 
     /**
      * {@inheritDoc}
