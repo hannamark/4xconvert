@@ -62,6 +62,7 @@
             <pa:sucessMessage/>
             <pa:failureMessage/>
             <s:form action="nciSpecificInformationupdate">
+                <s:token/>
                 <pa:studyUniqueToken/>
                 <h2><fmt:message key="nciSpecificInformation.title" /></h2>
                 <table class="form" >

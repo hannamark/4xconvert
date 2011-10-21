@@ -105,7 +105,7 @@ public class ManageAccrualAccessHelper {
     /**
      * Place holder id for "all sites" drop down item.
      */
-    public static final long ALL_TREATING_SITES_ID = -1L;
+    public static final Long ALL_TREATING_SITES_ID = -1L;
     private final StudySiteAccrualAccessServiceLocal accrualAccessService;
 
     /**
@@ -124,7 +124,7 @@ public class ManageAccrualAccessHelper {
     public void addMultipleTreatingSitesAccess(StudySiteAccrualAccessWebDTO webDto,
             Map<Long, String> sites) throws PAException {
         for (Long key : sites.keySet()) {
-            if (ALL_TREATING_SITES_ID == key.longValue()) {
+            if (ALL_TREATING_SITES_ID.equals(key)) {
                 continue;
             }
             webDto.setStudySiteId(key);

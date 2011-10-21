@@ -117,6 +117,7 @@
             <pa:sucessMessage/>
             <pa:failureMessage/>
             <s:form action="regulatoryInfoupdate" name="saveRegAuthority" theme="simple">
+                <s:token/>
                 <pa:studyUniqueToken/>
                 <s:actionerror/>
                 <h2><fmt:message key="regulatory.title" /></h2>

@@ -37,6 +37,7 @@ function handleAction(){
     <pa:sucessMessage/>
    <pa:failureMessage/>
     <s:form name="editForm">
+        <s:token/>
         <s:actionerror/>
         <pa:studyUniqueToken/>
     <h2><fmt:message key="trialHistory.edittitle" /></h2>

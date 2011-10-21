@@ -52,7 +52,9 @@ function callOnloadFunctions(){
 		      <s:elseif test="%{#attr.row.typeCode.equals('Change Memo Document')}">
               </s:elseif>
     		  <s:else>
-			     <s:url id="url" action="trialDocumentdelete"><s:param name="id" value="%{#attr.row.id}" /></s:url>
+			     <s:url id="url" action="trialDocumentdelete">
+                    <s:param name="id" value="%{#attr.row.id}" />
+                 </s:url>
     		     <s:a href="%{url}"><img src="<c:url value='/images/ico_delete.gif'/>" alt="Delete" width="16" height="16"/></s:a>
 		      </s:else>
     	   </display:column>

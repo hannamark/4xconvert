@@ -34,14 +34,6 @@
             function lookup() {
                 showPopup('${lookupUrl}', null, 'Disease');
             }
-
-            function loadDiv(intid) {
-                 var url = '/pa/protected/ajaxptpDiseasedisplay.action';
-                 var params = { diseaseId: intid };
-                 var div = document.getElementById('loadDetails');   
-                 div.innerHTML = '<div align="left"><img  src="../images/loading.gif"/>&nbsp;Loading...</div>';
-                 var aj = callAjaxPost(div, url, params);
-            }
         </script>
     </head>
     <body>
@@ -60,6 +52,7 @@
                 <tr>
                     <td colspan="2">
                         <s:form name="diseaseForm">
+                            <s:token/>
                            <div id="loadDetails">
                                 <%@ include file="/WEB-INF/jsp/nodecorate/selectedDiseaseDetails.jsp"%>
                             </div>

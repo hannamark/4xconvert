@@ -85,15 +85,8 @@ package gov.nih.nci.pa.report.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.DSet;
-import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
@@ -102,11 +95,9 @@ import gov.nih.nci.pa.report.dto.result.Summ4RepResultDto;
 import gov.nih.nci.pa.report.util.MockPoServiceLocator;
 import gov.nih.nci.pa.report.util.TestSchema;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PoRegistry;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -144,11 +135,11 @@ public class Summ4RepTest
         assertEquals("StudyProtocol", resultList.get(0).getLeadOrgName().getValue());
         assertEquals("StudyProtocol", resultList.get(0).getNciIdentifier().getValue());
         assertEquals("StudyProtocol", resultList.get(0).getNctIdentifier().getValue());
-        assertEquals("StudyProtocol", resultList.get(0).getCtepIdentifier().getValue());        
+        assertEquals("StudyProtocol", resultList.get(0).getCtepIdentifier().getValue());
     }
-    
+
 //    @Test (expected=PAException.class)
-//    public void getTestWithNullCriteria() throws Exception {    
+//    public void getTestWithNullCriteria() throws Exception {
 //        List<Summ4RepResultDto> resultList = bean.get(null);
 //    }
 
@@ -186,13 +177,13 @@ public class Summ4RepTest
         Map<String, String> families =  bean.getFamilies(10);
         assertEquals(5, families.size());
     }
-    
+
     @Test
     public void testConvertToInteger() throws Exception  {
         assertEquals(null, bean.convertToInteger(null));
         assertEquals(new Integer(1), bean.convertToInteger("1"));
     }
-   
+
 
     private class Summ4RepBeanExtenderForTest extends Summ4ReportBean {
         /**

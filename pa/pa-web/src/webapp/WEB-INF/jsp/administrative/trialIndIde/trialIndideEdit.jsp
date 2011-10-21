@@ -172,6 +172,7 @@ function tooltip() {
     <pa:sucessMessage/>
    <pa:failureMessage/>
     <s:form>
+        <s:token/>
         <s:actionerror/>
         <pa:studyUniqueToken/>
     <h2><fmt:message key="trialIndide.edittitle" /></h2>

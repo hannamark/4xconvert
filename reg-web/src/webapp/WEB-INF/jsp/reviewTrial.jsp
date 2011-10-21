@@ -61,6 +61,7 @@
             <c:set var="topic" scope="request" value="edittrial"/>
             <div class="box">
                 <s:form id="reviewTrialForm">
+                    <s:token/>
                     <s:actionerror/>
                     <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
                     <s:hidden name="pageFrom" id="pageFrom"/>

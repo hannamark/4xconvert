@@ -48,6 +48,7 @@ BubbleTips.activateTipOn("dfn");
    <pa:sucessMessage/>
    <pa:failureMessage/>
     <s:form method="POST" enctype="multipart/form-data">
+        <s:token/>
         <s:actionerror/>
         <pa:studyUniqueToken/>
     <h2><fmt:message key="trialDocument.addtitle" /></h2>

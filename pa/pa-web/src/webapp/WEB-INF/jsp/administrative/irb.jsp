@@ -120,6 +120,7 @@
                 <fmt:message key="irb.details.title" />
             </h2>
             <s:form name="irbForm">
+                <s:token/>
                 <pa:studyUniqueToken/>
                 <table class="form">
                     <s:hidden name="selectedArmIdentifier"/>

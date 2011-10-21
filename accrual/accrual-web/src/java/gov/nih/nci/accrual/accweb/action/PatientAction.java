@@ -120,7 +120,6 @@ import com.opensymphony.xwork2.Preparable;
  */
 public class PatientAction extends AbstractListEditAccrualAction<PatientWebDto> implements Preparable {
     private static final long serialVersionUID = -6820189447703204634L;
-    private static String deletedStatusCode = FunctionalRoleStatusCode.TERMINATED.getCode();
     private static List<Country> listOfCountries = null;
     private static Long unitedStatesId = null;
     private Long organizationId;

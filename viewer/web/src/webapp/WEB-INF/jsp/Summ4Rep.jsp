@@ -61,6 +61,7 @@ function displaySearch() {
 <!-- main content begins-->
     <h1><fmt:message key="summ4Rep.header"/></h1>
     <s:form name="criteria" id="criteria">
+        <s:token/>
         <table class="form">
             <s:if test="hasActionErrors()"><tr><td colspan="2"><div class="error_msg"><s:actionerror /></div></td></tr></s:if> 
             <tr><td colspan="2">

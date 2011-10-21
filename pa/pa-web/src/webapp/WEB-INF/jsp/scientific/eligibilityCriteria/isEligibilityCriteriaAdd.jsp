@@ -191,10 +191,11 @@
             </c:choose>
         </h1>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
-        <div class="box">  
+        <div class="box">
             <pa:sucessMessage/>
             <pa:failureMessage/>
             <s:form id="eligibilityCriteraiAdd" name="eligibilityCriteraiAdd">
+                <s:token/>
                 <s:actionerror/>
                 <pa:studyUniqueToken/>
                 <h2><fmt:message key="isdesign.eligibilitycriteria.subtitle"/></h2>

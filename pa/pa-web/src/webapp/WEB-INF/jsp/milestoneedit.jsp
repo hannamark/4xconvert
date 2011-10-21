@@ -20,10 +20,8 @@
             function milestoneAdd() {
                 input_box = confirm("Click OK to add milestone.  Cancel to Abort.");
                 if (input_box == true) {
-                    var date = document.getElementById("date").value;
                     var form = document.milestoneForm;
-                    form.elements["milestone.date"].value = date;
-                    form.action = "milestoneadd.action?date=" + date;
+                    form.action = "milestoneadd.action";
                     form.submit();
                 }
             }
@@ -75,6 +73,7 @@
                                 <td colspan="2">
                                     <h3><fmt:message key="milestone.milestone"/></h3>
                                     <s:form name="milestoneForm">
+                                        <s:token/>
                                         <pa:studyUniqueToken/>
                                         <table class="form">
                                             <tr>

@@ -129,6 +129,7 @@ function initialize() {
 <pa:sucessMessage/>
    <pa:failureMessage/>
 <s:form>
+    <s:token/>
     <pa:studyUniqueToken/>
 <s:actionerror/>
 <h2><fmt:message key="isdesign.details.title"/></h2>

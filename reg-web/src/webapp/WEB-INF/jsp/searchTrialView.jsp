@@ -52,6 +52,7 @@
                     </div>
                 </c:if>
                 <s:form > 
+                    <s:token/>
                     <s:actionerror/>
                     <s:hidden name="criteria.identifierType" />
                     <s:hidden name="criteria.identifier" />

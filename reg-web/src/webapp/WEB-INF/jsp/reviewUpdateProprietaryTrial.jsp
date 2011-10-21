@@ -52,7 +52,8 @@
             <h1><fmt:message key="review.trial.view.page.title" /></h1>
             <c:set var="topic" scope="request" value="edittrial"/>
             <div class="box">
-                <s:form > 
+                <s:form>
+                    <s:token/> 
                     <s:actionerror/>
                     <s:hidden name="trialDTO.assignedIdentifier" id="trialDTO.assignedIdentifier"/>
                     <s:hidden name="pageFrom" id="pageFrom"/>

@@ -135,6 +135,7 @@
                 <tr>
                     <td colspan="2">
                         <s:form name="interventionForm" validate="true">
+                            <s:token/>
                             <pa:studyUniqueToken/>
                             <div id="loadDetails">
                                 <%@ include file="/WEB-INF/jsp/nodecorate/selectedInterventionDetails.jsp"%>

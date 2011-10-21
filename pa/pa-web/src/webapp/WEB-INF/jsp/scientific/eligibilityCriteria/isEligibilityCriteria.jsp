@@ -49,7 +49,9 @@ BubbleTips.activateTipOn("dfn");
   <div class="box">  
    <pa:sucessMessage/>
    <pa:failureMessage/>
-    <s:form><s:actionerror/>
+    <s:form>
+        <s:token/>
+        <s:actionerror/>
         <pa:studyUniqueToken/>    
     <h2><fmt:message key="isdesign.eligibilitycriteria.title"/></h2>
     <table class="form">

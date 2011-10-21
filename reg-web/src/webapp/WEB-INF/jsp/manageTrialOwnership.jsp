@@ -46,6 +46,7 @@
             <reg-web:failureMessage/>
             <reg-web:sucessMessage/>
             <s:form name="formManageTrialOwnership" action="manageTrialOwnershipview.action">
+                <s:token/>
             <table class="form">
                 <tr>
                     <td scope="row" class="label">

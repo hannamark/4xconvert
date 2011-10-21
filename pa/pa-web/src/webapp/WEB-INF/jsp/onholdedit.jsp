@@ -58,6 +58,7 @@
                     <s:else><fmt:message key="onhold.edit.title"/></s:else>
                 </h3>
                 <s:form name="editForm">
+                    <s:token/>
                     <pa:studyUniqueToken/>
                   <s:hidden name="currentAction"/>
                   <s:hidden name="onhold.identifier"/> 

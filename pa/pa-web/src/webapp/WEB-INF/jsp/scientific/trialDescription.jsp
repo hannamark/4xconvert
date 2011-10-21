@@ -42,6 +42,7 @@
 <pa:sucessMessage/>
 <pa:failureMessage/>
 <s:form name="trialDescription" validate="true" method="POST">
+    <s:token/>
     <pa:studyUniqueToken/>
     <s:hidden name="studyObjectiveIip" id="studyObjectiveIip"/>
     <s:hidden name="studyObjectiveIis" id="studyObjectiveIis"/>

@@ -234,6 +234,7 @@
                         <div id="tabboxwrapper"><!--Facility-->
                             <div id="facility" class="box">
                                 <s:form name="facility">
+                                    <s:token/>
                                     <pa:studyUniqueToken/>
                                     <div id="loadOrgDetails">
                                          <%@ include file="/WEB-INF/jsp/nodecorate/nodecororgdetails.jsp" %>

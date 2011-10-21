@@ -339,6 +339,7 @@
         <div class="box" id="filters">
             <reg-web:failureMessage/>
             <s:form name="submitTrial" method="POST" enctype="multipart/form-data">
+                <s:token/>
                 <s:if test="hasActionErrors()">
                     <div class="error_msg">
                         <s:actionerror/>

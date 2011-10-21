@@ -35,6 +35,7 @@
         <div class="box">
             <pa:sucessMessage/>
             <s:form>
+                <s:token/>
                 <s:actionerror/>
                 <h2>Trial Identification</h2>
                 <table class="form">

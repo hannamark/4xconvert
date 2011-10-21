@@ -21,6 +21,7 @@ function setCheckbox(index) {
 </s:if>
 
 <s:form name="countform" action="industrialPatientsupdate">
+    <s:token/>
     <s:hidden name="studyProtocolId" />
     <display:table class="data" sort="list" pagesize="10" uid="row" name="studySiteCounts" export="false"
         decorator="gov.nih.nci.accrual.accweb.decorator.SubjectAccrualCountDecorator">

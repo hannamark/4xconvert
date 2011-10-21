@@ -102,6 +102,7 @@
                 <tr>
                     <td colspan="2">
                         <s:form id="plannedMarkerForm" action="%{#submitUrl}">
+                            <s:token/>
                             <pa:studyUniqueToken/>
                             <div id="plannedMarkerDetails">
                                 <%@ include file="/WEB-INF/jsp/scientific/plannedMarker/selectedPlannedMarker.jsp"%>

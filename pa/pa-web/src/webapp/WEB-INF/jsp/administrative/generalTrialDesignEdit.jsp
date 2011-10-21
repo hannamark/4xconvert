@@ -129,6 +129,7 @@
             <pa:sucessMessage/>
             <pa:failureMessage/>
             <s:form>
+                <s:token/>
                 <pa:studyUniqueToken/>
                 <s:actionerror/>
                 <table class="form">

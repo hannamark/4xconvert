@@ -68,6 +68,7 @@
 
     <h1><fmt:message key="adHoc.header"/></h1>
     <s:form name="sForm">
+        <s:token/>
         <table class="form">
             <s:if test="hasActionErrors()"><tr><td colspan="2"><div class="error_msg"><s:actionerror /></div></td></tr></s:if> 
             

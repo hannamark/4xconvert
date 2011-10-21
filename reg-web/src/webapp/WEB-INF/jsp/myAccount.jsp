@@ -18,6 +18,7 @@
             <b><i> Please provide professional contact information only. </i></b>
             </p>
             <s:form name="myAccount" method="POST" >
+                <s:token/>
                 <s:actionmessage/>
                 <s:actionerror/>
                 <s:hidden name="registryUserWebDTO.id" />

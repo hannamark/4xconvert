@@ -48,6 +48,7 @@
             <reg-web:failureMessage/>
             <reg-web:sucessMessage/>
             <s:form name="formSiteAdministration" action="siteAdministrationview.action">
+                <s:token/>
                 <table class="form">
                     <tr>
                         <td scope="row" class="label">

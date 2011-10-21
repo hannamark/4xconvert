@@ -164,6 +164,7 @@
         <div class="box" id="filters">
             <reg-web:failureMessage/>
             <s:form name="updateTrial" id="updateTrial" method="POST" validate="false" enctype="multipart/form-data" cssStyle="display:block; width:100%;">
+                <s:token/>
                 <s:if test="hasActionErrors()">
                     <div class="error_msg"><s:actionerror/></div>
                 </s:if>

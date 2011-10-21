@@ -115,6 +115,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang.xwork.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.joda.time.DateTime;
 /**
@@ -224,11 +225,11 @@ public final class MilestoneAction extends AbstractListEditAction {
     @Override
     public String add() throws PAException {
         StudyMilestoneDTO dto = new StudyMilestoneDTO();
-        String date = ServletActionContext.getRequest().getParameter("date");
+        String date = milestone.getDate();
         dto.setCommentText(StConverter.convertToSt(milestone.getComment()));
         dto.setMilestoneCode(CdConverter.convertStringToCd(milestone.getMilestone()));
         Date now = new DateTime().toDate();
-        if (DateUtils.isSameDay(now, PAUtil.dateStringToDateTime(date))) {
+        if (StringUtils.isNotEmpty(date) && DateUtils.isSameDay(now, PAUtil.dateStringToDateTime(date))) {
             dto.setMilestoneDate(TsConverter.convertToTs(now));
         } else {
             dto.setMilestoneDate(TsConverter.convertToTs(PAUtil.dateStringToTimestamp(date)));

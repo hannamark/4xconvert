@@ -31,6 +31,7 @@ function handleAction(){
    <pa:sucessMessage/>
    <pa:failureMessage/> 
     <s:form>
+        <s:token/>
         <pa:studyUniqueToken/>
     <h2>Reason For Rejection</h2>
     <table class="form">

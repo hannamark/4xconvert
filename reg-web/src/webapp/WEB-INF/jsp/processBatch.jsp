@@ -21,7 +21,9 @@ function handleAction(){
     <h1><fmt:message key="process.batch.page.header"/></h1>
     <div class="box" id="filters">
     <reg-web:failureMessage/>
-    <s:form name="batchUpload" method="POST" enctype="multipart/form-data"><s:actionerror/>
+    <s:form name="batchUpload" method="POST" enctype="multipart/form-data">
+        <s:token/>
+        <s:actionerror/>
         <s:hidden name="page" />
         <p> Register multiple trials in the NCI Clinical Trials Reporting Program by uploading the Trial Data file and the Zip file that contains trial documents.
          <br>&nbsp;Note the following requirements:

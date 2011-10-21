@@ -101,6 +101,7 @@
         <c:set var="topic" scope="request" value="abstractsite"/>
         <jsp:include page="/WEB-INF/jsp/protocolDetailSummary.jsp"/>
         <s:form name="proprietarySite">
+            <s:token/>
             <pa:studyUniqueToken/>
             <div class="box">
                 <pa:sucessMessage/>

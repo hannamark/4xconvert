@@ -29,7 +29,7 @@
                 <interceptor-ref name="params">
                     <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop]
+                        _,d-\d+?-[sop],^struts\..*
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="servletConfig" />
@@ -40,7 +40,7 @@
                 <interceptor-ref name="params">
                     <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop]
+                        _,d-\d+?-[sop],^struts\..*
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="maliciousInput" />
@@ -54,6 +54,10 @@
                 <interceptor-ref name="workflow">
                     <param name="excludeMethods">input,back,cancel,reOrder</param>
                 </interceptor-ref>
+                <interceptor-ref name="tokenSession">
+                    <param name="includeMethods">add,update</param>
+                    <param name="excludeMethods">*</param>
+                </interceptor-ref>
             </interceptor-stack>
 
             <interceptor-stack name="paNoDisclaimerDefaultInterceptor">
@@ -61,7 +65,7 @@
                 <interceptor-ref name="params">
                     <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop]
+                        _,d-\d+?-[sop],^struts\..*
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="servletConfig" />
@@ -73,7 +77,7 @@
                 <interceptor-ref name="params">
                     <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop]
+                        _,d-\d+?-[sop],^struts\..*
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="maliciousInput" />
@@ -96,7 +100,7 @@
                 <interceptor-ref name="params">
                     <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop]
+                        _,d-\d+?-[sop],^struts\..*
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="servletConfig" />
@@ -107,7 +111,7 @@
                 <interceptor-ref name="params">
                     <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop]
+                        _,d-\d+?-[sop],^struts\..*
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="maliciousInput" />
@@ -121,6 +125,10 @@
                 </interceptor-ref>
                 <interceptor-ref name="workflow">
                     <param name="excludeMethods">input,back,cancel,reOrder</param>
+                </interceptor-ref>
+                <interceptor-ref name="tokenSession">
+                    <param name="includeMethods">add,update</param>
+                    <param name="excludeMethods">*</param>
                 </interceptor-ref>
             </interceptor-stack>
         </interceptors>
@@ -180,6 +188,9 @@
     <package name="protected" namespace="/protected" extends="report">
         <action name="studyProtocol*" class="gov.nih.nci.pa.action.StudyProtocolQueryAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">adminCheckIn,adminCheckOut,scientificCheckIn,scientificCheckOut</param>
+            </interceptor-ref>
             <result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>
             <result name="error">/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
             <result>/WEB-INF/jsp/studyProtocolQueryCriteria.jsp</result>
@@ -211,6 +222,9 @@
         </action>
         <action name="participatingOrganizations*" class="gov.nih.nci.pa.action.ParticipatingOrganizationsAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">facilitySave,facilityUpdate,proprietarySave</param>
+            </interceptor-ref>
             <result name="lookup">/WEB-INF/jsp/nodecorate/lookup.jsp</result>
             <result name="edit">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizationscreate.jsp</result>
             <result name="delete">/WEB-INF/jsp/administrative/participatingSites/participatingOrganizations.jsp</result>
@@ -234,6 +248,9 @@
 
         <action name="collaborators*" class="gov.nih.nci.pa.action.CollaboratorsAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">facilitySave,facilityUpdate</param>
+            </interceptor-ref>
             <result name="lookup">/WEB-INF/jsp/nodecorate/lookup.jsp</result>
             <result name="create">/WEB-INF/jsp/administrative/collaborators/collaboratorscreate.jsp</result>
             <result name="edit">/WEB-INF/jsp/administrative/collaborators/collaboratorscreate.jsp</result>
@@ -245,9 +262,6 @@
         <action name="ajaxdisplaypersoninfo*" class="gov.nih.nci.pa.action.DisplayInfoAction" method="{1}">
             <result>/WEB-INF/jsp/nodecorate/displayUserInfo.jsp</result>
             <result name="error">/WEB-INF/jsp/nodecorate/displayUserInfo.jsp</result>
-        </action>
-        <action name="ajaxptpDisease*" class="gov.nih.nci.pa.action.DiseaseAction" method="{1}">
-            <result name="edit">/WEB-INF/jsp/nodecorate/selectedDiseaseDetails.jsp</result>
         </action>
         <action name="ajaxptpIntervention*" class="gov.nih.nci.pa.action.TrialInterventionsAction" method="{1}">
             <result name="edit">/WEB-INF/jsp/nodecorate/selectedInterventionDetails.jsp</result>
@@ -289,6 +303,9 @@
         </action>
         <action name="trialFunding*" class="gov.nih.nci.pa.action.TrialFundingAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">delete</param>
+            </interceptor-ref>
             <result>/WEB-INF/jsp/administrative/trialFunding/trialFundingAdd.jsp</result>
             <result name="add">/WEB-INF/jsp/administrative/trialFunding/trialFundingAdd.jsp</result>
             <result name="query">/WEB-INF/jsp/administrative/trialFunding/trialFunding.jsp</result>
@@ -302,6 +319,9 @@
         </action>
         <action name="irb*" class="gov.nih.nci.pa.action.IrbAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">save</param>
+            </interceptor-ref>
             <result>/WEB-INF/jsp/administrative/irb.jsp</result>
         </action>
         <action name="nciSpecificInformation*" class="gov.nih.nci.pa.action.NCISpecificInformationAction" method="{1}">
@@ -315,6 +335,9 @@
         </action>
         <action name="trialDocument*" class="gov.nih.nci.pa.action.TrialDocumentAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">create</param>
+            </interceptor-ref>
             <result>/WEB-INF/jsp/administrative/trialDocuments/trialDocuments.jsp</result>
             <result name="input">/WEB-INF/jsp/administrative/trialDocuments/trialDocumentAdd.jsp</result>
             <result name="error">/WEB-INF/jsp/administrative/trialDocuments/trialDocuments.jsp</result>
@@ -325,6 +348,7 @@
             <result>/WEB-INF/jsp/nodecorate/diseaseDetails.jsp</result>
         </action>
         <action name="popupDis*" class="gov.nih.nci.pa.action.PopUpDisAction" method="{1}">
+        
             <result>/WEB-INF/jsp/nodecorate/lookupdiseases.jsp</result>
             <result name="displayList">/WEB-INF/jsp/nodecorate/lookupdiseasesdisplayList.jsp</result>
         </action>
@@ -359,6 +383,9 @@
 
         <action name="subGroups*" class="gov.nih.nci.pa.action.SubGroupsAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">create</param>
+            </interceptor-ref>
             <result>/WEB-INF/jsp/scientific/subGroups/subGroups.jsp</result>
             <result name="input">/WEB-INF/jsp/scientific/subGroups/subGroupsAdd.jsp</result>
             <result name="error">/WEB-INF/jsp/scientific/subGroups/subGroups.jsp</result>
@@ -367,6 +394,9 @@
 
         <action name="interventionalStudyDesign*" class="gov.nih.nci.pa.action.InterventionalStudyDesignAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">outcomecreate,outcomeupdate</param>
+            </interceptor-ref>
             <result name="details">/WEB-INF/jsp/scientific/isdesignDetails.jsp</result>
             <result name="outcome">/WEB-INF/jsp/scientific/outcomeMeasures/outcomeMeasure.jsp</result>
             <result name="outcomeAdd">/WEB-INF/jsp/scientific/outcomeMeasures/outcomeMeasureAdd.jsp</result>
@@ -400,12 +430,18 @@
         </action>
         <action name="eligibilityCriteria*" class="gov.nih.nci.pa.action.EligibilityCriteriaAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">create,save,reOrder</param>
+            </interceptor-ref>
             <result name="eligibility">/WEB-INF/jsp/scientific/eligibilityCriteria/isEligibilityCriteria.jsp</result>
             <result name="eligibilityAdd">/WEB-INF/jsp/scientific/eligibilityCriteria/isEligibilityCriteriaAdd.jsp</result>
             <result name="displaycde">/WEB-INF/jsp/nodecorate/eligibilityBuildCriterion.jsp</result>
         </action>
         <action name="trialIndide*" class="gov.nih.nci.pa.action.TrialIndideAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">create</param>
+            </interceptor-ref>
             <result>/WEB-INF/jsp/administrative/trialIndIde/trialIndideAdd.jsp</result>
             <result name="add">/WEB-INF/jsp/administrative/trialIndIde/trialIndideAdd.jsp</result>
             <result name="edit">/WEB-INF/jsp/administrative/trialIndIde/trialIndideEdit.jsp</result>
@@ -437,6 +473,9 @@
         </action>
         <action name="trialValidation*" class="gov.nih.nci.pa.action.TrialValidationAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">accept,reject,rejectReason</param>
+            </interceptor-ref>
             <result name="edit">/WEB-INF/jsp/trialValidation.jsp</result>
             <result name="rejectReason">/WEB-INF/jsp/trialValidationReject.jsp</result>
             <result name="amend_reject" type="redirectAction">

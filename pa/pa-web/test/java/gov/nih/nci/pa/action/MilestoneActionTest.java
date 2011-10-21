@@ -10,7 +10,6 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.pa.dto.MilestoneWebDTO;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -48,7 +47,7 @@ public class MilestoneActionTest extends AbstractPaActionTest {
         action = new MilestoneAction();
         action.prepare();
     }
-    
+
     @After
     public void tearDown() {
         DateTimeUtils.setCurrentMillisSystem();
@@ -96,10 +95,10 @@ public class MilestoneActionTest extends AbstractPaActionTest {
     public void testAddThrowsEx() throws PAException {
         MilestoneWebDTO webDTO = new MilestoneWebDTO();
         webDTO.setComment("comment");
-        getRequest().setupAddParameter("date", "06/18/2009");
+        webDTO.setDate("06/18/2009");
         webDTO.setMilestone(MilestoneCode.ADMINISTRATIVE_QC_START.getDisplayName());
         action.setMilestone(webDTO);
-        action.setSpIi(IiConverter.convertToIi("9"));
+        action.setSpIi(IiConverter.convertToStudyProtocolIi(9L));
         String result = action.add();
         assertEquals("Wrong result from add action", "edit", result);
         assertNotNull(action.getAllowedMilestones());
@@ -111,7 +110,7 @@ public class MilestoneActionTest extends AbstractPaActionTest {
     public void testAdd() throws PAException {
         MilestoneWebDTO webDTO = new MilestoneWebDTO();
         webDTO.setComment("comment");
-        getRequest().setupAddParameter("date", "06-19-2009");
+        webDTO.setDate("06-19-2009");
         webDTO.setMilestone(MilestoneCode.ADMINISTRATIVE_QC_START.getDisplayName());
         action.setMilestone(webDTO);
         setUpAmendmentSearch();
@@ -123,7 +122,7 @@ public class MilestoneActionTest extends AbstractPaActionTest {
     public void testDateCheckPastDate() throws PAException {
         MilestoneWebDTO webDTO = new MilestoneWebDTO();
         webDTO.setComment("comment");
-        getRequest().setupAddParameter("date", "06-19-2009");
+        webDTO.setDate("06-19-2009");
         webDTO.setMilestone(MilestoneCode.ADMINISTRATIVE_QC_START.getDisplayName());
         action.setMilestone(webDTO);
         setUpDateCheckForTodayOnMilestone();
@@ -139,7 +138,7 @@ public class MilestoneActionTest extends AbstractPaActionTest {
         String clientDate = sdf.format(new Timestamp(now));
         MilestoneWebDTO webDTO = new MilestoneWebDTO();
         webDTO.setComment("comment");
-        getRequest().setupAddParameter("date", clientDate);
+        webDTO.setDate(clientDate);
         webDTO.setMilestone(MilestoneCode.ADMINISTRATIVE_QC_START.getDisplayName());
         action.setMilestone(webDTO);
         setUpDateCheckForTodayOnMilestone();

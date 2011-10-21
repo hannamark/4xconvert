@@ -65,6 +65,7 @@
 <table class="form">
     <tr>
         <s:form name="armForm">
+        <s:token/>
         <pa:studyUniqueToken/>
         <s:hidden name="checkBoxEntry"/>
         <s:hidden name="currentAction"/>

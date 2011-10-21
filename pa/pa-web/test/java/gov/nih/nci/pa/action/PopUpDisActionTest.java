@@ -217,11 +217,11 @@ public class PopUpDisActionTest extends AbstractPaActionTest {
 	    StudyDiseaseDTO studyDiseaseDTO = new StudyDiseaseDTO();
 	    PopUpDisAction action = mock(PopUpDisAction.class);
 	    doCallRealMethod().when(action).setStudyDiseaseService(studyDiseaseService);
-	    doCallRealMethod().when(action).add();
+	    doCallRealMethod().when(action).addDisease();
 	    when(action.getStudyDisease()).thenReturn(studyDiseaseDTO);
 	    when(action.displayList()).thenReturn("displayList");
 	    action.setStudyDiseaseService(studyDiseaseService);
-	    String result = action.add();
+	    String result = action.addDisease();
 	    verify(action).getStudyDisease();
 	    verify(action, never()).addActionError(anyString());
 	    verify(studyDiseaseService).create(studyDiseaseDTO);
@@ -239,11 +239,11 @@ public class PopUpDisActionTest extends AbstractPaActionTest {
         when(studyDiseaseService.create(studyDiseaseDTO)).thenThrow(new PAException("PAException"));
         PopUpDisAction action = mock(PopUpDisAction.class);
         doCallRealMethod().when(action).setStudyDiseaseService(studyDiseaseService);
-        doCallRealMethod().when(action).add();
+        doCallRealMethod().when(action).addDisease();
         when(action.getStudyDisease()).thenReturn(studyDiseaseDTO);
         when(action.displayList()).thenReturn("displayList");
         action.setStudyDiseaseService(studyDiseaseService);
-        String result = action.add();
+        String result = action.addDisease();
         verify(action).getStudyDisease();
         verify(action).addActionError("PAException");
         verify(studyDiseaseService).create(studyDiseaseDTO);

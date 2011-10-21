@@ -159,7 +159,7 @@ public class ManageAccrualAccessAction extends AbstractListEditAction {
     @Override
     public String add() throws PAException {
         try {
-            if (ManageAccrualAccessHelper.ALL_TREATING_SITES_ID == getAccess().getStudySiteId().longValue()) {
+            if (ManageAccrualAccessHelper.ALL_TREATING_SITES_ID.equals(getAccess().getStudySiteId())) {
                 accrualAccessHelper.addMultipleTreatingSitesAccess(getAccess(), getSites());
                 getAccess().setStudySiteId(ManageAccrualAccessHelper.ALL_TREATING_SITES_ID);
             } else {

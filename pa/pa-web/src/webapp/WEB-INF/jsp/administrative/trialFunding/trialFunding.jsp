@@ -43,6 +43,7 @@ function handleDelete(studyResourcingId){
   <div class="box">
   <pa:sucessMessage/>
     <s:form>
+        <s:token/>
         <s:actionerror/>
         <pa:studyUniqueToken/>
     <h2><fmt:message key="trialFunding.subtitle" /></h2>

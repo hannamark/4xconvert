@@ -66,6 +66,7 @@
                 <tr>
                     <td colspan="2">
                         <s:form name="facility">
+                            <s:token/>
                             <pa:studyUniqueToken/>
                             <div id="loadOrgDetails">
                                 <div id="orgDetailsDiv">

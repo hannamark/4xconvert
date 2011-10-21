@@ -41,6 +41,7 @@
             <s:actionerror/>
         </s:else>
         <s:form name="updateTrialStatusForm" id="updateTrialStatusForm" action="updateTrialStatuspopupupdate">
+            <s:token/>
             <s:hidden name="trialDTO.identifier"/>
             <s:hidden name="studyProtocolId"/>
             <table class="form">

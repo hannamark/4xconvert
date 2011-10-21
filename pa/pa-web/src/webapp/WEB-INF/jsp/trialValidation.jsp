@@ -114,6 +114,7 @@
             <pa:sucessMessage/>
             <pa:failureMessage/>
             <s:form>
+                <s:token/>
                 <pa:studyUniqueToken/>
                 <s:actionerror/> 
                 <s:hidden name="gtdDTO.submissionNumber" id="gtdDTO.submissionNumber"/>

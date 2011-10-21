@@ -26,7 +26,7 @@
             }
             
             function addDisease(diseaseid) {
-                 return addOrRemoveDisease(diseaseid, 'add');
+                 return addOrRemoveDisease(diseaseid, 'addDisease');
             }
             
             function removeDisease(diseaseid) {

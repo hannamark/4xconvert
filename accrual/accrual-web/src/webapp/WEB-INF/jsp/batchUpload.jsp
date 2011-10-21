@@ -12,6 +12,7 @@
         <s:if test="hasActionMessages()"><div class="confirm_msg"><s:actionmessage /></div></s:if>
         <h1><fmt:message key="accrual.batchUpload.title"/></h1>
         <s:form action="batchUploaddoUpload" method="POST" enctype="multipart/form-data">
+            <s:token/>
             <table class="form">
                 <tr>
                    <td class="value" style="width:250px">

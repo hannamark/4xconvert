@@ -117,18 +117,18 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 8987838321L;
 
     private static final Logger LOG = Logger.getLogger(PopUpDisAction.class);
-    
+
     private PDQDiseaseParentServiceRemote pdqDiseaseParentService;
     private PDQDiseaseServiceLocal pdqDiseaseService;
     private StudyDiseaseServiceLocal studyDiseaseService;
-    
+
     private String searchName;
     private String includeSynonym;
     private String exactMatch;
-    private List<DiseaseWebDTO> disWebList; 
+    private List<DiseaseWebDTO> disWebList;
     private Long diseaseId;
     private boolean includeXml = true;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -138,7 +138,7 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
         pdqDiseaseService = PaRegistry.getDiseaseService();
         studyDiseaseService = PaRegistry.getStudyDiseaseService();
     }
-    
+
     /**
      * Search the diseases according to the user criteria and loads them in the diseaseWebList.
      * @return The result name
@@ -151,7 +151,7 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
             return "displayList";
         }
         try {
-        Map<Ii, StudyDiseaseDTO> existingDiseaseIis = getExistingDiseases(getStudyProtocolIi());    
+        Map<Ii, StudyDiseaseDTO> existingDiseaseIis = getExistingDiseases(getStudyProtocolIi());
         List<PDQDiseaseDTO> pdqDiseaseDTOs = searchDiseases();
         disWebList = getDiseaseWebList(existingDiseaseIis, pdqDiseaseDTOs);
         loadParentPreferredNames();
@@ -187,7 +187,7 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
         }
         return diseaseIis;
     }
-    
+
     /**
      * Search the diseases corresponding to the criteria entered by the user.
      * @return The list of diseases corresponding to the criteria entered by the user
@@ -257,7 +257,7 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
             dto.setParentPreferredName(childParent.get(dto.getDiseaseIdentifier()));
         }
     }
-    
+
     /**
      * Get the parent diseases of the diseases already in the disease web list.
      * @return The parent diseases of the diseases already in the disease web list.
@@ -285,7 +285,7 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
      * Add a disease to the study protocol.
      * @return result
      */
-    public String add() {
+    public String addDisease() {
         try {
             StudyDiseaseDTO sdDto = getStudyDisease();
             studyDiseaseService.create(sdDto);
@@ -294,7 +294,7 @@ public class PopUpDisAction extends ActionSupport implements Preparable {
         }
         return displayList();
     }
-    
+
     /**
      * Creates the new study disease dto to add.
      * @return the new study disease dto.

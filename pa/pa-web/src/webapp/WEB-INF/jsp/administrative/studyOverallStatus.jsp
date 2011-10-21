@@ -77,6 +77,7 @@
         <div class="box">
             <pa:sucessMessage/>
             <s:form name="studyoverallstatus">
+                <s:token/>
                 <pa:studyUniqueToken/>
                 <s:if test="hasActionErrors()">
                     <div class="error_msg"><s:actionerror/></div>

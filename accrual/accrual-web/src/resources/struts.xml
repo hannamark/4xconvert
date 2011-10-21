@@ -27,7 +27,7 @@
                 <interceptor-ref name="params">
                     <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
                     <param name="excludeParams">
-                        _,d-\d+?-[sop]
+                        _,d-\d+?-[sop],^struts\..*
                     </param>
                 </interceptor-ref>
                 <interceptor-ref name="maliciousInput" />
@@ -43,6 +43,14 @@
                 <interceptor-ref name="parameterTrim">
                     <param name="trimToNull">true</param>
                     <param name="trimFromFront">true</param>
+                </interceptor-ref>
+            </interceptor-stack>
+            
+            <interceptor-stack name="tokenValidationStack">
+                <interceptor-ref name="methodValidationStack"/>
+                <interceptor-ref name="tokenSession">
+                    <param name="includeMethods">create,update,delete,doUpload</param>
+                    <param name="excludeMethods">execute</param>
                 </interceptor-ref>
             </interceptor-stack>
         </interceptors>
@@ -70,7 +78,7 @@
     </package>
 
     <package name="protected" namespace="/protected" extends="default">
-        <default-interceptor-ref name="methodValidationStack" />
+        <default-interceptor-ref name="tokenValidationStack" />
 
         <action name="welcome" class="gov.nih.nci.accrual.accweb.action.WelcomeAction">
             <interceptor-ref name="defaultStack" />
@@ -84,6 +92,7 @@
         </action>
 
         <action name="viewTrials*" class="gov.nih.nci.accrual.accweb.action.ViewTrialsAction">
+            <interceptor-ref name="methodValidationStack"/>
             <result>/WEB-INF/jsp/searchTrials.jsp</result>
         </action>
 

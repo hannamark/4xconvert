@@ -42,6 +42,7 @@ function handleDelete(rowId){
 <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1><fmt:message key="patient.search.title"/></h1>
   <s:form name="listForm">
+    <s:token/>
     <s:hidden name="selectedRowIdentifier"/>
 
     <table class="form">
