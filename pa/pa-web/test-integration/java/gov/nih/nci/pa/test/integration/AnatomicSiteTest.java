@@ -110,13 +110,13 @@ public class AnatomicSiteTest extends AbstractPaSeleniumTest {
 
         assertTrue(selenium.isElementPresent("id=anatomicSite_code"));
         assertTrue(selenium.isElementPresent("link=Save"));
-        selenium.select("id=anatomicSite_code", "label=anus");
+        selenium.select("id=anatomicSite_code", "label=Anus");
         clickAndWait("link=Save");
 
         assertTrue(selenium.isTextPresent("Record Created"));
         assertTrue(selenium.isTextPresent("One item found."));
 
-        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]"), "anus");
+        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]"), "Anus");
 
         //Test prevention of duplicate creation
         assertTrue(selenium.isElementPresent("link=Add"));
@@ -125,12 +125,12 @@ public class AnatomicSiteTest extends AbstractPaSeleniumTest {
 
         assertTrue(selenium.isElementPresent("id=anatomicSite_code"));
         assertTrue(selenium.isElementPresent("link=Save"));
-        selenium.select("id=anatomicSite_code", "label=anus");
+        selenium.select("id=anatomicSite_code", "label=Anus");
         clickAndWait("link=Save");
         assertTrue(selenium.isTextPresent("Record Created"));
         assertTrue(selenium.isTextPresent("One item found."));
 
-        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]"), "anus");
+        assertEquals(selenium.getText("xpath=//table[@id='row']//tr[1]//td[1]"), "Anus");
 
         // test delete.
         clickAndWait("xpath=//table[@id='row']//tr[1]//td[2]//a");
