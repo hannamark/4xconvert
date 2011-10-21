@@ -1,15 +1,11 @@
-<!DOCTYPE html PUBLIC
-    "-//W3C//DTD XHTML 1.1 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <title><fmt:message key="register.user.myaccount.title"/></title>
         <s:head/>
         <%@include file="nodecorate/accountScripts.jsp" %>
-        <c:url value="/orgPoplookuporgs.action" var="lookupOrgUrl"/>
-        <c:url value="/registry/ajaxUsersloadAdminUsers.action" var="displayUrl"/>
     </head>
     <body>
         <!-- main content begins-->
@@ -19,22 +15,20 @@
             <reg-web:sucessMessage/>
             <p>You may update your account information. Please note: asterisks (<span class="required">*</span>)
             indicate required fields.<br>
-            <b><i> Please provide professional contact information only. </i></b></p>
+            <b><i> Please provide professional contact information only. </i></b>
+            </p>
             <s:form name="myAccount" method="POST" >
+                <s:actionmessage/>
                 <s:actionerror/>
                 <s:hidden name="registryUserWebDTO.id" />
                 <s:hidden name="registryUserWebDTO.csmUserId" />
+                <s:hidden name="userWebDTO.username" />
                 <s:hidden name="page" />
                 <table class="form">
                     <tbody>
-                        <tr>
-                            <td scope="row" class="label">
-                                <label for="registerUsershowMyAccount_registryUserWebDTO_username"><fmt:message key="register.user.username"/></label>
-                            </td>
-                            <td>
-                                <s:textfield name="registryUserWebDTO.username" maxlength="15" size="20" cssStyle="width:200px" />
-                            </td>
-                        </tr>
+                        <reg-web:valueRow labelKey="register.user.username">
+                            <c:out value="${userName}"/>
+                        </reg-web:valueRow>
                         <%@include file="nodecorate/accountCommonForm.jsp" %>
                     </tbody>
                 </table>

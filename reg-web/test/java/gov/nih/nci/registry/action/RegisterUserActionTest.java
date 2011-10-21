@@ -5,6 +5,13 @@ package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
@@ -18,16 +25,8 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyObject;
 
 
 /**
@@ -55,10 +54,8 @@ public class RegisterUserActionTest extends AbstractRegWebTest {
 
         CSMUserService.setInstance(csmSvc);
 
-        try {
-            action = new RegisterUserAction();
-        } catch (Exception e) {
-        }
+        action = new RegisterUserAction();
+        action.prepare();
 
         Map<String, String> idps = new HashMap<String, String>();
         idps.put("dorian", "/O=caBIG/OU=Dorian");

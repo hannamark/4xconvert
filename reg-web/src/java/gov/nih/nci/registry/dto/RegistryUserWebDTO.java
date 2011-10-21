@@ -85,6 +85,7 @@ package gov.nih.nci.registry.dto;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.enums.UserOrgType;
 
+import org.hibernate.validator.Email;
 import org.hibernate.validator.NotEmpty;
 
 /**
@@ -318,6 +319,8 @@ public class RegistryUserWebDTO {
     /**
      * @return the email address
      */
+    @NotEmpty(message = "error.register.emailAddress")
+    @Email (message = "error.register.emailAddressInvalid")
     public String getEmailAddress() {
         return this.emailAddress;
     }

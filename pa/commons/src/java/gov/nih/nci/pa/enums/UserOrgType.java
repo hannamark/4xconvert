@@ -119,6 +119,7 @@ public enum UserOrgType implements CodedEnum<String> {
     /**
      * @return code coded value of enum.
      */
+    @Override
     public String getCode() {
         return code;
     }
@@ -126,6 +127,7 @@ public enum UserOrgType implements CodedEnum<String> {
     /**
      *@return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -148,6 +150,7 @@ public enum UserOrgType implements CodedEnum<String> {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getNameByCode(String str) {
         return getByCode(str).name();
     }
