@@ -98,7 +98,6 @@
              <scope>provided</scope>
         </dependency>
 
-
         <!-- Jars required -->
         <dependency>
              <groupId>weblogic</groupId>
@@ -107,8 +106,8 @@
              <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>gov.nih.nci</groupId>
-            <artifactId>security</artifactId>
+            <groupId>csmapi</groupId>
+            <artifactId>csmapi</artifactId>
             <version>4.2</version>
             <scope>compile</scope>
         </dependency>

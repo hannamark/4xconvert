@@ -47,9 +47,8 @@
             <type>ejb</type>
         </dependency>
         <dependency>
-            <!--  -->
-            <groupId>gov.nih.nci</groupId>
-            <artifactId>security</artifactId>
+            <groupId>csmapi</groupId>
+            <artifactId>csmapi</artifactId>
             <version>4.2</version>
             <scope>provided</scope>
         </dependency>
