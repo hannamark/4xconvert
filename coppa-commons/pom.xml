@@ -66,14 +66,14 @@
 
     <distributionManagement>
         <repository>
-            <id>5AM-Releases</id>
-            <name>5AM Releases</name>
-            <url>dav:http://maven.5amsolutions.com/archiva/repository/internal/</url>
+            <id>releases</id>
+            <name>CBIIT Nexus Releases</name>
+            <url>dav:https://ncimvn.nci.nih.gov/nexus/content/repositories/releases/</url>
         </repository>
         <snapshotRepository>
-            <id>5AM-Snapshots</id>
-            <name>5AM Snapshots</name>
-            <url>dav:http://maven.5amsolutions.com/archiva/repository/snapshots/</url>
+            <id>snapshots</id>
+            <name>CBIIT Nexus Snapshots</name>
+            <url>dav:https://ncimvn.nci.nih.gov/nexus/content/repositories/snapshots/</url>
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>
     </distributionManagement>
@@ -243,38 +243,38 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>gov.nih.nci.cagrid</groupId>
-            <artifactId>caGrid-core</artifactId>
+            <groupId>caGrid</groupId>
+            <artifactId>core</artifactId>
             <version>1.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.cagrid.gaards.csm</groupId>
-            <artifactId>caGrid-csm-common</artifactId>
+            <groupId>gov.nih.nci.csm</groupId>
+            <artifactId>csm-common</artifactId>
             <version>1.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.cagrid.gaards.csm</groupId>
-            <artifactId>caGrid-csm-stubs</artifactId>
+            <groupId>gov.nih.nci.csm</groupId>
+            <artifactId>csm-stubs</artifactId>
             <version>1.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.cagrid.gaards.csm</groupId>
-            <artifactId>caGrid-csm-service</artifactId>
+            <groupId>gov.nih.nci.csm</groupId>
+            <artifactId>csm-service</artifactId>
             <version>1.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.cagrid.gaards.csm</groupId>
-            <artifactId>caGrid-csm-client</artifactId>
+            <groupId>gov.nih.nci.csm</groupId>
+            <artifactId>csm-client</artifactId>
             <version>1.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>globus</groupId>
-            <artifactId>wsrf_core_stubs</artifactId>
+            <artifactId>ws-core-client</artifactId>
             <version>4.0.3</version>
             <scope>compile</scope>
         </dependency>
@@ -291,38 +291,38 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>gov.nih.nci.cagrid</groupId>
-            <artifactId>caGrid-gridgrouper-common</artifactId>
+            <groupId>caGrid</groupId>
+            <artifactId>gridgrouper-common</artifactId>
             <version>1.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>gov.nih.nci.cagrid</groupId>
-            <artifactId>caGrid-gridgrouper-stubs</artifactId>
+            <groupId>caGrid</groupId>
+            <artifactId>gridgrouper-stubs</artifactId>
             <version>1.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>gov.nih.nci.cagrid</groupId>
-            <artifactId>caGrid-gridgrouper-client</artifactId>
+            <groupId>caGrid</groupId>
+            <artifactId>gridgrouper-client</artifactId>
             <version>1.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>gov.nih.nci.cagrid</groupId>
+            <groupId>cagrid</groupId>
             <artifactId>gridgrouper</artifactId>
-            <version>1.3</version>
+            <version>1.3nci</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>gov.nih.nci.cagrid</groupId>
-            <artifactId>caGrid-ServiceSecurityProvider-common</artifactId>
-            <version>1.3</version>
+            <groupId>cagrid</groupId>
+            <artifactId>cagrid-servicesecurityprovider-common</artifactId>
+            <version>1.3nci</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>gov.nih.nci.cagrid</groupId>
-            <artifactId>caGrid-ServiceSecurityProvider-client</artifactId>
+            <groupId>caGrid</groupId>
+            <artifactId>service-security-provider-client</artifactId>
             <version>1.3</version>
             <scope>compile</scope>
         </dependency>
@@ -332,8 +332,8 @@
             <version>1.2-custom</version>
         </dependency>
         <dependency>
-            <groupId>net.sourceforge.addressing</groupId>
-            <artifactId>addressing</artifactId>
+            <groupId>globus</groupId>
+            <artifactId>ws-addressing</artifactId>
             <version>1.0</version>
             <exclusions>
                 <exclusion>
@@ -348,19 +348,19 @@
             <version>4.0.3</version>
         </dependency>
         <dependency>
-            <groupId>axis</groupId>
+            <groupId>org.globus</groupId>
             <artifactId>cog-axis</artifactId>
-            <version>1.0</version>
+            <version>1.0nci</version>
         </dependency>
         <dependency>
-            <groupId>gov.nih.nci.cagrid</groupId>
-            <artifactId>caGrid-metadata-common</artifactId>
-            <version>1.3</version>
+            <groupId>cagrid</groupId>
+            <artifactId>cagrid-metadata-common</artifactId>
+            <version>1.3nci</version>
         </dependency>
         <dependency>
-            <groupId>gov.nih.nci.cagrid</groupId>
-            <artifactId>caGrid-metadata-security</artifactId>
-            <version>1.3</version>
+            <groupId>cagrid</groupId>
+            <artifactId>cagrid-metadata-security</artifactId>
+            <version>1.3nci</version>
         </dependency>
         <dependency>
             <groupId>wss4j</groupId>
@@ -500,45 +500,14 @@
 
     <repositories>
         <repository>
-            <id>5AM-Releases</id>
-            <url>http://maven.5amsolutions.com/archiva/repository/internal/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>5AM-Snapshots</id>
-            <url>http://maven.5amsolutions.com/archiva/repository/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>maven</id>
-            <url>http://repo1.maven.org/maven2</url>
-        </repository>
-        <repository>
-            <id>repository.jboss.org-public</id>
-            <name>JBoss repository</name>
-            <url>https://repository.jboss.org/nexus/content/groups/public</url>
+            <id>central</id>
+            <url>https://ncimvn.nci.nih.gov/nexus/content/groups/public</url>
         </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
-            <id>5AM-Releases</id>
-            <url>http://maven.5amsolutions.com/archiva/repository/internal/</url>
+            <id>central</id>
+            <url>https://ncimvn.nci.nih.gov/nexus/content/groups/public</url>
         </pluginRepository>
-        <pluginRepository>
-            <id>maven</id>
-            <url>http://repo1.maven.org/maven2</url>
-        </pluginRepository>
-
     </pluginRepositories>
-
 </project>
