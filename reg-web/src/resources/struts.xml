@@ -154,18 +154,21 @@
         </action>
         
         <action name="orgPop*" class="gov.nih.nci.registry.action.PopupAction" method="{1}">
+            <interceptor-ref name="noDisclaimerDefaultInterceptor" />
             <result name="success">/WEB-INF/jsp/nodecorate/displayAffOrgList.jsp</result>
             <result name="orgs">/WEB-INF/jsp/nodecorate/lookupAffliatedOrgs.jsp</result>
             <result name="create_org_response">/WEB-INF/jsp/nodecorate/displayAffOrgList.jsp</result>
         </action>
         
         <action name="popup*" class="gov.nih.nci.registry.action.PopupAction" method="{1}">
+            <interceptor-ref name="noDisclaimerDefaultInterceptor" />
             <result name="displayPasswordReset">/WEB-INF/jsp/nodecorate/passwordReset.jsp</result>
         </action>
     </package>
     
     <package name="admin" namespace="/admin" extends="global">
         <action name="batchUpload*" class="gov.nih.nci.registry.action.BatchUploadAction" method="{1}">
+            <interceptor-ref name="noDisclaimerDefaultInterceptor" />
             <result>/WEB-INF/jsp/processBatch.jsp</result>
             <result name="error">/WEB-INF/jsp/processBatch.jsp</result>
             <result name="batch_confirm">/WEB-INF/jsp/batchUploadConfirm.jsp</result>
