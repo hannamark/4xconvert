@@ -794,4 +794,8 @@
         <comment>Correct names of anatomic sites</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.6.1/PO-3773.sql"/>
      </changeSet>
+     <changeSet id="PO-4237" author="ludetc" runOnChange="true">
+        <comment>Update mail from, with tier based filtering</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.7/PO-4237.sql"/>
+     </changeSet>
 </databaseChangeLog>
