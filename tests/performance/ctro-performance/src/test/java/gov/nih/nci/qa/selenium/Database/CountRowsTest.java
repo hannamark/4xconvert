@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
-public class CountRows {
+public class CountRowsTest {
 	private static final String FILENAME = "config.properties";
 
 	Connection connection = null;
