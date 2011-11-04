@@ -24,7 +24,7 @@ public class CountRows {
 	Properties properties;
 
 	@Before
-	public void readProperties() {
+	public void loadProperties() {
 		this.properties = new Properties();
 		try {
 			properties.load(new FileInputStream(FILENAME));
