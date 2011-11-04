@@ -143,7 +143,6 @@ public abstract class AbstractPoWebTest extends AbstractSeleneseTestCase {
         assertTrue(selenium.isTextPresent("Login"));
         assertTrue(selenium.isTextPresent("CONTACT US"));
         clickAndWait("link=Login");
-        selenium.select("authenticationServiceURL", "label=Training");
         selenium.type("j_username", username);
         selenium.type("j_password", password);
         clickAndWait("id=enableEnterSubmit");
