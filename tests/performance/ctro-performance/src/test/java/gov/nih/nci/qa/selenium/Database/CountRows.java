@@ -1,7 +1,6 @@
 package gov.nih.nci.qa.selenium.Database;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -12,10 +11,14 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import au.com.bytecode.opencsv.CSVWriter;
 
 public class CountRows {
 	private static final String FILENAME = "config.properties";
@@ -39,19 +42,23 @@ public class CountRows {
 	public void getAllDatabaseRowCounts() {
 		connectToDatabase();
 
-		// Load the Driver class.
 		try {
 			Class.forName("org.postgresql.Driver");
 			Statement stmt = connection.createStatement();
 			String sqlStatement = getFile();
 			createRelation(stmt, sqlStatement);
 			ResultSet resultSet = stmt.executeQuery("select count_em_all();");
-			BufferedWriter report = new BufferedWriter(new FileWriter(
-					"RowCounts.txt"));
+			String filename = getOutputFilename();
+			CSVWriter writer = new CSVWriter(new FileWriter(filename), ',');
+			String[] header = getHeader();
+			writer.writeNext(header);
 			while (resultSet.next()) {
-				report.write(resultSet.getString("count_em_all") + '\n');
+				String results = resultSet.getString("count_em_all");
+				String removed = removeParatheses(results);
+				String[] split = removed.split(",");
+				writer.writeNext(split);
 			}
-			report.close();
+			writer.close();
 			connection.close();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -60,6 +67,30 @@ public class CountRows {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private String[] getHeader() {
+		List<String> headerList = new ArrayList<String>();
+		headerList.add("table");
+		headerList.add("count(*)");
+		String[] headerArray = headerList
+				.toArray(new String[headerList.size()]);
+		return headerArray;
+	}
+
+	/**
+	 * The pattern is "(activity_relationship,0)". Remove the paratheses from
+	 * the ends.
+	 * 
+	 * @param remove
+	 * @return
+	 */
+	private String removeParatheses(String remove) {
+		int openParantheses = remove.indexOf("(");
+		int closeParantheses = remove.indexOf(")");
+		String removed = remove
+				.substring(openParantheses + 1, closeParantheses);
+		return removed;
 	}
 
 	private void connectToDatabase() {
@@ -103,6 +134,18 @@ public class CountRows {
 		}
 
 		return statement;
+	}
+
+	private static String getOutputFilename() {
+		Properties properties = new Properties();
+		try {
+			properties.load(new FileInputStream(FILENAME));
+
+		} catch (IOException e) {
+			System.out.println("Couldn't read the file [" + FILENAME + "].");
+			e.printStackTrace();
+		}
+		return properties.getProperty("table.rows.csv");
 	}
 
 }
