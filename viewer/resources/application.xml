@@ -20,7 +20,7 @@
         <java>pa-ejb.jar</java>
     </module>
     <module>
-        <java>pa-commons-3.7-alpha1.jar</java>
+        <java>pa-commons-3.7-alpha2.jar</java>
     </module>
     <module>
         <java>commons-collections-3.2.1.jar</java>
@@ -33,6 +33,9 @@
     </module>
     <module>
         <java>commons-lang-2.4.jar</java>
+    </module>
+    <module>
+        <java>joda-time-1.6.2.jar</java>
     </module>
     <security-role><role-name>Abstractor</role-name></security-role>
     <security-role><role-name>Submitter</role-name></security-role>

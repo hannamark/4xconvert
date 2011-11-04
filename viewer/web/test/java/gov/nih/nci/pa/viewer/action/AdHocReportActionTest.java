@@ -88,7 +88,11 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.IdentifierType;
+import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -96,6 +100,7 @@ import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
+import gov.nih.nci.pa.viewer.dto.result.KeyValueDTO;
 import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
 import java.io.ByteArrayOutputStream;
@@ -234,6 +239,31 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         action.getAnatomicSitesList();
         verify(svcLoc.getLookUpTableService()).getAnatomicSites();
     }
+    
+    @Test
+    public void getPlannedMarkersList() throws PAException {
+        ServiceLocator svcLoc = createServiceLocatorWithMocks();
+        action.getPlannedMarkersList();
+        verify(svcLoc.getPlannedMarkerService()).getAll();
+    }
+    
+    @Test
+    public void getPlannedMarkersListConvertion() throws PAException {
+        ServiceLocator svcLoc = createServiceLocatorWithMocks();
+        
+        List<PlannedMarkerDTO> dtos = new ArrayList<PlannedMarkerDTO>();
+        PlannedMarkerDTO dto1 = new PlannedMarkerDTO();
+        dto1.setIdentifier(IiConverter.convertToIi(2L));
+        dto1.setLongName(StConverter.convertToSt("name1"));
+        dtos.add(dto1);
+        
+        when(svcLoc.getPlannedMarkerService().getAll()).thenReturn(dtos);
+        
+        List<KeyValueDTO> result = action.getPlannedMarkersList();
+        assertEquals(Long.valueOf(2), result.get(0).getKey());
+        assertEquals("name1", result.get(0).getValue());
+        
+    }
 
     private ServiceLocator createServiceLocatorWithMocks() {
         ServiceLocator svcLoc = mock(ServiceLocator.class);
@@ -242,6 +272,8 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         when(svcLoc.getPAOrganizationService()).thenReturn(paOrganizationServiceMock);
         LookUpTableServiceRemote lookUpTableServiceRemoteMock = mock(LookUpTableServiceRemote.class);
         when(svcLoc.getLookUpTableService()).thenReturn(lookUpTableServiceRemoteMock);
+        PlannedMarkerServiceLocal plannedMarkerServiceLocal = mock(PlannedMarkerServiceLocal.class);
+        when(svcLoc.getPlannedMarkerService()).thenReturn(plannedMarkerServiceLocal);
         return svcLoc;
     }
 

@@ -110,6 +110,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
+import org.joda.time.DateMidnight;
 /**
  *
  * @author Vrushali
@@ -466,14 +467,14 @@ public class TrialValidator {
         }
     }
 
-    private void checkDateAndType(String date, String dateType, String fieldName, String errorKey,
+    private void checkDateAndType(String dateString, String dateType, String fieldName, String errorKey,
             Map<String, String> addFieldError) {
-        Timestamp timestamp = ISOUtil.dateStringToTimestamp(date);
-        Timestamp now = new Timestamp((new Date()).getTime());
+        DateMidnight date = new DateMidnight(ISOUtil.dateStringToDate(dateString));
+        DateMidnight today = new DateMidnight();
         ActualAnticipatedTypeCode type = ActualAnticipatedTypeCode.getByCode(dateType);
-        if (type == ActualAnticipatedTypeCode.ACTUAL && now.before(timestamp)) {
+        if (type == ActualAnticipatedTypeCode.ACTUAL && today.isBefore(date)) {
             addFieldError.put(fieldName, getText("error.submit.invalidActual" + errorKey));
-        } else if (type == ActualAnticipatedTypeCode.ANTICIPATED && now.after(timestamp)) {
+        } else if (type == ActualAnticipatedTypeCode.ANTICIPATED && today.isAfter(date)) {
             addFieldError.put(fieldName, getText("error.submit.invalidAnticipated" + errorKey));
         }
     }

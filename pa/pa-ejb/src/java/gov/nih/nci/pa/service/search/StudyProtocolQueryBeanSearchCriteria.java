@@ -166,7 +166,10 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String STUDY_OWNER_DWS_PARAM = "studyOwnerDWSParam";
         private static final String STUDY_OWNER_SITE_PARAM = "studyOwnerSiteFunctionalCodeParam";
         private static final String STUDY_PHASE_CODE_PARAM = "studyPhaseCodeParam";
-        private static final String  ANATOMIC_SITES_PARAM  = "anatomicSitesParam";
+        private static final String ANATOMIC_SITES_PARAM  = "anatomicSitesParam";
+        private static final String PARTICIPATING_SITE_PARAM  = "participatingSiteParam";
+        private static final String BIOMARKERS_PARAM  = "biomarkersParam";
+        private static final String PDQDISEASES_PARAM  = "pdqdiseaseParam";
         
         private final StudyProtocol sp;
         private final StudyProtocolOptions spo;
@@ -180,6 +183,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         /**
          * {@inheritDoc}
          */
+        @Override
         public void afterIteration(Object obj, boolean isCountOnly, StringBuffer whereClause,
                 Map<String, Object> params) {
 
@@ -315,8 +319,9 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 whereClause.append(String.format(" %s exists (select sps2.id from StudySite sps2 "
                         + "left outer join sps2.healthCareFacility as hcf "
                         + "left outer join hcf.organization as site "
-                        + "where sps2.studyProtocol.id = %s.id and site.id = " + spo.getParticipatingSiteId() + ")",
+                        + "where sps2.studyProtocol.id = %s.id and site.id = :" + PARTICIPATING_SITE_PARAM + ")",
                         operator, SearchableUtils.ROOT_OBJ_ALIAS));
+                        params.put(PARTICIPATING_SITE_PARAM, spo.getParticipatingSiteId());
             }
 
             if (spo.isSearchOnHoldTrials()) {
@@ -359,6 +364,24 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 String operator = determineOperator(whereClause);
                 whereClause.append(String.format(" %s (select count(id) from %s.studyInbox where closeDate is null) "
                         + "> 0", operator, SearchableUtils.ROOT_OBJ_ALIAS));
+            }
+            
+            if (CollectionUtils.isNotEmpty(spo.getBioMarkers())) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String.format(" %s exists (select plm.id from PlannedMarker plm "
+                                                         + "where plm.studyProtocol.id = %s.id and plm.id in (:%s))",
+                                                 operator,
+                                                 SearchableUtils.ROOT_OBJ_ALIAS, BIOMARKERS_PARAM));
+                params.put(BIOMARKERS_PARAM, spo.getBioMarkers());
+            }
+            
+            if (CollectionUtils.isNotEmpty(spo.getPdqDiseases())) {
+                String operator = determineOperator(whereClause);
+                whereClause.append(String
+                    .format(" %s exists (select sd.id from StudyDisease sd "
+                                    + "where sd.studyProtocol.id = %s.id and sd.disease.id in (:%s))", operator,
+                            SearchableUtils.ROOT_OBJ_ALIAS, PDQDISEASES_PARAM));
+                params.put(PDQDISEASES_PARAM, spo.getPdqDiseases());
             }
         }
 

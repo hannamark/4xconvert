@@ -3,8 +3,13 @@
 <head>
 <title><fmt:message key="summaryOfSubmission.header" /></title>
 <s:head />
+<link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all" />
+<link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all" />
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
+<c:url value="/ctro/popupWaitDialog.action" var="waitDialogUrl"/>
 <script type="text/javascript">
 addCalendar("Cal1", "Select Date", "criteria.intervalStartDate", "criteria");
 addCalendar("Cal2", "Select Date", "criteria.intervalEndDate", "criteria");
@@ -14,6 +19,7 @@ setFormat("mm/dd/yyyy");
 function handleAction(){
     document.forms[0].action="resultsSummaryOfSubmission.action";
     document.forms[0].submit();
+    showPopWin('${waitDialogUrl}', 600, 200, '', 'Summary of Submission');
 }
 function handleReset(){
     document.forms[0].action="criteriaSummaryOfSubmission.action";

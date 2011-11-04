@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <table>
-<c:if test="${sessionScope.adminUsers != null && fn:length(sessionScope.adminUsers) > 0}">
+<c:if test="${sessionScope.adminUsers != null && fn:length(sessionScope.adminUsers) > 0 && registryUserWebDTO.affiliatedOrganizationId != null}">
        <tr>
         <td colspan="2" class="space">
             <li><a href="#" onclick="viewAdmin();"/>View Admins</a></li>

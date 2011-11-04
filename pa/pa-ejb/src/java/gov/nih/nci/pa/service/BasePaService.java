@@ -81,6 +81,8 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Ii;
 
+import java.util.List;
+
 /**
  * @author Hugh Reinhart
  * @since 10/01/2008
@@ -119,5 +121,11 @@ public interface BasePaService<DTO> {
      * @param dto Dto object
      * @throws PAException on error
      */
-    void validate(DTO dto) throws PAException;    
+    void validate(DTO dto) throws PAException; 
+    
+    /**
+     * @return All entities
+     * @throws PAException PAException
+     */
+    List<DTO> getAll() throws PAException;
 }

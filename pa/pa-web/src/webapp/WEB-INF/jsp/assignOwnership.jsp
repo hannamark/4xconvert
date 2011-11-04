@@ -177,12 +177,15 @@
                     <h2 id="search_results">Search Results</h2>
                     <s:hidden name="currentAction" />
                     <display:table class="data" pagesize="10" id="results" name="users" requestURI="assignOwnershipsearch.action" export="false">
-                        <display:column escapeXml="true" titleKey="pending.userFirstName" property="regUser.firstName"
-                                        sortable="true" headerClass="sortable" />
-                        <display:column escapeXml="true" titleKey="pending.userLastName" property="regUser.lastName" sortable="true"
-                                        headerClass="sortable" />
-                        <display:column escapeXml="true" titleKey="pending.emailAddress" property="regUser.emailAddress"
-                                        sortable="true" headerClass="sortable" />
+                        <display:column  titleKey="pending.userFirstName" sortable="true" headerClass="sortable" >
+                           <c:out value="${results.regUser.firstName}"/> 
+                        </display:column>
+                        <display:column  titleKey="pending.userLastName"  sortable="true" headerClass="sortable">
+                           <c:out value="${results.regUser.lastName}"/> 
+                        </display:column>
+                        <display:column  titleKey="pending.emailAddress" sortable="true" headerClass="sortable">
+                           <c:out value="${results.regUser.emailAddress}"/> 
+                        </display:column>
                         <display:column class="title" titleKey="studyProtocol.action">
                             <c:choose>
                                 <c:when test="${results.owner == true}">

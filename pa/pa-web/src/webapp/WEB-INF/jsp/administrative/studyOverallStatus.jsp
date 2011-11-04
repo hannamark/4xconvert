@@ -134,7 +134,7 @@
                                     </a> 
                                     <s:radio name="primaryCompletionDateType" id="primaryCompletionDateType" list="dateTypeList" />
                                 </pa:valueRow>
-                                <pa:valueRow labelFor="completionDate" labelKey="trialStatus.completionDate" required="true">
+                                <pa:valueRow labelFor="completionDate" labelKey="trialStatus.completionDate">
                                     <s:textfield name="completionDate" id="completionDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                                     <a href="javascript:showCal('Cal3')">
                                         <img src="${pageContext.request.contextPath}/images/ico_calendar.gif" alt="select date" class="calendaricon" />

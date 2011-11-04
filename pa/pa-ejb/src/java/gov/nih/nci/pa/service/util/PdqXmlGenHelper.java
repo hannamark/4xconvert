@@ -143,7 +143,7 @@ public class PdqXmlGenHelper {
         try {
             roDTO = PoRegistry.getResearchOrganizationCorrelationService().getCorrelation(poRoIi);
         } catch (NullifiedRoleException e) {
-            throw new PAException(e);
+            throw new PAException("Nullified Exception for RO.Ii = " + poRoIi, e);
         }
         return roDTO;
     }
@@ -163,7 +163,7 @@ public class PdqXmlGenHelper {
         try {
             hcfDTO = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(poHcfIi);
         } catch (NullifiedRoleException e) {
-            throw new PAException(e);
+            throw new PAException("Nullified Exception for HCF.Ii = " + poHcfIi, e);
         }
         return hcfDTO;
     }
@@ -183,7 +183,7 @@ public class PdqXmlGenHelper {
         try {
             orgDTO = PoRegistry.getOrganizationEntityService().getOrganization(poOrgIi);
         } catch (NullifiedEntityException e) {
-            throw new PAException(e);
+            throw new PAException("Nullified Exception for Org.Ii = " + poOrgIi, e);
         }
         return orgDTO;
     }
@@ -203,7 +203,7 @@ public class PdqXmlGenHelper {
         try {
             ocDTO = PoRegistry.getOrganizationalContactCorrelationService().getCorrelation(poOcIi);
         } catch (NullifiedRoleException e) {
-            throw new PAException(e);
+            throw new PAException("Nullified Exception for OC.Ii = " + poOcIi, e);
         }
         return ocDTO;
     }

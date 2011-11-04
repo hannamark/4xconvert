@@ -89,6 +89,8 @@ import gov.nih.nci.pa.util.ISOUtil;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import org.joda.time.DateMidnight;
+
 /**
  * utility method for converting Ts and Timestamp.
  *
@@ -110,17 +112,30 @@ public class TsConverter {
         ts.setValue(date);
         return ts;
     }
+    
+    /**
+     * Test if the given Ts has no value.
+     * @param tsIso The Ts to test
+     * @return true if the given Ts has no value
+     */
+    static boolean hasNoValue(Ts tsIso) {
+        return tsIso == null || tsIso.getNullFlavor() != null || tsIso.getValue() == null;
+    }
 
     /**
      * @param tsIso iso Ts
      * @return java Timestamp
      */
     public static Timestamp convertToTimestamp(Ts tsIso) {
-        // We're going to treat Unknown null flavors are a null timestamp for PO-2429.
-        if (tsIso == null || tsIso.getNullFlavor() != null || tsIso.getValue() == null) {
-            return null;
-        }
-        return new Timestamp(tsIso.getValue().getTime());
+        return (hasNoValue(tsIso)) ? null : new Timestamp(tsIso.getValue().getTime());
+    }
+    
+    /**
+     * @param tsIso iso Ts
+     * @return a joda DateMidnight
+     */
+    public static DateMidnight convertToDateMidnight(Ts tsIso) {
+        return (hasNoValue(tsIso)) ? null :  new DateMidnight(tsIso.getValue().getTime());
     }
 
     /**

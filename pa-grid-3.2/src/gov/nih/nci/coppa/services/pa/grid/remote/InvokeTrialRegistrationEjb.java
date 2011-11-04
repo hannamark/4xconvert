@@ -275,4 +275,16 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
         }
         return resourcing;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void update(StudyProtocolDTO studyProtocolDTO, StudyOverallStatusDTO overallStatusDTO,
+            List<StudyResourcingDTO> studyResourcingDTOs, List<DocumentDTO> documentDTOs,
+            List<StudySiteAccrualStatusDTO> studySiteAccrualStatusDTOs, List<StudySiteDTO> studySiteDTOs,
+            Bl isBatchMode)
+            throws PAException {
+        throw new UnsupportedOperationException();
+    }
 }

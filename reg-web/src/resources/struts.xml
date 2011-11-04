@@ -53,7 +53,7 @@
                 <interceptor-ref name="tokenSession">
                     <param name="includeMethods">process,edit,update,partialSave,review,
                     reviewUpdate,amend,create,popupupdate,assignOwnership,unassignOwnership,save,updateAccount</param>
-                    <param name="excludeMethods">execute,viewDoc,popupView,view,query</param>
+                    <param name="excludeMethods">execute,viewDoc,popupView,view,query,ajaxCreate</param>
                 </interceptor-ref>
             </interceptor-stack>
             

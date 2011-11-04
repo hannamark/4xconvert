@@ -4,10 +4,10 @@
 <!-- pa-ejb ant script for COPPA PA                                         -->
 <!-- ====================================================================== -->
 
-<project name="pa-ejb" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="pa-ejb" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
     <property name="pa-ejb.coverage.line" value="72"/>
     <property name="pa-ejb.coverage.branch" value="57"/>
-    <property name="pa-ejb.pmd.maxerrors" value="339"/>
+    <property name="pa-ejb.pmd.maxerrors" value="338"/>
 
     <property name="software.dir" value="${basedir}/../.."/>
     <property name="pa.dir" value="${software.dir}/pa"/>
@@ -57,6 +57,13 @@
     <property name="compile.jar.dir" location="${lib.dir}/pa-ejb/compile" />
     <path id="compile.classpath">
         <fileset dir="${compile.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+    
+    <property name="maven.jar.dir" location="${lib.dir}/pa-ejb/maven" />
+    <path id="maven.classpath">
+        <fileset dir="${maven.jar.dir}">
             <include name="*.jar"/>
         </fileset>
     </path>
@@ -447,7 +454,36 @@
     <target name="help">
         <echo message="Please run: $ant -projecthelp"/>
     </target>
-
+    
+    <!-- ====================================================================== -->
+    <!-- Maven Installation Targets                                             -->
+    <!-- ====================================================================== -->
+    <target name="maven:generate-pom">
+        <!-- We cannot use in memory poms due to a bug: http://jira.codehaus.org/browse/MANTTASKS-170 -->
+        <taskdef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven.classpath" />
+        <artifact:pom id="pa-ejb-pom-temp" groupId="gov.nih.nci.coppa.pa" artifactId="pa-ejb-client" version="${pa.version}" name="PA EJB Client"/>
+        <artifact:writepom pomRefId="pa-ejb-pom-temp" file="target/pom.xml"/>
+        <artifact:pom id="pa-ejb-pom" file="target/pom.xml"/>
+    </target>
+        
+    <target name="maven:install" depends="package,maven:generate-pom">
+        <echo message="Installing version ${pa.version} to the local maven repo."/>
+        <artifact:install file="${pa-ejb.build.dir}/pa-ejb-client.jar">
+            <pom refid="pa-ejb-pom"/>
+        </artifact:install>
+    </target>
+        
+    <target name="maven:deploy" depends="package,maven:generate-pom">
+        <artifact:remoteRepository id="remote.repository" url="https://ncimvn.nci.nih.gov/nexus/content/repositories/snapshots/">
+            <authentication username="${maven.username}" password="${maven.password}"/>
+        </artifact:remoteRepository>
+        <echo message="Installing version ${pa.version} to the remote maven repo."/>
+        <artifact:deploy file="${pa-ejb.build.dir}/pa-ejb-client.jar">
+            <remoteRepository refid="remote.repository" />
+            <pom refid="pa-ejb-pom"/>
+        </artifact:deploy>
+    </target>
+    
     <!-- ====================================================================== -->
     <!-- Ivy Targets                                                            -->
     <!-- ====================================================================== -->
@@ -459,35 +495,39 @@
     </target>
     <target name="ivy-test-cobertura" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-cobertura" />
-        <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision].[ext]" conf="test-cobertura" />
+        <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-cobertura" />
     </target>
     <target name="ivy-test-junit" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-junit" />
-        <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision].[ext]" conf="test-junit" />
+        <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-junit" />
     </target>
     <target name="ivy-test-pmd" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-pmd" />
-        <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision].[ext]" conf="test-pmd" />
+        <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-pmd" />
     </target>
     <target name="ivy-test-checkstyle" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-checkstyle" />
-        <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision].[ext]" conf="test-checkstyle" />
+        <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-checkstyle" />
     </target>
     <target name="ivy-test-simian" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-simian" />
-        <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision].[ext]" conf="test-simian" />
+        <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-simian" />
     </target>
     <target name="ivy-compile" depends="init:ivy">
         <ivy:resolve refresh="true" conf="compile" />
-        <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision].[ext]" conf="compile" />
+        <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="compile" />
     </target>
     <target name="ivy-test"
             depends="init:ivy,ivy-test-cobertura,ivy-test-junit,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian">
             <ivy:resolve refresh="true" conf="test" />
-            <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision].[ext]" conf="test" />
+            <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test" />
+    </target>
+    <target name="ivy-maven" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="maven" />
+        <ivy:retrieve pattern="${lib.dir}/pa-ejb/[conf]/[artifact]-[revision].[ext]" conf="maven" />
     </target>
     <target name="ivy-get"
-            depends="init:ivy,ivy-compile,ivy-test"
+            depends="init:ivy,ivy-compile,ivy-maven,ivy-test"
             description="Updates the local ivy repository">
     </target>
     <target name="ivy-clean" description="Delete jars.">

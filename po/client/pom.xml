@@ -4,7 +4,7 @@
     <parent>
         <groupId>gov.nih.nci.coppa.po</groupId>
         <artifactId>po</artifactId>
-        <version>3.6-SNAPSHOT</version>
+        <version>3.7-SNAPSHOT</version>
     </parent>
 
     <artifactId>po-client</artifactId>
@@ -42,6 +42,12 @@
             <artifactId>hibernate</artifactId>
             <version>${hibernate.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.transaction</groupId>
+                    <artifactId>jta</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -86,13 +92,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- JTC -->
-        <dependency>
-            <groupId>org.openqa.jtc.junit</groupId>
-            <artifactId>jtc</artifactId>
-            <version>0.2</version>
-            <scope>test</scope>
-        </dependency>
+        
 
         <!-- Selenium -->
         <dependency>
@@ -103,9 +103,8 @@
         </dependency>
         <dependency>
             <groupId>gov.nih.nci.coppa</groupId>
-            <artifactId>coppa-commons</artifactId>
+            <artifactId>coppa-commons-test</artifactId>
             <version>${coppa-commons.version}</version>
-            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>

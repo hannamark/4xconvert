@@ -24,12 +24,14 @@ function handleAction(){
     <div class="box" id="filters">
     <s:form name="registerUser" validate="true" method="POST" ><s:actionerror />
         <s:hidden name="page" />
-        <p>Create account to register trials with NCI Clinical Trials Reporting Program. </p>
     <table class="form">
         <tr>
             <s:url id="existingGridAccountUrl" action="registerUserexistingGridAccount.action" />
             <td colspan="2" class="space">
-            <h3>If you already have an NIH account, click <s:a href="%{existingGridAccountUrl}">here.</s:a></h3>
+            <ul>
+                <li>If you already have an NIH or NCI account, click <s:a href="%{existingGridAccountUrl}">here</s:a> to proceed.</li>
+                <li>If you do not have an NIH or NCI account, enter the email address below and click Next.</li>
+            </ul>
             </td>
         </tr>
         <tr>
@@ -47,7 +49,7 @@ function handleAction(){
                 <ul class="btnrow">
                     <li>
                         <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img">
-                        <span class="login">Submit</span></span></s:a>
+                        <span class="login">Next</span></span></s:a>
                     </li>
                 </ul>
             </del>

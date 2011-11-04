@@ -4,6 +4,8 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.service.BasePaService;
 import gov.nih.nci.pa.service.PAException;
 
+import java.util.List;
+
 public class MockAbstractBaseIsoService <DTO> implements BasePaService<DTO> {
 
     public DTO create(DTO dto) throws PAException {
@@ -29,6 +31,14 @@ public class MockAbstractBaseIsoService <DTO> implements BasePaService<DTO> {
     public void validate(DTO dto) throws PAException {
         // TODO Auto-generated method stub
         
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<DTO> getAll() throws PAException {
+        return null;
     }
 
 

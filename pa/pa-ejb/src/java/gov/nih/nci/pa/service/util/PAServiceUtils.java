@@ -213,8 +213,7 @@ public class PAServiceUtils {
     /**LEAD_ORGANIZATION_NULLIFIED.*/
     public static final String LEAD_ORGANIZATION_NULLIFIED = "The Lead Organization has been nullified";
     /**The size of the counter portion of the NCI ID.*/
-    protected static final int NCI_ID_SIZE = 5;
-    
+    protected static final int NCI_ID_SIZE = 5;    
     /**
      * Executes an sql.
      * @param sql sql to be executed
@@ -223,8 +222,7 @@ public class PAServiceUtils {
     public int executeSql(String sql) {
         Session session = PaHibernateUtil.getCurrentSession();
         return session.createSQLQuery(sql).executeUpdate();
-    }
-    
+    }    
     /**
      * Executes an list of sql.
      * @param sqls list of sqls
@@ -234,7 +232,6 @@ public class PAServiceUtils {
             executeSql(sql);
         }
     }
-
     /**
      * does a deep copy of protocol to a new protocol.
      * @param fromStudyProtocolIi study protocol ii
@@ -558,12 +555,7 @@ public class PAServiceUtils {
     public void manageSponsor(Ii studyProtocolIi, OrganizationDTO sponsorDto) throws PAException {
         OrganizationCorrelationServiceRemote ocsr = PaRegistry.getOrganizationCorrelationService();
         String orgPoIdentifier = sponsorDto.getIdentifier().getExtension();
-        if (orgPoIdentifier == null) {
-            throw new PAException(ORGANIZATION_IDENTIFIER_IS_NULL);
-        }
-        if (studyProtocolIi == null) {
-            throw new PAException("Protocol Identifier is Null");
-        }
+        validateNotNullParamtrs(studyProtocolIi, orgPoIdentifier);
         Long roId = null;
         try {
             roId = ocsr.createResearchOrganizationCorrelations(orgPoIdentifier);
@@ -597,6 +589,15 @@ public class PAServiceUtils {
             throw pae;
         }
 
+    }
+
+    private void validateNotNullParamtrs(Ii studyProtocolIi, String orgPoIdentifier) throws PAException {
+        if (orgPoIdentifier == null) {
+            throw new PAException(ORGANIZATION_IDENTIFIER_IS_NULL);
+        }
+        if (studyProtocolIi == null) {
+            throw new PAException("Protocol Identifier is Null");
+        }
     }
 
     /**
@@ -1247,7 +1248,6 @@ public class PAServiceUtils {
         }
         return retEntity;
     }
-
     /**
      *
      * @param <Entity> Person or Organization

@@ -5,11 +5,13 @@
 <html>
 <head>
     <title>Login</title>
+    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/loginValidation.js'/>"></script>
 </head>
 <body onload="setFocusToFirstControl();">
     <div class="po_form">
         <script type="text/javascript">
             function startLogin() {
+                if (!validate()) return false;
                 $('login_progress').show();
                 <c:choose>
                     <c:when test="${param.fromAjax == 'true'}">

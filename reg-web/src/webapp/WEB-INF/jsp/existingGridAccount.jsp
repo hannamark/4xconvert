@@ -10,13 +10,26 @@
         function handleAction(){
             document.forms[0].page.value = "Submit";
             document.forms[0].action="registerUserregisterExistingGridAccount.action";
-            document.forms[0].submit();
+            if (validate()) {
+                document.forms[0].submit()
+             }
+        }
+        function validate() {
+            var box = document.forms[0].username;
+            
+            re = /^[0-9a-zA-Z\_\.\-]*$/;
+
+            if (!re.exec(box.value)) {
+                alert("Invalid Entry:\nOnly Alphanumeric, _ or . are allowed.");
+                return false;
+            }
+            return true;
         }
     </SCRIPT>
     <body>
         <c:set var="topic" scope="request" value="register"/>
+        <h1>Register for a CTRP Account</h1>
         <div class="box">
-            <h1>Register</h1>
             <s:form name="existingAccount" method="POST">
                 <s:actionerror/>
                 <s:hidden name="page" />
@@ -28,7 +41,7 @@
                         <td class="label" scope="row">
                             <label><fmt:message key="register.user.username"/></label>
                         </td>
-                        <td class="value"><s:textfield name="userWebDTO.username" maxlength="15" size="20" cssStyle="width:200px" /></td>
+                        <td class="value"><s:textfield name="userWebDTO.username" maxlength="15" size="20" cssStyle="width:200px" id="username"/></td>
                     </tr>
                     <tr>
                         <td class="label" scope="row">
@@ -56,7 +69,7 @@
                     <del class="btnwrapper">
                         <ul class="btnrow">
                             <li>
-                                <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="login">Submit</span></span></s:a>
+                                <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="login">Next</span></span></s:a>
                             </li>
                         </ul>
                     </del>

@@ -5,26 +5,30 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/loginValidation.js'/>"></script>
 <SCRIPT TYPE="text/javascript">
 // this function is called from body onload in main.jsp (decorator)
 function callOnloadFunctions(){
     setFocusToFirstControl();
 }
 <!--
-function submitenter(myfield,e)
-{
-var keycode;
-if (window.event) keycode = window.event.keyCode;
-else if (e) keycode = e.which;
-else return true;
+function submitenter(myfield,e) {
+ var keycode;
+ if (window.event) keycode = window.event.keyCode;
+ else if (e) keycode = e.which;
+ else return true;
 
-if (keycode == 13)
-   {
-   myfield.form.submit();
-   return false;
+    if (keycode == 13) {            
+      myfield.form.submit();
+      return false;
    }
-else
-   return true;
+else return true;
+  
+}
+function validateForm() {
+    if (validate()) {
+       document.forms[0].submit()
+    }
 }
 //-->
 </SCRIPT>
@@ -90,7 +94,7 @@ else
             <del class="btnwrapper">
                 <ul class="btnrow">
                     <li>
-                        <s:a href="#" cssClass="btn" onclick="document.forms.loginForm.submit();" id="loginLink"><span class="btn_img"><span class="login">Login</span></span></s:a>
+                        <s:a href="#" cssClass="btn" onclick="validateForm();" id="loginLink"><span class="btn_img"><span class="login">Login</span></span></s:a>
                     </li>
                 </ul>
             </del>

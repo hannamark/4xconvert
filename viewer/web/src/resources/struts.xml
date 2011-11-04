@@ -73,7 +73,7 @@
             <interceptor-ref name="defaultStack" />
             <result>/WEB-INF/jsp/disclaimer.jsp</result>
             <result name="acceptView" type="redirectAction">ctro/welcome.action</result>
-        </action>
+        </action>        
     </package>
     <package name="public" namespace="/public" extends="default">
         <default-interceptor-ref name="showDisclaimer" />
@@ -104,6 +104,10 @@
         <action name="ajaxptpDiseasedisplay" class="gov.nih.nci.pa.viewer.action.AdHocReportAction" method="fillInDiseaseId">
             <interceptor-ref name="methodValidationStack" />
             <result name="success">/WEB-INF/jsp/nodecorate/selectedDiseaseDetails.jsp</result>
+        </action>
+        <action name="popupWaitDialog">
+            <interceptor-ref name="methodValidationStack" />
+            <result>/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>
         </action>
     </package>
 

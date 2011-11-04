@@ -98,6 +98,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
@@ -151,7 +152,7 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
      */
     @SuppressWarnings(UNCHECKED)
     public AbstractBaseIsoService() {
-        Class clss = getClass();
+        Class<?> clss = getClass();
         Type type = clss.getGenericSuperclass();
         while (!(type instanceof ParameterizedType)) {
             clss = clss.getSuperclass();
@@ -161,6 +162,29 @@ public abstract class AbstractBaseIsoService<DTO extends BaseDTO, BO extends Abs
 
         typeArgument = (Class<BO>) parameterizedType.getActualTypeArguments()[1];
         converterArgument = (Class<CONVERTER>) parameterizedType.getActualTypeArguments()[2];
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<DTO> getAll() throws PAException {
+
+        Session session = PaHibernateUtil.getCurrentSession();
+        String hql = "select alias from " + getTypeArgument().getName() + " alias "
+                + getQueryOrderClause();
+
+        Query query = session.createQuery(hql);
+        return convertFromDomainToDTOs(query.list());
+    }   
+
+    /**
+     * Builds the order by clause forv the HQL query that gets the objects by Study Protocol.
+     * @return The order by clause forv the HQL query that gets the objects by Study Protocol.
+     */
+    protected String getQueryOrderClause() {
+        return " order by alias.id";
     }
 
     /**

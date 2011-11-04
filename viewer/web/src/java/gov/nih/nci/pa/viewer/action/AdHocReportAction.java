@@ -87,14 +87,18 @@ import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.IdentifierType;
+import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.viewer.dto.result.KeyValueDTO;
 import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -269,11 +273,30 @@ public class AdHocReportAction
     
     /**
      * Return a list of anatomic sites.
-     * @return ist of anatomic sites.
+     * @return list of anatomic sites.
      * @throws PAException on error
      */
     public List<AnatomicSite> getAnatomicSitesList() throws PAException {
         return  PaRegistry.getLookUpTableService().getAnatomicSites();
+    }
+    
+    /**
+     * Return a list of planned markers.
+     * @return list of planned markers.
+     * @throws PAException on error
+     */
+    public List<KeyValueDTO> getPlannedMarkersList() throws PAException {
+        List<KeyValueDTO> result = new ArrayList<KeyValueDTO>();
+        for (PlannedMarkerDTO dto : PaRegistry.getPlannedMarkerService().getAll()) {
+            result.add(populateWebDTO(dto));
+        }
+        return result;
+    }
+
+    private KeyValueDTO populateWebDTO(PlannedMarkerDTO markerDTO) {
+        KeyValueDTO result = new KeyValueDTO(IiConverter.convertToLong(markerDTO.getIdentifier()),
+                StConverter.convertToString(markerDTO.getLongName()));
+        return result;
     }
 
     /**

@@ -1,6 +1,4 @@
-Exception in generating PDQ XML for Study 1
-cvc-complex-type.2.4.a: Invalid content was found starting with element 'secondary_id'. One of '{org_study_id}' is expected.
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <clinical_study>
     <id_info>
         <secondary_id>

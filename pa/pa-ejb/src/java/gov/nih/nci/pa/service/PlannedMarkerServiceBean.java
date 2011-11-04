@@ -118,6 +118,7 @@ public class PlannedMarkerServiceBean extends
     /**
      * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public PlannedMarkerDTO getPlannedMarker(Ii ii) throws PAException {
         return super.get(ii);
@@ -150,6 +151,14 @@ public class PlannedMarkerServiceBean extends
     public void validate(PlannedMarkerDTO dto) throws PAException {
         super.validate(dto);
         enforceNoDuplicates(dto);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getQueryOrderClause() {
+        return " order by alias.longName";
     }
 
     private void enforceNoDuplicates(PlannedMarkerDTO markerDTO) throws PAException {

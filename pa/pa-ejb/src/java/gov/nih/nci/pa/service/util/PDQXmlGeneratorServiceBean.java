@@ -324,7 +324,6 @@ public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implemen
             String errorMsg = String.format("Exception in generating PDQ XML for Study %s", studyProtocolIi
                     .getExtension());
             LOG.error(errorMsg.concat(" (see generated xml file for source xml)"), e);
-            return errorMsg.concat("\n").concat(e.getMessage()).concat("\n").concat(generatedXml);
         }
         return generatedXml;
     }

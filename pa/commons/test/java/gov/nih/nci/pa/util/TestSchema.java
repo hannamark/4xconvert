@@ -1001,6 +1001,18 @@ public class TestSchema {
         create.setDateLastUpdated(TODAY);
         return create;
     }
+    
+    public static PlannedMarker createPlannedMarker() {
+        PlannedMarker result = new PlannedMarker(); 
+        result.setName("name");
+        result.setAssayTypeCode(AssayTypeCode.CGH);
+        result.setAssayUseCode(AssayUseCode.CORRELATIVE);
+        result.setAssayPurposeCode(AssayPurposeCode.ELIGIBILITY_CRITERION);
+        result.setTissueCollectionMethodCode(TissueCollectionMethodCode.MANDATORY);
+        result.setTissueSpecimenTypeCode(TissueSpecimenTypeCode.CITRATED_PLASMA);
+        result.setStatusCode(ActiveInactivePendingCode.ACTIVE);       
+        return result;
+    }
 
     public static ClinicalResearchStaff createClinicalResearchStaffObj(Organization o, Person p) {
         ClinicalResearchStaff crs = new ClinicalResearchStaff();

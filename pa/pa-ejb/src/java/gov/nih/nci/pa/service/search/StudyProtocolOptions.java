@@ -95,6 +95,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Abraham J. Evans-EL
  *
  */
+@SuppressWarnings({"PMD.TooManyFields" })
 public class StudyProtocolOptions {
 
     private boolean excludeRejectedTrials;
@@ -111,6 +112,8 @@ public class StudyProtocolOptions {
     private List<String> states = new ArrayList<String>();
     private String city;
     private List<Long> summary4AnatomicSites = new ArrayList<Long>();
+    private List<Long> bioMarkers = new ArrayList<Long>();
+    private List<Long> pdqDiseases = new ArrayList<Long>();
 
     /**
      * @return excludeRejectedTrials
@@ -326,5 +329,33 @@ public class StudyProtocolOptions {
         return (StringUtils.isNotBlank(getCountryName()) || StringUtils.isNotBlank(getCity()) 
                 || CollectionUtils.isNotEmpty(getStates()));
     }
+
+    /**
+     * @return the bioMarkers
+     */
+    public List<Long> getBioMarkers() {
+        return bioMarkers;
+    }
+
+    /**
+     * @param bioMarkers the bioMarkers to set
+     */
+    public void setBioMarkers(List<Long> bioMarkers) {
+        this.bioMarkers = bioMarkers;
+    }
+
+    /**
+     * @return the pdqDiseases
+     */
+    public List<Long> getPdqDiseases() {
+        return pdqDiseases;
+    }
+
+    /**
+     * @param pdqDiseases the pdqDiseases to set
+     */
+    public void setPdqDiseases(List<Long> pdqDiseases) {
+        this.pdqDiseases = pdqDiseases;
+    }     
     
 }

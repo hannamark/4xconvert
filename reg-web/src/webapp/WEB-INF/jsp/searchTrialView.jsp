@@ -111,12 +111,12 @@
                         <c:if test="${requestScope.trialSummary.amendmentDate.value != null}">
                             <reg-web:titleRow titleKey="trial.amendDetails"/>
                             <reg-web:spaceRow/>
-                            <reg-web:valueRow labelKey="submit.trial.amendmentNumber">
+                            <reg-web:valueRow labelKey="view.trial.amendmentNumber">
                                 <c:if test="${requestScope.trialSummary.amendmentNumber.value != null}">
                                     <c:out value="${requestScope.trialSummary.amendmentNumber.value}"/>
                                 </c:if>
                             </reg-web:valueRow>
-                            <reg-web:valueRow labelKey="submit.trial.amendmentDate">
+                            <reg-web:valueRow labelKey="view.trial.amendmentDate">
                                 <fmt:formatDate value="${requestScope.trialSummary.amendmentDate.value}"/>
                             </reg-web:valueRow>
                         </c:if>

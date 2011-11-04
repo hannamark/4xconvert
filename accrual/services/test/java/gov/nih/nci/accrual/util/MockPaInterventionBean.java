@@ -96,49 +96,43 @@ public class MockPaInterventionBean implements InterventionServiceRemote {
 
     public static List<InterventionDTO> list;
     private static Long seq = 1L;
-    
+
     static {
         list = new ArrayList<InterventionDTO>();
         InterventionDTO idto = new InterventionDTO();
         idto.setIdentifier(IiConverter.convertToIi(seq++));
-        idto.setName(StConverter.convertToSt("Test Int. 001"));  
+        idto.setName(StConverter.convertToSt("Test Int. 001"));
         list.add(idto);
     }
 
     /**
-     * @param searchCriteria
-     * @return
-     * @throws PAException
+     * {@inheritDoc}
      */
-    public List<InterventionDTO> search(InterventionDTO searchCriteria)
-            throws PAException {
+    @Override
+    public List<InterventionDTO> search(InterventionDTO searchCriteria) throws PAException {
         return list;
     }
 
     /**
-     * @param dto
-     * @return
-     * @throws PAException
+     * {@inheritDoc}
      */
+    @Override
     public InterventionDTO create(InterventionDTO dto) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     /**
-     * @param ii
-     * @throws PAException
+     * {@inheritDoc}
      */
+    @Override
     public void delete(Ii ii) throws PAException {
-        // TODO Auto-generated method stub
 
     }
 
     /**
-     * @param ii
-     * @return
-     * @throws PAException
+     * {@inheritDoc}
      */
+    @Override
     public InterventionDTO get(Ii ii) throws PAException {
         if (ii == null || ii.getExtension() == null) {
             throw new PAException("NULL argument getInterventionDTO");
@@ -154,18 +148,26 @@ public class MockPaInterventionBean implements InterventionServiceRemote {
     }
 
     /**
-     * @param dto
-     * @return
-     * @throws PAException
+     * {@inheritDoc}
      */
+    @Override
     public InterventionDTO update(InterventionDTO dto) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void validate(InterventionDTO arg0) throws PAException {
-        // TODO Auto-generated method stub
-        
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<InterventionDTO> getAll() throws PAException {
+        return null;
     }
 
 }

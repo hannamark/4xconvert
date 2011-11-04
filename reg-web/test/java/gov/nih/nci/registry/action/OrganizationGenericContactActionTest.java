@@ -62,7 +62,7 @@ public class OrganizationGenericContactActionTest extends AbstractRegWebTest {
 
     @Test
     public void testCreate() {
-        assertEquals("create_org_contact_response", action.create());
+        assertEquals("create_org_contact_response", action.ajaxCreate());
         assertTrue(action.getActionErrors().contains("Sponsor is a required field"));
         action = new OrganizationGenericContactAction();
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -71,21 +71,21 @@ public class OrganizationGenericContactActionTest extends AbstractRegWebTest {
         request.setupAddParameter("phone", "phone");
         request.setupAddParameter("title", "title");
         ServletActionContext.setRequest(request);
-        assertEquals("create_org_contact_response", action.create());
+        assertEquals("create_org_contact_response", action.ajaxCreate());
         request = new MockHttpServletRequest();
         request.setupAddParameter("orgGenericContactIdentifier", "1");
         request.setupAddParameter("email", "e@mail.com");
         request.setupAddParameter("phone", "phone");
         request.setupAddParameter("title", "TestEntityValidationException");
         ServletActionContext.setRequest(request);
-        assertEquals("create_org_contact_response", action.create());
+        assertEquals("create_org_contact_response", action.ajaxCreate());
         request = new MockHttpServletRequest();
         request.setupAddParameter("orgGenericContactIdentifier", "1");
         request.setupAddParameter("email", "e@mail");
         request.setupAddParameter("phone", "phone");
         request.setupAddParameter("title", "title");
         ServletActionContext.setRequest(request);
-        assertEquals("create_org_contact_response", action.create());
+        assertEquals("create_org_contact_response", action.ajaxCreate());
 
     }
 }

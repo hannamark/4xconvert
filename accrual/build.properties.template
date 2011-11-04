@@ -29,3 +29,6 @@ selenium.server.port=4444
 accrual.batch.upload.filepath.relative.dir=accrual_batch
 accrual.batch.upload.filepath.loc=${application.base.path}/${accrual.batch.upload.filepath.relative.dir}
 wikiHelp.baseUrl.accrual=https://wiki.nci.nih.gov/x/yALTAg#NCICTRPAccrualHelpTopics-
+
+maven.username=uploaded
+maven.password=password

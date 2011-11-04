@@ -571,36 +571,36 @@
     </target>
     <target name="ivy-test-cobertura" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-cobertura" />
-        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="test-cobertura" />
+        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-cobertura" />
     </target>
     <target name="ivy-test-junit" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-junit" />
-        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="test-junit" />
+        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-junit" />
     </target>
     <target name="ivy-test-pmd" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-pmd" />
-        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="test-pmd" />
+        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-pmd" />
     </target>
     <target name="ivy-test-checkstyle" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-checkstyle" />
-        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="test-checkstyle" />
+        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-checkstyle" />
     </target>
     <target name="ivy-test-simian" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-simian" />
-        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="test-simian" />
+        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-simian" />
     </target>
     <target name="ivy-compile" depends="init:ivy">
         <ivy:resolve refresh="true" conf="compile" />
-        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="compile" />
+        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="compile" />
     </target>
     <target name="ivy-selenium" depends="init:ivy">
         <ivy:resolve refresh="true" conf="selenium" />
-        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="selenium" />
+        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="selenium" />
     </target>
     <target name="ivy-test"
             depends="init:ivy,ivy-test-cobertura,ivy-test-junit,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian">
         <ivy:resolve refresh="true" conf="test" />
-        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision].[ext]" conf="test" />
+        <ivy:retrieve pattern="${lib.dir}/pa-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test" />
     </target>
     <target name="ivy-runtime" depends="init:ivy" description="Updates the local ivy repository">
         <ivy:resolve refresh="true" conf="runtime" />

@@ -1532,6 +1532,28 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <target name="run-selenium:all" description="Runs Selenium tests for pa, registry, viewer and accrual"
         depends="run-selenium:reg-web,run-selenium:paear, run-selenium:viewer, run-selenium:accrual">
     </target>
+    
+    <target name="maven:install" description="Installs the pa-commons,pa-ejb-client and accrual-services-client into the local maven repo.">
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa.build.file}" dir="${pa.base.dir}" target="maven:install">
+            <property name="maven.username"  value="${maven.username}"/>
+            <property name="maven.password"  value="${maven.password}"/>
+        </ant>
+        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}" dir="${accrual-ear.base.dir}" target="maven:install">
+            <property name="maven.username"  value="${maven.username}"/>
+            <property name="maven.password"  value="${maven.password}"/>
+        </ant>
+    </target>
+    
+    <target name="maven:deploy" description="Installs the pa-commons,pa-ejb-client and accrual-services-client into the local maven repo.">
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa.build.file}" dir="${pa.base.dir}" target="maven:deploy">
+            <property name="maven.username"  value="${maven.username}"/>
+            <property name="maven.password"  value="${maven.password}"/>
+        </ant>
+        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}" dir="${accrual-ear.base.dir}" target="maven:deploy">
+            <property name="maven.username"  value="${maven.username}"/>
+            <property name="maven.password"  value="${maven.password}"/>
+        </ant>
+    </target>
 
     <target name="init:ivy">
         <mkdir dir="${local.repo.dir}"/>

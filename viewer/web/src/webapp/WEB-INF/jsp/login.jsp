@@ -2,12 +2,13 @@
 <page:applyDecorator name="main">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/loginValidation.js'/>"></script>
 </head>
 <body><h1>Login</h1>
 <c:set var="topic" scope="request" value="login"/> 
 <div class="box"> 
     <p style="margin:0; padding:0">Please log in to view reports on CTRP trials.</p>
-    <form action="j_security_check" method="post" id="loginForm">   
+    <form action="j_security_check" method="post" id="loginForm" onsubmit="return validate();">   
 
     <table style="margin:0 auto">
         <c:if test="${not empty param.failedLogin}">

@@ -76,6 +76,13 @@ public class InvokeRegulatoryAuthorityEjb implements RegulatoryAuthorityServiceR
     public void validate(RegulatoryAuthorityDTO arg0) throws PAException {
         throw new PAException("not implemented");   
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public List<RegulatoryAuthorityDTO> getAll() throws PAException {
+        throw new PAException("not implemented");
+    }
 
    
 }

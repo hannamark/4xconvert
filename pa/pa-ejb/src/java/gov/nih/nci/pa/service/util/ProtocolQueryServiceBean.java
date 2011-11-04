@@ -87,13 +87,11 @@ import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.Organization;
-import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyContact;
-import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
@@ -157,7 +155,7 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 @Stateless
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(PaHibernateSessionInterceptor.class)
-@SuppressWarnings("PMD.TooManyMethods")
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtocol>
     implements ProtocolQueryServiceLocal {
 
@@ -401,6 +399,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setStates(criteria.getStates());
         options.setCity(criteria.getCity());
         options.setSummary4AnatomicSites(criteria.getSummary4AnatomicSites());
+        options.setBioMarkers(criteria.getBioMarkers());
+        options.setPdqDiseases(criteria.getPdqDiseases());
 
         populateExample(criteria, example);
         return new StudyProtocolQueryBeanSearchCriteria(example, options);
@@ -479,15 +479,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     }
     private void populateExampleStudyProtocolDiseaseInterventionType(
             StudyProtocolQueryCriteria crit, StudyProtocol sp) {
-        populateExampleStudyProtocolSumm4FundSrc(crit, sp);
-
-        if (crit.getDiseaseConditionId() != null) {
-            StudyDisease stdDis = new StudyDisease();
-            PDQDisease des = new PDQDisease();
-            des.setId(crit.getDiseaseConditionId());
-            stdDis.setDisease(des);
-            sp.getStudyDiseases().add(stdDis);
-        }
+        populateExampleStudyProtocolSumm4FundSrc(crit, sp);        
 
         if (crit.getInterventionType() != null) {
             PlannedActivity plndAct = new PlannedActivity();
@@ -626,14 +618,15 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && CollectionUtils.isEmpty(criteria.getStates())
                 && CollectionUtils.isEmpty(criteria.getPhaseCodes())
                 && CollectionUtils.isEmpty(criteria.getSummary4AnatomicSites())
+                && CollectionUtils.isEmpty(criteria.getBioMarkers())
+                && CollectionUtils.isEmpty(criteria.getPdqDiseases())
                 && !criteria.isSearchOnHold()
                 && !criteria.isStudyLockedBy()
                 && StringUtils.isEmpty(criteria.getSubmissionType())
                 && StringUtils.isEmpty(criteria.getTrialCategory())
                 && criteria.getSumm4FundingSourceId() == null
                 && StringUtils.isEmpty(criteria.getSumm4FundingSourceTypeCode())
-                && criteria.getInterventionType() == null
-                && criteria.getDiseaseConditionId() == null
+                && criteria.getInterventionType() == null               
                 && (criteria.isMyTrialsOnly() != null && !criteria.isMyTrialsOnly()
                         || criteria.isMyTrialsOnly() == null));
     }

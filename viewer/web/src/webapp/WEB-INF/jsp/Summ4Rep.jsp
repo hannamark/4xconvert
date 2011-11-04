@@ -3,6 +3,10 @@
 <head>
 <title><fmt:message key="summ4Rep.header" /></title>
 <s:head />
+<link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all" />
+<link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all" />
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
 <script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
 <script type="text/javascript">
 addCalendar("Cal1", "Select Date", "criteria.intervalStartDate", "criteria");
@@ -13,6 +17,7 @@ setFormat("mm/dd/yyyy");
 function handleAction(){
     document.forms[0].action="resultsSumm4Rep.action";
     document.forms[0].submit();
+    showPopWin('${waitDialogUrl}', 600, 200, '', 'Summary 4 Type Report');
 }
 function handleReset(){
     document.forms[0].action="criteriaSumm4Rep.action";

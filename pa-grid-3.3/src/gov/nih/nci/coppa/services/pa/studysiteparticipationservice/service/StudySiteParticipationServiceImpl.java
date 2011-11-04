@@ -27,7 +27,7 @@ import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.DSetConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.services.correlation.AbstractRoleDTO;
 import gov.nih.nci.services.correlation.ClinicalResearchStaffDTO;
 import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
@@ -72,7 +72,7 @@ public class StudySiteParticipationServiceImpl extends StudySiteParticipationSer
 
             ParticipatingSiteDTO participatingSite = null;
             Ii hcfIi = extractIdentifer(hcfDTO);
-            if (PAUtil.isIiNotNull(hcfIi)) {
+            if (!ISOUtil.isIiNull(hcfIi)) {
                 participatingSite = service.createStudySiteParticipant(studySiteDTO, studySiteAccrualStatusDTO,
                         hcfIi, participatingSiteContactDTOList);
             } else {

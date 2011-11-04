@@ -79,13 +79,18 @@
 package gov.nih.nci.pa.iso.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.Ts;
 
 import java.sql.Timestamp;
 import java.util.Date;
 
+import org.joda.time.DateMidnight;
 import org.junit.Test;
 
 /**
@@ -93,16 +98,113 @@ import org.junit.Test;
  *
  */
 public class TsConverterTest {
+    /**
+     * test the convertToTs method for a given date.
+     */
     @Test
-    public void timestampTsTimestamp () {
-        Timestamp xxx = new Timestamp(new Date().getTime());
-        Timestamp yyy = TsConverter.convertToTimestamp(TsConverter.convertToTs(xxx));
-        assertEquals(xxx,yyy);
-        Timestamp zzz = TsConverter.convertToTimestamp(TsConverter.convertToTs(null));
-        assertNull(zzz);
-
-        Ts ts = new Ts();
-        ts.setNullFlavor(NullFlavor.UNK);
-        assertNull(TsConverter.convertToTimestamp(ts));
+    public void testConvertToTs() {
+        Date input = new Date();
+        Ts result = TsConverter.convertToTs(input);
+        assertNotNull("No result returned", result);
+        assertNull("Null flavor should not be set", result.getNullFlavor());
+        assertEquals("Wrong value returned", input, result.getValue());
     }
+    
+    /**
+     * test the convertToTs method for a null date.
+     */
+    @Test
+    public void testConvertToTsNull() {
+        Ts result = TsConverter.convertToTs(null);
+        assertNotNull("No result returned", result);
+        assertEquals("Wrong null flavor", NullFlavor.NI, result.getNullFlavor());
+        assertNull("Wrong value returned", result.getValue());
+    }
+    
+    /**
+     * Test the hasNoValue method in the null case.
+     */
+    @Test
+    public void testHasNoValueNull() {
+        boolean result = TsConverter.hasNoValue(null);
+        assertTrue("null Ts has no value", result);
+    }
+    
+    /**
+     * Test the hasNoValue method in the nullified case.
+     */
+    @Test
+    public void testHasNoValueNullified() {
+        Ts ts = new Ts();
+        ts.setNullFlavor(NullFlavor.NI);
+        ts.setValue(new Date());
+        boolean result = TsConverter.hasNoValue(ts);
+        assertTrue("nullified Ts has no value", result);
+    }
+    
+    /**
+     * Test the hasNoValue method with no value.
+     */
+    @Test
+    public void testHasNoValueNoValue() {
+        Ts ts = new Ts();
+        boolean result = TsConverter.hasNoValue(ts);
+        assertTrue("empty Ts has no value", result);
+    }
+    
+    /**
+     * Test the hasNoValue method with a value.
+     */
+    @Test
+    public void testHasNoValue() {
+        Ts ts = new Ts();
+        ts.setValue(new Date());
+        boolean result = TsConverter.hasNoValue(ts);
+        assertFalse("Ts has a value", result);
+    }
+    
+    /**
+     * Test the convertToTimestamp method with a null value.
+     */
+    @Test
+    public void testConvertToTimestampNull() {
+        Timestamp result = TsConverter.convertToTimestamp(null);
+        assertNull("null Ts has no value", result);
+    }
+    
+    /**
+     * Test the convertToTimestamp method with a value.
+     */
+    @Test
+    public void testConvertToTimestamp() {
+        Date now = new Date();
+        Ts ts = new Ts();
+        ts.setValue(now);
+        Timestamp result = TsConverter.convertToTimestamp(ts);
+        assertEquals(now, result);
+    }
+    
+
+    /**
+     * Test the convertToDateMidnight method with a null value.
+     */
+    @Test
+    public void testConvertToDateMidnightNull() {
+        DateMidnight result = TsConverter.convertToDateMidnight(null);
+        assertNull("null Ts has no value", result);
+    }
+    
+    /**
+     * Test the convertToDateMidnight method with a value.
+     */
+    @Test
+    public void testConvertToDateMidnight() {
+        Date now = new Date();
+        Ts ts = new Ts();
+        ts.setValue(now);
+        DateMidnight result = TsConverter.convertToDateMidnight(ts);
+        DateMidnight today = new DateMidnight(now);
+        assertEquals(today, result);
+    }
+  
 }

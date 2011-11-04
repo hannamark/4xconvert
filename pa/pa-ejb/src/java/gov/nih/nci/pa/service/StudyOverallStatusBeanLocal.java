@@ -100,13 +100,10 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.exception.PAValidationException;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -120,6 +117,7 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
+import org.joda.time.DateMidnight;
 
 /**
  * @author asharma
@@ -157,15 +155,14 @@ public class StudyOverallStatusBeanLocal extends
             return oldStatus;
         }
         StudyStatusCode oldCode = null;
-        Timestamp oldDate = null;
+        DateMidnight oldDate = null;
 
         if (oldStatus != null) {
             oldCode = StudyStatusCode.getByCode(oldStatus.getStatusCode().getCode());
-            oldDate = TsConverter.convertToTimestamp(oldStatus.getStatusDate());
+            oldDate = TsConverter.convertToDateMidnight(oldStatus.getStatusDate());
         }
         StudyStatusCode newCode = StudyStatusCode.getByCode(dto.getStatusCode().getCode());
-        Timestamp newDate = TsConverter.convertToTimestamp(dto.getStatusDate());
-
+        DateMidnight newDate = TsConverter.convertToDateMidnight(dto.getStatusDate());
         validateStatusCodeAndDate(oldCode, newCode, oldDate, newDate);
         validateReasonText(dto);
 
@@ -263,8 +260,8 @@ public class StudyOverallStatusBeanLocal extends
      * @param newDate the date of the new transition
      * @throws PAException on error
      */
-    private void validateStatusCodeAndDate(StudyStatusCode oldCode, StudyStatusCode newCode, Timestamp oldDate,
-            Timestamp newDate) throws PAException {
+    private void validateStatusCodeAndDate(StudyStatusCode oldCode, StudyStatusCode newCode, DateMidnight oldDate,
+            DateMidnight newDate) throws PAException {
         checkCondition(newCode == null, "Study status must be set.");
         checkCondition(newDate == null, "Study status date must be set.");
         if (oldCode != null) {
@@ -272,7 +269,7 @@ public class StudyOverallStatusBeanLocal extends
                            "Invalid study status transition from " + oldCode.getCode() + " to " + newCode.getCode()
                                    + ".");
         }
-        checkCondition(oldDate != null && newDate.before(oldDate),
+        checkCondition(oldDate != null && newDate.isBefore(oldDate),
                        "New current status date should be bigger/same as old date.");
     }
 
@@ -319,10 +316,9 @@ public class StudyOverallStatusBeanLocal extends
         }
         StudyOverallStatusDTO currentDBdto = getCurrentByStudyProtocol(studyProtocolIi);
         StudyStatusCode currentStatusCode = StudyStatusCode.getByCode(currentDBdto.getStatusCode().getCode());
-        Timestamp currentStatusDate = TsConverter.convertToTimestamp(currentDBdto.getStatusDate());
-
+        DateMidnight currentStatusDate = TsConverter.convertToDateMidnight(currentDBdto.getStatusDate());
         StudyStatusCode newStatusCode = StudyStatusCode.getByCode(newStatusDto.getStatusCode().getCode());
-        Timestamp newStatusDate = TsConverter.convertToTimestamp(newStatusDto.getStatusDate());
+        DateMidnight newStatusDate = TsConverter.convertToDateMidnight(newStatusDto.getStatusDate());
         boolean codeChanged =
                 (newStatusCode == null) ? (currentStatusCode != null) : !newStatusCode.equals(currentStatusCode);
         boolean statusDateChanged =
@@ -397,10 +393,10 @@ public class StudyOverallStatusBeanLocal extends
             StudyProtocolDTO studyProtocolDTO) throws PAException {
         StringBuffer errMsg = new StringBuffer();
         StudyStatusCode newCode = StudyStatusCode.getByCode(statusDto.getStatusCode().getCode());
-        Timestamp newStatusTimestamp = PAUtil.dateStringToTimestamp(statusDto.getStatusDate().toString());
+        DateMidnight newStatusDate = TsConverter.convertToDateMidnight(statusDto.getStatusDate());
         StudyOverallStatusDTO  currentDBdto = getCurrentByStudyProtocol(studyProtocolDTO.getIdentifier());
         StudyStatusCode oldStatusCode = StudyStatusCode.getByCode(currentDBdto.getStatusCode().getCode());
-        Timestamp newStartDate = TsConverter.convertToTimestamp(studyProtocolDTO.getStartDate());
+        DateMidnight newStartDate = TsConverter.convertToDateMidnight(studyProtocolDTO.getStartDate());
         String actualString = "Actual";
         String anticipatedString = "Anticipated";
         String newStartDateType = studyProtocolDTO.getStartDateTypeCode().getCode();
@@ -416,7 +412,7 @@ public class StudyOverallStatusBeanLocal extends
                 && ISOUtil.isCdNull(studyProtocolDTO.getPrimaryCompletionDateTypeCode())) {
 
             if (StudyStatusCode.APPROVED.equals(oldStatusCode) && StudyStatusCode.ACTIVE.equals(newCode)) {
-                if (newStartDate.equals(newStatusTimestamp)) {
+                if (newStartDate.equals(newStatusDate)) {
                     errMsg.append("When transitioning from 'Approved' to 'Active' the trial start "
                             + "date must be the same as the status date.");
                 }
@@ -443,8 +439,8 @@ public class StudyOverallStatusBeanLocal extends
                     errMsg.append(newCode.getCode());
                     errMsg.append("'.");
                 }
-                if (TsConverter.convertToTimestamp(studyProtocolDTO.getPrimaryCompletionDate())
-                        .before(TsConverter.convertToTimestamp(oldStatusDto.getStatusDate()))) {
+                if (TsConverter.convertToDateMidnight(studyProtocolDTO.getPrimaryCompletionDate())
+                        .isBefore(TsConverter.convertToDateMidnight(oldStatusDto.getStatusDate()))) {
                     errMsg.append("Primary Completion Date must be the same or greater than Current Trial "
                             + " Status Date when Current Trial Status is '");
                     errMsg.append(newCode.getCode());
@@ -462,26 +458,31 @@ public class StudyOverallStatusBeanLocal extends
 
     private StringBuffer validateTrialDates(StudyProtocolDTO dto, StudyOverallStatusDTO statusDto) {
         StringBuffer errors = new StringBuffer();
-        Timestamp statusDate = TsConverter.convertToTimestamp(statusDto.getStatusDate());
+        DateMidnight statusDate = TsConverter.convertToDateMidnight(statusDto.getStatusDate());
         String statusCode = CdConverter.convertCdToString(statusDto.getStatusCode());
 
-        Timestamp currentTimeStamp = new Timestamp((new Date()).getTime());
+        DateMidnight today = new DateMidnight();
         StudyProtocolDates dates = AbstractStudyProtocolConverter.convertDatesToDomain(dto);
+        DateMidnight startDate = (dates.getStartDate() != null) ? new DateMidnight(dates.getStartDate()) : null;
+        DateMidnight primaryCompletionDate =
+                (dates.getPrimaryCompletionDate() != null) ? new DateMidnight(dates.getPrimaryCompletionDate()) : null;
+        DateMidnight completionDate =
+                (dates.getCompletionDate() != null) ? new DateMidnight(dates.getCompletionDate()) : null;
         //If the null flavor is unknown we ignore primary completion date, thus making it option for PO-2429
         boolean unknownPrimaryCompletionDate = dto.getPrimaryCompletionDate().getNullFlavor() == NullFlavor.UNK;
 
         // Constraint/Rule: 22 Current Trial Status Date must be current or past.
-        if (currentTimeStamp.before(statusDate)) {
+        if (today.isBefore(statusDate)) {
             errors.append("Current Trial Status Date cannot be in the future.\n");
         }
         // Constraint/Rule: 23 Trial Start Date must be current/past if 'actual' trial start date type
         // is selected and must be future if 'anticipated' trial start date type is selected.
         if (dates.getStartDateTypeCode() == ActualAnticipatedTypeCode.ACTUAL
-                && currentTimeStamp.before(dates.getStartDate())) {
-            errors.append("Actual Trial Start Date must be current or in past. \n");
+                && today.isBefore(startDate)) {
+            errors.append("Actual Trial Start Date must be current or in the past. \n");
         } else if (dates.getStartDateTypeCode() == ActualAnticipatedTypeCode.ANTICIPATED
-                && currentTimeStamp.after(dates.getStartDate())) {
-            errors.append("Anticipated Start Date must be in future. \n");
+                && today.isAfter(startDate)) {
+            errors.append("Anticipated Start Date must be current or in the future. \n");
         }
         // Constraint/Rule:24 Primary Completion Date must be current/past if 'actual' primary completion date type
         // is selected and must be future if 'anticipated'trial primary completion date type is selected.
@@ -491,11 +492,11 @@ public class StudyOverallStatusBeanLocal extends
             }
         } else {
             if (dates.getPrimaryCompletionDateTypeCode() == ActualAnticipatedTypeCode.ACTUAL
-                    && currentTimeStamp.before(dates.getPrimaryCompletionDate())) {
-                errors.append("Actual Primary Completion Date must be current or in past.\n");
+                    && today.isBefore(primaryCompletionDate)) {
+                errors.append("Actual Primary Completion Date must be current or in the past.\n");
             } else if (dates.getPrimaryCompletionDateTypeCode() == ActualAnticipatedTypeCode.ANTICIPATED
-                    && currentTimeStamp.after(dates.getPrimaryCompletionDate())) {
-                errors.append("Anticipated Primary Completion Date must be in future. \n");
+                    && today.isAfter(primaryCompletionDate)) {
+                errors.append("Anticipated Primary Completion Date must be current or in the future. \n");
             }
 
         }
@@ -513,7 +514,7 @@ public class StudyOverallStatusBeanLocal extends
         //Current Trial Status Date and have 'actual' type. New Rule added-01/15/09 if start date is smaller
         //than the Current Trial Status Date, replace Current Trial Status date with the actual Start Date.
         //pa2.0 as part of release removing the "replace Current Trial Status date with the actual Start Date."
-        if (StudyStatusCode.ACTIVE.getCode().equals(statusCode) && (dates.getStartDate().after(statusDate)
+        if (StudyStatusCode.ACTIVE.getCode().equals(statusCode) && (startDate.isAfter(statusDate)
                 || dates.getStartDateTypeCode() != ActualAnticipatedTypeCode.ACTUAL)) {
             errors.append("If Current Trial Status is Active, Trial Start Date must be Actual "
                     + " and same as or smaller than Current Trial Status Date.\n");
@@ -543,21 +544,21 @@ public class StudyOverallStatusBeanLocal extends
             errors.append("Trial Start Date must be same or earlier than Primary Completion Date.\n");
         }
 
-        if (dates.getCompletionDate() != null) {
+        if (completionDate != null) {
             if (dates.getCompletionDateTypeCode() == null) {
                 errors.append("Completion Date Type must be specified.\n");
             } else {
                 if (dates.getCompletionDateTypeCode() == ActualAnticipatedTypeCode.ACTUAL) {
-                    if (currentTimeStamp.before(dates.getCompletionDate())) {
+                    if (today.isBefore(completionDate)) {
                         errors.append("Actual Trial Completion Date must be current or in the past.\n");
                     }
                 } else {
-                    if (currentTimeStamp.after(dates.getCompletionDate())) {
-                        errors.append("Anticipated Completion Date must be in the future\n");
+                    if (today.isAfter(completionDate)) {
+                        errors.append("Anticipated Completion Date must be current or in the future\n");
                     }
                 }
             }
-            if (!unknownPrimaryCompletionDate && dates.getCompletionDate().before(dates.getPrimaryCompletionDate())) {
+            if (!unknownPrimaryCompletionDate && completionDate.isBefore(primaryCompletionDate)) {
                 errors.append("Completion date must be >= Primary completion date.\n");
             }
         }

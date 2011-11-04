@@ -163,6 +163,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.joda.time.DateMidnight;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
@@ -475,22 +476,26 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         boolean unknownPrimaryCompletionDate =
                 studyProtocolDTO.getPrimaryCompletionDate() != null
                         && studyProtocolDTO.getPrimaryCompletionDate().getNullFlavor() == NullFlavor.UNK;
-        Timestamp now = new Timestamp((new Date()).getTime());
+        DateMidnight today = new DateMidnight();
         checkRequiredDates(dates, unknownPrimaryCompletionDate);
-        checkDateAndType(now, dates.getStartDate(), dates.getStartDateTypeCode(), "start date");
+        DateMidnight startDate = new DateMidnight(dates.getStartDate());
+        checkDateAndType(today, startDate, dates.getStartDateTypeCode(), "start date");
         if (unknownPrimaryCompletionDate) {
             if (dates.getPrimaryCompletionDateTypeCode() != ActualAnticipatedTypeCode.ANTICIPATED) {
                 throw new PAException("Unknown primary completion dates must be marked as Anticipated. ");
             }
         } else {
-            checkDateAndType(now, dates.getPrimaryCompletionDate(), dates.getPrimaryCompletionDateTypeCode(),
+            DateMidnight primaryCompletionDate = new DateMidnight(dates.getPrimaryCompletionDate());
+            checkDateAndType(today, primaryCompletionDate, dates.getPrimaryCompletionDateTypeCode(),
                              "primary completion date");
-            if (dates.getPrimaryCompletionDate().before(dates.getStartDate())) {
+            if (primaryCompletionDate.isBefore(startDate)) {
                 throw new PAException("Primary completion date must be >= start date.");
             }
-            if (dates.getCompletionDate() != null 
-                && dates.getPrimaryCompletionDate().after(dates.getCompletionDate())) {
-                throw new PAException("Completion date must be >= Primary completion date.");
+            if (dates.getCompletionDate() != null) {
+                DateMidnight completionDate = new DateMidnight(dates.getCompletionDate());
+                if (primaryCompletionDate.isAfter(completionDate)) {
+                    throw new PAException("Completion date must be >= Primary completion date.");
+                }
             }
         }
     }
@@ -513,12 +518,12 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         }
     }
     
-    private void checkDateAndType(Timestamp now, Timestamp date, ActualAnticipatedTypeCode type, String field)
+    private void checkDateAndType(DateMidnight today, DateMidnight date, ActualAnticipatedTypeCode type, String field)
             throws PAException {
-        if (type == ActualAnticipatedTypeCode.ACTUAL && now.before(date)) {
+        if (type == ActualAnticipatedTypeCode.ACTUAL && today.isBefore(date)) {
             throw new PAException(MessageFormat.format("Actual {0} cannot be in the future.  ", field));
         }
-        if (type == ActualAnticipatedTypeCode.ANTICIPATED && now.after(date)) {
+        if (type == ActualAnticipatedTypeCode.ANTICIPATED && today.isAfter(date)) {
             throw new PAException(MessageFormat.format("Anticipated {0} must be in the future.  ", field));
         }
     }

@@ -141,7 +141,7 @@ public class OrganizationGenericContactAction extends ActionSupport {
     }
 
     private String phone;
-    
+
 
     /**
      *
@@ -155,7 +155,7 @@ public class OrganizationGenericContactAction extends ActionSupport {
      * @return res
      */
     public String displayTitleList() {
-       
+
         if (handleErrors()) {
             return SUCCESS;
         }
@@ -199,7 +199,7 @@ public class OrganizationGenericContactAction extends ActionSupport {
     }
 
     private boolean isMissingSponsor() {
-        return orgGenericContactIdentifier != null && (orgGenericContactIdentifier.equals("undefined") 
+        return orgGenericContactIdentifier != null && (orgGenericContactIdentifier.equals("undefined")
                 || orgGenericContactIdentifier.equals(""));
     }
 
@@ -207,7 +207,7 @@ public class OrganizationGenericContactAction extends ActionSupport {
      *
      * @return s
      */
-    public String create() {
+    public String ajaxCreate() {
         validateForCreate(email, phone);
         if (hasActionErrors()) {
             StringBuffer errMsg = new StringBuffer();

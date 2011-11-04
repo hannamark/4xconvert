@@ -99,6 +99,7 @@ import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PlannedActivity;
+import gov.nih.nci.pa.domain.PlannedMarker;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyCheckout;
@@ -876,6 +877,28 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         assertTrue(testBean.output.contains(result.get(0).getId()));
         assertTrue(testBean.output.contains(result.get(1).getId()));
     }
+    
+    @Test
+    public void getStudyProtocolQueryResultListByBioMarkers() throws PAException {
+        TestBean testBean = createStudyProtocolListForSearchByBioMarkers();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setBioMarkers(testBean.input);
+        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(2, result.size());       
+        assertTrue(testBean.output.contains(result.get(0).getId()));
+        assertTrue(testBean.output.contains(result.get(1).getId()));
+    }
+    
+    @Test
+    public void getStudyProtocolQueryResultListByPDQDiseases() throws PAException {
+        TestBean testBean = createStudyProtocolListForSearchByPdqDisease();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setPdqDiseases(testBean.input);
+        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
+        assertEquals(2, result.size());       
+        assertTrue(testBean.output.contains(result.get(0).getId()));
+        assertTrue(testBean.output.contains(result.get(1).getId()));
+    }
 
     private List<Long> createStudyProtocolList() {
         List<Long> result = Arrays.asList(new Long[]{0L, 0L, 0L, 0L, 0L });
@@ -986,6 +1009,61 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
 
         return result;
     }
+    
+    private TestBean createStudyProtocolListForSearchByBioMarkers() {
+        TestBean result = new TestBean();                 
+
+        StudyProtocol studyProtocol1 = createStudyProtocol();
+        TestSchema.addUpdObject(studyProtocol1);
+        result.input.add(studyProtocol1.getPlannedActivities().iterator().next().getId());
+        result.output.add(studyProtocol1.getId());
+        
+        createStudyProtocol();              
+
+        StudyProtocol studyProtocol3 = createStudyProtocol();
+        PlannedMarker plannedMarker = TestSchema.createPlannedMarker();
+        plannedMarker.setStudyProtocol(studyProtocol3);
+        TestSchema.addUpdObject(plannedMarker);
+        TestSchema.addUpdObject(studyProtocol3);
+        result.input.add(plannedMarker.getId());
+        result.output.add(studyProtocol3.getId());
+        
+        createStudyProtocol();    
+
+        return result;
+    }
+    
+    private TestBean createStudyProtocolListForSearchByPdqDisease() {
+        TestBean result = new TestBean();   
+        
+        createStudyProtocol(); 
+
+        StudyProtocol studyProtocol2 = createStudyProtocol();
+        TestSchema.addUpdObject(studyProtocol2);
+        PDQDisease pdqDisease2 = TestSchema.createPdqDisease("name2");
+        TestSchema.addUpdObject(pdqDisease2);
+        StudyDisease studyDisease2 = TestSchema.createStudyDiseaseObj(studyProtocol2, pdqDisease2);
+        studyProtocol2.getStudyDiseases().add(studyDisease2);
+        TestSchema.addUpdObject(studyDisease2);
+        TestSchema.addUpdObject(studyProtocol2);
+        result.input.add(pdqDisease2.getId());
+        result.output.add(studyProtocol2.getId());
+        
+        StudyProtocol studyProtocol3 = createStudyProtocol();
+        TestSchema.addUpdObject(studyProtocol3);
+        PDQDisease pdqDisease3 = TestSchema.createPdqDisease("name3");
+        TestSchema.addUpdObject(pdqDisease3);
+        StudyDisease studyDisease3 = TestSchema.createStudyDiseaseObj(studyProtocol3, pdqDisease3);
+        studyProtocol3.getStudyDiseases().add(studyDisease3);
+        TestSchema.addUpdObject(studyDisease3);
+        TestSchema.addUpdObject(studyProtocol3);
+        result.input.add(pdqDisease3.getId());
+        result.output.add(studyProtocol3.getId());
+        
+        createStudyProtocol();    
+
+        return result;
+    }
 
     private StudyProtocol createStudyProtocol() {
         StudyProtocol result = TestSchema.createStudyProtocolObj();
@@ -1002,6 +1080,11 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         Set<AnatomicSite> summary4AnatomicSites = new TreeSet<AnatomicSite>(new AnatomicSiteComparator());
         summary4AnatomicSites.add(createAnatomicSite(result.getId()+"code"));
         result.setSummary4AnatomicSites(summary4AnatomicSites);
+        PlannedMarker plannedMarker = TestSchema.createPlannedMarker();
+        plannedMarker.setStudyProtocol(result);
+        TestSchema.addUpdObject(plannedMarker);
+        result.getPlannedActivities().add(plannedMarker);
+        
         TestSchema.addUpdObject(result);
         return result;
     }
@@ -1063,7 +1146,8 @@ public class ProtocolQueryServiceTest extends AbstractHibernateTestCase {
         AnatomicSite  result = TestSchema.createAnatomicSiteObj(preferredName);       
         TestSchema.addUpdObject(result);
         return result;
-    }
+    }     
+   
     
     private static class TestBean {
         List<Long> input = new ArrayList<Long>();

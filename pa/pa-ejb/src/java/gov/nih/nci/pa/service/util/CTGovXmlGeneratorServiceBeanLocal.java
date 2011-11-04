@@ -915,11 +915,11 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                 }
             } else if (descriptionText != null) {
                 if (incIndicator == null) {
-                    nullCrit.append(createDescriptionTextString(descriptionText));                  
+                    nullCrit.append(createDescriptionTextString(descriptionText));
                 } else if (incIndicator) {
-                    incCrit.append(createDescriptionTextString(descriptionText));                 
+                    incCrit.append(createDescriptionTextString(descriptionText));
                 } else {
-                    exCrit.append(createDescriptionTextString(descriptionText));                   
+                    exCrit.append(createDescriptionTextString(descriptionText));
                 }
             } else {
                 value = pq.getLow().getValue();
@@ -962,20 +962,20 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         XmlGenHelper.appendElement(root, eligibility);
 
     }
-    
+
      /**
      * @param text Description text
      * @return formatted String with description text
      */
     String createDescriptionTextString(String text) {
         StringBuilder str = new StringBuilder();
-        str.append(XmlGenHelper.TAB);                   
+        str.append(XmlGenHelper.TAB);
         str.append(text);
         str.append('\n');
         return str.toString();
     }
-    
-    
+
+
     /**
      * @param criterionName criterionName
      * @param value value
@@ -1006,10 +1006,10 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         for (ArmDTO armDTO : arms) {
             Element armGroup = doc.createElement("arm_group");
             XmlGenHelper.appendElement(armGroup,
-                    XmlGenHelper.createElementWithTextblock("arm_group_label",
+                    XmlGenHelper.createElement("arm_group_label",
                             StConverter.convertToString(armDTO.getName()), doc));
             XmlGenHelper.appendElement(armGroup,
-                    XmlGenHelper.createElementWithTextblock("arm_type", convertToCtValues(armDTO.getTypeCode()), doc));
+                    XmlGenHelper.createElement("arm_type", convertToCtValues(armDTO.getTypeCode()), doc));
             createTextBlock("arm_group_description", StringUtils.substring(
                     StConverter.convertToString(armDTO.getDescriptionText()), 0, PAAttributeMaxLen.LEN_1000)
                     , doc, armGroup);

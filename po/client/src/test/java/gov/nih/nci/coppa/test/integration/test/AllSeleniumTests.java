@@ -83,12 +83,33 @@
 package gov.nih.nci.coppa.test.integration.test;
 
 import org.junit.runner.RunWith;
-import org.junit.runners.AllTests;
-import org.openqa.jtc.junit.TestSuiteBuilder;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
-@RunWith(AllTests.class)
+@RunWith(Suite.class)
+@SuiteClasses(value = {
+        LoginTest.class,
+        ContactFormattingTest.class,
+        CreateOrganizationTest.class,
+        CreatePersonTest.class,
+        CreateResearchOrganizationTest.class,
+        CurateOrganizationTest.class,
+        CuratePersonTest.class,
+        GenericOrganizationalContactTest.class,
+        ManageClinicalResearchStaffWithCRTest.class,
+        ManageHealthCareFacilityWithCRTest.class,
+        ManageHealthCareProviderWithCRTest.class,
+        ManageIdentifiedOrganizationWithCRTest.class,
+        ManageIdentifiedPersonWithCRTest.class,
+        ManageOrganizationalContactWithCRTest.class,
+        ManageOversightCommitteeWithCRTest.class,
+        ManageResearchOrganizationWithCRTest.class,
+        OrganizationFamilyTest.class,
+        OrganizationRelationshipTest.class,
+        SearchOrganizationTest.class,
+        SearchPersonTest.class,
+        SelectOrganizationTest.class,
+        UsePersonsAddressButtonTest.class})
 public class AllSeleniumTests {
-    public static junit.framework.Test suite(){
-      return TestSuiteBuilder.suite(AbstractPoWebTest.class);
-    }
-  }
+
+}

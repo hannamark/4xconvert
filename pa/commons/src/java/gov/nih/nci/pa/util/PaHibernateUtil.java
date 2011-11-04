@@ -94,8 +94,7 @@ import com.fiveamsolutions.nci.commons.util.HibernateHelper;
  */
 public class PaHibernateUtil {
     private static final AuditLogInterceptor AUDIT_LOG_INTERCEPTOR = new AuditLogInterceptor(null);
-    private static HibernateHelper hibernateHelper = new CsmEnabledHibernateHelper(null, AUDIT_LOG_INTERCEPTOR,
-            null);
+    private static HibernateHelper hibernateHelper = new CsmEnabledHibernateHelper(null, AUDIT_LOG_INTERCEPTOR, null);
     static {
         hibernateHelper.initialize();
         AUDIT_LOG_INTERCEPTOR.setHibernateHelper(hibernateHelper);

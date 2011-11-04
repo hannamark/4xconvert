@@ -4,6 +4,7 @@
 <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all" />
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/loginValidation.js'/>"></script>
 <SCRIPT>
     function showPasswordResetInfo(){
         showPopWin('/registry/popupdisplayPasswordReset.action', 900, 400, '', 'Resetting Your Password');
@@ -29,7 +30,7 @@
              If you have not yet registered, you may do so by clicking <a title="To Create an Account" href="/registry/registerUser.action">here</a>. </p>
      </c:otherwise>
  </c:choose>
-<form action="j_security_check" method="post" id="loginForm">
+<form action="j_security_check" method="post" id="loginForm" onsubmit="return validate();">
 
  <table style="margin:0 auto">
             <c:if test="${not empty param.failedLogin}">
@@ -45,7 +46,7 @@
                 <label for="j_username">Username:</label>
                 </td>
                 <td class="value">
-                    <input name="j_username" maxlength="100" size="25" type="text">
+                    <input name="j_username" maxlength="100" size="25" type="text" id="j_username">
                 </td>
             </tr>
             <tr>

@@ -106,7 +106,7 @@ import java.util.Map;
 
 import javax.ejb.EJB;
 
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * Ejbs getters/setters for part site bean.

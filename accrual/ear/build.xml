@@ -109,7 +109,7 @@
 
     <target name="ivy-runtime" depends="init:ivy">
         <ivy:resolve refresh="true" conf="runtime" />
-        <ivy:retrieve pattern="${lib.dir}/ear/[conf]/[artifact]-[revision].[ext]" conf="runtime" />
+        <ivy:retrieve pattern="${lib.dir}/ear/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="runtime" />
     </target>
 
     <target name="ivy-get" 

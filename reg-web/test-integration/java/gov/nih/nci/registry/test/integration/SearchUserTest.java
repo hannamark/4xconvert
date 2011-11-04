@@ -142,7 +142,7 @@ public class SearchUserTest extends AbstractRegistrySeleniumTest {
     }
 
     private void verifySearchUserPage() {
-        assertTrue(selenium.isTextPresent("Search User Name"));
-        assertTrue(selenium.isTextPresent("Enter the email address associated with your account."));
+        assertTrue(selenium.isTextPresent("Retrieve Username"));
+        assertTrue(selenium.isTextPresent("enter the email address associated with your account"));
     }
 }

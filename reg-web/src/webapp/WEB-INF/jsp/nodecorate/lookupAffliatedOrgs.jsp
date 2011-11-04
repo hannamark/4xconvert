@@ -33,7 +33,7 @@
                 var params = {
                     cityName: $("orgCitySearch").value,
                     countryName: $("orgCountrySearch").value,
-                    ctepid: $("orgCtepIdSearch").value,
+                    ctepId: $("orgCtepIdSearch").value,
                     orgName: $("orgNameSearch").value,
                     stateName: $("orgStateSearch").value,
                     zipCode: $("orgZipSearch").value

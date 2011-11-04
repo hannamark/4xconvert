@@ -49,7 +49,7 @@
             }
             
             function createTitle() {
-                var url = '/registry/protected/ajaxorganizationGenericContactcreate.action';
+                var url = '/registry/protected/ajaxorganizationGenericContactajaxCreate.action';
                 var params = {
                         email: $("email").value,
                         orgGenericContactIdentifier: $("orgGenericContactIdentifier").value,

@@ -92,7 +92,6 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -130,25 +129,14 @@ public abstract class AbstractStudyIsoService<DTO extends StudyDTO, BO extends A
         // step 1: form the hql
         String hql = "select alias from " + getTypeArgument().getName()
                 + " alias join alias.studyProtocol sp where sp.id = :studyProtocolId"
-                + getByStudyProtocolQueryOrderClause();
+                + getQueryOrderClause();
         // step 2: construct query object
         Query query = session.createQuery(hql);
         query.setParameter("studyProtocolId", IiConverter.convertToLong(ii));
         // step 3: query the result
-        List<DTO> resultList = new ArrayList<DTO>();
-        for (BO bo : (List<BO>) query.list()) {
-            resultList.add(convertFromDomainToDto(bo));
-        }
-        return resultList;
-    }
-
-    /**
-     * Builds the order by clause forv the HQL query that gets the objects by Study Protocol.
-     * @return The order by clause forv the HQL query that gets the objects by Study Protocol.
-     */
-    protected String getByStudyProtocolQueryOrderClause() {
-        return " order by alias.id";
-    }
+        return convertFromDomainToDTOs(query.list());
+    } 
+   
 
     /**
      * {@inheritDoc}

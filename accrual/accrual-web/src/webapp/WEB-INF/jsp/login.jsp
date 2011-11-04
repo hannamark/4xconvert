@@ -3,6 +3,7 @@
 <c:set var="topic" scope="request" value="login"/>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/loginValidation.js'/>"></script>
 </head>
 <c:url value="/../registry/registerUser.action" var="createAccountUrl"/>
 <c:url value="/../registry/registerUser.action?resetPassword=true" var="resetPasswordUrl"/>
@@ -10,7 +11,7 @@
 <a href="#" class="helpbutton" onclick="Help.popHelp('<c:out value="${requestScope.topic}"/>');">Help</a>
 <h1>Login</h1>
 <div class="box">
-    <form action="j_security_check" method="post" id="loginForm">
+    <form action="j_security_check" method="post" id="loginForm" onsubmit="return validate();">
     <table style="margin:0 auto">
         <c:if test="${fn:length(applicationScope.AUTHENTICATION_SOURCE_MAP) > 1}">
             <p><fmt:message key="login.instructions"/></p>

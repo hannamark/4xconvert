@@ -217,4 +217,12 @@ public class MockPaPlannedActivityServiceBean implements PlannedActivityServiceR
     public Ii getDuplicateIi(PlannedActivityDTO dto) throws PAException {
         return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<PlannedActivityDTO> getAll() throws PAException {
+        return null;
+    }
 }

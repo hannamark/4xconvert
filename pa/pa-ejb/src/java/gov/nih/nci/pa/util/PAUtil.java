@@ -80,6 +80,7 @@ package gov.nih.nci.pa.util;
 
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROLE;
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
+
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
@@ -160,6 +161,7 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
+@SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class PAUtil {
     private static final String EXTN = "extn";
     private static final int EXTN_COUNT = 4;

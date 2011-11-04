@@ -1,4 +1,4 @@
-<ivy-module version="1.0">
+<ivy-module version="1.0" xmlns:m="http://ant.apache.org/ivy/maven">
   <info organisation="cbiit" module="ctrp-accrual-ear"/>
 
   <configurations>
@@ -8,8 +8,8 @@
 
   <dependencies>
     <!-- runtime -->
-    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="3.7-alpha1"        force="true"   conf="runtime->master"/>
-    <dependency org="gov.nih.nci.coppa.pa"   name="pa-ejb-client"           rev="3.7-alpha1"        force="true"   conf="runtime->master"/>
+    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="3.7-SNAPSHOT"        force="true"   conf="runtime->master"/>
+    <dependency org="gov.nih.nci.coppa.pa"   name="pa-ejb-client"           rev="3.7-SNAPSHOT"        force="true"   conf="runtime->master"/>
     <dependency org="commons-collections"    name="commons-collections"     rev="3.2.1"             force="true"   conf="runtime->master"/>
     <dependency org="commons-fileupload"     name="commons-fileupload"      rev="1.2.1"             force="true"   conf="runtime->master"/>
     <dependency org="commons-io"             name="commons-io"              rev="1.4"               force="true"   conf="runtime->master"/>
@@ -18,6 +18,7 @@
     <dependency org="net.sf.ehcache"         name="ehcache"                 rev="1.2.4"                            conf="runtime->master">
         <exclude module="commons-logging"/>
     </dependency>
+    <dependency org="joda-time"              name="joda-time"               rev="1.6.2"           conf="runtime->master"/>
     <dependency org="net.sf.opencsv"         name="opencsv"                 rev="2.1"              conf="runtime->master"/>
   </dependencies>
 

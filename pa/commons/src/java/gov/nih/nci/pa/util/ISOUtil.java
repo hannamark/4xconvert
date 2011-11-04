@@ -357,7 +357,7 @@ public class ISOUtil {
      * @param inDate string to be normalized
      * @return Date
      */
-    private static Date dateStringToDate(String inDate) {
+    public static Date dateStringToDate(String inDate) {
         if (inDate == null) {
             return null;
         }

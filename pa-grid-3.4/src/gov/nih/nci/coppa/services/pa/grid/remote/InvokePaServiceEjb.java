@@ -6,6 +6,8 @@ import gov.nih.nci.pa.iso.dto.BaseDTO;
 import gov.nih.nci.pa.service.BasePaService;
 import gov.nih.nci.pa.service.PAException;
 
+import java.util.List;
+
 /**
  * Generic invoke service.
  * @param <DTO> pa DTO type
@@ -110,5 +112,13 @@ public class InvokePaServiceEjb<DTO extends BaseDTO> implements BasePaService<DT
     protected Class<DTO> getType() {
         return type;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<DTO> getAll() throws PAException {
+        throw new UnsupportedOperationException();
+    }   
 
 }

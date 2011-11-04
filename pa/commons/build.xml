@@ -4,7 +4,7 @@
 <!-- commons ant script for COPPA PA                                         -->
 <!-- ====================================================================== -->
 
-<project name="commons" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="commons" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
     <property name="commons.coverage.line" value="53"/>
     <property name="commons.coverage.branch" value="43"/>
     <property name="commons.pmd.maxerrors" value="31"/>
@@ -59,15 +59,22 @@
     <!-- Defining classpaths                                                    -->
     <!-- ====================================================================== -->
 
-     <path id="common.package.classpath">
-         <fileset dir="${commons.dir}/target">
-             <include name="*.jar"/>
-         </fileset>
-      </path>
-
+    <path id="common.package.classpath">
+        <fileset dir="${commons.dir}/target">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+    
     <property name="compile.jar.dir" location="${lib.dir}/commons/compile" />
     <path id="compile.classpath">
         <fileset dir="${compile.jar.dir}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+    
+    <property name="maven.jar.dir" location="${lib.dir}/commons/maven" />
+    <path id="maven.classpath">
+        <fileset dir="${maven.jar.dir}">
             <include name="*.jar"/>
         </fileset>
     </path>
@@ -388,7 +395,38 @@
 
     <target name="package-client" depends="package-notest-noivy"
             description="Package the client jar."/>
-
+    
+    <!-- ====================================================================== -->
+    <!-- Maven Installation Targets                                             -->
+    <!-- ====================================================================== -->
+    <target name="maven:generate-pom">
+        <!-- We cannot use in memory poms due to a bug: http://jira.codehaus.org/browse/MANTTASKS-170 -->
+        <taskdef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven.classpath" />
+        <artifact:pom id="commons-pom-temp" groupId="gov.nih.nci.coppa.pa" artifactId="pa-commons" version="${pa.version}" name="PA Commons"/>
+        <artifact:writepom pomRefId="commons-pom-temp" file="target/pom.xml"/>
+        <artifact:pom id="commons-pom" file="target/pom.xml"/>
+    </target>
+    
+    <target name="maven:install" depends="package,maven:generate-pom">
+        <echo message="Installing version ${pa.version} to the local maven repo."/>
+        <artifact:install file="target/${commons.jar}">
+            <pom refid="commons-pom"/>
+            <attach file="target/${commons-test.jar}" type="jar" classifier="test"/>
+        </artifact:install>
+    </target>
+    
+    <target name="maven:deploy" depends="package,maven:generate-pom">
+        <artifact:remoteRepository id="remote.repository" url="https://ncimvn.nci.nih.gov/nexus/content/repositories/snapshots/">
+            <authentication username="${maven.username}" password="${maven.password}"/>
+        </artifact:remoteRepository>
+        <echo message="Installing version ${pa.version} to the remote maven repo."/>
+        <artifact:deploy file="target/${commons.jar}">
+            <remoteRepository refid="remote.repository" />
+            <pom refid="commons-pom"/>
+            <attach file="target/${commons-test.jar}" type="jar" classifier="test"/>
+        </artifact:deploy>
+    </target>
+    
     <!-- ====================================================================== -->
     <!-- Help target                                                            -->
     <!-- ====================================================================== -->
@@ -408,39 +446,43 @@
     </target>
     <target name="ivy-test-cobertura" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-cobertura" />
-        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="test-cobertura" />
+        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-cobertura" />
     </target>
     <target name="ivy-test-junit" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-junit" />
-        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="test-junit" />
+        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-junit" />
     </target>
     <target name="ivy-test-pmd" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-pmd" />
-        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="test-pmd" />
+        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-pmd" />
     </target>
     <target name="ivy-test-checkstyle" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-checkstyle" />
-        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="test-checkstyle" />
+        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-checkstyle" />
     </target>
     <target name="ivy-test-simian" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-simian" />
-        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="test-simian" />
+        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-simian" />
     </target>
     <target name="ivy-test-selenium" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-selenium" />
-        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="test-selenium" />
+        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-selenium" />
     </target>
     <target name="ivy-compile" depends="init:ivy">
         <ivy:resolve refresh="true" conf="compile" />
-        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="compile" />
+        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="compile" />
+    </target>
+    <target name="ivy-maven" depends="init:ivy">
+        <ivy:resolve refresh="true" conf="maven" />
+        <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="maven" />
     </target>
     <target name="ivy-test"
             depends="init:ivy,ivy-test-cobertura,ivy-test-junit,ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian,ivy-test-selenium">
             <ivy:resolve refresh="true" conf="test" />
-            <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision].[ext]" conf="test" />
+            <ivy:retrieve pattern="${lib.dir}/commons/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test" />
     </target>
     <target name="ivy-get"
-            depends="init:ivy,ivy-compile,ivy-test"
+            depends="init:ivy,ivy-compile,ivy-maven,ivy-test"
             description="Updates the local ivy repository">
     </target>
     <target name="ivy-clean" description="Delete jars.">

@@ -415,46 +415,46 @@
 
     <target name="ivy-test-pmd" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-pmd"/>
-        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="test-pmd"/>
+        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-pmd"/>
     </target>
 
     <target name="ivy-test-checkstyle" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-checkstyle"/>
-        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="test-checkstyle"/>
+        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-checkstyle"/>
     </target>
 
     <target name="ivy-test-simian" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-simian"/>
-        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="test-simian"/>
+        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-simian"/>
     </target>
 
     <target name="ivy-test-cobertura" depends="init:ivy">
         <ivy:resolve refresh="true" conf="test-cobertura"/>
-        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="test-cobertura"/>
+        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test-cobertura"/>
     </target>
 
     <target name="ivy-compile" depends="init:ivy"
             description="Resolves and retrieves the JARs needed to compile the subproject">
         <ivy:resolve refresh="true" conf="compile"/>
-        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="compile"/>
+        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="compile"/>
     </target>
 
     <target name="ivy-runtime" depends="init:ivy"
             description="Resolves and retrieves the JARs needed to run the subproject">
         <ivy:resolve refresh="true" conf="runtime"/>
-        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="runtime"/>
+        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="runtime"/>
     </target>
 
     <target name="ivy-test"
             depends="ivy-test-pmd,ivy-test-checkstyle,ivy-test-simian,ivy-test-cobertura,ivy-selenium"
             description="Resolves and retrieves the JARs needed to test the subproject">
         <ivy:resolve refresh="true" conf="test"/>
-        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="test"/>
+        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="test"/>
     </target>
 
     <target name="ivy-selenium" depends="init:ivy"  description="Resolves and retrieves the JARs needed to run the subproject">
         <ivy:resolve refresh="true" conf="selenium"/>
-        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision].[ext]" conf="selenium"/>
+        <ivy:retrieve pattern="${lib.dir}/accrual-web/[conf]/[artifact]-[revision](-[classifier]).[ext]" conf="selenium"/>
     </target>
 
     <target name="ivy-get"

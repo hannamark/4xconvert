@@ -7,7 +7,7 @@
 <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
 
 <c:url value="/orgPoplookuporgs.action" var="lookupOrgUrl"/>
-<c:url value="/registry/ajaxUsersloadAdminUsers.action" var="displayUrl"/>
+<c:url value="/registry/ajaxUsersviewAdminUsers.action" var="displayUrl"/>
 
 <script type="text/javascript" language="javascript">
     var orgid;

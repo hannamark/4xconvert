@@ -80,6 +80,7 @@ package gov.nih.nci.pa.dto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -154,6 +155,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private final List<String> states = new ArrayList<String>();
     private String city;
     private final List<Long> summary4AnatomicSites = new ArrayList<Long>();
+    private final List<Long> bioMarkers = new ArrayList<Long>();
+    private final List<Long> pdqDiseases = new ArrayList<Long>();
     
     /**
      * @return the inBoxProcessing
@@ -544,6 +547,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setDiseaseConditionId(Long diseaseConditionId) {
         this.diseaseConditionId = diseaseConditionId;
+        setPdqDiseases(Arrays.asList(new Long[] {diseaseConditionId}));
     }
     /**
      * @return the leadAgentInterventionId
@@ -641,12 +645,49 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public void setSummary4AnatomicSites(List<Long> summary4AnatomicSites) {
         this.summary4AnatomicSites.clear();
         for (Long id : summary4AnatomicSites) {
-            if (id != 0) {
+            if (id != null) {
                 this.summary4AnatomicSites.add(id);
             }
         }       
+    }    
+    
+    /**
+     * @return the bioMarkers
+     */
+    public List<Long> getBioMarkers() {
+        return bioMarkers;
     }
     
+    /**
+     * @param bioMarkers the bioMarkers to set
+     */
+    public void setBioMarkers(List<Long> bioMarkers) {
+        this.bioMarkers.clear();
+        for (Long id : bioMarkers) {
+            if (id != null) {
+                this.bioMarkers.add(id);
+            }
+        }  
+    }    
+    
+    /**
+     * @return the pdqDiseases
+     */
+    public List<Long> getPdqDiseases() {
+        return pdqDiseases;
+    }
+
+    /**
+     * @param pdqDiseases the pdqDiseases to set
+     */
+    public void setPdqDiseases(List<Long> pdqDiseases) {
+        this.pdqDiseases.clear();
+        for (Long id : pdqDiseases) {
+            if (id != null) {
+                this.pdqDiseases.add(id);
+            }
+        }
+    }
     
     /**
      * return true if criteria contains location data.

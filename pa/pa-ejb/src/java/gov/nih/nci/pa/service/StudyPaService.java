@@ -108,6 +108,6 @@ public interface StudyPaService<DTO> extends BasePaService<DTO> {
      * @return map
      * @throws PAException on error
      */
-    Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException;
+    Map<Ii, Ii> copy(Ii fromStudyProtocolIi, Ii toStudyProtocolIi) throws PAException;    
  
 }

@@ -158,4 +158,12 @@ public class MockStudyResourcingService implements StudyResourcingServiceLocal {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<StudyResourcingDTO> getAll() throws PAException {
+        return null;
+    }    
+
 }

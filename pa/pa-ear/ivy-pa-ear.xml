@@ -4,7 +4,7 @@ $HeadURL: https://gforge.nci.nih.gov/svnroot/automation/trunk/bda/ivy/ivy-bda.xm
 
 This is the definition of a virtual module called bda-download that has a dependency of bda-utils.  This virtual project causes the download of bda-utils from the NCICB Ivy Repository.  This file currently points to the 1.0 version of bda-utils if you want to use another version change the rev="1.0" to the desired version.
 -->
-<ivy-module version="1.0">
+<ivy-module version="1.0" xmlns:m="http://ant.apache.org/ivy/maven">
   <info organisation="cbiit" module="pa-ear"
         />
   <configurations>
@@ -38,7 +38,8 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="javax.transaction"      name="jta"                     rev="1.1"             conf="compile->master"/>
     <dependency org="jboss"                  name="jboss-annotations-ejb3"  rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="ncicb"                  name="clm"                     rev="4.0"             conf="compile->master"/>
-    <dependency org="ncicb"                  name="security"                rev="4.2"             conf="compile->master"/>
+    <dependency org="com.fiveamsolutions"                  name="nci-commons-struts2"     rev="1.2.24"          conf="compile->default"/>
+    <dependency org="csmapi"                  name="csmapi"                rev="4.2"             conf="compile->master"/>
     <dependency org="opensymphony"           name="quartz"                   rev="1.6.3"          conf="compile->default"/>
     
     <dependency org="org.hibernate"          name="hibernate-annotations"   rev="3.2.0.ga"        conf="compile->master"/>
@@ -65,22 +66,25 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="gov.nih.nci.coppa.pa"   name="csm-service"              rev="1.3"          conf="container->master"/>
     <dependency org="gov.nih.nci.coppa.pa"   name="csm-stubs"                rev="1.3"          conf="container->master"/>
     <dependency org="globus"                 name="ws-core-client"           rev="4.0.3"        conf="container->master"/>
-    <dependency org="caGrid"                 name="gridgrouper"              rev="1.3"          conf="container->client"/>
-
+    <dependency org="cagrid"                 name="gridgrouper-client"       rev="1.3"          conf="container->master"/>
+    <dependency org="cagrid"                 name="gridgrouper-common"       rev="1.3"          conf="container->master"/>
+    <dependency org="cagrid"                 name="gridgrouper-stubs"       rev="1.3"          conf="container->master"/>
+    <dependency org="cagrid"                 name="gridgrouper"              rev="1.3nci"          conf="container->master"/>
+    <dependency org="edu.internet2.middleware.grouper" name="subject"       rev="2.0.0"           conf="container->master"/>
 
     <!-- container -->
     <dependency org="gov.nih.nci.security"   name="clm"                     rev="4.0"             conf="container->master"/>
     <dependency org="gov.nih.nci.coppa"      name="coppa-commons"           rev="1.3.7"           conf="container->master"/>
     <dependency org="gov.nih.nci.iso-datatypes" name="iso-datatypes"           rev="2.0.0-alpha1"    conf="container->master"/>
-    <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="3.5.0-alpha1"       conf="container->master"/>
-    <dependency org="ncicb"                  name="nci-commons-core"        rev="1.2.23"          conf="container->master"/>
-    <dependency org="ncicb"                  name="security"                rev="4.2"             conf="container->master"/>
+    <dependency org="gov.nih.nci.coppa.po"   name="po-services-client"      rev="3.5"       conf="container->master"/>
+    <dependency org="com.fiveamsolutions"                  name="nci-commons-core"        rev="1.2.24"          conf="container->master"/>
+    <dependency org="csmapi"                  name="csmapi"                rev="4.2"             conf="container->master"/>
     <dependency org="org.jdom"               name="jdom"                    rev="1.1"             conf="container->master"/>
     <dependency org="postgresql"             name="postgresql"              rev="8.4-701.jdbc3"   conf="container->master"/>
     <dependency org="org.mockito"            name="mockito-all"             rev="1.8.4"           conf="container->master"/>
 
     <!-- Grid Registration container jar -->
-    <dependency org="caGrid"                 name="dorian"                  rev="1.3"             conf="container->service">
+    <dependency org="caGrid"                 name="caGrid-dorian-service"  rev="1.3" conf="container->master">
        <exclude module="commons-lang"/>
     </dependency>
 

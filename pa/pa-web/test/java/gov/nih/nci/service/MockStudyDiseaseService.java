@@ -100,4 +100,14 @@ public class MockStudyDiseaseService implements StudyDiseaseServiceLocal {
     public void validate(StudyDiseaseDTO dto) throws PAException {
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<StudyDiseaseDTO> getAll() throws PAException {
+        return null;
+    }
+    
+    
+
 }

@@ -6,14 +6,14 @@ import gov.nih.nci.pa.iso.dto.PDQDiseaseParentDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PDQDiseaseParentServiceRemote;
 import gov.nih.nci.pa.util.PAUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MockPaDiseaseParentServiceBean implements PDQDiseaseParentServiceRemote{
+public class MockPaDiseaseParentServiceBean implements PDQDiseaseParentServiceRemote {
 
     /** mock data. */
     public static List<PDQDiseaseParentDTO> dtos;
@@ -34,45 +34,75 @@ public class MockPaDiseaseParentServiceBean implements PDQDiseaseParentServiceRe
         dtos.add(r);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<PDQDiseaseParentDTO> getByChildDisease(Ii arg0) throws PAException {
-     // TODO Auto-generated method stub
         return null;
     }
 
-    public List<PDQDiseaseParentDTO> getByChildDisease(Ii[] arg0)
-            throws PAException {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<PDQDiseaseParentDTO> getByChildDisease(Ii[] arg0) throws PAException {
         return dtos;
     }
 
-    public List<PDQDiseaseParentDTO> getByParentDisease(Ii arg0)
-            throws PAException {
-        // TODO Auto-generated method stub
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<PDQDiseaseParentDTO> getByParentDisease(Ii arg0) throws PAException {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public PDQDiseaseParentDTO create(PDQDiseaseParentDTO arg0) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void delete(Ii arg0) throws PAException {
-        // TODO Auto-generated method stub
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public PDQDiseaseParentDTO get(Ii arg0) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public PDQDiseaseParentDTO update(PDQDiseaseParentDTO arg0) throws PAException {
-        // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void validate(PDQDiseaseParentDTO arg0) throws PAException {
-        // TODO Auto-generated method stub
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<PDQDiseaseParentDTO> getAll() throws PAException {
+        return null;
     }
 
 }
