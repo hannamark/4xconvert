@@ -387,16 +387,13 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 		WebElement selectedDisease = webDriver.findElement(By
 				.id("criteriaAdHocReport"));
 		// If it contains "Loading..." look again.
-		// int counter = 0;
 		while (selectedDisease.getText().contains("Loading...")) {
-			// System.out.println("load details wait count [" + counter + "].");
 			selectedDisease = (new WebDriverWait(webDriver, 10))
 					.until(new ExpectedCondition<WebElement>() {
 						public WebElement apply(WebDriver d) {
 							return d.findElement(By.id("criteriaAdHocReport"));
 						}
 					});
-			// counter++;
 		}
 		split.stop();
 	}

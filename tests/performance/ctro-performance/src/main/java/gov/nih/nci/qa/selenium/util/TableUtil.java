@@ -111,8 +111,6 @@ public class TableUtil {
 		List<WebElement> rowWebElements = getRowWebElements(row);
 		WebElement cellElement = rowWebElements.get(column);
 		WebElement findElement = cellElement.findElement(By.className("btn"));
-		System.out.println("findElement :" + cellElement.getText());
-		// return rowWebElements.get(column);
 		return findElement;
 	}
 

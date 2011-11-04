@@ -216,16 +216,13 @@ public class Summary4TypeReportPage extends
 					});
 
 			// If it contains "Loading..." look again.
-			int counter = 0;
 			while (diseasesForm.getText().contains("Loading...")) {
-				System.out.println("org names wait count [" + counter + "].");
 				diseasesForm = (new WebDriverWait(webDriver, 10))
 						.until(new ExpectedCondition<WebElement>() {
 							public WebElement apply(WebDriver d) {
 								return d.findElement(By.id("orgNames"));
 							}
 						});
-				counter++;
 			}
 		}
 		split.stop();
