@@ -80,53 +80,52 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.report.test.integration;
+package gov.nih.nci.pa.viewer.util;
 
-import org.junit.Test;
+import java.util.regex.Pattern;
 
 /**
- * @author merenkoi
+ * @author Michael Visee
  */
-public class AdHocReportSeleniumTest extends AbstractViewerSeleniumTest {
-    
+public class ExpirationRule {
+
+    private String pattern;
+    private Pattern compiledPattern;
+    private int delayInSeconds = 0;
+
     /**
-     * Tests validation.
+     * @return the pattern
      */
-    @Test
-    public void testValidation() {
-        loginAsAbstractor();
-        disclaimer(true);
-        clickAndWait("link=Ad Hoc");     
-        clickAndWait("id=runButton");      
-        assertTrue(selenium.isTextPresent("At least one criteria is required."));       
+    public String getPattern() {
+        return pattern;
     }
 
     /**
-     * Tests search by participating site.
+     * @param pattern the pattern to set
      */
-//    @Test
-//    public void testSearchByParticipatingSite() {
-//        loginAsAbstractor();
-//        disclaimer(true);
-//        clickAndWait("link=Ad Hoc");
-//        selenium.select("id=participatingSiteId", "label=ClinicalTrials.gov");
-//        clickAndWait("css=del.btnwrapper > ul.btnrow > li > #criteriaAdHocReport_ > span.btn_img > span.search");      
-//        assertTrue(selenium.isTextPresent("One item found."));       
-//    }
-    
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+        compiledPattern = Pattern.compile(pattern);
+    }
+
     /**
-     * Tests search by Location.
+     * @return the compiledPattern
      */
-    @Test
-    public void testSearchByLocation() {
-        loginAsAbstractor();
-        disclaimer(true);
-        clickAndWait("link=Ad Hoc");
-        selenium.click("link=Disease/Condition and Stage");
-        selenium.select("id=country", "label=United States");
-        selenium.addSelection("id=states", "label=Maryland");
-        selenium.type("id=city", "ville");
-        clickAndWait("id=runButton");      
-        assertTrue(selenium.isTextPresent("11 items found"));       
+    public Pattern getCompiledPattern() {
+        return compiledPattern;
+    }
+
+    /**
+     * @return the delayInSeconds
+     */
+    public int getDelayInSeconds() {
+        return delayInSeconds;
+    }
+
+    /**
+     * @param delayInSeconds the delayInSeconds to set
+     */
+    public void setDelayInSeconds(int delayInSeconds) {
+        this.delayInSeconds = delayInSeconds;
     }
 }

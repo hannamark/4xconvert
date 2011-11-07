@@ -27,6 +27,18 @@
 
     <!-- Filters -->
     <filter>
+        <filter-name>expirationFilter</filter-name>
+        <filter-class>gov.nih.nci.pa.viewer.util.ExpirationFilter</filter-class>
+        <init-param>
+            <param-name>patterns</param-name>
+            <param-value>/images/.*,/protected/images/.*,/scripts/.*,/styles/.*</param-value>
+        </init-param>
+        <init-param>
+            <param-name>delaysInSeconds</param-name>
+            <param-value>31536000,31536000,31536000,31536000</param-value>
+        </init-param>
+    </filter>
+    <filter>
         <filter-name>usernameFilter</filter-name>
         <filter-class>com.fiveamsolutions.nci.commons.web.filter.UsernameFilter</filter-class>
         <init-param>
@@ -62,7 +74,12 @@
         <filter-name>csmUserFilter</filter-name>
         <filter-class>gov.nih.nci.pa.filter.CsmUserFilter</filter-class>
     </filter>
-
+    
+    <filter-mapping>
+        <filter-name>expirationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>usernameFilter</filter-name>
         <url-pattern>*.action</url-pattern>

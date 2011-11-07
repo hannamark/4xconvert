@@ -104,6 +104,7 @@ public class Summ4ReportSeleniumTest extends AbstractViewerSeleniumTest {
         assertEquals(new SimpleDateFormat("MM/dd/yyyy").format(new Date()), selenium.getValue("id=intervalEndDate"));
 
         clickAndWait("link=Run report");
+        waitForElementById("intervalStartDate", 15);
         assertTrue(selenium.isTextPresent("An Organization name is required."));
         
         selenium.type("id=intervalStartDate", "02/02/2010");

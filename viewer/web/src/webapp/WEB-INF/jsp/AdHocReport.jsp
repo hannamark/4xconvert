@@ -1,356 +1,114 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <c:set var="topic" scope="request" value="run_ad_hoc"/> 
-<c:url value="/ctro/popupDis.action" var="lookupUrl" />
-<head>
-    <title><fmt:message key="adHoc.header" /></title>
-    <s:head />
-    <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all" />
-    <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all" />
-    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
-    <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
-    <script type="text/javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
-    <c:url value="/ctro/popupWaitDialog.action" var="waitDialogUrl"/>
-    <script type="text/javascript">
-        function handleAction(){
-            document.forms[0].action="resultsAdHocReport.action";
-            document.forms[0].submit();
-            showPopWin('${waitDialogUrl}', 600, 200, '', 'Ad Hoc Report');
-        }
+<!DOCTYPE html PUBLIC 
+    "-//W3C//DTD XHTML 1.1 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+    <head>
+        <link href="${pageContext.request.contextPath}/styles/reportui.css" rel="stylesheet" type="text/css" media="all"/>
         
-        function resetValues(){
-            document.getElementById("officialTitle").value="";
-            document.getElementById("leadOrganizationId").value="";
-            document.getElementById("identifierType").value="";
-            document.getElementById("identifier").value="";
-            document.getElementById("principalInvestigatorId").value="";
-            document.getElementById("phaseCodes").value="";
-            document.getElementById("primaryPurpose").value="";
-            document.getElementById("studyStatusCode").value="";
-            document.getElementById("documentWorkflowStatusCode").value="";
-            document.getElementById("studyMilestone").value="";
-            document.getElementById("submissionType").value="";
-            document.getElementById("trialCategory").value="";
-            document.getElementById("criteria_diseaseCondition").value="";
-            document.getElementById("diseaseName").value="";
-            document.getElementById("summ4Sponsor").value="";
-            document.getElementById("interventionType").value="";
-            document.getElementById("summ4FundingSourceTypeCode").value="";
-            document.getElementById("interventionType").value="";
-            document.getElementById("summ4FundingSourceTypeCode").value="";
-            document.getElementById("country").value="";
-            document.getElementById("city").value="";
-            document.getElementById("states").value="";
-            document.getElementById("participatingSiteId").value="";
-            document.getElementById("anatomicSitesList").value="";
-            document.getElementById("bioMarkersList").value="";
+        <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all" />
+        <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all" />
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
+        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
+        <c:url value="/ctro/popupWaitDialog.action" var="waitDialogUrl"/>
+    
+        <script type="text/javascript">
+            jQuery(function() {
+                   var tabOptions = {
+                           selected: (jQuery("#resultTable").size() == 0) ? 0 : 1
+                   };
+                   jQuery("#reportui").tabs(tabOptions);       
+                   var accordionOptions = {
+                           autoHeight: false
+                   };
+                   jQuery("#filtersAccordion").accordion(accordionOptions);
+                   jQuery("#runButton").bind("click", function(ev) {
+                        jQuery("#resultsTab").html(jQuery("div.template.loadingMessage").children().html());
+                        jQuery("#reportui").tabs("select", 1);
+                        var form = jQuery("#searchForm").get(0);
+                        form.action="resultsAdHocReport.action";
+                        form.submit();
+                        });
+                   jQuery("#resetButton").bind("click", function(ev) {
+                        jQuery("#officialTitle").val("");
+                        jQuery("#primaryPurpose").val("");
+                        jQuery("#phaseCodes").val("");
+                        jQuery("#identifierType").val("");
+                        jQuery("#identifier").val("");
+                        jQuery("#leadOrganizationId").val("");
+                        jQuery("#principalInvestigatorId").val("");
+                        jQuery("#documentWorkflowStatusCode").val("");
+                        jQuery("#studyStatusCode").val("");
+                        jQuery("#submissionType").val("");
+                        jQuery("#trialCategory").val("");
+                        jQuery("#studyMilestone").val("");
+                        jQuery("#criteria_diseaseCondition").val("");
+                        jQuery("#diseaseName").val("");
+                        jQuery("#interventionType").val("");
+                        jQuery("#participatingSiteId").val("");
+                        jQuery("#country").val("");
+                        jQuery("#states").val("");
+                        jQuery("#city").val("");
+                        jQuery("#bioMarkers").val("");
+                        jQuery("#summ4FundingSourceTypeCode").val("");
+                        jQuery("#anatomicSites").val("");
+                        });
+                   });
             
-        }
-        
-        function lookup() {
-            showPopup('${lookupUrl}', '', 'Disease');
-        }
-        
-        function loadDiv(intid, disName) {
-            var url = '/viewer/ctro/ajaxptpDiseasedisplay.action';
-            var params = {diseaseName: disName, 'criteria.diseaseConditionId': intid};
-            var div = document.getElementById('loadDetails');   
-            div.innerHTML = '<div align="left"><img  src="<c:url value="/images/loading.gif"/>"/>&nbsp;Loading...</div>';
-            var aj = callAjaxPost(div, url, params);
-        }
-        
-        function generateTSR(Id) {
-            var url = "/viewer/ctro/ajax/resultsAdHocReportviewTSR.action?studyProtocolId="+Id;
-            document.sForm.target = "TSR";
-            document.sForm.action = url;
-            document.sForm.submit();
-        }
-    </script>
-</head>
-<body>
-<!-- main content begins-->
-
-    <h1><fmt:message key="adHoc.header"/></h1>
-    <s:form name="sForm">
-        <s:token/>
-        <table class="form">
-            <s:if test="hasActionErrors()"><tr><td colspan="2"><div class="error_msg"><s:actionerror /></div></td></tr></s:if> 
+            function lookup() {
+                showPopup('<c:url value="/ctro/popupDis.action" />', '', 'Disease');
+            }
             
-            <tr>
-                <td  scope="row" class="label">
-                    <label for="officialTitle"> <fmt:message key="studyProtocol.officialTitle"/></label>
-                </td>
-                <td>
-                    <s:textfield id="officialTitle" name="criteria.officialTitle" maxlength="200" size="100" cssStyle="width:200px"  />
-                </td>
-                <td  scope="row" class="label">
-                    <label for="leadOrganization"> <fmt:message key="studyProtocol.leadOrganization"/></label>
-                </td>
-                <td>
-                    <s:select name="criteria.leadOrganizationId" id="leadOrganizationId" list="leadOrgList" listKey="id"
-                        listValue="name" headerKey="" headerValue="All" value="criteria.leadOrganizationId" />
-                </td>
-            </tr>
-            <tr>    
-                <td  scope="row" class="label">
-                    <label for="trialType"> <fmt:message key="studyProtocol.trialType"/></label>
-
-                </td>
-                <s:set name="primaryPurposeCodeValues" value="@gov.nih.nci.pa.enums.PrimaryPurposeCode@getDisplayNames()" />
-                <td>
-                    <s:select headerKey="" id="primaryPurpose" headerValue="All" name="criteria.primaryPurposeCode" list="#primaryPurposeCodeValues"
-                    value="criteria.primaryPurposeCode" cssStyle="width:206px" />
-                </td>
-                 <td  scope="row" class="label">
-                    <label for="studyProtocol.participatingSite"> <fmt:message key="studyProtocol.participatingSite"/></label>
-                </td>
-                <td>
-                    <s:select name="criteria.participatingSiteId" id="participatingSiteId" list="participatingSiteList" listKey="id"
-                        listValue="name" headerKey="" headerValue="All" value="criteria.participatingSiteId" />
-                </td>                
-            </tr>
-            <tr>
-                <td scope="row" class="label">
-                    <label for="studyPhase"> <fmt:message key="studyProtocol.studyPhase"/></label>
-                </td>
-                <s:set name="phaseCodeValues" value="@gov.nih.nci.pa.enums.PhaseCode@getDisplayNames()" />
-                <td>
-                    <s:select headerKey="" id="phaseCodes" headerValue="All" name="criteria.phaseCodes" list="#phaseCodeValues"  value="criteria.phaseCodes" cssStyle="width:206px" multiple="true" size="3" />
-                </td>
-                
-                <td scope="row" class="label">
-                    <label for="summ4Sponsor"> <fmt:message key="studyProtocol.summ4Sponsor"/></label>
-                </td>
-                <td>
-                   <s:select name="criteria.summ4FundingSourceId" id="summ4Sponsor" list="summ4FunsingSponsorsList" listKey="id"
-                         listValue="name" headerKey="" headerValue="All" value="criteria.summ4FundingSourceId" />
-                </td>               
-            </tr>
-            <s:set name="identifierSearchTypes" value="@gov.nih.nci.pa.enums.IdentifierType@getDisplayNames()" />
-            <tr>
-                <td scope="row" class="label">
-                    <label for="identfierType"><fmt:message key="studyProtocol.identifierType"/></label>
-                </td>
-                <td>
-                    <s:select id="identifierType" headerKey="" headerValue="--Select--" name="criteria.identifierType"  
-                        list="#identifierSearchTypes" value="criteria.identifierType"  cssStyle="width:206px" />
-                    <span class="formErrorMsg"> 
-                        <s:fielderror>
-                            <s:param>criteria.identifierType</s:param>
-                        </s:fielderror>                            
-                    </span> 
-                </td>
-                <td scope="row" class="label">
-                    <label for="summary4AnatomicSites"> <fmt:message key="studyProtocol.summary4AnatomicSites"/></label>
-                </td>
-                <td>
-                   <s:select name="criteria.summary4AnatomicSites" id="anatomicSitesList" list="anatomicSitesList" listKey="id"
-                        listValue="displayName" headerKey=""  headerValue="All" value="criteria.summary4AnatomicSites" multiple="true" size="3"  />
-                </td>                            
-            </tr>
-
-            <tr>
-            <s:set name="principalInvs" value="@gov.nih.nci.pa.util.PaRegistry@getPAPersonService().getAllPrincipalInvestigators()" />
-             <tr>
-                <td  scope="row" class="label">
-                    <label for="principalInvestigator"> <fmt:message key="studyProtocol.principalInvestigator"/></label>
-                </td>
-
-                <td align=left>
-                    <s:select
-                        name="criteria.principalInvestigatorId"
-                        id="principalInvestigatorId"
-                        list="#principalInvs"
-                        listKey="id"
-                        listValue="fullName"
-                        headerKey=""
-                        headerValue="All"
-                        value="criteria.principalInvestigatorId" />
-
-                </td>
-                  <td scope="row" class="label">
-                    <label for="biomarker"> <fmt:message key="studyProtocol.biomarker"/></label>
-                </td>
-                <td>
-                    <s:select name="criteria.bioMarkers" id="bioMarkersList" list="plannedMarkersList" listKey="key"
-                         listValue="value" headerKey="" headerValue="All" value="criteria.bioMarkers" multiple="true" size="3" />
-                </td>            
-            </tr>
-
-            <tr>
-                <td scope="row" class="label">
-                    <label for="documentWorkflowStatus"> <fmt:message key="studyProtocol.documentWorkflowStatus"/></label>
-                </td>                
-                <td>
-                   <s:set name="documentWorkflowStatusCodeValues" value="@gov.nih.nci.pa.enums.DocumentWorkflowStatusCode@getDisplayNames()" />
-                   <s:select headerKey="" headerValue="All" id="documentWorkflowStatusCode" name="criteria.documentWorkflowStatusCode" list="#documentWorkflowStatusCodeValues"  value="criteria.documentWorkflowStatusCode" cssStyle="width:206px" />
-                </td>
-                <td scope="row" class="label">
-                    <label for="diseaseConditionId"> <fmt:message key="studyProtocol.diseaseCondition"/></label>
-                </td>
-                <td>
-                    <s:form name="diseaseForm">
-                    <div id="loadDetails">
-                        <%@ include file="/WEB-INF/jsp/nodecorate/selectedDiseaseDetails.jsp"%>
-                    </div>
-                    </s:form>
-                </td>                                            
-            </tr>
-            <tr>
-                <td scope="row" class="label">
-                    <label for="interventionType"> <fmt:message key="studyProtocol.interventionType"/></label>
-                </td>                
-                <td>
-                   <s:set name="interventionTypeValues" value="@gov.nih.nci.pa.enums.ActivitySubcategoryCode@getDisplayNames()" />
-                   <s:select headerKey="" headerValue="All" id="interventionType" name="criteria.interventionType" list="#interventionTypeValues"  value="criteria.interventionType" cssStyle="width:206px" />
-                </td>
-                <td scope="row" class="label">
-                    <label for="identifier"><fmt:message key="studyProtocol.identifier"/></label>
-                    <br><span class="info">(e.g: NCI-2008-00015; ECOG-1234, etc)</span>
-                </td>
-                <td>
-                    <s:textfield id="identifier" name="identifier" maxlength="200" size="100"  cssStyle="width:200px" />
-                    <span class="formErrorMsg"> 
-                        <s:fielderror>
-                            <s:param>identifier</s:param>
-                       </s:fielderror>                            
-                    </span>  
-                </td>                                                  
-            </tr>
-            <tr>
-                <td scope="row" class="label">
-                    <label for="studyStatus"> <fmt:message key="studyProtocol.studyStatus"/></label>
-                </td>
-               <s:set name="studyStatusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
-
-                <td>
-                   <s:select headerKey="" id="studyStatusCode" headerValue="All" name="criteria.studyStatusCode" list="#studyStatusCodeValues"  value="criteria.studyStatusCode" cssStyle="width:206px" />
-                </td>
-                <td scope="row" class="label">
-                    <label for="submissionType"> <fmt:message key="studyProtocol.submissionTypeSearch"/></label>
-                </td>
-                <s:set name="submissionTypeValues" value="@gov.nih.nci.pa.enums.SubmissionTypeCode@getDisplayNames()" />
-                <td>
-                   <s:select headerKey="" headerValue="All" id="submissionType" name="criteria.submissionType" list="#submissionTypeValues"  value="criteria.submissionType" cssStyle="width:206px" />
-                </td>                                                 
-            </tr>
-             <tr>
-                <td scope="row" class="label">
-                    <label for="country"> <fmt:message key="studyProtocol.country"/></label>
-                </td>
-                
-                <s:set name="countries"  value="@gov.nih.nci.pa.util.PaRegistry@getLookUpTableService().getCountries()" />
-                <td>
-                    <s:select headerKey="" headerValue="All" id="country" name="criteria.countryName"  list="#countries"  listKey="alpha3"  listValue="name"  value="criteria.countryName"    cssStyle="width:206px" />
-               </td>
-               <td scope="row" class="label">
-                    <label for="trialCategory"> <fmt:message key="studyProtocol.trialCategorySearch"/></label>
-                </td>
-                <td>
-                   <s:select headerKey="" headerValue="Both" id="trialCategory" name="criteria.trialCategory" list="#{'p':'Abbreviated','n':'Complete'}"  value="criteria.trialCategory" cssStyle="width:206px" />
-                </td>                                             
-            </tr>
-            <tr>
-                <td scope="row" class="label">
-                    <label for="state"> <fmt:message key="studyProtocol.state"/></label>
-                </td>                
-                <td>
-                  <s:set name="stateCodeValues" value="@gov.nih.nci.pa.enums.USStateCode@values()" />
-                  <s:select headerKey="" headerValue="All" id="states" name="criteria.states" list="#stateCodeValues" listKey="name"  listValue="code" value="criteria.states" cssStyle="width:206px" multiple="true" size="3"/>
-                </td>  
-                <s:set name="summ4FundingSourceTypeCodes" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
-                <td scope="row" class="label">
-                    <label for="summ4FundingSourceTypeCode"> <fmt:message key="studyProtocol.summ4FundingSourceTypeCode"/></label>
-                </td>
-                <td>
-                   <s:select headerKey="" headerValue="All" id="summ4FundingSourceTypeCode" name="criteria.summ4FundingSourceTypeCode" list="#summ4FundingSourceTypeCodes"  value="criteria.summ4FundingSourceTypeCode" cssStyle="width:206px" />
-                </td>             
-            </tr>
-            <tr>                
-                <td scope="row" class="label">
-                  <label for="city"> <fmt:message key="studyProtocol.city"/></label>
-                </td>               
-                <td>
-                  <s:textfield id="city" name="criteria.city" maxlength="200" size="100" cssStyle="width:200px"  />
-                </td>                
-                <td scope="row" class="label">
-                    <label for="milestoneCode"> <fmt:message key="studyProtocol.milestone"/></label>
-                </td>
-                <s:set name="milestoneCodes" value="@gov.nih.nci.pa.enums.MilestoneCode@getDisplayNames()" />
-                <td>
-                   <s:select headerKey="" headerValue="All" id="studyMilestone" name="criteria.studyMilestone" list="#milestoneCodes"  value="criteria.studyMilestone" cssStyle="width:206px" />
-                </td> 
-            </tr>
-        </table>
-        <div class="actionsrow">
-            <del class="btnwrapper">
-                <ul class="btnrow">
-                    <li>
-                            <s:a href="#" cssClass="btn" onclick="handleAction()"><span class="btn_img"><span class="search">Run Report</span></span></s:a>
-                            <s:a href="#" cssClass="btn" onclick="resetValues();return false"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
-                        </li>
+            function loadDiv(intid, disName) {
+                var url = '/viewer/ctro/ajaxptpDiseasedisplay.action';
+                var params = {diseaseName: disName, 'criteria.diseaseConditionId': intid};
+                var div = document.getElementById('loadDetails');   
+                div.innerHTML = '<div align="left"><img  src="<c:url value="/images/loading.gif"/>"/>&nbsp;Loading...</div>';
+                var aj = callAjaxPost(div, url, params);
+            }
+        </script>
+    </head>
+    <body>
+        <h1><fmt:message key="adHocReport.title"/></h1>
+        <s:form id="searchForm" name="sForm">
+            <s:token/>
+            <s:if test="hasActionErrors()">
+                <div class="error_msg">
+                    <s:actionerror />
+                </div>
+            </s:if> 
+            <div id="reportui">
+                <!--Tabs-->
+                <ul id="reporttabs" class="clearfix">
+                    <li><a href="#filtersTab"><fmt:message key="adHocReport.tab.filters"/></a></li>
+                    <li><a href="#resultsTab"><fmt:message key="adHocReport.tab.results"/></a></li>
                 </ul>
-            </del>
-
+                <!--/Tabs-->
+                <div id="filtersTab">
+                    <!--Filters-->
+                    <div id="filtersAccordion">
+                        <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/registrationDetailsFilter.jsp"/>
+                        <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/diseasesFilter.jsp"/>
+                        <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/interventionsFilter.jsp"/>
+                        <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/participatingSitesFilter.jsp"/>
+                        <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/geographicAreaFilter.jsp"/>
+                        <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/biomarkersFilter.jsp"/>
+                        <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/summary4Filter.jsp"/>
+                    </div>
+                    <viewer:buttonBar>
+                        <viewer:button labelKey="adHocReport.button.run" id="runButton" imgClass="search" />
+                        <viewer:button labelKey="adHocReport.button.reset" id="resetButton" imgClass="cancel" />
+                    </viewer:buttonBar>
+                </div>
+                <div id="resultsTab">
+                    <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/result.jsp"/>
+                </div>
+            </div>    
+        </s:form>
+        <div id="templates">
+            <jsp:include page="/WEB-INF/jsp/nodecorate/templates/loadingMessage.jsp"/>
         </div>
-        <s:if test="%{resultList != null}">
-            <table width="100%">
-                <tr>
-                    <td colspan="2">
-                        <h2><fmt:message key="adHoc.header"/></h2>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <fmt:message key="report.header.user"/>
-                        <viewer:displayUser />
-                    </td>
-                </tr>
-                <tr>
-                    <td><br/></td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <display:table class="data" sort="list" pagesize="10" id="row" name="sessionScope.displayTagList" 
-                                       requestURI="resultsAdHocReport.action" export="true">
-                            <display:setProperty name="export.excel" value="true" />
-                            <viewer:displayTagProperties/>
-                            <display:column escapeXml="false" titleKey="studyProtocol.documentWorkflowStatusDate" property="documentWorkflowStatusDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
-                            <display:column escapeXml="true" titleKey="studyProtocol.nciIdentifier" property="nciIdentifier" sortable="true" headerClass="sortable"/>
-                            <display:column escapeXml="true" titleKey="studyProtocol.officialTitle" maxLength= "200" property="officialTitle" sortable="true" headerClass="sortable"/>
-                            <display:column escapeXml="true" titleKey="studyProtocol.leadOrganization" maxLength= "200" property="leadOrganizationName" sortable="true" headerClass="sortable"/>
-                            <display:column escapeXml="true" titleKey="studyProtocol.leadOrgID" maxLength= "200" property="leadOrganizationId" sortable="true" headerClass="sortable"/>
-                            <display:column escapeXml="true" titleKey="studyProtocol.principalInvestigator" maxLength= "200" property="piFullName" sortable="true" headerClass="sortable"/>
-                            <display:column escapeXml="true" titleKey="studyProtocol.trialType" maxLength= "200" property="primaryPurpose" sortable="true" headerClass="sortable"/>
-                            <display:column escapeXml="true" titleKey="studyProtocol.diseaseCondition" maxLength= "200" property="diseaseNames" sortable="true" headerClass="sortable"/>
-                            <display:column escapeXml="true" titleKey="studyProtocol.interventionType" maxLength= "200" property="interventionTypes" sortable="true" headerClass="sortable"/>
-                            <display:column escapeXml="true" titleKey="studyProtocol.milestone" sortable="true" headerClass="sortable">
-                                <s:if test="%{#attr.row.milestones.adminMilestone.milestone == null && #attr.row.milestones.scientificMilestone.milestone == null}">
-                                    <c:out value="${row.milestones.studyMilestone.milestone.code}" />
-                                    <fmt:formatDate value="${row.milestones.studyMilestone.milestoneDate}" pattern="MM/dd/yyyy"/>
-                                </s:if>
-                            </display:column>
-                            <display:column escapeXml="true" titleKey="studyProtocol.adminMilestone" sortable="true" headerClass="sortable">
-                                <c:out value="${row.milestones.adminMilestone.milestone.code}" />
-                                <fmt:formatDate value="${row.milestones.adminMilestone.milestoneDate}" pattern="MM/dd/yyyy"/>
-                            </display:column>
-                            <display:column escapeXml="true" titleKey="studyProtocol.scientificMilestone" sortable="true" headerClass="sortable">
-                                <c:out value="${row.milestones.scientificMilestone.milestone.code}" />
-                                <fmt:formatDate value="${row.milestones.scientificMilestone.milestoneDate}" pattern="MM/dd/yyyy"/>
-                            </display:column>
-                            <display:column escapeXml="true" titleKey="studyProtocol.documentWorkflowStatus" property="documentWorkflowStatusCode.code" sortable="true" headerClass="sortable"/>
-                            <display:column escapeXml="true" titleKey="studyProtocol.submissionType" property="submissionTypeCode.code"  headerClass="sortable"/>  
-                            <display:column escapeXml="true" titleKey="studyProtocol.studyPhase" property="phaseCode.code"  headerClass="sortable"/>  
-                            <display:column escapeXml="true" titleKey="studyProtocol.summ4FundingSourceTypeCode" property="summ4FundingSrcCategory"  headerClass="sortable"/>  
-                            <display:column escapeXml="true" titleKey="studyProtocol.studyStatusResult" property="studyStatusCode.code"  headerClass="sortable"/>  
-                            <display:column titleKey="studyProtocol.viewTSR" media="html">
-                                <c:if test="${row.viewTSR}">
-                                    <s:a href='#' onclick='generateTSR(%{#attr.row.studyProtocolId});'> View TSR</s:a>
-                                </c:if>
-                            </display:column>
-                        </display:table>
-                    </td>
-                </tr>
-            </table>
-        </s:if>
-    </s:form>
-</body>
+    </body>
+</html>

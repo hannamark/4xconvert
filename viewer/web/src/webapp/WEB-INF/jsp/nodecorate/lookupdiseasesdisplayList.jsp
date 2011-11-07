@@ -1,5 +1,4 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
-<%@ include file="/WEB-INF/jsp/common/includejs.jsp" %>
 <pa:failureMessage/>
 <s:if test="disWebList != null">
 <s:set name="disWebList" value="disWebList" scope="request"/>

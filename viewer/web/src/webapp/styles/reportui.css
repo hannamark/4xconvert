@@ -1,0 +1,164 @@
+
+#templates {
+    display: none;
+}
+
+/* Tabs */
+#reporttabs { 
+    background: none;
+    border: 0;
+    color: #030303;
+}
+#reporttabs li {
+    background:#dadada;
+    font-size: 14px; 
+    font-weight: bold;
+    margin-left: 5px;
+    outline:none; 
+    -moz-border-radius-topleft:4px; 
+    -moz-border-radius-topright:4px;
+    -webkit-border-top-left-radius:4px; 
+    -webkit-border-top-right-radius:4px;  
+}
+#reporttabs .ui-state-default {
+    border-color: #0c0c0c; 
+}
+#reporttabs .ui-state-default.ui-state-active {
+    border-color: #c1c1c1;
+}
+#reporttabs .ui-state-default.ui-state-hover {
+    border-color: #c1c1c1;
+}
+#reporttabs .ui-state-default a {
+    background: #ebebeb;
+    color: #656565;
+    text-decoration:none;
+}
+#reporttabs .ui-state-default.ui-state-active a {
+    background: #dadada;
+    color: #030303;
+    text-decoration:none;
+}
+#reporttabs .ui-state-default.ui-state-hover a {
+    background: #eeeeee;
+    color: #000;
+    text-decoration:none;
+}
+
+#reportui .ui-tabs-panel { 
+    background:#dadada; 
+    border:1px solid #c1c1c1;
+    border-radius:3px;
+    padding:8px; 
+    -moz-border-radius:3px; 
+    -moz-box-shadow:0 1px 3px rgba(0,0,0,0.2); 
+    -webkit-border-radius:3px; 
+    -webkit-box-shadow:0 1px 3px rgba(0,0,0,0.2); 
+}
+
+#filtersTab { 
+    padding:0; 
+}
+/* Categories */
+
+#filtersAccordion .ui-accordion-header { 
+    background: url("../images/ltblue_gradient.gif") repeat-x scroll 0 0  #ffffff;
+    color: #404040;
+    font-size: 130%;
+    font-weight: bold;
+}
+
+#filtersAccordion .ui-accordion-content { 
+    background: url("../images/ltblue_gradient.gif") repeat-x scroll 0 0  #ffffff;
+    padding: 1em;
+}
+
+#filtersAccordion .ui-accordion-header.ui-state-default a, 
+#filtersAccordion .ui-accordion-header.ui-state-default a:link,
+#filtersAccordion .ui-accordion-header.ui-state-default a:visited,
+#filtersAccordion .ui-accordion-header.ui-state-hover a,
+#filtersAccordion .ui-accordion-header.ui-state-hover a:hover  { 
+    color: #656565;
+    text-decoration:none;
+}
+
+#filtersAccordion .ui-accordion-header.ui-state-active a, 
+#filtersAccordion .ui-accordion-header.ui-state-active a:link,
+#filtersAccordion .ui-accordion-header.ui-state-active a:visited 
+#filtersAccordion .ui-accordion-header.ui-state-default.ui-state-hover a,
+#filtersAccordion .ui-accordion-header.ui-state-default.ui-state-hover a:hover { 
+    color: #333333;
+    text-decoration:none;
+}
+
+.form-table { 
+    margin:0; 
+    position:relative; 
+    width:100%; 
+}
+.form-table TH A, .form-table TH DIV.nosort, .form-table TH A { 
+    background:#747474 url("../images/bg_th.gif") repeat-x center; 
+    color:#fff; display:block; 
+    padding:0 
+}
+.form-table TH A, .form-table TH DIV { 
+    padding:7px; 
+}
+.form-table TH A:hover { 
+    text-decoration:underline;
+ }
+.form-table TR.graybar:hover {
+    background: url("../images/bg_grayfade.gif") repeat-x 0 1px #dfdfdf; 
+    border-bottom:1px solid #ccc; 
+    font-size:120% 
+}
+.form-table TR.hilite, .form-table TD.hilite { 
+    background: #fff2b0 url("../images/bg_hilite.gif") repeat-x center; 
+    font-weight:bold  
+}
+.form-table TD { 
+    height:2.7em !important;
+    line-height:1.3em; 
+    padding:5px 10px;
+    vertical-align:top;   
+}
+.form-table .title { 
+    font-weight:bold;
+ }
+.form-table TH.sort_descending A
+{ background:transparent url("../images/arrow_sort_descending.gif") no-repeat right; padding-right:22px; }
+.form-table TH.sort_ascending A
+{background:transparent url("../images/arrow_sort_ascending.gif") no-repeat right; padding-right:22px; }
+.form-table TH.action,.form-table TD.action, .form-table TH.checkbox,.form-table TD.checkbox
+{ text-align:center; padding-left:7px; padding-right:7px; }
+.form-table TD.action A, .form-table TD.action INPUT
+{ font-size:9px; }          
+.form-table TR:hover
+{ background:transparent; }
+.form-table TR.odd
+{ background:#fff }
+.form-table TD.label
+{ width:180px; padding:6px 10px; text-align:left; border-bottom:1px dotted #eee; background:#f3f9fb; height:2.7em !important }
+.form-table TD.label LABEL
+{ padding:4px 10px 0 10px; margin:0; font-size:100%; display:block; text-align:left; }
+#reportui .form-table TD.value
+{ padding:7px 8px !important; border-bottom:1px solid #eee; vertical-align:middle; height:2.7em !important }
+.form-table TD.value INPUT, .form-table TD.value SELECT
+{ margin:0; padding:0; font-size:100%;}
+.form-table TD.value INPUT[type=text]
+{ background:none repeat scroll 0 0 #fff; border:1px solid #fff; border-radius:4px; box-shadow:0 0 15px rgba(0, 0, 0, 0.1) inset, 0 1px 1px rgba(0, 0, 0, 0.3) inset, 0 0 0 rgba(0, 0, 0, 0.2); color:#333; font-family:'helvetica neue',helvetica,arial,sans-serif; font-size:1em; padding:3px 4px; }
+
+
+
+.diseaserescol
+{ width:374px; float:left; border-right:1px solid #6d80a2; }
+
+
+
+
+.form-table TD.value INPUT.hintTextbox
+{ float:left; width:230px !important; font-style:italic; color:#999 !important; }
+.form-table TD.value INPUT.hintTextboxActive
+{ float:left; width:230px !important; font-style:normal; color:#333; }
+
+

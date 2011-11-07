@@ -99,7 +99,7 @@ public class TrialsByInstitutionReportSeleniumTest extends AbstractViewerSeleniu
         clickAndWait("link=Trials Submitted by Institution");
         assertTrue(selenium.isTextPresent("Trials Submitted by Institution"));
         clickAndWait("link=Run report");
-        waitForPageToLoad();
+        waitForElementById("resultsSubmissionByInstitution_criteria_intervalStartDate", 15);
         assertTrue(selenium.isTextPresent("14 items found, displaying all items.1"));
         assertTrue(StringUtils.isBlank(selenium.getText("xpath=//table[@id='row']//tr[8]//td[9]").trim()));
         assertTrue(selenium.getText("xpath=//table[@id='row']//tr[9]//td[10]").contains("Administrative Processing Start Date"));

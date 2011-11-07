@@ -11,7 +11,7 @@
 <%@ attribute name="tooltip" required="false" type="java.lang.String" description="An optional tooltip" %>
 <c:if test="${not cellOnly}">
     <c:choose>
-        <c:when test="${not empty id}"><tr></c:when>
+        <c:when test="${empty id}"><tr></c:when>
         <c:otherwise><tr id="${id}"></c:otherwise>
     </c:choose>
 </c:if>

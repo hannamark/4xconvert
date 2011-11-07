@@ -29,6 +29,7 @@
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/ehcache-1.2.4.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/ejb-api-3.0.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/freemarker-2.3.16.jar"/>
+    <classpathentry kind="var" path="VIEWER_LIB/web/compile/joda-time-1.6.2.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/jstl-1.1.2.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/nci-commons-struts2-1.2.24.jar"/>
 	<classpathentry kind="var" path="VIEWER_LIB/web/compile/ognl-2.6.11.jar"/>

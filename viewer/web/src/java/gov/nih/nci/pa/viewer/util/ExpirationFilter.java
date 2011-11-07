@@ -80,53 +80,110 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.report.test.integration;
+package gov.nih.nci.pa.viewer.util;
 
-import org.junit.Test;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
- * @author merenkoi
+ * This servlet filter allows to set up the time to live for requests matching selected patterns.
+ * 
+ * It takes 2 initialization parameters: patterns : A comma separated list of url patterns delaysInSeconds : A comma
+ * separated list of delays
+ * 
+ * For the requests that match one of the given patterns, the filter sets the Expires header to the corresponding delay.
+ * They are considered as static content
+ * 
+ * For requests that do not match any of the patterns, caching is disabled. They are considered as dynamic content.
+ * 
+ * @author Michael Visee
  */
-public class AdHocReportSeleniumTest extends AbstractViewerSeleniumTest {
-    
+public class ExpirationFilter implements Filter {
+
+    private static final String EXPIRES_HEADER = "Expires";
+    private static final String CACHE_CONTROL_HEADER = "Cache-Control";
+    private static final String NOCACHE_HEADER = "max-age=0, must-revalidate, no-cache";
+    private static final long MILLISECONDS_PER_SECOND = 1000;
+
+    private List<ExpirationRule> rules;
+
     /**
-     * Tests validation.
+     * {@inheritDoc}
      */
-    @Test
-    public void testValidation() {
-        loginAsAbstractor();
-        disclaimer(true);
-        clickAndWait("link=Ad Hoc");     
-        clickAndWait("id=runButton");      
-        assertTrue(selenium.isTextPresent("At least one criteria is required."));       
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        String[] patterns = filterConfig.getInitParameter("patterns").split(",");
+        String[] delays = filterConfig.getInitParameter("delaysInSeconds").split(",");
+        if (patterns.length != delays.length) {
+            throw new ServletException("Configuration exception : Pattern and delay arrays have different lengths");
+        }
+        rules = new ArrayList<ExpirationRule>();
+        for (int i = 0; i < patterns.length; i++) {
+            ExpirationRule rule = new ExpirationRule();
+            rule.setPattern(patterns[i].trim());
+            try {
+                rule.setDelayInSeconds(Integer.parseInt(delays[i]));
+            } catch (NumberFormatException e) {
+                throw new ServletException("Configuration exception : delay " + delays[i] + " is not an integer", e);
+            }
+            rules.add(rule);
+        }
     }
 
     /**
-     * Tests search by participating site.
+     * {@inheritDoc}
      */
-//    @Test
-//    public void testSearchByParticipatingSite() {
-//        loginAsAbstractor();
-//        disclaimer(true);
-//        clickAndWait("link=Ad Hoc");
-//        selenium.select("id=participatingSiteId", "label=ClinicalTrials.gov");
-//        clickAndWait("css=del.btnwrapper > ul.btnrow > li > #criteriaAdHocReport_ > span.btn_img > span.search");      
-//        assertTrue(selenium.isTextPresent("One item found."));       
-//    }
-    
-    /**
-     * Tests search by Location.
-     */
-    @Test
-    public void testSearchByLocation() {
-        loginAsAbstractor();
-        disclaimer(true);
-        clickAndWait("link=Ad Hoc");
-        selenium.click("link=Disease/Condition and Stage");
-        selenium.select("id=country", "label=United States");
-        selenium.addSelection("id=states", "label=Maryland");
-        selenium.type("id=city", "ville");
-        clickAndWait("id=runButton");      
-        assertTrue(selenium.isTextPresent("11 items found"));       
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+            ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        String uri = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
+        boolean unmatched = true;
+        for (ExpirationRule rule : rules) {
+            if (rule.getCompiledPattern().matcher(uri).matches()) {
+                long expirationTime = System.currentTimeMillis() + MILLISECONDS_PER_SECOND * rule.getDelayInSeconds();
+                httpResponse.setDateHeader(EXPIRES_HEADER, expirationTime);
+                unmatched = false;
+                break;
+            }
+        }
+        if (unmatched) {
+            httpResponse.setHeader(CACHE_CONTROL_HEADER, NOCACHE_HEADER);
+        }
+        chain.doFilter(request, response);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void destroy() {
+        // Nothing to do
+    }
+
+    /**
+     * @return the rules
+     */
+    public List<ExpirationRule> getRules() {
+        return rules;
+    }
+
+    /**
+     * @param rules the rules to set
+     */
+    public void setRules(List<ExpirationRule> rules) {
+        this.rules = rules;
+    }
+
 }
