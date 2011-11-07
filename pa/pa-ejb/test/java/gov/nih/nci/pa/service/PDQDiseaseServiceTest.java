@@ -84,6 +84,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
@@ -97,6 +98,7 @@ import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -237,5 +239,24 @@ public class PDQDiseaseServiceTest extends AbstractHibernateTestCase {
 
         r = bean.search(searchCriteria);
         assertEquals(0, r.size());
+    }
+    
+    @Test
+    public void getByIds() {
+        PDQDisease bo1 = TestSchema.createPdqDisease("1");
+        TestSchema.addUpdObject(bo1);
+        PDQDisease bo2 = TestSchema.createPdqDisease("2");
+        TestSchema.addUpdObject(bo2);
+        PDQDisease bo3 = TestSchema.createPdqDisease("3");
+        TestSchema.addUpdObject(bo3);
+        PDQDisease bo4 = TestSchema.createPdqDisease("4");
+        TestSchema.addUpdObject(bo4);        
+        List<Long> ids = Arrays.asList(new Long[] {bo2.getId(), bo4.getId()});
+        
+        List<PDQDisease> result = bean.getByIds(ids);
+        
+        assertEquals(2, result.size());
+        assertTrue(ids.contains(result.get(0).getId()));
+        assertTrue(ids.contains(result.get(1).getId()));        
     }
 }

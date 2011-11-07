@@ -85,12 +85,13 @@ package gov.nih.nci.pa.iso.convert;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
-import gov.nih.nci.pa.service.util.ProtocolQueryServiceTest;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceIntegrationTest;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -171,7 +172,7 @@ public class ReportStudyProtocolQueryConvertTest extends AbstractHibernateTestCa
 
     @Test
     public void convertFromDomainToDTOTest() throws PAException {
-        StudyProtocol sp = (new ProtocolQueryServiceTest())
+        StudyProtocol sp = (new ProtocolQueryServiceIntegrationTest())
             .createStudyProtocol("1", false, Boolean.FALSE, false, false, false, false, true);
         assertNotNull(sp.getId());
         StudyProtocolQueryDTO spDTO = studyProtocolQueryConverter.convertToStudyProtocolDtoForReporting(

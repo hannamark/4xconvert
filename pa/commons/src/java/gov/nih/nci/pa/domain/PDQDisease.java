@@ -89,6 +89,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.Length;
@@ -234,6 +236,7 @@ public class PDQDisease extends AbstractEntityWithStatusCode<ActiveInactivePendi
      */
     @OneToMany(mappedBy = "parentDisease")
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @Fetch(FetchMode.SUBSELECT)
     public List<PDQDiseaseParent> getDiseaseChildren() {
         return diseaseChildren;
     }

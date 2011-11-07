@@ -87,6 +87,8 @@ import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.PDQDisease;
+import gov.nih.nci.pa.domain.PDQDiseaseParent;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -115,6 +117,7 @@ import gov.nih.nci.pa.iso.convert.ReportStudyProtocolQueryConverter;
 import gov.nih.nci.pa.iso.convert.TrialSearchStudyProtocolQueryConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.search.StudyProtocolBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyProtocolOptions;
 import gov.nih.nci.pa.service.search.StudyProtocolQueryBeanSearchCriteria;
@@ -127,8 +130,10 @@ import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -161,6 +166,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
 
     @EJB
     private RegistryUserServiceLocal registryUserService;
+    
+    @EJB
+    private PDQDiseaseServiceLocal pdqDiseaseService;
 
     private PAServiceUtils paServiceUtils;
 
@@ -194,7 +202,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             throws PAException {
         if (isCriteriaEmpty(criteria)) {
             throw new PAException("At least one criteria is required.");
-        }
+        }        
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
         List<StudyProtocol> studies = getStudyProtocolQueryResultList(criteria);            
         List<Long> spIdList = convertProtocolListToIdList(studies);
@@ -206,6 +214,30 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         return pdtos;
     }
     
+    /**
+     * @param parentDiseases parent Diseases.
+     * @return list of diseases including parent and children etc..
+     */
+    Set<Long> getPDQParentsAndDescendants(List<Long> parentDiseases) {
+        Set<Long> result = new HashSet<Long>();
+        List<PDQDisease> diseases = pdqDiseaseService.getByIds(parentDiseases);
+        for (PDQDisease disease : diseases) {
+            if (!result.contains(disease.getId())) {
+                result.add(disease.getId());
+                traverseTree(disease, result);
+            }
+        }
+        return result;
+    }
+    
+   
+    private void traverseTree(PDQDisease disease, Set<Long> result) {
+        for (PDQDiseaseParent pdqDiseaseParent : disease.getDiseaseChildren()) {
+            result.add(pdqDiseaseParent.getDisease().getId());
+            traverseTree(pdqDiseaseParent.getDisease(), result);
+        }
+    }
+
     private List<Long> convertProtocolListToIdList(List<StudyProtocol> studyProtocols) {
         List<Long> result = new ArrayList<Long>();
         for (StudyProtocol studyProtocol : studyProtocols) {
@@ -426,8 +458,11 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
      */
     @Override
     @SuppressWarnings("unchecked")
-    public List<StudyProtocol> getStudyProtocolQueryResultList(StudyProtocolQueryCriteria criteria)
-            throws PAException {
+    public List<StudyProtocol> getStudyProtocolQueryResultList(StudyProtocolQueryCriteria criteria) throws PAException {
+        if (CollectionUtils.isNotEmpty(criteria.getPdqDiseases())) {
+            List<Long> allDiseases = new ArrayList<Long>(getPDQParentsAndDescendants(criteria.getPdqDiseases()));
+            criteria.setPdqDiseases(allDiseases);
+        }
         StudyProtocolQueryBeanSearchCriteria crit = getExampleCriteria(criteria);
         try {
             validateSearchCriteria(crit);
@@ -693,6 +728,15 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
      */
     public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
         this.paServiceUtils = paServiceUtils;
+    }   
+
+    /**
+     * @param pdqDiseaseService the pdqDiseaseService to set
+     */
+    public void setPdqDiseaseService(PDQDiseaseServiceLocal pdqDiseaseService) {
+        this.pdqDiseaseService = pdqDiseaseService;
     }
+    
+    
 
 }

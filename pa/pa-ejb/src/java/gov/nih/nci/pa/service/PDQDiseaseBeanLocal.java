@@ -91,9 +91,10 @@ import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.search.PDQDiseaseBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.PDQDiseaseSortCriterion;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,6 +108,8 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
@@ -168,6 +171,23 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
 
         return convertFromDomainToDTOs(results);
     }
+    
+    
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<PDQDisease> getByIds(List<Long> ids) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        String hql = "select pd from PDQDisease pd where id in (:ids) order by id "; 
+        Query query = session.createQuery(hql);
+        query.setParameterList("ids", ids);
+        return query.list();
+    }
+
+
 
     /**
      * String to search.
