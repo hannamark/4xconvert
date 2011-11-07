@@ -227,6 +227,7 @@
             <classpath>
                 <path refid="ejb.package.classpath"/>
                 <path refid="common.package.classpath"/>
+                <path refid="selenium.classpath"/>
             </classpath>
             <fileset dir="src" includes="**/*.java"/>
             <formatter type="plain"/>
