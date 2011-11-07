@@ -420,7 +420,7 @@
             <authentication username="${maven.username}" password="${maven.password}"/>
         </artifact:remoteRepository>
         <echo message="Installing version ${pa.version} to the remote maven repo."/>
-        <artifact:deploy file="target/${commons.jar}">
+        <artifact:deploy file="target/${commons.jar}" uniqueversion="false">
             <remoteRepository refid="remote.repository" />
             <pom refid="commons-pom"/>
             <attach file="target/${commons-test.jar}" type="jar" classifier="test"/>

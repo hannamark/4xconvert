@@ -73,7 +73,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="globus"                 name="ws-addressing"           rev="1.0"         conf="compile->master"/>
     
     <!-- Maven management -->
-    <dependency org="org.apache.maven"       name="maven-ant-tasks"         rev="2.1.1"          conf="maven->master"/>
+    <dependency org="org.apache.maven"       name="maven-ant-tasks"         rev="2.1.3"          conf="maven->master"/>
 
     <!-- test -->
     <dependency org="antlr"                  name="antlr"                   rev="2.7.6"           conf="test->master"/>

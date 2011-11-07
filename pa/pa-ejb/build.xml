@@ -478,7 +478,7 @@
             <authentication username="${maven.username}" password="${maven.password}"/>
         </artifact:remoteRepository>
         <echo message="Installing version ${pa.version} to the remote maven repo."/>
-        <artifact:deploy file="${pa-ejb.build.dir}/pa-ejb-client.jar">
+        <artifact:deploy file="${pa-ejb.build.dir}/pa-ejb-client.jar" uniqueversion="false">
             <remoteRepository refid="remote.repository" />
             <pom refid="pa-ejb-pom"/>
         </artifact:deploy>

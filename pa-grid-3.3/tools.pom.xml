@@ -24,21 +24,11 @@
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-			<id>5AM-Releases</id>
-			<url>http://maven.5amsolutions.com/archiva/repository/internal/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</repository>
-		<repository>
-			<id>maven</id>
-			<url>http://repo1.maven.org/maven2</url>
-		</repository>
-	</repositories>
-
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>CBIIT Nexus</name>
+            <url>https://ncimvn.nci.nih.gov/nexus/content/groups/public</url>
+        </repository>
+    </repositories>
 </project>

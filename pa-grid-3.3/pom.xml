@@ -17,18 +17,18 @@
             <artifactId>iso-datatypes-extensions</artifactId>
             <version>2.0</version>
             <scope>test</scope>
-            <type>test-jar</type>
+            <classifier>tests</classifier>
         </dependency>
         <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>2.1.4</version>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.2.5</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>gov.nih.nci.coppa</groupId>
             <artifactId>coppa-commons</artifactId>
-            <version>1.3.5</version>
+            <version>1.3.7</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -152,39 +152,38 @@
         <dependency>
             <groupId>com.fiveamsolutions</groupId>
             <artifactId>nci-commons-core</artifactId>
-            <version>1.2.14</version>
+            <version>1.2.24</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>gov.nih.nci.coppa.pa</groupId>
             <artifactId>pa-ejb-client</artifactId>
-            <version>3.7-alpha2</version>
+            <version>3.7-SNAPSHOT</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>gov.nih.nci.coppa.pa</groupId>
             <artifactId>pa-commons</artifactId>
-            <version>3.7-alpha2</version>
+            <version>3.7-SNAPSHOT</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>gov.nih.nci.coppa.po-grid</groupId>
-            <artifactId>CoreServices-stubs</artifactId>
-            <version>3.2m5</version>
+            <artifactId>core-services-stubs</artifactId>
+            <version>3.2</version>
         </dependency>
         <dependency>
             <groupId>gov.nih.nci.coppa.po-grid</groupId>
-            <artifactId>CoreServices-common</artifactId>
-            <version>3.2m5</version>
+            <artifactId>core-services-common</artifactId>
+            <version>3.2</version>
         </dependency>
         <dependency>
             <groupId>gov.nih.nci.coppa.po</groupId>
-            <artifactId>po-services</artifactId>
-            <version>3.2m10</version>
-            <type>ejb-client</type>
+            <artifactId>po-services-client</artifactId>
+            <version>3.2.0-m10</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-beanutils</groupId>
@@ -305,39 +304,9 @@
     </dependencies>
     <repositories>
         <repository>
-            <id>5AM-Releases</id>
-            <url>http://maven.5amsolutions.com/archiva/repository/internal/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
+            <id>central</id>
+            <name>CBIIT Nexus</name>
+            <url>https://ncimvn.nci.nih.gov/nexus/content/groups/public</url>
         </repository>
-        <repository>
-            <id>5AM-Snapshots</id>
-            <url>http://maven.5amsolutions.com/archiva/repository/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>maven</id>
-            <url>http://repo1.maven.org/maven2</url>
-        </repository>
-        <repository>
-            <id>jboss</id>
-            <url>http://repository.jboss.com/maven2</url>
-        </repository>
-        <repository>
-            <id>maven2-repository.dev.java.net</id>
-            <name>Java.net Repository for Maven</name>
-            <url>http://download.java.net/maven/2/</url>
-            <layout>default</layout>
-        </repository>
-
     </repositories>
 </project>
