@@ -52,18 +52,14 @@ public class StopwatchUtil {
 		header.add("max");
 		header.add("minTimestamp");
 		header.add("maxTimestamp");
-		// header.add("active");
 		header.add("maxActive");
 		header.add("maxActiveTimestamp");
 		header.add("last");
 		header.add("mean");
 		header.add("standardDeviation");
-		header.add("variance");
-		header.add("varianceN");
 		header.add("note");
 		header.add("firstUsage");
 		header.add("lastUsage");
-		// header.add("lastReset");
 		String[] statsArray = header.toArray(new String[header.size()]);
 		return statsArray;
 	}
@@ -77,25 +73,17 @@ public class StopwatchUtil {
 		stats.add(getMax((Stopwatch) child));
 		stats.add(getMinTimestamp((Stopwatch) child));
 		stats.add(getMaxTimestamp((Stopwatch) child));
-		// stats.add(getActive((Stopwatch) child));
 		stats.add(getMaxActive((Stopwatch) child));
 		stats.add(getmaxActiveTimestamp((Stopwatch) child));
 		stats.add(getLast((Stopwatch) child));
 		stats.add(getMean((Stopwatch) child));
 		stats.add(getStandardDeviation((Stopwatch) child));
-		stats.add(getVariance((Stopwatch) child));
-		stats.add(getVarianceN((Stopwatch) child));
 		stats.add(getNote((Stopwatch) child));
 		stats.add(getFirstUsage((Stopwatch) child));
 		stats.add(getLastUsage((Stopwatch) child));
-		// stats.add(getLastReset((Stopwatch) child));
 		String[] statsArray = stats.toArray(new String[stats.size()]);
 		return statsArray;
 	}
-
-	// private static String getLastReset(Stopwatch child) {
-	// return convertMillisToDate(((Stopwatch) child).getLastReset());
-	// }
 
 	private static String getLastUsage(Stopwatch child) {
 		return convertMillisToDate(((Stopwatch) child).getLastUsage());
@@ -109,21 +97,14 @@ public class StopwatchUtil {
 		return ((Stopwatch) child).getNote();
 	}
 
-	private static String getVarianceN(Stopwatch child) {
-		return convertFromDoubleToSeconds(((Stopwatch) child).getVarianceN());
-	}
-
-	private static String getVariance(Stopwatch child) {
-		return convertFromDoubleToSeconds(((Stopwatch) child).getVariance());
-	}
-
 	private static String getStandardDeviation(Stopwatch child) {
-		return convertFromDoubleToSeconds(((Stopwatch) child)
-				.getStandardDeviation());
+		long round = Math.round(((Stopwatch) child).getStandardDeviation());
+		return convertFromNanoToSeconds(round);
 	}
 
 	private static String getMean(Stopwatch child) {
-		return convertFromDoubleToSeconds(((Stopwatch) child).getMean());
+		long round = Math.round(((Stopwatch) child).getMean());
+		return convertFromNanoToSeconds(round);
 	}
 
 	private static String getLast(Stopwatch child) {
@@ -137,10 +118,6 @@ public class StopwatchUtil {
 	private static String getMaxActive(Stopwatch child) {
 		return getValueOfLong(((Stopwatch) child).getMaxActive());
 	}
-
-	// private static String getActive(Stopwatch child) {
-	// return getValueOfLong(((Stopwatch) child).getActive());
-	// }
 
 	private static String getMaxTimestamp(Stopwatch child) {
 		return convertMillisToDate(((Stopwatch) child).getMaxTimestamp());
@@ -174,15 +151,6 @@ public class StopwatchUtil {
 	private static String getValueOfLong(long number) {
 		return String.valueOf(number);
 	}
-
-	private static String convertFromDoubleToSeconds(double number) {
-		double seconds = (double) number / 1000000000.0;
-		return String.valueOf(seconds);
-	}
-
-	// private static String valueOfDouble(double number) {
-	// return String.valueOf(number);
-	// }
 
 	private static String convertMillisToDate(long number) {
 		SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");

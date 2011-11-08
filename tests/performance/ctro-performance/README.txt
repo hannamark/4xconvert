@@ -44,8 +44,6 @@ Timings for elements on a page. Here's a breakdown of what the columns in the cs
 	last: Returns value of the last added split - wheter it was added directly or with stop method.
 	mean: Returns mean value (average) of all measured values.
 	standardDeviation: Returns standard deviation for all measured values.
-	variance: Returns unbiased estimate of the population variance.
-	varianceN: Returns variance value of all measured values (entire population).
 	note: Returns note for the Simon. Note enables Simon with an additional information in human readable form.
 	firstUsage: Returns ms timestamp of the first usage of this Simon. First and last usage are updated when monitor performs the measuring (start/stop/count/etc). They are not updated when values are obtained from the monitor.
 	lastUsage: Returns ms timestamp of the last usage of this Simon. First and last usage are updated when monitor performs the measuring (start/stop/count/etc). They are not updated when values are obtained from the monitor.
