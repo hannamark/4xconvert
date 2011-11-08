@@ -52,7 +52,7 @@ public class StopwatchUtil {
 		header.add("max");
 		header.add("minTimestamp");
 		header.add("maxTimestamp");
-		header.add("active");
+		// header.add("active");
 		header.add("maxActive");
 		header.add("maxActiveTimestamp");
 		header.add("last");
@@ -63,7 +63,7 @@ public class StopwatchUtil {
 		header.add("note");
 		header.add("firstUsage");
 		header.add("lastUsage");
-		header.add("lastReset");
+		// header.add("lastReset");
 		String[] statsArray = header.toArray(new String[header.size()]);
 		return statsArray;
 	}
@@ -77,7 +77,7 @@ public class StopwatchUtil {
 		stats.add(getMax((Stopwatch) child));
 		stats.add(getMinTimestamp((Stopwatch) child));
 		stats.add(getMaxTimestamp((Stopwatch) child));
-		stats.add(getActive((Stopwatch) child));
+		// stats.add(getActive((Stopwatch) child));
 		stats.add(getMaxActive((Stopwatch) child));
 		stats.add(getmaxActiveTimestamp((Stopwatch) child));
 		stats.add(getLast((Stopwatch) child));
@@ -88,14 +88,14 @@ public class StopwatchUtil {
 		stats.add(getNote((Stopwatch) child));
 		stats.add(getFirstUsage((Stopwatch) child));
 		stats.add(getLastUsage((Stopwatch) child));
-		stats.add(getLastReset((Stopwatch) child));
+		// stats.add(getLastReset((Stopwatch) child));
 		String[] statsArray = stats.toArray(new String[stats.size()]);
 		return statsArray;
 	}
 
-	private static String getLastReset(Stopwatch child) {
-		return convertMillisToDate(((Stopwatch) child).getLastReset());
-	}
+	// private static String getLastReset(Stopwatch child) {
+	// return convertMillisToDate(((Stopwatch) child).getLastReset());
+	// }
 
 	private static String getLastUsage(Stopwatch child) {
 		return convertMillisToDate(((Stopwatch) child).getLastUsage());
@@ -138,9 +138,9 @@ public class StopwatchUtil {
 		return getValueOfLong(((Stopwatch) child).getMaxActive());
 	}
 
-	private static String getActive(Stopwatch child) {
-		return getValueOfLong(((Stopwatch) child).getActive());
-	}
+	// private static String getActive(Stopwatch child) {
+	// return getValueOfLong(((Stopwatch) child).getActive());
+	// }
 
 	private static String getMaxTimestamp(Stopwatch child) {
 		return convertMillisToDate(((Stopwatch) child).getMaxTimestamp());
@@ -180,9 +180,9 @@ public class StopwatchUtil {
 		return String.valueOf(seconds);
 	}
 
-	private static String valueOfDouble(double number) {
-		return String.valueOf(number);
-	}
+	// private static String valueOfDouble(double number) {
+	// return String.valueOf(number);
+	// }
 
 	private static String convertMillisToDate(long number) {
 		SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy HH:mm:ss");

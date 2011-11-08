@@ -30,7 +30,25 @@ Output:
 This project outputs two files configured from the config.properties file.
 
 sample.output.csv=sampleOutput.csv
-Timings for page objects.
+Timings for elements on a page. Here's a breakdown of what the columns in the csv output mean.
+
+	name: Returns Simon name. Simon name is always fully qualified and determines also position of the Simon in the monitor hierarchy. Simon name can be null for anonymous Simons.
+	total: Returns total sum of all split times in nanoseconds.
+	counter: Returns usage count of the stopwatch. Counter is increased by addTime and stop - that means that it's updated every time the next time split is added.
+	min: Returns minimal time split value in nanoseconds.
+	max: Returns maximal time split value in nanoseconds.
+	minTimestamp: Returns ms timestamp when the min value was measured.
+	maxTimestamp: Returns ms timestamp when the max value was measured.
+	maxActive: Returns peek value of active concurrent splits.
+	maxActiveTimestamp: Retruns ms timestamp when the last peek of the active split count occured.
+	last: Returns value of the last added split - wheter it was added directly or with stop method.
+	mean: Returns mean value (average) of all measured values.
+	standardDeviation: Returns standard deviation for all measured values.
+	variance: Returns unbiased estimate of the population variance.
+	varianceN: Returns variance value of all measured values (entire population).
+	note: Returns note for the Simon. Note enables Simon with an additional information in human readable form.
+	firstUsage: Returns ms timestamp of the first usage of this Simon. First and last usage are updated when monitor performs the measuring (start/stop/count/etc). They are not updated when values are obtained from the monitor.
+	lastUsage: Returns ms timestamp of the last usage of this Simon. First and last usage are updated when monitor performs the measuring (start/stop/count/etc). They are not updated when values are obtained from the monitor.
 
 table.rows.csv=tableRowCount.csv
 Row counts for all the tables.
