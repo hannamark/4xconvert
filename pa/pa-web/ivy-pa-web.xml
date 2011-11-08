@@ -95,8 +95,7 @@ This is the definition of a virtual module called bda-download that has a depend
         <artifact name="selenium-server-coreless" type="jar"/>
     </dependency>
     <dependency org="org.seleniumhq.selenium.server" name="selenium-server" rev="1.0.3"               conf="selenium->master">
-        <artifact name="selenium-server" type="jar"
-        url="https://ncisvn.nci.nih.gov/svn/maven-mirror/trunk/org/seleniumhq/selenium/server/selenium-server/1.0.3/selenium-server-1.0.3-standalone.jar"/>
+        <artifact name="selenium-server" m:classifier="standalone"/>
     </dependency>
   </dependencies>
 </ivy-module>

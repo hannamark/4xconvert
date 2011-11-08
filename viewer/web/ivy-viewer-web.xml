@@ -72,7 +72,7 @@
 
     <dependency org="junit"                  name="junit"                   rev="4.8.2"           conf="selenium->master"/>
     <dependency org="gov.nih.nci.coppa"      name="coppa-commons-test"      rev="1.3.7"           conf="selenium->master"/>
-    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="3.7-SNAPSHOT"    conf="selenium->master">
+    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="${pa.version}"   conf="selenium->master">
         <artifact name="pa-commons" m:classifier="test"/>
     </dependency>
     <dependency org="org.seleniumhq.selenium.client-drivers" name="selenium-java-client-driver"    rev="1.0.2" conf="selenium->master"/>
@@ -80,8 +80,7 @@
         <artifact name="selenium-server-coreless" type="jar"/>
     </dependency>
     <dependency org="org.seleniumhq.selenium.server" name="selenium-server" rev="1.0.3"               conf="selenium->master">
-        <artifact name="selenium-server" type="jar"
-        url="https://ncisvn.nci.nih.gov/svn/maven-mirror/trunk/org/seleniumhq/selenium/server/selenium-server/1.0.3/selenium-server-1.0.3-standalone.jar"/>
+        <artifact name="selenium-server" m:classifier="standalone"/>
     </dependency>
   </dependencies>
 </ivy-module>

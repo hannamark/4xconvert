@@ -20,6 +20,7 @@
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
     <property name="ivy.def.file" location="ivy-accrual-ear.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
+    <property name="pa.version" value="3.7-SNAPSHOT"/>
 
     <!-- ====================================================================== -->
     <!-- Defining classpaths                                                    -->
@@ -85,15 +86,14 @@
                 <filter token="accrual.db.password" value="${database.password}"/>
             	<filter token="gridServicePrincipal" value="${gridServicePrincipal}"/>
             	<filter token="gridServiceCredential" value="${gridServiceCredential}"/>
+                <filter token="pa.version" value="${pa.version}"/>
             </filterset>
-            <fileset dir="${ear.resource.dir}" 
-                     includes="**/*" 
-                     excludes="**/application.xml"/>
+            <fileset dir="${ear.resource.dir}" includes="**/*" />
         </copy>
         <ear destfile="${ear.build.dir}/${ear.build.finalName}.ear" 
              basedir="${ear.build.dir}/${ear.build.finalName}" 
              compress="false" 
-             appxml="${ear.resource.dir}/META-INF/application.xml"/>
+             appxml="${ear.build.dir}/${ear.build.finalName}/META-INF/application.xml"/>
     </target>
 
 

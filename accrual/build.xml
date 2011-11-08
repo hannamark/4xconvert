@@ -211,8 +211,7 @@
         <fail unless="gridServicePrincipal" message="Missing required property gridServicePrincipal"/>
         <fail unless="gridServiceCredential" message="Missing required property gridServiceCredential"/>
 
-        <ant inheritAll="false" inheritRefs="false" antfile="${ear.build.file}"
-            dir="${ear.dir}" >
+        <ant inheritAll="false" inheritRefs="false" antfile="${ear.build.file}" dir="${ear.dir}" >
             <property name="jdbc.driver" value="${jdbc.driver}" />
             <property name="csm.jdbc.url" value="${database.url}" />
             <property name="csm.db.username" value="${database.user}"/>
@@ -222,7 +221,7 @@
             <property name="accrual.db.password" value="${database.password}"/>
             <property name="gridServicePrincipal" value="${gridServicePrincipal}"/>
             <property name="gridServiceCredential" value="${gridServiceCredential}"/>
-
+            
             <target name="${ear.build.target}"/>
         </ant>
     </target>

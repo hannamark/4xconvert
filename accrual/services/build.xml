@@ -39,6 +39,8 @@
     <property name="ivy.settings.file" location="${common.dir}/ivysettings.xml" />
     <property name="ivy.def.file" location="ivy-accrual-services.xml" />
     <property name="local.repo.dir" location="${software.dir}/local-ivy-repo" />
+    
+    <property name="pa.version" value="3.7-SNAPSHOT"/>
 
 
     <!-- ====================================================================== -->

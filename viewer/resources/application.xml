@@ -20,7 +20,7 @@
         <java>pa-ejb.jar</java>
     </module>
     <module>
-        <java>pa-commons-3.7-alpha2.jar</java>
+        <java>pa-commons.jar</java>
     </module>
     <module>
         <java>commons-collections-3.2.1.jar</java>

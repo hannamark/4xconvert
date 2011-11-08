@@ -47,6 +47,8 @@
     <property name="bda-utils" value="${software.dir}/target/pa/bda-utils"/>
     
     <property name="selenium.delay" value="10"/>
+    
+    <property name="pa.version" value="3.7-SNAPSHOT"/>
 
 
     <!-- ====================================================================== -->
