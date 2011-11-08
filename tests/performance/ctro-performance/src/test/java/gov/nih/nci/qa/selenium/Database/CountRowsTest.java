@@ -50,6 +50,8 @@ public class CountRowsTest {
 			ResultSet resultSet = stmt.executeQuery("select count_em_all();");
 			String filename = getOutputFilename();
 			CSVWriter writer = new CSVWriter(new FileWriter(filename), ',');
+			String[] databaseUrl = getDatabaseUrl();
+			writer.writeNext(databaseUrl);
 			String[] header = getHeader();
 			writer.writeNext(header);
 			while (resultSet.next()) {
@@ -91,6 +93,17 @@ public class CountRowsTest {
 		String removed = remove
 				.substring(openParantheses + 1, closeParantheses);
 		return removed;
+	}
+
+	private String[] getDatabaseUrl() {
+		List<String> urlLine = new ArrayList<String>();
+		String host = properties.getProperty("database.host");
+		String port = properties.getProperty("database.port");
+		String name = properties.getProperty("database.name");
+		String url = "jdbc:postgresql://" + host + ":" + port + "/" + name;
+		urlLine.add(url);
+		String[] urlArray = urlLine.toArray(new String[urlLine.size()]);
+		return urlArray;
 	}
 
 	private void connectToDatabase() {
