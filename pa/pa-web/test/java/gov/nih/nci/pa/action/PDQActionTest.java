@@ -87,15 +87,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
+import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -107,10 +114,11 @@ import com.mockrunner.mock.web.MockHttpServletResponse;
  *
  */
 public class PDQActionTest extends AbstractPaActionTest {
-    private PDQAction action = new PDQAction();
+    private final PDQAction action = new PDQAction();
     private ServiceLocator paSvcLoc;
     private PDQUpdateGeneratorTaskServiceLocal pdqUpdateGeneratorTaskService;
-    
+    private PDQXmlGeneratorServiceRemote pdqXmlGen;
+
     @Before
     public void setup() throws PAException {
         paSvcLoc = mock (ServiceLocator.class);
@@ -119,9 +127,13 @@ public class PDQActionTest extends AbstractPaActionTest {
         when(paSvcLoc.getPDQUpdateGeneratorTaskService()).thenReturn(pdqUpdateGeneratorTaskService);
         when(pdqUpdateGeneratorTaskService.getListOfFileNames()).thenReturn(new ArrayList<String>());
         when(pdqUpdateGeneratorTaskService.getRequestedFileName(anyString())).thenReturn("fileName");
-        action.prepare();
+
+        pdqXmlGen = mock(PDQXmlGeneratorServiceRemote.class);
+        when(pdqXmlGen.generatePdqXml((Ii) anyObject())).thenReturn("<xml>");
+
+        action.setPdqXmlGenerator(pdqXmlGen);
     }
-    
+
     @Test
     public void testProperties() {
         assertNull(action.getServletResponse());
@@ -137,16 +149,40 @@ public class PDQActionTest extends AbstractPaActionTest {
         assertNull(action.getListOffileName());
 
     }
-    
+
     @Test
     public void testGetAvailableFiles() {
+        action.prepare();
         assertNotNull(action.getAvailableFiles());
     }
-    
+
     @Test
     public void testGetFileByDate() {
+        action.prepare();
         assertEquals("error", action.getFileByDate());
         action.setDate("someDate");
         assertEquals("success", action.getFileByDate());
     }
+
+    @Test
+    public void testGetSingleExportNoId() {
+        assertEquals("singleExport", action.getSingleExport());
+    }
+
+    @Test
+    public void testGetSingleExport() throws IOException {
+        HttpServletResponse servletResp = mock(HttpServletResponse.class);
+        ServletOutputStream sos = mock(ServletOutputStream.class);
+        when(servletResp.getOutputStream()).thenReturn(sos);
+        action.setServletResponse(servletResp);
+        action.setStudyProtocolId("some ID");
+        assertEquals("none", action.getSingleExport());
+    }
+
+    @Test
+    public void testGetSingleExportWithException() throws PAException {
+        when(pdqXmlGen.generatePdqXml((Ii) anyObject())).thenThrow(new PAException("some Exception"));
+        assertEquals("singleExport", action.getSingleExport());
+    }
+
 }

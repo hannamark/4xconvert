@@ -156,6 +156,7 @@
             <interceptor-ref name="paNoDisclaimerDefaultInterceptor" />
             <result>/WEB-INF/jsp/pdqExport.jsp</result>
             <result name="error">/WEB-INF/jsp/pdqExport.jsp</result>
+            <result name="singleExport">/WEB-INF/jsp/singlePdqExport.jsp</result>            
         </action>
         <action name="duplicateTrialErrorAction">
             <interceptor-ref name="paNoDisclaimerDefaultInterceptor" />

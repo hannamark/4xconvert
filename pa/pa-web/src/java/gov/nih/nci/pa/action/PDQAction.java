@@ -83,13 +83,16 @@
  */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PDQUpdateGeneratorTaskServiceLocal;
+import gov.nih.nci.pa.service.util.PDQXmlGeneratorServiceRemote;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,10 +115,12 @@ public class PDQAction extends ActionSupport implements Preparable, ServletRespo
     private static final long serialVersionUID = -1336481874691716853L;
 
     private PDQUpdateGeneratorTaskServiceLocal pdqUpdateGeneratorTaskService;
+    private PDQXmlGeneratorServiceRemote pdqXmlGenerator;
 
     private HttpServletResponse servletResponse;
     private String date;
     private List<String> listOfFileNames = new ArrayList<String>();
+    private String studyProtocolId = null;
 
     /**
      * {@inheritDoc}
@@ -123,10 +128,11 @@ public class PDQAction extends ActionSupport implements Preparable, ServletRespo
     @Override
     public void prepare() {
         pdqUpdateGeneratorTaskService = PaRegistry.getPDQUpdateGeneratorTaskService();
+        pdqXmlGenerator = PaRegistry.getPDQXmlGeneratorService();
     }
 
     /**
-     * 
+     *
      * @return success
      */
     public String getAvailableFiles() {
@@ -140,7 +146,7 @@ public class PDQAction extends ActionSupport implements Preparable, ServletRespo
     }
 
     /**
-     * 
+     *
      * @return success
      */
     public String getFileByDate() {
@@ -170,6 +176,35 @@ public class PDQAction extends ActionSupport implements Preparable, ServletRespo
         }
         return SUCCESS;
     }
+
+
+    /**
+     *
+     * @return A single XML file.
+     */
+    public String getSingleExport() {
+        try {
+            if (StringUtils.isEmpty(studyProtocolId)) {
+                return "singleExport";
+            }
+            Ii ii = new Ii();
+            ii.setExtension(studyProtocolId);
+            String xmlData = pdqXmlGenerator.generatePdqXml(ii);
+            servletResponse.setContentType("application/xml");
+            servletResponse.setCharacterEncoding("UTF-8");
+            servletResponse.setContentLength(xmlData.getBytes("UTF-8").length);
+            OutputStreamWriter writer = new OutputStreamWriter(servletResponse.getOutputStream(), "UTF-8");
+            writer.write(xmlData);
+            writer.flush();
+            writer.close();
+        } catch (Exception e) {
+            addActionMessage("unable to get PDQ file " + e.getMessage());
+            LOG.error(e.getMessage(), e);
+            return "singleExport";
+        }
+        return NONE;
+    }
+
 
     /**
      * @return the servletResponse
@@ -220,5 +255,27 @@ public class PDQAction extends ActionSupport implements Preparable, ServletRespo
     public void setPdqUpdateGeneratorTaskService(PDQUpdateGeneratorTaskServiceLocal pdqUpdateGeneratorTaskService) {
         this.pdqUpdateGeneratorTaskService = pdqUpdateGeneratorTaskService;
     }
+
+    /**
+     * @param pdqXmlGen the generator to set.
+     */
+    public void setPdqXmlGenerator(PDQXmlGeneratorServiceRemote pdqXmlGen) {
+        this.pdqXmlGenerator = pdqXmlGen;
+    }
+
+    /**
+     * @param id the ID.
+     */
+    public void setStudyProtocolId(String id) {
+        this.studyProtocolId = id;
+    }
+
+    /**
+     * @return the ID.
+     */
+    public String getStudyProtocolId() {
+        return studyProtocolId;
+    }
+
 
 }
