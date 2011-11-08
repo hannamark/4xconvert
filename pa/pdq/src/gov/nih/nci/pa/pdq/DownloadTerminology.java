@@ -9,6 +9,7 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.log4j.Logger;
 
@@ -37,6 +38,7 @@ public class DownloadTerminology {
               LOG.error("Unable to login to PDQ");
               System.exit(0);
           }
+          client.setFileType(FTP.BINARY_FILE_TYPE);
           FileOutputStream fos = null;
           fos = new FileOutputStream(filename);
           client.retrieveFile("/" + filename, fos);
