@@ -82,108 +82,141 @@
  */
 package gov.nih.nci.pa.viewer.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 /**
- * This servlet filter allows to set up the time to live for requests matching selected patterns.
- * 
- * It takes 2 initialization parameters: patterns : A comma separated list of url patterns delaysInSeconds : A comma
- * separated list of delays
- * 
- * For the requests that match one of the given patterns, the filter sets the Expires header to the corresponding delay.
- * They are considered as static content
- * 
- * For requests that do not match any of the patterns, caching is disabled. They are considered as dynamic content.
- * 
  * @author Michael Visee
  */
-public class ExpirationFilter implements Filter {
-
-    private static final String EXPIRES_HEADER = "Expires";
-    private static final String CACHE_CONTROL_HEADER = "Cache-Control";
-    private static final String NOCACHE_HEADER = "max-age=0, must-revalidate, no-cache";
-    private static final long MILLISECONDS_PER_SECOND = 1000;
-
-    private List<ExpirationRule> rules;
+public class ExpirationFilterTest {
+    
+    private ExpirationFilter sut = new ExpirationFilter();
 
     /**
-     * {@inheritDoc}
+     * ExpectedException rule.
      */
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        String[] patterns = filterConfig.getInitParameter("patterns").split(",");
-        String[] delays = filterConfig.getInitParameter("delaysInSeconds").split(",");
-        if (patterns.length != delays.length) {
-            throw new ServletException("Configuration exception : Pattern and delay arrays have different lengths");
-        }
-        rules = new ArrayList<ExpirationRule>();
-        for (int i = 0; i < patterns.length; i++) {
-            ExpirationRule rule = new ExpirationRule();
-            rule.setPattern(patterns[i].trim());
-            try {
-                rule.setDelayInSeconds(Integer.parseInt(delays[i].trim()));
-            } catch (NumberFormatException e) {
-                throw new ServletException("Configuration exception : delay " + delays[i] + " is not an integer", e);
-            }
-            rules.add(rule);
-        }
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    /**
+     * Test the init method in the successful case
+     * @throws ServletException in case of error
+     */
+    @Test
+    public void testInit() throws ServletException {
+        FilterConfig config = createFilterConfig("p1,p2", "10, 20");
+        sut.init(config);
+        List<ExpirationRule> rules = sut.getRules();
+        assertNotNull("No rule set", rules);
+        assertEquals("Wrong number of collections", 2, rules.size());
+        ExpirationRule rule0 = rules.get(0);
+        assertEquals("Wrong pattern in first rule", "p1", rule0.getPattern());
+        assertEquals("Wrong delay in first rule", 10, rule0.getDelayInSeconds());
+        ExpirationRule rule1 = rules.get(1);
+        assertEquals("Wrong pattern in second rule", "p2", rule1.getPattern());
+        assertEquals("Wrong delay in second rule", 20, rule1.getDelayInSeconds());
     }
 
     /**
-     * {@inheritDoc}
+     * Test the init method in the case arrays are of wrong length.
+     * @throws ServletException in case of error
      */
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-            ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
-        String uri = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
-        boolean unmatched = true;
-        for (ExpirationRule rule : rules) {
-            if (rule.getCompiledPattern().matcher(uri).matches()) {
-                long expirationTime = System.currentTimeMillis() + MILLISECONDS_PER_SECOND * rule.getDelayInSeconds();
-                httpResponse.setDateHeader(EXPIRES_HEADER, expirationTime);
-                unmatched = false;
-                break;
-            }
-        }
-        if (unmatched) {
-            httpResponse.setHeader(CACHE_CONTROL_HEADER, NOCACHE_HEADER);
-        }
-        chain.doFilter(request, response);
+    @Test
+    public void testInitDifferentLength() throws ServletException {
+        thrown.expect(ServletException.class);
+        thrown.expectMessage("Configuration exception : Pattern and delay arrays have different lengths");
+        FilterConfig config = createFilterConfig("p1,p2", "10");
+        sut.init(config);
     }
 
     /**
-     * {@inheritDoc}
+     * Test the init method with a number format.
+     * @throws ServletException in case of error
      */
-    @Override
-    public void destroy() {
-        // Nothing to do
+    @Test
+    public void testInitFormatError() throws ServletException {
+        thrown.expect(ServletException.class);
+        thrown.expectMessage("Configuration exception : delay abcd is not an integer");
+        FilterConfig config = createFilterConfig("p1", "abcd");
+        sut.init(config);
     }
 
     /**
-     * @return the rules
+     * Test the doFilter method in the static case.
+     * @throws ServletException in case of error
+     * @throws IOException in case of error
      */
-    public List<ExpirationRule> getRules() {
-        return rules;
+    @Test
+    public void testDoFilterStatic() throws ServletException, IOException {
+        FilterConfig config = createFilterConfig("/static/.*", "10");
+        sut.init(config);
+        HttpServletRequest request = createRequest("/viewer", "/viewer/static/image.gif");
+        HttpServletResponse response = createResponse();
+        FilterChain chain = mock(FilterChain.class);
+        long now = System.currentTimeMillis();
+        sut.doFilter(request, response, chain);
+        ArgumentCaptor<Long> captor = ArgumentCaptor.forClass(Long.class);
+        verify(response).setDateHeader(eq("Expires"), captor.capture());
+        verify(response, never()).setHeader(anyString(), anyString());
+        assertTrue(now + 10000L <= captor.getValue());
+        verify(chain).doFilter(request, response);
     }
 
     /**
-     * @param rules the rules to set
+     * Test the doFilter method in the dynamic case.
+     * @throws ServletException in case of error
+     * @throws IOException in case of error
      */
-    public void setRules(List<ExpirationRule> rules) {
-        this.rules = rules;
+    @Test
+    public void testDoFilterDynamic() throws ServletException, IOException {
+        FilterConfig config = createFilterConfig("/static/.*", "10");
+        sut.init(config);
+        HttpServletRequest request = createRequest("/viewer", "/viewer/blablabla");
+        HttpServletResponse response = createResponse();
+        FilterChain chain = mock(FilterChain.class);
+        sut.doFilter(request, response, chain);
+        verify(response).setHeader("Cache-Control", "max-age=0, must-revalidate, no-cache");
+        verify(response, never()).setDateHeader(anyString(), anyLong());
+        verify(chain).doFilter(request, response);
+    }
+
+    private FilterConfig createFilterConfig(String patterns, String delays) {
+        FilterConfig config = mock(FilterConfig.class);
+        when(config.getInitParameter("patterns")).thenReturn(patterns);
+        when(config.getInitParameter("delaysInSeconds")).thenReturn(delays);
+        return config;
+    }
+
+    private HttpServletRequest createRequest(String contextPath, String uri) {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getContextPath()).thenReturn(contextPath);
+        when(request.getRequestURI()).thenReturn(uri);
+        return request;
+    }
+
+    private HttpServletResponse createResponse() {
+        return mock(HttpServletResponse.class);
     }
 
 }

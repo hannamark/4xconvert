@@ -3,7 +3,7 @@
     <table id="resultTable" width="100%">
         <tr>
             <td colspan="2">
-                <h2><fmt:message key="adHoc.header"/></h2>
+                <h2><fmt:message key="adHocReport.title"/></h2>
             </td>
         </tr>
         <tr>

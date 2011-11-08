@@ -1316,7 +1316,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         test:pa-web,
         test:reg-web,
         test:accrual,
-        test:viewer
+        test:viewer-services,
+        test:viewer-web
         "/>
 
     <target name="test:pa-commons" depends="init">
@@ -1402,7 +1403,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <property name="po.server.name" value="${po.server.name}"/>
         </ant>
     </target>
-    <target name="test:viewer" depends="init" unless="exclude.viewer">
+    <target name="test:viewer-services" depends="init" unless="exclude.viewer">
         <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
                 target="test-dynamic-analysis" dir="${viewer-services.base.dir}" >
             <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
@@ -1413,6 +1414,22 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="jdbc.url" value="${database.url}"/>
         </ant>
     </target>
+    <target name="test:viewer-web" depends="init" unless="exclude.viewer">
+        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-web.build.file}" target="test-dynamic-analysis"
+            dir="${viewer-web.base.dir}" >
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
+            <property name="jboss.port" value="${selenium.jboss.port}"/>
+            <property name="hibernate.dialect" value="${database.dialect}"/>
+            <property name="db.username" value="${database.user}"/>
+            <property name="db.password" value="${database.password}"/>
+            <property name="jdbc.driver" value="${database.dirver}"/>
+            <property name="jdbc.url" value="${database.url}"/>
+            <property name="test.schema.showsql" value="false"/>
+            <property name="test.java.naming.provider" value="localhost"/>
+            <property name="pa.server.name" value="${jboss.server.hostname}"/>
+            <property name="selenium.server.port" value="${selenium.proxy.port}"/>
+        </ant>
+    </target>
 
     <!-- Wrapper test target, call appropriate test for sub-projects -->
     <target name="static-analysis:all" description="Runs static-analysis target for all sub-projects"
@@ -1421,7 +1438,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         static-analysis:pa-ejb,
         static-analysis:pa-web,
         static-analysis:reg-web,
-        static-analysis:viewer
+        static-analysis:viewer-services,
+        static-analysis:viewer-web
         "/>
 
     <target name="static-analysis:pa-web" depends="init">
@@ -1456,12 +1474,19 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         </ant>
     </target>
 
-    <target name="static-analysis:viewer" depends="init">
-            <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
-                target="test-static-analysis"
-                dir="${viewer-services.base.dir}" >
-                <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
-            </ant>
+    <target name="static-analysis:viewer-services" depends="init">
+        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-services.build.file}"
+            target="test-static-analysis"
+            dir="${viewer-services.base.dir}" >
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
+        </ant>
+    </target>
+    <target name="static-analysis:viewer-web" depends="init">
+        <ant inheritAll="false" inheritRefs="false" antfile="${viewer-web.build.file}"
+            target="test-static-analysis"
+            dir="${viewer-web.base.dir}" >
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
+        </ant>
     </target>
 
     <target name="continuous-integration" description="calls wrapper targets for continuous integration build"

@@ -6,13 +6,13 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
     <head>
+        <title><fmt:message key="adHocReport.title" /></title>
         <link href="${pageContext.request.contextPath}/styles/reportui.css" rel="stylesheet" type="text/css" media="all"/>
         
         <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all" />
         <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all" />
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
-        <c:url value="/ctro/popupWaitDialog.action" var="waitDialogUrl"/>
     
         <script type="text/javascript">
             jQuery(function() {
@@ -82,8 +82,8 @@
             <div id="reportui">
                 <!--Tabs-->
                 <ul id="reporttabs" class="clearfix">
-                    <li><a href="#filtersTab"><fmt:message key="adHocReport.tab.filters"/></a></li>
-                    <li><a href="#resultsTab"><fmt:message key="adHocReport.tab.results"/></a></li>
+                    <li><a href="#filtersTab"><fmt:message key="report.tab.filters"/></a></li>
+                    <li><a href="#resultsTab"><fmt:message key="report.tab.results"/></a></li>
                 </ul>
                 <!--/Tabs-->
                 <div id="filtersTab">
@@ -98,8 +98,8 @@
                         <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/summary4Filter.jsp"/>
                     </div>
                     <viewer:buttonBar>
-                        <viewer:button labelKey="adHocReport.button.run" id="runButton" imgClass="search" />
-                        <viewer:button labelKey="adHocReport.button.reset" id="resetButton" imgClass="cancel" />
+                        <viewer:button labelKey="report.button.run" id="runButton" imgClass="search" />
+                        <viewer:button labelKey="report.button.reset" id="resetButton" imgClass="cancel" />
                     </viewer:buttonBar>
                 </div>
                 <div id="resultsTab">

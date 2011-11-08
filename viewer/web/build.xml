@@ -525,5 +525,12 @@
             </else>
        </if>
    </target>
+    
+    <target name="test-dynamic-analysis"
+            depends="ivy-get,compile,compile-tests,test-cobertura"
+            description="Run dynamic analysis."/>
 
+    <target name="test-static-analysis"
+        depends="ivy-get,compile,test-checkstyle,test-pmd,test-simian"
+        description="Run static analysis."/>
 </project>
