@@ -1,5 +1,7 @@
 package gov.nih.nci.qa.selenium.PageComponents;
 
+import gov.nih.nci.qa.selenium.PageObjects.AdHocReportPage;
+import gov.nih.nci.qa.selenium.enumerations.AdHocReportMessage;
 import gov.nih.nci.qa.selenium.util.TableUtil;
 
 import java.util.Iterator;
@@ -133,7 +135,12 @@ public class AdHocReportTable {
 	}
 
 	public int getResultCount() {
-		// TODO Look for an error first rather than diving right in.
+		// Don't assume there are results. There might be an error.
+		AdHocReportPage adHocReportPage = new AdHocReportPage(webDriver);
+		AdHocReportMessage message = adHocReportPage.getMessage();
+		if (!message.equals(AdHocReportMessage.NO_ERROR_FOUND)) {
+			return 0;
+		}
 
 		WebElement adHocReport = webDriver.findElement(By.id("resultsTab"));
 		List<WebElement> tableDataCells = adHocReport.findElements(By

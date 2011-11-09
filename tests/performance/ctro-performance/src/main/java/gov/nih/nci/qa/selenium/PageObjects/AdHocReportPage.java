@@ -157,6 +157,7 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 		} else if (errorText.contains("Results exceed more than 500.")) {
 			return AdHocReportMessage.RESULTS_EXCEEDED_500;
 		} else {
+			// Uncategorized error! Add something to the enum.
 			return null;
 		}
 	}
