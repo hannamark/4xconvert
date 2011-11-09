@@ -46,9 +46,8 @@ public class ExerciseSummaryOfSubmissionPageTest {
 	public void exercisePageObject() {
 		SummaryOfSubmissionReportPage summaryOfSubmissionReportPage = new SummaryOfSubmissionReportPage(
 				webDriver).get();
-		summaryOfSubmissionReportPage.setDateRange("1/1/2009", "9/7/2011");
-		summaryOfSubmissionReportPage.setIncludeTrials(false);
-		summaryOfSubmissionReportPage.setIncludeTrials(true);
+		summaryOfSubmissionReportPage.setSummaryOfSubmission("1/1/2009",
+				"9/7/2011", false);
 		SummaryOfSubmissionResultsTable resultsTable = summaryOfSubmissionReportPage
 				.clickRunReportButton();
 

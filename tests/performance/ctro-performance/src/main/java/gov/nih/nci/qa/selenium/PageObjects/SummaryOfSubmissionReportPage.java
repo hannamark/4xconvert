@@ -16,19 +16,25 @@ import org.openqa.selenium.support.ui.LoadableComponent;
 public class SummaryOfSubmissionReportPage extends
 		LoadableComponent<SummaryOfSubmissionReportPage> {
 
-	@FindBy(how = How.ID, using = "criteriaSummaryOfSubmission_criteria_intervalStartDate")
+	@FindBy(how = How.LINK_TEXT, using = "Report Filters")
+	WebElement reportFiltersTab;
+
+	@FindBy(how = How.LINK_TEXT, using = "Results")
+	WebElement resultsTab;
+
+	@FindBy(how = How.ID, using = "intervalStartDate")
 	WebElement intervalStartDate;
 
-	@FindBy(how = How.ID, using = "criteriaSummaryOfSubmission_criteria_intervalEndDate")
+	@FindBy(how = How.ID, using = "intervalEndDate")
 	WebElement intervalEndDate;
 
-	@FindBy(how = How.ID, using = "criteriaSummaryOfSubmission_criteria_ctep")
+	@FindBy(how = How.ID, using = "ctep")
 	WebElement includeTrialsCheckbox;
 
-	@FindBy(how = How.LINK_TEXT, using = "Run report")
+	@FindBy(how = How.ID, using = "runButton")
 	WebElement runReportButton;
 
-	@FindBy(how = How.LINK_TEXT, using = "Reset")
+	@FindBy(how = How.ID, using = "resetButton")
 	WebElement resetButton;
 
 	private final WebDriver webDriver;
@@ -39,9 +45,18 @@ public class SummaryOfSubmissionReportPage extends
 						+ "SummaryOfSubmissionReportPage"
 						+ Manager.HIERARCHY_DELIMITER + "clickResetButton")
 				.start();
+		// Change to the report filters tab first.
+		reportFiltersTab.click();
 		resetButton.click();
 		split.stop();
 		return new SummaryOfSubmissionReportPage(webDriver);
+	}
+
+	public void setSummaryOfSubmission(String startDate, String endDate,
+			boolean includeTrials) {
+		reportFiltersTab.click();
+		setDateRange(startDate, endDate);
+		setIncludeTrials(includeTrials);
 	}
 
 	public SummaryOfSubmissionResultsTable clickRunReportButton() {
@@ -50,29 +65,11 @@ public class SummaryOfSubmissionReportPage extends
 						+ "SummaryOfSubmissionReportPage"
 						+ Manager.HIERARCHY_DELIMITER + "clickRunReportButton")
 				.start();
+		// Change to the report filters tab first.
+		reportFiltersTab.click();
 		runReportButton.click();
 		split.stop();
 		return new SummaryOfSubmissionResultsTable(webDriver);
-	}
-
-	public void setDateRange(String startDate, String endDate) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "SummaryOfSubmissionReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setDateRange").start();
-		PageUtil.setDateInterval(intervalStartDate, startDate, intervalEndDate,
-				endDate);
-		split.stop();
-	}
-
-	public void setIncludeTrials(boolean includeTrials) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "SummaryOfSubmissionReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setIncludeTrials")
-				.start();
-		PageUtil.setCheckbox(includeTrialsCheckbox, includeTrials);
-		split.stop();
 	}
 
 	public SummaryOfSubmissionReportPage(WebDriver webDriver) {
@@ -99,6 +96,28 @@ public class SummaryOfSubmissionReportPage extends
 		CtroReportSelectionPage ctroReportSelectionPage = new CtroReportSelectionPage(
 				webDriver).get();
 		ctroReportSelectionPage.clickSummaryOfSubmissionLink();
+		split.stop();
+	}
+
+	// privates
+
+	private void setDateRange(String startDate, String endDate) {
+		Split split = SimonManager.getStopwatch(
+				"parent" + Manager.HIERARCHY_DELIMITER
+						+ "SummaryOfSubmissionReportPage"
+						+ Manager.HIERARCHY_DELIMITER + "setDateRange").start();
+		PageUtil.setDateInterval(intervalStartDate, startDate, intervalEndDate,
+				endDate);
+		split.stop();
+	}
+
+	private void setIncludeTrials(boolean includeTrials) {
+		Split split = SimonManager.getStopwatch(
+				"parent" + Manager.HIERARCHY_DELIMITER
+						+ "SummaryOfSubmissionReportPage"
+						+ Manager.HIERARCHY_DELIMITER + "setIncludeTrials")
+				.start();
+		PageUtil.setCheckbox(includeTrialsCheckbox, includeTrials);
 		split.stop();
 	}
 

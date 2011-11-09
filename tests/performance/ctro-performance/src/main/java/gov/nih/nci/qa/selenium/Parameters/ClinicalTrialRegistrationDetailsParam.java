@@ -11,18 +11,18 @@ import java.util.List;
  */
 public class ClinicalTrialRegistrationDetailsParam {
 
-	String officialTitleTextBox;
-	String primaryPurposeDropDown;
-	List<String> trialPhaseMultiSelect;
-	String identifierTypeDropDown;
-	String principalInvestigatorDropDown;
-	String processingStatusDropDown;
-	String identifierTextBox;
-	String searchBySubmissionTypeDropDown;
-	String searchByTrialCategoryDropDown;
-	String milestoneDropDown;
-	String currentTrialStatusDropDown;
-	String leadOrganizationDropDown;
+	private String officialTitleTextBox;
+	private String primaryPurposeDropDown;
+	private List<String> trialPhaseMultiSelect;
+	private String identifierTypeDropDown;
+	private String principalInvestigatorDropDown;
+	private String processingStatusDropDown;
+	private String identifierTextBox;
+	private String searchBySubmissionTypeDropDown;
+	private String searchByTrialCategoryDropDown;
+	private String milestoneDropDown;
+	private String currentTrialStatusDropDown;
+	private String leadOrganizationDropDown;
 
 	public String getOfficialTitleTextBox() {
 		return officialTitleTextBox;

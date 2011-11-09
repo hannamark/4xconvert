@@ -113,10 +113,11 @@ public class Summary4TypeReportPage extends
 						+ Manager.HIERARCHY_DELIMITER + "setFindByFamily")
 				.start();
 		findByFamilyRadio.click();
+		// Special case when the database has no data. There's nothing to select
+		// from the list except for "--Select--". Selenium will present a
+		// timeout attempting to set the dropdown. This is the correct behavior.
 		PageUtil.setDropDown(findByFamilyDropDown, familyName);
 		waitForLoadingToFinish();
-		// TODO Need to add the capability to select an individual family. At
-		// the moment just "Select All".
 		split.stop();
 	}
 
