@@ -1,6 +1,10 @@
 package gov.nih.nci.qa.selenium.smoke;
 
+import gov.nih.nci.qa.selenium.PageComponents.AdHocReportTable;
 import gov.nih.nci.qa.selenium.PageObjects.AdHocReportPage;
+import gov.nih.nci.qa.selenium.Parameters.ClinicalTrialRegistrationDetailsBuilder;
+import gov.nih.nci.qa.selenium.Parameters.ClinicalTrialRegistrationDetailsParam;
+import gov.nih.nci.qa.selenium.enumerations.AdHocReportMessage;
 import gov.nih.nci.qa.selenium.util.StopwatchUtil;
 
 import java.util.ArrayList;
@@ -46,47 +50,61 @@ public class ExerciseAdHocReportPageTest {
 	public void exercisePageObjects() {
 		AdHocReportPage adHocReportPage = new AdHocReportPage(webDriver).get();
 
-		// Run down through all the page elements.
-		adHocReportPage.setOfficialTitle("");
-		adHocReportPage.setPrimaryPurpose("");
+		// Use a builder object to create a parameter. This keeps the Ad-Hoc
+		// Report page services intact.
+		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
+		builder.setOfficialTitle("offical title");
+		builder.setPrimaryPurposeDropDown("Treatment");
+		builder.setIdentifierTypeDropDown("");
+		builder.setIdentifierTextBox("");
+		builder.setPrincipalInvestigatorDropDown("All");
+		builder.setProcessingStatusDropDown("Submitted");
+		builder.setCurrentTrialStatusDropDown("Approved");
+		builder.setLeadOrganizationDropDown("All");
+		builder.setSearchBySubmissionTypeDropDown("Original");
+		builder.setSearchByTrialCategoryDropDown("Complete");
+		builder.setCurrentTrialStatusDropDown("Approved");
+		builder.setMilestoneDropDown("Submission Acceptance Date");
 
 		ArrayList<String> trialPhases = new ArrayList<String>();
 		trialPhases.add("I/II");
 		trialPhases.add("NA");
-		adHocReportPage.setTrialPhase(trialPhases);
+		builder.setTrialPhaseMultiSelect(trialPhases);
 
-		adHocReportPage.setIdentifierType("");
-		adHocReportPage.setPrincipalInvestigator("");
-		adHocReportPage.setProcessingStatus("");
-		adHocReportPage.setInterventionType("");
-		adHocReportPage.setCurrentTrialStatus("");
-		adHocReportPage.setCountry("");
+		ClinicalTrialRegistrationDetailsParam parameters = builder
+				.getParameters();
+		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
+
+		adHocReportPage.setParticipatingSites("All");
 
 		ArrayList<String> states = new ArrayList<String>();
 		states.add("Washington");
-		adHocReportPage.setState(states);
+		adHocReportPage.setTrialGeographicArea("USA", states, "Tacoma");
 
-		adHocReportPage.setCity("");
-		adHocReportPage.setLeadOrganization("");
-		adHocReportPage.setParticipatingSite("");
-		adHocReportPage.setSummary4Sponsor("");
+		adHocReportPage.setDiseaseConditionAndStage("recurrent thyroid", true,
+				true);
 
 		ArrayList<String> sites = new ArrayList<String>();
 		sites.add("Kaposi's Sarcoma");
 		sites.add("Multiple Myeloma");
-		adHocReportPage.setSummary4AnatomicSites(sites);
+		adHocReportPage.setSummary4AnatomicSite("All", sites, "National");
 
 		ArrayList<String> biomarkers = new ArrayList<String>();
 		biomarkers.add("All");
-		adHocReportPage.setBiomarker(biomarkers);
+		adHocReportPage.setBiomarkers(biomarkers);
 
-		adHocReportPage.setDiseaseCondition("", true, true);
-		adHocReportPage.setIdentifier("");
-		adHocReportPage.setSearchBySubmissionType("");
-		adHocReportPage.setSearchByTrialCategory("");
-		adHocReportPage.setMilestone("");
-		adHocReportPage.clickResetButton();
+		AdHocReportTable reportTable = adHocReportPage.clickRunReportButton();
+		if (reportTable.hasResults()) {
+			System.out.println("The table had results.");
+		} else {
+			System.out.println("The table did not have results.");
+		}
+
+		// Resetting and running the report should yield a message.
+		adHocReportPage = adHocReportPage.clickResetButton();
 		adHocReportPage.clickRunReportButton();
-	}
 
+		AdHocReportMessage message = adHocReportPage.getMessage();
+		System.out.println("Message on the page was " + message);
+	}
 }

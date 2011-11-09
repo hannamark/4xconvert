@@ -1,4 +1,4 @@
-package gov.nih.nci.qa.selenium.PageComponents;
+package gov.nih.nci.qa.selenium.PageComponents.AdHocReport;
 
 import gov.nih.nci.qa.selenium.util.TableUtil;
 
@@ -14,9 +14,6 @@ import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
 
 public class AdHocReportTable {
-	@FindBy(how = How.ID, using = "resultsTab")
-	WebElement resultsTab;
-
 	@FindBy(how = How.ID, using = "row")
 	WebElement tableRow;
 
@@ -125,17 +122,9 @@ public class AdHocReportTable {
 		return resultsTableHelper.getCellValue(OFFICIAL_TITLE_COLUMN, row);
 	}
 
-	public boolean hasResults() {
-		if (getResultCount() > 0) {
-			return true;
-		}
-		return false;
-	}
-
 	public int getResultCount() {
-		// TODO Look for an error first rather than diving right in.
-
-		WebElement adHocReport = webDriver.findElement(By.id("resultsTab"));
+		WebElement adHocReport = webDriver.findElement(By
+				.id("resultsAdHocReport"));
 		List<WebElement> tableDataCells = adHocReport.findElements(By
 				.tagName("td"));
 		Iterator<WebElement> it = tableDataCells.iterator();
@@ -143,9 +132,6 @@ public class AdHocReportTable {
 			String currentText = it.next().getText();
 			// Assume the message is correct.
 			if (currentText.contains("Nothing found to display.")) {
-				return 0;
-			}
-			if (currentText.contains("At least one criteria is required.")) {
 				return 0;
 			}
 		}

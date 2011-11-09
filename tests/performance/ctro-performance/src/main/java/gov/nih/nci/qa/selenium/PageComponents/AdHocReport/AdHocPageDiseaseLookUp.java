@@ -1,8 +1,13 @@
-package gov.nih.nci.qa.selenium.PageComponents;
+package gov.nih.nci.qa.selenium.PageComponents.AdHocReport;
 
+import gov.nih.nci.qa.selenium.PageComponents.DiseaseLocatorResultsTable;
 import gov.nih.nci.qa.selenium.PageObjects.AdHocReportPage;
+import gov.nih.nci.qa.selenium.PageObjects.CtroReportSelectionPage;
 import gov.nih.nci.qa.selenium.util.PageUtil;
 
+import org.javasimon.Manager;
+import org.javasimon.SimonManager;
+import org.javasimon.Split;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -80,17 +85,15 @@ public class AdHocPageDiseaseLookUp extends
 
 	@Override
 	protected void load() {
-		// Split split = SimonManager.getStopwatch(
-		// "parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-		// + Manager.HIERARCHY_DELIMITER + "load").start();
-		// CtroReportSelectionPage ctroReportSelectionPage = new
-		// CtroReportSelectionPage(
-		// webDriver).get();
-		// AdHocReportPage adHocReportPage = ctroReportSelectionPage
-		// .clickAdHocLink();
-		// AdHocPageDiseaseLookUp adHocPageDiseaseLookUp = adHocReportPage
-		// .clickLookUpButton();
-		// split.stop();
+		Split split = SimonManager.getStopwatch(
+				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
+						+ Manager.HIERARCHY_DELIMITER + "load").start();
+		CtroReportSelectionPage ctroReportSelectionPage = new CtroReportSelectionPage(
+				webDriver).get();
+		AdHocReportPage adHocReportPage = ctroReportSelectionPage
+				.clickAdHocLink();
+		// TODO Need to navigate to accordion for disease.
+		split.stop();
 	}
 
 }

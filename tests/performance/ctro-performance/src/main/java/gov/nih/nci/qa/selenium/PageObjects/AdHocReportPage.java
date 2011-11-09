@@ -1,10 +1,15 @@
 package gov.nih.nci.qa.selenium.PageObjects;
 
-import gov.nih.nci.qa.selenium.PageComponents.AdHocPageDiseaseLookUp;
 import gov.nih.nci.qa.selenium.PageComponents.AdHocReportTable;
-import gov.nih.nci.qa.selenium.PageComponents.DiseaseLocatorResultsTable;
+import gov.nih.nci.qa.selenium.PageComponents.AdHocReport.Biomarkers;
+import gov.nih.nci.qa.selenium.PageComponents.AdHocReport.ClinicalTrialsRegistrationDetails;
+import gov.nih.nci.qa.selenium.PageComponents.AdHocReport.DiseaseConditionAndStage;
+import gov.nih.nci.qa.selenium.PageComponents.AdHocReport.Interventions;
+import gov.nih.nci.qa.selenium.PageComponents.AdHocReport.ParticipatingSites;
+import gov.nih.nci.qa.selenium.PageComponents.AdHocReport.Summary4AnatomicSite;
+import gov.nih.nci.qa.selenium.PageComponents.AdHocReport.TrialGeographicArea;
+import gov.nih.nci.qa.selenium.Parameters.ClinicalTrialRegistrationDetailsParam;
 import gov.nih.nci.qa.selenium.enumerations.AdHocReportMessage;
-import gov.nih.nci.qa.selenium.util.PageUtil;
 
 import java.util.List;
 
@@ -18,83 +23,42 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.LoadableComponent;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 
-	@FindBy(how = How.ID, using = "officialTitle")
-	WebElement officialTitleTextBox;
+	@FindBy(how = How.LINK_TEXT, using = "Report Filters")
+	WebElement reportFiltersTab;
 
-	@FindBy(how = How.ID, using = "primaryPurpose")
-	WebElement primaryPurposeDropDown;
+	@FindBy(how = How.LINK_TEXT, using = "Results")
+	WebElement resultsTab;
 
-	@FindBy(how = How.ID, using = "phaseCodes")
-	WebElement trialPhaseMultiSelect;
+	@FindBy(how = How.LINK_TEXT, using = "Clinical Trial Registration Details")
+	WebElement clinicalTrialRegistrationDetailsLink;
 
-	@FindBy(how = How.ID, using = "identifierType")
-	WebElement identifierTypeDropDown;
+	@FindBy(how = How.LINK_TEXT, using = "Disease/Condition and Stage")
+	WebElement diseaseConditionAndStageLink;
 
-	@FindBy(how = How.ID, using = "principalInvestigatorId")
-	WebElement principalInvestigatorDropDown;
+	@FindBy(how = How.LINK_TEXT, using = "Interventions")
+	WebElement interventionsLink;
 
-	@FindBy(how = How.ID, using = "documentWorkflowStatusCode")
-	WebElement processingStatusDropDown;
+	@FindBy(how = How.LINK_TEXT, using = "Participating Sites")
+	WebElement participatingSitesLink;
 
-	@FindBy(how = How.ID, using = "country")
-	WebElement countryDropDown;
-
-	@FindBy(how = How.ID, using = "states")
-	WebElement statesMultiSelect;
-
-	@FindBy(how = How.ID, using = "city")
-	WebElement cityTextBox;
-
-	@FindBy(how = How.ID, using = "interventionType")
-	WebElement interventionTypeDropDown;
-
-	@FindBy(how = How.ID, using = "studyStatusCode")
-	WebElement currentTrialStatusDropDown;
-
-	@FindBy(how = How.ID, using = "leadOrganizationId")
-	WebElement leadOrganizationDropDown;
-
-	@FindBy(how = How.ID, using = "participatingSiteId")
-	WebElement partipatingSiteDropDown;
-
-	@FindBy(how = How.ID, using = "summ4Sponsor")
-	WebElement summary4SponsorDropDown;
-
-	@FindBy(how = How.ID, using = "anatomicSitesList")
-	WebElement summary4AnatomicSitesMultiSelect;
-
-	@FindBy(how = How.ID, using = "bioMarkersList")
-	WebElement biomarkerMultiSelect;
-
-	@FindBy(how = How.CSS, using = "span.search")
-	WebElement lookUpButton;
-
-	@FindBy(how = How.ID, using = "identifier")
-	WebElement identifierTextBox;
-
-	@FindBy(how = How.ID, using = "submissionType")
-	WebElement searchBySubmissionTypeDropDown;
-
-	@FindBy(how = How.ID, using = "trialCategory")
-	WebElement searchByTrialCategoryDropDown;
-
-	@FindBy(how = How.ID, using = "summ4FundingSourceTypeCode")
-	WebElement summary4FundingCategoryDropDown;
-
-	@FindBy(how = How.ID, using = "studyMilestone")
-	WebElement milestoneDropDown;
+	@FindBy(how = How.LINK_TEXT, using = "Biomarkers")
+	WebElement biomarkersLink;
 
 	@FindBy(how = How.LINK_TEXT, using = "Run Report")
 	WebElement runReportButton;
 
 	@FindBy(how = How.LINK_TEXT, using = "Reset")
 	WebElement resetButton;
+
+	@FindBy(how = How.LINK_TEXT, using = "Trial Geographic Area")
+	WebElement trialGeographicAreaLink;
+
+	@FindBy(how = How.LINK_TEXT, using = "Summary 4 Anatomic Site")
+	WebElement summary4AnatomicSiteLink;
 
 	AdHocReportTable adHocResultsTable;
 
@@ -105,11 +69,56 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 		PageFactory.initElements(webDriver, this);
 	}
 
+	public void setClinicalTrialsRegistrationDetails(
+			ClinicalTrialRegistrationDetailsParam params) {
+		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		clinicalTrialRegistrationDetails
+				.setClinicalTrialsRegistrationDetails(params);
+	}
+
+	public void setInterventions(String keysToSend) {
+		Interventions interventions = clickInterventions();
+		interventions.setInterventionType(keysToSend);
+	}
+
+	public void setParticipatingSites(String keysToSend) {
+		ParticipatingSites sites = clickParticipatingSites();
+		sites.setParticipatingSites(keysToSend);
+	}
+
+	public void setDiseaseConditionAndStage(String keysToSend,
+			Boolean includeSynonym, Boolean exactMatchOnly) {
+		DiseaseConditionAndStage diseaseAndStage = clickDiseaseAndStage();
+		diseaseAndStage.setDiseaseCondition(keysToSend, includeSynonym,
+				exactMatchOnly);
+	}
+
+	public void setTrialGeographicArea(String country, List<String> states,
+			String city) {
+		TrialGeographicArea geographicArea = clickTrialGeographicArea();
+		geographicArea.setTrialGeographicArea(country, states, city);
+	}
+
+	public void setSummary4AnatomicSite(String sponsor, List<String> sites,
+			String fundingCategory) {
+		Summary4AnatomicSite summary4AnatomicSite = clickSummary4AnatomicSite();
+		summary4AnatomicSite.setSummary4AnatomicSite(sponsor, sites,
+				fundingCategory);
+	}
+
+	public void setBiomarkers(List<String> selectList) {
+		Biomarkers biomarkers = clickBiomarkers();
+		biomarkers.setBiomarkers(selectList);
+	}
+
 	public AdHocReportTable clickRunReportButton() {
 		Split split = SimonManager.getStopwatch(
 				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
 						+ Manager.HIERARCHY_DELIMITER + "clickRunReportButton")
 				.start();
+		// Make certain we're on the report filters tab. The reset button
+		// doesn't exist on the results tab.
+		reportFiltersTab.click();
 		runReportButton.click();
 		split.stop();
 		return new AdHocReportTable(webDriver);
@@ -120,232 +129,16 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
 						+ Manager.HIERARCHY_DELIMITER + "clickResetButton")
 				.start();
+		// Make certain we're on the report filters tab. The reset button
+		// doesn't exist on the results tab.
+		reportFiltersTab.click();
 		resetButton.click();
 		split.stop();
 		return new AdHocReportPage(webDriver);
 	}
 
-	public void setOfficialTitle(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setOfficialTitle")
-				.start();
-		officialTitleTextBox.clear();
-		officialTitleTextBox.sendKeys(keysToSend);
-		split.stop();
-	}
-
-	public void setPrimaryPurpose(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setPrimaryPurpose")
-				.start();
-		PageUtil.setDropDown(primaryPurposeDropDown, keysToSend);
-		split.stop();
-	}
-
-	public void setTrialPhase(List<String> selectList) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setTrialPhase")
-				.start();
-		PageUtil.setMultiSelect(trialPhaseMultiSelect, selectList);
-		split.stop();
-	}
-
-	public void setIdentifierType(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setIdentifierType")
-				.start();
-		PageUtil.setDropDown(identifierTypeDropDown, keysToSend);
-		split.stop();
-	}
-
-	public void setPrincipalInvestigator(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER
-						+ "setPrincipalInvestigator").start();
-		PageUtil.setDropDown(principalInvestigatorDropDown, keysToSend);
-		split.stop();
-	}
-
-	public void setProcessingStatus(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setProcessingStatus")
-				.start();
-		PageUtil.setDropDown(processingStatusDropDown, keysToSend);
-		split.stop();
-	}
-
-	public void setCountry(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setCountry").start();
-		PageUtil.setDropDown(countryDropDown, keysToSend);
-		split.stop();
-	}
-
-	public void setState(List<String> selectList) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setState").start();
-		PageUtil.setMultiSelect(statesMultiSelect, selectList);
-		split.stop();
-	}
-
-	public void setCity(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setCity").start();
-		cityTextBox.sendKeys(keysToSend);
-		split.stop();
-	}
-
-	public void setInterventionType(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setInterventionType")
-				.start();
-		PageUtil.setDropDown(interventionTypeDropDown, keysToSend);
-		split.stop();
-	}
-
-	public void setCurrentTrialStatus(String keysToSend) {
-		Split split = SimonManager
-				.getStopwatch(
-						"parent" + Manager.HIERARCHY_DELIMITER
-								+ "AdHocReportPage"
-								+ Manager.HIERARCHY_DELIMITER
-								+ "setCurrentTrialStatus").start();
-		PageUtil.setDropDown(currentTrialStatusDropDown, keysToSend);
-		split.stop();
-	}
-
-	public void setLeadOrganization(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setLeadOrganization")
-				.start();
-		PageUtil.setDropDown(leadOrganizationDropDown, keysToSend);
-		split.stop();
-	}
-
-	public void setParticipatingSite(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setParticipatingSite")
-				.start();
-		PageUtil.setDropDown(partipatingSiteDropDown, keysToSend);
-		split.stop();
-	}
-
-	public void setSummary4Sponsor(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setSummary4Sponsor")
-				.start();
-		PageUtil.setDropDown(summary4SponsorDropDown, keysToSend);
-		split.stop();
-	}
-
-	public void setSummary4AnatomicSites(List<String> selectList) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER
-						+ "setSummary4AnatomicSites").start();
-		PageUtil.setMultiSelect(summary4AnatomicSitesMultiSelect, selectList);
-		split.stop();
-	}
-
-	public void setBiomarker(List<String> selectList) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setBiomarker").start();
-		PageUtil.setMultiSelect(biomarkerMultiSelect, selectList);
-		split.stop();
-	}
-
-	public void setIdentifier(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setIdentifier")
-				.start();
-		identifierTextBox.clear();
-		identifierTextBox.sendKeys(keysToSend);
-		split.stop();
-	}
-
-	public void setSearchBySubmissionType(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER
-						+ "setSearchBySubmissionType").start();
-		PageUtil.setDropDown(searchBySubmissionTypeDropDown, keysToSend);
-		split.stop();
-	}
-
-	public void setSearchByTrialCategory(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER
-						+ "setSearchByTrialCategory").start();
-		PageUtil.setDropDown(searchByTrialCategoryDropDown, keysToSend);
-		split.stop();
-	}
-
-	public void setSummary4FundingCategory(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER
-						+ "setSummary4FundingCategory").start();
-		PageUtil.setDropDown(summary4FundingCategoryDropDown, keysToSend);
-		split.stop();
-	}
-
-	public void setMilestone(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setMilestone").start();
-		PageUtil.setDropDown(milestoneDropDown, keysToSend);
-		split.stop();
-	}
-
-	public void setDiseaseCondition(String keysToSend, Boolean includeSynonym,
-			Boolean exactMatchOnly) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setDiseaseCondition")
-				.start();
-		AdHocPageDiseaseLookUp adHocPageDiseaseLookUp = clickLookUpButton();
-
-		waitForFrameToAppear();
-
-		WebDriver frame = webDriver.switchTo().frame("popupFrame");
-
-		adHocPageDiseaseLookUp.setDiseaseName(keysToSend);
-		adHocPageDiseaseLookUp.setExactMatch(exactMatchOnly);
-		adHocPageDiseaseLookUp.setIncludeSynonym(includeSynonym);
-
-		DiseaseLocatorResultsTable diseaseLocatorResultsTable = adHocPageDiseaseLookUp
-				.clickSearchButton();
-
-		if (diseaseLocatorResultsTable.hasResults()) {
-			diseaseLocatorResultsTable.clickSelectButton();
-			frame.switchTo().defaultContent();
-			waitForLoadingToFinish();
-		} else {
-			adHocPageDiseaseLookUp.clickCloseButton();
-			frame.switchTo().defaultContent();
-		}
-		split.stop();
-	}
-
 	public AdHocReportMessage getMessage() {
-		WebElement adHocResults = webDriver.findElement(By
-				.id("resultsAdHocReport"));
+		WebElement adHocResults = webDriver.findElement(By.id("content"));
 		WebElement errorMessage = null;
 		try {
 			errorMessage = adHocResults.findElement(By
@@ -368,67 +161,49 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 		}
 	}
 
-	public AdHocPageDiseaseLookUp clickLookUpButton() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "clickLookUpButton")
-				.start();
-		lookUpButton.click();
-		split.stop();
-		return new AdHocPageDiseaseLookUp(webDriver);
-
+	// private methods
+	private ClinicalTrialsRegistrationDetails clickClinicalTrialRegistrationDetails() {
+		clinicalTrialRegistrationDetailsLink.click();
+		return new ClinicalTrialsRegistrationDetails(webDriver);
 	}
 
-	private void waitForLoadingToFinish() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER
-						+ "waitForLoadingToFinish").start();
-		WebElement selectedDisease = webDriver.findElement(By
-				.id("criteriaAdHocReport"));
-		// If it contains "Loading..." look again.
-		while (selectedDisease.getText().contains("Loading...")) {
-			selectedDisease = (new WebDriverWait(webDriver, 10))
-					.until(new ExpectedCondition<WebElement>() {
-						public WebElement apply(WebDriver d) {
-							return d.findElement(By.id("criteriaAdHocReport"));
-						}
-					});
-		}
-		split.stop();
+	private DiseaseConditionAndStage clickDiseaseAndStage() {
+		diseaseConditionAndStageLink.click();
+		return new DiseaseConditionAndStage(webDriver);
 	}
 
-	private void waitForFrameToAppear() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "waitForFrameToAppear")
-				.start();
+	private Interventions clickInterventions() {
+		interventionsLink.click();
+		return new Interventions(webDriver);
+	}
 
-		(new WebDriverWait(webDriver, 15))
-				.until(new ExpectedCondition<Boolean>() {
-					public Boolean apply(WebDriver d) {
-						d.switchTo().defaultContent();
-						List<WebElement> iframes = d.findElements(By
-								.tagName("iframe"));
-						for (WebElement iframe : iframes) {
-							d.switchTo().frame(iframe);
-							d.findElement(By.tagName("body"));
-							d.switchTo().defaultContent();
-						}
-						return true;
-					}
-				});
-		split.stop();
+	private ParticipatingSites clickParticipatingSites() {
+		participatingSitesLink.click();
+		return new ParticipatingSites(webDriver);
+	}
+
+	private TrialGeographicArea clickTrialGeographicArea() {
+		trialGeographicAreaLink.click();
+		return new TrialGeographicArea(webDriver);
+	}
+
+	private Biomarkers clickBiomarkers() {
+		biomarkersLink.click();
+		return new Biomarkers(webDriver);
+	}
+
+	private Summary4AnatomicSite clickSummary4AnatomicSite() {
+		summary4AnatomicSiteLink.click();
+		return new Summary4AnatomicSite(webDriver);
 	}
 
 	@Override
 	protected void isLoaded() throws Error {
-		if (!"Ad Hoc Report".equals(webDriver.getTitle())) {
+		if (!"Ad-Hoc Report".equals(webDriver.getTitle())) {
 			// TODO Do something nicer than just accepting the default title as
 			// proof that we're at the right place.
-			throw new Error("This is not the Ad Hoc Report page!");
+			throw new Error("This is not the Ad-Hoc Report page!");
 		}
-
 	}
 
 	@Override
