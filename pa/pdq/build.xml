@@ -88,7 +88,7 @@
         <jar destfile="${basedir}/target/pdq.jar" basedir="${basedir}/target/classes" />
     </target>
 
-    <target name="run" depends="jar">
+    <target name="run" depends="jar" description="run PDQ disease Loader.">
         <java fork="true" classname="gov.nih.nci.pa.pdq.Loader" dir="${basedir}">
             <classpath>
                 <path refid="classpath" />

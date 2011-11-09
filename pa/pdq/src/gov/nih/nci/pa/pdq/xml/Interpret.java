@@ -80,9 +80,11 @@ import gov.nih.nci.pa.pdq.PDQException;
 
 import java.util.ArrayList;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
@@ -95,70 +97,60 @@ public class Interpret {
     private static Interpret interpreter = new Interpret();
     public static Interpret getInterpreter() { return interpreter; }
 
-    public Rule process(Document doc) throws PDQException {
-        return getType(doc);
-    }
+    public Rule process(final Document doc) throws PDQException {
+        Rule result = null;
+        final ArrayList<String> semanticList = new ArrayList<String>();
 
-    private Rule getType(Document doc) throws PDQException {
-        Rule result = Rule.INVALID;
-        boolean hasTerm = false;
-        String term = "";
-        boolean hasSemantic = false;
-        ArrayList<String> semanticList = new ArrayList<String>();
-        boolean hasPreferredName = false;
-        String preferredName = "";
-
-        Node root = doc.getDocumentElement();
+        final Node root = doc.getDocumentElement();
         if (!root.getNodeName().equals(Rule.NODE_NAME_TERM)) {
             throw new PDQException("Invalid root node.  Name = " + doc.getDocumentElement().getNodeName());
         }
-        NodeList children = doc.getDocumentElement().getChildNodes();
-        for (int i = 0; i < children.getLength(); i++) {
-            Node child = children.item(i);
-            if (child.getNodeName() == Rule.NODE_NAME_TERM_TYPE_NAME) {
-                if (hasTerm) {
-                    throw new PDQException("Invalid PDQ file.  Multiple '" + Rule.NODE_NAME_TERM_TYPE_NAME
-                            + "' nodes found.  " + "First = " + term + "  Second = " + child.getTextContent());
-                }
-                hasTerm = true;
-                term = child.getTextContent();
-            }
-            if (child.getNodeName() == Rule.NODE_NAME_SEMANTIC_TYPE) {
-                hasSemantic = true;
-                semanticList.add(child.getTextContent());
-            }
-            if (child.getNodeName() == Rule.NODE_NAME_PREFERRED_NAME) {
-                if (hasPreferredName) {
-                    throw new PDQException("Invalid PDQ file.  Multiple '" + Rule.NODE_NAME_PREFERRED_NAME
-                            + "' nodes found.  First = " + preferredName + "  Second = " + child.getTextContent());
-                }
-                hasPreferredName = true;
-                preferredName = child.getTextContent();
-            }
+
+        final Element rootNode = doc.getDocumentElement();
+
+        final String term = getUniqueChild(Rule.NODE_NAME_TERM_TYPE_NAME, rootNode);
+        final String preferredName = getUniqueChild(Rule.NODE_NAME_PREFERRED_NAME, rootNode);
+
+        final NodeList semanticTypes = rootNode.getElementsByTagName(Rule.NODE_NAME_SEMANTIC_TYPE);
+        for (int i = 0; i < semanticTypes.getLength(); i++) {
+            semanticList.add(semanticTypes.item(i).getTextContent());
         }
-        if (!hasTerm && !hasSemantic) {
+
+        if (StringUtils.isEmpty(term) && semanticList.isEmpty()) {
             throw new PDQException("Invalid PDQ file.  Neither 'TermTypeName' nor 'SemanticType' found.  ");
         }
-        if (term.equals(Rule.TERM_TYPE_SEMANTIC) && Rule.diseaseList.contains(preferredName)) {
+        if (Rule.TERM_TYPE_SEMANTIC.equals(term) && Rule.diseaseList.contains(preferredName)) {
             result = Rule.RULE1;
         }
-        if (term.equals(Rule.TERM_TYPE_SEMANTIC) && !Rule.diseaseList.contains(preferredName)) {
+        if (Rule.TERM_TYPE_SEMANTIC.equals(term) && !Rule.diseaseList.contains(preferredName)) {
             result = Rule.RULE2;
         }
-        if (term.equals(Rule.TERM_TYPE_OBSOLETE)) {
+        if (Rule.TERM_TYPE_OBSOLETE.equals(term)) {
             result = Rule.RULE3;
         }
-        if (result.equals(Rule.INVALID)) {
-            if (hasSemantic) {
+        if (result == null) {
+            if (semanticList.isEmpty()) {
+                LOG.debug("Invalid file.  " + " term " + term);
+                result = Rule.INVALID;
+            } else {
                 result = Rule.RULE5;
                 for (String semantic : semanticList) {
                     if (Rule.diseaseList.contains(semantic)) {
                         result = Rule.RULE4;
                     }
                 }
-            } else {
-                LOG.debug("Invalid file.  "+ " term "+term);
             }
+        }
+        return result;
+    }
+
+    private String getUniqueChild(final String tag, final Element rootNode) throws PDQException {
+        final NodeList termTypeNames = rootNode.getElementsByTagName(tag);
+        String result = "";
+        if (termTypeNames.getLength() > 1) {
+            throw new PDQException("Invalid PDQ file. Multiple '" + tag + "' nodes found.");
+        } else if (termTypeNames.getLength() == 1) {
+            result = termTypeNames.item(0).getTextContent();
         }
         return result;
     }

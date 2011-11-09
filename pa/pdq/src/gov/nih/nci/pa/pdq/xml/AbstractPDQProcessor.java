@@ -76,9 +76,6 @@
 */
 package gov.nih.nci.pa.pdq.xml;
 
-
-import gov.nih.nci.pa.pdq.PDQException;
-
 import org.w3c.dom.Document;
 
 /**
@@ -90,11 +87,4 @@ public abstract class AbstractPDQProcessor {
     protected Rule rule;
     protected String user;
 
-    /**
-     * @param doc the document being processed
-     * @param rule the rule being applied (see enum for details)
-     * @param user user
-     * @throws PDQException exception
-     */
-    public abstract void process(Document doc, Rule rule, String user) throws PDQException;
 }

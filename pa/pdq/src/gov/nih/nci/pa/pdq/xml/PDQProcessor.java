@@ -78,7 +78,6 @@ package gov.nih.nci.pa.pdq.xml;
 
 import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.PDQDiseaseAltername;
-import gov.nih.nci.pa.pdq.PDQConstants;
 import gov.nih.nci.pa.pdq.PDQException;
 import gov.nih.nci.pa.pdq.dml.DiseaseScript;
 
@@ -87,6 +86,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -99,130 +99,113 @@ import org.apache.commons.lang.StringUtils;
  * @since 7/13/2009
  */
 public class PDQProcessor extends AbstractPDQProcessor {
-    private static final Logger LOG = Logger.getLogger(PDQDisease.class);
+    private static final Logger LOG = Logger.getLogger(PDQProcessor.class);
 
     /**
-     * {@inheritDoc}
+     * ...
      */
-    @Override
-    public void process(Document doc, Rule rule, String user) throws PDQException {
-        this.doc = doc;
-        this.rule = rule;
-        this.user = user;
-        if (rule.equals(Rule.RULE1)) {
-            rule1or4();
-        }
-        if (rule.equals(Rule.RULE4)) {
-            rule1or4();
+    public void process(final Document doc, final Rule rule, final String user) throws PDQException {
+        if (Rule.RULE1.equals(rule) || Rule.RULE4.equals(rule)) {
+            rule1or4(doc, rule, user);
         }
     }
 
-    private void rule1or4() throws PDQException {
-        PDQDisease d = new PDQDisease();
-        List<PDQDiseaseAltername> danList = new ArrayList<PDQDiseaseAltername>();
+    private void rule1or4(final Document doc, final Rule rule, final String user) throws PDQException {
+        final PDQDisease disease = new PDQDisease();
+        final List<PDQDiseaseAltername> danList = new ArrayList<PDQDiseaseAltername>();
+        final Node node = doc.getDocumentElement();
 
-        Node node = doc.getDocumentElement();
+        setDiseaseCode(disease, node);
 
-        // set disease code (PDQ ID)
-        NamedNodeMap attributes = node.getAttributes();
-        for (int x = 0; x < attributes.getLength(); x++) {
-            Node attribute = attributes.item(x);
-            if(Rule.ATTR_NAME_ID.equals(attribute.getNodeName())) {
-                d.setDiseaseCode(attribute.getNodeValue());
-            }
-            if (Rule.ATTR_NAME_NCI_TERM.equals(attribute.getNodeName())) {
-                d.setNtTermIdentifier(attribute.getNodeValue());
-            }
+        final Element root = doc.getDocumentElement();
+        final NodeList prefNames = root.getElementsByTagName(Rule.NODE_NAME_PREFERRED_NAME);
+        if (prefNames.getLength() > 0) {
+            disease.setPreferredName(prefNames.item(0).getTextContent());
         }
 
-        NodeList children = node.getChildNodes();
-
-        // set preferred name
-        for (int x = 0; x < children.getLength(); x++) {
-            Node child = children.item(x);
-
-            if (child.getNodeName().equals(Rule.NODE_NAME_PREFERRED_NAME)) {
-                d.setPreferredName(child.getTextContent());
-            }
+        if (StringUtils.isEmpty(disease.getPreferredName())) {
+            LOG.error("Error determining name from: ");
+            XMLFileParser.getParser().writeDocumentToOutput(doc.getDocumentElement(), 0);
+            throw new PDQException("Error determining name from: ");
         }
-        for (int x = 0; x < children.getLength(); x++) {
-            Node child = children.item(x);
 
-            // set menu display name
-            if (child.getNodeName().equals(Rule.NODE_NAME_MENU_INFO)) {
-                NodeList ddd = child.getChildNodes();
-                for (int y = 0; y < ddd.getLength(); y++) {
-                    Node eee = ddd.item(y);
-                    if (eee.getNodeName().equals(Rule.NODE_NAME_MENU_ITEM)) {
-                        NodeList fff = eee.getChildNodes();
-                        for (int z = 0; z < fff.getLength(); z++) {
-                            Node ggg = fff.item(z);
-                            if (ggg.getNodeName().equals(Rule.NODE_NAME_MENU_DISPLAY_NAME)) {
-                                d.setDisplayName(ggg.getTextContent());
-//                                LOG.info("Found menu DisplayName.");
-                            }
-                        }
-                    }
-                }
-                if(StringUtils.isEmpty(d.getDisplayName())) {
-                    d.setDisplayName(d.getPreferredName());
-//                    LOG.info("Had to use preferred name for menu display name.");
-                }
-            }
+        setDisplayName(disease, root);
 
-            // find parent association
-            if (child.getNodeName().equals(Rule.NODE_NAME_TERM_RELATIONSHIP)) {
-                String parentCode = null;
-                String childCode = d.getDiseaseCode();
-                String type = null;
-                NodeList pars = child.getChildNodes();
-                for (int y = 0; y < pars.getLength(); y++) {
-                    Node aaa = pars.item(y);
-                    if (aaa.getNodeName().equals(Rule.NODE_NAME_PARENT_TERM)) {
-                        NodeList bbb = aaa.getChildNodes();
-                        for (int z = 0; z < bbb.getLength(); z++) {
-                            Node ccc = bbb.item(z);
-                            if(ccc.getNodeName().equals(Rule.NODE_NAME_PARENT_TYPE)) {
-                                type = ccc.getTextContent();
-                            }
-                            if(ccc.getNodeName().equals(Rule.NODE_NAME_PARENT_TERM_NAME)) {
-                                NamedNodeMap attrs = ccc.getAttributes();
-                                for (int xx = 0; xx < attrs.getLength(); xx++) {
-                                    Node attr = attrs.item(xx);
-                                    if(Rule.ATTR_NAME_REF.equals(attr.getNodeName())) {
-                                        parentCode = attr.getNodeValue();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                if(StringUtils.isNotEmpty(parentCode) && StringUtils.isNotEmpty(childCode)) {
-                    DiseaseScript.get().addParent(childCode, parentCode, type);
-                }
-            }
-            // find alternate names
-            if (child.getNodeName().equals(Rule.NODE_NAME_OTHER_NAME)) {
-                NodeList others = child.getChildNodes();
+        DiseaseScript.get().add(disease, danList, user);
+
+        addParents(disease, root);
+
+        addAltNames(danList, root);
+
+    }
+
+    private void addAltNames(final List<PDQDiseaseAltername> danList, final Element root) {
+        final NodeList otherNames = root.getElementsByTagName(Rule.NODE_NAME_OTHER_NAME);
+        for (int i = 0; i < otherNames.getLength(); i++) {
+            final Node otherName = otherNames.item(i);
+            final NodeList others = otherName.getChildNodes();
                 for (int y = 0; y < others.getLength(); y++) {
-                    Node other = others.item(y);
+                    final Node other = others.item(y);
                     if(other.getNodeName().equals(Rule.NODE_NAME_OTHER_TERM_NAME)) {
-                        PDQDiseaseAltername dan = new PDQDiseaseAltername();
+                        final PDQDiseaseAltername dan = new PDQDiseaseAltername();
                         dan.setAlternateName(other.getTextContent());
                         danList.add(dan);
                     }
                 }
             }
-        }
-        if(StringUtils.isEmpty(d.getDisplayName())) {
-            d.setDisplayName(PDQConstants.NOT_MENU);
-        }
-        if (StringUtils.isEmpty(d.getPreferredName())) {
-            LOG.error("Error determining name from: ");
-            XMLFileParser.getParser().writeDocumentToOutput(doc.getDocumentElement(), 0);
-            System.exit(0);
-        }
-        DiseaseScript.get().add(d, danList, user);
-//        XMLFileParser.getParser().writeDocumentToOutput(doc.getDocumentElement(), 0);
     }
+
+    private void setDiseaseCode(final PDQDisease disease, final Node node) {
+        final NamedNodeMap attributes = node.getAttributes();
+        for (int x = 0; x < attributes.getLength(); x++) {
+            final Node attribute = attributes.item(x);
+            if(Rule.ATTR_NAME_ID.equals(attribute.getNodeName())) {
+                disease.setDiseaseCode(attribute.getNodeValue());
+            } else if (Rule.ATTR_NAME_NCI_TERM.equals(attribute.getNodeName())) {
+                disease.setNtTermIdentifier(attribute.getNodeValue());
+            }
+        }
+    }
+
+    private void addParents(final PDQDisease disease, final Element root) {
+        final NodeList termRels = root.getElementsByTagName(Rule.NODE_NAME_TERM_RELATIONSHIP);
+        if (termRels.getLength() > 0) {
+            final Element termRel = (Element) termRels.item(0);
+            NodeList parentTerms = termRel.getElementsByTagName(Rule.NODE_NAME_PARENT_TERM);
+            for (int i = 0; i < parentTerms.getLength(); i++) {
+                String type = null;
+                String parentCode = null;
+                Element parentTerm = (Element) parentTerms.item(i);
+                NodeList parentTypes = parentTerm.getElementsByTagName(Rule.NODE_NAME_PARENT_TYPE);
+                if (parentTypes.getLength() > 0) {
+                    type = parentTypes.item(0).getTextContent();
+                }
+                NodeList parentNames = parentTerm.getElementsByTagName(Rule.NODE_NAME_PARENT_TERM_NAME);
+                if (parentNames.getLength() > 0) {
+                    parentCode = ((Element)parentNames.item(0)).getAttributeNode(Rule.ATTR_NAME_REF).getValue();
+                }
+                if(StringUtils.isNotEmpty(parentCode) && StringUtils.isNotEmpty(disease.getDiseaseCode())) {
+                    DiseaseScript.get().addParent(disease.getDiseaseCode(), parentCode, type);
+                }
+            }
+        }
+    }
+
+    private void setDisplayName(final PDQDisease disease, final Element root) {
+        NodeList nameMenuInfoNodes = root.getElementsByTagName(Rule.NODE_NAME_MENU_INFO);
+        if (nameMenuInfoNodes.getLength() > 0) {
+            NodeList menuItems = ((Element)nameMenuInfoNodes.item(0)).getElementsByTagName(Rule.NODE_NAME_MENU_ITEM);
+            if (menuItems.getLength() > 0) {
+               NodeList displayNames = ((Element)nameMenuInfoNodes.item(0)).getElementsByTagName(Rule.NODE_NAME_MENU_DISPLAY_NAME);
+               if (displayNames.getLength() > 0) {
+                   disease.setDisplayName(displayNames.item(0).getTextContent());
+               }
+            }
+        }
+
+        if(StringUtils.isEmpty(disease.getDisplayName())) {
+            disease.setDisplayName(disease.getPreferredName());
+        }
+    }
+
 }

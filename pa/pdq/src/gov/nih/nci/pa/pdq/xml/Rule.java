@@ -93,19 +93,19 @@ public enum Rule {
 
     /**
      * XML record has TermTypeName item, it is semantic type or obsolete term.
-     * TermTypeName is ‘Semantic type’ and  PreferredName is in the list.
+     * TermTypeName is "Semantic type" and  PreferredName is in the list.
      */
     RULE1(PDQProcessor.class),
 
     /**
      * XML record has TermTypeName item, it is semantic type or obsolete term.
-     * TermTypeName is ‘Semantic type’ and  PreferredName is NOT in the list.
+     * TermTypeName is "Semantic type" and  PreferredName is NOT in the list.
      */
     RULE2(PDQIntervention.class),
 
     /**
      * XML record has TermTypeName item, it is semantic type or obsolete term.
-     * TermTypeName is ‘Obsolete term’.
+     * TermTypeName is "Obsolete term".
      */
     RULE3(PDQIntervention.class),
 

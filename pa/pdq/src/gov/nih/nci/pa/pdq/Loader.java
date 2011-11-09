@@ -102,41 +102,38 @@ import org.w3c.dom.Node;
 public class Loader {
     private static final Logger LOG = Logger.getLogger(Loader.class);
 
-    private Loader() {
-
-    }
-
     /**
      * @param args
      * @throws IOException
      */
     public static void main(final String[] args) throws PDQException, IOException {
-
-        DownloadTerminology.process();
-        ArrayList<String> invalid = new ArrayList<String>();
-        SortedMap<Rule, Integer> counts = new TreeMap<Rule, Integer>();
+        new DownloadTerminology().process();
+        final ArrayList<String> invalid = new ArrayList<String>();
+        final SortedMap<Rule, Integer> counts = new TreeMap<Rule, Integer>();
         for (Rule r : Rule.values()) {
             counts.put(r, 0);
         }
         LOG.info("Starting load of PDQ data...");
         final File dir = new File(PDQConstants.DIRECTORY_NAME);
 
-        String[] children = dir.list(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
+        final String[] children = dir.list(new FilenameFilter() {
+            public boolean accept(final File dir, final String name) {
                 return !name.endsWith(".svn");
             }
         });
         if (children == null) {
             throw new PDQException("Either dir " + PDQConstants.DIRECTORY_NAME + " does not exist or is not a directory.  ");
         } else {
-            PDQIntervention pi = new PDQIntervention();
-            PDQProcessor pd = new PDQProcessor();
+            final PDQIntervention pi = new PDQIntervention();
+            final PDQProcessor pd = new PDQProcessor();
             for (String filename : children) {
-                // Get filename of file or directory
                 Document doc;
                 doc = XMLFileParser.getParser().parseFile(PDQConstants.DIRECTORY_NAME + "/"+ filename);
                 try {
-                    Rule rule = Interpret.getInterpreter().process(doc);
+                    final Rule rule = Interpret.getInterpreter().process(doc);
+                    if (rule == null) {
+                        LOG.error("Null RULE: " + filename);
+                    }
                     LOG.debug("file = " + filename + "  rule = " + rule);
                     counts.put(rule, counts.get(rule) + 1);
                     if (rule.equals(Rule.INVALID)) {
@@ -151,9 +148,8 @@ public class Loader {
                     }
                 } catch (PDQException e) {
                     LOG.error(e);
-                    Node root = doc.getDocumentElement();
-                    XMLFileParser.getParser().writeDocumentToOutput(root, 0);
-                    System.exit(0);
+                    XMLFileParser.getParser().writeDocumentToOutput(doc.getDocumentElement(), 0);
+                    return;
                 }
             }
             InterventionScript.get().close();

@@ -104,69 +104,12 @@ public class PDQIntervention extends AbstractPDQProcessor {
     private static final Logger LOG = Logger.getLogger(PDQIntervention.class);
 
     /**
-     * {@inheritDoc}
+     * ...
      */
-    @Override
-    public void process(Document doc, Rule rule, String user) throws PDQException {
-        this.doc = doc;
-        this.rule = rule;
-        this.user = user;
-//        if (rule.equals(Rule.RULE2) || rule.equals(Rule.RULE3)) {
-//        if (rule.equals(Rule.RULE2)) {
-//            rule2or3();
-//        }
-        if (rule.equals(Rule.RULE5)) {
-            rule5();
+    public void process(final Document doc, final Rule rule, final String user) throws PDQException {
+        if (!Rule.RULE5.equals(rule)) {
+            return;
         }
-    }
-
-//    private void rule2or3() {
-//        Intervention i = new Intervention();
-//        List<InterventionAlternateName> ianList = new ArrayList<InterventionAlternateName>();
-//
-//        Node node = doc.getDocumentElement();
-//        NodeList children = node.getChildNodes();
-//        for (int x = 0; x < children.getLength(); x++) {
-//            Node child = children.item(x);
-//            if (child.getNodeName().equals(Rule.NODE_NAME_PREFERRED_NAME)) {
-//                i.setName(child.getTextContent());
-//            }
-//            if (child.getNodeName().equals(Rule.NODE_NAME_OTHER_NAME)) {
-//                NodeList others = child.getChildNodes();
-//                for (int y = 0; y < others.getLength(); y++) {
-//                    Node other = others.item(y);
-//                    if(other.getNodeName().equals(Rule.NODE_NAME_OTHER_TERM_NAME)) {
-//                        InterventionAlternateName ian = new InterventionAlternateName();
-//                        ian.setName(other.getTextContent());
-//                        ianList.add(ian);
-//                    }
-//                }
-//            }
-//        }
-//        if (StringUtils.isEmpty(i.getName())) {
-//            LOG.error("Error determining name from: ");
-//            XMLFileParser.getParser().writeDocumentToOutput(doc.getDocumentElement(), 0);
-//            System.exit(0);
-//        }
-//        NamedNodeMap attributes = node.getAttributes();
-//        for (int x = 0; x < attributes.getLength(); x++) {
-//            Node attribute = attributes.item(x);
-//            if(Rule.ATTR_NAME_ID.equals(attribute.getNodeName())) {
-//                i.setPdqTermIdentifier(attribute.getNodeValue());
-//            }
-//        }
-//        i.setTypeCode(InterventionTypeCode.OTHER);
-////        if(rule.equals(Rule.RULE2)) {
-////            i.setDescriptionText(Rule.TERM_TYPE_SEMANTIC);
-////        }
-////        if(rule.equals(Rule.RULE3)) {
-////            i.setDescriptionText(Rule.TERM_TYPE_OBSOLETE);
-////        }
-//        InterventionScript.get().add(i, ianList, user);
-////        XMLFileParser.getParser().writeDocumentToOutput(doc.getDocumentElement(), 0);
-//    }
-
-    private void rule5() throws PDQException {
         Intervention i = new Intervention();
         List<InterventionAlternateName> ianList = new ArrayList<InterventionAlternateName>();
         Node node = doc.getDocumentElement();

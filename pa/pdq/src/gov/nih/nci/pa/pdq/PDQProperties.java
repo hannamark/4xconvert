@@ -95,7 +95,7 @@ public class PDQProperties {
         boolean loaded = false;
         try {
             // load properties from IDE
-            InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("..\\build.properties");
+            InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream("build.properties");
             properties.load(stream);
             loaded = true;
         } catch (Exception e) {

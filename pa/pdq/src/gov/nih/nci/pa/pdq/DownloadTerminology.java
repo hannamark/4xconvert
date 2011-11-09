@@ -1,5 +1,6 @@
 package gov.nih.nci.pa.pdq;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -17,8 +18,9 @@ public class DownloadTerminology {
     private static final Logger LOG = Logger.getLogger(DownloadTerminology.class);
 
     private static String filename = "Terminology.tar.gz";
+    private static final int BUFFER = 2048;
 
-    public static void process() throws IOException {
+    public void process() throws IOException {
         preCheck();
         LOG.info("Completed Pre Check ...........");
         cleanUp();
@@ -30,13 +32,13 @@ public class DownloadTerminology {
     }
 
 
-    private static void download() throws IOException {
-      FTPClient client = new FTPClient();
+    private void download() throws IOException {
+      final FTPClient client = new FTPClient();
       try {
           client.connect("cipsftp.nci.nih.gov");
           if (!client.login("scenpro", "UO8cbV^")) {
               LOG.error("Unable to login to PDQ");
-              System.exit(0);
+              throw new IOException("Unable to login to FTP Server.");
           }
           client.setFileType(FTP.BINARY_FILE_TYPE);
           FileOutputStream fos = null;
@@ -44,45 +46,42 @@ public class DownloadTerminology {
           client.retrieveFile("/" + filename, fos);
           fos.close();
       } catch (IOException e) {
-          e.printStackTrace();
+          LOG.error(e);
       }
 
     }
-    private static void extract() throws IOException {
-        InputStream is = getInputStream(filename);
-        TarArchiveInputStream tais = new TarArchiveInputStream(is);
-        TarArchiveEntry tea = null ;
-        int i = 0 ;
-        while ((tea = tais.getNextTarEntry()) != null) {
+    private void extract() throws IOException {
+        final TarArchiveInputStream tais = new TarArchiveInputStream(getInputStream(filename));
+        TarArchiveEntry tea = tais.getNextTarEntry() ;
+        BufferedOutputStream dest = null;
+        FileOutputStream fos = null;
+        byte data[] = null;
+        while (tea != null) {
             if (tea.getName().endsWith(".xml")) {
-                i++;
-                int b = tais.available();
-                byte[] data = new byte[b];
-                tais.read(data);
-                FileOutputStream fos = new FileOutputStream(tea.getName());
-                fos.write(data);
-                fos.close();
+                data = new byte[BUFFER];
+                fos = new FileOutputStream(tea.getName());
+                dest = new BufferedOutputStream(fos, BUFFER);
+                int count = tais.read(data, 0, BUFFER);
+                while (count != -1) {
+                   dest.write(data, 0, count);
+                   count = tais.read(data, 0, BUFFER);
+                }
+                dest.flush();
+                dest.close();
             }
-
-
+            tea = tais.getNextTarEntry();
         }
-
-
     }
 
-    private static void preCheck() {
-        File disease = new File("disease.sql");
-        File intervention = new File("intervention.sql");
-        intervention.delete();
-        disease.delete();
+    private void preCheck() {
+        new File("disease.sql").delete();
+        new File("intervention.sql").delete();
     }
-    private static void cleanUp() {
-        File ter = new File(filename);
-        ter.delete();
-        File f = new File("./Terminology");
-        File[] files = f.listFiles();
-        for (int i = 0 ; i < files.length ; i++) {
-            File file = files[i];
+
+    private void cleanUp() {
+        new File(filename).delete();
+        final File[] files = new File("./Terminology").listFiles();
+        for (File file : files) {
             if (file.getName().endsWith(".xml")) {
                 file.delete();
             }
@@ -90,9 +89,9 @@ public class DownloadTerminology {
         }
 
     }
-    private static InputStream getInputStream(String tarFileName) throws IOException{
 
-           return new GZIPInputStream(new FileInputStream(new File(tarFileName)));
+    private InputStream getInputStream(final String tarFileName) throws IOException {
+        return new GZIPInputStream(new FileInputStream(new File(tarFileName)));
     }
 
 }
