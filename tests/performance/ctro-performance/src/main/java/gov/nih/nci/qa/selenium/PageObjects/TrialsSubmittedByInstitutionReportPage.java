@@ -18,25 +18,31 @@ import org.openqa.selenium.support.ui.LoadableComponent;
 public class TrialsSubmittedByInstitutionReportPage extends
 		LoadableComponent<TrialsSubmittedByInstitutionReportPage> {
 
-	@FindBy(how = How.ID, using = "criteriaSubmissionByInstitution_criteria_intervalStartDate")
+	@FindBy(how = How.LINK_TEXT, using = "Report Filters")
+	WebElement reportFilterTab;
+
+	@FindBy(how = How.LINK_TEXT, using = "Results")
+	WebElement resultsTab;
+
+	@FindBy(how = How.ID, using = "intervalStartDate")
 	WebElement intervalStartDate;
 
-	@FindBy(how = How.ID, using = "criteriaSubmissionByInstitution_criteria_intervalEndDate")
+	@FindBy(how = How.ID, using = "intervalEndDate")
 	WebElement intervalEndDate;
 
-	@FindBy(how = How.ID, using = "criteriaSubmissionByInstitution_criteria_submissionType")
+	@FindBy(how = How.ID, using = "submissionType")
 	WebElement submissionTypeDropDown;
 
-	@FindBy(how = How.ID, using = "criteriaSubmissionByInstitution_criteria_ctep")
+	@FindBy(how = How.ID, using = "ctep")
 	WebElement includeTrialsCheckbox;
 
-	@FindBy(how = How.ID, using = "criteriaSubmissionByInstitution_criteria_institutions")
+	@FindBy(how = How.ID, using = "institutions")
 	WebElement institutionsMultiSelect;
 
-	@FindBy(how = How.LINK_TEXT, using = "Run report")
+	@FindBy(how = How.ID, using = "runButton")
 	WebElement runReportButton;
 
-	@FindBy(how = How.LINK_TEXT, using = "Reset")
+	@FindBy(how = How.ID, using = "resetButton")
 	WebElement resetButton;
 
 	TrialsSubmittedByInstitutionResultsTable resultsTable;
@@ -48,44 +54,13 @@ public class TrialsSubmittedByInstitutionReportPage extends
 		PageFactory.initElements(webDriver, this);
 	}
 
-	public void setDateRange(String startDate, String endDate) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "TrialsSubmittedByInstitutionReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setDateRange").start();
-		PageUtil.setDateInterval(intervalStartDate, startDate, intervalEndDate,
-				endDate);
-		split.stop();
-	}
-
-	public void setSubmissionType(String type) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "TrialsSubmittedByInstitutionReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setSubmissionType")
-				.start();
-		PageUtil.setDropDown(submissionTypeDropDown, type);
-		split.stop();
-	}
-
-	public void setIncludeTrials(boolean includeTrials) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "TrialsSubmittedByInstitutionReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setIncludeTrials")
-				.start();
-		PageUtil.setCheckbox(includeTrialsCheckbox, includeTrials);
-		split.stop();
-	}
-
-	public void setInstitutions(List<String> selections) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "TrialsSubmittedByInstitutionReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setInstitutions")
-				.start();
-		PageUtil.setMultiSelect(institutionsMultiSelect, selections);
-		split.stop();
+	public void setTrialsSubmittedByInstitution(String startDate,
+			String endDate, String type, boolean includeTrials,
+			List<String> institutions) {
+		setDateRange(startDate, endDate);
+		setIncludeTrials(includeTrials);
+		setInstitutions(institutions);
+		setSubmissionType(type);
 	}
 
 	public TrialsSubmittedByInstitutionReportPage clickResetButton() {
@@ -94,6 +69,8 @@ public class TrialsSubmittedByInstitutionReportPage extends
 						+ "TrialsSubmittedByInstitutionReportPage"
 						+ Manager.HIERARCHY_DELIMITER + "clickResetButton")
 				.start();
+		// Change to the report filters tab first.
+		reportFilterTab.click();
 		resetButton.click();
 		split.stop();
 		return new TrialsSubmittedByInstitutionReportPage(webDriver);
@@ -105,6 +82,8 @@ public class TrialsSubmittedByInstitutionReportPage extends
 						+ "TrialsSubmittedByInstitutionReportPage"
 						+ Manager.HIERARCHY_DELIMITER + "clickRunReportButton")
 				.start();
+		// Change to the report filters tab first.
+		reportFilterTab.click();
 		runReportButton.click();
 		split.stop();
 		return new TrialsSubmittedByInstitutionResultsTable(webDriver);
@@ -129,6 +108,47 @@ public class TrialsSubmittedByInstitutionReportPage extends
 		CtroReportSelectionPage ctroReportSelectionPage = new CtroReportSelectionPage(
 				webDriver).get();
 		ctroReportSelectionPage.clickTrialsSubmittedByInstitutionLink();
+		split.stop();
+	}
+
+	// privates
+	private void setSubmissionType(String type) {
+		Split split = SimonManager.getStopwatch(
+				"parent" + Manager.HIERARCHY_DELIMITER
+						+ "TrialsSubmittedByInstitutionReportPage"
+						+ Manager.HIERARCHY_DELIMITER + "setSubmissionType")
+				.start();
+		PageUtil.setDropDown(submissionTypeDropDown, type);
+		split.stop();
+	}
+
+	private void setIncludeTrials(boolean includeTrials) {
+		Split split = SimonManager.getStopwatch(
+				"parent" + Manager.HIERARCHY_DELIMITER
+						+ "TrialsSubmittedByInstitutionReportPage"
+						+ Manager.HIERARCHY_DELIMITER + "setIncludeTrials")
+				.start();
+		PageUtil.setCheckbox(includeTrialsCheckbox, includeTrials);
+		split.stop();
+	}
+
+	private void setInstitutions(List<String> selections) {
+		Split split = SimonManager.getStopwatch(
+				"parent" + Manager.HIERARCHY_DELIMITER
+						+ "TrialsSubmittedByInstitutionReportPage"
+						+ Manager.HIERARCHY_DELIMITER + "setInstitutions")
+				.start();
+		PageUtil.setMultiSelect(institutionsMultiSelect, selections);
+		split.stop();
+	}
+
+	private void setDateRange(String startDate, String endDate) {
+		Split split = SimonManager.getStopwatch(
+				"parent" + Manager.HIERARCHY_DELIMITER
+						+ "TrialsSubmittedByInstitutionReportPage"
+						+ Manager.HIERARCHY_DELIMITER + "setDateRange").start();
+		PageUtil.setDateInterval(intervalStartDate, startDate, intervalEndDate,
+				endDate);
 		split.stop();
 	}
 }

@@ -6,44 +6,62 @@ import gov.nih.nci.qa.selenium.PageObjects.AdHocReportPage;
 import gov.nih.nci.qa.selenium.Parameters.ClinicalTrialRegistrationDetailsBuilder;
 import gov.nih.nci.qa.selenium.Parameters.ClinicalTrialRegistrationDetailsParam;
 import gov.nih.nci.qa.selenium.enumerations.AdHocReportMessage;
+import gov.nih.nci.qa.selenium.util.SplitUtil;
 import gov.nih.nci.qa.selenium.util.StopwatchUtil;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-import org.javasimon.Manager;
-import org.javasimon.SimonManager;
 import org.javasimon.Split;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class AdHocReportTest {
 
+	@Rule
+	public TestName testName = new TestName();
+
 	private WebDriver webDriver;
+	Split testCaseSplit;
 
 	@Before
 	public void setUp() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "Browser"
-						+ Manager.HIERARCHY_DELIMITER + "startup").start();
+		// Measure the browser startup time.
+		Split browserStart = SplitUtil.getBrowserStartSplit();
+
+		// Start the browser.
 		webDriver = new FirefoxDriver();
 		webDriver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-		split.stop();
+
+		// Stop the browser timer.
+		browserStart.stop();
+
+		// Start the timer for the currently executing test.
+		testCaseSplit = SplitUtil.getTestSplit(testName.getMethodName());
 	}
 
 	@After
 	public void tearDown() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "Browser"
-						+ Manager.HIERARCHY_DELIMITER + "shutdown").start();
+		// Measure the browser shutdown time.
+		Split shutdownSplit = SplitUtil.getBrowserShutdownSplit();
+
 		// Close the browser.
 		if (webDriver != null) {
 			webDriver.quit();
 		}
-		split.stop();
+
+		// Stop the browser timer.
+		shutdownSplit.stop();
+
+		// Stop the timer for the currently executing test.
+		testCaseSplit.stop();
+
+		// Output to a report.
 		StopwatchUtil.printReport("parent");
 	}
 
@@ -97,13 +115,9 @@ public class AdHocReportTest {
 		AdHocReportTable adHocReportTable = adHocReportPage
 				.clickRunReportButton();
 
-		// assertEquals("Not the expected result amount.", 18,
-		// adHocReportTable.getResultCount());
-
 		AdHocReportMessage adHocReportMessage = adHocReportPage.getMessage();
 		assertEquals("Didn't expect an error to be present.",
 				AdHocReportMessage.NO_ERROR_FOUND, adHocReportMessage);
-
 	}
 
 	@Test
@@ -122,13 +136,9 @@ public class AdHocReportTest {
 		AdHocReportTable adHocReportTable = adHocReportPage
 				.clickRunReportButton();
 
-		// assertEquals("Not the expected result amount.", 32,
-		// adHocReportTable.getResultCount());
-
 		AdHocReportMessage adHocReportMessage = adHocReportPage.getMessage();
 		assertEquals("Didn't expect an error to be present.",
 				AdHocReportMessage.NO_ERROR_FOUND, adHocReportMessage);
-
 	}
 
 	@Test
@@ -145,13 +155,9 @@ public class AdHocReportTest {
 		AdHocReportTable adHocReportTable = adHocReportPage
 				.clickRunReportButton();
 
-		// assertEquals("Not the expected result amount.", 122,
-		// adHocReportTable.getResultCount());
-
 		AdHocReportMessage adHocReportMessage = adHocReportPage.getMessage();
 		assertEquals("Didn't expect an error to be present.",
 				AdHocReportMessage.NO_ERROR_FOUND, adHocReportMessage);
-
 	}
 
 	@Test
