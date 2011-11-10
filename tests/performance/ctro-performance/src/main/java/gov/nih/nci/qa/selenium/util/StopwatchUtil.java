@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -18,6 +19,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 public class StopwatchUtil {
 
 	private static final String FILENAME = "config.properties";
+	private static final String DELIMETER = ".";
 
 	public static void printReport(String stopwatchParent) {
 		Simon parent = SimonManager.getSimon(stopwatchParent);
@@ -158,16 +160,29 @@ public class StopwatchUtil {
 		return sdf.format(date);
 	}
 
+	public static String now() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyMMddHHmmss");
+		Calendar cal = Calendar.getInstance();
+		return sdf.format(cal.getTime());
+	}
+
 	private static String getFilename() {
 		Properties properties = new Properties();
 		try {
 			properties.load(new FileInputStream(FILENAME));
-
 		} catch (IOException e) {
 			System.out.println("Couldn't read the file [" + FILENAME + "].");
 			e.printStackTrace();
 		}
-		return properties.getProperty("sample.output.csv");
-	}
+		String filename = properties.getProperty("sample.output.filename");
+		String extension = properties.getProperty("sample.output.extension");
 
+		boolean timestamps = properties.getProperty("filename.timestamps")
+				.equalsIgnoreCase("true");
+		if (timestamps) {
+			return filename + "-" + now() + DELIMETER + extension;
+		} else {
+			return filename + DELIMETER + extension;
+		}
+	}
 }

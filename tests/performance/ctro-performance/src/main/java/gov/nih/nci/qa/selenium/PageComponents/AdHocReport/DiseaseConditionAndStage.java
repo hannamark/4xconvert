@@ -42,16 +42,12 @@ public class DiseaseConditionAndStage {
 				"setDiseaseCondition");
 		AdHocPageDiseaseLookUp adHocPageDiseaseLookUp = clickLookUpButton();
 
-		waitForFrameToAppear();
+		waitForPopupToAppear();
 
 		WebDriver frame = webDriver.switchTo().frame("popupFrame");
 
-		adHocPageDiseaseLookUp.setDiseaseName(keysToSend);
-		adHocPageDiseaseLookUp.setExactMatch(exactMatchOnly);
-		adHocPageDiseaseLookUp.setIncludeSynonym(includeSynonym);
-
 		DiseaseLocatorResultsTable diseaseLocatorResultsTable = adHocPageDiseaseLookUp
-				.clickSearchButton();
+				.searchDiseases(keysToSend, includeSynonym, exactMatchOnly);
 
 		if (diseaseLocatorResultsTable.hasResults()) {
 			diseaseLocatorResultsTable.clickSelectButton();
@@ -67,21 +63,21 @@ public class DiseaseConditionAndStage {
 	private void waitForLoadingToFinish() {
 		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
 				"waitForLoadingToFinish");
-		WebElement selectedDisease = webDriver.findElement(By
-				.id("criteriaAdHocReport"));
+		WebElement diseaseAccordion = webDriver.findElement(By
+				.id("diseasesSection"));
 		// If it contains "Loading..." look again.
-		while (selectedDisease.getText().contains("Loading...")) {
-			selectedDisease = (new WebDriverWait(webDriver, 10))
+		while (diseaseAccordion.getText().contains("Loading...")) {
+			diseaseAccordion = (new WebDriverWait(webDriver, 10))
 					.until(new ExpectedCondition<WebElement>() {
 						public WebElement apply(WebDriver d) {
-							return d.findElement(By.id("criteriaAdHocReport"));
+							return d.findElement(By.id("diseasesSection"));
 						}
 					});
 		}
 		split.stop();
 	}
 
-	private void waitForFrameToAppear() {
+	private void waitForPopupToAppear() {
 		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
 				"waitForFrameToAppear");
 

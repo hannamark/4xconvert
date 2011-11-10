@@ -11,7 +11,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
 
@@ -22,6 +24,8 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 public class CountRowsTest {
 	private static final String FILENAME = "config.properties";
+	private static final String SQL_FILENAME = "./src/test/resources/create-replace-function.sql";
+	private static final String DELIMETER = ".";
 
 	Connection connection = null;
 	Properties properties;
@@ -45,10 +49,10 @@ public class CountRowsTest {
 		try {
 			Class.forName("org.postgresql.Driver");
 			Statement stmt = connection.createStatement();
-			String sqlStatement = getFile();
+			String sqlStatement = getFileContents(SQL_FILENAME);
 			createRelation(stmt, sqlStatement);
 			ResultSet resultSet = stmt.executeQuery("select count_em_all();");
-			String filename = getOutputFilename();
+			String filename = getFilename();
 			CSVWriter writer = new CSVWriter(new FileWriter(filename), ',');
 			String[] databaseUrl = getDatabaseUrl();
 			writer.writeNext(databaseUrl);
@@ -130,10 +134,10 @@ public class CountRowsTest {
 		}
 	}
 
-	private String getFile() {
+	private String getFileContents(String filename) {
 		String statement = "";
 
-		File file = new File("./src/test/resources/create-replace-function.sql");
+		File file = new File(filename);
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new InputStreamReader(new FileInputStream(
@@ -145,20 +149,33 @@ public class CountRowsTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		return statement;
 	}
 
-	private static String getOutputFilename() {
+	public static String now() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyMMddHHmmss");
+		Calendar cal = Calendar.getInstance();
+		return sdf.format(cal.getTime());
+	}
+
+	private static String getFilename() {
 		Properties properties = new Properties();
 		try {
 			properties.load(new FileInputStream(FILENAME));
-
 		} catch (IOException e) {
 			System.out.println("Couldn't read the file [" + FILENAME + "].");
 			e.printStackTrace();
 		}
-		return properties.getProperty("table.rows.csv");
+		String filename = properties.getProperty("table.rows.filename");
+		String extension = properties.getProperty("table.rows.extension");
+
+		boolean timestamps = properties.getProperty("filename.timestamps")
+				.equalsIgnoreCase("true");
+		if (timestamps) {
+			return filename + "-" + now() + DELIMETER + extension;
+		} else {
+			return filename + DELIMETER + extension;
+		}
 	}
 
 }

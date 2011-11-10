@@ -41,21 +41,12 @@ public class AdHocPageDiseaseLookUp extends
 		PageFactory.initElements(webDriver, this);
 	}
 
-	public void setDiseaseName(String keysToSend) {
-		diseaseNameTextBox.sendKeys(keysToSend);
-	}
-
-	public void setIncludeSynonym(boolean includeSynonym) {
-		PageUtil.setCheckbox(includeSynonymCheckbox, includeSynonym);
-	}
-
-	public void setExactMatch(boolean exactMatchOnly) {
-		PageUtil.setCheckbox(exactMatchOnlyCheckbox, exactMatchOnly);
-	}
-
-	public DiseaseLocatorResultsTable clickSearchButton() {
-		lookUpButton.click();
-		return new DiseaseLocatorResultsTable(webDriver);
+	public DiseaseLocatorResultsTable searchDiseases(String name,
+			boolean includeSynonym, boolean exactMatch) {
+		setDiseaseName(name);
+		setExactMatch(exactMatch);
+		setIncludeSynonym(includeSynonym);
+		return clickSearchButton();
 	}
 
 	public AdHocReportPage clickSelectButton() {
@@ -80,6 +71,24 @@ public class AdHocPageDiseaseLookUp extends
 
 	@Override
 	protected void load() {
+	}
+
+	// privates
+	private void setDiseaseName(String keysToSend) {
+		diseaseNameTextBox.sendKeys(keysToSend);
+	}
+
+	private void setIncludeSynonym(boolean includeSynonym) {
+		PageUtil.setCheckbox(includeSynonymCheckbox, includeSynonym);
+	}
+
+	private void setExactMatch(boolean exactMatchOnly) {
+		PageUtil.setCheckbox(exactMatchOnlyCheckbox, exactMatchOnly);
+	}
+
+	private DiseaseLocatorResultsTable clickSearchButton() {
+		lookUpButton.click();
+		return new DiseaseLocatorResultsTable(webDriver);
 	}
 
 }
