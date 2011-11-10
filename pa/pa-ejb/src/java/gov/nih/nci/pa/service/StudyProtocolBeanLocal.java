@@ -259,7 +259,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
 
     private void checkBlindingSchemaCode(InterventionalStudyProtocolDTO ispDTO, int totBlindCodes) throws PAException {
         if (ispDTO.getBlindingSchemaCode() != null) {
-            if (BlindingSchemaCode.OPEN.getCode().equals(ispDTO.getBlindingSchemaCode().getCode()) 
+            if (BlindingSchemaCode.OPEN.getCode().equals(ispDTO.getBlindingSchemaCode().getCode())
                     && totBlindCodes > 0) {
                 throw new PAException("Open Blinding Schema code cannot have any Blinded codes.");
             }
@@ -443,7 +443,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                     dateRulesApply = true;
                 }
             }
-           
+
         }
         if (dateRulesApply) {
             enForceDateRules(studyProtocolDTO);
@@ -517,7 +517,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             throw new PAException("Completion date type must be set.  ");
         }
     }
-    
+
     private void checkDateAndType(DateMidnight today, DateMidnight date, ActualAnticipatedTypeCode type, String field)
             throws PAException {
         if (type == ActualAnticipatedTypeCode.ACTUAL && today.isBefore(date)) {
@@ -527,7 +527,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             throw new PAException(MessageFormat.format("Anticipated {0} must be in the future.  ", field));
         }
     }
-    
+
 
     private void enForcePrimaryPurposeRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
         if (studyProtocolDTO.getPrimaryPurposeCode() == null) {
@@ -654,6 +654,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         ro.setOrganization(org);
         ss.setResearchOrganization(ro);
         sp.getStudySites().add(ss);
+        sp.setStatusCode(ActStatusCode.ACTIVE);
         return sp;
     }
 
@@ -712,7 +713,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         }
         return studyProtocolDTO;
     }
-    
+
     private StudyProtocolDTO searchStudyProtocolByIi(Ii studyProtocolIi) throws PAException {
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         List<StudyProtocolDTO> spList;
@@ -781,8 +782,8 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         return studyProtocolIi != null
                 && (StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.DCP_STUDY_PROTOCOL_ROOT)
                         || StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.CTEP_STUDY_PROTOCOL_ROOT)
-                        || StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.NCT_STUDY_PROTOCOL_ROOT) 
-                        || (StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT) 
+                        || StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.NCT_STUDY_PROTOCOL_ROOT)
+                        || (StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT)
                                 && StringUtils.startsWith(studyProtocolIi.getExtension(), "NCI")));
     }
 

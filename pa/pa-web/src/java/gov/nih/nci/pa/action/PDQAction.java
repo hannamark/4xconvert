@@ -132,6 +132,22 @@ public class PDQAction extends ActionSupport implements Preparable, ServletRespo
     }
 
     /**
+     * @return String
+     *
+     */
+    public String startProcess() {
+        try {
+            PaRegistry.getPDQUpdateGeneratorTaskService().performTask();
+        } catch (PAException e) {
+            addActionError(e.getMessage());
+            return ERROR;
+        }
+        ServletActionContext.getRequest().setAttribute("showButton", "no");
+        addActionMessage("Process has been started...");
+        return SUCCESS;
+    }
+
+    /**
      *
      * @return success
      */
