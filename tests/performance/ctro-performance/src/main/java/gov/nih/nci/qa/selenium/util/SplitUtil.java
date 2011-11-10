@@ -6,6 +6,14 @@ import org.javasimon.Split;
 
 public class SplitUtil {
 
+	public static Split getPageElementSplit(String pageObjectName,
+			String pageElementName) {
+		return SimonManager.getStopwatch(
+				"parent" + Manager.HIERARCHY_DELIMITER + pageObjectName
+						+ Manager.HIERARCHY_DELIMITER + pageElementName)
+				.start();
+	}
+
 	public static Split getTestSplit(String name) {
 		return SimonManager.getStopwatch(
 				"parent" + Manager.HIERARCHY_DELIMITER + "test"

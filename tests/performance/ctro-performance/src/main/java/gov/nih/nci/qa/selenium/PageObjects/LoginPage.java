@@ -1,9 +1,8 @@
 package gov.nih.nci.qa.selenium.PageObjects;
 
 import gov.nih.nci.qa.selenium.util.PageUtil;
+import gov.nih.nci.qa.selenium.util.SplitUtil;
 
-import org.javasimon.Manager;
-import org.javasimon.SimonManager;
 import org.javasimon.Split;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -38,37 +37,29 @@ public class LoginPage extends LoadableComponent<LoginPage> {
 	}
 
 	public void setLoginField(String username) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "LoginPage"
-						+ Manager.HIERARCHY_DELIMITER + "setLoginField")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("LoginPage",
+				"setLoginField");
 		loginField.sendKeys(username);
 		split.stop();
 	}
 
 	public void setPasswordField(String password) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "LoginPage"
-						+ Manager.HIERARCHY_DELIMITER + "setPasswordField")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("LoginPage",
+				"setPasswordField");
 		passwordField.sendKeys(password);
 		split.stop();
 	}
 
 	public void setAccountSource(String accountSource) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "LoginPage"
-						+ Manager.HIERARCHY_DELIMITER + "setAccountSource")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("LoginPage",
+				"setAccountSource");
 		PageUtil.setDropDown(accountSourceDropDown, accountSource);
 		split.stop();
 	}
 
 	public DisclaimerPage clickLoginButton() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "LoginPage"
-						+ Manager.HIERARCHY_DELIMITER + "clickLoginButton")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("LoginPage",
+				"clickLoginButton");
 		loginButton.click();
 		split.stop();
 		return new DisclaimerPage(webDriver);
@@ -89,9 +80,7 @@ public class LoginPage extends LoadableComponent<LoginPage> {
 
 	public DisclaimerPage loginAs(String username, String password,
 			String accountSource) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "LoginPage"
-						+ Manager.HIERARCHY_DELIMITER + "loginAs").start();
+		Split split = SplitUtil.getPageElementSplit("LoginPage", "loginAs");
 		setLoginField(username);
 		setPasswordField(password);
 		PageUtil.setDropDown(accountSourceDropDown, accountSource);
@@ -111,9 +100,7 @@ public class LoginPage extends LoadableComponent<LoginPage> {
 
 	@Override
 	protected void load() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "LoginPage"
-						+ Manager.HIERARCHY_DELIMITER + "load").start();
+		Split split = SplitUtil.getPageElementSplit("LoginPage", "load");
 		HomePage homePage = new HomePage(webDriver).get();
 		homePage.clickLogInLink();
 		split.stop();

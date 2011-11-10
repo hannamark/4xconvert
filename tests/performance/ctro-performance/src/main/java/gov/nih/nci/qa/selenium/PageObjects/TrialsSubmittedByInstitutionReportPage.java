@@ -2,11 +2,10 @@ package gov.nih.nci.qa.selenium.PageObjects;
 
 import gov.nih.nci.qa.selenium.PageComponents.TrialsSubmittedByInstitutionResultsTable;
 import gov.nih.nci.qa.selenium.util.PageUtil;
+import gov.nih.nci.qa.selenium.util.SplitUtil;
 
 import java.util.List;
 
-import org.javasimon.Manager;
-import org.javasimon.SimonManager;
 import org.javasimon.Split;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -64,11 +63,8 @@ public class TrialsSubmittedByInstitutionReportPage extends
 	}
 
 	public TrialsSubmittedByInstitutionReportPage clickResetButton() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "TrialsSubmittedByInstitutionReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "clickResetButton")
-				.start();
+		Split split = SplitUtil.getPageElementSplit(
+				"TrialsSubmittedByInstitutionReportPage", "clickResetButton");
 		// Change to the report filters tab first.
 		reportFilterTab.click();
 		resetButton.click();
@@ -77,11 +73,9 @@ public class TrialsSubmittedByInstitutionReportPage extends
 	}
 
 	public TrialsSubmittedByInstitutionResultsTable clickRunReportButton() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "TrialsSubmittedByInstitutionReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "clickRunReportButton")
-				.start();
+		Split split = SplitUtil.getPageElementSplit(
+				"TrialsSubmittedByInstitutionReportPage",
+				"clickRunReportButton");
 		// Change to the report filters tab first.
 		reportFilterTab.click();
 		runReportButton.click();
@@ -101,10 +95,8 @@ public class TrialsSubmittedByInstitutionReportPage extends
 
 	@Override
 	protected void load() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "TrialsSubmittedByInstitutionReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "load").start();
+		Split split = SplitUtil.getPageElementSplit(
+				"TrialsSubmittedByInstitutionReportPage", "load");
 		CtroReportSelectionPage ctroReportSelectionPage = new CtroReportSelectionPage(
 				webDriver).get();
 		ctroReportSelectionPage.clickTrialsSubmittedByInstitutionLink();
@@ -113,40 +105,29 @@ public class TrialsSubmittedByInstitutionReportPage extends
 
 	// privates
 	private void setSubmissionType(String type) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "TrialsSubmittedByInstitutionReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setSubmissionType")
-				.start();
+		Split split = SplitUtil.getPageElementSplit(
+				"TrialsSubmittedByInstitutionReportPage", "setSubmissionType");
 		PageUtil.setDropDown(submissionTypeDropDown, type);
 		split.stop();
 	}
 
 	private void setIncludeTrials(boolean includeTrials) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "TrialsSubmittedByInstitutionReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setIncludeTrials")
-				.start();
+		Split split = SplitUtil.getPageElementSplit(
+				"TrialsSubmittedByInstitutionReportPage", "setIncludeTrials");
 		PageUtil.setCheckbox(includeTrialsCheckbox, includeTrials);
 		split.stop();
 	}
 
 	private void setInstitutions(List<String> selections) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "TrialsSubmittedByInstitutionReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setInstitutions")
-				.start();
+		Split split = SplitUtil.getPageElementSplit(
+				"TrialsSubmittedByInstitutionReportPage", "setInstitutions");
 		PageUtil.setMultiSelect(institutionsMultiSelect, selections);
 		split.stop();
 	}
 
 	private void setDateRange(String startDate, String endDate) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "TrialsSubmittedByInstitutionReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setDateRange").start();
+		Split split = SplitUtil.getPageElementSplit(
+				"TrialsSubmittedByInstitutionReportPage", "setDateRange");
 		PageUtil.setDateInterval(intervalStartDate, startDate, intervalEndDate,
 				endDate);
 		split.stop();

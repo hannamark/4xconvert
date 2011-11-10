@@ -1,11 +1,10 @@
 package gov.nih.nci.qa.selenium.PageComponents.AdHocReport;
 
 import gov.nih.nci.qa.selenium.util.PageUtil;
+import gov.nih.nci.qa.selenium.util.SplitUtil;
 
 import java.util.List;
 
-import org.javasimon.Manager;
-import org.javasimon.SimonManager;
 import org.javasimon.Split;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -33,31 +32,31 @@ public class TrialGeographicArea {
 
 	public void setTrialGeographicArea(String country, List<String> states,
 			String city) {
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setTrialGeographicArea");
 		setCountry(country);
 		setState(states);
 		setCity(city);
+		split.stop();
 	}
 
 	private void setCountry(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setCountry").start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setCountry");
 		PageUtil.setDropDown(countryDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setState(List<String> selectList) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setState").start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setState");
 		PageUtil.setMultiSelect(statesMultiSelect, selectList);
 		split.stop();
 	}
 
 	private void setCity(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setCity").start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setCity");
 		cityTextBox.sendKeys(keysToSend);
 		split.stop();
 	}

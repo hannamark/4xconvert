@@ -2,11 +2,10 @@ package gov.nih.nci.qa.selenium.PageComponents.AdHocReport;
 
 import gov.nih.nci.qa.selenium.PageComponents.AdHocPageDiseaseLookUp;
 import gov.nih.nci.qa.selenium.PageComponents.DiseaseLocatorResultsTable;
+import gov.nih.nci.qa.selenium.util.SplitUtil;
 
 import java.util.List;
 
-import org.javasimon.Manager;
-import org.javasimon.SimonManager;
 import org.javasimon.Split;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -30,10 +29,8 @@ public class DiseaseConditionAndStage {
 	}
 
 	public AdHocPageDiseaseLookUp clickLookUpButton() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "clickLookUpButton")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"clickLookUpButton");
 		lookUpButton.click();
 		split.stop();
 		return new AdHocPageDiseaseLookUp(webDriver);
@@ -41,10 +38,8 @@ public class DiseaseConditionAndStage {
 
 	public void setDiseaseCondition(String keysToSend, Boolean includeSynonym,
 			Boolean exactMatchOnly) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setDiseaseCondition")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setDiseaseCondition");
 		AdHocPageDiseaseLookUp adHocPageDiseaseLookUp = clickLookUpButton();
 
 		waitForFrameToAppear();
@@ -70,10 +65,8 @@ public class DiseaseConditionAndStage {
 	}
 
 	private void waitForLoadingToFinish() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER
-						+ "waitForLoadingToFinish").start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"waitForLoadingToFinish");
 		WebElement selectedDisease = webDriver.findElement(By
 				.id("criteriaAdHocReport"));
 		// If it contains "Loading..." look again.
@@ -89,10 +82,8 @@ public class DiseaseConditionAndStage {
 	}
 
 	private void waitForFrameToAppear() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "waitForFrameToAppear")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"waitForFrameToAppear");
 
 		(new WebDriverWait(webDriver, 15))
 				.until(new ExpectedCondition<Boolean>() {

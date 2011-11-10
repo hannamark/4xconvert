@@ -1,7 +1,7 @@
 package gov.nih.nci.qa.selenium.PageObjects;
 
-import org.javasimon.Manager;
-import org.javasimon.SimonManager;
+import gov.nih.nci.qa.selenium.util.SplitUtil;
+
 import org.javasimon.Split;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -28,20 +28,16 @@ public class DisclaimerPage extends LoadableComponent<DisclaimerPage> {
 	}
 
 	public HomePage rejectDisclaimer() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "DisclaimerPage"
-						+ Manager.HIERARCHY_DELIMITER + "rejectDisclaimer")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("DisclaimerPage",
+				"rejectDisclaimer");
 		rejectDisclaimerButton.click();
 		split.stop();
 		return new HomePage(webDriver);
 	}
 
 	public CtroReportSelectionPage acceptDisclaimer() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "DisclaimerPage"
-						+ Manager.HIERARCHY_DELIMITER + "acceptDisclaimer")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("DisclaimerPage",
+				"acceptDisclaimer");
 		acceptDisclaimerButton.click();
 		split.stop();
 		return new CtroReportSelectionPage(webDriver);
@@ -65,9 +61,7 @@ public class DisclaimerPage extends LoadableComponent<DisclaimerPage> {
 
 	@Override
 	protected void load() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "DisclaimerPage"
-						+ Manager.HIERARCHY_DELIMITER + "load").start();
+		Split split = SplitUtil.getPageElementSplit("DisclaimerPage", "load");
 		LoginPage loginPage = new LoginPage(webDriver).get();
 		loginPage.loginAs("abstractor", "Coppa#12345", "Training");
 		split.stop();

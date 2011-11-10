@@ -80,17 +80,6 @@ public class AdHocPageDiseaseLookUp extends
 
 	@Override
 	protected void load() {
-		// Split split = SimonManager.getStopwatch(
-		// "parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-		// + Manager.HIERARCHY_DELIMITER + "load").start();
-		// CtroReportSelectionPage ctroReportSelectionPage = new
-		// CtroReportSelectionPage(
-		// webDriver).get();
-		// AdHocReportPage adHocReportPage = ctroReportSelectionPage
-		// .clickAdHocLink();
-		// AdHocPageDiseaseLookUp adHocPageDiseaseLookUp = adHocReportPage
-		// .clickLookUpButton();
-		// split.stop();
 	}
 
 }

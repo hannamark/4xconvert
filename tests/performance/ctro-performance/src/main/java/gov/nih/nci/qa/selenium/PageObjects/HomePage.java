@@ -1,11 +1,11 @@
 package gov.nih.nci.qa.selenium.PageObjects;
 
+import gov.nih.nci.qa.selenium.util.SplitUtil;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.javasimon.Manager;
-import org.javasimon.SimonManager;
 import org.javasimon.Split;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -27,10 +27,8 @@ public class HomePage extends LoadableComponent<HomePage> {
 	}
 
 	public LoginPage clickLogInLink() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "HomePage"
-						+ Manager.HIERARCHY_DELIMITER + "clickLogInLink")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("HomePage",
+				"clickLogInLink");
 		loginLink.click();
 		split.stop();
 		return new LoginPage(webDriver);
@@ -38,9 +36,7 @@ public class HomePage extends LoadableComponent<HomePage> {
 
 	@Override
 	protected void load() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "HomePage"
-						+ Manager.HIERARCHY_DELIMITER + "load").start();
+		Split split = SplitUtil.getPageElementSplit("HomePage", "load");
 		// TODO this probably belongs somewhere nicer.
 		String filename = "config.properties";
 		Properties properties = new Properties();

@@ -1,7 +1,7 @@
 package gov.nih.nci.qa.selenium.PageObjects;
 
-import org.javasimon.Manager;
-import org.javasimon.SimonManager;
+import gov.nih.nci.qa.selenium.util.SplitUtil;
+
 import org.javasimon.Split;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -36,56 +36,40 @@ public class CtroReportSelectionPage extends
 	}
 
 	public AdHocReportPage clickAdHocLink() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "CtroReportSelectionPage"
-						+ Manager.HIERARCHY_DELIMITER + "clickAdHocLink")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("CtroReportSelectionPage",
+				"clickAdHocLink");
 		adHocLink.click();
 		split.stop();
 		return new AdHocReportPage(webDriver);
 	}
 
 	public Summary4TypeReportPage clickSummary4TypeLink() {
-		Split split = SimonManager
-				.getStopwatch(
-						"parent" + Manager.HIERARCHY_DELIMITER
-								+ "CtroReportSelectionPage"
-								+ Manager.HIERARCHY_DELIMITER
-								+ "clickSummary4TypeLink").start();
+		Split split = SplitUtil.getPageElementSplit("CtroReportSelectionPage",
+				"clickSummary4TypeLink");
 		summary4TypeLink.click();
 		split.stop();
 		return new Summary4TypeReportPage(webDriver);
 	}
 
 	public TrialsSubmittedByInstitutionReportPage clickTrialsSubmittedByInstitutionLink() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "CtroReportSelectionPage"
-						+ Manager.HIERARCHY_DELIMITER
-						+ "clickTrialsSubmittedByInstitutionLink").start();
+		Split split = SplitUtil.getPageElementSplit("CtroReportSelectionPage",
+				"clickTrialsSubmittedByInstitutionLink");
 		trialsSubmittedByInstitutionLink.click();
 		split.stop();
 		return new TrialsSubmittedByInstitutionReportPage(webDriver);
 	}
 
 	public SummaryOfSubmissionReportPage clickSummaryOfSubmissionLink() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "CtroReportSelectionPage"
-						+ Manager.HIERARCHY_DELIMITER
-						+ "clickSummaryOfSubmissionLink").start();
+		Split split = SplitUtil.getPageElementSplit("CtroReportSelectionPage",
+				"clickSummaryOfSubmissionLink");
 		summaryOfSubmissionLink.click();
 		split.stop();
 		return new SummaryOfSubmissionReportPage(webDriver);
 	}
 
 	public HomePage clickLogOutLink() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "CtroReportSelectionPage"
-						+ Manager.HIERARCHY_DELIMITER + "clickLogOutLink")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("CtroReportSelectionPage",
+				"clickLogOutLink");
 		logOutLink.click();
 		split.stop();
 		return new HomePage(webDriver);
@@ -102,10 +86,8 @@ public class CtroReportSelectionPage extends
 
 	@Override
 	protected void load() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "CtroReportSelectionPage"
-						+ Manager.HIERARCHY_DELIMITER + "load").start();
+		Split split = SplitUtil.getPageElementSplit("CtroReportSelectionPage",
+				"load");
 		DisclaimerPage disclaimerPage = new DisclaimerPage(webDriver).get();
 		disclaimerPage.acceptDisclaimer();
 		split.stop();

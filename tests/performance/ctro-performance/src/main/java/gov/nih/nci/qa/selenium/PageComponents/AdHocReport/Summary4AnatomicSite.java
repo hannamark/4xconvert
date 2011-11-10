@@ -1,11 +1,10 @@
 package gov.nih.nci.qa.selenium.PageComponents.AdHocReport;
 
 import gov.nih.nci.qa.selenium.util.PageUtil;
+import gov.nih.nci.qa.selenium.util.SplitUtil;
 
 import java.util.List;
 
-import org.javasimon.Manager;
-import org.javasimon.SimonManager;
 import org.javasimon.Split;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -45,28 +44,22 @@ public class Summary4AnatomicSite {
 	}
 
 	private void setSummary4Sponsor(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setSummary4Sponsor")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setSummary4Sponsor");
 		PageUtil.setDropDown(summary4SponsorDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setSummary4AnatomicSites(List<String> selectList) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER
-						+ "setSummary4AnatomicSites").start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setSummary4AnatomicSites");
 		PageUtil.setMultiSelect(summary4AnatomicSitesMultiSelect, selectList);
 		split.stop();
 	}
 
 	private void setSummary4FundingCategory(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER
-						+ "setSummary4FundingCategory").start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setSummary4FundingCategory");
 		PageUtil.setDropDown(summary4FundingCategoryDropDown, keysToSend);
 		split.stop();
 	}

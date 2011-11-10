@@ -10,11 +10,10 @@ import gov.nih.nci.qa.selenium.PageComponents.AdHocReport.Summary4AnatomicSite;
 import gov.nih.nci.qa.selenium.PageComponents.AdHocReport.TrialGeographicArea;
 import gov.nih.nci.qa.selenium.Parameters.ClinicalTrialRegistrationDetailsParam;
 import gov.nih.nci.qa.selenium.enumerations.AdHocReportMessage;
+import gov.nih.nci.qa.selenium.util.SplitUtil;
 
 import java.util.List;
 
-import org.javasimon.Manager;
-import org.javasimon.SimonManager;
 import org.javasimon.Split;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -71,51 +70,70 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 
 	public void setClinicalTrialsRegistrationDetails(
 			ClinicalTrialRegistrationDetailsParam params) {
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setClinicalTrialsRegistrationDetails");
 		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
 		clinicalTrialRegistrationDetails
 				.setClinicalTrialsRegistrationDetails(params);
+		split.stop();
 	}
 
 	public void setInterventions(String keysToSend) {
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setInterventions");
 		Interventions interventions = clickInterventions();
 		interventions.setInterventionType(keysToSend);
+		split.stop();
 	}
 
 	public void setParticipatingSites(String keysToSend) {
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setParticipatingSites");
 		ParticipatingSites sites = clickParticipatingSites();
 		sites.setParticipatingSites(keysToSend);
+		split.stop();
 	}
 
 	public void setDiseaseConditionAndStage(String keysToSend,
 			Boolean includeSynonym, Boolean exactMatchOnly) {
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setDiseaseConditionAndStage");
 		DiseaseConditionAndStage diseaseAndStage = clickDiseaseAndStage();
 		diseaseAndStage.setDiseaseCondition(keysToSend, includeSynonym,
 				exactMatchOnly);
+		split.stop();
 	}
 
 	public void setTrialGeographicArea(String country, List<String> states,
 			String city) {
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setTrialGeographicArea");
 		TrialGeographicArea geographicArea = clickTrialGeographicArea();
 		geographicArea.setTrialGeographicArea(country, states, city);
+		split.stop();
 	}
 
 	public void setSummary4AnatomicSite(String sponsor, List<String> sites,
 			String fundingCategory) {
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setTrialGeographicArea");
 		Summary4AnatomicSite summary4AnatomicSite = clickSummary4AnatomicSite();
 		summary4AnatomicSite.setSummary4AnatomicSite(sponsor, sites,
 				fundingCategory);
+		split.stop();
 	}
 
 	public void setBiomarkers(List<String> selectList) {
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setTrialGeographicArea");
 		Biomarkers biomarkers = clickBiomarkers();
 		biomarkers.setBiomarkers(selectList);
+		split.stop();
 	}
 
 	public AdHocReportTable clickRunReportButton() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "clickRunReportButton")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"clickRunReportButton");
 		// Make certain we're on the report filters tab. The reset button
 		// doesn't exist on the results tab.
 		reportFiltersTab.click();
@@ -125,10 +143,8 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 	}
 
 	public AdHocReportPage clickResetButton() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "clickResetButton")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"clickResetButton");
 		// Make certain we're on the report filters tab. The reset button
 		// doesn't exist on the results tab.
 		reportFiltersTab.click();
@@ -209,9 +225,7 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 
 	@Override
 	protected void load() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "load").start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage", "load");
 		CtroReportSelectionPage ctroReportSelectionPage = new CtroReportSelectionPage(
 				webDriver).get();
 		ctroReportSelectionPage.clickAdHocLink();

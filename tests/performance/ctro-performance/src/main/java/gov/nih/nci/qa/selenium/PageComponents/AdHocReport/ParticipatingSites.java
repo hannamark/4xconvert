@@ -1,9 +1,8 @@
 package gov.nih.nci.qa.selenium.PageComponents.AdHocReport;
 
 import gov.nih.nci.qa.selenium.util.PageUtil;
+import gov.nih.nci.qa.selenium.util.SplitUtil;
 
-import org.javasimon.Manager;
-import org.javasimon.SimonManager;
 import org.javasimon.Split;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -24,10 +23,8 @@ public class ParticipatingSites {
 	}
 
 	public void setParticipatingSites(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setParticipatingSite")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setParticipatingSites");
 		PageUtil.setDropDown(partipatingSiteDropDown, keysToSend);
 		split.stop();
 	}

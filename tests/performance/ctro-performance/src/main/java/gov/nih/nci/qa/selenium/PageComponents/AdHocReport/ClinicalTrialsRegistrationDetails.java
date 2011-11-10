@@ -2,11 +2,10 @@ package gov.nih.nci.qa.selenium.PageComponents.AdHocReport;
 
 import gov.nih.nci.qa.selenium.Parameters.ClinicalTrialRegistrationDetailsParam;
 import gov.nih.nci.qa.selenium.util.PageUtil;
+import gov.nih.nci.qa.selenium.util.SplitUtil;
 
 import java.util.List;
 
-import org.javasimon.Manager;
-import org.javasimon.SimonManager;
 import org.javasimon.Split;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -108,112 +107,87 @@ public class ClinicalTrialsRegistrationDetails {
 	}
 
 	private void setOfficialTitle(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setOfficialTitle")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setOfficialTitle");
 		officialTitleTextBox.clear();
 		officialTitleTextBox.sendKeys(keysToSend);
 		split.stop();
 	}
 
 	private void setPrimaryPurpose(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setPrimaryPurpose")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setPrimaryPurpose");
 		PageUtil.setDropDown(primaryPurposeDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setTrialPhase(List<String> selectList) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setTrialPhase")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setTrialPhase");
 		PageUtil.setMultiSelect(trialPhaseMultiSelect, selectList);
 		split.stop();
 	}
 
 	private void setIdentifierType(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setIdentifierType")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setIdentifierType");
 		PageUtil.setDropDown(identifierTypeDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setPrincipalInvestigator(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER
-						+ "setPrincipalInvestigator").start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setPrincipalInvestigator");
 		PageUtil.setDropDown(principalInvestigatorDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setProcessingStatus(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setProcessingStatus")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setProcessingStatus");
 		PageUtil.setDropDown(processingStatusDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setCurrentTrialStatus(String keysToSend) {
-		Split split = SimonManager
-				.getStopwatch(
-						"parent" + Manager.HIERARCHY_DELIMITER
-								+ "AdHocReportPage"
-								+ Manager.HIERARCHY_DELIMITER
-								+ "setCurrentTrialStatus").start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setCurrentTrialStatus");
 		PageUtil.setDropDown(currentTrialStatusDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setLeadOrganization(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setLeadOrganization")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setLeadOrganization");
 		PageUtil.setDropDown(leadOrganizationDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setIdentifier(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setIdentifier")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setIdentifier");
 		identifierTextBox.clear();
 		identifierTextBox.sendKeys(keysToSend);
 		split.stop();
 	}
 
 	private void setSearchBySubmissionType(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER
-						+ "setSearchBySubmissionType").start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setSearchBySubmissionType");
 		PageUtil.setDropDown(searchBySubmissionTypeDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setSearchByTrialCategory(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER
-						+ "setSearchByTrialCategory").start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setSearchByTrialCategory");
 		PageUtil.setDropDown(searchByTrialCategoryDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setMilestone(String keysToSend) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER + "AdHocReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setMilestone").start();
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setMilestone");
 		PageUtil.setDropDown(milestoneDropDown, keysToSend);
 		split.stop();
 	}

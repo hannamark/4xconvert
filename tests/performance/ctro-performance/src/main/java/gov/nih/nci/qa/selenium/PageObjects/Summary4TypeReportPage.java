@@ -3,11 +3,10 @@ package gov.nih.nci.qa.selenium.PageObjects;
 import gov.nih.nci.qa.selenium.PageComponents.Summary4TypeReportTable;
 import gov.nih.nci.qa.selenium.enumerations.Summary4ReportMessage;
 import gov.nih.nci.qa.selenium.util.PageUtil;
+import gov.nih.nci.qa.selenium.util.SplitUtil;
 
 import java.util.List;
 
-import org.javasimon.Manager;
-import org.javasimon.SimonManager;
 import org.javasimon.Split;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -64,10 +63,8 @@ public class Summary4TypeReportPage extends
 	}
 
 	public void setDateRange(String startDate, String endDate) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "Summary4TypeReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setDateRange").start();
+		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
+				"setDateRange");
 
 		PageUtil.setDateInterval(intervalStartDate, startDate, intervalEndDate,
 				endDate);
@@ -75,43 +72,31 @@ public class Summary4TypeReportPage extends
 	}
 
 	public void setFindByOrgName(String orgName) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "Summary4TypeReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setFindByOrgName")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
+				"setFindByOrgName");
 		findByOrgNameRadio.click();
 		findByOrgNameField.sendKeys(orgName);
 		split.stop();
 	}
 
 	public void clickFindByOrgNameRadio() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "Summary4TypeReportPage"
-						+ Manager.HIERARCHY_DELIMITER
-						+ "clickFindByFamilyRadio").start();
+		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
+				"setFindByOrgName");
 		findByOrgNameRadio.click();
 		split.stop();
 	}
 
 	public void clickFindByFamilyRadio() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "Summary4TypeReportPage"
-						+ Manager.HIERARCHY_DELIMITER
-						+ "clickFindByFamilyRadio").start();
+		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
+				"clickFindByFamilyRadio");
 		findByFamilyRadio.click();
 		split.stop();
 
 	}
 
 	public void setFindByFamily(String familyName) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "Summary4TypeReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setFindByFamily")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
+				"setFindByFamily");
 		findByFamilyRadio.click();
 		// Special case when the database has no data. There's nothing to select
 		// from the list except for "--Select--". Selenium will present a
@@ -126,22 +111,16 @@ public class Summary4TypeReportPage extends
 	}
 
 	public Summary4TypeReportTable clickRunReportButton() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "Summary4TypeReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "clickRunReportButton")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
+				"clickRunReportButton");
 		runReportButton.click();
 		split.stop();
 		return new Summary4TypeReportTable(webDriver);
 	}
 
 	public Summary4TypeReportPage clickResetButton() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "Summary4TypeReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "clickResetButton")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
+				"clickResetButton");
 		resetButton.click();
 		split.stop();
 		return new Summary4TypeReportPage(webDriver);
@@ -152,11 +131,8 @@ public class Summary4TypeReportPage extends
 	}
 
 	public void setSelectAllCheckbox(boolean selectAll) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "Summary4TypeReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setSelectAllCheckbox")
-				.start();
+		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
+				"setSelectAllCheckbox");
 		PageUtil.setCheckbox(selectAllCheckbox, selectAll);
 		split.stop();
 	}
@@ -193,11 +169,8 @@ public class Summary4TypeReportPage extends
 	}
 
 	private void waitForLoadingToFinish() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "Summary4TypeReportPage"
-						+ Manager.HIERARCHY_DELIMITER
-						+ "waitForLoadingToFinish").start();
+		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
+				"waitForLoadingToFinish");
 		// PO-4297
 		// TODO This is GROSS!!! If no diseases families are entered in the
 		// database the Find By Familty drop down doesn’t tell you that “No
@@ -242,10 +215,8 @@ public class Summary4TypeReportPage extends
 
 	@Override
 	protected void load() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "Summary4TypeReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "load").start();
+		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
+				"load");
 		CtroReportSelectionPage ctroReportSelectionPage = new CtroReportSelectionPage(
 				webDriver).get();
 		ctroReportSelectionPage.clickSummary4TypeLink();

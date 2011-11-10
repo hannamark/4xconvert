@@ -2,9 +2,8 @@ package gov.nih.nci.qa.selenium.PageObjects;
 
 import gov.nih.nci.qa.selenium.PageComponents.SummaryOfSubmissionResultsTable;
 import gov.nih.nci.qa.selenium.util.PageUtil;
+import gov.nih.nci.qa.selenium.util.SplitUtil;
 
-import org.javasimon.Manager;
-import org.javasimon.SimonManager;
 import org.javasimon.Split;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -40,11 +39,8 @@ public class SummaryOfSubmissionReportPage extends
 	private final WebDriver webDriver;
 
 	public SummaryOfSubmissionReportPage clickResetButton() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "SummaryOfSubmissionReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "clickResetButton")
-				.start();
+		Split split = SplitUtil.getPageElementSplit(
+				"SummaryOfSubmissionReportPage", "clickResetButton");
 		// Change to the report filters tab first.
 		reportFiltersTab.click();
 		resetButton.click();
@@ -54,17 +50,17 @@ public class SummaryOfSubmissionReportPage extends
 
 	public void setSummaryOfSubmission(String startDate, String endDate,
 			boolean includeTrials) {
+		Split split = SplitUtil.getPageElementSplit(
+				"SummaryOfSubmissionReportPage", "setSummaryOfSubmission");
 		reportFiltersTab.click();
 		setDateRange(startDate, endDate);
 		setIncludeTrials(includeTrials);
+		split.stop();
 	}
 
 	public SummaryOfSubmissionResultsTable clickRunReportButton() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "SummaryOfSubmissionReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "clickRunReportButton")
-				.start();
+		Split split = SplitUtil.getPageElementSplit(
+				"SummaryOfSubmissionReportPage", "clickRunReportButton");
 		// Change to the report filters tab first.
 		reportFiltersTab.click();
 		runReportButton.click();
@@ -89,10 +85,8 @@ public class SummaryOfSubmissionReportPage extends
 
 	@Override
 	protected void load() {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "SummaryOfSubmissionReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "load").start();
+		Split split = SplitUtil.getPageElementSplit(
+				"SummaryOfSubmissionReportPage", "load");
 		CtroReportSelectionPage ctroReportSelectionPage = new CtroReportSelectionPage(
 				webDriver).get();
 		ctroReportSelectionPage.clickSummaryOfSubmissionLink();
@@ -102,21 +96,16 @@ public class SummaryOfSubmissionReportPage extends
 	// privates
 
 	private void setDateRange(String startDate, String endDate) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "SummaryOfSubmissionReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setDateRange").start();
+		Split split = SplitUtil.getPageElementSplit(
+				"SummaryOfSubmissionReportPage", "setDateRange");
 		PageUtil.setDateInterval(intervalStartDate, startDate, intervalEndDate,
 				endDate);
 		split.stop();
 	}
 
 	private void setIncludeTrials(boolean includeTrials) {
-		Split split = SimonManager.getStopwatch(
-				"parent" + Manager.HIERARCHY_DELIMITER
-						+ "SummaryOfSubmissionReportPage"
-						+ Manager.HIERARCHY_DELIMITER + "setIncludeTrials")
-				.start();
+		Split split = SplitUtil.getPageElementSplit(
+				"SummaryOfSubmissionReportPage", "setIncludeTrials");
 		PageUtil.setCheckbox(includeTrialsCheckbox, includeTrials);
 		split.stop();
 	}
