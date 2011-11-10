@@ -421,8 +421,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setLockedTrials(criteria.isStudyLockedBy());
         options.setLockedUser(criteria.getUserLastCreated());
         options.setMyTrialsOnly(BooleanUtils.isTrue(criteria.isMyTrialsOnly()));
-        options.setParticipatingSiteId(StringUtils.isNumeric(criteria.getParticipatingSiteId()) ? Long.valueOf(criteria
-            .getParticipatingSiteId()) : null);
+        options.setParticipatingSiteIds(criteria.getParticipatingSiteIds());
         options.setTrialSubmissionType(SubmissionTypeCode.getByCode(criteria.getSubmissionType()));
         options.setSearchOnHoldTrials(criteria.isSearchOnHold());
         options.setInboxProcessing(BooleanUtils.isTrue(criteria.isInBoxProcessing()));
@@ -647,7 +646,6 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && StringUtils.isEmpty(criteria.getNctNumber())
                 && StringUtils.isEmpty(criteria.getDcpIdentifier())
                 && StringUtils.isEmpty(criteria.getCtepIdentifier())
-                && StringUtils.isEmpty(criteria.getParticipatingSiteId())
                 && StringUtils.isEmpty(criteria.getCountryName())
                 && StringUtils.isEmpty(criteria.getCity())
                 && CollectionUtils.isEmpty(criteria.getStates())
@@ -655,6 +653,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && CollectionUtils.isEmpty(criteria.getSummary4AnatomicSites())
                 && CollectionUtils.isEmpty(criteria.getBioMarkers())
                 && CollectionUtils.isEmpty(criteria.getPdqDiseases())
+                && CollectionUtils.isEmpty(criteria.getParticipatingSiteIds())
                 && !criteria.isSearchOnHold()
                 && !criteria.isStudyLockedBy()
                 && StringUtils.isEmpty(criteria.getSubmissionType())

@@ -122,7 +122,6 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String officialTitle;
     private String leadOrganizationId;
     private String otherIdentifier;
-    private String participatingSiteId;
     private String leadOrganizationTrialIdentifier;   
     private String phaseAdditionalQualifierCode;
     private String studyStatusCode;
@@ -149,14 +148,15 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private Long diseaseConditionId;
     private String interventionType;
     private String summ4FundingSourceTypeCode;
-    private final List<String> phaseCodes = new ArrayList<String>();
     
     private String countryName;   
-    private final List<String> states = new ArrayList<String>();
     private String city;
+    private final List<String> states = new ArrayList<String>();
+    private final List<String> phaseCodes = new ArrayList<String>();
     private final List<Long> summary4AnatomicSites = new ArrayList<Long>();
     private final List<Long> bioMarkers = new ArrayList<Long>();
     private final List<Long> pdqDiseases = new ArrayList<Long>();
+    private final List<Long> participatingSiteIds = new ArrayList<Long>();
     
     /**
      * @return the inBoxProcessing
@@ -258,16 +258,21 @@ public class StudyProtocolQueryCriteria implements Serializable {
         this.leadOrganizationTrialIdentifier = leadOrganizationTrialIdentifier;
     }
     /**
-     * @param participatingSiteId the participatingSiteId to set
+     * @param participatingSiteIds the participatingSiteIds to set
      */
-    public void setParticipatingSiteId(String participatingSiteId) {
-        this.participatingSiteId = participatingSiteId;
+    public void setParticipatingSiteIds(List<Long> participatingSiteIds) {
+        this.participatingSiteIds.clear();
+        for (Long id : participatingSiteIds) {
+            if (id != null) {
+                this.participatingSiteIds.add(id);
+            }
+        }  
     }
     /**
-     * @return the participatingSiteId
+     * @return the participatingSiteIds
      */
-    public String getParticipatingSiteId() {
-        return participatingSiteId;
+    public List<Long> getParticipatingSiteIds() {
+        return participatingSiteIds;
     }
     
     /**

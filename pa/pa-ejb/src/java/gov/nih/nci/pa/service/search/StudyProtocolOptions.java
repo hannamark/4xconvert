@@ -104,7 +104,6 @@ public class StudyProtocolOptions {
     private SubmissionTypeCode trialSubmissionType;
     private boolean lockedTrials;
     private Long userId;
-    private Long participatingSiteId;
     private String lockedUser;
     private boolean inboxProcessing;
     private List<PhaseCode> phaseCodes = new ArrayList<PhaseCode>();
@@ -114,6 +113,7 @@ public class StudyProtocolOptions {
     private List<Long> summary4AnatomicSites = new ArrayList<Long>();
     private List<Long> bioMarkers = new ArrayList<Long>();
     private List<Long> pdqDiseases = new ArrayList<Long>();
+    private List<Long> participatingSiteIds = new ArrayList<Long>();
 
     /**
      * @return excludeRejectedTrials
@@ -200,17 +200,17 @@ public class StudyProtocolOptions {
     }
 
     /**
-     * @return participating site id
+     * @return participating site ids
      */
-    public Long getParticipatingSiteId() {
-        return participatingSiteId;
+    public List<Long> getParticipatingSiteIds() {
+        return participatingSiteIds;
     }
 
     /**
-     * @param participatingSiteId the id of the participating site
+     * @param participatingSiteIds the ids of the participating sites
      */
-    public void setParticipatingSiteId(Long participatingSiteId) {
-        this.participatingSiteId = participatingSiteId;
+    public void setParticipatingSiteIds(List<Long> participatingSiteIds) {
+        this.participatingSiteIds = participatingSiteIds;
     }
 
     /**

@@ -258,10 +258,10 @@ public class SearchTrialAction extends ActionSupport {
             convertIdentifierType(queryCriteria);
         }
         if (StringUtils.isNotEmpty(criteria.getOrganizationId())) {
-            queryCriteria.setLeadOrganizationId(criteria.getOrganizationId().toString());
+            queryCriteria.setLeadOrganizationId(criteria.getOrganizationId());
         }
         if (StringUtils.isNotBlank(criteria.getParticipatingSiteId())) {
-            queryCriteria.setParticipatingSiteId(criteria.getParticipatingSiteId().toString());
+            queryCriteria.getParticipatingSiteIds().add(Long.parseLong(criteria.getParticipatingSiteId()));
         }
         queryCriteria.setOrganizationType(criteria.getOrganizationType());
         queryCriteria.setMyTrialsOnly(criteria.isMyTrialsOnly());

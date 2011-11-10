@@ -862,7 +862,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
     public void getStudyProtocolQueryResultListByParticipatingSite() throws PAException {
         TestBean testBean = createStudyProtocolListForSearchByParticipatingSite();
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
-        criteria.setParticipatingSiteId(testBean.input.get(0).toString());
+        criteria.setParticipatingSiteIds(testBean.input);
         List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
         assertEquals(2, result.size());
         List<Long> expectedResult = Arrays.asList(new Long[]{testBean.output.get(1), testBean.output.get(2)});

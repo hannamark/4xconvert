@@ -314,14 +314,14 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         }
 
         private void handleAdditionalCriteria(StringBuffer whereClause, Map<String, Object> params) {
-            if (spo.getParticipatingSiteId() != null) {
+            if (CollectionUtils.isNotEmpty(spo.getParticipatingSiteIds())) {
                 String operator = determineOperator(whereClause);
                 whereClause.append(String.format(" %s exists (select sps2.id from StudySite sps2 "
                         + "left outer join sps2.healthCareFacility as hcf "
                         + "left outer join hcf.organization as site "
-                        + "where sps2.studyProtocol.id = %s.id and site.id = :" + PARTICIPATING_SITE_PARAM + ")",
-                        operator, SearchableUtils.ROOT_OBJ_ALIAS));
-                        params.put(PARTICIPATING_SITE_PARAM, spo.getParticipatingSiteId());
+                        + "where sps2.studyProtocol.id = %s.id and site.id in (:%s))",
+                        operator, SearchableUtils.ROOT_OBJ_ALIAS, PARTICIPATING_SITE_PARAM));
+                        params.put(PARTICIPATING_SITE_PARAM, spo.getParticipatingSiteIds());
             }
 
             if (spo.isSearchOnHoldTrials()) {

@@ -266,9 +266,13 @@ public class AdHocReportAction
      * @return list of participating site orgs.
      * @throws PAException on error
      */
-    public List<PaOrganizationDTO> getParticipatingSiteList() throws PAException {
-        return PaRegistry.getPAOrganizationService()
-            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE);
+    public List<KeyValueDTO> getParticipatingSiteList() throws PAException {
+        List<KeyValueDTO> result = new ArrayList<KeyValueDTO>();
+        for (PaOrganizationDTO dto : PaRegistry.getPAOrganizationService()
+                .getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE)) {
+            result.add(new KeyValueDTO(Long.parseLong(dto.getId()), dto.getName()));
+        }
+        return result;
     }
     
     /**

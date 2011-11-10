@@ -3,9 +3,9 @@
 <div id="participatingSitesSection">
     <table class="form-table">
         <tbody>
-            <viewer:valueRow labelFor="participatingSiteId" labelKey="studyProtocol.participatingSite">
-                <s:select name="criteria.participatingSiteId" id="participatingSiteId" list="participatingSiteList" listKey="id"
-                          listValue="name" headerKey="" headerValue="All" value="criteria.participatingSiteId" />
+            <viewer:valueRow labelFor="participatingSiteIds" labelKey="studyProtocol.participatingSites">
+                <s:select name="criteria.participatingSiteIds" id="participatingSiteIds" list="participatingSiteList" listKey="key"
+                          listValue="value" headerKey="" headerValue="All" value="criteria.participatingSiteIds" multiple="true"/>
             </viewer:valueRow>
         </tbody>
     </table> 
