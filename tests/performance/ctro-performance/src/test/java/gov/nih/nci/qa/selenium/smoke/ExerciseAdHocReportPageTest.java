@@ -87,7 +87,7 @@ public class ExerciseAdHocReportPageTest {
 		ArrayList<String> trialPhases = new ArrayList<String>();
 		trialPhases.add("I/II");
 		trialPhases.add("NA");
-		builder.setTrialPhaseMultiSelect(trialPhases);
+		builder.setTrialPhases(trialPhases);
 
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();

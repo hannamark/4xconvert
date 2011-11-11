@@ -70,12 +70,9 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 
 	public void setClinicalTrialsRegistrationDetails(
 			ClinicalTrialRegistrationDetailsParam params) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setClinicalTrialsRegistrationDetails");
 		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
 		clinicalTrialRegistrationDetails
 				.setClinicalTrialsRegistrationDetails(params);
-		split.stop();
 	}
 
 	public void setInterventions(String keysToSend) {
@@ -87,48 +84,33 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 	}
 
 	public void setParticipatingSites(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setParticipatingSites");
 		ParticipatingSites sites = clickParticipatingSites();
 		sites.setParticipatingSites(keysToSend);
-		split.stop();
 	}
 
 	public void setDiseaseConditionAndStage(String keysToSend,
 			Boolean includeSynonym, Boolean exactMatchOnly) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setDiseaseConditionAndStage");
 		DiseaseConditionAndStage diseaseAndStage = clickDiseaseAndStage();
 		diseaseAndStage.setDiseaseCondition(keysToSend, includeSynonym,
 				exactMatchOnly);
-		split.stop();
 	}
 
 	public void setTrialGeographicArea(String country, List<String> states,
 			String city) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setTrialGeographicArea");
 		TrialGeographicArea geographicArea = clickTrialGeographicArea();
 		geographicArea.setTrialGeographicArea(country, states, city);
-		split.stop();
 	}
 
 	public void setSummary4AnatomicSite(String sponsor, List<String> sites,
 			String fundingCategory) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setTrialGeographicArea");
 		Summary4AnatomicSite summary4AnatomicSite = clickSummary4AnatomicSite();
 		summary4AnatomicSite.setSummary4AnatomicSite(sponsor, sites,
 				fundingCategory);
-		split.stop();
 	}
 
 	public void setBiomarkers(List<String> selectList) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setTrialGeographicArea");
 		Biomarkers biomarkers = clickBiomarkers();
 		biomarkers.setBiomarkers(selectList);
-		split.stop();
 	}
 
 	public AdHocReportTable clickRunReportButton() {
@@ -180,37 +162,58 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 
 	// private methods
 	private ClinicalTrialsRegistrationDetails clickClinicalTrialRegistrationDetails() {
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"clickClinicalTrialRegistrationDetails");
 		clinicalTrialRegistrationDetailsLink.click();
+		split.stop();
 		return new ClinicalTrialsRegistrationDetails(webDriver);
 	}
 
 	private DiseaseConditionAndStage clickDiseaseAndStage() {
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"clickDiseaseAndStage");
 		diseaseConditionAndStageLink.click();
+		split.stop();
 		return new DiseaseConditionAndStage(webDriver);
 	}
 
 	private Interventions clickInterventions() {
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"clickInterventions");
 		interventionsLink.click();
+		split.stop();
 		return new Interventions(webDriver);
 	}
 
 	private ParticipatingSites clickParticipatingSites() {
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"clickParticipatingSites");
 		participatingSitesLink.click();
+		split.stop();
 		return new ParticipatingSites(webDriver);
 	}
 
 	private TrialGeographicArea clickTrialGeographicArea() {
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"clickTrialGeographicArea");
 		trialGeographicAreaLink.click();
+		split.stop();
 		return new TrialGeographicArea(webDriver);
 	}
 
 	private Biomarkers clickBiomarkers() {
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"clickBiomarkers");
 		biomarkersLink.click();
+		split.stop();
 		return new Biomarkers(webDriver);
 	}
 
 	private Summary4AnatomicSite clickSummary4AnatomicSite() {
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"clickSummary4AnatomicSite");
 		summary4AnatomicSiteLink.click();
+		split.stop();
 		return new Summary4AnatomicSite(webDriver);
 	}
 

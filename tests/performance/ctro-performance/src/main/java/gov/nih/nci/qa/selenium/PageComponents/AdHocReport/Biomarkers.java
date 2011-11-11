@@ -1,9 +1,11 @@
 package gov.nih.nci.qa.selenium.PageComponents.AdHocReport;
 
 import gov.nih.nci.qa.selenium.util.PageUtil;
+import gov.nih.nci.qa.selenium.util.SplitUtil;
 
 import java.util.List;
 
+import org.javasimon.Split;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -23,7 +25,10 @@ public class Biomarkers {
 	}
 
 	public void setBiomarkers(List<String> selectList) {
+		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
+				"setBiomarkers");
 		PageUtil.setMultiSelect(biomarkerMultiSelect, selectList);
+		split.stop();
 	}
 
 }

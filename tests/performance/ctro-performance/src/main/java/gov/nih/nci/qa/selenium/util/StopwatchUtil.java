@@ -3,11 +3,14 @@ package gov.nih.nci.qa.selenium.util;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.javasimon.Simon;
@@ -42,7 +45,30 @@ public class StopwatchUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
 
+	public static void printConsoleReport(String stopwatchParent) {
+		Simon parent = SimonManager.getSimon(stopwatchParent);
+		List<Simon> children = parent.getChildren();
+
+		PrintWriter printWriter = new PrintWriter(System.out, true);
+		CSVWriter writer = null;
+		try {
+			writer = new CSVWriter(printWriter, ',');
+			String[] header = getHeader();
+			writer.writeNext(header);
+			for (Simon firstLevel : children) {
+				List<Simon> secondLevel = firstLevel.getChildren();
+				for (Simon child : secondLevel) {
+					String[] entries = getChildStatistics(child);
+					writer.writeNext(entries);
+				}
+			}
+			writer.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static String[] getHeader() {
@@ -64,6 +90,20 @@ public class StopwatchUtil {
 		header.add("lastUsage");
 		String[] statsArray = header.toArray(new String[header.size()]);
 		return statsArray;
+	}
+
+	public static Map<String, Double> getMaxValues(String stopwatchParent) {
+		Simon parent = SimonManager.getSimon(stopwatchParent);
+		List<Simon> children = parent.getChildren();
+
+		Map<String, Double> entries = new HashMap<String, Double>();
+		for (Simon firstLevel : children) {
+			List<Simon> secondLevel = firstLevel.getChildren();
+			for (Simon child : secondLevel) {
+				entries.put(child.getName(), getMaxInSeconds((Stopwatch) child));
+			}
+		}
+		return entries;
 	}
 
 	public static String[] getChildStatistics(Simon child) {
@@ -127,6 +167,12 @@ public class StopwatchUtil {
 
 	private static String getMinTimestamp(Stopwatch child) {
 		return convertMillisToDate(((Stopwatch) child).getMinTimestamp());
+	}
+
+	private static Double getMaxInSeconds(Stopwatch child) {
+		long number = ((Stopwatch) child).getMax();
+		double seconds = (double) number / 1000000000.0;
+		return Double.valueOf(seconds);
 	}
 
 	private static String getMax(Stopwatch child) {

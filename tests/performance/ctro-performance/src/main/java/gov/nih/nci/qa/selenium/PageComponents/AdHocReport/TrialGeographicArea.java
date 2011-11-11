@@ -32,12 +32,9 @@ public class TrialGeographicArea {
 
 	public void setTrialGeographicArea(String country, List<String> states,
 			String city) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setTrialGeographicArea");
 		setCountry(country);
 		setState(states);
 		setCity(city);
-		split.stop();
 	}
 
 	private void setCountry(String keysToSend) {

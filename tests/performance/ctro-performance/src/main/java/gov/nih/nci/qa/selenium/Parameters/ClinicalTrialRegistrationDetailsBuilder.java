@@ -1,5 +1,6 @@
 package gov.nih.nci.qa.selenium.Parameters;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClinicalTrialRegistrationDetailsBuilder {
@@ -45,7 +46,13 @@ public class ClinicalTrialRegistrationDetailsBuilder {
 		this.primaryPurposeDropDown = primaryPurposeDropDown;
 	}
 
-	public void setTrialPhaseMultiSelect(List<String> trialPhaseMultiSelect) {
+	public void setTrialPhase(String trialPhase) {
+		List<String> trialPhases = new ArrayList<String>();
+		trialPhases.add(trialPhase);
+		this.trialPhaseMultiSelect = trialPhases;
+	}
+
+	public void setTrialPhases(List<String> trialPhaseMultiSelect) {
 		this.trialPhaseMultiSelect = trialPhaseMultiSelect;
 	}
 

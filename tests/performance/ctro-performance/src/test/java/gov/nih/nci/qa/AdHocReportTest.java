@@ -62,7 +62,7 @@ public class AdHocReportTest {
 		testCaseSplit.stop();
 
 		// Output to a report.
-		StopwatchUtil.printReport("parent");
+		StopwatchUtil.printReport(SplitUtil.getRootName());
 	}
 
 	@Test
@@ -105,7 +105,7 @@ public class AdHocReportTest {
 
 		ArrayList<String> trialPhases = new ArrayList<String>();
 		trialPhases.add("II");
-		builder.setTrialPhaseMultiSelect(trialPhases);
+		builder.setTrialPhases(trialPhases);
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
@@ -189,7 +189,7 @@ public class AdHocReportTest {
 
 		ArrayList<String> trialPhases = new ArrayList<String>();
 		trialPhases.add("II");
-		builder.setTrialPhaseMultiSelect(trialPhases);
+		builder.setTrialPhases(trialPhases);
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
@@ -212,7 +212,7 @@ public class AdHocReportTest {
 
 		ArrayList<String> trialPhases = new ArrayList<String>();
 		trialPhases.add("I");
-		builder.setTrialPhaseMultiSelect(trialPhases);
+		builder.setTrialPhases(trialPhases);
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
@@ -235,7 +235,7 @@ public class AdHocReportTest {
 
 		ArrayList<String> trialPhases = new ArrayList<String>();
 		trialPhases.add("III");
-		builder.setTrialPhaseMultiSelect(trialPhases);
+		builder.setTrialPhases(trialPhases);
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);

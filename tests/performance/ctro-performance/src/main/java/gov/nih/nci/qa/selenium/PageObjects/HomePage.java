@@ -36,7 +36,8 @@ public class HomePage extends LoadableComponent<HomePage> {
 
 	@Override
 	protected void load() {
-		Split split = SplitUtil.getPageElementSplit("HomePage", "load");
+		Split split = SplitUtil.getTestSplit(SplitUtil.PAGE_LOAD_CATEGORY,
+				"HomePage");
 		// TODO this probably belongs somewhere nicer.
 		String filename = "config.properties";
 		Properties properties = new Properties();
