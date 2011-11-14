@@ -76,11 +76,8 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 	}
 
 	public void setInterventions(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setInterventions");
 		Interventions interventions = clickInterventions();
 		interventions.setInterventionType(keysToSend);
-		split.stop();
 	}
 
 	public void setParticipatingSites(String keysToSend) {

@@ -93,6 +93,8 @@ public class ExerciseAdHocReportPageTest {
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
 
+		adHocReportPage.setInterventions("Drug");
+
 		adHocReportPage.setParticipatingSites("All");
 
 		ArrayList<String> states = new ArrayList<String>();
