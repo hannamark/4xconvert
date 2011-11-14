@@ -98,7 +98,7 @@ public class TrialsByInstitutionReportSeleniumTest extends AbstractViewerSeleniu
         clickAndWait("link=Trials Submitted by Institution");
         assertTrue(selenium.isTextPresent("Trials Submitted by Institution"));
         clickAndWait("id=runButton");   
-        waitForElementById("resultsSubmissionByInstitution_criteria_intervalStartDate", 15);
+        waitForElementById("resultTable", 15);
         assertTrue(selenium.isTextPresent("14 items found"));
         
     }
