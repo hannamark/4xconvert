@@ -1,4 +1,4 @@
-package gov.nih.nci.qa.selenium.Cucumber;
+package gov.nih.nci.qa.selenium.Cucumber.AdHocReport;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -24,7 +24,7 @@ import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
 
-public class CucumberAdHocReportSteps {
+public class AdHocReportSteps {
 
 	private static WebDriver webDriver;
 	private AdHocReportPage adHocReportPage;

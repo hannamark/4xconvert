@@ -1,4 +1,4 @@
-package gov.nih.nci.qa.selenium.Cucumber;
+package gov.nih.nci.qa.selenium.Cucumber.Login;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -18,7 +18,7 @@ import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
 
-public class CucumerLoginSteps {
+public class LoginSteps {
 	private WebDriver webDriver;
 
 	private HomePage homePage;
