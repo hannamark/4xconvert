@@ -24,54 +24,90 @@ public class StopwatchUtil {
 	private static final String FILENAME = "config.properties";
 	private static final String DELIMETER = ".";
 
-	public static void printReport(String stopwatchParent) {
-		Simon parent = SimonManager.getSimon(stopwatchParent);
-		List<Simon> children = parent.getChildren();
+	public static void printCompleteReport() {
+		Simon parent = SimonManager.getSimon(SplitUtil.ROOT_NAME);
+
 		String filename = getFilename();
 		CSVWriter writer = null;
 		try {
 			writer = new CSVWriter(new FileWriter(filename), ',');
 			String[] header = getHeader();
 			writer.writeNext(header);
-			for (Simon firstLevel : children) {
-				List<Simon> secondLevel = firstLevel.getChildren();
-				for (Simon child : secondLevel) {
-					String[] entries = getChildStatistics(child);
-					writer.writeNext(entries);
-				}
+
+			List<Simon> children = new ArrayList<Simon>();
+			getChildren(parent, children);
+
+			for (Simon child : children) {
+				String[] childStatistics = getChildStatistics(child);
+				writer.writeNext(childStatistics);
 			}
 			writer.close();
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static void printConsoleReport(String stopwatchParent) {
-		Simon parent = SimonManager.getSimon(stopwatchParent);
-		List<Simon> children = parent.getChildren();
+	public static void printCompleteReportToConsole() {
+		Simon parent = SimonManager.getSimon(SplitUtil.ROOT_NAME);
 
 		PrintWriter printWriter = new PrintWriter(System.out, true);
 		CSVWriter writer = null;
-		try {
-			writer = new CSVWriter(printWriter, ',');
-			String[] header = getHeader();
-			writer.writeNext(header);
-			for (Simon firstLevel : children) {
-				List<Simon> secondLevel = firstLevel.getChildren();
-				for (Simon child : secondLevel) {
-					String[] entries = getChildStatistics(child);
-					writer.writeNext(entries);
-				}
-			}
-			writer.close();
+		writer = new CSVWriter(printWriter, ',');
+		String[] header = getHeader();
+		writer.writeNext(header);
 
+		List<Simon> children = new ArrayList<Simon>();
+		getChildren(parent, children);
+
+		for (Simon child : children) {
+			String[] childStatistics = getChildStatistics(child);
+			writer.writeNext(childStatistics);
+		}
+
+		try {
+			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static String[] getHeader() {
+	public static Map<String, Double> getMaxValues(String stopwatchParent) {
+		Simon parent = SimonManager.getSimon(stopwatchParent);
+
+		List<Simon> children = new ArrayList<Simon>();
+		getChildren(parent, children);
+
+		Map<String, Double> entries = new HashMap<String, Double>();
+		for (Simon child : children) {
+			entries.put(child.getName(), getMaxInSeconds((Stopwatch) child));
+		}
+
+		return entries;
+	}
+
+	// private methods
+
+	/**
+	 * Traverse the list and get the list of children under the parent.
+	 * 
+	 * @param currentParent
+	 * @param childNames
+	 */
+	private static void getChildren(Simon parent, List<Simon> children) {
+		List<Simon> currentChildren = parent.getChildren();
+
+		for (int j = 0; j < currentChildren.size(); j++) {
+			// If you have children you don't get added.
+			if (currentChildren.get(j).getChildren().size() == 0) {
+				children.add(currentChildren.get(j));
+			}
+			// Traverse the list until there aren't any more.
+			if (currentChildren.get(j).getChildren() != null)
+				getChildren(currentChildren.get(j), children);
+		}
+	}
+
+	private static String[] getHeader() {
 		List<String> header = new ArrayList<String>();
 		header.add("name");
 		header.add("total");
@@ -92,21 +128,7 @@ public class StopwatchUtil {
 		return statsArray;
 	}
 
-	public static Map<String, Double> getMaxValues(String stopwatchParent) {
-		Simon parent = SimonManager.getSimon(stopwatchParent);
-		List<Simon> children = parent.getChildren();
-
-		Map<String, Double> entries = new HashMap<String, Double>();
-		for (Simon firstLevel : children) {
-			List<Simon> secondLevel = firstLevel.getChildren();
-			for (Simon child : secondLevel) {
-				entries.put(child.getName(), getMaxInSeconds((Stopwatch) child));
-			}
-		}
-		return entries;
-	}
-
-	public static String[] getChildStatistics(Simon child) {
+	private static String[] getChildStatistics(Simon child) {
 		List<String> stats = new ArrayList<String>();
 		stats.add(child.getName());
 		stats.add(getTotal((Stopwatch) child));

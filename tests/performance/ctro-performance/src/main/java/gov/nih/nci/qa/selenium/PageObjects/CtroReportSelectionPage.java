@@ -86,8 +86,7 @@ public class CtroReportSelectionPage extends
 
 	@Override
 	protected void load() {
-		Split split = SplitUtil.getTestSplit(SplitUtil.PAGE_LOAD_CATEGORY,
-				"CtroReportSelectionPage");
+		Split split = SplitUtil.getNavigationSplit("CtroReportSelectionPage");
 		DisclaimerPage disclaimerPage = new DisclaimerPage(webDriver).get();
 		disclaimerPage.acceptDisclaimer();
 		split.stop();

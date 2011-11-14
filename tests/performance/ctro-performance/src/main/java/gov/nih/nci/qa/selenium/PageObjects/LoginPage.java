@@ -100,8 +100,7 @@ public class LoginPage extends LoadableComponent<LoginPage> {
 
 	@Override
 	protected void load() {
-		Split split = SplitUtil.getTestSplit(SplitUtil.PAGE_LOAD_CATEGORY,
-				"LoginPage");
+		Split split = SplitUtil.getNavigationSplit("LoginPage");
 		HomePage homePage = new HomePage(webDriver).get();
 		homePage.clickLogInLink();
 		split.stop();

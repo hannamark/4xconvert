@@ -228,7 +228,7 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 
 	@Override
 	protected void load() {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage", "load");
+		Split split = SplitUtil.getNavigationSplit("AdHocReportPage");
 		CtroReportSelectionPage ctroReportSelectionPage = new CtroReportSelectionPage(
 				webDriver).get();
 		ctroReportSelectionPage.clickAdHocLink();

@@ -14,8 +14,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.junit.Rule;
-import org.junit.rules.TestName;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
@@ -28,10 +26,7 @@ import cucumber.annotation.en.When;
 
 public class CucumberAdHocReportSteps {
 
-	@Rule
-	public TestName testName = new TestName();
-
-	private WebDriver webDriver;
+	private static WebDriver webDriver;
 	private AdHocReportPage adHocReportPage;
 	private AdHocReportTable adHocReportTable;
 
@@ -56,6 +51,15 @@ public class CucumberAdHocReportSteps {
 	public void selectPrimaryPurposeOfTreatment(String purpose) {
 		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
 		builder.setPrimaryPurposeDropDown(purpose);
+		ClinicalTrialRegistrationDetailsParam parameters = builder
+				.getParameters();
+		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
+	}
+
+	@Given("^I select a lead organization of (.*)$")
+	public void selectLeadOrganization(String organization) {
+		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
+		builder.setLeadOrganizationDropDown(organization);
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
@@ -96,20 +100,20 @@ public class CucumberAdHocReportSteps {
 		adHocReportTable = adHocReportPage.clickRunReportButton();
 	}
 
-	@And("^the program shall respond in less than (.*) seconds$")
+	@And("^no interface command shall take more than (.*) seconds$")
 	public void assertPerformance(String seconds) {
-		// Output to a report.
-		Map<String, Double> maxValues = StopwatchUtil.getMaxValues(SplitUtil
-				.getRootName());
+		Map<String, Double> maxValues = StopwatchUtil
+				.getMaxValues(SplitUtil.PAGE_CATEGORY);
 
 		Set<Entry<String, Double>> entrySet = maxValues.entrySet();
 		Iterator<Entry<String, Double>> it = entrySet.iterator();
 		while (it.hasNext()) {
 			Entry<String, Double> me = it.next();
-			System.out.println(me.getKey() + "=" + me.getValue());
 			Double lessThanMe = Double.valueOf(seconds);
-			assertTrue(me.getKey() + " was not less than " + lessThanMe
-					+ " seconds.", (lessThanMe > me.getValue()));
+			assertTrue(me.getKey() + " took " + me.getValue()
+					+ " which is not less than " + lessThanMe + " second(s).",
+					(lessThanMe > me.getValue()));
 		}
 	}
+
 }

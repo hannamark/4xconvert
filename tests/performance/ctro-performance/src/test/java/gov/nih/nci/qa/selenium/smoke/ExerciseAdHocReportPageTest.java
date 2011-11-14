@@ -61,7 +61,7 @@ public class ExerciseAdHocReportPageTest {
 		testCaseSplit.stop();
 
 		// Output to a report.
-		StopwatchUtil.printReport("parent");
+		StopwatchUtil.printCompleteReport();
 	}
 
 	@Test

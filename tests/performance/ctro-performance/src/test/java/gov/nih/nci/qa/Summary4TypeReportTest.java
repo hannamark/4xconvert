@@ -62,7 +62,7 @@ public class Summary4TypeReportTest {
 		testCaseSplit.stop();
 
 		// Output to a report.
-		StopwatchUtil.printReport("parent");
+		StopwatchUtil.printCompleteReport();
 	}
 
 	@Test

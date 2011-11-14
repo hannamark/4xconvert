@@ -6,44 +6,81 @@ import org.javasimon.Split;
 
 public class SplitUtil {
 
-	private static final String ROOT_NAME = "root";
-	public static final String PAGE_LOAD_CATEGORY = "navigation";
+	public static final String ROOT_NAME = "root";
 
-	public static String getRootName() {
-		return ROOT_NAME;
-	}
+	/**
+	 * Used to store timings such as loading and navigation.
+	 */
+	public static final String NAVIGATION_CATEGORY = ROOT_NAME
+			+ Manager.HIERARCHY_DELIMITER + "navigation";
 
+	/**
+	 * Used to store timings related to page operations such as clicking.
+	 */
+	public static final String PAGE_CATEGORY = ROOT_NAME
+			+ Manager.HIERARCHY_DELIMITER + "page";
+
+	/**
+	 * Used to store timings related to overall test methods.
+	 */
+	public static final String TEST_CATEGORY = ROOT_NAME
+			+ Manager.HIERARCHY_DELIMITER + "test";
+
+	/**
+	 * Used to store timings related to browser startup and shutdown.
+	 */
+	public static final String BROWSER_CATEGORY = ROOT_NAME
+			+ Manager.HIERARCHY_DELIMITER + "browser";
+
+	/**
+	 * Use this to for reporting elements on pages.
+	 * 
+	 * @param pageObjectName
+	 * @param pageElementName
+	 * @return
+	 */
 	public static Split getPageElementSplit(String pageObjectName,
 			String pageElementName) {
 		return SimonManager.getStopwatch(
-				ROOT_NAME + Manager.HIERARCHY_DELIMITER + pageObjectName
+				PAGE_CATEGORY + Manager.HIERARCHY_DELIMITER + pageObjectName
 						+ Manager.HIERARCHY_DELIMITER + pageElementName)
 				.start();
 	}
 
+	/**
+	 * Use this for reporting tests.
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public static Split getTestSplit(String name) {
 		return SimonManager.getStopwatch(
-				ROOT_NAME + Manager.HIERARCHY_DELIMITER + "test"
-						+ Manager.HIERARCHY_DELIMITER + name).start();
+				TEST_CATEGORY + Manager.HIERARCHY_DELIMITER + name).start();
 	}
 
-	public static Split getTestSplit(String root, String name) {
+	/**
+	 * Use this for navigation.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public static Split getNavigationSplit(String name) {
 		return SimonManager.getStopwatch(
-				root + Manager.HIERARCHY_DELIMITER + "test"
-						+ Manager.HIERARCHY_DELIMITER + name).start();
+				NAVIGATION_CATEGORY + Manager.HIERARCHY_DELIMITER + name)
+				.start();
 	}
 
 	public static Split getBrowserStartSplit() {
 		Split split = SimonManager.getStopwatch(
-				ROOT_NAME + Manager.HIERARCHY_DELIMITER + "Browser"
-						+ Manager.HIERARCHY_DELIMITER + "startup").start();
+				BROWSER_CATEGORY + Manager.HIERARCHY_DELIMITER + "startup")
+				.start();
 		return split;
 	}
 
 	public static Split getBrowserShutdownSplit() {
 		Split split = SimonManager.getStopwatch(
-				ROOT_NAME + Manager.HIERARCHY_DELIMITER + "Browser"
-						+ Manager.HIERARCHY_DELIMITER + "shutdown").start();
+				BROWSER_CATEGORY + Manager.HIERARCHY_DELIMITER + "shutdown")
+				.start();
 		return split;
 	}
 

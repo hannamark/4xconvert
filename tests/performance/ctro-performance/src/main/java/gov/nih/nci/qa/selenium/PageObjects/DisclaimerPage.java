@@ -61,8 +61,7 @@ public class DisclaimerPage extends LoadableComponent<DisclaimerPage> {
 
 	@Override
 	protected void load() {
-		Split split = SplitUtil.getTestSplit(SplitUtil.PAGE_LOAD_CATEGORY,
-				"DisclaimerPage");
+		Split split = SplitUtil.getNavigationSplit("DisclaimerPage");
 		LoginPage loginPage = new LoginPage(webDriver).get();
 		loginPage.loginAs("abstractor", "Coppa#12345", "Training");
 		split.stop();

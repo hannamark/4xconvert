@@ -58,7 +58,7 @@ public class ExerciseSummary4TypeReportPageTest {
 		testCaseSplit.stop();
 
 		// Output to a report.
-		StopwatchUtil.printReport("parent");
+		StopwatchUtil.printCompleteReport();
 	}
 
 	@Test

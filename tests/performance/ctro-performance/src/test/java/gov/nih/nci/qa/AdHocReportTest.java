@@ -62,7 +62,7 @@ public class AdHocReportTest {
 		testCaseSplit.stop();
 
 		// Output to a report.
-		StopwatchUtil.printReport(SplitUtil.getRootName());
+		StopwatchUtil.printCompleteReport();
 	}
 
 	@Test

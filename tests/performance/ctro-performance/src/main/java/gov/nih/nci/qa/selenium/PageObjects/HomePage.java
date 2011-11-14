@@ -36,14 +36,12 @@ public class HomePage extends LoadableComponent<HomePage> {
 
 	@Override
 	protected void load() {
-		Split split = SplitUtil.getTestSplit(SplitUtil.PAGE_LOAD_CATEGORY,
-				"HomePage");
+		Split split = SplitUtil.getNavigationSplit("HomePage");
 		// TODO this probably belongs somewhere nicer.
 		String filename = "config.properties";
 		Properties properties = new Properties();
 		try {
 			properties.load(new FileInputStream(filename));
-
 		} catch (IOException e) {
 			System.out.println("Couldn't read the file [" + filename + "].");
 			e.printStackTrace();
