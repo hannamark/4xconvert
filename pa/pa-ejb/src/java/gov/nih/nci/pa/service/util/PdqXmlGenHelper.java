@@ -139,11 +139,11 @@ public class PdqXmlGenHelper {
         throws PAException {
         ResearchOrganization paRo = corrUtils.getStructuralRoleByIi(paRoIi);
         Ii poRoIi = IiConverter.convertToPoResearchOrganizationIi(paRo.getIdentifier());
-        ResearchOrganizationDTO roDTO;
+        ResearchOrganizationDTO roDTO = null;
         try {
             roDTO = PoRegistry.getResearchOrganizationCorrelationService().getCorrelation(poRoIi);
         } catch (NullifiedRoleException e) {
-            throw new PAException("Nullified Exception for RO.Ii = " + poRoIi, e);
+            throwNullifiedException(e, poRoIi);
         }
         return roDTO;
     }
@@ -159,11 +159,11 @@ public class PdqXmlGenHelper {
         throws PAException {
         HealthCareFacility paHcf = corrUtils.getStructuralRoleByIi(paHcfIi);
         Ii poHcfIi = IiConverter.convertToPoHealthCareFacilityIi(paHcf.getIdentifier());
-        HealthCareFacilityDTO hcfDTO;
+        HealthCareFacilityDTO hcfDTO = null;
         try {
             hcfDTO = PoRegistry.getHealthCareFacilityCorrelationService().getCorrelation(poHcfIi);
         } catch (NullifiedRoleException e) {
-            throw new PAException("Nullified Exception for HCF.Ii = " + poHcfIi, e);
+            throwNullifiedException(e, poHcfIi);
         }
         return hcfDTO;
     }
@@ -179,11 +179,11 @@ public class PdqXmlGenHelper {
     throws PAException {
         Organization paOrg = corrUtils.getPAOrganizationByIi(paOrgIi);
         Ii poOrgIi = IiConverter.convertToPoOrganizationIi(paOrg.getIdentifier());
-        OrganizationDTO orgDTO;
+        OrganizationDTO orgDTO = null;
         try {
             orgDTO = PoRegistry.getOrganizationEntityService().getOrganization(poOrgIi);
         } catch (NullifiedEntityException e) {
-            throw new PAException("Nullified Exception for Org.Ii = " + poOrgIi, e);
+            throwNullifiedException(e, poOrgIi);
         }
         return orgDTO;
     }
@@ -199,11 +199,11 @@ public class PdqXmlGenHelper {
     throws PAException {
         OrganizationalContact paOc = corrUtils.getStructuralRoleByIi(paOcIi);
         Ii poOcIi = IiConverter.convertToPoOrganizationalContactIi(paOc.getIdentifier());
-        OrganizationalContactDTO ocDTO;
+        OrganizationalContactDTO ocDTO = null;
         try {
             ocDTO = PoRegistry.getOrganizationalContactCorrelationService().getCorrelation(poOcIi);
         } catch (NullifiedRoleException e) {
-            throw new PAException("Nullified Exception for OC.Ii = " + poOcIi, e);
+            throwNullifiedException(e, poOcIi);
         }
         return ocDTO;
     }
@@ -397,6 +397,16 @@ public class PdqXmlGenHelper {
         if (!StringUtils.isEmpty(childName)) {
            BaseXmlGenHelper.appendElement(root, child);
         }
+    }
+
+    private static void throwNullifiedException(Exception e, Ii ii) throws PAException {
+        StringBuilder message = new StringBuilder("Nullified Exception for Ii = ");
+        if (ii != null) {
+            message.append(ii.getRoot());
+            message.append(" - ");
+            message.append(ii.getExtension());
+        }
+        throw new PAException(message.toString(), e);
     }
 
     /**

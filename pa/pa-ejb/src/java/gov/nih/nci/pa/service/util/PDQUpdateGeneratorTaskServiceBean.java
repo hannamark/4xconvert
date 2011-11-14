@@ -91,6 +91,7 @@ import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
@@ -204,7 +205,12 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
     public List<String> getListOfFileNames() throws PAException {
         List<String> listOfFileNames = new ArrayList<String>();
         File folder = new File(PaEarPropertyReader.getPDQUploadPath());
-        File[] listOfFiles = folder.listFiles();
+        File[] listOfFiles = folder.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.startsWith("CTRP") && name.endsWith(".zip");
+            }
+        });
         for (int i = 0; i < listOfFiles.length; i++) {
             listOfFileNames.add(listOfFiles[i].getName());
         }
