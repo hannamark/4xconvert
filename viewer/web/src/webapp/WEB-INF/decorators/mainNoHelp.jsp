@@ -8,30 +8,27 @@
     <title><decorator:title default="NCI CTRP Viewer"/></title>    
     <%@ include file="/WEB-INF/jsp/common/includecss.jsp" %>
     <%@ include file="/WEB-INF/jsp/common/includejs.jsp" %>
-    <!-- Version: ${initParam["appTagVersion"]}, revision: ${initParam["appTagRevision"]} -->
+    <script>
+        (function($) {
+            $(function() {
+            $('#mainmenu').buttonset().ptMenu().show();        
+            });
+            })(jQuery);
+     </script>  
     <decorator:head/>
 </head>
-<style type="text/css">
-   BODY { width:1221px }
-</style>
 <body>
 <a href="#content" id="navskip">Skip to Page Content</a> 
 <div id="wrapper">
     <jsp:include page="/WEB-INF/jsp/common/nciheader.jsp"/>
     <jsp:include page="/WEB-INF/jsp/common/viewerheader.jsp"/>
-    <div id="main">    
+    <div id="main2">    
        <div id="contentwrapper">
            <div id="content">
                <decorator:body/>
            </div> 
            <div class="clear"></div>
-       </div>
-       <div id="leftnav">
-           <ul class="menu">
-               <jsp:include page="/WEB-INF/jsp/common/viewermenu.jsp"/> 
-               <jsp:include page="/WEB-INF/jsp/common/quicklinks.jsp"/> 
-           </ul>
-       </div> 
+       </div>      
     </div> 
     <div class="clear"><br /></div>
     <jsp:include page="/WEB-INF/jsp/common/footer.jsp"/>

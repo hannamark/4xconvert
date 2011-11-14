@@ -1,5 +1,6 @@
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/jquery-1.7.min.js"/>"></script>
 <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/jquery-ui-1.8.16.custom.min.js"/>"></script>
+<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/jquery.ui.potato.menu.js"/>"></script>
 <script type="text/javascript" language="javascript" >
  jQuery.noConflict();
 </script>

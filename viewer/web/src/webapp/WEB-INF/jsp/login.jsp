@@ -6,7 +6,7 @@
 </head>
 <body><h1>Login</h1>
 <c:set var="topic" scope="request" value="login"/> 
-<div class="box"> 
+<div> 
     <p style="margin:0; padding:0">Please log in to view reports on CTRP trials.</p>
     <form action="j_security_check" method="post" id="loginForm" onsubmit="return validate();">   
 

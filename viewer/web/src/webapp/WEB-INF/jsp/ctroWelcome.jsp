@@ -2,7 +2,7 @@
 <c:set var="topic" scope="request" value="run_reports"/> 
 <body>
     <p class="intro">
-        To view CTRO Reports select from the menu at left.
+        To view CTRO Reports select from the menu.
     </p>
     <p class="intro">
         To learn more about running CTRO Reports view the 

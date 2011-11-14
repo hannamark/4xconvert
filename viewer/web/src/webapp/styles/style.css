@@ -3,7 +3,7 @@
 :root 
 { overflow-y:scroll; }
 BODY, HTML
-{ margin:0; padding:0; font-family:arial,helvetica,sans-serif; color:#000; font-size:85% !important; background:#fff; min-width:920px }
+{ margin:0; padding:0;  font-family:'Helvetica Neue',helvetica,arial,sans-serif; color:#333; font-size:85% !important; background:#fff; min-width:1000px; }
 /* IE6 min-width dynamic expression (hack) */
 * html #wrapper
 { width:expression(document.body.clientWidth <=970 ? "970px" : "100%" ); }
@@ -93,6 +93,38 @@ LEGEND
 { background:url("../images/bg_btn_createacct.gif") no-repeat; padding:3px 12px; font-weight:bold; color:#475b82; text-decoration:none }
 #main
 { float:left; width:100%; height:1%; min-width:770px; max-width:1400px;  }
+
+/* Template Mods */
+
+#main2
+{ background:#fff url("../images/bg_main2.png") repeat-x top; }
+#main2 #contentwrapper, #main2 #contentwrapper #content
+{ width:1000px; float:none; margin:0 auto; }
+#main2 A.helpbutton
+{ color:#333 !important; font-size:90%; }
+
+#main2 #content
+{ border:0; padding:15px 0;  }
+
+#main2 #content H1
+{ background:0; border-bottom:0; border-top:0; color:#404040; font-size:180%; font-weight:bold; margin:0 0 8px 5px; padding:0; }
+
+/*
+
+#main2 #content
+{ font-size:110%; border:0; padding:15px 0;  }
+#main2 #content H1
+{ background:0; border-bottom:0; border-top:0; color:#404040; font-size:180%; font-weight:bold; margin:0 0 8px 5px; padding:0; }
+#main2 #content H2
+{ background:transparent; color:#333; font-size:130%; font-weight:bold; padding:0; text-shadow:#fff 1px 1px 0; }
+#main2 #content H2 A
+{ color:#404040; text-decoration:none; display:block; padding:10px 10px 7px 10px; }
+#main2 #content H2 A:hover
+{ color:#000; }
+#main2 #content H2 A IMG
+{ padding-right:6px; width:18px; height:18px; } */
+
+
 #leftnav
 { float:left; width:190px; margin:0 0 10px -100%; font-size:92%;  }
 #contentwrapper
@@ -630,5 +662,20 @@ div.autocomplete ul li {
   overflow: hidden;
 }
 
+/* Navigation */
 
+#nav
+{ display:block; width:100%; background:#fff url("../images/nav_gradient.gif") repeat-x 0 -3px; border-top:1px solid #6f86b0; border-bottom:1px solid #263146; -moz-box-shadow:0 0 5px rgba(0,0,0,0.5); -webkit-box-shadow:0 0 5px rgba(0,0,0,0.5); }
+ #nav UL
+{ list-style-type:none; margin:0; padding:0; }
 
+#nav UL LI
+{ float:left; border-right:5px solid #6f86b0;}
+
+#nav UL LI A
+{display:block; color:#fff; background:#36445e url("../images/nav_gradient.gif"); font-weight:bold; text-decoration:none; border-top:0px; border-left:0px; border-bottom:0px;  border-right:1px solid #263146;  text-shadow:#333 -1px -1px 0;   }
+/*{ display:block; color:#fff; font-weight:bold; font-size:120%; text-decoration:none; border-right:1px solid #263146; padding:6px 19px; text-shadow:#333 -1px -1px 0;}*/
+#nav UL LI A:hover
+{ background:#263146; }
+#header
+{ height:83px; }
