@@ -37,10 +37,13 @@ public class PageUtil {
 
 	public static void setDateInterval(WebElement startElement,
 			String startDate, WebElement endElement, String endDate) {
-		startElement.clear();
-		startElement.sendKeys(startDate);
-		endElement.clear();
-		endElement.sendKeys(endDate);
+		setDate(startElement, startDate);
+		setDate(endElement, endDate);
+	}
+
+	public static void setDate(WebElement dateElement, String date) {
+		dateElement.clear();
+		dateElement.sendKeys(date);
 	}
 
 	public static void setCheckbox(WebElement webElement, boolean select) {

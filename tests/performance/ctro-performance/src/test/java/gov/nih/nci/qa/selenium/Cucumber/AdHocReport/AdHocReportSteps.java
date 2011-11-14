@@ -88,10 +88,9 @@ public class AdHocReportSteps {
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
 	}
 
-	@Then("^a report will be displayed with (.*) results$")
-	public void assertResultsTotal(String expected) {
-		int intValue = Integer.valueOf(expected).intValue();
-		assertEquals("Result total doesn't match!", intValue,
+	@Then("^a report will be displayed with (\\d+) results$")
+	public void assertResultsTotal(int expected) {
+		assertEquals("Result total doesn't match!", expected,
 				adHocReportTable.getResultCount());
 	}
 
@@ -100,8 +99,8 @@ public class AdHocReportSteps {
 		adHocReportTable = adHocReportPage.clickRunReportButton();
 	}
 
-	@And("^no interface command shall take more than (.*) seconds$")
-	public void assertPerformance(String seconds) {
+	@And("^no interface command shall take more than (\\d+) seconds$")
+	public void assertPerformance(int seconds) {
 		Map<String, Double> maxValues = StopwatchUtil
 				.getMaxValues(SplitUtil.PAGE_CATEGORY);
 

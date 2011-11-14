@@ -65,9 +65,22 @@ public class Summary4TypeReportPage extends
 	public void setDateRange(String startDate, String endDate) {
 		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
 				"setDateRange");
-
 		PageUtil.setDateInterval(intervalStartDate, startDate, intervalEndDate,
 				endDate);
+		split.stop();
+	}
+
+	public void setStartDate(String startDate) {
+		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
+				"setStartDate");
+		PageUtil.setDate(intervalStartDate, startDate);
+		split.stop();
+	}
+
+	public void setEndDate(String endDate) {
+		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
+				"setEndDate");
+		PageUtil.setDate(intervalEndDate, endDate);
 		split.stop();
 	}
 
