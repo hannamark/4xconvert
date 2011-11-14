@@ -99,7 +99,7 @@ LEGEND
 #main2
 { background:#fff url("../images/bg_main2.png") repeat-x top; }
 #main2 #contentwrapper, #main2 #contentwrapper #content
-{ width:1000px; float:none; margin:0 auto; }
+{ min-width:1000px; float:none; overflow:auto; }
 #main2 A.helpbutton
 { color:#333 !important; font-size:90%; }
 
@@ -109,6 +109,8 @@ LEGEND
 #main2 #content H1
 { background:0; border-bottom:0; border-top:0; color:#404040; font-size:180%; font-weight:bold; margin:0 0 8px 5px; padding:0; }
 
+#overflow-div
+{ overflow:auto;  }
 /*
 
 #main2 #content
@@ -130,7 +132,7 @@ LEGEND
 #contentwrapper
 { float:left; width:100%; }
 #content
-{ margin-left:190px; margin-right:10px; padding:0; min-height:200px; height:1%; border:1px solid #cacaca; border-top:0; }
+{ margin-left:50px; margin-right:50px; padding:0; min-height:200px; height:1%; border:1px solid #cacaca; border-top:0; }
 #contenthome
 { margin-left:190px; min-height:330px; border-left:1px solid #fff; border-top:0; padding:0; padding-bottom:40px  }
 
