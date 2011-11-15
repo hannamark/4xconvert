@@ -57,24 +57,24 @@ public class AdHocPageDiseaseLookUp extends
 	}
 
 	public DiseaseLocatorResultsTable clickSearchButton() {
-		Split split = SplitUtil.getPageElementSplit("AdHocPageDiseaseLookUp",
-				"clickSearchButton");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocPageDiseaseLookUp", "clickSearchButton");
 		lookUpButton.click();
 		split.stop();
 		return new DiseaseLocatorResultsTable(webDriver);
 	}
 
 	public AdHocReportPage clickSelectButton() {
-		Split split = SplitUtil.getPageElementSplit("AdHocPageDiseaseLookUp",
-				"clickSelectButton");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocPageDiseaseLookUp", "clickSelectButton");
 		diseaseLocatorResultsTable.clickSelectButton();
 		split.stop();
 		return new AdHocReportPage(webDriver);
 	}
 
 	public AdHocReportPage clickCloseButton() {
-		Split split = SplitUtil.getPageElementSplit("AdHocPageDiseaseLookUp",
-				"clickCloseButton");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocPageDiseaseLookUp", "clickCloseButton");
 		closeButton.click();
 		split.stop();
 		return new AdHocReportPage(webDriver);

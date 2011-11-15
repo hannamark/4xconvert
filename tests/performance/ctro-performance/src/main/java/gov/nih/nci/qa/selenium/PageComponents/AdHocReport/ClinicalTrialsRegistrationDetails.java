@@ -107,87 +107,87 @@ public class ClinicalTrialsRegistrationDetails {
 	}
 
 	private void setOfficialTitle(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setOfficialTitle");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setOfficialTitle");
 		officialTitleTextBox.clear();
 		officialTitleTextBox.sendKeys(keysToSend);
 		split.stop();
 	}
 
 	private void setPrimaryPurpose(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setPrimaryPurpose");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setPrimaryPurpose");
 		PageUtil.setDropDown(primaryPurposeDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setTrialPhase(List<String> selectList) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setTrialPhase");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setTrialPhase");
 		PageUtil.setMultiSelect(trialPhaseMultiSelect, selectList);
 		split.stop();
 	}
 
 	private void setIdentifierType(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setIdentifierType");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setIdentifierType");
 		PageUtil.setDropDown(identifierTypeDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setPrincipalInvestigator(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setPrincipalInvestigator");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setPrincipalInvestigator");
 		PageUtil.setDropDown(principalInvestigatorDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setProcessingStatus(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setProcessingStatus");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setProcessingStatus");
 		PageUtil.setDropDown(processingStatusDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setCurrentTrialStatus(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setCurrentTrialStatus");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setCurrentTrialStatus");
 		PageUtil.setDropDown(currentTrialStatusDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setLeadOrganization(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setLeadOrganization");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setLeadOrganization");
 		PageUtil.setDropDown(leadOrganizationDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setIdentifier(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setIdentifier");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setIdentifier");
 		identifierTextBox.clear();
 		identifierTextBox.sendKeys(keysToSend);
 		split.stop();
 	}
 
 	private void setSearchBySubmissionType(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setSearchBySubmissionType");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setSearchBySubmissionType");
 		PageUtil.setDropDown(searchBySubmissionTypeDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setSearchByTrialCategory(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setSearchByTrialCategory");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setSearchByTrialCategory");
 		PageUtil.setDropDown(searchByTrialCategoryDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setMilestone(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setMilestone");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setMilestone");
 		PageUtil.setDropDown(milestoneDropDown, keysToSend);
 		split.stop();
 	}

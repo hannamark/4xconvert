@@ -3,6 +3,8 @@ package gov.nih.nci.qa.selenium.util;
 import org.javasimon.Manager;
 import org.javasimon.SimonManager;
 import org.javasimon.Split;
+import org.javasimon.Stopwatch;
+import org.openqa.selenium.WebDriver;
 
 public class SplitUtil {
 
@@ -19,6 +21,12 @@ public class SplitUtil {
 	 */
 	public static final String PAGE_CATEGORY = ROOT_NAME
 			+ Manager.HIERARCHY_DELIMITER + "page";
+
+	/**
+	 * Used to store timings related to page operations such as clicking.
+	 */
+	public static final String REVISION_CATEGORY = ROOT_NAME
+			+ Manager.HIERARCHY_DELIMITER + "revision";
 
 	/**
 	 * Used to store timings related to overall test methods.
@@ -39,12 +47,13 @@ public class SplitUtil {
 	 * @param pageElementName
 	 * @return
 	 */
-	public static Split getPageElementSplit(String pageObjectName,
-			String pageElementName) {
-		return SimonManager.getStopwatch(
-				PAGE_CATEGORY + Manager.HIERARCHY_DELIMITER + pageObjectName
-						+ Manager.HIERARCHY_DELIMITER + pageElementName)
-				.start();
+	public static Split getPageElementSplit(WebDriver webDriver,
+			String pageObjectName, String pageElementName) {
+		Stopwatch stopwatch = SimonManager.getStopwatch(PAGE_CATEGORY
+				+ Manager.HIERARCHY_DELIMITER + pageObjectName
+				+ Manager.HIERARCHY_DELIMITER + pageElementName);
+		stopwatch.setNote(webDriver.getCurrentUrl());
+		return stopwatch.start();
 	}
 
 	/**
@@ -82,6 +91,13 @@ public class SplitUtil {
 				BROWSER_CATEGORY + Manager.HIERARCHY_DELIMITER + "shutdown")
 				.start();
 		return split;
+	}
+
+	public static Split getRevisionSplit(String number) {
+		Stopwatch stopwatch = SimonManager.getStopwatch(REVISION_CATEGORY
+				+ Manager.HIERARCHY_DELIMITER + "viewer");
+		stopwatch.setNote(number);
+		return stopwatch.start();
 	}
 
 }

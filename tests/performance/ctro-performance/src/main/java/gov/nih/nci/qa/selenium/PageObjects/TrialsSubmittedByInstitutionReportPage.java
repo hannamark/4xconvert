@@ -63,7 +63,7 @@ public class TrialsSubmittedByInstitutionReportPage extends
 	}
 
 	public TrialsSubmittedByInstitutionReportPage clickResetButton() {
-		Split split = SplitUtil.getPageElementSplit(
+		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"TrialsSubmittedByInstitutionReportPage", "clickResetButton");
 		// Change to the report filters tab first.
 		reportFilterTab.click();
@@ -73,7 +73,7 @@ public class TrialsSubmittedByInstitutionReportPage extends
 	}
 
 	public TrialsSubmittedByInstitutionResultsTable clickRunReportButton() {
-		Split split = SplitUtil.getPageElementSplit(
+		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"TrialsSubmittedByInstitutionReportPage",
 				"clickRunReportButton");
 		// Change to the report filters tab first.
@@ -95,7 +95,7 @@ public class TrialsSubmittedByInstitutionReportPage extends
 
 	@Override
 	protected void load() {
-		Split split = SplitUtil.getPageElementSplit(
+		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"TrialsSubmittedByInstitutionReportPage", "load");
 		CtroReportSelectionPage ctroReportSelectionPage = new CtroReportSelectionPage(
 				webDriver).get();
@@ -105,28 +105,28 @@ public class TrialsSubmittedByInstitutionReportPage extends
 
 	// privates
 	private void setSubmissionType(String type) {
-		Split split = SplitUtil.getPageElementSplit(
+		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"TrialsSubmittedByInstitutionReportPage", "setSubmissionType");
 		PageUtil.setDropDown(submissionTypeDropDown, type);
 		split.stop();
 	}
 
 	private void setIncludeTrials(boolean includeTrials) {
-		Split split = SplitUtil.getPageElementSplit(
+		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"TrialsSubmittedByInstitutionReportPage", "setIncludeTrials");
 		PageUtil.setCheckbox(includeTrialsCheckbox, includeTrials);
 		split.stop();
 	}
 
 	private void setInstitutions(List<String> selections) {
-		Split split = SplitUtil.getPageElementSplit(
+		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"TrialsSubmittedByInstitutionReportPage", "setInstitutions");
 		PageUtil.setMultiSelect(institutionsMultiSelect, selections);
 		split.stop();
 	}
 
 	private void setDateRange(String startDate, String endDate) {
-		Split split = SplitUtil.getPageElementSplit(
+		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"TrialsSubmittedByInstitutionReportPage", "setDateRange");
 		PageUtil.setDateInterval(intervalStartDate, startDate, intervalEndDate,
 				endDate);

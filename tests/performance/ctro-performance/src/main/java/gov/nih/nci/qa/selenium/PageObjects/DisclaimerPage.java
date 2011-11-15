@@ -28,16 +28,16 @@ public class DisclaimerPage extends LoadableComponent<DisclaimerPage> {
 	}
 
 	public HomePage rejectDisclaimer() {
-		Split split = SplitUtil.getPageElementSplit("DisclaimerPage",
-				"rejectDisclaimer");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"DisclaimerPage", "rejectDisclaimer");
 		rejectDisclaimerButton.click();
 		split.stop();
 		return new HomePage(webDriver);
 	}
 
 	public CtroReportSelectionPage acceptDisclaimer() {
-		Split split = SplitUtil.getPageElementSplit("DisclaimerPage",
-				"acceptDisclaimer");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"DisclaimerPage", "acceptDisclaimer");
 		acceptDisclaimerButton.click();
 		split.stop();
 		return new CtroReportSelectionPage(webDriver);

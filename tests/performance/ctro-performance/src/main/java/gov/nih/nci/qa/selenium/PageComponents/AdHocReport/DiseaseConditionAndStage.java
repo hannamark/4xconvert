@@ -29,8 +29,8 @@ public class DiseaseConditionAndStage {
 	}
 
 	public AdHocPageDiseaseLookUp clickLookUpButton() {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"clickLookUpButton");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "clickLookUpButton");
 		lookUpButton.click();
 		split.stop();
 		return new AdHocPageDiseaseLookUp(webDriver);
@@ -38,8 +38,8 @@ public class DiseaseConditionAndStage {
 
 	public void setDiseaseCondition(String keysToSend, Boolean includeSynonym,
 			Boolean exactMatchOnly) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setDiseaseCondition");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setDiseaseCondition");
 		AdHocPageDiseaseLookUp adHocPageDiseaseLookUp = clickLookUpButton();
 
 		waitForPopupToAppear();
@@ -61,8 +61,8 @@ public class DiseaseConditionAndStage {
 	}
 
 	private void waitForLoadingToFinish() {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"waitForLoadingToFinish");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "waitForLoadingToFinish");
 		WebElement diseaseAccordion = webDriver.findElement(By
 				.id("diseasesSection"));
 		// If it contains "Loading..." look again.
@@ -78,8 +78,8 @@ public class DiseaseConditionAndStage {
 	}
 
 	private void waitForPopupToAppear() {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"waitForFrameToAppear");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "waitForFrameToAppear");
 
 		(new WebDriverWait(webDriver, 15))
 				.until(new ExpectedCondition<Boolean>() {

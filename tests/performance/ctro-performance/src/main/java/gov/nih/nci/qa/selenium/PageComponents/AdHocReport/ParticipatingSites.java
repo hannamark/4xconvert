@@ -23,8 +23,8 @@ public class ParticipatingSites {
 	}
 
 	public void setParticipatingSites(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setParticipatingSites");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setParticipatingSites");
 		PageUtil.setDropDown(partipatingSiteDropDown, keysToSend);
 		split.stop();
 	}

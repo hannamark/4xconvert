@@ -38,22 +38,22 @@ public class TrialGeographicArea {
 	}
 
 	private void setCountry(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setCountry");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setCountry");
 		PageUtil.setDropDown(countryDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setState(List<String> selectList) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setState");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setState");
 		PageUtil.setMultiSelect(statesMultiSelect, selectList);
 		split.stop();
 	}
 
 	private void setCity(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setCity");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setCity");
 		cityTextBox.sendKeys(keysToSend);
 		split.stop();
 	}

@@ -111,8 +111,8 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 	}
 
 	public AdHocReportTable clickRunReportButton() {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"clickRunReportButton");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "clickRunReportButton");
 		// Make certain we're on the report filters tab. The reset button
 		// doesn't exist on the results tab.
 		reportFiltersTab.click();
@@ -122,8 +122,8 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 	}
 
 	public AdHocReportPage clickResetButton() {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"clickResetButton");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "clickResetButton");
 		// Make certain we're on the report filters tab. The reset button
 		// doesn't exist on the results tab.
 		reportFiltersTab.click();
@@ -159,56 +159,56 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 
 	// private methods
 	private ClinicalTrialsRegistrationDetails clickClinicalTrialRegistrationDetails() {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"clickClinicalTrialRegistrationDetails");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "clickClinicalTrialRegistrationDetails");
 		clinicalTrialRegistrationDetailsLink.click();
 		split.stop();
 		return new ClinicalTrialsRegistrationDetails(webDriver);
 	}
 
 	private DiseaseConditionAndStage clickDiseaseAndStage() {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"clickDiseaseAndStage");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "clickDiseaseAndStage");
 		diseaseConditionAndStageLink.click();
 		split.stop();
 		return new DiseaseConditionAndStage(webDriver);
 	}
 
 	private Interventions clickInterventions() {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"clickInterventions");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "clickInterventions");
 		interventionsLink.click();
 		split.stop();
 		return new Interventions(webDriver);
 	}
 
 	private ParticipatingSites clickParticipatingSites() {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"clickParticipatingSites");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "clickParticipatingSites");
 		participatingSitesLink.click();
 		split.stop();
 		return new ParticipatingSites(webDriver);
 	}
 
 	private TrialGeographicArea clickTrialGeographicArea() {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"clickTrialGeographicArea");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "clickTrialGeographicArea");
 		trialGeographicAreaLink.click();
 		split.stop();
 		return new TrialGeographicArea(webDriver);
 	}
 
 	private Biomarkers clickBiomarkers() {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"clickBiomarkers");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "clickBiomarkers");
 		biomarkersLink.click();
 		split.stop();
 		return new Biomarkers(webDriver);
 	}
 
 	private Summary4AnatomicSite clickSummary4AnatomicSite() {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"clickSummary4AnatomicSite");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "clickSummary4AnatomicSite");
 		summary4AnatomicSiteLink.click();
 		split.stop();
 		return new Summary4AnatomicSite(webDriver);

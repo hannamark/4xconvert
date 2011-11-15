@@ -23,8 +23,8 @@ public class Interventions {
 	}
 
 	public void setInterventionType(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setInterventionType");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setInterventionType");
 		PageUtil.setDropDown(interventionTypeDropDown, keysToSend);
 		split.stop();
 	}

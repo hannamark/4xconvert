@@ -2,6 +2,8 @@ package gov.nih.nci.qa.selenium.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -68,5 +70,22 @@ public class PageUtil {
 			optionsText.add(we.getText());
 		}
 		return optionsText;
+	}
+
+	public static String getViewerRevision(String pageSource) {
+		Pattern pattern = Pattern
+				.compile("\\<![ \\r\\n\\t]*(--([^\\-]|[\\r\\n]|-[^\\-])*--[ \\r\\n\\t]*)\\>");
+		Matcher matcher = pattern.matcher(pageSource);
+		String revision = null;
+		while (matcher.find()) {
+			String s = matcher.group();
+			if (s.contains("Version: ") && s.contains("revision")) {
+				revision = s;
+			}
+		}
+		int start = revision.indexOf("Version");
+		int end = revision.indexOf("-->");
+
+		return revision.substring(start, end);
 	}
 }

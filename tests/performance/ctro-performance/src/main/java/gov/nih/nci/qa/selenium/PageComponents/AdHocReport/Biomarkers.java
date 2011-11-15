@@ -25,8 +25,8 @@ public class Biomarkers {
 	}
 
 	public void setBiomarkers(List<String> selectList) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setBiomarkers");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setBiomarkers");
 		PageUtil.setMultiSelect(biomarkerMultiSelect, selectList);
 		split.stop();
 	}

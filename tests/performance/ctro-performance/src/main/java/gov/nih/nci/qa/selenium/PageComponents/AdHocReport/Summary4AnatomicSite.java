@@ -44,22 +44,22 @@ public class Summary4AnatomicSite {
 	}
 
 	private void setSummary4Sponsor(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setSummary4Sponsor");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setSummary4Sponsor");
 		PageUtil.setDropDown(summary4SponsorDropDown, keysToSend);
 		split.stop();
 	}
 
 	private void setSummary4AnatomicSites(List<String> selectList) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setSummary4AnatomicSites");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setSummary4AnatomicSites");
 		PageUtil.setMultiSelect(summary4AnatomicSitesMultiSelect, selectList);
 		split.stop();
 	}
 
 	private void setSummary4FundingCategory(String keysToSend) {
-		Split split = SplitUtil.getPageElementSplit("AdHocReportPage",
-				"setSummary4FundingCategory");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"AdHocReportPage", "setSummary4FundingCategory");
 		PageUtil.setDropDown(summary4FundingCategoryDropDown, keysToSend);
 		split.stop();
 	}

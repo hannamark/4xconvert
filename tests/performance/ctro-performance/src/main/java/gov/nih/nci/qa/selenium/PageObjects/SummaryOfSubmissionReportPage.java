@@ -39,7 +39,7 @@ public class SummaryOfSubmissionReportPage extends
 	private final WebDriver webDriver;
 
 	public SummaryOfSubmissionReportPage clickResetButton() {
-		Split split = SplitUtil.getPageElementSplit(
+		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"SummaryOfSubmissionReportPage", "clickResetButton");
 		// Change to the report filters tab first.
 		reportFiltersTab.click();
@@ -50,7 +50,7 @@ public class SummaryOfSubmissionReportPage extends
 
 	public void setSummaryOfSubmission(String startDate, String endDate,
 			boolean includeTrials) {
-		Split split = SplitUtil.getPageElementSplit(
+		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"SummaryOfSubmissionReportPage", "setSummaryOfSubmission");
 		reportFiltersTab.click();
 		setDateRange(startDate, endDate);
@@ -59,7 +59,7 @@ public class SummaryOfSubmissionReportPage extends
 	}
 
 	public SummaryOfSubmissionResultsTable clickRunReportButton() {
-		Split split = SplitUtil.getPageElementSplit(
+		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"SummaryOfSubmissionReportPage", "clickRunReportButton");
 		// Change to the report filters tab first.
 		reportFiltersTab.click();
@@ -85,7 +85,7 @@ public class SummaryOfSubmissionReportPage extends
 
 	@Override
 	protected void load() {
-		Split split = SplitUtil.getPageElementSplit(
+		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"SummaryOfSubmissionReportPage", "load");
 		CtroReportSelectionPage ctroReportSelectionPage = new CtroReportSelectionPage(
 				webDriver).get();
@@ -96,7 +96,7 @@ public class SummaryOfSubmissionReportPage extends
 	// privates
 
 	private void setDateRange(String startDate, String endDate) {
-		Split split = SplitUtil.getPageElementSplit(
+		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"SummaryOfSubmissionReportPage", "setDateRange");
 		PageUtil.setDateInterval(intervalStartDate, startDate, intervalEndDate,
 				endDate);
@@ -104,7 +104,7 @@ public class SummaryOfSubmissionReportPage extends
 	}
 
 	private void setIncludeTrials(boolean includeTrials) {
-		Split split = SplitUtil.getPageElementSplit(
+		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"SummaryOfSubmissionReportPage", "setIncludeTrials");
 		PageUtil.setCheckbox(includeTrialsCheckbox, includeTrials);
 		split.stop();

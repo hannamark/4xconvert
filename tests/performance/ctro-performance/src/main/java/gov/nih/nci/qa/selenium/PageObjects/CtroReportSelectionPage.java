@@ -36,23 +36,24 @@ public class CtroReportSelectionPage extends
 	}
 
 	public AdHocReportPage clickAdHocLink() {
-		Split split = SplitUtil.getPageElementSplit("CtroReportSelectionPage",
-				"clickAdHocLink");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"CtroReportSelectionPage", "clickAdHocLink");
 		adHocLink.click();
 		split.stop();
 		return new AdHocReportPage(webDriver);
 	}
 
 	public Summary4TypeReportPage clickSummary4TypeLink() {
-		Split split = SplitUtil.getPageElementSplit("CtroReportSelectionPage",
-				"clickSummary4TypeLink");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"CtroReportSelectionPage", "clickSummary4TypeLink");
 		summary4TypeLink.click();
 		split.stop();
 		return new Summary4TypeReportPage(webDriver);
 	}
 
 	public TrialsSubmittedByInstitutionReportPage clickTrialsSubmittedByInstitutionLink() {
-		Split split = SplitUtil.getPageElementSplit("CtroReportSelectionPage",
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"CtroReportSelectionPage",
 				"clickTrialsSubmittedByInstitutionLink");
 		trialsSubmittedByInstitutionLink.click();
 		split.stop();
@@ -60,16 +61,16 @@ public class CtroReportSelectionPage extends
 	}
 
 	public SummaryOfSubmissionReportPage clickSummaryOfSubmissionLink() {
-		Split split = SplitUtil.getPageElementSplit("CtroReportSelectionPage",
-				"clickSummaryOfSubmissionLink");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"CtroReportSelectionPage", "clickSummaryOfSubmissionLink");
 		summaryOfSubmissionLink.click();
 		split.stop();
 		return new SummaryOfSubmissionReportPage(webDriver);
 	}
 
 	public HomePage clickLogOutLink() {
-		Split split = SplitUtil.getPageElementSplit("CtroReportSelectionPage",
-				"clickLogOutLink");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"CtroReportSelectionPage", "clickLogOutLink");
 		logOutLink.click();
 		split.stop();
 		return new HomePage(webDriver);

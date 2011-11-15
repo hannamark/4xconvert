@@ -27,7 +27,7 @@ public class HomePage extends LoadableComponent<HomePage> {
 	}
 
 	public LoginPage clickLogInLink() {
-		Split split = SplitUtil.getPageElementSplit("HomePage",
+		Split split = SplitUtil.getPageElementSplit(webDriver, "HomePage",
 				"clickLogInLink");
 		loginLink.click();
 		split.stop();
@@ -36,7 +36,6 @@ public class HomePage extends LoadableComponent<HomePage> {
 
 	@Override
 	protected void load() {
-		Split split = SplitUtil.getNavigationSplit("HomePage");
 		// TODO this probably belongs somewhere nicer.
 		String filename = "config.properties";
 		Properties properties = new Properties();
@@ -51,7 +50,9 @@ public class HomePage extends LoadableComponent<HomePage> {
 		String host = properties.getProperty("host");
 		String port = properties.getProperty("port");
 		String url = protocol + "://" + host + ":" + port + "/viewer/";
+
 		// TODO sanity check the url.
+		Split split = SplitUtil.getNavigationSplit("HomePage");
 		webDriver.get(url);
 		split.stop();
 	}

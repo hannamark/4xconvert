@@ -37,28 +37,28 @@ public class LoginPage extends LoadableComponent<LoginPage> {
 	}
 
 	public void setLoginField(String username) {
-		Split split = SplitUtil.getPageElementSplit("LoginPage",
+		Split split = SplitUtil.getPageElementSplit(webDriver, "LoginPage",
 				"setLoginField");
 		loginField.sendKeys(username);
 		split.stop();
 	}
 
 	public void setPasswordField(String password) {
-		Split split = SplitUtil.getPageElementSplit("LoginPage",
+		Split split = SplitUtil.getPageElementSplit(webDriver, "LoginPage",
 				"setPasswordField");
 		passwordField.sendKeys(password);
 		split.stop();
 	}
 
 	public void setAccountSource(String accountSource) {
-		Split split = SplitUtil.getPageElementSplit("LoginPage",
+		Split split = SplitUtil.getPageElementSplit(webDriver, "LoginPage",
 				"setAccountSource");
 		PageUtil.setDropDown(accountSourceDropDown, accountSource);
 		split.stop();
 	}
 
 	public DisclaimerPage clickLoginButton() {
-		Split split = SplitUtil.getPageElementSplit("LoginPage",
+		Split split = SplitUtil.getPageElementSplit(webDriver, "LoginPage",
 				"clickLoginButton");
 		loginButton.click();
 		split.stop();
@@ -80,7 +80,8 @@ public class LoginPage extends LoadableComponent<LoginPage> {
 
 	public DisclaimerPage loginAs(String username, String password,
 			String accountSource) {
-		Split split = SplitUtil.getPageElementSplit("LoginPage", "loginAs");
+		Split split = SplitUtil.getPageElementSplit(webDriver, "LoginPage",
+				"loginAs");
 		setLoginField(username);
 		setPasswordField(password);
 		PageUtil.setDropDown(accountSourceDropDown, accountSource);

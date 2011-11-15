@@ -63,53 +63,53 @@ public class Summary4TypeReportPage extends
 	}
 
 	public void setDateRange(String startDate, String endDate) {
-		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
-				"setDateRange");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"Summary4TypeReportPage", "setDateRange");
 		PageUtil.setDateInterval(intervalStartDate, startDate, intervalEndDate,
 				endDate);
 		split.stop();
 	}
 
 	public void setStartDate(String startDate) {
-		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
-				"setStartDate");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"Summary4TypeReportPage", "setStartDate");
 		PageUtil.setDate(intervalStartDate, startDate);
 		split.stop();
 	}
 
 	public void setEndDate(String endDate) {
-		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
-				"setEndDate");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"Summary4TypeReportPage", "setEndDate");
 		PageUtil.setDate(intervalEndDate, endDate);
 		split.stop();
 	}
 
 	public void setFindByOrgName(String orgName) {
-		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
-				"setFindByOrgName");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"Summary4TypeReportPage", "setFindByOrgName");
 		findByOrgNameRadio.click();
 		findByOrgNameField.sendKeys(orgName);
 		split.stop();
 	}
 
 	public void clickFindByOrgNameRadio() {
-		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
-				"setFindByOrgName");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"Summary4TypeReportPage", "setFindByOrgName");
 		findByOrgNameRadio.click();
 		split.stop();
 	}
 
 	public void clickFindByFamilyRadio() {
-		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
-				"clickFindByFamilyRadio");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"Summary4TypeReportPage", "clickFindByFamilyRadio");
 		findByFamilyRadio.click();
 		split.stop();
 
 	}
 
 	public void setFindByFamily(String familyName) {
-		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
-				"setFindByFamily");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"Summary4TypeReportPage", "setFindByFamily");
 		findByFamilyRadio.click();
 		// Special case when the database has no data. There's nothing to select
 		// from the list except for "--Select--". Selenium will present a
@@ -124,16 +124,16 @@ public class Summary4TypeReportPage extends
 	}
 
 	public Summary4TypeReportTable clickRunReportButton() {
-		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
-				"clickRunReportButton");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"Summary4TypeReportPage", "clickRunReportButton");
 		runReportButton.click();
 		split.stop();
 		return new Summary4TypeReportTable(webDriver);
 	}
 
 	public Summary4TypeReportPage clickResetButton() {
-		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
-				"clickResetButton");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"Summary4TypeReportPage", "clickResetButton");
 		resetButton.click();
 		split.stop();
 		return new Summary4TypeReportPage(webDriver);
@@ -144,8 +144,8 @@ public class Summary4TypeReportPage extends
 	}
 
 	public void setSelectAllCheckbox(boolean selectAll) {
-		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
-				"setSelectAllCheckbox");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"Summary4TypeReportPage", "setSelectAllCheckbox");
 		PageUtil.setCheckbox(selectAllCheckbox, selectAll);
 		split.stop();
 	}
@@ -182,8 +182,8 @@ public class Summary4TypeReportPage extends
 	}
 
 	private void waitForLoadingToFinish() {
-		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
-				"waitForLoadingToFinish");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"Summary4TypeReportPage", "waitForLoadingToFinish");
 		// PO-4297
 		// TODO This is GROSS!!! If no diseases families are entered in the
 		// database the Find By Familty drop down doesn’t tell you that “No
@@ -228,8 +228,8 @@ public class Summary4TypeReportPage extends
 
 	@Override
 	protected void load() {
-		Split split = SplitUtil.getPageElementSplit("Summary4TypeReportPage",
-				"load");
+		Split split = SplitUtil.getPageElementSplit(webDriver,
+				"Summary4TypeReportPage", "load");
 		CtroReportSelectionPage ctroReportSelectionPage = new CtroReportSelectionPage(
 				webDriver).get();
 		ctroReportSelectionPage.clickSummary4TypeLink();
