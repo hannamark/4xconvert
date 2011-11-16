@@ -31,4 +31,8 @@ public class Biomarkers {
 		split.stop();
 	}
 
+	public List<String> getBiomarkers() {
+		return PageUtil.getOptions(biomarkerMultiSelect);
+	}
+
 }

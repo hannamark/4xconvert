@@ -42,7 +42,7 @@ public class ClinicalTrialRegistrationDetailsBuilder {
 		this.officialTitleTextBox = officialTitleTextBox;
 	}
 
-	public void setPrimaryPurposeDropDown(String primaryPurposeDropDown) {
+	public void setPrimaryPurpose(String primaryPurposeDropDown) {
 		this.primaryPurposeDropDown = primaryPurposeDropDown;
 	}
 
@@ -60,12 +60,12 @@ public class ClinicalTrialRegistrationDetailsBuilder {
 		this.identifierTypeDropDown = identifierTypeDropDown;
 	}
 
-	public void setPrincipalInvestigatorDropDown(
+	public void setPrincipalInvestigator(
 			String principalInvestigatorDropDown) {
 		this.principalInvestigatorDropDown = principalInvestigatorDropDown;
 	}
 
-	public void setProcessingStatusDropDown(String processingStatusDropDown) {
+	public void setProcessingStatus(String processingStatusDropDown) {
 		this.processingStatusDropDown = processingStatusDropDown;
 	}
 
@@ -73,21 +73,21 @@ public class ClinicalTrialRegistrationDetailsBuilder {
 		this.identifierTextBox = identifierTextBox;
 	}
 
-	public void setSearchBySubmissionTypeDropDown(
+	public void setSearchBySubmissionType(
 			String searchBySubmissionTypeDropDown) {
 		this.searchBySubmissionTypeDropDown = searchBySubmissionTypeDropDown;
 	}
 
-	public void setSearchByTrialCategoryDropDown(
+	public void setSearchByTrialCategory(
 			String searchByTrialCategoryDropDown) {
 		this.searchByTrialCategoryDropDown = searchByTrialCategoryDropDown;
 	}
 
-	public void setMilestoneDropDown(String milestoneDropDown) {
+	public void setMilestone(String milestoneDropDown) {
 		this.milestoneDropDown = milestoneDropDown;
 	}
 
-	public void setCurrentTrialStatusDropDown(String currentTrialStatusDropDown) {
+	public void setCurrentTrialStatus(String currentTrialStatusDropDown) {
 		this.currentTrialStatusDropDown = currentTrialStatusDropDown;
 	}
 

@@ -64,4 +64,16 @@ public class Summary4AnatomicSite {
 		split.stop();
 	}
 
+	public List<String> getSummary4Sponsors() {
+		return PageUtil.getOptions(summary4SponsorDropDown);
+	}
+
+	public List<String> getSummary4FundingCategories() {
+		return PageUtil.getOptions(summary4FundingCategoryDropDown);
+	}
+
+	public List<String> getSummary4AnatomicSites() {
+		return PageUtil.getOptions(summary4AnatomicSitesMultiSelect);
+	}
+
 }

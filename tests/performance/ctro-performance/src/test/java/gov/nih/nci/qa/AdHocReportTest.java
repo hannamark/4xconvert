@@ -100,8 +100,8 @@ public class AdHocReportTest {
 		AdHocReportPage adHocReportPage = new AdHocReportPage(webDriver).get();
 
 		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
-		builder.setPrimaryPurposeDropDown("Treatment");
-		builder.setSearchByTrialCategoryDropDown("Both");
+		builder.setPrimaryPurpose("Treatment");
+		builder.setSearchByTrialCategory("Both");
 
 		ArrayList<String> trialPhases = new ArrayList<String>();
 		trialPhases.add("II");
@@ -125,8 +125,8 @@ public class AdHocReportTest {
 		AdHocReportPage adHocReportPage = new AdHocReportPage(webDriver).get();
 
 		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
-		builder.setPrimaryPurposeDropDown("Treatment");
-		builder.setSearchByTrialCategoryDropDown("Both");
+		builder.setPrimaryPurpose("Treatment");
+		builder.setSearchByTrialCategory("Both");
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
@@ -147,7 +147,7 @@ public class AdHocReportTest {
 
 		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
 		builder.setLeadOrganizationDropDown("Mayo Clinic");
-		builder.setSearchByTrialCategoryDropDown("Complete");
+		builder.setSearchByTrialCategory("Complete");
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
@@ -166,7 +166,7 @@ public class AdHocReportTest {
 
 		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
 
-		builder.setPrimaryPurposeDropDown("Treatment");
+		builder.setPrimaryPurpose("Treatment");
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
@@ -255,7 +255,7 @@ public class AdHocReportTest {
 		AdHocReportPage adHocReportPage = new AdHocReportPage(webDriver).get();
 
 		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
-		builder.setPrimaryPurposeDropDown("Supportive Care");
+		builder.setPrimaryPurpose("Supportive Care");
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
@@ -277,7 +277,7 @@ public class AdHocReportTest {
 		AdHocReportPage adHocReportPage = new AdHocReportPage(webDriver).get();
 
 		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
-		builder.setMilestoneDropDown("Trial Summary Report Sent Date");
+		builder.setMilestone("Trial Summary Report Sent Date");
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
@@ -298,7 +298,7 @@ public class AdHocReportTest {
 		AdHocReportPage adHocReportPage = new AdHocReportPage(webDriver).get();
 
 		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
-		builder.setPrimaryPurposeDropDown("Prevention");
+		builder.setPrimaryPurpose("Prevention");
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
@@ -321,7 +321,7 @@ public class AdHocReportTest {
 		AdHocReportPage adHocReportPage = new AdHocReportPage(webDriver).get();
 
 		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
-		builder.setPrincipalInvestigatorDropDown("Abrams,Ross");
+		builder.setPrincipalInvestigator("Abrams,Ross");
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
@@ -342,7 +342,7 @@ public class AdHocReportTest {
 		AdHocReportPage adHocReportPage = new AdHocReportPage(webDriver).get();
 
 		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
-		builder.setProcessingStatusDropDown("Verification Pending");
+		builder.setProcessingStatus("Verification Pending");
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
@@ -362,7 +362,7 @@ public class AdHocReportTest {
 		AdHocReportPage adHocReportPage = new AdHocReportPage(webDriver).get();
 
 		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
-		builder.setProcessingStatusDropDown("Rejected");
+		builder.setProcessingStatus("Rejected");
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
@@ -383,7 +383,7 @@ public class AdHocReportTest {
 		AdHocReportPage adHocReportPage = new AdHocReportPage(webDriver).get();
 
 		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
-		builder.setCurrentTrialStatusDropDown("Enrolling by Invitation");
+		builder.setCurrentTrialStatus("Enrolling by Invitation");
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
@@ -426,7 +426,7 @@ public class AdHocReportTest {
 
 		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
 		builder.setLeadOrganizationDropDown("Ziopharm Oncology Inc");
-		builder.setPrimaryPurposeDropDown("Treatment");
+		builder.setPrimaryPurpose("Treatment");
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
@@ -448,7 +448,7 @@ public class AdHocReportTest {
 
 		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
 		builder.setLeadOrganizationDropDown("Ziopharm Oncology Inc");
-		builder.setPrimaryPurposeDropDown("Treatment");
+		builder.setPrimaryPurpose("Treatment");
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
@@ -471,8 +471,8 @@ public class AdHocReportTest {
 
 		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
 		builder.setLeadOrganizationDropDown("Ziopharm Oncology Inc");
-		builder.setPrimaryPurposeDropDown("Treatment");
-		builder.setSearchBySubmissionTypeDropDown("Original");
+		builder.setPrimaryPurpose("Treatment");
+		builder.setSearchBySubmissionType("Original");
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);

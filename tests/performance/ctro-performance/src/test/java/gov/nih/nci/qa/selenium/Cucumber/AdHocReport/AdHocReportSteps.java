@@ -50,7 +50,7 @@ public class AdHocReportSteps {
 	@Given("^I select a primary purpose of (.*)$")
 	public void selectPrimaryPurposeOfTreatment(String purpose) {
 		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
-		builder.setPrimaryPurposeDropDown(purpose);
+		builder.setPrimaryPurpose(purpose);
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);
@@ -73,7 +73,7 @@ public class AdHocReportSteps {
 	@And("^I select a trial category of (.*)$")
 	public void selectTrialCategory(String category) {
 		ClinicalTrialRegistrationDetailsBuilder builder = new ClinicalTrialRegistrationDetailsBuilder();
-		builder.setSearchByTrialCategoryDropDown(category);
+		builder.setSearchByTrialCategory(category);
 		ClinicalTrialRegistrationDetailsParam parameters = builder
 				.getParameters();
 		adHocReportPage.setClinicalTrialsRegistrationDetails(parameters);

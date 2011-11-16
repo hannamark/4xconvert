@@ -106,6 +106,52 @@ public class ClinicalTrialsRegistrationDetails {
 		}
 	}
 
+	public List<String> getPrimaryPurposeOptions() {
+		return getOptions(primaryPurposeDropDown);
+	}
+
+	public List<String> getTrialPhases() {
+		return getOptions(trialPhaseMultiSelect);
+	}
+
+	public List<String> getIdentifierTypes() {
+		return getOptions(identifierTypeDropDown);
+	}
+
+	public List<String> getLeadOrganizations() {
+		return getOptions(leadOrganizationDropDown);
+	}
+
+	public List<String> getPrincipalInvestigators() {
+		return getOptions(principalInvestigatorDropDown);
+	}
+
+	public List<String> getProcessingStatuses() {
+		return getOptions(processingStatusDropDown);
+	}
+
+	public List<String> getCurrentTrialStatues() {
+		return getOptions(currentTrialStatusDropDown);
+	}
+
+	public List<String> getSubmissionTypes() {
+		return getOptions(searchBySubmissionTypeDropDown);
+	}
+
+	public List<String> getTrialCategories() {
+		return getOptions(searchByTrialCategoryDropDown);
+	}
+
+	public List<String> getMilestones() {
+		return getOptions(milestoneDropDown);
+	}
+
+	// privates
+
+	private List<String> getOptions(WebElement webElement) {
+		return PageUtil.getOptions(webElement);
+	}
+
 	private void setOfficialTitle(String keysToSend) {
 		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"AdHocReportPage", "setOfficialTitle");

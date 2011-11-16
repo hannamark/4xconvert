@@ -3,6 +3,8 @@ package gov.nih.nci.qa.selenium.PageComponents.AdHocReport;
 import gov.nih.nci.qa.selenium.util.PageUtil;
 import gov.nih.nci.qa.selenium.util.SplitUtil;
 
+import java.util.List;
+
 import org.javasimon.Split;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -27,6 +29,10 @@ public class ParticipatingSites {
 				"AdHocReportPage", "setParticipatingSites");
 		PageUtil.setDropDown(partipatingSiteDropDown, keysToSend);
 		split.stop();
+	}
+
+	public List<String> getParticipatingSites() {
+		return PageUtil.getOptions(partipatingSiteDropDown);
 	}
 
 }

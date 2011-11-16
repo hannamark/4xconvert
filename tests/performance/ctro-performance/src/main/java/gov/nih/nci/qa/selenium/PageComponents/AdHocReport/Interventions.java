@@ -3,6 +3,8 @@ package gov.nih.nci.qa.selenium.PageComponents.AdHocReport;
 import gov.nih.nci.qa.selenium.util.PageUtil;
 import gov.nih.nci.qa.selenium.util.SplitUtil;
 
+import java.util.List;
+
 import org.javasimon.Split;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -27,6 +29,10 @@ public class Interventions {
 				"AdHocReportPage", "setInterventionType");
 		PageUtil.setDropDown(interventionTypeDropDown, keysToSend);
 		split.stop();
+	}
+
+	public List<String> getInterventions() {
+		return PageUtil.getOptions(interventionTypeDropDown);
 	}
 
 }

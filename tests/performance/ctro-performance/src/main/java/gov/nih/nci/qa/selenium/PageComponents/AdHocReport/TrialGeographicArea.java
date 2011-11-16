@@ -58,4 +58,12 @@ public class TrialGeographicArea {
 		split.stop();
 	}
 
+	public List<String> getCountries() {
+		return PageUtil.getOptions(countryDropDown);
+	}
+
+	public List<String> getStates() {
+		return PageUtil.getOptions(statesMultiSelect);
+	}
+
 }

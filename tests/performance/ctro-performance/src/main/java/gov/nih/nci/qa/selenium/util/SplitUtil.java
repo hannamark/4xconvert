@@ -68,6 +68,19 @@ public class SplitUtil {
 	}
 
 	/**
+	 * Use this for reporting tests.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public static Split getParameterizedTestSplit(String name, String option) {
+		Stopwatch stopwatch = SimonManager.getStopwatch(TEST_CATEGORY
+				+ Manager.HIERARCHY_DELIMITER + name);
+		stopwatch.setNote(option);
+		return stopwatch.start();
+	}
+
+	/**
 	 * Use this for navigation.
 	 * 
 	 * @param name

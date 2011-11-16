@@ -47,17 +47,17 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 	@FindBy(how = How.LINK_TEXT, using = "Biomarkers")
 	WebElement biomarkersLink;
 
-	@FindBy(how = How.LINK_TEXT, using = "Run Report")
-	WebElement runReportButton;
-
-	@FindBy(how = How.LINK_TEXT, using = "Reset")
-	WebElement resetButton;
-
 	@FindBy(how = How.LINK_TEXT, using = "Trial Geographic Area")
 	WebElement trialGeographicAreaLink;
 
 	@FindBy(how = How.LINK_TEXT, using = "Summary 4 Anatomic Site")
 	WebElement summary4AnatomicSiteLink;
+
+	@FindBy(how = How.LINK_TEXT, using = "Run Report")
+	WebElement runReportButton;
+
+	@FindBy(how = How.LINK_TEXT, using = "Reset")
+	WebElement resetButton;
 
 	AdHocReportTable adHocResultsTable;
 
@@ -73,6 +73,96 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
 		clinicalTrialRegistrationDetails
 				.setClinicalTrialsRegistrationDetails(params);
+	}
+
+	public List<String> getPrimaryPurposes() {
+		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		return clinicalTrialRegistrationDetails.getPrimaryPurposeOptions();
+	}
+
+	public List<String> getTrialPhases() {
+		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		return clinicalTrialRegistrationDetails.getTrialPhases();
+	}
+
+	public List<String> getIdentifierTypes() {
+		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		return clinicalTrialRegistrationDetails.getIdentifierTypes();
+	}
+
+	public List<String> getLeadOrganizations() {
+		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		return clinicalTrialRegistrationDetails.getLeadOrganizations();
+	}
+
+	public List<String> getPrincipalInvestigators() {
+		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		return clinicalTrialRegistrationDetails.getPrincipalInvestigators();
+	}
+
+	public List<String> getProcessingStatuses() {
+		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		return clinicalTrialRegistrationDetails.getProcessingStatuses();
+	}
+
+	public List<String> getCurrentTrialStatues() {
+		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		return clinicalTrialRegistrationDetails.getCurrentTrialStatues();
+	}
+
+	public List<String> getSubmissionTypes() {
+		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		return clinicalTrialRegistrationDetails.getSubmissionTypes();
+	}
+
+	public List<String> getTrialCategories() {
+		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		return clinicalTrialRegistrationDetails.getTrialCategories();
+	}
+
+	public List<String> getMilestones() {
+		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		return clinicalTrialRegistrationDetails.getMilestones();
+	}
+
+	public List<String> getInterventions() {
+		Interventions interventions = clickInterventions();
+		return interventions.getInterventions();
+	}
+
+	public List<String> getParticipatingSites() {
+		ParticipatingSites participatingSites = clickParticipatingSites();
+		return participatingSites.getParticipatingSites();
+	}
+
+	public List<String> getCountries() {
+		TrialGeographicArea trialGeographicArea = clickTrialGeographicArea();
+		return trialGeographicArea.getCountries();
+	}
+
+	public List<String> getStates() {
+		TrialGeographicArea trialGeographicArea = clickTrialGeographicArea();
+		return trialGeographicArea.getStates();
+	}
+
+	public List<String> getBiomarkers() {
+		Biomarkers biomarkers = clickBiomarkers();
+		return biomarkers.getBiomarkers();
+	}
+
+	public List<String> getSummary4Sponsors() {
+		Summary4AnatomicSite summary4AnatomicSite = clickSummary4AnatomicSite();
+		return summary4AnatomicSite.getSummary4Sponsors();
+	}
+
+	public List<String> getSummary4FundingCategories() {
+		Summary4AnatomicSite summary4AnatomicSite = clickSummary4AnatomicSite();
+		return summary4AnatomicSite.getSummary4FundingCategories();
+	}
+
+	public List<String> getSummary4AnatomicSites() {
+		Summary4AnatomicSite summary4AnatomicSite = clickSummary4AnatomicSite();
+		return summary4AnatomicSite.getSummary4AnatomicSites();
 	}
 
 	public void setInterventions(String keysToSend) {
@@ -231,4 +321,5 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 		ctroReportSelectionPage.clickAdHocLink();
 		split.stop();
 	}
+
 }
