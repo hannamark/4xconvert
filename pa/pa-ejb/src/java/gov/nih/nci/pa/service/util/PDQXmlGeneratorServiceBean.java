@@ -85,7 +85,6 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
@@ -93,7 +92,6 @@ import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
-import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -106,7 +104,6 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaRegistry;
-import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.io.IOException;
@@ -405,21 +402,6 @@ public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implemen
                "facility", sp.getHealthcareFacilityIi(), doc, this.getCorUtils());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void createContact(List<StudySiteContactDTO> spcDTOs, Element location, Document doc)
-            throws PAException, NullifiedRoleException {
-        for (StudySiteContactDTO sscDTO : spcDTOs) {
-            if (!StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equals(sscDTO.getRoleCode().getCode())) {
-                continue;
-            }
-            PdqXmlGenHelper.addPoPersonByPaCrsIi(location,
-                    "contact", sscDTO.getClinicalResearchStaffIi(), doc, this.getCorUtils());
-        }
-    }
-
 
     @Override
     protected void addVerificationDate(Document doc, Element root, Ts tsVerificationDate) {
@@ -428,24 +410,4 @@ public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implemen
                         tsVerificationDate, "yyyy-MM-dd"), doc));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void createInvestigators(List<StudySiteContactDTO> spcDTOs, Element location, Document doc)
-            throws PAException {
-        for (StudySiteContactDTO spcDTO : spcDTOs) {
-            if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equals(spcDTO.getRoleCode().getCode())) {
-                continue;
-            }
-            Element investigator = doc.createElement("investigator");
-            PdqXmlGenHelper.addPoPersonByPaCrsIi(investigator,
-                    null, spcDTO.getClinicalResearchStaffIi(), doc, this.getCorUtils());
-            XmlGenHelper.appendElement(investigator,
-                    XmlGenHelper.createElementWithTextblock("role", convertToCtValues(spcDTO.getRoleCode()), doc));
-            if (investigator.hasChildNodes()) {
-                XmlGenHelper.appendElement(location, investigator);
-            }
-        }
-    }
 }
