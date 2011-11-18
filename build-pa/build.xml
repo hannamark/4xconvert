@@ -233,9 +233,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         <property name="lib.dir" location="${lib.dir}" />
         <property name="software.dir" location="${software.dir}" />
         <property name="commonlibrary.dir" location="${commonlibrary.dir}" />
-        <!-- Use below for old ivy repo -->
-        <!--<property name="ivy.settings.file" value="ivy-bda-settings.xml"/>-->
-        <!-- Use below for new ivy repo -->
         <property name="ivy.settings.file" value="cbiit-ivy-bda-settings.xml"/>
         <property name="target.dir" location="${target.dir}"/>
         <property name="local.cbiit-ivy-repo.dir" value="${local.cbiit-ivy-repo.dir}"/>
@@ -258,7 +255,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <taskdef name="for" classname="net.sf.antcontrib.logic.ForTask" classpathref="bda-utils.classpath"/>
 
     <!-- Includes- include BDA marcos -->
-    <import file="${bda-utils.dir}/bda-build-utils-${bda.version}.xml" />
+    <import file="${bda-utils.dir}/bda-build-utils-${bda.version}.xml"/>
 
     <!-- Start logging -->
     <mkdir dir="${log.dir}" />
@@ -1090,9 +1087,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
         * This target will use differnt properties based on linux (linux-install.properties) or windows (windows-install.properties) installs.
         * It only supports using those properties files for now, so if you want to change install time properites edit these files.
         -->
-        <deploy-local
-                target.name="${install.target}"
-                />
+        <deploy-local target.name="${install.target}"/>
     </target>
 
     <target name="deploy:local:upgrade" depends="build:all,local:upgrade" description="Upgrades the application on the local machine, used for developer desktops and ci environments" />
@@ -1717,21 +1712,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                 </copy>
             </sequential>
         </for>
-    </target>
-    <target name="ivy:module:add2repo">
-        <!-- you would want to use this value instead and you can get rid of the mkdir below
-        <property name="ivy-repo.base.dir" location="${software.dir}/../../ivy-repo"/>
-        -->
-        <mkdir dir="${user.home}/tmp"/>
-        <ivy-module-add2repo
-            ivy-repo.base.dir="${user.home}/tmp/ivy-repo"
-            ivy.add.org="ncicb"
-            ivy.add.module="ssaksa-test-module3"
-            ivy.add.version="0.1.0"
-            ivy.add.module.src.dir="${build.dir}"
-            ivy.add.module.src.file.list="build.xml"
-            ivy.add.xml.src.location="${build.dir}/install.xml"
-            />
     </target>
 
     <target name="database:prep" description="Copies db files with filtering">

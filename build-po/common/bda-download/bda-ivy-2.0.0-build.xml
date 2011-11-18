@@ -1,19 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:ivy="antlib:org.apache.ivy.ant" name="bda-utils" default="retrieve-bda" basedir=".">
-<!--
-$Id$
-$HeadURL$
-
-This ant build file downloads the bda project from the official NCICB Ivy Repository.  It also downloads files required to complete the operation if they do not exist.  This script aslo includes some sample publish tasks.  It can be called from other build scripts to download the bda project and it's supporting libraries.  Below is what you might add to your build.xml to use this script.
-
-<ant inheritAll="false" inheritRefs="false" antfile="bda-ivy-2.0.0-build.xml"
-	target="retrieve-bda">
-	<property name="bda-utils.dir" value="${bda-utils.dir}"/>
-	<property name="lib.dir" value="${lib.dir}"/>
-</ant>
-
-<import file="${bda-utils.dir}/bda-build-utils-1.0.xml" />
--->
 	<!-- Properties -->
 	<property name="lib.dir" location="${basedir}/lib" />
 	<property name="software.dir" location="${basedir}" />
@@ -27,9 +13,8 @@ This ant build file downloads the bda project from the official NCICB Ivy Reposi
 	<property name="ivy.settings.file" value="cbiit-ivy-bda-settings.xml" />
 	<property name="ivy.bda.file" value="ivy-bda-2.0.0.xml" />
     
-    <property name="ivy.repo.url" value="https://ncisvn.nci.nih.gov/svn/cbiit-ivy-repo/trunk" />
-	<property name="ivy.src.url" value="https://ncisvn.nci.nih.gov/svn/maven-mirror/trunk/org/apache/ivy/ivy/2.0.0/${ivy.jar.file}" />
-	<property name="ivy-bda.src.url.base" value="http://gforge.nci.nih.gov/svnroot/automation/trunk/software/bda-download" />
+    <property name="ivy.src.url" value="https://ncimvn.nci.nih.gov/nexus/content/groups/public/org/apache/ivy/ivy/2.0.0/${ivy.jar.file}"/>
+    <property name="ivy-bda.src.url.base" value="file://${software.dir}/commons/bda-download"/>
 
 	<property name="ivy.dest.file" value="${lib.dir}/${ivy.jar.file}" />
 	<!-- Paths-->
@@ -111,28 +96,4 @@ This ant build file downloads the bda project from the official NCICB Ivy Reposi
 		<ivy:settings file="${ivy.settings.file}" />
 		<ivy:cleancache />
 	</target>
-
-	<!-- This is an example target demonstrating publishing modules to the local ivy repository.  It is currently not working because of cache naming patterns -->
-	<target name="ivy-publish">
-		<taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.classpath" />
-		<property name="ivy.sample.path" value="ivy-repo/jakarta/commons-logging/1.0.4" />
-		<property name="ivy.sample.file" value="commons-logging-1.0.4.jar" />
-		<property name="ivy.sample.ivy.jar.file" value="ivy.xml" />
-		<property name="scratch.dir" value="scratch" />
-		<property name="version" value="1.0.4" />
-		<tstamp>
-			<format property="now" pattern="yyyyMMddHHmmss" />
-		</tstamp>
-		<mkdir dir="${bda.local.repo.dir}" />
-		<mkdir dir="${scratch.dir}" />
-		<get src="${ivy.repo.url}/${ivy.sample.path}/${ivy.sample.file}" dest="${scratch.dir}/${ivy.sample.file}" />
-		<get src="${ivy.repo.url}/${ivy.sample.path}/${ivy.sample.ivy.jar.file}" dest="${scratch.dir}/${ivy.sample.ivy.jar.file}" />
-		<property name="ivy.dep.file" value="${scratch.dir}/ivy.xml" />
-		<ivy:settings file="ivy-bda-settings.xml" />
-		<ivy:info file="${ivy.dep.file}" />
-
-		<echoproperties prefix="ivy" />
-		<ivy:publish artifactspattern="${scratch.dir}/[artifact].jar" resolver="local-repo" pubrevision="${version}" status="release" forcedeliver="true" pubdate="${now}" update="true" />
-	</target>
-
 </project>
