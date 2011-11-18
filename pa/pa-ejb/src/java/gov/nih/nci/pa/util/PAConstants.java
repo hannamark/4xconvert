@@ -166,4 +166,8 @@ public class PAConstants {
      * CT.gov Org Name.
      */
     public static final String CTGOV_ORG_NAME = "ClinicalTrials.gov";
+    /**
+     * NCI Org Name.
+     */
+    public static final String NCI_ORG_NAME = "National Cancer Institute";
 }

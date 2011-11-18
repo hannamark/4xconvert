@@ -1366,8 +1366,12 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         Organization sponsor = getOrgCorrelationService().getOrganizationByFunctionRole(studyProtocolIi, CdConverter
                 .convertToCd(StudySiteFunctionalCode.SPONSOR));
         Element lead = doc.createElement("lead_sponsor");
+        String sponsorName = sponsor.getName();
+        if (PAConstants.DCP_ORG_NAME.equals(sponsorName) || PAConstants.CTEP_ORG_NAME.equals(sponsorName)) {
+            sponsorName = PAConstants.NCI_ORG_NAME;
+        }
         XmlGenHelper.appendElement(lead,
-                XmlGenHelper.createElementWithTextblock("agency", StringUtils.substring(sponsor.getName(), 0,
+                XmlGenHelper.createElement("agency", StringUtils.substring(sponsorName, 0,
                 PAAttributeMaxLen.LEN_160), doc));
         return lead;
     }

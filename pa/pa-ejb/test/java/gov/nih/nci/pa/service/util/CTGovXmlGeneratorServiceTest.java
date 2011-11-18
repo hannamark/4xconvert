@@ -86,6 +86,7 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
@@ -112,6 +113,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
 import java.math.BigDecimal;
@@ -123,42 +125,50 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
+public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
 
     private final CTGovXmlGeneratorServiceBeanLocal bean = new CTGovXmlGeneratorServiceBeanLocal();
 
+    @Override
     public CTGovXmlGeneratorServiceBeanLocal getBean() {
         return bean;
     }
 
-    @Before
-    public void setup() throws Exception {
-        getBean().setStudyResourcingService(studyResourcingSvc);
-        getBean().setInterventionService(interventionSvc);
-        getBean().setInterventionAlternateNameService(interventionAltNameSvc);
-        getBean().setStudySiteContactService(studySiteContactSvc);
-        getBean().setStudySiteAccrualStatusService(studySiteAccrualStatusSvc);
-        getBean().setDiseaseService(diseaseSvc);
-        getBean().setDocumentWorkflowStatusService(dwsSvc);
-        getBean().setPlannedActivityService(plannedActSvc);
-        getBean().setArmService(armSvc);
-        getBean().setStudyDiseaseService(studyDiseaseSvc);
-        getBean().setStudyOutcomeMeasureService(studyOutcomeMeasureSvc);
-        getBean().setStudyRecruitmentService(studyRecruitmentStatusSvc);
-        getBean().setStudyOverallStatusService(studyOverallStatusSvc);
-        getBean().setRegulatoryInformationService(regulInfoSvc);
-        getBean().setStudyRegulatoryAuthorityService(studyRegAuthSvc);
-        getBean().setCorrelationUtils(corUtils);
-        getBean().setStudyContactService(studyContactSvc);
-        getBean().setOrgCorrelationService(orgSvc);
-        getBean().setStudyIndldeService(studyIndIdeSvc);
-        getBean().setRegistryUserService(regUserSvc);
-        getBean().setStudySiteService(studySiteSvc);
-        getBean().setStudyProtocolService(spSvc);
-        getBean().setLookUpTableService(lookupSvc);
+    private void assertCreatedLeadSponsorName(String orgName) throws ParserConfigurationException, PAException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.newDocument();
+        Element result = getBean().createLeadSponsor(spId, doc);
+        System.out.println("1" + result);
+        System.out.println("2" + result.getElementsByTagName("agency"));
+        System.out.println("3" + result.getElementsByTagName("agency").item(0));
+        assertEquals(orgName, result.getElementsByTagName("agency").item(0).getTextContent());
+    }
+
+    @Test
+    public void testCreateLeadSponsor() throws PAException, ParserConfigurationException {
+        assertCreatedLeadSponsorName("some name");
+    }
+
+    @Test
+    public void testCreateLeadSponsorDCP() throws PAException, ParserConfigurationException {
+        org.setName(PAConstants.DCP_ORG_NAME);
+        assertCreatedLeadSponsorName(PAConstants.NCI_ORG_NAME);
+    }
+
+    @Test
+    public void testCreateLeadSponsorCTEP() throws PAException, ParserConfigurationException {
+        org.setName(PAConstants.CTEP_ORG_NAME);
+        assertCreatedLeadSponsorName(PAConstants.NCI_ORG_NAME);
     }
 
     @Test(expected=PAException.class)
@@ -740,29 +750,29 @@ public class CTGovXmlGeneratorServiceTest extends AbstractMockitoTest {
         accrualStatus.setStatusCode(CdConverter.convertToCd(RecruitmentStatusCode.ADMINISTRATIVELY_COMPLETE));
         assertTrue(getBean().generateCTGovXml(spId).contains("<status>Terminated</status>"));
     }
-    
+
     @Test
     public void createDescriptionTextString() {
         String text = "text";
-        
+
         String result = bean.createDescriptionTextString(text);
-        
+
         String expected = "     text\n";
         assertEquals(expected, result);
-        
+
     }
-    
+
     @Test
     public void createValueUnitOperatorString() {
-        String criterionName = "criteria"; 
-        BigDecimal value = new BigDecimal(3); 
-        String unit = "unit"; 
+        String criterionName = "criteria";
+        BigDecimal value = new BigDecimal(3);
+        String unit = "unit";
         String operator = "operator";
-        
+
         String result = bean.createValueUnitOperatorString(criterionName, value, unit, operator);
-        
-        String expected = "     criteria 3 operator unit\n";        
+
+        String expected = "     criteria 3 operator unit\n";
         assertEquals(expected, result);
-        
+
     }
 }

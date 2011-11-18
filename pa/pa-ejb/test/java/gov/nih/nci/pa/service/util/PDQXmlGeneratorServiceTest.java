@@ -118,7 +118,7 @@ import org.mockito.ArgumentMatcher;
  * @author mshestopalov
  *
  */
-public class PDQXmlGeneratorServiceTest extends CTGovXmlGeneratorServiceTest {
+public class PDQXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
 
     private final PDQXmlGeneratorServiceBean pdqBean = new PDQXmlGeneratorServiceBean();
 
@@ -216,45 +216,18 @@ public class PDQXmlGeneratorServiceTest extends CTGovXmlGeneratorServiceTest {
         }
     }
 
-    @Override
-    @Test
-    public void testCrsNull() throws PAException {
-        //NOOP - can't be null any more
-    }
-
-    @Override
     @Test
     public void testExpAccIndFalse() throws PAException {
         studySiteIndIdeDto.setExpandedAccessIndicator(BlConverter.convertToBl(false));
         assertTrue(getBean().generateCTGovXml(spId).contains("<expanded_access_status>No longer available</expanded_access_status>"));
     }
 
-    @Override
-    @Test
-    public void testRbApNull() throws PAException {
-        //NOOP - irb
-    }
-
-    @Override
-    @Test
-    public void testRbAppFalse() throws PAException {
-        //NOOP - irb
-    }
-
-    @Override
-    @Test
-    public void testRBStatSub() throws PAException {
-        //NOOP - irb
-    }
-
-    @Override
     @Test
     public void testSIndGetNull() throws PAException {
         when(studyIndIdeSvc.getByStudyProtocol(any(Ii.class))).thenReturn(null);
         assertFalse(getBean().generateCTGovXml(spId).contains("<trial_ind_ide>"));
     }
 
-    @Override
     @Test
     public void testOrgTelEmpty() throws PAException {
         orgDto.setTelecomAddress(new DSet<Tel>());
@@ -273,21 +246,18 @@ public class PDQXmlGeneratorServiceTest extends CTGovXmlGeneratorServiceTest {
         assertTrue(results.contains("</lead_org>"));
     }
 
-    @Override
     @Test
     public void testOrgNameNull() throws PAException {
         orgDto.setName(null);
         assertFalse(getBean().generateCTGovXml(spId).contains("<lead_sponsor>"));
     }
 
-    @Override
     @Test
     public void testOrgBySSNull() throws PAException {
         when(studySiteSvc.getByStudyProtocol(any(Ii.class), any(StudySiteDTO.class))).thenReturn(null);
         assertFalse(getBean().generateCTGovXml(spId).contains("<collaborator>"));
     }
 
-    @Override
     @Test
     public void testOrgBySsEmpty() throws PAException {
         when(studySiteSvc.getByStudyProtocol(any(Ii.class), any(StudySiteDTO.class)))
@@ -327,14 +297,8 @@ public class PDQXmlGeneratorServiceTest extends CTGovXmlGeneratorServiceTest {
         assertTrue(results.contains("<ctep_id>ctep org id</ctep_id>"));
     }
 
-    @Override
+
     @Test
-    public void testSosByCurrent() throws PAException {
-        //nop
-    }
-    
-    @Test
-    @Override
     public void testMiddleNameNullCheck() throws PAException {
         person.setMiddleName(null);
         assertFalse(getBean().generateCTGovXml(spId).contains("<middle_initial>"));
