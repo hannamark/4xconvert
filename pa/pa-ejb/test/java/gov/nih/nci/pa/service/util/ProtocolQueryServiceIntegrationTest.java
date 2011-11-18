@@ -95,6 +95,7 @@ import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.HealthCareProvider;
 import gov.nih.nci.pa.domain.Intervention;
+import gov.nih.nci.pa.domain.InterventionAlternateName;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.PDQDiseaseParent;
@@ -115,6 +116,7 @@ import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.enums.ActivityCategoryCode;
 import gov.nih.nci.pa.enums.ActivitySubcategoryCode;
@@ -903,7 +905,48 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         assertEquals(2, result.size());       
         assertTrue(testBean.output.contains(result.get(0).getId()));
         assertTrue(testBean.output.contains(result.get(1).getId()));
-    }    
+    }  
+    
+    @Test
+    public void getStudyProtocolQueryResultListByIntervention() throws PAException {
+        TestBean testBean = createStudyProtocolListForSearchByIntervention();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        List<Long> interventionIds = Arrays.asList(new Long[]{testBean.input.get(0), testBean.input.get(1) });
+        criteria.setInterventionIds(interventionIds);
+        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
+        List<Long> output = Arrays.asList(new Long[]{testBean.output.get(0), testBean.output.get(1) });
+        assertEquals(2, result.size());
+        assertTrue(output.contains(result.get(0).getId()));
+        assertTrue(output.contains(result.get(1).getId()));
+    }
+    
+    @Test
+    public void getStudyProtocolQueryResultListByInterventionAlternativeNames() throws PAException {
+        TestBean testBean = createStudyProtocolListForSearchByIntervention();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        List<Long> interventionAlternateNameIds = Arrays.asList(new Long[]{testBean.input.get(2), testBean.input.get(3) });
+        criteria.setInterventionAlternateNameIds(interventionAlternateNameIds);
+        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
+        List<Long> output = Arrays.asList(new Long[]{testBean.output.get(1), testBean.output.get(2) });
+        assertEquals(2, result.size());
+        assertTrue(output.contains(result.get(0).getId()));
+        assertTrue(output.contains(result.get(1).getId()));
+    }
+    
+    @Test
+    public void getStudyProtocolQueryResultListByInterventionAndInterventionAlternativeNames() throws PAException {
+        TestBean testBean = createStudyProtocolListForSearchByIntervention();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        List<Long> interventionIds = Arrays.asList(new Long[]{testBean.input.get(0), testBean.input.get(1) });
+        criteria.setInterventionIds(interventionIds);
+        List<Long> interventionAlternateNameIds = Arrays.asList(new Long[]{testBean.input.get(2), testBean.input.get(3) });
+        criteria.setInterventionAlternateNameIds(interventionAlternateNameIds);
+        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);        
+        assertEquals(3, result.size());
+        assertTrue(testBean.output.contains(result.get(0).getId()));
+        assertTrue(testBean.output.contains(result.get(1).getId()));
+        assertTrue(testBean.output.contains(result.get(2).getId()));
+    }
    
     private List<Long> createStudyProtocolList() {
         List<Long> result = Arrays.asList(new Long[]{0L, 0L, 0L, 0L, 0L });
@@ -1077,6 +1120,60 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
 
         return result;
     }
+    
+    private TestBean createStudyProtocolListForSearchByIntervention() {
+        TestBean result = new TestBean();
+
+        createStudyProtocol();
+
+        StudyProtocol studyProtocol1 = createStudyProtocol();
+        studyProtocol1.getPlannedActivities().clear();
+        Intervention intervention1 = createIntervention();
+        TestSchema.addUpdObject(intervention1);
+        PlannedActivity plannedActivity1 = createPlannedActivity(intervention1, studyProtocol1);
+        TestSchema.addUpdObject(plannedActivity1);
+        studyProtocol1.getPlannedActivities().add(plannedActivity1);
+        TestSchema.addUpdObject(studyProtocol1);
+        result.input.add(studyProtocol1.getPlannedActivities().iterator().next().getIntervention().getId());
+        result.output.add(studyProtocol1.getId());
+
+        StudyProtocol studyProtocol2 = createStudyProtocol();
+        studyProtocol2.getPlannedActivities().clear();
+        Intervention intervention2 = createIntervention();
+        InterventionAlternateName interventionAlternateName2 = createInterventionAlternateName(intervention2);
+        intervention2.getInterventionAlternateNames().clear();
+        intervention2.getInterventionAlternateNames().add(interventionAlternateName2);
+        TestSchema.addUpdObject(intervention2);
+        TestSchema.addUpdObject(interventionAlternateName2);       
+        PlannedActivity plannedActivity2 = createPlannedActivity(intervention2, studyProtocol2);
+        TestSchema.addUpdObject(plannedActivity2);
+        studyProtocol2.getPlannedActivities().add(plannedActivity2);
+        TestSchema.addUpdObject(studyProtocol2);
+        result.input.add(studyProtocol2.getPlannedActivities().iterator().next().getIntervention().getId());
+        result.input.add(studyProtocol2.getPlannedActivities().iterator().next().getIntervention()
+            .getInterventionAlternateNames().iterator().next().getId());
+        result.output.add(studyProtocol2.getId());
+        
+        StudyProtocol studyProtocol3 = createStudyProtocol();
+        studyProtocol3.getPlannedActivities().clear();
+        Intervention intervention3 = createIntervention();
+        InterventionAlternateName interventionAlternateName3 = createInterventionAlternateName(intervention3);
+        intervention3.getInterventionAlternateNames().clear();
+        intervention3.getInterventionAlternateNames().add(interventionAlternateName3);
+        TestSchema.addUpdObject(intervention3);
+        TestSchema.addUpdObject(interventionAlternateName3);       
+        PlannedActivity plannedActivity3 = createPlannedActivity(intervention3, studyProtocol3);
+        TestSchema.addUpdObject(plannedActivity3);
+        studyProtocol3.getPlannedActivities().add(plannedActivity3);
+        TestSchema.addUpdObject(studyProtocol3);        
+        result.input.add(studyProtocol3.getPlannedActivities().iterator().next().getIntervention()
+            .getInterventionAlternateNames().iterator().next().getId());
+        result.output.add(studyProtocol3.getId());
+
+        createStudyProtocol();
+
+        return result;
+    }
 
     private StudyProtocol createStudyProtocol() {
         StudyProtocol result = TestSchema.createStudyProtocolObj();
@@ -1159,11 +1256,44 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         AnatomicSite  result = TestSchema.createAnatomicSiteObj(preferredName);       
         TestSchema.addUpdObject(result);
         return result;
-    }    
-   
+    }  
+    
+    
+    private Intervention createIntervention() {
+        Intervention result = new Intervention();
+        result.setName("Chocolate Bar");
+        result.setDescriptionText("Oral intervention to improve morale");
+        result.setDateLastUpdated(new Date());
+        result.setStatusCode(ActiveInactivePendingCode.ACTIVE);
+        result.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("1/1/2000"));
+        result.setTypeCode(InterventionTypeCode.DRUG);
+        return result;
+    }
+
+    private PlannedActivity createPlannedActivity(Intervention inv, StudyProtocol sp) {
+        PlannedActivity result = new PlannedActivity();
+        result.setCategoryCode(ActivityCategoryCode.INTERVENTION);
+        result.setDateLastUpdated(new Date());
+        result.setIntervention(inv);
+        result.setLeadProductIndicator(true);
+        result.setStudyProtocol(sp);
+        result.setSubcategoryCode(ActivitySubcategoryCode.DIETARY_SUPPLEMENT.getCode());
+        return result;
+    }
+
+    private InterventionAlternateName createInterventionAlternateName(Intervention inv) {
+        InterventionAlternateName inresult = new InterventionAlternateName();
+        inresult.setDateLastUpdated(new Date());
+        inresult.setIntervention(inv);
+        inresult.setName("Hershey");
+        inresult.setStatusCode(ActiveInactiveCode.ACTIVE);
+        inresult.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("1/1/2000"));
+        inresult.setNameTypeCode("synonym");
+        return inresult;
+    }
     
     private static class TestBean {
-        List<Long> input = new ArrayList<Long>();
+        List<Long> input = new ArrayList<Long>();       
         List<Long> output = new ArrayList<Long>();       
     }
 

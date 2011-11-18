@@ -173,6 +173,8 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String PARTICIPATING_SITE_PARAM  = "participatingSiteParam";
         private static final String BIOMARKERS_PARAM  = "biomarkersParam";
         private static final String PDQDISEASES_PARAM  = "pdqdiseaseParam";
+        private static final String INTERVENTIONS_PARAM  = "interventions";
+        private static final String INTERVENTIONS_ALTERNAMES_PARAM  = "interventionAlternates";
         
         private final StudyProtocol sp;
         private final StudyProtocolOptions spo;
@@ -389,6 +391,56 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                             SearchableUtils.ROOT_OBJ_ALIAS, PDQDISEASES_PARAM));
                 params.put(PDQDISEASES_PARAM, spo.getPdqDiseases());
             }
+            
+            searchByIntervention(whereClause, params);
+        }
+
+        private void searchByIntervention(StringBuffer whereClause, Map<String, Object> params) {
+            if (CollectionUtils.isNotEmpty(spo.getInterventionIds())
+                    || CollectionUtils.isNotEmpty(spo.getInterventionAlternateNameIds())) {
+                StringBuilder sql = createSqlForSearchByIntervention(whereClause);
+                
+                if (CollectionUtils.isNotEmpty(spo.getInterventionIds())) {
+                    params.put(INTERVENTIONS_PARAM, spo.getInterventionIds());
+                }
+
+                if (CollectionUtils.isNotEmpty(spo.getInterventionAlternateNameIds())) {
+                    params.put(INTERVENTIONS_ALTERNAMES_PARAM, spo.getInterventionAlternateNameIds());
+                }
+                whereClause.append(sql.toString());
+            }
+        }
+
+        private StringBuilder createSqlForSearchByIntervention(StringBuffer whereClause) {
+            String operator = determineOperator(whereClause);
+
+            StringBuilder sql = new StringBuilder(" ");
+
+            sql.append(operator);
+
+            sql.append(" exists (select pa.id from PlannedActivity pa");
+
+            if (CollectionUtils.isNotEmpty(spo.getInterventionAlternateNameIds())) {
+                sql.append(" join pa.intervention intr left join intr.interventionAlternateNames aln ");
+            }
+
+            sql.append(" where pa.studyProtocol.id = " + SearchableUtils.ROOT_OBJ_ALIAS + ".id and (");
+
+            if (CollectionUtils.isNotEmpty(spo.getInterventionIds())) {
+                sql.append(" pa.intervention.id in (:" + INTERVENTIONS_PARAM + ") ");
+            }
+
+            if (CollectionUtils.isNotEmpty(spo.getInterventionIds())
+                    && CollectionUtils.isNotEmpty(spo.getInterventionAlternateNameIds())) {
+                sql.append(" or ");
+            }
+
+            if (CollectionUtils.isNotEmpty(spo.getInterventionAlternateNameIds())) {
+                sql.append("aln.id in (:" + INTERVENTIONS_ALTERNAMES_PARAM + ")");
+            }
+
+            sql.append("))");
+            return sql;
         }
 
         private void handleOtherIdentifiersAndOwnership(StringBuffer whereClause, Map<String, Object> params) {

@@ -157,7 +157,9 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private final List<Long> pdqDiseases = new ArrayList<Long>();
     private final List<Long> participatingSiteIds = new ArrayList<Long>();
     private final List<Long> leadOrganizationIds = new ArrayList<Long>();
-    
+    private final List<Long> interventionIds = new ArrayList<Long>();
+    private final List<Long> interventionAlternateNameIds = new ArrayList<Long>();    
+   
     /**
      * @return the inBoxProcessing
      */
@@ -700,6 +702,44 @@ public class StudyProtocolQueryCriteria implements Serializable {
         for (Long id : pdqDiseases) {
             if (id != null) {
                 this.pdqDiseases.add(id);
+            }
+        }
+    }     
+   
+    /**
+     * @return the interventionIds
+     */
+    public List<Long> getInterventionIds() {
+        return interventionIds;
+    }
+    
+    /**
+     * @param interventionIds the interventionIds to set
+     */
+    public void setInterventionIds(List<Long> interventionIds) {
+        this.interventionIds.clear();
+        for (Long id : interventionIds) {
+            if (id != null) {
+                this.interventionIds.add(id);
+            }
+        }
+    }    
+    
+    
+    /**
+     * @return the interventionAlternateNameIds
+     */
+    public List<Long> getInterventionAlternateNameIds() {
+        return interventionAlternateNameIds;
+    }
+    /**
+     * @param interventionAlternateNameIds the interventionAlternateNameIds to set
+     */
+    public void setInterventionAlternateNameIds(List<Long> interventionAlternateNameIds) {
+        this.interventionAlternateNameIds.clear();
+        for (Long id : interventionAlternateNameIds) {
+            if (id != null) {
+                this.interventionAlternateNameIds.add(id);
             }
         }
     }

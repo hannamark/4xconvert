@@ -114,6 +114,8 @@ public class StudyProtocolOptions {
     private List<Long> bioMarkers = new ArrayList<Long>();
     private List<Long> pdqDiseases = new ArrayList<Long>();
     private List<Long> participatingSiteIds = new ArrayList<Long>();
+    private List<Long> interventionIds = new ArrayList<Long>();
+    private List<Long> interventionAlternateNameIds = new ArrayList<Long>();
 
     /**
      * @return excludeRejectedTrials
@@ -356,6 +358,34 @@ public class StudyProtocolOptions {
      */
     public void setPdqDiseases(List<Long> pdqDiseases) {
         this.pdqDiseases = pdqDiseases;
-    }     
+    }
+
+    /**
+     * @return the interventionIds
+     */
+    public List<Long> getInterventionIds() {
+        return interventionIds;
+    }
+
+    /**
+     * @param interventionIds the interventionIds to set
+     */
+    public void setInterventionIds(List<Long> interventionIds) {
+        this.interventionIds = interventionIds;
+    }
+
+    /**
+     * @return the interventionAlternateNameIds
+     */
+    public List<Long> getInterventionAlternateNameIds() {
+        return interventionAlternateNameIds;
+    }
+
+    /**
+     * @param interventionAlternateNameIds the interventionAlternateNameIds to set
+     */
+    public void setInterventionAlternateNameIds(List<Long> interventionAlternateNameIds) {
+        this.interventionAlternateNameIds = interventionAlternateNameIds;
+    }        
     
 }

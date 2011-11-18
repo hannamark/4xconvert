@@ -432,6 +432,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setSummary4AnatomicSites(criteria.getSummary4AnatomicSites());
         options.setBioMarkers(criteria.getBioMarkers());
         options.setPdqDiseases(criteria.getPdqDiseases());
+        options.setInterventionIds(criteria.getInterventionIds());
+        options.setInterventionAlternateNameIds(criteria.getInterventionAlternateNameIds());
 
         populateExample(criteria, example);
         return new StudyProtocolQueryBeanSearchCriteria(example, options);
@@ -666,7 +668,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && StringUtils.isEmpty(criteria.getTrialCategory())
                 && criteria.getSumm4FundingSourceId() == null
                 && StringUtils.isEmpty(criteria.getSumm4FundingSourceTypeCode())
-                && criteria.getInterventionType() == null               
+                && criteria.getInterventionType() == null 
+                && CollectionUtils.isEmpty(criteria.getInterventionIds()) 
+                && CollectionUtils.isEmpty(criteria.getInterventionAlternateNameIds()) 
                 && (criteria.isMyTrialsOnly() != null && !criteria.isMyTrialsOnly()
                         || criteria.isMyTrialsOnly() == null));
     }
