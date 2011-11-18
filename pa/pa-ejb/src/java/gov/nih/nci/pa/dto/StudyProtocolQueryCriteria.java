@@ -120,7 +120,6 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String ctepIdentifier;
     private String nctNumber;
     private String officialTitle;
-    private String leadOrganizationId;
     private String otherIdentifier;
     private String leadOrganizationTrialIdentifier;   
     private String phaseAdditionalQualifierCode;
@@ -157,6 +156,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private final List<Long> bioMarkers = new ArrayList<Long>();
     private final List<Long> pdqDiseases = new ArrayList<Long>();
     private final List<Long> participatingSiteIds = new ArrayList<Long>();
+    private final List<Long> leadOrganizationIds = new ArrayList<Long>();
     
     /**
      * @return the inBoxProcessing
@@ -215,17 +215,22 @@ public class StudyProtocolQueryCriteria implements Serializable {
 
     /**
      *
-     * @return leadOrganizationId
+     * @return leadOrganizationIds
      */
-    public String getLeadOrganizationId() {
-        return leadOrganizationId;
+    public List<Long> getLeadOrganizationIds() {
+        return leadOrganizationIds;
     }
     /**
      *
-     * @param leadOrganizationId leadOrganizationId
+     * @param leadOrganizationIds leadOrganizationIds
      */
-    public void setLeadOrganizationId(String leadOrganizationId) {
-        this.leadOrganizationId = leadOrganizationId;
+    public void setLeadOrganizationIds(List<Long> leadOrganizationIds) {
+        this.leadOrganizationIds.clear();
+        for (Long id : leadOrganizationIds) {
+            if (id != null) {
+                this.leadOrganizationIds.add(id);
+            }
+        }
     }
 
     /**

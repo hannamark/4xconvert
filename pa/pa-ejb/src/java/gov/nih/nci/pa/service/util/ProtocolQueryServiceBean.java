@@ -557,7 +557,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     }
 
     private void populateExampleStudySites(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
-        if (StringUtils.isNotEmpty(crit.getLeadOrganizationTrialIdentifier())) {
+        if (CollectionUtils.isNotEmpty(crit.getLeadOrganizationIds())) {
             StudySite ss = new StudySite();
             ss.setLocalStudyProtocolIdentifier(crit.getLeadOrganizationTrialIdentifier());
             ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
@@ -588,10 +588,16 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             sp.getStudySites().add(ss);
         }
 
-        if (StringUtils.isNotEmpty(crit.getLeadOrganizationId())) {
+        if (CollectionUtils.isNotEmpty(crit.getLeadOrganizationIds())) {
+            populateLeadOrganizations(crit, sp);
+        }
+    }
+
+    private void populateLeadOrganizations(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
+        for (Long currId : crit.getLeadOrganizationIds()) {
             StudySite ss = new StudySite();
             Organization organization = new Organization();
-            organization.setId(Long.valueOf(crit.getLeadOrganizationId()));
+            organization.setId(currId);
             ResearchOrganization ro = new ResearchOrganization();
             ro.setOrganization(organization);
             ss.setResearchOrganization(ro);
@@ -634,7 +640,6 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     private boolean isCriteriaEmpty(StudyProtocolQueryCriteria criteria) {
         return (StringUtils.isEmpty(criteria.getNciIdentifier())
                 && StringUtils.isEmpty(criteria.getOfficialTitle())
-                && StringUtils.isEmpty(criteria.getLeadOrganizationId())
                 && StringUtils.isEmpty(criteria.getLeadOrganizationTrialIdentifier())
                 && StringUtils.isEmpty(criteria.getPrincipalInvestigatorId())
                 && StringUtils.isEmpty(criteria.getPrimaryPurposeCode())               
@@ -654,6 +659,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && CollectionUtils.isEmpty(criteria.getBioMarkers())
                 && CollectionUtils.isEmpty(criteria.getPdqDiseases())
                 && CollectionUtils.isEmpty(criteria.getParticipatingSiteIds())
+                && CollectionUtils.isEmpty(criteria.getLeadOrganizationIds())
                 && !criteria.isSearchOnHold()
                 && !criteria.isStudyLockedBy()
                 && StringUtils.isEmpty(criteria.getSubmissionType())

@@ -283,16 +283,16 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
             .getMilestone());
         criteria.setStudyMilestone(null);
 
-        criteria.setLeadOrganizationId("123");
+        criteria.getLeadOrganizationIds().add(123L);
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertTrue(results.isEmpty());
-        criteria.setLeadOrganizationId(null);
+        criteria.getLeadOrganizationIds().clear();
 
-        criteria.setLeadOrganizationId(leadOrgId.toString());
+        criteria.getLeadOrganizationIds().add(leadOrgId);
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
         assertEquals(leadOrgId, results.get(0).getLeadOrganizationId());
-        criteria.setLeadOrganizationId(null);
+        criteria.getLeadOrganizationIds().clear();
 
         criteria.setPrincipalInvestigatorId("123");
         results = localEjb.getStudyProtocolByCriteria(criteria);
@@ -424,7 +424,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
 
         createStudyProtocol("11", false, Boolean.FALSE, false, false, false, false, true);
         otherCriteria = new StudyProtocolQueryCriteria();
-        otherCriteria.setLeadOrganizationId(leadOrgId.toString());
+        otherCriteria.getLeadOrganizationIds().add(leadOrgId);
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 1, results.size());
 

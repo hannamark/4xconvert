@@ -258,7 +258,7 @@ public class SearchTrialAction extends ActionSupport {
             convertIdentifierType(queryCriteria);
         }
         if (StringUtils.isNotEmpty(criteria.getOrganizationId())) {
-            queryCriteria.setLeadOrganizationId(criteria.getOrganizationId());
+            queryCriteria.getLeadOrganizationIds().add(Long.valueOf(criteria.getOrganizationId()));
         }
         if (StringUtils.isNotBlank(criteria.getParticipatingSiteId())) {
             queryCriteria.getParticipatingSiteIds().add(Long.parseLong(criteria.getParticipatingSiteId()));

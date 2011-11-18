@@ -246,9 +246,13 @@ public class AdHocReportAction
      * @return list of lead orgs.
      * @throws PAException on error
      */
-    public List<PaOrganizationDTO> getLeadOrgList() throws PAException {
-        return PaRegistry.getPAOrganizationService()
-            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION);
+    public List<KeyValueDTO> getLeadOrgList() throws PAException {
+        List<KeyValueDTO> result = new ArrayList<KeyValueDTO>();
+        for (PaOrganizationDTO dto : PaRegistry.getPAOrganizationService()
+                .getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION)) {
+            result.add(new KeyValueDTO(Long.parseLong(dto.getId()), dto.getName()));
+        }
+        return result;
     }
 
     /**

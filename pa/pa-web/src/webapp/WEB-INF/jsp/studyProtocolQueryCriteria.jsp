@@ -72,8 +72,8 @@
                             <label for="leadOrganization"> <fmt:message key="studyProtocol.leadOrganization"/></label>
                         </td>
                         <td>
-                            <s:select name="criteria.leadOrganizationId" id="leadOrganizationId" list="#protocolOrgs" listKey="id"
-                                listValue="name" headerKey="" headerValue="All" value="criteria.leadOrganizationId" />
+                            <s:select name="criteria.leadOrganizationIds" id="leadOrganizationId" list="#protocolOrgs" listKey="id"
+                                listValue="name" headerKey="" headerValue="All" value="criteria.leadOrganizationIds" />
                         </td>
                     </tr>
                     <s:set name="identifierSearchTypes" value="@gov.nih.nci.pa.enums.IdentifierType@getDisplayNames()" />

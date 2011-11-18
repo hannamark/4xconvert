@@ -40,10 +40,10 @@
                     </span>  
                 </td>   
             </tr>    
-            <viewer:valueRow labelFor="leadOrganizationId" labelKey="studyProtocol.leadOrganization">
-                <s:select name="criteria.leadOrganizationId" id="leadOrganizationId" list="leadOrgList" listKey="id"
-                          listValue="name" headerKey="" headerValue="All" value="criteria.leadOrganizationId" />
-            </viewer:valueRow>
+            <viewer:valueRow labelFor="leadOrganizationIds" labelKey="studyProtocol.leadOrganizations">
+                <s:select name="criteria.leadOrganizationIds" id="leadOrganizationIds" list="leadOrgList" listKey="key"
+                          listValue="value" headerKey="" headerValue="All" value="criteria.leadOrganizationIds" multiple="true" />
+             </viewer:valueRow>
             <viewer:valueRow labelFor="principalInvestigatorId" labelKey="studyProtocol.principalInvestigator">
                 <s:set name="principalInvs" value="@gov.nih.nci.pa.util.PaRegistry@getPAPersonService().getAllPrincipalInvestigators()" />
                 <s:select name="criteria.principalInvestigatorId" id="principalInvestigatorId" list="#principalInvs" listKey="id"

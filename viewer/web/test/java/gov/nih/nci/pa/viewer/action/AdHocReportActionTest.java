@@ -152,6 +152,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         List<PaOrganizationDTO> paOrgDtoList = new ArrayList<PaOrganizationDTO>();
         PaOrganizationDTO paOrgDto = new PaOrganizationDTO();
         paOrgDto.setName("Org Name");
+        paOrgDto.setId("1");
         paOrgDtoList.add(paOrgDto);
         when(paOrgSvc.getOrganizationsAssociatedWithStudyProtocol(any(String.class))).thenReturn(paOrgDtoList);
         action =  new AdHocReportAction();

@@ -25,7 +25,7 @@
                         <display:column escapeXml="false" titleKey="studyProtocol.documentWorkflowStatusDate" property="documentWorkflowStatusDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
                         <display:column escapeXml="true" titleKey="studyProtocol.nciIdentifier" property="nciIdentifier" sortable="true" headerClass="sortable"/>
                         <display:column escapeXml="true" titleKey="studyProtocol.officialTitle" maxLength= "200" property="officialTitle" sortable="true" headerClass="sortable"/>
-                        <display:column escapeXml="true" titleKey="studyProtocol.leadOrganization" maxLength= "200" property="leadOrganizationName" sortable="true" headerClass="sortable"/>
+                        <display:column escapeXml="true" titleKey="report.result.leadOrg" maxLength= "200" property="leadOrganizationName" sortable="true" headerClass="sortable"/>
                         <display:column escapeXml="true" titleKey="studyProtocol.leadOrgID" maxLength= "200" property="leadOrganizationId" sortable="true" headerClass="sortable"/>
                         <display:column escapeXml="true" titleKey="studyProtocol.principalInvestigator" maxLength= "200" property="piFullName" sortable="true" headerClass="sortable"/>
                         <display:column escapeXml="true" titleKey="studyProtocol.primaryPurpose" maxLength= "200" property="primaryPurpose" sortable="true" headerClass="sortable"/>
