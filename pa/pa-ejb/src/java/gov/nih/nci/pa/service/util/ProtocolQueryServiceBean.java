@@ -549,9 +549,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     }
 
     private void populateExampleDocumentWork(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
-        if (StringUtils.isNotEmpty(crit.getDocumentWorkflowStatusCode())) {
+        for (String statusCode : crit.getDocumentWorkflowStatusCodes()) {
             DocumentWorkflowStatus dws = new DocumentWorkflowStatus();
-            dws.setStatusCode(DocumentWorkflowStatusCode.getByCode(crit.getDocumentWorkflowStatusCode()));
+            dws.setStatusCode(DocumentWorkflowStatusCode.getByCode(statusCode));
             sp.getDocumentWorkflowStatuses().add(dws);
         }
     }
@@ -640,7 +640,6 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && StringUtils.isEmpty(criteria.getPrimaryPurposeCode())               
                 && StringUtils.isEmpty(criteria.getPhaseAdditionalQualifierCode())
                 && StringUtils.isEmpty(criteria.getStudyStatusCode())
-                && StringUtils.isEmpty(criteria.getDocumentWorkflowStatusCode())
                 && StringUtils.isEmpty(criteria.getStudyMilestone())
                 && StringUtils.isEmpty(criteria.getOtherIdentifier())
                 && StringUtils.isEmpty(criteria.getNctNumber())
@@ -648,6 +647,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && StringUtils.isEmpty(criteria.getCtepIdentifier())
                 && StringUtils.isEmpty(criteria.getCountryName())
                 && StringUtils.isEmpty(criteria.getCity())
+                && CollectionUtils.isEmpty(criteria.getDocumentWorkflowStatusCodes())
                 && CollectionUtils.isEmpty(criteria.getStates())
                 && CollectionUtils.isEmpty(criteria.getPhaseCodes())
                 && CollectionUtils.isEmpty(criteria.getSummary4AnatomicSites())

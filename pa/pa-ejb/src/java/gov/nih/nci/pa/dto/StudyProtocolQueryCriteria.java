@@ -125,7 +125,6 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String leadOrganizationTrialIdentifier;   
     private String phaseAdditionalQualifierCode;
     private String studyStatusCode;
-    private String documentWorkflowStatusCode;
     private String principalInvestigatorId;
     private String primaryPurposeCode;
     private String identifierType;
@@ -151,6 +150,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     
     private String countryName;   
     private String city;
+    private final List<String> documentWorkflowStatusCodes = new ArrayList<String>();
     private final List<String> states = new ArrayList<String>();
     private final List<String> phaseCodes = new ArrayList<String>();
     private final List<Long> summary4AnatomicSites = new ArrayList<Long>();
@@ -300,17 +300,22 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
     /**
      *
-     * @return documentWorkflowStatusCode
+     * @return documentWorkflowStatusCodes
      */
-    public String getDocumentWorkflowStatusCode() {
-        return documentWorkflowStatusCode;
+    public List<String> getDocumentWorkflowStatusCodes() {
+        return documentWorkflowStatusCodes;
     }
     /**
      *
-     * @param documentWorkflowStatusCode documentWorkflowStatusCode
+     * @param documentWorkflowStatusCodes documentWorkflowStatusCodes
      */
-    public void setDocumentWorkflowStatusCode(String documentWorkflowStatusCode) {
-        this.documentWorkflowStatusCode = documentWorkflowStatusCode;
+    public void setDocumentWorkflowStatusCodes(List<String> documentWorkflowStatusCodes) {
+        this.documentWorkflowStatusCodes.clear();
+        for (String statusCode : documentWorkflowStatusCodes) {
+            if (StringUtils.isNotBlank(statusCode)) {
+                this.documentWorkflowStatusCodes.add(statusCode);
+            }
+        }
     }
     /**
      *

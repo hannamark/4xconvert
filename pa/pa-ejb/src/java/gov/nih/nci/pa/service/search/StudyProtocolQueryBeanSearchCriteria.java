@@ -83,6 +83,7 @@
 package gov.nih.nci.pa.service.search;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
@@ -91,8 +92,10 @@ import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.enums.UserOrgType;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -198,11 +201,14 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
 
             if (CollectionUtils.isNotEmpty(sp.getDocumentWorkflowStatuses())) {
                 String operator = determineOperator(whereClause);
-                DocumentWorkflowStatusCode dws = sp.getDocumentWorkflowStatuses().iterator().next().getStatusCode();
-                whereClause.append(String.format(" %s dws.statusCode = :%s ", operator, DWS_PARAM));
+                Set<DocumentWorkflowStatusCode> statusCodes = new HashSet<DocumentWorkflowStatusCode>();
+                for (DocumentWorkflowStatus status : sp.getDocumentWorkflowStatuses()) {
+                    statusCodes.add(status.getStatusCode());
+                }
+                whereClause.append(String.format(" %s dws.statusCode in (:%s) ", operator, DWS_PARAM));
                 whereClause.append(String.format(" and dws.id = (select max(id) from %s.documentWorkflowStatuses)",
                         SearchableUtils.ROOT_OBJ_ALIAS));
-                params.put(DWS_PARAM, dws);
+                params.put(DWS_PARAM, statusCodes);
             }
 
             if (CollectionUtils.isNotEmpty(sp.getStudyMilestones())) {

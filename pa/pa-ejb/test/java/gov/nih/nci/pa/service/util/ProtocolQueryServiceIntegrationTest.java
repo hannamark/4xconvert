@@ -211,16 +211,16 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         assertEquals(StudyStatusCode.ACTIVE, results.get(0).getStudyStatusCode());
         criteria.setStudyStatusCode(null);
 
-        criteria.setDocumentWorkflowStatusCode("Verification Pending");
+        criteria.getDocumentWorkflowStatusCodes().add("Verification Pending");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertTrue(results.isEmpty());
-        criteria.setDocumentWorkflowStatusCode(null);
+        criteria.getDocumentWorkflowStatusCodes().clear();
 
-        criteria.setDocumentWorkflowStatusCode("Accepted");
+        criteria.getDocumentWorkflowStatusCodes().add("Accepted");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertFalse(results.isEmpty());
         assertEquals(DocumentWorkflowStatusCode.ACCEPTED, results.get(0).getDocumentWorkflowStatusCode());
-        criteria.setDocumentWorkflowStatusCode(null);
+        criteria.getDocumentWorkflowStatusCodes().clear();
 
         criteria.setLeadOrganizationTrialIdentifier("Local1");
         results = localEjb.getStudyProtocolByCriteria(criteria);

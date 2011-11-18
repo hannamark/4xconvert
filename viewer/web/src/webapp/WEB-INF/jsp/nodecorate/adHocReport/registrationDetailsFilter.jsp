@@ -49,10 +49,10 @@
                 <s:select name="criteria.principalInvestigatorId" id="principalInvestigatorId" list="#principalInvs" listKey="id"
                           listValue="fullName" headerKey="" headerValue="All" value="criteria.principalInvestigatorId" />
             </viewer:valueRow>
-            <viewer:valueRow labelFor="documentWorkflowStatusCode" labelKey="studyProtocol.documentWorkflowStatus">
+            <viewer:valueRow labelFor="documentWorkflowStatusCodes" labelKey="studyProtocol.documentWorkflowStatus">
                 <s:set name="documentWorkflowStatusCodeValues" value="@gov.nih.nci.pa.enums.DocumentWorkflowStatusCode@getDisplayNames()" />
-                <s:select headerKey="" headerValue="All" id="documentWorkflowStatusCode" name="criteria.documentWorkflowStatusCode" list="#documentWorkflowStatusCodeValues"  
-                          value="criteria.documentWorkflowStatusCode" cssStyle="width:206px" />
+                <s:select headerKey="" headerValue="All" id="documentWorkflowStatusCodes" name="criteria.documentWorkflowStatusCodes" list="#documentWorkflowStatusCodeValues"  
+                          value="criteria.documentWorkflowStatusCodes" cssStyle="width:206px" multiple="true" />
             </viewer:valueRow>
             <viewer:valueRow labelFor="studyStatusCode" labelKey="studyProtocol.studyStatus">
                 <s:set name="studyStatusCodeValues" value="@gov.nih.nci.pa.enums.StudyStatusCode@getDisplayNames()" />
