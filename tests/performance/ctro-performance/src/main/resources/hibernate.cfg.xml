@@ -9,7 +9,8 @@
 
         <!-- Database connection settings -->
         <property name="connection.driver_class">org.postgresql.Driver</property>
-        <property name="connection.url">jdbc:postgresql://localhost/ctods_pa</property>
+        <property name="connection.url">jdbc:postgresql://192.168.184.190/ctods_pa</property>
+        <!-- <property name="connection.url">jdbc:postgresql://localhost/ctods_pa</property>-->
         <property name="connection.username">postgres</property>
         <property name="connection.password">postgres</property>
 
@@ -26,7 +27,7 @@
         <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
 
         <!-- Echo all executed SQL to stdout -->
-        <property name="show_sql">true</property>
+        <property name="show_sql">false</property>
 
     </session-factory>
 
