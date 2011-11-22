@@ -236,7 +236,7 @@ public class StudyOverallStatusBeanLocal extends
         // automatically update StudyRecruitmentStatus for applicable overall status code's
         if (bo != null && bo.getStatusCode() != null) {
             StudyRecruitmentStatus srsBo = new StudyRecruitmentStatus();
-            srsBo.setStatusCode(RecruitmentStatusCode.getByCode(bo.getStatusCode().getCode()));
+            srsBo.setStatusCode(RecruitmentStatusCode.getByStatusCode(bo.getStatusCode()));
             srsBo.setStatusDate(bo.getStatusDate());
             srsBo.setStudyProtocol(bo.getStudyProtocol());
             return srsBo;

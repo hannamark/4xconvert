@@ -798,4 +798,8 @@
         <comment>Update mail from, with tier based filtering</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.7/PO-4237.sql"/>
      </changeSet>
+     <changeSet id="PO-4344" author="moweis">
+        <comment>Update nullified Recruitment Status codes to COMPLETED.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.7/PO-4344.sql"/>
+     </changeSet>
 </databaseChangeLog>

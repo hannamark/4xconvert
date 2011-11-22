@@ -165,8 +165,6 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
     public static RecruitmentStatusCode getByCode(String code) {
         return getByClassAndCode(RecruitmentStatusCode.class, code);
     }
-    
-    
 
     /**
      * @return String[] display names of enums
@@ -209,5 +207,16 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
     @Override
     public String getNameByCode(String str) {
         return getByCode(str).name();
+    }
+    /**
+     * Returns the corresponding recruitment status code for a study status code.
+     * @param statusCode overall status of study
+     * @return mapped recruitment status code
+     */
+    public static RecruitmentStatusCode getByStatusCode(StudyStatusCode statusCode) {
+        if (StudyStatusCode.COMPLETE.equals(statusCode)) {
+            return COMPLETED;
+        }
+        return getByCode(statusCode.getCode());
     }
 }
