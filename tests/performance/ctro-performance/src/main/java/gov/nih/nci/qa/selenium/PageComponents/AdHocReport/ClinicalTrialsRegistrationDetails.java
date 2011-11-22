@@ -36,7 +36,7 @@ public class ClinicalTrialsRegistrationDetails {
 	@FindBy(how = How.ID, using = "principalInvestigatorId")
 	WebElement principalInvestigatorDropDown;
 
-	@FindBy(how = How.ID, using = "documentWorkflowStatusCode")
+	@FindBy(how = How.ID, using = "documentWorkflowStatusCodes")
 	WebElement processingStatusDropDown;
 
 	@FindBy(how = How.ID, using = "identifier")
@@ -54,7 +54,7 @@ public class ClinicalTrialsRegistrationDetails {
 	@FindBy(how = How.ID, using = "studyStatusCode")
 	WebElement currentTrialStatusDropDown;
 
-	@FindBy(how = How.ID, using = "leadOrganizationId")
+	@FindBy(how = How.ID, using = "leadOrganizationIds")
 	WebElement leadOrganizationDropDown;
 
 	private final WebDriver webDriver;

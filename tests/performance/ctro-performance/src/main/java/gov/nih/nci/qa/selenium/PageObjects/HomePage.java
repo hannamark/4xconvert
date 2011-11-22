@@ -49,7 +49,7 @@ public class HomePage extends LoadableComponent<HomePage> {
 		String protocol = properties.getProperty("protocol");
 		String host = properties.getProperty("host");
 		String port = properties.getProperty("port");
-		String url = protocol + "://" + host + ":" + port + "/viewer/";
+		String url = protocol + "://" + host + ":" + port + "/viewer/ctro";
 
 		// TODO sanity check the url.
 		Split split = SplitUtil.getNavigationSplit("HomePage");
@@ -59,7 +59,7 @@ public class HomePage extends LoadableComponent<HomePage> {
 
 	@Override
 	protected void isLoaded() throws Error {
-		if (!"Welcome to NCI's CTRP Viewer".equals(webDriver.getTitle())) {
+		if (!"NCI CTRP Viewer".equals(webDriver.getTitle())) {
 			// TODO Do something nicer than just accepting the default title as
 			// proof that we're at the right place.
 			throw new Error("This is not the Home Page");

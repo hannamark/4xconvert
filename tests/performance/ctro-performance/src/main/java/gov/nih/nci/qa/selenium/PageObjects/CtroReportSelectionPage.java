@@ -5,6 +5,7 @@ import gov.nih.nci.qa.selenium.util.SplitUtil;
 import org.javasimon.Split;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
@@ -13,16 +14,19 @@ import org.openqa.selenium.support.ui.LoadableComponent;
 public class CtroReportSelectionPage extends
 		LoadableComponent<CtroReportSelectionPage> {
 
-	@FindBy(how = How.LINK_TEXT, using = "Ad Hoc")
+	@FindBy(how = How.XPATH, using = "//ul[@id='mainmenu']/li[2]/a/span")
+	private WebElement mainMenuLink;
+
+	@FindBy(how = How.XPATH, using = "//ul[@id='reportmenu']/li[4]/a/span")
 	private WebElement adHocLink;
 
-	@FindBy(how = How.LINK_TEXT, using = "Summary 4 Type")
+	@FindBy(how = How.XPATH, using = "//ul[@id='reportmenu']/li[3]/a/span")
 	private WebElement summary4TypeLink;
 
-	@FindBy(how = How.LINK_TEXT, using = "Trials Submitted by Institution")
+	@FindBy(how = How.XPATH, using = "//ul[@id='reportmenu']/li[2]/a/span")
 	private WebElement trialsSubmittedByInstitutionLink;
 
-	@FindBy(how = How.LINK_TEXT, using = "Summary of Submission")
+	@FindBy(how = How.XPATH, using = "//ul[@id='reportmenu']/li/a/span")
 	private WebElement summaryOfSubmissionLink;
 
 	@FindBy(how = How.LINK_TEXT, using = "Log Out")
@@ -38,7 +42,9 @@ public class CtroReportSelectionPage extends
 	public AdHocReportPage clickAdHocLink() {
 		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"CtroReportSelectionPage", "clickAdHocLink");
-		adHocLink.click();
+		Actions actions = new Actions(webDriver);
+		actions.click(mainMenuLink).click(adHocLink);
+		actions.perform();
 		split.stop();
 		return new AdHocReportPage(webDriver);
 	}
@@ -46,7 +52,9 @@ public class CtroReportSelectionPage extends
 	public Summary4TypeReportPage clickSummary4TypeLink() {
 		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"CtroReportSelectionPage", "clickSummary4TypeLink");
-		summary4TypeLink.click();
+		Actions actions = new Actions(webDriver);
+		actions.click(mainMenuLink).click(summary4TypeLink);
+		actions.perform();
 		split.stop();
 		return new Summary4TypeReportPage(webDriver);
 	}
@@ -55,7 +63,9 @@ public class CtroReportSelectionPage extends
 		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"CtroReportSelectionPage",
 				"clickTrialsSubmittedByInstitutionLink");
-		trialsSubmittedByInstitutionLink.click();
+		Actions actions = new Actions(webDriver);
+		actions.click(mainMenuLink).click(trialsSubmittedByInstitutionLink);
+		actions.perform();
 		split.stop();
 		return new TrialsSubmittedByInstitutionReportPage(webDriver);
 	}
@@ -63,7 +73,9 @@ public class CtroReportSelectionPage extends
 	public SummaryOfSubmissionReportPage clickSummaryOfSubmissionLink() {
 		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"CtroReportSelectionPage", "clickSummaryOfSubmissionLink");
-		summaryOfSubmissionLink.click();
+		Actions actions = new Actions(webDriver);
+		actions.click(mainMenuLink).click(summaryOfSubmissionLink);
+		actions.perform();
 		split.stop();
 		return new SummaryOfSubmissionReportPage(webDriver);
 	}

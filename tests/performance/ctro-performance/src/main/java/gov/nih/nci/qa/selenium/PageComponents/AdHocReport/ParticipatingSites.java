@@ -14,7 +14,7 @@ import org.openqa.selenium.support.PageFactory;
 
 public class ParticipatingSites {
 
-	@FindBy(how = How.ID, using = "participatingSiteId")
+	@FindBy(how = How.ID, using = "participatingSiteIds")
 	WebElement partipatingSiteDropDown;
 
 	private final WebDriver webDriver;
