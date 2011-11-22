@@ -17,27 +17,69 @@
         <script type="text/javascript" src="${scriptPath}/pages/adHocReport/diseasesFilter.js"></script>
         <script type="text/javascript">
             jQuery(function() {
-                   var tabOptions = {
-                           selected: (jQuery("#resultTable").size() == 0) ? 0 : 1
-                   };
-                   jQuery("#reportui").tabs(tabOptions);       
-                   var accordionOptions = {
-                           autoHeight: false
-                   };
-                   jQuery("#filtersAccordion").accordion(accordionOptions);
-                   jQuery("#runButton").bind("click", function(ev) {
+                    var tabOptions = {
+                        selected: (jQuery("#resultTable").size() == 0) ? 0 : 1
+                    };
+                    jQuery("#reportui").tabs(tabOptions);       
+                    var accordionOptions = {
+                        autoHeight: false,
+                        active: false,
+                        collapsible: true
+                    };
+                    var firstAccordionOptions = {
+                        autoHeight: false,
+                        collapsible: true
+                    };
+                    // Activate accordions
+                    jQuery("#detailsAccordion").accordion(firstAccordionOptions);
+                    jQuery("#diseaseAccordion").accordion(accordionOptions);
+                    jQuery("#interventionsAccordion").accordion(accordionOptions);
+                    jQuery("#sitesAccordion").accordion(accordionOptions);
+                    jQuery("#geographicAreaAccordion").accordion(accordionOptions);
+                    jQuery("#biomarkersAccordion").accordion(accordionOptions);
+                    jQuery("#summaryAccordion").accordion(accordionOptions);
+                    // Expand/Collapse all functionality
+                    jQuery("#expandAll a").bind("click", function(ev) {
+                        expandOrCollapseAll(false);
+                        jQuery("#expandAll").toggle();
+                        jQuery("#collapseAll").toggle();
+                    });
+                    jQuery("#collapseAll a").bind("click", function(ev) {
+                        expandOrCollapseAll(true);
+                        jQuery("#expandAll").toggle();
+                        jQuery("#collapseAll").toggle();
+                    });
+                    jQuery("#runButton").bind("click", function(ev) {
                         jQuery("#resultsTab").html(jQuery("div.template.loadingMessage").children().html());
                         jQuery("#reportui").tabs("select", 1);
                         var form = jQuery("#searchForm").get(0);
                         form.action="resultsAdHocReport.action";
                         form.submit();
                         });
-                   jQuery("#resetButton").bind("click", function(ev) {
+                    jQuery("#resetButton").bind("click", function(ev) {
                         var form = jQuery("#searchForm").get(0);
                         form.action="criteriaAdHocReport.action";
                         form.submit();
                         });
-                   });
+                    });
+            
+                    // Expands all sections if 'currentlyVisible' is false, otherwise collapses all
+                    function expandOrCollapseAll(currentlyVisible) {
+                        expandOrCollapseSection('#detailsSection', '#detailsAccordion', currentlyVisible);
+                        expandOrCollapseSection('#diseasesSection', '#diseaseAccordion', currentlyVisible);
+                        expandOrCollapseSection('#interventionsSection', '#interventionsAccordion', currentlyVisible);
+                        expandOrCollapseSection('#participatingSitesSection', '#sitesAccordion', currentlyVisible);
+                        expandOrCollapseSection('#geographicAreaSection', '#geographicAreaAccordion', currentlyVisible);
+                        expandOrCollapseSection('#biomarkersSection', '#biomarkersAccordion', currentlyVisible);
+                        expandOrCollapseSection('#summary4Section', '#summaryAccordion', currentlyVisible);
+                    }
+            
+                    // Triggers expand/collapse section if 'currentlyVisible' matches
+                    function expandOrCollapseSection(sectionName, accordionName, currentlyVisible) {
+                        if (jQuery(sectionName).is(":visible") == currentlyVisible) {
+                            jQuery(accordionName + " .ui-accordion-header").click();
+                        }
+                    }
         </script>
     </head>
     <body>
@@ -60,13 +102,33 @@
                 <div id="filtersTab">
                     <!--Filters-->
                     <div id="filtersAccordion">
-                        <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/registrationDetailsFilter.jsp"/>
-                        <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/diseasesFilter.jsp"/>
-                        <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/interventionsFilter.jsp"/>
-                        <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/participatingSitesFilter.jsp"/>
-                        <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/geographicAreaFilter.jsp"/>
-                        <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/biomarkersFilter.jsp"/>
-                        <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/summary4Filter.jsp"/>
+                        <div id="expandAll">
+                            <a href="#"><fmt:message key="adHocReport.expand" /></a>
+                        </div>
+                        <div id="collapseAll" style="display: none;">
+                            <a href="#"><fmt:message key="adHocReport.collapse" /></a>
+                        </div>
+                        <div id="detailsAccordion">
+                            <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/registrationDetailsFilter.jsp"/>
+                        </div>
+                        <div id="diseaseAccordion">
+                            <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/diseasesFilter.jsp"/>
+                        </div>
+                        <div id="interventionsAccordion">
+                            <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/interventionsFilter.jsp"/>
+                        </div>
+                        <div id="sitesAccordion">
+                            <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/participatingSitesFilter.jsp"/>
+                        </div>
+                        <div id="geographicAreaAccordion">
+                            <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/geographicAreaFilter.jsp"/>
+                        </div>
+                        <div id="biomarkersAccordion">
+                            <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/biomarkersFilter.jsp"/>
+                        </div>
+                        <div id="summaryAccordion">
+                            <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/summary4Filter.jsp"/>
+                        </div>
                     </div>
                     <viewer:buttonBar>
                         <viewer:button labelKey="report.button.run" id="runButton" imgClass="search" />
