@@ -81,26 +81,28 @@ package gov.nih.nci.pa.enums;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+
 /**
  * 
  * @author Vrushali
- *
+ * 
  */
 public enum FunctionalRoleStatusCode implements CodedEnum<String> {
-    /*** Active.*/
-    ACTIVE("Active"), 
-    /*** Pending.*/
+    /*** Active. */
+    ACTIVE("Active"),
+    /*** Pending. */
     PENDING("Pending"),
     /*** Suspended. */
     SUSPENDED("Suspended"),
     /** Cancelled. */
     CANCELLED("Cancelled"),
-    /**Terminated. */
+    /** Terminated. */
     TERMINATED("Terminated"),
     /*** Nullified. */
     NULLIFIED("Nullified");
 
     private String code;
+
     /**
      * Constructor for StatusCode.
      * @param code
@@ -109,12 +111,15 @@ public enum FunctionalRoleStatusCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return String display name
      */
+    @Override
     public String getCode() {
         return code;
     }
+
     /**
      * @return String display name
      */
@@ -123,35 +128,32 @@ public enum FunctionalRoleStatusCode implements CodedEnum<String> {
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
+
     /**
      * @param code code
-     * @return StatusCode 
+     * @return StatusCode
      */
     public static FunctionalRoleStatusCode getByCode(String code) {
         return getByClassAndCode(FunctionalRoleStatusCode.class, code);
     }
+
     /**
      * construct a array of display names for Abstracted Status coded Enum.
      * @return String[] display names for Abstracted Status Code
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         FunctionalRoleStatusCode[] absStatusCodes = FunctionalRoleStatusCode.values();
         String[] codedNames = new String[absStatusCodes.length];
         for (int i = 0; i < absStatusCodes.length; i++) {
             codedNames[i] = absStatusCodes[i].getCode();
         }
         return codedNames;
-    } 
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
     }
+
 }

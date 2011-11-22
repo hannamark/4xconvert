@@ -89,19 +89,49 @@ import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.opensymphony.xwork2.Preparable;
 
 /**
  * @author Hugh Reinhart
  * @since 4/16/2009
  */
 public class SubmissionByInstitutionAction
-        extends AbstractReportAction<InstitutionCriteriaWebDto, TrialListResultWebDto> {
+        extends AbstractReportAction<InstitutionCriteriaWebDto, TrialListResultWebDto> implements Preparable {
 
     private static final long serialVersionUID = 7044286786372431982L;
+    
+    private static final Set<SubmissionTypeCode> ORIGINAL_CODES = EnumSet.of(SubmissionTypeCode.BOTH,
+                                                                             SubmissionTypeCode.ORIGINAL);
+    private static final Set<SubmissionTypeCode> AMENDMENT_CODES = EnumSet.of(SubmissionTypeCode.BOTH,
+                                                                              SubmissionTypeCode.AMENDMENT);
+    private static final Set<SubmissionTypeCode> OVERALL_CODES = EnumSet.of(SubmissionTypeCode.BOTH);
+    private static final String TOTAL_ORIG = "Total of original submissions";
+    private static final String TOTAL_AMEND = "Total of amendments";
+    private static final String TOTAL_BOTH = "Total all submission";
+    private static final String TOTAL = "Total";
+    private static final String SUB_TYPE_ORIG = "Original";
+    private static final String SUB_TYPE_AMEND = "Amendment";
+    private static final String SUB_TYPE_BOTH = "All";
+    
+    private SubmitterOrganizationLocal submitterOrganizationReportService;
+    private TrialListLocal trialListReportService;
 
     private InstitutionCriteriaWebDto criteria;
-    private static List<String> submitterOrganizations;
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() {
+        submitterOrganizationReportService = ViewerServiceLocator.getInstance().getSubmitterOrganizationReportService();
+        trialListReportService = ViewerServiceLocator.getInstance().getTrialListReportService();
+    }
 
     /**
      * {@inheritDoc}
@@ -117,46 +147,81 @@ public class SubmissionByInstitutionAction
      */
     @Override
     public String getReport() {
-        TrialListLocal local = ViewerServiceLocator.getInstance().getTrialListReportService();
-        List<TrialListResultDto> isoList;
         try {
-            isoList = local.get(criteria.getIsoDto());
+            List<TrialListResultDto> isoList = trialListReportService.get(criteria.getIsoDto());
+            setResultList(getWebList(isoList, SubmissionTypeCode.valueOf(getCriteria()
+                .getSubmissionType()), false));
+            return super.getReport();
         } catch (PAException e) {
             addActionError(e.getMessage());
             return super.execute();
         }
-        setResultList(TrialListResultWebDto.getWebList(isoList,
-                SubmissionTypeCode.valueOf(getCriteria().getSubmissionType()), false));
-        return super.getReport();
+
+    }
+    
+    /**
+     * Generates a list of web dto's from a list of service dto's.
+     * @param serviceDtoList service dto list
+     * @param subTypeCriteria submission type(s) being reported upon
+     * @param isCurrentMilestoneReport Is this a current milestone report.
+     * @return web dto list
+     */
+    List<TrialListResultWebDto> getWebList(List<TrialListResultDto> serviceDtoList, SubmissionTypeCode subTypeCriteria,
+            boolean isCurrentMilestoneReport) {
+        List<TrialListResultWebDto> resultList = new ArrayList<TrialListResultWebDto>();
+        int original = 0;
+        for (TrialListResultDto dto : serviceDtoList) {
+            if (dto.isOriginal()) {
+                original++;
+            }
+            resultList.add(new TrialListResultWebDto(dto));
+        }
+        addSummaryResults(resultList, subTypeCriteria, isCurrentMilestoneReport, original, serviceDtoList.size());
+        return resultList;
     }
 
     /**
-     * @return the criteria
+     * Adds the summary results at the end of the report.
+     * @param resultList The result list
+     * @param subTypeCriteria submission type(s) being reported upon
+     * @param isCurrentMilestoneReport Is this a current milestone report.
+     * @param original Number of original submissions
+     * @param total Total number of submissions
      */
-    public InstitutionCriteriaWebDto getCriteria() {
-        return criteria;
+    void addSummaryResults(List<TrialListResultWebDto> resultList, SubmissionTypeCode subTypeCriteria,
+            boolean isCurrentMilestoneReport, int original, int total) {
+        if (ORIGINAL_CODES.contains(subTypeCriteria)) {
+            TrialListResultWebDto webDto =
+                    new TrialListResultWebDto(TOTAL_ORIG, SUB_TYPE_ORIG, Integer.toString(original));
+            resultList.add(webDto);
+        }
+        if (AMENDMENT_CODES.contains(subTypeCriteria)) {
+            TrialListResultWebDto webDto =
+                    new TrialListResultWebDto(TOTAL_AMEND, SUB_TYPE_AMEND, Integer.toString(total - original));
+            resultList.add(webDto);
+        }
+        if (OVERALL_CODES.contains(subTypeCriteria)) {
+            TrialListResultWebDto webDto =
+                    new TrialListResultWebDto(TOTAL_BOTH, SUB_TYPE_BOTH, Integer.toString(total));
+            resultList.add(webDto);
+        }
+        if (isCurrentMilestoneReport) {
+            TrialListResultWebDto webDto = new TrialListResultWebDto(TOTAL, Integer.toString(total), null);
+            resultList.add(webDto);
+        }
     }
-    /**
-     * @param criteria the criteria to set
-     */
-    public void setCriteria(InstitutionCriteriaWebDto criteria) {
-        this.criteria = criteria;
-    }
+
     /**
      * @return the submitterOrganizations
      */
     public List<String> getSubmitterOrganizations() {
-        SubmitterOrganizationLocal local = ViewerServiceLocator.getInstance().
-                getSubmitterOrganizationReportService();
-        List<St> isoList = null;
+        List<String> submitterOrganizations = new ArrayList<String>();
         try {
-            isoList = local.get();
+            for (St iso : submitterOrganizationReportService.get()) {
+                submitterOrganizations.add(StConverter.convertToString(iso));
+            }
         } catch (PAException e) {
             addActionError(e.getMessage());
-        }
-        submitterOrganizations = new ArrayList<String>();
-        for (St iso : isoList) {
-            submitterOrganizations.add(StConverter.convertToString(iso));
         }
         return submitterOrganizations;
     }
@@ -165,22 +230,44 @@ public class SubmissionByInstitutionAction
      * @return list of institutions for display
      */
     public String getSelectedInstitutions() {
-        StringBuffer result = new StringBuffer();
+        String result = null;
         if (criteria.getInstitutions().contains("1")) {
-            result.append("All");
+            result = "All";
         } else {
-            ArrayList<String> iList = new ArrayList<String>();
+            List<String> iList = new ArrayList<String>();
             iList.addAll(criteria.getInstitutions());
             Collections.sort(iList);
-            boolean first = true;
-            for (String i : iList) {
-                if (!first) {
-                    result.append(", ");
-                }
-                result.append(i);
-                first = false;
-            }
+            result = StringUtils.join(iList, ", ");
         }
-        return result.toString();
+        return result;
     }
+
+    /**
+     * @return the criteria
+     */
+    public InstitutionCriteriaWebDto getCriteria() {
+        return criteria;
+    }
+
+    /**
+     * @param criteria the criteria to set
+     */
+    public void setCriteria(InstitutionCriteriaWebDto criteria) {
+        this.criteria = criteria;
+    }
+
+    /**
+     * @param submitterOrganizationReportService the submitterOrganizationReportService to set
+     */
+    public void setSubmitterOrganizationReportService(SubmitterOrganizationLocal submitterOrganizationReportService) {
+        this.submitterOrganizationReportService = submitterOrganizationReportService;
+    }
+
+    /**
+     * @param trialListReportService the trialListReportService to set
+     */
+    public void setTrialListReportService(TrialListLocal trialListReportService) {
+        this.trialListReportService = trialListReportService;
+    }
+
 }

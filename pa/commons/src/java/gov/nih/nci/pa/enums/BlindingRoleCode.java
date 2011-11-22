@@ -102,6 +102,7 @@ public enum BlindingRoleCode implements CodedEnum<String> {
     OUTCOMES_ASSESSOR("Outcomes Assessor");
 
     private String code;
+
     /**
      * 
      * @param code
@@ -110,16 +111,19 @@ public enum BlindingRoleCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -135,7 +139,7 @@ public enum BlindingRoleCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return BlindingRoleCode 
+     * @return BlindingRoleCode
      */
     public static BlindingRoleCode getByCode(String code) {
         return getByClassAndCode(BlindingRoleCode.class, code);
@@ -144,7 +148,7 @@ public enum BlindingRoleCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         BlindingRoleCode[] l = BlindingRoleCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -152,11 +156,5 @@ public enum BlindingRoleCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

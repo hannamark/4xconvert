@@ -104,42 +104,46 @@ public enum LanskyPerformanceStatusCode implements CodedEnum<String> {
     /** 50. */
     FIFTY("50 - Gets dressed, but lies around much of the day; no active play,"
             + " able to participate in all quiet play and activities."),
-   /** 40. */
-   FORTY("40 - Mostly in bed; participates in quiet activities."),    
-   /** 30. */
-   THIRTY("30 - In bed; needs assistance even for quiet play."),      
-   /** 20. */
-   TWENTY("20 - Often sleeping; play entirely limited to very passive activities."),       
-   /** 10. */
-   TEN("10 - No play; does not get out of bed."),       
-   /** 0. */
-   ZERO("0 - Unresponsive");
+    /** 40. */
+    FORTY("40 - Mostly in bed; participates in quiet activities."),
+    /** 30. */
+    THIRTY("30 - In bed; needs assistance even for quiet play."),
+    /** 20. */
+    TWENTY("20 - Often sleeping; play entirely limited to very passive activities."),
+    /** 10. */
+    TEN("10 - No play; does not get out of bed."),
+    /** 0. */
+    ZERO("0 - Unresponsive");
 
     private String code;
+
     /**
-     *
+     * 
      * @param code
      */
     private LanskyPerformanceStatusCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -147,7 +151,7 @@ public enum LanskyPerformanceStatusCode implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return PatientGenderCode
      */
@@ -158,7 +162,7 @@ public enum LanskyPerformanceStatusCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         LanskyPerformanceStatusCode[] l = LanskyPerformanceStatusCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -166,11 +170,5 @@ public enum LanskyPerformanceStatusCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

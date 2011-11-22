@@ -90,7 +90,7 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * @since 11/5/2009
  */
 public enum InterventionType implements CodedEnum<String> {
-    
+
     /** Drug/Biologics. */
     DRUG_OR_BIOLOGICS("Drug/Biologics"),
     /** Surgery. */
@@ -99,30 +99,34 @@ public enum InterventionType implements CodedEnum<String> {
     RADIATION("Radiation");
 
     private String code;
+
     /**
-     *
+     * 
      * @param code
      */
     private InterventionType(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -130,7 +134,7 @@ public enum InterventionType implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return PatientGenderCode
      */
@@ -141,7 +145,7 @@ public enum InterventionType implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         InterventionType[] l = InterventionType.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -149,11 +153,5 @@ public enum InterventionType implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

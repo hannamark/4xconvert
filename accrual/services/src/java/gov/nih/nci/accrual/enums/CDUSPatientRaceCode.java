@@ -85,6 +85,7 @@ package gov.nih.nci.accrual.enums;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.PatientRaceCode;
 
@@ -114,11 +115,11 @@ public enum CDUSPatientRaceCode implements CodedEnum<String> {
     NOT_REPORTED("98", PatientRaceCode.NOT_REPORTED.getCode(), PatientRaceCode.NOT_REPORTED),
     /** Unknown. */
     UNKNOWN("99", PatientRaceCode.UNKNOWN.getCode(), PatientRaceCode.UNKNOWN);
-    
+
     private String cdusCode;
     private String crfCode;
     private PatientRaceCode value;
-    
+
     /**
      * @param cdusCode the cdus representation
      * @param crfCode the crf representation
@@ -130,14 +131,7 @@ public enum CDUSPatientRaceCode implements CodedEnum<String> {
         this.value = value;
         register(this);
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-    
+
     /**
      * @param code the code to lookup the code for
      * @return the cdus race code
@@ -150,7 +144,7 @@ public enum CDUSPatientRaceCode implements CodedEnum<String> {
         }
         return getByClassAndCode(CDUSPatientRaceCode.class, code);
     }
-    
+
     /**
      * Returns a list of race codes corresponding to the given cdus codes.
      * @param cdusCodes the cdus codes
@@ -168,15 +162,17 @@ public enum CDUSPatientRaceCode implements CodedEnum<String> {
     }
 
     /**
-     * @return the code
+     * {@inheritDoc}
      */
+    @Override
     public String getCode() {
         return crfCode;
     }
-    
+
     /**
-     *@return the display name
+     * {@inheritDoc}
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -194,4 +190,5 @@ public enum CDUSPatientRaceCode implements CodedEnum<String> {
     public String getCdusCode() {
         return cdusCode;
     }
+
 }

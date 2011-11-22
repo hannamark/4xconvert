@@ -87,91 +87,89 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * @since 02/11/2009
  */
 public enum OnholdReasonCode implements CodedEnum<String> {
-  /**
-   * SUBMISSION_INCOM.
-   */
-  SUBMISSION_INCOM("Submission Incomplete"),
-  /**
-   * INVALID_GRANT.
-   */
-  INVALID_GRANT("Invalid Grant"),
-  /**
-   * PENDING_DISEASE_CUR.
-   */
-  PENDING_DISEASE_CUR("Pending Disease Curation"),
-  /**
-   * PENDING_PERSON_CUR.
-   */
-  PENDING_PERSON_CUR("Pending Person Curation"),
-  /**
-   * PPENDING_ORG_CUR.
-   */
-  PENDING_ORG_CUR("Pending Organization Curation"),
-  /**
-   * PENDING_INTERVENTION_CUR.
-   */
-  PENDING_INTERVENTION_CUR("Pending Intervention Curation"),
-  /**
-   * OTHER.
-   */
-  OTHER("Other");
+    /**
+     * SUBMISSION_INCOM.
+     */
+    SUBMISSION_INCOM("Submission Incomplete"),
+    /**
+     * INVALID_GRANT.
+     */
+    INVALID_GRANT("Invalid Grant"),
+    /**
+     * PENDING_DISEASE_CUR.
+     */
+    PENDING_DISEASE_CUR("Pending Disease Curation"),
+    /**
+     * PENDING_PERSON_CUR.
+     */
+    PENDING_PERSON_CUR("Pending Person Curation"),
+    /**
+     * PPENDING_ORG_CUR.
+     */
+    PENDING_ORG_CUR("Pending Organization Curation"),
+    /**
+     * PENDING_INTERVENTION_CUR.
+     */
+    PENDING_INTERVENTION_CUR("Pending Intervention Curation"),
+    /**
+     * OTHER.
+     */
+    OTHER("Other");
 
-  private String code;
-  /**
-   * 
-   * @param code
-   */
-  private OnholdReasonCode(String code) {
-      this.code = code;
-      register(this);
-  }
-  /**
-   * @return code code
-   */
-  public String getCode() {
-      return code;
-  }
+    private String code;
 
-  /**
-   *@return String DisplayName 
-   */
-  public String getDisplayName() {
-      return sentenceCasedName(this);
-  }
+    /**
+     * 
+     * @param code
+     */
+    private OnholdReasonCode(String code) {
+        this.code = code;
+        register(this);
+    }
 
-  /**
-   * 
-   * @return String name
-   */
-  public String getName() {
-      return name();
-  }
+    /**
+     * @return code code
+     */
+    @Override
+    public String getCode() {
+        return code;
+    }
 
-  /**
-   * 
-   * @param code code
-   * @return OnholdReasonCode 
-   */
-  public static OnholdReasonCode getByCode(String code) {
-      return getByClassAndCode(OnholdReasonCode.class, code);
-  }
+    /**
+     * @return String DisplayName
+     */
+    @Override
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
 
-  /**
-   * @return String[] display names of enums
-   */
-  public static String[]  getDisplayNames() {
-      OnholdReasonCode[] l = OnholdReasonCode.values();
-      String[] a = new String[l.length];
-      for (int i = 0; i < l.length; i++) {
-          a[i] = l[i].getCode();
-      }
-      return a;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public String getNameByCode(String str) {
-      return getByCode(str).name();
-  }
+    /**
+     * 
+     * @return String name
+     */
+    public String getName() {
+        return name();
+    }
+
+    /**
+     * 
+     * @param code code
+     * @return OnholdReasonCode
+     */
+    public static OnholdReasonCode getByCode(String code) {
+        return getByClassAndCode(OnholdReasonCode.class, code);
+    }
+
+    /**
+     * @return String[] display names of enums
+     */
+    public static String[] getDisplayNames() {
+        OnholdReasonCode[] l = OnholdReasonCode.values();
+        String[] a = new String[l.length];
+        for (int i = 0; i < l.length; i++) {
+            a[i] = l[i].getCode();
+        }
+        return a;
+    }
+
 }

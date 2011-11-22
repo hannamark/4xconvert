@@ -80,6 +80,7 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
+import gov.nih.nci.pa.noniso.dto.PDQDiseaseNode;
 
 import java.util.List;
 
@@ -100,10 +101,16 @@ public interface PDQDiseaseServiceLocal extends BasePaService<PDQDiseaseDTO> {
      * @throws PAException exception
      */
     List<PDQDiseaseDTO> search(PDQDiseaseDTO searchCriteria) throws PAException;
-    
+
     /**
      * @param ids list of id of diseases.
      * @return list of diseases
      */
     List<PDQDisease> getByIds(List<Long> ids);
+
+    /**
+     * Gets the entire disease tree as a List of PDQDiseaseNode.
+     * @return The entire disease tree as a List of PDQDiseaseNode.
+     */
+    List<PDQDiseaseNode> getDiseaseTree();
 }

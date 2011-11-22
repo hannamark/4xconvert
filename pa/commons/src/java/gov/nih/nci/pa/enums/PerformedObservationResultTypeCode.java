@@ -89,7 +89,7 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * @since 11/17/2009
  */
 public enum PerformedObservationResultTypeCode implements CodedEnum<String> {
-    
+
     /** Vital Status. */
     VITAL_STATUS("Vital Status"),
     /** Evaluable for Response. */
@@ -103,25 +103,26 @@ public enum PerformedObservationResultTypeCode implements CodedEnum<String> {
     /** Autopsy Performed Indicator. */
     AUTOPSY_PERFORMED_INDICATOR("Autopsy Performed Indicator"),
     /** Cause of Death as Determined by Autopsy. */
-    CAUSE_OF_DEATH_AS_DETERMINED_BY_AUTOPSY("Cause of Death as Determined by Autopsy"),    
+    CAUSE_OF_DEATH_AS_DETERMINED_BY_AUTOPSY("Cause of Death as Determined by Autopsy"),
     /** T. */
-    T("T"),    
-    /**  N. */
-    N("N"),    
-    /**  M. */
-    M("M"),    
-    /**  STAGE. */
+    T("T"),
+    /** N. */
+    N("N"),
+    /** M. */
+    M("M"),
+    /** STAGE. */
     STAGE("Stage"),
     /** Had Prior Therapies. */
     HAD_PRIOR_THERAPIES("Had Prior Therapies"),
     /** Number of Prior Therapies. */
     NUMBER_OF_PRIOR_THERAPIES("Number of Prior Therapies"),
-    /**Prior Therapy. */
+    /** Prior Therapy. */
     PRIOR_THERAPY("Prior Therapy"),
     /** Number of Prior Chemotherapy Regimens. */
     NUMBER_OF_PRIOR_CHEMOTHERAPY_REGIMENS("Number of Prior Chemotherapy Regimens");
-    
+
     private String code;
+
     /**
      * 
      * @param code
@@ -130,16 +131,19 @@ public enum PerformedObservationResultTypeCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -155,16 +159,16 @@ public enum PerformedObservationResultTypeCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return TrialPhaseType 
+     * @return TrialPhaseType
      */
     public static PerformedObservationResultTypeCode getByCode(String code) {
         return getByClassAndCode(PerformedObservationResultTypeCode.class, code);
     }
-    
+
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         PerformedObservationResultTypeCode[] l = PerformedObservationResultTypeCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -172,12 +176,6 @@ public enum PerformedObservationResultTypeCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-}    
+
+}  
  

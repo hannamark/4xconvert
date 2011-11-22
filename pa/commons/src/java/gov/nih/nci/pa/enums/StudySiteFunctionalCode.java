@@ -84,23 +84,21 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
  * Indicates the manner in which the site is participating on the trial.
- *
+ * 
  * @author Naveen Amiruddin
- * @since 07/22/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @since 07/22/2008 copyright NCI 2008. All rights reserved. This code may not be used without the express written
+ *        permission of the copyright holder, NCI.
  */
 public enum StudySiteFunctionalCode implements CodedEnum<String> {
 
     /**
      * Treating Site.
      */
-    TREATING_SITE("Treating Site", false), 
+    TREATING_SITE("Treating Site", false),
     /**
      * Identifier Assigner.
      */
-    IDENTIFIER_ASSIGNER("Identifier Assigner", false), 
+    IDENTIFIER_ASSIGNER("Identifier Assigner", false),
     /**
      * Data Management Center.
      */
@@ -138,49 +136,49 @@ public enum StudySiteFunctionalCode implements CodedEnum<String> {
      * Laboratory.
      */
     LABORATORY("Laboratory", true),
-    
-     /**
+
+    /**
      * Study Oversight Committee.
      */
     STUDY_OVERSIGHT_COMMITTEE("Study Oversight Committee", false);
-     
-          
-     private String code;
-     private boolean collaboratorCode;
 
-     /**
-      * Constructor for StudySiteFunctionalCode.
-      * @param code
-      */
-     private StudySiteFunctionalCode(String code, boolean isCollaboratorCode) {
-         this.code = code;
-         this.collaboratorCode = isCollaboratorCode;
-         register(this);
-     }
+    private String code;
+    private boolean collaboratorCode;
 
-     /**
-      * @return code coded value of enum
-      */
-     public String getCode() {
-         return code;
-     }
+    /**
+     * Constructor for StudySiteFunctionalCode.
+     * @param code
+     */
+    private StudySiteFunctionalCode(String code, boolean isCollaboratorCode) {
+        this.code = code;
+        this.collaboratorCode = isCollaboratorCode;
+        register(this);
+    }
 
+    /**
+     * @return code coded value of enum
+     */
+    @Override
+    public String getCode() {
+        return code;
+    }
 
-     /**
-      *@return String DisplayName 
-      */
-     public String getDisplayName() {
-         return sentenceCasedName(this);
-     }
+    /**
+     * @return String DisplayName
+     */
+    @Override
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
 
-     /**
-      * @return String display name
-      */
-     public String getName() {
-         return name();
-     }
+    /**
+     * @return String display name
+     */
+    public String getName() {
+        return name();
+    }
 
-     /**
+    /**
      * @return the collaboratorCode
      */
     public boolean isCollaboratorCode() {
@@ -188,52 +186,47 @@ public enum StudySiteFunctionalCode implements CodedEnum<String> {
     }
 
     /**
-      * @param code code
-      * @return StudySiteFunctionalCode 
-      */
-     public static StudySiteFunctionalCode getByCode(String code) {
-         return getByClassAndCode(StudySiteFunctionalCode.class, code);
-     }
-     
-     /**
-      * construct a array of display names for StudySiteFunctionalCode Enum.
-      * @return String[] display names for StudySiteFunctionalCode
-      */
-     public static String[]  getDisplayNames() {
-         StudySiteFunctionalCode[] codes = StudySiteFunctionalCode.values();
-         String[] codedNames = new String[codes.length];
-         for (int i = 0; i < codes.length; i++) {
-             codedNames[i] = codes[i].getCode();
-         }
-         return codedNames;
-     }        
-     /**
-      * construct a array of display names for StudySiteFunctionalCode Enum.
-      * @return String[] display names for StudySiteFunctionalCode
-      */
-     public static String[]  getCollaboratorDisplayNames() {
-         StudySiteFunctionalCode[] codes = StudySiteFunctionalCode.values();
-         int resultSize = 0;
-         for (StudySiteFunctionalCode fc : codes) {
-             if (fc.collaboratorCode) {
-                 resultSize++;
-             }
-         }
-         
-         String[] codedNames = new String[resultSize];
-         int index = 0;
-         for (int i = 0; i < codes.length; i++) {
-             if (codes[i].collaboratorCode) {
-               codedNames[index++] = codes[i].getCode();
-             }
-         }
-         return codedNames;
-     }        
-     
-     /**
-      * {@inheritDoc}
-      */
-     public String getNameByCode(String str) {
-         return getByCode(str).name();
-     }
+     * @param code code
+     * @return StudySiteFunctionalCode
+     */
+    public static StudySiteFunctionalCode getByCode(String code) {
+        return getByClassAndCode(StudySiteFunctionalCode.class, code);
+    }
+
+    /**
+     * construct a array of display names for StudySiteFunctionalCode Enum.
+     * @return String[] display names for StudySiteFunctionalCode
+     */
+    public static String[] getDisplayNames() {
+        StudySiteFunctionalCode[] codes = StudySiteFunctionalCode.values();
+        String[] codedNames = new String[codes.length];
+        for (int i = 0; i < codes.length; i++) {
+            codedNames[i] = codes[i].getCode();
+        }
+        return codedNames;
+    }
+
+    /**
+     * construct a array of display names for StudySiteFunctionalCode Enum.
+     * @return String[] display names for StudySiteFunctionalCode
+     */
+    public static String[] getCollaboratorDisplayNames() {
+        StudySiteFunctionalCode[] codes = StudySiteFunctionalCode.values();
+        int resultSize = 0;
+        for (StudySiteFunctionalCode fc : codes) {
+            if (fc.collaboratorCode) {
+                resultSize++;
+            }
+        }
+
+        String[] codedNames = new String[resultSize];
+        int index = 0;
+        for (int i = 0; i < codes.length; i++) {
+            if (codes[i].collaboratorCode) {
+                codedNames[index++] = codes[i].getCode();
+            }
+        }
+        return codedNames;
+    }
+
 }

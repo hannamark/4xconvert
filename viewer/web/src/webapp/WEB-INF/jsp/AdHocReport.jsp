@@ -7,13 +7,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
     <head>
         <title><fmt:message key="adHocReport.title" /></title>
-        <link href="${pageContext.request.contextPath}/styles/reportui.css" rel="stylesheet" type="text/css" media="all"/>
-        
-        <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all" />
-        <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all" />
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
-    
+        <link href="${stylePath}/ml_breadcrumbs.css" rel="stylesheet" type="text/css" media="all"/>
+        <link href="${stylePath}/reportui.css" rel="stylesheet" type="text/css" media="all"/>
+        <script type="text/javascript">
+            var diseaseTree = <s:property escape="false" value="diseaseTree"/>;
+        </script>
+        <script type="text/javascript" src="${scriptPath}/js/ml_breadcrumbs.js"></script>
+        <script type="text/javascript" src="${scriptPath}/js/generic_tree.js"></script>
+        <script type="text/javascript" src="${scriptPath}/pages/adHocReport/diseasesFilter.js"></script>
         <script type="text/javascript">
             jQuery(function() {
                    var tabOptions = {
@@ -32,45 +33,15 @@
                         form.submit();
                         });
                    jQuery("#resetButton").bind("click", function(ev) {
-                        jQuery("#officialTitle").val("");
-                        jQuery("#primaryPurpose").val("");
-                        jQuery("#phaseCodes").val("");
-                        jQuery("#identifierType").val("");
-                        jQuery("#identifier").val("");
-                        jQuery("#leadOrganizationId").val("");
-                        jQuery("#principalInvestigatorId").val("");
-                        jQuery("#documentWorkflowStatusCode").val("");
-                        jQuery("#studyStatusCode").val("");
-                        jQuery("#submissionType").val("");
-                        jQuery("#trialCategory").val("");
-                        jQuery("#studyMilestone").val("");
-                        jQuery("#criteria_diseaseCondition").val("");
-                        jQuery("#diseaseName").val("");
-                        jQuery("#interventionType").val("");
-                        jQuery("#participatingSiteId").val("");
-                        jQuery("#country").val("");
-                        jQuery("#states").val("");
-                        jQuery("#city").val("");
-                        jQuery("#bioMarkers").val("");
-                        jQuery("#summ4FundingSourceTypeCode").val("");
-                        jQuery("#anatomicSites").val("");
+                        var form = jQuery("#searchForm").get(0);
+                        form.action="criteriaAdHocReport.action";
+                        form.submit();
                         });
                    });
-            
-            function lookup() {
-                showPopup('<c:url value="/ctro/popupDis.action" />', '', 'Disease');
-            }
-            
-            function loadDiv(intid, disName) {
-                var url = '/viewer/ctro/ajaxptpDiseasedisplay.action';
-                var params = {diseaseName: disName, 'criteria.diseaseConditionId': intid};
-                var div = document.getElementById('loadDetails');   
-                div.innerHTML = '<div align="left"><img  src="<c:url value="/images/loading.gif"/>"/>&nbsp;Loading...</div>';
-                var aj = callAjaxPost(div, url, params);
-            }
         </script>
     </head>
     <body>
+    	<input type="hidden" id="imagePath" name="imagePath" value="${imagePath}" />
         <h1><fmt:message key="adHocReport.title"/></h1>
         <s:form id="searchForm" name="sForm">
             <s:token/>

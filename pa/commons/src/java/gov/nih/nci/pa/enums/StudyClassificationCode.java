@@ -81,14 +81,13 @@ package gov.nih.nci.pa.enums;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+
 /**
-*
-* @author Kalpana Guthikonda
-* @since 10/21/2008
-* copyright NCI 2008.  All rights reserved.
-* This code may not be used without the express written permission of the
-* copyright holder, NCI.
-*/
+ * 
+ * @author Kalpana Guthikonda
+ * @since 10/21/2008 copyright NCI 2008. All rights reserved. This code may not be used without the express written
+ *        permission of the copyright holder, NCI.
+ */
 public enum StudyClassificationCode implements CodedEnum<String> {
 
     /** Safety. */
@@ -108,9 +107,10 @@ public enum StudyClassificationCode implements CodedEnum<String> {
     /** Pharmacokinetics/dynamics. */
     PHARMACOKINETICS_OR_DYNAMICS("Pharmacokinetics/dynamics"),
     /*** Not Applicable . */
-    NA("NA");    
+    NA("NA");
 
     private String code;
+
     /**
      * 
      * @param code
@@ -119,16 +119,19 @@ public enum StudyClassificationCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -144,7 +147,7 @@ public enum StudyClassificationCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return StudyClassificationCode 
+     * @return StudyClassificationCode
      */
     public static StudyClassificationCode getByCode(String code) {
         return getByClassAndCode(StudyClassificationCode.class, code);
@@ -153,7 +156,7 @@ public enum StudyClassificationCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         StudyClassificationCode[] l = StudyClassificationCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -161,11 +164,5 @@ public enum StudyClassificationCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

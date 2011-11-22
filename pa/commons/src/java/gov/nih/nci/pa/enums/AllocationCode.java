@@ -92,15 +92,16 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * copyright holder, NCI.
  */
 public enum AllocationCode implements CodedEnum<String> {
-    
+
     /** NA. */
     NA("NA"),
-    /**Randomized Controlled Trial. */
+    /** Randomized Controlled Trial. */
     RANDOMIZED_CONTROLLED_TRIAL("Randomized Controlled Trial"),
     /** Non-Randomized Trial. */
-    NON_RANDOMIZED_TRIAL("Non-Randomized Trial");    
-    
+    NON_RANDOMIZED_TRIAL("Non-Randomized Trial");
+
     private String code;
+
     /**
      * 
      * @param code
@@ -109,16 +110,19 @@ public enum AllocationCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -134,16 +138,16 @@ public enum AllocationCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return biospecimenRetentionCode 
+     * @return biospecimenRetentionCode
      */
     public static AllocationCode getByCode(String code) {
         return getByClassAndCode(AllocationCode.class, code);
     }
-    
+
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         AllocationCode[] l = AllocationCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -151,12 +155,5 @@ public enum AllocationCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-}
 
+}

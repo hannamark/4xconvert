@@ -87,7 +87,7 @@ package gov.nih.nci.pa.enums;
  * </p> 
  * 
  * @author Rhett Sutphin
- * @param <C>
+ * @param <C> The type of code
  */
 
 public interface CodedEnum<C> {
@@ -102,11 +102,4 @@ public interface CodedEnum<C> {
      */
     String getDisplayName();
     
-    /**
-     * Given the Cd code return the Enum value by name.
-     * 
-     * @param str the code from a Cd
-     * @return the Enum.name() value
-     */
-    String getNameByCode(String str);
 }

@@ -90,7 +90,7 @@ import java.util.TreeMap;
  * @author Hugh Reinhart
  * @since Aug 28, 2009
  */
-public enum PatientRaceCode implements CodedEnum<String>  {
+public enum PatientRaceCode implements CodedEnum<String> {
 
     /** White. */
     WHITE("White", false, "WHITE"),
@@ -182,14 +182,6 @@ public enum PatientRaceCode implements CodedEnum<String>  {
             a[i] = l[i].getCode();
         }
         return a;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
     }
 
     /**

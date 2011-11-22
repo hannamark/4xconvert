@@ -7,7 +7,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
     <head>
         <title><fmt:message key="sosReport.title" /></title>
-        <link href="${pageContext.request.contextPath}/styles/reportui.css" rel="stylesheet" type="text/css" media="all"/>
+        <link href="${stylePath}/reportui.css" rel="stylesheet" type="text/css" media="all"/>
         <script type="text/javascript">
             jQuery(function() {
                    var tabOptions = {

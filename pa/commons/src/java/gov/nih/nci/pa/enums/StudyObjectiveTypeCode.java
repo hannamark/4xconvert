@@ -87,75 +87,73 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * @since 07/20/2009
  */
 public enum StudyObjectiveTypeCode implements CodedEnum<String> {
-  /**
-   * PRIMARY.
-   */
-  PRIMARY("Primary"),
-  /**
-   * SECONDARY.
-   */
-  SECONDARY("Secondary"),
-  /**
-   * TERNARY.
-   */
-  TERNARY("Ternary");
+    /**
+     * PRIMARY.
+     */
+    PRIMARY("Primary"),
+    /**
+     * SECONDARY.
+     */
+    SECONDARY("Secondary"),
+    /**
+     * TERNARY.
+     */
+    TERNARY("Ternary");
 
-  private String code;
-  /**
-   * 
-   * @param code
-   */
-  private StudyObjectiveTypeCode(String code) {
-      this.code = code;
-      register(this);
-  }
-  /**
-   * @return code code
-   */
-  public String getCode() {
-      return code;
-  }
+    private String code;
 
-  /**
-   *@return String DisplayName 
-   */
-  public String getDisplayName() {
-      return sentenceCasedName(this);
-  }
+    /**
+     * 
+     * @param code
+     */
+    private StudyObjectiveTypeCode(String code) {
+        this.code = code;
+        register(this);
+    }
 
-  /**
-   * 
-   * @return String name
-   */
-  public String getName() {
-      return name();
-  }
+    /**
+     * @return code code
+     */
+    @Override
+    public String getCode() {
+        return code;
+    }
 
-  /**
-   * 
-   * @param code code
-   * @return OnholdReasonCode 
-   */
-  public static StudyObjectiveTypeCode getByCode(String code) {
-      return getByClassAndCode(StudyObjectiveTypeCode.class, code);
-  }
+    /**
+     * @return String DisplayName
+     */
+    @Override
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
 
-  /**
-   * @return String[] display names of enums
-   */
-  public static String[]  getDisplayNames() {
-      StudyObjectiveTypeCode[] l = StudyObjectiveTypeCode.values();
-      String[] a = new String[l.length];
-      for (int i = 0; i < l.length; i++) {
-          a[i] = l[i].getCode();
-      }
-      return a;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public String getNameByCode(String str) {
-      return getByCode(str).name();
-  }
+    /**
+     * 
+     * @return String name
+     */
+    public String getName() {
+        return name();
+    }
+
+    /**
+     * 
+     * @param code code
+     * @return OnholdReasonCode
+     */
+    public static StudyObjectiveTypeCode getByCode(String code) {
+        return getByClassAndCode(StudyObjectiveTypeCode.class, code);
+    }
+
+    /**
+     * @return String[] display names of enums
+     */
+    public static String[] getDisplayNames() {
+        StudyObjectiveTypeCode[] l = StudyObjectiveTypeCode.values();
+        String[] a = new String[l.length];
+        for (int i = 0; i < l.length; i++) {
+            a[i] = l[i].getCode();
+        }
+        return a;
+    }
+
 }

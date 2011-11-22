@@ -14,7 +14,7 @@ import java.util.Map;
  *
  */
 public enum PhaseAdditionalQualifierCode implements CodedEnum<String> {
-    /*** Pilot.  */
+    /*** Pilot. */
     PILOT("Pilot", "Yes");
 
     private String code;
@@ -25,9 +25,11 @@ public enum PhaseAdditionalQualifierCode implements CodedEnum<String> {
         this.displayName = displayName;
         register(this);
     }
+
     /**
      * @return code
      */
+    @Override
     public String getCode() {
         return code;
     }
@@ -35,6 +37,7 @@ public enum PhaseAdditionalQualifierCode implements CodedEnum<String> {
     /**
      * @return name
      */
+    @Override
     public String getDisplayName() {
         return this.displayName;
     }
@@ -48,9 +51,9 @@ public enum PhaseAdditionalQualifierCode implements CodedEnum<String> {
     }
 
     /**
-    *
-    * @return String name
-    */
+     * 
+     * @return String name
+     */
     public String getName() {
         return name();
     }
@@ -62,6 +65,7 @@ public enum PhaseAdditionalQualifierCode implements CodedEnum<String> {
     public static PhaseAdditionalQualifierCode getByCode(String code) {
         return getByClassAndCode(PhaseAdditionalQualifierCode.class, code);
     }
+
     /**
      * @return String[] display names of enums
      */

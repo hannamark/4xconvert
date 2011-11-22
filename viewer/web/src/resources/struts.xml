@@ -6,7 +6,7 @@
 
 <struts>
     <constant name="struts.devMode" value="false" />
-    <package name="default" extends="struts-default">
+    <package name="default" extends="json-default">
         <interceptors>
             <interceptor name="showDisclaimer" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ShowSplashPageInterceptor">
                 <param name="splashPageActionName">disclaimerAction</param>
@@ -97,14 +97,6 @@
             <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/{1}.jsp</result>
         </action>
-        <action name="popupDis*" class="gov.nih.nci.pa.viewer.action.PopUpDisAction" method="{1}">
-            <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/lookupdiseases{1}.jsp</result>
-        </action>
-        <action name="ajaxptpDiseasedisplay" class="gov.nih.nci.pa.viewer.action.AdHocReportAction" method="fillInDiseaseId">
-            <interceptor-ref name="methodValidationStack" />
-            <result name="success">/WEB-INF/jsp/nodecorate/selectedDiseaseDetails.jsp</result>
-        </action>
         <action name="popupWaitDialog">
             <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>
@@ -162,5 +154,9 @@
         <action name="resultsAdHocReportviewTSR" class="gov.nih.nci.pa.viewer.action.AdHocReportAction" method="viewTSR">
             <interceptor-ref name="methodValidationStack" />
         </action>
+    </package>
+    
+    <package name="ctrojson" namespace="/ctro/json" extends="public">
+        
     </package>
 </struts>

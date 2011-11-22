@@ -160,11 +160,4 @@ public enum PatientGenderCode implements CodedEnum<String> {
         return a;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
 }

@@ -92,15 +92,14 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 public enum ActiveInactiveCode implements CodedEnum<String> {
 
     /**
-    * Active.
-    */
-    ACTIVE("Active"), 
+     * Active.
+     */
+    ACTIVE("Active"),
     /**
      * Inactive.
      */
     INACTIVE("Inactive");
-    
-         
+
     private String code;
 
     /**
@@ -115,14 +114,15 @@ public enum ActiveInactiveCode implements CodedEnum<String> {
     /**
      * @return code coded value of enum
      */
+    @Override
     public String getCode() {
         return code;
     }
 
-
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -134,20 +134,19 @@ public enum ActiveInactiveCode implements CodedEnum<String> {
         return name();
     }
 
-
     /**
      * @param code code
-     * @return StatusCode 
+     * @return StatusCode
      */
     public static ActiveInactiveCode getByCode(String code) {
         return getByClassAndCode(ActiveInactiveCode.class, code);
     }
-    
+
     /**
      * construct a array of display names for Abstracted Status coded Enum.
      * @return String[] display names for Abstracted Status Code
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         ActiveInactiveCode[] absStatusCodes = ActiveInactiveCode.values();
         String[] codedNames = new String[absStatusCodes.length];
         for (int i = 0; i < absStatusCodes.length; i++) {
@@ -155,11 +154,5 @@ public enum ActiveInactiveCode implements CodedEnum<String> {
         }
         return codedNames;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

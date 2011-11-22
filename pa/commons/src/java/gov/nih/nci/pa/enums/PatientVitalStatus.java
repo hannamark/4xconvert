@@ -101,30 +101,34 @@ public enum PatientVitalStatus implements CodedEnum<String> {
     UNSPECIFIED("Unspecified");
 
     private String code;
+
     /**
-     *
+     * 
      * @param code
      */
     private PatientVitalStatus(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -132,7 +136,7 @@ public enum PatientVitalStatus implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return PatientGenderCode
      */
@@ -143,7 +147,7 @@ public enum PatientVitalStatus implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         PatientVitalStatus[] l = PatientVitalStatus.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -151,11 +155,5 @@ public enum PatientVitalStatus implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

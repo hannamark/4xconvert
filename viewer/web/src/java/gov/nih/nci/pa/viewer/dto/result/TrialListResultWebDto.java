@@ -82,10 +82,6 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
-import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Hugh Reinhart
@@ -94,14 +90,8 @@ import java.util.List;
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public final class TrialListResultWebDto {
 
-    private static final String TOTAL_ORIG = "Total of original submissions";
-    private static final String TOTAL_AMEND = "Total of amendments";
-    private static final String TOTAL_BOTH = "Total all submission";
-    private static final String TOTAL = "Total";
-
     private static final String SUB_TYPE_ORIG = "Original";
     private static final String SUB_TYPE_AMEND = "Amendment";
-    private static final String SUB_TYPE_BOTH = "All";
 
     private String assignedIdentifier;
     private String submissionType;
@@ -119,79 +109,29 @@ public final class TrialListResultWebDto {
     private String scientificMilestoneDate;
 
     /**
-     * Static method for generating a list of web dto's from a list of service dto's.
-     * @param serviceDtoList service dto list
-     * @param subTypeCriteria submission type(s) being reported upon
-     * @param isCurrentMilestoneReport Is this a current milestone report.
-     * @return web dto list
+     * Default constructor.
      */
-    public static List<TrialListResultWebDto> getWebList(List<TrialListResultDto> serviceDtoList,
-            SubmissionTypeCode subTypeCriteria, boolean isCurrentMilestoneReport) {
-        List<TrialListResultWebDto> resultList = new ArrayList<TrialListResultWebDto>();
-        int original = 0;
-        int amendment = 0;
-        for (TrialListResultDto dto : serviceDtoList) {
-            int submissionNumber = IntConverter.convertToInteger(dto.getSubmissionNumber());
-            if (submissionNumber == 1) {
-                original++;
-            } else {
-                amendment++;
-            }
-            resultList.add(new TrialListResultWebDto(dto));
-        }
-        if (includeOriginalTotal(subTypeCriteria)) {
-            TrialListResultWebDto webDto = new TrialListResultWebDto();
-            webDto.setAssignedIdentifier(TOTAL_ORIG);
-            webDto.setSubmissionType(SUB_TYPE_ORIG);
-            webDto.setSubmitterOrg(Integer.toString(original));
-            resultList.add(webDto);
-        }
-        if (includeAmendmentTotal(subTypeCriteria)) {
-            TrialListResultWebDto webDto = new TrialListResultWebDto();
-            webDto.setAssignedIdentifier(TOTAL_AMEND);
-            webDto.setSubmissionType(SUB_TYPE_AMEND);
-            webDto.setSubmitterOrg(Integer.toString(amendment));
-            resultList.add(webDto);
-        }
-        if (includeOverallTotal(subTypeCriteria)) {
-            TrialListResultWebDto webDto = new TrialListResultWebDto();
-            webDto.setAssignedIdentifier(TOTAL_BOTH);
-            webDto.setSubmissionType(SUB_TYPE_BOTH);
-            webDto.setSubmitterOrg(Integer.toString(serviceDtoList.size()));
-            resultList.add(webDto);
-        }
-        if (isCurrentMilestoneReport) {
-            TrialListResultWebDto webDto = new TrialListResultWebDto();
-            webDto.setAssignedIdentifier(TOTAL);
-            webDto.setSubmissionType(Integer.toString(serviceDtoList.size()));
-            resultList.add(webDto);
-        }
-        return resultList;
-    }
-
-    private static boolean includeOriginalTotal(SubmissionTypeCode code) {
-        return code != null && (SubmissionTypeCode.ORIGINAL.equals(code) || SubmissionTypeCode.BOTH.equals(code));
-    }
-
-    private static boolean includeAmendmentTotal(SubmissionTypeCode code) {
-        return code != null && (SubmissionTypeCode.AMENDMENT.equals(code) || SubmissionTypeCode.BOTH.equals(code));
-    }
-
-    private static boolean includeOverallTotal(SubmissionTypeCode code) {
-        return code != null && SubmissionTypeCode.BOTH.equals(code);
+    public TrialListResultWebDto() {
+        super();
     }
 
     /**
-     * Default constructor.
+     * Constructor.
+     * @param assignedIdentifier The assigned identifier
+     * @param submissionType The subission type
+     * @param submitterOrg The sumitter organization
      */
-    private TrialListResultWebDto() {
+    public TrialListResultWebDto(String assignedIdentifier, String submissionType, String submitterOrg) {
+        this.assignedIdentifier = assignedIdentifier;
+        this.submissionType = submissionType;
+        this.submitterOrg = submitterOrg;
     }
 
     /**
      * Constructor using service dto.
      * @param dto the service iso dto
      */
-    private TrialListResultWebDto(TrialListResultDto dto) {
+    public TrialListResultWebDto(TrialListResultDto dto) {
         if (dto == null) { return; }
         assignedIdentifier = StConverter.convertToString(dto.getAssignedIdentifier());
         Integer submissionNumber = IntConverter.convertToInteger(dto.getSubmissionNumber());

@@ -124,7 +124,11 @@
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
-
+    
+    <listener>
+        <description>Sets the various paths variables in the servlet context for use in jsps</description>
+        <listener-class>gov.nih.nci.pa.viewer.util.ServletContextConfigurator</listener-class>
+    </listener>
 
     <!-- Registry session-timeout-->
     <session-config>

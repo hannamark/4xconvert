@@ -89,19 +89,20 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * @since 11/5/2009
  */
 public enum DoseModificationType implements CodedEnum<String> {
-    
+
     /** Dose Increased. */
     DOSE_INCREASED("Dose Increased"),
     /** Dose not changed,. */
-    DOSE_NOT_CHANGED("Dose Not Changed"), 
+    DOSE_NOT_CHANGED("Dose Not Changed"),
     /** Dose Reduced. */
-    DOSE_REDUCED("Dose Reduced"), 
+    DOSE_REDUCED("Dose Reduced"),
     /** Dose Withdrawn,. */
-    DOSE_WITHDRAWN("Dose Withdrawn"), 
-    /**Not applicable. */
+    DOSE_WITHDRAWN("Dose Withdrawn"),
+    /** Not applicable. */
     NOT_APPLICABLE("Not Applicable");
-     
+
     private String code;
+
     /**
      * 
      * @param code
@@ -110,16 +111,19 @@ public enum DoseModificationType implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -135,16 +139,16 @@ public enum DoseModificationType implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return TrialPhaseType 
+     * @return TrialPhaseType
      */
     public static DoseModificationType getByCode(String code) {
         return getByClassAndCode(DoseModificationType.class, code);
     }
-    
+
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         DoseModificationType[] l = DoseModificationType.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -152,12 +156,6 @@ public enum DoseModificationType implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-}    
+
+}
  

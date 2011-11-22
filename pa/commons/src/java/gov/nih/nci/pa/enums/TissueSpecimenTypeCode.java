@@ -87,7 +87,7 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 
 /**
  * Enumeration for planned marker's tissue specimen type code.
- *
+ * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public enum TissueSpecimenTypeCode implements CodedEnum<String> {
@@ -140,6 +140,7 @@ public enum TissueSpecimenTypeCode implements CodedEnum<String> {
     /**
      * @return the coded value of the enum
      */
+    @Override
     public String getCode() {
         return this.code;
     }
@@ -147,13 +148,7 @@ public enum TissueSpecimenTypeCode implements CodedEnum<String> {
     /**
      * {@inheritDoc}
      */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getDisplayName() {
         return getCode();
     }
@@ -176,7 +171,7 @@ public enum TissueSpecimenTypeCode implements CodedEnum<String> {
     /**
      * @return display names for tissue specimen type codes
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         TissueSpecimenTypeCode[] codes = TissueSpecimenTypeCode.values();
         String[] codedNames = new String[codes.length];
         for (int i = 0; i < codes.length; i++) {
@@ -184,6 +179,5 @@ public enum TissueSpecimenTypeCode implements CodedEnum<String> {
         }
         return codedNames;
     }
-
 
 }

@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <div id="header">
-   <div id="logo"><a href="./"><img src="<%=request.getContextPath()%>/images//logo_ctrp_reg.gif" alt="NCI CTRP Registration Site" height="41" width="340"></a></div>
+   <div id="logo"><a href="./"><img src="${imagePath}/logo_ctrp_reg.gif" alt="NCI CTRP Registration Site" height="41" width="340"></a></div>
     <!--User Details-->
   	<c:choose>
         <c:when test="${pageContext.request.remoteUser != null}">

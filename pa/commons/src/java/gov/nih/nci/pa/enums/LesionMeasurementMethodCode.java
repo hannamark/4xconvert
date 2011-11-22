@@ -97,7 +97,7 @@ public enum LesionMeasurementMethodCode implements CodedEnum<String> {
     CAT_SCAN("Computed Tomography"),
     /** Chest Radiography. */
     CXR("Chest Radiography"),
-     /** Fludeoxyglucose F 18: C964. */
+    /** Fludeoxyglucose F 18: C964. */
     FDGPET_SCAN("Fludeoxyglucose F 18: C964"),
     /** Ultrasound: C17230. */
     US("Ultrasound: C17230"),
@@ -119,30 +119,34 @@ public enum LesionMeasurementMethodCode implements CodedEnum<String> {
     PE("Physical Examination");
 
     private String code;
+
     /**
-     *
+     * 
      * @param code
      */
     private LesionMeasurementMethodCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -150,7 +154,7 @@ public enum LesionMeasurementMethodCode implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return PatientGenderCode
      */
@@ -161,7 +165,7 @@ public enum LesionMeasurementMethodCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         LesionMeasurementMethodCode[] l = LesionMeasurementMethodCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -169,11 +173,5 @@ public enum LesionMeasurementMethodCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

@@ -67,7 +67,7 @@
     <dependency org="jboss"                  name="jboss-jaxrpc"            rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="jboss"                  name="jbossall-client"         rev="4.0.5.GA"        conf="test->master"/>
     <dependency org="junit"                  name="junit"                   rev="4.8.2"           conf="test->master"/>
-    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="${pa.version}"    conf="test->master">
+    <dependency org="gov.nih.nci.coppa.pa"   name="pa-commons"              rev="${pa.version}"   conf="test->master">
         <artifact name="pa-commons" m:classifier="test"/>
     </dependency>
     <dependency org="antlr"                  name="antlr"                   rev="2.7.6"           conf="test->master"/>

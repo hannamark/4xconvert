@@ -102,35 +102,39 @@ public enum EcogPerformanceStatusCode implements CodedEnum<String> {
             + " Up and about more than 50% of waking hours."),
     /** 1. */
     ONE("1 - Restricted in physically strenuous activity but ambulatory and able"
-                    + " to carry out work of a light or sedentary nature"),
+            + " to carry out work of a light or sedentary nature"),
     /** 0. */
     ZERO("0 - Fully active, able to carry on all pre-disease performance without restriction.");
 
     private String code;
+
     /**
-     *
+     * 
      * @param code
      */
     private EcogPerformanceStatusCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -138,7 +142,7 @@ public enum EcogPerformanceStatusCode implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return PatientGenderCode
      */
@@ -149,7 +153,7 @@ public enum EcogPerformanceStatusCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         EcogPerformanceStatusCode[] l = EcogPerformanceStatusCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -157,11 +161,5 @@ public enum EcogPerformanceStatusCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

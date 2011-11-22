@@ -108,8 +108,9 @@ public enum ActivitySubcategoryCode implements CodedEnum<String> {
     DIETARY_SUPPLEMENT("Dietary Supplement"),
     /** Other. */
     OTHER("Other");
-    
+
     private String code;
+
     /**
      * 
      * @param code
@@ -118,16 +119,19 @@ public enum ActivitySubcategoryCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -143,16 +147,16 @@ public enum ActivitySubcategoryCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return TrialPhaseType 
+     * @return TrialPhaseType
      */
     public static ActivitySubcategoryCode getByCode(String code) {
         return getByClassAndCode(ActivitySubcategoryCode.class, code);
     }
-    
+
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         ActivitySubcategoryCode[] l = ActivitySubcategoryCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -160,12 +164,5 @@ public enum ActivitySubcategoryCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-}    
- 
+
+}

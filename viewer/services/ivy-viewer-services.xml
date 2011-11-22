@@ -27,6 +27,7 @@
     <dependency org="jboss"                  name="commons-logging"         rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="hibernate3"              rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="log4j"                   rev="4.0.5.GA"        conf="compile->master"/>
+    <dependency org="joda-time"              name="joda-time"               rev="1.6.2"           conf="compile->master"/>
     <dependency org="net.htmlparser.jericho" name="jericho-html"            rev="2.4"             conf="compile->master"/>
     <dependency org="gov.nih.nci.security"   name="clm"                     rev="4.0"             conf="compile->master"/>
     <dependency org="gov.nih.nci.iso-datatypes" name="iso-datatypes"        rev="2.0.0-alpha1"    conf="compile->master"/>

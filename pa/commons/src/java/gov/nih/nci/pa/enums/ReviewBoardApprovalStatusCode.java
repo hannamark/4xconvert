@@ -84,10 +84,8 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
  * @author Hugh Reinhart
- * @since 11/20/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @since 11/20/2008 copyright NCI 2008. All rights reserved. This code may not be used without the express written
+ *        permission of the copyright holder, NCI.
  */
 public enum ReviewBoardApprovalStatusCode implements CodedEnum<String> {
     /** Submitted, approved. */
@@ -96,34 +94,40 @@ public enum ReviewBoardApprovalStatusCode implements CodedEnum<String> {
     SUBMITTED_EXEMPT("Submitted, exempt"),
     /** Submission not required. */
     SUBMISSION_NOT_REQUIRED("Submission not required"),
-    /** Submitted, Pending.    */
+    /** Submitted, Pending. */
     SUBMITTED_PENDING("Submitted, pending"),
-    /** Submitted, Disapproved.     */
+    /** Submitted, Disapproved. */
     SUBMITTED_DENIED("Submitted, denied");
-    
+
     private String code;
+
     /**
-     *
+     * 
      * @param code
      */
     private ReviewBoardApprovalStatusCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
+
     /**
-    *@return String DisplayName
-    */
+     * @return String DisplayName
+     */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
+
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -131,7 +135,7 @@ public enum ReviewBoardApprovalStatusCode implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return ReviewBoardApprovalStatusCode
      */
@@ -142,7 +146,7 @@ public enum ReviewBoardApprovalStatusCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         ReviewBoardApprovalStatusCode[] l = ReviewBoardApprovalStatusCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -150,11 +154,5 @@ public enum ReviewBoardApprovalStatusCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

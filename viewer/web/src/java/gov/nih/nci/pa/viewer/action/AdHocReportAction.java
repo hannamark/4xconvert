@@ -86,16 +86,20 @@ import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.IdentifierType;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.noniso.dto.PDQDiseaseNode;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
+import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
+import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.viewer.dto.result.KeyValueDTO;
-import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -107,24 +111,42 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
+import org.apache.struts2.json.JSONException;
+import org.apache.struts2.json.JSONUtil;
+
+import com.opensymphony.xwork2.Preparable;
 
 /**
  * @author Max Shestopalov
  */
-public class AdHocReportAction
-        extends AbstractReportAction <StudyProtocolQueryCriteria, StudyProtocolQueryDTO>
-    implements ServletResponseAware {
+public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCriteria, StudyProtocolQueryDTO>
+        implements Preparable, ServletResponseAware {
 
-    private static final long serialVersionUID = 7222372874396709972L;
+    private static final long serialVersionUID = -8539599386849881611L;
+    
+    private PDQDiseaseServiceLocal diseaseService;
+    private LookUpTableServiceRemote lookUpTableService;
+    private PAOrganizationServiceRemote paOrganizationService;
+    private PlannedMarkerServiceLocal plannedMarkerService;
+    private ProtocolQueryServiceLocal protocolQueryService;
+    private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
+
     private StudyProtocolQueryCriteria criteria;
     private String identifier;
     private HttpServletResponse servletResponse;
-    private String diseaseName;
 
     /**
-     * Limit of search results.
+     * {@inheritDoc}
      */
-    public static final int MAX_LIMIT = 100;
+    @Override
+    public void prepare() {
+        diseaseService = PaRegistry.getDiseaseService();
+        lookUpTableService = PaRegistry.getLookUpTableService();
+        paOrganizationService = PaRegistry.getPAOrganizationService();
+        plannedMarkerService = PaRegistry.getPlannedMarkerService();
+        protocolQueryService = PaRegistry.getProtocolQueryService();
+        tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorService();
+    }
 
     /**
      * {@inheritDoc}
@@ -134,24 +156,30 @@ public class AdHocReportAction
         setCriteria(new StudyProtocolQueryCriteria());
         return super.execute();
     }
-
+    
     /**
-     * Fill the id and name of the disease chosen on search form.
-     * @return success
+     * {@inheritDoc}
      */
-    public String fillInDiseaseId() {
-        return SUCCESS;
+    @Override
+    public String getReport() {
+        if (isReportInError()) {
+            return super.execute();
+        }
+        return super.getReport();
     }
 
-    private boolean isReportInError() {
+    /**
+     * Generates the report.
+     * @return true if there are errors.
+     */
+    boolean isReportInError() {
         validateIdentifierSearchParameters();
         if (hasFieldErrors()) {
             return true;
         }
-        ProtocolQueryServiceLocal local = ViewerServiceLocator.getInstance().getProtocolQueryService();
         try {
             populateIdentifierSearchParameters();
-            setResultList(local.getStudyProtocolByCriteriaForReporting(criteria));
+            setResultList(protocolQueryService.getStudyProtocolByCriteriaForReporting(criteria));
         } catch (PAException e) {
             addActionError(e.getMessage());
             return true;
@@ -160,9 +188,10 @@ public class AdHocReportAction
     }
 
     /**
-     * Validates the identifier portion of the search.
+     * Validates the identifier portion of the search. Checks that both the identifier type and the identifier are 
+     * provider when at least one of them is provided.
      */
-    public void validateIdentifierSearchParameters() {
+    void validateIdentifierSearchParameters() {
         if (criteria.getIdentifierType() != null && StringUtils.isEmpty(getIdentifier())) {
             addFieldError("identifier", getText("error.studyProtocol.identifier"));
         }
@@ -174,48 +203,10 @@ public class AdHocReportAction
     /**
      * Populates the identifier search parameters.
      */
-    public void populateIdentifierSearchParameters() {
+    void populateIdentifierSearchParameters() {
         if (criteria.getIdentifierType() != null && StringUtils.isNotEmpty(getIdentifier())) {
-            checkTrialSearchIdentifiers();
-            checkLeadOrgIdentifier();
-            checkOtherIdentifier();
+            criteria.setIdentifier(getIdentifier());
         }
-    }
-
-    private void checkTrialSearchIdentifiers() {
-        if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.NCI.getCode())) {
-            criteria.setNciIdentifier(getIdentifier());
-        } else if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.DCP.getCode())) {
-            criteria.setDcpIdentifier(getIdentifier());
-        } else if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.CTEP.getCode())) {
-            criteria.setCtepIdentifier(getIdentifier());
-        } else if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.NCT.getCode())) {
-            criteria.setNctNumber(getIdentifier());
-        }
-    }
-
-    private void checkLeadOrgIdentifier() {
-        if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.LEAD_ORG.getCode())) {
-            criteria.setLeadOrganizationTrialIdentifier(getIdentifier());
-        }
-    }
-
-    private void checkOtherIdentifier() {
-        if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.OTHER_IDENTIFIER.getCode())) {
-            criteria.setOtherIdentifier(getIdentifier());
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getReport() {
-
-        if (isReportInError()) {
-            return super.execute();
-        }
-        return super.getReport();
     }
 
     /**
@@ -223,24 +214,22 @@ public class AdHocReportAction
      * @throws PAException exception
      */
     public String viewTSR() throws PAException {
-
         try {
-            String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
+            Long pId = Long.parseLong(ServletActionContext.getRequest().getParameter("studyProtocolId"));
             ByteArrayOutputStream reportData =
-                PaRegistry.getTSRReportGeneratorService().generateRtfTsrReport(IiConverter.convertToIi(pId));
+                    tsrReportGeneratorService.generateRtfTsrReport(IiConverter.convertToStudyProtocolIi(pId));
             servletResponse.setHeader("Content-disposition", "inline; filename=TsrReport.rtf");
             servletResponse.setContentType("application/rtf;");
             servletResponse.setContentLength(reportData.size());
             ServletOutputStream servletout = servletResponse.getOutputStream();
             reportData.writeTo(servletout);
             servletout.flush();
-          } catch (Exception e) {
-              LOG.error("Error while generating TSR Summary report " , e);
-              return NONE;
-          }
-          return NONE;
+        } catch (Exception e) {
+            LOG.error("Error while generating TSR Summary report ", e);
+        }
+        return NONE;
     }
-    
+
     /**
      * Return a list of lead orgs.
      * @return list of lead orgs.
@@ -248,8 +237,8 @@ public class AdHocReportAction
      */
     public List<KeyValueDTO> getLeadOrgList() throws PAException {
         List<KeyValueDTO> result = new ArrayList<KeyValueDTO>();
-        for (PaOrganizationDTO dto : PaRegistry.getPAOrganizationService()
-                .getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION)) {
+        for (PaOrganizationDTO dto : paOrganizationService
+            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION)) {
             result.add(new KeyValueDTO(Long.parseLong(dto.getId()), dto.getName()));
         }
         return result;
@@ -261,10 +250,9 @@ public class AdHocReportAction
      * @throws PAException on error
      */
     public List<PaOrganizationDTO> getSumm4FunsingSponsorsList() throws PAException {
-        return PaRegistry.getPAOrganizationService()
-            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.SUMM4_SPONSOR);
+        return paOrganizationService.getOrganizationsAssociatedWithStudyProtocol(PAConstants.SUMM4_SPONSOR);
     }
-    
+
     /**
      * Return a list of participating site orgs.
      * @return list of participating site orgs.
@@ -272,22 +260,22 @@ public class AdHocReportAction
      */
     public List<KeyValueDTO> getParticipatingSiteList() throws PAException {
         List<KeyValueDTO> result = new ArrayList<KeyValueDTO>();
-        for (PaOrganizationDTO dto : PaRegistry.getPAOrganizationService()
-                .getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE)) {
+        for (PaOrganizationDTO dto : paOrganizationService
+            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE)) {
             result.add(new KeyValueDTO(Long.parseLong(dto.getId()), dto.getName()));
         }
         return result;
     }
-    
+
     /**
      * Return a list of anatomic sites.
      * @return list of anatomic sites.
      * @throws PAException on error
      */
     public List<AnatomicSite> getAnatomicSitesList() throws PAException {
-        return  PaRegistry.getLookUpTableService().getAnatomicSites();
+        return lookUpTableService.getAnatomicSites();
     }
-    
+
     /**
      * Return a list of planned markers.
      * @return list of planned markers.
@@ -295,16 +283,23 @@ public class AdHocReportAction
      */
     public List<KeyValueDTO> getPlannedMarkersList() throws PAException {
         List<KeyValueDTO> result = new ArrayList<KeyValueDTO>();
-        for (PlannedMarkerDTO dto : PaRegistry.getPlannedMarkerService().getAll()) {
-            result.add(populateWebDTO(dto));
+        for (PlannedMarkerDTO dto : plannedMarkerService.getAll()) {
+            KeyValueDTO keyValue =
+                    new KeyValueDTO(IiConverter.convertToLong(dto.getIdentifier()), StConverter.convertToString(dto
+                        .getLongName()));
+            result.add(keyValue);
         }
         return result;
     }
 
-    private KeyValueDTO populateWebDTO(PlannedMarkerDTO markerDTO) {
-        KeyValueDTO result = new KeyValueDTO(IiConverter.convertToLong(markerDTO.getIdentifier()),
-                StConverter.convertToString(markerDTO.getLongName()));
-        return result;
+    /**
+     * Gets the PDQDiseases for the disease section as a JSON collection.
+     * @return The result name
+     * @throws JSONException JSON Translation exception
+     */
+    public String getDiseaseTree() throws JSONException {
+        List<PDQDiseaseNode> diseaseTree = diseaseService.getDiseaseTree();
+        return JSONUtil.serialize(diseaseTree);
     }
 
     /**
@@ -313,6 +308,7 @@ public class AdHocReportAction
     public StudyProtocolQueryCriteria getCriteria() {
         return criteria;
     }
+
     /**
      * @param criteria the criteria to set
      */
@@ -335,15 +331,7 @@ public class AdHocReportAction
     }
 
     /**
-     * @return the servletResponse
-     */
-    public HttpServletResponse getServletResponse() {
-        return servletResponse;
-    }
-
-    /**
-     * @param response
-     *            servletResponse
+     * @param response servletResponse
      */
     @Override
     public void setServletResponse(HttpServletResponse response) {
@@ -351,17 +339,45 @@ public class AdHocReportAction
     }
 
     /**
-     * @param diseaseName the diseaseName to set
+     * @param diseaseService the diseaseService to set
      */
-    public void setDiseaseName(String diseaseName) {
-        this.diseaseName = diseaseName;
+    public void setDiseaseService(PDQDiseaseServiceLocal diseaseService) {
+        this.diseaseService = diseaseService;
     }
 
     /**
-     * @return the diseaseName
+     * @param lookUpTableService the lookUpTableService to set
      */
-    public String getDiseaseName() {
-        return diseaseName;
-    }   
+    public void setLookUpTableService(LookUpTableServiceRemote lookUpTableService) {
+        this.lookUpTableService = lookUpTableService;
+    }
+
+    /**
+     * @param paOrganizationService the paOrganizationService to set
+     */
+    public void setPaOrganizationService(PAOrganizationServiceRemote paOrganizationService) {
+        this.paOrganizationService = paOrganizationService;
+    }
+
+    /**
+     * @param plannedMarkerService the plannedMarkerService to set
+     */
+    public void setPlannedMarkerService(PlannedMarkerServiceLocal plannedMarkerService) {
+        this.plannedMarkerService = plannedMarkerService;
+    }
+
+    /**
+     * @param protocolQueryService the protocolQueryService to set
+     */
+    public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
+    }
+
+    /**
+     * @param tsrReportGeneratorService the tsrReportGeneratorService to set
+     */
+    public void setTsrReportGeneratorService(TSRReportGeneratorServiceRemote tsrReportGeneratorService) {
+        this.tsrReportGeneratorService = tsrReportGeneratorService;
+    }
 
 }

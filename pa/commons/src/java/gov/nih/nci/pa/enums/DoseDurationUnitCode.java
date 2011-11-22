@@ -88,7 +88,7 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * @author Kalpana Guthikonda
  * @since 21/10/2009
  */
-public enum DoseDurationUnitCode  implements CodedEnum<String> {
+public enum DoseDurationUnitCode implements CodedEnum<String> {
 
     /** Seconds. */
     SECONDS("Seconds"),
@@ -103,7 +103,7 @@ public enum DoseDurationUnitCode  implements CodedEnum<String> {
     /** Months. */
     MONTHS("Months"),
     /** Years. */
-    YEARS("Years");   
+    YEARS("Years");
 
     private String code;
 
@@ -120,6 +120,7 @@ public enum DoseDurationUnitCode  implements CodedEnum<String> {
      * Gets the code.
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
@@ -128,6 +129,7 @@ public enum DoseDurationUnitCode  implements CodedEnum<String> {
      * Gets the display name.
      * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -153,7 +155,7 @@ public enum DoseDurationUnitCode  implements CodedEnum<String> {
      * Gets the display names.
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         DoseDurationUnitCode[] l = DoseDurationUnitCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -162,10 +164,4 @@ public enum DoseDurationUnitCode  implements CodedEnum<String> {
         return a;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
 }

@@ -9,7 +9,7 @@
     <title>
       <fmt:message key="sbiReport.title" />
    </title>
-   <link href="${pageContext.request.contextPath}/styles/reportui.css" rel="stylesheet" type="text/css" media="all" />
+   <link href="${stylePath}/reportui.css" rel="stylesheet" type="text/css" media="all" />
    <script type="text/javascript">
             jQuery(function() {
                    var tabOptions = {

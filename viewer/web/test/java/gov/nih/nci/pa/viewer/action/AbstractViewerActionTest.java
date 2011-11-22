@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.viewer.action;
 
 import static org.junit.Assert.assertNotNull;
+
 import gov.nih.nci.pa.viewer.util.ViewerConstants;
 
 import org.apache.struts2.ServletActionContext;
@@ -8,6 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 
 import com.mockrunner.mock.web.MockHttpServletRequest;
+import com.mockrunner.mock.web.MockHttpServletResponse;
 import com.mockrunner.mock.web.MockHttpSession;
 import com.mockrunner.mock.web.MockServletContext;
 import com.opensymphony.xwork2.ActionContext;
@@ -41,9 +43,10 @@ public abstract class AbstractViewerActionTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setSession(new MockHttpSession());
         request.setRemoteUser(USER);
+        MockHttpServletResponse response = new MockHttpServletResponse();
         ServletActionContext.setServletContext(new MockServletContext());
         ServletActionContext.setRequest(request);
-
+        ServletActionContext.setResponse(response);
         setRole(ViewerConstants.ROLE_CTRO);
     }
 

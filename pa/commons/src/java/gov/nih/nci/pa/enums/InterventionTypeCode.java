@@ -84,15 +84,13 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
  * Clinical trial pattern developed to compare treatment groups in a clinical trial.
- *
+ * 
  * @author Naveen Amiruddin
- * @since 07/09/2007
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @since 07/09/2007 copyright NCI 2007. All rights reserved. This code may not be used without the express written
+ *        permission of the copyright holder, NCI.
  */
 public enum InterventionTypeCode implements CodedEnum<String> {
-    
+
     /** Drug. */
     DRUG("Drug"),
     /** Device. */
@@ -111,8 +109,9 @@ public enum InterventionTypeCode implements CodedEnum<String> {
     DIETARY_SUPPLEMENT("Dietary Supplement"),
     /** Other. */
     OTHER("Other");
-    
+
     private String code;
+
     /**
      * 
      * @param code
@@ -121,16 +120,19 @@ public enum InterventionTypeCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -146,16 +148,16 @@ public enum InterventionTypeCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return biospecimenRetentionCode 
+     * @return biospecimenRetentionCode
      */
     public static InterventionTypeCode getByCode(String code) {
         return getByClassAndCode(InterventionTypeCode.class, code);
     }
-    
+
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         InterventionTypeCode[] l = InterventionTypeCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -163,12 +165,6 @@ public enum InterventionTypeCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }
 

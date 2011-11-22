@@ -84,11 +84,13 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.PDQDiseaseAltername;
+import gov.nih.nci.pa.domain.PDQDiseaseParent;
 import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.iso.convert.PDQDiseaseConverter;
 import gov.nih.nci.pa.iso.dto.PDQDiseaseDTO;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.noniso.dto.PDQDiseaseNode;
 import gov.nih.nci.pa.service.search.PDQDiseaseBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.PDQDiseaseSortCriterion;
 import gov.nih.nci.pa.util.PAConstants;
@@ -106,6 +108,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
@@ -123,22 +126,15 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
     implements PDQDiseaseServiceLocal {
 
     /**
-     * @param searchCriteria search string
-     * @return all diseases with preferred names or alternate names matching search string
-     * @throws PAException exception
+     * {@inheritDoc}
      */
+    @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<PDQDiseaseDTO> search(PDQDiseaseDTO searchCriteria) throws PAException {
-        if (searchCriteria == null) {
-            throw new PAException("Must pass in search criteria when calling search().");
-        }
-
-        if (searchCriteria.getPreferredName() == null) {
-            throw new PAException("Must pass in a name when calling search().");
-        }
+        checkSearchCriteria(searchCriteria);
 
         boolean includeSynonyms =
-            BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getIncludeSynonym()));
+                BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getIncludeSynonym()));
         boolean exactMatch = BooleanUtils.toBoolean(StConverter.convertToString(searchCriteria.getExactMatch()));
         String preferredName = StConverter.convertToString(searchCriteria.getPreferredName());
 
@@ -160,10 +156,11 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
             preferredName = PAUtil.wildcardCriteria(preferredName);
         }
 
-        PageSortParams<PDQDisease> params = new PageSortParams<PDQDisease>(PAConstants.MAX_SEARCH_RESULTS, 0,
-                PDQDiseaseSortCriterion.DISEASE_PREFERRED_NAME, false);
+        PageSortParams<PDQDisease> params =
+                new PageSortParams<PDQDisease>(PAConstants.MAX_SEARCH_RESULTS, 0,
+                        PDQDiseaseSortCriterion.DISEASE_PREFERRED_NAME, false);
         PDQDiseaseBeanSearchCriteria<PDQDisease> crit =
-            new PDQDiseaseBeanSearchCriteria<PDQDisease>(criteria, includeSynonyms, exactMatch, preferredName);
+                new PDQDiseaseBeanSearchCriteria<PDQDisease>(criteria, includeSynonyms, exactMatch, preferredName);
         List<PDQDisease> results = search(crit, params);
         if (results.size() > PAConstants.MAX_SEARCH_RESULTS) {
             throw new PAException("Too many diseases found.  Please narrow search.");
@@ -171,8 +168,15 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
 
         return convertFromDomainToDTOs(results);
     }
-    
-    
+
+    private void checkSearchCriteria(PDQDiseaseDTO searchCriteria) throws PAException {
+        if (searchCriteria == null) {
+            throw new PAException("Must pass in search criteria when calling search().");
+        }
+        if (searchCriteria.getPreferredName() == null) {
+            throw new PAException("Must pass in a name when calling search().");
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -186,8 +190,6 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
         query.setParameterList("ids", ids);
         return query.list();
     }
-
-
 
     /**
      * String to search.
@@ -212,6 +214,35 @@ public class PDQDiseaseBeanLocal extends AbstractBaseIsoService<PDQDiseaseDTO, P
         }
 
         return term;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<PDQDiseaseNode> getDiseaseTree() {
+        List<PDQDiseaseNode> tree = new ArrayList<PDQDiseaseNode>();
+        Session session = PaHibernateUtil.getCurrentSession();
+        String hql = "from PDQDisease order by id";
+        Query query = session.createQuery(hql);
+        for (PDQDisease disease : (List<PDQDisease>) query.list()) {
+            if (CollectionUtils.isEmpty(disease.getDiseaseParents())) {
+                PDQDiseaseNode node = new PDQDiseaseNode();
+                node.setId(disease.getId());
+                node.setName(disease.getDisplayName());
+                tree.add(node);
+            } else {
+                for (PDQDiseaseParent parent : disease.getDiseaseParents()) {
+                    PDQDiseaseNode node = new PDQDiseaseNode();
+                    node.setId(disease.getId());
+                    node.setName(disease.getDisplayName());
+                    node.setParentId(parent.getParentDisease().getId());
+                    tree.add(node);
+                }
+            }
+        }
+        return tree;
     }
 
 }

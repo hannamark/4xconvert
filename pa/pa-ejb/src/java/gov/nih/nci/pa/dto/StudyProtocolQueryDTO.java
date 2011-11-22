@@ -88,8 +88,9 @@ import java.util.Date;
  * @since 07/22/2007
  */
 public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO implements Serializable {
-    static final long serialVersionUID = 283476876L;
 
+    private static final long serialVersionUID = 8200069337460780484L;
+    
     private boolean viewTSR;
     private boolean proprietaryTrial;
     private Date recordVerificationDate;

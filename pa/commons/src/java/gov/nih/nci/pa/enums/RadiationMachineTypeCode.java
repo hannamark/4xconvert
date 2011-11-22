@@ -97,7 +97,7 @@ public enum RadiationMachineTypeCode implements CodedEnum<String> {
     GENERAL_RADIOGRAPHIC("General Radiographic"),
     /** Photofluorographic/cine, etc. */
     PHOTOFLUOROGRAPHIC_OR_CINE("Photofluorographic/cine, etc"),
-     /** Mammographic. */
+    /** Mammographic. */
     MAMMOGRAPHIC("Mammographic"),
     /** Tomographic. */
     TOMOGRAPHIC("Tomographic"),
@@ -127,30 +127,34 @@ public enum RadiationMachineTypeCode implements CodedEnum<String> {
     OTHER("Other");
 
     private String code;
+
     /**
-     *
+     * 
      * @param code
      */
     private RadiationMachineTypeCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -158,7 +162,7 @@ public enum RadiationMachineTypeCode implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return PatientGenderCode
      */
@@ -169,7 +173,7 @@ public enum RadiationMachineTypeCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         RadiationMachineTypeCode[] l = RadiationMachineTypeCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -177,11 +181,5 @@ public enum RadiationMachineTypeCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

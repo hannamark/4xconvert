@@ -82,8 +82,11 @@ package gov.nih.nci.pa.iso.util;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.pa.enums.CodedEnum;
+import gov.nih.nci.pa.enums.CodedEnumHelper;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -135,28 +138,17 @@ public class DSetEnumConverter {
      * @param dset iso DSet
      * @return csv string of enumerator names
      */
-    public static <T extends Enum<T> & CodedEnum<?>> String convertDSetToCsv(Class<T> ctype, DSet<Cd> dset) {
-        StringBuffer result = new StringBuffer();
+    public static <T extends Enum<T> & CodedEnum<String>> String convertDSetToCsv(Class<T> ctype, DSet<Cd> dset) {
+        String result = "";
         if (dset != null && dset.getItem() != null && !dset.getItem().isEmpty()) {
             Set<Cd> set = dset.getItem();
-            boolean flag = false;
+            List<String> names = new ArrayList<String>();
             for (Cd cd : set) {
-
-                // Start adding commas after the first time through the loop.
-                if (flag) {
-                    result.append(',');
-                }
-
-                // Get an Enum from the class, it doesn't matter which instance because the getNameByCode() does a
-                // lookup within the Enum and the name returned matches the code not the instance of the Enum
-                T value = ctype.getEnumConstants()[0];
-                result.append(value.getNameByCode(CdConverter.convertCdToString(cd)));
-
-                // This loop is complete
-                flag = true;
+                names.add(CodedEnumHelper.getByClassAndCode(ctype, CdConverter.convertCdToString(cd)).name());
             }
+            result = StringUtils.join(names, ',');
         }
-        return result.toString();
+        return result;
     }
 
     /**

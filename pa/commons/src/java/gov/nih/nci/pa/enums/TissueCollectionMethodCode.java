@@ -87,7 +87,7 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 
 /**
  * Enumeration for planned marker's tissue collection method.
- *
+ * 
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public enum TissueCollectionMethodCode implements CodedEnum<String> {
@@ -125,6 +125,7 @@ public enum TissueCollectionMethodCode implements CodedEnum<String> {
     /**
      * @return the coded value of the enum
      */
+    @Override
     public String getCode() {
         return this.code;
     }
@@ -132,13 +133,7 @@ public enum TissueCollectionMethodCode implements CodedEnum<String> {
     /**
      * {@inheritDoc}
      */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getDisplayName() {
         return getCode();
     }
@@ -161,7 +156,7 @@ public enum TissueCollectionMethodCode implements CodedEnum<String> {
     /**
      * @return display names for tissue collection methods
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         TissueCollectionMethodCode[] codes = TissueCollectionMethodCode.values();
         String[] codedNames = new String[codes.length];
         for (int i = 0; i < codes.length; i++) {

@@ -3,11 +3,11 @@
 <head>
 <title><fmt:message key="summ4Rep.header" /></title>
 <s:head />
-<link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all" />
-<link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all" />
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
-<script type="text/javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
+<link href="${stylePath}/subModalstyle.css" rel="stylesheet" type="text/css" media="all" />
+<link href="${stylePath}/subModal.css'" rel="stylesheet" type="text/css" media="all" />
+<script type="text/javascript" language="javascript" src="${scriptPath}/js/subModalcommon.js"></script>
+<script type="text/javascript" language="javascript" src="${scriptPath}/js/subModal.js"></script>
+<script type="text/javascript" src="${scriptPath}/js/cal2.js"></script>
 <script type="text/javascript">
 addCalendar("Cal1", "Select Date", "criteria.intervalStartDate", "criteria");
 addCalendar("Cal2", "Select Date", "criteria.intervalEndDate", "criteria");
@@ -32,7 +32,7 @@ function loadOrgsDiv() {
     }
     var url = '/viewer/ctro/ajax/refreshOrganizationsSumm4Rep.action';
     var params = { "criteria.familyId": familyId };
-    div.innerHTML = '<div align="left"><img  src="/viewer/images/loading.gif"/>&nbsp;Loading...</div>';
+    div.innerHTML = '<div align="left"><img  src="${imagePath}/loading.gif"/>&nbsp;Loading...</div>';
     var aj = callAjaxPost(div, url, params);
     return false;
 }
@@ -80,7 +80,7 @@ function displaySearch() {
                 <td class="value">
                     <s:textfield id="intervalStartDate" name="criteria.intervalStartDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                     <a href="javascript:showCal('Cal1')">
-                        <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
+                        <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
                     </a>
                 </td>
             </tr>
@@ -92,7 +92,7 @@ function displaySearch() {
                 <td class="value">
                     <s:textfield id="intervalEndDate" name="criteria.intervalEndDate" maxlength="10" size="10" cssStyle="width:70px;float:left"/>
                     <a href="javascript:showCal('Cal2')">
-                        <img src="<%=request.getContextPath()%>/images/ico_calendar.gif" alt="select date" class="calendaricon" />
+                        <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
                     </a>
                 </td>
             </tr>

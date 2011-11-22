@@ -91,45 +91,48 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 public enum IdentifierType implements CodedEnum<String> {
 
-    /** NCI.*/
+    /** NCI. */
     NCI("NCI"),
     /** NCT. */
     NCT("NCT"),
     /** CTEP. */
     CTEP("CTEP"),
-    /** DCP.*/
+    /** DCP. */
     DCP("DCP"),
-    /** Other Identifier.*/
+    /** Other Identifier. */
     OTHER_IDENTIFIER("Other Identifier"),
-    /** Lead Organization.*/
+    /** Lead Organization. */
     LEAD_ORG("Lead Organization");
 
     private String code;
 
     /**
-     *
+     * 
      * @param code
      */
     private IdentifierType(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -146,18 +149,10 @@ public enum IdentifierType implements CodedEnum<String> {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-
-
-    /**
      * Gets the display names.
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         IdentifierType[] l = IdentifierType.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {

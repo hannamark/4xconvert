@@ -96,11 +96,12 @@ public enum ExpandedAccessStatusCode implements CodedEnum<String> {
     /** No longer available. */
     NO_LONGER_AVAILABLE("No longer available"),
     /** Temporarily not available. */
-    TEMPORARILY_NOT_AVAILABLE("Temporarily not available"),    
+    TEMPORARILY_NOT_AVAILABLE("Temporarily not available"),
     /** Approved for marketing. */
     APPROVED_FOR_MARKETING("Approved for marketing");
-    
+
     private String code;
+
     /**
      * 
      * @param code
@@ -109,16 +110,19 @@ public enum ExpandedAccessStatusCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -134,7 +138,7 @@ public enum ExpandedAccessStatusCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return ExpandedAccessCode 
+     * @return ExpandedAccessCode
      */
     public static ExpandedAccessStatusCode getByCode(String code) {
         return getByClassAndCode(ExpandedAccessStatusCode.class, code);
@@ -143,7 +147,7 @@ public enum ExpandedAccessStatusCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         ExpandedAccessStatusCode[] l = ExpandedAccessStatusCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -151,11 +155,5 @@ public enum ExpandedAccessStatusCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

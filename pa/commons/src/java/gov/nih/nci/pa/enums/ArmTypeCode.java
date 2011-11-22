@@ -90,21 +90,22 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * copyright holder, NCI.
  */
 public enum ArmTypeCode implements CodedEnum<String> {
-    
-     /** Experimental. */
-     EXPERIMENTAL("Experimental"),
-     /** Active Comparator. */
-     ACTIVE_COMPARATOR("Active Comparator"),
-     /** Placebo Comparator. */
-     PLACEBO_COMPARATOR("Placebo Comparator"),
-     /** Sham Comparator. */
-     SHAM_COMPARATOR("Sham Comparator"),
-     /** No intervention. */
-     NO_INTERVENTION("No intervention"),
-     /** Other. */
-     OTHER("Other");
-     
+
+    /** Experimental. */
+    EXPERIMENTAL("Experimental"),
+    /** Active Comparator. */
+    ACTIVE_COMPARATOR("Active Comparator"),
+    /** Placebo Comparator. */
+    PLACEBO_COMPARATOR("Placebo Comparator"),
+    /** Sham Comparator. */
+    SHAM_COMPARATOR("Sham Comparator"),
+    /** No intervention. */
+    NO_INTERVENTION("No intervention"),
+    /** Other. */
+    OTHER("Other");
+
     private String code;
+
     /**
      * 
      * @param code
@@ -113,16 +114,19 @@ public enum ArmTypeCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -138,16 +142,16 @@ public enum ArmTypeCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return arm type 
+     * @return arm type
      */
     public static ArmTypeCode getByCode(String code) {
         return getByClassAndCode(ArmTypeCode.class, code);
     }
-    
+
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         ArmTypeCode[] l = ArmTypeCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -155,12 +159,5 @@ public enum ArmTypeCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-}    
- 
+
+}

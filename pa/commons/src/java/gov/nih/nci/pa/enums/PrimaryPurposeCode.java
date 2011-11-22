@@ -81,14 +81,13 @@ package gov.nih.nci.pa.enums;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+
 /**
  * Code to identify a type of study protocol based upon the intent of the study's activities.
- *
+ * 
  * @author Naveen Amiruddin
- * @since 07/22/2008
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @since 07/22/2008 copyright NCI 2007. All rights reserved. This code may not be used without the express written
+ *        permission of the copyright holder, NCI.
  */
 
 public enum PrimaryPurposeCode implements CodedEnum<String> {
@@ -111,28 +110,34 @@ public enum PrimaryPurposeCode implements CodedEnum<String> {
     OTHER("Other");
 
     private String code;
+
     /**
-     *
+     * 
      * @param code
      */
     private PrimaryPurposeCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
+
     /**
-    *@return String DisplayName
-    */
+     * @return String DisplayName
+     */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
+
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -140,7 +145,7 @@ public enum PrimaryPurposeCode implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return ResponsibilityCode
      */
@@ -151,7 +156,7 @@ public enum PrimaryPurposeCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         PrimaryPurposeCode[] l = PrimaryPurposeCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -160,10 +165,4 @@ public enum PrimaryPurposeCode implements CodedEnum<String> {
         return a;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
 }

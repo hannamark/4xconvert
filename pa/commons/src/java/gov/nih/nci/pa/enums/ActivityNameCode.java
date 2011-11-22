@@ -126,30 +126,34 @@ public enum ActivityNameCode implements CodedEnum<String> {
     PATHOLOGY_GRADE("Pathology Grade");
 
     private String code;
+
     /**
-     *
+     * 
      * @param code
      */
     private ActivityNameCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -157,7 +161,7 @@ public enum ActivityNameCode implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return TrialPhaseType
      */
@@ -168,7 +172,7 @@ public enum ActivityNameCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         ActivityNameCode[] l = ActivityNameCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -177,11 +181,4 @@ public enum ActivityNameCode implements CodedEnum<String> {
         return a;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
 }
-

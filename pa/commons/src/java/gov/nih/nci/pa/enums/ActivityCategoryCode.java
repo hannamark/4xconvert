@@ -90,9 +90,9 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * copyright holder, NCI.
  */
 public enum ActivityCategoryCode implements CodedEnum<String> {
-    
+
     /** Intervention. */
-    INTERVENTION("Intervention"), 
+    INTERVENTION("Intervention"),
     /** Eligibility Criterion. */
     ELIGIBILITY_CRITERION("Eligibility Criterion"),
     /** Substance Administration. */
@@ -113,8 +113,9 @@ public enum ActivityCategoryCode implements CodedEnum<String> {
     OTHER("Other"),
     /** Tumor Marker. */
     TUMOR_MARKER("Tumor Marker");
-     
+
     private String code;
+
     /**
      * 
      * @param code
@@ -123,16 +124,19 @@ public enum ActivityCategoryCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -148,16 +152,16 @@ public enum ActivityCategoryCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return TrialPhaseType 
+     * @return TrialPhaseType
      */
     public static ActivityCategoryCode getByCode(String code) {
         return getByClassAndCode(ActivityCategoryCode.class, code);
     }
-    
+
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         ActivityCategoryCode[] l = ActivityCategoryCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -165,12 +169,5 @@ public enum ActivityCategoryCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-}    
- 
+
+}

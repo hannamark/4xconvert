@@ -85,18 +85,17 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 /**
  * 
  * @author Kalpana Guthikonda
- * @since 10/31/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI. 
+ * @since 10/31/2008 copyright NCI 2008. All rights reserved. This code may not be used without the express written
+ *        permission of the copyright holder, NCI.
  */
 public enum IndldeTypeCode implements CodedEnum<String> {
     /** IND. */
     IND("IND"),
-    /**  IDE. */
-    IDE("IDE");    
+    /** IDE. */
+    IDE("IDE");
 
     private String code;
+
     /**
      * 
      * @param code
@@ -105,16 +104,19 @@ public enum IndldeTypeCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -130,7 +132,7 @@ public enum IndldeTypeCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return IndldeTypeCode 
+     * @return IndldeTypeCode
      */
     public static IndldeTypeCode getByCode(String code) {
         return getByClassAndCode(IndldeTypeCode.class, code);
@@ -139,7 +141,7 @@ public enum IndldeTypeCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         IndldeTypeCode[] l = IndldeTypeCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -147,11 +149,5 @@ public enum IndldeTypeCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

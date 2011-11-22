@@ -211,13 +211,15 @@ public enum USStateCode implements CodedEnum<String> {
     /**
      * @return code coded value of enum
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -230,8 +232,7 @@ public enum USStateCode implements CodedEnum<String> {
     }
 
     /**
-     * @param code
-     *            code
+     * @param code code
      * @return Study Type Code
      */
     public static USStateCode getByCode(String code) {
@@ -250,22 +251,15 @@ public enum USStateCode implements CodedEnum<String> {
         return a;
     }
 
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
     /**
      * @return String[] abbreviations names of enums
      */
-     public static String[] getAbbreviatedNames() {
+    public static String[] getAbbreviatedNames() {
         USStateCode[] usStateArray = USStateCode.values();
         String[] abbrArray = new String[usStateArray.length];
         for (int i = 0; i < usStateArray.length; i++) {
-             abbrArray[i] = usStateArray[i].toString();
+            abbrArray[i] = usStateArray[i].toString();
         }
         return abbrArray;
-    }   
+    }
 }

@@ -96,76 +96,69 @@ public enum AccrualReportingMethodCode implements CodedEnum<String> {
     /**
      * Abbreviated.
      */
-    ABBREVIATED("Abbreviated"), 
-     /**
-      * Complete.
-      */
+    ABBREVIATED("Abbreviated"),
+    /**
+     * Complete.
+     */
     COMPLETE("Complete"),
-     /**
-      * AE.
-      */
-     AE("AE");
-     
-          
-     private String code;
+    /**
+     * AE.
+     */
+    AE("AE");
 
-     /**
-      * Constructor for AccrualReportingMethodCode.
-      * @param code
-      */
-     private AccrualReportingMethodCode(String code) {
-         this.code = code;
-         register(this);
-     }
+    private String code;
 
-     /**
-      * @return code coded value of enum
-      */
-     public String getCode() {
-         return code;
-     }
+    /**
+     * Constructor for AccrualReportingMethodCode.
+     * @param code
+     */
+    private AccrualReportingMethodCode(String code) {
+        this.code = code;
+        register(this);
+    }
 
+    /**
+     * @return code coded value of enum
+     */
+    @Override
+    public String getCode() {
+        return code;
+    }
 
-     /**
-      *@return String DisplayName 
-      */
-     public String getDisplayName() {
-         return sentenceCasedName(this);
-     }
+    /**
+     * @return String DisplayName
+     */
+    @Override
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
 
-     /**
-      * @return String display name
-      */
-     public String getName() {
-         return name();
-     }
+    /**
+     * @return String display name
+     */
+    public String getName() {
+        return name();
+    }
 
+    /**
+     * @param code code
+     * @return AccrualReportingMethodCode
+     */
+    public static AccrualReportingMethodCode getByCode(String code) {
+        return getByClassAndCode(AccrualReportingMethodCode.class, code);
+    }
 
-     /**
-      * @param code code
-      * @return AccrualReportingMethodCode 
-      */
-     public static AccrualReportingMethodCode getByCode(String code) {
-         return getByClassAndCode(AccrualReportingMethodCode.class, code);
-     }
-     
-     /**
-      * construct a array of display names for AccrualReportingMethodCode Enum.
-      * @return String[] display names for AccrualReportingMethodCode
-      */
-     public static String[]  getDisplayNames() {
-         AccrualReportingMethodCode[] codes = AccrualReportingMethodCode.values();
-         String[] codedNames = new String[codes.length];
-         for (int i = 0; i < codes.length; i++) {
-             codedNames[i] = codes[i].getCode();
-         }
-         return codedNames;
-     }        
-     
-     /**
-      * {@inheritDoc}
-      */
-     public String getNameByCode(String str) {
-         return getByCode(str).name();
-     }
+    /**
+     * construct a array of display names for AccrualReportingMethodCode Enum.
+     * @return String[] display names for AccrualReportingMethodCode
+     */
+    public static String[] getDisplayNames() {
+        AccrualReportingMethodCode[] codes = AccrualReportingMethodCode.values();
+        String[] codedNames = new String[codes.length];
+        for (int i = 0; i < codes.length; i++) {
+            codedNames[i] = codes[i].getCode();
+        }
+        return codedNames;
+    }
+
 }

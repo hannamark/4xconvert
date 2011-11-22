@@ -89,8 +89,8 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * @author Kalpana Guthikonda
  * @since 11/5/2009
  */
-public enum BestResponseCode implements CodedEnum<String> { 
-    
+public enum BestResponseCode implements CodedEnum<String> {
+
     /** Clinical Progressive Disease. */
     CLINICAL_PROGRESSIVE_DISEASE("Clinical Progressive Disease"),
     /** Complete Response. */
@@ -113,30 +113,34 @@ public enum BestResponseCode implements CodedEnum<String> {
     TOO_EARLY_TO_ASSESS_PER_PROTOCOL("Too Early to Assess per Protocol");
 
     private String code;
+
     /**
-     *
+     * 
      * @param code
      */
     private BestResponseCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -144,7 +148,7 @@ public enum BestResponseCode implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return PatientGenderCode
      */
@@ -155,7 +159,7 @@ public enum BestResponseCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         BestResponseCode[] l = BestResponseCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -163,11 +167,5 @@ public enum BestResponseCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

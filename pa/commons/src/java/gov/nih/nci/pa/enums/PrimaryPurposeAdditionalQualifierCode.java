@@ -26,13 +26,16 @@ public enum PrimaryPurposeAdditionalQualifierCode implements CodedEnum<String> {
     OTHER("Other");
 
     private String code;
+
     private PrimaryPurposeAdditionalQualifierCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code
      */
+    @Override
     public String getCode() {
         return code;
     }
@@ -40,6 +43,7 @@ public enum PrimaryPurposeAdditionalQualifierCode implements CodedEnum<String> {
     /**
      * @return name
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -53,9 +57,9 @@ public enum PrimaryPurposeAdditionalQualifierCode implements CodedEnum<String> {
     }
 
     /**
-    *
-    * @return String name
-    */
+     * 
+     * @return String name
+     */
     public String getName() {
         return name();
     }
@@ -67,10 +71,11 @@ public enum PrimaryPurposeAdditionalQualifierCode implements CodedEnum<String> {
     public static PrimaryPurposeAdditionalQualifierCode getByCode(String code) {
         return getByClassAndCode(PrimaryPurposeAdditionalQualifierCode.class, code);
     }
+
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         int i = 0;
         String[] result = new String[PrimaryPurposeAdditionalQualifierCode.values().length];
         for (PrimaryPurposeAdditionalQualifierCode value : PrimaryPurposeAdditionalQualifierCode.values()) {

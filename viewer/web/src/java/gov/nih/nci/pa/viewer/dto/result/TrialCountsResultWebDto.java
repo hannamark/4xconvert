@@ -80,16 +80,11 @@ import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.result.TrialCountsResultDto;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Hugh Reinhart
  * @since 05/12/2009
  */
 public class TrialCountsResultWebDto {
-
-    private static final String TOTAL_ALL = "All Sites";
 
     private String organization;
     private Integer year;
@@ -99,29 +94,10 @@ public class TrialCountsResultWebDto {
     private Integer amendment;
 
     /**
-     * Static method for generating a list of web dto's from a list of service dto's.
-     * @param serviceDtoList service dto list
-     * @return web dto list
+     * Default constructor.
      */
-    public static List<TrialCountsResultWebDto> getWebList(List<TrialCountsResultDto> serviceDtoList) {
-        List<TrialCountsResultWebDto> resultList = new ArrayList<TrialCountsResultWebDto>();
-        int original = 0;
-        int amendments = 0;
-        for (TrialCountsResultDto dto : serviceDtoList) {
-            TrialCountsResultWebDto webDto = new TrialCountsResultWebDto(dto);
-            original += webDto.getInitial();
-            amendments += webDto.getAmendment();
-            resultList.add(webDto);
-        }
-        TrialCountsResultWebDto webDto = new TrialCountsResultWebDto();
-        webDto.setOrganization(TOTAL_ALL);
-        webDto.setInitial(original);
-        webDto.setAmendment(amendments);
-        resultList.add(webDto);
-        return resultList;
-    }
-
-    private TrialCountsResultWebDto() {
+    public TrialCountsResultWebDto() {
+        super();
     }
 
     /**
@@ -129,7 +105,9 @@ public class TrialCountsResultWebDto {
      * @param dto the service iso dto
      */
     public TrialCountsResultWebDto(TrialCountsResultDto dto) {
-        if (dto == null) { return; }
+        if (dto == null) {
+            return;
+        }
         organization = StConverter.convertToString(dto.getOrganization());
         year = IntConverter.convertToInteger(dto.getYear());
         month = IntConverter.convertToInteger(dto.getMonth());

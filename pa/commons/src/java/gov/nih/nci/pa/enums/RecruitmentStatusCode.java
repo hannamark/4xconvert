@@ -123,11 +123,11 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
     private boolean eligibleForAccrual;
 
     private static final Set<RecruitmentStatusCode> RECRUITING_STATUSES = EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION);
-    private static final Set<RecruitmentStatusCode> NON_RECRUITING_STATUSES =
+    private static final Set<RecruitmentStatusCode> NON_RECRUITING_STATUSES = 
         EnumSet.of(RecruitmentStatusCode.WITHDRAWN, RecruitmentStatusCode.IN_REVIEW, RecruitmentStatusCode.APPROVED);
 
     /**
-     *
+     * 
      * @param code
      */
     private RecruitmentStatusCode(String code, boolean eligibleForAccrual) {
@@ -135,6 +135,7 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
         this.eligibleForAccrual = eligibleForAccrual;
         register(this);
     }
+
     /**
      * @return code code
      */
@@ -142,15 +143,17 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
     public String getCode() {
         return code;
     }
+
     /**
-    *@return String DisplayName
-    */
+     * @return String DisplayName
+     */
     @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
+
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -158,7 +161,7 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return RecruitmentStatusCode
      */
@@ -169,7 +172,7 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         RecruitmentStatusCode[] l = RecruitmentStatusCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -201,13 +204,6 @@ public enum RecruitmentStatusCode implements CodedEnum<String> {
         return eligibleForAccrual;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
     /**
      * Returns the corresponding recruitment status code for a study status code.
      * @param statusCode overall status of study

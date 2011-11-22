@@ -87,7 +87,7 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * @author Hugh Reinhart
  * @since Aug 28, 2009
  */
-public enum PaymentMethodCode  implements CodedEnum<String> {
+public enum PaymentMethodCode implements CodedEnum<String> {
 
     /** Private Insurance. */
     PRIVATE("Private Insurance"),
@@ -115,30 +115,34 @@ public enum PaymentMethodCode  implements CodedEnum<String> {
     UNKNOWN("Unknown");
 
     private String code;
+
     /**
-     *
+     * 
      * @param code
      */
     private PaymentMethodCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -146,7 +150,7 @@ public enum PaymentMethodCode  implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return PaymentMethodCode
      */
@@ -157,7 +161,7 @@ public enum PaymentMethodCode  implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         PaymentMethodCode[] l = PaymentMethodCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -166,10 +170,4 @@ public enum PaymentMethodCode  implements CodedEnum<String> {
         return a;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
 }

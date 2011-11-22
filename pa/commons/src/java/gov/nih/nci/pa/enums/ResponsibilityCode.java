@@ -81,14 +81,13 @@ package gov.nih.nci.pa.enums;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+
 /**
  * The specific responsibility assumed by an organization for a given study.
- *
+ * 
  * @author Naveen Amiruddin
- * @since 07/22/2007
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @since 07/22/2007 copyright NCI 2007. All rights reserved. This code may not be used without the express written
+ *        permission of the copyright holder, NCI.
  */
 
 public enum ResponsibilityCode implements CodedEnum<String> {
@@ -103,28 +102,34 @@ public enum ResponsibilityCode implements CodedEnum<String> {
     DATA_MANAGEMENT("Data Management");
 
     private String code;
+
     /**
-     *
+     * 
      * @param code
      */
     private ResponsibilityCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
+
     /**
-    *@return String DisplayName
-    */
+     * @return String DisplayName
+     */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
+
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -132,7 +137,7 @@ public enum ResponsibilityCode implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return ResponsibilityCode
      */
@@ -143,7 +148,7 @@ public enum ResponsibilityCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         ResponsibilityCode[] l = ResponsibilityCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -151,11 +156,5 @@ public enum ResponsibilityCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

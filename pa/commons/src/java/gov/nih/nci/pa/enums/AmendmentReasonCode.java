@@ -88,75 +88,73 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 public enum AmendmentReasonCode implements CodedEnum<String> {
 
-  /**
-   * ADMINISTRATIVE.
-   */
-  ADMINISTRATIVE("Administrative"),
-   /**
-   * SCIENTIFIC.
-   */
-  SCIENTIFIC("Scientific"),
-  /**
-   * BOTH.
-   */
-  BOTH("Both");
+    /**
+     * ADMINISTRATIVE.
+     */
+    ADMINISTRATIVE("Administrative"),
+    /**
+     * SCIENTIFIC.
+     */
+    SCIENTIFIC("Scientific"),
+    /**
+     * BOTH.
+     */
+    BOTH("Both");
 
-  private String code;
-  /**
-   * 
-   * @param code
-   */
-  private AmendmentReasonCode(String code) {
-      this.code = code;
-      register(this);
-  }
-  /**
-   * @return code code
-   */
-  public String getCode() {
-      return code;
-  }
+    private String code;
 
-  /**
-   *@return String DisplayName 
-   */
-  public String getDisplayName() {
-      return sentenceCasedName(this);
-  }
+    /**
+     * 
+     * @param code
+     */
+    private AmendmentReasonCode(String code) {
+        this.code = code;
+        register(this);
+    }
 
-  /**
-   * 
-   * @return String name
-   */
-  public String getName() {
-      return name();
-  }
+    /**
+     * @return code code
+     */
+    @Override
+    public String getCode() {
+        return code;
+    }
 
-  /**
-   * 
-   * @param code code
-   * @return OnholdReasonCode 
-   */
-  public static AmendmentReasonCode getByCode(String code) {
-      return getByClassAndCode(AmendmentReasonCode.class, code);
-  }
+    /**
+     * @return String DisplayName
+     */
+    @Override
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
 
-  /**
-   * @return String[] display names of enums
-   */
-  public static String[]  getDisplayNames() {
-      AmendmentReasonCode[] l = AmendmentReasonCode.values();
-      String[] a = new String[l.length];
-      for (int i = 0; i < l.length; i++) {
-          a[i] = l[i].getCode();
-      }
-      return a;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public String getNameByCode(String str) {
-      return getByCode(str).name();
-  }
+    /**
+     * 
+     * @return String name
+     */
+    public String getName() {
+        return name();
+    }
+
+    /**
+     * 
+     * @param code code
+     * @return OnholdReasonCode
+     */
+    public static AmendmentReasonCode getByCode(String code) {
+        return getByClassAndCode(AmendmentReasonCode.class, code);
+    }
+
+    /**
+     * @return String[] display names of enums
+     */
+    public static String[] getDisplayNames() {
+        AmendmentReasonCode[] l = AmendmentReasonCode.values();
+        String[] a = new String[l.length];
+        for (int i = 0; i < l.length; i++) {
+            a[i] = l[i].getCode();
+        }
+        return a;
+    }
+
 }

@@ -90,7 +90,7 @@ import org.junit.Test;
 
 
 public class TrialCountsTest
-        extends AbstractReportBeanTest<StandardCriteriaDto, TrialCountsResultDto, TrialCountsReportBean> {
+        extends AbstractReportBeanTestBase<StandardCriteriaDto, TrialCountsResultDto, TrialCountsReportBean> {
 
     @Before
     public void setUp() throws Exception {

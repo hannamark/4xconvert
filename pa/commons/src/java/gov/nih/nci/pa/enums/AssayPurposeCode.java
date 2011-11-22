@@ -140,6 +140,7 @@ public enum AssayPurposeCode implements CodedEnum<String> {
     /**
      * @return the coded value of the enum
      */
+    @Override
     public String getCode() {
         return this.code;
     }
@@ -147,13 +148,7 @@ public enum AssayPurposeCode implements CodedEnum<String> {
     /**
      * {@inheritDoc}
      */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getDisplayName() {
         return getCode();
     }
@@ -176,7 +171,7 @@ public enum AssayPurposeCode implements CodedEnum<String> {
     /**
      * @return display names for assay purpose codes
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         AssayPurposeCode[] codes = AssayPurposeCode.values();
         String[] codedNames = new String[codes.length];
         for (int i = 0; i < codes.length; i++) {
@@ -184,6 +179,5 @@ public enum AssayPurposeCode implements CodedEnum<String> {
         }
         return codedNames;
     }
-
 
 }

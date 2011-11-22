@@ -30,8 +30,8 @@
     <property name="viewer.build.testResourceDir.0" value="${basedir}/test/resources"/>
     <property name="viewer.test.reports" value="${reportDir}/test-reports"/>
     <property name="viewer.coverage.reports" value="${reportDir}/coverage-reports"/>
-    <property name="viewer.coverage.line" value="61"/>
-    <property name="viewer.coverage.branch" value="68"/>
+    <property name="viewer.coverage.line" value="63"/>
+    <property name="viewer.coverage.branch" value="76"/>
     <property name="viewer.pmd.maxerrors" value="1"/>
     <property name="viewer.reporting.outputDirectory" value="${reportDir}/site"/>
     <property name="viewer.war" value="${viewer.build.finalName}.war"/>
@@ -227,6 +227,7 @@
         <taskdef resource="checkstyletask.properties" classpathref="test-checkstyle.classpath"/>
         <checkstyle configurl="${checkstyle.url}" failOnViolation="true">
             <classpath>
+                <path refid="compile.classpath"/>
                 <path refid="ejb.package.classpath"/>
                 <path refid="common.package.classpath"/>
                 <path refid="selenium.classpath"/>

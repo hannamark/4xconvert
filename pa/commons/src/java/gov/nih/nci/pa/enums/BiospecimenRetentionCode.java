@@ -92,7 +92,7 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * This code may not be used without the express written permission of the
  * copyright holder, NCI.
  */
-public enum BiospecimenRetentionCode  implements CodedEnum<String> {
+public enum BiospecimenRetentionCode implements CodedEnum<String> {
 
     /** Retained. */
     RETAINED("Retained"),
@@ -102,8 +102,9 @@ public enum BiospecimenRetentionCode  implements CodedEnum<String> {
     SPECIMENT_ONLY("Speciment Only"),
     /** None. */
     NONE("None");
-    
+
     private String code;
+
     /**
      * 
      * @param code
@@ -112,16 +113,19 @@ public enum BiospecimenRetentionCode  implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -137,16 +141,16 @@ public enum BiospecimenRetentionCode  implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return biospecimenRetentionCode 
+     * @return biospecimenRetentionCode
      */
     public static BiospecimenRetentionCode getByCode(String code) {
         return getByClassAndCode(BiospecimenRetentionCode.class, code);
     }
-    
+
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         BiospecimenRetentionCode[] l = BiospecimenRetentionCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -154,11 +158,5 @@ public enum BiospecimenRetentionCode  implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

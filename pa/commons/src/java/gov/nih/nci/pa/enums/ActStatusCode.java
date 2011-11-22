@@ -93,72 +93,66 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 public enum ActStatusCode implements CodedEnum<String> {
 
-     /*** Active.*/
-     ACTIVE("Active"),
-     /*** In Active. **/
-     INACTIVE("InActive"),
-     /*** Nullified. */
-     NULLIFIED("Nullified");
+    /*** Active. */
+    ACTIVE("Active"),
+    /*** In Active. **/
+    INACTIVE("InActive"),
+    /*** Nullified. */
+    NULLIFIED("Nullified");
 
-     private String code;
+    private String code;
 
-     /**
-      * Constructor for StatusCode.
-      * @param code
-      */
-     private ActStatusCode(String code) {
-         this.code = code;
-         register(this);
-     }
+    /**
+     * Constructor for StatusCode.
+     * @param code
+     */
+    private ActStatusCode(String code) {
+        this.code = code;
+        register(this);
+    }
 
-     /**
-      * @return code coded value of enum
-      */
-     public String getCode() {
-         return code;
-     }
+    /**
+     * @return code coded value of enum
+     */
+    @Override
+    public String getCode() {
+        return code;
+    }
 
+    /**
+     * @return String DisplayName
+     */
+    @Override
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
 
-     /**
-      *@return String DisplayName
-      */
-     public String getDisplayName() {
-         return sentenceCasedName(this);
-     }
+    /**
+     * @return String display name
+     */
+    public String getName() {
+        return name();
+    }
 
-     /**
-      * @return String display name
-      */
-     public String getName() {
-         return name();
-     }
+    /**
+     * @param code code
+     * @return StatusCode
+     */
+    public static ActStatusCode getByCode(String code) {
+        return getByClassAndCode(ActStatusCode.class, code);
+    }
 
+    /**
+     * construct a array of display names for Abstracted Status coded Enum.
+     * @return String[] display names for Abstracted Status Code
+     */
+    public static String[] getDisplayNames() {
+        ActStatusCode[] absStatusCodes = ActStatusCode.values();
+        String[] codedNames = new String[absStatusCodes.length];
+        for (int i = 0; i < absStatusCodes.length; i++) {
+            codedNames[i] = absStatusCodes[i].getCode();
+        }
+        return codedNames;
+    }
 
-     /**
-      * @param code code
-      * @return StatusCode
-      */
-     public static ActStatusCode getByCode(String code) {
-         return getByClassAndCode(ActStatusCode.class, code);
-     }
-
-     /**
-      * construct a array of display names for Abstracted Status coded Enum.
-      * @return String[] display names for Abstracted Status Code
-      */
-     public static String[]  getDisplayNames() {
-         ActStatusCode[] absStatusCodes = ActStatusCode.values();
-         String[] codedNames = new String[absStatusCodes.length];
-         for (int i = 0; i < absStatusCodes.length; i++) {
-             codedNames[i] = absStatusCodes[i].getCode();
-         }
-         return codedNames;
-     }
-
-     /**
-      * {@inheritDoc}
-      */
-     public String getNameByCode(String str) {
-         return getByCode(str).name();
-     }
 }

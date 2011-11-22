@@ -85,10 +85,8 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 /**
  * 
  * @author Kalpana Guthikonda
- * @since 10/31/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI. 
+ * @since 10/31/2008 copyright NCI 2008. All rights reserved. This code may not be used without the express written
+ *        permission of the copyright holder, NCI.
  */
 public enum HolderTypeCode implements CodedEnum<String> {
     /** Investigator. */
@@ -96,13 +94,14 @@ public enum HolderTypeCode implements CodedEnum<String> {
     /** Organization. */
     ORGANIZATION("Organization"),
     /** Industry. */
-    INDUSTRY("Industry"),   
+    INDUSTRY("Industry"),
     /** NIH. */
     NIH("NIH"),
     /** NCI. */
     NCI("NCI");
-    
+
     private String code;
+
     /**
      * 
      * @param code
@@ -111,16 +110,19 @@ public enum HolderTypeCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -136,7 +138,7 @@ public enum HolderTypeCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return HolderTypeCode 
+     * @return HolderTypeCode
      */
     public static HolderTypeCode getByCode(String code) {
         return getByClassAndCode(HolderTypeCode.class, code);
@@ -145,7 +147,7 @@ public enum HolderTypeCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         HolderTypeCode[] l = HolderTypeCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -153,11 +155,5 @@ public enum HolderTypeCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

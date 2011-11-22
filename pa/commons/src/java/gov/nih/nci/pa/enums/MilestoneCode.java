@@ -320,14 +320,6 @@ public enum MilestoneCode implements CodedEnum<String> {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-
-    /**
      * Checks if is above trial summary report.
      * @param mc the mc
      * @return true, if is above trial summary report

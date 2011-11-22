@@ -95,19 +95,19 @@ import java.util.List;
  */
 public enum DocumentTypeCode implements CodedEnum<String> {
 
-    /** Trial_Document.*/
+    /** Trial_Document. */
     PROTOCOL_DOCUMENT("Protocol Document", "protocolDoc"),
-    /**IRB_Approval_Document.*/
+    /** IRB_Approval_Document. */
     IRB_APPROVAL_DOCUMENT("IRB Approval Document", "irbApprovalDoc"),
-    /**Participating_sites.*/
+    /** Participating_sites. */
     PARTICIPATING_SITES("Participating sites", "participatingSitesDoc"),
-    /**Informed_Consent_Document.*/
+    /** Informed_Consent_Document. */
     INFORMED_CONSENT_DOCUMENT("Informed Consent Document", "informedConsentDoc"),
-    /**Other.*/
+    /** Other. */
     OTHER("Other", "otherDoc"),
-    /** Change Memo Document.*/
+    /** Change Memo Document. */
     CHANGE_MEMO_DOCUMENT("Change Memo Document", "changeMemoDoc"),
-    /**Protocol Highlighted Document.     */
+    /** Protocol Highlighted Document. */
     PROTOCOL_HIGHLIGHTED_DOCUMENT("Protocol Highlighted Document", "protocolHighlightDoc"),
     /** TSR. */
     TSR("TSR", "tsr");
@@ -129,14 +129,15 @@ public enum DocumentTypeCode implements CodedEnum<String> {
     /**
      * @return code coded value of enum
      */
+    @Override
     public String getCode() {
         return code;
     }
 
-
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -148,7 +149,6 @@ public enum DocumentTypeCode implements CodedEnum<String> {
         return name();
     }
 
-
     /**
      * @param code code
      * @return DocumentTypeCode
@@ -157,12 +157,11 @@ public enum DocumentTypeCode implements CodedEnum<String> {
         return getByClassAndCode(DocumentTypeCode.class, code);
     }
 
-
     /**
      * construct a array of display names for DocumentTypeCode Enum.
      * @return String[] display names for DocumentTypeCode
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         DocumentTypeCode[] codes = DocumentTypeCode.values();
         String[] codedNames = new String[codes.length];
         for (int i = 0; i < codes.length; i++) {
@@ -170,6 +169,7 @@ public enum DocumentTypeCode implements CodedEnum<String> {
         }
         return codedNames;
     }
+
     /**
      * @return String[] display names of enums
      */
@@ -180,15 +180,8 @@ public enum DocumentTypeCode implements CodedEnum<String> {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-
-    /**
      * Gets the session attribute.
-     *
+     * 
      * @return the session attribute
      */
     public String getShortName() {

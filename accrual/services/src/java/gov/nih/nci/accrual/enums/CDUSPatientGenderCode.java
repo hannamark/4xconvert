@@ -85,6 +85,7 @@ package gov.nih.nci.accrual.enums;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.PatientGenderCode;
 
@@ -96,18 +97,18 @@ import org.apache.commons.lang.StringUtils;
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  */
 public enum CDUSPatientGenderCode implements CodedEnum<String> {
-    
+
     /** Male. */
     MALE("1", PatientGenderCode.MALE.getCode(), PatientGenderCode.MALE),
     /** Female. */
     FEMALE("2", PatientGenderCode.FEMALE.getCode(), PatientGenderCode.FEMALE),
     /** Unknown. */
     UNKNOWN("9", PatientGenderCode.UNKNOWN.getCode(), PatientGenderCode.UNKNOWN);
-    
+
     private String cdusCode;
     private String crfCode;
     private PatientGenderCode value;
-    
+
     /**
      * @param cdusCode the cdus representation
      * @param crfCode the crf representation
@@ -119,14 +120,7 @@ public enum CDUSPatientGenderCode implements CodedEnum<String> {
         this.value = value;
         register(this);
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-    
+
     /**
      * @param code the code to lookup the code for
      * @return the cdus patient gender code
@@ -141,15 +135,17 @@ public enum CDUSPatientGenderCode implements CodedEnum<String> {
     }
 
     /**
-     * @return the code
+     * {@inheritDoc}
      */
+    @Override
     public String getCode() {
         return crfCode;
     }
-    
+
     /**
-     *@return the display name
+     * {@inheritDoc}
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -167,4 +163,5 @@ public enum CDUSPatientGenderCode implements CodedEnum<String> {
     public String getCdusCode() {
         return cdusCode;
     }
+  
 }

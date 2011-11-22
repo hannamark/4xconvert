@@ -92,9 +92,9 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 public enum ActiveInactivePendingCode implements CodedEnum<String> {
 
     /**
-    * Active.
-    */
-    ACTIVE("Active"), 
+     * Active.
+     */
+    ACTIVE("Active"),
     /**
      * Inactive.
      */
@@ -103,8 +103,7 @@ public enum ActiveInactivePendingCode implements CodedEnum<String> {
      * Pending.
      */
     PENDING("Pending");
-    
-         
+
     private String code;
 
     /**
@@ -119,14 +118,15 @@ public enum ActiveInactivePendingCode implements CodedEnum<String> {
     /**
      * @return code coded value of enum
      */
+    @Override
     public String getCode() {
         return code;
     }
 
-
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -138,20 +138,19 @@ public enum ActiveInactivePendingCode implements CodedEnum<String> {
         return name();
     }
 
-
     /**
      * @param code code
-     * @return StatusCode 
+     * @return StatusCode
      */
     public static ActiveInactivePendingCode getByCode(String code) {
         return getByClassAndCode(ActiveInactivePendingCode.class, code);
     }
-    
+
     /**
      * construct a array of display names for Abstracted Status coded Enum.
      * @return String[] display names for Abstracted Status Code
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         ActiveInactivePendingCode[] absStatusCodes = ActiveInactivePendingCode.values();
         String[] codedNames = new String[absStatusCodes.length];
         for (int i = 0; i < absStatusCodes.length; i++) {
@@ -159,11 +158,5 @@ public enum ActiveInactivePendingCode implements CodedEnum<String> {
         }
         return codedNames;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

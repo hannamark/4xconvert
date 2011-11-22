@@ -88,7 +88,7 @@ import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 
 import org.junit.Before;
 
-public abstract class AbstractReportBeanTest<CRITERIA extends AbstractCriteriaDto, RESULT, BEAN extends AbstractReportBean<CRITERIA, RESULT>>
+public abstract class AbstractReportBeanTestBase<CRITERIA extends AbstractCriteriaDto, RESULT, BEAN extends AbstractReportBean<CRITERIA, RESULT>>
         extends AbstractHibernateTestCase {
 
     public BEAN bean = null;

@@ -83,15 +83,13 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
-* @author Naveen Amiruddin
-* @since 07/22/2007
-* copyright NCI 2007.  All rights reserved.
-* This code may not be used without the express written permission of the
-* copyright holder, NCI.
-*/
+ * @author Naveen Amiruddin
+ * @since 07/22/2007 copyright NCI 2007. All rights reserved. This code may not be used without the express written
+ *        permission of the copyright holder, NCI.
+ */
 
 public enum StudySiteContactRoleCode implements CodedEnum<String> {
-    
+
     /** Sdy primary contact 3rd tab. */
     PRIMARY_CONTACT("Primary Contact"),
     /** Study Principal Investigator. */
@@ -102,33 +100,39 @@ public enum StudySiteContactRoleCode implements CodedEnum<String> {
     COORDINATING_INVESTIGATOR("Coordinating Investigator"),
     /** Responsible party contact . */
     STUDY_RESPONSIBLE_PARTY_CONTACT("Study Responsible Party Contact"),
-    /**Submitter. */
+    /** Submitter. */
     SUBMITTER("Submitter"),
-    /**Responsible party - Sponsor contact. */
-    RESPONSIBLE_PARTY_SPONSOR_CONTACT("Responsible Party - Sponsor Contact");    
+    /** Responsible party - Sponsor contact. */
+    RESPONSIBLE_PARTY_SPONSOR_CONTACT("Responsible Party - Sponsor Contact");
     private String code;
+
     /**
-     *
+     * 
      * @param code
      */
     private StudySiteContactRoleCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
+
     /**
-    *@return String DisplayName
-    */
+     * @return String DisplayName
+     */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
+
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -136,7 +140,7 @@ public enum StudySiteContactRoleCode implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return StudySiteContactRoleCode
      */
@@ -147,7 +151,7 @@ public enum StudySiteContactRoleCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         StudySiteContactRoleCode[] l = StudySiteContactRoleCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -155,7 +159,7 @@ public enum StudySiteContactRoleCode implements CodedEnum<String> {
         }
         return a;
     }
-    
+
     /**
      * @return String[] display names of enums
      */
@@ -171,13 +175,7 @@ public enum StudySiteContactRoleCode implements CodedEnum<String> {
             }
         }
         return a;
-    } 
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
     }
+
 }
     

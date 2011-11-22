@@ -77,12 +77,26 @@
 package gov.nih.nci.pa.viewer.action;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import gov.nih.nci.pa.util.PAUtil;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.report.dto.criteria.StandardCriteriaDto;
+import gov.nih.nci.pa.report.dto.result.TrialCountsResultDto;
+import gov.nih.nci.pa.report.service.TrialCountsLocal;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.viewer.dto.criteria.StandardCriteriaWebDto;
-import gov.nih.nci.pa.viewer.dto.result.AverageMilestoneResultWebDto;
+import gov.nih.nci.pa.viewer.dto.result.TrialCountsResultWebDto;
 import gov.nih.nci.pa.viewer.util.ViewerConstants;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.struts2.ServletActionContext;
@@ -91,42 +105,141 @@ import org.junit.Test;
 
 import com.opensymphony.xwork2.Action;
 
+/**
+ * Tests for SummaryOfSubmissionAction.
+ * 
+ * @author Michael Visee
+ */
 public class SummaryOfSubmissionTest extends AbstractReportActionTest<SummaryOfSubmissionAction> {
 
+    private TrialCountsLocal trialCountsReportService = mock(TrialCountsLocal.class);
+
+    /**
+     * Initialization for parent class tests.
+     */
     @Before
     public void initAction() {
-        action = new SummaryOfSubmissionAction();
+        action = createSummaryOfSubmissionAction();
         action.setCriteria(new StandardCriteriaWebDto());
     }
 
+    /**
+     * Creates a real SummaryOfSubmissionAction and inject the mock services in it.
+     * @return A real SummaryOfSubmissionAction with mock services injected.
+     */
+    private SummaryOfSubmissionAction createSummaryOfSubmissionAction() {
+        SummaryOfSubmissionAction action = new SummaryOfSubmissionAction();
+        setDependencies(action);
+        return action;
+    }
+
+    /**
+     * Creates a mock SummaryOfSubmissionAction and inject the mock services in it.
+     * @return A mock SummaryOfSubmissionAction with mock services injected.
+     */
+    private SummaryOfSubmissionAction createSummaryOfSubmissionActionMock() {
+        SummaryOfSubmissionAction action = mock(SummaryOfSubmissionAction.class);
+        doCallRealMethod().when(action).setTrialCountsReportService(trialCountsReportService);
+        setDependencies(action);
+        return action;
+    }
+
+    private void setDependencies(SummaryOfSubmissionAction action) {
+        action.setTrialCountsReportService(trialCountsReportService);
+    }
+
+    /**
+     * Test the execute method.
+     */
     @Test
     public void executeTest() {
-        // user selects type of report
-        assertEquals(Action.SUCCESS, action.execute());
+        SummaryOfSubmissionAction sut = createSummaryOfSubmissionAction();
+        assertEquals(Action.SUCCESS, sut.execute());
     }
 
+    /**
+     * Test the getReport method in the successful case.
+     * @throws PAException in case of error
+     */
     @SuppressWarnings("unchecked")
     @Test
-    public void getReportTest() {
-        // user selects type of report
-        assertEquals(Action.SUCCESS, action.execute());
-
-        // user enters criteria
-        action.getCriteria().setCtep(false);
-        action.getCriteria().setIntervalStartDate(DATE_1);
-        action.getCriteria().setIntervalEndDate(DATE_2);
-
-        // user clicks "Run report"
-        assertEquals(Action.SUCCESS, action.getReport());
-
-        // result header displays
-        assertEquals(PAUtil.normalizeDateString(DATE_1), action.getCriteria().getIntervalStartDate());
-        assertEquals(PAUtil.normalizeDateString(DATE_2), action.getCriteria().getIntervalEndDate());
-        assertEquals(USER, ServletActionContext.getRequest().getRemoteUser());
-
-        // result spreadsheet displays
-        List<AverageMilestoneResultWebDto> resultList = (List<AverageMilestoneResultWebDto>)
-                ServletActionContext.getRequest().getSession().getAttribute(ViewerConstants.RESULT_LIST);
-        assertTrue(resultList.size() > 0);
+    public void testGetReportSuccess() throws PAException {
+        SummaryOfSubmissionAction sut = createSummaryOfSubmissionActionMock();
+        doCallRealMethod().when(sut).getCriteria();
+        doCallRealMethod().when(sut).setCriteria(any(StandardCriteriaWebDto.class));
+        doCallRealMethod().when(sut).getReport();
+        doCallRealMethod().when(sut).getResultList();
+        doCallRealMethod().when(sut).setResultList(anyListOf(TrialCountsResultWebDto.class));
+        doCallRealMethod().when(sut).getUserRole();
+        StandardCriteriaWebDto criteria = new StandardCriteriaWebDto();
+        sut.setCriteria(criteria);
+        List<TrialCountsResultDto> results = new ArrayList<TrialCountsResultDto>();
+        when(trialCountsReportService.get(any(StandardCriteriaDto.class))).thenReturn(results);
+        List<TrialCountsResultWebDto> webResults = new ArrayList<TrialCountsResultWebDto>();
+        when(sut.getWebList(results)).thenReturn(webResults);
+        String result = sut.getReport();
+        assertEquals("Wrong result returned", "success", result);
+        assertEquals("Wrong result list", webResults, sut.getResultList());
+        List<TrialCountsResultWebDto> sessionResult =
+                (List<TrialCountsResultWebDto>) ServletActionContext.getRequest().getSession()
+                    .getAttribute(ViewerConstants.RESULT_LIST);
+        assertEquals("Wrong result in session", webResults, sessionResult);
     }
+
+    /**
+     * Test the getReport method in the error case.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testGetReportError() throws PAException {
+        SummaryOfSubmissionAction sut = createSummaryOfSubmissionAction();
+        StandardCriteriaWebDto criteria = new StandardCriteriaWebDto();
+        sut.setCriteria(criteria);
+        when(trialCountsReportService.get(any(StandardCriteriaDto.class))).thenThrow(new PAException("PA"));
+        String result = sut.getReport();
+        Collection<String> errors = sut.getActionErrors();
+        assertNotNull("No error collection", errors);
+        assertEquals("Wrong number of errors", 1, errors.size());
+        assertEquals("Wrong error message", "PA", errors.iterator().next());
+        assertEquals("Wrong result returned", "success", result);
+        assertNull("Wrong result list", sut.getResultList());
+    }
+    
+    /**
+     * Test the getWebList method.
+     */
+    @Test
+    public void testGetWebList() {
+        SummaryOfSubmissionAction sut = createSummaryOfSubmissionAction();
+        List<TrialCountsResultDto> trialCoutDtos = createTrialCountDtos();
+        List<TrialCountsResultWebDto> result = sut.getWebList(trialCoutDtos);
+        assertNotNull("No result returned", result);
+        assertEquals("Wrong result size", 3, result.size());
+        checkTrialCountsResultWebDto(result.get(0), "org1", 1, 1);
+        checkTrialCountsResultWebDto(result.get(1), "org2", 2, 3);
+        checkTrialCountsResultWebDto(result.get(2), "All Sites", 3, 4);
+    }
+    
+    private List<TrialCountsResultDto> createTrialCountDtos() {
+        List<TrialCountsResultDto> dtos = new ArrayList<TrialCountsResultDto>();
+        TrialCountsResultDto dto1 = new TrialCountsResultDto();
+        dto1.setOrganization(StConverter.convertToSt("org1"));
+        dto1.setInitial(IntConverter.convertToInt(1));
+        dto1.setAmendment(IntConverter.convertToInt(1));
+        dtos.add(dto1);
+        TrialCountsResultDto dto2 = new TrialCountsResultDto();
+        dto2.setOrganization(StConverter.convertToSt("org2"));
+        dto2.setInitial(IntConverter.convertToInt(2));
+        dto2.setAmendment(IntConverter.convertToInt(3));
+        dtos.add(dto2);
+        return dtos;
+    }
+    
+    private void checkTrialCountsResultWebDto(TrialCountsResultWebDto result, String organization, int original,
+            int amendment) {
+        assertEquals("Wrong organization", organization, result.getOrganization());
+        assertEquals("Wrong original count", original, result.getInitial().intValue());
+        assertEquals("Wrong amendment count", amendment, result.getAmendment().intValue());
+    }
+
 }

@@ -11,7 +11,7 @@
         <table><tr>
         <!--Home Banner-->
           <td>
-            <div class="homebanner"><img src="<%=request.getContextPath()%>/images/banner_viewer.jpg" width="599" height="140" alt="" /></div>
+            <div class="homebanner"><img src="${imagePath}/banner_viewer.jpg" width="599" height="140" alt="" /></div>
           </td>
         <!--/Home Banner-->
         <!--Help Link-->

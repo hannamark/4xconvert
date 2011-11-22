@@ -89,13 +89,14 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * @since 11/17/2009
  */
 public enum ActivityRelationshipTypeCode implements CodedEnum<String> {
-    
+
     /** COMP. */
     COMP("COMP"),
     /** PERT. */
     PERT("PERT");
-     
+
     private String code;
+
     /**
      * 
      * @param code
@@ -104,16 +105,19 @@ public enum ActivityRelationshipTypeCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -129,16 +133,16 @@ public enum ActivityRelationshipTypeCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return TrialPhaseType 
+     * @return TrialPhaseType
      */
     public static ActivityRelationshipTypeCode getByCode(String code) {
         return getByClassAndCode(ActivityRelationshipTypeCode.class, code);
     }
-    
+
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         ActivityRelationshipTypeCode[] l = ActivityRelationshipTypeCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -146,12 +150,5 @@ public enum ActivityRelationshipTypeCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-}    
- 
+
+}

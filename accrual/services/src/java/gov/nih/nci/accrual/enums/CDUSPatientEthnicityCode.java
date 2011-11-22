@@ -85,6 +85,7 @@ package gov.nih.nci.accrual.enums;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
+
 import gov.nih.nci.pa.enums.CodedEnum;
 import gov.nih.nci.pa.enums.PatientEthnicityCode;
 
@@ -104,11 +105,11 @@ public enum CDUSPatientEthnicityCode implements CodedEnum<String> {
     NOT_REPORTED("8", PatientEthnicityCode.NOT_REPORTED.getCode(), PatientEthnicityCode.NOT_REPORTED),
     /** Unknown. */
     UNKNOWN("9", PatientEthnicityCode.UNKNOWN.getCode(), PatientEthnicityCode.UNKNOWN);
-    
+
     private String cdusCode;
     private String crfCode;
     private PatientEthnicityCode value;
-    
+
     /**
      * @param cdusCode the cdus representation
      * @param crfCode the crf representation
@@ -120,14 +121,7 @@ public enum CDUSPatientEthnicityCode implements CodedEnum<String> {
         this.value = value;
         register(this);
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-    
+
     /**
      * @param code the code to lookup the code for
      * @return the cdus patient ethnicity code
@@ -142,15 +136,18 @@ public enum CDUSPatientEthnicityCode implements CodedEnum<String> {
     }
 
     /**
-     * @return the code
+     * {@inheritDoc}
      */
+
+    @Override
     public String getCode() {
         return crfCode;
     }
-    
+
     /**
-     *@return the display name
+     * {@inheritDoc}
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -168,4 +165,5 @@ public enum CDUSPatientEthnicityCode implements CodedEnum<String> {
     public String getCdusCode() {
         return cdusCode;
     }
+    
 }

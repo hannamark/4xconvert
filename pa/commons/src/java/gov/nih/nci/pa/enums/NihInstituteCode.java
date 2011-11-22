@@ -83,180 +83,175 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
-* 
-* @author Kalpana Guthikonda
-* @since 2/05/2009
-* copyright NCI 2009.  All rights reserved.
-* This code may not be used without the express written permission of the
-* copyright holder, NCI. 
-*/
+ * 
+ * @author Kalpana Guthikonda
+ * @since 2/05/2009 copyright NCI 2009. All rights reserved. This code may not be used without the express written
+ *        permission of the copyright holder, NCI.
+ */
 public enum NihInstituteCode implements CodedEnum<String> {
-  /**
-   * National Eye Institute.
-   */
-  NEI("NEI-National Eye Institute"),
-  /**
-   * National Heart, Lung, and Blood Institute.
-   */
-  NHLBI("NHLBI-National Heart, Lung, and Blood Institute"),
-  /**
-   * National Human Genome Research Institute.
-   */
-  NHGRI("NHGRI-National Human Genome Research Institute"),
-  /**
-   * National Institute on Aging.
-   */
-  NIA("NIA-National Institute on Aging"),
-  /**
-   * National Institute on Alcohol Abuse and Alcoholism.
-   */
-  NIAAA("NIAA-National Institute on Alcohol Abuse and Alcoholism"),
-  /**
-   * National Institute of Allergy and Infectious Diseases.
-   */
-  NIAID("NIAID-National Institute of Allergy and Infectious Diseases"),
-  /**
-   * National Institute of Arthritis and Musculoskeletal and Skin Diseases.
-   */
-  NIAMS("NIAMS-National Institute of Arthritis and Musculoskeletal and Skin Diseases"),
-  /**
-   * National Institute of Biomedical Imaging and Bioengineering.
-   */
-  NIBIB("NIBIB-National Institute of Biomedical Imaging and Bioengineering"),
-  /**
-   * Eunice Kennedy Shriver National Institute of Child Health and Human Development.
-   */
-  NICHD("NICHD-NICHD-Eunice Kennedy Shriver National Institute of Child Health and Human Development"),
-  /**
-   * National Institute on Deafness and Other Communication Disorders.
-   */
-  NIDCD("NIDCD-National Institute on Deafness and Other Communication Disorders"),
-  /**
-   * National Institute of Dental and Craniofacial Research.
-   */
-  NIDCR("NIDCR-National Institute of Dental and Craniofacial Research"),
-  /**
-   * National Institute of Diabetes and Digestive and Kidney Diseases.
-   */
-  NIDDK("NIDDK-National Institute of Diabetes and Digestive and Kidney Diseases"),
-  /**
-   * National Institute on Drug Abuse.
-   */
-  NIDA("NIDA-National Institute on Drug Abuse"),
-  /**
-   * National Institute of Environmental Health Sciences.
-   */
-  NIEHS("NIEHS-National Institute of Environmental Health Sciences"),
-  /**
-   * National Institute of General Medical Sciences.
-   */
-  NIGMS("NIGMS-National Institute of General Medical Sciences"),
-  /**
-   * National Institute of Mental Health.
-   */
-  NIMH("NIMH-National Institute of Mental Health"),
-  /**
-   * National Institute of Neurological Disorders and Stroke.
-   */
-  NINDS("NINDS-National Institute of Neurological Disorders and Stroke"),
-  /**
-   * National Institute of Nursing Research.
-   */
-  NINR("NINR-National Institute of Nursing Research"),
-  /**
-   * National Library of Medicine.
-   */
-  NLM("NLM-National Library of Medicine"),
-  /**
-   * Center for Information Technology.
-   */
-  CIT("CIT-Center for Information Technology"),
-  /**
-   * Center for Scientific Review.
-   */
-  CSR("CSR-Center for Scientific Review"),
-  /**
-   * John E. Fogarty International Center for Advanced Study in the Health Sciences.
-   */
-  FIC("FIC-John E. Fogarty International Center for Advanced Study in the Health Sciences"),
-  /**
-   * National Center for Complementary and Alternative Medicine.
-   */
-  NCCAM("NCCAM-National Center for Complementary and Alternative Medicine"),
-  /**
-   * National Center on Minority Health and Health Disparities.
-   */
-  NCMHD("NCMHD-National Center on Minority Health and Health Disparities"),
-  /**
-   * National Center for Research Resources (NCRR).
-   */
-  NCRR("NCRR-National Center for Research Resources (NCRR)"),
-  /**
-   * NIH Clinical Center.
-   */
-  CC("CC-NIH Clinical Center"),
-  /**
-   * Office of the Director.
-   */
-  OD("OD-Office of the Director");
+    /**
+     * National Eye Institute.
+     */
+    NEI("NEI-National Eye Institute"),
+    /**
+     * National Heart, Lung, and Blood Institute.
+     */
+    NHLBI("NHLBI-National Heart, Lung, and Blood Institute"),
+    /**
+     * National Human Genome Research Institute.
+     */
+    NHGRI("NHGRI-National Human Genome Research Institute"),
+    /**
+     * National Institute on Aging.
+     */
+    NIA("NIA-National Institute on Aging"),
+    /**
+     * National Institute on Alcohol Abuse and Alcoholism.
+     */
+    NIAAA("NIAA-National Institute on Alcohol Abuse and Alcoholism"),
+    /**
+     * National Institute of Allergy and Infectious Diseases.
+     */
+    NIAID("NIAID-National Institute of Allergy and Infectious Diseases"),
+    /**
+     * National Institute of Arthritis and Musculoskeletal and Skin Diseases.
+     */
+    NIAMS("NIAMS-National Institute of Arthritis and Musculoskeletal and Skin Diseases"),
+    /**
+     * National Institute of Biomedical Imaging and Bioengineering.
+     */
+    NIBIB("NIBIB-National Institute of Biomedical Imaging and Bioengineering"),
+    /**
+     * Eunice Kennedy Shriver National Institute of Child Health and Human Development.
+     */
+    NICHD("NICHD-NICHD-Eunice Kennedy Shriver National Institute of Child Health and Human Development"),
+    /**
+     * National Institute on Deafness and Other Communication Disorders.
+     */
+    NIDCD("NIDCD-National Institute on Deafness and Other Communication Disorders"),
+    /**
+     * National Institute of Dental and Craniofacial Research.
+     */
+    NIDCR("NIDCR-National Institute of Dental and Craniofacial Research"),
+    /**
+     * National Institute of Diabetes and Digestive and Kidney Diseases.
+     */
+    NIDDK("NIDDK-National Institute of Diabetes and Digestive and Kidney Diseases"),
+    /**
+     * National Institute on Drug Abuse.
+     */
+    NIDA("NIDA-National Institute on Drug Abuse"),
+    /**
+     * National Institute of Environmental Health Sciences.
+     */
+    NIEHS("NIEHS-National Institute of Environmental Health Sciences"),
+    /**
+     * National Institute of General Medical Sciences.
+     */
+    NIGMS("NIGMS-National Institute of General Medical Sciences"),
+    /**
+     * National Institute of Mental Health.
+     */
+    NIMH("NIMH-National Institute of Mental Health"),
+    /**
+     * National Institute of Neurological Disorders and Stroke.
+     */
+    NINDS("NINDS-National Institute of Neurological Disorders and Stroke"),
+    /**
+     * National Institute of Nursing Research.
+     */
+    NINR("NINR-National Institute of Nursing Research"),
+    /**
+     * National Library of Medicine.
+     */
+    NLM("NLM-National Library of Medicine"),
+    /**
+     * Center for Information Technology.
+     */
+    CIT("CIT-Center for Information Technology"),
+    /**
+     * Center for Scientific Review.
+     */
+    CSR("CSR-Center for Scientific Review"),
+    /**
+     * John E. Fogarty International Center for Advanced Study in the Health Sciences.
+     */
+    FIC("FIC-John E. Fogarty International Center for Advanced Study in the Health Sciences"),
+    /**
+     * National Center for Complementary and Alternative Medicine.
+     */
+    NCCAM("NCCAM-National Center for Complementary and Alternative Medicine"),
+    /**
+     * National Center on Minority Health and Health Disparities.
+     */
+    NCMHD("NCMHD-National Center on Minority Health and Health Disparities"),
+    /**
+     * National Center for Research Resources (NCRR).
+     */
+    NCRR("NCRR-National Center for Research Resources (NCRR)"),
+    /**
+     * NIH Clinical Center.
+     */
+    CC("CC-NIH Clinical Center"),
+    /**
+     * Office of the Director.
+     */
+    OD("OD-Office of the Director");
 
+    private String code;
 
-  private String code;
-  /**
-   * 
-   * @param code
-   */
-  private NihInstituteCode(String code) {
-      this.code = code;
-      register(this);
-  }
-  /**
-   * @return code code
-   */
-  public String getCode() {
-      return code;
-  }
+    /**
+     * 
+     * @param code
+     */
+    private NihInstituteCode(String code) {
+        this.code = code;
+        register(this);
+    }
 
-  /**
-   *@return String DisplayName 
-   */
-  public String getDisplayName() {
-      return sentenceCasedName(this);
-  }
+    /**
+     * @return code code
+     */
+    @Override
+    public String getCode() {
+        return code;
+    }
 
-  /**
-   * 
-   * @return String name
-   */
-  public String getName() {
-      return name();
-  }
+    /**
+     * @return String DisplayName
+     */
+    @Override
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
 
-  /**
-   * 
-   * @param code code
-   * @return NihInstituteCode 
-   */
-  public static NihInstituteCode getByCode(String code) {
-      return getByClassAndCode(NihInstituteCode.class, code);
-  }
+    /**
+     * 
+     * @return String name
+     */
+    public String getName() {
+        return name();
+    }
 
-  /**
-   * @return String[] display names of enums
-   */
-  public static String[]  getDisplayNames() {
-    NihInstituteCode[] l = NihInstituteCode.values();
-      String[] a = new String[l.length];
-      for (int i = 0; i < l.length; i++) {
-          a[i] = l[i].getCode();
-      }
-      return a;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public String getNameByCode(String str) {
-      return getByCode(str).name();
-  }
+    /**
+     * 
+     * @param code code
+     * @return NihInstituteCode
+     */
+    public static NihInstituteCode getByCode(String code) {
+        return getByClassAndCode(NihInstituteCode.class, code);
+    }
+
+    /**
+     * @return String[] display names of enums
+     */
+    public static String[] getDisplayNames() {
+        NihInstituteCode[] l = NihInstituteCode.values();
+        String[] a = new String[l.length];
+        for (int i = 0; i < l.length; i++) {
+            a[i] = l[i].getCode();
+        }
+        return a;
+    }
+
 }

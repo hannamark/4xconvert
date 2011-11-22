@@ -92,7 +92,7 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 public enum CheckOutType implements CodedEnum<String> {
     /** Administrative Checkout. */
-    ADMINISTRATIVE("Administrative"), 
+    ADMINISTRATIVE("Administrative"),
     /** Scientific Checkout. */
     SCIENTIFIC("Scientific");
 
@@ -102,7 +102,7 @@ public enum CheckOutType implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
-    
+
     /**
      * @param code code
      * @return CheckOutType with the given code
@@ -114,6 +114,7 @@ public enum CheckOutType implements CodedEnum<String> {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getCode() {
         return code;
     }
@@ -121,15 +122,9 @@ public enum CheckOutType implements CodedEnum<String> {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByClassAndCode(CheckOutType.class, code).name();
     }
 
     /**

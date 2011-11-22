@@ -80,6 +80,7 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.iso.util.IntConverter;
 
 /**
  * @author Hugh Reinhart
@@ -96,7 +97,6 @@ public class TrialListResultDto {
     private Cd dws = new Cd();
     private Ts dwsDate = new Ts();
     private MilestoneResultDto milestoneResult = new MilestoneResultDto();
-    
 
     /**
      * @return the assignedIdentifier
@@ -104,106 +104,131 @@ public class TrialListResultDto {
     public St getAssignedIdentifier() {
         return assignedIdentifier;
     }
+
     /**
      * @param assignedIdentifier the assignedIdentifier to set
      */
     public void setAssignedIdentifier(St assignedIdentifier) {
         this.assignedIdentifier = assignedIdentifier;
     }
+
     /**
      * @return the submissionNumber
      */
     public Int getSubmissionNumber() {
         return submissionNumber;
     }
+
     /**
      * @param submissionNumber the submissionNumber to set
      */
     public void setSubmissionNumber(Int submissionNumber) {
         this.submissionNumber = submissionNumber;
     }
+
     /**
      * @return the submitterOrg
      */
     public St getSubmitterOrg() {
         return submitterOrg;
     }
+
     /**
      * @param submitterOrg the submitterOrg to set
      */
     public void setSubmitterOrg(St submitterOrg) {
         this.submitterOrg = submitterOrg;
     }
+
     /**
      * @return the leadOrgTrialIdentifier
      */
     public St getLeadOrgTrialIdentifier() {
         return leadOrgTrialIdentifier;
     }
+
     /**
      * @param leadOrgTrialIdentifier the leadOrgTrialIdentifier to set
      */
     public void setLeadOrgTrialIdentifier(St leadOrgTrialIdentifier) {
         this.leadOrgTrialIdentifier = leadOrgTrialIdentifier;
     }
+
     /**
      * @return the leadOrg
      */
     public St getLeadOrg() {
         return leadOrg;
     }
+
     /**
      * @param leadOrg the leadOrg to set
      */
     public void setLeadOrg(St leadOrg) {
         this.leadOrg = leadOrg;
     }
+
     /**
      * @return the dateLastCreated
      */
     public Ts getDateLastCreated() {
         return dateLastCreated;
     }
+
     /**
      * @param dateLastCreated the dateLastCreated to set
      */
     public void setDateLastCreated(Ts dateLastCreated) {
         this.dateLastCreated = dateLastCreated;
     }
+
     /**
      * @return the dws
      */
     public Cd getDws() {
         return dws;
     }
+
     /**
      * @param dws the dws to set
      */
     public void setDws(Cd dws) {
         this.dws = dws;
     }
+
     /**
      * @return the dwsDate
      */
     public Ts getDwsDate() {
         return dwsDate;
     }
+
     /**
      * @param dwsDate the dwsDate to set
      */
     public void setDwsDate(Ts dwsDate) {
         this.dwsDate = dwsDate;
     }
+
     /**
      * @param milestoneResult the milestoneResult to set
      */
     public void setMilestoneResult(MilestoneResultDto milestoneResult) {
         this.milestoneResult = milestoneResult;
     }
+
     /**
      * @return the milestoneResult
      */
     public MilestoneResultDto getMilestoneResult() {
         return milestoneResult;
+    }
+
+    /**
+     * Test if this is an original submission.
+     * @return true if this is an original submission.
+     */
+    public boolean isOriginal() {
+        return IntConverter.convertToInteger(submissionNumber) == 1;
     }
 }

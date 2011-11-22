@@ -83,24 +83,22 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
-*
-* @author Kalpana Guthikonda
-* @since 11/10/2008
-* copyright NCI 2008.  All rights reserved.
-* This code may not be used without the express written permission of the
-* copyright holder, NCI.
-*/
+ * 
+ * @author Kalpana Guthikonda
+ * @since 11/10/2008 copyright NCI 2008. All rights reserved. This code may not be used without the express written
+ *        permission of the copyright holder, NCI.
+ */
 public enum EligibleGenderCode implements CodedEnum<String> {
-
 
     /** Male. */
     MALE("Male"),
     /** Female. */
     FEMALE("Female"),
     /** Both. */
-    BOTH("Both");    
+    BOTH("Both");
 
     private String code;
+
     /**
      * 
      * @param code
@@ -109,16 +107,19 @@ public enum EligibleGenderCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -134,7 +135,7 @@ public enum EligibleGenderCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return EligibleGenderCode 
+     * @return EligibleGenderCode
      */
     public static EligibleGenderCode getByCode(String code) {
         return getByClassAndCode(EligibleGenderCode.class, code);
@@ -143,7 +144,7 @@ public enum EligibleGenderCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         EligibleGenderCode[] l = EligibleGenderCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -151,11 +152,5 @@ public enum EligibleGenderCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

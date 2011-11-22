@@ -89,13 +89,14 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * @since 11/17/2009
  */
 public enum EvidenceOfDiseaseCode implements CodedEnum<String> {
-    
+
     /** No Evidence of Disease. */
     NO_EVIDENCE_OF_DISEASE("No Evidence of Disease"),
     /** Disease Present. */
     DISEASE_PRESENT("Disease Present");
-     
+
     private String code;
+
     /**
      * 
      * @param code
@@ -104,16 +105,19 @@ public enum EvidenceOfDiseaseCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -129,16 +133,16 @@ public enum EvidenceOfDiseaseCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return TrialPhaseType 
+     * @return TrialPhaseType
      */
     public static EvidenceOfDiseaseCode getByCode(String code) {
         return getByClassAndCode(EvidenceOfDiseaseCode.class, code);
     }
-    
+
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         EvidenceOfDiseaseCode[] l = EvidenceOfDiseaseCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -146,12 +150,5 @@ public enum EvidenceOfDiseaseCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-}    
- 
+
+}

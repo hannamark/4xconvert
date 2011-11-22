@@ -91,7 +91,6 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  */
 public enum KarnoskyPerformanceStatusCode implements CodedEnum<String> {
 
-    
     /** 100. */
     HUNDRED("100 - Normal, no complaints, no evidence of disease"),
     /** 90. */
@@ -105,41 +104,45 @@ public enum KarnoskyPerformanceStatusCode implements CodedEnum<String> {
     /** 50. */
     FIFTY("50 - Requires considerable assistance and frequent medical care."),
     /** 40. */
-    FORTY("40 - Disabled, requires special care and assistance"),    
+    FORTY("40 - Disabled, requires special care and assistance"),
     /** 30. */
-    THIRTY("30 - Severely disabled, hospitalization indicated. Death not imminent"),     
+    THIRTY("30 - Severely disabled, hospitalization indicated. Death not imminent"),
     /** 20. */
-    TWENTY("20 - Very sick, hospitalization indicated. Death not imminent"),       
+    TWENTY("20 - Very sick, hospitalization indicated. Death not imminent"),
     /** 10. */
     TEN("10 - Moribund, fatal processes progressing rapidly"),
     /** 0. */
     ZERO("0 - Dead");
 
     private String code;
+
     /**
-     *
+     * 
      * @param code
      */
     private KarnoskyPerformanceStatusCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -147,7 +150,7 @@ public enum KarnoskyPerformanceStatusCode implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return PatientGenderCode
      */
@@ -158,7 +161,7 @@ public enum KarnoskyPerformanceStatusCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         KarnoskyPerformanceStatusCode[] l = KarnoskyPerformanceStatusCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -166,11 +169,5 @@ public enum KarnoskyPerformanceStatusCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

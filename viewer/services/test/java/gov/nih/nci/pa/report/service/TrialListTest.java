@@ -113,7 +113,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class TrialListTest
-        extends AbstractReportBeanTest<AbstractStandardCriteriaDto, TrialListResultDto, TrialListReportBean> {
+        extends AbstractReportBeanTestBase<AbstractStandardCriteriaDto, TrialListResultDto, TrialListReportBean> {
 
     private StudyMilestoneServicelocal smSvc;
     

@@ -90,14 +90,14 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * @since 11/5/2009
  */
 public enum OffTreatmentReasonCode implements CodedEnum<String> {
-    
+
     /** Death. */
     DEATH("Death"),
     /** Adverse event/side effects/complications. */
     ADVERSEEVENT_SIDEEFFECTS_COMPLICATIONS("Adverse Event/Side Effects/Complications"),
     /** Lost to followup. */
     LOST_TO_FOLLOWUP("Lost to Followup"),
-     /** Refused followup. */
+    /** Refused followup. */
     REFUSED_FOLLOWUP("Refused Followup"),
     /** Followup completed. */
     FOLLOWUP_COMPLETED("Followup Completed"),
@@ -105,30 +105,34 @@ public enum OffTreatmentReasonCode implements CodedEnum<String> {
     OTHER("Other");
 
     private String code;
+
     /**
-     *
+     * 
      * @param code
      */
     private OffTreatmentReasonCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -136,7 +140,7 @@ public enum OffTreatmentReasonCode implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return PatientGenderCode
      */
@@ -147,7 +151,7 @@ public enum OffTreatmentReasonCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         OffTreatmentReasonCode[] l = OffTreatmentReasonCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -155,11 +159,5 @@ public enum OffTreatmentReasonCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

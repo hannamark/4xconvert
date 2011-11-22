@@ -88,13 +88,12 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
  * @author kkanchinadam
-
  */
 public enum UserOrgType implements CodedEnum<String> {
 
     /**
-    * Member.
-    */
+     * Member.
+     */
     MEMBER("Member"),
     /**
      * PENDING_ADMIN.
@@ -125,7 +124,7 @@ public enum UserOrgType implements CodedEnum<String> {
     }
 
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
     @Override
     public String getDisplayName() {
@@ -147,11 +146,4 @@ public enum UserOrgType implements CodedEnum<String> {
         return getByClassAndCode(UserOrgType.class, code);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
 }

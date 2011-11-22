@@ -169,14 +169,6 @@ public enum PatientEthnicityCode implements CodedEnum<String> {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-
-    /**
      * Gets the display map.
      * @return the display map
      */

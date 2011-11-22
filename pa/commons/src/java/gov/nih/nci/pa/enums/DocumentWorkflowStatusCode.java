@@ -215,14 +215,6 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-    
-    /**
      * Helper method that indicates whether a transition to the new entity status
      * is allowed.
      *

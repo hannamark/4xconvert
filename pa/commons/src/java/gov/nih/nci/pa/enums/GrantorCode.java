@@ -85,10 +85,8 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 /**
  * 
  * @author Kalpana Guthikonda
- * @since 10/31/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI. 
+ * @since 10/31/2008 copyright NCI 2008. All rights reserved. This code may not be used without the express written
+ *        permission of the copyright holder, NCI.
  */
 public enum GrantorCode implements CodedEnum<String> {
     /** CDER. */
@@ -96,9 +94,10 @@ public enum GrantorCode implements CodedEnum<String> {
     /** CBER. */
     CBER("CBER"),
     /** CDRH. */
-    CDRH("CDRH");    
+    CDRH("CDRH");
 
     private String code;
+
     /**
      * 
      * @param code
@@ -107,16 +106,19 @@ public enum GrantorCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -132,7 +134,7 @@ public enum GrantorCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return GrantorCode 
+     * @return GrantorCode
      */
     public static GrantorCode getByCode(String code) {
         return getByClassAndCode(GrantorCode.class, code);
@@ -141,7 +143,7 @@ public enum GrantorCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         GrantorCode[] l = GrantorCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -149,11 +151,5 @@ public enum GrantorCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

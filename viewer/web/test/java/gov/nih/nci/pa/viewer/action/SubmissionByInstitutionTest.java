@@ -77,13 +77,34 @@
 package gov.nih.nci.pa.viewer.action;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import gov.nih.nci.iso21090.St;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.report.dto.criteria.StandardCriteriaDto;
+import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
 import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
-import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
+import gov.nih.nci.pa.report.service.TrialListLocal;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.viewer.dto.criteria.InstitutionCriteriaWebDto;
-import gov.nih.nci.pa.viewer.dto.result.AverageMilestoneResultWebDto;
+import gov.nih.nci.pa.viewer.dto.result.TrialCountsResultWebDto;
+import gov.nih.nci.pa.viewer.dto.result.TrialListResultWebDto;
 import gov.nih.nci.pa.viewer.util.ViewerConstants;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -95,52 +116,238 @@ import org.junit.Test;
 import com.opensymphony.xwork2.Action;
 
 public class SubmissionByInstitutionTest extends AbstractReportActionTest<SubmissionByInstitutionAction> {
-
+    
+    private SubmitterOrganizationLocal submitterOrganizationReportService = mock(SubmitterOrganizationLocal.class);
+    private TrialListLocal trialListReportService = mock(TrialListLocal.class);
+    
+    /**
+     * Initialization for parent class tests.
+     */
     @Before
     public void initAction() {
-        action = new SubmissionByInstitutionAction();
+        action = createSubmissionByInstitutionAction();
         action.setCriteria(new InstitutionCriteriaWebDto());
     }
+    
+    /**
+     * Creates a real SubmissionByInstitutionAction and inject the mock services in it.
+     * @return A real SubmissionByInstitutionAction with mock services injected.
+     */
+    private SubmissionByInstitutionAction createSubmissionByInstitutionAction() {
+        SubmissionByInstitutionAction action = new SubmissionByInstitutionAction();
+        setDependencies(action);
+        return action;
+    }
 
+    /**
+     * Creates a mock SubmissionByInstitutionAction and inject the mock services in it.
+     * @return A mock SubmissionByInstitutionAction with mock services injected.
+     */
+    private SubmissionByInstitutionAction createSubmissionByInstitutionActionMock() {
+        SubmissionByInstitutionAction action = mock(SubmissionByInstitutionAction.class);
+        doCallRealMethod().when(action).setSubmitterOrganizationReportService(submitterOrganizationReportService);
+        doCallRealMethod().when(action).setTrialListReportService(trialListReportService);
+        setDependencies(action);
+        return action;
+    }
+
+    private void setDependencies(SubmissionByInstitutionAction action) {
+        action.setSubmitterOrganizationReportService(submitterOrganizationReportService);
+        action.setTrialListReportService(trialListReportService);
+    }
+    
+    /**
+     * Test the execute method.
+     */
     @Test
     public void executeTest() {
-        // user selects type of report
-        assertEquals(Action.SUCCESS, action.execute());
+        SubmissionByInstitutionAction sut = createSubmissionByInstitutionAction();
+        assertEquals(Action.SUCCESS, sut.execute());
     }
-
-    @Test
-    public void getSubmitterOrganizationsTest() {
-        List<String> rList = action.getSubmitterOrganizations();
-        assertTrue(rList.size() > 0);
-    }
-
+    
+    /**
+     * Test the getReport method in the successful case.
+     * @throws PAException in case of error
+     */
     @SuppressWarnings("unchecked")
     @Test
-    public void getReportTest() {
-        // user selects type of report
-        assertEquals(Action.SUCCESS, action.execute());
-
-        // user enters criteria
-        action.getCriteria().setCtep(false);
-        action.getCriteria().setIntervalStartDate(DATE_1);
-        action.getCriteria().setIntervalEndDate(DATE_2);
-        action.getCriteria().setSubmissionType(SubmissionTypeCode.BOTH.name());
-        Set<String> ins = new HashSet<String>();
-        ins.add("1");
-        action.getCriteria().setInstitutions(ins);
-
-        // user clicks "Run report"
-        assertEquals(Action.SUCCESS, action.getReport());
-
-        // result header displays
-        assertEquals(PAUtil.normalizeDateString(DATE_1), action.getCriteria().getIntervalStartDate());
-        assertEquals(PAUtil.normalizeDateString(DATE_2), action.getCriteria().getIntervalEndDate());
-        assertEquals(USER, ServletActionContext.getRequest().getRemoteUser());
-        assertEquals("All", action.getSelectedInstitutions());
-
-        // result spreadsheet displays
-        List<AverageMilestoneResultWebDto> resultList = (List<AverageMilestoneResultWebDto>)
-                ServletActionContext.getRequest().getSession().getAttribute(ViewerConstants.RESULT_LIST);
-        assertTrue(resultList.size() > 0);
+    public void testGetReportSuccess() throws PAException {
+        SubmissionByInstitutionAction sut = createSubmissionByInstitutionActionMock();
+        doCallRealMethod().when(sut).getCriteria();
+        doCallRealMethod().when(sut).setCriteria(any(InstitutionCriteriaWebDto.class));
+        doCallRealMethod().when(sut).getReport();
+        doCallRealMethod().when(sut).getResultList();
+        doCallRealMethod().when(sut).setResultList(anyListOf(TrialListResultWebDto.class));
+        doCallRealMethod().when(sut).getUserRole();
+        InstitutionCriteriaWebDto criteria = new InstitutionCriteriaWebDto();
+        criteria.setSubmissionType(SubmissionTypeCode.BOTH.name());
+        sut.setCriteria(criteria);
+        List<TrialListResultDto> results = new ArrayList<TrialListResultDto>();
+        when(trialListReportService.get(any(StandardCriteriaDto.class))).thenReturn(results);
+        List<TrialListResultWebDto> webResults = new ArrayList<TrialListResultWebDto>();
+        when(sut.getWebList(results, SubmissionTypeCode.BOTH, false)).thenReturn(webResults);
+        String result = sut.getReport();
+        assertEquals("Wrong result returned", "success", result);
+        assertEquals("Wrong result list", webResults, sut.getResultList());
+        List<TrialCountsResultWebDto> sessionResult =
+                (List<TrialCountsResultWebDto>) ServletActionContext.getRequest().getSession()
+                    .getAttribute(ViewerConstants.RESULT_LIST);
+        assertEquals("Wrong result in session", webResults, sessionResult);
     }
+
+    /**
+     * Test the getReport method in the error case.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testGetReportError() throws PAException {
+        SubmissionByInstitutionAction sut = createSubmissionByInstitutionAction();
+        InstitutionCriteriaWebDto criteria = new InstitutionCriteriaWebDto();
+        sut.setCriteria(criteria);
+        when(trialListReportService.get(any(StandardCriteriaDto.class))).thenThrow(new PAException("PA"));
+        String result = sut.getReport();
+        Collection<String> errors = sut.getActionErrors();
+        assertNotNull("No error collection", errors);
+        assertEquals("Wrong number of errors", 1, errors.size());
+        assertEquals("Wrong error message", "PA", errors.iterator().next());
+        assertEquals("Wrong result returned", "success", result);
+        assertNull("Wrong result list", sut.getResultList());
+    }
+    
+    /**
+     * Test the getWebList method.
+     */
+    @Test
+    public void testGetWebList() {
+        SubmissionByInstitutionAction sut = createSubmissionByInstitutionActionMock();
+        List<TrialListResultDto> trialListResultDtos = createTrialListResultDtos();
+        doCallRealMethod().when(sut).getWebList(trialListResultDtos, SubmissionTypeCode.BOTH, false);
+        List<TrialListResultWebDto> result = sut.getWebList(trialListResultDtos, SubmissionTypeCode.BOTH, false);
+        verify(sut).addSummaryResults(anyListOf(TrialListResultWebDto.class), eq(SubmissionTypeCode.BOTH), eq(false),
+                                      eq(1), eq(2));
+        assertNotNull("No result returned", result);
+        assertEquals("Wrong result size", 2, result.size());
+    }
+
+    private List<TrialListResultDto> createTrialListResultDtos() {
+        List<TrialListResultDto> dtos = new ArrayList<TrialListResultDto>();
+        TrialListResultDto dto1 = new TrialListResultDto();
+        dto1.setSubmissionNumber(IntConverter.convertToInt(1));
+        dto1.setDws(CdConverter.convertStringToCd(DocumentWorkflowStatusCode.ACCEPTED.name()));
+        dtos.add(dto1);
+        TrialListResultDto dto2 = new TrialListResultDto();
+        dto2.setSubmissionNumber(IntConverter.convertToInt(2));
+        dto2.setDws(CdConverter.convertStringToCd(DocumentWorkflowStatusCode.ACCEPTED.name()));
+        dtos.add(dto2);
+        return dtos;
+    }
+    
+    /**
+     * Test the addSummaryResults method for original submissions.
+     */
+    @Test
+    public void testAddSummaryResultsOriginal() {
+        SubmissionByInstitutionAction sut = createSubmissionByInstitutionAction();
+        List<TrialListResultWebDto> results = new ArrayList<TrialListResultWebDto>();
+        sut.addSummaryResults(results, SubmissionTypeCode.ORIGINAL, false, 1, 3);
+        assertEquals("Wrong result size", 1, results.size());
+        checkTrialListResultWebDto(results.get(0), "Total of original submissions", "Original", "1");
+    }
+
+    /**
+     * Test the addSummaryResults method for amendment submissions.
+     */
+    @Test
+    public void testAddSummaryResultsAmendment() {
+        SubmissionByInstitutionAction sut = createSubmissionByInstitutionAction();
+        List<TrialListResultWebDto> results = new ArrayList<TrialListResultWebDto>();
+        sut.addSummaryResults(results, SubmissionTypeCode.AMENDMENT, false, 1, 3);
+        assertEquals("Wrong result size", 1, results.size());
+        checkTrialListResultWebDto(results.get(0), "Total of amendments", "Amendment", "2");
+    }
+
+    /**
+     * Test the addSummaryResults method for both submissions.
+     */
+    @Test
+    public void testAddSummaryResultsBoth() {
+        SubmissionByInstitutionAction sut = createSubmissionByInstitutionAction();
+        List<TrialListResultWebDto> results = new ArrayList<TrialListResultWebDto>();
+        sut.addSummaryResults(results, SubmissionTypeCode.BOTH, true, 1, 3);
+        assertEquals("Wrong result size", 4, results.size());
+        checkTrialListResultWebDto(results.get(0), "Total of original submissions", "Original", "1");
+        checkTrialListResultWebDto(results.get(1), "Total of amendments", "Amendment", "2");
+        checkTrialListResultWebDto(results.get(2), "Total all submission", "All", "3");
+        checkTrialListResultWebDto(results.get(3), "Total", "3", null);
+    }
+
+    private void checkTrialListResultWebDto(TrialListResultWebDto result, String assignedIdentifier,
+            String submissionType, String submitterOrg) {
+        assertEquals("Wrong assigned identifier", assignedIdentifier, result.getAssignedIdentifier());
+        assertEquals("Wrong submission type", submissionType, result.getSubmissionType());
+        assertEquals("Wrong submitter org", submitterOrg, result.getSubmitterOrg());
+    }
+
+    /**
+     * Test the getSubmitterOrganizations method in the success case.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testgetSubmitterOrganizationsSuccess() throws PAException {
+        SubmissionByInstitutionAction sut = createSubmissionByInstitutionAction();
+        List<St> orgs = new ArrayList<St>();
+        orgs.add(StConverter.convertToSt("org1"));
+        orgs.add(StConverter.convertToSt("org2"));
+        when(submitterOrganizationReportService.get()).thenReturn(orgs);
+        List<String> result = sut.getSubmitterOrganizations();
+        assertNotNull("No result returned", result);
+        assertEquals("Wrong result size", 2, result.size());
+        assertEquals("Wrong organization", "org1", result.get(0));
+        assertEquals("Wrong organization", "org2", result.get(1));
+    }
+    
+    /**
+     * Test the getSubmitterOrganizations method in the error case.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testgetSubmitterOrganizationsError() throws PAException {
+        SubmissionByInstitutionAction sut = createSubmissionByInstitutionAction();
+        when(submitterOrganizationReportService.get()).thenThrow(new PAException("PA"));
+        List<String> result = sut.getSubmitterOrganizations();
+        assertNotNull("No result returned", result);
+        assertEquals("Wrong result size", 0, result.size());
+    }
+    
+    /**
+     * Test the getSelectedInstitutions method for all case
+     */
+    @Test
+    public void testGetSelectedInstitutionsAll() {
+        SubmissionByInstitutionAction sut = createSubmissionByInstitutionAction();
+        InstitutionCriteriaWebDto criteria = new InstitutionCriteriaWebDto();
+        sut.setCriteria(criteria);
+        Set<String> institutions = new HashSet<String>();
+        institutions.add("1");
+        criteria.setInstitutions(institutions);
+        String result = sut.getSelectedInstitutions();
+        assertEquals("All", result);
+    }
+    
+    /**
+     * Test the getSelectedInstitutions method 
+     */
+    @Test
+    public void testGetSelectedInstitutions() {
+        SubmissionByInstitutionAction sut = createSubmissionByInstitutionAction();
+        InstitutionCriteriaWebDto criteria = new InstitutionCriteriaWebDto();
+        sut.setCriteria(criteria);
+        Set<String> institutions = new HashSet<String>();
+        institutions.add("org 1");
+        institutions.add("org 2");
+        criteria.setInstitutions(institutions);
+        String result = sut.getSelectedInstitutions();
+        assertEquals("org 1, org 2", result);
+    }
+   
 }

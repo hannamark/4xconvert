@@ -85,10 +85,8 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 /**
  * 
  * @author Kalpana Guthikonda
- * @since 10/31/2008
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI. 
+ * @since 10/31/2008 copyright NCI 2008. All rights reserved. This code may not be used without the express written
+ *        permission of the copyright holder, NCI.
  */
 public enum NihInstHolderCode implements CodedEnum<String> {
     /** NEI-National Eye Institute. */
@@ -112,7 +110,7 @@ public enum NihInstHolderCode implements CodedEnum<String> {
     /** NIDCD-National Institute on Deafness and Other Communication Disorders. */
     NIDCD("NIDCD-National Institute on Deafness and Other Communication Disorders"),
     /** NIDCR-National Institute of Dental and Craniofacial Research. */
-    NIDCR("NIDCR-National Institute of Dental and Craniofacial Research"),    
+    NIDCR("NIDCR-National Institute of Dental and Craniofacial Research"),
     /** NIDDK-National Institute of Diabetes and Digestive and Kidney Diseases. */
     NIDDK("NIDDK-National Institute of Diabetes and Digestive and Kidney Diseases"),
     /** NIDA-National Institute on Drug Abuse. */
@@ -144,9 +142,10 @@ public enum NihInstHolderCode implements CodedEnum<String> {
     /** CC-NIH Clinical Center. */
     CC("CC-NIH Clinical Center"),
     /** OD-Office of the Director. */
-    OD("OD-Office of the Director");    
+    OD("OD-Office of the Director");
 
     private String code;
+
     /**
      * 
      * @param code
@@ -155,16 +154,19 @@ public enum NihInstHolderCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -180,7 +182,7 @@ public enum NihInstHolderCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return NihInstHolderCode 
+     * @return NihInstHolderCode
      */
     public static NihInstHolderCode getByCode(String code) {
         return getByClassAndCode(NihInstHolderCode.class, code);
@@ -189,7 +191,7 @@ public enum NihInstHolderCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         NihInstHolderCode[] l = NihInstHolderCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -197,11 +199,5 @@ public enum NihInstHolderCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

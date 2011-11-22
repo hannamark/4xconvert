@@ -129,24 +129,6 @@ public final class ReportUtil {
     }
 
     /**
-     * @param year year
-     * @param month month
-     * @param day day
-     * @return Timestamp
-     */
-    public static Timestamp makeTimestamp(int year, int month, int day) {
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.YEAR, year);
-        cal.set(Calendar.MONTH, month - 1);
-        cal.set(Calendar.DATE, day);
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        return new Timestamp(cal.getTimeInMillis());
-    }
-
-    /**
      * @param timestamp timestame
      * @return year
      */

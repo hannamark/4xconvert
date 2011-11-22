@@ -82,24 +82,20 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
 import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
-
-
 /**
- * Enumeration  for  Phase codes.
- *
+ * Enumeration for Phase codes.
+ * 
  * @author Naveen Amiruddin
- * @since 05/22/2007
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @since 05/22/2007 copyright NCI 2007. All rights reserved. This code may not be used without the express written
+ *        permission of the copyright holder, NCI.
  */
 public enum PhaseCode implements CodedEnum<String> {
 
-    /*** 0.  */
+    /*** 0. */
     O("0"),
     /*** The first step in testing a new treatment in humans. */
     I("I"),
-    /*** A clinical research protocol designed to study the safety, dosage levels and response to new treatment.*/
+    /*** A clinical research protocol designed to study the safety, dosage levels and response to new treatment. */
     I_II("I/II"),
     /*** A study to test whether a new treatment has an anticancer effect . */
     II("II"),
@@ -113,30 +109,34 @@ public enum PhaseCode implements CodedEnum<String> {
     NA("NA");
 
     private String code;
+
     /**
-     *
+     * 
      * @param code
      */
     private PhaseCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -144,7 +144,7 @@ public enum PhaseCode implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return TrialPhaseType
      */
@@ -155,7 +155,7 @@ public enum PhaseCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         PhaseCode[] l = PhaseCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -164,10 +164,4 @@ public enum PhaseCode implements CodedEnum<String> {
         return a;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
 }

@@ -83,81 +83,72 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
- * Enumeration  for Study Relationship Type.
- *
+ * Enumeration for Study Relationship Type.
+ * 
  * @author Anupama Sharma
- * @since 04/10/2009
- * copyright NCI 2008.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @since 04/10/2009 copyright NCI 2008. All rights reserved. This code may not be used without the express written
+ *        permission of the copyright holder, NCI.
  */
 public enum StudyRelationshipTypeCode implements CodedEnum<String> {
 
     /** Modified. */
-MOD("Modified"), 
-     /*** Replaces. */
-RPLC("Replaces");
- 
-          
-     private String code;
+    MOD("Modified"),
+    /*** Replaces. */
+    RPLC("Replaces");
 
-     /**
-      * Constructor for StudyTypeCode.
-      * @param code
-      */
-     private StudyRelationshipTypeCode(String code) {
-         this.code = code;
-         register(this);
-     }
+    private String code;
 
-     /**
-      * @return code coded value of enum
-      */
-     public String getCode() {
-         return code;
-     }
+    /**
+     * Constructor for StudyTypeCode.
+     * @param code
+     */
+    private StudyRelationshipTypeCode(String code) {
+        this.code = code;
+        register(this);
+    }
 
+    /**
+     * @return code coded value of enum
+     */
+    @Override
+    public String getCode() {
+        return code;
+    }
 
-     /**
-      *@return String DisplayName 
-      */
-     public String getDisplayName() {
-         return sentenceCasedName(this);
-     }
+    /**
+     * @return String DisplayName
+     */
+    @Override
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
 
-     /**
-      * @return String display name
-      */
-     public String getName() {
-         return name();
-     }
+    /**
+     * @return String display name
+     */
+    public String getName() {
+        return name();
+    }
 
+    /**
+     * @param code code
+     * @return StudyRelationshipTypeCode
+     */
+    public static StudyRelationshipTypeCode getByCode(String code) {
+        return getByClassAndCode(StudyRelationshipTypeCode.class, code);
+    }
 
-     /**
-      * @param code code
-      * @return StudyRelationshipTypeCode 
-      */
-     public static StudyRelationshipTypeCode getByCode(String code) {
-         return getByClassAndCode(StudyRelationshipTypeCode.class, code);
-     }
-     
-     /**
-      * construct a array of display names for StudyRelationshipTypeCode Enum.
-      * @return String[] display names for StudyRelationshipTypeCode
-      */
-     public static String[]  getDisplayNames() {
-         StudyRelationshipTypeCode[] codes = StudyRelationshipTypeCode.values();
-         String[] codedNames = new String[codes.length];
-         for (int i = 0; i < codes.length; i++) {
-             codedNames[i] = codes[i].getCode();
-         }
-         return codedNames;
-     }        
-     
-     /**
-      * {@inheritDoc}
-      */
-     public String getNameByCode(String str) {
-         return getByCode(str).name();
-     }
+    /**
+     * construct a array of display names for StudyRelationshipTypeCode Enum.
+     * @return String[] display names for StudyRelationshipTypeCode
+     */
+    public static String[] getDisplayNames() {
+        StudyRelationshipTypeCode[] codes = StudyRelationshipTypeCode.values();
+        String[] codedNames = new String[codes.length];
+        for (int i = 0; i < codes.length; i++) {
+            codedNames[i] = codes[i].getCode();
+        }
+        return codedNames;
+    }
+
 }

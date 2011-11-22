@@ -84,12 +84,12 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
  * @author Vrushali
- *
+ * 
  */
 public enum EntityStatusCode implements CodedEnum<String> {
-    /*** Active.*/
-    ACTIVE("Active"), 
-    /*** Pending.*/
+    /*** Active. */
+    ACTIVE("Active"),
+    /*** Pending. */
     PENDING("Pending"),
     /*** In Active. **/
     INACTIVE("InActive"),
@@ -97,8 +97,9 @@ public enum EntityStatusCode implements CodedEnum<String> {
     SUSPENDED("Suspended"),
     /*** Nullified. */
     NULLIFIED("Nullified");
-    
+
     private String code;
+
     /**
      * Constructor for StatusCode.
      * @param code
@@ -111,15 +112,19 @@ public enum EntityStatusCode implements CodedEnum<String> {
     /**
      * @return code coded value of enum
      */
+    @Override
     public String getCode() {
         return code;
     }
+
     /**
-     *@return str 
+     * @return str
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
+
     /**
      * @return String display name
      */
@@ -127,32 +132,25 @@ public enum EntityStatusCode implements CodedEnum<String> {
         return name();
     }
 
-
     /**
      * @param code code
-     * @return StatusCode 
+     * @return StatusCode
      */
     public static EntityStatusCode getByCode(String code) {
         return getByClassAndCode(EntityStatusCode.class, code);
     }
-    
+
     /**
      * construct a array of display names for Abstracted Status coded Enum.
      * @return String[] display names for Abstracted Status Code
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         EntityStatusCode[] absStatusCodes = EntityStatusCode.values();
         String[] codedNames = new String[absStatusCodes.length];
         for (int i = 0; i < absStatusCodes.length; i++) {
             codedNames[i] = absStatusCodes[i].getCode();
         }
         return codedNames;
-    }   
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
     }
+
 }

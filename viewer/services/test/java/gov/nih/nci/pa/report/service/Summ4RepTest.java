@@ -105,7 +105,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class Summ4RepTest
-    extends AbstractReportBeanTest<Summ4RepCriteriaDto, Summ4RepResultDto, Summ4ReportBean> {
+    extends AbstractReportBeanTestBase<Summ4RepCriteriaDto, Summ4RepResultDto, Summ4ReportBean> {
 
     @Before
     public void setUp() throws Exception {

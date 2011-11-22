@@ -97,9 +97,10 @@ public enum BlindingSchemaCode implements CodedEnum<String> {
     /** Single Blind. */
     SINGLE_BLIND("Single Blind"),
     /** Double Blind. */
-    DOUBLE_BLIND("Double Blind");    
+    DOUBLE_BLIND("Double Blind");
 
     private String code;
+
     /**
      * 
      * @param code
@@ -108,16 +109,19 @@ public enum BlindingSchemaCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -133,7 +137,7 @@ public enum BlindingSchemaCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return BlindingSchemaCode 
+     * @return BlindingSchemaCode
      */
     public static BlindingSchemaCode getByCode(String code) {
         return getByClassAndCode(BlindingSchemaCode.class, code);
@@ -142,7 +146,7 @@ public enum BlindingSchemaCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         BlindingSchemaCode[] l = BlindingSchemaCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -150,11 +154,5 @@ public enum BlindingSchemaCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

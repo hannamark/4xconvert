@@ -89,13 +89,11 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Enumeration  for Trial Status codes.
- *
+ * Enumeration for Trial Status codes.
+ * 
  * @author Naveen Amiruddin
- * @since 05/22/2007
- * copyright NCI 2007.  All rights reserved.
- * This code may not be used without the express written permission of the
- * copyright holder, NCI.
+ * @since 05/22/2007 copyright NCI 2007. All rights reserved. This code may not be used without the express written
+ *        permission of the copyright holder, NCI.
  */
 public enum StudyStatusCode implements CodedEnum<String> {
     /**
@@ -142,12 +140,12 @@ public enum StudyStatusCode implements CodedEnum<String> {
      * Complete.
      */
     COMPLETE("Complete");
-    
+
     private static final Set<StudyStatusCode> REASON_REQUIRED = EnumSet
         .of(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL,
             StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION, StudyStatusCode.WITHDRAWN,
             StudyStatusCode.ADMINISTRATIVELY_COMPLETE);
-    
+
     private static final Map<StudyStatusCode, Set<StudyStatusCode>> TRANSITIONS;
 
     static {
@@ -158,21 +156,24 @@ public enum StudyStatusCode implements CodedEnum<String> {
 
         tmpSet = EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION, WITHDRAWN);
         tmp.put(APPROVED, Collections.unmodifiableSet(tmpSet));
-        
+
         Set<StudyStatusCode> emptySet = Collections.emptySet();
         tmp.put(WITHDRAWN, emptySet);
 
-        tmpSet = EnumSet.of(TEMPORARILY_CLOSED_TO_ACCRUAL, TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
-                            ADMINISTRATIVELY_COMPLETE, CLOSED_TO_ACCRUAL, CLOSED_TO_ACCRUAL_AND_INTERVENTION, COMPLETE);
+        tmpSet =
+                EnumSet.of(TEMPORARILY_CLOSED_TO_ACCRUAL, TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
+                           ADMINISTRATIVELY_COMPLETE, CLOSED_TO_ACCRUAL, CLOSED_TO_ACCRUAL_AND_INTERVENTION, COMPLETE);
         tmp.put(ACTIVE, Collections.unmodifiableSet(tmpSet));
         tmp.put(ENROLLING_BY_INVITATION, Collections.unmodifiableSet(tmpSet));
 
-        tmpSet = EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION, TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
-                            ADMINISTRATIVELY_COMPLETE, CLOSED_TO_ACCRUAL, CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+        tmpSet =
+                EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION, TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION,
+                           ADMINISTRATIVELY_COMPLETE, CLOSED_TO_ACCRUAL, CLOSED_TO_ACCRUAL_AND_INTERVENTION);
         tmp.put(TEMPORARILY_CLOSED_TO_ACCRUAL, Collections.unmodifiableSet(tmpSet));
 
-        tmpSet = EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION, ADMINISTRATIVELY_COMPLETE, CLOSED_TO_ACCRUAL,
-                            CLOSED_TO_ACCRUAL_AND_INTERVENTION);
+        tmpSet =
+                EnumSet.of(ACTIVE, ENROLLING_BY_INVITATION, ADMINISTRATIVELY_COMPLETE, CLOSED_TO_ACCRUAL,
+                           CLOSED_TO_ACCRUAL_AND_INTERVENTION);
         tmp.put(TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION, Collections.unmodifiableSet(tmpSet));
 
         tmp.put(ADMINISTRATIVELY_COMPLETE, emptySet);
@@ -199,7 +200,7 @@ public enum StudyStatusCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
-    
+
     /**
      * @param code code
      * @return TrialStatusCode
@@ -220,7 +221,7 @@ public enum StudyStatusCode implements CodedEnum<String> {
         }
         return codedNames;
     }
-    
+
     /**
      * construct a array of display names for Study Status coded Enum for amend.
      * @return String[] display names for StudyStatusCode
@@ -238,7 +239,7 @@ public enum StudyStatusCode implements CodedEnum<String> {
     }
 
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
     @Override
     public String getDisplayName() {
@@ -263,19 +264,11 @@ public enum StudyStatusCode implements CodedEnum<String> {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
-    
-    /**
      * Test if this status requires a reason text.
      * @return true if this status requires a reason text.
      */
     public boolean requiresReasonText() {
         return REASON_REQUIRED.contains(this);
     }
- 
+
 }

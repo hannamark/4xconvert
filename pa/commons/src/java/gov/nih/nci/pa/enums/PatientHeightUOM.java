@@ -99,30 +99,34 @@ public enum PatientHeightUOM implements CodedEnum<String> {
     CM("Cm");
 
     private String code;
+
     /**
-     *
+     * 
      * @param code
      */
     private PatientHeightUOM(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -130,7 +134,7 @@ public enum PatientHeightUOM implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return PatientGenderCode
      */
@@ -141,7 +145,7 @@ public enum PatientHeightUOM implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         PatientHeightUOM[] l = PatientHeightUOM.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -149,11 +153,5 @@ public enum PatientHeightUOM implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

@@ -78,10 +78,13 @@
 */
 package gov.nih.nci.pa.dto;
 
+import gov.nih.nci.pa.enums.IdentifierType;
+
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -89,7 +92,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * Class used to hold criteria used in searching study protocols.
- *
+ * 
  * <pre>
  * Attr.                         Corresponding bo attribute
  * =====                         ==========================
@@ -102,18 +105,15 @@ import org.apache.commons.lang.StringUtils;
  * documentWrokflowStatus        domain.DocumentWorkflowStatus
  * principalInvestigatorId       domain.StudyContact.clinicalResearchStaff.person.id
  * </pre>
- *
+ * 
  * @author Hugh Reinhart
  * @author Naveen Amiruddin
  */
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength" })
 public class StudyProtocolQueryCriteria implements Serializable {
-    
-    /**
-     * serialVersionUID.
-     */
-    static final long serialVersionUID = 252345L;
 
+    private static final long serialVersionUID = 1047596217516203744L;
+    
     private Long studyProtocolId;
     private String nciIdentifier;
     private String dcpIdentifier;
@@ -121,7 +121,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String nctNumber;
     private String officialTitle;
     private String otherIdentifier;
-    private String leadOrganizationTrialIdentifier;   
+    private String leadOrganizationTrialIdentifier;
     private String phaseAdditionalQualifierCode;
     private String studyStatusCode;
     private String principalInvestigatorId;
@@ -136,18 +136,17 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private String studyMilestone;
     private String submissionType;
 
-    //for Inbox Processing
+    // for Inbox Processing
     private Boolean inBoxProcessing;
     private boolean studyLockedBy;
     private String trialCategory;
     private Long userId;
-    
+
     private Long summ4FundingSourceId;
-    private Long diseaseConditionId;
     private String interventionType;
     private String summ4FundingSourceTypeCode;
-    
-    private String countryName;   
+
+    private String countryName;
     private String city;
     private final List<String> documentWorkflowStatusCodes = new ArrayList<String>();
     private final List<String> states = new ArrayList<String>();
@@ -158,57 +157,64 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private final List<Long> participatingSiteIds = new ArrayList<Long>();
     private final List<Long> leadOrganizationIds = new ArrayList<Long>();
     private final List<Long> interventionIds = new ArrayList<Long>();
-    private final List<Long> interventionAlternateNameIds = new ArrayList<Long>();    
-   
+    private final List<Long> interventionAlternateNameIds = new ArrayList<Long>();
+
     /**
      * @return the inBoxProcessing
      */
-     public Boolean isInBoxProcessing() {
-       return inBoxProcessing;
-     }
-     /**
-      * @param inBoxProcessing the inBoxProcessing to set
-      */
-     public void setInBoxProcessing(Boolean inBoxProcessing) {
-       this.inBoxProcessing = inBoxProcessing;
-     }
-     /**
-     *
+    public Boolean isInBoxProcessing() {
+        return inBoxProcessing;
+    }
+
+    /**
+     * @param inBoxProcessing the inBoxProcessing to set
+     */
+    public void setInBoxProcessing(Boolean inBoxProcessing) {
+        this.inBoxProcessing = inBoxProcessing;
+    }
+
+    /**
+     * 
      * @return studyProtocolId
      */
     public Long getStudyProtocolId() {
         return studyProtocolId;
     }
+
     /**
-     *
+     * 
      * @param studyProtocolId studyProtocolId
      */
     public void setStudyProtocolId(Long studyProtocolId) {
         this.studyProtocolId = studyProtocolId;
     }
+
     /**
-     *
+     * 
      * @return nciIdentifier
      */
     public String getNciIdentifier() {
         return nciIdentifier;
     }
+
     /**
-     *
+     * 
      * @param nciIdentifier nciIdentifier
      */
     public void setNciIdentifier(String nciIdentifier) {
         this.nciIdentifier = nciIdentifier;
     }
+
     /**
-     *
+     * 
      * @return officialTitle
      */
     public String getOfficialTitle() {
         return officialTitle;
     }
+
     /**
-     *
+     * 
      * @param officialTitle officialTitle
      */
     public void setOfficialTitle(String officialTitle) {
@@ -216,14 +222,15 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
 
     /**
-     *
+     * 
      * @return leadOrganizationIds
      */
     public List<Long> getLeadOrganizationIds() {
         return leadOrganizationIds;
     }
+
     /**
-     *
+     * 
      * @param leadOrganizationIds leadOrganizationIds
      */
     public void setLeadOrganizationIds(List<Long> leadOrganizationIds) {
@@ -236,14 +243,15 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
 
     /**
-     *
+     * 
      * @return the other identifier
      */
     public String getOtherIdentifier() {
         return otherIdentifier;
     }
+
     /**
-     *
+     * 
      * @param otherId identifier
      */
     public void setOtherIdentifier(String otherId) {
@@ -251,19 +259,21 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
 
     /**
-     *
+     * 
      * @return leadOrganizationTrialIdentifier
      */
     public String getLeadOrganizationTrialIdentifier() {
         return leadOrganizationTrialIdentifier;
     }
+
     /**
-     *
+     * 
      * @param leadOrganizationTrialIdentifier leadOrganizationTrialIdentifier
      */
     public void setLeadOrganizationTrialIdentifier(String leadOrganizationTrialIdentifier) {
         this.leadOrganizationTrialIdentifier = leadOrganizationTrialIdentifier;
     }
+
     /**
      * @param participatingSiteIds the participatingSiteIds to set
      */
@@ -273,17 +283,18 @@ public class StudyProtocolQueryCriteria implements Serializable {
             if (id != null) {
                 this.participatingSiteIds.add(id);
             }
-        }  
+        }
     }
+
     /**
      * @return the participatingSiteIds
      */
     public List<Long> getParticipatingSiteIds() {
         return participatingSiteIds;
     }
-    
+
     /**
-     *
+     * 
      * @param phaseCode phaseCode
      */
     public void setPhaseCode(String phaseCode) {
@@ -291,29 +302,33 @@ public class StudyProtocolQueryCriteria implements Serializable {
         code.add(phaseCode);
         setPhaseCodes(code);
     }
+
     /**
-     *
+     * 
      * @return studyStatusCode
      */
     public String getStudyStatusCode() {
         return studyStatusCode;
     }
+
     /**
-     *
+     * 
      * @param studyStatusCode studyStatusCode
      */
     public void setStudyStatusCode(String studyStatusCode) {
         this.studyStatusCode = studyStatusCode;
     }
+
     /**
-     *
+     * 
      * @return documentWorkflowStatusCodes
      */
     public List<String> getDocumentWorkflowStatusCodes() {
         return documentWorkflowStatusCodes;
     }
+
     /**
-     *
+     * 
      * @param documentWorkflowStatusCodes documentWorkflowStatusCodes
      */
     public void setDocumentWorkflowStatusCodes(List<String> documentWorkflowStatusCodes) {
@@ -324,64 +339,74 @@ public class StudyProtocolQueryCriteria implements Serializable {
             }
         }
     }
+
     /**
-     *
+     * 
      * @return principalInvestigatorId
      */
     public String getPrincipalInvestigatorId() {
         return principalInvestigatorId;
     }
+
     /**
-     *
+     * 
      * @param principalInvestigatorId principalInvestigatorId
      */
     public void setPrincipalInvestigatorId(String principalInvestigatorId) {
         this.principalInvestigatorId = principalInvestigatorId;
     }
+
     /**
-     *
+     * 
      * @return primaryPurposeCode
      */
     public String getPrimaryPurposeCode() {
         return primaryPurposeCode;
     }
+
     /**
-     *
+     * 
      * @param primaryPurposeCode primaryPurposeCode
      */
     public void setPrimaryPurposeCode(String primaryPurposeCode) {
         this.primaryPurposeCode = primaryPurposeCode;
     }
+
     /**
      * @return the identifierType
      */
     public String getIdentifierType() {
         return identifierType;
     }
+
     /**
      * @param identifierType the identifierType to set
      */
     public void setIdentifierType(String identifierType) {
         this.identifierType = identifierType;
     }
+
     /**
      * @return the organizationType
      */
     public String getOrganizationType() {
         return organizationType;
     }
+
     /**
      * @param organizationType the organizationType to set
      */
     public void setOrganizationType(String organizationType) {
         this.organizationType = organizationType;
     }
+
     /**
      * @return the userLastCreated
      */
     public String getUserLastCreated() {
         return userLastCreated;
     }
+
     /**
      * @param userLastCreated the userLastCreated to set
      */
@@ -390,121 +415,140 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
 
     /**
-     *
+     * 
      * @return excludeRejectProtocol excludeRejectProtocol
      */
     public Boolean isExcludeRejectProtocol() {
         return excludeRejectProtocol;
     }
+
     /**
-     *
+     * 
      * @param excludeRejectProtocol excludeRejectProtocol
      */
     public void setExcludeRejectProtocol(Boolean excludeRejectProtocol) {
         this.excludeRejectProtocol = excludeRejectProtocol;
     }
+
     /**
      * @return the myTrialsOnly
      */
     public Boolean isMyTrialsOnly() {
         return myTrialsOnly;
     }
+
     /**
      * @param searchOnHold the searchOnHold to set
      */
     public void setSearchOnHold(boolean searchOnHold) {
         this.searchOnHold = searchOnHold;
     }
+
     /**
      * @return the searchOnHold
      */
     public boolean isSearchOnHold() {
         return searchOnHold;
     }
+
     /**
      * @param studyMilestone the studyMilestone to set
      */
     public void setStudyMilestone(String studyMilestone) {
         this.studyMilestone = studyMilestone;
     }
+
     /**
      * @return the studyMilestone
      */
     public String getStudyMilestone() {
         return studyMilestone;
     }
+
     /**
      * @param myTrialsOnly the myTrialsOnly to set
      */
     public void setMyTrialsOnly(Boolean myTrialsOnly) {
         this.myTrialsOnly = myTrialsOnly;
     }
+
     /**
      * @param nctNumber the nctNumber to set
      */
     public void setNctNumber(String nctNumber) {
         this.nctNumber = nctNumber;
     }
+
     /**
      * @return the nctNumber
      */
     public String getNctNumber() {
         return nctNumber;
     }
+
     /**
      * @return the submissionType
      */
     public String getSubmissionType() {
         return submissionType;
     }
+
     /**
      * @param submissionType the submissionType to set
      */
     public void setSubmissionType(String submissionType) {
         this.submissionType = submissionType;
     }
+
     /**
      * @return the getStudyLockedBy
      */
     public boolean isStudyLockedBy() {
         return studyLockedBy;
     }
+
     /**
      * @param studyLockedBy the studyLockedBy to set
      */
     public void setStudyLockedBy(boolean studyLockedBy) {
         this.studyLockedBy = studyLockedBy;
     }
+
     /**
      * @return the trialCategory
      */
     public String getTrialCategory() {
         return trialCategory;
     }
+
     /**
      * @param trialCategory the trialCategory to set
      */
     public void setTrialCategory(String trialCategory) {
         this.trialCategory = trialCategory;
     }
+
     /**
      * @param userId the userId to set
      */
     public void setUserId(Long userId) {
         this.userId = userId;
     }
+
     /**
      * @return the userId
      */
     public Long getUserId() {
         return userId;
     }
+
     /**
      * @param phaseAdditionalQualifierCode the phaseAdditionalQualifierCode to set
      */
     public void setPhaseAdditionalQualifierCode(String phaseAdditionalQualifierCode) {
         this.phaseAdditionalQualifierCode = phaseAdditionalQualifierCode;
     }
+
     /**
      * @return the phaseAdditionalQualifierCode
      */
@@ -539,13 +583,14 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public void setCtepIdentifier(String ctepIdentifier) {
         this.ctepIdentifier = ctepIdentifier;
     }
-    
+
     /**
      * @return the summ4FundingSourceId
      */
     public Long getSumm4FundingSourceId() {
         return summ4FundingSourceId;
     }
+
     /**
      * Note that this is the PA Db Org Id.
      * @param summ4FundingSourceId the summ4FundingSourceId to set
@@ -553,43 +598,35 @@ public class StudyProtocolQueryCriteria implements Serializable {
     public void setSumm4FundingSourceId(Long summ4FundingSourceId) {
         this.summ4FundingSourceId = summ4FundingSourceId;
     }
-    /**
-     * @return the diseaseConditionId
-     */
-    public Long getDiseaseConditionId() {
-        return diseaseConditionId;
-    }
-    /**
-     * @param diseaseConditionId the diseaseConditionId to set
-     */
-    public void setDiseaseConditionId(Long diseaseConditionId) {
-        this.diseaseConditionId = diseaseConditionId;
-        setPdqDiseases(Arrays.asList(new Long[] {diseaseConditionId}));
-    }
+
     /**
      * @return the leadAgentInterventionId
      */
     public String getInterventionType() {
         return interventionType;
     }
+
     /**
      * @param interventionType the interventionType to set
      */
     public void setInterventionType(String interventionType) {
         this.interventionType = interventionType;
     }
+
     /**
      * @return the summ4FundingSourceTypeCode
      */
     public String getSumm4FundingSourceTypeCode() {
         return summ4FundingSourceTypeCode;
     }
+
     /**
      * @param summ4FundingSourceTypeCode the summ4FundingSourceTypeCode to set
      */
     public void setSumm4FundingSourceTypeCode(String summ4FundingSourceTypeCode) {
         this.summ4FundingSourceTypeCode = summ4FundingSourceTypeCode;
     }
+
     /**
      * @return the phaseCodes
      */
@@ -608,24 +645,28 @@ public class StudyProtocolQueryCriteria implements Serializable {
             }
         }
     }
+
     /**
      * @return the countryName
      */
     public String getCountryName() {
         return countryName;
     }
+
     /**
      * @param countryName the countryName to set
      */
     public void setCountryName(String countryName) {
         this.countryName = countryName;
     }
+
     /**
      * @return the states
      */
     public List<String> getStates() {
         return states;
     }
+
     /**
      * @param states the states to set
      */
@@ -637,56 +678,59 @@ public class StudyProtocolQueryCriteria implements Serializable {
             }
         }
     }
+
     /**
      * @return the city
      */
     public String getCity() {
         return city;
     }
+
     /**
      * @param city the city to set
      */
     public void setCity(String city) {
         this.city = city;
-    }     
-    
+    }
+
     /**
      * @return the summary4AnatomicSites
      */
     public List<Long> getSummary4AnatomicSites() {
         return summary4AnatomicSites;
     }
+
     /**
-     * @param summary4AnatomicSites the summary4AnatomicSites to set
+     * @param summary4AnatomicSiteIds the summary4AnatomicSites to set
      */
-    public void setSummary4AnatomicSites(List<Long> summary4AnatomicSites) {
-        this.summary4AnatomicSites.clear();
-        for (Long id : summary4AnatomicSites) {
+    public void setSummary4AnatomicSites(List<Long> summary4AnatomicSiteIds) {
+        summary4AnatomicSites.clear();
+        for (Long id : summary4AnatomicSiteIds) {
             if (id != null) {
-                this.summary4AnatomicSites.add(id);
+                summary4AnatomicSites.add(id);
             }
-        }       
-    }    
-    
+        }
+    }
+
     /**
      * @return the bioMarkers
      */
     public List<Long> getBioMarkers() {
         return bioMarkers;
     }
-    
+
     /**
-     * @param bioMarkers the bioMarkers to set
+     * @param bioMarkerIds the bioMarkers to set
      */
-    public void setBioMarkers(List<Long> bioMarkers) {
-        this.bioMarkers.clear();
-        for (Long id : bioMarkers) {
+    public void setBioMarkers(List<Long> bioMarkerIds) {
+        bioMarkers.clear();
+        for (Long id : bioMarkerIds) {
             if (id != null) {
-                this.bioMarkers.add(id);
+                bioMarkers.add(id);
             }
-        }  
-    }    
-    
+        }
+    }
+
     /**
      * @return the pdqDiseases
      */
@@ -695,24 +739,26 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
 
     /**
-     * @param pdqDiseases the pdqDiseases to set
+     * @param pdqDiseaseIds the pdqDiseases to set
      */
-    public void setPdqDiseases(List<Long> pdqDiseases) {
-        this.pdqDiseases.clear();
-        for (Long id : pdqDiseases) {
+    public void setPdqDiseases(List<Long> pdqDiseaseIds) {
+        pdqDiseases.clear();
+        Set<Long> ids = new HashSet<Long>();
+        for (Long id : pdqDiseaseIds) {
             if (id != null) {
-                this.pdqDiseases.add(id);
+                ids.add(id);
             }
         }
-    }     
-   
+        pdqDiseases.addAll(ids);
+    }
+
     /**
      * @return the interventionIds
      */
     public List<Long> getInterventionIds() {
         return interventionIds;
     }
-    
+
     /**
      * @param interventionIds the interventionIds to set
      */
@@ -723,15 +769,15 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 this.interventionIds.add(id);
             }
         }
-    }    
-    
-    
+    }
+
     /**
      * @return the interventionAlternateNameIds
      */
     public List<Long> getInterventionAlternateNameIds() {
         return interventionAlternateNameIds;
     }
+
     /**
      * @param interventionAlternateNameIds the interventionAlternateNameIds to set
      */
@@ -743,14 +789,44 @@ public class StudyProtocolQueryCriteria implements Serializable {
             }
         }
     }
-    
+
     /**
      * return true if criteria contains location data.
      * @return boolean
      */
     public boolean isByLocation() {
-        return (StringUtils.isNotBlank(getCountryName()) || StringUtils.isNotBlank(getCity()) 
-                || CollectionUtils.isNotEmpty(getStates()));
+        return (StringUtils.isNotBlank(getCountryName()) || StringUtils.isNotBlank(getCity()) || CollectionUtils
+            .isNotEmpty(getStates()));
     }
-    
+
+    /**
+     * Set the appropriate identifier base on the identifier type.
+     * @param identifier The identifier value
+     */
+    @SuppressWarnings("PMD.CyclomaticComplexity")
+    public void setIdentifier(String identifier) {
+        IdentifierType idType = IdentifierType.getByCode(identifierType);
+        switch (idType) {
+        case CTEP:
+            setCtepIdentifier(identifier);
+            break;
+        case DCP:
+            setDcpIdentifier(identifier);
+            break;
+        case LEAD_ORG:
+            setLeadOrganizationTrialIdentifier(identifier);
+            break;
+        case NCI:
+            setNciIdentifier(identifier);
+            break;
+        case NCT:
+            setNctNumber(identifier);
+            break;
+        case OTHER_IDENTIFIER:
+            setOtherIdentifier(identifier);
+            break;
+        default:
+            break;
+        }
+    }
 }

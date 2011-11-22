@@ -77,12 +77,20 @@
 package gov.nih.nci.pa.viewer.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
@@ -91,7 +99,9 @@ import gov.nih.nci.pa.enums.IdentifierType;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.noniso.dto.PDQDiseaseNode;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.PAOrganizationServiceRemote;
@@ -101,7 +111,6 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.viewer.dto.result.KeyValueDTO;
-import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -110,6 +119,7 @@ import java.util.List;
 import java.util.TreeSet;
 
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -117,16 +127,33 @@ import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpServletResponse;
 import com.mockrunner.mock.web.MockHttpSession;
 
+/**
+ * Tests for AdHocReportAction.
+ * 
+ * @author Michael Visee
+ */
 public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportAction> {
-
-    StudyProtocolQueryCriteria criteria;
+    
+    private PDQDiseaseServiceLocal diseaseService = mock(PDQDiseaseServiceLocal.class);
+    private LookUpTableServiceRemote lookUpTableService = mock(LookUpTableServiceRemote.class);
+    private PAOrganizationServiceRemote paOrganizationService = mock(PAOrganizationServiceRemote.class);
+    private PlannedMarkerServiceLocal plannedMarkerService = mock(PlannedMarkerServiceLocal.class);
+    private ProtocolQueryServiceLocal protocolQueryService = mock(ProtocolQueryServiceLocal.class);
+    private TSRReportGeneratorServiceRemote tsrReportGeneratorService = mock(TSRReportGeneratorServiceRemote.class);
+    
+    private StudyProtocolQueryCriteria criteria;
 
     @Before
     public void setUp() throws PAException {
-        ProtocolQueryServiceLocal protQuerySvc = mock(ProtocolQueryServiceLocal.class);
-        gov.nih.nci.pa.viewer.util.ServiceLocator viewerSvcLoc = mock(gov.nih.nci.pa.viewer.util.ServiceLocator.class);
-        ViewerServiceLocator.getInstance().setServiceLocator(viewerSvcLoc);
-        when(viewerSvcLoc.getProtocolQueryService()).thenReturn(protQuerySvc);
+        ServiceLocator serviceLocator = mock(ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(serviceLocator);
+        when(serviceLocator.getDiseaseService()).thenReturn(diseaseService);
+        when(serviceLocator.getLookUpTableService()).thenReturn(lookUpTableService);
+        when(serviceLocator.getPAOrganizationService()).thenReturn(paOrganizationService);
+        when(serviceLocator.getPlannedMarkerService()).thenReturn(plannedMarkerService);
+        when(serviceLocator.getProtocolQueryService()).thenReturn(protocolQueryService);
+        when(serviceLocator.getTSRReportGeneratorService()).thenReturn(tsrReportGeneratorService);
+
         List<StudyProtocolQueryDTO> protList = new ArrayList<StudyProtocolQueryDTO>();
         StudyProtocolQueryDTO protListItem = new StudyProtocolQueryDTO();
         protListItem.setLeadOrganizationId(1L);
@@ -141,23 +168,56 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         protListItem.getInterventionTypes().add("Drug");
         protListItem.setSumm4FundingSrcCategory("NATIONAL");
         protList.add(protListItem);
-        when(protQuerySvc.getStudyProtocolByCriteriaForReporting(any(StudyProtocolQueryCriteria.class))).thenReturn(protList);
-        TSRReportGeneratorServiceRemote tsrSvcRemote = mock(TSRReportGeneratorServiceRemote.class);
-        ServiceLocator svcLoc = mock(ServiceLocator.class);
-        PaRegistry.getInstance().setServiceLocator(svcLoc);
-        when(svcLoc.getTSRReportGeneratorService()).thenReturn(tsrSvcRemote);
-        when(tsrSvcRemote.generateRtfTsrReport(any(Ii.class))).thenReturn(new ByteArrayOutputStream());
-        PAOrganizationServiceRemote paOrgSvc = mock(PAOrganizationServiceRemote.class);
-        when(svcLoc.getPAOrganizationService()).thenReturn(paOrgSvc);
+        when(protocolQueryService.getStudyProtocolByCriteriaForReporting(any(StudyProtocolQueryCriteria.class)))
+            .thenReturn(protList);
+        when(tsrReportGeneratorService.generateRtfTsrReport(any(Ii.class))).thenReturn(new ByteArrayOutputStream());
+
         List<PaOrganizationDTO> paOrgDtoList = new ArrayList<PaOrganizationDTO>();
         PaOrganizationDTO paOrgDto = new PaOrganizationDTO();
         paOrgDto.setName("Org Name");
         paOrgDto.setId("1");
         paOrgDtoList.add(paOrgDto);
-        when(paOrgSvc.getOrganizationsAssociatedWithStudyProtocol(any(String.class))).thenReturn(paOrgDtoList);
-        action =  new AdHocReportAction();
+        when(paOrganizationService.getOrganizationsAssociatedWithStudyProtocol(any(String.class)))
+            .thenReturn(paOrgDtoList);
+        action = new AdHocReportAction();
         criteria = new StudyProtocolQueryCriteria();
         action.setCriteria(criteria);
+        action.prepare();
+    }
+    
+    /**
+     * Creates a real AdHocReportAction and inject the mock services in it.
+     * @return A real AdHocReportAction with mock services injected.
+     */
+    private AdHocReportAction createAdHocReportAction() {
+        AdHocReportAction action = new AdHocReportAction();
+        setDependencies(action);
+        return action;
+    }
+
+    /**
+     * Creates a mock AdHocReportAction and inject the mock services in it.
+     * @return A mock AdHocReportAction with mock services injected.
+     */
+    private AdHocReportAction createAdHocReportActionMock() {
+        AdHocReportAction action = mock(AdHocReportAction.class);
+        doCallRealMethod().when(action).setDiseaseService(diseaseService);
+        doCallRealMethod().when(action).setLookUpTableService(lookUpTableService);
+        doCallRealMethod().when(action).setPaOrganizationService(paOrganizationService);
+        doCallRealMethod().when(action).setPlannedMarkerService(plannedMarkerService);
+        doCallRealMethod().when(action).setProtocolQueryService(protocolQueryService);
+        doCallRealMethod().when(action).setTsrReportGeneratorService(tsrReportGeneratorService);
+        setDependencies(action);
+        return action;
+    }
+    
+    private void setDependencies(AdHocReportAction action) {
+        action.setDiseaseService(diseaseService);
+        action.setLookUpTableService(lookUpTableService);
+        action.setPaOrganizationService(paOrganizationService);
+        action.setPlannedMarkerService(plannedMarkerService);
+        action.setProtocolQueryService(protocolQueryService);
+        action.setTsrReportGeneratorService(tsrReportGeneratorService);
     }
 
     @Test
@@ -165,26 +225,6 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         assertEquals("success", action.execute());
     }
 
-    @Test
-    public void testFillDiseaseId() throws PAException {
-        assertEquals("success", action.fillInDiseaseId());
-    }
-
-    @Test
-    public void testQueryTypeButNoIdentifier() throws PAException {
-        action.setCriteria(new StudyProtocolQueryCriteria());
-        action.getCriteria().setIdentifierType("anything");
-        assertEquals("success", action.getReport());
-        assertEquals("error.studyProtocol.identifier", action.getFieldErrors().get("identifier").get(0));
-    }
-
-    @Test
-    public void testQueryIdentifierNoType() throws PAException {
-        action.setCriteria(new StudyProtocolQueryCriteria());
-        action.setIdentifier("anything");
-        assertEquals("success", action.getReport());
-        assertEquals("error.studyProtocol.identifierType", action.getFieldErrors().get("criteria.identifierType").get(0));
-    }
 
     @Test
     public void testQueryIdentifierTypes() throws PAException {
@@ -213,71 +253,260 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         assertEquals("Drug", action.getResultList().get(0).getInterventionTypes().iterator().next());
         assertEquals("NATIONAL", action.getResultList().get(0).getSumm4FundingSrcCategory());
     }
+   
+    /**
+     * Test the isReportInError in case of field error.
+     */
+    @Test
+    public void testIsReportInErrorFieldError() {
+        AdHocReportAction sut = createAdHocReportActionMock();
+        doCallRealMethod().when(sut).isReportInError();
+        when(sut.hasFieldErrors()).thenReturn(true);
+        boolean result = sut.isReportInError();
+        verify(sut).validateIdentifierSearchParameters();
+        assertTrue(result);
+    }
+    
+    /**
+     * Test the isReportInError in case of report error.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testIsReportInErrorReportError() throws PAException {
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        AdHocReportAction sut = createAdHocReportActionMock();
+        doCallRealMethod().when(sut).isReportInError();
+        doCallRealMethod().when(sut).setCriteria(criteria);
+        sut.setCriteria(criteria);
+        when(sut.hasFieldErrors()).thenReturn(false);
+        when(protocolQueryService.getStudyProtocolByCriteriaForReporting(criteria)).thenThrow(new PAException("PA"));
+        boolean result = sut.isReportInError();
+        verify(sut).validateIdentifierSearchParameters();
+        verify(sut).hasFieldErrors();
+        verify(sut).populateIdentifierSearchParameters();
+        verify(sut).addActionError("PA");
+        assertTrue(result);
+    }
+    
+    /**
+     * Test the isReportInError in case of success.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testIsReportInErrorSuccess() throws PAException {
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        AdHocReportAction sut = createAdHocReportActionMock();
+        doCallRealMethod().when(sut).isReportInError();
+        doCallRealMethod().when(sut).setCriteria(criteria);
+        doCallRealMethod().when(sut).getResultList();
+        doCallRealMethod().when(sut).setResultList(anyListOf(StudyProtocolQueryDTO.class));
+        sut.setCriteria(criteria);
+        when(sut.hasFieldErrors()).thenReturn(false);
+        List<StudyProtocolQueryDTO> resultList = new ArrayList<StudyProtocolQueryDTO>();
+        when(protocolQueryService.getStudyProtocolByCriteriaForReporting(criteria)).thenReturn(resultList);
+        boolean result = sut.isReportInError();
+        verify(sut).validateIdentifierSearchParameters();
+        verify(sut).hasFieldErrors();
+        verify(sut).populateIdentifierSearchParameters();
+        verify(sut).setResultList(resultList);
+        verify(sut, never()).addActionError(anyString());
+        assertFalse(result);
+        assertEquals("Wrong result list", resultList, sut.getResultList());
+    }
 
+    /**
+     * Test the validateIdentifierSearchParameters with a type error.
+     */
+    @Test
+    public void testValidateIdentifierSearchParametersTypeError() {
+        AdHocReportAction sut = createAdHocReportAction();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setIdentifierType("type");
+        sut.setCriteria(criteria);
+        sut.validateIdentifierSearchParameters();
+        assertTrue(sut.getFieldErrors().containsKey("identifier"));
+    }
+
+    /**
+     * Test the validateIdentifierSearchParameters with an identifier error.
+     */
+    @Test
+    public void testValidateIdentifierSearchParametersIdentifierError() {
+        AdHocReportAction sut = createAdHocReportAction();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        sut.setCriteria(criteria);
+        sut.setIdentifier("identifier");
+        sut.validateIdentifierSearchParameters();
+        assertTrue(sut.getFieldErrors().containsKey("criteria.identifierType"));
+    }
+
+    /**
+     * Test the validateIdentifierSearchParameters with no error.
+     */
+    @Test
+    public void testValidateIdentifierSearchParametersNoError() {
+        AdHocReportAction sut = createAdHocReportAction();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setIdentifierType("type");
+        sut.setCriteria(criteria);
+        sut.setIdentifier("identifier");
+        sut.validateIdentifierSearchParameters();
+        assertTrue(sut.getFieldErrors().isEmpty());
+    }
+
+    /**
+     * Test the validateIdentifierSearchParameters with no data.
+     */
+    @Test
+    public void testValidateIdentifierSearchParametersNoData() {
+        AdHocReportAction sut = createAdHocReportAction();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        sut.setCriteria(criteria);
+        sut.validateIdentifierSearchParameters();
+        assertTrue(sut.getFieldErrors().isEmpty());
+    }
+
+    /**
+     * Test the populateIdentifierSearchParameters method.
+     */
+    @Test
+    public void testPopulateIdentifierSearchParameters() {
+        String identifierType = IdentifierType.NCI.getCode();
+        String identifier = "identifier";
+        AdHocReportAction sut = createAdHocReportAction();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setIdentifierType(identifierType);
+        sut.setCriteria(criteria);
+        sut.setIdentifier(identifier);
+        sut.populateIdentifierSearchParameters();
+        assertEquals("Wrong identifier", identifier, criteria.getNciIdentifier());
+    }
+    
+    /**
+     * test the viewTSR method in the successful case.
+     * @throws PAException in case of error
+     */
     @Test
     public void testViewTSR() throws PAException {
+        AdHocReportAction sut = createAdHocReportAction();
         getRequest().setupAddParameter("studyProtocolId", "1");
-        assertEquals("none", action.viewTSR());
+        MockHttpServletResponse response = getResponse();
+        sut.setServletResponse(response);
+        ByteArrayOutputStream reportData = new ByteArrayOutputStream();
+        reportData.write(65);
+        when(tsrReportGeneratorService.generateRtfTsrReport(any(Ii.class))).thenReturn(reportData);
+        String result = sut.viewTSR();
+        assertEquals("Wrong result returned", "none", result);
+        assertEquals("Wrong Content-disposition", "inline; filename=TsrReport.rtf", response.getHeader("Content-disposition"));
+        assertEquals("Wrong Content Type", "application/rtf;", response.getContentType());
+        assertEquals("", "A", response.getOutputStreamContent());
     }
 
+    /**
+     * test the viewTSR method in the exception case.
+     * @throws PAException in case of error
+     */
     @Test
-    public void testCheckLeadOrgAndSumm4SponsorLists() throws PAException {
-        assertEquals(1, action.getLeadOrgList().size());
-        assertEquals(1, action.getSumm4FunsingSponsorsList().size());
+    public void testViewTSRError() throws PAException {
+        AdHocReportAction sut = createAdHocReportAction();
+        getRequest().setupAddParameter("studyProtocolId", "1");  
+        when(tsrReportGeneratorService.generateRtfTsrReport(any(Ii.class))).thenThrow(new PAException("PA"));
+        assertEquals("Wrong result returned", "none", sut.viewTSR());
+    }
+
+    /**
+     * Test the getLeadOrgList method.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testGetLeadOrgList() throws PAException {
+        AdHocReportAction sut = createAdHocReportAction();
+        List<PaOrganizationDTO> organizations = new ArrayList<PaOrganizationDTO>();
+        when(paOrganizationService.getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION))
+            .thenReturn(organizations);
+        assertEquals("Wrong result returned", organizations, sut.getLeadOrgList());
     }
     
+    /**
+     * Test the getSumm4FunsingSponsorsList method.
+     * @throws PAException in case of error
+     */
     @Test
-    public void getParticipatingSiteList() throws PAException {
-        ServiceLocator svcLoc = createServiceLocatorWithMocks();
-        action.getParticipatingSiteList();
-        verify(svcLoc.getPAOrganizationService())
-            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE);
+    public void testGetSumm4FunsingSponsorsList() throws PAException {
+        AdHocReportAction sut = createAdHocReportAction();
+        List<PaOrganizationDTO> organizations = new ArrayList<PaOrganizationDTO>();
+        when(paOrganizationService.getOrganizationsAssociatedWithStudyProtocol(PAConstants.SUMM4_SPONSOR))
+            .thenReturn(organizations);
+        assertEquals("Wrong result returned", organizations, sut.getSumm4FunsingSponsorsList());
     }
 
+    /**
+     * Test the getParticipatingSiteList method.
+     * @throws PAException in case of error
+     */
     @Test
-    public void getAnatomicSitesList() throws PAException {
-        ServiceLocator svcLoc = createServiceLocatorWithMocks();
-        action.getAnatomicSitesList();
-        verify(svcLoc.getLookUpTableService()).getAnatomicSites();
+    public void testGetParticipatingSiteList() throws PAException {
+        AdHocReportAction sut = createAdHocReportAction();
+        List<PaOrganizationDTO> organizations = new ArrayList<PaOrganizationDTO>();
+        when(paOrganizationService.getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE))
+            .thenReturn(organizations);
+        assertEquals("Wrong result returned", organizations, sut.getParticipatingSiteList());
+    }
+
+    /**
+     * Test the getAnatomicSitesList method.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testGetAnatomicSitesList() throws PAException {
+        AdHocReportAction sut = createAdHocReportAction();
+        List<AnatomicSite> anatomicSites = new ArrayList<AnatomicSite>();
+        when(lookUpTableService.getAnatomicSites()).thenReturn(anatomicSites);
+        assertEquals("Wrong result returned", anatomicSites, sut.getAnatomicSitesList());
+    }
+
+    /**
+     * Test the getPlannedMarkersList metod.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testGetPlannedMarkersList() throws PAException {
+        AdHocReportAction sut = createAdHocReportAction();
+        List<PlannedMarkerDTO> markers = createPlannedMarkerDTOs();
+        when(plannedMarkerService.getAll()).thenReturn(markers);
+        List<KeyValueDTO> result = sut.getPlannedMarkersList();
+        assertNotNull("No result returned", result);
+        assertEquals("Wrong result size", 1, result.size());
+        KeyValueDTO keyValue = result.get(0);
+        assertEquals("Wrong key", 1L, keyValue.getKey().longValue());
+        assertEquals("Wrong value", "Long Name", keyValue.getValue());
     }
     
+    private List<PlannedMarkerDTO> createPlannedMarkerDTOs() {
+        List<PlannedMarkerDTO> markers = new ArrayList<PlannedMarkerDTO>();
+        PlannedMarkerDTO marker = new PlannedMarkerDTO();
+        marker.setIdentifier(IiConverter.convertToIi(1L));
+        marker.setLongName(StConverter.convertToSt("Long Name"));
+        markers.add(marker);
+        return markers;
+    }
+    /**
+     * Test the getDisplayTree method.
+     * @throws JSONException if an error occurs.
+     */
     @Test
-    public void getPlannedMarkersList() throws PAException {
-        ServiceLocator svcLoc = createServiceLocatorWithMocks();
-        action.getPlannedMarkersList();
-        verify(svcLoc.getPlannedMarkerService()).getAll();
+    public void testGetDisplayTree() throws JSONException {
+        List<PDQDiseaseNode> tree = new ArrayList<PDQDiseaseNode>();
+        PDQDiseaseNode node = new PDQDiseaseNode();
+        node.setId(1L);
+        node.setParentId(2L);
+        node.setName("name value");
+        tree.add(node);
+        when(diseaseService.getDiseaseTree()).thenReturn(tree);
+        String result = action.getDiseaseTree();
+        assertEquals("Wrong json string returned", "[{\"id\":1,\"name\":\"name value\",\"parentId\":2}]", result);
     }
     
-    @Test
-    public void getPlannedMarkersListConvertion() throws PAException {
-        ServiceLocator svcLoc = createServiceLocatorWithMocks();
-        
-        List<PlannedMarkerDTO> dtos = new ArrayList<PlannedMarkerDTO>();
-        PlannedMarkerDTO dto1 = new PlannedMarkerDTO();
-        dto1.setIdentifier(IiConverter.convertToIi(2L));
-        dto1.setLongName(StConverter.convertToSt("name1"));
-        dtos.add(dto1);
-        
-        when(svcLoc.getPlannedMarkerService().getAll()).thenReturn(dtos);
-        
-        List<KeyValueDTO> result = action.getPlannedMarkersList();
-        assertEquals(Long.valueOf(2), result.get(0).getKey());
-        assertEquals("name1", result.get(0).getValue());
-        
-    }
-
-    private ServiceLocator createServiceLocatorWithMocks() {
-        ServiceLocator svcLoc = mock(ServiceLocator.class);
-        PaRegistry.getInstance().setServiceLocator(svcLoc);
-        PAOrganizationServiceRemote paOrganizationServiceMock = mock(PAOrganizationServiceRemote.class);
-        when(svcLoc.getPAOrganizationService()).thenReturn(paOrganizationServiceMock);
-        LookUpTableServiceRemote lookUpTableServiceRemoteMock = mock(LookUpTableServiceRemote.class);
-        when(svcLoc.getLookUpTableService()).thenReturn(lookUpTableServiceRemoteMock);
-        PlannedMarkerServiceLocal plannedMarkerServiceLocal = mock(PlannedMarkerServiceLocal.class);
-        when(svcLoc.getPlannedMarkerService()).thenReturn(plannedMarkerServiceLocal);
-        return svcLoc;
-    }
-
     /**
      * @return MockHttpServletRequest
      */
@@ -294,10 +523,10 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
 
     /**
      * Gets the response.
-     *
+     * 
      * @return the response
      */
-    protected MockHttpServletResponse  getResponse() {
+    protected MockHttpServletResponse getResponse() {
         return (MockHttpServletResponse) ServletActionContext.getResponse();
     }
 }

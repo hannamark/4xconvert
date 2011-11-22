@@ -83,15 +83,12 @@ import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
 import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
-*
-* @author Anupama Sharma
-* @since 07/21/2009
-* copyright NCI 2009.  All rights reserved.
-* This code may not be used without the express written permission of the
-* copyright holder, NCI.
-*/
+ * 
+ * @author Anupama Sharma
+ * @since 07/21/2009 copyright NCI 2009. All rights reserved. This code may not be used without the express written
+ *        permission of the copyright holder, NCI.
+ */
 public enum SubmissionTypeCode implements CodedEnum<String> {
-
 
     /** Original. */
     O("Original"),
@@ -100,32 +97,35 @@ public enum SubmissionTypeCode implements CodedEnum<String> {
     /** Amendment. */
     A("Amendment");
 
-
     private String code;
+
     /**
-     *
+     * 
      * @param code
      */
     private SubmissionTypeCode(String code) {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
 
     /**
-     *
+     * 
      * @return String name
      */
     public String getName() {
@@ -133,7 +133,7 @@ public enum SubmissionTypeCode implements CodedEnum<String> {
     }
 
     /**
-     *
+     * 
      * @param code code
      * @return UnitsCode
      */
@@ -144,7 +144,7 @@ public enum SubmissionTypeCode implements CodedEnum<String> {
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         SubmissionTypeCode[] l = SubmissionTypeCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -153,10 +153,4 @@ public enum SubmissionTypeCode implements CodedEnum<String> {
         return a;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
 }

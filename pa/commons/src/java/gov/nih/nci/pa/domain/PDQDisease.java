@@ -120,6 +120,7 @@ public class PDQDisease extends AbstractEntityWithStatusCode<ActiveInactivePendi
     /**
      * @return the diseaseCode
      */
+    @Override
     @Column(name = "DISEASE_CODE")
     @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
     public String getDiseaseCode() {
@@ -153,6 +154,7 @@ public class PDQDisease extends AbstractEntityWithStatusCode<ActiveInactivePendi
     /**
      * @return the preferredName
      */
+    @Override
     @Column(name = "PREFERRED_NAME")
     @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
     public String getPreferredName() {
@@ -169,6 +171,7 @@ public class PDQDisease extends AbstractEntityWithStatusCode<ActiveInactivePendi
     /**
      * @return the displayName
      */
+    @Override
     @Column(name = "MENU_DISPLAY_NAME")
     @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
     public String getDisplayName() {
@@ -187,6 +190,7 @@ public class PDQDisease extends AbstractEntityWithStatusCode<ActiveInactivePendi
      */
     @OneToMany(mappedBy = DISEASE_STR)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @Fetch(FetchMode.SUBSELECT)
     public List<StudyDisease> getStudyDiseases() {
         return studyDiseases;
     }
@@ -204,6 +208,7 @@ public class PDQDisease extends AbstractEntityWithStatusCode<ActiveInactivePendi
     @OneToMany(mappedBy = DISEASE_STR)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @Searchable(nested = true)
+    @Fetch(FetchMode.SUBSELECT)
     public List<PDQDiseaseAltername> getDiseaseAlternames() {
         return diseaseAlternames;
     }
@@ -220,6 +225,7 @@ public class PDQDisease extends AbstractEntityWithStatusCode<ActiveInactivePendi
      */
     @OneToMany(mappedBy = DISEASE_STR)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @Fetch(FetchMode.SUBSELECT)
     public List<PDQDiseaseParent> getDiseaseParents() {
         return diseaseParents;
     }

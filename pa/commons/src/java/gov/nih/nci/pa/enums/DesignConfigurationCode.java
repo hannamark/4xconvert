@@ -92,7 +92,7 @@ import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
  * copyright holder, NCI.
  */
 public enum DesignConfigurationCode implements CodedEnum<String> {
-    
+
     /** Single Group. */
     SINGLE_GROUP("Single Group"),
     /** Parallel. */
@@ -100,9 +100,10 @@ public enum DesignConfigurationCode implements CodedEnum<String> {
     /** Crossover Design. */
     CROSSOVER("Cross-over"),
     /** Factorial. */
-    FACTORIAL("Factorial");    
-    
+    FACTORIAL("Factorial");
+
     private String code;
+
     /**
      * 
      * @param code
@@ -111,16 +112,19 @@ public enum DesignConfigurationCode implements CodedEnum<String> {
         this.code = code;
         register(this);
     }
+
     /**
      * @return code code
      */
+    @Override
     public String getCode() {
         return code;
     }
 
     /**
-     *@return String DisplayName 
+     * @return String DisplayName
      */
+    @Override
     public String getDisplayName() {
         return sentenceCasedName(this);
     }
@@ -136,16 +140,16 @@ public enum DesignConfigurationCode implements CodedEnum<String> {
     /**
      * 
      * @param code code
-     * @return biospecimenRetentionCode 
+     * @return biospecimenRetentionCode
      */
     public static DesignConfigurationCode getByCode(String code) {
         return getByClassAndCode(DesignConfigurationCode.class, code);
     }
-    
+
     /**
      * @return String[] display names of enums
      */
-    public static String[]  getDisplayNames() {
+    public static String[] getDisplayNames() {
         DesignConfigurationCode[] l = DesignConfigurationCode.values();
         String[] a = new String[l.length];
         for (int i = 0; i < l.length; i++) {
@@ -153,11 +157,5 @@ public enum DesignConfigurationCode implements CodedEnum<String> {
         }
         return a;
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    public String getNameByCode(String str) {
-        return getByCode(str).name();
-    }
+
 }

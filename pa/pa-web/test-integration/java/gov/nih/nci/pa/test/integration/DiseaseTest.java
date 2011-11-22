@@ -91,8 +91,8 @@ import org.junit.Test;
  */
 public class DiseaseTest extends AbstractPaSeleniumTest {
     
-    private static final String DISEASE1 = "adult melanocytic lesion";
-    private static final String DISEASE2 = "ciliary body and choroid melanoma, medium/large size";
+    private static final String DISEASE1 = "cellular diagnosis, intraocular melanoma";
+    private static final String DISEASE2 = "ciliary body and choroid melanoma, small size";
     private static final String ADD_BUTTON = "Add";
     private static final String REMOVE_BUTTON = "Remove";
     private static final String YES = "Yes";
