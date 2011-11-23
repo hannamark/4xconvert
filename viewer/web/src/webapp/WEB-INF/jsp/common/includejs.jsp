@@ -3,7 +3,7 @@
 <script type="text/javascript" language="javascript" src="${scriptPath}/js/jquery.sizes.min.js"></script>
 <script type="text/javascript" language="javascript" src="${scriptPath}/js/jquery.hotkeys.js"></script>
 <script type="text/javascript" language="javascript" src="${scriptPath}/js/jquery.jstree.js"></script>
-<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/jquery.ui.potato.menu.js"/>"></script>
+<script type="text/javascript" language="javascript" src="${scriptPath}/js/jquery.ui.potato.menu.js"></script>
 <script type="text/javascript" language="javascript" >
  jQuery.noConflict();
 </script>
@@ -13,8 +13,8 @@
 <script type="text/javascript" language="javascript" src="${scriptPath}/js/popup.js"></script>
 <script type="text/javascript" language="javascript" src="${scriptPath}/js/Help.js"></script>
 <script type="text/javascript" language="javascript" src="${scriptPath}/js/prototype.js"></script>
-<script type="text/javascript" language="javascript" src="${scriptPath}/js/control.tabs.js"> </script>
-<script type="text/javascript" language="javascript" src="${scriptPath}/js/ajaxHelper.js'/>"></script>  
+<script type="text/javascript" language="javascript" src="${scriptPath}/js/control.tabs.js"></script>
+<script type="text/javascript" language="javascript" src="${scriptPath}/js/ajaxHelper.js"></script>  
 <script type="text/javascript" language="javascript" src="${scriptPath}/scriptaculous/scriptaculous.js"></script>
 <script type="text/javascript" language="javascript" src="${scriptPath}/scriptaculous/effects.js"></script>
 <script type="text/javascript" language="javascript" src="${scriptPath}/scriptaculous/builder.js"></script>
