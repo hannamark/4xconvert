@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS DW_STUDY ;
 CREATE TABLE DW_STUDY (
-    ACCEPTS_HEALTHY_VOLUNTEERS_INDICATOR boolean,
+    ACCEPTS_HEALTHY_VOLUNTEERS_INDICATOR character varying(3),
     ACRONYM  character varying(200),
     ALLOCATION_CODE character varying(200),
     AMENDMENT_DATE date,
@@ -16,16 +16,16 @@ CREATE TABLE DW_STUDY (
     COMPLETION_DATE date,
     COMPLETION_DATE_TYPE_CODE character varying(50),
     CREATED_BY character varying(500),
-    CT_GOV_XML_REQUIRED_INDICATOR boolean,
+    CT_GOV_XML_REQUIRED_INDICATOR character varying(3),
     CTEP_ID character varying(200),
     CURRENT_MILESTONE character varying(200),
     CURRENT_TRIAL_STATUS character varying(200),
     CURRENT_TRIAL_STATUS_DATE date,
-    DATA_MONITORING_COMMITTEE_APPOINTED_INDICATOR boolean,
+    DATA_MONITORING_COMMITTEE_APPOINTED_INDICATOR character varying(3),
     DATE_LAST_CREATED date,
     DATE_LAST_UPDATED date,
     DCP_ID character varying(200),
-    DELAYED_POSTING_INDICATOR boolean,
+    DELAYED_POSTING_INDICATOR character varying(3),
     DETAIL_DESCRIPTION character varying(32000),
     DETAIL_DESCRIPTION_PRIMARY character varying(2000),
     DETAIL_DESCRIPTION_SECONDARY character varying(2000),
@@ -33,8 +33,8 @@ CREATE TABLE DW_STUDY (
     ELIGIBLE_GENDER character varying(200),
     ELIGIBLE_MAX_AGE character varying(200000),
     ELIGIBLE_MIN_AGE character varying(200000),
-    EXPANDED_ACCESS_INDICATOR boolean,
-    FDAREGULATED_INDICATOR boolean,
+    EXPANDED_ACCESS_INDICATOR character varying(3),
+    FDAREGULATED_INDICATOR character varying(3),
     INTERNAL_SYSTEM_ID INTEGER,
     INTERVENTIONAL_MODEL character varying(255),
     IRB_APPROVAL_NUMBER character varying(200),
@@ -76,7 +76,7 @@ CREATE TABLE DW_STUDY (
     PRINCIPAL_INVESTIGATOR character varying(1000),
     PROCESSING_STATUS character varying(200),
     PROGRAM_CODE character varying(100),
-    PROPRIETARY_TRIAL_INDICATOR boolean,
+    PROPRIETARY_TRIAL_INDICATOR character varying(3),
     PUBLIC_BRIEF_SUMMARY character varying(5000),
     PUBLIC_BRIEF_TITLE character varying(300),
     RECORD_STATUS_CODE character varying(200),
@@ -86,9 +86,9 @@ CREATE TABLE DW_STUDY (
     RESP_PARTY_TYPE character varying (50),
     RESPONSIBLE_PARTY_GENERIC_CONTACT character varying(200),
     RESPONSIBLE_PARTY_PERSONAL_CONTACT character varying(200),
-    REVIEW_BOARD_APPROVAL_REQUIRED_INDICATOR boolean,
+    REVIEW_BOARD_APPROVAL_REQUIRED_INDICATOR character varying(3),
     SAMPLING_METHOD_CODE character varying(200),
-    SECTION_801_INDICATOR boolean,
+    SECTION_801_INDICATOR character varying(3),
     SPONSOR character varying(255),
     SPONSOR_OR_RESPONSIBLE_PARTY character varying(1000),
     SPONSOR_RESP_PARTY_EMAIL character varying(200),
@@ -101,7 +101,8 @@ CREATE TABLE DW_STUDY (
     SUMMARY_4_FUNDING_CATEGORY character varying(200),
     SUMMARY_4_FUNDING_SPONSOR character varying(200),
     TYPE_STUDY character varying(100),
-    WHY_STUDY_STOPPED character varying(2000)
+    WHY_STUDY_STOPPED character varying(2000),
+    PRIMARY KEY (INTERNAL_SYSTEM_ID)
 ); 
 
 
@@ -128,15 +129,34 @@ INSERT INTO DW_STUDY (
     SECTION_801_INDICATOR, SPONSOR, START_DATE, START_DATE_TYPE_CODE, 
     SUBMISSION_NUMBER, SUBMITTER_NAME, SUBMITTER_ORGANIZATION, SUMMARY_4_FUNDING_CATEGORY,
     SUMMARY_4_FUNDING_SPONSOR, TYPE_STUDY, WHY_STUDY_STOPPED
-) SELECT sp.accept_healthy_volunteers_indicator, sp.acronym, sp.allocation_code, sp.amendment_date, 
+) SELECT 
+    CASE WHEN sp.accept_healthy_volunteers_indicator THEN 'YES'
+         ELSE 'NO'
+    END, 
+    sp.acronym, sp.allocation_code, sp.amendment_date, 
     sp.amendment_number, sp.amendment_reason_code, 
     central_contact.email, central_contact.telephone,
     admin.user_identifier, scientific.user_identifier, 
     sp.study_classification_code, sp.completion_date, sp.completion_date_type_code, creator.login_name, 
-    sp.ctgov_xml_required_indicator, milestone.milestone_code, current_status.status_code, current_status.status_date,
-    sp.data_monty_comty_apptn_indicator, sp.date_last_created, sp.date_last_updated, sp.delayed_posting_indicator, 
+    CASE WHEN sp.ctgov_xml_required_indicator THEN 'YES'
+         ELSE 'NO'
+    END, 
+    milestone.milestone_code, current_status.status_code, current_status.status_date,
+    CASE WHEN sp.data_monty_comty_apptn_indicator THEN 'YES'
+         ELSE 'NO'
+    END, 
+    sp.date_last_created, sp.date_last_updated, 
+    CASE WHEN sp.delayed_posting_indicator THEN 'YES'
+         ELSE 'NO'
+    END, 
     sp.scientific_description, obj_primary.description, obj_secondary.description, obj_ternary.description,
-    sp.expd_access_indidicator, sp.fda_regulated_indicator, sp.identifier, irb.review_board_approval_number, 
+    CASE WHEN sp.expd_access_indidicator THEN 'YES'
+         ELSE 'NO'
+    END,
+    CASE WHEN sp.fda_regulated_indicator THEN 'YES'
+         ELSE 'NO'
+    END,
+    sp.identifier, irb.review_board_approval_number, 
     irb.review_board_approval_status_code, irb_org.city, irb_org.country_name, irb_org.name,
     irb.review_board_organizational_affiliation, irb_org.state, irb_org.postal_code, sp.keyword_text, 
     updater.login_name, sp.design_configuration_code, lead_org.name, lead_org_id.local_sp_indentifier, 
@@ -145,9 +165,19 @@ INSERT INTO DW_STUDY (
     sp.official_title, oversight.authority_name, oversight_country.name, sp.phase_code, 
     sp.phase_additional_qualifier_code, sp.phase_other_text, sp.pri_compl_date, sp.pri_compl_date_type_code, 
     sp.primary_purpose_additional_qualifier_code, sp.primary_purpose_code, sp.primary_purpose_other_text, pi.first_name || ' ' || pi.last_name, 
-    processing_status.status_code, sp.program_code_text, sp.proprietary_trial_indicator, sp.public_description, 
-    sp.public_tittle, sp.status_code, sp.record_verification_date, rejection.comment_text, 
-    sp.accr_rept_meth_code, sp.review_brd_approval_req_indicator, sp.sampling_method_code, sp.section801_indicator,
+    processing_status.status_code, sp.program_code_text, 
+    CASE WHEN sp.proprietary_trial_indicator THEN 'YES'
+         ELSE 'NO'
+    END, 
+    sp.public_description, sp.public_tittle, sp.status_code, sp.record_verification_date, rejection.comment_text, 
+    sp.accr_rept_meth_code, 
+    CASE WHEN sp.review_brd_approval_req_indicator THEN 'YES'
+         ELSE 'NO'
+    END, 
+    sp.sampling_method_code, 
+    CASE WHEN sp.section801_indicator THEN 'YES'
+         ELSE 'NO'
+    END,
     sponsor.name, sp.start_date, sp.start_date_type_code, sp.submission_number, 
     submitter.first_name || ' ' || submitter.last_name, submitter.affiliate_org, summary4.type_code, summary4_sponsor.name, 
     sp.study_protocol_type, stopped.comment_text
