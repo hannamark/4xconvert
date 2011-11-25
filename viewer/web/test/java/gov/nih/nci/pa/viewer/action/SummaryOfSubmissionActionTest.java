@@ -83,6 +83,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import gov.nih.nci.pa.iso.util.IntConverter;
@@ -93,7 +94,9 @@ import gov.nih.nci.pa.report.service.TrialCountsLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.viewer.dto.criteria.StandardCriteriaWebDto;
 import gov.nih.nci.pa.viewer.dto.result.TrialCountsResultWebDto;
+import gov.nih.nci.pa.viewer.util.ServiceLocator;
 import gov.nih.nci.pa.viewer.util.ViewerConstants;
+import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -103,14 +106,12 @@ import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.opensymphony.xwork2.Action;
-
 /**
  * Tests for SummaryOfSubmissionAction.
  * 
  * @author Michael Visee
  */
-public class SummaryOfSubmissionTest extends AbstractReportActionTest<SummaryOfSubmissionAction> {
+public class SummaryOfSubmissionActionTest extends AbstractReportActionTest<SummaryOfSubmissionAction> {
 
     private TrialCountsLocal trialCountsReportService = mock(TrialCountsLocal.class);
 
@@ -147,14 +148,34 @@ public class SummaryOfSubmissionTest extends AbstractReportActionTest<SummaryOfS
     private void setDependencies(SummaryOfSubmissionAction action) {
         action.setTrialCountsReportService(trialCountsReportService);
     }
+    
+    /**
+     * Test the prepare method.
+     */
+    @Test
+    public void testPrepare() {
+        SummaryOfSubmissionAction sut = mock(SummaryOfSubmissionAction.class);
+        doCallRealMethod().when(sut).prepare();
+        ServiceLocator serviceLocator = mock(ServiceLocator.class);
+        ViewerServiceLocator.getInstance().setServiceLocator(serviceLocator);
+        when(serviceLocator.getTrialCountsReportService()).thenReturn(trialCountsReportService);
+        sut.prepare();
+        verify(sut).setTrialCountsReportService(trialCountsReportService);
+    }
 
     /**
      * Test the execute method.
      */
     @Test
-    public void executeTest() {
-        SummaryOfSubmissionAction sut = createSummaryOfSubmissionAction();
-        assertEquals(Action.SUCCESS, sut.execute());
+    public void testExecute() {
+        SummaryOfSubmissionAction sut = createSummaryOfSubmissionActionMock();
+        doCallRealMethod().when(sut).execute();
+        doCallRealMethod().when(sut).getUserRole();
+        doCallRealMethod().when(sut).getCriteria();
+        doCallRealMethod().when(sut).setCriteria(any(StandardCriteriaWebDto.class));
+        String result = sut.execute();
+        assertEquals("Wrong result returned", "success", result);
+        assertNotNull("No criteria created", sut.getCriteria());
     }
 
     /**

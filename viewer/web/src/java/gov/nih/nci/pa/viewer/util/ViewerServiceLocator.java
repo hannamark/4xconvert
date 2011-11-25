@@ -124,6 +124,7 @@ public final class ViewerServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public TrialListLocal getTrialListReportService() {
         return serviceLocator.getTrialListReportService();
     }
@@ -131,6 +132,7 @@ public final class ViewerServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public TrialCountsLocal getTrialCountsReportService() {
         return serviceLocator.getTrialCountsReportService();
     }
@@ -138,6 +140,7 @@ public final class ViewerServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public SubmitterOrganizationLocal getSubmitterOrganizationReportService() {
         return serviceLocator.getSubmitterOrganizationReportService();
     }
@@ -145,6 +148,7 @@ public final class ViewerServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Summ4RepLocal getSumm4ReportService() {
         return serviceLocator.getSumm4ReportService();
     }
@@ -152,6 +156,7 @@ public final class ViewerServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ProtocolQueryServiceLocal getProtocolQueryService() {
         return serviceLocator.getProtocolQueryService();
     }

@@ -92,6 +92,7 @@ import gov.nih.nci.pa.viewer.util.ViewerConstants;
 import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -102,53 +103,40 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 
+import com.opensymphony.xwork2.Preparable;
+
 /**
  * @author Max Shestopalov
  */
-public class Summ4RepAction 
-        extends AbstractReportAction <Summ4RepCriteriaWebDto, Summ4ResultWebDto> {
+public class Summary4ReportAction 
+        extends AbstractReportAction <Summ4RepCriteriaWebDto, Summ4ResultWebDto> implements Preparable {
 
     private static final long serialVersionUID = 7222372874396709972L;
+    private static final int MAX_LIMIT = 100;
+    
+    private Summ4RepLocal summ4ReportService;
+
+    private List<String> autoCompleteResult;
     private Summ4RepCriteriaWebDto criteria;
-  
-    private final Map<String, List<Summ4ResultWebDto>> agentDeviceMap = new HashMap<String, List<Summ4ResultWebDto>>();
-    private final Map<String, List<Summ4ResultWebDto>> otherInterventionMap
-        = new HashMap<String, List<Summ4ResultWebDto>>();
-
-    private final Map<String, String> families = new TreeMap<String, String>();
-    private final Map<String, String> organizations = new TreeMap<String, String>();
-    private final List<String> autoCompleteResult = new ArrayList<String>();
-    private final List<String> orgSearchTypes = new ArrayList<String>();
-    private String orgSearchType = getText("report.orgSearchType.byName");
+    private Map<String, String> families;
+    private Map<String, String> organizations;
+    private int orgSearchType;
+    private String term;
     
-    /**
-     * Limit of search results.
-     */
-    public static final int MAX_LIMIT = 100;
-    
-    /**
-     * Default constructor.
-     */
-    public Summ4RepAction() {
-        getOrgSearchTypes().add(getText("report.orgSearchType.byName"));
-        getOrgSearchTypes().add(getText("report.orgSearchType.byFamily"));
-    }
-    
-    /**
-     * @return the epidemOutcomeList
-     */
-    public List<Summ4ResultWebDto> getEpidemOutcomeList() {
-        return epidemOutcomeList;
-    }
-
-    /**
-     * @return the anciCorrList
-     */
-    public List<Summ4ResultWebDto> getAnciCorrList() {
-        return anciCorrList;
-    }
-    private final List<Summ4ResultWebDto> epidemOutcomeList = new ArrayList<Summ4ResultWebDto>();
+    private Map<String, List<Summ4ResultWebDto>> agentDeviceMap;
     private final List<Summ4ResultWebDto> anciCorrList = new ArrayList<Summ4ResultWebDto>();
+    private final List<Summ4ResultWebDto> epidemOutcomeList = new ArrayList<Summ4ResultWebDto>();
+    private final Map<String, List<Summ4ResultWebDto>> otherInterventionMap =
+            new HashMap<String, List<Summ4ResultWebDto>>();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() {
+        setSumm4ReportService(ViewerServiceLocator.getInstance().getSumm4ReportService());
+    }
+    
     
     /**
      * {@inheritDoc}
@@ -160,100 +148,17 @@ public class Summ4RepAction
         loadOrganizations();
         return super.execute();
     }
-
-    private void loadFamilies() {
-        Summ4RepLocal local = ViewerServiceLocator.getInstance().getSumm4ReportService();
+    
+    /**
+     * Load the families.
+     */
+    void loadFamilies() {
         try {
-            getFamilies().clear();
-            getFamilies().putAll(local.getFamilies(MAX_LIMIT));
+            families = new TreeMap<String, String>();
+            families.putAll(summ4ReportService.getFamilies(MAX_LIMIT));
         } catch (TooManyResultsException e) {
             addActionError(e.getMessage());
         }
-    }
-
-    private boolean isCriteriaValid() {
-        boolean returnVal = true;
-        if (CollectionUtils.isEmpty(criteria.getOrgNames()) && StringUtils.isBlank(criteria.getOrgName())) {
-            addActionError("An Organization name is required.");
-            returnVal = false;
-        }
-        
-        if (StringUtils.isBlank(criteria.getIntervalStartDate())) {
-            addActionError("A Start Date is required.");
-            returnVal = false;
-        }
-        
-        if (StringUtils.isBlank(criteria.getIntervalEndDate())) {
-            addActionError("An End Date is required.");
-            returnVal = false;
-        }
-        
-        return returnVal;
-    }
-    
-    private boolean isReportInError() {
-        if (!isCriteriaValid()) {
-            return true;
-        }
-        
-        Summ4RepLocal local = ViewerServiceLocator.getInstance().getSumm4ReportService();
-        List<Summ4RepResultDto> isoList;
-        try {
-            isoList = local.get(criteria.getIsoDto());
-        } catch (PAException e) {
-            addActionError(e.getMessage());
-            return true;
-        }
-        setResultList(Summ4ResultWebDto.getWebList(isoList));
-        
-        return false;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getReport() {
-        loadFamilies();
-        loadOrganizations();
-
-        if (isReportInError()) {
-            return super.execute();
-        }
-       
-        for (Summ4ResultWebDto item : getResultList()) {
-            addItemToMap(agentDeviceMap, item);
-        }
-        
-        ServletActionContext.getRequest().getSession()
-                .setAttribute(ViewerConstants.SUMM4_AGENT_DEVICE_RESULT_MAP, agentDeviceMap);
-        
-        return super.getReport();
-    }
-    
-    private void addItemToMap(Map<String, List<Summ4ResultWebDto>> myMap, Summ4ResultWebDto item) {
-        if (!myMap.containsKey(item.getSubSortCriteria())) {
-            myMap.put(item.getSubSortCriteria(), new ArrayList<Summ4ResultWebDto>());
-        }
-        myMap.get(item.getSubSortCriteria()).add(item);
-    }
-        
-    /**
-     * Auto complete action.
-     * @return list
-     * @throws PAException if error
-     */
-    public String getAutoComplete() throws PAException {
-        Summ4RepLocal local = ViewerServiceLocator.getInstance().getSumm4ReportService();
-       
-        getAutoCompleteResult().clear();
-        try {
-            getAutoCompleteResult().addAll(local.searchPoOrgNames(criteria.getOrgName(), MAX_LIMIT));
-        } catch (TooManyResultsException e) {
-            getAutoCompleteResult().add(criteria.getOrgName());
-        }    
-        
-        return super.getReport();
     }
 
     /**
@@ -261,22 +166,97 @@ public class Summ4RepAction
      * @return list
      */
     public String loadOrganizations() {
-        Summ4RepLocal local = ViewerServiceLocator.getInstance().getSumm4ReportService();
-        getOrganizations().clear();
-        if (criteria == null || StringUtils.isEmpty(criteria.getFamilyId())) {
-            return super.getReport();
+        organizations = new TreeMap<String, String>();
+        if (criteria != null && StringUtils.isNotEmpty(criteria.getFamilyId())) {
+            try {
+                Map<String, String> orgMap = summ4ReportService.getOrganizations(criteria.getFamilyId(), MAX_LIMIT);
+                for (String orgName : orgMap.keySet()) {
+                    String display = orgName + " (" + orgMap.get(orgName).toUpperCase(Locale.getDefault()) + ")";
+                    organizations.put(orgName, display);
+                }
+            } catch (TooManyResultsException e) {
+                addActionError(e.getMessage());
+            }
+        }
+        return super.getReport();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getReport() {
+        loadFamilies();
+        loadOrganizations();
+        if (isReportInError()) {
+            return super.execute();
+        }
+        agentDeviceMap = new HashMap<String, List<Summ4ResultWebDto>>();
+        for (Summ4ResultWebDto item : getResultList()) {
+            if (!agentDeviceMap.containsKey(item.getSubSortCriteria())) {
+                agentDeviceMap.put(item.getSubSortCriteria(), new ArrayList<Summ4ResultWebDto>());
+            }
+            agentDeviceMap.get(item.getSubSortCriteria()).add(item);
+        }
+        ServletActionContext.getRequest().getSession()
+            .setAttribute(ViewerConstants.SUMM4_AGENT_DEVICE_RESULT_MAP, agentDeviceMap);
+        return super.getReport();
+    }
+
+    /**
+     * Generates the report.
+     * @return true if there is an error
+     */
+    boolean isReportInError() {
+        if (!isCriteriaValid()) {
+            return true;
         }
         try {
-            Map<String, String> orgMap = local.getOrganizations(criteria.getFamilyId(), MAX_LIMIT);
-            for (String orgName : orgMap.keySet()) {
-                getOrganizations().put(orgName,
-                        orgName.concat(" (" + orgMap.get(orgName).toUpperCase(Locale.getDefault()) + ")"));
-            }
-        } catch (TooManyResultsException e) {
+            List<Summ4RepResultDto> isoList = summ4ReportService.get(criteria.getIsoDto());
+            setResultList(Summ4ResultWebDto.getWebList(isoList));
+            return false;
+        } catch (PAException e) {
             addActionError(e.getMessage());
+            return true;
+        }
+
+    }
+
+    /**
+     * Test if the criteria is valid.
+     * @return true if the criteria is valid
+     */
+    boolean isCriteriaValid() {
+        boolean returnVal = true;
+        if (CollectionUtils.isEmpty(criteria.getOrgNames()) && StringUtils.isBlank(criteria.getOrgName())) {
+            addActionError("An Organization name is required.");
+            returnVal = false;
+        }
+        if (StringUtils.isBlank(criteria.getIntervalStartDate())) {
+            addActionError("A Start Date is required.");
+            returnVal = false;
+        }
+        if (StringUtils.isBlank(criteria.getIntervalEndDate())) {
+            addActionError("An End Date is required.");
+            returnVal = false;
+        }
+        return returnVal;
+    }
+
+    /**
+     * Auto complete action.
+     * @return result name
+     * @throws PAException if error
+     */
+    public String getOrganizationNames() throws PAException {
+        try {
+            autoCompleteResult = summ4ReportService.searchPoOrgNames(term, MAX_LIMIT);
+            Collections.sort(autoCompleteResult);
+        } catch (TooManyResultsException e) {
+            autoCompleteResult = new ArrayList<String>();
+            autoCompleteResult.add(term);
         }    
-        
-        return super.getReport();
+        return SUCCESS;
     }
 
     /**
@@ -285,6 +265,7 @@ public class Summ4RepAction
     public Summ4RepCriteriaWebDto getCriteria() {
         return criteria;
     }
+
     /**
      * @param criteria the criteria to set
      */
@@ -300,10 +281,45 @@ public class Summ4RepAction
     }
 
     /**
+     * @return the families
+     */
+    public Map<String, String> getFamilies() {
+        return families;
+    }
+
+    /**
      * @return the organizations
      */
     public Map<String, String> getOrganizations() {
         return organizations;
+    }
+
+    /**
+     * @return the orgSearchType
+     */
+    public int getOrgSearchType() {
+        return orgSearchType;
+    }
+
+    /**
+     * @param orgSearchType the orgSearchType to set
+     */
+    public void setOrgSearchType(int orgSearchType) {
+        this.orgSearchType = orgSearchType;
+    }
+
+    /**
+     * @return the term
+     */
+    public String getTerm() {
+        return term;
+    }
+
+    /**
+     * @param term the term to set
+     */
+    public void setTerm(String term) {
+        this.term = term;
     }
 
     /**
@@ -313,6 +329,12 @@ public class Summ4RepAction
         return agentDeviceMap;
     }
 
+    /**
+     * @return the anciCorrList
+     */
+    public List<Summ4ResultWebDto> getAnciCorrList() {
+        return anciCorrList;
+    }
 
     /**
      * @return the otherInterventionMap
@@ -322,37 +344,17 @@ public class Summ4RepAction
     }
 
     /**
-     * @return the families
+     * @return the epidemOutcomeList
      */
-    public Map<String, String> getFamilies() {
-        return families;
+    public List<Summ4ResultWebDto> getEpidemOutcomeList() {
+        return epidemOutcomeList;
     }
 
-    /**
-     * @return the orgSearchTypes
-     */
-    public List<String> getOrgSearchTypes() {
-        return orgSearchTypes;
-    }
-    
-    /**
-     * @return the defaultOrgSearchType
-     */
-    public String getDefaultOrgSearchType() {
-        return "Find by Org Name";
-    }
 
     /**
-     * @return the orgSearchType
+     * @param summ4ReportService the summ4ReportService to set
      */
-    public String getOrgSearchType() {
-        return orgSearchType;
-    }
-
-    /**
-     * @param orgSearchType the orgSearchType to set
-     */
-    public void setOrgSearchType(String orgSearchType) {
-        this.orgSearchType = orgSearchType;
+    public void setSumm4ReportService(Summ4RepLocal summ4ReportService) {
+        this.summ4ReportService = summ4ReportService;
     }
 }

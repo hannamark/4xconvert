@@ -2,7 +2,7 @@
 
 <c:url value="/ctro/ajax/refreshAgencyDeviceEPPResultsSumm4Rep.action" var="agencyDeviceEPPSortUrl"/>
 <s:set name="eppStr" value="@gov.nih.nci.pa.viewer.util.ViewerConstants@EXTERNALLY_PEER_REVIEWED" />
-<h3>Externally Peer Reviewed</h3>
+<h3><fmt:message key="summary4Report.resultHead.epr"/></h3>
 <table width="100%">
     <tr>               
         <td colspan="2">

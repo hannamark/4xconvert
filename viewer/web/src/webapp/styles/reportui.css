@@ -4,13 +4,13 @@
 }
 
 /* Tabs */
-#reporttabs { 
+.ui-tabs .ui-tabs-nav { 
     background: none;
     border: 0;
     color: #030303;
 }
 
-#reporttabs li {
+.ui-tabs .ui-tabs-nav li {
     background:#dadada;
     font-size: 14px; 
     font-weight: bold;
@@ -22,31 +22,31 @@
     -webkit-border-top-right-radius:4px;  
 }
 
-#reporttabs .ui-state-default {
+.ui-tabs .ui-tabs-nav .ui-state-default {
     border-color: #0c0c0c; 
 }
 
-#reporttabs .ui-state-default.ui-state-active {
+.ui-tabs .ui-tabs-nav .ui-state-default.ui-state-active {
     border-color: #c1c1c1;
 }
 
-#reporttabs .ui-state-default.ui-state-hover {
+.ui-tabs .ui-tabs-nav .ui-state-default.ui-state-hover {
     border-color: #c1c1c1;
 }
 
-#reporttabs .ui-state-default a {
+.ui-tabs .ui-tabs-nav .ui-state-default a {
     background: #ebebeb;
     color: #656565;
     text-decoration:none;
 }
 
-#reporttabs .ui-state-default.ui-state-active a {
+.ui-tabs .ui-tabs-nav .ui-state-default.ui-state-active a {
     background: #dadada;
     color: #030303;
     text-decoration:none;
 }
 
-#reporttabs .ui-state-default.ui-state-hover a {
+.ui-tabs .ui-tabs-nav .ui-state-default.ui-state-hover a {
     background: #eeeeee;
     color: #000;
     text-decoration:none;

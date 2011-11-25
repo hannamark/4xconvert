@@ -101,7 +101,9 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.viewer.dto.criteria.InstitutionCriteriaWebDto;
 import gov.nih.nci.pa.viewer.dto.result.TrialCountsResultWebDto;
 import gov.nih.nci.pa.viewer.dto.result.TrialListResultWebDto;
+import gov.nih.nci.pa.viewer.util.ServiceLocator;
 import gov.nih.nci.pa.viewer.util.ViewerConstants;
+import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -113,9 +115,12 @@ import org.apache.struts2.ServletActionContext;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.opensymphony.xwork2.Action;
-
-public class SubmissionByInstitutionTest extends AbstractReportActionTest<SubmissionByInstitutionAction> {
+/**
+ * Test for SubmissionByInstitutionAction.
+ * 
+ * @author Michael Visee
+ */
+public class SubmissionByInstitutionActionTest extends AbstractReportActionTest<SubmissionByInstitutionAction> {
     
     private SubmitterOrganizationLocal submitterOrganizationReportService = mock(SubmitterOrganizationLocal.class);
     private TrialListLocal trialListReportService = mock(TrialListLocal.class);
@@ -157,12 +162,34 @@ public class SubmissionByInstitutionTest extends AbstractReportActionTest<Submis
     }
     
     /**
+     * Test the prepare method.
+     */
+    @Test
+    public void testPrepare() {
+        SubmissionByInstitutionAction sut = mock(SubmissionByInstitutionAction.class);
+        doCallRealMethod().when(sut).prepare();
+        ServiceLocator serviceLocator = mock(ServiceLocator.class);
+        ViewerServiceLocator.getInstance().setServiceLocator(serviceLocator);
+        when(serviceLocator.getSubmitterOrganizationReportService()).thenReturn(submitterOrganizationReportService);
+        when(serviceLocator.getTrialListReportService()).thenReturn(trialListReportService);
+        sut.prepare();
+        verify(sut).setSubmitterOrganizationReportService(submitterOrganizationReportService);
+        verify(sut).setTrialListReportService(trialListReportService);
+    }
+    
+    /**
      * Test the execute method.
      */
     @Test
-    public void executeTest() {
-        SubmissionByInstitutionAction sut = createSubmissionByInstitutionAction();
-        assertEquals(Action.SUCCESS, sut.execute());
+    public void testExecute() {
+        SubmissionByInstitutionAction sut = createSubmissionByInstitutionActionMock();
+        doCallRealMethod().when(sut).execute();
+        doCallRealMethod().when(sut).getUserRole();
+        doCallRealMethod().when(sut).getCriteria();
+        doCallRealMethod().when(sut).setCriteria(any(InstitutionCriteriaWebDto.class));
+        String result = sut.execute();
+        assertEquals("Wrong result returned", "success", result);
+        assertNotNull("No criteria created", sut.getCriteria());
     }
     
     /**

@@ -78,11 +78,8 @@ package gov.nih.nci.pa.viewer.action;
 
 import static org.junit.Assert.assertEquals;
 
-import gov.nih.nci.pa.viewer.util.MockServiceLocator;
 import gov.nih.nci.pa.viewer.util.ViewerConstants;
-import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
-import org.junit.Before;
 import org.junit.Test;
 
 public class AbstractReportActionTest<ACTION extends AbstractReportAction<?, ?>> extends AbstractViewerActionTest {
@@ -90,12 +87,7 @@ public class AbstractReportActionTest<ACTION extends AbstractReportAction<?, ?>>
     protected static final String DATE_1 = "1/13/2009";
     protected static final String DATE_2 = "3/31/2009";
 
-    ACTION action = null;
-
-    @Before
-    public void initMockServiceLocator() {
-        ViewerServiceLocator.getInstance().setServiceLocator(new MockServiceLocator());
-    }
+    ACTION action;
 
     @Test
     public void sessionTimeoutExecuteTest() {

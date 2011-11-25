@@ -21,16 +21,16 @@ public final class Summ4ResultWebDto {
     private String pi = "";
     private String programCode = "";
     private String orgMember = "";
-    private Timestamp openDate = null;
-    private Timestamp closedDate = null;
+    private Timestamp openDate;
+    private Timestamp closedDate;
     private String phase = "";
     private String type = "";
     private String title = "";
-    private Integer target = null;
-    private Integer accrualCenterLO12m = null;
-    private Integer accrualCenterTS12m = null;
-    private Integer accrualCenterLOToDate = null;
-    private Integer accrualCenterTSToDate = null;
+    private Integer target;
+    private Integer accrualCenterLO12m;
+    private Integer accrualCenterTS12m;
+    private Integer accrualCenterLOToDate;
+    private Integer accrualCenterTSToDate;
     private String sortCriteria = "";
     private String subSortCriteria = "";
     private String anatomicSites = "";
@@ -42,14 +42,15 @@ public final class Summ4ResultWebDto {
     /**
      * Default constructor.
      */
-    private Summ4ResultWebDto() {
+    public Summ4ResultWebDto() {
+        super();
     }
 
     /**
      * Constructor using service dto.
      * @param dto the service iso dto
      */
-    private Summ4ResultWebDto(Summ4RepResultDto dto) {
+    public Summ4ResultWebDto(Summ4RepResultDto dto) {
         if (dto == null) { return; }
         sponsor = StConverter.convertToString(dto.getSponsor());
         protoId = StConverter.convertToString(dto.getProtoId());

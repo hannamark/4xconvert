@@ -78,20 +78,21 @@ package gov.nih.nci.pa.viewer.action;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.opensymphony.xwork2.Action;
-
+/**
+ * Test for LogoutAction.
+ * 
+ * @author Michael Visee
+ */
 public class LogoutActionTest extends AbstractViewerActionTest {
 
-    LogoutAction action;
+    private LogoutAction action = new LogoutAction();;
 
-    @Before
-    public void initAction() {
-        action = new LogoutAction();
-    }
-
+    /**
+     * Test the logout method
+     */
     @Test
     public void inSessionTest() {
         assertEquals(Action.SUCCESS, action.logout());

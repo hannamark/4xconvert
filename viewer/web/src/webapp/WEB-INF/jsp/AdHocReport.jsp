@@ -85,21 +85,20 @@
     <body>
     	<input type="hidden" id="imagePath" name="imagePath" value="${imagePath}" />
         <h1><fmt:message key="adHocReport.title"/></h1>
-        <s:form id="searchForm" name="sForm">
-            <s:token/>
-            <s:if test="hasActionErrors()">
-                <div class="error_msg">
-                    <s:actionerror />
-                </div>
-            </s:if> 
-            <div id="reportui">
-                <!--Tabs-->
-                <ul id="reporttabs" class="clearfix">
-                    <li><a href="#filtersTab"><fmt:message key="report.tab.filters"/></a></li>
-                    <li><a href="#resultsTab"><fmt:message key="report.tab.results"/></a></li>
-                </ul>
-                <!--/Tabs-->
-                <div id="filtersTab">
+        <s:if test="hasActionErrors()">
+            <div class="error_msg">
+                <s:actionerror />
+            </div>
+        </s:if> 
+        <div id="reportui">
+            <!--Tabs-->
+            <ul id="reporttabs" class="clearfix">
+                <li><a href="#filtersTab"><fmt:message key="report.tab.filters"/></a></li>
+                <li><a href="#resultsTab"><fmt:message key="report.tab.results"/></a></li>
+            </ul>
+            <!--/Tabs-->
+            <div id="filtersTab">
+                <s:form id="searchForm" name="sForm">
                     <!--Filters-->
                     <div id="filtersAccordion">
                         <div id="expandAll">
@@ -134,12 +133,12 @@
                         <viewer:button labelKey="report.button.run" id="runButton" imgClass="search" />
                         <viewer:button labelKey="report.button.reset" id="resetButton" imgClass="cancel" />
                     </viewer:buttonBar>
-                </div>
-                <div id="resultsTab">
-                    <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/result.jsp"/>
-                </div>
-            </div>    
-        </s:form>
+                </s:form>
+            </div>
+            <div id="resultsTab">
+                <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/result.jsp"/>
+            </div>
+        </div>    
         <div id="templates">
             <jsp:include page="/WEB-INF/jsp/nodecorate/templates/loadingMessage.jsp"/>
         </div>

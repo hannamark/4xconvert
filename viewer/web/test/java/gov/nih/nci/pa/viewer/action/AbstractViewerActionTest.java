@@ -20,8 +20,15 @@ import com.opensymphony.xwork2.inject.Container;
 import com.opensymphony.xwork2.util.ValueStack;
 import com.opensymphony.xwork2.util.ValueStackFactory;
 
+/**
+ * Base class for viewer action test classes
+ * 
+ * @author Michael Visee
+ */
 public abstract class AbstractViewerActionTest {
-
+    /**
+     * user attached to the request
+     */
     protected static final String USER = "joe@barngrill.com";
 
     /**
@@ -58,6 +65,10 @@ public abstract class AbstractViewerActionTest {
         ActionContext.setContext(null);
     }
 
+    /**
+     * Sets the role in the session.
+     * @param role The role to set
+     */
     public void setRole(String role) {
         if (role != null) {
             ServletActionContext.getRequest().getSession().setAttribute(ViewerConstants.SESSION_ATTR_ROLE, role);

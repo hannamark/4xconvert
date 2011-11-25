@@ -140,12 +140,12 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
      */
     @Override
     public void prepare() {
-        diseaseService = PaRegistry.getDiseaseService();
-        lookUpTableService = PaRegistry.getLookUpTableService();
-        paOrganizationService = PaRegistry.getPAOrganizationService();
-        plannedMarkerService = PaRegistry.getPlannedMarkerService();
-        protocolQueryService = PaRegistry.getProtocolQueryService();
-        tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorService();
+        setDiseaseService(PaRegistry.getDiseaseService());
+        setLookUpTableService(PaRegistry.getLookUpTableService());
+        setPaOrganizationService(PaRegistry.getPAOrganizationService());
+        setPlannedMarkerService(PaRegistry.getPlannedMarkerService());
+        setProtocolQueryService(PaRegistry.getProtocolQueryService());
+        setTsrReportGeneratorService(PaRegistry.getTSRReportGeneratorService());
     }
 
     /**

@@ -88,14 +88,18 @@ import java.util.Date;
 
 import org.junit.Test;
 
-
-public class Summ4ReportSeleniumTest extends AbstractViewerSeleniumTest {
+/**
+ * Selenium test for summary4Type report.
+ * 
+ * @author Michael Visee
+ */
+public class Summary4ReportSeleniumTest extends AbstractViewerSeleniumTest {
 
     /**
      * Tests Summ 4 form validation.
      */
     @Test
-    public void testSumm4Form() {
+    public void testSummary4Form() {
         loginAsAbstractor();
         disclaimer(true);
         clickAndWait("link=Summary 4 Type");
@@ -103,7 +107,7 @@ public class Summ4ReportSeleniumTest extends AbstractViewerSeleniumTest {
         assertEquals("01/01/2009", selenium.getValue("id=intervalStartDate"));
         assertEquals(new SimpleDateFormat("MM/dd/yyyy").format(new Date()), selenium.getValue("id=intervalEndDate"));
 
-        clickAndWait("link=Run report");
+        clickAndWait("id=runButton");
         waitForElementById("intervalStartDate", 15);
         assertTrue(selenium.isTextPresent("An Organization name is required."));
         
@@ -111,7 +115,7 @@ public class Summ4ReportSeleniumTest extends AbstractViewerSeleniumTest {
         selenium.type("id=intervalEndDate", "02/02/2010");
         assertEquals("02/02/2010", selenium.getValue("id=intervalStartDate"));
         assertEquals("02/02/2010", selenium.getValue("id=intervalEndDate"));
-        clickAndWait("link=Reset");
+        clickAndWait("id=resetButton");
         assertTrue(selenium.isTextPresent("Summary 4 Type Report"));
         assertEquals("01/01/2009", selenium.getValue("id=intervalStartDate"));
         assertEquals(new SimpleDateFormat("MM/dd/yyyy").format(new Date()), selenium.getValue("id=intervalEndDate"));

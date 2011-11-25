@@ -129,8 +129,9 @@ public class SubmissionByInstitutionAction
      */
     @Override
     public void prepare() {
-        submitterOrganizationReportService = ViewerServiceLocator.getInstance().getSubmitterOrganizationReportService();
-        trialListReportService = ViewerServiceLocator.getInstance().getTrialListReportService();
+        ViewerServiceLocator locator = ViewerServiceLocator.getInstance();
+        setSubmitterOrganizationReportService(locator.getSubmitterOrganizationReportService());
+        setTrialListReportService(locator.getTrialListReportService());
     }
 
     /**

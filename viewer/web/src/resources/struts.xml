@@ -46,10 +46,6 @@
                     <param name="trimToNull">true</param>
                     <param name="trimFromFront">true</param>
                 </interceptor-ref>
-                <interceptor-ref name="tokenSession">
-                    <param name="includeMethods">getReport</param>
-                    <param name="excludeMethods">*</param>
-                </interceptor-ref>
             </interceptor-stack>
         </interceptors>
         <global-results>
@@ -97,59 +93,16 @@
             <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/{1}.jsp</result>
         </action>
-        <action name="popupWaitDialog">
-            <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>
-        </action>
     </package>
 
     <package name="ctroajax" namespace="/ctro/ajax" extends="public">
-        <action name="refreshAncCorResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
+        <action name="refreshSummary4Report*" class="gov.nih.nci.pa.viewer.action.Summary4ReportAction" method="getReport">
             <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepAncillaryCorrelativeResult.jsp</result>
+            <result>/WEB-INF/jsp/nodecorate/summary4Report/{1}.jsp</result>
         </action>
-        <action name="refreshEpidemResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
+        <action name="refreshOrganizationsSummary4Report" class="gov.nih.nci.pa.viewer.action.Summary4ReportAction" method="loadOrganizations">
             <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepEpidemOutcomeResult.jsp</result>
-        </action>
-        <!-- agency/device -->
-        <action name="refreshAgencyDeviceNationalResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
-            <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceNationalResult.jsp</result>
-        </action>
-        <action name="refreshAgencyDeviceEPPResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
-            <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceEPPResult.jsp</result>
-        </action>
-        <action name="refreshAgencyDeviceInstitutionalResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
-            <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceInstitutionalResult.jsp</result>
-        </action>
-        <action name="refreshAgencyDeviceIndustrialResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
-            <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepAgencyDeviceIndustrialResult.jsp</result>
-        </action>
-        <!-- other interventions -->
-        <action name="refreshOtherIntEPPResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
-            <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepOtherInterventionEPPResult.jsp</result>
-        </action>
-        <action name="refreshOtherIntNationalResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
-            <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepOtherInterventionNationalResult.jsp</result>
-        </action>
-        <action name="refreshOtherIntInstitutionalResults*" class="gov.nih.nci.pa.viewer.action.Summ4RepAction" method="getReport">
-            <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepOtherInterventionInstitutionalResult.jsp</result>
-        </action>
-
-        <action name="refreshAutocompleteResults*" class="gov.nih.nci.pa.viewer.action.{1}Action" method="getAutoComplete">
-            <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepAutoCompleteResult.jsp</result>
-        </action>
-        <action name="refreshOrganizations*" class="gov.nih.nci.pa.viewer.action.{1}Action" method="loadOrganizations">
-            <interceptor-ref name="methodValidationStack" />
-            <result>/WEB-INF/jsp/nodecorate/summ4RepOrganizationsResult.jsp</result>
+            <result>/WEB-INF/jsp/nodecorate/summary4Report/organizationsByFamily.jsp</result>
         </action>
         <action name="resultsAdHocReportviewTSR" class="gov.nih.nci.pa.viewer.action.AdHocReportAction" method="viewTSR">
             <interceptor-ref name="methodValidationStack" />
@@ -157,6 +110,11 @@
     </package>
     
     <package name="ctrojson" namespace="/ctro/json" extends="public">
-        
+        <action name="summary4ReportGetOrganizationNames" class="gov.nih.nci.pa.viewer.action.Summary4ReportAction" method="getOrganizationNames">
+            <interceptor-ref name="methodValidationStack" />
+            <result type="json">
+                <param name="root">autoCompleteResult</param>
+            </result>
+        </action>
     </package>
 </struts>

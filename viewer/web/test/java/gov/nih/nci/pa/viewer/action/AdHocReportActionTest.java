@@ -219,12 +219,45 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         action.setProtocolQueryService(protocolQueryService);
         action.setTsrReportGeneratorService(tsrReportGeneratorService);
     }
-
+    
+    /**
+     * Test the prepare method.
+     */
     @Test
-    public void testExecute() throws PAException {
-        assertEquals("success", action.execute());
+    public void testPrepare() {
+        AdHocReportAction sut = mock(AdHocReportAction.class);
+        doCallRealMethod().when(sut).prepare();
+        ServiceLocator serviceLocator = mock(ServiceLocator.class);
+        PaRegistry.getInstance().setServiceLocator(serviceLocator);
+        when(serviceLocator.getDiseaseService()).thenReturn(diseaseService);
+        when(serviceLocator.getLookUpTableService()).thenReturn(lookUpTableService);
+        when(serviceLocator.getPAOrganizationService()).thenReturn(paOrganizationService);
+        when(serviceLocator.getPlannedMarkerService()).thenReturn(plannedMarkerService);
+        when(serviceLocator.getProtocolQueryService()).thenReturn(protocolQueryService);
+        when(serviceLocator.getTSRReportGeneratorService()).thenReturn(tsrReportGeneratorService);
+        sut.prepare();
+        verify(sut).setDiseaseService(diseaseService);
+        verify(sut).setLookUpTableService(lookUpTableService);
+        verify(sut).setPaOrganizationService(paOrganizationService);
+        verify(sut).setPlannedMarkerService(plannedMarkerService);
+        verify(sut).setProtocolQueryService(protocolQueryService);
+        verify(sut).setTsrReportGeneratorService(tsrReportGeneratorService);
     }
-
+    
+    /**
+     * Test the execute method.
+     */
+    @Test
+    public void testExecute() {
+        AdHocReportAction sut = createAdHocReportActionMock();
+        doCallRealMethod().when(sut).execute();
+        doCallRealMethod().when(sut).getUserRole();
+        doCallRealMethod().when(sut).getCriteria();
+        doCallRealMethod().when(sut).setCriteria(any(StudyProtocolQueryCriteria.class));
+        String result = sut.execute();
+        assertEquals("Wrong result returned", "success", result);
+        assertNotNull("No criteria created", sut.getCriteria());
+    }
 
     @Test
     public void testQueryIdentifierTypes() throws PAException {

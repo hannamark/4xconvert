@@ -29,7 +29,7 @@ public class SummaryOfSubmissionAction extends AbstractReportAction<StandardCrit
      */
     @Override
     public void prepare() {
-        trialCountsReportService = ViewerServiceLocator.getInstance().getTrialCountsReportService();
+        setTrialCountsReportService(ViewerServiceLocator.getInstance().getTrialCountsReportService());
     }
 
     /**

@@ -42,33 +42,32 @@
     <h1>
         <fmt:message key="sbiReport.title" />
     </h1>
-    <s:form id="searchForm" name="sForm">
-        <s:token />
-        <s:if test="hasActionErrors()">
-            <div class="error_msg">
-                <s:actionerror />
-            </div>
-        </s:if>
-        <div id="reportui">
-            <!--Tabs-->
-            <ul id="reporttabs" class="clearfix">
-                <li><a href="#filtersTab"><fmt:message key="report.tab.filters" /> </a></li>
-                <li><a href="#resultsTab"><fmt:message key="report.tab.results" /> </a></li>
-            </ul>
-            <!--/Tabs-->
-            <div id="filtersTab">
+    <s:if test="hasActionErrors()">
+        <div class="error_msg">
+            <s:actionerror />
+        </div>
+    </s:if>
+    <div id="reportui">
+        <!--Tabs-->
+        <ul id="reporttabs" class="clearfix">
+            <li><a href="#filtersTab"><fmt:message key="report.tab.filters" /> </a></li>
+            <li><a href="#resultsTab"><fmt:message key="report.tab.results" /> </a></li>
+        </ul>
+        <!--/Tabs-->
+        <div id="filtersTab">
+            <s:form id="searchForm" name="sForm">
                 <!--Filters-->
                 <jsp:include page="/WEB-INF/jsp/nodecorate/submissionByInstitution/criteria.jsp" />
                 <viewer:buttonBar>
                     <viewer:button labelKey="report.button.run" id="runButton" imgClass="search" />
                     <viewer:button labelKey="report.button.reset" id="resetButton" imgClass="cancel" />
                 </viewer:buttonBar>
-            </div>
-            <div id="resultsTab">
-                <jsp:include page="/WEB-INF/jsp/nodecorate/submissionByInstitution/result.jsp" />
-            </div>
+            </s:form>
         </div>
-    </s:form>
+        <div id="resultsTab">
+            <jsp:include page="/WEB-INF/jsp/nodecorate/submissionByInstitution/result.jsp" />
+        </div>
+    </div>
     <div id="templates">
         <jsp:include page="/WEB-INF/jsp/nodecorate/templates/loadingMessage.jsp" />
     </div>
