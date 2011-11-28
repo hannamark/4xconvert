@@ -1,0 +1,307 @@
+-- To generate list:
+-- COPY (select f.name, o.name from organization o join familyorganizationrelationship fo on fo.organization_id=o.id join family f on f.id=fo.family_id where fo.enddate is null and f.statuscode='ACTIVE' order by f.name asc) TO '/tmp/families_orgs.txt';
+-- To import list:
+-- COPY dw_family_organization(family_name, organization_name) FROM '/tmp/families_orgs.txt'
+
+Abramson Cancer Center	University of Pennsylvania School of Medicine
+Abramson Cancer Center	Penn Presbyterian Medical Center
+Abramson Cancer Center	Chestnut Hill Health System
+Abramson Cancer Center	Holy Redeemer Hospital and Medical Center
+Abramson Cancer Center	Doylestown Hospital
+Abramson Cancer Center	Saint Barnabas Medical Center
+Abramson Cancer Center	Kennedy Health Systems
+Abramson Cancer Center	Phoenixville Hospital
+Abramson Cancer Center	University of Pennsylvania Health System
+Abramson Cancer Center	Abramson Cancer Center of The University of Pennsylvania
+Abramson Cancer Center	Lancaster General Hospital
+Abramson Cancer Center	Bayhealth Cancer Center
+Abramson Cancer Center	Pennsylvania Hospital
+Abramson Cancer Center	University of Pennsylvania Medical Center
+Abramson Cancer Center	Hospital of The University of Pennsylvania
+Abramson Cancer Center	Abramson Family Cancer Research Institute
+Abramson Cancer Center	Shore Memorial Hospital
+Albert Einstein Cancer Center	Eastern Cooperative Oncology Group
+Albert Einstein Cancer Center	Albert Einstein College of Medicine
+Albert Einstein Cancer Center	Jacobi Hospital
+Albert Einstein Cancer Center	Montefiore Medical Center Phase 2 Consortium
+Albert Einstein Cancer Center	Montefiore Medical Center-Weiler Division
+Albert Einstein Cancer Center	Montefiore Medical Center
+Albert Einstein Cancer Center	The North Division of Montefiore Medical Center
+Albert Einstein Cancer Center	Gynecologic Oncology Group
+Arizona Cancer Center	University of Arizona Health Sciences Center
+Arizona Cancer Center	Arizona Cancer Center
+Arizona Cancer Center	Premiere Oncology of Arizona
+Arizona Cancer Center	Arizona Cancer Center at University Medical Center North
+Arizona Cancer Center	Arizona Cancer Center
+Arizona Cancer Center	Arizona Cancer Center at UMC Orange Grove
+Cancer Therapy & Research Center	Cancer Therapy and Research Center at The UT Health Science Center at San Antonio
+Cancer Therapy & Research Center	Christus Santa Rosa Hospital-Medical Center
+Cancer Therapy & Research Center	University of Texas Health Science Center
+Case Comprehensive Cancer Center	Case Western Reserve University
+Case Comprehensive Cancer Center	Case Medical Center, University Hospitals Seidman Cancer Center, Case Comprehensive Cancer Center
+Case Comprehensive Cancer Center	Case Medical Center, University Hospitals Seidman Cancer Center, Case Comprehensive Cancer Center
+Case Comprehensive Cancer Center	Case Comprehensive Cancer Center
+Case Comprehensive Cancer Center	Cleveland Clinic Taussig Cancer Institute, Case Comprehensive Cancer Center
+Chao Family Comprehensive Cancer Center	University of California Medical Center At Irvine-Orange Campus
+Chao Family Comprehensive Cancer Center	Chao Family Comprehensive Cancer Center
+City of Hope National Medical Center	Beckman Research Institute - City of Hope
+City of Hope National Medical Center	City of Hope Medical Center
+City of Hope National Medical Center	City of Hope
+City of Hope National Medical Center	City of Hope- South Pasadena Cancer Center
+City of Hope National Medical Center	City of Hope Medical Group Inc
+Dana-Farber/Harvard Cancer Center	Dana-Farber/Brigham and Women's Cancer Center at South Shore
+Dana-Farber/Harvard Cancer Center	Dana-Farber Harvard Cancer Center
+Dana-Farber/Harvard Cancer Center	Children's Hospital Boston
+Dana-Farber/Harvard Cancer Center	Dana-Farber Cancer Institute
+Dana-Farber/Harvard Cancer Center	Dana-Farber/Brigham and Women's Cancer Center at Milford Regional
+Dana-Farber/Harvard Cancer Center	Harvard Medical School
+Dana-Farber/Harvard Cancer Center	The Dana-Farber Cancer Institute at Londonberry
+Dana-Farber/Harvard Cancer Center	Harvard School of Public Health
+Dana-Farber/Harvard Cancer Center	Beth Israel Deaconess Medical Center
+Dan L. Duncan Cancer Center	Ben Taub General Hospital
+Dan L. Duncan Cancer Center	Baylor Breast Center, Dan L. Duncan Cancer Center
+Dan L. Duncan Cancer Center	Baylor Breast Care Center
+Dan L. Duncan Cancer Center	Baylor College of Medicine
+Dan L. Duncan Cancer Center	Texas Children's Hospital
+David H. Koch Institute for Integrative Cancer Research at MIT	Whitehead Institute
+Duke Cancer Institute	Duke-NUS Graduate Medical School Singapore
+Duke Cancer Institute	Cancer and Leukemia Group B
+Duke Cancer Institute	Duke University Medical Center
+Duke Cancer Institute	Duke Hematology Oncology at Raleigh Community Hospital
+Duke Cancer Institute	Duke Raleigh Hospital
+Duke Cancer Institute	Duke Health Center at North Duke Street
+Fox Chase Cancer Center	Fox Chase Cancer Center
+Fox Chase Cancer Center	Fox Chase Cancer Center
+Fox Chase Cancer Center	Fox Chase Cancer Center Buckingham
+Fox Chase Cancer Center	Fox Chase Virtua Health Cancer Program - Gibbsboro
+Fox Chase Cancer Center	Fox Chase Cancer Center - Cheltenham
+Fox Chase Cancer Center	Fox Chase Cancer Center at Virtua Memorial Hospital of Burlington County
+Fox Chase Cancer Center	Fox Chase - Temple Bone Marrow Transplant Program
+Fred Hutchinson/University of Washington Cancer Consortium	Fred Hutchinson Cancer Research Center/University of Washington Cancer Consortium
+Fred Hutchinson/University of Washington Cancer Consortium	University of Washington Medical Center
+Fred Hutchinson/University of Washington Cancer Consortium	Puget Sound Cancer Center
+Fred Hutchinson/University of Washington Cancer Consortium	Puget Sound Oncology Consortium
+Fred Hutchinson/University of Washington Cancer Consortium	Seattle Cancer Care Alliance
+Greenebaum Cancer Center	Maryland Regional Cancer Care
+Greenebaum Cancer Center	University of Maryland Greenebaum Cancer Center
+Greenebaum Cancer Center	University of Maryland Baltimore
+Harold C. Simmons Cancer Center	Harold C Simmons Cancer Center
+Harold C. Simmons Cancer Center	Simmons Cancer Center-North Campus
+Harold C. Simmons Cancer Center	University of Texas Southwestern Medical Center
+Harold C. Simmons Cancer Center	Mocrief Cancer Center-The University of Texas Southwestern Medical Center
+Herbert Irving Comprehensive Cancer Center	New York Presbyterian-The University Hospital of Columbia and Cornell
+Herbert Irving Comprehensive Cancer Center	Columbia University Medical Center
+H. Lee Moffitt Cancer Center & Research Institute	H. Lee Moffit Cancer Center Research Base
+H. Lee Moffitt Cancer Center & Research Institute	Moffitt Cancer Center and Research Institute
+H. Lee Moffitt Cancer Center & Research Institute	Moffitt Cancer Center at Tampa General Hospital
+H. Lee Moffitt Cancer Center & Research Institute	H Lee Moffitt Cancer Center and Research Institute Phase 2 Consortium
+H. Lee Moffitt Cancer Center & Research Institute	University of South Florida
+Holden Comprehensive Cancer Center	University of Iowa
+Holden Comprehensive Cancer Center	University of Iowa Hospitals and Clinics
+Hollings Cancer Center	Medical University of South Carolina
+Huntsman Cancer Institute	Huntsman Cancer Institute/University of Utah
+Indian University Melvin and Bren Simon Cancer Center	Indiana University Cancer Center
+Indian University Melvin and Bren Simon Cancer Center	Clarian Health
+Indian University Melvin and Bren Simon Cancer Center	Indiana University Medical Center
+Jonsson Comprehensive Cancer Center	University of California at Los Angeles (UCLA )
+Jonsson Comprehensive Cancer Center	Jonsson Comprehensive Cancer Center
+Kimmel Cancer Center	Thomas Jefferson University Hospital
+Kimmel Cancer Center	Thomas Jefferson University
+Kimmel Cancer Center	Thomas Jefferson University
+Kimmel Cancer Center	Kimmel Cancer Center
+Lombardi Comprehensive Cancer Center	Lombardi Comprehensive Cancer Center at Georgetown University
+Lombardi Comprehensive Cancer Center	MedStar Oncology Network
+Lombardi Comprehensive Cancer Center	MedStar Research Institute
+Masonic Cancer Center	University of Minnesota Medical Center-Fairview
+Masonic Cancer Center	University of Minnesota-Stem Cell Institute
+Masonic Cancer Center	University of Minnesota Medical Center-Fairview-Riverside
+Masonic Cancer Center	Masonic Cancer Center, University of Minnesota
+Massey Cancer Center	Virginia Commonwealth University/Massey Cancer Center
+Massey Cancer Center	Virginia Commonwealth University MBCCOP
+Mayo Clinic Cancer Center	Saint Mary's Hospital
+Mayo Clinic Cancer Center	Mayo Phase 2 Consortium
+Mayo Clinic Cancer Center	Mayo Clinic in Florida
+Mayo Clinic Cancer Center	Mayo Clinic
+Mayo Clinic Cancer Center	Mayo Clinic in Arizona
+Mayo Clinic Cancer Center	Immanuel-Saint Joseph Hospital-Mayo Health System
+Mayo Clinic Cancer Center	Albert Lea Medical Center-Mayo Health System
+Mayo Clinic Cancer Center	Mayo Hospital
+Mayo Clinic Cancer Center	Mayo Clinic Hospital
+M.D. Anderson Cancer Center	M D Anderson Cancer Center (MDACC) Research Base
+M.D. Anderson Cancer Center	M D Anderson Cancer Center- Orlando
+M.D. Anderson Cancer Center	M D Anderson Cancer Center
+M.D. Anderson Cancer Center	M D Anderson Cancer Center (IND Holder)
+M.D. Anderson Cancer Center	M D Anderson International Spain
+M.D. Anderson Cancer Center	MD Anderson Cancer Network
+M.D. Anderson Cancer Center	M D Anderson Cancer Center
+M.D. Anderson Cancer Center	MD Anderson Phase 2 Consortium
+Memorial Sloan-Kettering Cancer Center	Memorial Sloan-Kettering Cancer Center at Phelps
+Memorial Sloan-Kettering Cancer Center	Memorial Sloan Kettering Cancer Center
+Memorial Sloan-Kettering Cancer Center	Memorial Sloan-Kettering Cancer Center Rockville Centre
+Memorial Sloan-Kettering Cancer Center	Memorial Sloan Kettering Cancer Center
+Memorial Sloan-Kettering Cancer Center	Memorial Sloan Kettering Cancer Center at Basking Ridge
+Memorial Sloan-Kettering Cancer Center	Memorial Sloan Kettering Cancer Center Phase 2 Consortium test
+Memorial Sloan-Kettering Cancer Center	Memorial Sloan-Kettering Cancer Center at Saint Claires
+Memorial Sloan-Kettering Cancer Center	Memorial Sloan-Kettering Cancer Center at Suffolk
+Moores Cancer Center	University of California San Diego
+Moores Cancer Center	University of California At San Diego
+Moores Cancer Center	Moores University of California San Diego Cancer Center
+Norris Cotton Cancer Center	Norris Cotton Cancer Center-North
+Norris Cotton Cancer Center	Norris Cotton Cancer Center-Manchester
+Norris Cotton Cancer Center	Cheshire Medical Center-Dartmouth-Hitchcock Keene
+Norris Cotton Cancer Center	Dartmouth Hitchcock Medical Center
+Norris Cotton Cancer Center	Dartmouth Hitchcock Medical Center - Manchester
+NYU Cancer Institute	New York University Langone Medical Center
+NYU Cancer Institute	NYU Cancer Institute
+OHSU Knight Cancer Institute	Saint John Medical Center
+OHSU Knight Cancer Institute	Tuality Community Hospital
+OHSU Knight Cancer Institute	Oregon Health and Science University
+OHSU Knight Cancer Institute	Salem Hospital
+OHSU Knight Cancer Institute	Bay Area Hospital
+OHSU Knight Cancer Institute	Pacific Oncology
+OHSU Knight Cancer Institute	OHSU Knight Cancer Institute
+Purdue University Center for Cancer Research	Purdue University
+Robert H. Lurie Comprehensive Cancer Center	Northwestern University
+Robert H. Lurie Comprehensive Cancer Center	Childrens Memorial Hospital
+Robert H. Lurie Comprehensive Cancer Center	Robert H. Lurie Comprehensive Cancer Center
+Robert H. Lurie Comprehensive Cancer Center	Northwestern Memorial Hospital
+Robert H. Lurie Comprehensive Cancer Center	Jesse Brown Veterans Affairs Medical Center
+Robert H. Lurie Comprehensive Cancer Center	Robert Lurie Comprehensive Cancer Center
+Roswell Park Cancer Institute	Roswell Park Cancer Institute
+Salk Institute Cancer Center	Salk Institute
+Sanford-Burnham Medical Research Institute	Burnham Institute
+Sidney Kimmel Comprehensive Cancer Center	Johns Hopkins University
+Sidney Kimmel Comprehensive Cancer Center	Johns Hopkins University
+Sidney Kimmel Comprehensive Cancer Center	Sidney Kimmel Comprehensive Cancer Center at Johns Hopkins Hospital
+Siteman Cancer Center	Barnes-Jewish Hospital
+Siteman Cancer Center	Washington University - Jewish
+Siteman Cancer Center	Saint Louis Children's Hospital
+Siteman Cancer Center	Barnes West County Hospital
+Siteman Cancer Center	Washington University School of Medicine
+Siteman Cancer Center	Barnes-Jewish Saint Peters Hospital
+Siteman Cancer Center	Siteman Cancer Center at Washington University
+Siteman Cancer Center	Siteman Cancer Center - Saint Peters
+Stanford Cancer Center	Veterans Administration Palo Alto-Health and Science Center
+Stanford Cancer Center	Stanford Cancer Center
+Stanford Cancer Center	Packard Children's Hospital Stanford University
+Stanford Cancer Center	Stanford University
+Stanford Cancer Center	Stanford University Medical Center
+St. Jude Children's Research Hospital	Saint Jude Children's Research Hospital
+St. Jude Children's Research Hospital	Pediatric Brain Tumor Consortium
+The Barbara Ann Karmanos Cancer Institute	Barbara Ann Karmanos Cancer Institute
+The Barbara Ann Karmanos Cancer Institute	Karmanos-Crittenton Cancer Center
+The Cancer Institute of New Jersey	UMDNJ - Robert Wood Johnson University Hospital
+The Cancer Institute of New Jersey	Cancer Institute of New Jersey
+The Cancer Institute of New Jersey	UMDNJ - New Jersey Medical School
+The Cancer Institute of New Jersey	Umdnj - The Cancer Institute of New Jersey
+The Cancer Institute of New Jersey	Cancer Institute of New Jersey At Hamilton
+The Cancer Institute of New Jersey	Robert Wood Johnson University Hospital
+The Jackson Laboratory Cancer Center	jackson laboratory
+The Ohio State University Comprehensive Cancer Center	Arthur G. James Cancer Hospital and Solove Research Institute at Ohio State University Medical Center
+The Ohio State University Comprehensive Cancer Center	Ohio State University
+The Ohio State University Comprehensive Cancer Center	A G James Cancer Hospital
+The Ohio State University Comprehensive Cancer Center	Cincinnati Children's Hospital Medical Center
+The Ohio State University Comprehensive Cancer Center	Nationwide Children's Hospital
+The Ohio State University Comprehensive Cancer Center	Ohio State University Phase 2 Consortium
+The Ohio State University Comprehensive Cancer Center	The Ohio State University James Cancer Hospital
+The Wistar Institute	The Wistar Institute
+UAB Comprehensive Cancer Center	University of Alabama at Birmingham
+UAB Comprehensive Cancer Center	University of Alabama Comprehensive Cancer Center
+UAB Comprehensive Cancer Center	UAB Comprehensive Cancer Center
+UC Davis Cancer Center	University of California Davis Cancer Center
+UC Davis Cancer Center	University of California Davis Phase 2 Consortium
+UC Davis Cancer Center	UC Davis Cancer Center
+UC Davis Cancer Center	Fremont - Rideout Cancer Center
+UC Davis Cancer Center	Mercy UC Davis Cancer Center
+UCSF Helen Diller Family Comprehensive Cancer Center	University of California San Francisco Medical Center-Parnassus
+UCSF Helen Diller Family Comprehensive Cancer Center	University of California San Francisco Medical Center-Mount Zion
+UCSF Helen Diller Family Comprehensive Cancer Center	San Francisco General
+UCSF Helen Diller Family Comprehensive Cancer Center	University of California at San Francisco - Comprehensive Cancer Center
+UCSF Helen Diller Family Comprehensive Cancer Center	Lawrence Berkeley National Laboratory
+UCSF Helen Diller Family Comprehensive Cancer Center	Veterans Affairs Medical Center - San Francisco
+UNC LIneberger Comprehensive Cancer Center	University of North Carolina Health Care
+UNC LIneberger Comprehensive Cancer Center	University of North Carolina
+University of Chicago Comprehensive Cancer Center	Evanston CCOP-NorthShore University HealthSystem
+University of Chicago Comprehensive Cancer Center	University of Chicago Phase 2 Consortium
+University of Chicago Comprehensive Cancer Center	University of Chicago
+University of Chicago Comprehensive Cancer Center	University of Chicago
+University of Chicago Comprehensive Cancer Center	University of Chicago
+University of Chicago Comprehensive Cancer Center	University of Chicago Comer Children's Hospital
+University of Colorado Cancer Center	Denver Health Medical Center
+University of Colorado Cancer Center	Denver Veterans Administration Medical Center
+University of Colorado Cancer Center	University of Colorado at Denver Health Sciences Center
+University of Colorado Cancer Center	National Jewish Health
+University of Colorado Cancer Center	University of Colorado Cancer Center - Anschutz Cancer Pavilion
+University of Colorado Cancer Center	Colorado State University
+University of Colorado Cancer Center	University of Colorado Anschutz Medical Campus
+University of Colorado Cancer Center	University of Colorado Anshutz Medical Campus
+University of Colorado Cancer Center	University of Colorado
+University of Hawaii Cancer Center	Kuakini Medical Center
+University of Hawaii Cancer Center	University of Hawaii at Manoa
+University of Hawaii Cancer Center	University of Hawaii
+University of Hawaii Cancer Center	University of Hawaii
+University of Hawaii Cancer Center	Queen's Medical Center
+University of Hawaii Cancer Center	Hawaii Pacific Oncology Center
+University of Michigan Comprehensive Cancer Center	University of Michigan University Hospital
+University of Michigan Comprehensive Cancer Center	University of Michigan Cancer Center (UMCC) Research Base
+University of Michigan Comprehensive Cancer Center	University of Michigan
+University of Michigan Comprehensive Cancer Center	University of Michigan Comprehensive Cancer Center
+University of Michigan Comprehensive Cancer Center	Michigan Comprehensive Cancer Institute
+University of Nebraska Medical Center/Eppley Cancer Center	The Nebraska Medical Center
+University of Nebraska Medical Center/Eppley Cancer Center	UNMC Eppley Cancer Center at the University of Nebraska Medical Center
+University of Nebraska Medical Center/Eppley Cancer Center	University of Nebraska Medical Center
+University of Nebraska Medical Center/Eppley Cancer Center	Mary Lanning Memorial Hospital
+University of New Mexico Research & Treatment Center	University of New Mexico at Lovelace Medical Center
+University of New Mexico Research & Treatment Center	University of New Mexico
+University of New Mexico Research & Treatment Center	New Mexico State University
+University of New Mexico Research & Treatment Center	University of New Mexico Health Science CCOP
+University of New Mexico Research & Treatment Center	Los Alamos Medical Center
+University of New Mexico Research & Treatment Center	New Mexico Cancer Care Alliance
+University of New Mexico Research & Treatment Center	Lovelace Sandia Health System
+University of New Mexico Research & Treatment Center	University of New Mexico Cancer Center-South
+University of New Mexico Research & Treatment Center	University of New Mexico Cancer Center
+University of Pittsburgh Cancer Institute	University of Pittsburgh Medical Cancer Center - Natrona Heights
+University of Pittsburgh Cancer Institute	UPMC Cancer Center - Pittsburgh
+University of Pittsburgh Cancer Institute	University of Pittsburgh Medical Center - Cancer Center Washington
+University of Pittsburgh Cancer Institute	University Pittsburgh Medical Cancer Center-Johnstown
+University of Pittsburgh Cancer Institute	University of Pittsburgh Medical Center-Cancer Centers at Uniontown
+University of Pittsburgh Cancer Institute	UPMC Hillman Cancer Center
+University of Pittsburgh Cancer Institute	University Pittsburgh Medical Center-South Side
+University of Pittsburgh Cancer Institute	University of Pittsburgh - Beaver Valley
+University of Pittsburgh Cancer Institute	University of Pittsburgh Medical Center-Passavant Hospital
+University of Pittsburgh Cancer Institute	University of Pittsburgh Cancer Institute
+University of Pittsburgh Cancer Institute	University of Pittsburgh Medical Center - Shadyside Hospital
+University of Pittsburgh Cancer Institute	University of Pittsburgh
+University of Pittsburgh Cancer Institute	University of Pittsburgh Medical Center-Presbyterian Hospital
+University of Pittsburgh Cancer Institute	Magee-Womens Hospital - University of Pittsburgh Medical Center
+University of Pittsburgh Cancer Institute	University of Pittsburgh Medical Center Northwest
+University of Pittsburgh Cancer Institute	University of Pittsburgh Medical Center -Moon Township
+USC/Norris Comprehensive Cancer Center	USC/Norris Comprehensive Cancer Center
+USC/Norris Comprehensive Cancer Center	Los Angeles County-USC Medical Center
+USC/Norris Comprehensive Cancer Center	Children's Hospital of Los Angeles
+USC/Norris Comprehensive Cancer Center	University of Southern California
+USC/Norris Comprehensive Cancer Center	Childrens Hospital Los Angeles
+UVA Cancer Center	University of Virginia
+UVA Cancer Center	University of Virginia
+UW Paul P. Carbone Comprehensive Cancer Center	University of Wisconsin Medical School
+UW Paul P. Carbone Comprehensive Cancer Center	UW Cancer Center Johnson Creek
+UW Paul P. Carbone Comprehensive Cancer Center	Wisconsin Clinical Cancer Center
+UW Paul P. Carbone Comprehensive Cancer Center	University of Wisconsin Hospital and Clinics
+UW Paul P. Carbone Comprehensive Cancer Center	Children's Hospital of Wisconsin
+UW Paul P. Carbone Comprehensive Cancer Center	University of Wisconsin Cancer Center Riverview
+Vanderbilt-Ingram Cancer Center	Vanderbilt-Ingram Cancer Center at Franklin
+Vanderbilt-Ingram Cancer Center	 Vanderbilt-Ingram Cancer Center Cool Springs
+Vanderbilt-Ingram Cancer Center	Vanderbilt University
+Vanderbilt-Ingram Cancer Center	Vanderbilt-Ingram Cancer Center
+Wake Forest Comprehensive Cancer Center	Wake Forest University Cancer Center (WFUCC) Research Base
+Wake Forest Comprehensive Cancer Center	Wake Radiology Oncology
+Wake Forest Comprehensive Cancer Center	Wake Forest University Health Sciences
+Wake Forest Comprehensive Cancer Center	Wake Medical Center-Breast Screening and Diagnostic
+Winship Cancer Institute	Crawford-Long Hospital of Emory University
+Winship Cancer Institute	The Emory Clinic Inc
+Winship Cancer Institute	Emory University Robert Woodruff Health Sciences Center
+Winship Cancer Institute	Emory University School Of Medicine
+Winship Cancer Institute	Emory University
+Yale Cancer Center	Yale University
+Yale Cancer Center	Yale New Haven Hospital
+Yale Cancer Center	Smilow Cancer Hospital at Yale-New Haven
