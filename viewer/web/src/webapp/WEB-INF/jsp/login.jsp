@@ -2,7 +2,7 @@
 <page:applyDecorator name="main">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<script type="text/javascript" src="${scriptPath}/js/loginValidation.js"></script>
+<script type="text/javascript" src="${scriptPath}/pages/loginValidation.js"></script>
 </head>
 <body><h1>Login</h1>
 <c:set var="topic" scope="request" value="login"/> 

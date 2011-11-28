@@ -308,6 +308,9 @@
                 <filter token="project.revision" value="${project.revision}"/>
             </filterset>
         </copy>
+        <copy todir="${viewer.build.dir}/${viewer.build.finalName}/static/static-${project.version}">
+            <fileset dir="${basedir}/src/static" />
+        </copy>
 
         <war destfile="${viewer.build.dir}/${viewer.war}"
              compress="false"
@@ -315,7 +318,8 @@
             <lib dir="${viewer.build.dir}/${viewer.build.finalName}/WEB-INF/lib"/>
             <classes dir="${viewer.build.outputDir}"/>
             <webinf dir="${basedir}/src/webapp/WEB-INF" excludes="web.xml"/>
-            <fileset dir="${basedir}/src/webapp"/>
+            <fileset dir="${basedir}/src/webapp" />
+            <fileset dir="${viewer.build.dir}/${viewer.build.finalName}/static" />
         </war>
     </target>
 

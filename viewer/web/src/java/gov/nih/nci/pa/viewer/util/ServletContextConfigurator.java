@@ -98,10 +98,11 @@ public class ServletContextConfigurator implements ServletContextListener {
     public void contextInitialized(ServletContextEvent event) {
         ServletContext context = event.getServletContext();
         String contextPath = "/viewer";
-        context.setAttribute("imagePath", contextPath + "/images");
-        context.setAttribute("scriptPath", contextPath + "/scripts");
-        context.setAttribute("staticPath", contextPath + "/static-" + context.getInitParameter("appTagVersion"));
-        context.setAttribute("stylePath", contextPath + "/styles");
+        String staticPath = contextPath + "/static-" + context.getInitParameter("appTagVersion");
+        context.setAttribute("imagePath", staticPath + "/images");
+        context.setAttribute("scriptPath", staticPath + "/scripts");
+        context.setAttribute("staticPath", staticPath);
+        context.setAttribute("stylePath", staticPath + "/styles");
     }
     
     /**

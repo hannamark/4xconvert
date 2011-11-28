@@ -4,7 +4,7 @@
 <%@ taglib uri="http://ctrp.nci.nih.gov/taglib/utility-functions" prefix="func" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="viewer" %>
 
-<%@ tag display-name="summary4ReportResultTable" description="Displays the results for a cat of the summ4 report" body-content="empty"%>
+<%@ tag display-name=" description="Displays the results for a cat of the summ4 report" body-content="empty"%>
 <%@ attribute name="name" type="java.lang.Object" required="true" rtexprvalue="true"%>
 <%@ attribute name="requestURI" type="java.lang.String" required="true" rtexprvalue="true"%>
 <%@ attribute name="uid" type="java.lang.String" required="true" rtexprvalue="true"%>

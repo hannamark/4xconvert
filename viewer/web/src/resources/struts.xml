@@ -6,6 +6,8 @@
 
 <struts>
     <constant name="struts.devMode" value="false" />
+    <constant name="struts.action.excludePattern" value="/static-.*" />
+    
     <package name="default" extends="json-default">
         <interceptors>
             <interceptor name="showDisclaimer" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ShowSplashPageInterceptor">

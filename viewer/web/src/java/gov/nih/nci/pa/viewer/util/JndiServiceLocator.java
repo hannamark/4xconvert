@@ -94,6 +94,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public TrialCountsLocal getTrialCountsReportService() {
         return (TrialCountsLocal) JNDIUtil.lookupPa("pa/TrialCountsReportBean/local");
     }
@@ -101,6 +102,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public TrialListLocal getTrialListReportService() {
         return (TrialListLocal) JNDIUtil.lookupPa("pa/TrialListReportBean/local");
     }
@@ -108,6 +110,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public SubmitterOrganizationLocal getSubmitterOrganizationReportService() {
         return (SubmitterOrganizationLocal) JNDIUtil.lookupPa("pa/SubmitterOrganizationReportBean/local");
     }
@@ -115,6 +118,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Summ4RepLocal getSumm4ReportService() {
         return (Summ4RepLocal) JNDIUtil.lookupPa("pa/Summ4ReportBean/local");
     }
@@ -122,6 +126,7 @@ public class JndiServiceLocator implements ServiceLocator {
     /**
      * {@inheritDoc}
      */
+    @Override
     public ProtocolQueryServiceLocal getProtocolQueryService() {
         return (ProtocolQueryServiceLocal) JNDIUtil.lookupPa("pa/ProtocolQueryServiceBean/local");
     }
