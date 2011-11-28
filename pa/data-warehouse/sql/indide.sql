@@ -38,11 +38,17 @@ INSERT INTO DW_STUDY_IND_IDE (
     END,
     indide.expanded_access_status_code, indide.grantor_code, indide.holder_type_code, indide.indlde_number,
     indide.indlde_type_code, indide.identifier, indide.nci_div_prog_holder_code, nci_id.extension, 
-    indide.nih_inst_holder_code, creator.login_name, updater.login_name
+    indide.nih_inst_holder_code,
+    CASE WHEN ru_creator.first_name is null THEN split_part(creator.login_name, 'CN=', 2)
+        ELSE ru_creator.first_name || ' ' || ru_creator.last_name
+    END,
+    CASE WHEN ru_updater.first_name is null THEN split_part(updater.login_name, 'CN=', 2)
+        ELSE ru_updater.first_name || ' ' || ru_updater.last_name
+    END
     from STUDY_INDLDE indide 
         inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = indide.study_protocol_identifier
                 and nci_id.root = '2.16.840.1.113883.3.26.4.3'
-        join csm_user as creator on indide.user_last_created_id = creator.user_id
-        join csm_user as updater on indide.user_last_created_id = updater.user_id
-    
-
+        left outer join csm_user as creator on indide.user_last_created_id = creator.user_id
+        left outer join registry_user as ru_creator on ru_creator.csm_user_id = creator.user_id
+        left outer join csm_user as updater on indide.user_last_created_id = updater.user_id
+        left outer join registry_user as ru_updater on ru_updater.csm_user_id = updater.user_id;
