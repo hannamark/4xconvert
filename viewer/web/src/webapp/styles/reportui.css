@@ -255,7 +255,7 @@
     background: #8092b1;
     border: 1px solid #6d80a2;
     border-radius: 5px;
-    min-width: 922px; padding : 0 10px;
+    width: 922px;
     -moz-border-radius: 5px;
     -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     -webkit-border-radius: 5px;
