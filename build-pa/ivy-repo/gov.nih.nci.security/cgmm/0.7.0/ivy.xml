@@ -24,14 +24,14 @@
 
     <dependencies>
         <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.3" conf="compile;runtime->master"/>
-        <dependency org="org.springframework" name="spring" rev="1.2.8" conf="compile;runtime">
+        <dependency org="org.springframework" name="spring" rev="1.2.8" conf="compile;runtime->master">
             <exclude module="connector"/>
         </dependency>
         <dependency org="javax.servlet" name="servlet-api" rev="2.3" conf="compile;runtime->master"/>
         <dependency org="log4j" name="log4j" rev="1.2.9" conf="compile" />
-        <dependency org="commons-lang" name="commons-lang" rev="1.0.1" conf="compile;runtime;" />
+        <dependency org="commons-lang" name="commons-lang" rev="1.0.1" conf="compile;runtime->master;" />
         <dependency org="commons-logging" name="commons-logging" rev="1.0.4" conf="compile" />
-        <dependency org="commons-validator" name="commons-validator" rev="1.3.1" conf="compile->compile;runtime->compile" />
+        <dependency org="commons-validator" name="commons-validator" rev="1.3.1" conf="compile->compile;runtime->master" />
         <dependency org="commons-discovery" name="commons-discovery" rev="0.5" conf="compile->runtime;runtime->master"/>
         <dependency org="org.jdom" name="jdom" rev="1.1" conf="compile;runtime;">
             <exclude module="jaxen"/>
@@ -41,13 +41,13 @@
         </dependency>
         <dependency org="mysql" name="mysql-connector-java" rev="3.1.11" conf="compile" />
 
-        <dependency org="org.hibernate" name="hibernate" rev="3.2.0.ga" conf="compile;runtime;" />
-        <dependency org="org.hibernate" name="hibernate-annotations" rev="3.2.0.ga" conf="compile;runtime;" />
+        <dependency org="org.hibernate" name="hibernate" rev="3.2.0.ga" conf="compile;runtime->master;" />
+        <dependency org="org.hibernate" name="hibernate-annotations" rev="3.2.0.ga" conf="compile;runtime->master;" />
         <dependency org="org.hibernate" name="ejb3-persistence" rev="1.0.1.GA" conf="compile;runtime->master;" />
 
-        <dependency org="net.sf.ehcache" name="ehcache" rev="1.2.4" conf="compile;runtime;" />
+        <dependency org="net.sf.ehcache" name="ehcache" rev="1.2.4" conf="compile;runtime->master;" />
         <dependency org="csmapi" name="csmapi" rev="4.2" conf="compile;runtime->default;" /> 
-        <dependency org="gov.nih.nci.security" name="clm" rev="4.2.beta" conf="compile;runtime;" />
+        <dependency org="gov.nih.nci.security" name="clm" rev="4.2.beta" conf="compile;runtime->master;" />
         <dependency org="jboss" name="mail" rev="4.0.5.GA" conf="compile->compile" />
         
         <!-- grid 1.2 jars -->
@@ -64,7 +64,7 @@
         <dependency org="caGrid" name="dorian" rev="1.3" conf="compile->client;runtime->client">
               <exclude module="gaards-core"/>
         </dependency>
-        <dependency org="globus" name="axis" rev="1.2RC2" conf="compile->runtime;runtime->default">
+        <dependency org="globus" name="axis" rev="1.2RC2" conf="compile->runtime;runtime->master">
             <exclude module="commons-discovery"/>
         </dependency>
         <dependency org="globus" name="ws-enumeration" rev="4.0.3" conf="compile;runtime->master" />
@@ -106,9 +106,9 @@
         </dependency>
 
         <!-- added to make this work -->
-        <dependency org="javax.mail" name="mail" rev="1.4" conf="runtime"/>
+        <dependency org="javax.mail" name="mail" rev="1.4" conf="runtime->master"/>
         <dependency org="javax.transaction" name="jta" rev="1.1" conf="runtime->master"/>
-        <dependency org="xml-apis" name="xml-apis" rev="2.0.2" conf="runtime"/>
+        <dependency org="xml-apis" name="xml-apis" rev="2.0.2" conf="runtime->master"/>
         <dependency org="c3p0" name="c3p0" rev="0.9.0" />
         <dependency org="commons-fileupload" name="commons-fileupload" rev="1.0" conf="runtime->master"/>
     </dependencies>
