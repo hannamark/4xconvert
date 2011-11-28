@@ -83,14 +83,19 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.PDQDiseaseParent;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -120,7 +125,7 @@ public class ProtocolQueryServiceTest  {
      * test if tree traversal is correct
      */
     @Test
-    public void  calculatePDQDiseases() {
+    public void  getPDQParentsAndDescendants() {
         TestBean<PDQDisease, Long> testBean = createListOfPDQDisease();
         PDQDiseaseServiceLocal pdqDiseaseService = mock(PDQDiseaseServiceLocal.class);
         List<Long> ids = new ArrayList<Long>();
@@ -133,6 +138,26 @@ public class ProtocolQueryServiceTest  {
         Collections.sort(result);
         assertTrue(CollectionUtils.isEqualCollection(testBean.output, result));
     }
+    
+    /**
+     * test organizationService.getOrganizationIdsByNames is called if names are present in criteria
+     * @throws PAException 
+     */
+    @Test
+    public void  getStudyProtocolByCriteriaForReportingGetOrganizationIdsIsCalled() throws PAException {
+        ProtocolQueryServiceBean bean = mock(ProtocolQueryServiceBean.class);
+        PAOrganizationServiceRemote organizationService = mock(PAOrganizationServiceRemote.class);
+        doCallRealMethod().when(bean).setOrganizationService(organizationService);
+        bean.setOrganizationService(organizationService);
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        List<String> orgNames = Arrays.asList(new String[] {"name1", "name2"});
+        criteria.setLeadOrganizationNames(orgNames);
+        doCallRealMethod().when(bean).getStudyProtocolByCriteriaForReporting(criteria);
+        bean.getStudyProtocolByCriteriaForReporting(criteria);
+        verify(organizationService).getOrganizationIdsByNames(orgNames);      
+        
+    }  
+    
 
     
     /**

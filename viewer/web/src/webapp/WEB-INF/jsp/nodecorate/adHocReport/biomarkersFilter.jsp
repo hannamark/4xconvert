@@ -5,7 +5,7 @@
         <tbody>
             <viewer:valueRow labelFor="bioMarkers" labelKey="studyProtocol.biomarker">
                 <s:select name="criteria.bioMarkers" id="bioMarkers" list="plannedMarkersList" listKey="key"
-                          listValue="value" headerKey="" headerValue="All" value="criteria.bioMarkers" multiple="true" size="3" />
+                          listValue="value" headerKey="" headerValue="All" value="criteria.bioMarkers" multiple="true" size="5" />
             </viewer:valueRow>
         </tbody>
     </table>    

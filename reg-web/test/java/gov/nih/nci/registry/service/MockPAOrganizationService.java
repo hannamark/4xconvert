@@ -47,4 +47,12 @@ public class MockPAOrganizationService implements PAOrganizationServiceRemote {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Long> getOrganizationIdsByNames(List<String> names) throws PAException {
+        return null;
+    }  
+
 }

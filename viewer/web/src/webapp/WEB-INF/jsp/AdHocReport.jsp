@@ -61,6 +61,23 @@
                         form.action="criteriaAdHocReport.action";
                         form.submit();
                         });
+                    
+                     jQuery("#familyId").bind("change", function(ev) {
+                         var familyId = jQuery("#familyId").val();                                          
+                         var url = '/viewer/ctro/ajax/refreshAdHocOrganizations.action';                    
+                         var params = { "criteria.familyId": familyId};
+                         jQuery("#organization_choices").html(jQuery("div.template.loadingMessage").children().html()).load(url, params, function() {
+                             jQuery("#orgSelectAllCheckbox").bind("click", function(ev) {
+                                 var selected = jQuery("#orgSelectAllCheckbox")[0].checked;
+                                 var options = jQuery("#orgNames")[0].options;
+                                 for (var i = 0; i < options.length; i++) {
+                                     options[i].selected = selected;
+                                 }
+                             });
+                         });
+                         return false;
+                     });         
+                    
                     });
             
                     // Expands all sections if 'currentlyVisible' is false, otherwise collapses all
@@ -80,7 +97,8 @@
                             jQuery(accordionName + " .ui-accordion-header").click();
                         }
                     }
-        </script>
+                     
+        </script>     
     </head>
     <body>
     	<input type="hidden" id="imagePath" name="imagePath" value="${imagePath}" />

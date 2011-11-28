@@ -81,6 +81,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doCallRealMethod;
@@ -89,6 +90,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
@@ -100,6 +102,7 @@ import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.noniso.dto.PDQDiseaseNode;
+import gov.nih.nci.pa.report.service.Summ4RepLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
@@ -111,6 +114,7 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.viewer.dto.result.KeyValueDTO;
+import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -126,6 +130,7 @@ import org.junit.Test;
 import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.mockrunner.mock.web.MockHttpServletResponse;
 import com.mockrunner.mock.web.MockHttpSession;
+import com.opensymphony.xwork2.Action;
 
 /**
  * Tests for AdHocReportAction.
@@ -140,6 +145,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     private PlannedMarkerServiceLocal plannedMarkerService = mock(PlannedMarkerServiceLocal.class);
     private ProtocolQueryServiceLocal protocolQueryService = mock(ProtocolQueryServiceLocal.class);
     private TSRReportGeneratorServiceRemote tsrReportGeneratorService = mock(TSRReportGeneratorServiceRemote.class);
+    private Summ4RepLocal summ4ReportService = mock(Summ4RepLocal.class);
     
     private StudyProtocolQueryCriteria criteria;
 
@@ -153,6 +159,10 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         when(serviceLocator.getPlannedMarkerService()).thenReturn(plannedMarkerService);
         when(serviceLocator.getProtocolQueryService()).thenReturn(protocolQueryService);
         when(serviceLocator.getTSRReportGeneratorService()).thenReturn(tsrReportGeneratorService);
+        gov.nih.nci.pa.viewer.util.ServiceLocator viewerServiceLocator = 
+                mock(gov.nih.nci.pa.viewer.util.ServiceLocator.class);
+        ViewerServiceLocator.getInstance().setServiceLocator(viewerServiceLocator);
+        when(viewerServiceLocator.getSumm4ReportService()).thenReturn(summ4ReportService);
 
         List<StudyProtocolQueryDTO> protList = new ArrayList<StudyProtocolQueryDTO>();
         StudyProtocolQueryDTO protListItem = new StudyProtocolQueryDTO();
@@ -207,6 +217,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         doCallRealMethod().when(action).setPlannedMarkerService(plannedMarkerService);
         doCallRealMethod().when(action).setProtocolQueryService(protocolQueryService);
         doCallRealMethod().when(action).setTsrReportGeneratorService(tsrReportGeneratorService);
+        doCallRealMethod().when(action).setSumm4ReportService(summ4ReportService);
         setDependencies(action);
         return action;
     }
@@ -218,6 +229,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         action.setPlannedMarkerService(plannedMarkerService);
         action.setProtocolQueryService(protocolQueryService);
         action.setTsrReportGeneratorService(tsrReportGeneratorService);
+        action.setSumm4ReportService(summ4ReportService);
     }
     
     /**
@@ -541,6 +553,58 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     }
     
     /**
+     * test loadOrganizations without family id
+     * 
+     * @throws TooManyResultsException 
+     */
+    @Test
+    public void loadOrganizationsWithoutFamilyId() throws TooManyResultsException {
+        // user selects type of report
+        assertEquals(Action.SUCCESS, action.loadOrganizations());
+        verify(summ4ReportService, never()).getOrganizations(anyString(), anyInt());
+        assertEquals(0, action.getActionErrors().size());
+    }
+    
+    /**
+    * test loadOrganizations without criteria
+    * 
+    * @throws TooManyResultsException 
+    */
+   @Test
+   public void loadOrganizationsWithoutCriteria() throws TooManyResultsException {       
+       assertEquals(Action.SUCCESS, action.loadOrganizations());
+       criteria = null;
+       verify(summ4ReportService, never()).getOrganizations(anyString(), anyInt());
+       assertEquals(0, action.getActionErrors().size());
+   }
+    
+    /**
+     * test loadOrganizations with family id
+     * 
+     * @throws TooManyResultsException 
+     */
+    @Test
+    public void loadOrganizationsWithFamilyId() throws TooManyResultsException {
+        String familyId = "1";
+        criteria.setFamilyId(familyId);
+        assertEquals(Action.SUCCESS, action.loadOrganizations());
+        verify(summ4ReportService).getOrganizations(familyId, 100);
+        assertEquals(0, action.getActionErrors().size());
+    }
+    
+    /**
+     * 
+     * test loadFamilies.
+     * @throws TooManyResultsException 
+     */
+    @Test
+    public void loadFamilies() throws TooManyResultsException {       
+        action.loadFamilies();
+        verify(summ4ReportService).getFamilies(100);
+        assertEquals(0, action.getActionErrors().size());
+    }
+    
+    /**
      * @return MockHttpServletRequest
      */
     protected MockHttpServletRequest getRequest() {
@@ -562,4 +626,6 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     protected MockHttpServletResponse getResponse() {
         return (MockHttpServletResponse) ServletActionContext.getResponse();
     }
+    
+    
 }

@@ -2,6 +2,8 @@ package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
@@ -19,8 +21,11 @@ import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -82,5 +87,46 @@ public class PAOrganizationServiceTest extends AbstractHibernateTestCase {
         Organization data = remoteEjb.getOrganizationByIndetifers(o);
         assertNotNull(data);
         assertEquals(" name does not match" , data.getName(), "Mayo University");
+    } 
+    
+    @Test
+    public void getOrganizationIdsByNames() throws PAException {
+        TestBean<String, Long> testBean = createDataForSearchByName() ;
+        List<Long> result = remoteEjb.getOrganizationIdsByNames(testBean.input);
+        assertEquals(3, result.size());
+        Collections.sort(testBean.output);
+        Collections.sort(result);
+        assertTrue(CollectionUtils.isEqualCollection(testBean.output, result));
     }
+    
+    
+    private TestBean<String, Long> createDataForSearchByName() {
+        TestBean<String, Long> result = new TestBean<String, Long>();
+
+        Organization organization1 = TestSchema.createOrganizationObj();
+        organization1.setName("name1");
+        TestSchema.addUpdObject(organization1);
+        result.input.add("name1");
+        result.output.add(organization1.getId());
+
+        Organization organization2 = TestSchema.createOrganizationObj();
+        organization2.setName("name2");
+        TestSchema.addUpdObject(organization2);
+        result.input.add("name2");
+        result.output.add(organization2.getId());
+
+        Organization organization3 = TestSchema.createOrganizationObj();
+        organization3.setName("name3");
+        TestSchema.addUpdObject(organization3);
+        result.input.add("name3");
+        result.output.add(organization3.getId());
+
+        return result;
+    }
+    
+    
+    private static class TestBean<I, U> {
+        List<I> input = new ArrayList<I>();
+        List<U> output = new ArrayList<U>();
+    } 
 }

@@ -158,6 +158,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private final List<Long> leadOrganizationIds = new ArrayList<Long>();
     private final List<Long> interventionIds = new ArrayList<Long>();
     private final List<Long> interventionAlternateNameIds = new ArrayList<Long>();
+    private final List<String> leadOrganizationNames = new ArrayList<String>();
+    private String familyId = "0";
 
     /**
      * @return the inBoxProcessing
@@ -788,6 +790,39 @@ public class StudyProtocolQueryCriteria implements Serializable {
                 this.interventionAlternateNameIds.add(id);
             }
         }
+    }     
+
+    /**
+     * @return the leadOrganizationNames
+     */
+    public List<String> getLeadOrganizationNames() {
+        return leadOrganizationNames;
+    }
+
+    /**
+     * @param leadOrganizationNames the leadOrganizationNames to set
+     */
+    public void setLeadOrganizationNames(List<String> leadOrganizationNames) {
+        this.leadOrganizationNames.clear();
+        for (String name : leadOrganizationNames) {
+            if (StringUtils.isNotEmpty(name)) {
+                this.leadOrganizationNames.add(name);
+            }
+        }
+    }
+
+    /**
+     * @return the familyId
+     */
+    public String getFamilyId() {
+        return familyId;
+    }
+
+    /**
+     * @param familyId the familyId to set
+     */
+    public void setFamilyId(String familyId) {
+        this.familyId = familyId;
     }
 
     /**

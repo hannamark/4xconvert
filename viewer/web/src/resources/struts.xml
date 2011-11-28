@@ -104,6 +104,10 @@
             <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/nodecorate/summary4Report/organizationsByFamily.jsp</result>
         </action>
+        <action name="refreshAdHocOrganizations" class="gov.nih.nci.pa.viewer.action.AdHocReportAction" method="loadOrganizations">
+            <interceptor-ref name="methodValidationStack" />
+            <result>/WEB-INF/jsp/nodecorate/adHocReport/organizationsByFamily.jsp</result>
+        </action>
         <action name="resultsAdHocReportviewTSR" class="gov.nih.nci.pa.viewer.action.AdHocReportAction" method="viewTSR">
             <interceptor-ref name="methodValidationStack" />
         </action>

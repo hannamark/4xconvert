@@ -115,5 +115,12 @@ public interface PAOrganizationServiceRemote  {
      */
     Organization getOrganizationByIndetifers(Organization organization) throws PAException;
     
+    /**
+     * @param names organization names
+     * @return list of organization ids
+     * @throws PAException PAException
+     */
+    List<Long> getOrganizationIdsByNames(List<String> names) throws PAException;
+    
 
 }

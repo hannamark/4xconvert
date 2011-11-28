@@ -169,6 +169,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     
     @EJB
     private PDQDiseaseServiceLocal pdqDiseaseService;
+    
+    @EJB 
+    private PAOrganizationServiceRemote organizationService;
 
     private PAServiceUtils paServiceUtils;
 
@@ -196,15 +199,20 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     /**
      * {@inheritDoc}
      */
+    
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyProtocolQueryDTO> getStudyProtocolByCriteriaForReporting(StudyProtocolQueryCriteria criteria)
             throws PAException {
         if (isCriteriaEmpty(criteria)) {
             throw new PAException("At least one criteria is required.");
-        }        
+        }
+        if (CollectionUtils.isNotEmpty(criteria.getLeadOrganizationNames())) {
+            criteria.setLeadOrganizationIds(organizationService.getOrganizationIdsByNames(criteria
+                .getLeadOrganizationNames()));
+        }
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
-        List<StudyProtocol> studies = getStudyProtocolQueryResultList(criteria);            
+        List<StudyProtocol> studies = getStudyProtocolQueryResultList(criteria);
         List<Long> spIdList = convertProtocolListToIdList(studies);
         pdtos = convertToStudyProtocolDTOById(spIdList, criteria.getUserId(),
                                               BooleanUtils.toBoolean(criteria.isMyTrialsOnly()));
@@ -662,6 +670,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && CollectionUtils.isEmpty(criteria.getPdqDiseases())
                 && CollectionUtils.isEmpty(criteria.getParticipatingSiteIds())
                 && CollectionUtils.isEmpty(criteria.getLeadOrganizationIds())
+                && CollectionUtils.isEmpty(criteria.getLeadOrganizationNames())
                 && !criteria.isSearchOnHold()
                 && !criteria.isStudyLockedBy()
                 && StringUtils.isEmpty(criteria.getSubmissionType())
@@ -746,6 +755,11 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         this.pdqDiseaseService = pdqDiseaseService;
     }
     
-    
+    /**
+     * @param organizationService the organizationService to set
+     */
+    public void setOrganizationService(PAOrganizationServiceRemote organizationService) {
+        this.organizationService = organizationService;
+    } 
 
 }

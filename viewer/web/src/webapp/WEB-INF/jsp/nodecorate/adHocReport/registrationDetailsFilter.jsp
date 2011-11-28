@@ -39,11 +39,19 @@
                        </s:fielderror>                            
                     </span>  
                 </td>   
-            </tr>    
-            <viewer:valueRow labelFor="leadOrganizationIds" labelKey="studyProtocol.leadOrganizations">
-                <s:select name="criteria.leadOrganizationIds" id="leadOrganizationIds" list="leadOrgList" listKey="key"
-                          listValue="value" headerKey="" headerValue="All" value="criteria.leadOrganizationIds" multiple="true" />
-             </viewer:valueRow>
+            </tr>             
+            
+            <viewer:titleRow titleKey="adHocReport.leadOrganizations"/>        
+           <viewer:valueRow labelKey="adHocReport.byFamily">
+              
+                <s:select id="familyId" name="criteria.familyId" list="families" headerKey="0" headerValue="--All--"  cssStyle="display:inline"/>
+            </viewer:valueRow>
+            <viewer:valueRow labelKey="adHocReport.orgsByFamily">
+                <div id="organization_choices">                       
+                  <jsp:include page="/WEB-INF/jsp/nodecorate/adHocReport/organizationsByFamily.jsp"/>                   
+                </div> 
+            </viewer:valueRow>           
+        
             <viewer:valueRow labelFor="principalInvestigatorId" labelKey="studyProtocol.principalInvestigator">
                 <s:set name="principalInvs" value="@gov.nih.nci.pa.util.PaRegistry@getPAPersonService().getAllPrincipalInvestigators()" />
                 <s:select name="criteria.principalInvestigatorId" id="principalInvestigatorId" list="#principalInvs" listKey="id"

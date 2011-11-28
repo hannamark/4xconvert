@@ -163,8 +163,21 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
                     + organization.getIdentifier(), e);
         }
     }
-
     
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    @SuppressWarnings("unchecked")
+    public List<Long> getOrganizationIdsByNames(List<String> names) throws PAException {
+        String hql = "select o.id from Organization o where o.name in (:names)";
+        Session session = PaHibernateUtil.getCurrentSession();
+        Query query =  session.createQuery(hql);
+        query.setParameterList("names", names);
+        return query.list();
+    }
+
     private List<Organization> generateDistinctOrganizationQuery(String organizationType) throws PAException {
         StringBuffer hql = prepareDistinctOrganizationQuery(organizationType);
         return executeDistinctOrganizationQuery(hql);

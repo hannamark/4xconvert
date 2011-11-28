@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.viewer.action;
 
+import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
@@ -90,6 +91,7 @@ import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.noniso.dto.PDQDiseaseNode;
+import gov.nih.nci.pa.report.service.Summ4RepLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
@@ -100,10 +102,13 @@ import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.viewer.dto.result.KeyValueDTO;
+import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -123,6 +128,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
         implements Preparable, ServletResponseAware {
 
     private static final long serialVersionUID = -8539599386849881611L;
+    private static final int MAX_LIMIT = 100;
     
     private PDQDiseaseServiceLocal diseaseService;
     private LookUpTableServiceRemote lookUpTableService;
@@ -130,10 +136,14 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     private PlannedMarkerServiceLocal plannedMarkerService;
     private ProtocolQueryServiceLocal protocolQueryService;
     private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
+    private Summ4RepLocal summ4ReportService;
 
     private StudyProtocolQueryCriteria criteria;
     private String identifier;
     private HttpServletResponse servletResponse;
+    
+    private Map<String, String> families;
+    private Map<String, String> organizations;   
 
     /**
      * {@inheritDoc}
@@ -146,6 +156,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
         setPlannedMarkerService(PaRegistry.getPlannedMarkerService());
         setProtocolQueryService(PaRegistry.getProtocolQueryService());
         setTsrReportGeneratorService(PaRegistry.getTSRReportGeneratorService());
+        summ4ReportService = ViewerServiceLocator.getInstance().getSumm4ReportService();
     }
 
     /**
@@ -154,7 +165,41 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     @Override
     public String execute() {
         setCriteria(new StudyProtocolQueryCriteria());
+        loadFamilies();
+        loadOrganizations();
         return super.execute();
+    }
+    
+    /**
+     * Load the families.
+     */
+    void loadFamilies() {
+        try {
+            families = new TreeMap<String, String>();
+            families.putAll(summ4ReportService.getFamilies(MAX_LIMIT));
+        } catch (TooManyResultsException e) {
+            addActionError(e.getMessage());
+        }
+    }
+
+    /**
+     * Get organizations based on family name.
+     * @return list
+     */
+    public String loadOrganizations() {
+        organizations = new TreeMap<String, String>();
+        if (criteria == null || criteria.getFamilyId().equals("0")) {
+            return super.getReport();
+        }
+        try {
+            Map<String, String> orgMap = summ4ReportService.getOrganizations(criteria.getFamilyId(), MAX_LIMIT);
+            for (String orgName : orgMap.keySet()) {
+                getOrganizations().put(orgName, orgName);                        
+            }
+        } catch (TooManyResultsException e) {
+            addActionError(e.getMessage());
+        }    
+        return super.getReport();
     }
     
     /**
@@ -162,6 +207,8 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
      */
     @Override
     public String getReport() {
+        loadFamilies();
+        loadOrganizations();
         if (isReportInError()) {
             return super.execute();
         }
@@ -329,7 +376,21 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
+    
+    /**
+     * @return the families
+     */
+    public Map<String, String> getFamilies() {
+        return families;
+    }
 
+    /**
+     * @return the organizations
+     */
+    public Map<String, String> getOrganizations() {
+        return organizations;
+    }   
+    
     /**
      * @param response servletResponse
      */
@@ -379,5 +440,19 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     public void setTsrReportGeneratorService(TSRReportGeneratorServiceRemote tsrReportGeneratorService) {
         this.tsrReportGeneratorService = tsrReportGeneratorService;
     }
+
+    /**
+     * @return the summ4ReportService
+     */
+    public Summ4RepLocal getSumm4ReportService() {
+        return summ4ReportService;
+    }
+
+    /**
+     * @param summ4ReportService the summ4ReportService to set
+     */
+    public void setSumm4ReportService(Summ4RepLocal summ4ReportService) {
+        this.summ4ReportService = summ4ReportService;
+    }  
 
 }
