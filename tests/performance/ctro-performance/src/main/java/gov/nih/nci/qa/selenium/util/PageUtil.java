@@ -69,4 +69,10 @@ public class PageUtil {
 		}
 		return optionsText;
 	}
+
+	public static void displayAccordionSection(WebElement section, WebElement link) {
+		if (!section.isDisplayed()) {
+			link.click();
+		}
+	}
 }

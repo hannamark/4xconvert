@@ -124,6 +124,8 @@ public class ExerciseAdHocReportPageTest {
 
 		adHocReportPage.setDiseaseConditionAndStage("recurrent thyroid", true,
 				true);
+		String diseaseCount = adHocReportPage.getDiseaseCount();
+		System.out.println("Disease count [" + diseaseCount + "].");
 
 		ArrayList<String> sites = new ArrayList<String>();
 		sites.add("Kaposi's Sarcoma");

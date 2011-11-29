@@ -19,7 +19,7 @@ import org.openqa.selenium.support.PageFactory;
  * @author kgann
  * 
  */
-public class ClinicalTrialsRegistrationDetails {
+public class DetailsSection {
 
 	@FindBy(how = How.ID, using = "officialTitle")
 	WebElement officialTitleTextBox;
@@ -59,7 +59,7 @@ public class ClinicalTrialsRegistrationDetails {
 
 	private final WebDriver webDriver;
 
-	public ClinicalTrialsRegistrationDetails(WebDriver webDriver) {
+	public DetailsSection(WebDriver webDriver) {
 		this.webDriver = webDriver;
 		PageFactory.initElements(webDriver, this);
 	}

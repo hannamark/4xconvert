@@ -2,14 +2,15 @@ package gov.nih.nci.qa.selenium.PageObjects;
 
 import gov.nih.nci.qa.selenium.PageComponents.AdHocReportTable;
 import gov.nih.nci.qa.selenium.PageComponents.AdHocReport.Biomarkers;
-import gov.nih.nci.qa.selenium.PageComponents.AdHocReport.ClinicalTrialsRegistrationDetails;
-import gov.nih.nci.qa.selenium.PageComponents.AdHocReport.DiseaseConditionAndStage;
+import gov.nih.nci.qa.selenium.PageComponents.AdHocReport.DetailsSection;
+import gov.nih.nci.qa.selenium.PageComponents.AdHocReport.DiseaseSection;
 import gov.nih.nci.qa.selenium.PageComponents.AdHocReport.Interventions;
 import gov.nih.nci.qa.selenium.PageComponents.AdHocReport.ParticipatingSites;
 import gov.nih.nci.qa.selenium.PageComponents.AdHocReport.Summary4AnatomicSite;
 import gov.nih.nci.qa.selenium.PageComponents.AdHocReport.TrialGeographicArea;
 import gov.nih.nci.qa.selenium.Parameters.ClinicalTrialRegistrationDetailsParam;
 import gov.nih.nci.qa.selenium.enumerations.AdHocReportMessage;
+import gov.nih.nci.qa.selenium.util.PageUtil;
 import gov.nih.nci.qa.selenium.util.SplitUtil;
 
 import java.util.List;
@@ -33,25 +34,46 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 	WebElement resultsTab;
 
 	@FindBy(how = How.LINK_TEXT, using = "Clinical Trial Registration Details")
-	WebElement clinicalTrialRegistrationDetailsLink;
+	WebElement detailsLink;
+
+	@FindBy(how = How.ID, using = "detailsSection")
+	WebElement detailsSection;
 
 	@FindBy(how = How.LINK_TEXT, using = "Disease/Condition and Stage")
-	WebElement diseaseConditionAndStageLink;
+	WebElement diseasesLink;
+
+	@FindBy(how = How.ID, using = "diseasesSection")
+	WebElement diseasesSection;
 
 	@FindBy(how = How.LINK_TEXT, using = "Interventions")
 	WebElement interventionsLink;
 
+	@FindBy(how = How.ID, using = "interventionsSection")
+	WebElement interventionsSection;
+
 	@FindBy(how = How.LINK_TEXT, using = "Participating Sites")
 	WebElement participatingSitesLink;
+
+	@FindBy(how = How.ID, using = "participatingSitesSection")
+	WebElement participatingSitesSection;
 
 	@FindBy(how = How.LINK_TEXT, using = "Biomarkers")
 	WebElement biomarkersLink;
 
+	@FindBy(how = How.ID, using = "biomarkersSection")
+	WebElement biomarkersSection;
+
 	@FindBy(how = How.LINK_TEXT, using = "Trial Geographic Area")
-	WebElement trialGeographicAreaLink;
+	WebElement geographicAreaLink;
+
+	@FindBy(how = How.ID, using = "geographicAreaSection")
+	WebElement geographicAreaSection;
 
 	@FindBy(how = How.LINK_TEXT, using = "Summary 4 Anatomic Site")
-	WebElement summary4AnatomicSiteLink;
+	WebElement summary4Link;
+
+	@FindBy(how = How.ID, using = "summary4Section")
+	WebElement summary4Section;
 
 	@FindBy(how = How.LINK_TEXT, using = "Run Report")
 	WebElement runReportButton;
@@ -70,58 +92,61 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 
 	public void setClinicalTrialsRegistrationDetails(
 			ClinicalTrialRegistrationDetailsParam params) {
-		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		// Change to the correct accordion.
+		DetailsSection clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+
+		// Set all the fields present in the params.
 		clinicalTrialRegistrationDetails
 				.setClinicalTrialsRegistrationDetails(params);
 	}
 
 	public List<String> getPrimaryPurposes() {
-		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		DetailsSection clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
 		return clinicalTrialRegistrationDetails.getPrimaryPurposeOptions();
 	}
 
 	public List<String> getTrialPhases() {
-		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		DetailsSection clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
 		return clinicalTrialRegistrationDetails.getTrialPhases();
 	}
 
 	public List<String> getIdentifierTypes() {
-		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		DetailsSection clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
 		return clinicalTrialRegistrationDetails.getIdentifierTypes();
 	}
 
 	public List<String> getLeadOrganizations() {
-		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		DetailsSection clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
 		return clinicalTrialRegistrationDetails.getLeadOrganizations();
 	}
 
 	public List<String> getPrincipalInvestigators() {
-		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		DetailsSection clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
 		return clinicalTrialRegistrationDetails.getPrincipalInvestigators();
 	}
 
 	public List<String> getProcessingStatuses() {
-		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		DetailsSection clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
 		return clinicalTrialRegistrationDetails.getProcessingStatuses();
 	}
 
 	public List<String> getCurrentTrialStatues() {
-		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		DetailsSection clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
 		return clinicalTrialRegistrationDetails.getCurrentTrialStatues();
 	}
 
 	public List<String> getSubmissionTypes() {
-		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		DetailsSection clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
 		return clinicalTrialRegistrationDetails.getSubmissionTypes();
 	}
 
 	public List<String> getTrialCategories() {
-		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		DetailsSection clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
 		return clinicalTrialRegistrationDetails.getTrialCategories();
 	}
 
 	public List<String> getMilestones() {
-		ClinicalTrialsRegistrationDetails clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
+		DetailsSection clinicalTrialRegistrationDetails = clickClinicalTrialRegistrationDetails();
 		return clinicalTrialRegistrationDetails.getMilestones();
 	}
 
@@ -177,9 +202,14 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 
 	public void setDiseaseConditionAndStage(String keysToSend,
 			Boolean includeSynonym, Boolean exactMatchOnly) {
-		DiseaseConditionAndStage diseaseAndStage = clickDiseaseAndStage();
+		DiseaseSection diseaseAndStage = clickDiseaseAndStage();
 		diseaseAndStage.setDiseaseCondition(keysToSend, includeSynonym,
 				exactMatchOnly);
+	}
+
+	public String getDiseaseCount() {
+		DiseaseSection diseaseAndStage = clickDiseaseAndStage();
+		return diseaseAndStage.getDiseaseSelectionCount();
 	}
 
 	public void setTrialGeographicArea(String country, List<String> states,
@@ -248,26 +278,27 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 	}
 
 	// private methods
-	private ClinicalTrialsRegistrationDetails clickClinicalTrialRegistrationDetails() {
+	private DetailsSection clickClinicalTrialRegistrationDetails() {
 		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"AdHocReportPage", "clickClinicalTrialRegistrationDetails");
-		clinicalTrialRegistrationDetailsLink.click();
+		PageUtil.displayAccordionSection(detailsSection, detailsLink);
 		split.stop();
-		return new ClinicalTrialsRegistrationDetails(webDriver);
+		return new DetailsSection(webDriver);
 	}
 
-	private DiseaseConditionAndStage clickDiseaseAndStage() {
+	private DiseaseSection clickDiseaseAndStage() {
 		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"AdHocReportPage", "clickDiseaseAndStage");
-		diseaseConditionAndStageLink.click();
+		PageUtil.displayAccordionSection(diseasesSection, diseasesLink);
 		split.stop();
-		return new DiseaseConditionAndStage(webDriver);
+		return new DiseaseSection(webDriver);
 	}
 
 	private Interventions clickInterventions() {
 		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"AdHocReportPage", "clickInterventions");
-		interventionsLink.click();
+		PageUtil.displayAccordionSection(interventionsSection,
+				interventionsLink);
 		split.stop();
 		return new Interventions(webDriver);
 	}
@@ -275,7 +306,8 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 	private ParticipatingSites clickParticipatingSites() {
 		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"AdHocReportPage", "clickParticipatingSites");
-		participatingSitesLink.click();
+		PageUtil.displayAccordionSection(participatingSitesSection,
+				participatingSitesLink);
 		split.stop();
 		return new ParticipatingSites(webDriver);
 	}
@@ -283,7 +315,8 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 	private TrialGeographicArea clickTrialGeographicArea() {
 		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"AdHocReportPage", "clickTrialGeographicArea");
-		trialGeographicAreaLink.click();
+		PageUtil.displayAccordionSection(geographicAreaSection,
+				geographicAreaLink);
 		split.stop();
 		return new TrialGeographicArea(webDriver);
 	}
@@ -291,7 +324,7 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 	private Biomarkers clickBiomarkers() {
 		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"AdHocReportPage", "clickBiomarkers");
-		biomarkersLink.click();
+		PageUtil.displayAccordionSection(biomarkersSection, biomarkersLink);
 		split.stop();
 		return new Biomarkers(webDriver);
 	}
@@ -299,7 +332,7 @@ public class AdHocReportPage extends LoadableComponent<AdHocReportPage> {
 	private Summary4AnatomicSite clickSummary4AnatomicSite() {
 		Split split = SplitUtil.getPageElementSplit(webDriver,
 				"AdHocReportPage", "clickSummary4AnatomicSite");
-		summary4AnatomicSiteLink.click();
+		PageUtil.displayAccordionSection(summary4Section, summary4Link);
 		split.stop();
 		return new Summary4AnatomicSite(webDriver);
 	}
