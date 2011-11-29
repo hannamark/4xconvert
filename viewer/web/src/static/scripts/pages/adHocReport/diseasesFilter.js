@@ -3,7 +3,7 @@
 	$(function() {
 
 		//$("a[href='#']").attr('href','##');
-		$.jstree._themes = "/viewer/styles/jstree/themes/";
+		$.jstree._themes = viewerApp.stylePath + "/jstree/themes/";
 		
 		// Clicking inside textboxes highlights the content
 		$('input[type="text"]').bind('click',function (e) {

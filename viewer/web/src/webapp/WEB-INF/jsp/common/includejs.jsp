@@ -6,6 +6,13 @@
 <script type="text/javascript" src="${scriptPath}/js/jquery.ui.potato.menu.js"></script>
 <script type="text/javascript">
  jQuery.noConflict();
+ var viewerApp = {
+   contextPath: "${pageContext.request.contextPath}",
+   imagePath: "${imagePath}",
+   scriptPath: "${scriptPath}",
+   staticPath: "${staticPath}",
+   stylePath: "${stylePath}"
+ };
 </script>
 <script type="text/javascript" src="${scriptPath}/js/Help.js"></script>
 <script type="text/javascript" src="${scriptPath}/ajax/prototype.js"></script>
