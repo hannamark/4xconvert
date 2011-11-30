@@ -24,6 +24,28 @@ CREATE TABLE DW_STUDY_PARTICIPATING_SITE (
     PRIMARY KEY (INTERNAL_SYSTEM_ID)
 );
 
+CREATE INDEX CONTACT_EMAIL_IDX on dw_study_participating_site(contact_email);
+CREATE INDEX CONTACT_FIRST_NAME_IDX on dw_study_participating_site(contact_first_name);
+CREATE INDEX CONTACT_LAST_NAME_IDX on dw_study_participating_site(contact_last_name);
+CREATE INDEX CONTACT_MIDDLE_NAME_IDX on dw_study_participating_site(contact_middle_name);
+CREATE INDEX GENERIC_CONTACT_IDX on dw_study_participating_site(generic_contact);
+CREATE INDEX INTERNAL_SYSTEM_ID_IDX on dw_study_participating_site(internal_system_id);
+CREATE INDEX INVESTIGATOR1_FIRST_NAME_IDX on dw_study_participating_site(investigator1_first_name);
+CREATE INDEX INVESTIGATOR1_LAST_NAME_IDX on dw_study_participating_site(investigator1_last_name);
+CREATE INDEX INVESTIGATOR1_ROLE_IDX on dw_study_participating_site(investigator1_role);
+CREATE INDEX INVESTIGATOR1_STATUS_IDX on dw_study_participating_site(investigator1_status);
+CREATE INDEX INVESTIGATOR2_FIRST_NAME_IDX on dw_study_participating_site(investigator2_first_name);
+CREATE INDEX INVESTIGATOR2_LAST_NAME_IDX on dw_study_participating_site(investigator2_last_name);
+CREATE INDEX INVESTIGATOR2_ROLE_IDX on dw_study_participating_site(investigator2_role);
+CREATE INDEX INVESTIGATOR2_STATUS_IDX on dw_study_participating_site(investigator2_status);
+CREATE INDEX NCI_ID_IDX on dw_study_participating_site(nci_id);
+CREATE INDEX ORG_NAME_IDX on dw_study_participating_site(org_name);
+CREATE INDEX ORG_ORG_FAMILY_IDX on dw_study_participating_site(org_org_family);
+CREATE INDEX ORG_STATUS_IDX on dw_study_participating_site(org_status);
+CREATE INDEX RECRUITMENT_STATUS_IDX on dw_study_participating_site(recruitment_status);
+CREATE INDEX RECRUITMENT_STATUS_DATE_IDX on dw_study_participating_site(recruitment_status_date);
+CREATE INDEX STATUS_IDX on dw_study_participating_site(status);
+
 INSERT INTO DW_STUDY_PARTICIPATING_SITE(
     CONTACT_EMAIL, 
     CONTACT_FIRST_NAME,

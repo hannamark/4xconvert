@@ -4,6 +4,9 @@ CREATE TABLE DW_ANATOMIC_SITE (
     NCI_ID character varying(255)
 );
 
+CREATE INDEX DW_STUDY_ANATOMIC_SITE_ANATOMIC_SITE_NAME_IDX on dw_anatomic_site(anatomic_site_name);
+CREATE INDEX DW_STUDY_ANATOMIC_SITE_NCI_ID_IDX on dw_anatomic_site(nci_id);
+
 INSERT INTO DW_ANATOMIC_SITE (
     ANATOMIC_SITE_NAME,
     NCI_ID
