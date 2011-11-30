@@ -22,19 +22,25 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class Summary4TypeReportPage extends
 		LoadableComponent<Summary4TypeReportPage> {
 
+	@FindBy(how = How.LINK_TEXT, using = "Report Filters")
+	WebElement reportFiltersTab;
+
+	@FindBy(how = How.LINK_TEXT, using = "Results")
+	WebElement resultsTab;
+
 	@FindBy(how = How.ID, using = "intervalStartDate")
 	WebElement intervalStartDate;
 
 	@FindBy(how = How.ID, using = "intervalEndDate")
 	WebElement intervalEndDate;
 
-	@FindBy(how = How.ID, using = "criteria_orgSearchTypeFind by Org Name")
+	@FindBy(how = How.ID, using = "orgSearchTypebyOrgName")
 	WebElement findByOrgNameRadio;
 
-	@FindBy(how = How.ID, using = "autocomplete")
+	@FindBy(how = How.ID, using = "orgName")
 	WebElement findByOrgNameField;
 
-	@FindBy(how = How.ID, using = "criteria_orgSearchTypeFind by Family")
+	@FindBy(how = How.ID, using = "orgSearchTypebyFamily")
 	WebElement findByFamilyRadio;
 
 	@FindBy(how = How.ID, using = "familyId")
@@ -49,10 +55,10 @@ public class Summary4TypeReportPage extends
 	@FindBy(how = How.ID, using = "orgSelectAllCheckbox")
 	WebElement selectAllCheckbox;
 
-	@FindBy(how = How.LINK_TEXT, using = "Run report")
+	@FindBy(how = How.ID, using = "runButton")
 	WebElement runReportButton;
 
-	@FindBy(how = How.LINK_TEXT, using = "Reset")
+	@FindBy(how = How.ID, using = "resetButton")
 	WebElement resetButton;
 
 	private final WebDriver webDriver;
@@ -60,6 +66,14 @@ public class Summary4TypeReportPage extends
 	public Summary4TypeReportPage(WebDriver webDriver) {
 		this.webDriver = webDriver;
 		PageFactory.initElements(webDriver, this);
+	}
+
+	public void clickReportFiltersTab() {
+		reportFiltersTab.click();
+	}
+
+	public void clickResultsTab() {
+		resultsTab.click();
 	}
 
 	public void setDateRange(String startDate, String endDate) {

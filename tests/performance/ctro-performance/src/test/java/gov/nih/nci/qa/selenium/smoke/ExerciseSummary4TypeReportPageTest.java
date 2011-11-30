@@ -84,7 +84,7 @@ public class ExerciseSummary4TypeReportPageTest {
 		summary4TypeReportPage.clickFindByOrgNameRadio();
 		summary4TypeReportPage.setFindByOrgName("Lorem Ipsum");
 		summary4TypeReportPage.clickRunReportButton();
-
+		summary4TypeReportPage.clickReportFiltersTab();
 		summary4TypeReportPage.clickResetButton();
 
 	}
