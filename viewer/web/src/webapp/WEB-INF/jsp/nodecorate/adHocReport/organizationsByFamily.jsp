@@ -5,7 +5,7 @@
 </s:if>
 <s:else>  
   <s:if test="organizations.size != 0">
-    <s:select id="orgNames" name="criteria.leadOrganizationNames" list="organizations" multiple="true" size="organizations.size > 10 ? 10 : organizations.size"/>
+    <s:select id="orgNames" name="criteria.leadOrganizationNames" list="organizations"  multiple="true" size="organizations.size > 10 ? 10 : organizations.size"/>
      <input type="checkbox" id="orgSelectAllCheckbox" title="Select All" /><label for="orgSelectAllCheckbox">Select All</label>
   </s:if>
   <s:else>

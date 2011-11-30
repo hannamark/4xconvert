@@ -82,60 +82,46 @@
  */
 package gov.nih.nci.pa.viewer.dto.result;
 
-/**
- * @author Igor Merenko
- */
-public final class KeyValueDTO implements Comparable<KeyValueDTO> {
-    private final Long key;
-    private final String value;
-    
-    /**
-     * @param key key
-     * @param value value
-     */
-    public KeyValueDTO(Long key, String value) {
-        super();
-        this.key = key;
-        this.value = value;
-    }     
-    
-    /**
-     * @return the key
-     */
-    public Long getKey() {
-        return key;
-    }    
-    
-    /**
-     * @return the value
-     */
-    public String getValue() {
-        return value;
-    }    
-   
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int compareTo(KeyValueDTO obj) {
-        int result = nullSafeStringComparator(this.value, obj.value);
-        if (result != 0) {
-            return result;
-        }
+import static org.junit.Assert.assertEquals;
 
-        return nullSafeStringComparator(this.value, obj.value);
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.junit.Test;
+
+/**
+ * @author imerenko
+ */
+public class KeyValueDTOTest {
+
+    /**
+     * Test compareTo
+     */
+    @Test
+    public void compareTo() {
+        List<KeyValueDTO> keyValues = createKeyValueDTOList();
+        Collections.sort(keyValues);
+        assertEquals("a", keyValues.get(0).getValue());
+        assertEquals("b", keyValues.get(1).getValue());
+        assertEquals("c", keyValues.get(2).getValue());
+        assertEquals(null, keyValues.get(3).getValue());
+        assertEquals(null, keyValues.get(4).getValue());
     }
 
-    private int nullSafeStringComparator(final String one, final String two) {
-        if (one == null ^ two == null) {
-            return (one == null) ? 1 : -1;
-        }
-
-        if (one == null && two == null) {
-            return 0;
-        }
-
-        return one.compareToIgnoreCase(two);
+    private List<KeyValueDTO> createKeyValueDTOList() {
+        List<KeyValueDTO> result = new ArrayList<KeyValueDTO>();
+        KeyValueDTO obj1 = new KeyValueDTO(1L, "b");
+        result.add(obj1);
+        KeyValueDTO obj2 = new KeyValueDTO(2L, "c");
+        result.add(obj2);
+        KeyValueDTO obj3 = new KeyValueDTO(4L, null);
+        result.add(obj3);
+        KeyValueDTO obj4 = new KeyValueDTO(4L, "a");
+        result.add(obj4);
+        KeyValueDTO obj5 = new KeyValueDTO(5L, null);
+        result.add(obj5);
+        return result;
     }
 
 }

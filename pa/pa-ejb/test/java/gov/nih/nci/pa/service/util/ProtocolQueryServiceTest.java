@@ -140,11 +140,11 @@ public class ProtocolQueryServiceTest  {
     }
     
     /**
-     * test organizationService.getOrganizationIdsByNames is called if names are present in criteria
+     * test organizationService.getOrganizationIdsByNames is called if lead organization names are present in criteria
      * @throws PAException 
      */
     @Test
-    public void  getStudyProtocolByCriteriaForReportingGetOrganizationIdsIsCalled() throws PAException {
+    public void  getStudyProtocolByCriteriaForReportingGetOrganizationIdsIsCalledLeadOrganization() throws PAException {
         ProtocolQueryServiceBean bean = mock(ProtocolQueryServiceBean.class);
         PAOrganizationServiceRemote organizationService = mock(PAOrganizationServiceRemote.class);
         doCallRealMethod().when(bean).setOrganizationService(organizationService);
@@ -155,6 +155,25 @@ public class ProtocolQueryServiceTest  {
         doCallRealMethod().when(bean).getStudyProtocolByCriteriaForReporting(criteria);
         bean.getStudyProtocolByCriteriaForReporting(criteria);
         verify(organizationService).getOrganizationIdsByNames(orgNames);      
+        
+    }  
+    
+    /**
+     * test organizationService.getOrganizationIdsByNames is called if participating site names are present in criteria
+     * @throws PAException 
+     */
+    @Test
+    public void  getStudyProtocolByCriteriaForReportingGetOrganizationIdsIsCalledParticipatingSite() throws PAException {
+        ProtocolQueryServiceBean bean = mock(ProtocolQueryServiceBean.class);
+        PAOrganizationServiceRemote organizationService = mock(PAOrganizationServiceRemote.class);
+        doCallRealMethod().when(bean).setOrganizationService(organizationService);
+        bean.setOrganizationService(organizationService);
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        List<String> participatingSiteNames = Arrays.asList(new String[] {"name1", "name2"});
+        criteria.setParticipatingSiteNames(participatingSiteNames);
+        doCallRealMethod().when(bean).getStudyProtocolByCriteriaForReporting(criteria);
+        bean.getStudyProtocolByCriteriaForReporting(criteria);
+        verify(organizationService).getOrganizationIdsByNames(participatingSiteNames);      
         
     }  
     

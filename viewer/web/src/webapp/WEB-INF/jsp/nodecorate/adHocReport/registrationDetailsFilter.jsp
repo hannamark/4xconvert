@@ -44,7 +44,8 @@
             <viewer:titleRow titleKey="adHocReport.leadOrganizations"/>        
            <viewer:valueRow labelKey="adHocReport.byFamily">
               
-                <s:select id="familyId" name="criteria.familyId" list="families" headerKey="0" headerValue="--All--"  cssStyle="display:inline"/>
+                <s:select id="familyId" name="criteria.familyId" list="families" listKey="key"
+                          listValue="value" headerKey="0" headerValue="--All--"  cssStyle="display:inline"/>
             </viewer:valueRow>
             <viewer:valueRow labelKey="adHocReport.orgsByFamily">
                 <div id="organization_choices">                       

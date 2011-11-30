@@ -79,6 +79,7 @@ package gov.nih.nci.pa.viewer.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -593,6 +594,47 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     }
     
     /**
+    * test loadParticipatingSites without family id
+    * 
+    * @throws TooManyResultsException 
+    */
+   @Test
+   public void loadParticipatingSitesWithoutFamilyId() throws TooManyResultsException {
+       // user selects type of report
+       assertEquals(Action.SUCCESS, action.loadParticipatingSites());
+       verify(summ4ReportService, never()).getOrganizations(anyString(), anyInt());
+       assertEquals(0, action.getActionErrors().size());
+   }
+   
+   /**
+    * test loadParticipatingSites without criteria
+    * 
+    * @throws TooManyResultsException 
+    */
+   @Test
+   public void loadParticipatingSitesWithoutCriteria() throws TooManyResultsException {       
+       assertEquals(Action.SUCCESS, action.loadParticipatingSites());
+       criteria = null;
+       verify(summ4ReportService, never()).getOrganizations(anyString(), anyInt());
+       assertEquals(0, action.getActionErrors().size());
+   }
+   
+   /**
+    * test loadParticipatingSites with family id
+    * 
+    * @throws TooManyResultsException 
+    */
+   @Test
+   public void loadParticipatingSitesWithFamilyId() throws TooManyResultsException {
+       String familyId = "1";
+       criteria.setParticipatingSiteFamilyId(familyId);
+       assertEquals(Action.SUCCESS, action.loadParticipatingSites());
+       verify(summ4ReportService).getOrganizations(familyId, 100);
+       assertEquals(0, action.getActionErrors().size());
+   }
+   
+    
+    /**
      * 
      * test loadFamilies.
      * @throws TooManyResultsException 
@@ -602,6 +644,58 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         action.loadFamilies();
         verify(summ4ReportService).getFamilies(100);
         assertEquals(0, action.getActionErrors().size());
+    }
+    
+    
+    /**
+     * Test the getReport in case of success.
+     */
+    @Test
+    public void testGetReportSuccess() {
+        AdHocReportAction action = createAdHocReportActionMock();;
+        
+        doCallRealMethod().when(action).getReport();
+        doCallRealMethod().when(action).getResultList();
+        doCallRealMethod().when(action).setResultList(anyListOf(StudyProtocolQueryDTO.class));
+        doCallRealMethod().when(action).getUserRole();
+        when(action.isReportInError()).thenReturn(false);
+        List<StudyProtocolQueryDTO> resultList = new ArrayList<StudyProtocolQueryDTO>();
+        StudyProtocolQueryDTO sp1 = new StudyProtocolQueryDTO();
+        StudyProtocolQueryDTO sp2 = new StudyProtocolQueryDTO();
+        resultList.add(sp1);
+        resultList.add(sp2);
+        action.setResultList(resultList);
+        String result = action.getReport();
+        assertEquals("Wrong result returned", "success", result);
+        verify(action).loadFamilies();
+        verify(action).loadOrganizations();
+        verify(action).loadParticipatingSites();
+        verify(action).isReportInError();
+        
+        assertEquals("Wrong webdtos list size", 2, action.getResultList().size());
+        assertEquals("Wrong result list", resultList, action.getResultList());       
+    }
+    
+    
+    
+    /**
+     * Test the getReport in case of error.
+     */
+    @Test
+    public void testGetReportError() {
+        AdHocReportAction action = createAdHocReportActionMock();
+        doCallRealMethod().when(action).getReport();
+        doCallRealMethod().when(action).getResultList();
+        doCallRealMethod().when(action).setResultList(anyListOf(StudyProtocolQueryDTO.class));
+        doCallRealMethod().when(action).getUserRole();
+        when(action.isReportInError()).thenReturn(true);
+        String result = action.getReport();
+        assertEquals("Wrong result returned", "success", result);
+        verify(action).loadFamilies();
+        verify(action).loadOrganizations();
+        verify(action).loadParticipatingSites();
+        verify(action).isReportInError();
+        assertNull("Wrong result list", action.getResultList());
     }
     
     /**

@@ -106,6 +106,7 @@ import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -142,8 +143,9 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     private String identifier;
     private HttpServletResponse servletResponse;
     
-    private Map<String, String> families;
-    private Map<String, String> organizations;   
+    private List<KeyValueDTO> families;
+    private Map<String, String> organizations;  
+    private Map<String, String> participatingSites;  
 
     /**
      * {@inheritDoc}
@@ -167,6 +169,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
         setCriteria(new StudyProtocolQueryCriteria());
         loadFamilies();
         loadOrganizations();
+        loadParticipatingSites();
         return super.execute();
     }
     
@@ -175,8 +178,13 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
      */
     void loadFamilies() {
         try {
-            families = new TreeMap<String, String>();
-            families.putAll(summ4ReportService.getFamilies(MAX_LIMIT));
+            families = new ArrayList<KeyValueDTO>();
+            Map<String, String> familyMap = summ4ReportService.getFamilies(MAX_LIMIT);
+            for (Map.Entry<String, String> entry : familyMap.entrySet()) {
+                KeyValueDTO keyValueDTO = new KeyValueDTO(Long.valueOf(entry.getKey()), entry.getValue());
+                families.add(keyValueDTO);
+            }
+            Collections.sort(families);
         } catch (TooManyResultsException e) {
             addActionError(e.getMessage());
         }
@@ -188,17 +196,36 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
      */
     public String loadOrganizations() {
         organizations = new TreeMap<String, String>();
-        if (criteria == null || criteria.getFamilyId().equals("0")) {
-            return super.getReport();
-        }
-        try {
-            Map<String, String> orgMap = summ4ReportService.getOrganizations(criteria.getFamilyId(), MAX_LIMIT);
-            for (String orgName : orgMap.keySet()) {
-                getOrganizations().put(orgName, orgName);                        
+        if (criteria != null && !criteria.getFamilyId().equals("0")) {
+            try {
+                Map<String, String> orgMap = summ4ReportService.getOrganizations(criteria.getFamilyId(), MAX_LIMIT);
+                for (String orgName : orgMap.keySet()) {
+                    getOrganizations().put(orgName, orgName);
+                }
+            } catch (TooManyResultsException e) {
+                addActionError(e.getMessage());
             }
-        } catch (TooManyResultsException e) {
-            addActionError(e.getMessage());
-        }    
+        }
+        return super.getReport();
+    }
+    
+    /**
+     * Get participating sites based on family name.
+     * @return list
+     */
+    public String loadParticipatingSites() {
+        participatingSites = new TreeMap<String, String>();
+        if (criteria != null && !criteria.getParticipatingSiteFamilyId().equals("0")) {
+            try {
+                Map<String, String> orgMap = summ4ReportService.getOrganizations(criteria
+                    .getParticipatingSiteFamilyId(), MAX_LIMIT);
+                for (String orgName : orgMap.keySet()) {
+                    getParticipatingSites().put(orgName, orgName);
+                }
+            } catch (TooManyResultsException e) {
+                addActionError(e.getMessage());
+            }
+        }
         return super.getReport();
     }
     
@@ -209,6 +236,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     public String getReport() {
         loadFamilies();
         loadOrganizations();
+        loadParticipatingSites();
         if (isReportInError()) {
             return super.execute();
         }
@@ -380,7 +408,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     /**
      * @return the families
      */
-    public Map<String, String> getFamilies() {
+    public List<KeyValueDTO> getFamilies() {
         return families;
     }
 
@@ -389,8 +417,22 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
      */
     public Map<String, String> getOrganizations() {
         return organizations;
-    }   
+    }     
     
+    /**
+     * @return the participatingSites
+     */
+    public Map<String, String> getParticipatingSites() {
+        return participatingSites;
+    }
+
+    /**
+     * @param participatingSites the participatingSites to set
+     */
+    public void setParticipatingSites(Map<String, String> participatingSites) {
+        this.participatingSites = participatingSites;
+    }
+
     /**
      * @param response servletResponse
      */

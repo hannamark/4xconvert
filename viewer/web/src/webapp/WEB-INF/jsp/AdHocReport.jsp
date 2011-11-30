@@ -76,7 +76,23 @@
                              });
                          });
                          return false;
-                     });         
+                     });  
+                     
+                     jQuery("#participatingSiteFamilyId").bind("change", function(ev) {
+                         var familyId = jQuery("#participatingSiteFamilyId").val();                                          
+                         var url = viewerApp.contextPath + '/ctro/ajax/refreshAdHocParticipatingSites.action';                    
+                         var params = { "criteria.participatingSiteFamilyId": familyId};
+                         jQuery("#sites_choices").html(jQuery("div.template.loadingMessage").children().html()).load(url, params, function() {
+                             jQuery("#participatingSitesSelectAllCheckbox").bind("click", function(ev) {
+                                 var selected = jQuery("#participatingSitesSelectAllCheckbox")[0].checked;
+                                 var options = jQuery("#siteNames")[0].options;
+                                 for (var i = 0; i < options.length; i++) {
+                                     options[i].selected = selected;
+                                 }
+                             });
+                         });
+                         return false;
+                     });   
                     
                     });
             

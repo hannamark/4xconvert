@@ -160,6 +160,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private final List<Long> interventionAlternateNameIds = new ArrayList<Long>();
     private final List<String> leadOrganizationNames = new ArrayList<String>();
     private String familyId = "0";
+    private final List<String> participatingSiteNames = new ArrayList<String>();
+    private String participatingSiteFamilyId = "0";
 
     /**
      * @return the inBoxProcessing
@@ -823,6 +825,40 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setFamilyId(String familyId) {
         this.familyId = familyId;
+    }
+    
+
+    /**
+     * @return the participatingSiteNames
+     */
+    public List<String> getParticipatingSiteNames() {
+        return participatingSiteNames;
+    }
+
+    /**
+     * @param participatingSiteNames the participatingSiteNames to set
+     */
+    public void setParticipatingSiteNames(List<String> participatingSiteNames) {        
+        this.participatingSiteNames.clear();
+        for (String name : participatingSiteNames) {
+            if (StringUtils.isNotEmpty(name)) {
+                this.participatingSiteNames.add(name);
+            }
+        }
+    }
+
+    /**
+     * @return the participatingSiteFamilyId
+     */
+    public String getParticipatingSiteFamilyId() {
+        return participatingSiteFamilyId;
+    }
+
+    /**
+     * @param participatingSiteFamilyId the participatingSiteFamilyId to set
+     */
+    public void setParticipatingSiteFamilyId(String participatingSiteFamilyId) {
+        this.participatingSiteFamilyId = participatingSiteFamilyId;
     }
 
     /**
