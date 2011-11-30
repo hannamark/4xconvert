@@ -5,7 +5,7 @@
     <c:choose>
       <c:when test="${requestScope.topic == 'run_reports' || requestScope.topic == 'login'}">
         <li>
-          <a href="/viewer/home.action">&nbsp;Home&nbsp;&nbsp;&nbsp;</a>
+          <a href="${pageContext.request.contextPath}/home.action">&nbsp;Home&nbsp;&nbsp;&nbsp;</a>
         </li>
       </c:when>                      
       <c:otherwise>

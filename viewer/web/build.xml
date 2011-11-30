@@ -462,7 +462,7 @@
     <!-- Copies JSP to the tmp folder                                           -->
     <!-- ====================================================================== -->
 
-    <target name="copy-jsp"  description="Copies the jsp's over to the unpacked war directory in jboss">
+    <target name="copy-jsp" depends="determine-build-version" description="Copies the jsp's over to the unpacked war directory in jboss">
         <for param="toDir">
             <path>
                 <dirset dir="${jboss.deploy.directory}/../tmp/deploy" includes="tmp*pa.ear-contents/viewer-exp.war"/>
@@ -474,8 +474,11 @@
                         <include name="WEB-INF/decorators/*"/>
                         <include name="WEB-INF/jsp/**/*"/>
                         <include name="WEB-INF/tags/*"/>
-                        <include name="styles/**/*"/>
-                        <include name="scripts/**/*"/>
+                    </fileset>
+                </copy>
+                <copy todir="@{toDir}/static-${project.version}">
+                    <fileset dir="${basedir}/src/static">
+                        <include name="**/*"/>
                     </fileset>
                 </copy>
             </sequential>

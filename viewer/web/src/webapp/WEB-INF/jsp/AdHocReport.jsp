@@ -64,7 +64,7 @@
                     
                      jQuery("#familyId").bind("change", function(ev) {
                          var familyId = jQuery("#familyId").val();                                          
-                         var url = '/viewer/ctro/ajax/refreshAdHocOrganizations.action';                    
+                         var url = viewerApp.contextPath + "/ctro/ajax/refreshAdHocOrganizations.action";                    
                          var params = { "criteria.familyId": familyId};
                          jQuery("#organization_choices").html(jQuery("div.template.loadingMessage").children().html()).load(url, params, function() {
                              jQuery("#orgSelectAllCheckbox").bind("click", function(ev) {
