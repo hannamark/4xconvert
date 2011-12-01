@@ -260,7 +260,7 @@ public class PdqXmlGenHelper {
      * @param childName of element
      * @param doc Document
      * @param roDTO Research Organization DTO
-     * @param Organization DTO
+     * @param orgDTO DTO
      * @throws PAException when error
      */
     protected static void addPoOrganizationByPaRoIi(Element root, String childName,
