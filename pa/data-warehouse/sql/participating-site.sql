@@ -1,17 +1,13 @@
-DROP TABLE IF EXISTS DW_STUDY_PARTICIPATING_SITE;
+DROP TABLE IF EXISTS DW_STUDY_PARTICIPATING_SITE CASCADE;
 CREATE TABLE DW_STUDY_PARTICIPATING_SITE (
     CONTACT_EMAIL character varying(200),
-    CONTACT_FIRST_NAME character varying(200),
-    CONTACT_LAST_NAME character varying(200),
-    CONTACT_MIDDLE_NAME character varying(200),
+    CONTACT_NAME character varying(600),
     GENERIC_CONTACT character varying(200),
     INTERNAL_SYSTEM_ID INTEGER,
-    INVESTIGATOR1_FIRST_NAME character varying(200),
-    INVESTIGATOR1_LAST_NAME character varying(200),
+    INVESTIGATOR1_NAME character varying(600),
     INVESTIGATOR1_ROLE character varying(200),
     INVESTIGATOR1_STATUS character varying(50),
-    INVESTIGATOR2_FIRST_NAME character varying(200),
-    INVESTIGATOR2_LAST_NAME character varying(200),
+    INVESTIGATOR2_NAME character varying(600),
     INVESTIGATOR2_ROLE character varying(200),
     INVESTIGATOR2_STATUS character varying(50),
     NCI_ID character varying(255),
@@ -25,17 +21,13 @@ CREATE TABLE DW_STUDY_PARTICIPATING_SITE (
 );
 
 CREATE INDEX DW_STUDY_PARTICIPATING_SITE_CONTACT_EMAIL_IDX on dw_study_participating_site(contact_email);
-CREATE INDEX DW_STUDY_PARTICIPATING_SITE_CONTACT_FIRST_NAME_IDX on dw_study_participating_site(contact_first_name);
-CREATE INDEX DW_STUDY_PARTICIPATING_SITE_CONTACT_LAST_NAME_IDX on dw_study_participating_site(contact_last_name);
-CREATE INDEX DW_STUDY_PARTICIPATING_SITE_CONTACT_MIDDLE_NAME_IDX on dw_study_participating_site(contact_middle_name);
+CREATE INDEX DW_STUDY_PARTICIPATING_SITE_CONTACT_NAME_IDX on dw_study_participating_site(contact_name);
 CREATE INDEX DW_STUDY_PARTICIPATING_SITE_GENERIC_CONTACT_IDX on dw_study_participating_site(generic_contact);
 CREATE INDEX DW_STUDY_PARTICIPATING_SITE_INTERNAL_SYSTEM_ID_IDX on dw_study_participating_site(internal_system_id);
-CREATE INDEX DW_STUDY_PARTICIPATING_SITE_INVESTIGATOR1_FIRST_NAME_IDX on dw_study_participating_site(investigator1_first_name);
-CREATE INDEX DW_STUDY_PARTICIPATING_SITE_INVESTIGATOR1_LAST_NAME_IDX on dw_study_participating_site(investigator1_last_name);
+CREATE INDEX DW_STUDY_PARTICIPATING_SITE_INVESTIGATOR1_NAME_IDX on dw_study_participating_site(investigator1_name);
 CREATE INDEX DW_STUDY_PARTICIPATING_SITE_INVESTIGATOR1_ROLE_IDX on dw_study_participating_site(investigator1_role);
 CREATE INDEX DW_STUDY_PARTICIPATING_SITE_INVESTIGATOR1_STATUS_IDX on dw_study_participating_site(investigator1_status);
-CREATE INDEX DW_STUDY_PARTICIPATING_SITE_INVESTIGATOR2_FIRST_NAME_IDX on dw_study_participating_site(investigator2_first_name);
-CREATE INDEX DW_STUDY_PARTICIPATING_SITE_INVESTIGATOR2_LAST_NAME_IDX on dw_study_participating_site(investigator2_last_name);
+CREATE INDEX DW_STUDY_PARTICIPATING_SITE_INVESTIGATOR2_NAME_IDX on dw_study_participating_site(investigator2_name);
 CREATE INDEX DW_STUDY_PARTICIPATING_SITE_INVESTIGATOR2_ROLE_IDX on dw_study_participating_site(investigator2_role);
 CREATE INDEX DW_STUDY_PARTICIPATING_SITE_INVESTIGATOR2_STATUS_IDX on dw_study_participating_site(investigator2_status);
 CREATE INDEX DW_STUDY_PARTICIPATING_SITE_NCI_ID_IDX on dw_study_participating_site(nci_id);
@@ -48,9 +40,7 @@ CREATE INDEX DW_STUDY_PARTICIPATING_SITE_STATUS_IDX on dw_study_participating_si
 
 INSERT INTO DW_STUDY_PARTICIPATING_SITE(
     CONTACT_EMAIL, 
-    CONTACT_FIRST_NAME,
-    CONTACT_LAST_NAME,
-    CONTACT_MIDDLE_NAME,
+    CONTACT_NAME,
     INTERNAL_SYSTEM_ID,
     NCI_ID,
     ORG_NAME,
@@ -58,7 +48,7 @@ INSERT INTO DW_STUDY_PARTICIPATING_SITE(
     RECRUITMENT_STATUS,
     RECRUITMENT_STATUS_DATE,
     STATUS
-) select contact.email, p.first_name, p.last_name, p.middle_name, ps.identifier, nci_id.extension, org.name, 
+) select contact.email, p.first_name || ' ' || p.middle_name || ' ' || p.last_name, ps.identifier, nci_id.extension, org.name, 
          org.status_code, ssas.status_code, ssas.status_date, ps.status_code
     from study_site ps
         left outer join study_protocol as sp on sp.identifier = ps.study_protocol_identifier
@@ -73,8 +63,8 @@ INSERT INTO DW_STUDY_PARTICIPATING_SITE(
             and ssas.identifier = (select max(identifier) from study_site_accrual_status where study_site_identifier = ps.identifier)
     where ps.functional_code = 'TREATING_SITE' and sp.status_code = 'ACTIVE';
     
-UPDATE DW_STUDY_PARTICIPATING_SITE SET INVESTIGATOR1_FIRST_NAME = p.first_name, INVESTIGATOR1_LAST_NAME = p.last_name,
-                                 INVESTIGATOR1_ROLE = investigator.role_code, INVESTIGATOR1_STATUS = investigator.status_code
+UPDATE DW_STUDY_PARTICIPATING_SITE SET INVESTIGATOR1_NAME = p.first_name || ' ' || p.last_name, 
+    INVESTIGATOR1_ROLE = investigator.role_code, INVESTIGATOR1_STATUS = investigator.status_code
     from study_site ps 
         left outer join study_site_contact as investigator on investigator.study_site_identifier = ps.identifier 
             and investigator.identifier = (
@@ -87,7 +77,7 @@ UPDATE DW_STUDY_PARTICIPATING_SITE SET INVESTIGATOR1_FIRST_NAME = p.first_name, 
     left outer join person as p on p.identifier = crs.person_identifier
     where ps.identifier = internal_system_id;
     
-UPDATE DW_STUDY_PARTICIPATING_SITE SET INVESTIGATOR2_FIRST_NAME = p.first_name, INVESTIGATOR2_LAST_NAME = p.last_name,
+UPDATE DW_STUDY_PARTICIPATING_SITE SET INVESTIGATOR2_NAME = p.first_name || ' ' || p.last_name,
                                  INVESTIGATOR2_ROLE = investigator.role_code, INVESTIGATOR2_STATUS = investigator.status_code
     from study_site ps 
         left outer join study_site_contact as investigator on investigator.study_site_identifier = ps.identifier 
