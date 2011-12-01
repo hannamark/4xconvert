@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS DW_STUDY ;
+DROP TABLE IF EXISTS DW_STUDY CASCADE;
 CREATE TABLE DW_STUDY (
     ACCEPTS_HEALTHY_VOLUNTEERS_INDICATOR character varying(3),
     ACRONYM  character varying(200),
@@ -65,7 +65,6 @@ CREATE TABLE DW_STUDY (
     OFFICIAL_TITLE character varying(4000),
     OVERSIGHT_AUTHORITY_COUNTRY character varying(200),
     OVERSIGHT_AUTHORITY_ORGANIZATION_NAME character varying(200),
-    PARENT_NCI_ID character varying(255),
     PHASE character varying(50),
     PHASE_ADDITIONAL_QUALIFIER_CODE character varying(50),
     PHASE_OTHER_TEXT character varying(200),
@@ -163,7 +162,6 @@ CREATE INDEX DW_STUDY_NCT_ID_IDX on dw_Study(NCT_ID);
 CREATE INDEX DW_STUDY_NUMBER_OF_ARMS_IDX on dw_study(NUMBER_OF_ARMS);
 CREATE INDEX DW_STUDY_OVERSIGHT_AUTHORITY_COUNTRY_IDX on dw_study(OVERSIGHT_AUTHORITY_COUNTRY);
 CREATE INDEX DW_STUDY_OVERSIGHT_AUTHORITY_ORGANIZATION_NAME_IDX on dw_study(OVERSIGHT_AUTHORITY_ORGANIZATION_NAME);
-CREATE INDEX DW_STUDY_PARENT_NCI_ID_IDX on dw_study(PARENT_NCI_ID);
 CREATE INDEX DW_STUDY_PHASE_IDX on dw_study(PHASE);
 CREATE INDEX DW_STUDY_PHASE_ADDITIONAL_QUALIFIER_CODE_IDX on dw_study(PHASE_ADDITIONAL_QUALIFIER_CODE);
 CREATE INDEX DW_STUDY_PHASE_OTHER_TEXT_IDX on dw_study(PHASE_OTHER_TEXT);
@@ -298,9 +296,9 @@ INSERT INTO DW_STUDY (
     left outer join study_objective as obj_primary on obj_primary.study_protocol_identifier = sp.identifier and obj_primary.type_code = 'PRIMARY' 
         and obj_primary.identifier = (select max(identifier) from study_objective where study_protocol_identifier = sp.identifier and type_code = 'PRIMARY')
     left outer join study_objective as obj_secondary on obj_secondary.study_protocol_identifier = sp.identifier and obj_secondary.type_code = 'SECONDARY'
-        and obj_primary.identifier = (select max(identifier) from study_objective where study_protocol_identifier = sp.identifier and type_code = 'SECONDARY')
+        and obj_secondary.identifier = (select max(identifier) from study_objective where study_protocol_identifier = sp.identifier and type_code = 'SECONDARY')
     left outer join study_objective as obj_ternary on obj_ternary.study_protocol_identifier = sp.identifier and obj_ternary.type_code = 'TERNARY'
-        and obj_primary.identifier = (select max(identifier) from study_objective where study_protocol_identifier = sp.identifier and type_code = 'TERNARY')
+        and obj_ternary.identifier = (select max(identifier) from study_objective where study_protocol_identifier = sp.identifier and type_code = 'TERNARY')
     left outer join study_site as lo on lo.study_protocol_identifier = sp.identifier and lo.functional_code = 'LEAD_ORGANIZATION'
     left outer join research_organization as ro_lead_org on ro_lead_org.identifier = lo.research_organization_identifier
     left outer join organization as lead_org on lead_org.identifier = ro_lead_org.organization_identifier
