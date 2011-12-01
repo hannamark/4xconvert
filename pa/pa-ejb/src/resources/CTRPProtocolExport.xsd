@@ -63,6 +63,7 @@
         <xs:sequence>
             <xs:element minOccurs="0" ref="first_name" />
             <xs:element minOccurs="0" ref="middle_initial" />
+            <xs:element minOccurs="0" ref="middle_name" />
             <xs:element ref="last_name" />
         </xs:sequence>
     </xs:group>
@@ -473,9 +474,6 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:group ref="person_name_group" />
-                <xs:group ref="id_group"/>
-                <xs:element ref="address" />
-                <xs:group ref="telecom_group" />
                 <xs:element minOccurs="0" ref="role" />
             </xs:sequence>
         </xs:complexType>
@@ -517,6 +515,7 @@
     <xs:element name="first_name" type="xs:string" />
     <xs:element name="last_name" type="xs:string" />
     <xs:element name="middle_initial" type="xs:string" />
+    <xs:element name="middle_name" type="xs:string" />
     <xs:element name="role" type="xs:string" />
     <xs:complexType name="name_type">
         <xs:sequence>
