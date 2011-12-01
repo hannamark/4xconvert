@@ -99,12 +99,20 @@ import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.correlation.CorrelationUtils;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.pa.util.PoRegistry;
+import gov.nih.nci.services.correlation.HealthCareFacilityDTO;
 import gov.nih.nci.services.correlation.NullifiedRoleException;
+import gov.nih.nci.services.correlation.ResearchOrganizationDTO;
+import gov.nih.nci.services.entity.NullifiedEntityException;
+import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -340,10 +348,45 @@ public class BasePdqXmlGeneratorBean extends CTGovXmlGeneratorServiceBeanLocal {
         Ii paRoIi = getOrgCorrelationService().getROByFunctionRole(studyProtocolIi, CdConverter
                         .convertToCd(StudySiteFunctionalCode.SPONSOR));
         Element lead = doc.createElement("lead_sponsor");
-        PdqXmlGenHelper.addPoOrganizationByPaRoIi(lead, null, paRoIi, doc, this.getCorUtils());
+        addPoOrganizationByPaRoIi(lead, null, paRoIi, doc, this.getCorUtils());
 
         return lead;
     }
+
+    /**
+     * addPoOrganizationByPaRoIi.
+     * @param root Element
+     * @param childName of element
+     * @param paRoIi pa ro ii
+     * @param doc Document
+     * @param corrUtils utility
+     * @throws PAException when error
+     */
+    protected static void addPoOrganizationByPaRoIi(Element root, String childName,
+            Ii paRoIi, Document doc, CorrelationUtils corrUtils)
+        throws PAException {
+        ResearchOrganizationDTO roDTO = PdqXmlGenHelper.getPoRODTOByPaRoIi(paRoIi, corrUtils);
+        if (roDTO == null) {
+            return;
+        }
+        OrganizationDTO orgDTO;
+        try {
+            orgDTO = PoRegistry.getOrganizationEntityService()
+                .getOrganization(roDTO.getPlayerIdentifier());
+        } catch (NullifiedEntityException e) {
+            throw new PAException(e);
+        }
+
+        // Change org name if name is CTEP or DCP
+        String orgName = EnOnConverter.convertEnOnToString(orgDTO.getName());
+
+        if (PAConstants.DCP_ORG_NAME.equals(orgName) || PAConstants.CTEP_ORG_NAME.equals(orgName)) {
+            orgName = PAConstants.NCI_ORG_NAME;
+        }
+        orgDTO.setName(EnOnConverter.convertToEnOn(orgName));
+        PdqXmlGenHelper.addPoOrganizationByPaRoIi(root, childName, doc, roDTO, orgDTO);
+    }
+
 
     /**
      * {@inheritDoc}

@@ -251,6 +251,22 @@ public class PdqXmlGenHelper {
         } catch (NullifiedEntityException e) {
             throw new PAException(e);
         }
+        addPoOrganizationByPaRoIi(root, childName, doc, roDTO, orgDTO);
+    }
+
+    /**
+     * addPoOrganizationByPaRoIi where roDTO and orgDTO are provided.
+     * @param root Element
+     * @param childName of element
+     * @param doc Document
+     * @param roDTO Research Organization DTO
+     * @param Organization DTO
+     * @throws PAException when error
+     */
+    protected static void addPoOrganizationByPaRoIi(Element root, String childName,
+            Document doc, ResearchOrganizationDTO roDTO, OrganizationDTO orgDTO)
+        throws PAException {
+
         Ii roCtepId = DSetConverter
             .getFirstInDSetByRoot(roDTO.getIdentifier(), IiConverter.CTEP_ORG_IDENTIFIER_ROOT);
         loadOrgParts(childName, root, doc, roCtepId, orgDTO);
