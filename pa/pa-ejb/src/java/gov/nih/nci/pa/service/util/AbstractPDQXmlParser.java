@@ -296,7 +296,7 @@ public abstract class AbstractPDQXmlParser {
             per = new PersonDTO();
         }
         per.setName(EnPnConverter.convertToEnPn(getText(overallOfficialElement, "first_name"),
-                                                getText(overallOfficialElement, "middle_name"),
+                                                getText(overallOfficialElement, "middle_initial"),
                                                 getText(overallOfficialElement, "last_name"), null, null));
         return per;
     }

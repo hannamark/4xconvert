@@ -1474,7 +1474,13 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
         }
     }
 
-    private void addMiddleName(Element contact, String name, Document doc) {
+    /**
+     * Adds a middle name to a contact.
+     * @param contact element
+     * @param name middle name
+     * @param doc document to add element to
+     */
+    protected void addMiddleName(Element contact, String name, Document doc) {
         String middleName = StringUtils.substring(name, 0, PAAttributeMaxLen.LEN_1);
         if (StringUtils.isNotBlank(middleName)) {
             XmlGenHelper.appendElement(contact,

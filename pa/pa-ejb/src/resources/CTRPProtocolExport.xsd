@@ -63,7 +63,6 @@
         <xs:sequence>
             <xs:element minOccurs="0" ref="first_name" />
             <xs:element minOccurs="0" ref="middle_initial" />
-            <xs:element minOccurs="0" ref="middle_name" />
             <xs:element ref="last_name" />
         </xs:sequence>
     </xs:group>
@@ -183,7 +182,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element minOccurs="0" ref="regulatory_authority" />
-                <xs:element ref="has_dmc" />
+                <xs:element minOccurs="0"   ref="has_dmc" />
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -263,8 +262,9 @@
                 <xs:element minOccurs="0" ref="phase" />
                 <xs:element minOccurs="0" ref="allocation" />
                 <xs:element minOccurs="0" ref="masking" />
-                <xs:element minOccurs="0" ref="masked_investigator" />
+                <xs:element minOccurs="0" ref="masked_assessor" />
                 <xs:element minOccurs="0" ref="masked_caregiver" />
+                <xs:element minOccurs="0" ref="masked_investigator" />
                 <xs:element minOccurs="0" ref="masked_subject" />
                 <xs:element minOccurs="0" ref="assignment" />
                 <xs:element minOccurs="0" ref="endpoint" />
@@ -279,6 +279,7 @@
     <xs:element name="phase" type="xs:string" />
     <xs:element name="allocation" type="xs:string" />
     <xs:element name="masking" type="xs:string" />
+    <xs:element name="masked_assessor" type="xs:string" />
     <xs:element name="masked_subject" type="xs:string" />
     <xs:element name="masked_investigator" type="xs:string" />
     <xs:element name="masked_caregiver" type="xs:string" />
@@ -515,7 +516,6 @@
     <xs:element name="first_name" type="xs:string" />
     <xs:element name="last_name" type="xs:string" />
     <xs:element name="middle_initial" type="xs:string" />
-    <xs:element name="middle_name" type="xs:string" />
     <xs:element name="role" type="xs:string" />
     <xs:complexType name="name_type">
         <xs:sequence>

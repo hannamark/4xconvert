@@ -283,7 +283,7 @@ public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implemen
             XmlGenHelper.appendElement(nciSpecRoot, nciSpecFundSpons);
         }
 
-        XmlGenHelper.appendElement(nciSpecRoot, XmlGenHelper.createElementWithTextblock("program_code",
+        XmlGenHelper.appendElement(nciSpecRoot, XmlGenHelper.createElement("program_code",
                 StConverter.convertToString(spDTO.getProgramCodeText()), doc));
         XmlGenHelper.appendElement(root, nciSpecRoot);
     }

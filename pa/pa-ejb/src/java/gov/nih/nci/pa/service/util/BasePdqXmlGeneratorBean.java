@@ -435,4 +435,16 @@ public class BasePdqXmlGeneratorBean extends CTGovXmlGeneratorServiceBeanLocal {
         return responsibleParty;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void addMiddleName(Element contact, String name, Document doc) {
+        String middleName = StringUtils.substring(name, 0, PAAttributeMaxLen.LEN_1);
+        if (StringUtils.isNotBlank(middleName)) {
+            XmlGenHelper.appendElement(contact,
+                    XmlGenHelper.createElementWithTextblock("middle_initial", middleName + "." , doc));
+}
+    }
+
 }
