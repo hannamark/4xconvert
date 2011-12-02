@@ -1,4 +1,13 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
+<script type="text/javascript">        
+function generateTSR(Id) {
+    var url = "/viewer/ctro/ajax/resultsAdHocReportviewTSR.action?studyProtocolId="+Id;
+    document.sForm.target = "TSR";
+    document.sForm.action = url;
+    document.sForm.submit();
+}
+</script>
+
  <s:if test="%{resultList != null}">
     <div id="overflow-div">
         <table id="resultTable" width="100%">
