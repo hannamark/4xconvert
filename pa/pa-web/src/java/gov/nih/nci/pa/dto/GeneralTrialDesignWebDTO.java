@@ -143,6 +143,7 @@ public class GeneralTrialDesignWebDTO {
     private String dcpIdentifier;
     private List<Ii> otherIdentifiers = new ArrayList<Ii>();
     private Ii nonOtherIdentifiers = new Ii();
+    private String rejectionReasonCode;
 
 
     /**
@@ -822,5 +823,17 @@ public class GeneralTrialDesignWebDTO {
     public String getPrimaryPurposeOtherText() {
         return primaryPurposeOtherText;
     }
+    /**
+     * @return the rejectionReasonCode
+     */
+    public String getRejectionReasonCode() {
+        return rejectionReasonCode;
+    }
+    /**
+     * @param rejectionReasonCode the rejectionReasonCode to set
+     */
+    public void setRejectionReasonCode(String rejectionReasonCode) {
+        this.rejectionReasonCode = rejectionReasonCode;
+    }  
 
 }

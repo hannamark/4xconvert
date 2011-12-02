@@ -87,6 +87,8 @@ import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.RejectionReasonCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -267,10 +269,8 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
     /**
      * @return String
      */
-    public String rejectReason() {
-        if (StringUtils.isEmpty(gtdDTO.getCommentText())) {
-            addFieldError("gtdDTO.commentText", getText("Rejection Reason must be Entered"));
-        }
+    public String rejectReason() {        
+        validateRejectionData();
         if (hasFieldErrors()) {
             return "rejectReason";
         }
@@ -283,8 +283,12 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
             // if trial is amend then hard delete
             if (intSubNo > 1) {
                 // send mail
-                mailManagerService.sendAmendRejectEmail(studyProtocolIi, gtdDTO.getCommentText());
-                trialRegistrationService.reject(studyProtocolIi, StConverter.convertToSt(gtdDTO.getCommentText()));
+                String rejectionMessage = StringUtils.isNotBlank(gtdDTO.getCommentText()) ? gtdDTO
+                    .getRejectionReasonCode() + " - " + gtdDTO.getCommentText() : gtdDTO.getRejectionReasonCode();
+                mailManagerService.sendAmendRejectEmail(studyProtocolIi, rejectionMessage);
+                trialRegistrationService.reject(studyProtocolIi, StConverter.convertToSt(gtdDTO.getCommentText()),
+                                                CdConverter.convertToCd(RejectionReasonCode.getByCode(gtdDTO
+                                                    .getRejectionReasonCode())));
                 session.removeAttribute(submissionNo);
                 session.removeAttribute(Constants.TRIAL_SUMMARY);
                 session.removeAttribute(Constants.STUDY_PROTOCOL_II);
@@ -304,6 +308,12 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
         return EDIT;
     }
 
+    private void validateRejectionData() {
+        if (StringUtils.isEmpty(gtdDTO.getRejectionReasonCode())) {
+            addFieldError("gtdDTO.getRejectionReasonCode", getText("Rejection Reason Code must be selected"));    
+        }        
+    }
+
     /**
      * Creates the milestones.
      *
@@ -314,10 +324,12 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
         HttpSession session = ServletActionContext.getRequest().getSession();
         Ii studyProtocolIi = (Ii) session.getAttribute(Constants.STUDY_PROTOCOL_II);
         PAServiceUtils paServiceUtil = new PAServiceUtils();
-        paServiceUtil.createMilestone(studyProtocolIi, msc, StConverter.convertToSt(gtdDTO.getCommentText()));
+        paServiceUtil.createMilestone(studyProtocolIi, msc, StConverter.convertToSt(gtdDTO.getCommentText()),
+                                      CdConverter.convertToCd(RejectionReasonCode.getByCode(gtdDTO
+                                          .getRejectionReasonCode())));
 
-        StudyProtocolQueryDTO studyProtocolQueryDTO =
-                protocolQueryService.getTrialSummaryByStudyProtocolId(Long.valueOf(studyProtocolIi.getExtension()));
+        StudyProtocolQueryDTO studyProtocolQueryDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(Long
+            .valueOf(studyProtocolIi.getExtension()));
 
         // put an entry in the session and store StudyProtocolQueryDTO
         session.setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);

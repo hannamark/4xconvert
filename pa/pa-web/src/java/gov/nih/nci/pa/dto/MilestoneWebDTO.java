@@ -112,13 +112,15 @@ public class MilestoneWebDTO {
     public MilestoneWebDTO(StudyMilestoneDTO isoDto) {
         milestone = CdConverter.convertCdToString(isoDto.getMilestoneCode());
         date = PAUtil.normalizeDateStringWithTime(TsConverter.convertToTimestamp(isoDto.getMilestoneDate()).toString());
-        comment = StConverter.convertToString(isoDto.getCommentText());
+        comment = isoDto.determineCommentText() != null ? isoDto.determineCommentText().getValue() : null;
         creator = StConverter.convertToString(isoDto.getCreator());
         if (isoDto.getCreationDate() != null) {
             creationDate = PAUtil.normalizeDateStringWithTime(TsConverter.convertToTimestamp(isoDto.getCreationDate())
                 .toString());
         }
     }
+
+  
 
     /**
      * @return the milestone

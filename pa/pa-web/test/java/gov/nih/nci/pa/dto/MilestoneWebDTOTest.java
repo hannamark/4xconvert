@@ -82,7 +82,11 @@
  */
 package gov.nih.nci.pa.dto;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.RejectionReasonCode;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
@@ -93,8 +97,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 /**
  * @author Michael Visee
  */
@@ -102,17 +104,19 @@ public class MilestoneWebDTOTest {
     private static final Date NOW = new Date();
     private static final Timestamp MILESTONE_DATE = new Timestamp(NOW.getTime());
     private static final String CREATOR = "Creator";
-    private static final String COMMENT = "comment";
+    private static final String COMMENT_TEXT = "comment";
+    private static final String COMMENT = "Other - comment";
 
     private StudyMilestoneDTO makeDto() {
         StudyMilestoneDTO dto = new StudyMilestoneDTO();
-        dto.setCommentText(StConverter.convertToSt(COMMENT));
+        dto.setCommentText(StConverter.convertToSt(COMMENT_TEXT));
         dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.SUBMISSION_RECEIVED));
         dto.setMilestoneDate(TsConverter.convertToTs(MILESTONE_DATE));
+        dto.setRejectionReasonCode(CdConverter.convertToCd(RejectionReasonCode.OTHER));
         return dto;
     }
 
-    private void verify(MilestoneWebDTO webDto) {
+    private void verify(MilestoneWebDTO webDto) {       
         assertEquals(COMMENT, webDto.getComment());
         assertEquals(MilestoneCode.SUBMISSION_RECEIVED.getCode(), webDto.getMilestone());
         assertEquals(PAUtil.normalizeDateStringWithTime(MILESTONE_DATE.toString()), webDto.getDate());

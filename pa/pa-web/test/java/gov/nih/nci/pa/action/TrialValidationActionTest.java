@@ -7,8 +7,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
@@ -22,23 +28,15 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserService;
 import gov.nih.nci.pa.util.Constants;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.service.MockCorrelationUtils;
 import gov.nih.nci.services.correlation.OrganizationalContactCorrelationServiceRemote;
 import gov.nih.nci.services.correlation.OrganizationalContactDTO;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.anyString;
+import java.util.ArrayList;
+
+import org.junit.Before;
+import org.junit.Test;
 
 public class TrialValidationActionTest extends AbstractPaActionTest {
 
@@ -232,12 +230,14 @@ public class TrialValidationActionTest extends AbstractPaActionTest {
     public void testRejectReason() {
         GeneralTrialDesignWebDTO gtdDTO = new GeneralTrialDesignWebDTO();
         gtdDTO.setCommentText("rejectcommentText");
+        gtdDTO.setRejectionReasonCode("Other");
         trialValidationAction.setGtdDTO(gtdDTO);
         getRequest().getSession().setAttribute("submissionNumber", 1);
         assertEquals("edit", trialValidationAction.rejectReason());
         gtdDTO = new GeneralTrialDesignWebDTO();
         gtdDTO.setProprietarytrialindicator(Boolean.TRUE.toString());
         gtdDTO.setCommentText("rejectcommentText");
+        gtdDTO.setRejectionReasonCode("Other");
         trialValidationAction.setGtdDTO(gtdDTO);
         getRequest().getSession().setAttribute("submissionNumber", 2);
         assertEquals("amend_reject", trialValidationAction.rejectReason());

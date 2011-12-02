@@ -588,7 +588,6 @@ public class PAServiceUtils {
             }
             throw pae;
         }
-
     }
 
     private void validateNotNullParamtrs(Ii studyProtocolIi, String orgPoIdentifier) throws PAException {
@@ -713,7 +712,6 @@ public class PAServiceUtils {
 
         }
         return spDtos;
-
     }
 
     /**
@@ -741,7 +739,6 @@ public class PAServiceUtils {
 
         }
         return spDtos;
-
     }
 
     /**
@@ -1011,16 +1008,19 @@ public class PAServiceUtils {
      * @param studyProtocolIi Ii
      * @param msc milestonCode
      * @param commentText text
+     * @param rejectionReasonCode rejectionReasonCode
      * @throws PAException e
      */
 
-    public void createMilestone(Ii studyProtocolIi, MilestoneCode msc, St commentText) throws PAException {
+    public void createMilestone(Ii studyProtocolIi, MilestoneCode msc, St commentText, Cd rejectionReasonCode)
+            throws PAException {
         StudyMilestoneDTO smDto = new StudyMilestoneDTO();
         smDto.setMilestoneDate(TsConverter.convertToTs(new Timestamp((new Date()).getTime())));
         smDto.setStudyProtocolIdentifier(studyProtocolIi);
         smDto.setMilestoneCode(CdConverter.convertToCd(msc));
+        smDto.setRejectionReasonCode(rejectionReasonCode);
         smDto.setCommentText(commentText);
-        StudyPaService<StudyMilestoneDTO>  spService = getRemoteService(IiConverter.convertToStudyMilestoneIi(null));
+        StudyPaService<StudyMilestoneDTO> spService = getRemoteService(IiConverter.convertToStudyMilestoneIi(null));
         spService.create(smDto);
     }
     /**

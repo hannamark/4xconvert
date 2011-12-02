@@ -81,6 +81,11 @@ package gov.nih.nci.pa.iso.dto;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.util.ISOUtil;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Hugh Reinhart
@@ -99,6 +104,7 @@ public class StudyMilestoneDTO extends StudyDTO {
     private Ts milestoneDate;
     private St creator;
     private Ts creationDate;
+    private Cd rejectionReasonCode;
     
     /**
      * @return the commentText
@@ -169,4 +175,39 @@ public class StudyMilestoneDTO extends StudyDTO {
     public void setCreationDate(Ts creationDate) {
         this.creationDate = creationDate;
     }
+
+    /**
+     * @return the rejectionReasonCode
+     */
+    public Cd getRejectionReasonCode() {
+        return rejectionReasonCode;
+    }
+
+    /**
+     * @param rejectionReasonCode the rejectionReasonCode to set
+     */
+    public void setRejectionReasonCode(Cd rejectionReasonCode) {
+        this.rejectionReasonCode = rejectionReasonCode;
+    }  
+    
+    /**
+     * @return Comment Text. returns null if CommentText is blank
+     */
+    public St determineCommentText() {
+        String rejectionReason = ISOUtil.isCdNull(getRejectionReasonCode()) ? "" : CdConverter
+            .convertCdToString(getRejectionReasonCode());
+        String commentTextStr = ISOUtil.isStNull(getCommentText()) ? "" : StConverter.convertToString(getCommentText());
+
+        StringBuilder str = new StringBuilder();
+        str.append(rejectionReason);
+        if (StringUtils.isNotEmpty(rejectionReason) && StringUtils.isNotEmpty(commentTextStr)) {
+            str.append(" - ");
+        }
+        str.append(commentTextStr);
+        if (StringUtils.isBlank(str.toString())) {
+            return null;
+        }
+        return StConverter.convertToSt(str.toString());
+    }
+    
 }

@@ -802,4 +802,8 @@
         <comment>Update nullified Recruitment Status codes to COMPLETED.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.7/PO-4344.sql"/>
      </changeSet>
+     <changeSet id="PO-4216" author="merenkoi">
+        <comment>Add rejection_reason_code column to study_milestone</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.7/PO-4216.sql"/>
+     </changeSet>
 </databaseChangeLog>

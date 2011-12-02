@@ -78,6 +78,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -259,8 +260,9 @@ public interface TrialRegistrationServiceLocal {
      * Reject a protocol and rollback all the changes.
      * @param studyProtocolIi study protocol identifier
      * @param rejectionReason rejectionReason
+     * @param rejectionReasonCode rejectionReasonCode
      * @throws PAException on error
      */
-    void reject(Ii studyProtocolIi, St rejectionReason) throws PAException;
+    void reject(Ii studyProtocolIi, St rejectionReason, Cd rejectionReasonCode) throws PAException;
 
 }

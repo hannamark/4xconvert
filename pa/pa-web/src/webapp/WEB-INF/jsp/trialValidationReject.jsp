@@ -33,12 +33,29 @@ function handleAction(){
     <s:form>
         <s:token/>
         <pa:studyUniqueToken/>
-    <h2>Reason For Rejection</h2>
+    <h2>Trial Rejection</h2>
     <table class="form">
+                <tr>
+                <td scope="row" class="label">
+                        <label for="deletion">                      
+                          Rejection Reason<span class="required">*</span>
+                        </label>
+                     </td>                     
+                    <td class="value">
+                        <s:set name="reasonCodeValues" value="@gov.nih.nci.pa.enums.RejectionReasonCode@getDisplayNames()" />
+                        <s:select headerKey="" id="reasonCodes" headerValue="--Select--" name="gtdDTO.rejectionReasonCode" 
+                          list="#reasonCodeValues"  value="gtdDTO.rejectionReasonCode" cssStyle="width:206px"/>
+                         <span class="formErrorMsg"> 
+                           <s:fielderror>
+                             <s:param>gtdDTO.getRejectionReasonCode</s:param>
+                           </s:fielderror>                            
+                         </span> 
+                      </td>  
+                </tr> 
                 <tr>
                     <td scope="row" class="label">
                         <label for="deletion">                      
-                            Reason For Rejection<span class="required">*</span>
+                            Comments
                         </label>
                      </td>                     
                     <td class="value">

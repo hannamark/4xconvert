@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.domain;
 
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.RejectionReasonCode;
 import gov.nih.nci.pa.util.CommonsConstant;
 
 import java.sql.Timestamp;
@@ -110,6 +111,7 @@ public class StudyMilestone extends AbstractStudyEntity {
     private String commentText;
     private MilestoneCode milestoneCode;
     private Timestamp milestoneDate;
+    private RejectionReasonCode rejectionReasonCode;
 
     /**
      * @return the commentText
@@ -140,7 +142,25 @@ public class StudyMilestone extends AbstractStudyEntity {
      */
     public void setMilestoneCode(MilestoneCode milestoneCode) {
         this.milestoneCode = milestoneCode;
+    }    
+    
+    /**
+     * @return the rejectionReasonCode
+     */
+    @Column(name = "REJECTION_REASON_CODE")
+    @Enumerated(EnumType.STRING)    
+    @Searchable
+    public RejectionReasonCode getRejectionReasonCode() {
+        return rejectionReasonCode;
     }
+    
+    /**
+     * @param rejectionReasonCode the rejectionReasonCode to set
+     */
+    public void setRejectionReasonCode(RejectionReasonCode rejectionReasonCode) {
+        this.rejectionReasonCode = rejectionReasonCode;
+    }
+    
     /**
      * @return the milestoneDate
      */

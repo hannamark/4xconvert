@@ -468,8 +468,8 @@ public class StudyMilestoneBeanLocal
         dwfDto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(TsConverter.convertToTimestamp(dto
                                                                             .getMilestoneDate()), null));
         dwfDto.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
-        if (dto.getCommentText() != null) {
-            dwfDto.setCommentText(dto.getCommentText());
+        if (dto.determineCommentText() != null) {
+            dwfDto.setCommentText(dto.determineCommentText());
         }
         documentWorkflowStatusService.create(dwfDto);
     }

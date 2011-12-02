@@ -287,7 +287,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
                                                        StudyTypeCode.INTERVENTIONAL);
             overallStatusDTO.setStudyProtocolIdentifier(spIi);
             createStudyRelationship(spIi, toStudyProtocolIi, studyProtocolDTO);
-            paServiceUtils.createMilestone(spIi, MilestoneCode.SUBMISSION_RECEIVED, null);
+            paServiceUtils.createMilestone(spIi, MilestoneCode.SUBMISSION_RECEIVED, null, null);
             studyOverallStatusService.create(overallStatusDTO);
             saveDocuments(documentDTOs, spIi);
             sendMail(AMENDMENT, isBatchMode, spIi);
@@ -433,7 +433,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             studyProtocolDTO.setIdentifier(null);
             studyProtocolDTO.setSubmissionNumber(IntConverter.convertToInt("1"));
             Ii spIi = createStudyProtocol(studyProtocolDTO);
-            paServiceUtils.createMilestone(spIi, MilestoneCode.SUBMISSION_RECEIVED, null);
+            paServiceUtils.createMilestone(spIi, MilestoneCode.SUBMISSION_RECEIVED, null, null);
             overallStatusDTO.setStudyProtocolIdentifier(spIi);
             studyOverallStatusService.create(overallStatusDTO);
             paServiceUtils.createOrUpdate(studyIndldeDTOs, IiConverter.convertToStudyIndIdeIi(null), spIi);
@@ -515,7 +515,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
 
         try {
             Ii spIi = createStudyProtocol(studyProtocolDTO);
-            getPAServiceUtils().createMilestone(spIi, MilestoneCode.SUBMISSION_RECEIVED, null);
+            getPAServiceUtils().createMilestone(spIi, MilestoneCode.SUBMISSION_RECEIVED, null, null);
 
             getPAServiceUtils().manageSummaryFour(spIi, summary4OrganizationDTO, summary4StudyResourcingDTO);
             updateStudySiteIdentifier(spIi, leadOrganizationDTO, leadOrganizationStudySiteDTO);
@@ -753,14 +753,11 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     }
 
     /**
-     * Reject a protocol and rollback all the changes.
-     * @param studyProtocolIi study protocol identifier
-     * @param rejectionReason rejectionReason
-     * @throws PAException on error
+     * {@inheritDoc}
      */
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void reject(Ii studyProtocolIi, St rejectionReason) throws PAException {
+    public void reject(Ii studyProtocolIi, St rejectionReason, Cd rejectionReasonCode) throws PAException {
         try {
             StudyProtocolDTO studyProtocolDto = studyProtocolService.getInterventionalStudyProtocol(studyProtocolIi);
             TrialRegistrationValidator validator = createValidator();
@@ -772,6 +769,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
                 smDto.setStudyProtocolIdentifier(studyProtocolIi);
                 smDto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.SUBMISSION_REJECTED));
                 smDto.setCommentText(rejectionReason);
+                smDto.setRejectionReasonCode(rejectionReasonCode);
                 studyMilestoneService.create(smDto);
             } else {
                 Ii targetSpIi = studyProtocolIi;

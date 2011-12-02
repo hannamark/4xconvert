@@ -985,7 +985,7 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
         PaHibernateUtil.getCurrentSession().clear();
 
         new PAServiceUtils()
-            .createMilestone(ii, MilestoneCode.SUBMISSION_ACCEPTED, StConverter.convertToSt("Accepted"));
+            .createMilestone(ii, MilestoneCode.SUBMISSION_ACCEPTED, StConverter.convertToSt("Accepted"), null);
 
         studyProtocolDTO = studyProtocolService.getInterventionalStudyProtocol(ii);
         overallStatusDTO = studyOverallStatusService.getCurrentByStudyProtocol(ii);
@@ -1295,18 +1295,19 @@ public class TrialRegistrationServiceTest extends AbstractHibernateTestCase {
     }
 
     private void createMilestones(Ii ii) throws PAException {
-        paServiceUtils.createMilestone(ii, MilestoneCode.SUBMISSION_ACCEPTED, StConverter.convertToSt("Accepted"));
-        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_READY_FOR_QC, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_QC_START, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_QC_COMPLETE, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_READY_FOR_QC, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_START, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_COMPLETE, null);
-        paServiceUtils.createMilestone(ii, MilestoneCode.INITIAL_ABSTRACTION_VERIFY, null);
+        paServiceUtils
+            .createMilestone(ii, MilestoneCode.SUBMISSION_ACCEPTED, StConverter.convertToSt("Accepted"), null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_PROCESSING_START_DATE, null, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_PROCESSING_COMPLETED_DATE, null, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_READY_FOR_QC, null, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_QC_START, null, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.ADMINISTRATIVE_QC_COMPLETE, null, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE, null, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE, null, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_READY_FOR_QC, null, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_START, null, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.SCIENTIFIC_QC_COMPLETE, null, null);
+        paServiceUtils.createMilestone(ii, MilestoneCode.INITIAL_ABSTRACTION_VERIFY, null, null);
     }
 
     @Test

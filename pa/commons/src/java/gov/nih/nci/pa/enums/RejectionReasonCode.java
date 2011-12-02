@@ -80,118 +80,72 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.iso.convert;
+package gov.nih.nci.pa.enums;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-import gov.nih.nci.pa.domain.StudyMilestone;
-import gov.nih.nci.pa.enums.MilestoneCode;
-import gov.nih.nci.pa.enums.RejectionReasonCode;
-import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
-import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
-import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.security.authorization.domainobjects.User;
-
-import java.sql.Timestamp;
-import java.util.Date;
-
-import org.junit.Test;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.getByClassAndCode;
+import static gov.nih.nci.pa.enums.CodedEnumHelper.register;
+import static gov.nih.nci.pa.enums.EnumHelper.sentenceCasedName;
 
 /**
- * @author Michael Visee
+ * @author imerenko
  */
-public class StudyMilestoneConverterTest extends AbstractConverterTest<StudyMilestoneConverter, StudyMilestoneDTO, StudyMilestone> {
-    
-    private static final Date NOW = new Date();
-    private static final Timestamp MILESTONE_DATE = new Timestamp(NOW.getTime());
-    private static final String USER_FIRST_NAME = "User First Name";
-    private static final String USER_LAST_NAME = "User Last Name";
-    private static final String COMMENT = "comment";
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StudyMilestone makeBo() {
-        User user = new User();
-        user.setFirstName(USER_FIRST_NAME);
-        user.setLastName(USER_LAST_NAME);
-        StudyMilestone bo = new StudyMilestone();
-        bo.setId(ID);
-        bo.setDateLastCreated(NOW);
-        bo.setUserLastCreated(user);
-        bo.setDateLastUpdated(NOW);
-        bo.setUserLastUpdated(user);
-        bo.setStudyProtocol(getStudyProtocol());
-        bo.setCommentText(COMMENT);
-        bo.setMilestoneCode(MilestoneCode.SUBMISSION_RECEIVED);
-        bo.setRejectionReasonCode(RejectionReasonCode.DUPLICATE);
-        bo.setMilestoneDate(MILESTONE_DATE);
-        return bo;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StudyMilestoneDTO makeDto() {
-        StudyMilestoneDTO dto = new StudyMilestoneDTO();
-        dto.setIdentifier(IiConverter.convertToIi(ID));
-        dto.setStudyProtocolIdentifier(IiConverter.convertToIi(STUDY_PROTOCOL_ID));
-        dto.setCommentText(StConverter.convertToSt(COMMENT));
-        dto.setMilestoneCode(CdConverter.convertToCd(MilestoneCode.SUBMISSION_RECEIVED));
-        dto.setRejectionReasonCode(CdConverter.convertToCd(RejectionReasonCode.DUPLICATE));
-        dto.setMilestoneDate(TsConverter.convertToTs(MILESTONE_DATE));
-        return dto;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void verifyBo(StudyMilestone bo) {
-        assertEquals(ID, bo.getId());
-        assertEquals(STUDY_PROTOCOL_ID, bo.getStudyProtocol().getId());
-        assertEquals(COMMENT, bo.getCommentText());
-        assertEquals(MilestoneCode.SUBMISSION_RECEIVED, bo.getMilestoneCode());
-        assertEquals(RejectionReasonCode.DUPLICATE, bo.getRejectionReasonCode());
-        assertEquals(MILESTONE_DATE, bo.getMilestoneDate());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void verifyDto(StudyMilestoneDTO dto) {
-        assertEquals(IiConverter.STUDY_MILESTONE_ROOT, dto.getIdentifier().getRoot());
-        assertEquals(ID, IiConverter.convertToLong(dto.getIdentifier()));
-        assertEquals(IiConverter.STUDY_PROTOCOL_ROOT, dto.getStudyProtocolIdentifier().getRoot());
-        assertEquals(STUDY_PROTOCOL_ID, IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
-        assertEquals(COMMENT, StConverter.convertToString(dto.getCommentText()));
-        assertEquals(MilestoneCode.SUBMISSION_RECEIVED.getCode(), dto.getMilestoneCode().getCode());
-        assertEquals(RejectionReasonCode.DUPLICATE.getCode(), dto.getRejectionReasonCode().getCode());
-        assertEquals(MILESTONE_DATE, TsConverter.convertToTimestamp(dto.getCreationDate()));
-        assertEquals(USER_LAST_NAME + ", " + USER_FIRST_NAME, StConverter.convertToString(dto.getCreator()));
-        assertEquals(MILESTONE_DATE, TsConverter.convertToTimestamp(dto.getCreationDate()));
-    }
+public enum RejectionReasonCode implements CodedEnum<String> {
     
     /**
-     * Test the conversion when there are missing fields.
-     * @throws PAException if an error occurs
+     * Out of Scope.
      */
-    @Test
-    public void testConversionOfMissingFields() throws PAException {
-        StudyMilestone bo = makeBo();
-        bo.setUserLastCreated(null);
-        bo.setDateLastCreated(null);
-        StudyMilestoneConverter converter = new StudyMilestoneConverter();
-        StudyMilestoneDTO dto = converter.convertFromDomainToDto(bo);
-        assertNull(dto.getCreator());
-        assertNull(dto.getCreationDate());
+    OUT_OF_SCOPE("Out of Scope"),
+    /**
+     * Duplicate.
+     */
+    DUPLICATE("Duplicate"),
+    /**
+     * Other.
+     */
+    OTHER("Other");
+    
+    private String code;
+    
+    private RejectionReasonCode(String code) {
+        this.code = code;
+        register(this);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getCode() {
+        return code;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getDisplayName() {
+        return sentenceCasedName(this);
+    }
+    
+   /**
+    * @param code code
+    * @return Rejection Reason Code
+    */
+   public static RejectionReasonCode getByCode(String code) {
+       return getByClassAndCode(RejectionReasonCode.class, code);
+   }
+
+   /**
+    * @return String[] display names of enums
+    */
+   public static String[] getDisplayNames() {
+       RejectionReasonCode[] l = RejectionReasonCode.values();
+       String[] a = new String[l.length];
+       for (int i = 0; i < l.length; i++) {
+           a[i] = l[i].getCode();
+       }
+       return a;
+   }
+
 
 }

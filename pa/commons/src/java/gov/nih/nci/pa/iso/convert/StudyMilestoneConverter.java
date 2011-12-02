@@ -81,6 +81,7 @@ package gov.nih.nci.pa.iso.convert;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.RejectionReasonCode;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
@@ -105,6 +106,7 @@ public class StudyMilestoneConverter extends AbstractConverter<StudyMilestoneDTO
         dto.setCommentText(StConverter.convertToSt(bo.getCommentText()));
         dto.setIdentifier(IiConverter.convertToStudyMilestoneIi(bo.getId()));
         dto.setMilestoneCode(CdConverter.convertToCd(bo.getMilestoneCode()));
+        dto.setRejectionReasonCode(CdConverter.convertToCd(bo.getRejectionReasonCode()));
         dto.setMilestoneDate(TsConverter.convertToTs(bo.getMilestoneDate()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
         User user = bo.getUserLastCreated();
@@ -142,6 +144,8 @@ public class StudyMilestoneConverter extends AbstractConverter<StudyMilestoneDTO
         bo.setCommentText(StConverter.convertToString(dto.getCommentText()));
         bo.setId(IiConverter.convertToLong(dto.getIdentifier()));
         bo.setMilestoneCode(MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode())));
+        bo.setRejectionReasonCode(RejectionReasonCode.getByCode(CdConverter.convertCdToString(dto
+            .getRejectionReasonCode())));
         bo.setMilestoneDate(TsConverter.convertToTimestamp(dto.getMilestoneDate()));
     }
 

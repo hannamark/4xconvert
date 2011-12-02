@@ -407,7 +407,7 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
 
         //Accept the trial then re-run to test updating.
         bean.getPaServiceUtils().createMilestone(trialIi, MilestoneCode.SUBMISSION_ACCEPTED,
-                StConverter.convertToSt("Accepted."));
+                StConverter.convertToSt("Accepted."), null);
 
         PaHibernateUtil.getCurrentSession().flush();
         Ii newTrialIi = bean.loadRegistrationElementFromPDQXml(testUpdateXMLUrl, "loginName");
