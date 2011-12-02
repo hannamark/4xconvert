@@ -42,27 +42,29 @@ INSERT INTO DW_STUDY_PARTICIPATING_SITE(
     CONTACT_EMAIL, 
     CONTACT_NAME,
     INTERNAL_SYSTEM_ID,
-    NCI_ID,
     ORG_NAME,
     ORG_STATUS,
     RECRUITMENT_STATUS,
     RECRUITMENT_STATUS_DATE,
     STATUS
-) select contact.email, p.first_name || ' ' || p.middle_name || ' ' || p.last_name, ps.identifier, nci_id.extension, org.name, 
+) select contact.email, p.first_name || ' ' || p.middle_name || ' ' || p.last_name, ps.identifier, org.name, 
          org.status_code, ssas.status_code, ssas.status_date, ps.status_code
     from study_site ps
         left outer join study_protocol as sp on sp.identifier = ps.study_protocol_identifier
         left outer join study_site_contact as contact on contact.study_site_identifier = ps.identifier and contact.role_code = 'PRIMARY_CONTACT'
         left join healthcare_provider as hcp on hcp.identifier = contact.healthcare_provider_identifier
         left join person as p on p.identifier = hcp.person_identifier
-        inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = ps.study_protocol_identifier
-                and nci_id.root = '2.16.840.1.113883.3.26.4.3'
         left outer join healthcare_facility as hcf on hcf.identifier = ps.healthcare_facility_identifier
         left outer join organization as org on org.identifier = hcf.organization_identifier
         left outer join study_site_accrual_status as ssas on ssas.study_site_identifier = ps.identifier
             and ssas.identifier = (select max(identifier) from study_site_accrual_status where study_site_identifier = ps.identifier)
     where ps.functional_code = 'TREATING_SITE' and sp.status_code = 'ACTIVE';
     
+UPDATE DW_STUDY_PARTICIPATING_SITE SET NCI_ID = oid.extension from study_site as ps
+        inner join study_protocol as sp on sp.identifier = ps.study_protocol_identifier and sp.status_code = 'ACTIVE'
+        inner join study_otheridentifiers as oid on oid.study_protocol_id = sp.identifier and oid.root = '2.16.840.1.113883.3.26.4.3'
+    where ps.functional_code = 'TREATING_SITE' and ps.identifier = internal_system_id;
+
 UPDATE DW_STUDY_PARTICIPATING_SITE SET INVESTIGATOR1_NAME = p.first_name || ' ' || p.last_name, 
     INVESTIGATOR1_ROLE = investigator.role_code, INVESTIGATOR1_STATUS = investigator.status_code
     from study_site ps 

@@ -219,7 +219,7 @@ INSERT INTO DW_STUDY (
     IRB_COUNTRY, IRB_NAME, IRB_ORGANIZATION_AFFILIATION, IRB_STATE_OR_PROVINCE,
     IRB_ZIP_CODE, KEYWORD_TEXT, LAST_UPDATED_BY, LEAD_ORG,
     LEAD_ORG_ID, MASKING, MASKING_ROLE_INVESTIGATOR, MASKING_ROLE_OUTCOME_ASSESSOR,
-    MASKING_ROLE_SUBJECT, MASKING_ROLE_CAREGIVER, MINIMUM_TARGET_ACCRUAL_NUMBER, NCI_ID,
+    MASKING_ROLE_SUBJECT, MASKING_ROLE_CAREGIVER, MINIMUM_TARGET_ACCRUAL_NUMBER,
     NUMBER_OF_ARMS, OFFICIAL_TITLE, OVERSIGHT_AUTHORITY_COUNTRY, OVERSIGHT_AUTHORITY_ORGANIZATION_NAME,
     PHASE, PHASE_ADDITIONAL_QUALIFIER_CODE, PHASE_OTHER_TEXT, PRIMARY_COMPLETION_DATE,
     PRIMARY_COMPLETION_DATE_TYPE_CODE, PRIMARY_PURPOSE_ADDITIONAL_QUALIFIER_CODE, PRIMARY_PURPOSE_CODE, PRIMARY_PURPOSE_OTHER_TEXT,
@@ -267,7 +267,7 @@ INSERT INTO DW_STUDY (
     END,
     lead_org.name, lead_org_id.local_sp_indentifier, 
     sp.blinding_schema_code, sp.blinding_role_code_investigator, sp.blinding_role_code_outcome, sp.blinding_role_code_subject, 
-    sp.blinding_role_code_caregiver, sp.min_target_accrual_num, nci_id.extension, sp.number_of_intervention_groups,
+    sp.blinding_role_code_caregiver, sp.min_target_accrual_num, sp.number_of_intervention_groups,
     sp.official_title, oversight_country.name, oversight.authority_name, sp.phase_code, 
     sp.phase_additional_qualifier_code, sp.phase_other_text, sp.pri_compl_date, sp.pri_compl_date_type_code, 
     sp.primary_purpose_additional_qualifier_code, sp.primary_purpose_code, sp.primary_purpose_other_text, pi.first_name || ' ' || pi.last_name, 
@@ -302,7 +302,6 @@ INSERT INTO DW_STUDY (
     left outer join study_site as lo on lo.study_protocol_identifier = sp.identifier and lo.functional_code = 'LEAD_ORGANIZATION'
     left outer join research_organization as ro_lead_org on ro_lead_org.identifier = lo.research_organization_identifier
     left outer join organization as lead_org on lead_org.identifier = ro_lead_org.organization_identifier
-    left outer join study_otheridentifiers as nci_id on nci_id.study_protocol_id = sp.identifier and nci_id.root = '2.16.840.1.113883.3.26.4.3'
     left outer join study_regulatory_authority as sra on sra.study_protocol_identifier = sp.identifier
     left outer join regulatory_authority as oversight on oversight.identifier = sra.regulatory_authority_identifier
     left outer join country as oversight_country on oversight_country.identifier = oversight.country_identifier
@@ -318,18 +317,20 @@ INSERT INTO DW_STUDY (
     left outer join organization as sponsor on sponsor.identifier = sponsor_ro.organization_identifier
     left outer join registry_user as submitter on submitter.csm_user_id = sp.user_last_created_id
     left outer join study_resourcing as summary4 on summary4.study_protocol_identifier = sp.identifier and summary4.summ_4_rept_indicator is true
+        and summary4.identifier = (select max(identifier) from study_resourcing where study_protocol_identifier = sp.identifier and summ_4_rept_indicator is true)
     left outer join organization as summary4_sponsor on summary4_sponsor.identifier = cast(summary4.organization_identifier as INTEGER)
     left outer join study_overall_status as stopped on stopped.study_protocol_identifier = sp.identifier 
         and stopped.status_code in ('ADMINISTRATIVELY_COMPLETE', 'WITHDRAWN', 'TEMPORARILY_CLOSED_TO_ACCRUAL', 'TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION')
         and stopped.identifier = (select max(identifier) from study_overall_status where study_protocol_identifier = sp.identifier)
     left outer join study_site as irb on irb.study_protocol_identifier = sp.identifier and irb.functional_code = 'STUDY_OVERSIGHT_COMMITTEE'
+        and irb.identifier = (select max(identifier) from study_site where functional_code = 'STUDY_OVERSIGHT_COMMITTEE' and study_protocol_identifier = sp.identifier)
     left outer join oversight_committee as oc on oc.identifier = irb.oversight_committee_identifier
     left outer join organization as irb_org on irb_org.identifier = oc.organization_identifier
     left outer join csm_user as updater on updater.user_id = sp.user_last_updated_id
     left outer join registry_user as ru_updater on ru_updater.csm_user_id = updater.user_id
     left outer join study_contact as central_contact on central_contact.study_protocol_identifier = sp.identifier and central_contact.role_code = 'CENTRAL_CONTACT'
     left outer join study_site as lead_org_id on lead_org_id.study_protocol_identifier = sp.identifier and lead_org_id.functional_code = 'LEAD_ORGANIZATION'
-where nci_id.extension is not null and sp.status_code = 'ACTIVE';
+where sp.status_code = 'ACTIVE';
     
 UPDATE DW_STUDY SET ELIGIBLE_GENDER = ec.eligible_gender_code from planned_activity pa
     inner join planned_eligibility_criterion ec on ec.identifier = pa.identifier and ec.criterion_name = 'GENDER'
@@ -365,6 +366,12 @@ UPDATE DW_STUDY SET RESPONSIBLE_PARTY_NAME = org.name, SPONSOR_RESP_PARTY_EMAIL 
         inner join organizational_contact as oc on oc.identifier = resp.organizational_contact_identifier
         join person as p on p.identifier = oc.person_identifier
     where ss.functional_code = 'RESPONSIBLE_PARTY_SPONSOR' and internal_system_id = ss.study_protocol_identifier;
+
+
+UPDATE DW_STUDY SET NCI_ID = oid.extension from study_otheridentifiers as oid 
+    inner join study_protocol as sp on sp.identifier = oid.study_protocol_id and sp.status_code = 'ACTIVE'
+    where oid.study_protocol_id = internal_system_id and oid.root = '2.16.840.1.113883.3.26.4.3' and oid.extension is not null;
+DELETE FROM DW_STUDY where NCI_ID is null;
 
 UPDATE DW_STUDY SET CTEP_ID = ss.local_sp_indentifier 
     from study_site ss
