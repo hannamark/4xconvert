@@ -3,7 +3,7 @@
 <div id="nav">
   <ul id="mainmenu" class="menu" style="display: none;">
     <c:choose>
-      <c:when test="${requestScope.topic == 'run_reports' || requestScope.topic == 'login'}">
+      <c:when test="${requestScope.topic == 'login'}">
         <li>
           <a href="${pageContext.request.contextPath}/home.action">&nbsp;Home&nbsp;&nbsp;&nbsp;</a>
         </li>

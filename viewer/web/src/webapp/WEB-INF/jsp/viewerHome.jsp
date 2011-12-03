@@ -1,5 +1,4 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %> 
-<c:set var="topic" scope="request" value="run_reports"/> 
 <head>
     <title><fmt:message key="viewer.home.title"/></title>
     <s:head />
