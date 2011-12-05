@@ -91,7 +91,7 @@
                             </c:if>
                             <c:if test="${fn:trim(trialDTO.summaryFourOrgName) != ''}">
                                 <reg-web:titleRow titleKey="view.trial.Summary4Information"/>
-                                <reg-web:valueRow labelKey="view.trial.FundingCategory">
+                                <reg-web:valueRow labelKey="view.trial.SubmissionCategory">
                                     <c:out value="${trialDTO.summaryFourFundingCategoryCode}"/>
                                 </reg-web:valueRow>
                                 <reg-web:valueRow labelKey="view.trial.FundingSponsor">

@@ -102,7 +102,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
             setTrialAction("");
             ServletActionContext.getRequest()
                 .setAttribute("failureMessage",
-                              "Summary 4 Funding Sponsor Type is required to continue onto registration.");
+                              "Trial Submission Category is required to continue onto registration.");
             return "redirect_to_search";
         }
         trialDTO = new ProprietaryTrialDTO();
@@ -168,7 +168,7 @@ public class SubmitProprietaryTrialAction extends ManageFileAction implements
         }
         if (StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode())
                 && !StringUtils.isEmpty(trialDTO.getSummaryFourOrgIdentifier())) {
-            addFieldError("trialDTO.summaryFourFundingCategoryCode", "Select the Summary 4 Funding Sponsor Type");
+            addFieldError("trialDTO.summaryFourFundingCategoryCode", "Select the Trial Submission Category");
         }
         Map<String, String> errMap = new HashMap<String, String>();
         try {

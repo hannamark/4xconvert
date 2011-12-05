@@ -424,7 +424,7 @@
                     <!--  summary4 information -->
                     <reg-web:titleRow titleKey="update.proprietary.trial.summary4Info"/>
                     <reg-web:spaceRow/>
-                    <reg-web:valueRow labelFor="submitTrial_summary4FundingCategory" labelKey="update.proprietary.trial.summary4FundingCategory" tooltip="tooltip.summary_4_funding_sponsor_type">
+                    <reg-web:valueRow labelFor="submitTrial_summary4FundingCategory" labelKey="update.trial.summary4FundingCategory" tooltip="tooltip.summary_4_funding_sponsor_type">
                         <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
                         <s:select headerKey="" headerValue="--Select--" 
                                     name="trialDTO.summaryFourFundingCategoryCode"

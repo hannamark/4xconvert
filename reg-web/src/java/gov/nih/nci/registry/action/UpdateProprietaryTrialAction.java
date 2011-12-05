@@ -296,7 +296,7 @@ public class UpdateProprietaryTrialAction extends ManageFileAction implements Se
         }
         if (StringUtils.isEmpty(trialDTO.getSummaryFourFundingCategoryCode())
                 && !StringUtils.isEmpty(trialDTO.getSummaryFourOrgIdentifier())) {
-            addFieldError("trialDTO.summaryFourFundingCategoryCode", "Select the Summary 4 Funding Sponsor Type");
+            addFieldError("trialDTO.summaryFourFundingCategoryCode", "Select the Trial Submission Category");
         }
     }
 
