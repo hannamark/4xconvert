@@ -1,3 +1,7 @@
+/**
+ * Disease Filter of the Ad-Hoc Report
+ * @input @global diseaseTree PDQ disease tree to run the name lookup against [{'id':'', 'name':'', 'parentId':''}, ...]
+ */
 
 (function($) {
 	$(function() {
@@ -13,7 +17,7 @@
 		});
 		
 		$('#disease_selections_count').hide();
-		$('.quickresults_count').show();
+		$('#diseasesSection .quickresults_count').show();
 		$('#diseasesSection .quickresults_header_buttons input[type="checkbox"]').attr('checked', false);
 		
 		//**********
@@ -159,13 +163,13 @@
 		
 		function updateQuickresultsCount( searchTerm, bInit ) {
 			if( bInit ) {
-				$('.quickresults_count').text( 'Hint: Press <Enter> when finished typing' ).show(); 
+				$('#diseasesSection .quickresults_count').text( 'Hint: Press <Enter> when finished typing' ).show(); 
 			} else {
 				var count = $('#diseasesSection #diseasebreadcrumbs .breadcrumbItemPane').length;
 				if( count == 1 ) 
-					$('.quickresults_count').text( '' + count + ' result for "' + searchTerm + '"' ).show(); 
+					$('#diseasesSection .quickresults_count').text( '' + count + ' result for "' + searchTerm + '"' ).show(); 
 				else
-					$('.quickresults_count').text( '' + count + ' results for "' + searchTerm + '"' ).show();
+					$('#diseasesSection .quickresults_count').text( '' + count + ' results for "' + searchTerm + '"' ).show();
 			}
 		}	
 		
@@ -198,16 +202,20 @@
 				}
 			  	return false;
 			});
+			innerHtml += '</span><br>';
+			if( innerHtml == '<span class="selectionElementText"></span><br>' )
+			    innerHtml = '';
+			
 			var name = item.children().last().text().trim();
-			innerHtml +='</span><br><span class="selectionFeaturedElement">'+name+'</span>';
+			innerHtml += '<span class="selectionFeaturedElement">'+name+'</span>';
 			var id = item.attr('id');
 			return { 'id':id, 'name':name, 'html':innerHtml };
 		}
 		
 		function updateSelectionCount() {
-			var count = $('#diseasesSection .selectionslist_body li').length
+			var count = $('#diseasesSection .selectionslist_body li').length;
 			if( count == 0 )
-				$('#disease_selections_count').stop(false,true).hide()
+				$('#disease_selections_count').stop(true,true).hide()
 						.removeClass('selections_count_normal').removeClass('selections_count_highlight').addClass('selections_count_normal').text( 'no selections added' ); 
 			else {
 				var newText = '';
@@ -219,7 +227,7 @@
 				var oldText = $('#disease_selections_count').text();
 				$('#disease_selections_count').text( newText );	
 				if( oldText != newText ) {
-					$('#disease_selections_count').stop(false,true).hide()
+					$('#disease_selections_count').stop(true,true).hide()
 							.removeClass('selections_count_normal').removeClass('selections_count_highlight').addClass('selections_count_highlight')
 							.show().delay(1000).switchClass('selections_count_highlight', 'selections_count_normal', 1000); 
 				}	

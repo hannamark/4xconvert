@@ -452,14 +452,6 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         otherCriteria.setPdqDiseases(Arrays.asList(999L));
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 0, results.size());
-        otherCriteria = new StudyProtocolQueryCriteria();
-        otherCriteria.setInterventionType(interventionType);
-        results = localEjb.getStudyProtocolByCriteria(otherCriteria);
-        assertEquals("Size does not match.", 12, results.size());
-        otherCriteria = new StudyProtocolQueryCriteria();
-        otherCriteria.setInterventionType(InterventionTypeCode.BIOLOGICAL_VACCINE.getCode());
-        results = localEjb.getStudyProtocolByCriteria(otherCriteria);
-        assertEquals("Size does not match.", 0, results.size());
     }
 
     @Test

@@ -11,10 +11,12 @@
         <link href="${stylePath}/reportui.css" rel="stylesheet" type="text/css" media="all"/>
         <script type="text/javascript">
             var diseaseTree = <s:property escape="false" value="diseaseTree"/>;
+            var interventions = <s:property escape="false" value="interventions"/>;
         </script>
         <script type="text/javascript" src="${scriptPath}/js/ml_breadcrumbs.js"></script>
         <script type="text/javascript" src="${scriptPath}/js/generic_tree.js"></script>
         <script type="text/javascript" src="${scriptPath}/pages/adHocReport/diseasesFilter.js"></script>
+        <script type="text/javascript" src="${scriptPath}/pages/adHocReport/interventionsFilter.js"></script>
         <script type="text/javascript">
             jQuery(function() {
                     var tabOptions = {
@@ -113,11 +115,10 @@
                             jQuery(accordionName + " .ui-accordion-header").click();
                         }
                     }
-                     
-        </script>     
+        </script>
     </head>
     <body>
-    	<input type="hidden" id="imagePath" name="imagePath" value="${imagePath}" />
+        <input type="hidden" id="imagePath" name="imagePath" value="${imagePath}" />
         <h1><fmt:message key="adHocReport.title"/></h1>
         <s:if test="hasActionErrors()">
             <div class="error_msg">

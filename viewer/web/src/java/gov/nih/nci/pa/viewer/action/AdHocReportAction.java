@@ -90,8 +90,10 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.noniso.dto.InterventionShortRecord;
 import gov.nih.nci.pa.noniso.dto.PDQDiseaseNode;
 import gov.nih.nci.pa.report.service.Summ4RepLocal;
+import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.service.PlannedMarkerServiceLocal;
@@ -132,6 +134,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     private static final int MAX_LIMIT = 100;
     
     private PDQDiseaseServiceLocal diseaseService;
+    private InterventionServiceLocal interventionService;
     private LookUpTableServiceRemote lookUpTableService;
     private PAOrganizationServiceRemote paOrganizationService;
     private PlannedMarkerServiceLocal plannedMarkerService;
@@ -153,6 +156,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     @Override
     public void prepare() {
         setDiseaseService(PaRegistry.getDiseaseService());
+        setInterventionService(PaRegistry.getInterventionService());
         setLookUpTableService(PaRegistry.getLookUpTableService());
         setPaOrganizationService(PaRegistry.getPAOrganizationService());
         setPlannedMarkerService(PaRegistry.getPlannedMarkerService());
@@ -378,6 +382,17 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     }
 
     /**
+     * Gets the Interventions for the interventions section as a JSON collection.
+     * @return The result name
+     * @throws JSONException JSON Translation exception
+     * @throws PAException on error 
+     */
+    public String getInterventions() throws JSONException, PAException {
+        List<InterventionShortRecord> interventions = interventionService.getInterventionShortRecords();
+        return JSONUtil.serialize(interventions);
+    }
+
+    /**
      * @return the criteria
      */
     public StudyProtocolQueryCriteria getCriteria() {
@@ -446,6 +461,13 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
      */
     public void setDiseaseService(PDQDiseaseServiceLocal diseaseService) {
         this.diseaseService = diseaseService;
+    }
+
+    /**
+     * @param interventionService the interventionService to set
+     */
+    public void setInterventionService(InterventionServiceLocal interventionService) {
+        this.interventionService = interventionService;
     }
 
     /**

@@ -82,6 +82,7 @@
  */
 package gov.nih.nci.pa.service.search;
 
+import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 
@@ -116,6 +117,7 @@ public class StudyProtocolOptions {
     private List<Long> participatingSiteIds = new ArrayList<Long>();
     private List<Long> interventionIds = new ArrayList<Long>();
     private List<Long> interventionAlternateNameIds = new ArrayList<Long>();
+    private List<InterventionTypeCode> interventionTypes = new ArrayList<InterventionTypeCode>();
 
     /**
      * @return excludeRejectedTrials
@@ -386,6 +388,23 @@ public class StudyProtocolOptions {
      */
     public void setInterventionAlternateNameIds(List<Long> interventionAlternateNameIds) {
         this.interventionAlternateNameIds = interventionAlternateNameIds;
-    }        
+    }
+
+    /**
+     * @return the interventionTypes
+     */
+    public List<InterventionTypeCode> getInterventionTypes() {
+        return interventionTypes;
+    }
+
+    /**
+     * @param interventionTypes the interventionTypes to set
+     */
+    public void setInterventionTypes(List<String> interventionTypes) {
+        this.interventionTypes = new ArrayList<InterventionTypeCode>();
+        for (String intvType : interventionTypes) {
+            this.interventionTypes.add(InterventionTypeCode.getByCode(intvType));
+        }
+    }
     
 }

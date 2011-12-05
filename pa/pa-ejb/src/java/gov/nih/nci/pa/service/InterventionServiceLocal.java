@@ -79,6 +79,7 @@
 package gov.nih.nci.pa.service;
 
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
+import gov.nih.nci.pa.noniso.dto.InterventionShortRecord;
 
 import java.util.List;
 
@@ -100,4 +101,14 @@ public interface InterventionServiceLocal extends BasePaService<InterventionDTO>
      * @throws PAException exception
      */
     List<InterventionDTO> search(InterventionDTO searchCriteria) throws PAException;
+
+    /**
+     * Gets the list of all Interventions in a form of short records
+     * (id,name,type) needed for the Ad-Hoc report filter.
+     * 
+     * @return The list of all Interventions in a form of short records
+     *         (id,name,type) needed for the Ad-Hoc report filter.
+     * @throws PAException exception
+     */
+    List<InterventionShortRecord> getInterventionShortRecords() throws PAException;
 }

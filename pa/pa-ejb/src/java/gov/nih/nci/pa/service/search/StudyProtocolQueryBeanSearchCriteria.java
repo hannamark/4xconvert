@@ -175,6 +175,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String PDQDISEASES_PARAM  = "pdqdiseaseParam";
         private static final String INTERVENTIONS_PARAM  = "interventions";
         private static final String INTERVENTIONS_ALTERNAMES_PARAM  = "interventionAlternates";
+        private static final String INTERVENTIONS_TYPES_PARAM  = "interventionTypes";
         
         private final StudyProtocol sp;
         private final StudyProtocolOptions spo;
@@ -397,7 +398,8 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
 
         private void searchByIntervention(StringBuffer whereClause, Map<String, Object> params) {
             if (CollectionUtils.isNotEmpty(spo.getInterventionIds())
-                    || CollectionUtils.isNotEmpty(spo.getInterventionAlternateNameIds())) {
+                    || CollectionUtils.isNotEmpty(spo.getInterventionAlternateNameIds())
+                    || CollectionUtils.isNotEmpty(spo.getInterventionTypes())) {
                 StringBuilder sql = createSqlForSearchByIntervention(whereClause);
                 
                 if (CollectionUtils.isNotEmpty(spo.getInterventionIds())) {
@@ -406,6 +408,10 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
 
                 if (CollectionUtils.isNotEmpty(spo.getInterventionAlternateNameIds())) {
                     params.put(INTERVENTIONS_ALTERNAMES_PARAM, spo.getInterventionAlternateNameIds());
+                }
+
+                if (CollectionUtils.isNotEmpty(spo.getInterventionTypes())) {
+                    params.put(INTERVENTIONS_TYPES_PARAM, spo.getInterventionTypes());
                 }
                 whereClause.append(sql.toString());
             }
@@ -424,19 +430,18 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
                 sql.append(" join pa.intervention intr left join intr.interventionAlternateNames aln ");
             }
 
-            sql.append(" where pa.studyProtocol.id = " + SearchableUtils.ROOT_OBJ_ALIAS + ".id and (");
+            sql.append(" where pa.studyProtocol.id = " + SearchableUtils.ROOT_OBJ_ALIAS + ".id and (0=1");
 
-            if (CollectionUtils.isNotEmpty(spo.getInterventionIds())) {
-                sql.append(" pa.intervention.id in (:" + INTERVENTIONS_PARAM + ") ");
+            if (CollectionUtils.isNotEmpty(spo.getInterventionTypes())) {
+                sql.append(" or pa.intervention.typeCode in (:" + INTERVENTIONS_TYPES_PARAM + ") ");
             }
 
-            if (CollectionUtils.isNotEmpty(spo.getInterventionIds())
-                    && CollectionUtils.isNotEmpty(spo.getInterventionAlternateNameIds())) {
-                sql.append(" or ");
+            if (CollectionUtils.isNotEmpty(spo.getInterventionIds())) {
+                sql.append(" or pa.intervention.id in (:" + INTERVENTIONS_PARAM + ") ");
             }
 
             if (CollectionUtils.isNotEmpty(spo.getInterventionAlternateNameIds())) {
-                sql.append("aln.id in (:" + INTERVENTIONS_ALTERNAMES_PARAM + ")");
+                sql.append(" or aln.id in (:" + INTERVENTIONS_ALTERNAMES_PARAM + ")");
             }
 
             sql.append("))");

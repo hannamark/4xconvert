@@ -85,12 +85,10 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
-import gov.nih.nci.pa.domain.Intervention;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.PDQDisease;
 import gov.nih.nci.pa.domain.PDQDiseaseParent;
 import gov.nih.nci.pa.domain.Person;
-import gov.nih.nci.pa.domain.PlannedActivity;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyContact;
@@ -104,7 +102,6 @@ import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.ActStatusCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeCode;
@@ -446,6 +443,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setPdqDiseases(criteria.getPdqDiseases());
         options.setInterventionIds(criteria.getInterventionIds());
         options.setInterventionAlternateNameIds(criteria.getInterventionAlternateNameIds());
+        options.setInterventionTypes(criteria.getInterventionTypes());
 
         populateExample(criteria, example);
         return new StudyProtocolQueryBeanSearchCriteria(example, options);
@@ -511,6 +509,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         sp.setPrimaryPurposeCode(PrimaryPurposeCode.getByCode(crit.getPrimaryPurposeCode()));
         populateExampleStudyProtocolDiseaseInterventionType(crit, sp);
     }
+
     private void populateExampleStudyProtocolSumm4FundSrc(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
         if (crit.getSumm4FundingSourceId() != null
                 || StringUtils.isNotBlank(crit.getSumm4FundingSourceTypeCode())) {
@@ -525,17 +524,10 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             sp.getStudyResourcings().add(stdRes);
         }
     }
+    
     private void populateExampleStudyProtocolDiseaseInterventionType(
             StudyProtocolQueryCriteria crit, StudyProtocol sp) {
         populateExampleStudyProtocolSumm4FundSrc(crit, sp);        
-
-        if (crit.getInterventionType() != null) {
-            PlannedActivity plndAct = new PlannedActivity();
-            Intervention intVen = new Intervention();
-            intVen.setTypeCode(InterventionTypeCode.getByCode(crit.getInterventionType()));
-            plndAct.setIntervention(intVen);
-            sp.getPlannedActivities().add(plndAct);
-        }
     }
 
     private void populateExampleSpOtherIdentifiers(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
@@ -682,9 +674,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && StringUtils.isEmpty(criteria.getTrialCategory())
                 && criteria.getSumm4FundingSourceId() == null
                 && StringUtils.isEmpty(criteria.getSumm4FundingSourceTypeCode())
-                && criteria.getInterventionType() == null 
                 && CollectionUtils.isEmpty(criteria.getInterventionIds()) 
                 && CollectionUtils.isEmpty(criteria.getInterventionAlternateNameIds()) 
+                && CollectionUtils.isEmpty(criteria.getInterventionTypes()) 
                 && (criteria.isMyTrialsOnly() != null && !criteria.isMyTrialsOnly()
                         || criteria.isMyTrialsOnly() == null));
     }

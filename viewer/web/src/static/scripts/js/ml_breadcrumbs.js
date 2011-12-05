@@ -42,12 +42,12 @@
 				var bcItem = bcItems[i];
 				var html = '<div class="breadcrumbItemPane"><div class="breadcrumbItemBox">';
 				if( bcItem[0].isFeatured ) 
-					html += '<div id="breadcrumb_box0_id'+bcItem[0].id+'" class="breadcrumbFeaturedElement">'+
+					html += '<div id="breadcrumb_box'+i+'_id'+bcItem[0].id+'" class="breadcrumbFeaturedElement">'+
 								'<div class="breadcrumbFeaturedElementText" title="'+textTip+'">' + bcItem[0].name + '</div>'+
 								'<div class="breadcrumbFeaturedElementImageLink"><a href="#" title="'+imageTip+'"><img src="'+imageFile+'"></img></a></div>'+
 							'</div>';
 				else
-					html += '<div id="breadcrumb_box0_id'+bcItem[0].id+'" class="breadcrumbElement">'+
+					html += '<div id="breadcrumb_box'+i+'_id'+bcItem[0].id+'" class="breadcrumbElement">'+
 								'<div class="breadcrumbElementText" title="'+textTip+'">' + bcItem[0].name + '</div>'+
 								'<div class="breadcrumbElementImageLink"><a href="#" title="'+imageTip+'"><img src="'+imageFile+'"></img></a></div>'+
 							'</div>';
@@ -55,12 +55,12 @@
 				for( var j=1; j<bcItem.length; j++ ) {
 					html += '<div class="breadcrumbElementSeparator"> &gt; </div>';
 					if( bcItem[j].isFeatured ) 
-					html += '<div id="breadcrumb_box'+j+'_id'+bcItem[j].id+'" class="breadcrumbFeaturedElement">'+
+					html += '<div id="breadcrumb_box'+i+'_id'+bcItem[j].id+'" class="breadcrumbFeaturedElement">'+
 								'<div class="breadcrumbFeaturedElementText" title="'+textTip+'">' + bcItem[j].name + '</div>'+
 								'<div class="breadcrumbFeaturedElementImageLink"><a href="#" title="'+imageTip+'"><img src="'+imageFile+'"></img></a></div>'+
 							'</div>';
 					else
-					html += '<div id="breadcrumb_box'+j+'_id'+bcItem[j].id+'" class="breadcrumbElement">'+
+					html += '<div id="breadcrumb_box'+i+'_id'+bcItem[j].id+'" class="breadcrumbElement">'+
 								'<div class="breadcrumbElementText" title="'+textTip+'">' + bcItem[j].name + '</div>'+
 								'<div class="breadcrumbElementImageLink"><a href="#" title="'+imageTip+'"><img src="'+imageFile+'"></img></a></div>'+
 							'</div>';

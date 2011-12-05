@@ -19,7 +19,7 @@
                                 </div>
                                 <fmt:message key="adHocReport.diseases.searchMagnifier.alt" var="title"/>
                                 <input type="image" src="${imagePath}/ico_magnifier.gif" alt="${title}" class="search_inner_button" />
-                                <div class="quickresults_header_buttons">
+                                <div class="quickresults_header_buttons right">
                                     <fmt:message key="adHocReport.diseases.button.add.title" var="title"/>
                                     <a id="add_all_disease" title="${title}" href="#"><fmt:message key="adHocReport.diseases.button.add"/></a>
                                     <fmt:message key="adHocReport.diseases.button.tree.title" var="title"/>

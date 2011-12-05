@@ -1,5 +1,6 @@
 <script type="text/javascript" src="${scriptPath}/js/jquery-1.7.min.js"></script>
 <script type="text/javascript" src="${scriptPath}/js/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="${scriptPath}/js/jquery.ui.selectmenu.js"></script>
 <script type="text/javascript" src="${scriptPath}/js/jquery.sizes.min.js"></script>
 <script type="text/javascript" src="${scriptPath}/js/jquery.hotkeys.js"></script>
 <script type="text/javascript" src="${scriptPath}/js/jquery.jstree.js"></script>

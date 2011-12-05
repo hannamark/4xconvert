@@ -195,7 +195,7 @@
     height: 2.7em !important
 }
 
-#diseasesSection .form-table TD.label {
+#diseasesSection .form-table TD.label, #interventionsSection .form-table TD.label {
     width: 0px;
 }
 
@@ -240,11 +240,11 @@
     padding: 10px !important;
 }
 
-#filtersAccordion #diseasesSection {
+#filtersAccordion #diseasesSection, #filtersAccordion #interventionsSection {
     padding: 0;
 }
 
-.diseaserescol {
+.diseaserescol, .interventionrescol {
     width: 556px;
     float: left;
     border-right: 1px solid #6d80a2;
@@ -291,8 +291,15 @@
 }
 
 .quickresults_header .ui-widget INPUT {
-    width: 250px;
     padding-right: 30px;
+}
+
+#diseasesSection .quickresults_header .ui-widget INPUT {
+    width: 250px;
+}
+
+#interventionsSection .quickresults_header .ui-widget INPUT {
+    width: 190px;
 }
 
 .search_inner_button {
@@ -300,6 +307,7 @@
     margin-left: -20px !important;
     float: left;
     display: inline;
+    position: relative;
 }
 
 .quickresults_header {
@@ -324,8 +332,6 @@
 }
 
 .quickresults_header_buttons {
-    float: right;
-    padding: 5px 0 0 0;
     text-align: center;
 }
 
@@ -335,14 +341,22 @@
     font-weight: bold;
     font-size: 11px;
     display: block;
+    margin: 4px 0 0 0;
     padding: 0 7px;
     float: left;
-    margin-right: 5px;
     text-decoration: none;
     border: 1px solid #fff;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
     border-radius: 5px;
+}
+
+#diseasesSection .quickresults_header_buttons A {
+    margin-right: 0.4em;
+}
+
+#interventionsSection .quickresults_header_buttons A {
+    margin-right: 0.3em;
 }
 
 .quickresults_header_buttons A:hover {
@@ -358,7 +372,6 @@
 }
 
 .quickresults_body {
-    width: 530px;
     height: 250px;
     margin-bottom: 10px;
     overflow: auto;
@@ -376,7 +389,35 @@
     color: #333;
     font-family: 'helvetica neue', helvetica, arial, sans-serif;
     font-size: 1em;
-    padding: 10px 5px;
+}
+
+#diseasesSection .quickresults_body {
+    width: 530px;
+	padding: 10px 5px;
+}
+
+#interventionsSection .quickresults_body {
+	width: 520px;
+    padding: 10px;
+}
+
+#interventionsSection .quickresults_body LI {
+    background: #FAFAFA;                                                                                                /* for non-CSS3 browsers */
+    filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFFFF', endColorstr='#E0E0E0'); /* for IE */
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#E0E0E0));                            /* for WebKit browsers */
+    background: -moz-linear-gradient(top, #FFFFFF, #E0E0E0);                                                            /* for Firefox 3.6+ */
+    border: 1px solid #D8E6F3;
+    margin: -1px 0px 0px 0px;
+    padding: 2px 5px; 
+}
+
+#interventionsSection .quickresults_body LI:HOVER {
+    background: #D0D0FF;                                                                                                /* for non-CSS3 browsers */
+    filter: progid:DXImageTransform.Microsoft.gradient(gradientType=0, startColorstr='#FFFFFF', endColorstr='#A0A0F0'); /* for IE */
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#A0A0F0));                            /* for WebKit browsers */
+    background: -moz-linear-gradient(top, #FFFFFF, #A0A0F0);                                                            /* for Firefox 3.6+ */
+    cursor: hand; cursor: pointer;
+    text-decoration: underline; 
 }
 
 .quickresults2 {
@@ -429,7 +470,7 @@
     font-size: 110%;
 }
 
-#disease_selections_count,#intervention_selections_count {
+#disease_selections_count, #intervention_selections_count {
     float: right;
     margin-top: -2.3em;
     font-weight: bold;
@@ -479,8 +520,17 @@
     text-decoration: none;
 }
 
+.selectionslist_body LI.selected_intv_by_type {
+    background: #dcf0dc;
+}
+
 .selectionslist_body LI:hover {
     background: #dadada;
+    color: #000;
+}
+
+.selectionslist_body LI.selected_intv_by_type:hover {
+    background: #daecda;
     color: #000;
 }
 
@@ -754,4 +804,8 @@ TABLE.report_output_inner TD LABEL {
 TABLE.report_output_inner TD DIV {
     padding-bottom: 12px;
     font-weight: normal;
+}
+
+.right {
+	float: right;
 }

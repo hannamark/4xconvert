@@ -88,12 +88,15 @@ import gov.nih.nci.pa.enums.ActiveInactiveCode;
 import gov.nih.nci.pa.enums.ActiveInactivePendingCode;
 import gov.nih.nci.pa.iso.convert.InterventionConverter;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.noniso.dto.InterventionShortRecord;
 import gov.nih.nci.pa.service.search.InterventionBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.InterventionSortCriterion;
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -194,4 +197,21 @@ public class InterventionBeanLocal extends AbstractBaseIsoService<InterventionDT
         return term;
     }
 
+    /**
+     * {@inheritDoc}
+     * @throws PAException 
+     */
+    @Override
+    public List<InterventionShortRecord> getInterventionShortRecords() throws PAException {
+        List<InterventionDTO> interventions1 = getAll();
+        List<InterventionShortRecord> interventions2 = new ArrayList<InterventionShortRecord>();
+        for (InterventionDTO intv1 : interventions1) {
+            InterventionShortRecord intv2 = new InterventionShortRecord();
+            intv2.setId(IiConverter.convertToLong(intv1.getIdentifier()));
+            intv2.setName(StConverter.convertToString(intv1.getName()));
+            intv2.setType(CdConverter.convertCdToString(intv1.getTypeCode()));
+            interventions2.add(intv2);
+        }
+        return interventions2;
+    }
 }

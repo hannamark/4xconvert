@@ -143,7 +143,6 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private Long userId;
 
     private Long summ4FundingSourceId;
-    private String interventionType;
     private String summ4FundingSourceTypeCode;
 
     private String countryName;
@@ -158,6 +157,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private final List<Long> leadOrganizationIds = new ArrayList<Long>();
     private final List<Long> interventionIds = new ArrayList<Long>();
     private final List<Long> interventionAlternateNameIds = new ArrayList<Long>();
+    private final List<String> interventionTypes = new ArrayList<String>();
     private final List<String> leadOrganizationNames = new ArrayList<String>();
     private String familyId = "0";
     private final List<String> participatingSiteNames = new ArrayList<String>();
@@ -604,20 +604,6 @@ public class StudyProtocolQueryCriteria implements Serializable {
     }
 
     /**
-     * @return the leadAgentInterventionId
-     */
-    public String getInterventionType() {
-        return interventionType;
-    }
-
-    /**
-     * @param interventionType the interventionType to set
-     */
-    public void setInterventionType(String interventionType) {
-        this.interventionType = interventionType;
-    }
-
-    /**
      * @return the summ4FundingSourceTypeCode
      */
     public String getSumm4FundingSourceTypeCode() {
@@ -768,11 +754,13 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setInterventionIds(List<Long> interventionIds) {
         this.interventionIds.clear();
+        Set<Long> ids = new HashSet<Long>();
         for (Long id : interventionIds) {
             if (id != null) {
-                this.interventionIds.add(id);
+                ids.add(id);
             }
         }
+        this.interventionIds.addAll(ids);
     }
 
     /**
@@ -793,6 +781,27 @@ public class StudyProtocolQueryCriteria implements Serializable {
             }
         }
     }     
+
+    /**
+     * @return the interventionTypes
+     */
+    public List<String> getInterventionTypes() {
+        return interventionTypes;
+    }
+
+    /**
+     * @param interventionTypes the interventionTypes to set
+     */
+    public void setInterventionTypes(List<String> interventionTypes) {
+        this.interventionTypes.clear();
+        Set<String> types = new HashSet<String>();
+        for (String type : interventionTypes) {
+            if (type != null) {
+                types.add(type);
+            }
+        }
+        this.interventionTypes.addAll(types);
+    }
 
     /**
      * @return the leadOrganizationNames
