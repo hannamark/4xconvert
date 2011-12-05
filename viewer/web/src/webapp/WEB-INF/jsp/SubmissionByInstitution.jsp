@@ -17,7 +17,7 @@
                    };
                    jQuery("#reportui").tabs(tabOptions);   
                    var dateOptions = { 
-                           buttonImage: "${pageContext.request.contextPath}/images/ico_calendar.gif",
+                           buttonImage: viewerApp.imagePath + "/ico_calendar.gif",
                            buttonText: "<fmt:message key="selectDate.alt"/>",
                            showOn: "button" 
                    };
@@ -34,7 +34,7 @@
                        var form = jQuery("#searchForm").get(0);
                        form.action="criteriaSubmissionByInstitution.action";
                        form.submit();
-                        });
+                       });
                    });
    </script>
  </head>
