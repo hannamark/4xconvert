@@ -195,18 +195,18 @@
 		
 		function generateSelectionItemBlock( item ) {
 			var innerHtml = '<span class="selectionElementText">';
-			$.each(item.children(), function(index, value ) {
-				if( index < item.children().length-1) {
+			$.each(item.children(), function(index, value) {
+				if (index < item.children().length-1) {
 				  	innerHtml += $(this).text();
 					return true;
 				}
 			  	return false;
 			});
 			innerHtml += '</span><br>';
-			if( innerHtml == '<span class="selectionElementText"></span><br>' )
+			if (innerHtml == '<span class="selectionElementText"></span><br>') {
 			    innerHtml = '';
-			
-			var name = item.children().last().text().trim();
+			}    
+			var name = $.trim(item.children().last().text());
 			innerHtml += '<span class="selectionFeaturedElement">'+name+'</span>';
 			var id = item.attr('id');
 			return { 'id':id, 'name':name, 'html':innerHtml };
@@ -214,19 +214,19 @@
 		
 		function updateSelectionCount() {
 			var count = $('#diseasesSection .selectionslist_body li').length;
-			if( count == 0 )
+			if (count == 0) {
 				$('#disease_selections_count').stop(true,true).hide()
 						.removeClass('selections_count_normal').removeClass('selections_count_highlight').addClass('selections_count_normal').text( 'no selections added' ); 
-			else {
+			} else {
 				var newText = '';
-				if( count == 1 )	
+				if (count == 1)	{
 					newText = '1 selection added';
-				else 
+				} else {
 					newText = '' + count + ' selections added';
-				
+				}
 				var oldText = $('#disease_selections_count').text();
 				$('#disease_selections_count').text( newText );	
-				if( oldText != newText ) {
+				if (oldText != newText) {
 					$('#disease_selections_count').stop(true,true).hide()
 							.removeClass('selections_count_normal').removeClass('selections_count_highlight').addClass('selections_count_highlight')
 							.show().delay(1000).switchClass('selections_count_highlight', 'selections_count_normal', 1000); 
@@ -277,7 +277,7 @@
 			$('#pdq_tree_dialog').prev().css({'background-color': '#FF8080', 'background-image': 'none', 'border': '1px solid #A06060'});
 			$('.pdq-tree-highlight').each(function(index,value) {
 				var node = $(value).parents('a:first');
-				var name = $(node).text().trim();
+				var name = $.trim($(node).text());
 				$(node).html( $(node).html().replace('<span class="pdq-tree-highlight">'+name+'</span>',name) );
 			});
 			if( typeof(id) != 'undefined' ) {
@@ -307,7 +307,7 @@
 				var thisId = (treeParentIds.length>0 ? treeParentIds[treeParentIds.length-1] : '') + '_' + id;
 				$('#pdq_tree').jstree("deselect_all");
 				$('#pdq_tree').jstree("select_node", $('#ptid'+thisId));
-				var name = $('#ptid'+thisId).children('a').text().trim();
+				var name = $.trim($('#ptid'+thisId).children('a').text());
 				$('#ptid'+thisId).html( $('#ptid'+thisId).html().replace(name,'<span class="pdq-tree-highlight">'+name+'</span>') );
 			}
 			adjustPDQTreeDimensions();

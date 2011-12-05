@@ -200,7 +200,7 @@ var hmTypesDropdownRev;
         });
         
         function generateSelectionItemBlock( item ) {
-            var name = item.text().trim();
+            var name = $.trim(item.text());
             var innerHtml ='<span class="selectionFeaturedElement">'+name+'</span>';
             var id = item.attr('id');
             return { 'id':id, 'name':name, 'html':innerHtml };
@@ -298,7 +298,7 @@ var hmTypesDropdownRev;
             $('#pdq_tree_dialog').prev().css({'background-color': '#FF8080', 'background-image': 'none', 'border': '1px solid #A06060'});
             $('.pdq-tree-highlight').each(function(index,value) {
                 var node = $(value).parents('a:first');
-                var name = $(node).text().trim();
+                var name = $.trim($(node).text());
                 $(node).html( $(node).html().replace('<span class="pdq-tree-highlight">'+name+'</span>',name) );
             });
             if( typeof(id) != 'undefined' ) {
@@ -319,7 +319,7 @@ var hmTypesDropdownRev;
                 var thisId = (treeParentIds.length>0 ? treeParentIds[treeParentIds.length-1] : '') + '_' + id;
                 $('#pdq_tree').jstree("deselect_all");
                 $('#pdq_tree').jstree("select_node", $('#ptid'+thisId));
-                var name = $('#ptid'+thisId).children('a').text().trim();
+                var name = $.trim($('#ptid'+thisId).children('a').text());
                 $('#ptid'+thisId).html( $('#ptid'+thisId).html().replace(name,'<span class="pdq-tree-highlight">'+name+'</span>') );
             }
             adjustInterventionsTreeDimensions();
