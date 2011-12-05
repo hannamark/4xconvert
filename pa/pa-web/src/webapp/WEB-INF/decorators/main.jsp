@@ -11,11 +11,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <title><decorator:title default="Protocol Abstraction (PA)"/></title>
-        <link href="<c:url value='/styles/style.css'/>" rel="stylesheet" type="text/css" media="all"/>
-        <link rel="address bar icon" href="<%=request.getContextPath()%>/images/favicon.ico" />
-        <link rel="icon" href="<%=request.getContextPath()%>/images/favicon.ico" type="image/x-icon" />
-        <link rel="shortcut icon" href="<%=request.getContextPath()%>/images/favicon.ico" type="image/x-icon" />
-        <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/Help.js"/>"></script>
+        <%@ include file="/WEB-INF/jsp/common/includecss.jsp" %>
+        <%@ include file="/WEB-INF/jsp/common/includejs.jsp" %>
         <script type="text/javascript" language="javascript">
             Help.url = '<s:property value="@gov.nih.nci.pa.util.PaEarPropertyReader@getPaHelpUrl()" />';
             var contextPath = '<%=request.getContextPath()%>';

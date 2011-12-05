@@ -140,8 +140,8 @@ public class StudyMilestoneBeanLocal
         throw new PAException("The update() method in the StudyMilestoneService has been disabled.");
     }
 
-    private DocumentWorkflowStatusCode getCurrentDocumentWorkflowStatus(Ii studyProtocolIi) throws PAException {
-        DocumentWorkflowStatusDTO dw = documentWorkflowStatusService.getCurrentByStudyProtocol(studyProtocolIi);
+    private DocumentWorkflowStatusCode getLatestOffholdStatus(Ii studyProtocolIi) throws PAException {
+        DocumentWorkflowStatusDTO dw = documentWorkflowStatusService.getLatestOffholdStatus(studyProtocolIi);
         return (dw == null) ? null : DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dw
             .getStatusCode()));
     }
@@ -235,7 +235,7 @@ public class StudyMilestoneBeanLocal
     }
 
     private void checkDocumentWorkflowStatusRules(StudyMilestoneDTO dto, MilestoneCode newCode) throws PAException {
-        DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
+        DocumentWorkflowStatusCode dwStatus = getLatestOffholdStatus(dto.getStudyProtocolIdentifier());
         if (newCode != MilestoneCode.SUBMISSION_RECEIVED && newCode != MilestoneCode.SUBMISSION_ACCEPTED
                 && newCode != MilestoneCode.SUBMISSION_REJECTED && !newCode.isValidDwfStatus(dwStatus)) {
             StringBuilder errMsg = new StringBuilder("The processing status must be ");
@@ -398,7 +398,7 @@ public class StudyMilestoneBeanLocal
 
     private void createDocumentWorkflowStatuses(StudyMilestoneDTO dto) throws PAException {
         MilestoneCode newCode = MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode()));
-        DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
+        DocumentWorkflowStatusCode dwStatus = getLatestOffholdStatus(dto.getStudyProtocolIdentifier());
         StudyProtocolDTO sp = studyProtocolService.getStudyProtocol(dto.getStudyProtocolIdentifier());
 
         if (newCode == MilestoneCode.SUBMISSION_RECEIVED && sp.getSubmissionNumber().getValue().intValue() == 1) {
@@ -426,7 +426,7 @@ public class StudyMilestoneBeanLocal
                 && (DocumentWorkflowStatusCode.ABSTRACTED == dwStatus
                         || DocumentWorkflowStatusCode.VERIFICATION_PENDING == dwStatus)) {
 
-            if (milestoneExists(MilestoneCode.TRIAL_SUMMARY_FEEDBACK, dto)) {
+            if (milestoneExists(MilestoneCode.TRIAL_SUMMARY_FEEDBACK, dto.getStudyProtocolIdentifier())) {
                 if (canTransition(dwStatus, DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE)) {
                     createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE , dto);
                 }
@@ -441,7 +441,7 @@ public class StudyMilestoneBeanLocal
                 && (dwStatus != null)
                 && DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE == dwStatus
                 && canTransition(dwStatus, DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE)
-                && milestoneExists(MilestoneCode.TRIAL_SUMMARY_FEEDBACK, dto)) {
+                && milestoneExists(MilestoneCode.TRIAL_SUMMARY_FEEDBACK, dto.getStudyProtocolIdentifier())) {
 
             createDocumentWorkflowStatus(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE, dto);
         }
@@ -477,7 +477,7 @@ public class StudyMilestoneBeanLocal
     private void updateRecordVerificationDates(StudyMilestoneDTO dto) throws PAException {
         MilestoneCode newCode = MilestoneCode.getByCode(CdConverter.convertCdToString(dto.getMilestoneCode()));
         if (newCode == MilestoneCode.READY_FOR_TSR) {
-            DocumentWorkflowStatusCode dwStatus = getCurrentDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
+            DocumentWorkflowStatusCode dwStatus = getLatestOffholdStatus(dto.getStudyProtocolIdentifier());
             if ((dwStatus != null) && DocumentWorkflowStatusCode.ACCEPTED == dwStatus) {
                 updateRecordVerificationDate(dto);
             }
@@ -494,8 +494,15 @@ public class StudyMilestoneBeanLocal
         studyProtocolService.updateStudyProtocol(sp);
     }
 
-    boolean milestoneExists(MilestoneCode milestoneCode, StudyMilestoneDTO dto) throws PAException {
-        List<StudyMilestoneDTO> smList = getByStudyProtocol(dto.getStudyProtocolIdentifier());
+    /**
+     * Test if the given milestone exists for the given stdy protocol. 
+     * @param milestoneCode The milestone to search for
+     * @param spIi The study protocol Ii
+     * @return true i the given milestone exist in the given study protocol.
+     * @throws PAException in error
+     */
+    boolean milestoneExists(MilestoneCode milestoneCode, Ii spIi) throws PAException {
+        List<StudyMilestoneDTO> smList = getByStudyProtocol(spIi);
         for (StudyMilestoneDTO sm : smList) {
             MilestoneCode tempCode = MilestoneCode.getByCode(CdConverter.convertCdToString(sm.getMilestoneCode()));
             if (tempCode.equals(milestoneCode)) {

@@ -95,6 +95,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyResourcing;
 import gov.nih.nci.pa.domain.StudySite;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.StudyTypeCode;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -261,16 +262,18 @@ public class TrialSearchStudyProtocolQueryConverter extends BaseStudyProtocolQue
      * @param studyProtocol trial domain object
      */
     private void setDocumentWorkflowStatus(StudyProtocolQueryDTO studyProtocolDto, StudyProtocol studyProtocol) {
-        // get documentWorkflowStatus
-        DocumentWorkflowStatus documentWorkflowStatus = studyProtocol.getDocumentWorkflowStatuses().isEmpty()
-                ? null : studyProtocol.getDocumentWorkflowStatuses().iterator().next();
-        // transfer protocol to studyProtocolDto
-        if (documentWorkflowStatus != null) {
-            studyProtocolDto.setDocumentWorkflowStatusCode(documentWorkflowStatus.getStatusCode());
-            studyProtocolDto.setDocumentWorkflowStatusDate(documentWorkflowStatus.getStatusDateRangeLow());
+        if (!studyProtocol.getDocumentWorkflowStatuses().isEmpty()) {
+            DocumentWorkflowStatus dws = studyProtocol.getDocumentWorkflowStatuses().iterator().next();
+            studyProtocolDto.setDocumentWorkflowStatusCode(dws.getStatusCode());
+            studyProtocolDto.setDocumentWorkflowStatusDate(dws.getStatusDateRangeLow());
+            for (DocumentWorkflowStatus status : studyProtocol.getDocumentWorkflowStatuses()) {
+                if (status.getStatusCode() != DocumentWorkflowStatusCode.ON_HOLD) {
+                    studyProtocolDto.setLastOffHollStatusCode(status.getStatusCode());
+                    break;
+                }
+            }
+            setViewTSR(studyProtocolDto, dws.getStatusCode());
         }
-        setViewTSR(studyProtocolDto, documentWorkflowStatus.getStatusCode());
-
     }
 
     /**

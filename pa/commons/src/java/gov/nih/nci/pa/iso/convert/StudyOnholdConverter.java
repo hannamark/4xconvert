@@ -80,6 +80,7 @@ package gov.nih.nci.pa.iso.convert;
 
 import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -103,6 +104,7 @@ public class StudyOnholdConverter extends AbstractConverter<StudyOnholdDTO, Stud
         dto.setOnholdReasonCode(CdConverter.convertToCd(bo.getOnholdReasonCode()));
         dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(bo.getStudyProtocol().getId()));
         dto.setOnholdDate(IvlConverter.convertTs().convertToIvl(bo.getOnholdDate(), bo.getOffholdDate()));
+        dto.setPreviousStatusCode(CdConverter.convertToCd(bo.getPreviousStatusCode()));
         return dto;
     }
 
@@ -129,6 +131,8 @@ public class StudyOnholdConverter extends AbstractConverter<StudyOnholdDTO, Stud
         bo.setOnholdReasonCode(OnholdReasonCode.getByCode(CdConverter.convertCdToString(dto.getOnholdReasonCode())));
         bo.setOnholdDate(IvlConverter.convertTs().convertLow(dto.getOnholdDate()));
         bo.setOffholdDate(IvlConverter.convertTs().convertHigh(dto.getOnholdDate()));
+        bo.setPreviousStatusCode(DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dto
+            .getPreviousStatusCode())));
         bo.setStudyProtocol(spBo);
     }
 }

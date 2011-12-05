@@ -97,6 +97,7 @@ import java.util.TreeSet;
  */
 public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQueryDTO {
 
+    private DocumentWorkflowStatusCode lastOffHollStatusCode;
     private DocumentWorkflowStatusCode documentWorkflowStatusCode;
     private Date documentWorkflowStatusDate;
     private String piFullName;
@@ -143,6 +144,20 @@ public class TrialSearchStudyProtocolQueryDTO extends UpdateableStudyProtocolQue
     }
 
    
+
+    /**
+     * @return the lastOffHollStatusCode
+     */
+    public DocumentWorkflowStatusCode getLastOffHollStatusCode() {
+        return lastOffHollStatusCode;
+    }
+
+    /**
+     * @param lastOffHollStatusCode the lastOffHollStatusCode to set
+     */
+    public void setLastOffHollStatusCode(DocumentWorkflowStatusCode lastOffHollStatusCode) {
+        this.lastOffHollStatusCode = lastOffHollStatusCode;
+    }
 
     /**
      * 

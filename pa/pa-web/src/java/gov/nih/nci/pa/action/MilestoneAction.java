@@ -84,7 +84,6 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.MilestoneTrialHistoryWebDTO;
 import gov.nih.nci.pa.dto.MilestoneWebDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -250,9 +249,6 @@ public final class MilestoneAction extends AbstractListEditAction {
                 } else {
                     mailManagerService.sendAcceptEmail(getSpIi());
                 }
-                TrialHelper helper = new TrialHelper();
-                ServletActionContext.getRequest().getSession()
-                    .setAttribute(Constants.DOC_WFS_MENU, helper.setMenuLinks(DocumentWorkflowStatusCode.ACCEPTED));
             }
         } catch (PAException e) {
             addActionError(e.getMessage());

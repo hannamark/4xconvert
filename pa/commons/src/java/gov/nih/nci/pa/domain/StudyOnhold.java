@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.domain;
 
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.util.CommonsConstant;
 
@@ -106,69 +107,93 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
                                  {@Index(name = "study_onhold_study_protocol_idx", 
                                  columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }) })
 public class StudyOnhold extends AbstractStudyEntity implements Auditable {
-  private static final long serialVersionUID = 1234509870L;
 
-  private String onholdReasonText;
-  private OnholdReasonCode onholdReasonCode;
-  private Timestamp onholdDate;
-  private Timestamp offholdDate;
+    private static final long serialVersionUID = 3521786448684361882L;
+    
+    private String onholdReasonText;
+    private OnholdReasonCode onholdReasonCode;
+    private Timestamp onholdDate;
+    private Timestamp offholdDate;
+    private DocumentWorkflowStatusCode previousStatusCode;
 
+    /**
+     * @return onholdReasonText
+     */
+    @Column(name = "ONHOLD_REASON_TEXT")
+    @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
+    public String getOnholdReasonText() {
+        return onholdReasonText;
+    }
 
-  /**
-   * @return onholdReasonText
-   */
-  @Column(name = "ONHOLD_REASON_TEXT")
-  @Length(max = CommonsConstant.LONG_TEXT_LENGTH)
-  public String getOnholdReasonText() {
-    return onholdReasonText;
-  }
-  /**
-   * @param onholdReasonText onholdReasonText
-   */
-  public void setOnholdReasonText(String onholdReasonText) {
-    this.onholdReasonText = onholdReasonText;
-  }
-  /**
-   * @return onholdReasonCode
-   */
-  @Column(name = "ONHOLD_REASON_CODE")
-  @Enumerated(EnumType.STRING)
-  public OnholdReasonCode getOnholdReasonCode() {
-    return onholdReasonCode;
-  }
-  /**
-   * @param onholdReasonCode onholdReasonCode
-   */
-  public void setOnholdReasonCode(OnholdReasonCode onholdReasonCode) {
-    this.onholdReasonCode = onholdReasonCode;
-  }
-  /**
-   * @return onholdDate
-   */
-  @Column(name = "ONHOLD_DATE")
-  @NotNull
-  @Past
-  public Timestamp getOnholdDate() {
-    return onholdDate;
-  }
-  /**
-   * @param onholdDate onholdDate
-   */
-  public void setOnholdDate(Timestamp onholdDate) {
-    this.onholdDate = onholdDate;
-  }
-  /**
-   * @return offholdDate
-   */
-  @Column(name = "OFFHOLD_DATE")
-  @Past
-  public Timestamp getOffholdDate() {
-    return offholdDate;
-  }
-  /**
-   * @param offholdDate offholdDate
-   */
-  public void setOffholdDate(Timestamp offholdDate) {
-    this.offholdDate = offholdDate;
-  }  
+    /**
+     * @param onholdReasonText onholdReasonText
+     */
+    public void setOnholdReasonText(String onholdReasonText) {
+        this.onholdReasonText = onholdReasonText;
+    }
+
+    /**
+     * @return onholdReasonCode
+     */
+    @Column(name = "ONHOLD_REASON_CODE")
+    @Enumerated(EnumType.STRING)
+    public OnholdReasonCode getOnholdReasonCode() {
+        return onholdReasonCode;
+    }
+
+    /**
+     * @param onholdReasonCode onholdReasonCode
+     */
+    public void setOnholdReasonCode(OnholdReasonCode onholdReasonCode) {
+        this.onholdReasonCode = onholdReasonCode;
+    }
+
+    /**
+     * @return onholdDate
+     */
+    @Column(name = "ONHOLD_DATE")
+    @NotNull
+    @Past
+    public Timestamp getOnholdDate() {
+        return onholdDate;
+    }
+
+    /**
+     * @param onholdDate onholdDate
+     */
+    public void setOnholdDate(Timestamp onholdDate) {
+        this.onholdDate = onholdDate;
+    }
+
+    /**
+     * @return offholdDate
+     */
+    @Column(name = "OFFHOLD_DATE")
+    @Past
+    public Timestamp getOffholdDate() {
+        return offholdDate;
+    }
+
+    /**
+     * @param offholdDate offholdDate
+     */
+    public void setOffholdDate(Timestamp offholdDate) {
+        this.offholdDate = offholdDate;
+    }
+
+    /**
+     * @return the previousStatusCode
+     */
+    @Column(name = "PREVIOUS_STATUS_CODE")
+    @Enumerated(EnumType.STRING)
+    public DocumentWorkflowStatusCode getPreviousStatusCode() {
+        return previousStatusCode;
+    }
+
+    /**
+     * @param previousStatusCode the previousStatusCode to set
+     */
+    public void setPreviousStatusCode(DocumentWorkflowStatusCode previousStatusCode) {
+        this.previousStatusCode = previousStatusCode;
+    }
 }

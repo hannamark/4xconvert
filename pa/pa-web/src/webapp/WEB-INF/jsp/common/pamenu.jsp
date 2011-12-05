@@ -1,397 +1,153 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
+
+<script type="text/javascript">
+    jQuery(function() {
+        jQuery("#viewTsrMenuOption").bind("click", function(ev) {
+            var form = document.qForm;
+            form.target = "TSR";
+            form.action = paApp.contextPath + "/protected/ajaxAbstractionCompletionviewTSR.action";
+            form.submit();
+        });
+    });
+</script>
+
 <s:form name="qForm">
-<li class="stdnav"><div>Protocol Abstraction</div>
-    <ul>
-     <c:choose>
-        <c:when test="${requestScope.topic == 'searchtrial'}">
-            <li><a id="trialSearchMenuOption" href="studyProtocolexecute.action" class="selected">Trial Search</a></li>
-        </c:when>
-        <c:otherwise>
-            <li><a id="trialSearchMenuOption" href="studyProtocolexecute.action" >Trial Search</a></li>
-        </c:otherwise>
-     </c:choose>
-        <c:choose>
-        <c:when test="${requestScope.topic == 'inboxprocess'}">
-             <li><a id="inboxProcessingMenuOption" href="inboxProcessingexecute.action" class="selected" >Inbox</a></li>
-         </c:when>
-         <c:when test="${requestScope.topic == 'inboxaccess'}">
-            <li><a id="inboxProcessingMenuOption" href="inboxProcessingexecute.action" class="selected" >Inbox</a></li>
-        </c:when>
-         <c:otherwise>
-           <li><a id="inboxProcessingMenuOption" href="inboxProcessingexecute.action" >Inbox</a></li>
-         </c:otherwise>
-         </c:choose>
-        <c:if test="${pageContext.request.remoteUser != null}">
-            <li><a id="logoutMenuOption" href="logout.action">Logout</a></li>
-        </c:if>
-    </ul>
-</li>
-
-
-<c:if test="${sessionScope.trialSummary != null && (sessionScope.isAbstractor || sessionScope.isSuAbstractor)}">
-    <li class="sub"><div><c:out value="${sessionScope.trialSummary.nciIdentifier }"/></div>
+    <li class="stdnav">
+        <div><fmt:message key="pamenu.abstraction"/></div>
         <ul>
-            <li><div>Trial Overview</div>
-                <ul>
-                    <c:choose>
-                        <c:when test="${requestScope.topic == 'trialdetails'}">
-                        <li><a href="studyProtocolview.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" class="selected">Trial Identification</a></li>
-                        </c:when>
-                        <c:otherwise>
-                        <li><a href="studyProtocolview.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" >Trial Identification</a></li>
-                        </c:otherwise>
-                    </c:choose>
-                    <c:choose>
-                       <c:when test="${requestScope.topic == 'trialhistory'}">
-                           <li><a href="trialHistory.action" class="selected">Trial History</a></li>
-                       </c:when>
-                       <c:otherwise>
-                           <li><a href="trialHistory.action" >Trial History</a></li>
-                       </c:otherwise>
-                    </c:choose>
-                    <c:choose>
-                        <c:when test="${requestScope.topic == 'trialmilestones'}">
-                           <li><a href="milestone.action" class="selected">Trial Milestones</a></li>
-                        </c:when>
-                        <c:otherwise>
-                           <li><a href="milestone.action" >Trial Milestones</a></li>
-                        </c:otherwise>
-                    </c:choose>
-                    <c:choose>
-                        <c:when test="${requestScope.topic == 'trialonhold'}">
-                           <li><a href="onhold.action" class="selected">On-hold Information</a></li>
-                        </c:when>
-                        <c:otherwise>
-                           <li><a href="onhold.action" >On-hold Information</a></li>
-                        </c:otherwise>
-                    </c:choose>
-                    <c:choose>
-                       <c:when test="${requestScope.topic == 'accrualaccess'}">
-                           <li><a href="manageAccrualAccess.action" class="selected">Manage Accrual Access</a></li>
-                       </c:when>
-                        <c:otherwise>
-                           <li><a href="manageAccrualAccess.action">Manage Accrual Access</a></li>
-                        </c:otherwise>
-                    </c:choose>
-                     <li><a href="#" onclick="generateTSRWord();" >View TSR</a></li>
-                     <li><a href="assignOwnershipview.action">Assign Ownership</a></li>
-                    <c:choose>
-                        <c:when test="${requestScope.topic == 'auditTrail'}">
-                            <li><a href="auditTrail.action" class="selected">Audit Trail</a></li>
-                        </c:when>
-                        <c:otherwise>
-                            <li><a href="auditTrail.action">Audit Trail</a></li>
-                        </c:otherwise>
-                    </c:choose>
-                </ul>
-            </li>
-            <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Submitted'
-            || sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'Amendment Submitted'}">
-            <div>Validation</div>
-                <ul>
-                    <c:choose>
-                        <c:when test="${requestScope.topic == 'reviewdocs'}">
-                            <li><a href="trialDocumentquery.action" class="selected">Trial Related Documents</a></li>
-                        </c:when>
-                        <c:otherwise>
-                            <li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
-                        </c:otherwise>
-                    </c:choose>
-
-                    <c:choose>
-                    <c:when test="${sessionScope.trialSummary.proprietaryTrial}">
-                        <c:choose>
-                            <c:when test="${requestScope.topic == 'abstractsite'}">
-                                <li><a href="participatingOrganizations.action?trialType=proprietary" class="selected">Participating Sites</a></li>
-                            </c:when>
-                            <c:otherwise>
-                               <li><a href="participatingOrganizations.action?trialType=proprietary">Participating Sites</a></li>
-                            </c:otherwise>
-                        </c:choose>
-                    </c:when>
-                    <c:otherwise>
-                        <c:choose>
-                            <c:when test="${requestScope.topic == 'reviewstatus'}">
-                                <li><a href="studyOverallStatus.action" class="selected">Trial Status</a></li>
-                            </c:when>
-                            <c:otherwise>
-                                <li><a href="studyOverallStatus.action" >Trial Status</a></li>
-                            </c:otherwise>
-                         </c:choose>
-                         <c:choose>
-                            <c:when test="${requestScope.topic == 'reviewfunding'}">
-                                <li><a href="trialFundingquery.action" class="selected">Trial Funding</a></li>
-                            </c:when>
-                            <c:otherwise>
-                                <li><a href="trialFundingquery.action" >Trial Funding</a></li>
-                            </c:otherwise>
-                         </c:choose>
-                        <c:choose>
-                            <c:when test="${requestScope.topic == 'reviewind'}">
-                                <li><a href="trialIndidequery.action" class="selected">Trial IND/IDE</a></li>
-                            </c:when>
-                            <c:otherwise>
-                                <li><a href="trialIndidequery.action">Trial IND/IDE</a></li>
-                            </c:otherwise>
-                        </c:choose>
-                        <c:choose>
-                            <c:when test="${requestScope.topic == 'reviewregulatory'}">
-                                <li><a href="regulatoryInfoquery.action" class="selected">Regulatory Information</a></li>
-                            </c:when>
-                            <c:otherwise>
-                                <li><a href="regulatoryInfoquery.action">Regulatory Information</a></li>
-                            </c:otherwise>
-                        </c:choose>
-                    </c:otherwise>
-                    </c:choose>
-                    <c:choose>
-                        <c:when test="${requestScope.topic == 'validatetrial'}">
-                        <li><a href="trialValidationquery.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" class="selected">Trial Validation</a></li>
-                        </c:when>
-                        <c:otherwise>
-                            <li><a href="trialValidationquery.action?studyProtocolId=<c:out value='${sessionScope.trialSummary.studyProtocolId }'/>" >Trial Validation</a></li>
-                        </c:otherwise>
-                    </c:choose>
-                  </ul>
-            </c:if>
-            <c:if test="${docWFSMenu  == 'Accepted'}">
-                <li><div>Administrative Data</div>
-                    <ul>
-                        <c:choose>
-                            <c:when test="${requestScope.topic =='abstractgeneral'}">
-                                <li><a href="generalTrialDesignquery.action"  class="selected">General Trial Details</a></li>
-                            </c:when>
-                            <c:otherwise>
-                                <li><a href="generalTrialDesignquery.action" >General Trial Details</a></li>
-                            </c:otherwise>
-                        </c:choose>
-                        <c:choose>
-                             <c:when test="${requestScope.topic =='abstractnci'}">
-                                <li><a href="nciSpecificInformationquery.action" class="selected" >NCI Specific Information</a></li>
-                             </c:when>
-                                <c:otherwise>
-                                    <li><a href="nciSpecificInformationquery.action" >NCI Specific Information</a></li>
-                                </c:otherwise>
-                        </c:choose>
-
-
-                        <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
-                        <li class="hassubmenu">Regulatory Information
-                           <ul id="part_sites">
-                                <c:choose>
-                                    <c:when test="${requestScope.topic =='abstractregulatory'}">
-                                        <li><a href="regulatoryInfoquery.action" class="selected">Regulatory Information</a></li>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <li><a href="regulatoryInfoquery.action" >Regulatory Information</a></li>
-                                    </c:otherwise>
-                                </c:choose>
-                                <c:choose>
-                                <c:when test="${requestScope.topic == 'abstractsafety'}">
-                                    <li><a href="irb.action" class="selected">Human Subject Safety</a></li>
-                                </c:when>
-                                <c:otherwise>
-                                    <li><a href="irb.action">Human Subject Safety</a></li>
-                                </c:otherwise>
-                                </c:choose>
-
-                                <c:choose>
-                                   <c:when test="${requestScope.topic == 'abstractind'}">
-                                        <li><a href="trialIndidequery.action" class="selected">Trial IND/IDE</a></li>
-                                    </c:when>
-                                    <c:otherwise>
-                                       <li><a href="trialIndidequery.action" >Trial IND/IDE</a></li>
-                                    </c:otherwise>
-                                </c:choose>
-                           </ul>
-                        </li>
-                         <c:choose>
-                           <c:when test="${requestScope.topic == 'abstractstatus'}">
-                                <li><a href="studyOverallStatus.action" class="selected">Trial Status</a></li>
-                           </c:when>
-                            <c:otherwise>
-                                <li><a href="studyOverallStatus.action" >Trial Status</a></li>
-                            </c:otherwise>
-                       </c:choose>
-                       <c:choose>
-                            <c:when test="${requestScope.topic == 'abstractfunding'}">
-                                <li><a href="trialFundingquery.action" class="selected">Trial Funding</a></li>
-                            </c:when>
-                            <c:otherwise>
-                                <li><a href="trialFundingquery.action" >Trial Funding</a></li>
-                            </c:otherwise>
-                        </c:choose>
-                        </c:if>
-                        <c:choose>
-                            <c:when test="${requestScope.topic == 'abstractsite'}">
-                                <li><a href="participatingOrganizations.action" class="selected">Participating Sites</a></li>
-                            </c:when>
-                            <c:otherwise>
-                                <li><a href="participatingOrganizations.action">Participating Sites</a></li>
-                            </c:otherwise>
-                        </c:choose>
-                        <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
-                        <c:choose>
-                            <c:when test="${requestScope.topic == 'abstractcollaborator'}">
-                                <li><a href="collaborators.action" class="selected">Collaborators</a></li>
-                            </c:when>
-                            <c:otherwise>
-                                <li><a href="collaborators.action">Collaborators</a></li>
-                            </c:otherwise>
-                        </c:choose>
-
-                        </c:if>
-                        <c:choose>
-                            <c:when test="${requestScope.topic == 'abstractdocs'}">
-                                <li><a href="trialDocumentquery.action" class="selected">Trial Related Documents</a></li>
-                            </c:when>
-                            <c:otherwise>
-                                <li><a href="trialDocumentquery.action" >Trial Related Documents</a></li>
-                            </c:otherwise>
-                        </c:choose>
-                      </ul>
-                </li>
-                <li><div>Scientific Data</div>
-                    <ul>
-                    <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
-                        <c:choose>
-                            <c:when test="${requestScope.topic == 'abstractdescription'}">
-                                <li><a href="trialDescriptionquery.action" class="selected">Trial Description</a></li>
-                            </c:when>
-                            <c:otherwise>
-                                <li><a href="trialDescriptionquery.action" >Trial Description</a></li>
-                            </c:otherwise>
-                        </c:choose>
-                        <c:choose>
-                        <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
-                        <li class="hassubmenu">Interventional Trial Design
-                            <ul id="part_sites">
-                                <c:choose>
-                                    <c:when test="${requestScope.topic == 'abstractdesign'}">
-                                        <li><a href="interventionalStudyDesigndetailsQuery.action" class="selected">Design Details</a></li>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <li><a href="interventionalStudyDesigndetailsQuery.action" >Design Details</a></li>
-                                    </c:otherwise>
-                                </c:choose>
-
-                                <c:choose>
-                                    <c:when test="${requestScope.topic == 'abstractoutcome'}" >
-                                        <li><a href="interventionalStudyDesignoutcomeQuery.action" class="selected">Outcome Measures</a></li>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <li><a href="interventionalStudyDesignoutcomeQuery.action" >Outcome Measures</a></li>
-                                    </c:otherwise>
-                                </c:choose>
-                                <c:choose>
-                                    <c:when test="${requestScope.topic == 'abstracteligibility'}">
-                                        <li><a href="eligibilityCriteriaquery.action" class="selected">Eligibility Criteria</a></li>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <li><a href="eligibilityCriteriaquery.action" >Eligibility Criteria</a></li>
-                                    </c:otherwise>
-                                </c:choose>
-
-                            </ul>
-                        </li>
-                        </c:when>
-                        <c:otherwise>
-                        <li class="hassubmenu">Observational Trial Design
-                            <ul id="part_sites">
-                                <li><a href="observationalStudyDesigndetailsQuery.action" >Design Details</a></li>
-                                <li><a href="interventionalStudyDesignoutcomeQuery.action" >Outcome Measures</a></li>
-                                <li><a href="eligibilityCriteriaquery.action" >Eligibility Criteria</a></li>
-                            </ul>
-                        </li>
-                        </c:otherwise>
-                        </c:choose>
-                        </c:if>
-                        <c:choose>
-                            <c:when test="${requestScope.topic == 'abstractdisease'}">
-                                <li><a href="disease.action" class="selected">Disease/Condition</a></li>
-                            </c:when>
-                            <c:otherwise>
-                                <li><a href="disease.action" >Disease/Condition</a></li>
-                            </c:otherwise>
-                        </c:choose>
-                        <c:choose>
-                            <c:when test="${requestScope.topic == 'abstractanatomicsite'}">
-                                <li><a href="anatomicSite.action" class="selected">Summary 4 Anatomic Site</a></li>
-                            </c:when>
-                            <c:otherwise>
-                                <li><a href="anatomicSite.action" >Summary 4 Anatomic Site</a></li>
-                            </c:otherwise>
-                        </c:choose>
-                        <c:choose>
-                            <c:when test="${requestScope.topic == 'abstractmarkers'}">
-                                <li><a href="plannedMarker.action" class="selected">Markers</a></li>
-                            </c:when>
-                            <c:otherwise>
-                                <li><a href="plannedMarker.action">Markers</a></li>
-                            </c:otherwise>
-                        </c:choose>
-                        <c:choose>
-                            <c:when test="${requestScope.topic == 'abstractinterventions'}">
-                                <li><a href="trialInterventions.action" class="selected" >Interventions</a></li>
-                            </c:when>
-                            <c:otherwise>
-                                <li><a href="trialInterventions.action">Interventions</a></li>
-                            </c:otherwise>
-                        </c:choose>
-
-                        <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
-                        <c:choose>
-                        <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
-                            <c:choose>
-                                <c:when test="${requestScope.topic == 'abstractarms'}">
-                                    <li><a href="trialArms.action" class="selected">Arms</a></li>
-                                </c:when>
-                                <c:otherwise>
-                                    <li><a href="trialArms.action" >Arms</a></li>
-                                </c:otherwise>
-                            </c:choose>
-
-                        </c:when>
-                        <c:otherwise>
-                            <li><a href="trialArmsobservational.action" >Groups</a></li>
-                        </c:otherwise>
-                        </c:choose>
-                        <c:choose>
-                            <c:when test="${requestScope.topic == 'abstractsubgroups'}">
-                                <li><a href="subGroupsquery.action" class="selected">Sub-groups</a></li>
-                            </c:when>
-                            <c:otherwise>
-                                <li><a href="subGroupsquery.action" >Sub-groups</a></li>
-                            </c:otherwise>
-                        </c:choose>
-                        </c:if>
-                    </ul>
-                </li>
-            <li><div>Completion</div>
-                <ul>
-                    <c:choose>
-                        <c:when test="${requestScope.topic == 'validateabstract'}">
-                            <li><a href="abstractionCompletionquery.action" class="selected">Abstraction Validation</a></li>
-                        </c:when>
-                        <c:otherwise>
-                            <li><a href="abstractionCompletionquery.action" >Abstraction Validation</a></li>
-                        </c:otherwise>
-                    </c:choose>
-                </ul>
-            </li>
+            <pa:menuLink href="studyProtocolexecute.action" id="trialSearchMenuOption" labelKey="pamenu.abstraction.search" selected="${requestScope.topic == 'searchtrial'}"/>
+            <pa:menuLink href="inboxProcessingexecute.action" id="inboxProcessingMenuOption" labelKey="pamenu.abstraction.inbox" selected="${requestScope.topic == 'inboxprocess' || requestScope.topic == 'inboxaccess'}"/>
+            <c:if test="${pageContext.request.remoteUser != null}">
+                <pa:menuLink href="logout.action" id="logoutMenuOption" labelKey="pamenu.abstraction.logout"/>
             </c:if>
         </ul>
     </li>
-</c:if>
+
+    <c:if test="${sessionScope.trialSummary != null && (sessionScope.isAbstractor || sessionScope.isSuAbstractor)}">
+        <c:set var="status" value="${ (sessionScope.trialSummary.documentWorkflowStatusCode.code  == 'On-Hold') ? sessionScope.trialSummary.lastOffHollStatusCode.code : sessionScope.trialSummary.documentWorkflowStatusCode.code}"/>
+        <c:choose>
+            <c:when test="${status == 'Submitted' || status == 'Amendment Submitted'}">
+                <c:set var="menuStatus" value="submitted" />
+            </c:when>
+            <c:when test="${status == 'Rejected'}">
+                <c:set var="menuStatus" value="rejected" />
+            </c:when>
+            <c:otherwise>
+                <c:set var="menuStatus" value="accepted" />
+            </c:otherwise>
+        </c:choose>
+        <li class="sub">
+            <div><c:out value="${sessionScope.trialSummary.nciIdentifier }"/></div>
+            <ul>
+                <li>
+                    <div><fmt:message key="pamenu.overview"/></div>
+                    <ul>
+                        <pa:menuLink href="studyProtocolview.action?studyProtocolId=${sessionScope.trialSummary.studyProtocolId}" labelKey="pamenu.overview.identification" selected="${requestScope.topic == 'trialdetails'}"/>
+                        <pa:menuLink href="trialHistory.action" labelKey="pamenu.overview.history" selected="${requestScope.topic == 'trialhistory'}"/>
+                        <pa:menuLink href="milestone.action" labelKey="pamenu.overview.milestone" selected="${requestScope.topic == 'trialmilestones'}"/>
+                        <pa:menuLink href="onhold.action" labelKey="pamenu.overview.onhold" selected="${requestScope.topic == 'trialonhold'}"/>
+                        <pa:menuLink href="manageAccrualAccess.action" labelKey="pamenu.overview.accrualaccess" selected="${requestScope.topic == 'accrualaccess'}"/>
+                        <pa:menuLink href="#" id="viewTsrMenuOption" labelKey="pamenu.overview.viewTsr"/>
+                        <pa:menuLink href="assignOwnershipview.action" labelKey="pamenu.overview.assignOwnership"/>
+                        <pa:menuLink href="auditTrail.action" labelKey="pamenu.overview.auditTrail" selected="${requestScope.topic == 'auditTrail'}"/>
+                    </ul>
+                </li>
+                <c:if test="${menuStatus == 'submitted'}">
+                    <div><fmt:message key="pamenu.validation"/></div>
+                    <ul>
+                        <pa:menuLink href="trialDocumentquery.action" labelKey="pamenu.admin.documents" selected="${requestScope.topic == 'reviewdocs'}"/>
+                        <c:choose>
+                            <c:when test="${sessionScope.trialSummary.proprietaryTrial}">
+                                <pa:menuLink href="participatingOrganizations.action?trialType=proprietary" labelKey="pamenu.admin.participatingSites" selected="${requestScope.topic == 'abstractsite'}"/>
+                            </c:when>
+                            <c:otherwise>
+                                <pa:menuLink href="studyOverallStatus.action" labelKey="pamenu.admin.status" selected="${requestScope.topic == 'reviewstatus'}"/>
+                                <pa:menuLink href="trialFundingquery.action" labelKey="pamenu.admin.funding" selected="${requestScope.topic == 'reviewfunding'}"/>
+                                <pa:menuLink href="trialIndidequery.action" labelKey="pamenu.admin.indide" selected="${requestScope.topic == 'reviewind'}"/> 
+                                <pa:menuLink href="regulatoryInfoquery.action" labelKey="pamenu.admin.regulatory" selected="${requestScope.topic == 'reviewregulatory'}"/> 
+                            </c:otherwise>
+                        </c:choose>
+                        <pa:menuLink href="trialValidationquery.action?studyProtocolId=${sessionScope.trialSummary.studyProtocolId}" labelKey="pamenu.validation.validation" selected="${requestScope.topic == 'validatetrial'}"/>
+                    </ul>
+                </c:if>
+                <c:if test="${menuStatus == 'accepted'}">
+                    <li>
+                        <div><fmt:message key="pamenu.admin"/></div>
+                        <ul>
+                            <pa:menuLink href="generalTrialDesignquery.action" labelKey="pamenu.admin.general" selected="${requestScope.topic == 'abstractgeneral'}"/> 
+                            <pa:menuLink href="nciSpecificInformationquery.action" labelKey="pamenu.admin.nciSpecific" selected="${requestScope.topic == 'abstractnci'}"/> 
+                            <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
+                                <li class="hassubmenu">
+                                    <fmt:message key="pamenu.admin.regulatory"/>
+                                    <ul id="part_sites">
+                                        <pa:menuLink href="regulatoryInfoquery.action" labelKey="pamenu.admin.regulatory" selected="${requestScope.topic == 'abstractregulatory'}"/> 
+                                        <pa:menuLink href="irb.action" labelKey="pamenu.admin.safety" selected="${requestScope.topic == 'abstractsafety'}"/>
+                                        <pa:menuLink href="trialIndidequery.action" labelKey="pamenu.admin.indide" selected="${requestScope.topic == 'abstractind'}"/> 
+                                   </ul>
+                                </li>
+                                <pa:menuLink href="studyOverallStatus.action" labelKey="pamenu.admin.status" selected="${requestScope.topic == 'abstractstatus'}"/>
+                                <pa:menuLink href="trialFundingquery.action" labelKey="pamenu.admin.funding" selected="${requestScope.topic == 'abstractfunding'}"/> 
+                            </c:if>
+                            <pa:menuLink href="participatingOrganizations.action" labelKey="pamenu.admin.participatingSites" selected="${requestScope.topic == 'abstractsite'}"/>
+                            <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
+                                <pa:menuLink href="collaborators.action" labelKey="pamenu.admin.collaborators" selected="${requestScope.topic == 'abstractcollaborator'}"/>
+                            </c:if>
+                            <pa:menuLink href="trialDocumentquery.action" labelKey="pamenu.admin.documents" selected="${requestScope.topic == 'abstractdocs'}"/>
+                        </ul>
+                    </li>
+                    <li>
+                        <div><fmt:message key="pamenu.scientific"/></div>
+                        <ul>
+                            <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
+                                <pa:menuLink href="trialDescriptionquery.action" labelKey="pamenu.scientific.description" selected="${requestScope.topic == 'abstractdescription'}"/>
+                                <c:choose>
+                                    <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
+                                        <li class="hassubmenu">
+                                            <fmt:message key="pamenu.scientific.interventionalDesign"/>
+                                            <ul id="part_sites">
+                                                <pa:menuLink href="interventionalStudyDesigndetailsQuery.action" labelKey="pamenu.scientific.design" selected="${requestScope.topic == 'abstractdesign'}"/>
+                                                <pa:menuLink href="interventionalStudyDesignoutcomeQuery.action" labelKey="pamenu.scientific.outcome" selected="${requestScope.topic == 'abstractoutcome'}"/>
+                                                <pa:menuLink href="eligibilityCriteriaquery.action" labelKey="pamenu.scientific.eligibility" selected="${requestScope.topic == 'abstracteligibility'}"/>
+                                            </ul>
+                                        </li>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <li class="hassubmenu">
+                                            <fmt:message key="pamenu.scientific.observationalDesign"/>
+                                            <ul id="part_sites">
+                                                <pa:menuLink href="observationalStudyDesigndetailsQuery.action" labelKey="pamenu.scientific.design" selected="${requestScope.topic == 'abstractdesign'}"/>
+                                                <pa:menuLink href="interventionalStudyDesignoutcomeQuery.action" labelKey="pamenu.scientific.outcome" selected="${requestScope.topic == 'abstractoutcome'}"/>
+                                                <pa:menuLink href="eligibilityCriteriaquery.action" labelKey="pamenu.scientific.eligibility" selected="${requestScope.topic == 'abstracteligibility'}"/>
+                                            </ul>
+                                        </li>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:if>
+                            <pa:menuLink href="disease.action" labelKey="pamenu.scientific.disease" selected="${requestScope.topic == 'abstractdisease'}"/>
+                            <pa:menuLink href="anatomicSite.action" labelKey="pamenu.scientific.anatomicSite" selected="${requestScope.topic == 'abstractanatomicsite'}"/>
+                            <pa:menuLink href="plannedMarker.action" labelKey="pamenu.scientific.markers" selected="${requestScope.topic == 'abstractmarkers'}"/>
+                            <pa:menuLink href="trialInterventions.action" labelKey="pamenu.scientific.interventions" selected="${requestScope.topic == 'abstractinterventions'}"/>
+                            <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
+                                <c:choose>
+                                    <c:when test="${sessionScope.trialSummary.studyProtocolType  == 'InterventionalStudyProtocol'}">
+                                        <pa:menuLink href="trialArms.action" labelKey="pamenu.scientific.arms" selected="${requestScope.topic == 'abstractarms'}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <pa:menuLink href="trialArmsobservational.action" labelKey="pamenu.scientific.groups"/>
+                                    </c:otherwise>
+                                </c:choose>
+                                <pa:menuLink href="subGroupsquery.action" labelKey="pamenu.scientific.subGroups" selected="${requestScope.topic == 'abstractsubgroups'}"/>
+                            </c:if>
+                        </ul>
+                    </li>
+                    <li>
+                        <div><fmt:message key="pamenu.completion"/></div>
+                        <ul>
+                            <pa:menuLink href="abstractionCompletionquery.action" labelKey="pamenu.completion.abstraction" selected="${requestScope.topic == 'validateabstract'}"/>
+                        </ul>
+                    </li>
+                </c:if>
+            </ul>
+        </li>
+    </c:if>
 </s:form>
-<SCRIPT LANGUAGE="JavaScript">
-
-function generateTSRWord() {
-  document.qForm.target = "TSR";
-   document.qForm.action = "/pa/protected/ajaxAbstractionCompletionviewTSR.action";
-   document.qForm.submit();
-
-}
-</SCRIPT>

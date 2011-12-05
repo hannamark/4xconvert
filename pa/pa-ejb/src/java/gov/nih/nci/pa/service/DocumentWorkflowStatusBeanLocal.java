@@ -78,28 +78,24 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
-import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.convert.DocumentWorkflowStatusConverter;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
-import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.joda.time.DateTime;
 
 /**
  * @author asharma
@@ -117,31 +113,77 @@ implements DocumentWorkflowStatusServiceLocal {
      */
     @Override
     public DocumentWorkflowStatusDTO create(DocumentWorkflowStatusDTO dto) throws PAException {
+        validationForCreation(dto);
+        Timestamp now = new Timestamp(new DateTime().getMillis());
+        dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(now, null));
+        DocumentWorkflowStatusCode latestStatus = getLatestStatus(dto.getStudyProtocolIdentifier());
+        DocumentWorkflowStatusCode newStatus =
+                CdConverter.convertCdToEnum(DocumentWorkflowStatusCode.class, dto.getStatusCode());
+        if (latestStatus != null && latestStatus.equals(newStatus)) {
+            throw new PAException("Consecutive statuses must be different.");
+        }
+        return super.create(dto);
+    }
+
+    /**
+     * Validates the input data for creation of a new status.
+     * @param dto The dto to validate.
+     * @throws PAException in case of error
+     */
+    void validationForCreation(DocumentWorkflowStatusDTO dto) throws PAException {
+        if (dto == null) {
+            throw new PAException("DocumentWorkflowStatusDTO object not provided.");
+        }
         if (!ISOUtil.isIiNull(dto.getIdentifier())) {
             throw new PAException("Update method should be used to modify existing.  ");
         }
-        DocumentWorkflowStatusDTO returnDto = new DocumentWorkflowStatusDTO();
-        DocumentWorkflowStatus criteria = new DocumentWorkflowStatus();
-        StudyProtocol sp = new StudyProtocol();
-        sp.setId(IiConverter.convertToLong(dto.getStudyProtocolIdentifier()));
-        criteria.setStudyProtocol(sp);
-        criteria.setStatusCode(
-                DocumentWorkflowStatusCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
-        List<DocumentWorkflowStatus> results =
-            search(new AnnotatedBeanSearchCriteria<DocumentWorkflowStatus>(criteria));
-
-        dto.setStatusDateRange(IvlConverter.convertTs().convertToIvl(new Timestamp((new Date()).getTime()), null));
-        if (CollectionUtils.isEmpty(results)) {
-            returnDto = super.create(dto);
-        } else if (results.size() == 1) {
-            dto.setIdentifier(IiConverter.convertToIi(results.get(0).getId()));
-            returnDto = super.update(dto);
-        } else if (results.size() > 1) {
-            throw new PAException("There cannot be more than 1 record for a given protocol and status "
-                    + " protocol id = " + dto.getStudyProtocolIdentifier().getExtension() + " status code "
-                    + dto.getStatusCode().getCode());
+        if (ISOUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
+            throw new PAException("Study Protocol is required.  ");
         }
-        return returnDto;
+        if (CdConverter.convertCdToEnum(DocumentWorkflowStatusCode.class, dto.getStatusCode()) == null) {
+            throw new PAException("Status Code is required.  ");
+        }
+    }
+
+    /**
+     * Gets the latest status of the study protocol.
+     * @param spIi The study protocol Ii
+     * @return The latest status of the study protocol before the given timestamp upper limit.
+     * @throws PAException exception
+     */
+    DocumentWorkflowStatusCode getLatestStatus(Ii spIi) throws PAException {
+        DocumentWorkflowStatusCode result = null;
+        Timestamp resultDate = null;
+        for (DocumentWorkflowStatusDTO status : getByStudyProtocol(spIi)) {
+            Timestamp low = IvlConverter.convertTs().convertLow(status.getStatusDateRange());
+            if (result == null || resultDate.before(low)) {
+                result = CdConverter.convertCdToEnum(DocumentWorkflowStatusCode.class, status.getStatusCode());
+                resultDate = low;
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Gets the latest off hold status of the study protocol.
+     * @param spIi The study protocol Ii
+     * @return The latest off hold status of the study protocol.
+     * @throws PAException exception
+     */
+    @Override
+    public DocumentWorkflowStatusDTO getLatestOffholdStatus(Ii spIi) throws PAException {
+        DocumentWorkflowStatusDTO result = null;
+        Timestamp resultDate = null;
+        for (DocumentWorkflowStatusDTO status : getByStudyProtocol(spIi)) {
+            DocumentWorkflowStatusCode statusCode = CdConverter.convertCdToEnum(DocumentWorkflowStatusCode.class, 
+                                                                                status.getStatusCode());
+            Timestamp low = IvlConverter.convertTs().convertLow(status.getStatusDateRange());
+            if (statusCode != DocumentWorkflowStatusCode.ON_HOLD  && (result == null || resultDate.before(low))) {
+                result = status;
+                resultDate = low;
+            }
+        }
+        return result;
     }
 
 }

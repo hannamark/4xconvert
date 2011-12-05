@@ -6,8 +6,11 @@ package gov.nih.nci.pa.service;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyOnhold;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.convert.StudyOnholdConverter;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.service.exception.PAFieldException;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -18,10 +21,13 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
+import org.joda.time.DateTime;
 
 /**
  * @author asharma
@@ -39,12 +45,14 @@ implements StudyOnholdServiceLocal {
     public static final int FN_DATE_LOW = 1;
     /** id for onholdDate.high. */
     public static final int FN_DATE_HIGH = 2;
+    
+    @EJB
+    private DocumentWorkflowStatusServiceLocal documentWorkflowStatusService;
 
     /**
-     * @param studyProtocolIi StudyProtocol identifier
-     * @return if there is an active onhold record
-     * @throws PAException exception
+     * {@inheritDoc}
      */
+    @Override
     public Bl isOnhold(Ii studyProtocolIi) throws PAException {
         Bl result = new Bl();
         List<StudyOnholdDTO> list = getByStudyProtocol(studyProtocolIi);
@@ -59,36 +67,137 @@ implements StudyOnholdServiceLocal {
     }
 
     /**
-     * @param dto dto
-     * @return dto
-     * @throws PAException exception
+     * {@inheritDoc}
      */
     @Override
     public StudyOnholdDTO create(StudyOnholdDTO dto) throws PAException {
+        validationForCreation(dto);
+        DocumentWorkflowStatusCode status = getDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
+        boolean statusOnHold = status == DocumentWorkflowStatusCode.ON_HOLD;
+        boolean onHold = isOnhold(dto.getStudyProtocolIdentifier()).getValue();
+        boolean newOnHold = IvlConverter.convertTs().convertHigh(dto.getOnholdDate()) == null;
+        statusRulesForCreation(statusOnHold, onHold, newOnHold);
+        if (newOnHold) {
+            dto.setPreviousStatusCode(CdConverter.convertToCd(status));
+        }
+        StudyOnholdDTO result = super.create(dto);
+        if (!onHold && newOnHold) {
+            createDocumentWorkflowStatus(dto.getStudyProtocolIdentifier(), DocumentWorkflowStatusCode.ON_HOLD);
+        }
+        return result;
+    }
+    
+    /**
+     * Validates the input for creation.
+     * @param dto The StudyOnholdDTO to check
+     * @throws PAException in case of error
+     */
+    void validationForCreation(StudyOnholdDTO dto) throws PAException {
+        if (dto == null) {
+            throw new PAException("No StudyOnholdDTO provided.");
+        }
+        if (ISOUtil.isIiNull(dto.getStudyProtocolIdentifier())) {
+            throw new PAException("Study Protocol is required.");
+        }
         setTimeIfToday(dto);
         reasonRules(dto);
         dateRules(dto);
-        return super.create(dto);
+    }
+    
+    /**
+     * Gets the processing status of the given study protocol.
+     * @param spIi The study protocol Id
+     * @return The processing status of the given study protocol.
+     * @throws PAException in case of error
+     */
+    DocumentWorkflowStatusCode getDocumentWorkflowStatus(Ii spIi) throws PAException {
+        DocumentWorkflowStatusDTO dws =
+                documentWorkflowStatusService.getCurrentByStudyProtocol(spIi);
+        return CdConverter.convertCdToEnum(DocumentWorkflowStatusCode.class, dws.getStatusCode());
     }
 
     /**
-     * @param dto dto
-     * @return dto
-     * @throws PAException exception
+     * Check the processing status rules for creation.
+     * @param statusOnHold true if the current status is onHold
+     * @param onHold true if there is a current onhold record
+     * @param newOnHold true if the new record is onHold
+     * @throws PAException in case of error
+     */
+    void statusRulesForCreation(boolean statusOnHold, boolean onHold, boolean newOnHold) throws PAException {
+        if (statusOnHold != onHold) {
+            throw new PAException("Processing status and on-hold records are inconsistent."
+                    + " Please contact your system administrator.");
+        }
+        if (onHold && newOnHold) {
+            throw new PAException("Study protocol is already on-hold.");
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
      */
     @Override
     public StudyOnholdDTO update(StudyOnholdDTO dto) throws PAException {
-        StudyOnholdDTO wrkDto = super.get(dto.getIdentifier());
+        validationForUpdate(dto);
+        StudyOnholdDTO wrkDto = get(dto.getIdentifier());
         if (wrkDto != null) {
-        wrkDto.getOnholdDate().setHigh(dto.getOnholdDate().getHigh());
-        setTimeIfToday(wrkDto);
-        dateRules(wrkDto);
+            wrkDto.getOnholdDate().setHigh(dto.getOnholdDate().getHigh());
+            setTimeIfToday(wrkDto);
+            dateRules(wrkDto);
+            DocumentWorkflowStatusCode status = getDocumentWorkflowStatus(dto.getStudyProtocolIdentifier());
+            boolean statusOnHold = status == DocumentWorkflowStatusCode.ON_HOLD;
+            boolean onHold = isOnhold(dto.getStudyProtocolIdentifier()).getValue();
+            boolean newOnHold = IvlConverter.convertTs().convertHigh(dto.getOnholdDate()) == null;
+            statusRulesForUpdate(statusOnHold, onHold, newOnHold);
+            StudyOnholdDTO result = super.update(wrkDto);
+            if (onHold != newOnHold) {
+                DocumentWorkflowStatusCode newStatus =
+                        (onHold) ? CdConverter.convertCdToEnum(DocumentWorkflowStatusCode.class,
+                                                               wrkDto.getPreviousStatusCode())
+                                : DocumentWorkflowStatusCode.ON_HOLD;
+                createDocumentWorkflowStatus(wrkDto.getStudyProtocolIdentifier(), newStatus);
+            }
+            return result;
+        } else {
+            throw new PAException("On Hold record does not exist.");
         }
-        return super.update(wrkDto);
+
+    }
+    
+    /**
+     * Validates the input for update.
+     * @param dto The StudyOnholdDTO to check
+     * @throws PAException in case of error
+     */
+    void validationForUpdate(StudyOnholdDTO dto) throws PAException {
+        if (dto == null) {
+            throw new PAException("No StudyOnholdDTO provided.");
+        }
+        if (ISOUtil.isIiNull(dto.getIdentifier())) {
+            throw new PAException("Identifier is required.");
+        }
+    }
+    
+    /**
+     * Check the processing status rules for update.
+     * @param statusOnHold true if the current status is onHold
+     * @param onHold true if there is a current onhold record
+     * @param newOnHold true if the new record is onHold
+     * @throws PAException in case of error
+     */
+    void statusRulesForUpdate(boolean statusOnHold, boolean onHold, boolean newOnHold) throws PAException {
+        if (statusOnHold != onHold) {
+            throw new PAException("Processing status and on-hold records are inconsistent."
+                    + " Please contact your system administrator.");
+        }
     }
 
-    private void setTimeIfToday(StudyOnholdDTO dto) {
-        Timestamp now = new Timestamp(new Date().getTime());
+    /**
+     * Adjust the timestamps of the given dto.
+     * @param dto The StudyOnholdDTO
+     */
+    void setTimeIfToday(StudyOnholdDTO dto) {
+        Timestamp now = new Timestamp(new DateTime().getMillis());
         Timestamp tsLow = IvlConverter.convertTs().convertLow(dto.getOnholdDate());
         Timestamp tsHigh = IvlConverter.convertTs().convertHigh(dto.getOnholdDate());
         if (tsLow != null && tsLow.equals(PAUtil.dateStringToTimestamp(PAUtil.today()))) {
@@ -100,14 +209,23 @@ implements StudyOnholdServiceLocal {
         dto.setOnholdDate(IvlConverter.convertTs().convertToIvl(tsLow, tsHigh));
     }
 
-    private void reasonRules(StudyOnholdDTO dto) throws PAException {
+    /**
+     * Check the reason field of the given dto.
+     * @param dto The StudyOnholdDTO
+     * @throws PAException if a validation error occurs.
+     */
+    void reasonRules(StudyOnholdDTO dto) throws PAException {
         if (ISOUtil.isCdNull(dto.getOnholdReasonCode())) {
-            throw new PAFieldException(FN_REASON_CODE,
-                    "The On-hold reason code is a required field.");
+            throw new PAFieldException(FN_REASON_CODE, "The On-hold reason code is a required field.");
         }
     }
 
-    private void dateRules(StudyOnholdDTO dto) throws PAException {
+    /**
+     * Check the dates of the given dto.
+     * @param dto The StudyOnholdDTO
+     * @throws PAException if a validation error occurs.
+     */
+    void dateRules(StudyOnholdDTO dto) throws PAException {
         Timestamp low = IvlConverter.convertTs().convertLow(dto.getOnholdDate());
         if (low == null) {
             throw new PAFieldException(FN_DATE_LOW, "On-hold date is required.");
@@ -126,6 +244,29 @@ implements StudyOnholdServiceLocal {
                         "Off-hold date must be bigger than on-hold date for the same on-hold record.");
             }
         }
+
     }
+    
+    /**
+     * Creates a new processing status.
+     * @param spIi The study protocol Ii
+     * @param dwf The new status
+     * @throws PAException if an error occurs.
+     */
+    void createDocumentWorkflowStatus(Ii spIi, DocumentWorkflowStatusCode dwf) 
+            throws PAException {
+        DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
+        dwfDto.setStatusCode(CdConverter.convertToCd(dwf));
+        dwfDto.setStudyProtocolIdentifier(spIi);
+        documentWorkflowStatusService.create(dwfDto);
+    }
+
+    /**
+     * @param documentWorkflowStatusService the documentWorkflowStatusService to set
+     */
+    public void setDocumentWorkflowStatusService(DocumentWorkflowStatusServiceLocal documentWorkflowStatusService) {
+        this.documentWorkflowStatusService = documentWorkflowStatusService;
+    }
+
 
 }

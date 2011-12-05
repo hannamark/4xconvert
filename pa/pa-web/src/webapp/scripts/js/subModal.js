@@ -23,8 +23,8 @@ var gPopFrame = null;
 var gReturnFunc;
 var gPopupIsShown = false;
 // Changes to the default page and close gif variables are deviations from the base subModal code
-var gDefaultPage = contextPath + "/images/loading.gif";
-var gCloseGif = contextPath + "/images/close.gif";
+var gDefaultPage = paApp.imagePath + "/loading.gif";
+var gCloseGif = paApp.imagePath + "/close.gif";
 var gHideSelects = false;
 var gReturnVal = null;
 

@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.service;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 
 /**
@@ -89,6 +90,12 @@ import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
  */
 public interface DocumentWorkflowStatusService extends StudyCurrentPaService<DocumentWorkflowStatusDTO> {
     
-    
+    /**
+     * Gets the latest off hold status of the study protocol.
+     * @param spIi The study protocol Ii
+     * @return The latest off hold status of the study protocol.
+     * @throws PAException exception
+     */
+    DocumentWorkflowStatusDTO getLatestOffholdStatus(Ii spIi) throws PAException;
 
 }

@@ -116,7 +116,9 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
     /** Abstraction Verified Response. */
     ABSTRACTION_VERIFIED_RESPONSE("Abstraction Verified Response", true, true, true),
     /** Abstraction Verified No Response. */
-    ABSTRACTION_VERIFIED_NORESPONSE("Abstraction Verified No Response", true, true, true);
+    ABSTRACTION_VERIFIED_NORESPONSE("Abstraction Verified No Response", true, true, true),
+    /** On Hold. */
+    ON_HOLD("On-Hold", false, false, false);
 
     private String code;
     private boolean eligibleForAccrual;
@@ -151,7 +153,10 @@ public enum DocumentWorkflowStatusCode implements CodedEnum<String> {
 
         tmpSet = EnumSet.of(REJECTED, ABSTRACTION_VERIFIED_RESPONSE);
         tmp.put(ABSTRACTION_VERIFIED_NORESPONSE, Collections.unmodifiableSet(tmpSet));
-
+        
+        tmpSet = EnumSet.complementOf(EnumSet.of(REJECTED, ON_HOLD));
+        tmp.put(ON_HOLD, Collections.unmodifiableSet(tmpSet));
+        
         TRANSITIONS = Collections.unmodifiableMap(tmp);
     }
 

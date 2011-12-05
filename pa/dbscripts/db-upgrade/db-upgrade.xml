@@ -806,4 +806,8 @@
         <comment>Add rejection_reason_code column to study_milestone</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.7/PO-4216.sql"/>
      </changeSet>
+     <changeSet id="PO-4217" author="mvisee">
+        <comment>Add on-hold processing status</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.7/PO-4217.sql"/>
+     </changeSet>
 </databaseChangeLog>

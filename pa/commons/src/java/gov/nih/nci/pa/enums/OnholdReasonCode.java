@@ -96,6 +96,10 @@ public enum OnholdReasonCode implements CodedEnum<String> {
      */
     INVALID_GRANT("Invalid Grant"),
     /**
+     * PENDING_CTRP_REVIEW.
+     */
+    PENDING_CTRP_REVIEW("Pending CTRP Review"),
+    /**
      * PENDING_DISEASE_CUR.
      */
     PENDING_DISEASE_CUR("Pending Disease Curation"),

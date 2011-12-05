@@ -87,47 +87,69 @@ import gov.nih.nci.iso21090.Ts;
  * @author Kalpana Guthikonda
  * @since 02/11/2009
  */
-public class StudyOnholdDTO  extends StudyDTO {
-  private static final long serialVersionUID = -487404345792624715L;
-private St onholdReasonText;
-  private Cd onholdReasonCode;
-  private Ivl<Ts> onholdDate;  
-  
-  /**
-   * @return onholdReasonText
-   */
-  public St getOnholdReasonText() {
-    return onholdReasonText;
-  }
-  /**
-   * @param onholdReasonText onholdReasonText
-   */
-  public void setOnholdReasonText(St onholdReasonText) {
-    this.onholdReasonText = onholdReasonText;
-  }
-  /**
-   * @return onholdReasonCode
-   */
-  public Cd getOnholdReasonCode() {
-    return onholdReasonCode;
-  }
-  /**
-   * @param onholdReasonCode onholdReasonCode
-   */
-  public void setOnholdReasonCode(Cd onholdReasonCode) {
-    this.onholdReasonCode = onholdReasonCode;
-  }
-  /**
-   * @return onholdDate
-   */
-  public Ivl<Ts> getOnholdDate() {
-    return onholdDate;
-  }
-  /**
-   * @param onholdDate onholdDate
-   */
-  public void setOnholdDate(Ivl<Ts> onholdDate) {
-    this.onholdDate = onholdDate;
-  }
-  
+public class StudyOnholdDTO extends StudyDTO {
+
+    private static final long serialVersionUID = 7153947378245021625L;
+    
+    private St onholdReasonText;
+    private Cd onholdReasonCode;
+    private Ivl<Ts> onholdDate;
+    private Cd previousStatusCode;
+
+    /**
+     * @return onholdReasonText
+     */
+    public St getOnholdReasonText() {
+        return onholdReasonText;
+    }
+
+    /**
+     * @param onholdReasonText onholdReasonText
+     */
+    public void setOnholdReasonText(St onholdReasonText) {
+        this.onholdReasonText = onholdReasonText;
+    }
+
+    /**
+     * @return onholdReasonCode
+     */
+    public Cd getOnholdReasonCode() {
+        return onholdReasonCode;
+    }
+
+    /**
+     * @param onholdReasonCode onholdReasonCode
+     */
+    public void setOnholdReasonCode(Cd onholdReasonCode) {
+        this.onholdReasonCode = onholdReasonCode;
+    }
+
+    /**
+     * @return onholdDate
+     */
+    public Ivl<Ts> getOnholdDate() {
+        return onholdDate;
+    }
+
+    /**
+     * @param onholdDate onholdDate
+     */
+    public void setOnholdDate(Ivl<Ts> onholdDate) {
+        this.onholdDate = onholdDate;
+    }
+
+    /**
+     * @return the previousStatusCode
+     */
+    public Cd getPreviousStatusCode() {
+        return previousStatusCode;
+    }
+
+    /**
+     * @param previousStatusCode the previousStatusCode to set
+     */
+    public void setPreviousStatusCode(Cd previousStatusCode) {
+        this.previousStatusCode = previousStatusCode;
+    }
+
 }

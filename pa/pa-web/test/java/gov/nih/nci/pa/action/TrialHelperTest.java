@@ -3,7 +3,6 @@
  */
 package gov.nih.nci.pa.action;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -12,11 +11,11 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
@@ -134,11 +133,6 @@ public class TrialHelperTest extends AbstractPaActionTest {
         gtdDTO.setResponsiblePersonName("test");
         gtdDTO.setResponsiblePersonIdentifier("1");
         trialHelper.createSponorContact(IiConverter.convertToIi("1"),gtdDTO);
-    }
-
-    @Test
-    public void testSetMenuLinks() {
-        assertEquals(DocumentWorkflowStatusCode.ACCEPTED.getCode(), trialHelper.setMenuLinks(DocumentWorkflowStatusCode.ABSTRACTED));
     }
 
 }

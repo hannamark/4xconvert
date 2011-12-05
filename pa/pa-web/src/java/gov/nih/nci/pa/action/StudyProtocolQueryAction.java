@@ -81,8 +81,6 @@ package gov.nih.nci.pa.action;
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.CheckOutType;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
-import gov.nih.nci.pa.enums.IdentifierType;
 import gov.nih.nci.pa.interceptor.PreventTrialEditingInterceptor;
 import gov.nih.nci.pa.iso.dto.StudyCheckoutDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -209,19 +207,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     private void populateIdentifierSearchParameters() {
         criteria.setUserLastCreated(UsernameHolder.getUser());
         if (criteria.getIdentifierType() != null && StringUtils.isNotEmpty(getIdentifier())) {
-            if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.NCI.getCode())) {
-                criteria.setNciIdentifier(getIdentifier());
-            } else if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.DCP.getCode())) {
-                criteria.setDcpIdentifier(getIdentifier());
-            } else if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.CTEP.getCode())) {
-                criteria.setCtepIdentifier(getIdentifier());
-            } else if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.NCT.getCode())) {
-                criteria.setNctNumber(getIdentifier());
-            } else if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.LEAD_ORG.getCode())) {
-                criteria.setLeadOrganizationTrialIdentifier(getIdentifier());
-            } else if (StringUtils.equals(criteria.getIdentifierType(), IdentifierType.OTHER_IDENTIFIER.getCode())) {
-                criteria.setOtherIdentifier(getIdentifier());
-            }
+            criteria.setIdentifier(getIdentifier());
         }
     }
 
@@ -288,9 +274,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             // When the study protocol is selected, set its token to be the current time in milliseconds.
             session.setAttribute(PreventTrialEditingInterceptor.STUDY_PROTOCOL_TOKEN, PreventTrialEditingInterceptor
                 .generateToken());
-            session.setAttribute(Constants.DOC_WFS_MENU, setMenuLinks(studyProtocolQueryDTO
-                .getDocumentWorkflowStatusCode()));
-
             String loginName = UsernameHolder.getUser();
             session.setAttribute(Constants.LOGGED_USER_NAME, loginName);
             setCheckoutCommands(studyProtocolQueryDTO);
@@ -370,19 +353,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
           return NONE;
     }
 
-    private String setMenuLinks(DocumentWorkflowStatusCode dwsCode) {
-        String action = "";
-        if (DocumentWorkflowStatusCode.REJECTED.equals(dwsCode)) {
-            action = DocumentWorkflowStatusCode.REJECTED.getCode();
-        } else if (DocumentWorkflowStatusCode.SUBMITTED.equals(dwsCode)
-                   || DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED.equals(dwsCode)) {
-            action = DocumentWorkflowStatusCode.SUBMITTED.getCode();
-        } else {
-            action = DocumentWorkflowStatusCode.ACCEPTED.getCode();
-        }
-        return action;
-    }
-    
     /**
      * Administrative check-out.
      * @return The result name
@@ -469,6 +439,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
      * @param response
      *            servletResponse
      */
+    @Override
     public void setServletResponse(HttpServletResponse response) {
         this.servletResponse = response;
     }

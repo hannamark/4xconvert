@@ -117,6 +117,7 @@ import gov.nih.nci.pa.domain.StudyContact;
 import gov.nih.nci.pa.domain.StudyDisease;
 import gov.nih.nci.pa.domain.StudyIndlde;
 import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.domain.StudyOnhold;
 import gov.nih.nci.pa.domain.StudyOutcomeMeasure;
 import gov.nih.nci.pa.domain.StudyOverallStatus;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -155,6 +156,7 @@ import gov.nih.nci.pa.enums.IndldeTypeCode;
 import gov.nih.nci.pa.enums.InterventionTypeCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.NihInstituteCode;
+import gov.nih.nci.pa.enums.OnholdReasonCode;
 import gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode;
 import gov.nih.nci.pa.enums.PhaseCode;
 import gov.nih.nci.pa.enums.PrimaryPurposeAdditionalQualifierCode;
@@ -219,6 +221,7 @@ public class TestSchema {
     public static List<Long> personIds;
     public static List<Long> organizationalContactIds;
     public static List<Long> studyDiseaseIds;
+    public static List<Long> studyOnholdIds;
     public static List<Country> countries;
     private static User user;
 
@@ -267,7 +270,8 @@ public class TestSchema {
         countries = new ArrayList<Country>();
         anatomicSiteIds = new ArrayList<Long>();
         studyDiseaseIds = new ArrayList<Long>();
-
+        studyOnholdIds = new ArrayList<Long>();
+        
         User curator = getUser(true);
         addUpdObject(curator);
 
@@ -303,7 +307,7 @@ public class TestSchema {
         addUpdObject(sp);
         sp.setId(sp.getId());
         studyProtocolIds.add(sp.getId());
-
+        
         StudyOverallStatus sos = new StudyOverallStatus();
         sos.setStatusCode(StudyStatusCode.APPROVED);
         sos.setStatusDate(YESTERDAY);
@@ -675,6 +679,43 @@ public class TestSchema {
         ICD9Disease icd905 = TestSchema.createICD9Disease("code5", "namedif5");
         addUpdObject(icd905);
         icd9DiseaseIds.add(icd905.getId());
+        
+        sp = new InterventionalStudyProtocol();
+        sp.setOfficialTitle("cancer for THOLA");
+        dates = sp.getDates();
+        dates.setStartDate(TODAY);
+        dates.setStartDateTypeCode(ActualAnticipatedTypeCode.ACTUAL);
+        dates.setPrimaryCompletionDate(ONE_YEAR_FROM_TODAY);
+        dates.setPrimaryCompletionDateTypeCode(ActualAnticipatedTypeCode.ANTICIPATED);
+        sp.setPrimaryPurposeCode(PrimaryPurposeCode.BASIC_SCIENCE);
+        sp.setAccrualReportingMethodCode(AccrualReportingMethodCode.ABBREVIATED);
+        sp.setStatusCode(ActStatusCode.ACTIVE);
+        sp.setPhaseCode(PhaseCode.I);
+        sp.setFdaRegulatedIndicator(Boolean.TRUE);
+        sp.setSection801Indicator(Boolean.TRUE);
+        sp.setDelayedpostingIndicator(Boolean.TRUE);
+        sp.setUserLastCreated(ru.getUserLastCreated());
+        sp.setUserLastUpdated(ru.getUserLastUpdated());
+
+        studySecondaryIdentifiers = new HashSet<Ii>();
+        spSecId = new Ii();
+        spSecId.setExtension("NCI-2009-00002");
+        spSecId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+        studySecondaryIdentifiers.add(spSecId);
+        sp.setOtherIdentifiers(studySecondaryIdentifiers);
+        sp.setSubmissionNumber(Integer.valueOf(1));
+        sp.setProprietaryTrialIndicator(Boolean.FALSE);
+        sp.setCtgovXmlRequiredIndicator(Boolean.TRUE);
+        addUpdObject(sp);
+        studyProtocolIds.add(sp.getId());
+        
+        StudyOnhold onhold = new StudyOnhold();
+        onhold.setStudyProtocol(sp);
+        onhold.setOnholdReasonCode(OnholdReasonCode.SUBMISSION_INCOM);
+        onhold.setOnholdReasonText("reason text");
+        onhold.setOnholdDate(TODAY);
+        addUpdObject(onhold);
+        studyOnholdIds.add(onhold.getId());
 
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();

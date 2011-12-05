@@ -85,7 +85,6 @@ import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.dto.PaPersonDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.RejectionReasonCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -279,7 +278,6 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
         try {
             Integer intSubNo = (Integer) session.getAttribute(submissionNo);
             Ii studyProtocolIi = (Ii) session.getAttribute(Constants.STUDY_PROTOCOL_II);
-            TrialHelper helper = new TrialHelper();
             // if trial is amend then hard delete
             if (intSubNo > 1) {
                 // send mail
@@ -292,12 +290,11 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
                 session.removeAttribute(submissionNo);
                 session.removeAttribute(Constants.TRIAL_SUMMARY);
                 session.removeAttribute(Constants.STUDY_PROTOCOL_II);
-                session.removeAttribute(Constants.DOC_WFS_MENU);
                 return "amend_reject";
             }
             createMilestones(MilestoneCode.SUBMISSION_REJECTED);
-            session.setAttribute(Constants.DOC_WFS_MENU, helper.setMenuLinks(DocumentWorkflowStatusCode.REJECTED));
             mailManagerService.sendRejectionEmail(studyProtocolIi);
+            refreshStudyProtocol(studyProtocolIi);
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
         }
@@ -306,6 +303,19 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
         session.removeAttribute(submissionNo);
         populateOtherIdentifiers();
         return EDIT;
+    }
+    
+    /**
+     * Refresh the study protocol in the Session.
+     * @param studyProtocolIi The study protocol Ii
+     * @throws PAException exception
+     * @return The studyProtocolQueryDTO
+     */
+    StudyProtocolQueryDTO refreshStudyProtocol(Ii studyProtocolIi) throws PAException {
+        Long spIi = IiConverter.convertToLong(studyProtocolIi);
+        StudyProtocolQueryDTO studyProtocolQueryDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(spIi);
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
+        return studyProtocolQueryDTO;
     }
 
     private void validateRejectionData() {
@@ -328,8 +338,8 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
                                       CdConverter.convertToCd(RejectionReasonCode.getByCode(gtdDTO
                                           .getRejectionReasonCode())));
 
-        StudyProtocolQueryDTO studyProtocolQueryDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(Long
-            .valueOf(studyProtocolIi.getExtension()));
+        StudyProtocolQueryDTO studyProtocolQueryDTO =
+                protocolQueryService.getTrialSummaryByStudyProtocolId(Long.valueOf(studyProtocolIi.getExtension()));
 
         // put an entry in the session and store StudyProtocolQueryDTO
         session.setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
@@ -348,19 +358,15 @@ public class TrialValidationAction extends ActionSupport implements Preparable {
                 regUserSvc.assignOwnership(rssUserId, Long.valueOf(studyProtocolIi.getExtension()));
             }
         }
-        StudyProtocolQueryDTO studyProtocolQueryDTO =
-                protocolQueryService.getTrialSummaryByStudyProtocolId(Long.valueOf(studyProtocolIi.getExtension()));
         // put an entry in the session and store StudyProtocolQueryDTO
         if (StringUtils.equalsIgnoreCase(operation, "accept")) {
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, "Study Protocol Accepted");
         } else {
             ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
         }
+        StudyProtocolQueryDTO studyProtocolQueryDTO = refreshStudyProtocol(studyProtocolIi);
         studyProtocolQueryDTO.setOfficialTitle(StringUtils.abbreviate(studyProtocolQueryDTO.getOfficialTitle(),
                                                                       PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE));
-        session.setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
-        session.setAttribute(Constants.DOC_WFS_MENU,
-                             trialHelper.setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
         query();
     }
 

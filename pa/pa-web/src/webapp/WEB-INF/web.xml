@@ -123,6 +123,10 @@
     <listener>
         <listener-class>gov.nih.nci.pa.filter.CSMSyncListener</listener-class>
     </listener>
+    <listener>
+        <description>Sets the various paths variables in the servlet context for use in jsps</description>
+        <listener-class>gov.nih.nci.pa.util.ServletContextConfigurator</listener-class>
+    </listener>
 
     <!-- Welcome file lists -->
     <welcome-file-list>

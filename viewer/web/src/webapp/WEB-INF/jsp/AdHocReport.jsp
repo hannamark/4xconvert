@@ -115,10 +115,18 @@
                             jQuery(accordionName + " .ui-accordion-header").click();
                         }
                     }
-        </script>
+                    
+                    function generateTSR(id) {
+                        var form = document.sForm;
+                        form.target = "TSR";
+                        form.action = viewerApp.contextPath + "/ctro/ajax/resultsAdHocReportviewTSR.action?studyProtocolId=" + id;
+                        form.submit();
+                    }
+                     
+        </script>     
     </head>
     <body>
-        <input type="hidden" id="imagePath" name="imagePath" value="${imagePath}" />
+    	<input type="hidden" id="imagePath" name="imagePath" value="${imagePath}" />
         <h1><fmt:message key="adHocReport.title"/></h1>
         <s:if test="hasActionErrors()">
             <div class="error_msg">

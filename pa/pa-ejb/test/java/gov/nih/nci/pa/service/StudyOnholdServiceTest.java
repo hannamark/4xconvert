@@ -80,202 +80,565 @@ package gov.nih.nci.pa.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.StudyOnhold;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
+import gov.nih.nci.pa.iso.convert.StudyOnholdConverter;
+import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.service.exception.PAFieldException;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
-import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.MockCSMUserService;
-import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
 import java.sql.Timestamp;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTime;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 
 /**
  * @author hreinhart
  *
  */
 public class StudyOnholdServiceTest extends AbstractHibernateTestCase {
-    private final StudyOnholdServiceLocal remote = new StudyOnholdBeanLocal();
-    private Long spId;
-    private Ii spIi;
-
-    private final String time1 = "1/1/2000";
-    private final String time2 = "1/1/2099";
-    private final Timestamp now = new Timestamp(new Date().getTime());
-    private final String reasonText = "reason";
-    private final OnholdReasonCode reasonCode = OnholdReasonCode.INVALID_GRANT;
-
+    
+    private DocumentWorkflowStatusServiceLocal documentWorkflowStatusService =
+            mock(DocumentWorkflowStatusServiceLocal.class);
+    /**
+     * Exception rule.
+     */
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+ 
+    /**
+     * Initialization of database.
+     */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         CSMUserService.setInstance(new MockCSMUserService());
         TestSchema.primeData();
-        spId = TestSchema.studyProtocolIds.get(0);
-        spIi = IiConverter.convertToStudyProtocolIi(spId);
+    }
+    
+    /**
+     * Creates a new StudyOnholdBeanLocal with its dependencies.
+     * @return The new StudyOnholdBeanLocal with its dependencies.
+     */
+    private StudyOnholdBeanLocal createStudyOnholdBeanLocal() {
+        StudyOnholdBeanLocal service = new StudyOnholdBeanLocal();
+        setDependencies(service);
+        return service;
     }
 
-    @Test
-    public void createTest() throws Exception {
-        // test reason code constraints
-        StudyOnholdDTO x = new StudyOnholdDTO();
-        x.setOnholdReasonCode(CdConverter.convertToCd(null));
-        x.setOnholdReasonText(StConverter.convertToSt(reasonText));
-        x.setOnholdDate(IvlConverter.convertTs().convertToIvl(time1, now));
-        x.setStudyProtocolIdentifier(spIi);
-        try {
-            remote.create(x);
-            fail("Should have throw exception for reason code required.");
-        } catch (PAFieldException e) {
-            assertEquals(StudyOnholdServiceBean.FN_REASON_CODE, e.getFieldNumber());
-        }
-
-        // test low date constraints
-        x.setOnholdReasonCode(CdConverter.convertToCd(reasonCode));
-        x.setOnholdDate(IvlConverter.convertTs().convertToIvl(null, null));
-        try {
-            remote.create(x);
-            fail("Should have throw exception on-hold date required.");
-        } catch (PAFieldException e) {
-            assertEquals(StudyOnholdServiceBean.FN_DATE_LOW, e.getFieldNumber());
-        }
-        x.setOnholdDate(IvlConverter.convertTs().convertToIvl(time2, null));
-        try {
-            remote.create(x);
-            fail("Should have throw exception for on-hold date can't be in future.");
-        } catch (PAFieldException e) {
-            assertEquals(StudyOnholdServiceBean.FN_DATE_LOW, e.getFieldNumber());
-        }
-
-        // test high date constraints
-        x.setOnholdDate(IvlConverter.convertTs().convertToIvl(now, time2));
-        try {
-            remote.create(x);
-            fail("Should have throw exception for off-hold date can't be in future.");
-        } catch (PAFieldException e) {
-            assertEquals(StudyOnholdServiceBean.FN_DATE_HIGH, e.getFieldNumber());
-        }
-        x.setOnholdDate(IvlConverter.convertTs().convertToIvl(now, time1));
-        try {
-            remote.create(x);
-            fail("Should have throw exception for off-hold date before on-hold date.");
-        } catch (PAFieldException e) {
-            assertEquals(StudyOnholdServiceBean.FN_DATE_HIGH, e.getFieldNumber());
-        }
-
-        // test successful create
-        x.setOnholdDate(IvlConverter.convertTs().convertToIvl(now, now));
-        StudyOnholdDTO y = remote.create(x);
-        assertEquals(now, IvlConverter.convertTs().convertLow(y.getOnholdDate()));
-        assertEquals(now, IvlConverter.convertTs().convertHigh(y.getOnholdDate()));
-        assertEquals(reasonText, StConverter.convertToString(y.getOnholdReasonText()));
-        assertEquals(reasonCode, OnholdReasonCode.getByCode(CdConverter.convertCdToString(y.getOnholdReasonCode())));
-        assertEquals(spId, IiConverter.convertToLong(y.getIdentifier()));
+    /**
+     * Creates a new StudyOnholdBeanLocal mock with its dependencies.
+     * @return The new StudyOnholdBeanLocal with its dependencies.
+     */
+    private StudyOnholdBeanLocal createStudyOnholdBeanLocalMock() {
+        StudyOnholdBeanLocal service = mock(StudyOnholdBeanLocal.class);
+        doCallRealMethod().when(service).setDocumentWorkflowStatusService(documentWorkflowStatusService);
+        setDependencies(service);
+        return service;
     }
 
+    /**
+     * Sets the dependencies of the given service.
+     */
+    private void setDependencies(StudyOnholdBeanLocal service) {
+        service.setDocumentWorkflowStatusService(documentWorkflowStatusService);
+    }
+    
+    /**
+     * Test the isOnhold method when the study is on hold.
+     * @throws PAException in case of error
+     */
     @Test
-    public void getByStudyProtocolTest() throws Exception {
-        List<StudyOnholdDTO> rList = remote.getByStudyProtocol(spIi);
-        int originalCount = rList.size();
+    public void testisOnholdTrue() throws PAException {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocalMock();
+        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        doCallRealMethod().when(sut).isOnhold(spIi);
+        List<StudyOnholdDTO> onholdList = createOnholdList(true);
+        when(sut.getByStudyProtocol(spIi)).thenReturn(onholdList);
+        Bl result = sut.isOnhold(spIi);
+        assertTrue("Wrong result", result.getValue());
+    }
+    
+    /**
+     * Test the isOnhold method when the study is not on hold.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testisOnholdFalse() throws PAException {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocalMock();
+        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        doCallRealMethod().when(sut).isOnhold(spIi);
+        List<StudyOnholdDTO> onholdList = createOnholdList(false);
+        when(sut.getByStudyProtocol(spIi)).thenReturn(onholdList);
+        Bl result = sut.isOnhold(spIi);
+        assertFalse("Wrong result", result.getValue());
+    }
+    
+    private List<StudyOnholdDTO> createOnholdList(boolean onhold) {
+        List<StudyOnholdDTO> onholdList = new ArrayList<StudyOnholdDTO>();
+        onholdList.add(createStudyOnholdDTO(onhold));
+        return onholdList;
+    }
+    
+    private StudyOnholdDTO createStudyOnholdDTO(boolean onhold) {
+        StudyOnholdDTO dto = new StudyOnholdDTO();
+        dto.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(1)));
+        Timestamp low = new Timestamp(new DateTime().getMillis());
+        Timestamp high = (onhold) ? null : low;
+        dto.setOnholdDate(IvlConverter.convertTs().convertToIvl(low, high));
+        return dto;
+    }
+    
+    /**
+     * Test the create method for the on-hold to off-hold transition.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testCreateOnToOff() throws PAException {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocalMock();
+        StudyOnholdDTO onholdDto = createStudyOnholdDTO(false);
+        doCallRealMethod().when(sut).create(onholdDto);
+        StudyOnhold onholdBo = new StudyOnholdConverter().convertFromDtoToDomain(onholdDto);
+        when(sut.convertFromDtoToDomain(onholdDto)).thenReturn(onholdBo);
+        when(sut.getDocumentWorkflowStatus(onholdDto.getStudyProtocolIdentifier())).thenReturn(DocumentWorkflowStatusCode.SUBMITTED);
+        when(sut.isOnhold(onholdDto.getStudyProtocolIdentifier())).thenReturn(BlConverter.convertToBl(true));
+        sut.create(onholdDto);
+        InOrder inOrder = inOrder(sut);
+        inOrder.verify(sut).getDocumentWorkflowStatus(onholdDto.getStudyProtocolIdentifier());
+        inOrder.verify(sut).isOnhold(onholdDto.getStudyProtocolIdentifier());
+        inOrder.verify(sut).statusRulesForCreation(false, true, false);
+        assertNull("Wrong previous status", onholdDto.getPreviousStatusCode());
+        inOrder.verify(sut, never()).createDocumentWorkflowStatus(any(Ii.class), any(DocumentWorkflowStatusCode.class));
+    }
+    
+    /**
+     * Test the create method for the off-hold to on-hold transition.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testCreateOffToOn() throws PAException {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocalMock();
+        StudyOnholdDTO onholdDto = createStudyOnholdDTO(true);
+        doCallRealMethod().when(sut).create(onholdDto);
+        StudyOnhold onholdBo = new StudyOnholdConverter().convertFromDtoToDomain(onholdDto);
+        when(sut.convertFromDtoToDomain(onholdDto)).thenReturn(onholdBo);
+        when(sut.getDocumentWorkflowStatus(onholdDto.getStudyProtocolIdentifier())).thenReturn(DocumentWorkflowStatusCode.SUBMITTED);
+        when(sut.isOnhold(onholdDto.getStudyProtocolIdentifier())).thenReturn(BlConverter.convertToBl(false));
+        sut.create(onholdDto);
+        InOrder inOrder = inOrder(sut);
+        inOrder.verify(sut).getDocumentWorkflowStatus(onholdDto.getStudyProtocolIdentifier());
+        inOrder.verify(sut).isOnhold(onholdDto.getStudyProtocolIdentifier());
+        inOrder.verify(sut).statusRulesForCreation(false, false, true);
+        assertEquals("Wrong previous status", DocumentWorkflowStatusCode.SUBMITTED, CdConverter.convertCdToEnum(DocumentWorkflowStatusCode.class, onholdDto.getPreviousStatusCode()));
+        inOrder.verify(sut).createDocumentWorkflowStatus(onholdDto.getStudyProtocolIdentifier(), DocumentWorkflowStatusCode.ON_HOLD);
+    }
+    
+    /**
+     * Test the create method for the off-hold to off-hold trasition.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testCreateOffToOff() throws PAException {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocalMock();
+        StudyOnholdDTO onholdDto = createStudyOnholdDTO(false);
+        doCallRealMethod().when(sut).create(onholdDto);
+        StudyOnhold onholdBo = new StudyOnholdConverter().convertFromDtoToDomain(onholdDto);
+        when(sut.convertFromDtoToDomain(onholdDto)).thenReturn(onholdBo);
+        when(sut.getDocumentWorkflowStatus(onholdDto.getStudyProtocolIdentifier()))
+            .thenReturn(DocumentWorkflowStatusCode.ON_HOLD);
+        when(sut.isOnhold(onholdDto.getStudyProtocolIdentifier())).thenReturn(BlConverter.convertToBl(false));
+        sut.create(onholdDto);
+        InOrder inOrder = inOrder(sut);
+        inOrder.verify(sut).getDocumentWorkflowStatus(onholdDto.getStudyProtocolIdentifier());
+        inOrder.verify(sut).isOnhold(onholdDto.getStudyProtocolIdentifier());
+        inOrder.verify(sut).statusRulesForCreation(true, false, false);
+        assertNull("Wrong previous status", onholdDto.getPreviousStatusCode());
+        inOrder.verify(sut, never()).createDocumentWorkflowStatus(any(Ii.class), any(DocumentWorkflowStatusCode.class));
+    }
+    
+    /**
+     * Test the validationForCreation method without dto.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testValidationForCreationNoDto() throws PAException {
+        expectedException.expect(PAException.class);
+        expectedException.expectMessage("No StudyOnholdDTO provided.");
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        sut.validationForCreation(null);
+    }
+    
+    /**
+     * Test the validationForCreation method without study protocol Ii.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testValidationForCreationNoStudyPrototocolIi() throws PAException {
+        expectedException.expect(PAException.class);
+        expectedException.expectMessage("Study Protocol is required.");
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        sut.validationForCreation(new StudyOnholdDTO());
+    }
+    
+    /**
+     * Test the validationForCreation method without dto.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testValidationForCreationOther() throws PAException {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocalMock();
+        StudyOnholdDTO dto = createStudyOnholdDTO(false);
+        doCallRealMethod().when(sut).validationForCreation(dto);
+        sut.validationForCreation(dto);
+        InOrder inOrder = inOrder(sut);
+        inOrder.verify(sut).setTimeIfToday(dto);
+        inOrder.verify(sut).reasonRules(dto);
+        inOrder.verify(sut).dateRules(dto);
+    }
+    
+    /**
+     * Test the getDocumentWorkflowStatus method.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testgetDocumentWorkflowStatus() throws PAException {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        DocumentWorkflowStatusDTO dto = new DocumentWorkflowStatusDTO();
+        dto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.SUBMITTED));
+        when(documentWorkflowStatusService.getCurrentByStudyProtocol(spIi)).thenReturn(dto);
+        DocumentWorkflowStatusCode result = sut.getDocumentWorkflowStatus(spIi);
+        assertEquals("Wrong status returned", DocumentWorkflowStatusCode.SUBMITTED, result);
+    }
+    
+    /**
+     * Test the update method for an off-hold to off-hold transition.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testUpdateOffToOff() throws PAException {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocalMock();
+        when(sut.getTypeArgument()).thenReturn(StudyOnhold.class);
+        StudyOnholdDTO dto = createStudyOnholdDTO(false);
+        Ii onholdIi = IiConverter.convertToStudyOnHoldIi(TestSchema.studyOnholdIds.get(0));
+        dto.setIdentifier(onholdIi);
+        doCallRealMethod().when(sut).update(dto);
+        StudyOnholdDTO existingDto = createStudyOnholdDTO(false);
+        existingDto.setIdentifier(onholdIi);
+        when(sut.get(onholdIi)).thenReturn(existingDto);
+        when(sut.getDocumentWorkflowStatus(dto.getStudyProtocolIdentifier()))
+            .thenReturn(DocumentWorkflowStatusCode.SUBMITTED);
+        when(sut.isOnhold(dto.getStudyProtocolIdentifier())).thenReturn(BlConverter.convertToBl(false));
+        sut.update(dto);
+        InOrder inOrder = inOrder(sut);
+        inOrder.verify(sut).validationForUpdate(dto);
+        inOrder.verify(sut).get(onholdIi);
+        inOrder.verify(sut).setTimeIfToday(existingDto);
+        inOrder.verify(sut).dateRules(existingDto);
+        inOrder.verify(sut).statusRulesForUpdate(false, false, false);
+        inOrder.verify(sut, never()).createDocumentWorkflowStatus(any(Ii.class), any(DocumentWorkflowStatusCode.class));
+    }
+    
+    /**
+     * Test the update method for an on-hold to off-hold transition.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testUpdateOnToOff() throws PAException {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocalMock();
+        when(sut.getTypeArgument()).thenReturn(StudyOnhold.class);
+        StudyOnholdDTO dto = createStudyOnholdDTO(false);
+        Ii onholdIi = IiConverter.convertToStudyOnHoldIi(TestSchema.studyOnholdIds.get(0));
+        dto.setIdentifier(onholdIi);
+        doCallRealMethod().when(sut).update(dto);
+        StudyOnholdDTO existingDto = createStudyOnholdDTO(true);
+        existingDto.setIdentifier(onholdIi);
+        existingDto.setPreviousStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.SUBMITTED));
+        when(sut.get(onholdIi)).thenReturn(existingDto);
+        when(sut.getDocumentWorkflowStatus(dto.getStudyProtocolIdentifier()))
+            .thenReturn(DocumentWorkflowStatusCode.ON_HOLD);
+        when(sut.isOnhold(dto.getStudyProtocolIdentifier())).thenReturn(BlConverter.convertToBl(true));
+        sut.update(dto);
+        InOrder inOrder = inOrder(sut);
+        inOrder.verify(sut).validationForUpdate(dto);
+        inOrder.verify(sut).get(onholdIi);
+        inOrder.verify(sut).setTimeIfToday(existingDto);
+        inOrder.verify(sut).dateRules(existingDto);
+        inOrder.verify(sut).statusRulesForUpdate(true, true, false);
+        inOrder.verify(sut).createDocumentWorkflowStatus(dto.getStudyProtocolIdentifier(),
+                                                         DocumentWorkflowStatusCode.SUBMITTED);
+
+    }
+    
+    /**
+     * Test the update method for an off-hold to off-hold transition.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testUpdateError() throws PAException {
+        expectedException.expect(PAException.class);
+        expectedException.expectMessage("On Hold record does not exist.");
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocalMock();
+        StudyOnholdDTO dto = createStudyOnholdDTO(false);
+        Ii onholdIi = IiConverter.convertToStudyOnHoldIi(1L);
+        dto.setIdentifier(onholdIi);
+        doCallRealMethod().when(sut).update(dto);
+        sut.update(dto);
+        InOrder inOrder = inOrder(sut);
+        inOrder.verify(sut).validationForUpdate(dto);
+        inOrder.verify(sut).get(onholdIi);
+    }
+    
+    /**
+     * Test the validationForUpdate method without dto.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testValidationForUpdateNoDto() throws PAException {
+        expectedException.expect(PAException.class);
+        expectedException.expectMessage("No StudyOnholdDTO provided.");
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        sut.validationForUpdate(null);
+    }
+    
+    /**
+     * Test the validationForUpdate method without identifier.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testValidationForUpdateNoIdentifier() throws PAException {
+        expectedException.expect(PAException.class);
+        expectedException.expectMessage("Identifier is required.");
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        sut.validationForUpdate(new StudyOnholdDTO());
+    }
+    
+    /**
+     * Test the validationForUpdate method success.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testValidationForUpdateSuccess() throws PAException {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        StudyOnholdDTO dto = new StudyOnholdDTO();
+        dto.setIdentifier(IiConverter.convertToStudyOnHoldIi(1L));
+        sut.validationForUpdate(dto);
+    }
+    
+    /**
+     * Test the setTimeIfToday method for today.
+     */
+    @Test
+    public void testSetTimeIfTodayToday() {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        StudyOnholdDTO dto = new StudyOnholdDTO();
+        DateTime now = new DateTime();
+        Timestamp ts = new Timestamp(now.getMillis());
+        dto.setOnholdDate(IvlConverter.convertTs().convertToIvl(ts,ts));
+        sut.setTimeIfToday(dto);
+        DateMidnight before = now.toDateMidnight();
+        DateMidnight after = before.plusDays(1);
+        DateTime low = new DateTime(IvlConverter.convertTs().convertLow(dto.getOnholdDate()));
+        assertTrue (before.isBefore(low) && low.isBefore(after));
+        DateTime high = new DateTime(IvlConverter.convertTs().convertHigh(dto.getOnholdDate()));
+        assertTrue (before.isBefore(high) && high.isBefore(after));
+    }
+    
+    /**
+     * Test the setTimeIfToday method for another day.
+     */
+    @Test
+    public void testSetTimeIfTodayOther() {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        StudyOnholdDTO dto = new StudyOnholdDTO();
+        DateTime now = new DateTime().minusDays(3);
+        Timestamp ts = new Timestamp(now.getMillis());
+        dto.setOnholdDate(IvlConverter.convertTs().convertToIvl(ts, ts));
+        sut.setTimeIfToday(dto);
+        assertEquals(ts, IvlConverter.convertTs().convertLow(dto.getOnholdDate()));
+        assertEquals(ts, IvlConverter.convertTs().convertHigh(dto.getOnholdDate()));
+    }
+
+    /**
+     * Test the reasonRules method with no reason code.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testReasonRulesError() throws PAException {
+        expectedException.expect(PAException.class);
+        expectedException.expectMessage("The On-hold reason code is a required field.");
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        sut.reasonRules(new StudyOnholdDTO());
+    }
+
+    /**
+     * Test the reasonRules method with a reason code.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testReasonRulesSuccess() throws PAException {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        StudyOnholdDTO dto = new StudyOnholdDTO();
+        dto.setOnholdReasonCode(CdConverter.convertToCd(OnholdReasonCode.SUBMISSION_INCOM));
+        sut.reasonRules(dto);
+    }
+
+    /**
+     * Test the dateRules method with no low timestamp.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testDateRulesNoLow() throws PAException {
+        expectedException.expect(PAException.class);
+        expectedException.expectMessage("On-hold date is required.");
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        StudyOnholdDTO dto = new StudyOnholdDTO();
+        dto.setOnholdDate(IvlConverter.convertTs().convertToIvl(null, null));
+        sut.dateRules(dto);
+    }
+    
+    /**
+     * Test the dateRules method with low in the future.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testDateRulesLowFuture() throws PAException {
+        expectedException.expect(PAException.class);
+        expectedException.expectMessage("On-hold dates must be only past or current dates.");
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        StudyOnholdDTO dto = new StudyOnholdDTO();
+        Timestamp low = new Timestamp(new DateTime().plusDays(1).getMillis());
+        dto.setOnholdDate(IvlConverter.convertTs().convertToIvl(low, null));
+        sut.dateRules(dto);
+    }
+    
+    /**
+     * Test the dateRules method with valid low and no high.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testDateRulesNoHigh() throws PAException {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        StudyOnholdDTO dto = new StudyOnholdDTO();
+        Timestamp low = new Timestamp(new DateTime().minusDays(1).getMillis());
+        dto.setOnholdDate(IvlConverter.convertTs().convertToIvl(low, null));
+        sut.dateRules(dto);
+    }
+    
+    /**
+     * Test the dateRules method with valid low and high in the future.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testDateRulesHighFuture() throws PAException {
+        expectedException.expect(PAException.class);
+        expectedException.expectMessage("Off-hold dates must be only past or current dates.");
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        StudyOnholdDTO dto = new StudyOnholdDTO();
+        Timestamp low = new Timestamp(new DateTime().minusDays(1).getMillis());
+        Timestamp high = new Timestamp(new DateTime().plusDays(1).getMillis());
+        dto.setOnholdDate(IvlConverter.convertTs().convertToIvl(low, high));
+        sut.dateRules(dto);
+    }
+    
+    /**
+     * Test the dateRules method with valid low and high in reverse.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testDateRulesReverse() throws PAException {
+        expectedException.expect(PAException.class);
+        expectedException.expectMessage("Off-hold date must be bigger than on-hold date for the same on-hold record.");
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        StudyOnholdDTO dto = new StudyOnholdDTO();
+        Timestamp low = new Timestamp(new DateTime().minusHours(1).getMillis());
+        Timestamp high = new Timestamp(new DateTime().minusHours(2).getMillis());
+        dto.setOnholdDate(IvlConverter.convertTs().convertToIvl(low, high));
+        sut.dateRules(dto);
+    }
+    
+    /**
+     * Test the dateRules method with valid dates.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testDateRulesValid() throws PAException {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        StudyOnholdDTO dto = new StudyOnholdDTO();
+        Timestamp low = new Timestamp(new DateTime().minusHours(2).getMillis());
+        Timestamp high = new Timestamp(new DateTime().minusHours(1).getMillis());
+        dto.setOnholdDate(IvlConverter.convertTs().convertToIvl(low, high));
+        sut.dateRules(dto);
+    }
+    
+    /**
+     * Test the createDocumentWorkflowStatus method.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testCreateDocumentWorkflowStatus() throws PAException {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocalMock();
+        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        DocumentWorkflowStatusCode status = DocumentWorkflowStatusCode.SUBMITTED;
+        doCallRealMethod().when(sut).createDocumentWorkflowStatus(spIi, status);
+        sut.createDocumentWorkflowStatus(spIi, status);
+        ArgumentCaptor<DocumentWorkflowStatusDTO> captor = ArgumentCaptor.forClass(DocumentWorkflowStatusDTO.class);
+        verify(documentWorkflowStatusService).create(captor.capture());
+        DocumentWorkflowStatusDTO dto = captor.getValue();
+        assertEquals("Wrong study protocol Ii", spIi, dto.getStudyProtocolIdentifier());
+        assertEquals("Wrong status", status,
+                     CdConverter.convertCdToEnum(DocumentWorkflowStatusCode.class, dto.getStatusCode()));
+    }
+
+    /**
+     * Test the getByStudyProtocol method.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testGetByStudyProtocol() throws PAException {
+        StudyOnholdBeanLocal sut = createStudyOnholdBeanLocal();
+        DocumentWorkflowStatusDTO dwsDto = new DocumentWorkflowStatusDTO();
+        dwsDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.SUBMITTED));
+        Ii spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));;
+        when(documentWorkflowStatusService.getCurrentByStudyProtocol(spIi)).thenReturn(dwsDto);
+        int originalCount = sut.getByStudyProtocol(spIi).size();
         StudyOnholdDTO x = new StudyOnholdDTO();
-        x.setOnholdDate(IvlConverter.convertTs().convertToIvl(new Timestamp(new Date().getTime()), null));
+        Timestamp ts = new Timestamp(new DateTime().getMillis());
+        x.setOnholdDate(IvlConverter.convertTs().convertToIvl(ts, ts));
         x.setOnholdReasonCode(CdConverter.convertToCd(OnholdReasonCode.PENDING_ORG_CUR));
         x.setOnholdReasonText(StConverter.convertToSt("reason"));
         x.setStudyProtocolIdentifier(spIi);
-        remote.create(x);
-        rList = remote.getByStudyProtocol(spIi);
-        assertEquals(originalCount + 1, rList.size());
+        sut.create(x);
+        assertEquals(originalCount + 1, sut.getByStudyProtocol(spIi).size());
     }
 
-    @Test
-    public void updateTest() throws Exception {
-        // create an on-hold
-        StudyOnholdDTO x = new StudyOnholdDTO();
-        x.setOnholdReasonCode(CdConverter.convertToCd(reasonCode));
-        x.setOnholdReasonText(StConverter.convertToSt(reasonText));
-        x.setOnholdDate(IvlConverter.convertTs().convertToIvl(now, null));
-        x.setStudyProtocolIdentifier(spIi);
-        StudyOnholdDTO y = remote.create(x);
-        Ii ohIi = y.getIdentifier();
-        assertFalse(ISOUtil.isIiNull(ohIi));
-
-        // confirm date rules (only off-hold date changes)
-        y = new StudyOnholdDTO();
-        y.setIdentifier(ohIi);
-        y.setOnholdDate(IvlConverter.convertTs().convertToIvl(null, time2));
-        try {
-            remote.update(y);
-            fail("Should have throw exception for off-hold date can't be in future.");
-        } catch (PAFieldException e) {
-            assertEquals(StudyOnholdServiceBean.FN_DATE_HIGH, e.getFieldNumber());
-        }
-        y.setOnholdDate(IvlConverter.convertTs().convertToIvl(null, time1));
-        try {
-            remote.update(y);
-            fail("Should have throw exception for off-hold date before on-hold date.");
-        } catch (PAFieldException e) {
-            assertEquals(StudyOnholdServiceBean.FN_DATE_HIGH, e.getFieldNumber());
-        }
-
-        // test good update
-        y.setOnholdDate(IvlConverter.convertTs().convertToIvl(null, now));
-        StudyOnholdDTO z = remote.update(y);
-        assertEquals(IiConverter.convertToLong(ohIi), IiConverter.convertToLong(z.getIdentifier()));
-        assertEquals(now, IvlConverter.convertTs().convertLow(z.getOnholdDate()));
-        assertEquals(now, IvlConverter.convertTs().convertHigh(z.getOnholdDate()));
-        assertEquals(reasonText, StConverter.convertToString(z.getOnholdReasonText()));
-        assertEquals(reasonCode, OnholdReasonCode.getByCode(CdConverter.convertCdToString(z.getOnholdReasonCode())));
-        assertEquals(spId, IiConverter.convertToLong(z.getIdentifier()));
-    }
-
-    @Test
-    public void storeTimeTest() throws Exception {
-        // time should be stored if today
-        StudyOnholdDTO x = new StudyOnholdDTO();
-        x.setOnholdReasonCode(CdConverter.convertToCd(reasonCode));
-        x.setOnholdReasonText(StConverter.convertToSt(reasonText));
-        x.setOnholdDate(IvlConverter.convertTs().convertToIvl(PAUtil.today(), PAUtil.today()));
-        x.setStudyProtocolIdentifier(spIi);
-        StudyOnholdDTO y = remote.create(x);
-        assertTrue(PAUtil.dateStringToTimestamp(PAUtil.today()).before(IvlConverter.convertTs().convertLow(y.getOnholdDate())));
-        assertTrue(PAUtil.dateStringToTimestamp(PAUtil.today()).before(IvlConverter.convertTs().convertHigh(y.getOnholdDate())));
-
-        // time not stored if not today
-        x.setIdentifier(null);
-        x.setOnholdDate(IvlConverter.convertTs().convertToIvl(time1, time1));
-        y = remote.create(x);
-        assertTrue(PAUtil.dateStringToTimestamp(time1).equals(IvlConverter.convertTs().convertLow(y.getOnholdDate())));
-        assertTrue(PAUtil.dateStringToTimestamp(time1).equals(IvlConverter.convertTs().convertHigh(y.getOnholdDate())));
-    }
-
-    @Test
-    public void isOnholdTest() throws Exception {
-        // put on-hold
-        assertFalse(BlConverter.convertToBool(remote.isOnhold(spIi)));
-        StudyOnholdDTO x = new StudyOnholdDTO();
-        x.setOnholdReasonCode(CdConverter.convertToCd(reasonCode));
-        x.setOnholdReasonText(StConverter.convertToSt(reasonText));
-        x.setOnholdDate(IvlConverter.convertTs().convertToIvl(time1, null));
-        x.setStudyProtocolIdentifier(spIi);
-        x = remote.create(x);
-        assertTrue(BlConverter.convertToBool(remote.isOnhold(spIi)));
-
-        // take off-hold
-        x.setOnholdDate(IvlConverter.convertTs().convertToIvl(time1, PAUtil.today()));
-        remote.update(x);
-        assertFalse(BlConverter.convertToBool(remote.isOnhold(spIi)));
-    }
+   
 }

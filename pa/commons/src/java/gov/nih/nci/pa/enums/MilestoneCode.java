@@ -101,9 +101,9 @@ public enum MilestoneCode implements CodedEnum<String> {
     /** Submission Received. */
     SUBMISSION_RECEIVED("Submission Received Date", true, false, true, true),
     /** Submission Accepted. */
-    SUBMISSION_ACCEPTED("Submission Acceptance Date", true, false, true, true),
+    SUBMISSION_ACCEPTED("Submission Acceptance Date", true, false, false, true),
     /** Submission Rejected. */
-    SUBMISSION_REJECTED("Submission Rejection Date", true, false, true, true),
+    SUBMISSION_REJECTED("Submission Rejection Date", true, false, false, true),
     /** Administrative processing start. */
     ADMINISTRATIVE_PROCESSING_START_DATE("Administrative Processing Start Date", false, false, true, true),
     /** Administrative processing completed. */

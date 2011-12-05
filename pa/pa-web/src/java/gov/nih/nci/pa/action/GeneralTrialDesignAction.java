@@ -166,8 +166,6 @@ public class GeneralTrialDesignAction extends ActionSupport {
                                                                       PAAttributeMaxLen.DISPLAY_OFFICIAL_TITLE));
         session.setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
         request.setAttribute(Constants.SUCCESS_MESSAGE, Constants.UPDATE_MESSAGE);
-        session.setAttribute(Constants.DOC_WFS_MENU,
-                             helper.setMenuLinks(studyProtocolQueryDTO.getDocumentWorkflowStatusCode()));
         populateOtherIdentifiers();
         query();
     }

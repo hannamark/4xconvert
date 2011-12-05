@@ -80,65 +80,37 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.enums;
+package gov.nih.nci.pa.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
-
-import org.junit.Test;
 /**
- * Tests for the MilestoneCode enum.
- * 
  * @author Michael Visee
  */
-public class MilestoneCodeTest {
-    
+public class ServletContextConfigurator implements ServletContextListener {
+
     /**
-     * test the getDisplayNames method.
+     * {@inheritDoc}
      */
-    @Test
-    public void testGetDisplayNames() {
-        String[] result = MilestoneCode.getDisplayNames();
-        assertNotNull("No result returned", result);
-        MilestoneCode[] values = MilestoneCode.values();
-        assertEquals("Result has the wrong size", values.length, result.length);
-        for (int i = 0; i < result.length; i++) {
-            assertEquals(values[i].getCode(), result[i]);
-        }
+    @Override
+    public void contextInitialized(ServletContextEvent event) {
+        ServletContext context = event.getServletContext();
+        String contextPath = "/pa";
+        String staticPath = contextPath;
+        context.setAttribute("imagePath", staticPath + "/images");
+        context.setAttribute("scriptPath", staticPath + "/scripts");
+        context.setAttribute("staticPath", staticPath);
+        context.setAttribute("stylePath", staticPath + "/styles");
     }
     
     /**
-     * test the isAboveTrialSummaryReport method.
+     * {@inheritDoc}
      */
-    @Test
-    public void testIsAboveTrialSummaryReport() {
-       Set<MilestoneCode> trsAndAbove = EnumSet.of(MilestoneCode.TRIAL_SUMMARY_SENT,
-                                                   MilestoneCode.TRIAL_SUMMARY_FEEDBACK,
-                                                   MilestoneCode.INITIAL_ABSTRACTION_VERIFY,
-                                                   MilestoneCode.ONGOING_ABSTRACTION_VERIFICATION);
-       for (MilestoneCode milestoneCode : MilestoneCode.values()) {
-           assertEquals(trsAndAbove.contains(milestoneCode), MilestoneCode.isAboveTrialSummaryReport(milestoneCode));
-       }
-    }
-    
-    /**
-     * test the getCodes method.
-     */
-    @Test
-    public void testGetCodes() {
-        Set<MilestoneCode> milestones = EnumSet.allOf(MilestoneCode.class);
-        milestones.remove(MilestoneCode.LATE_REJECTION_DATE);
-        List<String> result = MilestoneCode.getCodes(milestones);
-        assertNotNull("No result returned", result);
-        MilestoneCode[] values = MilestoneCode.values();
-        assertEquals("Result has the wrong size", values.length - 1, result.size());
-        for (int i = 0; i < result.size(); i++) {
-            assertEquals(values[i].getCode(), result.get(i));
-        }
+    @Override
+    public void contextDestroyed(ServletContextEvent event) {
+        // Nothing to do
     }
 
 }

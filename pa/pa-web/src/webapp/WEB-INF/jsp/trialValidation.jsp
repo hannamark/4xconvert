@@ -1,19 +1,11 @@
+<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <!DOCTYPE html PUBLIC 
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    
-<%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>   
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
     <head>
         <title><fmt:message key="trialValidation.page.title"/></title>   
         <s:head/>
-        <link href="<s:url value='/styles/subModalstyle.css'/>" rel="stylesheet" type="text/css" media="all"/>
-        <link href="<s:url value='/styles/subModal.css'/>" rel="stylesheet" type="text/css" media="all"/>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/coppa.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script> 
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
         <c:url value="/protected/ajaxTrialValidationgetOrganizationContacts.action" var="lookupOrgContactsUrl"/>
         <script type="text/javascript" language="javascript"> 
             var orgid;
@@ -23,25 +15,29 @@
             var contactPhone;
             var selectedName;    
             
-            // this function is called from body onload in main.jsp (decorator)
-            function callOnloadFunctions() {
-                setFocusToFirstControl();         
-            }
-            
-            function handleAction() {
-                document.forms[0].action="trialValidationupdate.action";
-                document.forms[0].submit(); 
-            }    
-            
-            function handleActionAccept() {
-                document.forms[0].action="trialValidationaccept.action";
-                document.forms[0].submit(); 
-            }    
-            
-            function handleActionReject() {
-                document.forms[0].action="trialValidationreject.action";
-                document.forms[0].submit(); 
-            }    
+            jQuery(function() {
+                setFocusToFirstControl();
+                jQuery("#saveButton").bind("click", function(ev) {
+                    var form = document.forms[0];
+                    form.action = "trialValidationupdate.action";
+                    form.submit();
+                });
+                jQuery("#acceptButton").bind("click", function(ev) {
+                    var form = document.forms[0];
+                    form.action = "trialValidationaccept.action";
+                    form.submit();
+                });
+                jQuery("#rejectButton").bind("click", function(ev) {
+                    var form = document.forms[0];
+                    form.action = "trialValidationreject.action";
+                    form.submit();
+                });
+                jQuery("#onholdButton").bind("click", function(ev) {
+                    var form = document.forms[0];
+                    form.action = "onhold.action";
+                    form.submit();
+                });
+            });
         
             function setorgid(orgIdentifier) {
                 orgid = orgIdentifier;
@@ -126,16 +122,9 @@
                 <s:hidden name="gtdDTO.dcpIdentifier" id ="gtdDTO.dcpIdentifier"/>
                 <h2><fmt:message key="trialValidation.trialDetails" /></h2>
                 <table class="form">
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="nciAccessionNumber">                
-                                <fmt:message key="studyProtocol.nciIdentifier"/>
-                            </label>
-                        </td>
-                        <td class="value">
-                            <c:out value="${sessionScope.trialSummary.nciIdentifier }"/> 
-                        </td>
-                    </tr>
+                    <pa:valueRow labelKey="studyProtocol.nciIdentifier">
+                        <c:out value="${sessionScope.trialSummary.nciIdentifier }"/> 
+                    </pa:valueRow>
                     <c:choose>
                         <c:when test="${!sessionScope.trialSummary.proprietaryTrial}">
                             <tr>
@@ -151,70 +140,27 @@
                             <s:hidden name="gtdDTO.ctGovXmlRequired" id="gtdDTO.ctGovXmlRequired"/>
                         </c:otherwise>
                     </c:choose>
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="nciIdentifier">
-                                <fmt:message key="studyCoordinatingCenterLead.localProtocolIdentifer"/><span class="required">*</span>
-                            </label>
-                        </td>
-                        <td class="value">
-                            <s:textfield name="gtdDTO.localProtocolIdentifier" cssStyle="width:206px" maxlength="50"/> 
-                            <span class="formErrorMsg"> 
-                                <s:fielderror>
-                                    <s:param>gtdDTO.LocalProtocolIdentifier</s:param>
-                                </s:fielderror>                            
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="nciIdentifier">
-                                <fmt:message key="trialValidation.nctNumber"/>
-                            </label>
-                        </td>
-                        <td class="value">
-                            <s:textfield name="gtdDTO.nctIdentifier" cssStyle="width:206px" maxlength="50"/> 
-                        </td>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="leadOrg"> 
-                                <fmt:message key="studyProtocol.proprietaryTrial"/>
-                            </label>
-                        </td>
-                        <td class="value">
-                            <s:property value="gtdDTO.proprietarytrialindicator"/> 
-                        </td>
-                    </tr> 
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="officialTitle">
-                                <fmt:message key="studyProtocol.officialTitle"/><span class="required">*</span>
-                            </label>
-                        </td>
-                        <td class="value">
-                            <s:textarea name="gtdDTO.officialTitle" cssStyle="width:606px" rows="4"/>
-                            <span class="formErrorMsg"> 
-                                <s:fielderror>
-                                    <s:param>gtdDTO.OfficialTitle</s:param>
-                                </s:fielderror>                            
-                            </span>
-                        </td>
-                    </tr>
+                    <pa:valueRow labelFor="localProtocolIdentifier" labelKey="studyCoordinatingCenterLead.localProtocolIdentifer" required="true">
+                        <s:textfield id="localProtocolIdentifier" name="gtdDTO.localProtocolIdentifier" cssStyle="width:206px" maxlength="50"/> 
+                        <pa:fieldError fieldName="gtdDTO.LocalProtocolIdentifier"/>
+                    </pa:valueRow>
+                    <pa:valueRow labelFor="nctIdentifier" labelKey="trialValidation.nctNumber">
+                        <s:textfield id="nctIdentifier" name="gtdDTO.nctIdentifier" cssStyle="width:206px" maxlength="50"/>
+                    </pa:valueRow>
+                    <pa:valueRow labelKey="studyProtocol.proprietaryTrial">
+                        <s:property value="gtdDTO.proprietarytrialindicator"/>
+                    </pa:valueRow>
+                    <pa:valueRow labelFor="officialTitle" labelKey="studyProtocol.officialTitle" required="true">
+                        <s:textarea id="officialTitle" name="gtdDTO.officialTitle" cssStyle="width:606px" rows="4"/>
+                        <pa:fieldError fieldName="gtdDTO.OfficialTitle"/>
+                    </pa:valueRow>
                     <%@ include file="/WEB-INF/jsp/nodecorate/phaseAndPurpose.jsp" %>
                     <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
-                        <tr>
-                            <th colspan="2">Other Identifiers</th>
-                        </tr>
-                        <tr>
-                            <td scope="row" class="label">
-                                <label for="submitTrial_protocolWebDTO_otherIdentifiers">Other Identifier</label>
-                            </td>
-                            <td>
-                                <input type="text" name="otherIdentifierOrg" id="otherIdentifierOrg" value="" />&nbsp; 
-                                <input type="button" id="otherIdbtnid" value="Add Other Identifier" onclick="addOtherIdentifier();" />
-                            </td>
-                        </tr>
+                        <pa:titleRow titleKey="trialValidation.otherIdentifiers"/>
+                        <pa:valueRow labelKey="studyProtocol.otherId">
+                            <input type="text" name="otherIdentifierOrg" id="otherIdentifierOrg" value="" />&nbsp; 
+                            <input type="button" id="otherIdbtnid" value="Add Other Identifier" onclick="addOtherIdentifier();" />
+                        </pa:valueRow>
                         <tr>
                             <td colspan="2" class="space">
                                 <div id="otherIdentifierdiv">
@@ -223,85 +169,47 @@
                             </td>
                         </tr>
                     </c:if>
-                    <%@ include file="/WEB-INF/jsp/nodecorate/gtdValidationpo.jsp" %>    
-                    <tr>
-                        <th colspan="2"> Summary 4 Information </th>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="summary4TypeCode"><fmt:message key="studyProtocol.summaryFourFundingCategoryCode"/></label>
-                        </td>
+                    <%@ include file="/WEB-INF/jsp/nodecorate/gtdValidationpo.jsp" %>  
+                    <pa:titleRow titleKey="trialValidation.summary4Info"/>  
+                    <pa:valueRow labelFor="summaryFourFundingCategoryCode" labelKey="studyProtocol.summaryFourFundingCategoryCode">
                         <s:set name="summaryFourFundingCategoryCodeValues" value="@gov.nih.nci.pa.enums.SummaryFourFundingCategoryCode@getDisplayNames()" />
-                        <td class="value">
-                            <s:select headerKey="" headerValue="" 
-                                name="gtdDTO.summaryFourFundingCategoryCode" 
-                                list="#summaryFourFundingCategoryCodeValues"  
-                                value="gtdDTO.summaryFourFundingCategoryCode" 
+                        <s:select id="summaryFourFundingCategoryCode" name="gtdDTO.summaryFourFundingCategoryCode" headerKey="" headerValue="" 
+                                list="#summaryFourFundingCategoryCodeValues" value="gtdDTO.summaryFourFundingCategoryCode" 
                                 cssStyle="width:206px" />
-                        </td>                                 
-                    </tr>    
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="summary4TypeCode">Summary 4 Funding Source:</label>
-                        </td>
-                        <td class="value">
-                            <div id="loadSummary4FundingSponsorField">
-                                <%@ include file="/WEB-INF/jsp/nodecorate/displaySummary4FundingSponsor.jsp" %>
-                            </div>      
-                        </td>
-                    </tr>
-                    <tr>
-                        <td scope="row" class="label">
-                            <label for="summary4ProgramCode"><fmt:message key="studyProtocol.summaryFourPrgCode"/></label>
-                        </td>
-                        <td class="value">
-                            <s:textfield name="gtdDTO.programCodeText"  maxlength="100" size="100"  cssStyle="width:200px" />
-                            <span class="formErrorMsg">
-                                <s:fielderror>
-                                    <s:param>gtdDTO.programCodeText</s:param>
-                                </s:fielderror>                            
-                             </span>
-                        </td>
-                    </tr>
+                    </pa:valueRow>
+                    <pa:valueRow labelKey="studyProtocol.summaryFourFundingSource">
+                        <div id="loadSummary4FundingSponsorField">
+                            <%@ include file="/WEB-INF/jsp/nodecorate/displaySummary4FundingSponsor.jsp" %>
+                        </div> 
+                    </pa:valueRow>
+                    <pa:valueRow labelFor="programCodeText" labelKey="studyProtocol.summaryFourPrgCode">
+                        <s:textfield id="programCodeText" name="gtdDTO.programCodeText"  maxlength="100" size="100" cssStyle="width:200px" />
+                        <pa:fieldError fieldName="gtdDTO.programCodeText"/>
+                    </pa:valueRow>
                     <s:if test="gtdDTO.submissionNumber > 1">
-                        <tr>
-                            <th colspan="2"> Amendment Information </th>
-                        </tr>
-                        <tr>
-                            <td scope="row" class="label">
-                                <label for="amendmentReasonCode">
-                                    <fmt:message key="studyProtocol.amendmentReasonCodeValues"/><span class="required">*</span>
-                               </label>
-                            </td>
+                        <pa:titleRow titleKey="trialValidation.amendmentInfo"/>
+                        <pa:valueRow labelFor="amendmentReasonCode" labelKey="studyProtocol.amendmentReasonCodeValues" required="true">
                             <s:set name="amendmentReasonCodeValues" value="@gov.nih.nci.pa.enums.AmendmentReasonCode@getDisplayNames()" />
-                            <td class="value">
-                                <s:select headerKey="" headerValue="" 
-                                    name="gtdDTO.amendmentReasonCode" 
-                                    list="#amendmentReasonCodeValues"  
-                                    value="gtdDTO.amendmentReasonCode" 
-                                    cssStyle="width:206px" />
-                                <span class="formErrorMsg"> 
-                                    <s:fielderror>
-                                        <s:param>gtdDTO.amendmentReasonCode</s:param>
-                                    </s:fielderror>                            
-                                </span>
-                            </td>                                 
-                        </tr>    
+                            <s:select id="amendmentReasonCode" name="gtdDTO.amendmentReasonCode" headerKey="" headerValue="" 
+                                      list="#amendmentReasonCodeValues" value="gtdDTO.amendmentReasonCode" 
+                                      cssStyle="width:206px" />
+                            <pa:fieldError fieldName="gtdDTO.amendmentReasonCode"/>          
+                        </pa:valueRow>
                     </s:if>    
                 </table>  
-                <div class="actionsrow">
-                    <del class="btnwrapper">
-                        <ul class="btnrow">
-                        <pa:displayWhenCheckedOut>
-                            <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Submitted' || sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Amendment Submitted' }">
-                                <li><a href="#" class="btn" onclick="handleAction();"><span class="btn_img"><span class="save">Save</span></span></a></li>
-                                <li><a href="#" class="btn" onclick="handleActionAccept();"><span class="btn_img"><span class="save">Accept</span></span></a></li>
-                                <li><a href="#" class="btn" onclick="handleActionReject();"><span class="btn_img"><span class="save">Reject</span></span></a></li>
-                            </c:if>
-                        </pa:displayWhenCheckedOut>  
-                        </ul>   
-                    </del>
-                </div>          
+                <pa:buttonBar>
+                    <pa:displayWhenCheckedOut>
+                        <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Submitted' || sessionScope.trialSummary.documentWorkflowStatusCode.code == 'Amendment Submitted' }">
+                            <pa:button id="saveButton" imgClass="save" labelKey="trialValidation.button.save"/>
+                            <pa:button id="acceptButton" imgClass="save" labelKey="trialValidation.button.accept"/>
+                            <pa:button id="rejectButton" imgClass="save"  labelKey="trialValidation.button.reject"/>
+                            <pa:button id="onholdButton" imgClass="save"  labelKey="trialValidation.button.onhold"/>
+                        </c:if>
+                        <c:if test="${sessionScope.trialSummary.documentWorkflowStatusCode.code == 'On-Hold'}">
+                            <pa:button id="onholdButton" imgClass="save"  labelKey="trialValidation.button.offhold"/>
+                        </c:if>
+                    </pa:displayWhenCheckedOut>  
+                </pa:buttonBar>   
              </s:form>
          </div>
      </body>

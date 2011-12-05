@@ -14,7 +14,6 @@ import gov.nih.nci.pa.dto.GeneralTrialDesignWebDTO;
 import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.dto.PAOrganizationalContactDTO;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
-import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.FunctionalRoleStatusCode;
 import gov.nih.nci.pa.enums.StudyContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
@@ -599,24 +598,6 @@ public class TrialHelper {
             }
             throw pae;
         }
-    }
-
-    /**
-     *
-     * @param dwsCode cd
-     * @return string
-     */
-    public String setMenuLinks(DocumentWorkflowStatusCode dwsCode) {
-        String action = "";
-        if (DocumentWorkflowStatusCode.REJECTED.equals(dwsCode)) {
-            action = DocumentWorkflowStatusCode.REJECTED.getCode();
-        } else if (DocumentWorkflowStatusCode.SUBMITTED.equals(dwsCode)
-                   || DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED.equals(dwsCode)) {
-            action = DocumentWorkflowStatusCode.SUBMITTED.getCode();
-        } else {
-            action = DocumentWorkflowStatusCode.ACCEPTED.getCode();
-        }
-        return action;
     }
 
     /**

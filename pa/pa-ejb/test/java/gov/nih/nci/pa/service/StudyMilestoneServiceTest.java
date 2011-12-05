@@ -143,7 +143,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     private final DocumentWorkflowStatusBeanLocal dws = new DocumentWorkflowStatusBeanLocal();
     private final MailManagerBeanLocal mailSrc = new MailManagerBeanLocal();
     private final StudyInboxServiceLocal sis = new StudyInboxServiceBean();
-    private final StudyOnholdServiceLocal ohs = new StudyOnholdServiceBean();
+    private final StudyOnholdServiceBean ohs = new StudyOnholdServiceBean();
     private final StudyProtocolServiceLocal sps = new StudyProtocolServiceBean();
 
     private Ii spIi;
@@ -169,6 +169,7 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         TestSchema.primeData();
         spIi = IiConverter.convertToStudyProtocolIi(TestSchema.studyProtocolIds.get(0));
         spAmendIi = TestSchema.createAmendStudyProtocol();
+        ohs.setDocumentWorkflowStatusService(dws);
     }
 
     private void compareDataAttributes(StudyMilestoneDTO dto1, StudyMilestoneDTO dto2) throws Exception {
@@ -214,9 +215,6 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.create(getMilestoneDTO(MilestoneCode.SUBMISSION_ACCEPTED));
         dtoList = bean.getByStudyProtocol(spIi);
         assertEquals(oldSize + 2, dtoList.size());
-        DocumentWorkflowStatusDTO dwfDto = getDocWrkStatusDTO();
-        dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ACCEPTED));
-        dws.create(dwfDto);
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE));
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_PROCESSING_COMPLETED_DATE));
         bean.create(getMilestoneDTO(MilestoneCode.SCIENTIFIC_READY_FOR_QC));
@@ -667,14 +665,8 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     public void checkAbstractionsRules() throws Exception {
         createMilestones(UP_TO_READY_FOR_TSR);
         StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_SENT);
-        DocumentWorkflowStatusDTO dwfDto = new DocumentWorkflowStatusDTO();
-        dwfDto.setStatusCode(CdConverter.convertToCd(DocumentWorkflowStatusCode.ABSTRACTED));
-        dwfDto.setStudyProtocolIdentifier(dto.getStudyProtocolIdentifier());
-        dws.create(dwfDto);
-
         bean.setValidateAbstractions(true);
         bean.setAbstractionCompletionService(null);
-
         String msg = "Error injecting reference to AbstractionCompletionService.";
         checkMilestoneFailure(dto, msg);
     }

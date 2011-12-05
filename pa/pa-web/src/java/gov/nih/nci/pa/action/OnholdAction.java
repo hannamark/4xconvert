@@ -78,17 +78,23 @@
 */
 package gov.nih.nci.pa.action;
 
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.dto.OnholdWebDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.iso.dto.StudyOnholdDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyOnholdBeanLocal;
 import gov.nih.nci.pa.service.StudyOnholdServiceLocal;
 import gov.nih.nci.pa.service.exception.PAFieldException;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.struts2.ServletActionContext;
 
 /**
  * @author Hugh Reinhart
@@ -98,6 +104,7 @@ public class OnholdAction extends AbstractListEditAction {
 
     private static final long serialVersionUID = -2979599251858185340L;
 
+    private ProtocolQueryServiceLocal protocolQueryService;
     private StudyOnholdServiceLocal studyOnholdService;
 
     private List<OnholdWebDTO> onholdList;
@@ -109,17 +116,18 @@ public class OnholdAction extends AbstractListEditAction {
     @Override
     public void prepare() throws PAException {
         super.prepare();
-        studyOnholdService = PaRegistry.getStudyOnholdService();
+        setProtocolQueryService(PaRegistry.getProtocolQueryService());
+        setStudyOnholdService(PaRegistry.getStudyOnholdService());
     }
 
     /**
-     * @return action result
-     * @throws PAException exception
+     * {@inheritDoc}
      */
     @Override
     public String add() throws PAException {
         try {
             studyOnholdService.create(onhold.getIsoDto(getSpIi()));
+            refreshStudyProtocol();
         } catch (PAFieldException e) {
             addFieldError(e);
             return AR_EDIT;
@@ -131,13 +139,13 @@ public class OnholdAction extends AbstractListEditAction {
     }
 
     /**
-     * @return action result
-     * @throws PAException exception
+     * {@inheritDoc}
      */
     @Override
     public String update() throws PAException {
         try {
             studyOnholdService.update(onhold.getIsoDto(getSpIi()));
+            refreshStudyProtocol();
         } catch (PAFieldException e) {
             addFieldError(e);
             return AR_EDIT;
@@ -149,19 +157,30 @@ public class OnholdAction extends AbstractListEditAction {
     }
 
     /**
+     * Refresh the study protocol in the Session.
      * @throws PAException exception
+     */
+    void refreshStudyProtocol() throws PAException {
+        Long spIi = IiConverter.convertToLong(getSpIi());
+        StudyProtocolQueryDTO studyProtocolQueryDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(spIi);
+        ServletActionContext.getRequest().getSession().setAttribute(Constants.TRIAL_SUMMARY, studyProtocolQueryDTO);
+    }
+    
+    /**
+     * {@inheritDoc}
      */
     @Override
     protected void loadEditForm() throws PAException {
         if (CA_EDIT.equals(getCurrentAction())) {
-            setOnhold(new OnholdWebDTO(studyOnholdService.get(IiConverter.convertToIi(getSelectedRowIdentifier()))));
+            Ii onHoldIi = IiConverter.convertToStudyOnHoldIi(Long.parseLong(getSelectedRowIdentifier()));
+            setOnhold(new OnholdWebDTO(studyOnholdService.get(onHoldIi)));
         } else {
             setOnhold(new OnholdWebDTO());
         }
     }
 
     /**
-     * @throws PAException exception
+     * {@inheritDoc}
      */
     @Override
     protected void loadListForm() throws PAException {
@@ -213,6 +232,13 @@ public class OnholdAction extends AbstractListEditAction {
             break;
         default:
         }
+    }
+
+    /**
+     * @param protocolQueryService the protocolQueryService to set
+     */
+    public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
     }
 
     /**
