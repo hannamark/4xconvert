@@ -31,7 +31,7 @@
 		function _build(){
 			var textTip = 'Add this item to your selections for the search';
 			var imageTip = 'Click to open this item in the tree view';
-			var imageFile = $('#imagePath').val()+'/tree_32.png';
+			var imageFile = viewerApp.imagePath + '/tree_32.png';
 						
 			breadcrumbsContainer.empty();
 			var bcItems = localSettings.bcItems;

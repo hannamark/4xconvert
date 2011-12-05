@@ -126,7 +126,6 @@
         </script>     
     </head>
     <body>
-    	<input type="hidden" id="imagePath" name="imagePath" value="${imagePath}" />
         <h1><fmt:message key="adHocReport.title"/></h1>
         <s:if test="hasActionErrors()">
             <div class="error_msg">

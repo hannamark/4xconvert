@@ -139,8 +139,9 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     private PAOrganizationServiceRemote paOrganizationService;
     private PlannedMarkerServiceLocal plannedMarkerService;
     private ProtocolQueryServiceLocal protocolQueryService;
-    private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
     private Summ4RepLocal summ4ReportService;
+    private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
+    
 
     private StudyProtocolQueryCriteria criteria;
     private String identifier;
@@ -161,8 +162,8 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
         setPaOrganizationService(PaRegistry.getPAOrganizationService());
         setPlannedMarkerService(PaRegistry.getPlannedMarkerService());
         setProtocolQueryService(PaRegistry.getProtocolQueryService());
+        setSumm4ReportService(ViewerServiceLocator.getInstance().getSumm4ReportService());
         setTsrReportGeneratorService(PaRegistry.getTSRReportGeneratorService());
-        summ4ReportService = ViewerServiceLocator.getInstance().getSumm4ReportService();
     }
 
     /**
@@ -499,24 +500,17 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     }
 
     /**
+     * @param summ4ReportService the summ4ReportService to set
+     */
+    public void setSumm4ReportService(Summ4RepLocal summ4ReportService) {
+        this.summ4ReportService = summ4ReportService;
+    }
+
+    /**
      * @param tsrReportGeneratorService the tsrReportGeneratorService to set
      */
     public void setTsrReportGeneratorService(TSRReportGeneratorServiceRemote tsrReportGeneratorService) {
         this.tsrReportGeneratorService = tsrReportGeneratorService;
     }
-
-    /**
-     * @return the summ4ReportService
-     */
-    public Summ4RepLocal getSumm4ReportService() {
-        return summ4ReportService;
-    }
-
-    /**
-     * @param summ4ReportService the summ4ReportService to set
-     */
-    public void setSumm4ReportService(Summ4RepLocal summ4ReportService) {
-        this.summ4ReportService = summ4ReportService;
-    }  
 
 }
