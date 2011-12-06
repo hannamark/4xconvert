@@ -69,34 +69,42 @@
                          var url = viewerApp.contextPath + "/ctro/ajax/refreshAdHocOrganizations.action";                    
                          var params = { "criteria.familyId": familyId};
                          jQuery("#organization_choices").html(jQuery("div.template.loadingMessage").children().html()).load(url, params, function() {
-                             jQuery("#orgSelectAllCheckbox").bind("click", function(ev) {
-                                 var selected = jQuery("#orgSelectAllCheckbox")[0].checked;
-                                 var options = jQuery("#orgNames")[0].options;
-                                 for (var i = 0; i < options.length; i++) {
-                                     options[i].selected = selected;
-                                 }
-                             });
+                             jQuery("#orgSelectAllCheckbox").bind("click", selectAllLeadOrganizations);
                          });
                          return false;
                      });  
+                     jQuery("#orgSelectAllCheckbox").bind("click", selectAllLeadOrganizations);
                      
                      jQuery("#participatingSiteFamilyId").bind("change", function(ev) {
                          var familyId = jQuery("#participatingSiteFamilyId").val();                                          
                          var url = viewerApp.contextPath + '/ctro/ajax/refreshAdHocParticipatingSites.action';                    
                          var params = { "criteria.participatingSiteFamilyId": familyId};
                          jQuery("#sites_choices").html(jQuery("div.template.loadingMessage").children().html()).load(url, params, function() {
-                             jQuery("#participatingSitesSelectAllCheckbox").bind("click", function(ev) {
-                                 var selected = jQuery("#participatingSitesSelectAllCheckbox")[0].checked;
-                                 var options = jQuery("#siteNames")[0].options;
-                                 for (var i = 0; i < options.length; i++) {
-                                     options[i].selected = selected;
-                                 }
-                             });
+                             jQuery("#participatingSitesSelectAllCheckbox").bind("click", selectAllParticipatingSite);
                          });
                          return false;
                      });   
+                     jQuery("#participatingSitesSelectAllCheckbox").bind("click", selectAllParticipatingSite);
                     
                     });
+            
+                    // Select all the lead organizations of a family
+                    function selectAllLeadOrganizations(ev) {
+                        var selected = jQuery("#orgSelectAllCheckbox")[0].checked;
+                        var options = jQuery("#orgNames")[0].options;
+                        for (var i = 0; i < options.length; i++) {
+                            options[i].selected = selected;
+                        }
+                    }
+                    
+                    // Select all the participating sites of a family
+                    function selectAllParticipatingSite(ev) {
+                        var selected = jQuery("#participatingSitesSelectAllCheckbox")[0].checked;
+                        var options = jQuery("#siteNames")[0].options;
+                        for (var i = 0; i < options.length; i++) {
+                            options[i].selected = selected;
+                        }
+                    }
             
                     // Expands all sections if 'currentlyVisible' is false, otherwise collapses all
                     function expandOrCollapseAll(currentlyVisible) {

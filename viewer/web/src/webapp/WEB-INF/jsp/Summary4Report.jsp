@@ -26,7 +26,7 @@
                 jQuery("#intervalEndDate").datepicker(dateOptions);
                 var orgNameAutoCompleteOptions = {
                     minLength: 2,
-                    source: "${pageContext.request.contextPath}/ctro/json/summary4ReportGetOrganizationNames.action"
+                    source: viewerApp.contextPath + "/ctro/json/summary4ReportGetOrganizationNames.action"
                 };
                 jQuery("#orgName").autocomplete(orgNameAutoCompleteOptions);
                 jQuery("#orgSearchTypebyOrgName").bind("click", function(ev) {
@@ -44,19 +44,14 @@
                         jQuery("#organization_choices").html("");
                         return false;
                     }
-                    var url = "${pageContext.request.contextPath}/ctro/ajax/refreshOrganizationsSummary4Report.action";
+                    var url = viewerApp.contextPath + "/ctro/ajax/refreshOrganizationsSummary4Report.action";
                     var params = { "criteria.familyId": familyId };
                     jQuery("#organization_choices").html(jQuery("div.template.loadingMessage").children().html()).load(url, params, function() {
-                        jQuery("#orgSelectAllCheckbox").bind("click", function(ev) {
-                            var selected = jQuery("#orgSelectAllCheckbox")[0].checked;
-                            var options = jQuery("#orgNames")[0].options;
-                            for (var i = 0; i < options.length; i++) {
-                                options[i].selected = selected;
-                            }
-                        });
+                        jQuery("#orgSelectAllCheckbox").bind("click", selectAllOrganizations);
                     });
                     return false;
                 });
+                jQuery("#orgSelectAllCheckbox").bind("click", selectAllOrganizations);
                 
                 jQuery("#runButton").bind("click", function(ev) {
                     jQuery("#resultsTab").html(jQuery("div.template.loadingMessage").children().html());
@@ -71,6 +66,15 @@
                     form.submit();
                 });
            });
+            
+            // Select all the organizations of a family
+            function selectAllOrganizations(ev) {
+                var selected = jQuery("#orgSelectAllCheckbox")[0].checked;
+                var options = jQuery("#orgNames")[0].options;
+                for (var i = 0; i < options.length; i++) {
+                    options[i].selected = selected;
+                }
+            }
         </script>
     </head>
     <body>
