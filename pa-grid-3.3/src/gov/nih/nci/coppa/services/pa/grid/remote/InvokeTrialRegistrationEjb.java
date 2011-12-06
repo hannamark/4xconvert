@@ -84,6 +84,7 @@ package gov.nih.nci.coppa.services.pa.grid.remote;
 
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.iso21090.Bl;
+import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
@@ -195,7 +196,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
     /**
      * {@inheritDoc}
      */
-    public void reject(Ii studyProtocolIi, St rejectionReason) throws PAException {
+    public void  reject(Ii studyProtocolIi, St rejectionReason, Cd rejectionReasonCode) throws PAException {
         throw new UnsupportedOperationException("reject not allowed");
     }
 

@@ -210,7 +210,7 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
     /**
      * {@inheritDoc}
      */
-    public void reject(Ii studyProtocolIi, St rejectionReason) throws PAException {
+    public void  reject(Ii studyProtocolIi, St rejectionReason, Cd rejectionReasonCode) throws PAException {
         throw new UnsupportedOperationException("reject not allowed");
     }
 
