@@ -21,6 +21,7 @@
                     <display:table class="data" sort="list" pagesize="10" id="row" name="sessionScope.displayTagList" 
                                    requestURI="resultsAdHocReport.action" export="true">
                         <display:setProperty name="export.excel" value="true" />
+                        <display:setProperty name="export.excel.filename" value="AdHocReport.xls" />
                         <viewer:displayTagProperties/>
                         <display:column escapeXml="false" titleKey="studyProtocol.documentWorkflowStatusDate" property="documentWorkflowStatusDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
                         <display:column escapeXml="true" titleKey="studyProtocol.nciIdentifier" property="nciIdentifier" sortable="true" headerClass="sortable"/>

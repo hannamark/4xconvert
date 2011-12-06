@@ -33,6 +33,7 @@
          <display:table class="data" pagesize="20" id="row" name="sessionScope.displayTagList" 
                     requestURI="resultsSubmissionByInstitution.action" export="true">
            <display:setProperty name="export.excel" value="true" />
+           <display:setProperty name="export.excel.filename" value="SubmissionByInstitutionReport.xls" />
            <display:column titleKey="sbiReport.result.assignedIdentifier" property="assignedIdentifier"/>
            <display:column titleKey="sbiReport.result.submissionType" property="submissionType"/>
            <display:column titleKey="sbiReport.result.submitterOrg" property="submitterOrg"/>

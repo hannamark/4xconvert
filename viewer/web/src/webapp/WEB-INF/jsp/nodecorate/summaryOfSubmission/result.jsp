@@ -26,6 +26,7 @@
                 <display:table class="data" pagesize="20" id="row" name="sessionScope.displayTagList" 
                                requestURI="resultsSummaryOfSubmission.action" export="true">
                     <display:setProperty name="export.excel" value="true" />
+                    <display:setProperty name="export.excel.filename" value="SummaryOfSubmissionReport.xls" />                    
                     <display:column titleKey="sosReport.result.organization" property="organization"/>
                     <display:column titleKey="sosReport.result.initial" property="initial"/>
                     <display:column titleKey="sosReport.result.amendment" property="amendment"/>

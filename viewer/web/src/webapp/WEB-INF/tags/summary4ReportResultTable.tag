@@ -11,6 +11,7 @@
 
 <display:table class="data" pagesize="20" uid="${uid}" name="${name}" requestURI="${requestURI}" export="true">
     <display:setProperty name="export.excel" value="true" />
+    <display:setProperty name="export.excel.filename" value="Summary4Report.xls" />
     <viewer:displayTagProperties />
     <display:column titleKey="summary4Report.result.sponsor" property="sponsor" />
     <display:column titleKey="summary4Report.result.cancerSite" property="anatomicSites" />
