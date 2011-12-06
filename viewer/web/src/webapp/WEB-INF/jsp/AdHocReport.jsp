@@ -69,6 +69,8 @@
                          var url = viewerApp.contextPath + "/ctro/ajax/refreshAdHocOrganizations.action";                    
                          var params = { "criteria.familyId": familyId};
                          jQuery("#organization_choices").html(jQuery("div.template.loadingMessage").children().html()).load(url, params, function() {
+                             jQuery("#orgSelectAllCheckbox")[0].checked = true;
+                             selectAllLeadOrganizations();
                              jQuery("#orgSelectAllCheckbox").bind("click", selectAllLeadOrganizations);
                          });
                          return false;
@@ -80,6 +82,8 @@
                          var url = viewerApp.contextPath + '/ctro/ajax/refreshAdHocParticipatingSites.action';                    
                          var params = { "criteria.participatingSiteFamilyId": familyId};
                          jQuery("#sites_choices").html(jQuery("div.template.loadingMessage").children().html()).load(url, params, function() {
+                             jQuery("#participatingSitesSelectAllCheckbox")[0].checked = true;
+                             selectAllParticipatingSite();
                              jQuery("#participatingSitesSelectAllCheckbox").bind("click", selectAllParticipatingSite);
                          });
                          return false;

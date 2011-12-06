@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 <s:if test="criteria.participatingSiteFamilyId  == 0">             
   <s:select name="criteria.participatingSiteIds" id="participatingSiteIds" list="participatingSiteList" listKey="key"
-                          listValue="value" headerKey="" headerValue="All" value="criteria.participatingSiteIds" multiple="true" cssStyle="display:inline"/>
+                          listValue="value" value="criteria.participatingSiteIds" multiple="true" cssStyle="display:inline"/>
 </s:if>
 <s:else>  
   <s:if test="participatingSites.size != 0">
