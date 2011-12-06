@@ -103,6 +103,7 @@ public class BaseStudyProtocolQueryDTO {
     
     private String leadOrganizationName;
     private Long leadOrganizationId;
+    private String leadOrganizationTrialIdentifier;
     private String sponsorOrganizationName;
 
     private String localStudyProtocolIdentifier;
@@ -312,4 +313,20 @@ public class BaseStudyProtocolQueryDTO {
     public void setSponsorOrganizationName(String sponsorOrganizationName) {
         this.sponsorOrganizationName = sponsorOrganizationName;
     }
+
+    /**
+     * @return the leadOrganizationTrialIdentifier
+     */
+    public String getLeadOrganizationTrialIdentifier() {
+        return leadOrganizationTrialIdentifier;
+    }
+
+    /**
+     * @param leadOrganizationTrialIdentifier the leadOrganizationTrialIdentifier to set
+     */
+    public void setLeadOrganizationTrialIdentifier(String leadOrganizationTrialIdentifier) {
+        this.leadOrganizationTrialIdentifier = leadOrganizationTrialIdentifier;
+    }
+
+    
 }

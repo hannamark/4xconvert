@@ -133,7 +133,7 @@ public class ReportStudyProtocolQueryConvertTest extends AbstractHibernateTestCa
             + "sp.OFFICIAL_TITLE, sp.PHASE_CODE, sp.PRIMARY_PURPOSE_CODE, null, "
             + "sp.RECORD_VERIFICATION_DATE, null, sp.PHASE_ADDITIONAL_QUALIFIER_CODE, "
             + "sp.DATE_LAST_CREATED, sp.AMENDMENT_NUMBER, sp.AMENDMENT_DATE, sp.SUBMISSION_NUMBER, "
-            + "sp.STUDY_PROTOCOL_TYPE, sOi.extension "
+            + "sp.STUDY_PROTOCOL_TYPE, sOi.extension, ss2.local_sp_indentifier "
             + "from study_protocol AS sp left join study_site AS ss ON sp.identifier = ss.study_protocol_identifier "
             + "left JOIN study_otheridentifiers sOi ON sp.identifier = sOi.study_protocol_id "
             + "AND sOi.root = :NCI_II_ROOT "
@@ -155,6 +155,8 @@ public class ReportStudyProtocolQueryConvertTest extends AbstractHibernateTestCa
             + "study_protocol_identifier as siSpi from study_inbox "
             + "where study_protocol_identifier = :spId limit 1) AS si "
             + "ON si.siSpi = ss.study_protocol_identifier "
+            + "left join study_site AS ss2 "
+            + "ON sp.identifier = ss2.study_protocol_identifier and ss2.functional_code = 'LEAD_ORGANIZATION' "
             + "where sp.identifier = :spId and 'LEAD_ORGANIZATION' = :leadOrgRole limit 1";
         }
     }

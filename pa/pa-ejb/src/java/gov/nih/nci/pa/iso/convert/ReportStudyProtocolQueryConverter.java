@@ -143,6 +143,7 @@ public class ReportStudyProtocolQueryConverter extends BaseStudyProtocolQueryCon
     private static final int SUMM_FIELD_SUBMISSION_NUMBER = 25;
     private static final int SUMM_FIELD_STUDY_PROTOCOL_TYPE = 26;
     private static final int SUMM_FIELD_STUDY_NCI_ID = 27;
+    private static final int SUMM_FIELD_LEAD_ORG_TRIAL_ID = 28;
 
     private final String generateDiseaseNamesSql =
         "select d.PREFERRED_NAME from study_disease AS sd "
@@ -316,6 +317,9 @@ public class ReportStudyProtocolQueryConverter extends BaseStudyProtocolQueryCon
         if (piData[SUMM_FIELD_LEADORG_ID] != null) {
             spDto.setLeadOrganizationId(((Number) piData[SUMM_FIELD_LEADORG_ID]).longValue());
         }
+        if (piData[SUMM_FIELD_LEAD_ORG_TRIAL_ID] != null) {
+            spDto.setLeadOrganizationTrialIdentifier(piData[SUMM_FIELD_LEAD_ORG_TRIAL_ID].toString());
+        }
         spDto.setLocalStudyProtocolIdentifier((String) piData[SUMM_FIELD_LOCAL_PROTOCOL_ID]);
         if (piData[SUMM_FIELD_FUND_SRC_CAT] != null) {
             spDto.setSumm4FundingSrcCategory(SummaryFourFundingCategoryCode.valueOf(
@@ -335,7 +339,7 @@ public class ReportStudyProtocolQueryConverter extends BaseStudyProtocolQueryCon
         + "sp.OFFICIAL_TITLE, sp.PHASE_CODE, sp.PRIMARY_PURPOSE_CODE, sp.PROPRIETARY_TRIAL_INDICATOR, "
         + "sp.RECORD_VERIFICATION_DATE, sp.CTGOV_XML_REQUIRED_INDICATOR, sp.PHASE_ADDITIONAL_QUALIFIER_CODE, "
         + "sp.DATE_LAST_CREATED, sp.AMENDMENT_NUMBER, sp.AMENDMENT_DATE, sp.SUBMISSION_NUMBER, "
-        + "sp.STUDY_PROTOCOL_TYPE, sOi.extension "
+        + "sp.STUDY_PROTOCOL_TYPE, sOi.extension, ss2.local_sp_indentifier "
         + "from study_protocol AS sp left join study_site AS ss ON sp.identifier = ss.study_protocol_identifier "
         + "left JOIN study_otheridentifiers sOi ON sp.identifier = sOi.study_protocol_id "
         + "AND sOi.root = :NCI_II_ROOT "
@@ -357,6 +361,8 @@ public class ReportStudyProtocolQueryConverter extends BaseStudyProtocolQueryCon
         + "study_protocol_identifier as siSpi from study_inbox "
         + "where study_protocol_identifier = :spId order by identifier desc limit 1) AS si "
         + "ON si.siSpi = ss.study_protocol_identifier "
+        + "left join study_site AS ss2 "
+        + "ON sp.identifier = ss2.study_protocol_identifier and ss2.functional_code = 'LEAD_ORGANIZATION' "
         + "where sp.identifier = :spId and ss.functional_code = :leadOrgRole";
     }
 
