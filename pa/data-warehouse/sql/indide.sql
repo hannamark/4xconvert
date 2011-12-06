@@ -56,11 +56,13 @@ INSERT INTO DW_STUDY_IND_IDE (
     indide.expanded_access_status_code, indide.grantor_code, indide.holder_type_code, indide.indlde_number,
     indide.indlde_type_code, indide.identifier, indide.nci_div_prog_holder_code, nci_id.extension, 
     indide.nih_inst_holder_code,
-    CASE WHEN ru_creator.first_name is null THEN split_part(creator.login_name, 'CN=', 2)
-        ELSE ru_creator.first_name || ' ' || ru_creator.last_name
+    CASE WHEN NULLIF(ru_creator.first_name, '') is not null THEN ru_creator.first_name || ' ' || ru_creator.last_name
+         WHEN NULLIF(split_part(creator.login_name, 'CN=', 2), '') is null THEN creator.login_name
+         ELSE split_part(creator.login_name, 'CN=', 2) 
     END,
-    CASE WHEN ru_updater.first_name is null THEN split_part(updater.login_name, 'CN=', 2)
-        ELSE ru_updater.first_name || ' ' || ru_updater.last_name
+    CASE WHEN NULLIF(ru_updater.first_name, '') is not null THEN ru_updater.first_name || ' ' || ru_updater.last_name
+         WHEN NULLIF(split_part(updater.login_name, 'CN=', 2), '') is null THEN updater.login_name
+         ELSE split_part(updater.login_name, 'CN=', 2) 
     END
     from STUDY_INDLDE indide 
         inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = indide.study_protocol_identifier

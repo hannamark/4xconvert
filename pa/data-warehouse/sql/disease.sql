@@ -41,11 +41,13 @@ INSERT INTO DW_STUDY_DISEASE (CT_GOV_XML_INDICATOR, DATE_LAST_CREATED, DATE_LAST
              ELSE 'NO'
         END,
         nci_id.extension, disease.nt_term_identifier,
-        CASE WHEN ru_creator.first_name is null THEN split_part(creator.login_name, 'CN=', 2)
-             ELSE ru_creator.first_name || ' ' || ru_creator.last_name
+        CASE WHEN NULLIF(ru_creator.first_name, '') is not null THEN ru_creator.first_name || ' ' || ru_creator.last_name
+            WHEN NULLIF(split_part(creator.login_name, 'CN=', 2), '') is null THEN creator.login_name
+            ELSE split_part(creator.login_name, 'CN=', 2) 
         END,
-        CASE WHEN ru_updater.first_name is null THEN split_part(updater.login_name, 'CN=', 2)
-            ELSE ru_updater.first_name || ' ' || ru_updater.last_name
+        CASE WHEN NULLIF(ru_updater.first_name, '') is not null THEN ru_updater.first_name || ' ' || ru_updater.last_name
+            WHEN NULLIF(split_part(updater.login_name, 'CN=', 2), '') is null THEN updater.login_name
+            ELSE split_part(updater.login_name, 'CN=', 2) 
         END
     FROM STUDY_DISEASE sd
         inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = sd.study_protocol_identifier 

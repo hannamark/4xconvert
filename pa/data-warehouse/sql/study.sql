@@ -238,8 +238,9 @@ INSERT INTO DW_STUDY (
     central_contact.email, central_contact.telephone,
     admin.user_identifier, scientific.user_identifier, 
     sp.study_classification_code, sp.completion_date, sp.completion_date_type_code, 
-    CASE WHEN ru_creator.first_name is null THEN split_part(creator.login_name, 'CN=', 2)
-        ELSE ru_creator.first_name || ' ' || ru_creator.last_name
+    CASE WHEN NULLIF(ru_creator.first_name, '') is not null THEN ru_creator.first_name || ' ' || ru_creator.last_name
+        WHEN NULLIF(split_part(creator.login_name, 'CN=', 2), '') is null THEN creator.login_name
+        ELSE split_part(creator.login_name, 'CN=', 2) 
     END,    
     CASE WHEN sp.ctgov_xml_required_indicator THEN 'YES'
          ELSE 'NO'
@@ -262,8 +263,9 @@ INSERT INTO DW_STUDY (
     sp.identifier, sp.design_configuration_code, irb.review_board_approval_number, 
     irb.review_board_approval_status_code, irb_org.city, irb_org.country_name, irb_org.name,
     irb.review_board_organizational_affiliation, irb_org.state, irb_org.postal_code, sp.keyword_text, 
-    CASE WHEN ru_updater.first_name is null THEN split_part(updater.login_name, 'CN=', 2)
-        ELSE ru_updater.first_name || ' ' || ru_updater.last_name
+    CASE WHEN NULLIF(ru_updater.first_name, '') is not null THEN ru_updater.first_name || ' ' || ru_updater.last_name
+         WHEN NULLIF(split_part(updater.login_name, 'CN=', 2), '') is null THEN updater.login_name
+         ELSE split_part(updater.login_name, 'CN=', 2) 
     END,
     lead_org.name, lead_org_id.local_sp_indentifier, 
     sp.blinding_schema_code, sp.blinding_role_code_investigator, sp.blinding_role_code_outcome, sp.blinding_role_code_subject, 

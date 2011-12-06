@@ -16,7 +16,6 @@ CREATE TABLE DW_STUDY_PARTICIPATING_SITE (
     ORG_STATUS character varying(200),
     RECRUITMENT_STATUS character varying(50),
     RECRUITMENT_STATUS_DATE date,
-    STATUS character varying(50),
     PRIMARY KEY (INTERNAL_SYSTEM_ID)
 );
 
@@ -36,7 +35,6 @@ CREATE INDEX DW_STUDY_PARTICIPATING_SITE_ORG_ORG_FAMILY_IDX on dw_study_particip
 CREATE INDEX DW_STUDY_PARTICIPATING_SITE_ORG_STATUS_IDX on dw_study_participating_site(org_status);
 CREATE INDEX DW_STUDY_PARTICIPATING_SITE_RECRUITMENT_STATUS_IDX on dw_study_participating_site(recruitment_status);
 CREATE INDEX DW_STUDY_PARTICIPATING_SITE_RECRUITMENT_STATUS_DATE_IDX on dw_study_participating_site(recruitment_status_date);
-CREATE INDEX DW_STUDY_PARTICIPATING_SITE_STATUS_IDX on dw_study_participating_site(status);
 
 INSERT INTO DW_STUDY_PARTICIPATING_SITE(
     CONTACT_EMAIL, 
@@ -45,10 +43,9 @@ INSERT INTO DW_STUDY_PARTICIPATING_SITE(
     ORG_NAME,
     ORG_STATUS,
     RECRUITMENT_STATUS,
-    RECRUITMENT_STATUS_DATE,
-    STATUS
+    RECRUITMENT_STATUS_DATE
 ) select contact.email, p.first_name || ' ' || p.middle_name || ' ' || p.last_name, ps.identifier, org.name, 
-         org.status_code, ssas.status_code, ssas.status_date, ps.status_code
+         org.status_code, ssas.status_code, ssas.status_date
     from study_site ps
         left outer join study_protocol as sp on sp.identifier = ps.study_protocol_identifier
         left outer join study_site_contact as contact on contact.study_site_identifier = ps.identifier and contact.role_code = 'PRIMARY_CONTACT'
