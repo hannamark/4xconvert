@@ -84,7 +84,6 @@
         <filter-name>usernameFilter</filter-name>
         <url-pattern>*.action</url-pattern>
         <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
     <filter-mapping>
         <filter-name>cgmmAuthSrcMapHelper</filter-name>

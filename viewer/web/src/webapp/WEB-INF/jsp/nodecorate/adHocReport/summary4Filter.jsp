@@ -4,7 +4,7 @@
     <table class="form-table">
         <tbody>
             <viewer:valueRow labelFor="summ4Sponsor" labelKey="studyProtocol.summ4Sponsor">
-                <s:select name="criteria.summ4FundingSourceId" id="summ4Sponsor" list="summ4FunsingSponsorsList" listKey="id"
+                <s:select name="criteria.summ4FundingSourceId" id="summ4Sponsor" list="summ4FundingSponsorsList" listKey="id"
                           listValue="name" headerKey="" headerValue="All" value="criteria.summ4FundingSourceId" />
             </viewer:valueRow>
             <viewer:valueRow labelFor="summ4FundingSourceTypeCode" labelKey="studyProtocol.summ4FundingSourceTypeCode">

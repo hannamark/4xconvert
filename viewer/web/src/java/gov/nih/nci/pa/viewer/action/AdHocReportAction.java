@@ -329,7 +329,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
      * @return list of summary 4 funding sponsors.
      * @throws PAException on error
      */
-    public List<PaOrganizationDTO> getSumm4FunsingSponsorsList() throws PAException {
+    public List<PaOrganizationDTO> getSumm4FundingSponsorsList() throws PAException {
         return paOrganizationService.getOrganizationsAssociatedWithStudyProtocol(PAConstants.SUMM4_SPONSOR);
     }
 

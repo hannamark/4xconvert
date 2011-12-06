@@ -487,16 +487,16 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     }
     
     /**
-     * Test the getSumm4FunsingSponsorsList method.
+     * Test the getSumm4FundingSponsorsList method.
      * @throws PAException in case of error
      */
     @Test
-    public void testGetSumm4FunsingSponsorsList() throws PAException {
+    public void testGetSumm4FundingSponsorsList() throws PAException {
         AdHocReportAction sut = createAdHocReportAction();
         List<PaOrganizationDTO> organizations = new ArrayList<PaOrganizationDTO>();
         when(paOrganizationService.getOrganizationsAssociatedWithStudyProtocol(PAConstants.SUMM4_SPONSOR))
             .thenReturn(organizations);
-        assertEquals("Wrong result returned", organizations, sut.getSumm4FunsingSponsorsList());
+        assertEquals("Wrong result returned", organizations, sut.getSumm4FundingSponsorsList());
     }
 
     /**
