@@ -171,6 +171,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
      */
     @Override
     public String execute() {
+        setIdentifier(null);
         setCriteria(new StudyProtocolQueryCriteria());
         loadFamilies();
         loadOrganizations();
