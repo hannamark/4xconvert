@@ -64,7 +64,29 @@
                         form.submit();
                         });
                     
-                     jQuery("#familyId").bind("change", function(ev) {
+                    jQuery("#country").bind("change", function(ev) {
+                        selectStatesBasedOnCountry();
+                    });
+                    
+                    function selectStatesBasedOnCountry() {
+                        if (jQuery("#country").val() == "USA" ) {
+                            jQuery("#states").prop("disabled",false);
+                            jQuery("#states option[value=INTERNATIONAL]").remove();
+                        } else {
+                            if (jQuery("#states option[value=INTERNATIONAL]").length == 0) {
+                                jQuery('#states option[value=]').after('<option value="INTERNATIONAL">None (International)</option>');
+                            }
+                            if (jQuery("#country").val() == "") {
+                                jQuery("#states").prop("disabled",false);
+                            } else {
+                                jQuery("#states").prop("disabled",true);
+                                jQuery("#states").val("INTERNATIONAL");
+                            }  
+                        }
+                    }
+                    selectStatesBasedOnCountry();
+                    
+                    jQuery("#familyId").bind("change", function(ev) {
                          var familyId = jQuery("#familyId").val();                                          
                          var url = viewerApp.contextPath + "/ctro/ajax/refreshAdHocOrganizations.action";                    
                          var params = { "criteria.familyId": familyId};
