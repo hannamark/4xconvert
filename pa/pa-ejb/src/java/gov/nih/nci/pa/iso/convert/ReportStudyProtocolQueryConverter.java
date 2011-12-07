@@ -98,6 +98,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 
@@ -144,6 +145,7 @@ public class ReportStudyProtocolQueryConverter extends BaseStudyProtocolQueryCon
     private static final int SUMM_FIELD_STUDY_PROTOCOL_TYPE = 26;
     private static final int SUMM_FIELD_STUDY_NCI_ID = 27;
     private static final int SUMM_FIELD_LEAD_ORG_TRIAL_ID = 28;
+    private static final int SUMM_FIELD_NCT_ID = 29;
 
     private final String generateDiseaseNamesSql =
         "select d.PREFERRED_NAME from study_disease AS sd "
@@ -255,6 +257,7 @@ public class ReportStudyProtocolQueryConverter extends BaseStudyProtocolQueryCon
 
     private void loadStudyProtocolDto(Object[] piData, StudyProtocolQueryDTO spDto) {
         loadPiAndLeadOrgIntoStudyProtocolDto(piData, spDto);
+        loadNctIdentifier(piData, spDto);
         if (piData[SUMM_FIELD_STATUS_CODE] != null) {
             spDto.setStudyStatusCode(StudyStatusCode.valueOf((String) piData[SUMM_FIELD_STATUS_CODE]));
         }
@@ -328,6 +331,12 @@ public class ReportStudyProtocolQueryConverter extends BaseStudyProtocolQueryCon
 
     }
 
+    private void loadNctIdentifier(Object[] piData, StudyProtocolQueryDTO spDto) {
+        if (piData[SUMM_FIELD_NCT_ID] != null) {
+            spDto.setNctIdentifier(piData[SUMM_FIELD_NCT_ID].toString());
+        }
+    }
+
     /**
      * Generate reporting sql.
      * @return sql.
@@ -339,30 +348,36 @@ public class ReportStudyProtocolQueryConverter extends BaseStudyProtocolQueryCon
         + "sp.OFFICIAL_TITLE, sp.PHASE_CODE, sp.PRIMARY_PURPOSE_CODE, sp.PROPRIETARY_TRIAL_INDICATOR, "
         + "sp.RECORD_VERIFICATION_DATE, sp.CTGOV_XML_REQUIRED_INDICATOR, sp.PHASE_ADDITIONAL_QUALIFIER_CODE, "
         + "sp.DATE_LAST_CREATED, sp.AMENDMENT_NUMBER, sp.AMENDMENT_DATE, sp.SUBMISSION_NUMBER, "
-        + "sp.STUDY_PROTOCOL_TYPE, sOi.extension, ss2.local_sp_indentifier "
+        + "sp.STUDY_PROTOCOL_TYPE, sOi.extension, ss2.local_sp_indentifier as leadOrgId, "
+        + "ss3.local_sp_indentifier as nctidentifier "
         + "from study_protocol AS sp left join study_site AS ss ON sp.identifier = ss.study_protocol_identifier "
         + "left JOIN study_otheridentifiers sOi ON sp.identifier = sOi.study_protocol_id "
         + "AND sOi.root = :NCI_II_ROOT "
-        + "left JOIN research_organization AS ro ON ss.research_organization_identifier = ro.identifier "
-        + "left JOIN organization AS ro_org ON ro.organization_identifier = ro_org.identifier "
-        + "left JOIN study_contact AS sc ON sc.study_protocol_identifier = ss.study_protocol_identifier "
+        + "JOIN research_organization AS ro ON ss.research_organization_identifier = ro.identifier "
+        + "JOIN organization AS ro_org ON ro.organization_identifier = ro_org.identifier "
+        + "left JOIN study_contact AS sc ON sc.study_protocol_identifier = sp.identifier "
         + "and sc.role_code = :piRole "
-        + "left JOIN clinical_research_staff AS crs ON sc.clinical_research_staff_identifier = crs.identifier "
-        + "left JOIN person AS crs_p ON crs.person_identifier = crs_p.identifier "
-        + "left JOIN study_resourcing AS sr ON sr.study_protocol_identifier = ss.study_protocol_identifier and "
+        + "JOIN clinical_research_staff AS crs ON sc.clinical_research_staff_identifier = crs.identifier "
+        + "JOIN person AS crs_p ON crs.person_identifier = crs_p.identifier "
+        + "left JOIN study_resourcing AS sr ON sr.study_protocol_identifier = sp.identifier and "
         + "sr.SUMM_4_REPT_INDICATOR = true "
         + "left join (select status_code as sosSc, status_date as sosSd, study_protocol_identifier as sosSpi from "
         + "study_overall_status where study_protocol_identifier = :spId order by identifier desc limit 1) AS sos "
-        + "ON sos.sosSpi = ss.study_protocol_identifier "
+        + "ON sos.sosSpi = sp.identifier "
         + "left join (select status_code as dwsSc, status_date_range_low as dwsSd, study_protocol_identifier as dwsSpi "
         + "from document_workflow_status where study_protocol_identifier = :spId order by identifier desc limit 1) "
-        + "AS dws ON dws.dwsSpi = ss.study_protocol_identifier "
+        + "AS dws ON dws.dwsSpi = sp.identifier "
         + "left join (select identifier as siId, comments as siCm, open_date as siOd, close_date as siCd, "
         + "study_protocol_identifier as siSpi from study_inbox "
         + "where study_protocol_identifier = :spId order by identifier desc limit 1) AS si "
-        + "ON si.siSpi = ss.study_protocol_identifier "
+        + "ON si.siSpi = sp.identifier "
         + "left join study_site AS ss2 "
         + "ON sp.identifier = ss2.study_protocol_identifier and ss2.functional_code = 'LEAD_ORGANIZATION' "
+        + "left join study_site AS ss3 ON sp.identifier = ss3.study_protocol_identifier and "
+        + "ss3.functional_code = 'IDENTIFIER_ASSIGNER' "
+        + "join research_organization ro3 ON ss3.research_organization_identifier = ro3.identifier "  
+        + "join organization o3 ON ro3.organization_identifier = o3.identifier and o3.name = '"
+        + PAConstants.CTGOV_ORG_NAME + "' "
         + "where sp.identifier = :spId and ss.functional_code = :leadOrgRole";
     }
 

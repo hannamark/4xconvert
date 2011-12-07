@@ -84,7 +84,7 @@ package gov.nih.nci.pa.viewer.action;
 
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.report.dto.result.Summ4RepResultDto;
-import gov.nih.nci.pa.report.service.Summ4RepLocal;
+import gov.nih.nci.pa.report.service.Summary4ReportLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.viewer.dto.criteria.Summ4RepCriteriaWebDto;
 import gov.nih.nci.pa.viewer.dto.result.Summ4ResultWebDto;
@@ -114,7 +114,7 @@ public class Summary4ReportAction
     private static final long serialVersionUID = 7222372874396709972L;
     private static final int MAX_LIMIT = 100;
     
-    private Summ4RepLocal summ4ReportService;
+    private Summary4ReportLocal summary4ReportService;
 
     private List<String> autoCompleteResult;
     private Summ4RepCriteriaWebDto criteria;
@@ -134,10 +134,9 @@ public class Summary4ReportAction
      */
     @Override
     public void prepare() {
-        setSumm4ReportService(ViewerServiceLocator.getInstance().getSumm4ReportService());
+        setSummary4ReportService(ViewerServiceLocator.getInstance().getSummary4ReportService());
     }
-    
-    
+
     /**
      * {@inheritDoc}
      */
@@ -148,14 +147,14 @@ public class Summary4ReportAction
         loadOrganizations();
         return super.execute();
     }
-    
+
     /**
      * Load the families.
      */
     void loadFamilies() {
         try {
             families = new TreeMap<String, String>();
-            families.putAll(summ4ReportService.getFamilies(MAX_LIMIT));
+            families.putAll(summary4ReportService.getFamilies(MAX_LIMIT));
         } catch (TooManyResultsException e) {
             addActionError(e.getMessage());
         }
@@ -169,7 +168,7 @@ public class Summary4ReportAction
         organizations = new TreeMap<String, String>();
         if (criteria != null && StringUtils.isNotEmpty(criteria.getFamilyId())) {
             try {
-                Map<String, String> orgMap = summ4ReportService.getOrganizations(criteria.getFamilyId(), MAX_LIMIT);
+                Map<String, String> orgMap = summary4ReportService.getOrganizations(criteria.getFamilyId(), MAX_LIMIT);
                 for (String orgName : orgMap.keySet()) {
                     String display = orgName + " (" + orgMap.get(orgName).toUpperCase(Locale.getDefault()) + ")";
                     organizations.put(orgName, display);
@@ -212,7 +211,7 @@ public class Summary4ReportAction
             return true;
         }
         try {
-            List<Summ4RepResultDto> isoList = summ4ReportService.get(criteria.getIsoDto());
+            List<Summ4RepResultDto> isoList = summary4ReportService.get(criteria.getIsoDto());
             setResultList(Summ4ResultWebDto.getWebList(isoList));
             return false;
         } catch (PAException e) {
@@ -250,12 +249,12 @@ public class Summary4ReportAction
      */
     public String getOrganizationNames() throws PAException {
         try {
-            autoCompleteResult = summ4ReportService.searchPoOrgNames(term, MAX_LIMIT);
+            autoCompleteResult = summary4ReportService.searchPoOrgNames(term, MAX_LIMIT);
             Collections.sort(autoCompleteResult);
         } catch (TooManyResultsException e) {
             autoCompleteResult = new ArrayList<String>();
             autoCompleteResult.add(term);
-        }    
+        }
         return SUCCESS;
     }
 
@@ -350,11 +349,10 @@ public class Summary4ReportAction
         return epidemOutcomeList;
     }
 
-
     /**
-     * @param summ4ReportService the summ4ReportService to set
+     * @param summary4ReportService the summary4ReportService to set
      */
-    public void setSumm4ReportService(Summ4RepLocal summ4ReportService) {
-        this.summ4ReportService = summ4ReportService;
+    public void setSummary4ReportService(Summary4ReportLocal summary4ReportService) {
+        this.summary4ReportService = summary4ReportService;
     }
 }

@@ -103,7 +103,7 @@ import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.noniso.dto.PDQDiseaseNode;
-import gov.nih.nci.pa.report.service.Summ4RepLocal;
+import gov.nih.nci.pa.report.service.Summary4ReportLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
@@ -149,7 +149,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     private PAOrganizationServiceRemote paOrganizationService = mock(PAOrganizationServiceRemote.class);
     private PlannedMarkerServiceLocal plannedMarkerService = mock(PlannedMarkerServiceLocal.class);
     private ProtocolQueryServiceLocal protocolQueryService = mock(ProtocolQueryServiceLocal.class);
-    private Summ4RepLocal summ4ReportService = mock(Summ4RepLocal.class);
+    private Summary4ReportLocal summary4ReportService = mock(Summary4ReportLocal.class);
     private TSRReportGeneratorServiceRemote tsrReportGeneratorService = mock(TSRReportGeneratorServiceRemote.class);
     
     
@@ -168,7 +168,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         gov.nih.nci.pa.viewer.util.ServiceLocator viewerServiceLocator = 
                 mock(gov.nih.nci.pa.viewer.util.ServiceLocator.class);
         ViewerServiceLocator.getInstance().setServiceLocator(viewerServiceLocator);
-        when(viewerServiceLocator.getSumm4ReportService()).thenReturn(summ4ReportService);
+        when(viewerServiceLocator.getSummary4ReportService()).thenReturn(summary4ReportService);
 
         List<StudyProtocolQueryDTO> protList = new ArrayList<StudyProtocolQueryDTO>();
         StudyProtocolQueryDTO protListItem = new StudyProtocolQueryDTO();
@@ -223,7 +223,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         doCallRealMethod().when(action).setPaOrganizationService(paOrganizationService);
         doCallRealMethod().when(action).setPlannedMarkerService(plannedMarkerService);
         doCallRealMethod().when(action).setProtocolQueryService(protocolQueryService);
-        doCallRealMethod().when(action).setSumm4ReportService(summ4ReportService);
+        doCallRealMethod().when(action).setSummary4ReportService(summary4ReportService);
         doCallRealMethod().when(action).setTsrReportGeneratorService(tsrReportGeneratorService);
         setDependencies(action);
         return action;
@@ -236,7 +236,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         action.setPaOrganizationService(paOrganizationService);
         action.setPlannedMarkerService(plannedMarkerService);
         action.setProtocolQueryService(protocolQueryService);
-        action.setSumm4ReportService(summ4ReportService);
+        action.setSummary4ReportService(summary4ReportService);
         action.setTsrReportGeneratorService(tsrReportGeneratorService);
     }
     
@@ -258,7 +258,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         when(serviceLocator.getTSRReportGeneratorService()).thenReturn(tsrReportGeneratorService);
         gov.nih.nci.pa.viewer.util.ServiceLocator viewerLocator = mock(gov.nih.nci.pa.viewer.util.ServiceLocator.class);
         ViewerServiceLocator.getInstance().setServiceLocator(viewerLocator);
-        when(viewerLocator.getSumm4ReportService()).thenReturn(summ4ReportService);
+        when(viewerLocator.getSummary4ReportService()).thenReturn(summary4ReportService);
         sut.prepare();
         verify(sut).setDiseaseService(diseaseService);
         verify(sut).setInterventionService(interventionService);
@@ -266,7 +266,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         verify(sut).setPaOrganizationService(paOrganizationService);
         verify(sut).setPlannedMarkerService(plannedMarkerService);
         verify(sut).setProtocolQueryService(protocolQueryService);
-        verify(sut).setSumm4ReportService(summ4ReportService);
+        verify(sut).setSummary4ReportService(summary4ReportService);
         verify(sut).setTsrReportGeneratorService(tsrReportGeneratorService);
     }
     
@@ -575,9 +575,9 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         AdHocReportAction sut = createAdHocReportAction();
         Map<String, String> familyMap = new HashMap<String, String>();
         familyMap.put("1", "name 1");
-        when(summ4ReportService.getFamilies(100)).thenReturn(familyMap);
+        when(summary4ReportService.getFamilies(100)).thenReturn(familyMap);
         sut.loadFamilies();
-        verify(summ4ReportService).getFamilies(100);
+        verify(summary4ReportService).getFamilies(100);
         List<KeyValueDTO> result = sut.getFamilies();
         assertNotNull("No result returned", result);
         assertEquals("Wrong result size", 1, result.size());
@@ -592,7 +592,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     public void testLoadFamiliesError() throws TooManyResultsException {
         AdHocReportAction sut = createAdHocReportActionMock();
         doCallRealMethod().when(sut).loadFamilies();
-        when(summ4ReportService.getFamilies(100)).thenThrow(new TooManyResultsException(200));
+        when(summary4ReportService.getFamilies(100)).thenThrow(new TooManyResultsException(200));
         sut.loadFamilies();
         verify(sut).addActionError(null);
     }
@@ -604,7 +604,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     public void testLoadOrganizationsWithoutFamilyId() throws TooManyResultsException {
         AdHocReportAction sut = createAdHocReportAction();
         assertEquals(Action.SUCCESS, sut.loadOrganizations());
-        verify(summ4ReportService, never()).getOrganizations(anyString(), anyInt());
+        verify(summary4ReportService, never()).getOrganizations(anyString(), anyInt());
         assertEquals(0, sut.getActionErrors().size());
     }
 
@@ -617,7 +617,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     public void testLoadOrganizationsWithoutCriteria() throws TooManyResultsException {
         AdHocReportAction sut = createAdHocReportAction();
         assertEquals(Action.SUCCESS, sut.loadOrganizations());
-        verify(summ4ReportService, never()).getOrganizations(anyString(), anyInt());
+        verify(summary4ReportService, never()).getOrganizations(anyString(), anyInt());
         assertEquals(0, sut.getActionErrors().size());
     }
 
@@ -633,7 +633,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         criteria.setFamilyId("1");
         sut.setCriteria(criteria);
         assertEquals(Action.SUCCESS, sut.loadOrganizations());
-        verify(summ4ReportService).getOrganizations(criteria.getFamilyId(), 100);
+        verify(summary4ReportService).getOrganizations(criteria.getFamilyId(), 100);
         assertEquals(0, sut.getActionErrors().size());
     }
 
@@ -646,7 +646,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     public void testLoadParticipatingSitesWithoutFamilyId() throws TooManyResultsException {
         AdHocReportAction sut = createAdHocReportAction();
         assertEquals(Action.SUCCESS, sut.loadParticipatingSites());
-        verify(summ4ReportService, never()).getOrganizations(anyString(), anyInt());
+        verify(summary4ReportService, never()).getOrganizations(anyString(), anyInt());
         assertEquals(0, sut.getActionErrors().size());
     }
 
@@ -659,7 +659,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     public void testLoadParticipatingSitesWithoutCriteria() throws TooManyResultsException {
         AdHocReportAction sut = createAdHocReportAction();
         assertEquals(Action.SUCCESS, sut.loadParticipatingSites());
-        verify(summ4ReportService, never()).getOrganizations(anyString(), anyInt());
+        verify(summary4ReportService, never()).getOrganizations(anyString(), anyInt());
         assertEquals(0, sut.getActionErrors().size());
     }
 
@@ -675,7 +675,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         criteria.setParticipatingSiteFamilyId("1");
         sut.setCriteria(criteria);
         assertEquals(Action.SUCCESS, sut.loadParticipatingSites());
-        verify(summ4ReportService).getOrganizations(criteria.getParticipatingSiteFamilyId(), 100);
+        verify(summary4ReportService).getOrganizations(criteria.getParticipatingSiteFamilyId(), 100);
         assertEquals(0, sut.getActionErrors().size());
     }
 
@@ -687,7 +687,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     public void testLoadFamilies() throws TooManyResultsException {
         AdHocReportAction sut = createAdHocReportAction();
         sut.loadFamilies();
-        verify(summ4ReportService).getFamilies(100);
+        verify(summary4ReportService).getFamilies(100);
         assertEquals(0, sut.getActionErrors().size());
     }
 

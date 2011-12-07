@@ -98,7 +98,7 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.report.dto.criteria.Summ4RepCriteriaDto;
 import gov.nih.nci.pa.report.dto.result.Summ4RepResultDto;
-import gov.nih.nci.pa.report.service.Summ4RepLocal;
+import gov.nih.nci.pa.report.service.Summary4ReportLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.viewer.dto.criteria.Summ4RepCriteriaWebDto;
 import gov.nih.nci.pa.viewer.dto.result.Summ4ResultWebDto;
@@ -126,7 +126,7 @@ import org.junit.Test;
  */
 public class Summary4ReportActionTest extends AbstractReportActionTest<Summary4ReportAction> {
     
-    private Summ4RepLocal summ4ReportService = mock(Summ4RepLocal.class);
+    private Summary4ReportLocal summary4ReportService = mock(Summary4ReportLocal.class);
     
     /**
      * Initialization for parent class tests.
@@ -136,7 +136,7 @@ public class Summary4ReportActionTest extends AbstractReportActionTest<Summary4R
     public void initAction() throws TooManyResultsException {
         action = createSummary4ReportAction();
         action.setCriteria(new Summ4RepCriteriaWebDto());
-        when(summ4ReportService.getFamilies(100)).thenReturn(new HashMap<String, String>());
+        when(summary4ReportService.getFamilies(100)).thenReturn(new HashMap<String, String>());
     }
 
     /**
@@ -155,13 +155,13 @@ public class Summary4ReportActionTest extends AbstractReportActionTest<Summary4R
      */
     private Summary4ReportAction createSummary4ReportActionMock() {
         Summary4ReportAction action = mock(Summary4ReportAction.class);
-        doCallRealMethod().when(action).setSumm4ReportService(summ4ReportService);
+        doCallRealMethod().when(action).setSummary4ReportService(summary4ReportService);
         setDependencies(action);
         return action;
     }
 
     private void setDependencies(Summary4ReportAction action) {
-        action.setSumm4ReportService(summ4ReportService);
+        action.setSummary4ReportService(summary4ReportService);
     }
     
     /**
@@ -173,9 +173,9 @@ public class Summary4ReportActionTest extends AbstractReportActionTest<Summary4R
         doCallRealMethod().when(sut).prepare();
         ServiceLocator serviceLocator = mock(ServiceLocator.class);
         ViewerServiceLocator.getInstance().setServiceLocator(serviceLocator);
-        when(serviceLocator.getSumm4ReportService()).thenReturn(summ4ReportService);
+        when(serviceLocator.getSummary4ReportService()).thenReturn(summary4ReportService);
         sut.prepare();
-        verify(sut).setSumm4ReportService(summ4ReportService);
+        verify(sut).setSummary4ReportService(summary4ReportService);
     }
 
     /**
@@ -204,9 +204,9 @@ public class Summary4ReportActionTest extends AbstractReportActionTest<Summary4R
         Summary4ReportAction sut = createSummary4ReportAction();
         Map<String, String> familyMap = new HashMap<String, String>();
         familyMap.put("1", "name 1");
-        when(summ4ReportService.getFamilies(100)).thenReturn(familyMap);
+        when(summary4ReportService.getFamilies(100)).thenReturn(familyMap);
         sut.loadFamilies();
-        verify(summ4ReportService).getFamilies(100);
+        verify(summary4ReportService).getFamilies(100);
         Map<String, String> result = sut.getFamilies();
         assertNotNull("No result returned", result);
         assertEquals("Wrong result size", 1, result.size());
@@ -221,7 +221,7 @@ public class Summary4ReportActionTest extends AbstractReportActionTest<Summary4R
     public void testLoadFamiliesError() throws TooManyResultsException {
         Summary4ReportAction sut = createSummary4ReportActionMock();
         doCallRealMethod().when(sut).loadFamilies();
-        when(summ4ReportService.getFamilies(100)).thenThrow(new TooManyResultsException(200));
+        when(summary4ReportService.getFamilies(100)).thenThrow(new TooManyResultsException(200));
         sut.loadFamilies();
         verify(sut).addActionError(null);
     }
@@ -238,7 +238,7 @@ public class Summary4ReportActionTest extends AbstractReportActionTest<Summary4R
         sut.setCriteria(criteria);
         Map<String, String> orgMap = new HashMap<String, String>();
         orgMap.put("org", "type");
-        when(summ4ReportService.getOrganizations("1", 100)).thenReturn(orgMap);
+        when(summary4ReportService.getOrganizations("1", 100)).thenReturn(orgMap);
         String result = sut.loadOrganizations();
         assertEquals("Wrong result returned", "success", result);
         assertNotNull("No organization collection", sut.getOrganizations());
@@ -286,7 +286,7 @@ public class Summary4ReportActionTest extends AbstractReportActionTest<Summary4R
         Summ4RepCriteriaWebDto criteria = new Summ4RepCriteriaWebDto();
         criteria.setFamilyId("1");
         sut.setCriteria(criteria);
-        when(summ4ReportService.getOrganizations("1", 100)).thenThrow(new TooManyResultsException(200));
+        when(summary4ReportService.getOrganizations("1", 100)).thenThrow(new TooManyResultsException(200));
         String result = sut.loadOrganizations();
         assertEquals("Wrong result returned", "success", result);
         verify(sut).addActionError(null);
@@ -363,7 +363,7 @@ public class Summary4ReportActionTest extends AbstractReportActionTest<Summary4R
         Summ4RepResultDto item = new Summ4RepResultDto();
         item.setSubSortCriteria(StConverter.convertToSt("criteria"));
         items.add(item);
-        when(summ4ReportService.get(any(Summ4RepCriteriaDto.class))).thenReturn(items);
+        when(summary4ReportService.get(any(Summ4RepCriteriaDto.class))).thenReturn(items);
         boolean result = sut.isReportInError();
         assertFalse("Wrong result returned", result);
         Collection<String> errors = sut.getActionErrors();
@@ -394,7 +394,7 @@ public class Summary4ReportActionTest extends AbstractReportActionTest<Summary4R
         Summ4RepCriteriaWebDto criteria = new Summ4RepCriteriaWebDto();
         criteria.setOrgName("org");
         sut.setCriteria(criteria);
-        when(summ4ReportService.get(any(Summ4RepCriteriaDto.class))).thenThrow(new PAException("PA"));
+        when(summary4ReportService.get(any(Summ4RepCriteriaDto.class))).thenThrow(new PAException("PA"));
         boolean result = sut.isReportInError();
         assertTrue("Wrong result returned", result);
         Collection<String> errors = sut.getActionErrors();
@@ -447,7 +447,7 @@ public class Summary4ReportActionTest extends AbstractReportActionTest<Summary4R
         Summary4ReportAction sut = createSummary4ReportAction();
         sut.setTerm("term");
         List<String> orgs = Arrays.asList("org2", "org1");
-        when(summ4ReportService.searchPoOrgNames("term", 100)).thenReturn(orgs);
+        when(summary4ReportService.searchPoOrgNames("term", 100)).thenReturn(orgs);
         String result = sut.getOrganizationNames();
         assertEquals("Wrong result returned", "success", result);
         assertEquals("Wrong result size", 2, sut.getAutoCompleteResult().size());
@@ -464,7 +464,7 @@ public class Summary4ReportActionTest extends AbstractReportActionTest<Summary4R
     public void testgetOrganizationNamesError() throws PAException, TooManyResultsException {
         Summary4ReportAction sut = createSummary4ReportAction();
         sut.setTerm("term");
-        when(summ4ReportService.searchPoOrgNames("term", 100)).thenThrow(new TooManyResultsException(100));
+        when(summary4ReportService.searchPoOrgNames("term", 100)).thenThrow(new TooManyResultsException(100));
         String result = sut.getOrganizationNames();
         assertEquals("Wrong result returned", "success", result);
         assertEquals("Wrong result size", 1, sut.getAutoCompleteResult().size());

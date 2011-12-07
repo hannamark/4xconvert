@@ -25,6 +25,7 @@
                         <viewer:displayTagProperties/>
                         <display:column escapeXml="false" titleKey="studyProtocol.documentWorkflowStatusDate" property="documentWorkflowStatusDate" format="{0,date,MM/dd/yyyy}" sortable="true" headerClass="sortable"/>
                         <display:column escapeXml="true" titleKey="studyProtocol.nciIdentifier" property="nciIdentifier" sortable="true" headerClass="sortable"/>
+                        <display:column escapeXml="true" titleKey="studyProtocol.nctIdentifier" property="nctIdentifier" sortable="true" headerClass="sortable"/>
                         <display:column escapeXml="true" titleKey="studyProtocol.officialTitle" maxLength= "200" property="officialTitle" sortable="true" headerClass="sortable"/>
                         <display:column escapeXml="true" titleKey="adHocReport.result.leadOrg" maxLength= "200" property="leadOrganizationName" sortable="true" headerClass="sortable"/>
                         <display:column escapeXml="true" titleKey="studyProtocol.leadOrgID" maxLength= "200" property="leadOrganizationTrialIdentifier" sortable="true" headerClass="sortable"/>

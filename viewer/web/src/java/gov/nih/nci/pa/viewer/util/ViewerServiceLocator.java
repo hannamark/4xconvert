@@ -79,7 +79,7 @@
 package gov.nih.nci.pa.viewer.util;
 
 import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
-import gov.nih.nci.pa.report.service.Summ4RepLocal;
+import gov.nih.nci.pa.report.service.Summary4ReportLocal;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
 import gov.nih.nci.pa.report.service.TrialListLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -149,8 +149,8 @@ public final class ViewerServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     @Override
-    public Summ4RepLocal getSumm4ReportService() {
-        return serviceLocator.getSumm4ReportService();
+    public Summary4ReportLocal getSummary4ReportService() {
+        return serviceLocator.getSummary4ReportService();
     }
     
     /**

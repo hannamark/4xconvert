@@ -79,7 +79,7 @@
 package gov.nih.nci.pa.viewer.util;
 
 import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
-import gov.nih.nci.pa.report.service.Summ4RepLocal;
+import gov.nih.nci.pa.report.service.Summary4ReportLocal;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
 import gov.nih.nci.pa.report.service.TrialListLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
@@ -119,8 +119,8 @@ public class JndiServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     @Override
-    public Summ4RepLocal getSumm4ReportService() {
-        return (Summ4RepLocal) JNDIUtil.lookupPa("pa/Summ4ReportBean/local");
+    public Summary4ReportLocal getSummary4ReportService() {
+        return (Summary4ReportLocal) JNDIUtil.lookupPa("pa/Summary4ReportBean/local");
     }
 
     /**

@@ -94,6 +94,7 @@ import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceIntegrationTest;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
@@ -133,17 +134,18 @@ public class ReportStudyProtocolQueryConvertTest extends AbstractHibernateTestCa
             + "sp.OFFICIAL_TITLE, sp.PHASE_CODE, sp.PRIMARY_PURPOSE_CODE, null, "
             + "sp.RECORD_VERIFICATION_DATE, null, sp.PHASE_ADDITIONAL_QUALIFIER_CODE, "
             + "sp.DATE_LAST_CREATED, sp.AMENDMENT_NUMBER, sp.AMENDMENT_DATE, sp.SUBMISSION_NUMBER, "
-            + "sp.STUDY_PROTOCOL_TYPE, sOi.extension, ss2.local_sp_indentifier "
+            + "sp.STUDY_PROTOCOL_TYPE, sOi.extension, ss2.local_sp_indentifier as leadOrgId, "
+            + "ss3.local_sp_indentifier as nctidentifier "
             + "from study_protocol AS sp left join study_site AS ss ON sp.identifier = ss.study_protocol_identifier "
             + "left JOIN study_otheridentifiers sOi ON sp.identifier = sOi.study_protocol_id "
             + "AND sOi.root = :NCI_II_ROOT "
-            + "left JOIN research_organization AS ro ON ss.research_organization_identifier = ro.identifier "
-            + "left JOIN organization AS ro_org ON ro.organization_identifier = ro_org.identifier "
-            + "left JOIN study_contact AS sc ON sc.study_protocol_identifier = ss.study_protocol_identifier "
+            + "JOIN research_organization AS ro ON ss.research_organization_identifier = ro.identifier "
+            + "JOIN organization AS ro_org ON ro.organization_identifier = ro_org.identifier "
+            + "left JOIN study_contact AS sc ON sc.study_protocol_identifier = sp.identifier "
             + "and sc.role_code = :piRole "
-            + "left JOIN clinical_research_staff AS crs ON sc.clinical_research_staff_identifier = crs.identifier "
-            + "left JOIN person AS crs_p ON crs.person_identifier = crs_p.identifier "
-            + "left JOIN study_resourcing AS sr ON sr.study_protocol_identifier = ss.study_protocol_identifier and "
+            + "JOIN clinical_research_staff AS crs ON sc.clinical_research_staff_identifier = crs.identifier "
+            + "JOIN person AS crs_p ON crs.person_identifier = crs_p.identifier "
+            + "left JOIN study_resourcing AS sr ON sr.study_protocol_identifier = sp.identifier and "
             + "sr.SUMM_4_REPT_INDICATOR = true "
             + "left join (select status_code as sosSc, status_date as sosSd, study_protocol_identifier as sosSpi from "
             + "study_overall_status where study_protocol_identifier = :spId limit 1) AS sos "
@@ -157,6 +159,11 @@ public class ReportStudyProtocolQueryConvertTest extends AbstractHibernateTestCa
             + "ON si.siSpi = ss.study_protocol_identifier "
             + "left join study_site AS ss2 "
             + "ON sp.identifier = ss2.study_protocol_identifier and ss2.functional_code = 'LEAD_ORGANIZATION' "
+            + "left join study_site ss3 ON sp.identifier = ss3.study_protocol_identifier and "
+            + "ss3.functional_code = 'IDENTIFIER_ASSIGNER' "
+            + "join research_organization ro3 ON ss3.research_organization_identifier = ro3.identifier "
+            + "join organization o3 ON ro3.organization_identifier = o3.identifier and o3.name = '"
+            + PAConstants.CTGOV_ORG_NAME + "' "
             + "where sp.identifier = :spId and 'LEAD_ORGANIZATION' = :leadOrgRole limit 1";
         }
     }

@@ -110,15 +110,6 @@ import org.mockito.ArgumentCaptor;
 public class AbstractStandardReportBeanTest {
     
     private AbstractStandardReportBean<?,?> sut = mock(AbstractStandardReportBean.class);
-//    private AbstractStandardReportBean<AbstractStandardCriteriaDto, Object> sut =
-//            new AbstractStandardReportBean<AbstractStandardCriteriaDto, Object>() {
-//
-//                @Override
-//                public List<Object> get(AbstractStandardCriteriaDto criteria) throws PAException {
-//                    return null;
-//                }
-//
-//            };
 
     /**
      * Test the dateRangeSql method with data.

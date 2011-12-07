@@ -92,7 +92,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.noniso.dto.InterventionShortRecord;
 import gov.nih.nci.pa.noniso.dto.PDQDiseaseNode;
-import gov.nih.nci.pa.report.service.Summ4RepLocal;
+import gov.nih.nci.pa.report.service.Summary4ReportLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
@@ -139,7 +139,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     private PAOrganizationServiceRemote paOrganizationService;
     private PlannedMarkerServiceLocal plannedMarkerService;
     private ProtocolQueryServiceLocal protocolQueryService;
-    private Summ4RepLocal summ4ReportService;
+    private Summary4ReportLocal summary4ReportService;
     private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
     
 
@@ -162,7 +162,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
         setPaOrganizationService(PaRegistry.getPAOrganizationService());
         setPlannedMarkerService(PaRegistry.getPlannedMarkerService());
         setProtocolQueryService(PaRegistry.getProtocolQueryService());
-        setSumm4ReportService(ViewerServiceLocator.getInstance().getSumm4ReportService());
+        setSummary4ReportService(ViewerServiceLocator.getInstance().getSummary4ReportService());
         setTsrReportGeneratorService(PaRegistry.getTSRReportGeneratorService());
     }
 
@@ -184,7 +184,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     void loadFamilies() {
         try {
             families = new ArrayList<KeyValueDTO>();
-            Map<String, String> familyMap = summ4ReportService.getFamilies(MAX_LIMIT);
+            Map<String, String> familyMap = summary4ReportService.getFamilies(MAX_LIMIT);
             for (Map.Entry<String, String> entry : familyMap.entrySet()) {
                 KeyValueDTO keyValueDTO = new KeyValueDTO(Long.valueOf(entry.getKey()), entry.getValue());
                 families.add(keyValueDTO);
@@ -203,7 +203,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
         organizations = new TreeMap<String, String>();
         if (criteria != null && !criteria.getFamilyId().equals("0")) {
             try {
-                Map<String, String> orgMap = summ4ReportService.getOrganizations(criteria.getFamilyId(), MAX_LIMIT);
+                Map<String, String> orgMap = summary4ReportService.getOrganizations(criteria.getFamilyId(), MAX_LIMIT);
                 for (String orgName : orgMap.keySet()) {
                     getOrganizations().put(orgName, orgName);
                 }
@@ -222,7 +222,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
         participatingSites = new TreeMap<String, String>();
         if (criteria != null && !criteria.getParticipatingSiteFamilyId().equals("0")) {
             try {
-                Map<String, String> orgMap = summ4ReportService.getOrganizations(criteria
+                Map<String, String> orgMap = summary4ReportService.getOrganizations(criteria
                     .getParticipatingSiteFamilyId(), MAX_LIMIT);
                 for (String orgName : orgMap.keySet()) {
                     getParticipatingSites().put(orgName, orgName);
@@ -500,10 +500,10 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     }
 
     /**
-     * @param summ4ReportService the summ4ReportService to set
+     * @param summary4ReportService the summary4ReportService to set
      */
-    public void setSumm4ReportService(Summ4RepLocal summ4ReportService) {
-        this.summ4ReportService = summ4ReportService;
+    public void setSummary4ReportService(Summary4ReportLocal summary4ReportService) {
+        this.summary4ReportService = summary4ReportService;
     }
 
     /**

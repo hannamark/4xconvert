@@ -111,6 +111,7 @@ public class BaseStudyProtocolQueryDTO {
     private PhaseCode phaseCode;
     private PhaseAdditionalQualifierCode phaseAdditionalQualifier;
     private String studyProtocolType;
+    private String nctIdentifier;
     
     /**
      * 
@@ -328,5 +329,18 @@ public class BaseStudyProtocolQueryDTO {
         this.leadOrganizationTrialIdentifier = leadOrganizationTrialIdentifier;
     }
 
+    /**
+     * @return the nctIdentifier
+     */
+    public String getNctIdentifier() {
+        return nctIdentifier;
+    }
+
+    /**
+     * @param nctIdentifier the nctIdentifier to set
+     */
+    public void setNctIdentifier(String nctIdentifier) {
+        this.nctIdentifier = nctIdentifier;
+    }
     
 }
