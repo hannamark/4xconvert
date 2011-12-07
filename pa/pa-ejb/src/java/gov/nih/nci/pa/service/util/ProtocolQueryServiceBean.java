@@ -563,7 +563,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     }
 
     private void populateExampleStudySites(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
-        if (CollectionUtils.isNotEmpty(crit.getLeadOrganizationIds())) {
+        if (StringUtils.isNotEmpty(crit.getLeadOrganizationTrialIdentifier())) {
             StudySite ss = new StudySite();
             ss.setLocalStudyProtocolIdentifier(crit.getLeadOrganizationTrialIdentifier());
             ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
