@@ -13,7 +13,7 @@
                     <div class="quickresults">
                         <div class="quickresults_header">
                             <s:set name="interventionTypeValues" value="@gov.nih.nci.pa.enums.ActivitySubcategoryCode@getDisplayNames()" />
-                            <s:select headerKey="All" headerValue="All" id="interventionType" name="criteria.interventionType" list="#interventionTypeValues"  
+                            <s:select headerKey="All" headerValue="All" id="interventionType" name="interventionType" list="#interventionTypeValues"  
                                     value="criteria.interventionType" />
                             <div class="quickresults_header_buttons">
                                 <fmt:message key="adHocReport.interventions.button.addType.title" var="title"/>

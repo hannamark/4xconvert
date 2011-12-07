@@ -24,6 +24,8 @@
                 <interceptor-ref name="alias" />
                 <!-- The fileUpload interceptor must occur before the params interceptor. -->
                 <interceptor-ref name="fileUpload" />
+                <interceptor-ref name="checkbox" />
+                <interceptor-ref name="multiselect"/>
                 <interceptor-ref name="params">
                     <!-- Excludes the jQuery no-cache _ parameter and the Displaytag d-#-X parameter(s) -->
                     <param name="excludeParams">
