@@ -346,9 +346,11 @@ UPDATE DW_STUDY SET CENTRAL_CONTACT_TYPE = 'PERSONAL', CENTRAL_CONTACT_NAME = cc
     from study_contact sc 
         inner join clinical_research_staff crs on crs.identifier = sc.clinical_research_staff_identifier
         inner join person cc on cc.identifier = crs.person_identifier
-    where internal_system_id = sc.study_protocol_identifier and sc.role_code = 'CENTRAL_CONTACT';
+    where internal_system_id = sc.study_protocol_identifier and sc.role_code = 'CENTRAL_CONTACT' and sc.organizational_contact_identifier is null;
 
-UPDATE DW_STUDY SET CENTRAL_CONTACT_TYPE = 'GENERIC' from study_contact sc 
+UPDATE DW_STUDY SET CENTRAL_CONTACT_TYPE = 'GENERIC', CENTRAL_CONTACT_NAME = gc.title from study_contact sc 
+        inner join organizational_contact as oc on oc.identifier = sc.organizational_contact_identifier
+        inner join dw_generic_contact as gc on gc.identifier = cast(oc.assigned_identifier as INTEGER)
     where internal_system_id = sc.study_protocol_identifier and sc.role_code = 'CENTRAL_CONTACT' 
         and sc.organizational_contact_identifier is not null;
 
@@ -356,7 +358,7 @@ UPDATE DW_STUDY SET RESPONSIBLE_PARTY_NAME = resp.name, SPONSOR_RESP_PARTY_EMAIL
                     RESP_PARTY_TYPE = 'PI'
     from study_contact sc 
         inner join clinical_research_staff crs on crs.identifier = sc.clinical_research_staff_identifier
-        inner join organization resp on resp.identifier = crs.organization_identifier
+        inner join organization as resp on resp.identifier = crs.organization_identifier
     where sc.role_code = 'RESPONSIBLE_PARTY_STUDY_PRINCIPAL_INVESTIGATOR' and internal_system_id = sc.study_protocol_identifier;
 
 UPDATE DW_STUDY SET RESPONSIBLE_PARTY_NAME = org.name, SPONSOR_RESP_PARTY_EMAIL = resp.email, SPONSOR_RESP_PARTY_PHONE = resp.telephone,
@@ -365,11 +367,21 @@ UPDATE DW_STUDY SET RESPONSIBLE_PARTY_NAME = org.name, SPONSOR_RESP_PARTY_EMAIL 
         inner join research_organization as ro on ro.identifier = ss.research_organization_identifier
         inner join organization as org on org.identifier = ro.organization_identifier
         inner join study_site_contact as resp on resp.study_site_identifier = ss.identifier and resp.role_code = 'RESPONSIBLE_PARTY_SPONSOR_CONTACT'
-        inner join organizational_contact as oc on oc.identifier = resp.organizational_contact_identifier
+        inner join organizational_contact as oc on oc.identifier = resp.organizational_contact_identifier and oc.person_identifier is not null
         join person as p on p.identifier = oc.person_identifier
     where ss.functional_code = 'RESPONSIBLE_PARTY_SPONSOR' and internal_system_id = ss.study_protocol_identifier;
 
-
+UPDATE DW_STUDY SET RESPONSIBLE_PARTY_NAME = org.name, SPONSOR_RESP_PARTY_EMAIL = resp.email, SPONSOR_RESP_PARTY_PHONE = resp.telephone,
+                    RESP_PARTY_TYPE = 'SPONSOR', RESPONSIBLE_PARTY_GENERIC_CONTACT = gc.title
+    from study_site ss
+        inner join research_organization as ro on ro.identifier = ss.research_organization_identifier
+        inner join organization as org on org.identifier = ro.organization_identifier
+        inner join study_site_contact as resp on resp.study_site_identifier = ss.identifier and resp.role_code = 'RESPONSIBLE_PARTY_SPONSOR_CONTACT'
+        inner join organizational_contact as oc on oc.identifier = resp.organizational_contact_identifier and oc.person_identifier is null
+        left outer join dw_generic_contact as gc on gc.identifier = cast(oc.assigned_identifier as INTEGER)
+    where ss.functional_code = 'RESPONSIBLE_PARTY_SPONSOR' and internal_system_id = ss.study_protocol_identifier;
+    
+    
 UPDATE DW_STUDY SET NCI_ID = oid.extension from study_otheridentifiers as oid 
     inner join study_protocol as sp on sp.identifier = oid.study_protocol_id and sp.status_code = 'ACTIVE'
     where oid.study_protocol_id = internal_system_id and oid.root = '2.16.840.1.113883.3.26.4.3' and oid.extension is not null;

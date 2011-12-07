@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS DW_STUDY_PARTICIPATING_SITE CASCADE;
 CREATE TABLE DW_STUDY_PARTICIPATING_SITE (
     CONTACT_EMAIL character varying(200),
     CONTACT_NAME character varying(600),
-    GENERIC_CONTACT character varying(200),
+    GENERIC_CONTACT character varying(255),
     INTERNAL_SYSTEM_ID INTEGER,
     INVESTIGATOR1_NAME character varying(600),
     INVESTIGATOR1_ROLE character varying(200),
@@ -88,6 +88,14 @@ UPDATE DW_STUDY_PARTICIPATING_SITE SET INVESTIGATOR2_NAME = p.first_name || ' ' 
     )
     left outer join clinical_research_staff as crs on crs.identifier = investigator.clinical_research_staff_identifier
     left outer join person as p on p.identifier = crs.person_identifier
+    where ps.identifier = internal_system_id;
+
+UPDATE DW_STUDY_PARTICIPATING_SITE SET CONTACT_EMAIL = generic_contact.email, GENERIC_CONTACT = gc.title
+    from study_site as ps 
+        left outer join study_site_contact as generic_contact on generic_contact.study_site_identifier = ps.identifier and generic_contact.role_code = 'PRIMARY_CONTACT' 
+            and generic_contact.organizational_contact_identifier is not null
+        left outer join organizational_contact as oc on oc.identifier = generic_contact.organizational_contact_identifier and oc.person_identifier is null
+        left outer join dw_generic_contact as gc on gc.identifier = cast(oc.assigned_identifier as INTEGER)
     where ps.identifier = internal_system_id;
     
 UPDATE DW_STUDY_PARTICIPATING_SITE SET ORG_ORG_FAMILY = fam_org.family_name

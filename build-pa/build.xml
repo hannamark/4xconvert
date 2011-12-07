@@ -97,6 +97,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="viewer-services.base.dir" location="${software.dir}/viewer/services"/>
     <property name="viewer-web.base.dir" location="${software.dir}/viewer/web"/>
     <property name="accrual-ear.base.dir" location="${software.dir}/accrual"/>
+    <property name="data-warehouse.base.dir" location="${software.dir}/pa/data-warehouse"/>
 
     <!-- Build file names relative working dir above, if the basedir of the sub-project ant script is ".." you should set the *.basdir to and the build file should include the dir and build file name from the *.base.dir -->
     <property name="pa.build.file" value="build.xml"/>
@@ -108,6 +109,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="viewer-services.build.file" value="build.xml"/>
     <property name="viewer-web.build.file" value="build.xml"/>
     <property name="accrual-ear.build.file" value="build.xml"/>
+    <property name="data-warehouse.build.file" value="build.xml"/>
 
     <!-- The target name that should be called from the sub-project build file -->
     <property name="pa-clean.build.target" value="clean"/>
@@ -124,6 +126,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <property name="viewer-web.build.target" value="war-notest"/>
     <property name="accrual-ear.build.target" value="build-notest"/>
     <property name="accrual-ear.deploy.target" value="deploy-ear"/>
+    <property name="data-warehouse.target" value="populate"/>
 
     <!-- Distribution Structure properties, used to copy files into the distribution area.
             Use project.properties relative dir names becasue they are used by install also-->
@@ -1776,5 +1779,20 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             src.java.dir="${bda-blueprints-webapp.base.dir}/src/java"
             uml.source.path="bda-blueprints.classpath.ref"
             />
+    </target>
+    
+    <target name="build-and-populate-data-warehouse" description="">
+        <ant inheritAll="false" inheritRefs="false" antfile="${data-warehouse.build.file}" dir="${data-warehouse.base.dir}" >
+            <property name="pa.jdbc.driver" value="${database.driver}"/>
+            <property name="pa.jdbc.url"  value="${database.url}"/>
+            <property name="pa.db.username" value="${database.user}" />
+            <property name="pa.db.password" value="${database.password}"/>
+            
+            <property name="po.jdbc.driver" value="${database.driver}"/>
+            <property name="po.jdbc.url"  value="${po.database.url}"/>
+            <property name="po.db.username" value="${po.database.user}" />
+            <property name="po.db.password" value="${po.database.password}"/>
+            <target name="${data-warehouse.target}"/>
+        </ant>
     </target>
 </project>

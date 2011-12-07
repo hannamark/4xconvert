@@ -1,0 +1,90 @@
+<project name="data-warehouse" default="populate" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+    <property file="${basedir}/build.properties"/>
+    <property name="bda-utils" value="${basedir}/../../target/pa/bda-utils" />
+    
+    <path id="bda-utils.classpath">
+        <fileset dir="${bda-utils}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+    
+    <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="bda-utils.classpath"/>
+    
+    <target name="retrieve-org-families">
+        <sql driver="${po.jdbc.driver}" url="${po.jdbc.url}" userid="${po.db.username}" password="${po.db.password}" expandproperties="true"
+             print="yes" showheaders="false" showtrailers="false" output="/tmp/family_organizations.txt">
+            <transaction>
+                select f.name, o.name from organization o 
+                    join familyorganizationrelationship fo on fo.organization_id=o.id 
+                    join family f on f.id=fo.family_id where fo.enddate is null and f.statuscode='ACTIVE' order by f.name asc;
+            </transaction>
+            <classpath>
+                <path refid="bda-utils.classpath"/>
+            </classpath>
+        </sql>
+    </target>
+    
+    <target name="generate-org-families" depends="retrieve-org-families">
+        <delete file="/tmp/family_organizations.sql"/>
+        <loadfile property="orgs" srcfile="/tmp/family_organizations.txt"/>
+        <for param="line" list="${orgs}" delimiter="${line.separator}">
+            <sequential>
+                <propertyregex property="family" input="@{line}" regexp="^([^,]+)" select="\0" override="true"/>
+                <propertyregex property="escaped_fam" input="${family}" regexp="'" replace="''" global="true" override="true" defaultValue="${family}"/>
+                <propertyregex property="org" input="@{line}" regexp=",(.)+$" select="\0" override="true"/>
+                <propertyregex property="escaped_org" input="${org}" regexp="," replace="" global="false" override="true" defaultValue="${org}"/>
+                <propertyregex property="escaped_org" input="${org}" regexp="'" replace="''" global="true" override="true" defaultValue="${escaped_org}"/>
+                <echo file="/tmp/family_organizations.sql" append="true">insert into dw_family_organization(family_name, organization_name) values ('${escaped_fam}', '${escaped_org}');
+                </echo>
+            </sequential>
+        </for>
+    </target>
+    
+    <target name="retrieve-org-contacts">
+        <sql driver="${po.jdbc.driver}" url="${po.jdbc.url}" userid="${po.db.username}" password="${po.db.password}" expandproperties="true"
+            print="yes" showheaders="false" showtrailers="false" output="/tmp/org_contacts.txt">
+            <transaction>
+                select id, title from organizationalcontact where title is not null order by id asc;
+            </transaction>
+            <classpath>
+                <path refid="bda-utils.classpath"/>
+            </classpath>
+        </sql>
+    </target>
+    
+    <target name="generate-org-contacts" depends="retrieve-org-contacts">
+        <delete file="/tmp/org_contacts.sql"/>
+        <loadfile property="ocs" srcfile="/tmp/org_contacts.txt"/>
+        <for param="line" list="${ocs}" delimiter="${line.separator}">
+            <sequential>
+                <propertyregex property="id" input="@{line}" regexp="^([^,]+)" select="\0" override="true"/>
+                <propertyregex property="title" input="@{line}" regexp=",(.)+$" select="\0" override="true"/>
+                <propertyregex property="escaped_title" input="${title}" regexp="," replace="" global="false" override="true" defaultValue="${title}"/>
+                <echo file="/tmp/org_contacts.sql" append="true">insert into dw_generic_contact(identifier, title) values (${id}, '${escaped_title}');
+                </echo>
+            </sequential>
+        </for>
+    </target>
+    
+    <target name="populate" depends="generate-org-families, generate-org-contacts" 
+        description="Populates the data warehousing tables using the given database">
+        <sql driver="${pa.jdbc.driver}" url="${pa.jdbc.url}" userid="${pa.db.username}" password="${pa.db.password}" 
+            expandproperties="true">
+            <transaction src="${basedir}/sql/families.sql"/>
+            <transaction src="/tmp/family_organizations.sql"/>
+            <transaction src="${basedir}/sql/generic-contact.sql"/>
+            <transaction src="/tmp/org_contacts.sql"/>
+            <transaction src="${basedir}/sql/study.sql"/>
+            <transaction src="${basedir}/sql/anatomic_site.sql"/>
+            <transaction src="${basedir}/sql/biomarker.sql"/>
+            <transaction src="${basedir}/sql/disease.sql"/>
+            <transaction src="${basedir}/sql/grant.sql"/>
+            <transaction src="${basedir}/sql/indide.sql"/>
+            <transaction src="${basedir}/sql/participating-site.sql"/>
+            <transaction src="${basedir}/sql/misc.sql"/>
+            <classpath>
+                <path refid="bda-utils.classpath"/>
+            </classpath>
+        </sql>
+    </target>
+</project>
