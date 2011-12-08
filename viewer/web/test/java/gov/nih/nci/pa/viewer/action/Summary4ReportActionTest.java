@@ -101,6 +101,7 @@ import gov.nih.nci.pa.report.dto.result.Summ4RepResultDto;
 import gov.nih.nci.pa.report.service.Summary4ReportLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.viewer.dto.criteria.Summ4RepCriteriaWebDto;
+import gov.nih.nci.pa.viewer.dto.result.KeyValueDTO;
 import gov.nih.nci.pa.viewer.dto.result.Summ4ResultWebDto;
 import gov.nih.nci.pa.viewer.util.ServiceLocator;
 import gov.nih.nci.pa.viewer.util.ViewerConstants;
@@ -207,10 +208,10 @@ public class Summary4ReportActionTest extends AbstractReportActionTest<Summary4R
         when(summary4ReportService.getFamilies(100)).thenReturn(familyMap);
         sut.loadFamilies();
         verify(summary4ReportService).getFamilies(100);
-        Map<String, String> result = sut.getFamilies();
+        List<KeyValueDTO> result = sut.getFamilies();
         assertNotNull("No result returned", result);
         assertEquals("Wrong result size", 1, result.size());
-        assertEquals("Wrong name or key", "name 1", result.get("1"));
+        assertEquals("Wrong name or key", "name 1", result.get(0).getValue());
     }
 
     /**

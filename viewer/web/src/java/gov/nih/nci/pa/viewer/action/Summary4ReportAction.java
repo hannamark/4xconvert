@@ -87,6 +87,7 @@ import gov.nih.nci.pa.report.dto.result.Summ4RepResultDto;
 import gov.nih.nci.pa.report.service.Summary4ReportLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.viewer.dto.criteria.Summ4RepCriteriaWebDto;
+import gov.nih.nci.pa.viewer.dto.result.KeyValueDTO;
 import gov.nih.nci.pa.viewer.dto.result.Summ4ResultWebDto;
 import gov.nih.nci.pa.viewer.util.ViewerConstants;
 import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
@@ -118,7 +119,7 @@ public class Summary4ReportAction
 
     private List<String> autoCompleteResult;
     private Summ4RepCriteriaWebDto criteria;
-    private Map<String, String> families;
+    private List<KeyValueDTO> families;
     private Map<String, String> organizations;
     private int orgSearchType;
     private String term;
@@ -153,8 +154,13 @@ public class Summary4ReportAction
      */
     void loadFamilies() {
         try {
-            families = new TreeMap<String, String>();
-            families.putAll(summary4ReportService.getFamilies(MAX_LIMIT));
+            families = new ArrayList<KeyValueDTO>();
+            Map<String, String> familyMap = summary4ReportService.getFamilies(MAX_LIMIT);
+            for (Map.Entry<String, String> entry : familyMap.entrySet()) {
+                KeyValueDTO keyValueDTO = new KeyValueDTO(Long.valueOf(entry.getKey()), entry.getValue());
+                families.add(keyValueDTO);
+            }
+            Collections.sort(families);
         } catch (TooManyResultsException e) {
             addActionError(e.getMessage());
         }
@@ -282,7 +288,7 @@ public class Summary4ReportAction
     /**
      * @return the families
      */
-    public Map<String, String> getFamilies() {
+    public List<KeyValueDTO> getFamilies() {
         return families;
     }
 
