@@ -111,7 +111,7 @@ var hmTypesDropdownRev;
         
         function searchInterventions() {
             $('.ui-autocomplete').hide();
-            var searchTerm = $('#interventionsSection .interventionrescol input[type="text"]').val();
+            var searchTerm = $('#interventionsSection .interventionrescol input[type="text"]').val().toLowerCase();
             var type = $('#interventionType option:selected').val();
             var resultIndexes = InterventionsPkg.searchInterventions( searchTerm, type );
             buildInterventionList( searchTerm, resultIndexes, type );
@@ -307,9 +307,9 @@ InterventionsPkg = {
                 continue;
             var intvItem = interventions[i];
             if( !this.intvData.hasOwnProperty( intvItem.type ))
-                this.intvData[intvItem.type] = [{'id':intvItem.id, 'name':intvItem.name}];
+                this.intvData[intvItem.type] = [{'id':intvItem.id, 'name':intvItem.name.toLowerCase()}];
             else
-                this.intvData[intvItem.type].push({'id':intvItem.id, 'name':intvItem.name});
+                this.intvData[intvItem.type].push({'id':intvItem.id, 'name':intvItem.name.toLowerCase()});
         }
         
         var hmNames = {};
@@ -329,7 +329,7 @@ InterventionsPkg = {
         this.intvData['All']=[];
         for( var name in hmNames ) 
             if(hmNames.hasOwnProperty(name)) 
-                this.intvData['All'].push({'id':hmNames[name].id, 'name':hmNames[name].name});
+                this.intvData['All'].push({'id':hmNames[name].id, 'name':hmNames[name].name.toLowerCase()});
     },
     
     initInterventionsDictionary : function() {

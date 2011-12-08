@@ -71,13 +71,7 @@
 			
 			$('.breadcrumbFeaturedElement').each( function() {
 				$(this).html( $(this).html().replace(term,'<span class="breadcrumbHighlight">'+term+'</span>') );
-			});
-			
-//			$('.breadcrumbElementText, .breadcrumbElementSeparator').hover(function(){
-//                $(this).addClass('breadcrumbElementSelection');
-//			}, function(){
-//                $(this).removeClass('breadcrumbElementSelection');
-//			});
+			});			
 		};
 		
 		//    Entry point
