@@ -180,6 +180,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
     @Before
     public void setUp() throws Exception {
         bean.setRegistryUserService(new RegistryUserServiceBean());
+        bean.setDataAccessService(new DataAccessServiceBean());
         createStudyProtocol("1", false, Boolean.FALSE, false, false, false, false, true);
     }
 
@@ -879,7 +880,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
     public void getStudyProtocolQueryResultListByBioMarkers() throws PAException {
         TestBean testBean = createStudyProtocolListForSearchByBioMarkers();
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
-        criteria.setBioMarkers(testBean.input);
+        criteria.setBioMarkerIds(testBean.input);
         List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
         assertEquals(2, result.size());       
         assertTrue(testBean.output.contains(result.get(0).getId()));

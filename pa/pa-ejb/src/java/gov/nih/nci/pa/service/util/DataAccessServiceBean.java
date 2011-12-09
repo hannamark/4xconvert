@@ -80,117 +80,88 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.dto;
+package gov.nih.nci.pa.service.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
-import gov.nih.nci.pa.enums.IdentifierType;
-
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
-import org.junit.Test;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
  * @author Michael Visee
  */
-public class StudyProtocolQueryCriteriaTest {
-    private static final String ID = "identifier value";
-    private StudyProtocolQueryCriteria sut = new StudyProtocolQueryCriteria();
+@Stateless
+@Interceptors(PaHibernateSessionInterceptor.class)
+public class DataAccessServiceBean implements DataAccessServiceLocal {
+    private static final Logger LOG = Logger.getLogger(DataAccessServiceBean.class);
 
     /**
-     * Test the setIdentifier method for the CTEP case.
+     * {@inheritDoc}
      */
-    @Test
-    public void testSetIdentifierCTEP() {
-        sut.setIdentifierType(IdentifierType.CTEP.getCode());
-        sut.setIdentifier(ID);
-        assertEquals("Wrong identifier value", ID, sut.getCtepIdentifier());
-    }
-
-    /**
-     * Test the setIdentifier method for the DCP case.
-     */
-    @Test
-    public void testSetIdentifierDCP() {
-        sut.setIdentifierType(IdentifierType.DCP.getCode());
-        sut.setIdentifier(ID);
-        assertEquals("Wrong identifier value", ID, sut.getDcpIdentifier());
+    @Override
+    public <T> T findEntityByQuery(DAQuery daQuery) {
+        List<T> list = findByQuery(daQuery);
+        if (CollectionUtils.isEmpty(list)) {
+            return null;
+        }
+        if (list.size() == 1) {
+            return list.get(0);
+        }
+        throw new IllegalArgumentException("Query should not return more than one result.");
     }
 
     /**
-     * Test the setIdentifier method for the LEAD_ORG case.
+     * {@inheritDoc}
      */
-    @Test
-    public void testSetIdentifierLEAD_ORG() {
-        sut.setIdentifierType(IdentifierType.LEAD_ORG.getCode());
-        sut.setIdentifier(ID);
-        assertEquals("Wrong identifier value", ID, sut.getLeadOrganizationTrialIdentifier());
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> List<T> findByQuery(DAQuery daQuery) {
+        Query query = createQuery(daQuery);
+        setParameters(query, daQuery.getParameters());
+        return query.list();
     }
 
     /**
-     * Test the setIdentifier method for the NCI case.
+     * Creates the hibernate query represented by the given DAQuery.
+     * @param daQuery The DAQuery to use.
+     * @return The hibernate query represented by the given DAQuery.
      */
-    @Test
-    public void testSetIdentifierNCI() {
-        sut.setIdentifierType(IdentifierType.NCI.getCode());
-        sut.setIdentifier(ID);
-        assertEquals("Wrong identifier value", ID, sut.getNciIdentifier());
+    Query createQuery(DAQuery daQuery) {
+        Session session = PaHibernateUtil.getCurrentSession();
+        if (daQuery.getName() != null) {
+            LOG.debug("Executing named query: " + daQuery.getName());
+            return session.getNamedQuery(daQuery.getName());
+        }
+        LOG.debug("Executing dynamic query query: " + daQuery.getText());
+        return (daQuery.isSql()) ? session.createSQLQuery(daQuery.getText()) : session.createQuery(daQuery.getText());
     }
 
     /**
-     * Test the setIdentifier method for the NCT case.
+     * Sets the parameters of the query.
+     * @param query The hibernate query
+     * @param parameters The map of parameter values
      */
-    @Test
-    public void testSetIdentifierNCT() {
-        sut.setIdentifierType(IdentifierType.NCT.getCode());
-        sut.setIdentifier(ID);
-        assertEquals("Wrong identifier value", ID, sut.getNctNumber());
-    }
-
-    /**
-     * Test the setIdentifier method for the OTHER_IDENTIFIER case.
-     */
-    @Test
-    public void testSetIdentifierOTHER_IDENTIFIER() {
-        sut.setIdentifierType(IdentifierType.OTHER_IDENTIFIER.getCode());
-        sut.setIdentifier(ID);
-        assertEquals("Wrong identifier value", ID, sut.getOtherIdentifier());
-    }
-    
-    /**
-     * Test the cleanupIds method.
-     */
-    @Test
-    public void cleanupIds() {
-        List<Long> ids = new ArrayList<Long>();
-        ids.add(1L);
-        ids.add(2L);
-        ids.add(1L);
-        ids.add(null);
-        List<Long> result = sut.cleanupIds(ids);
-        assertNotNull("No result returned", result);
-        assertEquals("Wrong result size", 2, result.size());
-        assertEquals("Wrong result(0)", 1L, result.get(0).longValue());
-        assertEquals("Wrong result(1)", 2L, result.get(1).longValue());
-    }
-    
-    /**
-     * Test the cleanupNames method.
-     */
-    @Test
-    public void cleanupNamess() {
-        List<String> names = new ArrayList<String>();
-        names.add("name1");
-        names.add("name2");
-        names.add("name1");
-        names.add("   ");
-        names.add(null);
-        List<String> result = sut.cleanupNames(names);
-        assertNotNull("No result returned", result);
-        assertEquals("Wrong result size", 2, result.size());
-        assertEquals("Wrong result(0)", "name1", result.get(0));
-        assertEquals("Wrong result(1)", "name2", result.get(1));
+    void setParameters(Query query, Map<String, Object> parameters) {
+        if (MapUtils.isNotEmpty(parameters)) {
+            for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+                if (entry.getValue() instanceof Collection) {
+                    query.setParameterList(entry.getKey(), (Collection<?>) entry.getValue());
+                } else {
+                    query.setParameter(entry.getKey(), entry.getValue());
+                }
+                LOG.debug("parameter " + entry.getKey() + " = " + entry.getValue());
+            }
+        }
     }
 }

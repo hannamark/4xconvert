@@ -147,20 +147,23 @@ public class StudyProtocolQueryCriteria implements Serializable {
 
     private String countryName;
     private String city;
-    private final List<String> documentWorkflowStatusCodes = new ArrayList<String>();
-    private final List<String> states = new ArrayList<String>();
-    private final List<String> phaseCodes = new ArrayList<String>();
-    private final List<Long> summary4AnatomicSites = new ArrayList<Long>();
-    private final List<Long> bioMarkers = new ArrayList<Long>();
-    private final List<Long> pdqDiseases = new ArrayList<Long>();
-    private final List<Long> participatingSiteIds = new ArrayList<Long>();
-    private final List<Long> leadOrganizationIds = new ArrayList<Long>();
-    private final List<Long> interventionIds = new ArrayList<Long>();
-    private final List<Long> interventionAlternateNameIds = new ArrayList<Long>();
-    private final List<String> interventionTypes = new ArrayList<String>();   
-    private String familyId = "0";    
+    
+    private List<Long> bioMarkerIds = new ArrayList<Long>();
+    private List<String> bioMarkerNames = new ArrayList<String>();
+    private List<String> documentWorkflowStatusCodes = new ArrayList<String>();
+    private List<Long> interventionIds = new ArrayList<Long>();
+    private List<Long> interventionAlternateNameIds = new ArrayList<Long>();
+    private List<String> interventionTypes = new ArrayList<String>();
+    private List<Long> leadOrganizationIds = new ArrayList<Long>();
+    private List<Long> participatingSiteIds = new ArrayList<Long>();
+    private List<Long> pdqDiseases = new ArrayList<Long>();
+    private List<String> phaseCodes = new ArrayList<String>();
+    private List<String> states = new ArrayList<String>();
+    private List<Long> summary4AnatomicSites = new ArrayList<Long>();
+    
+    private String familyId = "0";
     private String participatingSiteFamilyId = "0";
-
+    
     /**
      * @return the inBoxProcessing
      */
@@ -236,12 +239,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
      * @param leadOrganizationIds leadOrganizationIds
      */
     public void setLeadOrganizationIds(List<Long> leadOrganizationIds) {
-        this.leadOrganizationIds.clear();
-        for (Long id : leadOrganizationIds) {
-            if (id != null) {
-                this.leadOrganizationIds.add(id);
-            }
-        }
+        this.leadOrganizationIds = cleanupIds(leadOrganizationIds);
     }
 
     /**
@@ -280,12 +278,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
      * @param participatingSiteIds the participatingSiteIds to set
      */
     public void setParticipatingSiteIds(List<Long> participatingSiteIds) {
-        this.participatingSiteIds.clear();
-        for (Long id : participatingSiteIds) {
-            if (id != null) {
-                this.participatingSiteIds.add(id);
-            }
-        }
+        this.participatingSiteIds = cleanupIds(participatingSiteIds);
     }
 
     /**
@@ -334,12 +327,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
      * @param documentWorkflowStatusCodes documentWorkflowStatusCodes
      */
     public void setDocumentWorkflowStatusCodes(List<String> documentWorkflowStatusCodes) {
-        this.documentWorkflowStatusCodes.clear();
-        for (String statusCode : documentWorkflowStatusCodes) {
-            if (StringUtils.isNotBlank(statusCode)) {
-                this.documentWorkflowStatusCodes.add(statusCode);
-            }
-        }
+        this.documentWorkflowStatusCodes = cleanupNames(documentWorkflowStatusCodes);
     }
 
     /**
@@ -626,12 +614,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
      * @param phaseCodes the phaseCodes to set
      */
     public void setPhaseCodes(List<String> phaseCodes) {
-        this.phaseCodes.clear();
-        for (String code : phaseCodes) {
-            if (StringUtils.isNotBlank(code)) {
-                this.phaseCodes.add(code);
-            }
-        }
+        this.phaseCodes = cleanupNames(phaseCodes);
     }
 
     /**
@@ -659,12 +642,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
      * @param states the states to set
      */
     public void setStates(List<String> states) {
-        this.states.clear();
-        for (String state : states) {
-            if (StringUtils.isNotBlank(state)) {
-                this.states.add(state);
-            }
-        }
+        this.states = cleanupNames(states);
     }
 
     /**
@@ -692,31 +670,35 @@ public class StudyProtocolQueryCriteria implements Serializable {
      * @param summary4AnatomicSiteIds the summary4AnatomicSites to set
      */
     public void setSummary4AnatomicSites(List<Long> summary4AnatomicSiteIds) {
-        summary4AnatomicSites.clear();
-        for (Long id : summary4AnatomicSiteIds) {
-            if (id != null) {
-                summary4AnatomicSites.add(id);
-            }
-        }
+        summary4AnatomicSites = cleanupIds(summary4AnatomicSiteIds);
     }
 
     /**
-     * @return the bioMarkers
+     * @return the bioMarkerIds
      */
-    public List<Long> getBioMarkers() {
-        return bioMarkers;
+    public List<Long> getBioMarkerIds() {
+        return bioMarkerIds;
     }
 
     /**
      * @param bioMarkerIds the bioMarkers to set
      */
-    public void setBioMarkers(List<Long> bioMarkerIds) {
-        bioMarkers.clear();
-        for (Long id : bioMarkerIds) {
-            if (id != null) {
-                bioMarkers.add(id);
-            }
-        }
+    public void setBioMarkerIds(List<Long> bioMarkerIds) {
+        this.bioMarkerIds = cleanupIds(bioMarkerIds);
+    }
+
+    /**
+     * @return the bioMarkerNames
+     */
+    public List<String> getBioMarkerNames() {
+        return bioMarkerNames;
+    }
+
+    /**
+     * @param bioMarkerNames the bioMarkerNames to set
+     */
+    public void setBioMarkerNames(List<String> bioMarkerNames) {
+        this.bioMarkerNames = cleanupNames(bioMarkerNames);
     }
 
     /**
@@ -730,14 +712,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
      * @param pdqDiseaseIds the pdqDiseases to set
      */
     public void setPdqDiseases(List<Long> pdqDiseaseIds) {
-        pdqDiseases.clear();
-        Set<Long> ids = new HashSet<Long>();
-        for (Long id : pdqDiseaseIds) {
-            if (id != null) {
-                ids.add(id);
-            }
-        }
-        pdqDiseases.addAll(ids);
+        pdqDiseases = cleanupIds(pdqDiseaseIds);
     }
 
     /**
@@ -751,14 +726,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
      * @param interventionIds the interventionIds to set
      */
     public void setInterventionIds(List<Long> interventionIds) {
-        this.interventionIds.clear();
-        Set<Long> ids = new HashSet<Long>();
-        for (Long id : interventionIds) {
-            if (id != null) {
-                ids.add(id);
-            }
-        }
-        this.interventionIds.addAll(ids);
+        this.interventionIds = cleanupIds(interventionIds);
     }
 
     /**
@@ -772,12 +740,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
      * @param interventionAlternateNameIds the interventionAlternateNameIds to set
      */
     public void setInterventionAlternateNameIds(List<Long> interventionAlternateNameIds) {
-        this.interventionAlternateNameIds.clear();
-        for (Long id : interventionAlternateNameIds) {
-            if (id != null) {
-                this.interventionAlternateNameIds.add(id);
-            }
-        }
+        this.interventionAlternateNameIds = cleanupIds(interventionAlternateNameIds);
     }     
 
     /**
@@ -791,15 +754,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
      * @param interventionTypes the interventionTypes to set
      */
     public void setInterventionTypes(List<String> interventionTypes) {
-        this.interventionTypes.clear();
-        Set<String> types = new HashSet<String>();
-        for (String type : interventionTypes) {
-            if (type != null) {
-                types.add(type);
-            }
-        }
-        this.interventionTypes.addAll(types);
-    }    
+        this.interventionTypes = cleanupNames(interventionTypes);
+    }
 
     /**
      * @return the familyId
@@ -813,7 +769,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setFamilyId(String familyId) {
         this.familyId = familyId;
-    }    
+    }
 
     /**
      * @return the participatingSiteFamilyId
@@ -867,5 +823,46 @@ public class StudyProtocolQueryCriteria implements Serializable {
         default:
             break;
         }
+    }
+
+    /**
+     * Cleanup the given list of ids from nulls and duplicates.
+     * 
+     * @param ids The list to clean up.
+     * @return A new List cleaned-up from nulls and duplicates
+     */
+    List<Long> cleanupIds(List<Long> ids) {
+        List<Long> result = new ArrayList<Long>();
+        if (CollectionUtils.isNotEmpty(ids)) {
+            Set<Long> existingIds = new HashSet<Long>();
+            for (Long id : ids) {
+                if (id != null && !existingIds.contains(id)) {
+                    result.add(id);
+                    existingIds.add(id);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Cleanup the given list of names from blanks and duplicates.
+     * 
+     * @param names The list to clean up.
+     * @return A new List cleaned-up from blanks and duplicates
+     */
+    List<String> cleanupNames(List<String> names) {
+        List<String> result = new ArrayList<String>();
+        if (CollectionUtils.isNotEmpty(names)) {
+            Set<String> existingNames = new HashSet<String>();
+            for (String name : names) {
+                if (StringUtils.isNotBlank(name) && !existingNames.contains(name)) {
+                    result.add(name);
+                    existingNames.add(name);
+                }
+
+            }
+        }
+        return result;
     }
 }

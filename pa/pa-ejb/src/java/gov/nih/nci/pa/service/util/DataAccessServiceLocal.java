@@ -80,117 +80,31 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.dto;
+package gov.nih.nci.pa.service.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import gov.nih.nci.pa.enums.IdentifierType;
-
-import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import javax.ejb.Local;
 
 /**
  * @author Michael Visee
  */
-public class StudyProtocolQueryCriteriaTest {
-    private static final String ID = "identifier value";
-    private StudyProtocolQueryCriteria sut = new StudyProtocolQueryCriteria();
-
+@Local
+public interface DataAccessServiceLocal {
     /**
-     * Test the setIdentifier method for the CTEP case.
+     * Runs a HQL query that return at most one result.
+     * @param <T> The type of the result
+     * @param query The query to run.
+     * @return The result of the query
      */
-    @Test
-    public void testSetIdentifierCTEP() {
-        sut.setIdentifierType(IdentifierType.CTEP.getCode());
-        sut.setIdentifier(ID);
-        assertEquals("Wrong identifier value", ID, sut.getCtepIdentifier());
-    }
-
-    /**
-     * Test the setIdentifier method for the DCP case.
-     */
-    @Test
-    public void testSetIdentifierDCP() {
-        sut.setIdentifierType(IdentifierType.DCP.getCode());
-        sut.setIdentifier(ID);
-        assertEquals("Wrong identifier value", ID, sut.getDcpIdentifier());
-    }
-
-    /**
-     * Test the setIdentifier method for the LEAD_ORG case.
-     */
-    @Test
-    public void testSetIdentifierLEAD_ORG() {
-        sut.setIdentifierType(IdentifierType.LEAD_ORG.getCode());
-        sut.setIdentifier(ID);
-        assertEquals("Wrong identifier value", ID, sut.getLeadOrganizationTrialIdentifier());
-    }
-
-    /**
-     * Test the setIdentifier method for the NCI case.
-     */
-    @Test
-    public void testSetIdentifierNCI() {
-        sut.setIdentifierType(IdentifierType.NCI.getCode());
-        sut.setIdentifier(ID);
-        assertEquals("Wrong identifier value", ID, sut.getNciIdentifier());
-    }
-
-    /**
-     * Test the setIdentifier method for the NCT case.
-     */
-    @Test
-    public void testSetIdentifierNCT() {
-        sut.setIdentifierType(IdentifierType.NCT.getCode());
-        sut.setIdentifier(ID);
-        assertEquals("Wrong identifier value", ID, sut.getNctNumber());
-    }
-
-    /**
-     * Test the setIdentifier method for the OTHER_IDENTIFIER case.
-     */
-    @Test
-    public void testSetIdentifierOTHER_IDENTIFIER() {
-        sut.setIdentifierType(IdentifierType.OTHER_IDENTIFIER.getCode());
-        sut.setIdentifier(ID);
-        assertEquals("Wrong identifier value", ID, sut.getOtherIdentifier());
-    }
+    <T> T findEntityByQuery(DAQuery query);
     
     /**
-     * Test the cleanupIds method.
+     * Runs a HQL query that returns a list.
+     * @param <T> The type of the results
+     * @param query The query to run.
+     * @return The results of the query
      */
-    @Test
-    public void cleanupIds() {
-        List<Long> ids = new ArrayList<Long>();
-        ids.add(1L);
-        ids.add(2L);
-        ids.add(1L);
-        ids.add(null);
-        List<Long> result = sut.cleanupIds(ids);
-        assertNotNull("No result returned", result);
-        assertEquals("Wrong result size", 2, result.size());
-        assertEquals("Wrong result(0)", 1L, result.get(0).longValue());
-        assertEquals("Wrong result(1)", 2L, result.get(1).longValue());
-    }
+    <T> List<T> findByQuery(DAQuery query);
     
-    /**
-     * Test the cleanupNames method.
-     */
-    @Test
-    public void cleanupNamess() {
-        List<String> names = new ArrayList<String>();
-        names.add("name1");
-        names.add("name2");
-        names.add("name1");
-        names.add("   ");
-        names.add(null);
-        List<String> result = sut.cleanupNames(names);
-        assertNotNull("No result returned", result);
-        assertEquals("Wrong result size", 2, result.size());
-        assertEquals("Wrong result(0)", "name1", result.get(0));
-        assertEquals("Wrong result(1)", "name2", result.get(1));
-    }
 }

@@ -117,6 +117,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <!-- mapping classes for auditing -->
         <mapping class="com.fiveamsolutions.nci.commons.audit.AuditLogRecord" />
         <mapping class="com.fiveamsolutions.nci.commons.audit.AuditLogDetail" />
+        <mapping resource="queries.xml" />
 
     </session-factory>
 </hibernate-configuration>

@@ -80,117 +80,54 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.dto;
+package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import gov.nih.nci.pa.enums.IdentifierType;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
 /**
  * @author Michael Visee
  */
-public class StudyProtocolQueryCriteriaTest {
-    private static final String ID = "identifier value";
-    private StudyProtocolQueryCriteria sut = new StudyProtocolQueryCriteria();
+public class DAQueryTest {
 
     /**
-     * Test the setIdentifier method for the CTEP case.
+     * Test the queryByName method.
      */
     @Test
-    public void testSetIdentifierCTEP() {
-        sut.setIdentifierType(IdentifierType.CTEP.getCode());
-        sut.setIdentifier(ID);
-        assertEquals("Wrong identifier value", ID, sut.getCtepIdentifier());
-    }
-
-    /**
-     * Test the setIdentifier method for the DCP case.
-     */
-    @Test
-    public void testSetIdentifierDCP() {
-        sut.setIdentifierType(IdentifierType.DCP.getCode());
-        sut.setIdentifier(ID);
-        assertEquals("Wrong identifier value", ID, sut.getDcpIdentifier());
+    public void testQueryByName() {
+        DAQuery query = DAQuery.queryByName("name");
+        assertEquals("Wrong query name", "name", query.getName());
+        assertNull("Wrong query text", query.getText());
+        assertTrue("Wrong parameter map", query.getParameters().isEmpty());
     }
 
     /**
-     * Test the setIdentifier method for the LEAD_ORG case.
+     * Test the queryByText method.
      */
     @Test
-    public void testSetIdentifierLEAD_ORG() {
-        sut.setIdentifierType(IdentifierType.LEAD_ORG.getCode());
-        sut.setIdentifier(ID);
-        assertEquals("Wrong identifier value", ID, sut.getLeadOrganizationTrialIdentifier());
+    public void testQueryByText() {
+        DAQuery query = DAQuery.queryByText("text");
+        assertNull("Wrong query name", query.getName());
+        assertEquals("Wrong query text", "text", query.getText());
+        assertTrue("Wrong parameter map", query.getParameters().isEmpty());
     }
 
     /**
-     * Test the setIdentifier method for the NCI case.
+     * Test the addParameter method.
      */
     @Test
-    public void testSetIdentifierNCI() {
-        sut.setIdentifierType(IdentifierType.NCI.getCode());
-        sut.setIdentifier(ID);
-        assertEquals("Wrong identifier value", ID, sut.getNciIdentifier());
+    public void testAddParameter() {
+        DAQuery query = DAQuery.queryByName("name");
+        Object value = new Object();
+        query.addParameter("name", value);
+        Map<String, Object> result = query.getParameters();
+        assertEquals("Wrong map size", 1, result.size());
+        assertEquals("Wrong parameter value", value, result.get("name"));
     }
 
-    /**
-     * Test the setIdentifier method for the NCT case.
-     */
-    @Test
-    public void testSetIdentifierNCT() {
-        sut.setIdentifierType(IdentifierType.NCT.getCode());
-        sut.setIdentifier(ID);
-        assertEquals("Wrong identifier value", ID, sut.getNctNumber());
-    }
-
-    /**
-     * Test the setIdentifier method for the OTHER_IDENTIFIER case.
-     */
-    @Test
-    public void testSetIdentifierOTHER_IDENTIFIER() {
-        sut.setIdentifierType(IdentifierType.OTHER_IDENTIFIER.getCode());
-        sut.setIdentifier(ID);
-        assertEquals("Wrong identifier value", ID, sut.getOtherIdentifier());
-    }
-    
-    /**
-     * Test the cleanupIds method.
-     */
-    @Test
-    public void cleanupIds() {
-        List<Long> ids = new ArrayList<Long>();
-        ids.add(1L);
-        ids.add(2L);
-        ids.add(1L);
-        ids.add(null);
-        List<Long> result = sut.cleanupIds(ids);
-        assertNotNull("No result returned", result);
-        assertEquals("Wrong result size", 2, result.size());
-        assertEquals("Wrong result(0)", 1L, result.get(0).longValue());
-        assertEquals("Wrong result(1)", 2L, result.get(1).longValue());
-    }
-    
-    /**
-     * Test the cleanupNames method.
-     */
-    @Test
-    public void cleanupNamess() {
-        List<String> names = new ArrayList<String>();
-        names.add("name1");
-        names.add("name2");
-        names.add("name1");
-        names.add("   ");
-        names.add(null);
-        List<String> result = sut.cleanupNames(names);
-        assertNotNull("No result returned", result);
-        assertEquals("Wrong result size", 2, result.size());
-        assertEquals("Wrong result(0)", "name1", result.get(0));
-        assertEquals("Wrong result(1)", "name2", result.get(1));
-    }
 }

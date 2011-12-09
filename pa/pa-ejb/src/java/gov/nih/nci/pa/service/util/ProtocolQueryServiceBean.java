@@ -142,7 +142,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
@@ -160,6 +159,11 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtocol>
     implements ProtocolQueryServiceLocal {
+    
+    private static final Logger LOG = Logger.getLogger(ProtocolQueryServiceBean.class);
+    
+    @EJB
+    private DataAccessServiceLocal dataAccessService;
 
     @EJB
     private RegistryUserServiceLocal registryUserService;
@@ -168,8 +172,6 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     private PDQDiseaseServiceLocal pdqDiseaseService;    
 
     private PAServiceUtils paServiceUtils;
-
-    private static final Logger LOG = Logger.getLogger(ProtocolQueryServiceBean.class);
 
     /**
      * {@inheritDoc}
@@ -201,6 +203,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         if (isCriteriaEmpty(criteria)) {
             throw new PAException("At least one criteria is required.");
         }        
+        lookupBiomarkerIds(criteria);
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
         List<StudyProtocol> studies = getStudyProtocolQueryResultList(criteria);
         List<Long> spIdList = convertProtocolListToIdList(studies);
@@ -210,6 +213,19 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             pdtos = appendOnHold(pdtos);
         }
         return pdtos;
+    }
+    
+    /**
+     * Lookup the biomarker ids by names for the search by biomarkers.
+     * @param criteria The search criteria
+     */
+    void lookupBiomarkerIds(StudyProtocolQueryCriteria criteria) {
+        if (CollectionUtils.isNotEmpty(criteria.getBioMarkerNames())) {
+            DAQuery query = DAQuery.queryByName("gov.nih.nci.pa.domain.PlannedMarker.idsByLongNames");
+            query.addParameter("longNames", criteria.getBioMarkerNames());
+            List<Long> ids = dataAccessService.findByQuery(query);
+            criteria.setBioMarkerIds(ids);
+        }
     }
     
     /**
@@ -315,7 +331,6 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         RegistryUser potentialOwner = getPotentialOwner(userId);
         try {
             for (Long spId : protocolQueryResult) {
-
                 StudyProtocolQueryDTO studyProtocolDto =
                     studyProtocolQueryConverter.convertToStudyProtocolDtoForReporting(
                             spId, myTrialsOnly, potentialOwner);
@@ -336,42 +351,25 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
 
     @SuppressWarnings("unchecked")
     private List<StudyProtocolQueryDTO> appendOnHold(List<StudyProtocolQueryDTO> spDtos) throws PAException {
-        StringBuffer hql = new StringBuffer();
-        Session session = null;
-        long[] ids = getProtocolIds(spDtos);
-        session = PaHibernateUtil.getCurrentSession();
-        hql.append(" select sp , soh from StudyProtocol as sp  join sp.studyOnholds as soh where sp.id in ( ");
-        for (int i = 0; i < ids.length; i++) {
-            hql.append(ids[i]);
-            hql.append((i < ids.length - 1 ? " ," : " "));
-        }
-        hql.append(" ) and soh.offholdDate is null");
-        Query query = null;
-        query = session.createQuery(hql.toString());
-        Map<Long, List<StudyOnhold>> studyOnHolds = generateOnholdMap(query.list());
+        DAQuery query = DAQuery.queryByName("gov.nih.nci.pa.domain.StudyOnhold.offholdByStudyProtocolIds");
+        query.addParameter("spIds", getProtocolIds(spDtos));
+        List<Object[]> studyOnHoldList = dataAccessService.findByQuery(query);
+        Map<Long, List<StudyOnhold>> studyOnHolds = generateOnholdMap(studyOnHoldList);
         populateOnHoldData(spDtos, studyOnHolds);
         return spDtos;
     }
 
-   private Map<Long , List<StudyOnhold>> generateOnholdMap(List<Object> onHoldReasons) {
-        Object[] searchResult = null;
-        StudyProtocol studyProtocol = null;
-        StudyOnhold studyOnhold = null;
+   private Map<Long , List<StudyOnhold>> generateOnholdMap(List<Object[]> onHoldReasons) {
         Map<Long , List<StudyOnhold>> studyOnHolds = new HashMap<Long , List<StudyOnhold>>();
-        ArrayList<StudyOnhold> sohList = null;
-        for (int i = 0; i < onHoldReasons.size(); i++) {
-            searchResult = (Object[]) onHoldReasons.get(i);
-            if (searchResult == null) {
-                break;
-            }
-            studyProtocol = (StudyProtocol) searchResult[0];
-            studyOnhold = (StudyOnhold) searchResult[1];
-            if (studyOnHolds.containsKey(studyProtocol.getId())) {
-                studyOnHolds.get(studyProtocol.getId()).add(studyOnhold);
+        for (Object[] searchResult : onHoldReasons) {
+            Long studyProtocolId = (Long) searchResult[0];
+            StudyOnhold studyOnhold = (StudyOnhold) searchResult[1];
+            if (studyOnHolds.containsKey(studyProtocolId)) {
+                studyOnHolds.get(studyProtocolId).add(studyOnhold);
             } else {
-                sohList = new ArrayList<StudyOnhold>();
+                List<StudyOnhold> sohList = new ArrayList<StudyOnhold>();
                 sohList.add(studyOnhold);
-                studyOnHolds.put(studyProtocol.getId(), sohList);
+                studyOnHolds.put(studyProtocolId, sohList);
             }
         }
         return studyOnHolds;
@@ -401,14 +399,12 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         }
     }
 
-
-    private long[] getProtocolIds(List<StudyProtocolQueryDTO> spDtos) {
-        long[] pids = new long[spDtos.size()];
-        int x = 0;
+    private List<Long> getProtocolIds(List<StudyProtocolQueryDTO> spDtos) {
+        List<Long> spIds = new ArrayList<Long>();
         for (StudyProtocolQueryDTO spqDto : spDtos) {
-            pids[x++] = spqDto.getStudyProtocolId().longValue();
+            spIds.add(spqDto.getStudyProtocolId());
         }
-        return pids;
+        return spIds;
     }
 
     private StudyProtocolQueryBeanSearchCriteria getExampleCriteria(StudyProtocolQueryCriteria criteria) {
@@ -428,7 +424,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setStates(criteria.getStates());
         options.setCity(criteria.getCity());
         options.setSummary4AnatomicSites(criteria.getSummary4AnatomicSites());
-        options.setBioMarkers(criteria.getBioMarkers());
+        options.setBioMarkers(criteria.getBioMarkerIds());
         options.setPdqDiseases(criteria.getPdqDiseases());
         options.setInterventionIds(criteria.getInterventionIds());
         options.setInterventionAlternateNameIds(criteria.getInterventionAlternateNameIds());
@@ -651,7 +647,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && CollectionUtils.isEmpty(criteria.getStates())
                 && CollectionUtils.isEmpty(criteria.getPhaseCodes())
                 && CollectionUtils.isEmpty(criteria.getSummary4AnatomicSites())
-                && CollectionUtils.isEmpty(criteria.getBioMarkers())
+                && CollectionUtils.isEmpty(criteria.getBioMarkerNames())
                 && CollectionUtils.isEmpty(criteria.getPdqDiseases())
                 && CollectionUtils.isEmpty(criteria.getParticipatingSiteIds())
                 && CollectionUtils.isEmpty(criteria.getLeadOrganizationIds())               
@@ -731,6 +727,13 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
         this.paServiceUtils = paServiceUtils;
     }   
+
+    /**
+     * @param dataAccessService the dataAccessService to set
+     */
+    public void setDataAccessService(DataAccessServiceLocal dataAccessService) {
+        this.dataAccessService = dataAccessService;
+    }
 
     /**
      * @param pdqDiseaseService the pdqDiseaseService to set

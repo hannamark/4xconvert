@@ -70,6 +70,7 @@ This is the definition of a virtual module called bda-download that has a depend
 	<dependency org="postgresql"             name="postgresql"              rev="8.4-701.jdbc3"   conf="compile->master"/>
 	
     <!-- test -->
+    <dependency org="antlr"                  name="antlr"                   rev="2.7.6"           conf="test->master"/>
     <dependency org="dom4j"                  name="dom4j"                   rev="1.6.1"           conf="test->master"/>
     <dependency org="org.hsqldb"             name="hsqldb"                  rev="1.8.0.10"        conf="test->master"/>
     <dependency org="jboss"                  name="hibernate3"              rev="4.0.5.GA"        conf="test->master"/>

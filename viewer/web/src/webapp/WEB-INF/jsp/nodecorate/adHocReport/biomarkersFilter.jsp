@@ -4,8 +4,8 @@
     <table class="form-table">
         <tbody>
             <viewer:valueRow labelFor="bioMarkers" labelKey="studyProtocol.biomarker">
-                <s:select name="criteria.bioMarkers" id="bioMarkers" list="plannedMarkersList" listKey="key"
-                          listValue="value" headerKey="" headerValue="All" value="criteria.bioMarkers" multiple="true" size="5" />
+                <s:select name="criteria.bioMarkerNames" id="bioMarkers" list="plannedMarkersList" 
+                          headerKey="" headerValue="All" value="criteria.bioMarkers" multiple="true" size="5" />
             </viewer:valueRow>
         </tbody>
     </table>    
