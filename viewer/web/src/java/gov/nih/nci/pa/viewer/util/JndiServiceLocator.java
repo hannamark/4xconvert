@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.viewer.util;
 
+import gov.nih.nci.pa.report.service.OrganizationFamilyServiceLocal;
 import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
 import gov.nih.nci.pa.report.service.Summary4ReportLocal;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
@@ -130,4 +131,14 @@ public class JndiServiceLocator implements ServiceLocator {
     public ProtocolQueryServiceLocal getProtocolQueryService() {
         return (ProtocolQueryServiceLocal) JNDIUtil.lookupPa("pa/ProtocolQueryServiceBean/local");
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public OrganizationFamilyServiceLocal getOrganizationFamilyService() {
+        return (OrganizationFamilyServiceLocal) JNDIUtil.lookupPa("pa/OrganizationFamilyServiceBean/local");
+    }
+    
+    
 }

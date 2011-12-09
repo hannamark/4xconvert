@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.viewer.util;
 
+import gov.nih.nci.pa.report.service.OrganizationFamilyServiceLocal;
 import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
 import gov.nih.nci.pa.report.service.Summary4ReportLocal;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
@@ -112,5 +113,10 @@ public interface ServiceLocator {
      * @return protocol query service.
      */
     ProtocolQueryServiceLocal getProtocolQueryService();
+    
+    /**
+     * @return adHoc report service.
+     */
+    OrganizationFamilyServiceLocal getOrganizationFamilyService();
     
 }

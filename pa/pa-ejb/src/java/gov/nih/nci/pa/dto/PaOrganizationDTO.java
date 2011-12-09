@@ -93,6 +93,7 @@ public class PaOrganizationDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private String id;
     private String name;
+    private String identifier;
     private String familyName;
     private String nciNumber;
     private String recruitmentStatus;
@@ -376,4 +377,19 @@ public class PaOrganizationDTO implements Serializable {
     public String getCtepId() {
         return ctepId;
     }
+
+    /**
+     * @return the identifier
+     */
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }    
+    
 }

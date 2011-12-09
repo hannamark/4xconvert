@@ -103,6 +103,7 @@ import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.noniso.dto.PDQDiseaseNode;
+import gov.nih.nci.pa.report.service.OrganizationFamilyServiceLocal;
 import gov.nih.nci.pa.report.service.Summary4ReportLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
@@ -151,6 +152,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     private ProtocolQueryServiceLocal protocolQueryService = mock(ProtocolQueryServiceLocal.class);
     private Summary4ReportLocal summary4ReportService = mock(Summary4ReportLocal.class);
     private TSRReportGeneratorServiceRemote tsrReportGeneratorService = mock(TSRReportGeneratorServiceRemote.class);
+    private OrganizationFamilyServiceLocal adHocReportService = mock (OrganizationFamilyServiceLocal.class);
     
     
     private StudyProtocolQueryCriteria criteria;
@@ -169,6 +171,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
                 mock(gov.nih.nci.pa.viewer.util.ServiceLocator.class);
         ViewerServiceLocator.getInstance().setServiceLocator(viewerServiceLocator);
         when(viewerServiceLocator.getSummary4ReportService()).thenReturn(summary4ReportService);
+        when(viewerServiceLocator.getOrganizationFamilyService()).thenReturn(adHocReportService);
 
         List<StudyProtocolQueryDTO> protList = new ArrayList<StudyProtocolQueryDTO>();
         StudyProtocolQueryDTO protListItem = new StudyProtocolQueryDTO();
@@ -225,6 +228,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         doCallRealMethod().when(action).setProtocolQueryService(protocolQueryService);
         doCallRealMethod().when(action).setSummary4ReportService(summary4ReportService);
         doCallRealMethod().when(action).setTsrReportGeneratorService(tsrReportGeneratorService);
+        doCallRealMethod().when(action).setOrganizationFamilyService(adHocReportService);
         setDependencies(action);
         return action;
     }
@@ -238,6 +242,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         action.setProtocolQueryService(protocolQueryService);
         action.setSummary4ReportService(summary4ReportService);
         action.setTsrReportGeneratorService(tsrReportGeneratorService);
+        action.setOrganizationFamilyService(adHocReportService);
     }
     
     /**
@@ -259,6 +264,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         gov.nih.nci.pa.viewer.util.ServiceLocator viewerLocator = mock(gov.nih.nci.pa.viewer.util.ServiceLocator.class);
         ViewerServiceLocator.getInstance().setServiceLocator(viewerLocator);
         when(viewerLocator.getSummary4ReportService()).thenReturn(summary4ReportService);
+        when(viewerLocator.getOrganizationFamilyService()).thenReturn(adHocReportService);
         sut.prepare();
         verify(sut).setDiseaseService(diseaseService);
         verify(sut).setInterventionService(interventionService);
@@ -268,6 +274,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         verify(sut).setProtocolQueryService(protocolQueryService);
         verify(sut).setSummary4ReportService(summary4ReportService);
         verify(sut).setTsrReportGeneratorService(tsrReportGeneratorService);
+        verify(sut).setOrganizationFamilyService(adHocReportService);
     }
     
     /**
@@ -599,12 +606,14 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     /**
      * test the loadOrganizations method without family id.
      * @throws TooManyResultsException in case of error
+     * @throws PAException 
      */
     @Test
-    public void testLoadOrganizationsWithoutFamilyId() throws TooManyResultsException {
+    public void testLoadOrganizationsWithoutFamilyId() throws TooManyResultsException, PAException {
         AdHocReportAction sut = createAdHocReportAction();
-        assertEquals(Action.SUCCESS, sut.loadOrganizations());
-        verify(summary4ReportService, never()).getOrganizations(anyString(), anyInt());
+        assertEquals(Action.SUCCESS, sut.loadLeadOrganizations());
+        verify(adHocReportService, never()).getOrganizations(anyString(), anyString(), anyInt());
+        verify(paOrganizationService).getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION);
         assertEquals(0, sut.getActionErrors().size());
     }
 
@@ -612,12 +621,14 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
      * test the loadOrganizations method without criteria.
      * 
      * @throws TooManyResultsException in case of error
+     * @throws PAException 
      */
     @Test
-    public void testLoadOrganizationsWithoutCriteria() throws TooManyResultsException {
+    public void testLoadOrganizationsWithoutCriteria() throws TooManyResultsException, PAException {
         AdHocReportAction sut = createAdHocReportAction();
-        assertEquals(Action.SUCCESS, sut.loadOrganizations());
-        verify(summary4ReportService, never()).getOrganizations(anyString(), anyInt());
+        assertEquals(Action.SUCCESS, sut.loadLeadOrganizations());
+        verify(adHocReportService, never()).getOrganizations(anyString(), anyString(), anyInt());
+        verify(paOrganizationService).getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION);
         assertEquals(0, sut.getActionErrors().size());
     }
 
@@ -625,15 +636,18 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
      * test the loadOrganizations method with family id.
      * 
      * @throws TooManyResultsException in case of error
+     * @throws PAException 
      */
     @Test
-    public void testLoadOrganizationsWithFamilyId() throws TooManyResultsException {
+    public void testLoadOrganizationsWithFamilyId() throws TooManyResultsException, PAException {
         AdHocReportAction sut = createAdHocReportAction();
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
         criteria.setFamilyId("1");
         sut.setCriteria(criteria);
-        assertEquals(Action.SUCCESS, sut.loadOrganizations());
-        verify(summary4ReportService).getOrganizations(criteria.getFamilyId(), 100);
+        assertEquals(Action.SUCCESS, sut.loadLeadOrganizations());
+        verify(adHocReportService).getOrganizations(anyString(), anyString(), anyInt());
+        verify(paOrganizationService, never())
+            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION);
         assertEquals(0, sut.getActionErrors().size());
     }
 
@@ -641,12 +655,14 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
      * test the loadParticipatingSites method without family id.
      * 
      * @throws TooManyResultsException in case of error
+     * @throws PAException 
      */
     @Test
-    public void testLoadParticipatingSitesWithoutFamilyId() throws TooManyResultsException {
+    public void testLoadParticipatingSitesWithoutFamilyId() throws TooManyResultsException, PAException {
         AdHocReportAction sut = createAdHocReportAction();
         assertEquals(Action.SUCCESS, sut.loadParticipatingSites());
-        verify(summary4ReportService, never()).getOrganizations(anyString(), anyInt());
+        verify(adHocReportService, never()).getOrganizations(anyString(), anyString(), anyInt());
+        verify(paOrganizationService).getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE);
         assertEquals(0, sut.getActionErrors().size());
     }
 
@@ -654,28 +670,32 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
      * test the loadParticipatingSites method without criteria.
      * 
      * @throws TooManyResultsException in case of error
+     * @throws PAException 
      */
     @Test
-    public void testLoadParticipatingSitesWithoutCriteria() throws TooManyResultsException {
+    public void testLoadParticipatingSitesWithoutCriteria() throws TooManyResultsException, PAException {
         AdHocReportAction sut = createAdHocReportAction();
         assertEquals(Action.SUCCESS, sut.loadParticipatingSites());
-        verify(summary4ReportService, never()).getOrganizations(anyString(), anyInt());
+        verify(adHocReportService, never()).getOrganizations(anyString(), anyString(), anyInt());
+        verify(paOrganizationService).getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE);
         assertEquals(0, sut.getActionErrors().size());
     }
 
     /**
-     * test the loadParticipatingSites method with family id.
+     * test the loadParticipatingSites method with family id.      
      * 
      * @throws TooManyResultsException in case of error
+     * @throws PAException 
      */
     @Test
-    public void testLoadParticipatingSitesWithFamilyId() throws TooManyResultsException {
+    public void testLoadParticipatingSitesWithFamilyId() throws TooManyResultsException, PAException {
         AdHocReportAction sut = createAdHocReportAction();
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
         criteria.setParticipatingSiteFamilyId("1");
         sut.setCriteria(criteria);
         assertEquals(Action.SUCCESS, sut.loadParticipatingSites());
-        verify(summary4ReportService).getOrganizations(criteria.getParticipatingSiteFamilyId(), 100);
+        verify(adHocReportService).getOrganizations(anyString(), anyString(), anyInt());
+        verify(paOrganizationService, never()).getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE);
         assertEquals(0, sut.getActionErrors().size());
     }
 
@@ -711,7 +731,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         String result = action.getReport();
         assertEquals("Wrong result returned", "success", result);
         verify(action).loadFamilies();
-        verify(action).loadOrganizations();
+        verify(action).loadLeadOrganizations();
         verify(action).loadParticipatingSites();
         verify(action).isReportInError();
 
@@ -733,7 +753,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         String result = action.getReport();
         assertEquals("Wrong result returned", "success", result);
         verify(action).loadFamilies();
-        verify(action).loadOrganizations();
+        verify(action).loadLeadOrganizations();
         verify(action).loadParticipatingSites();
         verify(action).isReportInError();
         assertNull("Wrong result list", action.getResultList());

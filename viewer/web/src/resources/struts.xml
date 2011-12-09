@@ -107,7 +107,7 @@
             <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/nodecorate/summary4Report/organizationsByFamily.jsp</result>
         </action>
-        <action name="refreshAdHocOrganizations" class="gov.nih.nci.pa.viewer.action.AdHocReportAction" method="loadOrganizations">
+        <action name="refreshAdHocOrganizations" class="gov.nih.nci.pa.viewer.action.AdHocReportAction" method="loadLeadOrganizations">
             <interceptor-ref name="methodValidationStack" />
             <result>/WEB-INF/jsp/nodecorate/adHocReport/organizationsByFamily.jsp</result>
         </action>

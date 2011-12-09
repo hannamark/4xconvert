@@ -230,6 +230,7 @@ public class PAOrganizationServiceBean implements PAOrganizationServiceRemote {
             oganizationDTO = new PaOrganizationDTO();
             oganizationDTO.setId((organizations.get(i)).getId().toString());
             oganizationDTO.setName((organizations.get(i)).getName());
+            oganizationDTO.setIdentifier((organizations.get(i)).getIdentifier());
             organizationDTOs.add(oganizationDTO);
         }
         return organizationDTOs;

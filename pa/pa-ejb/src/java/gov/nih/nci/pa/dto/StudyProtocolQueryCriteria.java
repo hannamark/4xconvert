@@ -157,10 +157,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private final List<Long> leadOrganizationIds = new ArrayList<Long>();
     private final List<Long> interventionIds = new ArrayList<Long>();
     private final List<Long> interventionAlternateNameIds = new ArrayList<Long>();
-    private final List<String> interventionTypes = new ArrayList<String>();
-    private final List<String> leadOrganizationNames = new ArrayList<String>();
-    private String familyId = "0";
-    private final List<String> participatingSiteNames = new ArrayList<String>();
+    private final List<String> interventionTypes = new ArrayList<String>();   
+    private String familyId = "0";    
     private String participatingSiteFamilyId = "0";
 
     /**
@@ -801,26 +799,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
             }
         }
         this.interventionTypes.addAll(types);
-    }
-
-    /**
-     * @return the leadOrganizationNames
-     */
-    public List<String> getLeadOrganizationNames() {
-        return leadOrganizationNames;
-    }
-
-    /**
-     * @param leadOrganizationNames the leadOrganizationNames to set
-     */
-    public void setLeadOrganizationNames(List<String> leadOrganizationNames) {
-        this.leadOrganizationNames.clear();
-        for (String name : leadOrganizationNames) {
-            if (StringUtils.isNotEmpty(name)) {
-                this.leadOrganizationNames.add(name);
-            }
-        }
-    }
+    }    
 
     /**
      * @return the familyId
@@ -834,27 +813,7 @@ public class StudyProtocolQueryCriteria implements Serializable {
      */
     public void setFamilyId(String familyId) {
         this.familyId = familyId;
-    }
-    
-
-    /**
-     * @return the participatingSiteNames
-     */
-    public List<String> getParticipatingSiteNames() {
-        return participatingSiteNames;
-    }
-
-    /**
-     * @param participatingSiteNames the participatingSiteNames to set
-     */
-    public void setParticipatingSiteNames(List<String> participatingSiteNames) {        
-        this.participatingSiteNames.clear();
-        for (String name : participatingSiteNames) {
-            if (StringUtils.isNotEmpty(name)) {
-                this.participatingSiteNames.add(name);
-            }
-        }
-    }
+    }    
 
     /**
      * @return the participatingSiteFamilyId

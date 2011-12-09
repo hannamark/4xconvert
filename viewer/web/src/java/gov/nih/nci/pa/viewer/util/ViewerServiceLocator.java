@@ -78,6 +78,7 @@
 */
 package gov.nih.nci.pa.viewer.util;
 
+import gov.nih.nci.pa.report.service.OrganizationFamilyServiceLocal;
 import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
 import gov.nih.nci.pa.report.service.Summary4ReportLocal;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
@@ -160,4 +161,14 @@ public final class ViewerServiceLocator implements ServiceLocator {
     public ProtocolQueryServiceLocal getProtocolQueryService() {
         return serviceLocator.getProtocolQueryService();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public OrganizationFamilyServiceLocal getOrganizationFamilyService() {
+        return serviceLocator.getOrganizationFamilyService();
+    }
+    
+    
 }

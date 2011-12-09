@@ -85,7 +85,6 @@ package gov.nih.nci.pa.service.util;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import gov.nih.nci.pa.domain.PDQDisease;
@@ -95,7 +94,6 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -122,7 +120,7 @@ public class ProtocolQueryServiceTest  {
     
     
     /**
-     * test if tree traversal is correct
+     * tests if tree traversal is correct
      */
     @Test
     public void  getPDQParentsAndDescendants() {
@@ -140,43 +138,34 @@ public class ProtocolQueryServiceTest  {
     }
     
     /**
-     * test organizationService.getOrganizationIdsByNames is called if lead organization names are present in criteria
+     * tests getStudyProtocolByCriteriaForReporting()
      * @throws PAException 
      */
-    @Test
-    public void  getStudyProtocolByCriteriaForReportingGetOrganizationIdsIsCalledLeadOrganization() throws PAException {
-        ProtocolQueryServiceBean bean = mock(ProtocolQueryServiceBean.class);
-        PAOrganizationServiceRemote organizationService = mock(PAOrganizationServiceRemote.class);
-        doCallRealMethod().when(bean).setOrganizationService(organizationService);
-        bean.setOrganizationService(organizationService);
+    @Test(expected=PAException.class)
+    public void  getStudyProtocolByCriteriaForReporting() throws PAException {
+        ProtocolQueryServiceBean bean = mock(ProtocolQueryServiceBean.class);      
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
-        List<String> orgNames = Arrays.asList(new String[] {"name1", "name2"});
-        criteria.setLeadOrganizationNames(orgNames);
         doCallRealMethod().when(bean).getStudyProtocolByCriteriaForReporting(criteria);
-        bean.getStudyProtocolByCriteriaForReporting(criteria);
-        verify(organizationService).getOrganizationIdsByNames(orgNames);      
-        
+        bean.getStudyProtocolByCriteriaForReporting(criteria);       
+    } 
+    
+    /**
+     * tests getTrialSummaryByStudyProtocolIdTest()
+     * @throws PAException
+     */
+    @Test(expected = PAException.class)
+    public void getTrialSummaryByStudyProtocolIdTest() throws PAException {
+        bean.getTrialSummaryByStudyProtocolId(null);
     }  
     
     /**
-     * test organizationService.getOrganizationIdsByNames is called if participating site names are present in criteria
-     * @throws PAException 
+     * tests getStudyProtocolByOrgIdentifier
+     * @throws PAException
      */
-    @Test
-    public void  getStudyProtocolByCriteriaForReportingGetOrganizationIdsIsCalledParticipatingSite() throws PAException {
-        ProtocolQueryServiceBean bean = mock(ProtocolQueryServiceBean.class);
-        PAOrganizationServiceRemote organizationService = mock(PAOrganizationServiceRemote.class);
-        doCallRealMethod().when(bean).setOrganizationService(organizationService);
-        bean.setOrganizationService(organizationService);
-        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
-        List<String> participatingSiteNames = Arrays.asList(new String[] {"name1", "name2"});
-        criteria.setParticipatingSiteNames(participatingSiteNames);
-        doCallRealMethod().when(bean).getStudyProtocolByCriteriaForReporting(criteria);
-        bean.getStudyProtocolByCriteriaForReporting(criteria);
-        verify(organizationService).getOrganizationIdsByNames(participatingSiteNames);      
-        
-    }  
-    
+    @Test(expected = PAException.class)
+    public void getStudyProtocolByOrgIdentifier() throws PAException {
+        bean.getStudyProtocolByOrgIdentifier(null);
+    }
 
     
     /**

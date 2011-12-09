@@ -92,6 +92,7 @@ import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.noniso.dto.InterventionShortRecord;
 import gov.nih.nci.pa.noniso.dto.PDQDiseaseNode;
+import gov.nih.nci.pa.report.service.OrganizationFamilyServiceLocal;
 import gov.nih.nci.pa.report.service.Summary4ReportLocal;
 import gov.nih.nci.pa.service.InterventionServiceLocal;
 import gov.nih.nci.pa.service.PAException;
@@ -111,7 +112,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -128,7 +128,7 @@ import com.opensymphony.xwork2.Preparable;
  * @author Max Shestopalov
  */
 public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCriteria, StudyProtocolQueryDTO>
-        implements Preparable, ServletResponseAware {
+        implements Preparable, ServletResponseAware { 
 
     private static final long serialVersionUID = -8539599386849881611L;
     private static final int MAX_LIMIT = 100;
@@ -141,6 +141,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     private ProtocolQueryServiceLocal protocolQueryService;
     private Summary4ReportLocal summary4ReportService;
     private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
+    private OrganizationFamilyServiceLocal organizationFamilyService;
     
 
     private StudyProtocolQueryCriteria criteria;
@@ -148,8 +149,8 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     private HttpServletResponse servletResponse;
     
     private List<KeyValueDTO> families;
-    private Map<String, String> organizations;  
-    private Map<String, String> participatingSites;  
+    private List<KeyValueDTO> organizations;  
+    private List<KeyValueDTO> participatingSites;  
 
     /**
      * {@inheritDoc}
@@ -164,6 +165,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
         setProtocolQueryService(PaRegistry.getProtocolQueryService());
         setSummary4ReportService(ViewerServiceLocator.getInstance().getSummary4ReportService());
         setTsrReportGeneratorService(PaRegistry.getTSRReportGeneratorService());
+        setOrganizationFamilyService(ViewerServiceLocator.getInstance().getOrganizationFamilyService());
     }
 
     /**
@@ -174,7 +176,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
         setIdentifier(null);
         setCriteria(new StudyProtocolQueryCriteria());
         loadFamilies();
-        loadOrganizations();
+        loadLeadOrganizations();
         loadParticipatingSites();
         return super.execute();
     }
@@ -200,18 +202,19 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
      * Get organizations based on family name.
      * @return list
      */
-    public String loadOrganizations() {
-        organizations = new TreeMap<String, String>();
-        if (criteria != null && !criteria.getFamilyId().equals("0")) {
-            try {
-                Map<String, String> orgMap = summary4ReportService.getOrganizations(criteria.getFamilyId(), MAX_LIMIT);
-                for (String orgName : orgMap.keySet()) {
-                    getOrganizations().put(orgName, orgName);
-                }
-            } catch (TooManyResultsException e) {
-                addActionError(e.getMessage());
+    public String loadLeadOrganizations() {
+        try {
+            if (criteria != null && !criteria.getFamilyId().equals("0")) {
+                organizations = convertPaOrganizationDTOToKeyValueDTOList(organizationFamilyService
+                    .getOrganizations(PAConstants.LEAD_ORGANIZATION, criteria.getFamilyId(), MAX_LIMIT));
+            } else {
+                organizations = getLeadOrgList();
             }
+
+        } catch (Exception e) {           
+            addActionError(e.getMessage());
         }
+        Collections.sort(organizations);
         return super.getReport();
     }
     
@@ -220,17 +223,17 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
      * @return list
      */
     public String loadParticipatingSites() {
-        participatingSites = new TreeMap<String, String>();
-        if (criteria != null && !criteria.getParticipatingSiteFamilyId().equals("0")) {
-            try {
-                Map<String, String> orgMap = summary4ReportService.getOrganizations(criteria
-                    .getParticipatingSiteFamilyId(), MAX_LIMIT);
-                for (String orgName : orgMap.keySet()) {
-                    getParticipatingSites().put(orgName, orgName);
-                }
-            } catch (TooManyResultsException e) {
-                addActionError(e.getMessage());
+        try {
+            if (criteria != null && !criteria.getParticipatingSiteFamilyId().equals("0")) {
+
+                participatingSites = convertPaOrganizationDTOToKeyValueDTOList(organizationFamilyService
+                    .getOrganizations(PAConstants.PARTICIPATING_SITE, criteria.getParticipatingSiteFamilyId(),
+                                      MAX_LIMIT));
+            } else {
+                participatingSites = getParticipatingSiteList();
             }
+        } catch (Exception e) {            
+            addActionError(e.getMessage());
         }
         return super.getReport();
     }
@@ -241,7 +244,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     @Override
     public String getReport() {
         loadFamilies();
-        loadOrganizations();
+        loadLeadOrganizations();
         loadParticipatingSites();
         if (isReportInError()) {
             return super.execute();
@@ -317,9 +320,25 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
      * @throws PAException on error
      */
     public List<KeyValueDTO> getLeadOrgList() throws PAException {
+        return convertPaOrganizationDTOToKeyValueDTOList(paOrganizationService
+            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION));
+
+    }
+    
+    /**
+     * Return a list of participating site orgs.
+     * @return list of participating site orgs.
+     * @throws PAException on error
+     */
+    public List<KeyValueDTO> getParticipatingSiteList() throws PAException {
+        return convertPaOrganizationDTOToKeyValueDTOList(paOrganizationService
+            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE));
+
+    }
+    
+    private List<KeyValueDTO> convertPaOrganizationDTOToKeyValueDTOList(List<PaOrganizationDTO> list) {
         List<KeyValueDTO> result = new ArrayList<KeyValueDTO>();
-        for (PaOrganizationDTO dto : paOrganizationService
-            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION)) {
+        for (PaOrganizationDTO dto : list) {           
             result.add(new KeyValueDTO(Long.parseLong(dto.getId()), dto.getName()));
         }
         return result;
@@ -332,21 +351,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
      */
     public List<PaOrganizationDTO> getSumm4FundingSponsorsList() throws PAException {
         return paOrganizationService.getOrganizationsAssociatedWithStudyProtocol(PAConstants.SUMM4_SPONSOR);
-    }
-
-    /**
-     * Return a list of participating site orgs.
-     * @return list of participating site orgs.
-     * @throws PAException on error
-     */
-    public List<KeyValueDTO> getParticipatingSiteList() throws PAException {
-        List<KeyValueDTO> result = new ArrayList<KeyValueDTO>();
-        for (PaOrganizationDTO dto : paOrganizationService
-            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE)) {
-            result.add(new KeyValueDTO(Long.parseLong(dto.getId()), dto.getName()));
-        }
-        return result;
-    }
+    }    
 
     /**
      * Return a list of anatomic sites.
@@ -432,21 +437,21 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     /**
      * @return the organizations
      */
-    public Map<String, String> getOrganizations() {
+    public List<KeyValueDTO> getOrganizations() {
         return organizations;
     }     
     
     /**
      * @return the participatingSites
      */
-    public Map<String, String> getParticipatingSites() {
+    public List<KeyValueDTO> getParticipatingSites() {
         return participatingSites;
     }
 
     /**
      * @param participatingSites the participatingSites to set
      */
-    public void setParticipatingSites(Map<String, String> participatingSites) {
+    public void setParticipatingSites(List<KeyValueDTO> participatingSites) {
         this.participatingSites = participatingSites;
     }
 
@@ -512,6 +517,14 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
      */
     public void setTsrReportGeneratorService(TSRReportGeneratorServiceRemote tsrReportGeneratorService) {
         this.tsrReportGeneratorService = tsrReportGeneratorService;
-    }
+    }   
+
+    /**
+     * @param organizationFamilyService the organizationFamilyService to set
+     */
+    public void setOrganizationFamilyService(OrganizationFamilyServiceLocal organizationFamilyService) {
+        this.organizationFamilyService = organizationFamilyService;
+    } 
+    
 
 }

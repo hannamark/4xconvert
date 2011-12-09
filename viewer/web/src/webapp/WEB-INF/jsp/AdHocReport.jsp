@@ -91,8 +91,13 @@
                          var url = viewerApp.contextPath + "/ctro/ajax/refreshAdHocOrganizations.action";                    
                          var params = { "criteria.familyId": familyId};
                          jQuery("#organization_choices").html(jQuery("div.template.loadingMessage").children().html()).load(url, params, function() {
+                         if (jQuery("#familyId").val() != "0") {
                              jQuery("#orgSelectAllCheckbox")[0].checked = true;
                              selectAllLeadOrganizations();
+                         }
+                         else {
+                             jQuery("#orgSelectAllCheckbox")[0].checked = false; 
+                         }
                              jQuery("#orgSelectAllCheckbox").bind("click", selectAllLeadOrganizations);
                          });
                          return false;
@@ -104,8 +109,13 @@
                          var url = viewerApp.contextPath + '/ctro/ajax/refreshAdHocParticipatingSites.action';                    
                          var params = { "criteria.participatingSiteFamilyId": familyId};
                          jQuery("#sites_choices").html(jQuery("div.template.loadingMessage").children().html()).load(url, params, function() {
-                             jQuery("#participatingSitesSelectAllCheckbox")[0].checked = true;
-                             selectAllParticipatingSite();
+                             if (jQuery("#participatingSiteFamilyId").val() != "0") {
+                                 jQuery("#participatingSitesSelectAllCheckbox")[0].checked = true;
+                                 selectAllParticipatingSite();
+                             }
+                             else {
+                                 jQuery("#participatingSitesSelectAllCheckbox")[0].checked = false; 
+                             }
                              jQuery("#participatingSitesSelectAllCheckbox").bind("click", selectAllParticipatingSite);
                          });
                          return false;
