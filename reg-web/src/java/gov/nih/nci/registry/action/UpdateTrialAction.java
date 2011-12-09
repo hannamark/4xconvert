@@ -611,23 +611,33 @@ public class UpdateTrialAction extends ManageFileAction implements Preparable {
     boolean validateRespPartyInfo() {
         if (StringUtils.isEmpty(trialDTO.getResponsiblePartyType())) {
             return false;
-        }
-        if (StringUtils.isEmpty(trialDTO.getSponsorIdentifier())) {
+        }      
+
+        if (!validateXmlRequiredTrial()) {
             return false;
         }
 
-        if (!TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equalsIgnoreCase(trialDTO.getResponsiblePartyType())) {
-            return false;
-        }
+        return true;
+    }
 
-        if (StringUtils.isEmpty(trialDTO.getContactPhone())) {
-            return false;
-        }
+    private boolean validateXmlRequiredTrial() {
+        if (trialDTO.isXmlRequired()) {
+            if (StringUtils.isEmpty(trialDTO.getSponsorIdentifier())) {
+                return false;
+            }
 
-        if (StringUtils.isEmpty(trialDTO.getContactEmail())) {
-            return false;
-        }
+            if (!TrialDTO.RESPONSIBLE_PARTY_TYPE_PI.equalsIgnoreCase(trialDTO.getResponsiblePartyType())) {
+                return false;
+            }
 
+            if (StringUtils.isEmpty(trialDTO.getContactPhone())) {
+                return false;
+            }
+
+            if (StringUtils.isEmpty(trialDTO.getContactEmail())) {
+                return false;
+            }
+        }
         return true;
     }
 

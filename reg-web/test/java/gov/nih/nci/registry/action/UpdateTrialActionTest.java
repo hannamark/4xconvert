@@ -583,6 +583,43 @@ public class UpdateTrialActionTest extends AbstractRegWebTest {
     }
     
     @Test 
+    public void validateRespPartyInfoIncorrectSponsorIdentifierNoXMLRequired() {
+        TrialDTO trial = getMockTrialDTO();
+        trial.setXmlRequired(false);
+        trial.setSponsorIdentifier(null);
+        action.setTrialDTO(trial);
+        assertTrue(action.validateRespPartyInfo());
+    }    
+   
+    
+    @Test 
+    public void validateRespPartyInfoIncorrectContactPhoneNoXMLRequired() {
+        TrialDTO trial = getMockTrialDTO();
+        trial.setXmlRequired(false);
+        trial.setContactPhone(null);
+        action.setTrialDTO(trial);
+        assertTrue(action.validateRespPartyInfo());
+    }
+    
+    @Test 
+    public void validateRespPartyInfoIncorrectContactEmailNoXMLRequired() {
+        TrialDTO trial = getMockTrialDTO();
+        trial.setXmlRequired(false);
+        trial.setContactEmail(null);
+        action.setTrialDTO(trial);
+        assertTrue(action.validateRespPartyInfo());
+    }
+    
+    @Test 
+    public void validateRespPartyInfoIncorrectResponsiblePartyTypePINoXMLRequired() {
+        TrialDTO trial = getMockTrialDTO();
+        trial.setXmlRequired(false);
+        trial.setResponsiblePartyType("not PI");
+        action.setTrialDTO(trial);
+        assertTrue(action.validateRespPartyInfo());
+    }
+    
+    @Test 
     public void validateSummaryFourInfoValidationPassed() {
         TrialDTO trial = getMockTrialDTO();
         action.setTrialDTO(trial);
