@@ -496,6 +496,18 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
     <!-- Build accrual.ear -->
     <target name="build:accrual-ear" depends="init" unless="exclude.accrual">
+        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}" dir="${accrual-ear.base.dir}" target="${maven.install.target}">
+            <property name="hibernate.dialect" value="%%database.dialect%%"/>
+            <property name="po.jnp.url" value="%%po.jnp.url%%" />
+            <property name="pa.jnp.url" value="%%pa.jnp.url%%" />
+            <property name="accrual.jnp.url" value="%%accrual.jnp.url%%" />
+            <property name="po.username" value="%%po.username%%"/>
+            <property name="po.pass" value="%%po.pass%%"/>
+            <property name="po.server.name" value="%%po.server.name%%"/>
+            <property name="accrual.batch.upload.filepath.loc" value="${application.base.path}/${accrual.batch.upload.filepath.relative.dir}"/>
+            <property name="maven.username"  value="${maven.username}"/>
+            <property name="maven.password"  value="${maven.password}"/>
+        </ant>
         <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}"
             dir="${accrual-ear.base.dir}" >
             <property name="jboss.deploy.dir" location="%%jboss.deploy.dir%%" />
@@ -540,10 +552,6 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
                     <include name="runtime/wsrf_core_stubs-4.0.3.jar"/>
             </fileset>
         </copy>
-        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}" dir="${accrual-ear.base.dir}" target="${maven.install.target}">
-            <property name="maven.username"  value="${maven.username}"/>
-            <property name="maven.password"  value="${maven.password}"/>
-        </ant>
     </target>
 
     <target name="build:pa-web" depends="init" unless="exclude.pa-ear">
@@ -688,6 +696,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="gridgrouper.admin.user" value="${gridgrouper.admin.user}"/>
             <property name="gridgrouper.admin.password" value="${gridgrouper.admin.password}"/>
             <property name="idps.allow.password.editing" value="${idps.allow.password.editing}"/>
+            <property name="doc.upload.filepath.loc" value="${application.base.path}/${doc.upload.filepath.relative.dir}"/>
+            <property name="pdq.upload.filepath.loc" value="${application.base.path}/${doc.upload.filepath.relative.dir}/${pdq.upload.filepath.relative.dir}"/>
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-ejb.build.target}"/>
