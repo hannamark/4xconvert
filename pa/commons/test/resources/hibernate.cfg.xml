@@ -16,6 +16,7 @@ PUBLIC "-//Hibernate/Hibernate Configuration DTD//EN"
         <property name="hibernate.cache.use_second_level_cache">false</property>
         <property name="hibernate.cache.use_query_cache">false</property>
         <property name="hibernate.show_sql">@test.schema.showsql@</property>
+        <property name="hibernate.format_sql">true</property>
 
         <mapping class="gov.nih.nci.pa.domain.StudyProtocol" />
         <mapping class="gov.nih.nci.pa.domain.InterventionalStudyProtocol" />

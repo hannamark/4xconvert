@@ -158,6 +158,9 @@
    <!-- ================ -->
    <!-- Limit categories -->
    <!-- ================ -->
+   <category name="org.hibernate.SQL">
+     <priority value="@LOG_LEVEL_HIBERNATE@" />
+   </category>
 
    <!-- Set the logging level for PA packages -->
    <category name="gov.nih.nci.pa">
