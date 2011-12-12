@@ -17,7 +17,7 @@
     <c:choose>
       <c:when test="${pageContext.request.remoteUser != null}">
         <c:if test="${(sessionScope.viewerRole == 'Abstractor')}">
-          <li><a href="#">&nbsp;Reports&nbsp;&nbsp;&nbsp;</a>
+          <li><a>&nbsp;Reports&nbsp;&nbsp;&nbsp;</a>
             <ul id="reportmenu">
               <li style="width: 210px;"><a href="${pageContext.request.contextPath}/ctro/criteriaSummaryOfSubmission.action">Summary of
                                     Submission</a>
@@ -35,7 +35,7 @@
       </c:when>
     </c:choose>
 
-    <li><a href="#">&nbsp;Quick links&nbsp;&nbsp;&nbsp;</a>
+    <li><a>&nbsp;Quick links&nbsp;&nbsp;&nbsp;</a>
       <ul id="quicklinks">
       <li style="width: 300px;"><a href="http://www.cancer.gov/ncictrp" class="external" target="new1">Clinical
                         Trials Reporting Program (CTRP)</a>
