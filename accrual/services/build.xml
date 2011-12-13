@@ -164,14 +164,7 @@
                 <path refid="compile.classpath"/>
             </classpath>
         </javac>
-        <fail unless="hibernate.dialect" message="Property hibernate.dialect not set.  Check build.properties file."/>
-        <fail unless="accrual.jnp.url" message="Property accrual.jnp.url not set.  Check build.properties file."/>
-        <fail unless="pa.jnp.url" message="Property pa.jnp.url not set.  Check build.properties file."/>
-        <fail unless="po.jnp.url" message="Property po.jnp.url not set.  Check build.properties file."/>
-        <fail unless="po.server.name" message="Property po.server.name not set.  Check build.properties file."/>
-        <fail unless="po.username" message="Property po.username not set.  Check build.properties file."/>
-        <fail unless="po.pass" message="Property po.pass not set.  Check build.properties file."/>
-
+        
         <copy todir="${services.build.outputDir}">
             <filterset>
                 <filter token="hibernate.dialect" value="${hibernate.dialect}"/>
@@ -416,14 +409,14 @@
         <artifact:pom id="accrual-pom" file="target/pom.xml"/>
     </target>
             
-    <target name="maven:install" depends="jar,maven:generate-pom">
+    <target name="maven:install" depends="jar-notest,maven:generate-pom">
         <echo message="Installing version ${accrual.version} to the local maven repo."/>
         <artifact:install file="${services.build.dir}/${services-client.jar}">
             <pom refid="accrual-pom"/>
         </artifact:install>
     </target>
             
-    <target name="maven:deploy" depends="jar,maven:generate-pom">
+    <target name="maven:deploy" depends="jar-notest,maven:generate-pom">
         <artifact:remoteRepository id="remote.repository" url="https://ncimvn.nci.nih.gov/nexus/content/repositories/snapshots/">
             <authentication username="${maven.username}" password="${maven.password}"/>
         </artifact:remoteRepository>

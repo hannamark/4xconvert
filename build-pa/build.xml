@@ -197,6 +197,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     <!-- Default install time targets passed by deploy targets to the installer, can be overridden by being set on the command line if different target is desitred.  -->
     <property name="install.target" value="install"/>
     <property name="upgrade.target" value="upgrade"/>
+    <property name="maven.install.target" value="maven:install"/>
+    <property name="maven.deploy.target" value="maven:deploy"/>
 
     <!-- Where grand stores it's outputed pdf reports of build files -->
     <property name="grand.rpt.dir" value="${common.dir}/grand"/>
@@ -494,6 +496,7 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
 
     <!-- Build accrual.ear -->
     <target name="build:accrual-ear" depends="init" unless="exclude.accrual">
+        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}" dir="${accrual-ear.base.dir}" target="${maven.install.target}"/>
         <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}"
             dir="${accrual-ear.base.dir}" >
             <property name="jboss.deploy.dir" location="%%jboss.deploy.dir%%" />
@@ -617,44 +620,8 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </target>
 
     <target name="build:pa-commons" depends="init" unless="exclude.pa-ear">
-            <ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}"
-                dir="${pa-commons.base.dir}" >
-                <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
-                <property name="jboss.port" value="${jboss.server.port}"/>
-                <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
-                <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
-                <property name="db.username" value="${database.user}"/>
-                <property name="db.password" value="${database.password}"/>
-                <property name="jdbc.driver" value="${database.driver}"/>
-                <property name="jdbc.url" value="${database.url}"/>
-                <property name="po.server.name" value="${po.server.name}"/>
-                <property name="po.port.number" value="${po.port.number}"/>
-                <property name="po.username" value="${po.username}"/>
-                <property name="po.pass" value="${po.pass}"/>
-                <property name="hibernate.dialect" value="${database.dialect}"/>
-                <property name="po.topic.serverName" value="${po.topic.serverName}"/>
-                <property name="po.topic.port" value="${po.topic.port}"/>
-                <property name="po.topic.userName" value="${po.topic.userName}"/>
-                <property name="po.topic.password" value="${po.topic.password}"/>
-                <property name="po.topic.clientId" value="${po.topic.clientId}"/>
-                <property name="csm.submitter.group" value="${csm.submitter.group}"/>
-                <property name="grid.dorian.url" value="${grid.dorian.url}"/>
-                <property name="gridgrouper.url" value="${gridgrouper.url}"/>
-                <property name="gridgrouper.submitter.group" value="${gridgrouper.submitter.group}"/>
-                <property name="gridgrouper.admin.user" value="${gridgrouper.admin.user}"/>
-                <property name="gridgrouper.admin.password" value="${gridgrouper.admin.password}"/>
-                <property name="idps.allow.password.editing" value="${idps.allow.password.editing}"/>
-                <property name="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
-                <property name="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
-                <target name="${pa-clean.build.target}"/>
-                <target name="${pa-ivy-clean.build.target}"/>
-                <target name="${pa-commons.build.target}"/>
-            </ant>
-        </target>
-
-    <target name="build:pa-ejb" depends="init" unless="exclude.pa-ear">
-        <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}"
-            dir="${pa-ejb.base.dir}" >
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}" dir="${pa-commons.base.dir}" target="${maven.install.target}"/>
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-commons.build.file}" dir="${pa-commons.base.dir}" >
             <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
             <property name="jboss.port" value="${jboss.server.port}"/>
             <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
@@ -680,6 +647,44 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             <property name="gridgrouper.admin.user" value="${gridgrouper.admin.user}"/>
             <property name="gridgrouper.admin.password" value="${gridgrouper.admin.password}"/>
             <property name="idps.allow.password.editing" value="${idps.allow.password.editing}"/>
+            <property name="csm.remote.group.db.creation.policy" value="${csm.remote.group.db.creation.policy}"/>
+            <property name="csm.remote.group.sync.seconds" value="${csm.remote.group.sync.seconds}"/>
+            <target name="${pa-clean.build.target}"/>
+            <target name="${pa-ivy-clean.build.target}"/>
+            <target name="${pa-commons.build.target}"/>
+        </ant>
+    </target>
+
+    <target name="build:pa-ejb" depends="init" unless="exclude.pa-ear">
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}" dir="${pa-ejb.base.dir}" target="${maven.install.target}"/>
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa-ejb.build.file}" dir="${pa-ejb.base.dir}" >
+            <property name="pa-ear.build.dir" location="${pa-ear.dist.dir}" />
+            <property name="jboss.port" value="${jboss.server.port}"/>
+            <property name="jboss.server.jndi.port" value="${jboss.server.jndi.port}" />
+            <property name="jboss.deploy.directory" location="${jboss.deploy.dir}" />
+            <property name="db.username" value="${database.user}"/>
+            <property name="db.password" value="${database.password}"/>
+            <property name="jdbc.driver" value="${database.driver}"/>
+            <property name="jdbc.url" value="${database.url}"/>
+            <property name="po.server.name" value="${po.server.name}"/>
+            <property name="po.port.number" value="${po.port.number}"/>
+            <property name="po.username" value="${po.username}"/>
+            <property name="po.pass" value="${po.pass}"/>
+            <property name="hibernate.dialect" value="${database.dialect}"/>
+            <property name="po.topic.serverName" value="${po.topic.serverName}"/>
+            <property name="po.topic.port" value="${po.topic.port}"/>
+            <property name="po.topic.userName" value="${po.topic.userName}"/>
+            <property name="po.topic.password" value="${po.topic.password}"/>
+            <property name="po.topic.clientId" value="${po.topic.clientId}"/>
+            <property name="csm.submitter.group" value="${csm.submitter.group}"/>
+            <property name="grid.dorian.url" value="${grid.dorian.url}"/>
+            <property name="gridgrouper.url" value="${gridgrouper.url}"/>
+            <property name="gridgrouper.submitter.group" value="${gridgrouper.submitter.group}"/>
+            <property name="gridgrouper.admin.user" value="${gridgrouper.admin.user}"/>
+            <property name="gridgrouper.admin.password" value="${gridgrouper.admin.password}"/>
+            <property name="idps.allow.password.editing" value="${idps.allow.password.editing}"/>
+            <property name="doc.upload.filepath.loc" value="${application.base.path}/${doc.upload.filepath.relative.dir}"/>
+            <property name="pdq.upload.filepath.loc" value="${application.base.path}/${doc.upload.filepath.relative.dir}/${pdq.upload.filepath.relative.dir}"/>
             <target name="${pa-clean.build.target}"/>
             <target name="${pa-ivy-clean.build.target}"/>
             <target name="${pa-ejb.build.target}"/>
@@ -1557,22 +1562,16 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
     </target>
     
     <target name="maven:install" description="Installs the pa-commons,pa-ejb-client and accrual-services-client into the local maven repo.">
-        <ant inheritAll="false" inheritRefs="false" antfile="${pa.build.file}" dir="${pa.base.dir}" target="maven:install">
-            <property name="maven.username"  value="${maven.username}"/>
-            <property name="maven.password"  value="${maven.password}"/>
-        </ant>
-        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}" dir="${accrual-ear.base.dir}" target="maven:install">
-            <property name="maven.username"  value="${maven.username}"/>
-            <property name="maven.password"  value="${maven.password}"/>
-        </ant>
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa.build.file}" dir="${pa.base.dir}" target="${maven.install.target}"/>
+        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}" dir="${accrual-ear.base.dir}" target="${maven.install.target}"/>
     </target>
     
     <target name="maven:deploy" description="Installs the pa-commons,pa-ejb-client and accrual-services-client into the local maven repo.">
-        <ant inheritAll="false" inheritRefs="false" antfile="${pa.build.file}" dir="${pa.base.dir}" target="maven:deploy">
+        <ant inheritAll="false" inheritRefs="false" antfile="${pa.build.file}" dir="${pa.base.dir}" target="${maven.deploy.target}">
             <property name="maven.username"  value="${maven.username}"/>
             <property name="maven.password"  value="${maven.password}"/>
         </ant>
-        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}" dir="${accrual-ear.base.dir}" target="maven:deploy">
+        <ant inheritAll="false" inheritRefs="false" antfile="${accrual-ear.build.file}" dir="${accrual-ear.base.dir}" target="${maven.deploy.target}">
             <property name="maven.username"  value="${maven.username}"/>
             <property name="maven.password"  value="${maven.password}"/>
         </ant>
