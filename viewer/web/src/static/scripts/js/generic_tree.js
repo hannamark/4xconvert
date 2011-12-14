@@ -86,7 +86,7 @@ NBTree.prototype = {
  
         return { 
             'data' : jsTreeData,
-            'progressive_render' : false 
+            'progressive_render' : true 
         };
     },
     

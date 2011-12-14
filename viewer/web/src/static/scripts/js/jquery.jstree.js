@@ -1664,7 +1664,8 @@
 				}
 				return this.__call_old();
 			},
-			load_node_json : function (obj, s_call, e_call) {
+			load_node_json : function (obj, s_call, e_call, forceReload) {
+			    forceReload = forceReload || false;
 				var s = this.get_settings().json_data, d,
 					error_func = function () {},
 					success_func = function () {};
@@ -1711,7 +1712,7 @@
 						}, this));
 						break;
 					case (!!s.data && !s.ajax) || (!!s.data && !!s.ajax && (!obj || obj === -1)):
-						if(!obj || obj == -1) {
+						if(!obj || obj == -1 ||forceReload) {
 							d = this._parse_json(s.data, obj);
 							if(d) {
 								this.get_container().children("ul").empty().append(d.children());
