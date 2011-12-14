@@ -87,6 +87,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.BufferedOutputStream;
@@ -184,6 +185,7 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
                 IOUtils.write(FileUtils.readFileToByteArray(xmlFile), zipOutput);
                 //After file has been written to zip archive, delete it.
                 FileUtils.deleteQuietly(xmlFile);
+                PaHibernateUtil.getCurrentSession().clear();
             }
             lock.release();
             //Finally move the generic file to the more specific path.
