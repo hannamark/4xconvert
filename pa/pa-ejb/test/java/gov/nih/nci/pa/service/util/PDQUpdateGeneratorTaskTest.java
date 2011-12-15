@@ -85,9 +85,13 @@ package gov.nih.nci.pa.service.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.BufferedInputStream;
@@ -105,6 +109,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.fiveamsolutions.nci.commons.util.HibernateHelper;
+
 /**
  * @author Abraham J. Evans-EL <aevansel@5amsolutions.com>
  *
@@ -112,6 +118,7 @@ import org.junit.Test;
 public class PDQUpdateGeneratorTaskTest extends AbstractMockitoTest {
     private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     private PDQUpdateGeneratorTaskServiceBean taskBean;
+    private HibernateHelper hibernateHelperBackUp = PaHibernateUtil.getHibernateHelper();
 
     /**
      * {@inheritDoc}
@@ -122,7 +129,13 @@ public class PDQUpdateGeneratorTaskTest extends AbstractMockitoTest {
         super.setUp();
         taskBean = new PDQUpdateGeneratorTaskServiceBean();
         taskBean.setXmlGeneratorService(PaRegistry.getPDQXmlGeneratorService());
+        HibernateHelper hibernateHelper = mock(HibernateHelper.class);
+        org.hibernate.Session session = mock(org.hibernate.Session.class);
+        when(hibernateHelper.getCurrentSession()).thenReturn(session);
+        PaHibernateUtil.setHibernateHelper(hibernateHelper);
     }
+    
+
 
     /**
      * Deletes all files in the pdq directory. Ensuring nothing remains if something were to go wrong during the
@@ -133,6 +146,7 @@ public class PDQUpdateGeneratorTaskTest extends AbstractMockitoTest {
     public void tearDown() throws Exception {
         File pdqDirectory = new File(PaEarPropertyReader.getPDQUploadPath());
         FileUtils.cleanDirectory(pdqDirectory);
+        PaHibernateUtil.setHibernateHelper(hibernateHelperBackUp);
     }
 
 
