@@ -3,7 +3,17 @@
  * @input @global diseaseTree PDQ disease tree to run the name lookup against [{'id':'', 'name':'', 'parentId':''}, ...]
  */
 
-var countJsreeNodeOperations = 0;
+var bJstreeOperationReady = true;
+var jstreeNodeIdsToClose = [];
+var jstreeNodeIdsToOpen = [];
+
+function isJstreeOperationReady() {
+    return bJstreeOperationReady;
+}
+
+function setJstreeOperationReady(bReady) {
+    bJstreeOperationReady = bReady;
+}
 
 (function($) {
     $(function() {
@@ -271,11 +281,8 @@ var countJsreeNodeOperations = 0;
         function showTree( id, parentIds ) {
             pdqDialog.dialog('open');
             $('#pdq_tree_dialog').prev().css({'background-color': '#FF8080', 'background-image': 'none', 'border': '1px solid #A06060'});
-            $('.pdq-tree-highlight').each(function(index,value) {
-                var node = $(value).parents('a:first');
-                var name = $.trim($(node).text());
-                var html1 =  $(node).html().replace('<span class="pdq-tree-highlight">'+name+'</span>',name) ;
-                $(node).html(html1);
+            $('.pdq-tree-highlight ins:first').each(function(index,value) {
+                $(value).unwrap();
             });
             if( typeof(id) != 'undefined' ) {
                 var thisNodeParentIds = $(parentIds).toArray().reverse();
@@ -291,41 +298,46 @@ var countJsreeNodeOperations = 0;
                 var nodeIdsCurrentlyOpen = $.map( $('#pdq_tree').find('.jstree-open').toArray(), function(val,i) { 
                     return $(val).attr('id').match(/ptid([\d_]+)/)[1]; 
                 });
-                var nodeIdsToClose = nodeIdsCurrentlyOpen.slice(0);
+                jstreeNodeIdsToClose = nodeIdsCurrentlyOpen.slice(0);
                 for( var i in thisNodeParentIds ) { // We are going to close all open nodes except the ones that are parents of our to-be-highlighted node
                     if(!thisNodeParentIds.hasOwnProperty(i))
                         continue;
                     var parentId = thisNodeParentIds[i];
-                    if( $.inArray(parentId, nodeIdsToClose) != -1 )
-                        nodeIdsToClose.splice( nodeIdsToClose.indexOf(parentId), 1 );
+                    if( $.inArray(parentId, jstreeNodeIdsToClose) != -1 )
+                        jstreeNodeIdsToClose.splice( jstreeNodeIdsToClose.indexOf(parentId), 1 );
                 }
-                var nodeIdsToOpen = thisNodeParentIds.slice(0);
+                jstreeNodeIdsToOpen = thisNodeParentIds.slice(0);
                 for( var i in nodeIdsCurrentlyOpen ) { // We are going to open all parents of our to-be-highlighted node except those already open
                     if(!nodeIdsCurrentlyOpen.hasOwnProperty(i))
                         continue;
                     var nodeId = nodeIdsCurrentlyOpen[i];
-                    if( $.inArray(nodeId, nodeIdsToOpen) != -1 )
-                        nodeIdsToOpen.splice( nodeIdsToOpen.indexOf(nodeId), 1 );
+                    if( $.inArray(nodeId, jstreeNodeIdsToOpen) != -1 )
+                        jstreeNodeIdsToOpen.splice( jstreeNodeIdsToOpen.indexOf(nodeId), 1 );
                 }
                 
-                $(nodeIdsToClose).each(function() {
-                    $('#pdq_tree').jstree("close_node", $('#ptid'+this), false); 
-                });
-                $(nodeIdsToOpen).each(function() {
-                    $('#pdq_tree').jstree("open_node", $('#ptid'+this), false, false); 
-                });
-
-                countJsreeNodeOperations = nodeIdsToClose.length + nodeIdsToOpen.length;
+                setJstreeOperationReady(true);
                 var interval = setInterval( function(){
-                    if(countJsreeNodeOperations==0) {
-                        $('#pdq_tree').jstree("deselect_all");
-                        $('#pdq_tree').jstree("select_node", $('#ptid'+thisNodeId));
-                        var name = $.trim($('#ptid'+thisNodeId).children('a').text());
-                        $('#ptid'+thisNodeId).html( $('#ptid'+thisNodeId).html().replace(name,'<span class="pdq-tree-highlight">'+name+'</span>') );
-                        adjustPDQTreeDimensions();
-                        clearInterval(interval);
+                    if(jstreeNodeIdsToClose.length==0) {
+                        if(jstreeNodeIdsToOpen.length==0) {
+                            $('#pdq_tree').jstree("deselect_all");
+                            $('#pdq_tree').jstree("select_node", $('#ptid'+thisNodeId));
+                            var name = $.trim($('#ptid'+thisNodeId).children('a').text());
+                            $('#ptid'+thisNodeId+' a:first').wrapInner('<span class="pdq-tree-highlight"></span>');
+                            adjustPDQTreeDimensions();
+                            clearInterval(interval);
+                        } else {
+                            if( isJstreeOperationReady() ) {
+                                setJstreeOperationReady(false);
+                                $('#pdq_tree').jstree("open_node", $('#ptid'+jstreeNodeIdsToOpen[0]), false, true); 
+                            }
+                        }
+                    } else {
+                        if( isJstreeOperationReady() ) {
+                            setJstreeOperationReady(false);
+                            $('#pdq_tree').jstree("close_node", $('#ptid'+jstreeNodeIdsToClose[0]), true); 
+                        }
                     }
-                }, 100 );
+                }, 50 );
             }
             adjustPDQTreeDimensions();
         }
@@ -362,9 +374,19 @@ var countJsreeNodeOperations = 0;
                         scrollPDQTreeNodeIntoView(data.rslt.obj);
                     }
                 }).bind("after_open.jstree", function (e, data) { 
-                    countJsreeNodeOperations--;
+                    if( data.rslt.obj.context.nodeName.toLowerCase().indexOf('document')==-1 ) {
+                        adjustPDQTreeDimensions();
+                    } else {
+                        jstreeNodeIdsToOpen.splice(0,1);
+                        setJstreeOperationReady(true);
+                    }
                 }).bind("after_close.jstree", function (e, data) { 
-                    countJsreeNodeOperations--;
+                    if( data.rslt.obj.context.nodeName.toLowerCase().indexOf('document')==-1 ) {
+                        adjustPDQTreeDimensions();
+                    } else {
+                        jstreeNodeIdsToClose.splice(0,1);
+                        setJstreeOperationReady(true);
+                    }
                 });
             });
             return pdqTree;
