@@ -161,8 +161,10 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateMidnight;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
@@ -183,7 +185,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     private static final String UPDATE = "Update";
     @EJB
     private StudyIndldeServiceLocal studyIndldeService;
-    private PAServiceUtils paServiceUtils = new PAServiceUtils();
+    private final PAServiceUtils paServiceUtils = new PAServiceUtils();
 
     private StudyProtocolDTO getStudyProtocolById(Long id) throws PAException {
         Session session = PaHibernateUtil.getCurrentSession();
@@ -451,7 +453,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         enForcePrimaryPurposeRules(studyProtocolDTO);
         if (isCorrelationRuleRequired(studyProtocolDTO)) {
             List<StudyIndldeDTO> list = getStudyIndldeService().getByStudyProtocol(studyProtocolDTO.getIdentifier());
-            if (getPaServiceUtils().containsNonExemptInds(list)) {
+            if (paServiceUtils.containsNonExemptInds(list)) {
                 throw new PAException("Unable to set FDARegulatedIndicator to 'No', "
                         + " Please remove IND/IDEs and try again");
             }
@@ -528,7 +530,6 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         }
     }
 
-
     private void enForcePrimaryPurposeRules(StudyProtocolDTO studyProtocolDTO) throws PAException {
         if (studyProtocolDTO.getPrimaryPurposeCode() == null) {
             throw new PAException("Primary Purpose Code must be set.");
@@ -596,26 +597,10 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         criteria.setStatusCode(ActStatusCode.getByCode(CdConverter.convertCdToString(dto.getStatusCode())));
         criteria.setOtherIdentifiers(DSetConverter.convertDsetToIiSet(dto.getSecondaryIdentifiers()));
         criteria.setSummary4AnatomicSites(AnatomicSiteConverter.convertToSet(dto.getSummary4AnatomicSites()));
-        if (isNonDbStudyProtocolIdentifier(dto.getIdentifier())) {
-            StudySite ss = new StudySite();
-            ss.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
-            ss.setLocalStudyProtocolIdentifier(dto.getIdentifier().getExtension());
-
-            if (StringUtils.equals(dto.getIdentifier().getRoot(), IiConverter.CTEP_STUDY_PROTOCOL_ROOT)) {
-                ss.setResearchOrganization(PADomainUtils.createROExampleObjectByOrgName(PAConstants.CTEP_ORG_NAME));
-            }
-
-            if (StringUtils.equals(dto.getIdentifier().getRoot(), IiConverter.DCP_STUDY_PROTOCOL_ROOT)) {
-                ss.setResearchOrganization(PADomainUtils.createROExampleObjectByOrgName(PAConstants.DCP_ORG_NAME));
-            }
-
-            if (StringUtils.equals(dto.getIdentifier().getRoot(), IiConverter.NCT_STUDY_PROTOCOL_ROOT)) {
-                ss.setResearchOrganization(PADomainUtils.createROExampleObjectByOrgName(PAConstants.CTGOV_ORG_NAME));
-            }
-
+        StudySite ss = generateIdentifierAssigner(dto.getIdentifier());
+        if (ss != null) {
             criteria.getStudySites().add(ss);
         }
-
         int maxLimit = Math.min(pagingParams.getLimit(), PAConstants.MAX_SEARCH_RESULTS + 1);
         PageSortParams<StudyProtocol> params =
                 new PageSortParams<StudyProtocol>(maxLimit, pagingParams.getOffset(),
@@ -623,6 +608,25 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         StudyProtocolBeanSearchCriteria crit = new StudyProtocolBeanSearchCriteria(criteria);
         List<StudyProtocol> results = search(crit, params);
         return convertFromDomainToDTO(results);
+    }
+
+    private StudySite generateIdentifierAssigner(Ii identifier) {
+        StudySite ss = null;
+        if (isNonDbStudyProtocolIdentifier(identifier)) {
+            ss = new StudySite();
+            ss.setFunctionalCode(StudySiteFunctionalCode.IDENTIFIER_ASSIGNER);
+            ss.setLocalStudyProtocolIdentifier(identifier.getExtension());
+            if (StringUtils.equals(identifier.getRoot(), IiConverter.CTEP_STUDY_PROTOCOL_ROOT)) {
+                ss.setResearchOrganization(PADomainUtils.createROExampleObjectByOrgName(PAConstants.CTEP_ORG_NAME));
+            }
+            if (StringUtils.equals(identifier.getRoot(), IiConverter.DCP_STUDY_PROTOCOL_ROOT)) {
+                ss.setResearchOrganization(PADomainUtils.createROExampleObjectByOrgName(PAConstants.DCP_ORG_NAME));
+            }
+            if (StringUtils.equals(identifier.getRoot(), IiConverter.NCT_STUDY_PROTOCOL_ROOT)) {
+                ss.setResearchOrganization(PADomainUtils.createROExampleObjectByOrgName(PAConstants.CTGOV_ORG_NAME));
+            }
+        }
+        return ss;
     }
 
     /**
@@ -672,28 +676,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      */
     @Override
     public void changeOwnership(StudyProtocolDTO studyProtocolDTO) throws PAException {
-        if (studyProtocolDTO == null) {
-            LOG.error(" studyProtocolDTO should not be null ");
-            throw new PAException(" studyProtocolDTO should not be null ");
-
-        }
-        Session session = PaHibernateUtil.getCurrentSession();
-        Long studyProtocolId = IiConverter.convertToLong(studyProtocolDTO.getIdentifier());
-        StudyProtocol prevStudyProtocol = (StudyProtocol) session.load(StudyProtocol.class, studyProtocolId);
-        String newUserLastCreated = StConverter.convertToString(studyProtocolDTO.getUserLastCreated());
-        User prevUserLastCreatedObj = prevStudyProtocol.getUserLastCreated();
-        String prevUserLastCreated = prevUserLastCreatedObj != null ? prevUserLastCreatedObj.getLoginName() : null;
-        if (StringUtils.isNotEmpty(newUserLastCreated) && StringUtils.isNotEmpty(prevUserLastCreated)
-                && !prevUserLastCreated.equals(newUserLastCreated)) {
-            session = PaHibernateUtil.getCurrentSession();
-            String sql =
-                    "UPDATE STUDY_PROTOCOL SET USER_LAST_CREATED='" + newUserLastCreated + "' WHERE IDENTIFIER="
-                            + prevStudyProtocol.getId();
-            session.createSQLQuery(sql).executeUpdate();
-            session.flush();
-        }
-        StudyProtocol newSp = (StudyProtocol) session.load(StudyProtocol.class, studyProtocolId);
-        StudyProtocolConverter.convertFromDTOToDomain(studyProtocolDTO, newSp);
+        //Intentionally left blank. This method is unused and should be removed in future releases.
     }
 
     /**
@@ -706,28 +689,58 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         if (ISOUtil.isIiNull(studyProtocolIi)) {
             throw new PAException("Ii should not be null");
         }
-        if (isNonDbStudyProtocolIdentifier(studyProtocolIi)) {
+
+        if (isNCIIdentifier(studyProtocolIi)) {
             studyProtocolDTO = searchStudyProtocolByIi(studyProtocolIi);
+        } else if (isNonDbStudyProtocolIdentifier(studyProtocolIi)) {
+            studyProtocolDTO = getStudyProtocolByIi(studyProtocolIi);
         } else if (NumberUtils.isNumber(studyProtocolIi.getExtension())) {
             studyProtocolDTO = getStudyProtocolById(Long.valueOf(studyProtocolIi.getExtension()));
         }
         return studyProtocolDTO;
     }
 
+
     private StudyProtocolDTO searchStudyProtocolByIi(Ii studyProtocolIi) throws PAException {
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         List<StudyProtocolDTO> spList;
         try {
-            spList = search(populateStudyProtocolExample(studyProtocolIi), limit);
+            StudyProtocolDTO spDTO = new StudyProtocolDTO();
+            spDTO.setSecondaryIdentifiers(new DSet<Ii>());
+            spDTO.getSecondaryIdentifiers().setItem(new HashSet<Ii>());
+            spDTO.getSecondaryIdentifiers().getItem().add(studyProtocolIi);
+            spList = search(spDTO, limit);
         } catch (TooManyResultsException e) {
             throw new PAException("found too many trials with this identifier " + studyProtocolIi.getExtension()
                     + " when only 1 expected.", e);
         }
-        if (spList.isEmpty() || spList.size() > 1) {
-            throw new PAException("could not find unique trial with this identifier "
-                    + studyProtocolIi.getExtension());
-        }
+        checkResults(spList, studyProtocolIi);
         return spList.get(0);
+    }
+
+    private StudyProtocolDTO getStudyProtocolByIi(Ii studyProtocolIi) throws PAException {
+        StudySite ss = generateIdentifierAssigner(studyProtocolIi);
+
+        Criteria criteria = PaHibernateUtil.getCurrentSession().createCriteria(StudyProtocol.class);
+        criteria.createAlias("studySites", "ss").createAlias("ss.researchOrganization", "ro")
+            .createAlias("ro.organization", "org");
+        criteria.add(Restrictions.eq("org.name",
+                ss.getResearchOrganization().getOrganization().getName()));
+        criteria.add(Restrictions.eq("ss.localStudyProtocolIdentifier", ss.getLocalStudyProtocolIdentifier()));
+
+        List<StudyProtocol> results = criteria.list();
+        checkResults(results, studyProtocolIi);
+        return StudyProtocolConverter.convertFromDomainToDTO(results.get(0));
+    }
+
+    private void checkResults(List<?> results, Ii ii) throws PAException {
+        if (results.isEmpty()) {
+            throw new PAException("Could not find any trials with this identifier " + ii.getExtension()
+                    + " and this root " + ii.getRoot());
+        } else if (results.size() != 1) {
+            throw new PAException("Found multiple trials with this identifier " + ii.getExtension()
+                    + " and this root " + ii.getRoot());
+        }
     }
 
     /**
@@ -738,43 +751,25 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     public StudyProtocolDTO loadStudyProtocol(Ii ii) {
         StudyProtocolDTO studyProtocolDTO = null;
         if (ISOUtil.isIiNull(ii)) {
-            return studyProtocolDTO;
+           return studyProtocolDTO;
         }
         try {
-            if (isNonDbStudyProtocolIdentifier(ii)) {
-                LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
-                List<StudyProtocolDTO> results = search(populateStudyProtocolExample(ii), limit);
-                if (results.size() == 1) {
-                    studyProtocolDTO = results.get(0);
-                } else {
-                    LOG.error("Found multiple study protocols for ii " + ii.getExtension() + " with the root "
-                            + ii.getRoot());
-                }
+            if (isNCIIdentifier(ii)) {
+                studyProtocolDTO = searchStudyProtocolByIi(ii);
+            } else if (isNonDbStudyProtocolIdentifier(ii)) {
+                studyProtocolDTO = getStudyProtocolByIi(ii);
             } else if (NumberUtils.isNumber(ii.getExtension())) {
                 studyProtocolDTO = getStudyProtocolById(Long.valueOf(ii.getExtension()));
             }
-        } catch (Exception e) {
+        } catch (PAException e) {
             LOG.error("An error has occurred while trying to lookup the study protocol ii " + ii.getExtension()
                     + " with the root " + ii.getRoot(), e);
         }
         return studyProtocolDTO;
     }
 
-    private StudyProtocolDTO populateStudyProtocolExample(Ii studyProtocolIi) {
-        StudyProtocolDTO spDTO = new StudyProtocolDTO();
-        if (StringUtils.startsWith(studyProtocolIi.getExtension(), "NCI")) {
-            spDTO.setSecondaryIdentifiers(new DSet<Ii>());
-            spDTO.getSecondaryIdentifiers().setItem(new HashSet<Ii>());
-            spDTO.getSecondaryIdentifiers().getItem().add(studyProtocolIi);
-        } else {
-            spDTO.setIdentifier(studyProtocolIi);
-        }
-        return spDTO;
-    }
-
     /**
-     * Determines whether the given ii is either a DCP id, CTEP Id, NCT id or NCI assigned id. Basically any id other
-     * than the one assigned automatically by the database upon trial creation.
+     * Determines whether the given ii is either a DCP id, CTEP Id, NCT id.
      * @param studyProtocolIi
      * @return true iff the given ii is not a DB assigned id
      */
@@ -782,9 +777,18 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         return studyProtocolIi != null
                 && (StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.DCP_STUDY_PROTOCOL_ROOT)
                         || StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.CTEP_STUDY_PROTOCOL_ROOT)
-                        || StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.NCT_STUDY_PROTOCOL_ROOT)
-                        || (StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT)
-                                && StringUtils.startsWith(studyProtocolIi.getExtension(), "NCI")));
+                        || StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.NCT_STUDY_PROTOCOL_ROOT));
+    }
+
+    /**
+     * Determines whether the given ii is an NCI assigned id.
+     * @param studyProtocolIi
+     * @return true iff the given ii is an NCI assigned id.
+     */
+    private boolean isNCIIdentifier(Ii studyProtocolIi) {
+        return studyProtocolIi != null
+                && (StringUtils.equals(studyProtocolIi.getRoot(), IiConverter.STUDY_PROTOCOL_ROOT)
+                && StringUtils.startsWith(studyProtocolIi.getExtension(), "NCI"));
     }
 
     /**
@@ -799,19 +803,5 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      */
     public StudyIndldeServiceLocal getStudyIndldeService() {
         return studyIndldeService;
-    }
-
-    /**
-     * @param paServiceUtils the paServiceUtils to set
-     */
-    public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
-        this.paServiceUtils = paServiceUtils;
-    }
-
-    /**
-     * @return the paServiceUtils
-     */
-    public PAServiceUtils getPaServiceUtils() {
-        return paServiceUtils;
     }
 }

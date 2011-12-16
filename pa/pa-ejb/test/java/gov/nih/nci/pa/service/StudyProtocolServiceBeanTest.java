@@ -86,7 +86,6 @@ import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
@@ -374,8 +373,6 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
         results = remoteEjb.search(criteria, limit);
         assertEquals(1, results.size());
-
-
     }
 
 
@@ -395,7 +392,6 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         createStudyProtocols(1, null, null, false);
         results = remoteEjb.getAbstractedCollaborativeTrials();
         assertEquals(2, results.size());
-
     }
 
     @Test
@@ -494,8 +490,11 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
     @Test
     public void testGetStudyProtocol() throws Exception {
         createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "DCP-1", false);
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "DCP-11", false);
         createStudyProtocols(1, PAConstants.CTGOV_ORG_NAME, "NCT-1", false);
+        createStudyProtocols(1, PAConstants.CTGOV_ORG_NAME, "NCT-11", false);
         createStudyProtocols(1, PAConstants.CTEP_ORG_NAME, "CTEP-1", false);
+        createStudyProtocols(1, PAConstants.CTEP_ORG_NAME, "CTEP-11", false);
 
         Ii ii = new Ii();
         ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
@@ -508,6 +507,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         ii.setExtension("DCP-1");
         spDTO = remoteEjb.getStudyProtocol(ii);
         assertNotNull(spDTO);
+
 
         ii = new Ii();
         ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
@@ -531,6 +531,35 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         ii.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
         ii.setExtension("CTEP-1");
         spDTO = remoteEjb.getStudyProtocol(ii);
+        assertNotNull(spDTO);
+    }
+
+    @Test
+    public void loadStudyProtocol() throws Exception {
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "DCP-1", false);
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "DCP-11", false);
+        createStudyProtocols(1, PAConstants.CTGOV_ORG_NAME, "NCT-1", false);
+        createStudyProtocols(1, PAConstants.CTGOV_ORG_NAME, "NCT-11", false);
+        createStudyProtocols(1, PAConstants.CTEP_ORG_NAME, "CTEP-1", false);
+        createStudyProtocols(1, PAConstants.CTEP_ORG_NAME, "CTEP-11", false);
+
+        Ii ii = new Ii();
+        ii = new Ii();
+        ii.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
+        ii.setExtension("DCP-1");
+        StudyProtocolDTO spDTO = remoteEjb.loadStudyProtocol(ii);
+        assertNotNull(spDTO);
+
+        ii = new Ii();
+        ii.setRoot(IiConverter.NCT_STUDY_PROTOCOL_ROOT);
+        ii.setExtension("NCT-1");
+        spDTO = remoteEjb.loadStudyProtocol(ii);
+        assertNotNull(spDTO);
+
+        ii = new Ii();
+        ii.setRoot(IiConverter.CTEP_STUDY_PROTOCOL_ROOT);
+        ii.setExtension("CTEP-1");
+        spDTO = remoteEjb.loadStudyProtocol(ii);
         assertNotNull(spDTO);
     }
 
