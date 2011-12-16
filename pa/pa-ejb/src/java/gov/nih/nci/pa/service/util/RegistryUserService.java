@@ -127,7 +127,7 @@ public interface RegistryUserService {
     List<RegistryUser> getUserByUserOrgType(UserOrgType userType) throws PAException;
 
     /**
-     * @param userId  csm user id
+     * @param userId registry user id
      * @return user
      * @throws PAException on error
      */

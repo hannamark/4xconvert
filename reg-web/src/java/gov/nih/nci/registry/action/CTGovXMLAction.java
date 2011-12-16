@@ -84,14 +84,20 @@
 package gov.nih.nci.registry.action;
 
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
+import gov.nih.nci.pa.service.util.RegistryUserService;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.Preparable;
@@ -105,7 +111,10 @@ import com.opensymphony.xwork2.Preparable;
 public class CTGovXMLAction extends ActionSupport implements Preparable {
     private static final Logger LOG = Logger.getLogger(CTGovXMLAction.class);
 
-    private CTGovXmlGeneratorServiceLocal ctService;
+    private CTGovXmlGeneratorServiceLocal ctService; 
+    private StudyProtocolServiceLocal studyProtocolService;
+    private  RegistryUserService  registryUserService;
+    
 
     private static final long serialVersionUID = 1L;
     private String id;
@@ -115,30 +124,68 @@ public class CTGovXMLAction extends ActionSupport implements Preparable {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void prepare() {
-        ctService = PaRegistry.getCTGovXmlGeneratorService();
+        ctService = PaRegistry.getCTGovXmlGeneratorService();      
+        studyProtocolService = PaRegistry.getStudyProtocolService();
+        registryUserService = PaRegistry.getRegistryUserService();
     }
 
     /**
      * Calls the CTGovXmlGeneratorService in PA to retrieve the CTGov xml for the given id.
-     *
+     * 
      * @return action result string
      */
     public String retrieveCtGovXML() {
+        final Ii ii = createIi();
+        String xmlFileString = null;
+        if (!isUserOwnerOfStudyProtocol(ii)) {
+            xmlFileString = "Authorization failed. User does not have ownership of the trial.";
+        } else {
+            try {
+                xmlFileString = ctService.generateCTGovXml(ii);
+            } catch (PAException e) {
+                LOG.error("Error occurred while retrieving document from CT Service.", e);
+                xmlFileString = "An error occurred while retrieving the document from CT "
+                        + "Gov. Please contact a System administrator.";
+            }
+        }
+
+        xmlFile = new ByteArrayInputStream(xmlFileString.getBytes());
+        return "downloadXMLFile";
+    }
+
+    private Ii createIi() {
         final Ii ii = new Ii();
         ii.setExtension(getId());
         ii.setRoot(getRoot());
-
-        String xmlFileString = null;
+        return ii;
+    }
+    
+    /**
+     * @param ii StudyProtocol ii
+     * @return boolean. Return true if the user has access to the trial
+     */
+    boolean isUserOwnerOfStudyProtocol(Ii ii) {
         try {
-            xmlFileString = ctService.generateCTGovXml(ii);
+            String loginName = getUserName();          
+            StudyProtocolDTO studyProtocol = studyProtocolService.getStudyProtocol(ii);
+            Long studyProtocolId = IiConverter.convertToLong(studyProtocol.getIdentifier());
+            RegistryUser registryUser = registryUserService.getUser(loginName);
+            return registryUserService.isTrialOwner(registryUser.getId(), studyProtocolId);
+
         } catch (PAException e) {
-            LOG.error("Error occurred while retrieving document from CT Service.", e);
-            xmlFileString = "An error occurred while retrieving the document from CT "
-                    + "Gov. Please contact a System administrator.";
+            LOG.error("Error occurred while retrieving User. Please contact a System administrator.", e);
+            return false;
         }
-        xmlFile = new ByteArrayInputStream(xmlFileString.getBytes());
-        return "downloadXMLFile";
+    }
+
+    /**
+     * @return user login name
+     */
+    String getUserName() {
+        return ServletActionContext.getRequest().getUserPrincipal().getName();
+
     }
 
     /**
@@ -189,5 +236,19 @@ public class CTGovXMLAction extends ActionSupport implements Preparable {
     public void setCtService(CTGovXmlGeneratorServiceLocal ctService) {
         this.ctService = ctService;
     }
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
+    }
+
+    /**
+     * @param registryUserService the registryUserService to set
+     */
+    public void setRegistryUserService(RegistryUserService registryUserService) {
+        this.registryUserService = registryUserService;
+    }    
 
 }
