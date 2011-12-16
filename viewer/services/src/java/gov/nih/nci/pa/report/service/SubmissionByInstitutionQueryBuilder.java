@@ -80,121 +80,138 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.report.dto.result;
+package gov.nih.nci.pa.report.service;
 
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.dto.MilestonesDTO;
+import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
+import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.report.dto.criteria.InstitutionCriteriaDto;
+import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
+import gov.nih.nci.pa.report.util.ReportUtil;
+import gov.nih.nci.pa.service.util.DAQuery;
+
+import java.sql.Timestamp;
+import java.util.Set;
 
 /**
- * Milestone Dto.
- * @author mshestopalov
- *
+ * Query builder for the submission by institution report.
+ * 
+ * @author Michael Visee
  */
-public class MilestoneResultDto {
+public class SubmissionByInstitutionQueryBuilder {
 
-    private Cd milestone = new Cd();
-    private Ts milestoneDate = new Ts();
-    private Cd adminMilestone = new Cd();
-    private Ts adminMilestoneDate = new Ts();
-    private Cd scientificMilestone = new Cd();
-    private Ts scientificMilestoneDate = new Ts();
+    private static final String MAIN_SQL_START =
+            "SELECT oi.extension, sp.submission_number, cm.organization, sp.status_date, "
+                    + "dws.status_code, dws.status_date_range_low, sp.identifier, lo.leadOrgName, lo.leadOrgTrialId " 
+                    + "FROM study_protocol AS sp "
+                    + "LEFT OUTER JOIN study_otheridentifiers as oi ON sp.identifier = oi.study_protocol_id "
+                    + "AND oi.root = :spRoot AND oi.identifier_name = :spIdName "
+                    + "INNER JOIN document_workflow_status AS dws ON sp.identifier = dws.study_protocol_identifier "
+                    + "LEFT OUTER JOIN csm_user AS cm ON sp.user_last_created_id = cm.user_id "
+                    + "LEFT OUTER JOIN (SELECT ss.study_protocol_identifier, org.name as leadOrgName, "
+                    + "ss.local_sp_indentifier as leadOrgTrialId "
+                    + "FROM study_site AS ss "
+                    + "JOIN research_organization AS ro ON ss.research_organization_identifier = ro.identifier "
+                    + "JOIN organization AS org ON ro.organization_identifier = org.identifier "
+                    + "WHERE ss.functional_code = :leadOrgCode) AS lo "
+                    + "ON sp.identifier = lo.study_protocol_identifier "
+                    + "WHERE sp.status_code = :statusCode  AND "
+                    + "sp.date_last_created >= :low AND sp.date_last_created < :high AND "
+                    + "dws.identifier in (SELECT max(identifier) FROM document_workflow_status "
+                    + " GROUP BY study_protocol_identifier) ";
+    
+    private static final String ORDER_BY_CLAUSE = "ORDER BY cm.organization, sp.status_date, oi.extension";
+    
+    private InstitutionCriteriaDto criteria;
+
+    /**
+     * Constructor.
+     * @param criteria The submission by institution report criteria.
+     */
+    public SubmissionByInstitutionQueryBuilder(InstitutionCriteriaDto criteria) {
+        this.criteria = criteria;
+    }
+
+    /**
+     * Gets the report query corresponding to the report criteria.
+     * @return the report query
+     */
+    public DAQuery getReportQuery() {
+        DAQuery query = new DAQuery();
+        query.setSql(true);
+        query.addParameter("leadOrgCode", StudySiteFunctionalCode.LEAD_ORGANIZATION.getName());
+        query.addParameter("spRoot", IiConverter.STUDY_PROTOCOL_ROOT);
+        query.addParameter("spIdName", IiConverter.STUDY_PROTOCOL_IDENTIFIER_NAME);
+        query.addParameter("statusCode", ActStatusCode.ACTIVE.name());
+        query.addParameter("low", TsConverter.convertToTimestamp(criteria.getTimeInterval().getLow()));
+        Long high = TsConverter.convertToDateMidnight(criteria.getTimeInterval().getHigh()).plusDays(1).getMillis();
+        query.addParameter("high", new Timestamp(high));
+        StringBuilder builder = new StringBuilder(MAIN_SQL_START);
+        ctepSql(query, builder);
+        submissionTypeSql(builder);
+        submitterOrgSql(query, builder);
+        builder.append(ORDER_BY_CLAUSE);
+        query.setText(builder.toString());
+        return query;
+    }
     
     /**
-     * Default constructor.
+     * Adds the ctep criteria to the query.
+     * @param query The query under construction
+     * @param builder The query text under construction
      */
-    public MilestoneResultDto() {
-        super();
+    void ctepSql(DAQuery query, StringBuilder builder) {
+        if (!BlConverter.convertToBool(criteria.getCtep())) {
+            builder.append("AND (sp.user_last_created_id IS NULL OR"
+                    + "(cm.login_name NOT LIKE '%brownph2' AND cm.login_name NOT LIKE '%pb8593@yahoo.com')) ");
+        }
     }
-    
+
     /**
-     * Constructor from a MilestonesDTO.
-     * @param milestonesDto The MilestonesDTO
+     * Adds the submission type criteria to the query.
+     * @param builder The query text under construction
      */
-    public MilestoneResultDto(MilestonesDTO milestonesDto) {
-        milestone = CdConverter.convertToCd(milestonesDto.getStudyMilestone() == null ? null 
-                    : milestonesDto.getStudyMilestone().getMilestone());
-        milestoneDate = TsConverter.convertToTs(milestonesDto.getStudyMilestone().getMilestoneDate());
-        adminMilestone = CdConverter.convertToCd(milestonesDto.getAdminMilestone().getMilestone() == null ? null  
-                         : milestonesDto.getAdminMilestone().getMilestone());
-        adminMilestoneDate = TsConverter.convertToTs(milestonesDto.getAdminMilestone().getMilestoneDate());
-        scientificMilestone = CdConverter.convertToCd(milestonesDto.getScientificMilestone().getMilestone() == null 
-                              ? null : milestonesDto.getScientificMilestone().getMilestone());
-        scientificMilestoneDate = TsConverter.convertToTs(milestonesDto.getScientificMilestone().getMilestoneDate());
+    void submissionTypeSql(StringBuilder builder) {
+        String typeName = CdConverter.convertCdToString(criteria.getSubmissionType());
+        switch (SubmissionTypeCode.valueOf(typeName)) {
+        case AMENDMENT:
+            builder.append("AND sp.submission_number > 1 ");
+            break;
+        case ORIGINAL:
+            builder.append("AND sp.submission_number = 1 ");
+            break;
+        default:
+            break;
+        }
     }
-    
+
     /**
-     * @return the milestone
+     * Adds the organization criteria to the query.
+     * @param query The query under construction
+     * @param builder The query text under construction
      */
-    public Cd getMilestone() {
-        return milestone;
+    void submitterOrgSql(DAQuery query, StringBuilder builder) {
+        Set<String> orgs = ReportUtil.convertToString(criteria.getInstitutions());
+        if (!orgs.contains(InstitutionCriteriaDto.ALL_ORGANIZATIONS_KEY)) {
+            builder.append("AND cm.organization IN (:ORGS) ");
+            query.addParameter("ORGS", orgs);
+        }
     }
+
     /**
-     * @param milestone the milestone to set
+     * @return the criteria
      */
-    public void setMilestone(Cd milestone) {
-        this.milestone = milestone;
+    public InstitutionCriteriaDto getCriteria() {
+        return criteria;
     }
+
     /**
-     * @return the milestoneDate
+     * @param criteria the criteria to set
      */
-    public Ts getMilestoneDate() {
-        return milestoneDate;
-    }
-    /**
-     * @param milestoneDate the milestoneDate to set
-     */
-    public void setMilestoneDate(Ts milestoneDate) {
-        this.milestoneDate = milestoneDate;
-    }
-    /**
-     * @param adminMilestone the adminMilestone to set
-     */
-    public void setAdminMilestone(Cd adminMilestone) {
-        this.adminMilestone = adminMilestone;
-    }
-    /**
-     * @return the adminMilestone
-     */
-    public Cd getAdminMilestone() {
-        return adminMilestone;
-    }
-    /**
-     * @param adminMilestoneDate the adminMilestoneDate to set
-     */
-    public void setAdminMilestoneDate(Ts adminMilestoneDate) {
-        this.adminMilestoneDate = adminMilestoneDate;
-    }
-    /**
-     * @return the adminMilestoneDate
-     */
-    public Ts getAdminMilestoneDate() {
-        return adminMilestoneDate;
-    }
-    /**
-     * @param scientificMilestone the scientificMilestone to set
-     */
-    public void setScientificMilestone(Cd scientificMilestone) {
-        this.scientificMilestone = scientificMilestone;
-    }
-    /**
-     * @return the scientificMilestone
-     */
-    public Cd getScientificMilestone() {
-        return scientificMilestone;
-    }
-    /**
-     * @param scientificMilestoneDate the scientificMilestoneDate to set
-     */
-    public void setScientificMilestoneDate(Ts scientificMilestoneDate) {
-        this.scientificMilestoneDate = scientificMilestoneDate;
-    }
-    /**
-     * @return the scientificMilestoneDate
-     */
-    public Ts getScientificMilestoneDate() {
-        return scientificMilestoneDate;
+    public void setCriteria(InstitutionCriteriaDto criteria) {
+        this.criteria = criteria;
     }
 }

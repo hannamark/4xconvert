@@ -78,13 +78,13 @@ package gov.nih.nci.pa.viewer.action;
 
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
+import gov.nih.nci.pa.report.dto.result.SummaryByInstitutionResultDto;
 import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
+import gov.nih.nci.pa.report.service.SubmissionByInstitutionReportLocal;
 import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
-import gov.nih.nci.pa.report.service.TrialListLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.viewer.dto.criteria.InstitutionCriteriaWebDto;
-import gov.nih.nci.pa.viewer.dto.result.TrialListResultWebDto;
+import gov.nih.nci.pa.viewer.dto.result.SubmissionByInstitutionResultWebDto;
 import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
 
 import java.util.ArrayList;
@@ -101,8 +101,8 @@ import com.opensymphony.xwork2.Preparable;
  * @author Hugh Reinhart
  * @since 4/16/2009
  */
-public class SubmissionByInstitutionAction
-        extends AbstractReportAction<InstitutionCriteriaWebDto, TrialListResultWebDto> implements Preparable {
+public class SubmissionByInstitutionAction extends
+        AbstractReportAction<InstitutionCriteriaWebDto, SubmissionByInstitutionResultWebDto> implements Preparable {
 
     private static final long serialVersionUID = 7044286786372431982L;
     
@@ -119,8 +119,8 @@ public class SubmissionByInstitutionAction
     private static final String SUB_TYPE_AMEND = "Amendment";
     private static final String SUB_TYPE_BOTH = "All";
     
+    private SubmissionByInstitutionReportLocal submissionByInstitutionReportService;
     private SubmitterOrganizationLocal submitterOrganizationReportService;
-    private TrialListLocal trialListReportService;
 
     private InstitutionCriteriaWebDto criteria;
     
@@ -130,8 +130,8 @@ public class SubmissionByInstitutionAction
     @Override
     public void prepare() {
         ViewerServiceLocator locator = ViewerServiceLocator.getInstance();
+        setSubmissionByInstitutionReportService(locator.getSubmissionByInstitutionReporttService());
         setSubmitterOrganizationReportService(locator.getSubmitterOrganizationReportService());
-        setTrialListReportService(locator.getTrialListReportService());
     }
 
     /**
@@ -149,15 +149,14 @@ public class SubmissionByInstitutionAction
     @Override
     public String getReport() {
         try {
-            List<TrialListResultDto> isoList = trialListReportService.get(criteria.getIsoDto());
-            setResultList(getWebList(isoList, SubmissionTypeCode.valueOf(getCriteria()
-                .getSubmissionType()), false));
+            List<SummaryByInstitutionResultDto> isoList =
+                    submissionByInstitutionReportService.get(criteria.getIsoDto());
+            setResultList(getWebList(isoList, SubmissionTypeCode.valueOf(getCriteria().getSubmissionType()), false));
             return super.getReport();
         } catch (PAException e) {
             addActionError(e.getMessage());
             return super.execute();
         }
-
     }
     
     /**
@@ -167,15 +166,15 @@ public class SubmissionByInstitutionAction
      * @param isCurrentMilestoneReport Is this a current milestone report.
      * @return web dto list
      */
-    List<TrialListResultWebDto> getWebList(List<TrialListResultDto> serviceDtoList, SubmissionTypeCode subTypeCriteria,
-            boolean isCurrentMilestoneReport) {
-        List<TrialListResultWebDto> resultList = new ArrayList<TrialListResultWebDto>();
+    List<SubmissionByInstitutionResultWebDto> getWebList(List<SummaryByInstitutionResultDto> serviceDtoList,
+            SubmissionTypeCode subTypeCriteria, boolean isCurrentMilestoneReport) {
+        List<SubmissionByInstitutionResultWebDto> resultList = new ArrayList<SubmissionByInstitutionResultWebDto>();
         int original = 0;
-        for (TrialListResultDto dto : serviceDtoList) {
+        for (SummaryByInstitutionResultDto dto : serviceDtoList) {
             if (dto.isOriginal()) {
                 original++;
             }
-            resultList.add(new TrialListResultWebDto(dto));
+            resultList.add(new SubmissionByInstitutionResultWebDto(dto));
         }
         addSummaryResults(resultList, subTypeCriteria, isCurrentMilestoneReport, original, serviceDtoList.size());
         return resultList;
@@ -189,25 +188,27 @@ public class SubmissionByInstitutionAction
      * @param original Number of original submissions
      * @param total Total number of submissions
      */
-    void addSummaryResults(List<TrialListResultWebDto> resultList, SubmissionTypeCode subTypeCriteria,
+    void addSummaryResults(List<SubmissionByInstitutionResultWebDto> resultList, SubmissionTypeCode subTypeCriteria,
             boolean isCurrentMilestoneReport, int original, int total) {
         if (ORIGINAL_CODES.contains(subTypeCriteria)) {
-            TrialListResultWebDto webDto =
-                    new TrialListResultWebDto(TOTAL_ORIG, SUB_TYPE_ORIG, Integer.toString(original));
+            SubmissionByInstitutionResultWebDto webDto =
+                    new SubmissionByInstitutionResultWebDto(TOTAL_ORIG, SUB_TYPE_ORIG, Integer.toString(original));
             resultList.add(webDto);
         }
         if (AMENDMENT_CODES.contains(subTypeCriteria)) {
-            TrialListResultWebDto webDto =
-                    new TrialListResultWebDto(TOTAL_AMEND, SUB_TYPE_AMEND, Integer.toString(total - original));
+            SubmissionByInstitutionResultWebDto webDto =
+                    new SubmissionByInstitutionResultWebDto(TOTAL_AMEND, SUB_TYPE_AMEND, Integer.toString(total
+                            - original));
             resultList.add(webDto);
         }
         if (OVERALL_CODES.contains(subTypeCriteria)) {
-            TrialListResultWebDto webDto =
-                    new TrialListResultWebDto(TOTAL_BOTH, SUB_TYPE_BOTH, Integer.toString(total));
+            SubmissionByInstitutionResultWebDto webDto =
+                    new SubmissionByInstitutionResultWebDto(TOTAL_BOTH, SUB_TYPE_BOTH, Integer.toString(total));
             resultList.add(webDto);
         }
         if (isCurrentMilestoneReport) {
-            TrialListResultWebDto webDto = new TrialListResultWebDto(TOTAL, Integer.toString(total), null);
+            SubmissionByInstitutionResultWebDto webDto =
+                    new SubmissionByInstitutionResultWebDto(TOTAL, Integer.toString(total), null);
             resultList.add(webDto);
         }
     }
@@ -258,17 +259,20 @@ public class SubmissionByInstitutionAction
     }
 
     /**
+     * @param submissionByInstitutionReportService the submissionByInstitutionReportService to set
+     */
+    public void setSubmissionByInstitutionReportService(
+            SubmissionByInstitutionReportLocal submissionByInstitutionReportService) {
+        this.submissionByInstitutionReportService = submissionByInstitutionReportService;
+    }
+
+    /**
      * @param submitterOrganizationReportService the submitterOrganizationReportService to set
      */
     public void setSubmitterOrganizationReportService(SubmitterOrganizationLocal submitterOrganizationReportService) {
         this.submitterOrganizationReportService = submitterOrganizationReportService;
     }
 
-    /**
-     * @param trialListReportService the trialListReportService to set
-     */
-    public void setTrialListReportService(TrialListLocal trialListReportService) {
-        this.trialListReportService = trialListReportService;
-    }
+   
 
 }

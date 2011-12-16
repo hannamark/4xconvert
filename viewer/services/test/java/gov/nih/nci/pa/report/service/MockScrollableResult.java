@@ -80,121 +80,316 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.report.dto.result;
+package gov.nih.nci.pa.report.service;
 
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.dto.MilestonesDTO;
-import gov.nih.nci.pa.iso.util.CdConverter;
-import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.domain.StudyMilestone;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import org.hibernate.HibernateException;
+import org.hibernate.ScrollableResults;
+import org.hibernate.type.Type;
 
 /**
- * Milestone Dto.
- * @author mshestopalov
- *
+ * @author Michael Visee
  */
-public class MilestoneResultDto {
+public class MockScrollableResult implements ScrollableResults {
+    private List<StudyMilestone> milestones;
+    private int index = -1;
+    private boolean closed = false;
 
-    private Cd milestone = new Cd();
-    private Ts milestoneDate = new Ts();
-    private Cd adminMilestone = new Cd();
-    private Ts adminMilestoneDate = new Ts();
-    private Cd scientificMilestone = new Cd();
-    private Ts scientificMilestoneDate = new Ts();
-    
     /**
      * Default constructor.
+     * @param milestones The list of milestones to iterate over
      */
-    public MilestoneResultDto() {
-        super();
+    public MockScrollableResult(List<StudyMilestone> milestones) {
+        this.milestones = milestones;
     }
-    
+
     /**
-     * Constructor from a MilestonesDTO.
-     * @param milestonesDto The MilestonesDTO
+     * {@inheritDoc}
      */
-    public MilestoneResultDto(MilestonesDTO milestonesDto) {
-        milestone = CdConverter.convertToCd(milestonesDto.getStudyMilestone() == null ? null 
-                    : milestonesDto.getStudyMilestone().getMilestone());
-        milestoneDate = TsConverter.convertToTs(milestonesDto.getStudyMilestone().getMilestoneDate());
-        adminMilestone = CdConverter.convertToCd(milestonesDto.getAdminMilestone().getMilestone() == null ? null  
-                         : milestonesDto.getAdminMilestone().getMilestone());
-        adminMilestoneDate = TsConverter.convertToTs(milestonesDto.getAdminMilestone().getMilestoneDate());
-        scientificMilestone = CdConverter.convertToCd(milestonesDto.getScientificMilestone().getMilestone() == null 
-                              ? null : milestonesDto.getScientificMilestone().getMilestone());
-        scientificMilestoneDate = TsConverter.convertToTs(milestonesDto.getScientificMilestone().getMilestoneDate());
+    @Override
+    public void afterLast() throws HibernateException {
     }
-    
+
     /**
-     * @return the milestone
+     * {@inheritDoc}
      */
-    public Cd getMilestone() {
-        return milestone;
+    @Override
+    public void beforeFirst() throws HibernateException {
     }
+
     /**
-     * @param milestone the milestone to set
+     * {@inheritDoc}
      */
-    public void setMilestone(Cd milestone) {
-        this.milestone = milestone;
+    @Override
+    public void close() throws HibernateException {
+        closed = true;
     }
+
     /**
-     * @return the milestoneDate
+     * {@inheritDoc}
      */
-    public Ts getMilestoneDate() {
-        return milestoneDate;
+    @Override
+    public boolean first() throws HibernateException {
+        return false;
     }
+
     /**
-     * @param milestoneDate the milestoneDate to set
+     * {@inheritDoc}
      */
-    public void setMilestoneDate(Ts milestoneDate) {
-        this.milestoneDate = milestoneDate;
+    @Override
+    public Object[] get() throws HibernateException {
+        return new Object[]{milestones.get(index) };
     }
+
     /**
-     * @param adminMilestone the adminMilestone to set
+     * {@inheritDoc}
      */
-    public void setAdminMilestone(Cd adminMilestone) {
-        this.adminMilestone = adminMilestone;
+    @Override
+    public Object get(int arg0) throws HibernateException {
+        return null;
     }
+
     /**
-     * @return the adminMilestone
+     * {@inheritDoc}
      */
-    public Cd getAdminMilestone() {
-        return adminMilestone;
+    @Override
+    public BigDecimal getBigDecimal(int arg0) throws HibernateException {
+        return null;
     }
+
     /**
-     * @param adminMilestoneDate the adminMilestoneDate to set
+     * {@inheritDoc}
      */
-    public void setAdminMilestoneDate(Ts adminMilestoneDate) {
-        this.adminMilestoneDate = adminMilestoneDate;
+    @Override
+    public BigInteger getBigInteger(int arg0) throws HibernateException {
+        return null;
     }
+
     /**
-     * @return the adminMilestoneDate
+     * {@inheritDoc}
      */
-    public Ts getAdminMilestoneDate() {
-        return adminMilestoneDate;
+    @Override
+    public byte[] getBinary(int arg0) throws HibernateException {
+        return null;
     }
+
     /**
-     * @param scientificMilestone the scientificMilestone to set
+     * {@inheritDoc}
      */
-    public void setScientificMilestone(Cd scientificMilestone) {
-        this.scientificMilestone = scientificMilestone;
+    @Override
+    public Blob getBlob(int arg0) throws HibernateException {
+        return null;
     }
+
     /**
-     * @return the scientificMilestone
+     * {@inheritDoc}
      */
-    public Cd getScientificMilestone() {
-        return scientificMilestone;
+    @Override
+    public Boolean getBoolean(int arg0) throws HibernateException {
+        return null;
     }
+
     /**
-     * @param scientificMilestoneDate the scientificMilestoneDate to set
+     * {@inheritDoc}
      */
-    public void setScientificMilestoneDate(Ts scientificMilestoneDate) {
-        this.scientificMilestoneDate = scientificMilestoneDate;
+    @Override
+    public Byte getByte(int arg0) throws HibernateException {
+        return null;
     }
+
     /**
-     * @return the scientificMilestoneDate
+     * {@inheritDoc}
      */
-    public Ts getScientificMilestoneDate() {
-        return scientificMilestoneDate;
+    @Override
+    public Calendar getCalendar(int arg0) throws HibernateException {
+        return null;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Character getCharacter(int arg0) throws HibernateException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Clob getClob(int arg0) throws HibernateException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Date getDate(int arg0) throws HibernateException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Double getDouble(int arg0) throws HibernateException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Float getFloat(int arg0) throws HibernateException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Integer getInteger(int arg0) throws HibernateException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Locale getLocale(int arg0) throws HibernateException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Long getLong(int arg0) throws HibernateException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getRowNumber() throws HibernateException {
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Short getShort(int arg0) throws HibernateException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getString(int arg0) throws HibernateException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getText(int arg0) throws HibernateException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public TimeZone getTimeZone(int arg0) throws HibernateException {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Type getType(int arg0) {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isFirst() throws HibernateException {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isLast() throws HibernateException {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean last() throws HibernateException {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean next() throws HibernateException {
+        index++;
+        return index < milestones.size();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean previous() throws HibernateException {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean scroll(int arg0) throws HibernateException {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean setRowNumber(int arg0) throws HibernateException {
+        return false;
+    }
+
+    /**
+     * @return the closed
+     */
+    public boolean isClosed() {
+        return closed;
+    }
+
 }

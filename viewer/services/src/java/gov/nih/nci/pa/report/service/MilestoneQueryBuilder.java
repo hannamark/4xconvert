@@ -1,12 +1,12 @@
 /**
  * The software subject to this notice and license includes both human readable
- * source code form and machine readable, binary, object code form. The pa
+ * source code form and machine readable, binary, object code form. The viewer
  * Software was developed in conjunction with the National Cancer Institute 
  * (NCI) by NCI employees and 5AM Solutions, Inc. (5AM). To the extent 
  * government employees are authors, any rights in such works shall be subject 
  * to Title 17 of the United States Code, section 105. 
  *
- * This pa Software License (the License) is between NCI and You. You (or 
+ * This viewer Software License (the License) is between NCI and You. You (or 
  * Your) shall mean a person or an entity, and all other entities that control, 
  * are controlled by, or are under common control with the entity. Control for 
  * purposes of this definition means (i) the direct or indirect power to cause 
@@ -17,10 +17,10 @@
  * This License is granted provided that You agree to the conditions described 
  * below. NCI grants You a non-exclusive, worldwide, perpetual, fully-paid-up, 
  * no-charge, irrevocable, transferable and royalty-free right and license in 
- * its rights in the pa Software to (i) use, install, access, operate, 
+ * its rights in the viewer Software to (i) use, install, access, operate, 
  * execute, copy, modify, translate, market, publicly display, publicly perform,
- * and prepare derivative works of the pa Software; (ii) distribute and 
- * have distributed to and by third parties the pa Software and any 
+ * and prepare derivative works of the viewer Software; (ii) distribute and 
+ * have distributed to and by third parties the viewer Software and any 
  * modifications and derivative works thereof; and (iii) sublicense the 
  * foregoing rights set out in (i) and (ii) to third parties, including the 
  * right to license such rights to further third parties. For sake of clarity, 
@@ -80,100 +80,118 @@
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package gov.nih.nci.pa.service.util;
+package gov.nih.nci.pa.report.service;
 
-import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
-import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.enums.ActStatusCode;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.report.dto.criteria.InstitutionCriteriaDto;
+import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
+import gov.nih.nci.pa.report.util.ReportUtil;
+import gov.nih.nci.pa.service.util.DAQuery;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.ScrollableResults;
-import org.hibernate.Session;
+import java.sql.Timestamp;
+import java.util.Set;
 
 /**
  * @author Michael Visee
  */
-@Stateless
-@Interceptors(PaHibernateSessionInterceptor.class)
-public class DataAccessServiceBean implements DataAccessServiceLocal {
-    private static final Logger LOG = Logger.getLogger(DataAccessServiceBean.class);
+public class MilestoneQueryBuilder {
+    
+    private static final String MILESTONE_SQL_START =
+            "SELECT ms FROM " + StudyMilestone.class.getName() + " AS ms "
+                    + "INNER JOIN ms.studyProtocol AS sp "
+                    + "LEFT OUTER JOIN sp.userLastCreated cm "
+                    + "WHERE sp.statusCode = :statusCode AND "
+                    + "sp.dateLastCreated >= :low AND sp.dateLastCreated < :high ";
+    
+    private static final String ORDER_BY_CLAUSE = "ORDER BY ms.studyProtocol.id, ms.milestoneDate";
+    
+    private InstitutionCriteriaDto criteria;
 
     /**
-     * {@inheritDoc}
+     * Constructor.
+     * @param criteria The submission by institution report criteria.
      */
-    @Override
-    public <T> T findEntityByQuery(DAQuery daQuery) {
-        List<T> list = findByQuery(daQuery);
-        if (CollectionUtils.isEmpty(list)) {
-            return null;
-        }
-        if (list.size() == 1) {
-            return list.get(0);
-        }
-        throw new IllegalArgumentException("Query should not return more than one result.");
+    public MilestoneQueryBuilder(InstitutionCriteriaDto criteria) {
+        this.criteria = criteria;
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the report query corresponding to the report criteria.
+     * @return the report query
      */
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> List<T> findByQuery(DAQuery daQuery) {
-        Query query = createQuery(daQuery);
-        setParameters(query, daQuery.getParameters());
-        return query.list();
+    public DAQuery getMilestoneQuery() {
+        DAQuery query = new DAQuery();
+        query.addParameter("statusCode", ActStatusCode.ACTIVE);
+        query.addParameter("low", TsConverter.convertToTimestamp(criteria.getTimeInterval().getLow()));
+        Long high = TsConverter.convertToDateMidnight(criteria.getTimeInterval().getHigh()).plusDays(1).getMillis();
+        query.addParameter("high", new Timestamp(high));
+        StringBuilder builder = new StringBuilder(MILESTONE_SQL_START);
+        ctepSql(query, builder);
+        submissionTypeSql(builder);
+        submitterOrgSql(query, builder);
+        builder.append(ORDER_BY_CLAUSE);
+        query.setText(builder.toString());
+        return query;
     }
-
+    
     /**
-     * {@inheritDoc}
+     * Adds the ctep criteria to the query.
+     * @param query The query under construction
+     * @param builder The query text under construction
      */
-    @SuppressWarnings("unchecked")
-    @Override
-    public ScrollableResults scrollByQuery(DAQuery daQuery) {
-        Query query = createQuery(daQuery);
-        setParameters(query, daQuery.getParameters());
-        return query.scroll();
-    }
-
-    /**
-     * Creates the hibernate query represented by the given DAQuery.
-     * @param daQuery The DAQuery to use.
-     * @return The hibernate query represented by the given DAQuery.
-     */
-    Query createQuery(DAQuery daQuery) {
-        Session session = PaHibernateUtil.getCurrentSession();
-        if (daQuery.getName() != null) {
-            LOG.debug("Executing named query: " + daQuery.getName());
-            return session.getNamedQuery(daQuery.getName());
+    void ctepSql(DAQuery query, StringBuilder builder) {
+        if (!BlConverter.convertToBool(criteria.getCtep())) {
+            builder.append("AND (sp.userLastCreated.id IS NULL OR"
+                    + "(cm.loginName NOT LIKE '%brownph2' AND cm.loginName NOT LIKE '%pb8593@yahoo.com')) ");
         }
-        LOG.debug("Executing dynamic query query: " + daQuery.getText());
-        return (daQuery.isSql()) ? session.createSQLQuery(daQuery.getText()) : session.createQuery(daQuery.getText());
     }
 
     /**
-     * Sets the parameters of the query.
-     * @param query The hibernate query
-     * @param parameters The map of parameter values
+     * Adds the submission type criteria to the query.
+     * @param builder The query text under construction
      */
-    void setParameters(Query query, Map<String, Object> parameters) {
-        if (MapUtils.isNotEmpty(parameters)) {
-            for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-                if (entry.getValue() instanceof Collection) {
-                    query.setParameterList(entry.getKey(), (Collection<?>) entry.getValue());
-                } else {
-                    query.setParameter(entry.getKey(), entry.getValue());
-                }
-                LOG.debug("parameter " + entry.getKey() + " = " + entry.getValue());
-            }
+    void submissionTypeSql(StringBuilder builder) {
+        String typeName = CdConverter.convertCdToString(criteria.getSubmissionType());
+        switch (SubmissionTypeCode.valueOf(typeName)) {
+        case AMENDMENT:
+            builder.append("AND sp.submissionNumber > 1 ");
+            break;
+        case ORIGINAL:
+            builder.append("AND sp.submissionNumber = 1 ");
+            break;
+        default:
+            break;
         }
+    }
+
+    /**
+     * Adds the organization criteria to the query.
+     * @param query The query under construction
+     * @param builder The query text under construction
+     */
+    void submitterOrgSql(DAQuery query, StringBuilder builder) {
+        Set<String> orgs = ReportUtil.convertToString(criteria.getInstitutions());
+        if (!orgs.contains(InstitutionCriteriaDto.ALL_ORGANIZATIONS_KEY)) {
+            builder.append("AND cm.organization IN (:ORGS) ");
+            query.addParameter("ORGS", orgs);
+        }
+    }
+
+    /**
+     * @return the criteria
+     */
+    public InstitutionCriteriaDto getCriteria() {
+        return criteria;
+    }
+
+    /**
+     * @param criteria the criteria to set
+     */
+    public void setCriteria(InstitutionCriteriaDto criteria) {
+        this.criteria = criteria;
     }
 }

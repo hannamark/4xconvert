@@ -88,6 +88,9 @@ import java.util.Set;
  * @since 06/11/2009
  */
 public class InstitutionCriteriaDto extends SubmissionTypeCriteriaDto {
+    /** The value indicating results should not be filtered by organization. */
+    public static final String ALL_ORGANIZATIONS_KEY = "1";
+    
     private DSet<St> institutions = ReportUtil.convertToDSet(null);
 
     /**

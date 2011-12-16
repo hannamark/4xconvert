@@ -74,161 +74,283 @@
 * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS caBIG SOFTWARE, EVEN
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package gov.nih.nci.pa.report.dto.result;
+package gov.nih.nci.pa.viewer.dto.result;
 
-import gov.nih.nci.iso21090.Cd;
-import gov.nih.nci.iso21090.Int;
-import gov.nih.nci.iso21090.St;
-import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.report.dto.result.SummaryByInstitutionResultDto;
 
 /**
  * @author Hugh Reinhart
- * @since 03/19/2009
+ * @since 05/06/2009
  */
-public class TrialListResultDto {
+@SuppressWarnings("PMD.CyclomaticComplexity")
+public final class SubmissionByInstitutionResultWebDto {
 
-    private St assignedIdentifier = new St();
-    private Int submissionNumber = new Int();
-    private St submitterOrg = new St();
-    private St leadOrgTrialIdentifier = new St();
-    private St leadOrg = new St();
-    private Ts dateLastCreated = new Ts();;
-    private Cd dws = new Cd();
-    private Ts dwsDate = new Ts();
-    private MilestoneResultDto milestoneResult = new MilestoneResultDto();
+    private static final String SUB_TYPE_ORIG = "Original";
+    private static final String SUB_TYPE_AMEND = "Amendment";
+
+    private String assignedIdentifier;
+    private String submissionDate;
+    private String submissionType;
+    private String submitterOrg;
+    private String leadOrgTrialIdentifier;
+    private String leadOrg;
+    private String dws;
+    private String dwsDate;
+    private String milestone;
+    private String milestoneDate;
+    private String adminMilestone;
+    private String adminMilestoneDate;
+    private String scientificMilestone;
+    private String scientificMilestoneDate;
+
+    /**
+     * Default constructor.
+     */
+    public SubmissionByInstitutionResultWebDto() {
+        super();
+    }
+
+    /**
+     * Constructor.
+     * @param assignedIdentifier The assigned identifier
+     * @param submissionType The subission type
+     * @param submitterOrg The sumitter organization
+     */
+    public SubmissionByInstitutionResultWebDto(String assignedIdentifier, String submissionType, String submitterOrg) {
+        this.assignedIdentifier = assignedIdentifier;
+        this.submissionType = submissionType;
+        this.submitterOrg = submitterOrg;
+    }
+
+    /**
+     * Constructor using service dto.
+     * @param dto the service iso dto
+     */
+    public SubmissionByInstitutionResultWebDto(SummaryByInstitutionResultDto dto) {
+        if (dto == null) {
+            return;
+        }
+        assignedIdentifier = StConverter.convertToString(dto.getAssignedIdentifier());
+        Integer submissionNumber = IntConverter.convertToInteger(dto.getSubmissionNumber());
+        if (submissionNumber != null) {
+            if (submissionNumber == 1) {
+                submissionType = SUB_TYPE_ORIG;
+            } else if (submissionNumber > 1) {
+                submissionType = SUB_TYPE_AMEND;
+            }
+        }
+        submitterOrg = StConverter.convertToString(dto.getSubmitterOrg());
+        leadOrgTrialIdentifier = StConverter.convertToString(dto.getLeadOrgTrialIdentifier());
+        leadOrg = StConverter.convertToString(dto.getLeadOrg());
+        submissionDate = TsConverter.convertToString(dto.getSubmissionDate());
+        dws = DocumentWorkflowStatusCode.valueOf(CdConverter.convertCdToString(dto.getDws())).getCode();
+        dwsDate = TsConverter.convertToString(dto.getDwsDate());
+        milestone = CdConverter.convertCdToString(dto.getMilestoneResult().getMilestone());
+        milestoneDate = TsConverter.convertToString(dto.getMilestoneResult().getMilestoneDate());
+        adminMilestone = CdConverter.convertCdToString(dto.getMilestoneResult().getAdminMilestone());
+        adminMilestoneDate = TsConverter.convertToString(dto.getMilestoneResult().getAdminMilestoneDate());
+        scientificMilestone = CdConverter.convertCdToString(dto.getMilestoneResult().getScientificMilestone());
+        scientificMilestoneDate = TsConverter.convertToString(dto.getMilestoneResult().getScientificMilestoneDate());
+    }
 
     /**
      * @return the assignedIdentifier
      */
-    public St getAssignedIdentifier() {
+    public String getAssignedIdentifier() {
         return assignedIdentifier;
     }
 
     /**
      * @param assignedIdentifier the assignedIdentifier to set
      */
-    public void setAssignedIdentifier(St assignedIdentifier) {
+    public void setAssignedIdentifier(String assignedIdentifier) {
         this.assignedIdentifier = assignedIdentifier;
     }
 
     /**
-     * @return the submissionNumber
+     * @return the submissionDate
      */
-    public Int getSubmissionNumber() {
-        return submissionNumber;
+    public String getSubmissionDate() {
+        return submissionDate;
     }
 
     /**
-     * @param submissionNumber the submissionNumber to set
+     * @param submissionDate the submissionDate to set
      */
-    public void setSubmissionNumber(Int submissionNumber) {
-        this.submissionNumber = submissionNumber;
+    public void setSubmissionDate(String submissionDate) {
+        this.submissionDate = submissionDate;
+    }
+
+    /**
+     * @return the submissionType
+     */
+    public String getSubmissionType() {
+        return submissionType;
+    }
+
+    /**
+     * @param submissionType the submissionType to set
+     */
+    public void setSubmissionType(String submissionType) {
+        this.submissionType = submissionType;
     }
 
     /**
      * @return the submitterOrg
      */
-    public St getSubmitterOrg() {
+    public String getSubmitterOrg() {
         return submitterOrg;
     }
 
     /**
      * @param submitterOrg the submitterOrg to set
      */
-    public void setSubmitterOrg(St submitterOrg) {
+    public void setSubmitterOrg(String submitterOrg) {
         this.submitterOrg = submitterOrg;
     }
 
     /**
      * @return the leadOrgTrialIdentifier
      */
-    public St getLeadOrgTrialIdentifier() {
+    public String getLeadOrgTrialIdentifier() {
         return leadOrgTrialIdentifier;
     }
 
     /**
      * @param leadOrgTrialIdentifier the leadOrgTrialIdentifier to set
      */
-    public void setLeadOrgTrialIdentifier(St leadOrgTrialIdentifier) {
+    public void setLeadOrgTrialIdentifier(String leadOrgTrialIdentifier) {
         this.leadOrgTrialIdentifier = leadOrgTrialIdentifier;
     }
 
     /**
      * @return the leadOrg
      */
-    public St getLeadOrg() {
+    public String getLeadOrg() {
         return leadOrg;
     }
 
     /**
      * @param leadOrg the leadOrg to set
      */
-    public void setLeadOrg(St leadOrg) {
+    public void setLeadOrg(String leadOrg) {
         this.leadOrg = leadOrg;
-    }
-
-    /**
-     * @return the dateLastCreated
-     */
-    public Ts getDateLastCreated() {
-        return dateLastCreated;
-    }
-
-    /**
-     * @param dateLastCreated the dateLastCreated to set
-     */
-    public void setDateLastCreated(Ts dateLastCreated) {
-        this.dateLastCreated = dateLastCreated;
     }
 
     /**
      * @return the dws
      */
-    public Cd getDws() {
+    public String getDws() {
         return dws;
     }
 
     /**
      * @param dws the dws to set
      */
-    public void setDws(Cd dws) {
+    public void setDws(String dws) {
         this.dws = dws;
     }
 
     /**
      * @return the dwsDate
      */
-    public Ts getDwsDate() {
+    public String getDwsDate() {
         return dwsDate;
     }
 
     /**
      * @param dwsDate the dwsDate to set
      */
-    public void setDwsDate(Ts dwsDate) {
+    public void setDwsDate(String dwsDate) {
         this.dwsDate = dwsDate;
     }
 
     /**
-     * @param milestoneResult the milestoneResult to set
+     * @return the milestone
      */
-    public void setMilestoneResult(MilestoneResultDto milestoneResult) {
-        this.milestoneResult = milestoneResult;
+    public String getMilestone() {
+        return milestone;
     }
 
     /**
-     * @return the milestoneResult
+     * @param milestone the milestone to set
      */
-    public MilestoneResultDto getMilestoneResult() {
-        return milestoneResult;
+    public void setMilestone(String milestone) {
+        this.milestone = milestone;
     }
 
     /**
-     * Test if this is an original submission.
-     * @return true if this is an original submission.
+     * @return the milestoneDate
      */
-    public boolean isOriginal() {
-        return IntConverter.convertToInteger(submissionNumber) == 1;
+    public String getMilestoneDate() {
+        return milestoneDate;
+    }
+
+    /**
+     * @param milestoneDate the milestoneDate to set
+     */
+    public void setMilestoneDate(String milestoneDate) {
+        this.milestoneDate = milestoneDate;
+    }
+
+    /**
+     * @param adminMilestone the adminMilestone to set
+     */
+    public void setAdminMilestone(String adminMilestone) {
+        this.adminMilestone = adminMilestone;
+    }
+
+    /**
+     * @return the adminMilestone
+     */
+    public String getAdminMilestone() {
+        return adminMilestone;
+    }
+
+    /**
+     * @param adminMilestoneDate the adminMilestoneDate to set
+     */
+    public void setAdminMilestoneDate(String adminMilestoneDate) {
+        this.adminMilestoneDate = adminMilestoneDate;
+    }
+
+    /**
+     * @return the adminMilestoneDate
+     */
+    public String getAdminMilestoneDate() {
+        return adminMilestoneDate;
+    }
+
+    /**
+     * @param scientificMilestone the scientificMilestone to set
+     */
+    public void setScientificMilestone(String scientificMilestone) {
+        this.scientificMilestone = scientificMilestone;
+    }
+
+    /**
+     * @return the scientificMilestone
+     */
+    public String getScientificMilestone() {
+        return scientificMilestone;
+    }
+
+    /**
+     * @param scientificMilestoneDate the scientificMilestoneDate to set
+     */
+    public void setScientificMilestoneDate(String scientificMilestoneDate) {
+        this.scientificMilestoneDate = scientificMilestoneDate;
+    }
+
+    /**
+     * @return the scientificMilestoneDate
+     */
+    public String getScientificMilestoneDate() {
+        return scientificMilestoneDate;
     }
 }

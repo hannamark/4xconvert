@@ -814,4 +814,8 @@
         <comment>Refine App Support Create account instructions</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.7/PO-4504.sql"/>
      </changeSet>
+     <changeSet id="PO-4510" author="mvisee">
+        <comment>Add unique key on study protocol otheridentifier</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.7/PO-4510.sql"/>
+     </changeSet>
 </databaseChangeLog>

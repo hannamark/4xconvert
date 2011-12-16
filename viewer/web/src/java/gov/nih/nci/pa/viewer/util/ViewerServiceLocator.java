@@ -79,10 +79,10 @@
 package gov.nih.nci.pa.viewer.util;
 
 import gov.nih.nci.pa.report.service.OrganizationFamilyServiceLocal;
+import gov.nih.nci.pa.report.service.SubmissionByInstitutionReportLocal;
 import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
 import gov.nih.nci.pa.report.service.Summary4ReportLocal;
 import gov.nih.nci.pa.report.service.TrialCountsLocal;
-import gov.nih.nci.pa.report.service.TrialListLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 
 
@@ -126,8 +126,8 @@ public final class ViewerServiceLocator implements ServiceLocator {
      * {@inheritDoc}
      */
     @Override
-    public TrialListLocal getTrialListReportService() {
-        return serviceLocator.getTrialListReportService();
+    public SubmissionByInstitutionReportLocal getSubmissionByInstitutionReporttService() {
+        return serviceLocator.getSubmissionByInstitutionReporttService();
     }
 
     /**

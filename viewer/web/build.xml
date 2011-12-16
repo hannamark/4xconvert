@@ -31,7 +31,7 @@
     <property name="viewer.test.reports" value="${reportDir}/test-reports"/>
     <property name="viewer.coverage.reports" value="${reportDir}/coverage-reports"/>
     <property name="viewer.coverage.line" value="66"/>
-    <property name="viewer.coverage.branch" value="83"/>
+    <property name="viewer.coverage.branch" value="85"/>
     <property name="viewer.pmd.maxerrors" value="1"/>
     <property name="viewer.reporting.outputDirectory" value="${reportDir}/site"/>
     <property name="viewer.war" value="${viewer.build.finalName}.war"/>

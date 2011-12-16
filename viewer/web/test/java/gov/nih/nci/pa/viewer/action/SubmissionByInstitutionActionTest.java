@@ -92,15 +92,15 @@ import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IntConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
-import gov.nih.nci.pa.report.dto.criteria.StandardCriteriaDto;
-import gov.nih.nci.pa.report.dto.result.TrialListResultDto;
+import gov.nih.nci.pa.report.dto.criteria.InstitutionCriteriaDto;
+import gov.nih.nci.pa.report.dto.result.SummaryByInstitutionResultDto;
 import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
+import gov.nih.nci.pa.report.service.SubmissionByInstitutionReportLocal;
 import gov.nih.nci.pa.report.service.SubmitterOrganizationLocal;
-import gov.nih.nci.pa.report.service.TrialListLocal;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.viewer.dto.criteria.InstitutionCriteriaWebDto;
 import gov.nih.nci.pa.viewer.dto.result.TrialCountsResultWebDto;
-import gov.nih.nci.pa.viewer.dto.result.TrialListResultWebDto;
+import gov.nih.nci.pa.viewer.dto.result.SubmissionByInstitutionResultWebDto;
 import gov.nih.nci.pa.viewer.util.ServiceLocator;
 import gov.nih.nci.pa.viewer.util.ViewerConstants;
 import gov.nih.nci.pa.viewer.util.ViewerServiceLocator;
@@ -121,10 +121,11 @@ import org.junit.Test;
  * @author Michael Visee
  */
 public class SubmissionByInstitutionActionTest extends AbstractReportActionTest<SubmissionByInstitutionAction> {
-    
+
+    private SubmissionByInstitutionReportLocal submissionByInstitutionReportService =
+            mock(SubmissionByInstitutionReportLocal.class);
     private SubmitterOrganizationLocal submitterOrganizationReportService = mock(SubmitterOrganizationLocal.class);
-    private TrialListLocal trialListReportService = mock(TrialListLocal.class);
-    
+
     /**
      * Initialization for parent class tests.
      */
@@ -150,15 +151,15 @@ public class SubmissionByInstitutionActionTest extends AbstractReportActionTest<
      */
     private SubmissionByInstitutionAction createSubmissionByInstitutionActionMock() {
         SubmissionByInstitutionAction action = mock(SubmissionByInstitutionAction.class);
+        doCallRealMethod().when(action).setSubmissionByInstitutionReportService(submissionByInstitutionReportService);
         doCallRealMethod().when(action).setSubmitterOrganizationReportService(submitterOrganizationReportService);
-        doCallRealMethod().when(action).setTrialListReportService(trialListReportService);
         setDependencies(action);
         return action;
     }
 
     private void setDependencies(SubmissionByInstitutionAction action) {
+        action.setSubmissionByInstitutionReportService(submissionByInstitutionReportService);
         action.setSubmitterOrganizationReportService(submitterOrganizationReportService);
-        action.setTrialListReportService(trialListReportService);
     }
     
     /**
@@ -171,12 +172,13 @@ public class SubmissionByInstitutionActionTest extends AbstractReportActionTest<
         ServiceLocator serviceLocator = mock(ServiceLocator.class);
         ViewerServiceLocator.getInstance().setServiceLocator(serviceLocator);
         when(serviceLocator.getSubmitterOrganizationReportService()).thenReturn(submitterOrganizationReportService);
-        when(serviceLocator.getTrialListReportService()).thenReturn(trialListReportService);
+        when(serviceLocator.getSubmissionByInstitutionReporttService())
+            .thenReturn(submissionByInstitutionReportService);
         sut.prepare();
         verify(sut).setSubmitterOrganizationReportService(submitterOrganizationReportService);
-        verify(sut).setTrialListReportService(trialListReportService);
+        verify(sut).setSubmissionByInstitutionReportService(submissionByInstitutionReportService);
     }
-    
+
     /**
      * Test the execute method.
      */
@@ -204,14 +206,14 @@ public class SubmissionByInstitutionActionTest extends AbstractReportActionTest<
         doCallRealMethod().when(sut).setCriteria(any(InstitutionCriteriaWebDto.class));
         doCallRealMethod().when(sut).getReport();
         doCallRealMethod().when(sut).getResultList();
-        doCallRealMethod().when(sut).setResultList(anyListOf(TrialListResultWebDto.class));
+        doCallRealMethod().when(sut).setResultList(anyListOf(SubmissionByInstitutionResultWebDto.class));
         doCallRealMethod().when(sut).getUserRole();
         InstitutionCriteriaWebDto criteria = new InstitutionCriteriaWebDto();
         criteria.setSubmissionType(SubmissionTypeCode.BOTH.name());
         sut.setCriteria(criteria);
-        List<TrialListResultDto> results = new ArrayList<TrialListResultDto>();
-        when(trialListReportService.get(any(StandardCriteriaDto.class))).thenReturn(results);
-        List<TrialListResultWebDto> webResults = new ArrayList<TrialListResultWebDto>();
+        List<SummaryByInstitutionResultDto> results = new ArrayList<SummaryByInstitutionResultDto>();
+        when(submissionByInstitutionReportService.get(any(InstitutionCriteriaDto.class))).thenReturn(results);
+        List<SubmissionByInstitutionResultWebDto> webResults = new ArrayList<SubmissionByInstitutionResultWebDto>();
         when(sut.getWebList(results, SubmissionTypeCode.BOTH, false)).thenReturn(webResults);
         String result = sut.getReport();
         assertEquals("Wrong result returned", "success", result);
@@ -231,7 +233,7 @@ public class SubmissionByInstitutionActionTest extends AbstractReportActionTest<
         SubmissionByInstitutionAction sut = createSubmissionByInstitutionAction();
         InstitutionCriteriaWebDto criteria = new InstitutionCriteriaWebDto();
         sut.setCriteria(criteria);
-        when(trialListReportService.get(any(StandardCriteriaDto.class))).thenThrow(new PAException("PA"));
+        when(submissionByInstitutionReportService.get(any(InstitutionCriteriaDto.class))).thenThrow(new PAException("PA"));
         String result = sut.getReport();
         Collection<String> errors = sut.getActionErrors();
         assertNotNull("No error collection", errors);
@@ -247,22 +249,22 @@ public class SubmissionByInstitutionActionTest extends AbstractReportActionTest<
     @Test
     public void testGetWebList() {
         SubmissionByInstitutionAction sut = createSubmissionByInstitutionActionMock();
-        List<TrialListResultDto> trialListResultDtos = createTrialListResultDtos();
-        doCallRealMethod().when(sut).getWebList(trialListResultDtos, SubmissionTypeCode.BOTH, false);
-        List<TrialListResultWebDto> result = sut.getWebList(trialListResultDtos, SubmissionTypeCode.BOTH, false);
-        verify(sut).addSummaryResults(anyListOf(TrialListResultWebDto.class), eq(SubmissionTypeCode.BOTH), eq(false),
+        List<SummaryByInstitutionResultDto> summaryByInstitutionResultDtos = createTrialListResultDtos();
+        doCallRealMethod().when(sut).getWebList(summaryByInstitutionResultDtos, SubmissionTypeCode.BOTH, false);
+        List<SubmissionByInstitutionResultWebDto> result = sut.getWebList(summaryByInstitutionResultDtos, SubmissionTypeCode.BOTH, false);
+        verify(sut).addSummaryResults(anyListOf(SubmissionByInstitutionResultWebDto.class), eq(SubmissionTypeCode.BOTH), eq(false),
                                       eq(1), eq(2));
         assertNotNull("No result returned", result);
         assertEquals("Wrong result size", 2, result.size());
     }
 
-    private List<TrialListResultDto> createTrialListResultDtos() {
-        List<TrialListResultDto> dtos = new ArrayList<TrialListResultDto>();
-        TrialListResultDto dto1 = new TrialListResultDto();
+    private List<SummaryByInstitutionResultDto> createTrialListResultDtos() {
+        List<SummaryByInstitutionResultDto> dtos = new ArrayList<SummaryByInstitutionResultDto>();
+        SummaryByInstitutionResultDto dto1 = new SummaryByInstitutionResultDto();
         dto1.setSubmissionNumber(IntConverter.convertToInt(1));
         dto1.setDws(CdConverter.convertStringToCd(DocumentWorkflowStatusCode.ACCEPTED.name()));
         dtos.add(dto1);
-        TrialListResultDto dto2 = new TrialListResultDto();
+        SummaryByInstitutionResultDto dto2 = new SummaryByInstitutionResultDto();
         dto2.setSubmissionNumber(IntConverter.convertToInt(2));
         dto2.setDws(CdConverter.convertStringToCd(DocumentWorkflowStatusCode.ACCEPTED.name()));
         dtos.add(dto2);
@@ -275,7 +277,7 @@ public class SubmissionByInstitutionActionTest extends AbstractReportActionTest<
     @Test
     public void testAddSummaryResultsOriginal() {
         SubmissionByInstitutionAction sut = createSubmissionByInstitutionAction();
-        List<TrialListResultWebDto> results = new ArrayList<TrialListResultWebDto>();
+        List<SubmissionByInstitutionResultWebDto> results = new ArrayList<SubmissionByInstitutionResultWebDto>();
         sut.addSummaryResults(results, SubmissionTypeCode.ORIGINAL, false, 1, 3);
         assertEquals("Wrong result size", 1, results.size());
         checkTrialListResultWebDto(results.get(0), "Total of original submissions", "Original", "1");
@@ -287,7 +289,7 @@ public class SubmissionByInstitutionActionTest extends AbstractReportActionTest<
     @Test
     public void testAddSummaryResultsAmendment() {
         SubmissionByInstitutionAction sut = createSubmissionByInstitutionAction();
-        List<TrialListResultWebDto> results = new ArrayList<TrialListResultWebDto>();
+        List<SubmissionByInstitutionResultWebDto> results = new ArrayList<SubmissionByInstitutionResultWebDto>();
         sut.addSummaryResults(results, SubmissionTypeCode.AMENDMENT, false, 1, 3);
         assertEquals("Wrong result size", 1, results.size());
         checkTrialListResultWebDto(results.get(0), "Total of amendments", "Amendment", "2");
@@ -299,7 +301,7 @@ public class SubmissionByInstitutionActionTest extends AbstractReportActionTest<
     @Test
     public void testAddSummaryResultsBoth() {
         SubmissionByInstitutionAction sut = createSubmissionByInstitutionAction();
-        List<TrialListResultWebDto> results = new ArrayList<TrialListResultWebDto>();
+        List<SubmissionByInstitutionResultWebDto> results = new ArrayList<SubmissionByInstitutionResultWebDto>();
         sut.addSummaryResults(results, SubmissionTypeCode.BOTH, true, 1, 3);
         assertEquals("Wrong result size", 4, results.size());
         checkTrialListResultWebDto(results.get(0), "Total of original submissions", "Original", "1");
@@ -308,7 +310,7 @@ public class SubmissionByInstitutionActionTest extends AbstractReportActionTest<
         checkTrialListResultWebDto(results.get(3), "Total", "3", null);
     }
 
-    private void checkTrialListResultWebDto(TrialListResultWebDto result, String assignedIdentifier,
+    private void checkTrialListResultWebDto(SubmissionByInstitutionResultWebDto result, String assignedIdentifier,
             String submissionType, String submitterOrg) {
         assertEquals("Wrong assigned identifier", assignedIdentifier, result.getAssignedIdentifier());
         assertEquals("Wrong submission type", submissionType, result.getSubmissionType());

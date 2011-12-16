@@ -86,8 +86,6 @@ import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.pa.iso.util.StConverter;
 
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -132,45 +130,5 @@ public final class ReportUtil {
             result.add(StConverter.convertToString(item));
         }
         return result;
-    }
-
-    /**
-     * @param timestamp timestame
-     * @return year
-     */
-    public static int getYear(Timestamp timestamp) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(timestamp);
-        return cal.get(Calendar.YEAR);
-    }
-
-    /**
-     * @param timestamp timestamp
-     * @return month
-     */
-    public static int getMonth(Timestamp timestamp) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(timestamp);
-        return cal.get(Calendar.MONTH) + 1;
-    }
-
-    /**
-     * @param timestamp timestamp
-     * @return day
-     */
-    public static int getDay(Timestamp timestamp) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(timestamp);
-        return cal.get(Calendar.DAY_OF_MONTH);
-    }
-
-    /**
-     * Test interval value's.
-     * @param t1 early date
-     * @param t2 late date
-     * @return true if neither is null and early <= late
-     */
-    public static boolean invalidIntervalValues(Timestamp t1, Timestamp t2) {
-        return t1 == null || t2 == null || t2.before(t1);
     }
 }

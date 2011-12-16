@@ -82,13 +82,13 @@
  */
 package gov.nih.nci.pa.report.service;
 
-import gov.nih.nci.pa.report.dto.criteria.AbstractCriteriaDto;
+import gov.nih.nci.pa.report.dto.criteria.AbstractStandardCriteriaDto;
 import gov.nih.nci.pa.report.util.TestSchema;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 
 import org.junit.Before;
 
-public abstract class AbstractReportBeanTestBase<CRITERIA extends AbstractCriteriaDto, RESULT, BEAN extends AbstractReportBean<CRITERIA, RESULT>>
+public abstract class AbstractReportBeanTestBase<CRITERIA extends AbstractStandardCriteriaDto, RESULT, BEAN extends AbstractStandardReportBean<CRITERIA, RESULT>>
         extends AbstractHibernateTestCase {
 
     public BEAN bean = null;

@@ -3,10 +3,7 @@
  */
 package gov.nih.nci.pa.viewer.util;
 
-import gov.nih.nci.pa.report.util.ReportUtil;
-
-import java.sql.Timestamp;
-import java.util.Date;
+import org.joda.time.DateTime;
 
 /**
  * @author Hugh Reinhart
@@ -34,7 +31,7 @@ public class ViewerUtil {
         }
         if (result.length() == ASSIGNED_IDENTIFIER_SN_LENGTH) {
             StringBuffer sb = new StringBuffer("NCI-");
-            sb.append(String.format("%04d", ReportUtil.getYear(new Timestamp(new Date().getTime()))));
+            sb.append(String.format("%04d", new DateTime().getYear()));
             sb.append('-');
             result = new StringBuffer(sb.append(result).toString());
         }

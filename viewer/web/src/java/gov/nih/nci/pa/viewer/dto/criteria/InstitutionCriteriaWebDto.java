@@ -80,7 +80,6 @@ import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.report.dto.criteria.InstitutionCriteriaDto;
 import gov.nih.nci.pa.report.enums.SubmissionTypeCode;
-import gov.nih.nci.pa.report.service.TrialListReportBean;
 import gov.nih.nci.pa.report.util.ReportUtil;
 import gov.nih.nci.pa.service.PAException;
 
@@ -95,7 +94,7 @@ import java.util.Set;
 public class InstitutionCriteriaWebDto extends AbstractBaseCriteriaWebDto<InstitutionCriteriaDto>
         implements CriteriaWebDto<InstitutionCriteriaDto> {
 
-    private static final String[] DEFAULT_INSTITUTIONS = {TrialListReportBean.ALL_ORGANIZATIONS_KEY };
+    private static final String[] DEFAULT_INSTITUTIONS = {InstitutionCriteriaDto.ALL_ORGANIZATIONS_KEY };
 
     private String submissionType = SubmissionTypeCode.BOTH.name();
     private Set<String> institutions = new HashSet<String>(Arrays.asList(DEFAULT_INSTITUTIONS));
@@ -103,6 +102,7 @@ public class InstitutionCriteriaWebDto extends AbstractBaseCriteriaWebDto<Instit
     /**
      * {@inheritDoc}
      */
+    @Override
     public InstitutionCriteriaDto getIsoDto() throws PAException {
         InstitutionCriteriaDto result = new InstitutionCriteriaDto();
         super.setInterval(result);

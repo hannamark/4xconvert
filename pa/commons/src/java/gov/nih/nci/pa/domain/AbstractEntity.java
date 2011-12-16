@@ -121,6 +121,7 @@ public class AbstractEntity implements PersistentObject {
      * Get the id of the object.
      * @return the id
      */
+    @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "IDENTIFIER")

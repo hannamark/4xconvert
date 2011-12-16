@@ -293,6 +293,22 @@ public enum MilestoneCode implements CodedEnum<String> {
     }
 
     /**
+     * Test if this code represents an administrative milestone.
+     * @return true if this code represents an administrative milestone
+     */
+    public boolean isAdminMilestone() {
+        return ADMIN_SEQ.contains(this);
+    }
+
+    /**
+     * Test if this code represents an scientific milestone.
+     * @return true if this code represents an scientific milestone
+     */
+    public boolean isScientificMilestone() {
+        return SCIENTIFIC_SEQ.contains(this);
+    }
+
+    /**
      * @return all the valid document workflow statuses for this milestone
      */
     public List<DocumentWorkflowStatusCode> getValidDwfStatuses() {

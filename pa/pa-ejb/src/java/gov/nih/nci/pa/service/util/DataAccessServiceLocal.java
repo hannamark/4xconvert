@@ -86,6 +86,8 @@ import java.util.List;
 
 import javax.ejb.Local;
 
+import org.hibernate.ScrollableResults;
+
 /**
  * @author Michael Visee
  */
@@ -98,7 +100,7 @@ public interface DataAccessServiceLocal {
      * @return The result of the query
      */
     <T> T findEntityByQuery(DAQuery query);
-    
+
     /**
      * Runs a HQL query that returns a list.
      * @param <T> The type of the results
@@ -106,5 +108,12 @@ public interface DataAccessServiceLocal {
      * @return The results of the query
      */
     <T> List<T> findByQuery(DAQuery query);
-    
+
+    /**
+     * Runs a HQL query and returns the result as an iterator.
+     * @param query The query to run.
+     * @return An iterator on the results of the query
+     */
+    ScrollableResults scrollByQuery(DAQuery query);
+
 }

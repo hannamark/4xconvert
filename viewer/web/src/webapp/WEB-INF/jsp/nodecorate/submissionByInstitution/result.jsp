@@ -34,14 +34,14 @@
                     requestURI="resultsSubmissionByInstitution.action" export="true">
            <display:setProperty name="export.excel" value="true" />
            <display:setProperty name="export.excel.filename" value="SubmissionByInstitutionReport.xls" />
-           <display:column titleKey="sbiReport.result.assignedIdentifier" property="assignedIdentifier"/>
-           <display:column titleKey="sbiReport.result.submissionType" property="submissionType"/>
-           <display:column titleKey="sbiReport.result.submitterOrg" property="submitterOrg"/>
-           <display:column titleKey="sbiReport.result.leadOrgTrialIdentifier" property="leadOrgTrialIdentifier"/>
-           <display:column titleKey="sbiReport.result.leadOrg" property="leadOrg"/>
-           <display:column titleKey="sbiReport.result.dateLastCreated" property="dateLastCreated"/>
-           <display:column titleKey="sbiReport.result.dws" property="dws"/>
-           <display:column titleKey="sbiReport.result.dwsDate" property="dwsDate"/>
+           <display:column titleKey="sbiReport.result.assignedIdentifier" property="assignedIdentifier" sortable="true"/>
+           <display:column titleKey="sbiReport.result.submissionType" property="submissionType" sortable="true"/>
+           <display:column titleKey="sbiReport.result.submitterOrg" property="submitterOrg" sortable="true"/>
+           <display:column titleKey="sbiReport.result.leadOrgTrialIdentifier" property="leadOrgTrialIdentifier" sortable="true"/>
+           <display:column titleKey="sbiReport.result.leadOrg" property="leadOrg" sortable="true"/>
+           <display:column titleKey="sbiReport.result.submissionDate" property="submissionDate" sortable="true"/>
+           <display:column titleKey="sbiReport.result.dws" property="dws" sortable="true"/>
+           <display:column titleKey="sbiReport.result.dwsDate" property="dwsDate" sortable="true"/>
            <display:column escapeXml="true" titleKey="sbiReport.result.milestone" sortable="true" headerClass="sortable">
              <s:if test="%{#attr.row.adminMilestone == null && #attr.row.scientificMilestone == null}">
                <c:out value="${row.milestone}" />

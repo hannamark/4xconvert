@@ -113,6 +113,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Columns;
@@ -795,7 +796,8 @@ public class StudyProtocol extends AbstractStudyProtocol implements Auditable {
     @Fetch (FetchMode.SELECT)
     @JoinTable(
             name = "STUDY_OTHERIDENTIFIERS",
-            joinColumns = @JoinColumn(name = "STUDY_PROTOCOL_ID")
+            joinColumns = @JoinColumn(name = "STUDY_PROTOCOL_ID"),
+            uniqueConstraints = {@UniqueConstraint(columnNames = {"STUDY_PROTOCOL_ID", "ROOT", "EXTENSION" }) }
     )
     @ForeignKey(name = "STUDY_OI_FK")
     @Type(type = "gov.nih.nci.pa.iso.util.IiCompositeUserType")

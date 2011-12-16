@@ -100,9 +100,11 @@ import org.hibernate.SQLQuery;
  * @param <CRITERIA> criteria dto
  * @param <RESULT> result dto
  */
-public abstract class AbstractStandardReportBean<CRITERIA extends AbstractStandardCriteriaDto, RESULT>
-        extends AbstractReportBean<CRITERIA, RESULT> {
-
+public abstract class AbstractStandardReportBean<CRITERIA extends AbstractStandardCriteriaDto, RESULT> {
+    
+    /** Static spring to suppress conversion warnings. */
+    protected static final String UNCHECKED = "unchecked";
+    
     /**
      * @param criteria criteria
      * @param field field to run date checks
