@@ -292,6 +292,19 @@
             <version>20020414</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>csmapi</groupId>
+            <artifactId>csmapi</artifactId>
+            <version>4.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fiveamsolutions</groupId>
+            <artifactId>nci-commons-core</artifactId>
+            <version>1.2.24</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>

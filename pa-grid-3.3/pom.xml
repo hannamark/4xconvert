@@ -301,6 +301,12 @@
             <version>20020414</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>csmapi</groupId>
+            <artifactId>csmapi</artifactId>
+            <version>4.2</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>
