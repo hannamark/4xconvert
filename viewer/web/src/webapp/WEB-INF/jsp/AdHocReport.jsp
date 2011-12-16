@@ -54,6 +54,7 @@
                     jQuery("#runButton").bind("click", function(ev) {
                         jQuery("#resultsTab").html(jQuery("div.template.loadingMessage").children().html());
                         jQuery("#reportui").tabs("select", 1);
+                        jQuery("#pdq_tree_dialog").dialog('close');
                         var form = jQuery("#searchForm").get(0);
                         form.action="resultsAdHocReport.action";
                         form.submit();

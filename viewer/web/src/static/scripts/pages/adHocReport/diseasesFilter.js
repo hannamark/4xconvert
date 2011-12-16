@@ -259,7 +259,7 @@ function setJstreeOperationReady(bReady) {
         }
         
         //***************************************
-        //** PDQ Tree in sepatate popup dialog **
+        //** PDQ Tree in separate pop-up dialog **
         //***************************************
         var pdqDialog = $('<div id="pdq_tree_dialog"></div>')
                 .html( generatePDQTreeHtml() )
