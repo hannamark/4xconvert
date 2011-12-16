@@ -810,4 +810,8 @@
         <comment>Add on-hold processing status</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.7/PO-4217.sql"/>
      </changeSet>
+     <changeSet id="PO-4504" author="ludetc">
+        <comment>Refine App Support Create account instructions</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.7/PO-4504.sql"/>
+     </changeSet>
 </databaseChangeLog>
