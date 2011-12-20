@@ -122,7 +122,6 @@
                          return false;
                      });   
                      jQuery("#participatingSitesSelectAllCheckbox").bind("click", selectAllParticipatingSite);
-                     jQuery("#reportui").show();
                     });
             
                     // Select all the lead organizations of a family
@@ -177,7 +176,7 @@
                 <s:actionerror />
             </div>
         </s:if> 
-        <div id="reportui" style="display:none;">
+        <div id="reportui">
             <!--Tabs-->
             <ul id="reporttabs" class="clearfix">
                 <li><a href="#filtersTab"><fmt:message key="report.tab.filters"/></a></li>
