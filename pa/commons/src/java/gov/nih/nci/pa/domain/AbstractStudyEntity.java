@@ -78,7 +78,6 @@
 */
 package gov.nih.nci.pa.domain;
 
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
@@ -103,7 +102,7 @@ public class AbstractStudyEntity extends AbstractEntity {
     /**
      * @return studyProtocol
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "STUDY_PROTOCOL_IDENTIFIER", updatable = false)
     @NotNull
     @Searchable(nested = true)
