@@ -102,6 +102,7 @@ import gov.nih.nci.pa.enums.IdentifierType;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.noniso.dto.InterventionShortRecord;
 import gov.nih.nci.pa.noniso.dto.PDQDiseaseNode;
 import gov.nih.nci.pa.report.service.OrganizationFamilyServiceLocal;
 import gov.nih.nci.pa.report.service.Summary4ReportLocal;
@@ -450,6 +451,44 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     }
     
     /**
+     * Test the populateIdentifierSearchParameters method with no identifier type.
+     */
+    @Test
+    public void testPopulateIdentifierSearchParametersNoIdentifierType() {
+        AdHocReportAction sut = createAdHocReportAction();
+        StudyProtocolQueryCriteria criteria = mock(StudyProtocolQueryCriteria.class);
+        sut.setCriteria(criteria);
+        sut.populateIdentifierSearchParameters();
+        verify(criteria, never()).setIdentifier(anyString());
+    }
+    
+    /**
+     * Test the populateIdentifierSearchParameters method with no identifier.
+     */
+    @Test
+    public void testPopulateIdentifierSearchParametersNoIdentifier() {
+        AdHocReportAction sut = createAdHocReportAction();
+        StudyProtocolQueryCriteria criteria = mock(StudyProtocolQueryCriteria.class);
+        criteria.setIdentifierType(IdentifierType.NCI.getCode());
+        sut.setCriteria(criteria);
+        sut.populateIdentifierSearchParameters();
+        verify(criteria, never()).setIdentifier(anyString());
+    }
+    
+    /**
+     * Test the populateIdentifierSearchParameters method with no identifier.
+     */
+    @Test
+    public void testPopulateIdentifierSearchParametersIdOnly() {
+        AdHocReportAction sut = createAdHocReportAction();
+        StudyProtocolQueryCriteria criteria = mock(StudyProtocolQueryCriteria.class);
+        sut.setCriteria(criteria);
+        sut.setIdentifier("id");
+        sut.populateIdentifierSearchParameters();
+        verify(criteria, never()).setIdentifier(anyString());
+    }
+    
+    /**
      * test the viewTSR method in the successful case.
      * @throws PAException in case of error
      */
@@ -482,19 +521,6 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     }
 
     /**
-     * Test the getLeadOrgList method.
-     * @throws PAException in case of error
-     */
-    @Test
-    public void testGetLeadOrgList() throws PAException {
-        AdHocReportAction sut = createAdHocReportAction();
-        List<PaOrganizationDTO> organizations = new ArrayList<PaOrganizationDTO>();
-        when(paOrganizationService.getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION))
-            .thenReturn(organizations);
-        assertEquals("Wrong result returned", organizations, sut.getLeadOrgList());
-    }
-    
-    /**
      * Test the getSumm4FundingSponsorsList method.
      * @throws PAException in case of error
      */
@@ -505,19 +531,6 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         when(paOrganizationService.getOrganizationsAssociatedWithStudyProtocol(PAConstants.SUMM4_SPONSOR))
             .thenReturn(organizations);
         assertEquals("Wrong result returned", organizations, sut.getSumm4FundingSponsorsList());
-    }
-
-    /**
-     * Test the getParticipatingSiteList method.
-     * @throws PAException in case of error
-     */
-    @Test
-    public void testGetParticipatingSiteList() throws PAException {
-        AdHocReportAction sut = createAdHocReportAction();
-        List<PaOrganizationDTO> organizations = new ArrayList<PaOrganizationDTO>();
-        when(paOrganizationService.getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE))
-            .thenReturn(organizations);
-        assertEquals("Wrong result returned", organizations, sut.getParticipatingSiteList());
     }
 
     /**
@@ -564,11 +577,12 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
     }
     
     /**
-     * Test the getDisplayTree method.
+     * Test the getDiseaseTree method.
      * @throws JSONException if an error occurs.
      */
     @Test
-    public void testGetDisplayTree() throws JSONException {
+    public void testGetDiseaseTree() throws JSONException {
+        AdHocReportAction sut = createAdHocReportAction();
         List<PDQDiseaseNode> tree = new ArrayList<PDQDiseaseNode>();
         PDQDiseaseNode node = new PDQDiseaseNode();
         node.setId(1L);
@@ -576,8 +590,27 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         node.setName("name value");
         tree.add(node);
         when(diseaseService.getDiseaseTree()).thenReturn(tree);
-        String result = action.getDiseaseTree();
+        String result = sut.getDiseaseTree();
         assertEquals("Wrong json string returned", "[{\"id\":1,\"name\":\"name value\",\"parentId\":2}]", result);
+    }
+    
+    /**
+     * Test the getInterventions method.
+     * @throws PAException if an error occurs.
+     * @throws JSONException if an error occurs.
+     */
+    @Test
+    public void testGetInterventions() throws PAException, JSONException {
+        AdHocReportAction sut = createAdHocReportAction();
+        List<InterventionShortRecord> list = new ArrayList<InterventionShortRecord>();
+        InterventionShortRecord record = new InterventionShortRecord();
+        record.setId(1L);
+        record.setName("name");
+        record.setType("type");
+        list.add(record);
+        when(interventionService.getInterventionShortRecords()).thenReturn(list);
+        String result = sut.getInterventions();
+        assertEquals("Wrong json string returned", "[{\"id\":1,\"name\":\"name\",\"type\":\"type\"}]", result);
     }
     
     /**
@@ -596,6 +629,7 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         assertNotNull("No result returned", result);
         assertEquals("Wrong result size", 1, result.size());
         assertEquals("Wrong name or key", "name 1", result.get(0).getValue());
+        assertEquals(0, sut.getActionErrors().size());
     }
 
     /**
@@ -610,107 +644,139 @@ public class AdHocReportActionTest extends AbstractReportActionTest<AdHocReportA
         sut.loadFamilies();
         verify(sut).addActionError(null);
     }
+
+    /**
+     * Test the loadLeadOrganizations method.
+     */
+    @Test
+    public void testLoadLeadOrganizations() {
+        AdHocReportAction sut = createAdHocReportActionMock();
+        doCallRealMethod().when(sut).getUserRole();
+        doCallRealMethod().when(sut).loadLeadOrganizations();
+        doCallRealMethod().when(sut).getCriteria();
+        doCallRealMethod().when(sut).getOrganizations();
+        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
+        criteria.setFamilyId("0");
+        doCallRealMethod().when(sut).setCriteria(criteria);
+        sut.setCriteria(criteria);
+        List<KeyValueDTO> expectedResult = new ArrayList<KeyValueDTO>();
+        when(sut.getOrganizationsByFamilyId(PAConstants.LEAD_ORGANIZATION, "0")).thenReturn(expectedResult);
+        assertEquals(Action.SUCCESS, sut.loadLeadOrganizations());
+        verify(sut).getOrganizationsByFamilyId(PAConstants.LEAD_ORGANIZATION, "0");
+        assertEquals("Wrong list returned", expectedResult, sut.getOrganizations());
+    }
     
     /**
-     * test the loadLeadOrganizations method without family id.
-     * @throws PAException in case of error
+     * Test the loadParticipatingSites method.
      */
     @Test
-    public void testLoadOrganizationsWithoutFamilyId() throws PAException {
-        AdHocReportAction sut = createAdHocReportAction();
-        assertEquals(Action.SUCCESS, sut.loadLeadOrganizations());
-        verify(organizationFamilyService, never()).getOrganizations(anyString(), anyString(), anyInt());
-        verify(paOrganizationService).getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION);
-        assertEquals(0, sut.getActionErrors().size());
-    }
-
-    /**
-     * test the loadLeadOrganizations method without criteria.
-     * 
-     * @throws PAException in case of error
-     */
-    @Test
-    public void testLoadOrganizationsWithoutCriteria() throws PAException {
-        AdHocReportAction sut = createAdHocReportAction();
-        assertEquals(Action.SUCCESS, sut.loadLeadOrganizations());
-        verify(organizationFamilyService, never()).getOrganizations(anyString(), anyString(), anyInt());
-        verify(paOrganizationService).getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION);
-        assertEquals(0, sut.getActionErrors().size());
-    }
-
-    /**
-     * test the loadLeadOrganizations method with family id.
-     * 
-     * @throws PAException in case of error
-     */
-    @Test
-    public void testLoadOrganizationsWithFamilyId() throws PAException {
-        AdHocReportAction sut = createAdHocReportAction();
+    public void testLoadParticipatingSites() {
+        AdHocReportAction sut = createAdHocReportActionMock();
+        doCallRealMethod().when(sut).getUserRole();
+        doCallRealMethod().when(sut).loadParticipatingSites();
+        doCallRealMethod().when(sut).getCriteria();
+        doCallRealMethod().when(sut).getParticipatingSites();
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
-        criteria.setFamilyId("1");
+        criteria.setFamilyId("0");
+        doCallRealMethod().when(sut).setCriteria(criteria);
         sut.setCriteria(criteria);
-        assertEquals(Action.SUCCESS, sut.loadLeadOrganizations());
-        verify(organizationFamilyService).getOrganizations(anyString(), anyString(), anyInt());
+        List<KeyValueDTO> expectedResult = new ArrayList<KeyValueDTO>();
+        when(sut.getOrganizationsByFamilyId(PAConstants.PARTICIPATING_SITE, "0")).thenReturn(expectedResult);
+        assertEquals(Action.SUCCESS, sut.loadParticipatingSites());
+        verify(sut).getOrganizationsByFamilyId(PAConstants.PARTICIPATING_SITE, "0");
+        assertEquals("Wrong list returned", expectedResult, sut.getParticipatingSites());
+    }
+   
+    /**
+     * test the getOrganizationsByFamilyId method without family id.
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testGetOrganizationsByFamilyIdWithoutFamilyId() throws PAException {
+        AdHocReportAction sut = createAdHocReportActionMock();
+        doCallRealMethod().when(sut).getOrganizationsByFamilyId(PAConstants.LEAD_ORGANIZATION, "0");
+        List<PaOrganizationDTO> paOrgs = new ArrayList<PaOrganizationDTO>();
+        when(paOrganizationService.getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION))
+            .thenReturn(paOrgs);
+        List<KeyValueDTO> expectedResult = new ArrayList<KeyValueDTO>();
+        when(sut.convertPaOrganizationDTOToKeyValueDTOList(paOrgs)).thenReturn(expectedResult);
+        List<KeyValueDTO> result = sut.getOrganizationsByFamilyId(PAConstants.LEAD_ORGANIZATION, "0");
+        verify(organizationFamilyService, never()).getOrganizations(anyString(), anyString(), anyInt());
+        verify(paOrganizationService).getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION);
+        verify(sut).convertPaOrganizationDTOToKeyValueDTOList(paOrgs);
+        verify(sut, never()).addActionError(anyString());
+        assertEquals("Wrong list returned", expectedResult, result);
+    }
+
+    /**
+     * test the getOrganizationsByFamilyId method with family id.
+     * 
+     * @throws PAException in case of error
+     */
+    @Test
+    public void testGetOrganizationsByFamilyIdWithFamilyId() throws PAException {
+        AdHocReportAction sut = createAdHocReportActionMock();
+        doCallRealMethod().when(sut).getOrganizationsByFamilyId(PAConstants.LEAD_ORGANIZATION, "1");
+        List<PaOrganizationDTO> paOrgs = new ArrayList<PaOrganizationDTO>();
+        when(organizationFamilyService.getOrganizations(PAConstants.LEAD_ORGANIZATION, "1", 100)).thenReturn(paOrgs);
+        List<KeyValueDTO> expectedResult = new ArrayList<KeyValueDTO>();
+        when(sut.convertPaOrganizationDTOToKeyValueDTOList(paOrgs)).thenReturn(expectedResult);
+        List<KeyValueDTO> result = sut.getOrganizationsByFamilyId(PAConstants.LEAD_ORGANIZATION, "1");
+        verify(organizationFamilyService).getOrganizations(PAConstants.LEAD_ORGANIZATION, "1", 100);
         verify(paOrganizationService, never())
             .getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION);
-        assertEquals(0, sut.getActionErrors().size());
+        verify(sut).convertPaOrganizationDTOToKeyValueDTOList(paOrgs);
+        verify(sut, never()).addActionError(anyString());
+        assertEquals("Wrong list returned", expectedResult, result);
     }
-
+    
     /**
-     * test the loadParticipatingSites method without family id.
+     * test the getOrganizationsByFamilyId method in case of exception.
      * 
      * @throws PAException in case of error
      */
     @Test
-    public void testLoadParticipatingSitesWithoutFamilyId() throws PAException {
-        AdHocReportAction sut = createAdHocReportAction();
-        assertEquals(Action.SUCCESS, sut.loadParticipatingSites());
+    public void testGetOrganizationsByFamilyIdException() throws PAException {
+        AdHocReportAction sut = createAdHocReportActionMock();
+        doCallRealMethod().when(sut).getOrganizationsByFamilyId(PAConstants.LEAD_ORGANIZATION, "0");
+        when(paOrganizationService.getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION))
+            .thenThrow(new PAException("PA"));
+        List<KeyValueDTO> expectedResult = new ArrayList<KeyValueDTO>();
+        when(sut.convertPaOrganizationDTOToKeyValueDTOList(null)).thenReturn(expectedResult);
+        List<KeyValueDTO> result = sut.getOrganizationsByFamilyId(PAConstants.LEAD_ORGANIZATION, "0");
         verify(organizationFamilyService, never()).getOrganizations(anyString(), anyString(), anyInt());
-        verify(paOrganizationService).getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE);
-        assertEquals(0, sut.getActionErrors().size());
+        verify(paOrganizationService).getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION);
+        verify(sut).convertPaOrganizationDTOToKeyValueDTOList(null);
+        verify(sut).addActionError("PA");
+        assertEquals("Wrong list returned", expectedResult, result);
     }
 
     /**
-     * test the loadParticipatingSites method without criteria.
-     * 
-     * @throws PAException in case of error
+     * Test the convertPaOrganizationDTOToKeyValueDTOList with an empty list.
      */
     @Test
-    public void testLoadParticipatingSitesWithoutCriteria() throws PAException {
+    public void testconvertPaOrganizationDTOToKeyValueDTOListEmpty() {
         AdHocReportAction sut = createAdHocReportAction();
-        assertEquals(Action.SUCCESS, sut.loadParticipatingSites());
-        verify(organizationFamilyService, never()).getOrganizations(anyString(), anyString(), anyInt());
-        verify(paOrganizationService).getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE);
-        assertEquals(0, sut.getActionErrors().size());
+        List<KeyValueDTO> result = sut.convertPaOrganizationDTOToKeyValueDTOList(null);
+        assertEquals("Wrong result size", 0, result.size());
     }
-
+    
     /**
-     * test the loadParticipatingSites method with family id.      
-     * 
-     * @throws PAException in case of error
+     * Test the convertPaOrganizationDTOToKeyValueDTOList with an non empty list.
      */
     @Test
-    public void testLoadParticipatingSitesWithFamilyId() throws PAException {
+    public void testconvertPaOrganizationDTOToKeyValueDTOListNotEmpty() {
         AdHocReportAction sut = createAdHocReportAction();
-        StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
-        criteria.setParticipatingSiteFamilyId("1");
-        sut.setCriteria(criteria);
-        assertEquals(Action.SUCCESS, sut.loadParticipatingSites());
-        verify(organizationFamilyService).getOrganizations(anyString(), anyString(), anyInt());
-        verify(paOrganizationService, never()).getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE);
-        assertEquals(0, sut.getActionErrors().size());
-    }
-
-    /**
-     * test the loadFamilies method.
-     * @throws TooManyResultsException in case of error
-     */
-    @Test
-    public void testLoadFamilies() throws TooManyResultsException {
-        AdHocReportAction sut = createAdHocReportAction();
-        sut.loadFamilies();
-        verify(summary4ReportService).getFamilies(100);
-        assertEquals(0, sut.getActionErrors().size());
+        List<PaOrganizationDTO> paOrgs = new ArrayList<PaOrganizationDTO>();
+        PaOrganizationDTO paOrg = new PaOrganizationDTO();
+        paOrg.setId("1");
+        paOrg.setName("name");
+        paOrgs.add(paOrg);
+        List<KeyValueDTO> result = sut.convertPaOrganizationDTOToKeyValueDTOList(paOrgs);
+        assertEquals("Wrong result size", 1, result.size());
+        KeyValueDTO keyValue = result.get(0);
+        assertEquals("Wrong id", 1L, keyValue.getKey().longValue());
+        assertEquals("Wrong name", "name", keyValue.getValue());
     }
 
     /**

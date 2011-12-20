@@ -82,13 +82,16 @@
  */
 package gov.nih.nci.pa.viewer.dto.result;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.CompareToBuilder;
+
 /**
  * @author Igor Merenko
  */
 public final class KeyValueDTO implements Comparable<KeyValueDTO> {
     private final Long key;
     private final String value;
-    
+
     /**
      * @param key key
      * @param value value
@@ -97,45 +100,28 @@ public final class KeyValueDTO implements Comparable<KeyValueDTO> {
         super();
         this.key = key;
         this.value = value;
-    }     
-    
+    }
+
     /**
      * @return the key
      */
     public Long getKey() {
         return key;
-    }    
-    
+    }
+
     /**
      * @return the value
      */
     public String getValue() {
         return value;
-    }    
-   
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public int compareTo(KeyValueDTO obj) {
-        int result = nullSafeStringComparator(this.value, obj.value);
-        if (result != 0) {
-            return result;
-        }
-
-        return nullSafeStringComparator(this.value, obj.value);
+        return new CompareToBuilder().append(StringUtils.upperCase(StringUtils.trim(value)),
+                                             StringUtils.upperCase(StringUtils.trim(obj.value))).toComparison();
     }
-
-    private int nullSafeStringComparator(final String one, final String two) {
-        if (one == null ^ two == null) {
-            return (one == null) ? 1 : -1;
-        }
-
-        if (one == null && two == null) {
-            return 0;
-        }
-
-        return one.compareToIgnoreCase(two);
-    }
-
 }

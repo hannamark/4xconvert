@@ -77,9 +77,15 @@
 package gov.nih.nci.pa.viewer.action;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
+import javax.servlet.http.HttpSession;
+
+import org.apache.struts2.ServletActionContext;
 import org.junit.Test;
 
+import com.mockrunner.mock.web.MockHttpServletRequest;
 import com.opensymphony.xwork2.Action;
 /**
  * Test for LogoutAction.
@@ -88,13 +94,27 @@ import com.opensymphony.xwork2.Action;
  */
 public class LogoutActionTest extends AbstractViewerActionTest {
 
-    private LogoutAction action = new LogoutAction();;
+    private LogoutAction action = new LogoutAction();
 
     /**
-     * Test the logout method
+     * Test the logout method with a session
      */
     @Test
     public void inSessionTest() {
+        MockHttpServletRequest request = (MockHttpServletRequest) ServletActionContext.getRequest();
+        HttpSession session = mock(HttpSession.class);
+        request.setSession(session);
+        assertEquals(Action.SUCCESS, action.logout());
+        verify(session).invalidate();
+    }
+
+    /**
+     * Test the logout method without session.
+     */
+    @Test
+    public void noSessionTest() {
+        MockHttpServletRequest request = (MockHttpServletRequest) ServletActionContext.getRequest();
+        request.setSession(null);
         assertEquals(Action.SUCCESS, action.logout());
     }
 }

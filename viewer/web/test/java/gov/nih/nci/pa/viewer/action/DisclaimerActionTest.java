@@ -86,7 +86,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.struts2.ServletActionContext;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -94,18 +93,15 @@ import org.junit.Test;
  *
  */
 public class DisclaimerActionTest extends AbstractViewerActionTest {
-    DisclaimerAction action;
 
-    @Before
-    public void initAction() {
-        action = new DisclaimerAction();
-    }
-
+    /**
+     * Test the accept method.
+     */
     @Test
-    public void acceptTest(){
+    public void acceptTest() {
+        DisclaimerAction action = new DisclaimerAction();
         assertEquals("acceptView", action.accept());
-        assertTrue((Boolean)ServletActionContext.getRequest().getSession().
-                getAttribute("disclaimerAccepted"));
-     }
+        assertTrue((Boolean) ServletActionContext.getRequest().getSession().getAttribute("disclaimerAccepted"));
+    }
 
 }

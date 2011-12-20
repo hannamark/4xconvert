@@ -118,6 +118,7 @@ import java.util.Set;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.ServletResponseAware;
@@ -204,19 +205,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
      * @return list
      */
     public String loadLeadOrganizations() {
-        try {
-            if (criteria != null && !criteria.getFamilyId().equals("0")) {
-                organizations =
-                        convertPaOrganizationDTOToKeyValueDTOList(organizationFamilyService
-                            .getOrganizations(PAConstants.LEAD_ORGANIZATION, criteria.getFamilyId(), MAX_LIMIT));
-            } else {
-                organizations = getLeadOrgList();
-            }
-
-        } catch (Exception e) {
-            addActionError(e.getMessage());
-        }
-        Collections.sort(organizations);
+        organizations = getOrganizationsByFamilyId(PAConstants.LEAD_ORGANIZATION, criteria.getFamilyId());
         return super.getReport();
     }
 
@@ -225,20 +214,46 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
      * @return list
      */
     public String loadParticipatingSites() {
-        try {
-            if (criteria != null && !criteria.getParticipatingSiteFamilyId().equals("0")) {
+        participatingSites =
+                getOrganizationsByFamilyId(PAConstants.PARTICIPATING_SITE, criteria.getParticipatingSiteFamilyId());
+        return super.getReport();
+    }
 
-                participatingSites =
-                        convertPaOrganizationDTOToKeyValueDTOList(organizationFamilyService
-                            .getOrganizations(PAConstants.PARTICIPATING_SITE, criteria.getParticipatingSiteFamilyId(),
-                                              MAX_LIMIT));
+    /**
+     * Load the list of organizations of the given type and family. If familyId is 0, load them all.
+     * @param orgType The organization type
+     * @param familyId The family Id
+     * @return The organizations.
+     */
+    List<KeyValueDTO> getOrganizationsByFamilyId(String orgType, String familyId) {
+        List<PaOrganizationDTO> paOrgs = null;
+        try {
+            if ("0".equals(familyId)) {
+                paOrgs = paOrganizationService.getOrganizationsAssociatedWithStudyProtocol(orgType);
             } else {
-                participatingSites = getParticipatingSiteList();
+                paOrgs = organizationFamilyService.getOrganizations(orgType, familyId, MAX_LIMIT);
             }
         } catch (Exception e) {
             addActionError(e.getMessage());
         }
-        return super.getReport();
+        List<KeyValueDTO> orgs = convertPaOrganizationDTOToKeyValueDTOList(paOrgs);
+        Collections.sort(orgs);
+        return orgs;
+    }
+    
+    /**
+     * Converts a List of PaOrganizationDTO into a list of KeyValueDTO.
+     * @param list The list to convert
+     * @return The converted list
+     */
+    List<KeyValueDTO> convertPaOrganizationDTOToKeyValueDTOList(List<PaOrganizationDTO> list) {
+        List<KeyValueDTO> result = new ArrayList<KeyValueDTO>();
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (PaOrganizationDTO dto : list) {
+                result.add(new KeyValueDTO(Long.parseLong(dto.getId()), dto.getName()));
+            }
+        }
+        return result;
     }
 
     /**
@@ -315,36 +330,6 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
             LOG.error("Error while generating TSR Summary report ", e);
         }
         return NONE;
-    }
-
-    /**
-     * Return a list of lead orgs.
-     * @return list of lead orgs.
-     * @throws PAException on error
-     */
-    public List<KeyValueDTO> getLeadOrgList() throws PAException {
-        return convertPaOrganizationDTOToKeyValueDTOList(paOrganizationService
-            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.LEAD_ORGANIZATION));
-
-    }
-
-    /**
-     * Return a list of participating site orgs.
-     * @return list of participating site orgs.
-     * @throws PAException on error
-     */
-    public List<KeyValueDTO> getParticipatingSiteList() throws PAException {
-        return convertPaOrganizationDTOToKeyValueDTOList(paOrganizationService
-            .getOrganizationsAssociatedWithStudyProtocol(PAConstants.PARTICIPATING_SITE));
-
-    }
-
-    private List<KeyValueDTO> convertPaOrganizationDTOToKeyValueDTOList(List<PaOrganizationDTO> list) {
-        List<KeyValueDTO> result = new ArrayList<KeyValueDTO>();
-        for (PaOrganizationDTO dto : list) {
-            result.add(new KeyValueDTO(Long.parseLong(dto.getId()), dto.getName()));
-        }
-        return result;
     }
 
     /**
@@ -448,13 +433,6 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
      */
     public List<KeyValueDTO> getParticipatingSites() {
         return participatingSites;
-    }
-
-    /**
-     * @param participatingSites the participatingSites to set
-     */
-    public void setParticipatingSites(List<KeyValueDTO> participatingSites) {
-        this.participatingSites = participatingSites;
     }
 
     /**

@@ -33,6 +33,7 @@
                         jQuery("#intervalEndDate").val("");
                         jQuery("#ctep").val("");
                         });
+                   jQuery("#reportui").show();
                    });
         </script>
     </head>
@@ -43,7 +44,7 @@
                 <s:actionerror />
             </div>
         </s:if> 
-        <div id="reportui">
+        <div id="reportui" style="display:none;">
             <!--Tabs-->
             <ul id="reporttabs" class="clearfix">
                 <li><a href="#filtersTab"><fmt:message key="report.tab.filters"/></a></li>

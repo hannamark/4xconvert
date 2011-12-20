@@ -102,11 +102,12 @@ public class KeyValueDTOTest {
     public void compareTo() {
         List<KeyValueDTO> keyValues = createKeyValueDTOList();
         Collections.sort(keyValues);
-        assertEquals("a", keyValues.get(0).getValue());
-        assertEquals("b", keyValues.get(1).getValue());
-        assertEquals("c", keyValues.get(2).getValue());
-        assertEquals(null, keyValues.get(3).getValue());
-        assertEquals(null, keyValues.get(4).getValue());
+        assertEquals(null, keyValues.get(0).getValue());
+        assertEquals(null, keyValues.get(1).getValue());
+        assertEquals("a", keyValues.get(2).getValue());
+        assertEquals("b", keyValues.get(3).getValue());
+        assertEquals("c", keyValues.get(4).getValue());
+        
     }
 
     private List<KeyValueDTO> createKeyValueDTOList() {
