@@ -142,6 +142,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
@@ -429,17 +430,24 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setInterventionIds(criteria.getInterventionIds());
         options.setInterventionAlternateNameIds(criteria.getInterventionAlternateNameIds());
         options.setInterventionTypes(criteria.getInterventionTypes());
-
+        options.setLeadOrganizationIds(criteria.getLeadOrganizationIds());
+        
         populateExample(criteria, example);
         return new StudyProtocolQueryBeanSearchCriteria(example, options);
     }
 
+    @SuppressWarnings("unchecked")
     private List<StudyProtocol> getStudyProtocolQueryResults(StudyProtocolQueryCriteria criteria)
     throws PAException {
         StudyProtocolQueryBeanSearchCriteria crit = getExampleCriteria(criteria);
         List<StudyProtocol> results = new ArrayList<StudyProtocol>();
         try {
-            results = search(crit);
+            validateSearchCriteria(crit);
+            String orderBy = "";
+            String joinClause = createJoinClauseByCriteria(criteria);
+            Query query = crit.getQuery(orderBy, joinClause, false);
+            LOG.debug(query.getQueryString());
+            results = query.list();
         } catch (Exception e) {
             throw new PAException("An error has occurred when searching for trials.", e);
         }
@@ -464,7 +472,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             validateSearchCriteria(crit);
             String orderBy = "";
             String joinClause = createJoinClauseByCriteria(criteria);
-            return crit.getQuery(orderBy, joinClause, false).list();
+            Query query = crit.getQuery(orderBy, joinClause, false);
+            LOG.debug(query.getQueryString());
+            return query.list();
         } catch (Exception e) {
             throw new PAException("An error has occurred when searching for trials.", e);
         }
@@ -472,10 +482,13 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     }
     
     private String createJoinClauseByCriteria(StudyProtocolQueryCriteria criteria) {
-        StringBuilder result = new StringBuilder("");
+        StringBuilder result = new StringBuilder();
         if (CollectionUtils.isNotEmpty(criteria.getSummary4AnatomicSites())) {
             result.append(" left outer join obj.summary4AnatomicSites as ans ");
         }
+        if (CollectionUtils.isNotEmpty(criteria.getLeadOrganizationIds())) {
+            result.append(" join obj.studySites as leadOrgSite join leadOrgSite.researchOrganization as leadOrgRo ");
+        } 
         return result.toString();
     }
 
@@ -579,22 +592,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             sp.getStudySites().add(ss);
         }
 
-        if (CollectionUtils.isNotEmpty(crit.getLeadOrganizationIds())) {
-            populateLeadOrganizations(crit, sp);
-        }
-    }
-
-    private void populateLeadOrganizations(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
-        for (Long currId : crit.getLeadOrganizationIds()) {
-            StudySite ss = new StudySite();
-            Organization organization = new Organization();
-            organization.setId(currId);
-            ResearchOrganization ro = new ResearchOrganization();
-            ro.setOrganization(organization);
-            ss.setResearchOrganization(ro);
-            ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
-            sp.getStudySites().add(ss);
-        }
+       
     }
 
     private void populateExampleStudyMilestones(StudyProtocolQueryCriteria crit, StudyProtocol sp) {

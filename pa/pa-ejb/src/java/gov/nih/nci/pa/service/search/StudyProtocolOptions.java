@@ -113,12 +113,13 @@ public class StudyProtocolOptions {
     private String city;
     private List<Long> summary4AnatomicSites = new ArrayList<Long>();
     private List<Long> bioMarkers = new ArrayList<Long>();
+    private List<Long> leadOrganizationIds = new ArrayList<Long>(); 
     private List<Long> pdqDiseases = new ArrayList<Long>();
     private List<Long> participatingSiteIds = new ArrayList<Long>();
     private List<Long> interventionIds = new ArrayList<Long>();
     private List<Long> interventionAlternateNameIds = new ArrayList<Long>();
     private List<InterventionTypeCode> interventionTypes = new ArrayList<InterventionTypeCode>();
-
+    
     /**
      * @return excludeRejectedTrials
      */
@@ -346,6 +347,20 @@ public class StudyProtocolOptions {
      */
     public void setBioMarkers(List<Long> bioMarkers) {
         this.bioMarkers = bioMarkers;
+    }
+
+    /**
+     * @return the leadOrganizationIds
+     */
+    public List<Long> getLeadOrganizationIds() {
+        return leadOrganizationIds;
+    }
+
+    /**
+     * @param leadOrganizationIds the leadOrganizationIds to set
+     */
+    public void setLeadOrganizationIds(List<Long> leadOrganizationIds) {
+        this.leadOrganizationIds = leadOrganizationIds;
     }
 
     /**
