@@ -818,4 +818,8 @@
         <comment>Add unique key on study protocol otheridentifier</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.7/PO-4510.sql"/>
      </changeSet>
+     <changeSet id="PO-4012" author="ludetc">
+        <comment>change CDE marker wording</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.7.1/PO-4012.sql"/>
+     </changeSet>
 </databaseChangeLog>
