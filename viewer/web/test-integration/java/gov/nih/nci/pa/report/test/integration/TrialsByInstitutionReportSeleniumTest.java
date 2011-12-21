@@ -99,7 +99,7 @@ public class TrialsByInstitutionReportSeleniumTest extends AbstractViewerSeleniu
         assertTrue(selenium.isTextPresent("Trials Submitted by Institution"));
         clickAndWait("id=runButton");   
         waitForElementById("resultTable", 15);
-        assertTrue(selenium.isTextPresent("14 items found"));
+        assertTrue(selenium.isTextPresent("15 items found"));
         
     }
 }
