@@ -206,7 +206,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
      */
     public String loadLeadOrganizations() {
         organizations = getOrganizationsByFamilyId(PAConstants.LEAD_ORGANIZATION, criteria.getFamilyId());
-        return super.getReport();
+        return SUCCESS;
     }
 
     /**
@@ -216,7 +216,7 @@ public class AdHocReportAction extends AbstractReportAction<StudyProtocolQueryCr
     public String loadParticipatingSites() {
         participatingSites =
                 getOrganizationsByFamilyId(PAConstants.PARTICIPATING_SITE, criteria.getParticipatingSiteFamilyId());
-        return super.getReport();
+        return SUCCESS;
     }
 
     /**

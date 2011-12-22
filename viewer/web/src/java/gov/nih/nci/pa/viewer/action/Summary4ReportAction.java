@@ -183,7 +183,7 @@ public class Summary4ReportAction
                 addActionError(e.getMessage());
             }
         }
-        return super.getReport();
+        return SUCCESS;
     }
 
     /**

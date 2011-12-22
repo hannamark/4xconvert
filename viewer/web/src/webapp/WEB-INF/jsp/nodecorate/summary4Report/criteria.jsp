@@ -17,7 +17,8 @@
             </viewer:valueRow>
             <viewer:valueRow labelKey="summary4Report.byFamily">
                 <input id="orgSearchTypebyFamily" name="orgSearchType" type="radio" value="1" ${(orgSearchType == 1) ? 'checked' : '' }/>
-                <s:select id="familyId" name="criteria.familyId" list="families" listKey="key" listValue="value" headerKey="0" headerValue="--All--" cssStyle="display:inline"/>
+                <s:select id="familyId" name="criteria.familyId" list="families" headerKey="" headerValue="--Select--" 
+                          listKey="key" listValue="value" disabled="orgSearchType == 0" cssStyle="display:inline"/>
             </viewer:valueRow>
             <viewer:valueRow labelKey="summary4Report.orgsByFamily">
                 <div id="organization_choices">
