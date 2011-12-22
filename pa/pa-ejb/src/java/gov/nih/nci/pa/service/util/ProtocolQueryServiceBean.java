@@ -160,17 +160,17 @@ import com.fiveamsolutions.nci.commons.service.AbstractBaseSearchBean;
 @SuppressWarnings({"PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtocol>
     implements ProtocolQueryServiceLocal {
-    
+
     private static final Logger LOG = Logger.getLogger(ProtocolQueryServiceBean.class);
-    
+
     @EJB
     private DataAccessServiceLocal dataAccessService;
 
     @EJB
     private RegistryUserServiceLocal registryUserService;
-    
+
     @EJB
-    private PDQDiseaseServiceLocal pdqDiseaseService;    
+    private PDQDiseaseServiceLocal pdqDiseaseService;
 
     private PAServiceUtils paServiceUtils;
 
@@ -196,14 +196,14 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     /**
      * {@inheritDoc}
      */
-    
+
     @Override
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<StudyProtocolQueryDTO> getStudyProtocolByCriteriaForReporting(StudyProtocolQueryCriteria criteria)
             throws PAException {
         if (isCriteriaEmpty(criteria)) {
             throw new PAException("At least one criteria is required.");
-        }        
+        }
         lookupBiomarkerIds(criteria);
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
         List<StudyProtocol> studies = getStudyProtocolQueryResultList(criteria);
@@ -215,7 +215,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         }
         return pdtos;
     }
-    
+
     /**
      * Lookup the biomarker ids by names for the search by biomarkers.
      * @param criteria The search criteria
@@ -228,7 +228,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             criteria.setBioMarkerIds(ids);
         }
     }
-    
+
     /**
      * @param parentDiseases parent Diseases.
      * @return list of diseases including parent and children etc..
@@ -244,8 +244,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         }
         return result;
     }
-    
-   
+
+
     private void traverseTree(PDQDisease disease, Set<Long> result) {
         for (PDQDiseaseParent pdqDiseaseParent : disease.getDiseaseChildren()) {
             result.add(pdqDiseaseParent.getDisease().getId());
@@ -259,7 +259,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             result.add(studyProtocol.getId());
         }
         return result;
-    }    
+    }
 
     /**
      * {@inheritDoc}
@@ -431,7 +431,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setInterventionAlternateNameIds(criteria.getInterventionAlternateNameIds());
         options.setInterventionTypes(criteria.getInterventionTypes());
         options.setLeadOrganizationIds(criteria.getLeadOrganizationIds());
-        
+
         populateExample(criteria, example);
         return new StudyProtocolQueryBeanSearchCriteria(example, options);
     }
@@ -456,7 +456,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         }
         return results;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -480,7 +480,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         }
 
     }
-    
+
     private String createJoinClauseByCriteria(StudyProtocolQueryCriteria criteria) {
         StringBuilder result = new StringBuilder();
         if (CollectionUtils.isNotEmpty(criteria.getSummary4AnatomicSites())) {
@@ -488,13 +488,13 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         }
         if (CollectionUtils.isNotEmpty(criteria.getLeadOrganizationIds())) {
             result.append(" join obj.studySites as leadOrgSite join leadOrgSite.researchOrganization as leadOrgRo ");
-        } 
+        }
         return result.toString();
     }
 
     private void populateExampleStudyProtocol(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
         sp.setId(crit.getStudyProtocolId());
-        sp.setOfficialTitle(crit.getOfficialTitle());      
+        sp.setOfficialTitle(crit.getOfficialTitle());
         sp.setPhaseAdditionalQualifierCode(
                 PhaseAdditionalQualifierCode.getByCode(crit.getPhaseAdditionalQualifierCode()));
         if (StringUtils.equalsIgnoreCase(crit.getTrialCategory(), "p")) {
@@ -522,10 +522,10 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             sp.getStudyResourcings().add(stdRes);
         }
     }
-    
+
     private void populateExampleStudyProtocolDiseaseInterventionType(
             StudyProtocolQueryCriteria crit, StudyProtocol sp) {
-        populateExampleStudyProtocolSumm4FundSrc(crit, sp);        
+        populateExampleStudyProtocolSumm4FundSrc(crit, sp);
     }
 
     private void populateExampleSpOtherIdentifiers(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
@@ -592,7 +592,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             sp.getStudySites().add(ss);
         }
 
-       
+
     }
 
     private void populateExampleStudyMilestones(StudyProtocolQueryCriteria crit, StudyProtocol sp) {
@@ -628,10 +628,11 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
 
     private boolean isCriteriaEmpty(StudyProtocolQueryCriteria criteria) {
         return (StringUtils.isEmpty(criteria.getNciIdentifier())
+                && criteria.getStudyProtocolId() == null
                 && StringUtils.isEmpty(criteria.getOfficialTitle())
                 && StringUtils.isEmpty(criteria.getLeadOrganizationTrialIdentifier())
                 && StringUtils.isEmpty(criteria.getPrincipalInvestigatorId())
-                && StringUtils.isEmpty(criteria.getPrimaryPurposeCode())               
+                && StringUtils.isEmpty(criteria.getPrimaryPurposeCode())
                 && StringUtils.isEmpty(criteria.getPhaseAdditionalQualifierCode())
                 && StringUtils.isEmpty(criteria.getStudyStatusCode())
                 && StringUtils.isEmpty(criteria.getStudyMilestone())
@@ -648,16 +649,16 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
                 && CollectionUtils.isEmpty(criteria.getBioMarkerNames())
                 && CollectionUtils.isEmpty(criteria.getPdqDiseases())
                 && CollectionUtils.isEmpty(criteria.getParticipatingSiteIds())
-                && CollectionUtils.isEmpty(criteria.getLeadOrganizationIds())               
+                && CollectionUtils.isEmpty(criteria.getLeadOrganizationIds())
                 && !criteria.isSearchOnHold()
                 && !criteria.isStudyLockedBy()
                 && StringUtils.isEmpty(criteria.getSubmissionType())
                 && StringUtils.isEmpty(criteria.getTrialCategory())
                 && criteria.getSumm4FundingSourceId() == null
                 && StringUtils.isEmpty(criteria.getSumm4FundingSourceTypeCode())
-                && CollectionUtils.isEmpty(criteria.getInterventionIds()) 
-                && CollectionUtils.isEmpty(criteria.getInterventionAlternateNameIds()) 
-                && CollectionUtils.isEmpty(criteria.getInterventionTypes()) 
+                && CollectionUtils.isEmpty(criteria.getInterventionIds())
+                && CollectionUtils.isEmpty(criteria.getInterventionAlternateNameIds())
+                && CollectionUtils.isEmpty(criteria.getInterventionTypes())
                 && (criteria.isMyTrialsOnly() != null && !criteria.isMyTrialsOnly()
                         || criteria.isMyTrialsOnly() == null));
     }
@@ -724,7 +725,7 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
      */
     public void setPaServiceUtils(PAServiceUtils paServiceUtils) {
         this.paServiceUtils = paServiceUtils;
-    }   
+    }
 
     /**
      * @param dataAccessService the dataAccessService to set

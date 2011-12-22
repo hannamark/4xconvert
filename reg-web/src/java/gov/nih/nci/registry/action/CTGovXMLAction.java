@@ -85,16 +85,22 @@ package gov.nih.nci.registry.action;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
 import gov.nih.nci.pa.service.util.CTGovXmlGeneratorServiceLocal;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.RegistryUserService;
 import gov.nih.nci.pa.util.PaRegistry;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -105,54 +111,81 @@ import com.opensymphony.xwork2.Preparable;
 /**
  * Action class for streaming the CTGov XML file.
  *
- * @author bpickeral
- *
  */
 public class CTGovXMLAction extends ActionSupport implements Preparable {
     private static final Logger LOG = Logger.getLogger(CTGovXMLAction.class);
 
-    private CTGovXmlGeneratorServiceLocal ctService; 
+    private CTGovXmlGeneratorServiceLocal ctService;
     private StudyProtocolServiceLocal studyProtocolService;
+    private ProtocolQueryServiceLocal protocolQueryService;
     private  RegistryUserService  registryUserService;
-    
 
     private static final long serialVersionUID = 1L;
     private String id;
     private String root;
     private InputStream xmlFile;
 
+    private static final String ERROR_XML =
+        "<error>\n<error_description>Unable to generate the XML</error_description>\n"
+        + "<study_identifier>${ID}</study_identifier>"
+        + "<study_title>$TITLE</study_title><contact_info>"
+        + "This issue has been reported to the CTRP Tech support</contact_info>\n"
+        + "<error_type>Validation Error</error_type><error_messages><error_message>$TEXT"
+        + "</error_message></error_messages></error>";
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void prepare() {
-        ctService = PaRegistry.getCTGovXmlGeneratorService();      
+        ctService = PaRegistry.getCTGovXmlGeneratorService();
         studyProtocolService = PaRegistry.getStudyProtocolService();
+        protocolQueryService = PaRegistry.getProtocolQueryService();
         registryUserService = PaRegistry.getRegistryUserService();
     }
 
     /**
      * Calls the CTGovXmlGeneratorService in PA to retrieve the CTGov xml for the given id.
-     * 
+     *
      * @return action result string
      */
     public String retrieveCtGovXML() {
         final Ii ii = createIi();
-        String xmlFileString = null;
-        if (!isUserOwnerOfStudyProtocol(ii)) {
-            xmlFileString = "Authorization failed. User does not have ownership of the trial.";
+        StudyProtocolQueryDTO spqDto;
+        try {
+            spqDto = getStudyProtocolQueryDTO(ii);
+        } catch (PAException e1) {
+            xmlFile = new ByteArrayInputStream(convertToXML("Unable to retrieve Study Protocol", null).getBytes());
+            return "downloadXMLFile";
+        }
+        String xmlFileString = validateCtGovExportRules(spqDto, ii);
+        if (xmlFileString != null) {
+            xmlFileString = convertToXML(xmlFileString, spqDto);
         } else {
             try {
                 xmlFileString = ctService.generateCTGovXml(ii);
             } catch (PAException e) {
                 LOG.error("Error occurred while retrieving document from CT Service.", e);
-                xmlFileString = "An error occurred while retrieving the document from CT "
-                        + "Gov. Please contact a System administrator.";
+                xmlFileString = convertToXML("An error occurred while retrieving the document for CT "
+                        + "Gov. Please contact a System administrator.", null);
             }
         }
 
         xmlFile = new ByteArrayInputStream(xmlFileString.getBytes());
         return "downloadXMLFile";
+    }
+
+    private String convertToXML(String text, StudyProtocolQueryDTO spqDto) {
+        StudyProtocolQueryDTO dto = spqDto;
+        if (spqDto == null) {
+            dto = new StudyProtocolQueryDTO();
+            dto.setOfficialTitle("");
+            dto.setNciIdentifier("");
+        }
+        String result = ERROR_XML.replace("${ID}", dto.getNciIdentifier());
+        result = result.replace("$TITLE", dto.getOfficialTitle());
+        result = result.replace("$TEXT", text);
+        return result;
     }
 
     private Ii createIi() {
@@ -161,14 +194,45 @@ public class CTGovXMLAction extends ActionSupport implements Preparable {
         ii.setRoot(getRoot());
         return ii;
     }
-    
+
+    private StudyProtocolQueryDTO getStudyProtocolQueryDTO(Ii ii) throws PAException {
+        StudyProtocolDTO studyProtocol = studyProtocolService.getStudyProtocol(ii);
+
+        Long studyProtocolId = IiConverter.convertToLong(studyProtocol.getIdentifier());
+        StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
+        queryCriteria.setStudyProtocolId(studyProtocolId);
+        List<StudyProtocolQueryDTO> studyProtocolList = protocolQueryService
+            .getStudyProtocolByCriteria(queryCriteria);
+
+        return studyProtocolList.get(0);
+    }
+
+    private String validateCtGovExportRules(StudyProtocolQueryDTO spqDto, Ii spIi) {
+        String dwfs = spqDto.getDocumentWorkflowStatusCode().getCode();
+        List<String> abstractedCodes = Arrays.asList(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE
+                .getCode(), DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode());
+        if (spqDto.isProprietaryTrial()) {
+            return "Abbreviated trials are not eligible for XML Export.";
+        }
+        if (!abstractedCodes.contains(dwfs)) {
+            return "Only Abstracted trials are eligible for XML export.";
+        }
+        if (!spqDto.getCtgovXmlRequiredIndicator()) {
+            return "This trial is not indicated as being eligible for XML export.";
+        }
+        if (!isUserOwnerOfStudyProtocol(spIi)) {
+            return "Authorization failed. User does not have ownership of the trial.";
+        }
+        return null;
+    }
+
     /**
      * @param ii StudyProtocol ii
      * @return boolean. Return true if the user has access to the trial
      */
     boolean isUserOwnerOfStudyProtocol(Ii ii) {
         try {
-            String loginName = getUserName();          
+            String loginName = getUserName();
             StudyProtocolDTO studyProtocol = studyProtocolService.getStudyProtocol(ii);
             Long studyProtocolId = IiConverter.convertToLong(studyProtocol.getIdentifier());
             RegistryUser registryUser = registryUserService.getUser(loginName);
@@ -183,9 +247,12 @@ public class CTGovXMLAction extends ActionSupport implements Preparable {
     /**
      * @return user login name
      */
-    String getUserName() {
-        return ServletActionContext.getRequest().getUserPrincipal().getName();
-
+    private String getUserName() {
+        if (ServletActionContext.getRequest().getUserPrincipal() == null) {
+            return "";
+        } else {
+            return ServletActionContext.getRequest().getUserPrincipal().getName();
+        }
     }
 
     /**
@@ -224,13 +291,6 @@ public class CTGovXMLAction extends ActionSupport implements Preparable {
     }
 
     /**
-     * @param xmlFile the xmlFile to set
-     */
-    public void setXmlFile(InputStream xmlFile) {
-        this.xmlFile = xmlFile;
-    }
-
-    /**
      * @param ctService the ctService to set
      */
     public void setCtService(CTGovXmlGeneratorServiceLocal ctService) {
@@ -245,10 +305,17 @@ public class CTGovXMLAction extends ActionSupport implements Preparable {
     }
 
     /**
+     * @param service the service to set
+     */
+    public void setProtocolQueryService(ProtocolQueryServiceLocal service) {
+        this.protocolQueryService = service;
+    }
+
+    /**
      * @param registryUserService the registryUserService to set
      */
     public void setRegistryUserService(RegistryUserService registryUserService) {
         this.registryUserService = registryUserService;
-    }    
+    }
 
 }
