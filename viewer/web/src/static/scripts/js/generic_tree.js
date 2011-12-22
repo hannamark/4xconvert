@@ -80,10 +80,11 @@ NBTree.prototype = {
         };
         
         var jsTreeData = [];
-        jQuery.map( this.root.children, function(val,i) {
-            jsTreeData.push(go(val,''));  
-        });
- 
+        if (this.root.children != null) {
+            jQuery.map( this.root.children, function(val,i) {
+                jsTreeData.push(go(val,''));  
+            });
+        } 
         return { 
             'data' : jsTreeData,
             'progressive_render' : true 
