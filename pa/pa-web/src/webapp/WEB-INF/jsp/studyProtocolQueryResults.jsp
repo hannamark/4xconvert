@@ -1,5 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 <s:form name="sForm">
+    <s:token/>
     <s:actionerror/>
     <s:set name="records" value="records" scope="request"/>
     <display:table class="data" decorator="gov.nih.nci.pa.decorator.PADisplayTagDecorator" sort="list" pagesize="10" id="row"
@@ -42,12 +43,10 @@
         <c:if test="${sessionScope.isSuAbstractor}">
             <display:column class="title" title="Super User Action" sortable="true" headerClass="sortable">
             	<s:if test="%{#attr.row.adminCheckout.checkoutBy != null}">
-                    <s:url id="url" action="studyProtocoladminCheckIn"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-            		<s:a href="%{url}">Check-In (Admin)</s:a><br/>
+            		<a href="#" onclick="adminCheckIn('${row.studyProtocolId}')">Check-In (Admin)</a><br/>
                 </s:if>
-                <s:if test="%{#attr.row.studyScientific.checkoutBy != null}">
-                    <s:url id="url" action="studyProtocolscientificCheckIn"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
-                    <s:a href="%{url}">Check-In (Scientific)</s:a><br/>
+                <s:if test="%{#attr.row.scientificCheckout.checkoutBy != null}">
+                    <a href="#" onclick="scientificCheckIn('${row.studyProtocolId}')">Check-In (Scientific)</a><br/>
                 </s:if>
             </display:column>
         </c:if>
@@ -58,7 +57,17 @@
     function generateTSR(id) {
         var form = document.sForm;
         form.target = "TSR";
-        form.action = "${pageContext.request.contextPath}/protected/ajaxStudyProtocolviewTSR.action?studyProtocolId=" + id;
+        form.action = paApp.contextPath + "/protected/ajaxStudyProtocolviewTSR.action?studyProtocolId=" + id;
+        form.submit();
+    }
+    function adminCheckIn(id) {
+        var form = document.sForm;
+        form.action = paApp.contextPath + "/protected/studyProtocoladminCheckIn.action?studyProtocolId=" + id;
+        form.submit();
+    }
+    function scientificCheckIn(id) {
+        var form = document.sForm;
+        form.action = paApp.contextPath + "/protected/studyProtocolscientificCheckIn.action?studyProtocolId=" + id;
         form.submit();
     }
 </script>
