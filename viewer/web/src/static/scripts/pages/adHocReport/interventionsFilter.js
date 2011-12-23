@@ -7,9 +7,21 @@ var hmTypesDropdown;
 var hmTypesDropdownRev;
 
 (function($) {
+    $.interventionsFilter = {
+        //************************
+        //** Save/Restore state **
+        //************************
+        saveState : function() {
+        },
+     
+        restoreState : function() {
+        },
+    };
+    
+    //******************
+    //** On DOM Ready **
+    //******************
     $(function() {
-        
-        //$("a[href='#']").attr('href','##');
         $.jstree._themes = viewerApp.stylePath + "/jstree/themes/";
         
         // Clicking inside textboxes highlights the content
@@ -23,6 +35,8 @@ var hmTypesDropdownRev;
         $('#interventionsSection .quickresults_count').show();
         $('#interventionsSection .quickresults_header_buttons input[type="checkbox"]').attr('checked', false);
         
+        interventionsFilter.restoreState();
+
         //**********
         //** Tabs **
         //**********
@@ -294,6 +308,29 @@ var hmTypesDropdownRev;
         }
     });
 })(jQuery);
+
+
+//************************
+//** Save/Restore state **
+//************************
+interventionsFilter = {
+    saveState : function() {
+      (function($) {
+          var stateObj = {
+                  
+          };
+          var stateStr = $.toJSON(stateObj);
+          setCookieForDays( "interventionsFilterState", stateStr, 2 );
+      })(jQuery);
+  },
+
+  restoreState : function() {
+      (function($) {
+          var stateStr = getAndDeleteCookie( 'interventionsFilterState' );
+          var stateObj = $.parseJSON( stateStr );
+      })(jQuery);
+  }
+};
 
 
 InterventionsPkg = {

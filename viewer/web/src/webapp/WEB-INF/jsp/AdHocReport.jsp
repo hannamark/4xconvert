@@ -15,12 +15,19 @@
         </script>
         <script type="text/javascript" src="${scriptPath}/js/ml_breadcrumbs.js"></script>
         <script type="text/javascript" src="${scriptPath}/js/generic_tree.js"></script>
+        <script type="text/javascript" src="${scriptPath}/js/cookies_support.js"></script>
         <script type="text/javascript" src="${scriptPath}/pages/adHocReport/diseasesFilter.js"></script>
         <script type="text/javascript" src="${scriptPath}/pages/adHocReport/interventionsFilter.js"></script>
         <script type="text/javascript">
             jQuery(function() {
                     var tabOptions = {
-                        selected: (jQuery("#resultTable").size() == 0) ? 0 : 1
+                        selected: (jQuery("#resultTable").size() == 0) ? 0 : 1,
+                        select: function(event, ui) {
+                            if( ui.index != 0 ) { // This is the index of the tab in the group of tabs. 0 is for "Report Filters" so the logic is 'clicking on any tab except report filters'. 
+                                jQuery.diseasesFilter.saveState();
+                                jQuery.interventionsFilter.saveState();
+                            }
+                        }
                     };
                     jQuery("#reportui").tabs(tabOptions);       
                     var accordionOptions = {
@@ -55,6 +62,8 @@
                         jQuery("#resultsTab").html(jQuery("div.template.loadingMessage").children().html());
                         jQuery("#reportui").tabs("select", 1);
                         jQuery("#pdq_tree_dialog").dialog('close');
+                        jQuery.diseasesFilter.saveState();
+                        jQuery.interventionsFilter.saveState();
                         var form = jQuery("#searchForm").get(0);
                         form.action="resultsAdHocReport.action";
                         form.submit();

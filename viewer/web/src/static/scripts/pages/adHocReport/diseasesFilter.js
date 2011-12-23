@@ -15,101 +15,37 @@ function setJstreeOperationReady(bReady) {
     bJstreeOperationReady = bReady;
 }
 
-(function($) {
-    $(function() {
-
-        $.jstree._themes = viewerApp.stylePath + "/jstree/themes/";
+(function($){
+    $.diseasesFilter = {
+        pdqDialog : {},
         
-        // Clicking inside textboxes highlights the content
-        $('input[type="text"]').bind('click',function (e) {
-            $(this).focus();
-            $(this).select();
-            e.preventDefault();
-        });
-        
-        $('#disease_selections_count').hide();
-        $('#diseasesSection .quickresults_count').show();
-        $('#diseasesSection .quickresults_header_buttons input[type="checkbox"]').attr('checked', false);
-        
-        //**********
-        //** Tabs **
-        //**********
-        $('#reporttabs li a').hover(
-            function () {
-                $(this).animate({left:20}, 300, function (){
-                    $(this).animate({left:0}, 50);
-                });
-            }, 
-            function () {
-            }
-        );
-    
-        $('ul#reporttabs li a').bind('click',function (e) {
-            var linkIndex = $('ul#reporttabs li a').index(this);
-            $('ul#reporttabs li a').removeClass('reporttab-active');
-            $('.reporttab:visible').hide();
-            $('.reporttab:eq('+linkIndex+')').show();
-            $(this).addClass('reporttab-active');
-            e.preventDefault();
-        });
-        
-        $('.reporttab:first').show();   
-        $('#reporttabs li a:first').addClass('reporttab-active');
-    
-        //*********************
-        //** Category Toggle **
-        //*********************
-        $('.categorywrapper h2 a').bind('click',function (e) {
-            $(this).parents('.categorywrapper').find('.category').slideToggle('slow', function() {});
-            e.preventDefault();
-        });
-           
-        $('.category:eq(1)').show();    
-        
-        if( $('.quickresults').height() != 0 )
-            $('.selectionslist').height( $('.quickresults').height() - $('.selectionslist_body').padding().top - $('.selectionslist_body').padding().bottom );
-    
         //*******************************
         //** Search for Disease in PDQ **
         //*******************************
-        $('#diseasesSection .diseaserescol input[type="text"]').autocomplete({
-            source : function(request, response) {
-                var results = $.ui.autocomplete.filter(FiveAmUtil.PDQPkg.pdqDataDictionary, request.term);
-                response(results.slice(0, 8));
-            }
-        });
-        
-        $('#diseasesSection .search_inner_button').bind('click',function (e) {
-            searchDiseases();
-            e.preventDefault();
-        });
-    
-        $('#diseasesSection .diseaserescol input[type="text"]').keypress(function(e) {
-            if(e.keyCode == 13) {
-                searchDiseases();
-                e.preventDefault();
-            }
-        });
-        
-        function searchDiseases() {
+        searchDiseases : function () {
+            var self = this;
             $('.ui-autocomplete').hide();
             var searchTerm = $('#diseasesSection .diseaserescol input[type="text"]').val().toLowerCase();
             var searchResultsPDQ = FiveAmUtil.PDQPkg.searchPDQ( searchTerm );
             var breadcrumbsPkg = FiveAmUtil.breadcrumbsPkg.createPackage( searchTerm, searchResultsPDQ, FiveAmUtil.PDQPkg.pdqData );
             $('#diseasebreadcrumbs').buildBreadcrumbs( breadcrumbsPkg );
-            updateQuickresultsCount( searchTerm, false );
+            self.updateQuickresultsCount( searchTerm, false );
             $('#diseasesSection .quickresults_header_buttons input[type="checkbox"]').attr('checked', false);
-            adjustBreadcrumbAppearance();
+            self.adjustBreadcrumbAppearance();
     
             $.each([$('.breadcrumbElementText'), $('.breadcrumbFeaturedElementText')], function(index, value) {
                 $(value).live('click',function (e) {
-                    var id = $(this).parent().attr('id').match(/breadcrumb_box\d+_id(\d+)/)[1];
                     var selectedElement = $('<div></div>');
+                    var id = $(this).parent().attr('id').match(/breadcrumb_box\d+_id(\d+)/)[1];
                     selectedElement.attr('id', id);
+                    var parentIds = $.map( $(this).parent().prevAll('div[id^=breadcrumb_box]'), function(val,i) {
+                        return $(val).attr('id').match(/breadcrumb_box\d+_id(\d+)/)[1];
+                    });
+                    selectedElement.data('parentIds', parentIds);
                     selectedElement.append($(this).parent().prevAll().clone().get().reverse());
                     selectedElement.append($(this).clone());
-                    addToSelections(generateSelectionItemBlock(selectedElement));
-                    updateSelections(e);
+                    self.addToSelections(self.generateSelectionItemBlock(selectedElement));
+                    self.updateSelections(e);
                 });
             });
             
@@ -120,13 +56,13 @@ function setJstreeOperationReady(bReady) {
                     $(this).parent().parent().prevAll('div[id*="breadcrumb_box"]').each( function(index2, value2) {
                         parentIds.push($(value2).attr('id').match(/breadcrumb_box\d+_id(\d+)/)[1]);
                     });
-                    showTree( id, parentIds );
+                    self.showTree( id, parentIds );
                     e.preventDefault();
                 });
             });
-        }
+        },
         
-        function adjustBreadcrumbAppearance() {
+        adjustBreadcrumbAppearance : function () {
             var regTextHeight = $('.breadcrumbElementText').outerHeight();
             $('.breadcrumbElementImageLink').height(regTextHeight);
     
@@ -140,34 +76,39 @@ function setJstreeOperationReady(bReady) {
             var featLinkHeight = $('.breadcrumbFeaturedElementImageLink A').outerHeight();
             var featMarginTop = (featTextHeight-featLinkHeight)/2
             $('.breadcrumbFeaturedElementImageLink A').css({'margin-top': ''+featMarginTop+'px'});
-        }
+        },
             
-        function addToSelections(item) {
+        addToSelections : function (item) {
+            var self = this;
             var total=0, distinct=0;
             $('#diseasesSection .selectionslist_body li div').each(function(index) {
                 total++;
-                var candidate = unescapeHTML($(this).html());
+                var candidate = self.unescapeHTML($(this).html());
                 if( item.html != candidate ) 
                     distinct++;
             });
             if( total == distinct ) {
-                $('#diseasesSection .selectionslist_body').prepend('<li id=selection_box_id' + item.id +'><a href="#" title="Click to remove" /><div>' + item.html + '</div></li>');
+                var compositeId = 'sbid' + function(arr){var s=''; for(var i=0; i<arr.length; i++) s+= '_'+arr[i]; return s;}(item.parentIds) + '_' + item.id;
+                $('#diseasesSection .selectionslist_body').prepend('<li id="'+compositeId+'"><a href="#" title="Click to remove" /><div>' + item.html + '</div></li>');
+                $('#diseasesSection .selectionslist_body li#'+compositeId).data('shortId', item.id); 
                 $('#pdqDiseases').append('<option value="'+item.id+'" selected="selected">'+item.name+'</option>');
             }
-        }
+        },
         
-        function updateSelections(e) {
+        updateSelections : function (e) {
+            var self = this;
             $('#diseasesSection .selectionslist_body li a').bind('click',function (e) {
-                $('#pdqDiseases option[value="'+$(this).parent().attr('id').match(/selection_box_id(\d+)/)[1]+'"]').remove();
+                $('#pdqDiseases option[value="'+$(this).parent().data('shortId')+'"]').first().remove();
                 $(this).parent().remove();
-                updateSelectionCount();
+                self.updateSelectionCount();
                 e.preventDefault();
             });     
-            updateSelectionCount(); 
-            e.preventDefault();             
-        }
+            self.updateSelectionCount(); 
+            if( e!=null)
+                e.preventDefault();             
+        },
         
-        function updateQuickresultsCount( searchTerm, bInit ) {
+        updateQuickresultsCount : function ( searchTerm, bInit ) {
             if( bInit ) {
                 $('#diseasesSection .quickresults_count').text( 'Hint: Press <Enter> when finished typing' ).show(); 
             } else {
@@ -177,29 +118,12 @@ function setJstreeOperationReady(bReady) {
                 else
                     $('#diseasesSection .quickresults_count').text( '' + count + ' results for "' + searchTerm + '"' ).show();
             }
-        }   
-        
-        //****************
-        //** Select All **
-        //****************
-        $('#diseasesSection .quickresults_header_buttons input[type="checkbox"]').bind('click',function (e) {
-            $('#diseasesSection .quickresults_body input[type="checkbox"]').attr('checked', $(this).is(':checked'));   
-        });
-        
+        },   
+            
         //*******************************************
         //** Add Diseases to Selected (for Report) **
         //*******************************************
-        $('.quickresults_header_buttons #add_all_disease').bind('click',function (e) {
-            $($('.breadcrumbItemBox').get().reverse()).each( function() {
-                var id = $(this).children().last().attr('id').match(/breadcrumb_box\d+_id(\d+)/)[1];
-                var selectedElement = $(this).clone();
-                selectedElement.attr('id', id);
-                addToSelections(generateSelectionItemBlock(selectedElement));
-            });
-            updateSelections(e);
-        });
-        
-        function generateSelectionItemBlock( item ) {
+        generateSelectionItemBlock : function ( item ) {
             var innerHtml = '<span class="selectionElementText">';
             $.each(item.children(), function(index, value) {
                 if (index < item.children().length-1) {
@@ -215,10 +139,11 @@ function setJstreeOperationReady(bReady) {
             var name = $.trim(item.children().last().text());
             innerHtml += '<span class="selectionFeaturedElement">'+name+'</span>';
             var id = item.attr('id');
-            return { 'id':id, 'name':name, 'html':innerHtml };
-        }
+            var parentIds = item.data('parentIds');
+            return { 'id':id, 'parentIds':parentIds, 'name':name, 'html':innerHtml };
+        },
         
-        function updateSelectionCount() {
+        updateSelectionCount : function () {
             var count = $('#diseasesSection .selectionslist_body li').length;
             if (count == 0) {
                 $('#disease_selections_count').stop(true,true).hide()
@@ -238,48 +163,28 @@ function setJstreeOperationReady(bReady) {
                             .show().delay(1000).switchClass('selections_count_highlight', 'selections_count_normal', 1000); 
                 }   
             } 
-        }   
-        
+        },   
+            
         //***********
         //** Reset **
         //***********
-        $('.quickresults_header_buttons #reset_disease').bind('click',function (e) {
-            resetDiseaseFilter();
-            e.preventDefault();
-        });
-        
-        function resetDiseaseFilter() {
+        resetDiseaseFilter : function () {
+            var self = this;
             $('#diseasebreadcrumbs').empty();
             $('#diseasesSection .quickresults_header_buttons input[type="checkbox"]').attr('checked', false);
             $('#diseasesSection input[id="disease"]').val('Start typing a search term...');
-            updateQuickresultsCount('',true);
+            self.updateQuickresultsCount('',true);
             $('#diseasesSection .selectionslist_body').empty();
             $('#pdqDiseases').empty();
-            updateSelectionCount();
-        }
-        
+            self.updateSelectionCount();
+        },
+            
         //***************************************
         //** PDQ Tree in separate pop-up dialog **
         //***************************************
-        var pdqDialog = $('<div id="pdq_tree_dialog"></div>')
-                .html( generatePDQTreeHtml() )
-                .dialog({
-                    autoOpen: false,
-                    modal: false, 
-                    title: 'PDQ Tree',
-                    position: [30,5],
-                    width: 570,
-                    height: 300
-                });
-        $('.ui-dialog .ui-dialog-content').css({'padding': '.4em .3em .3em .3em'});
-                
-        $('#show_tree_disease').click(function(e) {
-            showTree();
-            e.preventDefault();
-        });
-        
-        function showTree( id, parentIds ) {
-            pdqDialog.dialog('open');
+        showTree : function ( id, parentIds ) {
+            var self = this;
+            self.pdqDialog.dialog('open');
             $('#pdq_tree_dialog').prev().css({'background-color': '#FF8080', 'background-image': 'none', 'border': '1px solid #A06060'});
             $('.pdq-tree-highlight ins:first').each(function(index,value) {
                 $(value).unwrap();
@@ -294,7 +199,7 @@ function setJstreeOperationReady(bReady) {
                 $(thisNodeParentIds).each(function() {
                     $('#pdq_tree').jstree("load_node_json", $('#ptid'+this), null, null, true);
                 });
-
+    
                 var nodeIdsCurrentlyOpen = $.map( $('#pdq_tree').find('.jstree-open').toArray(), function(val,i) { 
                     return $(val).attr('id').match(/ptid([\d_]+)/)[1]; 
                 });
@@ -323,7 +228,7 @@ function setJstreeOperationReady(bReady) {
                             $('#pdq_tree').jstree("select_node", $('#ptid'+thisNodeId));
                             var name = $.trim($('#ptid'+thisNodeId).children('a').text());
                             $('#ptid'+thisNodeId+' a:first').wrapInner('<span class="pdq-tree-highlight"></span>');
-                            adjustPDQTreeDimensions();
+                            self.adjustPDQTreeDimensions();
                             clearInterval(interval);
                         } else {
                             if( isJstreeOperationReady() ) {
@@ -339,10 +244,11 @@ function setJstreeOperationReady(bReady) {
                     }
                 }, 50 );
             }
-            adjustPDQTreeDimensions();
-        }
+            self.adjustPDQTreeDimensions();
+        },
         
-        function generatePDQTreeHtml() {
+        generatePDQTreeHtml : function () {
+            var self = this;
             var pdqTree = new NBTree();
             pdqTree.buildFromFlatData( FiveAmUtil.PDQPkg.pdqData );
             var jsTreeJsonData = pdqTree.generateJstreeJsonData();
@@ -360,6 +266,7 @@ function setJstreeOperationReady(bReady) {
                         var dataIds = id.substring(1).split('_');
                         id = dataIds[dataIds.length-1];
                         dataIds.splice(dataIds.length-1,1);
+                        var parentIds = dataIds.slice(0);
                         dataIds.reverse();
                         var breadcrumbsPkg = {
                             'bcItems' : [FiveAmUtil.breadcrumbsPkg.createBox( id, dataIds, FiveAmUtil.PDQPkg.pdqData )],
@@ -368,21 +275,22 @@ function setJstreeOperationReady(bReady) {
                         var bcItemMarkup = $('<div></div>').buildBreadcrumbs( breadcrumbsPkg );
                         var selectedElement = bcItemMarkup.find('.breadcrumbItemBox');
                         selectedElement.attr('id', id);
-                        addToSelections(generateSelectionItemBlock(selectedElement));
-                        updateSelections(e);
+                        selectedElement.data('parentIds', parentIds);
+                        self.addToSelections(self.generateSelectionItemBlock(selectedElement));
+                        self.updateSelections(e);
                     } else { // Selection comes from click on breadcrumb image link
-                        scrollPDQTreeNodeIntoView(data.rslt.obj);
+                        self.scrollPDQTreeNodeIntoView(data.rslt.obj);
                     }
                 }).bind("after_open.jstree", function (e, data) { 
-                    if( data.rslt.obj.context.nodeName.toLowerCase().indexOf('document')==-1 ) {
-                        adjustPDQTreeDimensions();
+                    if( data.rslt.obj.context.nodeName.toLowerCase().indexOf('document')==-1 ) { // Open was generated by mouse click
+                        self.adjustPDQTreeDimensions();
                     } else {
                         jstreeNodeIdsToOpen.splice(0,1);
                         setJstreeOperationReady(true);
                     }
                 }).bind("after_close.jstree", function (e, data) { 
-                    if( data.rslt.obj.context.nodeName.toLowerCase().indexOf('document')==-1 ) {
-                        adjustPDQTreeDimensions();
+                    if( data.rslt.obj.context.nodeName.toLowerCase().indexOf('document')==-1 ) { // Close was generated by mouse click
+                        self.adjustPDQTreeDimensions();
                     } else {
                         jstreeNodeIdsToClose.splice(0,1);
                         setJstreeOperationReady(true);
@@ -390,19 +298,21 @@ function setJstreeOperationReady(bReady) {
                 });
             });
             return pdqTree;
-        }
+        },
         
-        function adjustPDQTreeDimensions() {
-            var clientHeight = getRealPDQTreeClientHeight();
+        adjustPDQTreeDimensions : function () {
+            var self = this;
+            var clientHeight = self.getRealPDQTreeClientHeight();
             var viewHeight = $('#pdq_tree_dialog').height();
             if( clientHeight < viewHeight )
                 $('#pdq_tree').height(viewHeight);
             else
                 $('#pdq_tree').height(clientHeight);
-        }
+        },
         
-        function scrollPDQTreeNodeIntoView( node ) {
-            var clientHeight = getRealPDQTreeClientHeight();
+        scrollPDQTreeNodeIntoView : function ( node ) {
+            var self = this;
+            var clientHeight = self.getRealPDQTreeClientHeight();
             var viewHeight = $('#pdq_tree_dialog').height();
             var nodeTop = $(node).offset().top - $('#pdq_tree').offset().top;
             var scrollTop = $('#pdq_tree_dialog').scrollTop();
@@ -411,29 +321,71 @@ function setJstreeOperationReady(bReady) {
                 newScrollTop = newScrollTop>=0 ? newScrollTop : 0; 
                 $('#pdq_tree_dialog').scrollTop( newScrollTop );
             }
-        }
+        },
         
-        function getRealPDQTreeClientHeight() {
+        getRealPDQTreeClientHeight : function () {
             var lastNode = $('#pdq_tree li:visible:last');
             var realHeight = 0;
             if($(lastNode).toArray().length > 0)
                 realHeight = $(lastNode).offset().top + $(lastNode).height() - $('#pdq_tree').offset().top;
             return realHeight;
-        }
+        },
+        
+        //************************
+        //** Save/Restore state **
+        //************************
+        saveState : function() {
+            var stateObj = {
+                'breadcrumb_boxes': [],
+                'selection_boxes': $.map( $('li[id^=sbid]'), function(val,i) {
+                    return $(val).attr('id');  
+                })
+            };
+            var stateStr = $.toJSON(stateObj);
+            setCookieForDays( "diseasesFilterState", stateStr, 2 );
+        },
+     
+        restoreState : function() {
+            var self = this;
+            var stateStr = getAndDeleteCookie( 'diseasesFilterState' );
+            var stateObj = $.evalJSON( stateStr );
+            if( stateObj != null) {
+                if( typeof(stateObj.selection_boxes) != 'undefined' && stateObj.selection_boxes != null ) {
+                    $.each( $.evalJSON(stateObj.selection_boxes), function(index, value) {
+                        var id = value.match(/sbid([\d_]+)/)[1];
+                        var dataIds = id.substring(1).split('_');
+                        id = dataIds[dataIds.length-1];
+                        dataIds.splice(dataIds.length-1,1);
+                        var parentIds = dataIds.slice(0);
+                        dataIds.reverse();
+                        var breadcrumbsPkg = {
+                            'bcItems' : [FiveAmUtil.breadcrumbsPkg.createBox( id, dataIds, FiveAmUtil.PDQPkg.pdqData )],
+                            'searchTerm' : ''
+                        };
+                        var bcItemMarkup = $('<div></div>').buildBreadcrumbs( breadcrumbsPkg );
+                        var selectedElement = bcItemMarkup.find('.breadcrumbItemBox');
+                        selectedElement.attr('id', id);
+                        selectedElement.data('parentIds', parentIds);
+                        self.addToSelections(self.generateSelectionItemBlock(selectedElement));
+                        self.updateSelections(null);
+                    });
+                }
+            }
+        },
     
         //*******************
         //** Miscellaneous **
         //*******************
-        function escapeHTML(html) {
+        escapeHTML : function (html) {
             var escaped = html;
             var findReplace = [[/&/g, "&amp;"], [/</g, "&lt;"], [/>/g, "&gt;"], [/"/g, "&quot;"]]
             for(var item in findReplace)
                 if(findReplace.hasOwnProperty(item))
                     escaped = escaped.replace(findReplace[item][0], findReplace[item][1]);  
             return escaped;
-        }
-    
-        function unescapeHTML(html) {
+        },
+        
+        unescapeHTML : function (html) {
             var unescaped = html;
             var findReplace = [[/&amp;/g, "&"], [/&lt;/g, "<"], [/&gt;/g, ">"], [/&quot;/g, "\""]]
             for(var item in findReplace)
@@ -441,6 +393,140 @@ function setJstreeOperationReady(bReady) {
                     unescaped = unescaped.replace(findReplace[item][0], findReplace[item][1]);  
             return unescaped;
         }
+    };
+    
+    //******************
+    //** On DOM Ready **
+    //******************
+    $(function() {
+        $.jstree._themes = viewerApp.stylePath + "/jstree/themes/";
+        var df = $.diseasesFilter;
+        
+        // Clicking inside textboxes highlights the content
+        $('input[type="text"]').bind('click',function (e) {
+            $(this).focus();
+            $(this).select();
+            e.preventDefault();
+        });
+        
+        $('#disease_selections_count').hide();
+        $('#diseasesSection .quickresults_count').show();
+        $('#diseasesSection .quickresults_header_buttons input[type="checkbox"]').attr('checked', false);
+        
+        df.restoreState();
+        
+        //**********
+        //** Tabs **
+        //**********
+        $('#reporttabs li a').hover(
+            function () {
+                $(this).animate({left:20}, 300, function (){
+                    $(this).animate({left:0}, 50);
+                });
+            }, 
+            function () {
+            }
+        );
+        
+        $('ul#reporttabs li a').bind('click',function (e) {
+            var linkIndex = $('ul#reporttabs li a').index(this);
+            $('ul#reporttabs li a').removeClass('reporttab-active');
+            $('.reporttab:visible').hide();
+            $('.reporttab:eq('+linkIndex+')').show();
+            $(this).addClass('reporttab-active');
+            e.preventDefault();
+        });
+        
+        $('.reporttab:first').show();   
+        $('#reporttabs li a:first').addClass('reporttab-active');
+        
+        //*********************
+        //** Category Toggle **
+        //*********************
+        $('.categorywrapper h2 a').bind('click',function (e) {
+            $(this).parents('.categorywrapper').find('.category').slideToggle('slow', function() {});
+            e.preventDefault();
+        });
+           
+        $('.category:eq(1)').show();    
+        
+        if( $('.quickresults').height() != 0 )
+            $('.selectionslist').height( $('.quickresults').height() - $('.selectionslist_body').padding().top - $('.selectionslist_body').padding().bottom );
+        
+        //*******************************
+        //** Search for Disease in PDQ **
+        //*******************************
+        $('#diseasesSection .diseaserescol input[type="text"]').autocomplete({
+            source : function(request, response) {
+                var results = $.ui.autocomplete.filter(FiveAmUtil.PDQPkg.pdqDataDictionary, request.term);
+                response(results.slice(0, 8));
+            }
+        });
+        
+        $('#diseasesSection .search_inner_button').bind('click',function (e) {
+            df.searchDiseases();
+            e.preventDefault();
+        });
+        
+        $('#diseasesSection .diseaserescol input[type="text"]').keypress(function(e) {
+            if(e.keyCode == 13) {
+                df.searchDiseases();
+                e.preventDefault();
+            }
+        });
+        
+        //****************
+        //** Select All **
+        //****************
+        $('#diseasesSection .quickresults_header_buttons input[type="checkbox"]').bind('click',function (e) {
+            $('#diseasesSection .quickresults_body input[type="checkbox"]').attr('checked', $(this).is(':checked'));   
+        });
+        
+        //*******************************************
+        //** Add Diseases to Selected (for Report) **
+        //*******************************************
+        $('.quickresults_header_buttons #add_all_disease').bind('click',function (e) {
+            $($('.breadcrumbItemBox').get().reverse()).each( function() {
+                var selectedElement = $(this).clone();
+                var id = $(this).children().last().attr('id').match(/breadcrumb_box\d+_id(\d+)/)[1];
+                selectedElement.attr('id', id);
+                var parentIds = $.map( $(this).children('div[id^=breadcrumb_box]'), function(val,i) {
+                    return $(val).attr('id').match(/breadcrumb_box\d+_id(\d+)/)[1];
+                });
+                parentIds.splice(parentIds.length-1,1);
+                selectedElement.data('parentIds', parentIds);
+                df.addToSelections(df.generateSelectionItemBlock(selectedElement));
+            });
+            df.updateSelections(e);
+        });
+        
+        //***********
+        //** Reset **
+        //***********
+        $('.quickresults_header_buttons #reset_disease').bind('click',function (e) {
+            df.resetDiseaseFilter();
+            e.preventDefault();
+        });
+        
+        //***************************************
+        //** PDQ Tree in separate pop-up dialog **
+        //***************************************
+        df.pdqDialog = $('<div id="pdq_tree_dialog"></div>')
+                .html( df.generatePDQTreeHtml() )
+                .dialog({
+                    autoOpen: false,
+                    modal: false, 
+                    title: 'PDQ Tree',
+                    position: [30,5],
+                    width: 570,
+                    height: 300
+                });
+        $('.ui-dialog .ui-dialog-content').css({'padding': '.4em .3em .3em .3em'});
+                
+        $('#show_tree_disease').click(function(e) {
+            df.showTree();
+            e.preventDefault();
+        });
     });
 })(jQuery);
 
@@ -502,6 +588,7 @@ FiveAmUtil = {
     },  
     
     PDQPkg: {
+        pdqData : {},
         pdqDataDictionary : [],
         
         initPdqData : function() {
@@ -556,4 +643,5 @@ FiveAmUtil = {
 };
 
 FiveAmUtil.PDQPkg.init();
+
 
