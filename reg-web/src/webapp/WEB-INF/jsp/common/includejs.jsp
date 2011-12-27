@@ -1,10 +1,23 @@
-<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/calendarpopup.js"/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/tooltip.js"/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/showhide.js"/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/Help.js'/>"></script>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" src="${scriptPath}/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript">
+ jQuery.noConflict();
+ var registryApp = {
+   contextPath: "${pageContext.request.contextPath}",
+   imagePath: "${imagePath}",
+   scriptPath: "${scriptPath}",
+   staticPath: "${staticPath}",
+   stylePath: "${stylePath}"
+ };
+</script>
+<script type="text/javascript" src="${scriptPath}/js/calendarpopup.js"></script>
+<script type="text/javascript" src="${scriptPath}/js/tooltip.js"></script>
+<script type="text/javascript" src="${scriptPath}/js/showhide.js"></script>
+<script type="text/javascript" src="${scriptPath}/js/popup.js"></script>
+<script type="text/javascript" src="${scriptPath}/js/Help.js"></script>
+<script type="text/javascript">
     Help.url = '<s:property value="@gov.nih.nci.pa.util.PaEarPropertyReader@getRegistryHelpUrl()" />';
     var contextPath = '${pageContext.request.contextPath}';
 </script>
-<script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/overlib.js'/>"></script>
+<script type="text/javascript" src="${scriptPath}/js/overlib.js"></script>
+<script type="text/javascript" src="${scriptPath}/js/cal2.js"></script>
+<script type="text/javascript" src="${scriptPath}/js/ajaxHelper.js"></script>

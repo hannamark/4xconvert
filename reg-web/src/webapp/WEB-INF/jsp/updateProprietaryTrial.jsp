@@ -8,17 +8,23 @@
         <title>Update <fmt:message key="submit.proprietary.trial.page.title"/></title>
         <s:head/>
         <!-- po integration -->
-        <link href="${pageContext.request.contextPath}/styles/subModalstyle.css" rel="stylesheet" type="text/css" media="all"/>
-        <link href="${pageContext.request.contextPath}/styles/subModal.css" rel="stylesheet" type="text/css" media="all"/>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModalcommon.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/subModal.js'/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/prototype.js'/>"></script>
-        <!-- /po integration -->
-        <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/popup.js"/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value="/scripts/js/cal2.js"/>"></script>
-        <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
+        <link href="${stylePath}/subModalstyle.css" rel="stylesheet" type="text/css" media="all"/>
+        <link href="${stylePath}/subModal.css" rel="stylesheet" type="text/css" media="all"/>
+        <script type="text/javascript" src="${scriptPath}/js/subModalcommon.js"></script>
+        <script type="text/javascript" src="${scriptPath}/js/subModal.js"></script>
+        <script type="text/javascript" src="${scriptPath}/js/prototype.js"></script>
         <c:url value="/protected/popuplookuporgs.action" var="lookupOrgUrl"/>
-        <script type="text/javascript" language="javascript">
+        <script type="text/javascript">
+            var bla = <s:property value="trialDTO.participatingSitesList.size"/>;
+            jQuery(function() {
+                for (var i = 0; i < <s:property value="trialDTO.participatingSitesList.size"/>; i++) {
+                    addCalendar("Cal1-" + i, "Select Date", "trialDTO.participatingSitesList[" + i + "].recruitmentStatusDate", "updateProprietaryTrial");
+                    addCalendar("Cal2-" + i, "Select Date", "trialDTO.participatingSitesList[" + i + "].dateOpenedforAccrual", "updateProprietaryTrial");
+                    addCalendar("Cal3-" + i, "Select Date", "trialDTO.participatingSitesList[" + i + "].dateClosedforAccrual", "updateProprietaryTrial");
+                }
+                setWidth(90, 1, 15, 1);
+                setFormat("mm/dd/yyyy");
+            });
             var orgid;
             var chosenname;
             var persid;
@@ -30,7 +36,7 @@
                 chosenname = oname.replace(/&apos;/g,"'");
             }
             
-            function setpersid(persIdentifier, sname,email,phone) {
+            function setpersid(persIdentifier, sname, email, phone) {
                 persid = persIdentifier;
                 chosenname = sname.replace(/&apos;/g,"'");
             }
@@ -54,8 +60,8 @@
             }
 
             function reviewProtocol () {
-                submitFirstForm("review", "updateProprietaryTrialreview.action");
                 showPopWin('${reviewProtocol}', 600, 200, '', 'Review Register Trial');
+                submitFirstForm("review", "updateProprietaryTrialreview.action");
             }
             
             function cancelProtocol() {
@@ -69,12 +75,6 @@
                 }
                 form.action = action;
                 form.submit();
-            }
-            
-            function trim(val) {
-                var ret = val.replace(/^\s+/, '');
-                ret = ret.replace(/\s+$/, '');
-                return ret;
             }
             
             function toggledisplay (it, box) {
@@ -120,8 +120,8 @@
                     </reg-web:valueRow>
                     <reg-web:valueRow labelFor="submitTrial_selectedLeadOrg_name_part_0__value" labelKey="view.trial.leadOrganization" required="true">
                         <div id="loadOrgField">
-                                <%@ include file="/WEB-INF/jsp/nodecorate/trialLeadOrganization.jsp" %>
-                            </div>
+                            <%@ include file="/WEB-INF/jsp/nodecorate/trialLeadOrganization.jsp" %>
+                        </div>
                     </reg-web:valueRow>
                     <reg-web:valueRow labelFor="submitTrial_participationWebDTO_localProtocolIdentifier" labelKey="submit.trial.leadOrgidentifier" required="true">
                         <s:textfield name="trialDTO.leadOrgTrialIdentifier" maxlength="200" size="100" cssStyle="width:200px"  />
@@ -207,7 +207,7 @@
                                             <th>Local Trial<br/> Identifier<span class="required">*</span></th>
                                             <th>Program Code</th>
                                             <th>Current Site<br/> Recruitment Status<span class="required">*</span></th>
-                                            <th>Current Site<br/> Recruitment <br/>Status Date<span class="required">*</span></th>
+                                            <th>Current Site<br/> Recruitment <br/>Status Date<span class="required">*</span><br/>(mm/dd/yyyy) </th>
                                             <th>Date Opened <br/>for Accrual <br/>(mm/dd/yyyy) </th>
                                             <th>Date Closed <br/>for Accrual <br/>(mm/dd/yyyy) </th>
                                         </tr>
@@ -231,14 +231,23 @@
                                                           name="trialDTO.participatingSitesList[%{#psstats.index}].recruitmentStatus" value="%{recruitmentStatus}"
                                                           list="#recruitmentStatusValues" cssStyle="text-align:left;"/>
                                             </td>
-                                            <td>
-                                                <s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].recruitmentStatusDate" value="%{recruitmentStatusDate}" size="12"/>
+                                            <td nowrap="nowrap">
+                                                <s:textfield name="trialDTO.participatingSitesList[%{#psstats.index}].recruitmentStatusDate" value="%{recruitmentStatusDate}" size="12"/>
+                                                <a href="javascript:showCal('Cal1-<s:property value="%{#psstats.index}"/>')"> 
+                                                    <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
+                                                </a>
                                             </td>
-                                            <td>
+                                            <td nowrap="nowrap">
                                                 <s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].dateOpenedforAccrual" value="%{dateOpenedforAccrual}" size="12"/>
+                                                <a href="javascript:showCal('Cal2-<s:property value="%{#psstats.index}"/>')"> 
+                                                    <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
+                                                </a>
                                             </td>
-                                            <td>
+                                            <td nowrap="nowrap">
                                                 <s:textfield  name="trialDTO.participatingSitesList[%{#psstats.index}].dateClosedforAccrual" value="%{dateClosedforAccrual}" size="12"/>
+                                                <a href="javascript:showCal('Cal3-<s:property value="%{#psstats.index}"/>')"> 
+                                                    <img src="${imagePath}/ico_calendar.gif" alt="select date" class="calendaricon" />
+                                                </a>
                                             </td>
                                         </tr>
                                         </s:iterator >
