@@ -9,14 +9,15 @@
     </path>
     
     <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="bda-utils.classpath"/>
+    <taskdef classname="org.codehaus.groovy.ant.Groovy" classpathref="bda-utils.classpath" name="groovy"/> 
     
     <target name="retrieve-org-families">
         <sql driver="${po.jdbc.driver}" url="${po.jdbc.url}" userid="${po.db.username}" password="${po.db.password}" expandproperties="true"
              print="yes" showheaders="false" showtrailers="false" output="/tmp/family_organizations.txt">
             <transaction>
-                select f.name, o.name from organization o 
+                select f.name || '|' || o.name from organization o 
                     join familyorganizationrelationship fo on fo.organization_id=o.id 
-                    join family f on f.id=fo.family_id where fo.enddate is null and f.statuscode='ACTIVE' order by f.name asc;
+                    join family f on f.id=fo.family_id where fo.enddate is null and f.statuscode='ACTIVE' order by f.name asc
             </transaction>
             <classpath>
                 <path refid="bda-utils.classpath"/>
@@ -26,25 +27,26 @@
     
     <target name="generate-org-families" depends="retrieve-org-families">
         <delete file="/tmp/family_organizations.sql"/>
-        <loadfile property="orgs" srcfile="/tmp/family_organizations.txt"/>
-        <for param="line" list="${orgs}" delimiter="${line.separator}">
-            <sequential>
-                <propertyregex property="family" input="@{line}" regexp="^([^,]+)" select="\0" override="true"/>
-                <propertyregex property="escaped_fam" input="${family}" regexp="'" replace="''" global="true" override="true" defaultValue="${family}"/>
-                <propertyregex property="org" input="@{line}" regexp=",(.)+$" select="\0" override="true"/>
-                <propertyregex property="escaped_org" input="${org}" regexp="," replace="" global="false" override="true" defaultValue="${org}"/>
-                <propertyregex property="escaped_org" input="${org}" regexp="'" replace="''" global="true" override="true" defaultValue="${escaped_org}"/>
-                <echo file="/tmp/family_organizations.sql" append="true">insert into dw_family_organization(family_name, organization_name) values ('${escaped_fam}', '${escaped_org}');
-                </echo>
-            </sequential>
-        </for>
+        <groovy>
+           def input =  new File('/tmp/family_organizations.txt')
+           def output = new File('/tmp/family_organizations.sql')
+           input.eachLine { line ->
+               if (line.trim()) {
+                   family = line.tokenize('|')[0]
+                   org = line.tokenize('|')[1]
+                   output.append(
+                    'insert into dw_family_organization(family_name, organization_name) values (\'' + family + '\',\'' + org + '\');\n'  
+                   )
+                }
+            }
+        </groovy>
     </target>
     
     <target name="retrieve-org-contacts">
         <sql driver="${po.jdbc.driver}" url="${po.jdbc.url}" userid="${po.db.username}" password="${po.db.password}" expandproperties="true"
             print="yes" showheaders="false" showtrailers="false" output="/tmp/org_contacts.txt">
             <transaction>
-                select id, title from organizationalcontact where title is not null order by id asc;
+                select id || '|' || title from organizationalcontact where title is not null order by id asc;
             </transaction>
             <classpath>
                 <path refid="bda-utils.classpath"/>
@@ -54,16 +56,19 @@
     
     <target name="generate-org-contacts" depends="retrieve-org-contacts">
         <delete file="/tmp/org_contacts.sql"/>
-        <loadfile property="ocs" srcfile="/tmp/org_contacts.txt"/>
-        <for param="line" list="${ocs}" delimiter="${line.separator}">
-            <sequential>
-                <propertyregex property="id" input="@{line}" regexp="^([^,]+)" select="\0" override="true"/>
-                <propertyregex property="title" input="@{line}" regexp=",(.)+$" select="\0" override="true"/>
-                <propertyregex property="escaped_title" input="${title}" regexp="," replace="" global="false" override="true" defaultValue="${title}"/>
-                <echo file="/tmp/org_contacts.sql" append="true">insert into dw_generic_contact(identifier, title) values (${id}, '${escaped_title}');
-                </echo>
-            </sequential>
-        </for>
+        <groovy>
+            def input =  new File('/tmp/org_contacts.txt')
+            def output = new File('/tmp/org_contacts.sql')
+            input.eachLine { line ->
+                if (line.trim()) {
+                    id = line.tokenize('|')[0]
+                    title = line.tokenize('|')[1]
+                    output.append(
+                        'insert into dw_generic_contact(identifier, title) values (' + id + ',\'' + title + '\');\n'  
+                    )
+                }
+            }
+        </groovy>
     </target>
     
     <target name="populate" depends="generate-org-families, generate-org-contacts" 
