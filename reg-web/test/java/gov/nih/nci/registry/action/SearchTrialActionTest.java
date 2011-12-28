@@ -5,10 +5,12 @@ package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.Person;
@@ -38,6 +40,10 @@ import com.opensymphony.xwork2.Action;
 public class SearchTrialActionTest extends AbstractRegWebTest {
     private SearchTrialAction action;
 
+    /**
+     * Initialization.
+     * @throws Exception in case of error
+     */
     @Before
     public void setup() throws Exception {
         Organization org = new Organization();
@@ -61,6 +67,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
         when(correlationUtils.getContactByPAOrganizationalContactId(any(Long.class))).thenReturn(contactDTO);
 
         action = new SearchTrialAction();
+        action.prepare();
         TrialUtil trialUtils = new TrialUtil();
         trialUtils.setCorrelationUtils(correlationUtils);
         action.setTrialUtils(trialUtils);
@@ -81,7 +88,7 @@ public class SearchTrialActionTest extends AbstractRegWebTest {
 
     @Test
     public void testRecordsProperty(){
-        assertTrue(action.getRecords().isEmpty());
+        assertNull(action.getRecords());
     }
 
     @Test

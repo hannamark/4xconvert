@@ -100,7 +100,15 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
+import gov.nih.nci.pa.service.DocumentServiceLocal;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyProtocolServiceLocal;
+import gov.nih.nci.pa.service.StudyProtocolStageServiceLocal;
+import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
+import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
+import gov.nih.nci.pa.service.util.RegulatoryInformationServiceRemote;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaRegistry;
@@ -117,7 +125,7 @@ import gov.nih.nci.services.correlation.NullifiedRoleException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -133,20 +141,18 @@ import org.apache.struts2.ServletActionContext;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 
 /**
  *
  * @author Bala Nair
  *
  */
-public class SearchTrialAction extends ActionSupport {
+public class SearchTrialAction extends ActionSupport implements Preparable {
     private static final long serialVersionUID = 1L;
-    private List<StudyProtocolQueryDTO> records = new ArrayList<StudyProtocolQueryDTO>();
-    private SearchProtocolCriteria criteria = new SearchProtocolCriteria();
-    private Long studyProtocolId = null;
-    private String trialAction;
-    private Long identifier = null;
-    private TrialUtil trialUtils = new TrialUtil();
+    private static final Set<DocumentWorkflowStatusCode> ABSTRACTED_CODES =
+            EnumSet.of(DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE,
+                       DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE);
     private static final Set<StudyStatusCode> UPDATEABLE_STATUS = new HashSet<StudyStatusCode>();
     private static final Set<String> EXECUTE_ACTIONS = new HashSet<String>();
     static {
@@ -158,7 +164,38 @@ public class SearchTrialAction extends ActionSupport {
         EXECUTE_ACTIONS.add("AMEND");
         EXECUTE_ACTIONS.add("UPDATE");
     }
-
+    
+    private AbstractionCompletionServiceRemote abstractionCompletionService;
+    private DocumentServiceLocal documentService;
+    private MailManagerServiceLocal mailManagerService;
+    private ProtocolQueryServiceLocal protocolQueryService;
+    private RegistryUserServiceLocal registryUserService;
+    private RegulatoryInformationServiceRemote regulatoryInformationService;
+    private StudyProtocolServiceLocal studyProtocolService;
+    private StudyProtocolStageServiceLocal studyProtocolStageService;
+    
+    private List<StudyProtocolQueryDTO> records;
+    private SearchProtocolCriteria criteria = new SearchProtocolCriteria();
+    private Long studyProtocolId;
+    private String trialAction;
+    private Long identifier;
+    private TrialUtil trialUtils = new TrialUtil();
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() {
+        abstractionCompletionService = PaRegistry.getAbstractionCompletionService();
+        documentService = PaRegistry.getDocumentService();
+        mailManagerService = PaRegistry.getMailManagerService();
+        protocolQueryService = PaRegistry.getProtocolQueryService();
+        registryUserService = PaRegistry.getRegistryUserService();
+        regulatoryInformationService = PaRegistry.getRegulatoryInformationService();
+        studyProtocolService = PaRegistry.getStudyProtocolService();
+        studyProtocolStageService = PaRegistry.getStudyProtocolStageService();
+    }
+    
     /**
      * @return res
      */
@@ -190,11 +227,8 @@ public class SearchTrialAction extends ActionSupport {
             if (hasFieldErrors()) {
                 return ERROR;
             }
-            List<StudyProtocolQueryDTO> studyProtocolList = PaRegistry.getProtocolQueryService()
-                    .getStudyProtocolByCriteria(convertToStudyProtocolQueryCriteria());
-            records.addAll(studyProtocolList);
-            checkToShowSendXml();
-            checkToShowUpdate();
+            records = protocolQueryService.getStudyProtocolByCriteria(convertToStudyProtocolQueryCriteria());
+            checkToShow();
             return SUCCESS;
         } catch (Exception e) {
             addActionError(e.getLocalizedMessage());
@@ -202,33 +236,25 @@ public class SearchTrialAction extends ActionSupport {
             return ERROR;
         }
     }
-
-    private void checkToShowSendXml() throws PAException {
+    
+    private void checkToShow() {
         for (StudyProtocolQueryDTO queryDto : records) {
-            String dwfs = queryDto.getDocumentWorkflowStatusCode().getCode();
-            List<String> abstractedCodes = Arrays.asList(
-                    DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_NORESPONSE.getCode(),
-                    DocumentWorkflowStatusCode.ABSTRACTION_VERIFIED_RESPONSE.getCode());
-            if (!queryDto.isProprietaryTrial() && abstractedCodes.contains(dwfs)
+            DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
+            if (!queryDto.isProprietaryTrial() && ABSTRACTED_CODES.contains(dwfs)
                     && queryDto.getCtgovXmlRequiredIndicator() && queryDto.isSearcherTrialOwner()) {
                 queryDto.setShowSendXml(true);
             }
-        }
-    }
-
-    private void checkToShowUpdate() {
-        for (StudyProtocolQueryDTO queryDto : records) {
-            DocumentWorkflowStatusCode dwfs = queryDto.getDocumentWorkflowStatusCode();
-            StudyStatusCode statusCode = queryDto.getStudyStatusCode();
-
             queryDto.setUpdate("");
             queryDto.setStatusChangeLinkText("");
-
-            if (isUpdateableNonProperietaryTrial(queryDto, dwfs, statusCode)
-                    || isUpdateableProprietaryTrial(queryDto, dwfs)) {
-                queryDto.setUpdate(getText("search.trial.update"));
-                queryDto.setStatusChangeLinkText(getText("search.trial.statusChange"));
-            }
+            checkUpdatable(queryDto, dwfs);
+        }
+    }
+    
+    private void checkUpdatable(StudyProtocolQueryDTO queryDto, DocumentWorkflowStatusCode dwfs) {
+        if (isUpdateableNonProperietaryTrial(queryDto, dwfs, queryDto.getStudyStatusCode())
+                || isUpdateableProprietaryTrial(queryDto, dwfs)) {
+            queryDto.setUpdate(getText("search.trial.update"));
+            queryDto.setStatusChangeLinkText(getText("search.trial.statusChange"));
         }
     }
 
@@ -272,7 +298,7 @@ public class SearchTrialAction extends ActionSupport {
             queryCriteria.setPrincipalInvestigatorId(criteria.getPrincipalInvestigatorId());
         }
         String loginName = ServletActionContext.getRequest().getRemoteUser();
-        RegistryUser loggedInUser = PaRegistry.getRegistryUserService().getUser(loginName);
+        RegistryUser loggedInUser = registryUserService.getUser(loginName);
         queryCriteria.setUserId(loggedInUser.getId());
 
         return queryCriteria;
@@ -288,46 +314,6 @@ public class SearchTrialAction extends ActionSupport {
         } else if (Constants.IDENTIFIER_TYPE_OTHER_IDENTIFIER.equals(criteria.getIdentifierType())) {
             queryCriteria.setOtherIdentifier(criteria.getIdentifier());
         }
-    }
-
-    /**
-     *
-     * @return records
-     */
-    public List<StudyProtocolQueryDTO> getRecords() {
-        return records;
-    }
-
-    /**
-     *
-     * @return SearchProtocolCriteria SearchProtocolCriteria
-     */
-    public SearchProtocolCriteria getCriteria() {
-        return criteria;
-    }
-
-    /**
-     *
-     * @param criteria SearchProtocolCriteria
-     */
-    public void setCriteria(SearchProtocolCriteria criteria) {
-        this.criteria = criteria;
-    }
-
-    /**
-     *
-     * @return studyProtocolId
-     */
-    public Long getStudyProtocolId() {
-        return studyProtocolId;
-    }
-
-    /**
-     *
-     * @param studyProtocolId studyProtocolId
-     */
-    public void setStudyProtocolId(Long studyProtocolId) {
-        this.studyProtocolId = studyProtocolId;
     }
 
     private void loadPropTrial(Ii studyProtocolIi) throws PAException, NullifiedRoleException {
@@ -367,7 +353,7 @@ public class SearchTrialAction extends ActionSupport {
     private StudyProtocolDTO loadTrial(Ii studyProtocolIi, boolean maskFields) throws PAException,
             NullifiedRoleException {
         ServletActionContext.getRequest().getSession().setAttribute("spidfromviewresults", studyProtocolIi);
-        StudyProtocolDTO protocolDTO = PaRegistry.getStudyProtocolService().getStudyProtocol(studyProtocolIi);
+        StudyProtocolDTO protocolDTO = studyProtocolService.getStudyProtocol(studyProtocolIi);
         if (!ISOUtil.isBlNull(protocolDTO.getProprietaryTrialIndicator())
                 && BlConverter.convertToBoolean(protocolDTO.getProprietaryTrialIndicator())) {
             // prop trial
@@ -387,7 +373,7 @@ public class SearchTrialAction extends ActionSupport {
             // remove the session variables stored during a previous view if any
             ServletActionContext.getRequest().getSession().removeAttribute(Constants.TRIAL_SUMMARY);
             Ii studyProtocolIi = IiConverter.convertToIi(studyProtocolId);
-            boolean maskFields = !PaRegistry.getRegistryUserService().hasTrialAccess(UsernameHolder.getUser(),
+            boolean maskFields = !registryUserService.hasTrialAccess(UsernameHolder.getUser(),
                     studyProtocolId);
             StudyProtocolDTO protocolDTO = loadTrial(studyProtocolIi, maskFields);
             queryTrialDocsAndSetAttributes(studyProtocolIi, protocolDTO, maskFields);
@@ -406,8 +392,7 @@ public class SearchTrialAction extends ActionSupport {
             throws PAException {
         ServletActionContext.getRequest().setAttribute(Constants.TRIAL_SUMMARY, protocolDTO);
         // query the trial documents
-        List<DocumentDTO> documentISOList = PaRegistry.getDocumentService()
-                .getDocumentsByStudyProtocol(studyProtocolIi);
+        List<DocumentDTO> documentISOList = documentService.getDocumentsByStudyProtocol(studyProtocolIi);
         if (!maskFields && !documentISOList.isEmpty()) {
             ServletActionContext.getRequest().setAttribute(Constants.PROTOCOL_DOCUMENT, documentISOList);
         }
@@ -418,7 +403,7 @@ public class SearchTrialAction extends ActionSupport {
      */
     public String viewDoc() {
         try {
-            DocumentDTO docDTO = PaRegistry.getDocumentService().get(IiConverter.convertToIi(identifier));
+            DocumentDTO docDTO = documentService.get(IiConverter.convertToIi(identifier));
 
             HttpServletResponse servletResponse = ServletActionContext.getResponse();
             servletResponse.setContentType("application/octet-stream");
@@ -493,7 +478,7 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
-     *
+     * 
      * @return st
      */
     public String getMyPartiallySavedTrial() {
@@ -503,11 +488,10 @@ public class SearchTrialAction extends ActionSupport {
         criteriaSpDTO.setPhaseCode(CdConverter.convertStringToCd(criteria.getPhaseCode()));
         criteriaSpDTO.setPrimaryPurposeCode(CdConverter.convertStringToCd(criteria.getPrimaryPurposeCode()));
         criteriaSpDTO.setPhaseAdditionalQualifierCode(CdConverter.convertStringToCd(criteria
-                .getPhaseAdditionalQualifierCode()));
+            .getPhaseAdditionalQualifierCode()));
         LimitOffset limit = new LimitOffset(PAConstants.MAX_SEARCH_RESULTS, 0);
         try {
-            List<StudyProtocolStageDTO> spStageDTOs = PaRegistry.getStudyProtocolStageService().search(criteriaSpDTO,
-                    limit);
+            List<StudyProtocolStageDTO> spStageDTOs = studyProtocolStageService.search(criteriaSpDTO, limit);
             records = convertToSpQueryDTO(spStageDTOs);
         } catch (PAException e) {
             LOG.equals(e.getMessage());
@@ -546,7 +530,7 @@ public class SearchTrialAction extends ActionSupport {
 
     private void setTrialOversightCountryIfAppropriate(TrialDTO trialDTO) throws PAException {
         if (StringUtils.isNotEmpty(trialDTO.getLst())) {
-            String countryName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
+            String countryName = regulatoryInformationService.getCountryOrOrgName(
                     Long.valueOf(trialDTO.getLst()), "Country");
             trialDTO.setTrialOversgtAuthCountryName(countryName);
         }
@@ -554,7 +538,7 @@ public class SearchTrialAction extends ActionSupport {
 
     private void setTrialOversightOrgIfAppropriate(TrialDTO trialDTO) throws PAException {
         if (StringUtils.isNotEmpty(trialDTO.getSelectedRegAuth())) {
-            String orgName = PaRegistry.getRegulatoryInformationService().getCountryOrOrgName(
+            String orgName = regulatoryInformationService.getCountryOrOrgName(
                     Long.valueOf(trialDTO.getSelectedRegAuth()), "RegulatoryAuthority");
             trialDTO.setTrialOversgtAuthOrgName(orgName);
         }
@@ -603,7 +587,7 @@ public class SearchTrialAction extends ActionSupport {
 
     /**
      * Send xml.
-     *
+     * 
      * @return the string
      */
     public String sendXml() {
@@ -613,13 +597,13 @@ public class SearchTrialAction extends ActionSupport {
         String fullName = regUserWebDto.getFirstName() + " " + regUserWebDto.getLastName();
         String emailAddress = regUserWebDto.getEmailAddress();
         try {
-            List<AbstractionCompletionDTO> errorList = PaRegistry.getAbstractionCompletionService()
-                    .validateAbstractionCompletion(studyProtocolIi);
+            List<AbstractionCompletionDTO> errorList =
+                    abstractionCompletionService.validateAbstractionCompletion(studyProtocolIi);
             if (CollectionUtils.isEmpty(errorList) || !hasAnyAbstractionErrors(errorList)) {
-                PaRegistry.getMailManagerService().sendXMLAndTSREmail(fullName, emailAddress, studyProtocolIi);
+                mailManagerService.sendXMLAndTSREmail(fullName, emailAddress, studyProtocolIi);
             } else {
-                ServletActionContext.getRequest().setAttribute("failureMessage",
-                        "As Abstraction is not valid, sending letter is disabled .");
+                ServletActionContext.getRequest()
+                    .setAttribute("failureMessage", "As Abstraction is not valid, sending letter is disabled .");
             }
         } catch (PAException e) {
             addActionError("Exception while sending XML email:" + e.getMessage());
@@ -639,17 +623,43 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
-     * @return the identifier
+     * 
+     * @return records
      */
-    public Long getIdentifier() {
-        return identifier;
+    public List<StudyProtocolQueryDTO> getRecords() {
+        return records;
     }
 
     /**
-     * @param identifier the identifier to set
+     * 
+     * @return SearchProtocolCriteria SearchProtocolCriteria
      */
-    public void setIdentifier(Long identifier) {
-        this.identifier = identifier;
+    public SearchProtocolCriteria getCriteria() {
+        return criteria;
+    }
+
+    /**
+     * 
+     * @param criteria SearchProtocolCriteria
+     */
+    public void setCriteria(SearchProtocolCriteria criteria) {
+        this.criteria = criteria;
+    }
+
+    /**
+     * 
+     * @return studyProtocolId
+     */
+    public Long getStudyProtocolId() {
+        return studyProtocolId;
+    }
+
+    /**
+     * 
+     * @param studyProtocolId studyProtocolId
+     */
+    public void setStudyProtocolId(Long studyProtocolId) {
+        this.studyProtocolId = studyProtocolId;
     }
 
     /**
@@ -667,6 +677,20 @@ public class SearchTrialAction extends ActionSupport {
     }
 
     /**
+     * @return the identifier
+     */
+    public Long getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(Long identifier) {
+        this.identifier = identifier;
+    }
+
+    /**
      * @return the trialUtils
      */
     public TrialUtil getTrialUtils() {
@@ -679,4 +703,54 @@ public class SearchTrialAction extends ActionSupport {
     public void setTrialUtils(TrialUtil trialUtils) {
         this.trialUtils = trialUtils;
     }
+
+    /**
+     * @param abstractionCompletionService the abstractionCompletionService to set
+     */
+    public void setAbstractionCompletionService(AbstractionCompletionServiceRemote abstractionCompletionService) {
+        this.abstractionCompletionService = abstractionCompletionService;
+    }
+
+    /**
+     * @param documentService the documentService to set
+     */
+    public void setDocumentService(DocumentServiceLocal documentService) {
+        this.documentService = documentService;
+    }
+
+    /**
+     * @param protocolQueryService the protocolQueryService to set
+     */
+    public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
+    }
+
+    /**
+     * @param registryUserService the registryUserService to set
+     */
+    public void setRegistryUserService(RegistryUserServiceLocal registryUserService) {
+        this.registryUserService = registryUserService;
+    }
+
+    /**
+     * @param regulatoryInformationService the regulatoryInformationService to set
+     */
+    public void setRegulatoryInformationService(RegulatoryInformationServiceRemote regulatoryInformationService) {
+        this.regulatoryInformationService = regulatoryInformationService;
+    }
+
+    /**
+     * @param studyProtocolService the studyProtocolService to set
+     */
+    public void setStudyProtocolService(StudyProtocolServiceLocal studyProtocolService) {
+        this.studyProtocolService = studyProtocolService;
+    }
+
+    /**
+     * @param studyProtocolStageService the studyProtocolStageService to set
+     */
+    public void setStudyProtocolStageService(StudyProtocolStageServiceLocal studyProtocolStageService) {
+        this.studyProtocolStageService = studyProtocolStageService;
+    }
+
 }

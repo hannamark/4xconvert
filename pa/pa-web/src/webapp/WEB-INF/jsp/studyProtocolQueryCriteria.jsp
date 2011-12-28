@@ -199,7 +199,6 @@
             </s:form>
         </div>
         <div class="line"></div>
-        <h2>Search Results</h2>
         <jsp:include page="/WEB-INF/jsp/studyProtocolQueryResults.jsp"/>
     </body>
 </html>

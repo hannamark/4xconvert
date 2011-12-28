@@ -87,8 +87,10 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.StudyCheckoutServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAAttributeMaxLen;
 import gov.nih.nci.pa.util.PAConstants;
@@ -109,6 +111,7 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.Preparable;
 
 
 /**
@@ -116,17 +119,33 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Harsha
  *
  */
-public class StudyProtocolQueryAction extends ActionSupport implements ServletResponseAware {
+public class StudyProtocolQueryAction extends ActionSupport implements Preparable, ServletResponseAware {
     private static final long serialVersionUID = -2308994602660261367L;
-    private List<StudyProtocolQueryDTO> records = new ArrayList<StudyProtocolQueryDTO>();
+    private static final String SHOW_VIEW = "view";
+    private static final String SHOW_VIEW_REFRESH = "viewRefresh";
+    
+    private ProtocolQueryServiceLocal protocolQueryService;
+    private StudyCheckoutServiceLocal studyCheckoutService;
+    private TSRReportGeneratorServiceRemote tsrReportGeneratorService;
+    
+    private List<StudyProtocolQueryDTO> records;
     private StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
-    private Long studyProtocolId = null;
+    private Long studyProtocolId;
     private HttpServletResponse servletResponse;
     private List<String> checkoutCommands;
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
-    private static final String SHOW_VIEW = "view";
-    private static final String SHOW_VIEW_REFRESH = "viewRefresh";
+   
     private String identifier;
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void prepare() {
+        protocolQueryService = PaRegistry.getProtocolQueryService();
+        studyCheckoutService = PaRegistry.getStudyCheckoutService();
+        tsrReportGeneratorService = PaRegistry.getTSRReportGeneratorService();
+    }
 
     /**
      * @return res
@@ -181,7 +200,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
 
         try {
             populateIdentifierSearchParameters();
-            records = PaRegistry.getProtocolQueryService().getStudyProtocolByCriteria(criteria);
+            records = protocolQueryService.getStudyProtocolByCriteria(criteria);
             return SUCCESS;
         } catch (Exception e) {
             ServletActionContext.getRequest().setAttribute(Constants.FAILURE_MESSAGE, e.getLocalizedMessage());
@@ -211,47 +230,8 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         }
     }
 
-    /**
-     *
-     * @return records
-     */
-    public List<StudyProtocolQueryDTO> getRecords() {
-        return records;
-    }
+   
 
-    /**
-     *
-     * @return StudyProtocolQueryCriteria StudyProtocolQueryCriteria
-     */
-    public StudyProtocolQueryCriteria getCriteria() {
-        return criteria;
-    }
-
-    /**
-     *
-     * @param criteria
-     *            StudyProtocolQueryCriteria
-     */
-    public void setCriteria(StudyProtocolQueryCriteria criteria) {
-        this.criteria = criteria;
-    }
-
-    /**
-     *
-     * @return studyProtocolId
-     */
-    public Long getStudyProtocolId() {
-        return studyProtocolId;
-    }
-
-    /**
-     *
-     * @param studyProtocolId
-     *            studyProtocolId
-     */
-    public void setStudyProtocolId(Long studyProtocolId) {
-        this.studyProtocolId = studyProtocolId;
-    }
 
     /**
      * @return res
@@ -262,7 +242,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             return showCriteria();
         }
         try {
-            ProtocolQueryServiceLocal protocolQueryService = PaRegistry.getProtocolQueryService();
             StudyProtocolQueryDTO studyProtocolQueryDTO = protocolQueryService
                 .getTrialSummaryByStudyProtocolId(studyProtocolId);
             // put an entry in the session and store StudyProtocolQueryDTO
@@ -339,18 +318,18 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
         try {
             String pId = ServletActionContext.getRequest().getParameter("studyProtocolId");
             ByteArrayOutputStream reportData =
-                PaRegistry.getTSRReportGeneratorService().generateRtfTsrReport(IiConverter.convertToIi(pId));
+                    tsrReportGeneratorService.generateRtfTsrReport(IiConverter.convertToIi(pId));
             servletResponse.setHeader("Content-disposition", "inline; filename=TsrReport.rtf");
             servletResponse.setContentType("application/rtf;");
             servletResponse.setContentLength(reportData.size());
             ServletOutputStream servletout = servletResponse.getOutputStream();
             reportData.writeTo(servletout);
             servletout.flush();
-          } catch (Exception e) {
-              LOG.error("Error while generating TSR Summary report " , e);
-              return NONE;
-          }
-          return NONE;
+        } catch (Exception e) {
+            LOG.error("Error while generating TSR Summary report ", e);
+            return NONE;
+        }
+        return NONE;
     }
 
     /**
@@ -373,7 +352,6 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     
     private String checkOut(CheckOutType checkOutType) throws PAException {
         try {
-            ProtocolQueryServiceLocal protocolQueryService = PaRegistry.getProtocolQueryService();
             StudyProtocolQueryDTO spqDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(studyProtocolId);
             boolean canCheckOut = (checkOutType == CheckOutType.ADMINISTRATIVE)
                     ? spqDTO.getAdminCheckout().getCheckoutBy() == null : spqDTO
@@ -383,7 +361,7 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
                 scoDTO.setStudyProtocolIdentifier(IiConverter.convertToStudyProtocolIi(spqDTO.getStudyProtocolId()));
                 scoDTO.setCheckOutTypeCode(CdConverter.convertStringToCd(checkOutType.getCode()));
                 scoDTO.setUserIdentifier(StConverter.convertToSt(UsernameHolder.getUser()));
-                PaRegistry.getStudyCheckoutService().create(scoDTO);
+                studyCheckoutService.create(scoDTO);
                 String msg = getText("studyProtocol.trial.checkOut." + checkOutType.name());
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, msg);
             }
@@ -410,15 +388,15 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     public String scientificCheckIn() throws PAException {
         return checkIn(CheckOutType.SCIENTIFIC);
     }
-    
+
     private String checkIn(CheckOutType checkOutType) throws PAException {
         try {
-            ProtocolQueryServiceLocal protocolQueryService = PaRegistry.getProtocolQueryService();
             StudyProtocolQueryDTO spqDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(studyProtocolId);
-            Long checkoutId = (checkOutType == CheckOutType.ADMINISTRATIVE) ? spqDTO.getAdminCheckout().getCheckoutId()
-                    : spqDTO.getScientificCheckout().getCheckoutId();
+            Long checkoutId =
+                    (checkOutType == CheckOutType.ADMINISTRATIVE) ? spqDTO.getAdminCheckout().getCheckoutId() : spqDTO
+                        .getScientificCheckout().getCheckoutId();
             if (checkoutId != null) {
-                PaRegistry.getStudyCheckoutService().delete(IiConverter.convertToIi(checkoutId));
+                studyCheckoutService.delete(IiConverter.convertToIi(checkoutId));
                 String msg = getText("studyProtocol.trial.checkIn." + checkOutType.name());
                 ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, msg);
             }
@@ -426,6 +404,58 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
             addActionError(e.getLocalizedMessage());
         }
         return SHOW_VIEW_REFRESH;
+    }
+
+    private boolean userRoleInSession() {
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        boolean isSuAbstractor = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SU_ABSTRACTOR));
+        boolean isAbstractor = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_ABSTRACTOR));
+        boolean isAdminAbstractor =
+                BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_ADMIN_ABSTRACTOR));
+        boolean isScientificAbstractor =
+                BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR));
+        boolean isReportViewer = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_REPORT_VIEWER));
+        return isAbstractor || isSuAbstractor || isScientificAbstractor || isAdminAbstractor || isReportViewer;
+    }
+
+    /**
+     * 
+     * @return records
+     */
+    public List<StudyProtocolQueryDTO> getRecords() {
+        return records;
+    }
+
+    /**
+     * 
+     * @return StudyProtocolQueryCriteria StudyProtocolQueryCriteria
+     */
+    public StudyProtocolQueryCriteria getCriteria() {
+        return criteria;
+    }
+
+    /**
+     * 
+     * @param criteria StudyProtocolQueryCriteria
+     */
+    public void setCriteria(StudyProtocolQueryCriteria criteria) {
+        this.criteria = criteria;
+    }
+
+    /**
+     * 
+     * @return studyProtocolId
+     */
+    public Long getStudyProtocolId() {
+        return studyProtocolId;
+    }
+
+    /**
+     * 
+     * @param studyProtocolId studyProtocolId
+     */
+    public void setStudyProtocolId(Long studyProtocolId) {
+        this.studyProtocolId = studyProtocolId;
     }
 
     /**
@@ -436,24 +466,11 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
     }
 
     /**
-     * @param response
-     *            servletResponse
+     * @param response servletResponse
      */
     @Override
     public void setServletResponse(HttpServletResponse response) {
         this.servletResponse = response;
-    }
-
-    private boolean userRoleInSession() {
-        HttpSession session = ServletActionContext.getRequest().getSession();
-        boolean isSuAbstractor = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SU_ABSTRACTOR));
-        boolean isAbstractor = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_ABSTRACTOR));
-        boolean isAdminAbstractor = BooleanUtils.toBoolean((Boolean) session
-            .getAttribute(Constants.IS_ADMIN_ABSTRACTOR));
-        boolean isScientificAbstractor = BooleanUtils.toBoolean((Boolean) session
-            .getAttribute(Constants.IS_SCIENTIFIC_ABSTRACTOR));
-        boolean isReportViewer = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_REPORT_VIEWER));
-        return isAbstractor || isSuAbstractor || isScientificAbstractor || isAdminAbstractor || isReportViewer;
     }
 
     /**
@@ -482,5 +499,26 @@ public class StudyProtocolQueryAction extends ActionSupport implements ServletRe
      */
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    /**
+     * @param protocolQueryService the protocolQueryService to set
+     */
+    public void setProtocolQueryService(ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
+    }
+
+    /**
+     * @param studyCheckoutService the studyCheckoutService to set
+     */
+    public void setStudyCheckoutService(StudyCheckoutServiceLocal studyCheckoutService) {
+        this.studyCheckoutService = studyCheckoutService;
+    }
+
+    /**
+     * @param tsrReportGeneratorService the tsrReportGeneratorService to set
+     */
+    public void setTsrReportGeneratorService(TSRReportGeneratorServiceRemote tsrReportGeneratorService) {
+        this.tsrReportGeneratorService = tsrReportGeneratorService;
     }
 }

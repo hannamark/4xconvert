@@ -24,12 +24,14 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  */
 public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 
-    StudyProtocolQueryAction spqAction;
-    StudyProtocolQueryCriteria criteria;
+    private StudyProtocolQueryAction spqAction;
+    private StudyProtocolQueryCriteria criteria;
 
+    @Override
     @Before
-    public void setUp() throws PAException {
+    public void setUp() {
         spqAction = new StudyProtocolQueryAction();
+        spqAction.prepare();
         criteria = new StudyProtocolQueryCriteria();
         criteria.setNciIdentifier("NCI-2009-00001");
         getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
@@ -39,6 +41,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 
     /**
      * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#execute()}.
+     * @throws PAException in case of error
      */
     @Test
     public void testExecute() throws PAException {
@@ -47,6 +50,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 
     /**
      * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#showCriteria()}.
+     * @throws PAException in case of error
      */
     @Test
     public void testShowCriteria() throws PAException {
@@ -55,6 +59,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 
     /**
      * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#query()}.
+     * @throws PAException in case of error
      */
     @Test
     public void testQuery() throws PAException {
@@ -63,6 +68,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 
     /**
      * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#view()}.
+     * @throws PAException in case of error
      */
     @Test
     public void testView() throws PAException {
@@ -76,6 +82,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 
     /**
      * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#viewTSR()}.
+     * @throws PAException in case of error
      */
     @Test
     public void testViewTSR() throws PAException {
@@ -85,6 +92,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 
     /**
      * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#adminCheckOut()}.
+     * @throws PAException in case of error
      */
     @Test
     public void testAdminCheckOut() throws PAException {
@@ -94,6 +102,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 
     /**
      * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#adminCheckOut()}.
+     * @throws PAException in case of error
      */
     @Test
     public void testAdminCheckIn() throws PAException {
@@ -103,6 +112,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 
     /**
      * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#scientificCheckOut()}.
+     * @throws PAException in case of error
      */
     @Test
     public void testScientificCheckOut() throws PAException {
@@ -112,6 +122,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
 
     /**
      * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#scientificCheckIn()}.
+     * @throws PAException in case of error
      */
     @Test
     public void testScientificCheckIn() throws PAException {
