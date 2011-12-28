@@ -119,7 +119,6 @@ public class DuplicateTrialEditTest extends AbstractPaSeleniumTest {
         verifyTrialSelected(nciTrialId);
         assertTrue(selenium.isElementPresent("link=Admin Check Out"));
         clickAndWait("link=Admin Check Out");
-        selenium.getConfirmation();
         assertTrue(selenium.isTextPresent("You are attempting to edit two trials at once. This is not a supported action. "
                 + "Please reselect the trial you wish to edit and refrain from working on multiple trials at once. Thank You."));
 

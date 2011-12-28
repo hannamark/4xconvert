@@ -122,7 +122,6 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
         clickAndWait("link=Add");
 
         clickAndWait("link=Save");
-        selenium.getConfirmation();
 
         assertTrue(selenium.isTextPresent("Document Type Code must be Entered"));
         assertTrue(selenium.isTextPresent("FileName must be Entered"));
@@ -131,7 +130,6 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
         selenium.select("id=typeCode", "label=Protocol Highlighted Document");
         selenium.type("id=fileUpload", trialDocPath);
         clickAndWait("link=Save");
-        selenium.getConfirmation();
         assertTrue(selenium.isTextPresent("Record Created"));
 
 
@@ -162,7 +160,6 @@ public class TrialRelatedDocumentTest extends AbstractPaSeleniumTest {
         String trialDocPath = (new File(ClassLoader.getSystemResource(TRIAL_DOCUMENT).toURI()).toString());
         selenium.type("id=fileUpload", trialDocPath);
         clickAndWait("link=Save");
-        selenium.getConfirmation();
         assertTrue(selenium.isTextPresent("Record Updated"));
         assertTrue(selenium.isTextPresent("3 items found"));
     }

@@ -179,7 +179,6 @@ public class TrialStatusTest extends AbstractPaSeleniumTest {
             selenium.type("id=statusReason", statusReason);
         }
         clickAndWait("link=Save");
-        selenium.getConfirmation();
         assertTrue(selenium.isTextPresent("Record Updated"));
     }
 

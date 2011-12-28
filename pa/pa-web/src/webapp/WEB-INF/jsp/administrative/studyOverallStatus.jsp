@@ -47,11 +47,8 @@
             }
             
             function handleAction() {
-                input_box=confirm("Click OK to save changes or Cancel to Abort.");
-                if (input_box == true){
-                    document.forms[0].action="studyOverallStatusupdate.action";
-                    document.forms[0].submit();
-                }
+                document.forms[0].action="studyOverallStatusupdate.action";
+                document.forms[0].submit();
             }
             
             function displayTrialStatusDefinition(selectBoxId) {

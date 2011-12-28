@@ -54,15 +54,12 @@
                         form.submit();
                      }
                 } else {
-                    input_box=confirm("Click OK to save changes or Cancel to Abort.");
-                    if (input_box == true) {
-                        if (page == "Edit") {
-                            form.action="eligibilityCriteriaupdate.action";
-                        } else {
-                            form.action="eligibilityCriteriacreate.action";
-                        } 
-                        form.submit();
-                    }
+                    if (page == "Edit") {
+                        form.action="eligibilityCriteriaupdate.action";
+                    } else {
+                        form.action="eligibilityCriteriacreate.action";
+                    } 
+                    form.submit();
                 }
             } 
 

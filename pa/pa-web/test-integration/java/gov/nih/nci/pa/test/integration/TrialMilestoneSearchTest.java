@@ -167,7 +167,6 @@ public class TrialMilestoneSearchTest extends AbstractPaSeleniumTest {
             selenium.type("id=milestonecreate_milestone_comment", comment);
         }
         clickAndWait("link=Save");
-        selenium.getConfirmation();
         assertTrue(selenium.isTextPresent("Record Created"));
     }
 

@@ -108,7 +108,6 @@ public class PAUIApplication extends AbstractAccrualSeleniumTest {
         clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
         clickAndWait("link=Trial Identification");
         clickAndWait("link=Admin Check Out");
-        selenium.getConfirmation();
         clickAndWait("link=Trial Validation");
         clickAndWait("link=Accept");
     }
@@ -137,7 +136,6 @@ public class PAUIApplication extends AbstractAccrualSeleniumTest {
     private void updateScientificFields() {
         clickAndWait("link=Trial Identification");
         clickAndWait("link=Scientific Check Out");
-        selenium.getConfirmation();
         addIntervention();
         addDisease();
     }
@@ -200,7 +198,6 @@ public class PAUIApplication extends AbstractAccrualSeleniumTest {
             selenium.type("id=milestonecreate_milestone_comment", comment);
         }
         clickAndWait("link=Save");
-        selenium.getConfirmation();
         assertTrue(selenium.isTextPresent("Record Created"));
     }
 

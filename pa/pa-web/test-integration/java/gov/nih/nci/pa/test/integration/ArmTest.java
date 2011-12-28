@@ -130,7 +130,6 @@ public class ArmTest extends AbstractPaSeleniumTest {
         clickAndWait("xpath=//table[@id='row']/tbody/tr[1]/td[5]/a");
         selenium.select("id=armType", "label=Other");
         clickAndWait("link=Save");
-        selenium.getConfirmation();
         assertTrue(selenium.isTextPresent("Record Updated"));
         assertTrue(selenium.isTextPresent("One item found"));
     }

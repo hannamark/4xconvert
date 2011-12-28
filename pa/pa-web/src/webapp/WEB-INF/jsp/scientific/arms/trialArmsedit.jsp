@@ -22,11 +22,8 @@
         document.armForm.submit();
     }
     function armUpdate(){
-        input_box=confirm("Click OK to save changes.  Cancel to Abort.");
-        if (input_box==true){
-            document.armForm.action="trialArmsupdate.action";
-            document.armForm.submit();
-        }
+        document.armForm.action="trialArmsupdate.action";
+        document.armForm.submit();
     }
     function interventionCheckboxClick(rowId){
         document.armForm.checkBoxEntry.value += rowId;

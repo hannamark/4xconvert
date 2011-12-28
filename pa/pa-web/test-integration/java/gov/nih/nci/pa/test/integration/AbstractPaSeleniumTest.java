@@ -217,7 +217,6 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         assertTrue(selenium.isElementPresent("link=Scientific Check Out"));
         assertFalse(selenium.isElementPresent("link=Scientific Check In"));
         clickAndWait("link=Scientific Check Out");
-        selenium.getConfirmation();
         assertTrue(selenium.isElementPresent("link=Scientific Check In"));
         assertFalse(selenium.isElementPresent("link=Scientific Check Out"));
     }
@@ -231,7 +230,6 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         assertFalse(selenium.isElementPresent("link=Scientific Check Out"));
         assertTrue(selenium.isElementPresent("link=ScientificCheck In"));
         clickAndWait("link=Scientific Check In");
-        selenium.getConfirmation();
         assertTrue(selenium.isElementPresent("link=Scientific Check Out"));
         assertFalse(selenium.isElementPresent("link=Scientific Check In"));
     }
@@ -245,7 +243,6 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         assertTrue(selenium.isElementPresent("link=Admin Check Out"));
         assertFalse(selenium.isElementPresent("link=Admin Check In"));
         clickAndWait("link=Admin Check Out");
-        selenium.getConfirmation();
         assertTrue(selenium.isElementPresent("link=Admin Check In"));
         assertFalse(selenium.isElementPresent("link=Admin Check Out"));
     }
@@ -259,7 +256,6 @@ public abstract class AbstractPaSeleniumTest extends AbstractSeleneseTestCase {
         assertFalse(selenium.isElementPresent("link=Admin Check Out"));
         assertTrue(selenium.isElementPresent("link=Admin Check In"));
         clickAndWait("link=Check In");
-        selenium.getConfirmation();
         assertTrue(selenium.isElementPresent("link=Admin Check Out"));
         assertFalse(selenium.isElementPresent("link=Admin Check In"));
     }

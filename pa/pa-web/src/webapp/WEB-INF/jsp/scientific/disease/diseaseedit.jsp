@@ -24,11 +24,8 @@
             }
 
             function diseaseUpdate() {
-                input_box = confirm("Click OK to save changes.  Cancel to Abort.");
-                if (input_box == true){
-                    document.diseaseForm.action="diseaseupdate.action";
-                    document.diseaseForm.submit();
-                }
+                document.diseaseForm.action="diseaseupdate.action";
+                document.diseaseForm.submit();
             }
 
             function lookup() {

@@ -19,12 +19,9 @@
             }
             function handleAction(action) {
                 var studyProtocolId = '${sessionScope.trialSummary.studyProtocolId}';
-                var input_box = confirm("Click OK to save changes or Cancel to Abort.");
-                if (input_box == true) {
-                    var form = document.forms[0];
-                    form.action="studyProtocol" + action + ".action?studyProtocolId=" + studyProtocolId;
-                    form.submit();
-                }
+                var form = document.forms[0];
+                form.action="studyProtocol" + action + ".action?studyProtocolId=" + studyProtocolId;
+                form.submit();
             }
         </script>
     </head>

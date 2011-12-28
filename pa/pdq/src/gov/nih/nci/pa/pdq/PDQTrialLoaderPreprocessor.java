@@ -142,6 +142,8 @@ public class PDQTrialLoaderPreprocessor {
         }
         srcFileDir = args[0];
         destFileDir = args[1];
+        System.out.println("Input dir = " + srcFileDir);
+        System.out.println("Output dir = " + destFileDir);
 
         PDQTrialLoaderPreprocessor instance = new PDQTrialLoaderPreprocessor();
 

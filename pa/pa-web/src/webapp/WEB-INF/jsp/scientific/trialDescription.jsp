@@ -25,11 +25,8 @@
     }
     
     function handleAction() {
-        input_box=confirm("Click OK to save changes or Cancel to Abort.");
-        if (input_box==true){
-          document.trialDescription.action="trialDescriptionupdate.action";
-          document.trialDescription.submit();
-        }
+        document.trialDescription.action="trialDescriptionupdate.action";
+        document.trialDescription.submit();
     }    
 </script>
      

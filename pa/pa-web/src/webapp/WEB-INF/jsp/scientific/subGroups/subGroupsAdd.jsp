@@ -17,10 +17,7 @@ function callOnloadFunctions(){
     setFocusToFirstControl();         
 }
 function handleAction(){
-var page;
-page=document.forms[0].page.value;
-input_box=confirm("Click OK to save changes or Cancel to Abort.");
-if (input_box==true){
+    var page=document.forms[0].page.value;
     if (page == "Edit"){
  		document.forms[0].action="subGroupsupdate.action";
  		document.forms[0].submit();  	
@@ -28,7 +25,6 @@ if (input_box==true){
  		document.forms[0].action="subGroupscreate.action";
  		document.forms[0].submit();   
  	} 
- }
 } 
 function tooltip() {
 BubbleTips.activateTipOn("acronym");

@@ -18,12 +18,8 @@
             }
             
             function milestoneAdd() {
-                input_box = confirm("Click OK to add milestone.  Cancel to Abort.");
-                if (input_box == true) {
-                    var form = document.milestoneForm;
-                    form.action = "milestoneadd.action";
-                    form.submit();
-                }
+                document.milestoneForm.action = "milestoneadd.action";
+                document.milestoneForm.submit();
             }
             
             function cancel() {

@@ -102,7 +102,6 @@ public class PAUIApplication extends AbstractRegistrySeleniumTest {
         clickAndWait("xpath=//table[@id='row']//tr[1]//td[1]/a");
         clickAndWait("link=Trial Identification");
         clickAndWait("link=Admin Check Out");
-        selenium.getConfirmation();
         clickAndWait("link=Trial Validation");
         clickAndWait("link=Accept");
     }

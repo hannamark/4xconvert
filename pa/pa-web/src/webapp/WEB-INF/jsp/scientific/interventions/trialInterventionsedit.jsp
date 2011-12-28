@@ -40,11 +40,8 @@
             }
 
             function interventionUpdate(){
-                input_box=confirm("Click OK to save changes.  Cancel to Abort.");
-                if (input_box==true){
-                    document.interventionForm.action="trialInterventionsupdate.action";
-                    document.interventionForm.submit();
-                }
+                document.interventionForm.action="trialInterventionsupdate.action";
+                document.interventionForm.submit();
             }
 
             function statusChange() {

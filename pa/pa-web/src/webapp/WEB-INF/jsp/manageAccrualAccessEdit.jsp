@@ -17,19 +17,13 @@
             }
 
             function accessAdd() {
-                input_box=confirm("Click OK to add the access information.  Cancel to Abort.");
-                if (input_box==true) {
-                    document.editForm.action="manageAccrualAccessadd.action";
-                    document.editForm.submit();
-                }
+                document.editForm.action="manageAccrualAccessadd.action";
+                document.editForm.submit();
             }
 
             function accessUpdate() {
-                input_box=confirm("Click OK to update the access information.  Cancel to Abort.");
-                if (input_box==true){
-                    document.editForm.action="manageAccrualAccessupdate.action";
-                    document.editForm.submit();
-                }
+                document.editForm.action="manageAccrualAccessupdate.action";
+                document.editForm.submit();
             }
 
             function cancel() {

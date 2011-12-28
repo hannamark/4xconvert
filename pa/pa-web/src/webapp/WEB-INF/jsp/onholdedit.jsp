@@ -11,24 +11,18 @@
             addCalendar("Cal2", "Select Date", "onhold.dateHigh", "editForm");
             setWidth(90, 1, 15, 1);
             setFormat("mm/dd/yyyy");
-            var addMessage = "<fmt:message key="onhold.confirmAdd"/>";
-            var updateMessage= "<fmt:message key="onhold.confirmUpdate"/>";
             
             jQuery(function() {
                 setFocusToFirstControl();
                 jQuery("#addButton").bind("click", function(ev) {
-                    if (confirm(addMessage)) {
-                        var form = document.editForm;
-                        form.action = "onholdadd.action";
-                        form.submit();
-                    }
+                    var form = document.editForm;
+                    form.action = "onholdadd.action";
+                    form.submit();
                 });
                 jQuery("#updateButton").bind("click", function(ev) {
-                    if (confirm(updateMessage)) {
-                        var form = document.editForm;
-                        form.action = "onholdupdate.action";
-                        form.submit();
-                    }
+                    var form = document.editForm;
+                    form.action = "onholdupdate.action";
+                    form.submit();
                 });
                 jQuery("#cancelButton").bind("click", function(ev) {
                     var form = document.editForm;
