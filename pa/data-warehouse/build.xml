@@ -11,74 +11,11 @@
     <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="bda-utils.classpath"/>
     <taskdef classname="org.codehaus.groovy.ant.Groovy" classpathref="bda-utils.classpath" name="groovy"/> 
     
-    <target name="retrieve-org-families">
-        <sql driver="${po.jdbc.driver}" url="${po.jdbc.url}" userid="${po.db.username}" password="${po.db.password}" expandproperties="true"
-             print="yes" showheaders="false" showtrailers="false" output="/tmp/family_organizations.txt">
-            <transaction>
-                select f.name || '|' || o.name from organization o 
-                    join familyorganizationrelationship fo on fo.organization_id=o.id 
-                    join family f on f.id=fo.family_id where fo.enddate is null and f.statuscode='ACTIVE' order by f.name asc
-            </transaction>
-            <classpath>
-                <path refid="bda-utils.classpath"/>
-            </classpath>
-        </sql>
-    </target>
-    
-    <target name="generate-org-families" depends="retrieve-org-families">
-        <delete file="/tmp/family_organizations.sql"/>
-        <groovy>
-           def input =  new File('/tmp/family_organizations.txt')
-           def output = new File('/tmp/family_organizations.sql')
-           input.eachLine { line ->
-               if (line.trim()) {
-                   family = line.tokenize('|')[0]
-                   org = line.tokenize('|')[1]
-                   output.append(
-                    'insert into dw_family_organization(family_name, organization_name) values (\'' + family + '\',\'' + org + '\');\n'  
-                   )
-                }
-            }
-        </groovy>
-    </target>
-    
-    <target name="retrieve-org-contacts">
-        <sql driver="${po.jdbc.driver}" url="${po.jdbc.url}" userid="${po.db.username}" password="${po.db.password}" expandproperties="true"
-            print="yes" showheaders="false" showtrailers="false" output="/tmp/org_contacts.txt">
-            <transaction>
-                select id || '|' || title from organizationalcontact where title is not null order by id asc;
-            </transaction>
-            <classpath>
-                <path refid="bda-utils.classpath"/>
-            </classpath>
-        </sql>
-    </target>
-    
-    <target name="generate-org-contacts" depends="retrieve-org-contacts">
-        <delete file="/tmp/org_contacts.sql"/>
-        <groovy>
-            def input =  new File('/tmp/org_contacts.txt')
-            def output = new File('/tmp/org_contacts.sql')
-            input.eachLine { line ->
-                if (line.trim()) {
-                    id = line.tokenize('|')[0]
-                    title = line.tokenize('|')[1]
-                    output.append(
-                        'insert into dw_generic_contact(identifier, title) values (' + id + ',\'' + title + '\');\n'  
-                    )
-                }
-            }
-        </groovy>
-    </target>
-    
-    <target name="populate" depends="generate-org-families, generate-org-contacts" 
-        description="Populates the data warehousing tables using the given database">
-        <sql driver="${pa.jdbc.driver}" url="${pa.jdbc.url}" userid="${pa.db.username}" password="${pa.db.password}" 
-            expandproperties="true">
+    <target name="init-db" description="Initializes the data warehousing tables">
+        <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}" 
+            userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}" expandproperties="true">
             <transaction src="${basedir}/sql/families.sql"/>
-            <transaction src="/tmp/family_organizations.sql"/>
-            <transaction src="${basedir}/sql/generic-contact.sql"/>
-            <transaction src="/tmp/org_contacts.sql"/>
+            <transaction src="${basedir}/sql/generic_contact.sql"/>
             <transaction src="${basedir}/sql/study.sql"/>
             <transaction src="${basedir}/sql/anatomic_site.sql"/>
             <transaction src="${basedir}/sql/biomarker.sql"/>
@@ -91,5 +28,17 @@
                 <path refid="bda-utils.classpath"/>
             </classpath>
         </sql>
+    </target>
+    
+    <target name="populate" depends="init-db" description="Populates the data warehousing tables using the given database">
+        <groovy src="groovy/org_families.groovy"/>
+        <groovy src="groovy/generic_contact.groovy"/>
+        <groovy src="groovy/study.groovy"/>
+        <groovy src="groovy/anatomic_site.groovy"/>
+        <groovy src="groovy/biomarker.groovy"/>
+        <groovy src="groovy/disease.groovy"/>
+        <groovy src="groovy/grants.groovy"/>
+        <groovy src="groovy/indide.groovy"/>
+        <groovy src="groovy/participating_site.groovy"/>
     </target>
 </project>

@@ -1,22 +1,31 @@
-pa.db.type=postgresql
-pa.db.username=paadmin
-pa.db.password=paadmin123
-pa.db.server=localhost
-pa.db.port=5432
-pa.db.name=ctods_pa
+datawarehouse.pa.source.db.type=postgresql
+datawarehouse.pa.source.db.username=paadmin
+datawarehouse.pa.source.db.password=paadmin123
+datawarehouse.pa.source.db.server=localhost
+datawarehouse.pa.source.db.port=5432
+datawarehouse.pa.source.db.name=ctods_pa
+datawarehouse.pa.source.jdbc.driver=org.postgresql.Driver
+datawarehouse.pa.source.jdbc.base=jdbc:${datawarehouse.pa.source.db.type}://${datawarehouse.pa.source.db.server}:${datawarehouse.pa.source.db.port}
+datawarehouse.pa.source.jdbc.url=${datawarehouse.pa.source.jdbc.base}/${datawarehouse.pa.source.db.name}
 
-pa.jdbc.driver=org.postgresql.Driver
-pa.jdbc.base=jdbc:${pa.db.type}://${pa.db.server}:${pa.db.port}
-pa.jdbc.url=${pa.jdbc.base}/${pa.db.name}
+datawarehouse.pa.dest.db.type=postgresql
+datawarehouse.pa.dest.db.username=paadmin
+datawarehouse.pa.dest.db.password=paadmin123
+datawarehouse.pa.dest.db.server=localhost
+datawarehouse.pa.dest.db.port=5432
+datawarehouse.pa.dest.db.name=ctods_pa
+datawarehouse.pa.dest.jdbc.driver=org.postgresql.Driver
+datawarehouse.pa.dest.jdbc.base=jdbc:${datawarehouse.pa.dest.db.type}://${datawarehouse.pa.dest.db.server}:${datawarehouse.pa.dest.db.port}
+datawarehouse.pa.dest.jdbc.url=${datawarehouse.pa.dest.jdbc.base}/${datawarehouse.pa.dest.db.name}
 
 
-po.db.type=postgresql
-po.db.username=poadmin
-po.db.password=poadmin123
-po.db.server=localhost
-po.db.port=5481
-po.db.name=podb
+datawarehouse.po.db.type=postgresql
+datawarehouse.po.db.username=poadmin
+datawarehouse.po.db.password=poadmin123
+datawarehouse.po.db.server=localhost
+datawarehouse.po.db.port=5432
+datawarehouse.po.db.name=podb
 
-po.jdbc.driver=org.postgresql.Driver
-po.jdbc.base=jdbc:${po.db.type}://${po.db.server}:${po.db.port}
-po.jdbc.url=${po.jdbc.base}/${po.db.name}
+datawarehouse.po.jdbc.driver=org.postgresql.Driver
+datawarehouse.po.jdbc.base=jdbc:${datawarehouse.po.db.type}://${datawarehouse.po.db.server}:${datawarehouse.po.db.port}
+datawarehouse.po.jdbc.url=${datawarehouse.po.jdbc.base}/${datawarehouse.po.db.name}

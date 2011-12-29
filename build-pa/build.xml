@@ -1783,17 +1783,22 @@ $HeadURL: http://gforge.nci.nih.gov/svnroot/generic/trunk/software/build.xml $
             />
     </target>
     
-    <target name="build-and-populate-data-warehouse" description="">
+    <target name="build-and-populate-data-warehouse" description="Constructs and populates the data warehouse">
         <ant inheritAll="false" inheritRefs="false" antfile="${data-warehouse.build.file}" dir="${data-warehouse.base.dir}" >
-            <property name="pa.jdbc.driver" value="${database.driver}"/>
-            <property name="pa.jdbc.url"  value="${database.url}"/>
-            <property name="pa.db.username" value="${database.user}" />
-            <property name="pa.db.password" value="${database.password}"/>
+            <property name="datawarehouse.pa.dest.jdbc.driver" value="${database.driver}"/>
+            <property name="datawarehouse.pa.dest.jdbc.url"  value="${database.url}"/>
+            <property name="datawarehouse.pa.dest.db.username" value="${database.user}" />
+            <property name="datawarehouse.pa.dest.db.password" value="${database.password}"/>
             
-            <property name="po.jdbc.driver" value="${database.driver}"/>
-            <property name="po.jdbc.url"  value="${po.database.url}"/>
-            <property name="po.db.username" value="${po.database.user}" />
-            <property name="po.db.password" value="${po.database.password}"/>
+            <property name="datawarehouse.pa.source.jdbc.driver" value="${datawarehouse.pa.source.jdbc.driver}"/>
+            <property name="datawarehouse.pa.source.jdbc.url"  value="${datawarehouse.pa.source.jdbc.url}"/>
+            <property name="datawarehouse.pa.source.db.username" value="${datawarehouse.pa.source.db.username}" />
+            <property name="datawarehouse.pa.source.db.password" value="${datawarehouse.pa.source.db.password}"/>
+            
+            <property name="datawarehouse.po.jdbc.driver" value="${database.driver}"/>
+            <property name="datawarehouse.po.jdbc.url"  value="${datawarehouse.po.database.url}"/>
+            <property name="datawarehouse.po.db.username" value="${datawarehouse.po.database.user}" />
+            <property name="datawarehouse.po.db.password" value="${datawarehouse.po.database.password}"/>
             <target name="${data-warehouse.target}"/>
         </ant>
     </target>

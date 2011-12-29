@@ -27,26 +27,3 @@ CREATE INDEX DW_STUDY_BIOMARKER_NCI_ID_IDX on dw_study_biomarker(nci_id);
 CREATE INDEX DW_STUDY_BIOMARKER_STATUS_CODE_IDX on dw_study_biomarker(status_code);
 CREATE INDEX DW_STUDY_BIOMARKER_TISSUE_COLLECTION_METHOD_CODE_IDX on dw_study_biomarker(tissue_collection_method_code);
 CREATE INDEX DW_STUDY_BIOMARKER_TISSUE_SPECIMEN_TYPE_CODE_IDX on dw_study_biomarker(tissue_specimen_type_code);
-
-INSERT INTO DW_STUDY_BIOMARKER (
-    ASSAY_PURPOSE,
-    ASSAY_PURPOSE_DESCRIPTION,
-    ASSAY_TYPE_CODE,
-    ASSAY_TYPE_DESCRIPTION,
-    ASSAY_USE,
-    INTERNAL_SYSTEM_ID,
-    LONG_NAME,
-    NAME,
-    NCI_ID,
-    STATUS_CODE,
-    TISSUE_COLLECTION_METHOD_CODE,
-    TISSUE_SPECIMEN_TYPE_CODE
-) select marker.assay_purpose_code, marker.assay_purpose_other_text, marker.assay_type_code, marker.assay_type_other_text,
-         marker.assay_use_code, marker.identifier, marker.name, marker.long_name, nci_id.extension, marker.status_code,
-         marker.tissue_collection_method_code, marker.tissue_specimen_type_code
-    from planned_activity pa
-        inner join study_protocol as sp on sp.identifier = pa.study_protocol_identifier
-        inner join planned_marker as marker on marker.identifier = pa.identifier
-        inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = pa.study_protocol_identifier
-                and nci_id.root = '2.16.840.1.113883.3.26.4.3'
-    where sp.status_code = 'ACTIVE';

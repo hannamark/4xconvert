@@ -27,36 +27,3 @@ CREATE INDEX DW_STUDY_DISEASE_NCI_ID_IDX on dw_study_disease(nci_id);
 CREATE INDEX DW_STUDY_DISEASE_NCI_THESAURUS_CONCEPT_ID_IDX on dw_study_disease(nci_thesaurus_concept_id);
 CREATE INDEX DW_STUDY_DISEASE_USER_LAST_CREATED_IDX on dw_study_disease(user_last_created);
 CREATE INDEX DW_STUDY_DISEASE_USER_LAST_UPDATED_IDX on dw_study_disease(user_last_updated);
-
-INSERT INTO DW_STUDY_DISEASE (CT_GOV_XML_INDICATOR, DATE_LAST_CREATED, DATE_LAST_UPDATED, DISEASE_CODE, 
-    DISEASE_PREFERRED_NAME, DISEASE_MENU_DISPLAY_NAME, INTERNAL_SYSTEM_ID, LEAD_DISEASE_INDICATOR, NCI_ID, 
-    NCI_THESAURUS_CONCEPT_ID, USER_LAST_CREATED, USER_LAST_UPDATED)
-    SELECT 
-        CASE WHEN sd.ctgovxml_indicator THEN 'YES'
-             ELSE 'NO'
-        END,
-        sd.date_last_created, sd.date_last_updated, disease.disease_code, disease.preferred_name, disease.menu_display_name, 
-        sd.identifier, 
-        CASE WHEN sd.lead_disease_indicator THEN 'YES'
-             ELSE 'NO'
-        END,
-        nci_id.extension, disease.nt_term_identifier,
-        CASE WHEN NULLIF(ru_creator.first_name, '') is not null THEN ru_creator.first_name || ' ' || ru_creator.last_name
-            WHEN NULLIF(split_part(creator.login_name, 'CN=', 2), '') is null THEN creator.login_name
-            ELSE split_part(creator.login_name, 'CN=', 2) 
-        END,
-        CASE WHEN NULLIF(ru_updater.first_name, '') is not null THEN ru_updater.first_name || ' ' || ru_updater.last_name
-            WHEN NULLIF(split_part(updater.login_name, 'CN=', 2), '') is null THEN updater.login_name
-            ELSE split_part(updater.login_name, 'CN=', 2) 
-        END
-    FROM STUDY_DISEASE sd
-        inner join study_otheridentifiers as nci_id on nci_id.study_protocol_id = sd.study_protocol_identifier 
-            and nci_id.root = '2.16.840.1.113883.3.26.4.3'
-        left outer join pdq_disease as disease on disease.identifier = sd.disease_identifier
-        left outer join study_protocol as sp on sp.identifier = sd.study_protocol_identifier
-        left outer join csm_user as creator on sd.user_last_created_id = creator.user_id
-        left outer join registry_user as ru_creator on ru_creator.csm_user_id = creator.user_id
-        left outer join csm_user as updater on sd.user_last_created_id = updater.user_id
-        left outer join registry_user as ru_updater on ru_updater.csm_user_id = updater.user_id
-    where sp.status_code = 'ACTIVE';
-
