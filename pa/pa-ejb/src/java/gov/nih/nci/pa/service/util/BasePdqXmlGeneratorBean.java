@@ -361,7 +361,7 @@ public class BasePdqXmlGeneratorBean extends CTGovXmlGeneratorServiceBeanLocal {
      * @param corrUtils utility
      * @throws PAException when error
      */
-    protected static void addPoOrganizationByPaRoIi(Element root, String childName,
+    protected void addPoOrganizationByPaRoIi(Element root, String childName,
             Ii paRoIi, Document doc, CorrelationUtils corrUtils)
         throws PAException {
         ResearchOrganizationDTO roDTO = PdqXmlGenHelper.getPoRODTOByPaRoIi(paRoIi, corrUtils);

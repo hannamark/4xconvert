@@ -137,7 +137,7 @@ public class PDQAction extends ActionSupport implements Preparable, ServletRespo
      */
     public String startProcess() {
         try {
-            PaRegistry.getPDQUpdateGeneratorTaskService().performTask();
+            pdqUpdateGeneratorTaskService.performTask();
         } catch (PAException e) {
             addActionError(e.getMessage());
             return ERROR;

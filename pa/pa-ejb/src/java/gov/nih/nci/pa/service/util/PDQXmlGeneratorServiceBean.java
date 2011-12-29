@@ -85,6 +85,8 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ts;
+import gov.nih.nci.pa.domain.Person;
+import gov.nih.nci.pa.dto.PAContactDTO;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
@@ -92,6 +94,7 @@ import gov.nih.nci.pa.iso.dto.StratumGroupDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
+import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.EnOnConverter;
@@ -104,6 +107,7 @@ import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.services.correlation.NullifiedRoleException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 
 import java.io.IOException;
@@ -313,13 +317,14 @@ public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implemen
     /**
      * {@inheritDoc}
      */
+    @Override
     public String generatePdqXml(Ii studyProtocolIi) throws PAException {
         String generatedXml = super.generateCTGovXml(studyProtocolIi);
         try {
-            this.validate(generatedXml);
+            validate(generatedXml);
         } catch (Exception e) {
-            String errorMsg = String.format("Exception in generating PDQ XML for Study %s", studyProtocolIi
-                    .getExtension());
+            String errorMsg =
+                    String.format("Exception in generating PDQ XML for Study %s", studyProtocolIi.getExtension());
             LOG.error(errorMsg.concat(" (see generated xml file for source xml)"), e);
         }
         return generatedXml;
@@ -402,12 +407,59 @@ public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implemen
                "facility", sp.getHealthcareFacilityIi(), doc, this.getCorUtils());
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void addVerificationDate(Document doc, Element root, Ts tsVerificationDate) {
         XmlGenHelper.appendElement(root,
                 XmlGenHelper.createElementWithTextblock("verification_date", PAUtil.convertTsToFormattedDate(
                         tsVerificationDate, "yyyy-MM-dd"), doc));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void addContactPerson(StudySiteContactDTO sscDTO, Element contact, Document doc) throws PAException,
+            NullifiedRoleException {
+        if (sscDTO.getClinicalResearchStaffIi() != null) {
+            Person p = getCorUtils().getPAPersonByIi(sscDTO.getClinicalResearchStaffIi());
+            XmlGenHelper.appendElement(contact,
+                                       XmlGenHelper.createElementWithTextblock(XmlGenHelper.FIRST_NAME,
+                                                                               p.getFirstName(), doc));
+            addMiddleName(contact, p.getMiddleName(), doc);
+            XmlGenHelper.appendElement(contact, XmlGenHelper.createElementWithTextblock(XmlGenHelper.LAST_NAME,
+                                                                                        p.getLastName(), doc));
+            String poId = StringUtils.substring(p.getIdentifier(), 0, PAAttributeMaxLen.LEN_160);
+            XmlGenHelper.appendElement(contact, XmlGenHelper.createElement("po_id", poId, doc));
+        } else if (sscDTO.getOrganizationalContactIi() != null) {
+            Long contactId = IiConverter.convertToLong(sscDTO.getOrganizationalContactIi());
+            PAContactDTO paCDto = getCorUtils().getContactByPAOrganizationalContactId(contactId);
+            XmlGenHelper.appendElement(contact,
+                                       XmlGenHelper.createElementWithTextblock("last_name", paCDto.getTitle(), doc));
+            String poId = StringUtils.substring(IiConverter.convertToString(paCDto.getPersonIdentifier()), 0, 
+                                                PAAttributeMaxLen.LEN_160);
+            XmlGenHelper.appendElement(contact, XmlGenHelper.createElement("po_id", poId, doc));
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void addInvestigatorPerson(StudySiteContactDTO spcDTO, Element investigator, Document doc)
+            throws PAException {
+        Person p = getCorUtils().getPAPersonByIi(spcDTO.getClinicalResearchStaffIi());
+        XmlGenHelper.appendElement(investigator,
+                XmlGenHelper.createElementWithTextblock(XmlGenHelper.FIRST_NAME, p.getFirstName(), doc));
+        addMiddleName(investigator, p.getMiddleName(), doc);
+        XmlGenHelper.appendElement(investigator,
+                XmlGenHelper.createElementWithTextblock(XmlGenHelper.LAST_NAME, p.getLastName(), doc));
+        String poId = StringUtils.substring(p.getIdentifier(), 0, PAAttributeMaxLen.LEN_160);
+        XmlGenHelper.appendElement(investigator, XmlGenHelper.createElement("po_id", poId, doc));
+        XmlGenHelper.appendElement(investigator,
+                XmlGenHelper.createElementWithTextblock("role", convertToCtValues(spcDTO.getRoleCode()), doc));
     }
 
 }

@@ -1459,19 +1459,31 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equals(spcDTO.getRoleCode().getCode())) {
                 continue;
             }
-            Person p = getCorUtils().getPAPersonByIi(spcDTO.getClinicalResearchStaffIi());
             Element investigator = doc.createElement("investigator");
-            XmlGenHelper.appendElement(investigator,
-                    XmlGenHelper.createElementWithTextblock(XmlGenHelper.FIRST_NAME, p.getFirstName(), doc));
-            addMiddleName(investigator, p.getMiddleName(), doc);
-            XmlGenHelper.appendElement(investigator,
-                    XmlGenHelper.createElementWithTextblock(XmlGenHelper.LAST_NAME, p.getLastName(), doc));
-            XmlGenHelper.appendElement(investigator,
-                    XmlGenHelper.createElementWithTextblock("role", convertToCtValues(spcDTO.getRoleCode()), doc));
+            addInvestigatorPerson(spcDTO, investigator, doc);
             if (investigator.hasChildNodes()) {
                 XmlGenHelper.appendElement(location, investigator);
             }
         }
+    }
+    
+    /**
+     * Add the investigator person fields to the given element. 
+     * @param spcDTO The StudySiteContactDTO
+     * @param investigator the element to which fields must be added
+     * @param doc The document
+     * @throws PAException when error
+     */
+    protected void addInvestigatorPerson(StudySiteContactDTO spcDTO, Element investigator, Document doc)
+            throws PAException {
+        Person p = getCorUtils().getPAPersonByIi(spcDTO.getClinicalResearchStaffIi());
+        XmlGenHelper.appendElement(investigator,
+                XmlGenHelper.createElementWithTextblock(XmlGenHelper.FIRST_NAME, p.getFirstName(), doc));
+        addMiddleName(investigator, p.getMiddleName(), doc);
+        XmlGenHelper.appendElement(investigator,
+                XmlGenHelper.createElementWithTextblock(XmlGenHelper.LAST_NAME, p.getLastName(), doc));
+        XmlGenHelper.appendElement(investigator,
+                XmlGenHelper.createElementWithTextblock("role", convertToCtValues(spcDTO.getRoleCode()), doc));
     }
 
     /**
@@ -1502,35 +1514,60 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             if (!StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equals(sscDTO.getRoleCode().getCode())) {
                 continue;
             }
-            List<String> phones = DSetConverter.convertDSetToList(sscDTO.getTelecomAddresses(), "PHONE");
-            List<String> emails = DSetConverter.convertDSetToList(sscDTO.getTelecomAddresses(), "EMAIL");
             Element contact = doc.createElement("contact");
-            if (sscDTO.getClinicalResearchStaffIi() != null) {
-                Person p = getCorUtils().getPAPersonByIi(sscDTO.getClinicalResearchStaffIi());
-                XmlGenHelper.appendElement(contact,
-                        XmlGenHelper.createElementWithTextblock(XmlGenHelper.FIRST_NAME, p.getFirstName(), doc));
-                addMiddleName(contact, p.getMiddleName(), doc);
-                XmlGenHelper.appendElement(contact,
-                        XmlGenHelper.createElementWithTextblock(XmlGenHelper.LAST_NAME, p.getLastName(), doc));
-            } else if (sscDTO.getOrganizationalContactIi() != null) {
-                PAContactDTO paCDto = getCorUtils().getContactByPAOrganizationalContactId((Long.valueOf(sscDTO
-                        .getOrganizationalContactIi().getExtension())));
-                XmlGenHelper.appendElement(contact, XmlGenHelper.createElementWithTextblock("last_name",
-                        paCDto.getTitle(), doc));
-            }
-            if (phones != null && !phones.isEmpty()) {
-                XmlGenHelper.appendElement(contact,
-                        XmlGenHelper.createElementWithTextblock(XmlGenHelper.PHONE, StringUtils.substring(
-                                phones.get(0), 0, PAAttributeMaxLen.LEN_30), doc));
-            }
-            if (emails != null && !emails.isEmpty()) {
-                XmlGenHelper.appendElement(contact,
-                        XmlGenHelper.createElementWithTextblock(XmlGenHelper.EMAIL, StringUtils.substring(
-                                emails.get(0), 0, PAAttributeMaxLen.LEN_254), doc));
-            }
+            addContactPerson(sscDTO, contact, doc);
+            addPhoneAndEmail(sscDTO.getTelecomAddresses(), contact, doc);
             if (contact.hasChildNodes()) {
                 XmlGenHelper.appendElement(location, contact);
             }
+        }
+    }
+    
+    /**
+     * Add contact person fields to the given element.
+     * @param sscDTO The studySiteContactDTO.
+     * @param contact The element to which the person fields must be added
+     * @param doc The document
+     * @throws PAException NullifiedRoleException when error.
+     * @throws NullifiedRoleException when error.
+     */
+    protected void addContactPerson(StudySiteContactDTO sscDTO, Element contact, Document doc) throws PAException,
+            NullifiedRoleException {
+        if (sscDTO.getClinicalResearchStaffIi() != null) {
+            Person p = getCorUtils().getPAPersonByIi(sscDTO.getClinicalResearchStaffIi());
+            XmlGenHelper.appendElement(contact,
+                                       XmlGenHelper.createElementWithTextblock(XmlGenHelper.FIRST_NAME,
+                                                                               p.getFirstName(), doc));
+            addMiddleName(contact, p.getMiddleName(), doc);
+            XmlGenHelper.appendElement(contact, XmlGenHelper.createElementWithTextblock(XmlGenHelper.LAST_NAME,
+                                                                                        p.getLastName(), doc));
+        } else if (sscDTO.getOrganizationalContactIi() != null) {
+            Long contactId = IiConverter.convertToLong(sscDTO.getOrganizationalContactIi());
+            PAContactDTO paCDto = getCorUtils().getContactByPAOrganizationalContactId(contactId);
+            XmlGenHelper.appendElement(contact,
+                                       XmlGenHelper.createElementWithTextblock("last_name", paCDto.getTitle(), doc));
+        }
+    }
+
+    /**
+     * Adds the phone and email elements to the given element.
+     * @param dSet The DSet of telecom addresses
+     * @param element The element to which email and phone must be added
+     * @param doc The document
+     */
+    protected void addPhoneAndEmail(DSet<Tel> dSet, Element element, Document doc) {
+        List<String> phones = DSetConverter.convertDSetToList(dSet, "PHONE");
+        
+        if (phones != null && !phones.isEmpty()) {
+            XmlGenHelper.appendElement(element,
+                    XmlGenHelper.createElementWithTextblock(XmlGenHelper.PHONE, StringUtils.substring(
+                            phones.get(0), 0, PAAttributeMaxLen.LEN_30), doc));
+        }
+        List<String> emails = DSetConverter.convertDSetToList(dSet, "EMAIL");
+        if (emails != null && !emails.isEmpty()) {
+            XmlGenHelper.appendElement(element,
+                    XmlGenHelper.createElementWithTextblock(XmlGenHelper.EMAIL, StringUtils.substring(
+                            emails.get(0), 0, PAAttributeMaxLen.LEN_254), doc));
         }
     }
 
