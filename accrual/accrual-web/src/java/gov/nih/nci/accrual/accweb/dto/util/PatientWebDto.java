@@ -148,9 +148,6 @@ public class PatientWebDto {
     
     private String icd9DiseasePreferredName;
     private Long icd9DiseaseIdentifier;
-    
-    
-
 
     /**
      * Perform basic validations.
@@ -523,7 +520,15 @@ public class PatientWebDto {
      */
     public String getDiseasePreferredName() {
         return sdcDiseasePreferredName != null ? sdcDiseasePreferredName : icd9DiseasePreferredName;
-    }
+    } 
+    
+    /**
+     * artificial method to ged rid of the exception in logs.
+     * @param diseasePreferredName the diseasePreferredName to set
+     */
+    public void setDiseasePreferredName(String diseasePreferredName) {
+        //op
+    } 
 
     /**
      * @return the disease Identifier
@@ -604,6 +609,5 @@ public class PatientWebDto {
      */
     public void setIcd9DiseaseIdentifier(Long icd9DiseaseIdentifier) {
         this.icd9DiseaseIdentifier = icd9DiseaseIdentifier;       
-    }   
-    
+    }    
 }
