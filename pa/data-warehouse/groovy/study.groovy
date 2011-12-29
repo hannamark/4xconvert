@@ -32,7 +32,7 @@ def sql =
             CASE WHEN sp.fda_regulated_indicator THEN 'YES'
                  ELSE 'NO'
             END as fda_indicator,
-            sp.identifier, sp.design_configuration_code, irb.review_board_approval_number,
+            sp.identifier as system_id, sp.design_configuration_code, irb.review_board_approval_number,
             irb.review_board_approval_status_code, irb_org.city, irb_org.country_name, irb_org.name as irb_name,
             irb.review_board_organizational_affiliation, irb_org.state, irb_org.postal_code, sp.keyword_text,
             CASE WHEN NULLIF(ru_updater.first_name, '') is not null THEN ru_updater.first_name || ' ' || ru_updater.last_name
@@ -112,35 +112,41 @@ def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jd
         properties['datawarehouse.pa.dest.db.password'], properties['datawarehouse.pa.dest.jdbc.driver'])
 def studies = destinationConnection.dataSet("DW_STUDY")
 sourceConnection.eachRow(sql) { row ->
-    studies.add(accepts_healthy_volunteers_indicator: row.healthy_volunteer_indicator, acronym: row.acronym, masking_allocation_code: row.allocation_code,
-        amendment_date: row.amendment_date, amendment_number_text: row.amendment_number, amendment_reason_code: row.amendment_reason_code,
-        central_contact_email: row.central_contact_email, central_contact_phone: row.central_contact_phone, checked_out_by_for_administrative: row.admin_user,
-        checked_out_by_for_scientific: row.scientific_user, classification_code: row.study_classification_code, completion_date: row.completion_date,
-        completion_date_type_code: row.completion_date_type_code, created_by: row.creator, ct_gov_xml_required_indicator: row.ctgov_indicator,
-        current_milestone: row.milestone_code, current_trial_status: row.current_status, current_trial_status_date: row.current_status_date,
-        data_monitoring_committee_appointed_indicator: row.data_indicator, date_last_created: row.date_last_created, date_last_updated: row.date_last_updated,
-        delayed_posting_indicator: row.delayed_posting_indicator, detail_description: row.scientific_description,
-        detail_description_primary: row.primary, detail_description_secondary: row.secondary, detail_description_tertiary: row.ternary,
-        expanded_access_indicator: row.expanded_access_indicator, fdaregulated_indicator: row.fda_indicator, internal_system_id: row.identifier,
-        interventional_model: row.design_configuration_code, irb_approval_number: row.review_board_approval_number, irb_approval_status:row.review_board_approval_status_code,
-        irb_city: row.city, irb_country: row.country_name, irb_organization_affiliation: row.review_board_organizational_affiliation,
-        irb_state_or_province: row.state, irb_zip_code: row.postal_code, irb_name: row.irb_name, keyword_text: row.keyword_text,
-        last_updated_by: row.updater, lead_org: row.lead_org_name, lead_org_id: row.lead_org_id, masking: row.blinding_schema_code,
-        masking_role_investigator: row.blinding_role_code_investigator, masking_role_outcome_assessor: row.blinding_role_code_outcome,
-        masking_role_subject: row.blinding_role_code_subject, masking_role_caregiver: row.blinding_role_code_caregiver,
-        minimum_target_accrual_number: row.min_target_accrual_num, number_of_arms: row.number_of_intervention_groups, official_title: row.official_title,
-        oversight_authority_country: row.oversight_country, oversight_authority_organization_name: row.oversight_org_name,
-        phase: row.phase_code, phase_additional_qualifier_code: row.phase_additional_qualifier_code, phase_other_text: row.phase_other_text,
-        primary_completion_date: row.pri_compl_date, primary_completion_date_type_code: row.pri_compl_date_type_code,
-        primary_purpose_additional_qualifier_code: row.primary_purpose_additional_qualifier_code, primary_purpose_code: row.primary_purpose_code,
-        primary_purpose_other_text: row.primary_purpose_other_text, principal_investigator: row.principal_investigator,
-        processing_status: row.processing_status, brief_summary: row.public_description, brief_title: row.public_tittle,
-        record_verification_date: row.record_verification_date, rejection_reason: row.rejection_reason,
-        reporting_method_data_code: row.accr_rept_meth_code, review_board_approval_required_indicator: row.review_board_indicator,
-        section_801_indicator: row.section801_indicator, sponsor: row.sponsor, start_date: row.start_date, start_date_type_code: row.start_date_type_code,
-        submission_number: row.submission_number, submitter_name: row.submitter, submitter_organization: row.submitter_org,
-        summary_4_funding_category: row.summary4_type_code, summary_4_funding_sponsor: row.summary4_sponsor, why_study_stopped: row.why_stopped)
+    destinationConnection.withTransaction {
+        try {
+            studies.add(accepts_healthy_volunteers_indicator: row.healthy_volunteer_indicator, acronym: row.acronym, masking_allocation_code: row.allocation_code,
+                    amendment_date: row.amendment_date, amendment_number_text: row.amendment_number, amendment_reason_code: row.amendment_reason_code,
+                    central_contact_email: row.central_contact_email, central_contact_phone: row.central_contact_phone, checked_out_by_for_administrative: row.admin_user,
+                    checked_out_by_for_scientific: row.scientific_user, classification_code: row.study_classification_code, completion_date: row.completion_date,
+                    completion_date_type_code: row.completion_date_type_code, created_by: row.creator, ct_gov_xml_required_indicator: row.ctgov_indicator,
+                    current_milestone: row.milestone_code, current_trial_status: row.current_status, current_trial_status_date: row.current_status_date,
+                    data_monitoring_committee_appointed_indicator: row.data_indicator, date_last_created: row.date_last_created, date_last_updated: row.date_last_updated,
+                    delayed_posting_indicator: row.delayed_posting_indicator, detail_description: row.scientific_description,
+                    detail_description_primary: row.primary, detail_description_secondary: row.secondary, detail_description_tertiary: row.ternary,
+                    expanded_access_indicator: row.expanded_access_indicator, fdaregulated_indicator: row.fda_indicator, internal_system_id: row.system_id,
+                    interventional_model: row.design_configuration_code, irb_approval_number: row.review_board_approval_number, irb_approval_status:row.review_board_approval_status_code,
+                    irb_city: row.city, irb_country: row.country_name, irb_organization_affiliation: row.review_board_organizational_affiliation,
+                    irb_state_or_province: row.state, irb_zip_code: row.postal_code, irb_name: row.irb_name, keyword_text: row.keyword_text,
+                    last_updated_by: row.updater, lead_org: row.lead_org_name, lead_org_id: row.lead_org_id, masking: row.blinding_schema_code,
+                    masking_role_investigator: row.blinding_role_code_investigator, masking_role_outcome_assessor: row.blinding_role_code_outcome,
+                    masking_role_subject: row.blinding_role_code_subject, masking_role_caregiver: row.blinding_role_code_caregiver,
+                    minimum_target_accrual_number: row.min_target_accrual_num, number_of_arms: row.number_of_intervention_groups, official_title: row.official_title,
+                    oversight_authority_country: row.oversight_country, oversight_authority_organization_name: row.oversight_org_name,
+                    phase: row.phase_code, phase_additional_qualifier_code: row.phase_additional_qualifier_code, phase_other_text: row.phase_other_text,
+                    primary_completion_date: row.pri_compl_date, primary_completion_date_type_code: row.pri_compl_date_type_code,
+                    primary_purpose_additional_qualifier_code: row.primary_purpose_additional_qualifier_code, primary_purpose_code: row.primary_purpose_code,
+                    primary_purpose_other_text: row.primary_purpose_other_text, principal_investigator: row.principal_investigator,
+                    processing_status: row.processing_status, brief_summary: row.public_description, brief_title: row.public_tittle,
+                    record_verification_date: row.record_verification_date, rejection_reason: row.rejection_reason,
+                    reporting_method_data_code: row.accr_rept_meth_code, review_board_approval_required_indicator: row.review_board_indicator,
+                    section_801_indicator: row.section801_indicator, sponsor: row.sponsor, start_date: row.start_date, start_date_type_code: row.start_date_type_code,
+                    submission_number: row.submission_number, submitter_name: row.submitter, submitter_organization: row.submitter_org,
+                    summary_4_funding_category: row.summary4_type_code, summary_4_funding_sponsor: row.summary4_sponsor, why_study_stopped: row.why_stopped)
+        } catch (Exception e) {
+            println "Error adding row : " + row
+        }
     }
+}
 
 sourceConnection.eachRow("""select ec.eligible_gender_code, pa.study_protocol_identifier from planned_activity pa
     inner join planned_eligibility_criterion ec on ec.identifier = pa.identifier and ec.criterion_name = 'GENDER'
@@ -169,12 +175,11 @@ sourceConnection.eachRow("""select cc.first_name || ' ' || cc.last_name as centr
         destinationConnection.execute("UPDATE DW_STUDY SET CENTRAL_CONTACT_TYPE = 'PERSONAL', CENTRAL_CONTACT_NAME = ? where internal_system_id = ? ", [name, id])
     }
 
-sourceConnection.eachRow("""select gc.title, sc.study_protocol_identifier from study_contact sc
+sourceConnection.eachRow("""select sc.study_protocol_identifier, CAST(oc.assigned_identifier as INTEGER) from study_contact sc
     inner join organizational_contact as oc on oc.identifier = sc.organizational_contact_identifier
-    inner join dw_generic_contact as gc on gc.identifier = cast(oc.assigned_identifier as INTEGER)
     where sc.role_code = 'CENTRAL_CONTACT' and sc.organizational_contact_identifier is not null""") { row ->
         id = row.study_protocol_identifier
-        title = row.title
+        title = destinationConnection.firstRow("SELECT gc.title from DW_GENERIC_CONTACT as gc where gc.identifier = ? ", [row.assigned_identifier]).title
         destinationConnection.execute("UPDATE DW_STUDY SET CENTRAL_CONTACT_TYPE = 'GENERIC', CENTRAL_CONTACT_NAME = ? where internal_system_id = ? ", [title, id])
     }
 
@@ -206,18 +211,17 @@ sourceConnection.eachRow("""select org.name, resp.email, resp.telephone, p.first
                     RESP_PARTY_TYPE = 'SPONSOR', RESPONSIBLE_PARTY_PERSONAL_CONTACT = ?  where internal_system_id = ? """, [name, email, phone, contact, id])
     }
 
-sourceConnection.eachRow("""select org.name, resp.email, resp.telephone, gc.title as contact, ss.study_protocol_identifier from study_site ss
+sourceConnection.eachRow("""select org.name, resp.email, resp.telephone, ss.study_protocol_identifier, CAST(oc.assigned_identifier as INTEGER) from study_site ss
     inner join research_organization as ro on ro.identifier = ss.research_organization_identifier
     inner join organization as org on org.identifier = ro.organization_identifier
     inner join study_site_contact as resp on resp.study_site_identifier = ss.identifier and resp.role_code = 'RESPONSIBLE_PARTY_SPONSOR_CONTACT'
     inner join organizational_contact as oc on oc.identifier = resp.organizational_contact_identifier and oc.person_identifier is null
-    left outer join dw_generic_contact as gc on gc.identifier = cast(oc.assigned_identifier as INTEGER)
     where ss.functional_code = 'RESPONSIBLE_PARTY_SPONSOR'""") { row ->
         id = row.study_protocol_identifier
         name = row.name
         email = row.email
         phone = row.telephone
-        contact = row.contact
+        contact = destinationConnection.firstRow("SELECT gc.title from DW_GENERIC_CONTACT as gc where gc.identifier = ? ", [row.assigned_identifier]).title
         destinationConnection.execute("""UPDATE DW_STUDY SET RESPONSIBLE_PARTY_NAME = ?, SPONSOR_RESP_PARTY_EMAIL = ?, SPONSOR_RESP_PARTY_PHONE = ?,
                     RESP_PARTY_TYPE = 'SPONSOR', RESPONSIBLE_PARTY_GENERIC_CONTACT = ?  where internal_system_id = ? """, [name, email, phone, contact, id])
     }

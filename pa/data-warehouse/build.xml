@@ -13,7 +13,8 @@
     
     <target name="init-db" description="Initializes the data warehousing tables">
         <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}" 
-            userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}" expandproperties="true">
+            userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}" 
+            expandproperties="true" autocommit="true">
             <transaction src="${basedir}/sql/families.sql"/>
             <transaction src="${basedir}/sql/generic_contact.sql"/>
             <transaction src="${basedir}/sql/study.sql"/>

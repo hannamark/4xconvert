@@ -69,15 +69,14 @@ sourceConnection.eachRow("""select p.first_name || ' ' || p.last_name as name, i
         destinationConnection.execute(statement, [name, role, status, id])
     }
 
-sourceConnection.eachRow("""select generic_contact.email, gc.title, ps.identifier
+sourceConnection.eachRow("""select generic_contact.email, ps.identifier, cast(oc.assigned_identifier as INTEGER)
     from study_site as ps
         left outer join study_site_contact as generic_contact on generic_contact.study_site_identifier = ps.identifier and generic_contact.role_code = 'PRIMARY_CONTACT'
             and generic_contact.organizational_contact_identifier is not null
-        left outer join organizational_contact as oc on oc.identifier = generic_contact.organizational_contact_identifier and oc.person_identifier is null
-        left outer join dw_generic_contact as gc on gc.identifier = cast(oc.assigned_identifier as INTEGER)""") { row ->
+        inner join organizational_contact as oc on oc.identifier = generic_contact.organizational_contact_identifier and oc.person_identifier is null""") { row ->
             email = row.email
-            title = row.title
             id = row.identifier
+            title = destinationConnection.firstRow("SELECT gc.title from DW_GENERIC_CONTACT as gc where gc.identifier = ? ", [row.assigned_identifier]).title
             statement = "UPDATE DW_STUDY_PARTICIPATING_SITE SET CONTACT_EMAIL = ? , GENERIC_CONTACT = ? where internal_system_id = ?"
             destinationConnection.execute(statement, [email, title, id])
         }
