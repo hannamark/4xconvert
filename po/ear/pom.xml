@@ -180,11 +180,6 @@
                             <includeInApplicationXml>true</includeInApplicationXml>
                         </jarModule>
                         <jarModule>
-                            <groupId>com.googlecode.json-simple</groupId>
-                            <artifactId>json-simple</artifactId>
-                            <includeInApplicationXml>true</includeInApplicationXml>
-                        </jarModule>
-                        <jarModule>
                             <groupId>weblogic</groupId>
                             <artifactId>wlthinclient-trimmed</artifactId>
                             <includeInApplicationXml>true</includeInApplicationXml>
