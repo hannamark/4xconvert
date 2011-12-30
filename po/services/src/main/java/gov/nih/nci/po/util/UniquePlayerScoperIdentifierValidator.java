@@ -14,7 +14,7 @@ import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.validator.Validator;
 
-import com.fiveamsolutions.nci.commons.util.CGLIBUtils;
+import com.fiveamsolutions.nci.commons.util.ProxyUtils;
 
 /**
  * Used to validate that the scoper is unique for the given player, ignoring NULLIFIED records.
@@ -37,6 +37,7 @@ public class UniquePlayerScoperIdentifierValidator implements Validator<UniquePl
     /**
      * {@inheritDoc}
      */
+    @Override
     public void initialize(UniquePlayerScoperIdentifier parameters) {
         // no-op
     }
@@ -44,6 +45,7 @@ public class UniquePlayerScoperIdentifierValidator implements Validator<UniquePl
     /**
      * {@inheritDoc}
      */
+    @Override
     @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
     public boolean isValid(Object value) {
         if (!(value instanceof IdentifiedOrganization || value instanceof IdentifiedPerson)) {
@@ -78,7 +80,7 @@ public class UniquePlayerScoperIdentifierValidator implements Validator<UniquePl
         try {
             Connection conn = PoHibernateUtil.getCurrentSession().connection();
             s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
-            Criteria c = s.createCriteria(CGLIBUtils.unEnhanceCBLIBClass(ie.getClass()));
+            Criteria c = s.createCriteria(ProxyUtils.unEnhanceCGLIBClass(ie.getClass()));
             LogicalExpression and = Restrictions.and(Restrictions.eq("player", ie.getPlayer()),
                     Restrictions.eq("scoper", ie.getScoper()));
             and = Restrictions.and(

@@ -13,7 +13,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.validator.Validator;
 
-import com.fiveamsolutions.nci.commons.util.CGLIBUtils;
+import com.fiveamsolutions.nci.commons.util.ProxyUtils;
 
 /**
  * Used to validate that the title of an organizational contact is unique for the scoper, ignoring NULLIFIED records.
@@ -28,6 +28,7 @@ public class UniqueOrganizationalContactTitleScoperTypeValidator implements
     /**
      * {@inheritDoc}
      */
+    @Override
     public void initialize(UniqueOrganizationalContactTitleScoperType parameters) {
         // nothing to do here
     }
@@ -35,6 +36,7 @@ public class UniqueOrganizationalContactTitleScoperTypeValidator implements
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isValid(Object value) {
         if (!(value instanceof AbstractOrganizationalContact)) {
             return false;
@@ -73,7 +75,7 @@ public class UniqueOrganizationalContactTitleScoperTypeValidator implements
         try {
             Connection conn = PoHibernateUtil.getCurrentSession().connection();
             s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
-            Criteria c = s.createCriteria(CGLIBUtils.unEnhanceCBLIBClass(aoc.getClass()));
+            Criteria c = s.createCriteria(ProxyUtils.unEnhanceCGLIBClass(aoc.getClass()));
             c.add(Restrictions.eq("title", aoc.getTitle()));
             c.add(Restrictions.eq("scoper", aoc.getScoper()));
             c.add(Restrictions.eq("type", aoc.getType()));

@@ -114,7 +114,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fiveamsolutions.nci.commons.data.persistent.PersistentObject;
-import com.fiveamsolutions.nci.commons.util.CGLIBUtils;
+import com.fiveamsolutions.nci.commons.util.ProxyUtils;
 
 /**
  * IdConverter registry.
@@ -147,7 +147,7 @@ public class IdConverterRegistry {
      * @return IdConverter instance
      */
     public static IdConverter find(Class<? extends PersistentObject> clz) {
-        Class<?> tmp = CGLIBUtils.unEnhanceCBLIBClass(clz);
+        Class<?> tmp = ProxyUtils.unEnhanceCGLIBClass(clz);
         IdConverter idConverter = REGISTRY.get(tmp);
         if (idConverter == null) {
             throw new IllegalArgumentException(tmp.getName() + " is unsupported.");

@@ -18,8 +18,8 @@ import org.hibernate.Session;
 import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Restrictions;
 
-import com.fiveamsolutions.nci.commons.util.CGLIBUtils;
 import com.fiveamsolutions.nci.commons.util.JndiUtils;
+import com.fiveamsolutions.nci.commons.util.ProxyUtils;
 
 /**
  * @param <T> Entity type.
@@ -122,7 +122,7 @@ public abstract class AbstractCuratableEntityServiceBean <T extends CuratableEnt
      */
     @SuppressWarnings({ "PMD.AvoidThrowingRawExceptionTypes", UNCHECKED })
     protected <R extends Correlation> GenericStructrualRoleServiceLocal<R> getServiceForRole(Class<R> roleType) {
-        String className = CGLIBUtils.unEnhanceCBLIBClass(roleType).getSimpleName();
+        String className = ProxyUtils.unEnhanceCGLIBClass(roleType).getSimpleName();
         String serviceName = String.format("po/%sServiceBean/local", className);
         return (GenericStructrualRoleServiceLocal<R>) JndiUtils.lookup(serviceName);
     }

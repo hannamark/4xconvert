@@ -12,7 +12,7 @@ import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.validator.Validator;
 
-import com.fiveamsolutions.nci.commons.util.CGLIBUtils;
+import com.fiveamsolutions.nci.commons.util.ProxyUtils;
 
 /**
  * Used to validate that the scoper is unique for the given player, ignoring NULLIFIED records.
@@ -34,6 +34,7 @@ public class UniquePlayerScoperValidator implements Validator<UniquePlayerScoper
     /**
      * {@inheritDoc}
      */
+    @Override
     public void initialize(UniquePlayerScoper parameters) {
         this.friendlyName = parameters.friendlyName();
     }
@@ -41,6 +42,7 @@ public class UniquePlayerScoperValidator implements Validator<UniquePlayerScoper
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isValid(Object value) {
         if (!(value instanceof AbstractPersonRole)) {
             return false;
@@ -75,7 +77,7 @@ public class UniquePlayerScoperValidator implements Validator<UniquePlayerScoper
         try {
             Connection conn = PoHibernateUtil.getCurrentSession().connection();
             s = PoHibernateUtil.getHibernateHelper().getSessionFactory().openSession(conn);
-            Criteria c = s.createCriteria(CGLIBUtils.unEnhanceCBLIBClass(apr.getClass()));
+            Criteria c = s.createCriteria(ProxyUtils.unEnhanceCGLIBClass(apr.getClass()));
             LogicalExpression scoperPlayerComposite = Restrictions.and(Restrictions.eq("player", apr.getPlayer()),
                     Restrictions.eq("scoper", apr.getScoper()));
             c.add(Restrictions.and(Restrictions.ne("status", RoleStatus.NULLIFIED), scoperPlayerComposite));
