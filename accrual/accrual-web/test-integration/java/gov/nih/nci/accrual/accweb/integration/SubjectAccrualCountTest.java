@@ -117,7 +117,6 @@ public class SubjectAccrualCountTest extends AbstractAccrualSeleniumTest {
     }
 
     private void searchForTrialInAccrual() {
-        selenium.getConfirmation();
         selenium.selectWindow(null);
         loginAsAbstractor();
         disclaimer(true);

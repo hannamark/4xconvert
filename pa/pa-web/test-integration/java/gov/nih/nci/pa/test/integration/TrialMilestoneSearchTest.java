@@ -103,7 +103,7 @@ public class TrialMilestoneSearchTest extends AbstractPaSeleniumTest {
         loginAsAdminAbstractor();
         searchAndSelectTrialWithMilestoneCheck(
                 "Test Trial Status Trial created by Selenium.", "Submission Acceptance Date", "", "");
-        if (!selenium.isTextPresent("Checked-Out (Admin) By: admin-ci")) {
+        if (!selenium.isTextPresent("Checked Out for Admin. Use by: admin-ci")) {
             checkOutTrialAsAdminAbstractor();
         }
         clickAndWait("link=Trial Milestones");
@@ -119,7 +119,7 @@ public class TrialMilestoneSearchTest extends AbstractPaSeleniumTest {
         loginAsScientificAbstractor();
         searchAndSelectTrialWithMilestoneCheck(
                 "Test Trial Status Trial #2 created by Selenium.", "Submission Acceptance Date", "", "");
-        if (!selenium.isTextPresent("Checked-Out (Scientific) By: scientific-ci")) {
+        if (!selenium.isTextPresent("Checked Out for Scientific Use by: scientific-ci")) {
             checkOutTrialAsScientificAbstractor();
         }
         clickAndWait("link=Trial Milestones");
@@ -135,7 +135,7 @@ public class TrialMilestoneSearchTest extends AbstractPaSeleniumTest {
         loginAsAdminAbstractor();
         searchAndSelectTrialWithMilestoneCheck(
                 "Test Trial Status Trial #3 created by Selenium.", "Submission Acceptance Date", "", "");
-        if (!selenium.isTextPresent("Checked-Out (Admin) By: admin-ci")) {
+        if (!selenium.isTextPresent("Checked Out for Admin. Use by: admin-ci")) {
             checkOutTrialAsAdminAbstractor();
         }
         clickAndWait("link=Trial Milestones");
@@ -145,7 +145,7 @@ public class TrialMilestoneSearchTest extends AbstractPaSeleniumTest {
         searchAndSelectTrialWithMilestoneCheck(
                 "Test Trial Status Trial #3 created by Selenium.", "Submission Acceptance Date", 
                 "Administrative Processing Start Date", "");
-        if (!selenium.isTextPresent("Checked-Out (Scientific) By: scientific-ci")) {
+        if (!selenium.isTextPresent("Checked Out for Scientific Use by: scientific-ci")) {
             checkOutTrialAsScientificAbstractor();
         }
         clickAndWait("link=Trial Milestones");
