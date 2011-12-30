@@ -88,7 +88,7 @@ function setJstreeOperationReady(bReady) {
                     distinct++;
             });
             if( total == distinct ) {
-                var compositeId = 'sbid' + function(arr){var s=''; for(var i=0; i<arr.length; i++) s+= '_'+arr[i]; return s;}(item.parentIds) + '_' + item.id;
+                var compositeId = 'sbidd' + function(arr){var s=''; for(var i=0; i<arr.length; i++) s+= '_'+arr[i]; return s;}(item.parentIds) + '_' + item.id;
                 $('#diseasesSection .selectionslist_body').prepend('<li id="'+compositeId+'"><a href="#" title="Click to remove" /><div>' + item.html + '</div></li>');
                 $('#diseasesSection .selectionslist_body li#'+compositeId).data('shortId', item.id); 
                 $('#pdqDiseases').append('<option value="'+item.id+'" selected="selected">'+item.name+'</option>');
@@ -337,7 +337,7 @@ function setJstreeOperationReady(bReady) {
         saveState : function() {
             var stateObj = {
                 'breadcrumb_boxes': [],
-                'selection_boxes': $.map( $('li[id^=sbid]'), function(val,i) {
+                'selection_boxes': $.map( $('li[id^=sbidd]'), function(val,i) {
                     return $(val).attr('id');  
                 })
             };
@@ -352,7 +352,7 @@ function setJstreeOperationReady(bReady) {
             if( stateObj != null) {
                 if( typeof(stateObj.selection_boxes) != 'undefined' && stateObj.selection_boxes != null ) {
                     $.each( $.evalJSON(stateObj.selection_boxes), function(index, value) {
-                        var id = value.match(/sbid([\d_]+)/)[1];
+                        var id = value.match(/sbidd([\d_]+)/)[1];
                         var dataIds = id.substring(1).split('_');
                         id = dataIds[dataIds.length-1];
                         dataIds.splice(dataIds.length-1,1);
