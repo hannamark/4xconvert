@@ -4,6 +4,9 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <dependent-module archiveName="nci-commons-struts2-1.3.2.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/nci-commons-struts2/nci-commons-struts2">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="po-web"/>
         <property name="java-output-path" value="/po-web/target/classes"/>
     </wb-module>
