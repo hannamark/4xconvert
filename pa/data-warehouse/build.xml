@@ -32,14 +32,23 @@
     </target>
     
     <target name="populate" depends="init-db" description="Populates the data warehousing tables using the given database">
+        <echo message = "Running Org_families"/>
         <groovy src="groovy/org_families.groovy"/>
+        <echo message = "Running generic_contact"/>
         <groovy src="groovy/generic_contact.groovy"/>
+        <echo message = "Running study"/>
         <groovy src="groovy/study.groovy"/>
+        <echo message = "Running anatomic_site"/>
         <groovy src="groovy/anatomic_site.groovy"/>
+        <echo message = "Running biomarker"/>
         <groovy src="groovy/biomarker.groovy"/>
+        <echo message = "Running disease"/>
         <groovy src="groovy/disease.groovy"/>
+        <echo message = "Running grants"/>
         <groovy src="groovy/grants.groovy"/>
+            <echo message = "Running indide"/>
         <groovy src="groovy/indide.groovy"/>
+        <echo message = "Running participating_site"/>
         <groovy src="groovy/participating_site.groovy"/>
     </target>
 </project>

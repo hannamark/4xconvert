@@ -1,4 +1,5 @@
 import groovy.sql.Sql
+
 def sql = """
     select contact.email, p.first_name || ' ' || p.middle_name || ' ' || p.last_name as contact_name, ps.identifier, org.name as org_name,
          org.status_code as org_status, ssas.status_code, ssas.status_date
@@ -48,7 +49,7 @@ sourceConnection.eachRow("""select p.first_name || ' ' || p.last_name as name, i
         id = row.identifier
         statement = "UPDATE DW_STUDY_PARTICIPATING_SITE SET INVESTIGATOR1_NAME = ? , INVESTIGATOR1_ROLE = ? , INVESTIGATOR1_STATUS =  ? where internal_system_id = ?"
         destinationConnection.execute(statement, [name, role, status, id])
-    }
+    }    
 
 sourceConnection.eachRow("""select p.first_name || ' ' || p.last_name as name, investigator.role_code, investigator.status_code, ps.identifier
     from study_site ps
@@ -76,10 +77,14 @@ sourceConnection.eachRow("""select generic_contact.email, ps.identifier, cast(oc
         inner join organizational_contact as oc on oc.identifier = generic_contact.organizational_contact_identifier and oc.person_identifier is null""") { row ->
             email = row.email
             id = row.identifier
-            title = destinationConnection.firstRow("SELECT gc.title from DW_GENERIC_CONTACT as gc where gc.identifier = ? ", [row.assigned_identifier]).title
+            def titleRow = destinationConnection.firstRow("SELECT gc.title from DW_GENERIC_CONTACT as gc where gc.identifier = ? ", [row.assigned_identifier])
+            if (titleRow != null) {
+	            title = titleRow.title
+	        }
             statement = "UPDATE DW_STUDY_PARTICIPATING_SITE SET CONTACT_EMAIL = ? , GENERIC_CONTACT = ? where internal_system_id = ?"
             destinationConnection.execute(statement, [email, title, id])
         }
 
 destinationConnection.execute("""UPDATE DW_STUDY_PARTICIPATING_SITE SET ORG_ORG_FAMILY = fam_org.family_name
     from dw_family_organization fam_org where fam_org.organization_name = org_name""");
+        

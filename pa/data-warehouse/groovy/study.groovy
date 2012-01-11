@@ -235,6 +235,15 @@ sourceConnection.eachRow("""select oid.extension as nci_id, oid.study_protocol_i
     }
 destinationConnection.execute("DELETE FROM DW_STUDY where NCI_ID is null")
 
+sourceConnection.eachRow("""select oid.extension as cdr_id, oid.study_protocol_id from study_otheridentifiers as oid
+    inner join study_protocol as sp on sp.identifier = oid.study_protocol_id and sp.status_code = 'ACTIVE'
+    where oid.extension like 'CDR%' """) { row ->
+        id = row.study_protocol_id
+        cdr_id = row.cdr_id
+        destinationConnection.execute("UPDATE DW_STUDY SET CDR_ID = ? where internal_system_id = ?", [cdr_id, id])
+    }
+
+
 sourceConnection.eachRow("""select ss.local_sp_indentifier as ctep_id, ss.study_protocol_identifier from study_site ss
     inner join research_organization as ro on ro.identifier = ss.research_organization_identifier
     inner join organization as org on org.identifier = ro.organization_identifier and org.name = 'Cancer Therapy Evaluation Program'
