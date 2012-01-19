@@ -532,7 +532,7 @@
             description="Updates the local ivy repository">
     </target>
     <target name="ivy-clean" description="Delete jars.">
-        <delete dir="${lib.dir}/pa-ejb"/>
+        <delete dir="${lib.dir}/pa-ejb" failonerror="false"/>
     </target>
 
     <!-- ====================================================================== -->
