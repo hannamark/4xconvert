@@ -1,0 +1,10 @@
+jdbc.driver=org.postgresql.Driver
+database.url=jdbc:postgresql://localhost:5432/ctods_pa
+database.username=pauser
+database.password=pauser
+
+pdqReplaceSponsor.srcDir = C:/CTRP-COPPA/PA/Input
+pdqReplaceSponsor.destDir = C:/CTRP-COPPA/PA/Output
+
+issueScriptGenerator.inputDir =
+issueScriptGenerator.sqlScriptDir 
