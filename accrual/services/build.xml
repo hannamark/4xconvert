@@ -481,7 +481,7 @@
     </target>
 
     <target name="ivy-clean" description="Delete jars.">
-        <delete dir="${lib.dir}/services"/>
+        <delete dir="${lib.dir}/services" failonerror="false"/>
     </target>
 
     <!-- ====================================================================== -->
