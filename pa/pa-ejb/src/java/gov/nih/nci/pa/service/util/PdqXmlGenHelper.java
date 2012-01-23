@@ -356,8 +356,60 @@ public class PdqXmlGenHelper {
             BaseXmlGenHelper.appendElement(root, child);
         }
     }
-    
+
+    /**
+     * addPoPersonByPaCrsIi.
+     * @param root element
+     * @param childName of element
+     * @param paCrsIi pa crs ii.
+     * @param doc Document
+     * @param corrUtils utility
+     * @throws PAException when error.
+     */
+    protected static void addPoPersonByPaCrsIiNoAddress(Element root, String childName,
+            Ii paCrsIi, Document doc, CorrelationUtils corrUtils)
+        throws PAException {
+        Person p = corrUtils.getPAPersonByIi(paCrsIi);
+        ClinicalResearchStaffDTO crsDTO = PdqXmlGenHelper.getPoCrsDTOByPaCrsIi(paCrsIi, corrUtils);
+        if (p == null || crsDTO == null) {
+            return;
+        }
+        PersonDTO perDTO;
+        try {
+            perDTO = PoRegistry.getPersonEntityService().getPerson(crsDTO.getPlayerIdentifier());
+        } catch (NullifiedEntityException e) {
+            throw new PAException(e);
+        }
+        List<IdentifiedPersonDTO> ipDtos;
+        try {
+            ipDtos =
+                PoRegistry.getIdentifiedPersonEntityService().getCorrelationsByPlayerIds(
+                        new Ii[]{crsDTO.getPlayerIdentifier()});
+        } catch (NullifiedRoleException e) {
+            throw new PAException(e);
+        }
+
+        if (StringUtils.isEmpty(childName)) {
+            loadPoPersonNoAddress(root, doc, p, findCtepIdForPerson(ipDtos), perDTO);
+        } else {
+            Element child = doc.createElement(childName);
+            loadPoPersonNoAddress(child, doc, p, findCtepIdForPerson(ipDtos), perDTO);
+            BaseXmlGenHelper.appendElement(root, child);
+        }
+    }
+
+
     private static void loadPoPerson(Element child, Document doc, Person p, Ii ctepId, PersonDTO perDTO) {
+        loadPoPersonBase(child, doc, p, ctepId, perDTO);
+        XmlGenHelper.loadPoPerson(perDTO, child, doc, ctepId);
+    }
+
+    private static void loadPoPersonNoAddress(Element child, Document doc, Person p, Ii ctepId, PersonDTO perDTO) {
+        loadPoPersonBase(child, doc, p, ctepId, perDTO);
+        XmlGenHelper.loadPoPersonNoAddress(perDTO, child, doc, ctepId);
+    }
+
+    private static void loadPoPersonBase(Element child, Document doc, Person p, Ii ctepId, PersonDTO perDTO) {
         BaseXmlGenHelper.appendElement(child,
                 BaseXmlGenHelper.createElementWithTextblock(XmlGenHelper.FIRST_NAME, p.getFirstName(), doc));
         BaseXmlGenHelper.appendElement(child,
@@ -365,7 +417,6 @@ public class PdqXmlGenHelper {
                         StringUtils.substring(p.getMiddleName(), 0 , 1), doc));
         BaseXmlGenHelper.appendElement(child,
                 BaseXmlGenHelper.createElementWithTextblock(XmlGenHelper.LAST_NAME, p.getLastName(), doc));
-        XmlGenHelper.loadPoPerson(perDTO, child, doc, ctepId);
     }
 
     private static Ii findCtepIdForPerson(List<IdentifiedPersonDTO> ipDtos) {

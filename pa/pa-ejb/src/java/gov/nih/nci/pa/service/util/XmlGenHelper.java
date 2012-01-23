@@ -188,9 +188,11 @@ public class XmlGenHelper extends BaseXmlGenHelper {
                 PAAttributeMaxLen.LEN_160), doc));
         }
 
-        loadPoAddressTelecom(addressBo, telecom, lead, doc);
+        loadPoAddress(addressBo, lead, doc);
+        loadPoTelecom(telecom, lead, doc);
 
     }
+
     /**
      * Load PO Person into xml.
      * @param perDTO dto
@@ -199,20 +201,37 @@ public class XmlGenHelper extends BaseXmlGenHelper {
      * @param ctepId ctep id
      */
     public static void loadPoPerson(PersonDTO perDTO, Element lead, Document doc, Ii ctepId) {
+        loadPersonIds(perDTO, lead, doc, ctepId);
         Map<String, String> addressBo = AddressConverterUtil.convertToAddressBo(perDTO.getPostalAddress());
         DSet<Tel> telecom = perDTO.getTelecomAddress();
 
+        loadPoAddress(addressBo, lead, doc);
+        loadPoTelecom(telecom, lead, doc);
+    }
+
+    private static void loadPersonIds(PersonDTO perDTO, Element lead, Document doc, Ii ctepId) {
         appendElement(lead, createElementWithTextblock("po_id", StringUtils.substring(
                 perDTO.getIdentifier().getExtension(), 0, PAAttributeMaxLen.LEN_160), doc));
 
         if (!ISOUtil.isIiNull(ctepId))  {
             appendElement(lead, createElementWithTextblock("ctep_id", StringUtils.substring(ctepId.getExtension(), 0,
-                PAAttributeMaxLen.LEN_160), doc));
+                    PAAttributeMaxLen.LEN_160), doc));
         }
-
-        loadPoAddressTelecom(addressBo, telecom, lead, doc);
-
     }
+
+    /**
+     * Load PO Person into xml.
+     * @param perDTO dto
+     * @param lead element
+     * @param doc document
+     * @param ctepId ctep id
+     */
+    public static void loadPoPersonNoAddress(PersonDTO perDTO, Element lead, Document doc, Ii ctepId) {
+        loadPersonIds(perDTO, lead, doc, ctepId);
+        DSet<Tel> telecom = perDTO.getTelecomAddress();
+        loadPoTelecom(telecom, lead, doc);
+    }
+
     /**
      * Load PO Organizational Contact into xml.
      * @param ocDTO dto
@@ -235,25 +254,17 @@ public class XmlGenHelper extends BaseXmlGenHelper {
             appendElement(lead, createElementWithTextblock("ctep_id", StringUtils.substring(ctepId.getExtension(), 0,
                 PAAttributeMaxLen.LEN_160), doc));
         }
-        loadPoAddressTelecom(addressBo, telecom, lead, doc);
+        loadPoAddress(addressBo, lead, doc);
+        loadPoTelecom(telecom, lead, doc);
     }
+
     /**
      * Load a PO address and telecom info into xml.
-     * @param addressBo map of address info
      * @param telecom set of telecom
      * @param lead element
      * @param doc doc
      */
-    public static void loadPoAddressTelecom(
-            Map<String, String> addressBo, DSet<Tel> telecom, Element lead, Document doc) {
-        Element address = doc.createElement("address");
-        appendElement(address, createElementWithTextblock("street", addressBo.get(AdxpAl.class.getName()), doc));
-        appendElement(address, createElementWithTextblock("city", addressBo.get(AdxpCty.class.getName()), doc));
-        appendElement(address, createElementWithTextblock("state", addressBo.get(AdxpSta.class.getName()), doc));
-        appendElement(address, createElementWithTextblock("zip", addressBo.get(AdxpZip.class.getName()), doc));
-        appendElement(address, createElementWithTextblock("country",
-                PADomainUtils.getCountryNameUsingAlpha3Code(addressBo.get(AdxpCnt.class.getName())), doc));
-        appendElement(lead, address);
+    public static void loadPoTelecom(DSet<Tel> telecom, Element lead, Document doc) {
         if (PAUtil.isDSetTelAndEmailNull(telecom)) {
             return;
         }
@@ -273,6 +284,24 @@ public class XmlGenHelper extends BaseXmlGenHelper {
         for (String email : emails) {
             appendElement(lead, createElementWithTextblock("email", email, doc));
         }
+    }
+
+    /**
+     * Load a PO address and telecom info into xml.
+     * @param addressBo map of address info
+     * @param lead element
+     * @param doc doc
+     */
+    public static void loadPoAddress(
+            Map<String, String> addressBo, Element lead, Document doc) {
+        Element address = doc.createElement("address");
+        appendElement(address, createElementWithTextblock("street", addressBo.get(AdxpAl.class.getName()), doc));
+        appendElement(address, createElementWithTextblock("city", addressBo.get(AdxpCty.class.getName()), doc));
+        appendElement(address, createElementWithTextblock("state", addressBo.get(AdxpSta.class.getName()), doc));
+        appendElement(address, createElementWithTextblock("zip", addressBo.get(AdxpZip.class.getName()), doc));
+        appendElement(address, createElementWithTextblock("country",
+                PADomainUtils.getCountryNameUsingAlpha3Code(addressBo.get(AdxpCnt.class.getName())), doc));
+        appendElement(lead, address);
     }
 
     static boolean containsXmlChars(String data) {

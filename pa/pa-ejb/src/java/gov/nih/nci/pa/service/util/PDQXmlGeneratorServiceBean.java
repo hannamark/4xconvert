@@ -85,8 +85,8 @@ package gov.nih.nci.pa.service.util;
 import gov.nih.nci.coppa.services.interceptor.RemoteAuthorizationInterceptor;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Ts;
-import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.dto.PAContactDTO;
+import gov.nih.nci.pa.enums.StudySiteContactRoleCode;
 import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.iso.dto.InterventionDTO;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
@@ -418,48 +418,63 @@ public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implemen
     }
 
     /**
-     * {@inheritDoc}
+     * createContact.
+     * @param spcDTOs list of site contacts
+     * @param location element
+     * @param doc document
+     * @throws PAException when error
+     * @throws NullifiedRoleException when error.
      */
     @Override
-    protected void addContactPerson(StudySiteContactDTO sscDTO, Element contact, Document doc) throws PAException,
-            NullifiedRoleException {
-        if (sscDTO.getClinicalResearchStaffIi() != null) {
-            Person p = getCorUtils().getPAPersonByIi(sscDTO.getClinicalResearchStaffIi());
-            XmlGenHelper.appendElement(contact,
-                                       XmlGenHelper.createElementWithTextblock(XmlGenHelper.FIRST_NAME,
-                                                                               p.getFirstName(), doc));
-            addMiddleName(contact, p.getMiddleName(), doc);
-            XmlGenHelper.appendElement(contact, XmlGenHelper.createElementWithTextblock(XmlGenHelper.LAST_NAME,
-                                                                                        p.getLastName(), doc));
-            String poId = StringUtils.substring(p.getIdentifier(), 0, PAAttributeMaxLen.LEN_160);
-            XmlGenHelper.appendElement(contact, XmlGenHelper.createElement("po_id", poId, doc));
-        } else if (sscDTO.getOrganizationalContactIi() != null) {
-            Long contactId = IiConverter.convertToLong(sscDTO.getOrganizationalContactIi());
-            PAContactDTO paCDto = getCorUtils().getContactByPAOrganizationalContactId(contactId);
-            XmlGenHelper.appendElement(contact,
-                                       XmlGenHelper.createElementWithTextblock("last_name", paCDto.getTitle(), doc));
-            String poId = StringUtils.substring(IiConverter.convertToString(paCDto.getPersonIdentifier()), 0, 
-                                                PAAttributeMaxLen.LEN_160);
-            XmlGenHelper.appendElement(contact, XmlGenHelper.createElement("po_id", poId, doc));
+    protected void createContact(List<StudySiteContactDTO> spcDTOs, Element location, Document doc)
+            throws PAException, NullifiedRoleException {
+        for (StudySiteContactDTO sscDTO : spcDTOs) {
+            if (!StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equals(sscDTO.getRoleCode().getCode())) {
+                continue;
+            }
+            Element contact = doc.createElement("contact");
+            if (sscDTO.getClinicalResearchStaffIi() != null) {
+                PdqXmlGenHelper.addPoPersonByPaCrsIiNoAddress(location,
+                        "contact", sscDTO.getClinicalResearchStaffIi(), doc, this.getCorUtils());
+            } else if (sscDTO.getOrganizationalContactIi() != null) {
+                Long contactId = IiConverter.convertToLong(sscDTO.getOrganizationalContactIi());
+                PAContactDTO paCDto = getCorUtils().getContactByPAOrganizationalContactId(contactId);
+                XmlGenHelper.appendElement(contact,
+                        XmlGenHelper.createElementWithTextblock("last_name", paCDto.getTitle(), doc));
+                String poId = StringUtils.substring(IiConverter.convertToString(paCDto.getPersonIdentifier()), 0,
+                                                    PAAttributeMaxLen.LEN_160);
+                XmlGenHelper.appendElement(contact, XmlGenHelper.createElement("po_id", poId, doc));
+                addPhoneAndEmail(sscDTO.getTelecomAddresses(), contact, doc);
+            }
+            if (contact.hasChildNodes()) {
+                XmlGenHelper.appendElement(location, contact);
+            }
         }
     }
-    
+
     /**
-     * {@inheritDoc}
+     * createInvestigators.
+     * @param spcDTOs list of site contacts.
+     * @param location element
+     * @param doc document
+     * @throws PAException when error.
      */
     @Override
-    protected void addInvestigatorPerson(StudySiteContactDTO spcDTO, Element investigator, Document doc)
+    protected void createInvestigators(List<StudySiteContactDTO> spcDTOs, Element location, Document doc)
             throws PAException {
-        Person p = getCorUtils().getPAPersonByIi(spcDTO.getClinicalResearchStaffIi());
-        XmlGenHelper.appendElement(investigator,
-                XmlGenHelper.createElementWithTextblock(XmlGenHelper.FIRST_NAME, p.getFirstName(), doc));
-        addMiddleName(investigator, p.getMiddleName(), doc);
-        XmlGenHelper.appendElement(investigator,
-                XmlGenHelper.createElementWithTextblock(XmlGenHelper.LAST_NAME, p.getLastName(), doc));
-        String poId = StringUtils.substring(p.getIdentifier(), 0, PAAttributeMaxLen.LEN_160);
-        XmlGenHelper.appendElement(investigator, XmlGenHelper.createElement("po_id", poId, doc));
-        XmlGenHelper.appendElement(investigator,
-                XmlGenHelper.createElementWithTextblock("role", convertToCtValues(spcDTO.getRoleCode()), doc));
+        for (StudySiteContactDTO spcDTO : spcDTOs) {
+            if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equals(spcDTO.getRoleCode().getCode())) {
+                continue;
+            }
+            PdqXmlGenHelper.addPoPersonByPaCrsIiNoAddress(location,
+                    "investigator", spcDTO.getClinicalResearchStaffIi(), doc, this.getCorUtils());
+            Element investigator = (Element) location.getElementsByTagName("investigator").item(0);
+            XmlGenHelper.appendElement(investigator,
+                    XmlGenHelper.createElementWithTextblock("role", convertToCtValues(spcDTO.getRoleCode()), doc));
+            if (investigator.hasChildNodes()) {
+                XmlGenHelper.appendElement(location, investigator);
+            }
+        }
     }
 
 }
