@@ -241,11 +241,6 @@ public class XmlGenHelper extends BaseXmlGenHelper {
      */
     @SuppressWarnings("unchecked")
     public static void loadPoOrgContact(OrganizationalContactDTO ocDTO, Element lead, Document doc, Ii ctepId) {
-        Map<String, String> addressBo = null;
-        if (ISOUtil.isDSetNotEmpty(ocDTO.getPostalAddress())) {
-            addressBo =
-                AddressConverterUtil.convertToAddressBo((Ad) ocDTO.getPostalAddress().getItem().iterator().next());
-        }
         DSet<Tel> telecom = ocDTO.getTelecomAddress();
         appendElement(lead, createElementWithTextblock("po_id",
                 StringUtils.substring(DSetConverter.convertToIi(ocDTO.getIdentifier()).getExtension(), 0,
@@ -254,7 +249,12 @@ public class XmlGenHelper extends BaseXmlGenHelper {
             appendElement(lead, createElementWithTextblock("ctep_id", StringUtils.substring(ctepId.getExtension(), 0,
                 PAAttributeMaxLen.LEN_160), doc));
         }
-        loadPoAddress(addressBo, lead, doc);
+        if (ISOUtil.isDSetNotEmpty(ocDTO.getPostalAddress())) {
+            Map<String, String> addressBo = null;
+            addressBo =
+                AddressConverterUtil.convertToAddressBo((Ad) ocDTO.getPostalAddress().getItem().iterator().next());
+            loadPoAddress(addressBo, lead, doc);
+        }
         loadPoTelecom(telecom, lead, doc);
     }
 
