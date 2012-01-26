@@ -89,8 +89,9 @@ import gov.nih.nci.iso21090.grid.dto.transform.DtoTransformException;
 import gov.nih.nci.iso21090.grid.dto.transform.Transformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.BLTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformer;
-import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETCDTransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformer;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTELTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.INTTransformer;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IVLINTTransformer;
@@ -188,7 +189,9 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setSubmissionNumber(INTTransformer.INSTANCE.toDto(input.getSubmissionNumber()));
         // IVLINT
         result.setTargetAccrualNumber(IVLINTTransformer.INSTANCE.toDto(input.getTargetAccrualNumber()));
-
+        
+        //DSETTEL
+        result.setTrialRecordOwners(DSETTELTransformer.INSTANCE.toDto(input.getTrialRecordOwners()));
         return result;
     }
 
@@ -254,6 +257,9 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setSubmissionNumber(INTTransformer.INSTANCE.toXml(input.getSubmissionNumber()));
         // IVLINT
         result.setTargetAccrualNumber(IVLINTTransformer.INSTANCE.toXml(input.getTargetAccrualNumber()));
+        
+        // DSET<Tel>
+        result.setTrialRecordOwners(DSETTELTransformer.INSTANCE.toXml(input.getTrialRecordOwners()));
 
         return result;
     }

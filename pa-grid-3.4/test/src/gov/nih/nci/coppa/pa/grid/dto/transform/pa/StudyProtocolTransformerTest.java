@@ -84,16 +84,26 @@ package gov.nih.nci.coppa.pa.grid.dto.transform.pa;
 
 import gov.nih.nci.coppa.services.pa.StudyProtocol;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudyProtocolTransformer;
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.TelEmail;
 import gov.nih.nci.iso21090.grid.dto.transform.AbstractTransformerTestBase;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.BLTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.CDTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETIITransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.DSETTelTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IITransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.INTTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.IVLINTTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.STTransformerTest;
+import gov.nih.nci.iso21090.grid.dto.transform.iso.TELTransformerTest;
 import gov.nih.nci.iso21090.grid.dto.transform.iso.TSTransformerTest;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+
+import java.util.HashSet;
+
+import org.iso._21090.DSETTEL;
+import org.iso._21090.DSETTELEmail;
+import org.iso._21090.TELEmail;
 
 public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<StudyProtocolTransformer, StudyProtocol, StudyProtocolDTO> {
 
@@ -132,7 +142,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         result.setStartDateTypeCode(new CDTransformerTest().makeDtoSimple());
         result.setStatusCode(new CDTransformerTest().makeDtoSimple());
         //DSET
-        result.setSecondaryIdentifiers(new DSETIITransformerTest().makeDtoSimple());
+        result.setSecondaryIdentifiers(new DSETIITransformerTest().makeDtoSimple());        
         //II
         result.setIdentifier(new IITransformerTest().makeDtoSimple());
         //TS
@@ -145,9 +155,13 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         result.setSubmissionNumber(new INTTransformerTest().makeDtoSimple());
         //IVLINT
         result.setTargetAccrualNumber(new IVLINTTransformerTest().makeDtoSimple());
+        
+        // DSET<Tel>
+        result.setTrialRecordOwners(new DSETTelTransformerTest().makeDtoSimple());
 
         return result;
     }
+    
 
     @Override
     public StudyProtocol makeXmlSimple() {
@@ -198,8 +212,13 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         //IVLINT
         result.setTargetAccrualNumber(new IVLINTTransformerTest().makeXmlSimple());
 
+        // DSET<Tel>
+        result.setTrialRecordOwners(new DSETTelTransformerTest().makeXmlSimple());
+        
         return result;
     }
+    
+   
 
     @Override
     public void verifyDtoSimple(StudyProtocolDTO x) {
@@ -234,6 +253,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         new CDTransformerTest().verifyDtoSimple(x.getStatusCode());
         //DSET
         new DSETIITransformerTest().verifyDtoSimple(x.getSecondaryIdentifiers());
+        new DSETTelTransformerTest().verifyDtoSimple(x.getTrialRecordOwners());
         //II
         new IITransformerTest().verifyDtoSimple(x.getIdentifier());
         //TS
@@ -282,6 +302,8 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         
         //DSET
         new DSETIITransformerTest().verifyXmlSimple(x.getSecondaryIdentifiers());
+        new DSETTelTransformerTest().verifyXmlSimple(x.getTrialRecordOwners());
+        
         //II
         new IITransformerTest().verifyXmlSimple(x.getIdentifier());
         //TS
@@ -297,3 +319,4 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
 
     }
 }
+
