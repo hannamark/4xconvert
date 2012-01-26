@@ -85,6 +85,7 @@ import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.Int;
 import gov.nih.nci.iso21090.Ivl;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.iso21090.Ts;
 
 
@@ -102,6 +103,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     //once the AbstractStudyProtocolDTO owns the SecondaryIdentifiers.
     private DSet<Ii> secondaryIdentifiers;
     private DSet<Cd> summary4AnatomicSites;
+    private DSet<Tel> trialRecordOwners;
     private Bl expandedAccessIndicator;
     private Bl reviewBoardApprovalRequiredIndicator;
     private St publicDescription;
@@ -398,6 +400,20 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
      */
     public DSet<Cd> getSummary4AnatomicSites() {
         return summary4AnatomicSites;
+    }
+
+    /**
+     * @return the trialRecordOwners
+     */
+    public DSet<Tel> getTrialRecordOwners() {
+        return trialRecordOwners;
+    }
+
+    /**
+     * @param trialRecordOwners the trialRecordOwners to set
+     */
+    public void setTrialRecordOwners(DSet<Tel> trialRecordOwners) {
+        this.trialRecordOwners = trialRecordOwners;
     }
 
 }
