@@ -209,7 +209,14 @@ public class XmlGenHelper extends BaseXmlGenHelper {
         loadPoTelecom(telecom, lead, doc);
     }
 
-    private static void loadPersonIds(PersonDTO perDTO, Element lead, Document doc, Ii ctepId) {
+    /**
+     * Load PO Person ID into xml.
+     * @param perDTO dto
+     * @param lead element
+     * @param doc document
+     * @param ctepId ctep id
+     */
+    public static void loadPersonIds(PersonDTO perDTO, Element lead, Document doc, Ii ctepId) {
         appendElement(lead, createElementWithTextblock("po_id", StringUtils.substring(
                 perDTO.getIdentifier().getExtension(), 0, PAAttributeMaxLen.LEN_160), doc));
 

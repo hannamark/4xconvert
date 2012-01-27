@@ -434,8 +434,10 @@ public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implemen
             }
             Element contact = doc.createElement("contact");
             if (sscDTO.getClinicalResearchStaffIi() != null) {
-                PdqXmlGenHelper.addPoPersonByPaCrsIiNoAddress(location,
-                        "contact", sscDTO.getClinicalResearchStaffIi(), doc, this.getCorUtils());
+                addContactPerson(sscDTO, contact, doc);
+                PdqXmlGenHelper.loadPersonIdsByPaCrsIi(contact, sscDTO.getClinicalResearchStaffIi(),
+                        doc, this.getCorUtils());
+                addPhoneAndEmail(sscDTO.getTelecomAddresses(), contact, doc);
             } else if (sscDTO.getOrganizationalContactIi() != null) {
                 Long contactId = IiConverter.convertToLong(sscDTO.getOrganizationalContactIi());
                 PAContactDTO paCDto = getCorUtils().getContactByPAOrganizationalContactId(contactId);
@@ -458,6 +460,7 @@ public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implemen
      * @param location element
      * @param doc document
      * @throws PAException when error.
+     * @throws
      */
     @Override
     protected void createInvestigators(List<StudySiteContactDTO> spcDTOs, Element location, Document doc)
@@ -466,9 +469,15 @@ public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implemen
             if (StudySiteContactRoleCode.PRIMARY_CONTACT.getCode().equals(spcDTO.getRoleCode().getCode())) {
                 continue;
             }
-            PdqXmlGenHelper.addPoPersonByPaCrsIiNoAddress(location,
-                    "investigator", spcDTO.getClinicalResearchStaffIi(), doc, this.getCorUtils());
-            Element investigator = (Element) location.getElementsByTagName("investigator").item(0);
+            Element investigator = doc.createElement("investigator");
+            try {
+                addContactPerson(spcDTO, investigator, doc);
+            } catch (NullifiedRoleException e) {
+                throw new PAException(e);
+            }
+            PdqXmlGenHelper.loadPersonIdsByPaCrsIi(investigator,
+                    spcDTO.getClinicalResearchStaffIi(), doc, this.getCorUtils());
+            addPhoneAndEmail(spcDTO.getTelecomAddresses(), investigator, doc);
             XmlGenHelper.appendElement(investigator,
                     XmlGenHelper.createElementWithTextblock("role", convertToCtValues(spcDTO.getRoleCode()), doc));
             if (investigator.hasChildNodes()) {

@@ -359,18 +359,17 @@ public class PdqXmlGenHelper {
 
     /**
      * addPoPersonByPaCrsIi.
-     * @param root element
-     * @param childName of element
+     * @param elementToAddTo the element to add this to.
      * @param paCrsIi pa crs ii.
      * @param doc Document
      * @param corrUtils utility
      * @throws PAException when error.
      */
-    protected static void addPoPersonByPaCrsIiNoAddress(Element root, String childName,
-            Ii paCrsIi, Document doc, CorrelationUtils corrUtils)
-        throws PAException {
-        Person p = corrUtils.getPAPersonByIi(paCrsIi);
+    protected static void loadPersonIdsByPaCrsIi(Element elementToAddTo,
+            Ii paCrsIi, Document doc, CorrelationUtils corrUtils) throws PAException {
+
         ClinicalResearchStaffDTO crsDTO = PdqXmlGenHelper.getPoCrsDTOByPaCrsIi(paCrsIi, corrUtils);
+        Person p = corrUtils.getPAPersonByIi(paCrsIi);
         if (p == null || crsDTO == null) {
             return;
         }
@@ -389,13 +388,8 @@ public class PdqXmlGenHelper {
             throw new PAException(e);
         }
 
-        if (StringUtils.isEmpty(childName)) {
-            loadPoPersonNoAddress(root, doc, p, findCtepIdForPerson(ipDtos), perDTO);
-        } else {
-            Element child = doc.createElement(childName);
-            loadPoPersonNoAddress(child, doc, p, findCtepIdForPerson(ipDtos), perDTO);
-            BaseXmlGenHelper.appendElement(root, child);
-        }
+        XmlGenHelper.loadPersonIds(perDTO, elementToAddTo, doc, findCtepIdForPerson(ipDtos));
+
     }
 
 

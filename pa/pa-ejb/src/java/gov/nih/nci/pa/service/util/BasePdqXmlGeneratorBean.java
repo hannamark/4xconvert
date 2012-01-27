@@ -128,6 +128,7 @@ import org.w3c.dom.Element;
  * @author mshestopalov
  *
  */
+@SuppressWarnings({ "PMD.TooManyMethods" })
 public class BasePdqXmlGeneratorBean extends CTGovXmlGeneratorServiceBeanLocal {
 
     /**
