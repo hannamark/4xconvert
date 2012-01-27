@@ -3,7 +3,9 @@ package gov.nih.nci.coppa.services.pa.grid.remote;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -147,9 +149,10 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public void changeOwnership(StudyProtocolDTO studyProtocolDto) throws PAException {
+    public void changeOwnership(Ii id, DSet<Tel> trialRecordOwners) throws PAException {
         try {
-            GridSecurityJNDIServiceLocator.newInstance().getStudyProtocolService().changeOwnership(studyProtocolDto);
+            GridSecurityJNDIServiceLocator.newInstance().getStudyProtocolService().changeOwnership(id, 
+                    trialRecordOwners);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {

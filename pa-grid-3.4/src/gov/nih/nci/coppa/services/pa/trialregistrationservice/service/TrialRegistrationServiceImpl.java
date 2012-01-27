@@ -14,6 +14,7 @@ import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteAccrualStatusTransform
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteContactTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.StudySiteTransformer;
 import gov.nih.nci.coppa.services.pa.grid.dto.pa.faults.FaultUtil;
+import gov.nih.nci.coppa.services.pa.grid.remote.InvokeStudyProtocolEjb;
 import gov.nih.nci.coppa.services.pa.grid.remote.InvokeTrialRegistrationEjb;
 import gov.nih.nci.coppa.services.pa.studyprotocolservice.service.StudyProtocolServiceImpl;
 import gov.nih.nci.iso21090.Bl;
@@ -52,6 +53,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
 
     private static final Logger logger = LogManager.getLogger(StudyProtocolServiceImpl.class);
     private final InvokeTrialRegistrationEjb service = new InvokeTrialRegistrationEjb();
+    private final InvokeStudyProtocolEjb studyProtService = new InvokeStudyProtocolEjb();
 
     public TrialRegistrationServiceImpl() throws RemoteException {
         super();
@@ -174,6 +176,13 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
                           sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
                           studyContactDTO, studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
                           responsiblePartyContactIi, studyRegAuthDTO, isBatch);
+          
+          // PO-3441: if trial record owner information is provided as a part of this request, we also need to change the trial's record owner
+          // from the default one (calling grid user) to the specified one (or ones).
+          if (studyProtocolDTO.getTrialRecordOwners()!=null) {
+        	  studyProtService.changeOwnership(ii, studyProtocolDTO.getTrialRecordOwners());
+          }
+          
           return IdTransformer.INSTANCE.toXml(ii);
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
