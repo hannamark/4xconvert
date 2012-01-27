@@ -347,20 +347,26 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         assertNotNull(ii.getExtension());
     }
     
-    @Test
-    public void changeOwnershipSuccess() throws Exception {
-    	
-    	RegistryUser trialOwner = createRegistryUser();    	
-    	Ii ii = createProtocolID();        
-        DSet<Tel> owners = createDSetTelEmail();        
-        
-        when(registryService.getAllTrialOwners(any(Long.class))).thenReturn(new HashSet<RegistryUser>(Arrays.asList(trialOwner)));
-        when(registryService.getLoginNamesByEmailAddress("username@nci.nih.gov")).thenReturn(Arrays.asList(trialOwner));        
-        remoteEjb.changeOwnership(ii, owners);
-        verify(registryService,times(1)).removeOwnership(Long.MIN_VALUE, IiConverter.convertToLong(ii));
-        verify(registryService, times(1)).assignOwnership(Long.MIN_VALUE, IiConverter.convertToLong(ii));                
-        
-    }
+	@Test
+	public void changeOwnershipSuccess() throws Exception {
+
+		RegistryUser trialOwner = createRegistryUser();
+		Ii ii = createProtocolID();
+		DSet<Tel> owners = createDSetTelEmail();
+
+		when(registryService.getAllTrialOwners(any(Long.class))).thenReturn(
+				new HashSet<RegistryUser>(Arrays.asList(trialOwner)));
+		when(
+				registryService
+						.getLoginNamesByEmailAddress("username@nci.nih.gov"))
+				.thenReturn(Arrays.asList(trialOwner));
+		remoteEjb.changeOwnership(ii, owners);
+		verify(registryService, times(1)).removeOwnership(Long.MIN_VALUE,
+				IiConverter.convertToLong(ii));
+		verify(registryService, times(1)).assignOwnership(Long.MIN_VALUE,
+				IiConverter.convertToLong(ii));
+
+	}
 
 	/**
 	 * @return
@@ -368,10 +374,10 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 	 */
 	private DSet<Tel> createDSetTelEmail() throws URISyntaxException {
 		DSet<Tel> owners = new DSet<Tel>();
-        owners.setItem(new HashSet<Tel>());
-        Tel tel = new Tel();
-        tel.setValue(new URI("mailto:username@nci.nih.gov"));
-        owners.getItem().add(tel);
+		owners.setItem(new HashSet<Tel>());
+		Tel tel = new Tel();
+		tel.setValue(new URI("mailto:username@nci.nih.gov"));
+		owners.getItem().add(tel);
 		return owners;
 	}
 
@@ -380,8 +386,8 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 	 */
 	private Ii createProtocolID() {
 		Ii ii = new Ii();
-        ii.setExtension(Long.MAX_VALUE+"");
-        ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+		ii.setExtension(Long.MAX_VALUE + "");
+		ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
 		return ii;
 	}
 
@@ -390,47 +396,54 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 	 */
 	private RegistryUser createRegistryUser() {
 		RegistryUser trialOwner = new RegistryUser();
-    	trialOwner.setId(Long.MIN_VALUE);
+		trialOwner.setId(Long.MIN_VALUE);
 		return trialOwner;
 	}
-    
-    @Test
-    public void changeOwnershipFailure() throws Exception {
-    	Ii ii = createProtocolID();        
-        DSet<Tel> owners = createDSetTelEmail();        
-        
-        when(registryService.getAllTrialOwners(any(Long.class))).thenReturn(new HashSet<RegistryUser>());
-        when(registryService.getLoginNamesByEmailAddress("username@nci.nih.gov")).thenReturn(new ArrayList<RegistryUser>());
-        try {
-        	remoteEjb.changeOwnership(ii, owners);
-        	fail();
-        } catch (PAException e) {        	
-        }        
-        verify(registryService, never()).assignOwnership(Long.MIN_VALUE, IiConverter.convertToLong(ii));                
-        
-    }
-    
-    @Test
-    public void changeOwnershipFailureBadEmail() throws Exception {    	
-    	Ii ii = createProtocolID();
-        
-        DSet<Tel> owners = new DSet<Tel>();
-        owners.setItem(new HashSet<Tel>());
-        Tel tel = new Tel();
-        tel.setValue(new URI("mailto:bademail"));
-        owners.getItem().add(tel);        
-        
-        when(registryService.getAllTrialOwners(any(Long.class))).thenReturn(new HashSet<RegistryUser>());        
-        try {
-        	remoteEjb.changeOwnership(ii, owners);
-        	fail();
-        } catch (PAException e) {        	
-        }        
-        verify(registryService, never()).getLoginNamesByEmailAddress(anyString());
-        verify(registryService, never()).assignOwnership(Long.MIN_VALUE, IiConverter.convertToLong(ii));                
-        
-    }
 
+	@Test
+	public void changeOwnershipFailure() throws Exception {
+		Ii ii = createProtocolID();
+		DSet<Tel> owners = createDSetTelEmail();
+
+		when(registryService.getAllTrialOwners(any(Long.class))).thenReturn(
+				new HashSet<RegistryUser>());
+		when(
+				registryService
+						.getLoginNamesByEmailAddress("username@nci.nih.gov"))
+				.thenReturn(new ArrayList<RegistryUser>());
+		try {
+			remoteEjb.changeOwnership(ii, owners);
+			fail();
+		} catch (PAException e) {
+		}
+		verify(registryService, never()).assignOwnership(Long.MIN_VALUE,
+				IiConverter.convertToLong(ii));
+
+	}
+
+	@Test
+	public void changeOwnershipFailureBadEmail() throws Exception {
+		Ii ii = createProtocolID();
+
+		DSet<Tel> owners = new DSet<Tel>();
+		owners.setItem(new HashSet<Tel>());
+		Tel tel = new Tel();
+		tel.setValue(new URI("mailto:bademail"));
+		owners.getItem().add(tel);
+
+		when(registryService.getAllTrialOwners(any(Long.class))).thenReturn(
+				new HashSet<RegistryUser>());
+		try {
+			remoteEjb.changeOwnership(ii, owners);
+			fail();
+		} catch (PAException e) {
+		}
+		verify(registryService, never()).getLoginNamesByEmailAddress(
+				anyString());
+		verify(registryService, never()).assignOwnership(Long.MIN_VALUE,
+				IiConverter.convertToLong(ii));
+
+	}
     
     
 
