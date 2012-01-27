@@ -84,6 +84,7 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.NullFlavor;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.Arm;
 import gov.nih.nci.pa.domain.Document;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
@@ -92,6 +93,7 @@ import gov.nih.nci.pa.domain.ObservationalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.PerformedActivity;
 import gov.nih.nci.pa.domain.PlannedActivity;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StratumGroup;
 import gov.nih.nci.pa.domain.StudyCheckout;
@@ -136,9 +138,11 @@ import gov.nih.nci.pa.service.search.StudyProtocolBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyProtocolSortCriterion;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
+import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PADomainUtils;
+import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.security.authorization.domainobjects.User;
@@ -147,6 +151,7 @@ import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -157,6 +162,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -185,6 +191,10 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     private static final String UPDATE = "Update";
     @EJB
     private StudyIndldeServiceLocal studyIndldeService;
+    
+    @EJB
+    private RegistryUserServiceLocal registryUserService;
+    
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
 
     private StudyProtocolDTO getStudyProtocolById(Long id) throws PAException {
@@ -675,8 +685,38 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      * {@inheritDoc}
      */
     @Override
-    public void changeOwnership(StudyProtocolDTO studyProtocolDTO) throws PAException {
-        //Intentionally left blank. This method is unused and should be removed in future releases.
+    public void changeOwnership(Ii id, DSet<Tel> owners) throws PAException {
+        if (ISOUtil.isIiNull(id)) {
+            throw new PAException("Protocol identifier (Ii) must not be null");
+        }
+        if (owners != null) {
+            Long studyProtocolId = IiConverter.convertToLong(id);
+            for (RegistryUser user : registryUserService
+                    .getAllTrialOwners(studyProtocolId)) {
+                registryUserService.removeOwnership(user.getId(),
+                        studyProtocolId);
+            }
+            if (owners.getItem() != null) {
+                for (Tel tel : owners.getItem()) {
+                    String email = PAUtil.getEmail(tel);
+                    if (!PAUtil.isValidEmail(email)) {
+                        throw new PAException(
+                                "A trial record owner must be identified by a valid email address.");
+                    }
+                    Collection<RegistryUser> users = registryUserService
+                            .getLoginNamesByEmailAddress(email);
+                    if (CollectionUtils.isEmpty(users)) {
+                        throw new PAException(
+                                "Unable to find a registry user that could be identified by this email address: "
+                                        + email);
+                    }
+                    for (RegistryUser user : users) {
+                        registryUserService.assignOwnership(user.getId(),
+                                studyProtocolId);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -803,5 +843,19 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      */
     public StudyIndldeServiceLocal getStudyIndldeService() {
         return studyIndldeService;
+    }
+
+    /**
+     * @return the registryUserService
+     */
+    public RegistryUserServiceLocal getRegistryUserService() {
+        return registryUserService;
+    }
+
+    /**
+     * @param registryUserService the registryUserService to set
+     */
+    public void setRegistryUserService(RegistryUserServiceLocal registryUserService) {
+        this.registryUserService = registryUserService;
     }
 }

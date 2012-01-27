@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.NullFlavor;
 import gov.nih.nci.iso21090.St;
 import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.StudyMilestone;
@@ -29,6 +30,8 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 
 import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -366,7 +369,7 @@ public class PAUtilTest {
      */
     @Test
     public void testGetEmail() {
-        assertNull(PAUtil.getEmail(null));
+        assertNull(PAUtil.getEmail((DSet)null));
         DSet<Tel> telecomAddresses = new DSet<Tel> ();
         assertNull(PAUtil.getEmail(telecomAddresses));
         List<String> st = new ArrayList<String>();
@@ -375,6 +378,32 @@ public class PAUtilTest {
         assertNotNull(PAUtil.getEmail(telecomAddresses));
         assertEquals(PAUtil.getEmail(telecomAddresses),"email:n.n.com");
     }
+    
+    /**
+     * Test method for {@link gov.nih.nci.pa.util.PAUtil#getEmail(Tel)}.
+     * @throws URISyntaxException 
+     */
+    @Test
+    public void testGetEmailFromTel() throws URISyntaxException {
+        assertNull(PAUtil.getEmail((Tel)null));        
+        assertNull(PAUtil.getEmail(new Tel()));
+        
+        Tel tel = new Tel();
+        tel.setValue(new URI("mailto:denis.krylov@semanticbits.com"));
+        assertEquals(PAUtil.getEmail(tel),"denis.krylov@semanticbits.com");
+        
+        tel = new Tel();
+        tel.setValue(new URI("https://tracker.nci.nih.gov/browse/PO-3441"));
+        assertNull(PAUtil.getEmail(tel));
+        
+        tel = new Tel();
+        tel.setValue(new URI("mailto:denis.krylov@semanticbits.com"));
+        tel.setNullFlavor(NullFlavor.NI);
+        assertNull(PAUtil.getEmail(tel));
+        
+        
+    }
+    
 
     /**
      * Test method for {@link gov.nih.nci.pa.util.PAUtil#getPhone(gov.nih.nci.iso21090.DSet<Tel>)}.

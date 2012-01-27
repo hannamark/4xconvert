@@ -80,7 +80,9 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
@@ -221,10 +223,14 @@ public interface StudyProtocolService {
      */
     void validate(StudyProtocolDTO studyProtocolDTO) throws PAException;
     /**
-     * This method is to use to change the ownership of the studyProtocol.
-     * @param studyProtocolDTO studyProtocolDTO
+     * This method is to use to change the ownership of the studyProtocol record.
+     * @param id protocol identifier
+     * @param trialRecordOwners a set of record owners identified by email addresses. Null is treated as "no change"; 
+     * an empty set will remove all existing ownerships.
      * @throws PAException on error
+     * @see StudyProtocolDTO#getTrialRecordOwners()
+     * @see https://tracker.nci.nih.gov/browse/PO-3441
      */
-    void changeOwnership(StudyProtocolDTO studyProtocolDTO) throws PAException;
+    void changeOwnership(Ii id, DSet<Tel> trialRecordOwners) throws PAException;
 
 }

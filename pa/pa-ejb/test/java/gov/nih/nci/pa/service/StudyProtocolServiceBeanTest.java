@@ -84,16 +84,22 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.ResearchOrganization;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
@@ -125,6 +131,8 @@ import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
 import gov.nih.nci.pa.service.util.MockPAServiceUtils;
+import gov.nih.nci.pa.service.util.MockRegistryUserServiceBean;
+import gov.nih.nci.pa.service.util.RegistryUserServiceBean;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
 import gov.nih.nci.pa.util.AnatomicSiteComparator;
 import gov.nih.nci.pa.util.MockCSMUserService;
@@ -134,8 +142,11 @@ import gov.nih.nci.pa.util.PaRegistry;
 import gov.nih.nci.pa.util.ServiceLocator;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -159,8 +170,13 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
     @Rule public ExpectedException thrown = ExpectedException.none();
     private final StudyProtocolBeanLocal bean = new StudyProtocolBeanLocal();
     private final StudyProtocolServiceLocal remoteEjb = bean;
+    
+    private final RegistryUserServiceBean registryService = mock(MockRegistryUserServiceBean.class);    
+        
+    
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws Exception {   	
+    	
         CSMUserService.setInstance(new MockCSMUserService());
         UsernameHolder.setUser(TestSchema.getUser().getLoginName());
         AnatomicSite as = new AnatomicSite();
@@ -172,6 +188,9 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         when(lookupSvc.getLookupEntityByCode(any(Class.class), any(String.class))).thenReturn(as);
         when(paRegSvcLoc.getLookUpTableService()).thenReturn(lookupSvc);
         PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
+        
+        bean.setRegistryUserService(registryService);
+        
     }
 
     @Test(expected=PAException.class)
@@ -327,6 +346,93 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         Ii ii = remoteEjb.createInterventionalStudyProtocol(ispDTO);
         assertNotNull(ii.getExtension());
     }
+    
+    @Test
+    public void changeOwnershipSuccess() throws Exception {
+    	
+    	RegistryUser trialOwner = createRegistryUser();    	
+    	Ii ii = createProtocolID();        
+        DSet<Tel> owners = createDSetTelEmail();        
+        
+        when(registryService.getAllTrialOwners(any(Long.class))).thenReturn(new HashSet<RegistryUser>(Arrays.asList(trialOwner)));
+        when(registryService.getLoginNamesByEmailAddress("username@nci.nih.gov")).thenReturn(Arrays.asList(trialOwner));        
+        remoteEjb.changeOwnership(ii, owners);
+        verify(registryService,times(1)).removeOwnership(Long.MIN_VALUE, IiConverter.convertToLong(ii));
+        verify(registryService, times(1)).assignOwnership(Long.MIN_VALUE, IiConverter.convertToLong(ii));                
+        
+    }
+
+	/**
+	 * @return
+	 * @throws URISyntaxException
+	 */
+	private DSet<Tel> createDSetTelEmail() throws URISyntaxException {
+		DSet<Tel> owners = new DSet<Tel>();
+        owners.setItem(new HashSet<Tel>());
+        Tel tel = new Tel();
+        tel.setValue(new URI("mailto:username@nci.nih.gov"));
+        owners.getItem().add(tel);
+		return owners;
+	}
+
+	/**
+	 * @return
+	 */
+	private Ii createProtocolID() {
+		Ii ii = new Ii();
+        ii.setExtension(Long.MAX_VALUE+"");
+        ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+		return ii;
+	}
+
+	/**
+	 * @return
+	 */
+	private RegistryUser createRegistryUser() {
+		RegistryUser trialOwner = new RegistryUser();
+    	trialOwner.setId(Long.MIN_VALUE);
+		return trialOwner;
+	}
+    
+    @Test
+    public void changeOwnershipFailure() throws Exception {
+    	Ii ii = createProtocolID();        
+        DSet<Tel> owners = createDSetTelEmail();        
+        
+        when(registryService.getAllTrialOwners(any(Long.class))).thenReturn(new HashSet<RegistryUser>());
+        when(registryService.getLoginNamesByEmailAddress("username@nci.nih.gov")).thenReturn(new ArrayList<RegistryUser>());
+        try {
+        	remoteEjb.changeOwnership(ii, owners);
+        	fail();
+        } catch (PAException e) {        	
+        }        
+        verify(registryService, never()).assignOwnership(Long.MIN_VALUE, IiConverter.convertToLong(ii));                
+        
+    }
+    
+    @Test
+    public void changeOwnershipFailureBadEmail() throws Exception {    	
+    	Ii ii = createProtocolID();
+        
+        DSet<Tel> owners = new DSet<Tel>();
+        owners.setItem(new HashSet<Tel>());
+        Tel tel = new Tel();
+        tel.setValue(new URI("mailto:bademail"));
+        owners.getItem().add(tel);        
+        
+        when(registryService.getAllTrialOwners(any(Long.class))).thenReturn(new HashSet<RegistryUser>());        
+        try {
+        	remoteEjb.changeOwnership(ii, owners);
+        	fail();
+        } catch (PAException e) {        	
+        }        
+        verify(registryService, never()).getLoginNamesByEmailAddress(anyString());
+        verify(registryService, never()).assignOwnership(Long.MIN_VALUE, IiConverter.convertToLong(ii));                
+        
+    }
+
+    
+    
 
     @Test
     public void deleteStudyProtocol() throws Exception {

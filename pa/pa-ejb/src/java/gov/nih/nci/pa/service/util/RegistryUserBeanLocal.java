@@ -506,11 +506,16 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
                 .get(StudyProtocol.class, studyProtocolId)).getStudyOwners();
     }
 
+    // CHECKSTYLE:OFF
     /**
      * Gets the login names of registry users having the given e-mail address.
+     * 
+     * TO DO: The name of the method is inconsistent with its semantics.
+     * 
      * @param emailAddress The e-mail address
      * @return The login names of registry users having the given e-mail address
      */
+    //CHECKSTYLE:ON
     @Override
     @SuppressWarnings("unchecked")
     public List<RegistryUser> getLoginNamesByEmailAddress(String emailAddress) {

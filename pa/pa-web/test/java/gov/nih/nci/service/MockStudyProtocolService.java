@@ -80,7 +80,9 @@ package gov.nih.nci.service;
 
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.domain.StudyProtocolDates;
@@ -295,7 +297,7 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
      * {@inheritDoc}
      */
     @Override
-    public void changeOwnership(StudyProtocolDTO studyProtocolDTO)
+    public void changeOwnership(Ii id, DSet<Tel> trialRecordOwners)
             throws PAException {
     }
 

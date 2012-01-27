@@ -80,7 +80,6 @@ package gov.nih.nci.pa.util;
 
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.ADMIN_ABSTRACTOR_ROLE;
 import static gov.nih.nci.pa.service.AbstractBaseIsoService.CLIENT_ROLE;
-
 import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
@@ -135,6 +134,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -726,6 +726,22 @@ public class PAUtil {
     public static String getEmail(DSet<Tel> dset) {
         return getEmailOrPhone(DSetConverter.convertDSetToList(dset, "EMAIL"));
     }
+    
+    /**
+     * @param tel
+     *            telecom address, presumably an email address.
+     * @return email the email address
+     */
+    public static String getEmail(Tel tel) {
+        if (tel == null || tel.getValue() == null
+                || tel.getNullFlavor() != null) {
+            return null;
+        }
+        DSet<Tel> dset = new DSet<Tel>();
+        dset.setItem(new HashSet<Tel>());
+        dset.getItem().add(tel);
+        return getEmail(dset);
+    }    
 
     /**
      * @param dset telecom address
