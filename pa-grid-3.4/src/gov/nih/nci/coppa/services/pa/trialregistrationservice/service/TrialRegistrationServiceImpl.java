@@ -33,6 +33,7 @@ import gov.nih.nci.pa.iso.dto.StudyResourcingDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteAccrualStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteContactDTO;
 import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.services.organization.OrganizationDTO;
 import gov.nih.nci.services.person.PersonDTO;
 
@@ -177,11 +178,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
                           studyContactDTO, studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
                           responsiblePartyContactIi, studyRegAuthDTO, isBatch);
           
-          // PO-3441: if trial record owner information is provided as a part of this request, we also need to change the trial's record owner
-          // from the default one (calling grid user) to the specified one (or ones).
-          if (studyProtocolDTO.getTrialRecordOwners()!=null) {
-        	  studyProtService.changeOwnership(ii, studyProtocolDTO.getTrialRecordOwners());
-          }
+          changeOwnership(studyProtocolDTO, ii);
           
           return IdTransformer.INSTANCE.toXml(ii);
       } catch (Exception e) {
@@ -189,6 +186,23 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
           throw FaultUtil.reThrowRemote(e);
       }
   }
+
+	/**
+	 * @param studyProtocolDTO
+	 * @param protocolID
+	 * @throws PAException
+	 */
+	private void changeOwnership(StudyProtocolDTO studyProtocolDTO, Ii protocolID)
+			throws PAException {
+		// PO-3441: if trial record owner information is provided as a part of
+		// this request, we also need to change the trial's record owner
+		// from the default one (calling grid user) to the specified one (or
+		// multiple ones).
+		if (studyProtocolDTO.getTrialRecordOwners() != null) {
+			studyProtService.changeOwnership(protocolID,
+					studyProtocolDTO.getTrialRecordOwners());
+		}
+	}
 
   public gov.nih.nci.iso21090.extensions.Id createAbbreviatedInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus studySiteAccrualStatus,gov.nih.nci.coppa.services.pa.Document[] documents,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person studySiteInvestigator,gov.nih.nci.coppa.services.pa.StudySite leadOrganizationStudySite,gov.nih.nci.coppa.po.Organization studySiteOrganization,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudySite nctIdentifier,gov.nih.nci.coppa.po.Organization summary4Organization,gov.nih.nci.coppa.services.pa.StudyResourcing summary4StudyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       try {
@@ -214,6 +228,9 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
                           documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
                           studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4organizationDTO,
                           summary4studyResourcingDTO, isBatch);
+          
+          changeOwnership(studyProtocolDTO, ii);
+          
           return IdTransformer.INSTANCE.toXml(ii);
       } catch (Exception e) {
           logger.error(e.getMessage(), e);
