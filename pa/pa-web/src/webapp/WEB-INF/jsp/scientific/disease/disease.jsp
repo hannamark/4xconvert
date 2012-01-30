@@ -58,6 +58,7 @@
                 <div class="error_msg"><s:actionerror /></div>
             </s:if>
             <s:form name="diseaseForm">
+                <s:token/>
                 <s:hidden name="selectedRowIdentifier"/>
                 <h2>
                     <fmt:message key="disease.details.title"/>

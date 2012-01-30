@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC 
+<!DOCTYPE html PUBLIC
     "-//W3C//DTD XHTML 1.1 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
@@ -12,8 +12,8 @@ function submitForm(btnSelected){
     } else{
         document.forms[0].action="login/logout.action";
         document.forms[0].submit();
-    } 
-    
+    }
+
 }
 </SCRIPT>
 
@@ -21,6 +21,7 @@ function submitForm(btnSelected){
 
 <body>
 <s:form name="disclaimer" method="POST" action="disclaimerActionaccept.action">
+    <s:token/>
     <!-- main content begins-->
     <br>
     <br>

@@ -107,6 +107,10 @@
                 <interceptor-ref name="workflow">
                     <param name="excludeMethods">input,back,cancel</param>
                 </interceptor-ref>
+                <interceptor-ref name="tokenSession">
+                    <param name="includeMethods">accept</param>
+                    <param name="excludeMethods">*</param>
+                </interceptor-ref>
            </interceptor-stack>
 
            <interceptor-stack name="poPerMethodValidationStack">
@@ -194,6 +198,10 @@
                 </interceptor-ref>
                 <interceptor-ref name="workflow">
                 <param name="excludeMethods">input,back,cancel</param>
+                </interceptor-ref>
+                <interceptor-ref name="tokenSession">
+                    <param name="includeMethods">search</param>
+                    <param name="excludeMethods">*</param>
                 </interceptor-ref>
             </interceptor-stack>
             <!-- END : Special interceptors designed to NOT trim leading whitespace -->

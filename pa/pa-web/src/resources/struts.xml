@@ -251,7 +251,7 @@
         <action name="collaborators*" class="gov.nih.nci.pa.action.CollaboratorsAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <interceptor-ref name="tokenSession">
-                <param name="includeMethods">facilitySave,facilityUpdate</param>
+                <param name="includeMethods">facilitySave,facilityUpdate,execute</param>
             </interceptor-ref>
             <result name="lookup">/WEB-INF/jsp/nodecorate/lookup.jsp</result>
             <result name="create">/WEB-INF/jsp/administrative/collaborators/collaboratorscreate.jsp</result>
@@ -386,7 +386,7 @@
         <action name="subGroups*" class="gov.nih.nci.pa.action.SubGroupsAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <interceptor-ref name="tokenSession">
-                <param name="includeMethods">create</param>
+                <param name="includeMethods">create,query</param>
             </interceptor-ref>
             <result>/WEB-INF/jsp/scientific/subGroups/subGroups.jsp</result>
             <result name="input">/WEB-INF/jsp/scientific/subGroups/subGroupsAdd.jsp</result>
@@ -397,7 +397,7 @@
         <action name="interventionalStudyDesign*" class="gov.nih.nci.pa.action.InterventionalStudyDesignAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <interceptor-ref name="tokenSession">
-                <param name="includeMethods">outcomecreate,outcomeupdate</param>
+                <param name="includeMethods">outcomecreate,outcomeupdate,detailsQuery</param>
             </interceptor-ref>
             <result name="details">/WEB-INF/jsp/scientific/isdesignDetails.jsp</result>
             <result name="outcome">/WEB-INF/jsp/scientific/outcomeMeasures/outcomeMeasure.jsp</result>
@@ -413,6 +413,9 @@
         </action>
         <action name="trialDescription*" class="gov.nih.nci.pa.action.TrialDescriptionAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">query</param>
+            </interceptor-ref>
             <result name="input">/WEB-INF/jsp/scientific/trialDescription.jsp</result>
             <result name="error">/WEB-INF/jsp/scientific/trialDescription.jsp</result>
             <result name="edit">/WEB-INF/jsp/scientific/trialDescription.jsp</result>
@@ -427,13 +430,16 @@
         </action>
         <action name="trialArms*" class="gov.nih.nci.pa.action.TrialArmsAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">execute</param>
+            </interceptor-ref>
             <result name="edit">/WEB-INF/jsp/scientific/arms/trialArmsedit.jsp</result>
             <result name="list">/WEB-INF/jsp/scientific/arms/trialArms.jsp</result>
         </action>
         <action name="eligibilityCriteria*" class="gov.nih.nci.pa.action.EligibilityCriteriaAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
             <interceptor-ref name="tokenSession">
-                <param name="includeMethods">create,save,reOrder</param>
+                <param name="includeMethods">create,save,reOrder,query</param>
             </interceptor-ref>
             <result name="eligibility">/WEB-INF/jsp/scientific/eligibilityCriteria/isEligibilityCriteria.jsp</result>
             <result name="eligibilityAdd">/WEB-INF/jsp/scientific/eligibilityCriteria/isEligibilityCriteriaAdd.jsp</result>
@@ -460,6 +466,9 @@
         </action>
         <action name="disease*" class="gov.nih.nci.pa.action.DiseaseAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">execute</param>
+            </interceptor-ref>
             <result name="edit">/WEB-INF/jsp/scientific/disease/diseaseedit.jsp</result>
             <result name="list">/WEB-INF/jsp/scientific/disease/disease.jsp</result>
         </action>
@@ -470,6 +479,9 @@
         </action>
         <action name="plannedMarker*" class="gov.nih.nci.pa.action.PlannedMarkerAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">execute</param>
+            </interceptor-ref>
             <result name="list">/WEB-INF/jsp/scientific/plannedMarker/plannedMarkers.jsp</result>
             <result name="edit">/WEB-INF/jsp/scientific/plannedMarker/editPlannedMarker.jsp</result>
         </action>
@@ -505,11 +517,17 @@
 
         <action name="milestone*" class="gov.nih.nci.pa.action.MilestoneAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">execute</param>
+            </interceptor-ref>
             <result name="edit">/WEB-INF/jsp/milestoneedit.jsp</result>
             <result name="list">/WEB-INF/jsp/milestone.jsp</result>
         </action>
         <action name="onhold*" class="gov.nih.nci.pa.action.OnholdAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">execute</param>
+            </interceptor-ref>
             <result name="edit">/WEB-INF/jsp/onholdedit.jsp</result>
             <result name="list">/WEB-INF/jsp/onhold.jsp</result>
         </action>
@@ -523,6 +541,9 @@
         </action>
         <action name="manageAccrualAccess*" class="gov.nih.nci.pa.action.ManageAccrualAccessAction" method="{1}">
             <interceptor-ref name="paPreventDuplicateStudyInterceptor" />
+            <interceptor-ref name="tokenSession">
+                <param name="includeMethods">execute</param>
+            </interceptor-ref>
             <result name="edit">/WEB-INF/jsp/manageAccrualAccessEdit.jsp</result>
             <result name="list">/WEB-INF/jsp/manageAccrualAccess.jsp</result>
         </action>

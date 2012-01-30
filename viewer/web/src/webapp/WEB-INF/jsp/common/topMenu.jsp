@@ -19,15 +19,16 @@
         <c:if test="${(sessionScope.viewerRole == 'Abstractor')}">
           <li><a>&nbsp;Reports&nbsp;&nbsp;&nbsp;</a>
             <ul id="reportmenu">
-              <li style="width: 210px;"><a href="${pageContext.request.contextPath}/ctro/criteriaSummaryOfSubmission.action">Summary of
-                                    Submission</a>
+              <li style="width: 210px;"><a href="#" onclick="submitXsrfForm('${pageContext.request.contextPath}/ctro/criteriaSummaryOfSubmission.action');">
+                Summary of Submission</a>
               </li>
-              <li style="width: 210px;"><a href="${pageContext.request.contextPath}/ctro/criteriaSubmissionByInstitution.action">Trials
-                                    Submitted by Institution</a>
+              <li style="width: 210px;"><a href="#" onclick="submitXsrfForm('${pageContext.request.contextPath}/ctro/criteriaSubmissionByInstitution.action');">
+                Trials Submitted by Institution</a>
               </li>
-              <li style="width: 210px;"><a href="${pageContext.request.contextPath}/ctro/criteriaSummary4Report.action">Summary 4 Type</a>
+              <li style="width: 210px;"><a href="#" onclick="submitXsrfForm('${pageContext.request.contextPath}/ctro/criteriaSummary4Report.action');">
+                Summary 4 Type</a>
               </li>
-              <li style="width: 210px;"><a href="${pageContext.request.contextPath}/ctro/criteriaAdHocReport.action">Ad Hoc</a>
+              <li style="width: 210px;"><a href="#" onclick="submitXsrfForm('${pageContext.request.contextPath}/ctro/criteriaAdHocReport.action');">Ad Hoc</a>
               </li>
             </ul>
           </li>

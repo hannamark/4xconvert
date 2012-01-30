@@ -16,6 +16,10 @@
                     callOnloadFunctions();
                 }
             }
+            function submitXsrfForm(action){
+                document.xsrfForm.action=action;
+                document.xsrfForm.submit();
+            }
         </script>
         <fmt:setBundle basename="AuditTrailResources" var="auditTrailResources" scope="session"/>
         <!-- Version: ${initParam["appTagVersion"]}, revision: ${initParam["appTagRevision"]} -->
@@ -45,5 +49,6 @@
             <div class="clear"><br /></div>
             <jsp:include page="/WEB-INF/jsp/common/footer.jsp"/>
         </div>
+        <s:form id="xsrfForm"><s:token/></s:form>
     </body>
 </html>

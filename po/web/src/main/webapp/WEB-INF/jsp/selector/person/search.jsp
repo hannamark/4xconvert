@@ -15,6 +15,7 @@
                     <div class="po_form">
                         <s:actionerror/>
                         <s:form action="selector/person/search.action" id="duplicatePersonForm" onsubmit="$('duplicateSearchResultDetails').hide();">
+                            <s:token/>
                             <s:hidden name="rootKey"/>
                             <s:hidden name="source.id"/>
                             <%@include file="../../search/person/searchFormFields.jsp" %>

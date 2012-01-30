@@ -29,6 +29,7 @@
                 </div>
             </s:if>
             <s:form name="milestoneForm">
+                <s:token/>
                 <pa:studyUniqueToken/>
                 <s:hidden name="selectedRowIdentifier"/>
                 <s:if test="%{amendmentMap.size > 1}">

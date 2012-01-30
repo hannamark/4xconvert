@@ -6,7 +6,8 @@
     <!--User Details-->
       <c:choose>
         <c:when test="${pageContext.request.remoteUser != null}">
-        <div id="userarea">Welcome, <a href='<c:url value="registerUsershowMyAccount.action"/>'>${CsmHelper.firstName}</a>  |  <a href='<c:url value="/logout.action"/>' class="btn_logout">Log Out</a></div>
+        <c:url value="registerUsershowMyAccount.action" var="showMyAccountUrl"/>
+        <div id="userarea">Welcome, <a href="#" onclick="submitXsrfForm('${showMyAccountUrl}');">${CsmHelper.firstName}</a>  |  <a href='<c:url value="/logout.action"/>' class="btn_logout">Log Out</a></div>
         </c:when>
         <c:otherwise>
         <div id="userarea"><a href='<c:url value="/protected/disClaimerAction.action?actionName=searchTrial.action"/>' class="btn_login">Log In</a></div>

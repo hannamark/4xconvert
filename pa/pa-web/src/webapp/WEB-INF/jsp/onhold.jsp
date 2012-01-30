@@ -38,6 +38,7 @@
                 <div class="error_msg"><s:actionerror /></div>
             </s:if>
             <s:form name="listForm">
+                <s:token/>
                 <pa:studyUniqueToken/>
                 <s:hidden name="selectedRowIdentifier"/>
                 <input type="hidden" name="studyProtocolId" value="${sessionScope.trialSummary.studyProtocolId}"/>

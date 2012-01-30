@@ -194,6 +194,7 @@
             <!--/Tabs-->
             <div id="filtersTab">
                 <s:form id="searchForm" name="sForm">
+                    <s:token/>
                     <!--Filters-->
                     <div id="filtersAccordion">
                         <div id="expandAll">

@@ -24,6 +24,7 @@ function callOnloadFunctions(){
    <pa:sucessMessage/>
    <pa:failureMessage/>
     <s:form>
+        <s:token/>
         <pa:studyUniqueToken/>
         <s:actionerror/>
     <h2><fmt:message key="subGroups.subtitle" /></h2>
@@ -48,7 +49,7 @@ function callOnloadFunctions(){
 			<del class="btnwrapper">
 				<ul class="btnrow">
                     <pa:scientificAbstractorDisplayWhenCheckedOut>
-					   <li><s:a href="subGroupsinput.action" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
+					   <li><s:a href="#" onclick="submitXsrfForm(subGroupsinput.action);" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
                     </pa:scientificAbstractorDisplayWhenCheckedOut>
 				</ul>
 			</del>

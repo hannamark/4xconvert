@@ -57,6 +57,7 @@
         <!--/Tabs-->
         <div id="filtersTab">
             <s:form id="searchForm" name="sForm">
+                <s:token/>
                 <!--Filters-->
                 <jsp:include page="/WEB-INF/jsp/nodecorate/submissionByInstitution/criteria.jsp" />
                 <viewer:buttonBar>

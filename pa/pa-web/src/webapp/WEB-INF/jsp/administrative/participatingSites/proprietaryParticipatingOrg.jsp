@@ -46,6 +46,7 @@ function handleDelete(studyResourcingId){
     <pa:sucessMessage/>
     <s:actionerror />
     <s:form name="partOrgs">
+    <s:token/>
     <pa:studyUniqueToken/>
     <h2><fmt:message key="participatingOrganizations.title" /></h2>
     <table class="form">
@@ -73,13 +74,13 @@ function handleDelete(studyResourcingId){
     <del class="btnwrapper">
         <ul class="btnrow">
             <pa:adminAbstractorDisplayWhenCheckedOut>
-                <li><a href="participatingOrganizationsproprietaryCreate.action" class="btn" onclick="this.blur();"><span class="btn_img"><span class="add" >Add </span></span></a></li>
+                <li><a href="#" class="btn" onclick="this.blur();submitXsrfForm('participatingOrganizationsproprietaryCreate.action');"><span class="btn_img"><span class="add" >Add </span></span></a></li>
             </pa:adminAbstractorDisplayWhenCheckedOut>
             <c:if test="${!sessionScope.trialSummary.proprietaryTrial}">
-            <li><a href="trialFundingquery.action"
-                    class="btn" onclick="this.blur();"><span class="btn_img"><span class="back">Back</span></span></a></li>
-            <li><a href="collaborators.action"
-                    class="btn" onclick="this.blur();"><span class="btn_img"><span class="next">Next</span></span></a></li>
+            <li><a href="#"
+                    class="btn" onclick="this.blur();submitXsrfForm('trialFundingquery.action');"><span class="btn_img"><span class="back">Back</span></span></a></li>
+            <li><a href="#"
+                    class="btn" onclick="this.blur();submitXsrfForm('collaborators.action');"><span class="btn_img"><span class="next">Next</span></span></a></li>
             </c:if>
         </ul>
     </del>

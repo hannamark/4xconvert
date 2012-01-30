@@ -21,6 +21,7 @@
     </head>
     <body>
         <s:form name="disclaimer" method="POST" action="disClaimerActionaccept.action">
+        <s:token/>
         <!-- main content begins-->
             <br/>
             <br/>

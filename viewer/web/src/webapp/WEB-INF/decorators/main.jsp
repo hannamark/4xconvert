@@ -13,6 +13,10 @@
             jQuery(function() {
                 jQuery('#mainmenu').buttonset().ptMenu().show();        
             });
+            function submitXsrfForm(action){
+                document.xsrfForm.action=action;
+                document.xsrfForm.submit();
+            }
          </script>  
         <decorator:head/>
     </head>
@@ -34,4 +38,5 @@
             <jsp:include page="/WEB-INF/jsp/common/footer.jsp"/>
         </div>
     </body>
+    <s:form id="xsrfForm"><s:token/></s:form>
 </html>

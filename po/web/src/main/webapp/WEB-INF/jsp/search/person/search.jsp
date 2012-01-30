@@ -8,6 +8,7 @@
 <div class="boxouter">
 <h2>Person Criteria Information</h2>
 	<s:form action="search/person/search.action" id="searchPersonForm">
+        <s:token/>
 		<s:hidden name="rootKey"/>
         <%@include file="searchFormFields.jsp" %>
         <input id="enableEnterSubmit" type="submit"/>

@@ -52,6 +52,7 @@ function handleCreateGroup(){
     <div class="error_msg"><s:actionerror /></div>
 </s:if> 
     <s:form name="armForm">
+        <s:token/>
         <pa:studyUniqueToken/>
         <s:hidden name="selectedArmIdentifier"/>
         <s:hidden name="currentAction"/>

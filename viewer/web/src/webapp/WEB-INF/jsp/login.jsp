@@ -9,7 +9,8 @@
         <c:set var="topic" scope="request" value="login"/> 
         <div> 
             <p style="margin:0; padding:0">Please log in to view reports on CTRP trials.</p>
-            <form action="j_security_check" method="post" id="loginForm">   
+            <s:form action="j_security_check" method="post" id="loginForm">
+                <s:token/>
                 <table style="margin:0 auto">
                     <c:if test="${not empty param.failedLogin}">
                         <p class="directions"><fmt:message key="errors.password.mismatch"/></p>
@@ -60,7 +61,7 @@
                 <viewer:buttonBar>
                     <viewer:button labelKey="login.button.login" id="loginButton" imgClass="login" />
                 </viewer:buttonBar>
-            </form>
+            </s:form>
         </div>
     </body>
 </page:applyDecorator>
