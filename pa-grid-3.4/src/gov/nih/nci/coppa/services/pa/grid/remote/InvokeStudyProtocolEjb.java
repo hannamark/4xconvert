@@ -159,6 +159,14 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
             throw new InvokeCoppaServiceException(e.toString(), e);
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void changeOwnership(StudyProtocolDTO studyProtocolDTO)
+            throws PAException {
+    }
 
 
     /**
