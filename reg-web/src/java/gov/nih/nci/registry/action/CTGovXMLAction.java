@@ -155,7 +155,8 @@ public class CTGovXMLAction extends ActionSupport implements Preparable {
         try {
             spqDto = getStudyProtocolQueryDTO(ii);
         } catch (PAException e1) {
-            xmlFile = new ByteArrayInputStream(convertToXML("Unable to retrieve Study Protocol", null).getBytes());
+            xmlFile = new ByteArrayInputStream(convertToXML("No match found based on the NCI that was provided.",
+                    null).getBytes());
             return "downloadXMLFile";
         }
         String xmlFileString = validateCtGovExportRules(spqDto, ii);
@@ -215,10 +216,11 @@ public class CTGovXMLAction extends ActionSupport implements Preparable {
             return "Abbreviated trials are not eligible for XML Export.";
         }
         if (!abstractedCodes.contains(dwfs)) {
-            return "Only Abstracted trials are eligible for XML export.";
+            return "This trial is in review in CTRP by the CTRO and "
+                    + "is not eligible to be uploaded to PRS at this time.";
         }
         if (!spqDto.getCtgovXmlRequiredIndicator()) {
-            return "This trial is not indicated as being eligible for XML export.";
+            return "This trial cannot be uploaded to PRS.";
         }
         if (!isUserOwnerOfStudyProtocol(spIi)) {
             return "Authorization failed. User does not have ownership of the trial.";

@@ -119,7 +119,7 @@ public class CTGovXMLActionTest extends AbstractRegWebTest {
 
         String xml = readerToString(new BufferedReader(new InputStreamReader(action.getXmlFile())));
 
-        assertTrue(xml.contains("This trial is not indicated as being eligible for XML export."));
+        assertTrue(xml.contains("This trial cannot be uploaded to PRS."));
     }
 
     @Test
@@ -139,7 +139,7 @@ public class CTGovXMLActionTest extends AbstractRegWebTest {
 
         String xml = readerToString(new BufferedReader(new InputStreamReader(action.getXmlFile())));
 
-        assertTrue(xml.contains("Only Abstracted trials are eligible for XML export."));
+        assertTrue(xml.contains("This trial is in review in CTRP by the CTRO and is not eligible to be uploaded to PRS at this time."));
     }
 
     @Test
@@ -149,7 +149,7 @@ public class CTGovXMLActionTest extends AbstractRegWebTest {
 
         String xml = readerToString(new BufferedReader(new InputStreamReader(action.getXmlFile())));
 
-        assertTrue(xml.contains("Unable to retrieve Study Protocol"));
+        assertTrue(xml.contains("No match found based on the NCI that was provided."));
     }
 
     @Test
