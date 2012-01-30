@@ -232,5 +232,12 @@ public interface StudyProtocolService {
      * @see https://tracker.nci.nih.gov/browse/PO-3441
      */
     void changeOwnership(Ii id, DSet<Tel> trialRecordOwners) throws PAException;
+    
+    /**
+     * This method is to use to change the ownership of the studyProtocol.
+     * @param studyProtocolDTO studyProtocolDTO
+     * @throws PAException on error
+     */
+    void changeOwnership(StudyProtocolDTO studyProtocolDTO) throws PAException;
 
 }

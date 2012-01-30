@@ -680,6 +680,14 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
         }
         return studyProtocolDTOList;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void changeOwnership(StudyProtocolDTO studyProtocolDTO) throws PAException {
+        //Intentionally left blank. This method is unused and should be removed in future releases.
+    }
 
     /**
      * {@inheritDoc}

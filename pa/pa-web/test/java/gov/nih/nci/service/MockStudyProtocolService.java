@@ -292,6 +292,14 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
     @Override
     public void validate(StudyProtocolDTO studyProtocolDTO) throws PAException {
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void changeOwnership(StudyProtocolDTO studyProtocolDTO)
+            throws PAException {
+    }
 
     /**
      * {@inheritDoc}
