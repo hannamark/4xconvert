@@ -194,9 +194,9 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
         return null;
     }
 
-	@Override
-	public void changeOwnership(Ii id, DSet<Tel> trialRecordOwners)
-			throws PAException {
-		throw new PAException("changeOwnership is supported in version 3.4 and onwards.");
-	}
+    @Override
+    public void changeOwnership(Ii id, DSet<Tel> trialRecordOwners)
+            throws PAException {
+        throw new PAException("changeOwnership is supported in version 3.4 and onwards.");
+    }
 }
