@@ -35,6 +35,6 @@ def diseases = destinationConnection.dataSet("DW_STUDY_DISEASE");
 sourceConnection.eachRow(sql) { row ->
     diseases.add(ct_gov_xml_indicator: row.ct_indicator, date_last_created: row.date_last_created, date_last_updated: row.date_last_updated,
             disease_code: row.disease_code, disease_preferred_name: row.preferred_name, disease_menu_display_name: row.menu_display_name,
-            internal_system_id: row.identifier, lead_disease_indicator: row.lead_indicator, nci_thesaurus_concept_id: row.nt_term_identifier,
-            user_last_created: row.creator, user_last_updated: row.updater)
+            internal_system_id: row.identifier, lead_disease_indicator: row.lead_indicator, nci_id: row.extension, 
+            nci_thesaurus_concept_id: row.nt_term_identifier, user_last_created: row.creator, user_last_updated: row.updater)
 }
