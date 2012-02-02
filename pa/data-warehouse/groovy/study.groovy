@@ -319,3 +319,26 @@ destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='On-going
 	where CURRENT_MILESTONE='ONGOING_ABSTRACTION_VERIFICATION'""")
 destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_MILESTONE='Late Rejection Date'    
 	where CURRENT_MILESTONE='LATE_REJECTION_DATE'""")
+
+
+destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='Submitted'    
+	where PROCESSING_STATUS='SUBMITTED'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='Amendment Submitted'    
+	where PROCESSING_STATUS='AMENDMENT_SUBMITTED'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='Accepted'    
+	where PROCESSING_STATUS='ACCEPTED'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='Rejected'    
+	where PROCESSING_STATUS='REJECTED'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='Abstracted'    
+	where PROCESSING_STATUS='ABSTRACTED'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='Verification Pending'    
+	where PROCESSING_STATUS='VERIFICATION_PENDING'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='Abstraction Verified Response'    
+	where PROCESSING_STATUS='ABSTRACTION_VERIFIED_RESPONSE'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='Abstraction Verified No Response'    
+	where PROCESSING_STATUS='ABSTRACTION_VERIFIED_NORESPONSE'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='On-Hold'    
+	where PROCESSING_STATUS='ON_HOLD'""")
+
+	
+	
