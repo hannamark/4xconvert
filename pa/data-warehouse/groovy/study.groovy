@@ -340,5 +340,11 @@ destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='Abstract
 destinationConnection.execute("""UPDATE DW_STUDY SET PROCESSING_STATUS='On-Hold'    
 	where PROCESSING_STATUS='ON_HOLD'""")
 
+destinationConnection.execute("""UPDATE DW_STUDY SET MASKING_ALLOCATION_CODE='Randomized Controlled Trial'    
+	where MASKING_ALLOCATION_CODE='RANDOMIZED_CONTROLLED_TRIAL'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET MASKING_ALLOCATION_CODE='Non-Randomized Trial'    
+	where MASKING_ALLOCATION_CODE='NON_RANDOMIZED_TRIAL'""")
 	
 	
+	
+		
