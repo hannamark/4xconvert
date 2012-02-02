@@ -18,14 +18,15 @@ import com.google.inject.Injector;
 
 public class DelimitedFileReaderAndWriterTest {
     
+	private static final String LS = System.getProperty("line.separator");
     private static final String TEST_INPUT_FILE_NAME = "test.in.txt";
     private static final String TEST_OUTPUT_FILE_NAME = "test.out.txt";
     private static final List<String> EXPECTED_FIRST_LINE = getFirstLine();
     private static final List<String> EXPECTED_SECOND_LINE = getSecondLine();
-    private static final String TAB_DELIMITED_FILE_CONTENTS = "this\tis\ta\ttest\n"
-        + "foobar\n";
-    private static final String COMMA_DELIMITED_FILE_CONTENTS = "this,is,a,test\n"
-        + "foobar\n";
+	private static final String TAB_DELIMITED_FILE_CONTENTS = "this\tis\ta\ttest"
+			+ LS + "foobar" + LS;
+	private static final String COMMA_DELIMITED_FILE_CONTENTS = "this,is,a,test"
+			+ LS + "foobar" + LS;
 
     @Test
     public void testTabDelimitedReadingAndWriting() throws Exception {
