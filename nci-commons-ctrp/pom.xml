@@ -31,6 +31,20 @@
         <url>https://tracker.nci.nih.gov/browse/PO</url>
     </issueManagement>
 
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <name>CBIIT Nexus Releases</name>
+            <url>dav:https://ncimvn.nci.nih.gov/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>CBIIT Nexus Snapshots</name>
+            <url>dav:https://ncimvn.nci.nih.gov/nexus/content/repositories/snapshots/</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
     <repositories>
         <repository>
             <id>central</id>
