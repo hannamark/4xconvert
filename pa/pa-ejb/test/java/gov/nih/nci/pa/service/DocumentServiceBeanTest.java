@@ -84,6 +84,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Document;
+import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.util.CdConverter;
@@ -139,6 +141,30 @@ public class DocumentServiceBeanTest extends AbstractHibernateTestCase {
         docDTO.setText(EdConverter.convertToEd("Protocol Document".getBytes()));
         remoteEjb.create(docDTO);
     }
+    
+    @Test
+    public void testCreateDupTSR() throws Exception {
+        
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(TestSchema.studyProtocolIds.get(0));
+        
+        Document doc = new Document();
+        doc.setStudyProtocol(sp);
+        doc.setTypeCode(DocumentTypeCode.TSR);
+        doc.setActiveIndicator(true);
+        doc.setFileName("TSR.doc");
+        TestSchema.addUpdObject(doc);        
+        
+        // duplicate TSRs are now permitted, so no exception is expected here.
+        // see https://tracker.nci.nih.gov/browse/PO-2106?focusedCommentId=139596#comment-139596
+        DocumentDTO docDTO = new DocumentDTO();
+        docDTO.setStudyProtocolIdentifier(pid);
+        docDTO.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.TSR));
+        docDTO.setFileName(StConverter.convertToSt("TSR.rtf"));
+        docDTO.setText(EdConverter.convertToEd("TSR".getBytes()));
+        remoteEjb.create(docDTO);
+    }
+    
 
     @Test
     public void testGet() throws Exception {

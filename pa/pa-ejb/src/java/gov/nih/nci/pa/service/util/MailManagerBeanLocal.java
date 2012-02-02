@@ -108,6 +108,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -145,6 +146,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -244,8 +246,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             StringBuffer sb = new StringBuffer(folderPath);
             StringBuffer sb2 = new StringBuffer(folderPath);
             StringBuffer sb3 = new StringBuffer(folderPath);
-            String rtfTsrFile = getTSRFile(studyProtocolIi, spDTO, sb2, EXTENSION_RTF);
-            String htmlTsrFile = getTSRFile(studyProtocolIi, spDTO, sb3, EXTENSION_HTML);
+            String rtfTsrFile = getTSRFile(studyProtocolIi, spDTO.getNciIdentifier(), sb2, EXTENSION_RTF);
+            String htmlTsrFile = getTSRFile(studyProtocolIi, spDTO.getNciIdentifier(), sb3, EXTENSION_HTML);
             String mailSubject = "";
 
             if (spDTO.isProprietaryTrial()) {
@@ -285,21 +287,25 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         }
     }
 
-    private String getTSRFile(Ii studyProtocolIi, StudyProtocolQueryDTO spDTO, StringBuffer sb, String format)
+    private String getTSRFile(Ii studyProtocolID, String nciIdentifier, StringBuffer pathToFile, String format)
         throws PAException {
 
         String tsrFile =
-            sb.append(File.separator).append(TSR).append(spDTO.getNciIdentifier().toString()).append(format).toString();
+            pathToFile.append(File.separator).append(TSR).append(nciIdentifier).append(format).toString();
         ByteArrayOutputStream tsrStream = null;
+        OutputStream tsrFileStream = null;
         try {
             if (StringUtils.equals(format, EXTENSION_RTF)) {
-                tsrStream = tsrReportGeneratorService.generateRtfTsrReport(studyProtocolIi);
+                tsrStream = tsrReportGeneratorService.generateRtfTsrReport(studyProtocolID);
             } else if (StringUtils.equals(format, EXTENSION_HTML)) {
-                tsrStream = tsrReportGeneratorService.generateHtmlTsrReport(studyProtocolIi);
+                tsrStream = tsrReportGeneratorService.generateHtmlTsrReport(studyProtocolID);
             }
-            tsrStream.writeTo(new FileOutputStream(tsrFile));
+            tsrFileStream = new FileOutputStream(tsrFile);
+            tsrStream.writeTo(tsrFileStream);
         } catch (Exception e) {
             throw new PAException("Exception occured while getting TSR Report to submitter", e);
+        } finally {
+            IOUtils.closeQuietly(tsrFileStream);
         }
         return tsrFile;
     }
@@ -735,8 +741,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             String xmlFile = getXmlFile(studyProtocolIi, spDTO, sb);
             StringBuffer sb2 = new StringBuffer(folderPath);
             StringBuffer sb3 = new StringBuffer(folderPath);
-            String rtfTsrFile = getTSRFile(studyProtocolIi, spDTO, sb2, EXTENSION_RTF);
-            String htmlTsrFile = getTSRFile(studyProtocolIi, spDTO, sb3, EXTENSION_HTML);
+            String rtfTsrFile = getTSRFile(studyProtocolIi, spDTO.getNciIdentifier(), sb2, EXTENSION_RTF);
+            String htmlTsrFile = getTSRFile(studyProtocolIi, spDTO.getNciIdentifier(), sb3, EXTENSION_HTML);
 
             String mailSubject = lookUpTableService.getPropertyValue("xml.subject");
             mailSubject = mailSubject.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());

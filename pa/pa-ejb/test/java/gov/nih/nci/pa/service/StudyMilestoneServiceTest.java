@@ -81,14 +81,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyMilestone;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.OnholdReasonCode;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
@@ -104,6 +112,7 @@ import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceBean;
 import gov.nih.nci.pa.service.util.MailManagerBeanLocal;
 import gov.nih.nci.pa.service.util.ProtocolQueryServiceBean;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceBean;
 import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
@@ -114,16 +123,21 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateUtil;
 import gov.nih.nci.pa.util.TestSchema;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * @author hreinhart
@@ -145,6 +159,11 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
     private final StudyInboxServiceLocal sis = new StudyInboxServiceBean();
     private final StudyOnholdServiceBean ohs = new StudyOnholdServiceBean();
     private final StudyProtocolServiceLocal sps = new StudyProtocolServiceBean();
+    
+    private final TSRReportGeneratorServiceRemote tsrReportGeneratorServiceRemote = mock(TSRReportGeneratorServiceRemote.class);
+    private final ProtocolQueryServiceLocal protocolQueryServiceLocal = mock(ProtocolQueryServiceLocal.class);
+    private final DocumentServiceLocal documentServiceLocal = mock(DocumentServiceLocal.class);
+    
 
     private Ii spIi;
     private Ii spAmendIi;
@@ -162,6 +181,10 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         bean.setStudyInboxService(sis);
         bean.setStudyOnholdService(ohs);
         bean.setStudyProtocolService(sps);
+        bean.setTsrReportGeneratorService(tsrReportGeneratorServiceRemote);
+        bean.setProtocolQueryService(protocolQueryServiceLocal);
+        bean.setDocumentService(documentServiceLocal);
+        
 
         mailSrc.setProtocolQueryService(new ProtocolQueryServiceBean());
         bean.setValidateAbstractions(false);
@@ -721,6 +744,49 @@ public class StudyMilestoneServiceTest extends AbstractHibernateTestCase {
         mailSrc.setTsrReportGeneratorService(tsrBean);
         String msg = "Trial Summary Report Sent Date' could not be recorded as sending the TSR report to the submitter  failed.";
         checkMilestoneFailure(dto, msg);
+    }
+    
+    @Test
+    public void attachTSRToTrialDocs() throws PAException, IOException {
+        final StudyMilestoneDTO dto = getMilestoneDTO(MilestoneCode.TRIAL_SUMMARY_SENT);
+        
+        StudyProtocolQueryDTO queryDTO = new StudyProtocolQueryDTO();
+        queryDTO.setAmendmentNumber("10");
+        queryDTO.setNciIdentifier("NCI_ID");
+        when(protocolQueryServiceLocal.getTrialSummaryByStudyProtocolId(anyLong())).thenReturn(queryDTO);
+        
+        ByteArrayOutputStream tsr = new ByteArrayOutputStream();
+        tsr.write("TSR RTF".getBytes());
+        when(tsrReportGeneratorServiceRemote.generateRtfTsrReport(dto.getStudyProtocolIdentifier())).thenReturn(tsr);
+                
+        when(documentServiceLocal.create(any(DocumentDTO.class))).thenAnswer(
+                new Answer() {
+                    @Override
+                    public Object answer(InvocationOnMock invocation)
+                            throws Throwable {
+                        DocumentDTO docDTO = (DocumentDTO) invocation
+                                .getArguments()[0];
+                        assertEquals(dto.getStudyProtocolIdentifier(),
+                                docDTO.getStudyProtocolIdentifier());
+                        assertEquals(
+                                CdConverter.convertToCd(DocumentTypeCode.TSR),
+                                docDTO.getTypeCode());
+                        assertEquals(
+                                "TSR RTF",
+                                new String(docDTO.getText().getData()));
+                        assertEquals(
+                                "TSR_NCI_ID_"
+                                        + DateFormatUtils
+                                                .format(new Date(),
+                                                        gov.nih.nci.pa.service.StudyMilestoneBeanLocal.DATE_FORMAT)
+                                        + "_A10.rtf", docDTO.getFileName()
+                                        .getValue());
+                        return null;
+                    }
+                });
+       
+        bean.attachTSRToTrialDocs(dto);        
+        verify(documentServiceLocal, times(1)).create(any(DocumentDTO.class));
     }
 
     private void checkMilestoneFailure(MilestoneCode milestone, String message) {

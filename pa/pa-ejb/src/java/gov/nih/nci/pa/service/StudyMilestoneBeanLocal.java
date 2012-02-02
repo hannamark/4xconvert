@@ -8,27 +8,36 @@ import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.StudyMilestone;
 import gov.nih.nci.pa.dto.AbstractionCompletionDTO;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
+import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.iso.convert.Converters;
 import gov.nih.nci.pa.iso.convert.StudyMilestoneConverter;
+import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.DocumentWorkflowStatusDTO;
 import gov.nih.nci.pa.iso.dto.StudyInboxDTO;
 import gov.nih.nci.pa.iso.dto.StudyMilestoneDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.iso.util.BlConverter;
 import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.EdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.IvlConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyMilestoneSortCriterion;
 import gov.nih.nci.pa.service.util.AbstractionCompletionServiceRemote;
 import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
+import gov.nih.nci.pa.service.util.ProtocolQueryServiceLocal;
+import gov.nih.nci.pa.service.util.TSRReportGeneratorServiceRemote;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 
+import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -44,6 +53,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.log4j.Logger;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
@@ -58,6 +69,13 @@ public class StudyMilestoneBeanLocal
     extends AbstractCurrentStudyIsoService<StudyMilestoneDTO, StudyMilestone, StudyMilestoneConverter>
     implements StudyMilestoneServicelocal {
     
+     /**
+     * Date format for TSR file names.
+     */
+    public static final String DATE_FORMAT = "yyyy-MM-dd-HHmm";
+
+    private static final Logger LOG = Logger.getLogger(StudyMilestoneBeanLocal.class);
+    
     /** TRIAL_SUMMARY_SENT stop search milestones. **/
     private static final Set<MilestoneCode> TSS_STOP_SEARCH = EnumSet.complementOf(EnumSet
         .of(MilestoneCode.TRIAL_SUMMARY_SENT, MilestoneCode.TRIAL_SUMMARY_FEEDBACK,
@@ -70,6 +88,9 @@ public class StudyMilestoneBeanLocal
     
     /** LATE_REJECTION_DATE stop search milestones. **/
     private static final Set<MilestoneCode> LRD_STOP_SEARCH = EnumSet.noneOf(MilestoneCode.class);
+    
+    private static final String TSR = "TSR_";
+    private static final String EXTENSION_RTF = ".rtf";
 
     @EJB
     private AbstractionCompletionServiceRemote abstractionCompletionService;
@@ -88,6 +109,15 @@ public class StudyMilestoneBeanLocal
     
     @EJB
     private StudyProtocolServiceLocal studyProtocolService;
+    
+    @EJB
+    private TSRReportGeneratorServiceRemote tsrReportGeneratorService;   
+    
+    @EJB
+    private ProtocolQueryServiceLocal protocolQueryService;
+    
+    @EJB 
+    private DocumentServiceLocal documentService;
     
     
     /** For testing purposes only. Set to false to bypass abstraction validations. */
@@ -116,8 +146,9 @@ public class StudyMilestoneBeanLocal
         updateRecordVerificationDates(resultDto);
         createReadyForTSRMilestone(resultDto);
         // Send TSR e-mail for the appropriate milestone
+        attachTSRToTrialDocs(workDto);
         sendTSREmail(workDto);
-        sendLateRejectionEmail(workDto);
+        sendLateRejectionEmail(workDto);                
         return resultDto;
     }
 
@@ -567,6 +598,59 @@ public class StudyMilestoneBeanLocal
             }
         }
     }
+    
+    /**
+     * Automatically attach TSRs to trial docs whenever a "TSR Sent Date" milestone is recorded.
+     * @param workDto
+     * @throws PAException
+     * @see https://tracker.nci.nih.gov/browse/PO-2106
+     */
+    void attachTSRToTrialDocs(StudyMilestoneDTO workDto)
+            throws PAException {
+        MilestoneCode milestoneCode = MilestoneCode.getByCode(CdConverter
+                .convertCdToString(workDto.getMilestoneCode()));
+        if ((MilestoneCode.TRIAL_SUMMARY_SENT.equals(milestoneCode))) {
+            try {
+                final Ii studyID = workDto.getStudyProtocolIdentifier();
+                StudyProtocolQueryDTO spDTO = protocolQueryService
+                        .getTrialSummaryByStudyProtocolId(IiConverter
+                                .convertToLong(studyID));
+                if (spDTO != null) {
+                    String amendNum = spDTO.getAmendmentNumber();
+                    String discriminator = "_"
+                            + (StringUtils.isBlank(amendNum) ? "O"
+                                    : ("A" + amendNum));
+                    final String nciID = spDTO.getNciIdentifier();
+                    String filename = TSR + nciID + "_"
+                            + DateFormatUtils.format(new Date(), DATE_FORMAT)
+                            + discriminator + EXTENSION_RTF;
+                    ByteArrayOutputStream tsrStream = tsrReportGeneratorService
+                            .generateRtfTsrReport(studyID);
+                    attachTSRToTrialDocs(workDto, filename, tsrStream);
+                }
+            } catch (Exception e) {                
+                throw new PAException("Unable to add TSR to the trial documents.", e);
+            }
+        }
+    }
+    
+
+    /**
+     * Automatically attach TSRs to trial docs whenever a "TSR Sent Date" milestone is recorded.
+     * @param workDto
+     * @param filename
+     * @param tsrStream
+     * @throws PAException 
+     */
+    void attachTSRToTrialDocs(StudyMilestoneDTO workDto,
+            String filename, ByteArrayOutputStream tsrStream) throws PAException {
+        DocumentDTO docDto = new DocumentDTO();
+        docDto.setStudyProtocolIdentifier(workDto.getStudyProtocolIdentifier());
+        docDto.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.TSR));
+        docDto.setText(EdConverter.convertToEd(tsrStream.toByteArray()));
+        docDto.setFileName(StConverter.convertToSt(filename));
+        documentService.create(docDto);        
+    }
 
     private boolean canTransition(DocumentWorkflowStatusCode dwStatus, DocumentWorkflowStatusCode newCode)
     throws PAException {
@@ -664,6 +748,50 @@ public class StudyMilestoneBeanLocal
      */
     public void setValidateAbstractions(boolean validateAbstractions) {
         this.validateAbstractions = validateAbstractions;
+    }
+
+    /**
+     * @return the tsrReportGeneratorService
+     */
+    public TSRReportGeneratorServiceRemote getTsrReportGeneratorService() {
+        return tsrReportGeneratorService;
+    }
+
+    /**
+     * @param tsrReportGeneratorService the tsrReportGeneratorService to set
+     */
+    public void setTsrReportGeneratorService(
+            TSRReportGeneratorServiceRemote tsrReportGeneratorService) {
+        this.tsrReportGeneratorService = tsrReportGeneratorService;
+    }
+
+    /**
+     * @return the protocolQueryService
+     */
+    public ProtocolQueryServiceLocal getProtocolQueryService() {
+        return protocolQueryService;
+    }
+
+    /**
+     * @param protocolQueryService the protocolQueryService to set
+     */
+    public void setProtocolQueryService(
+            ProtocolQueryServiceLocal protocolQueryService) {
+        this.protocolQueryService = protocolQueryService;
+    }
+
+    /**
+     * @return the documentService
+     */
+    public DocumentServiceLocal getDocumentService() {
+        return documentService;
+    }
+
+    /**
+     * @param documentService the documentService to set
+     */
+    public void setDocumentService(DocumentServiceLocal documentService) {
+        this.documentService = documentService;
     }
 
 }

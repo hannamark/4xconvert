@@ -267,6 +267,7 @@ public class DocumentBeanLocal extends AbstractStudyIsoService<DocumentDTO, Docu
         List<DocumentDTO> resultList = getDocumentsByStudyProtocol(docDTO.getStudyProtocolIdentifier());
         for (DocumentDTO check : resultList) {
             if (!StringUtils.equalsIgnoreCase(check.getTypeCode().getCode(), DocumentTypeCode.OTHER.getCode())
+                    && !StringUtils.equalsIgnoreCase(check.getTypeCode().getCode(), DocumentTypeCode.TSR.getCode())
                     && StringUtils.equals(check.getTypeCode().getCode(), docDTO.getTypeCode().getCode())) {
                 throw new PADuplicateException("Document with selected type already exists on the trial.");
             }
