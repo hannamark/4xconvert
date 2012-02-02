@@ -601,17 +601,17 @@ public class StudyMilestoneBeanLocal
     
     /**
      * Automatically attach TSRs to trial docs whenever a "TSR Sent Date" milestone is recorded.
-     * @param workDto
+     * @param studyMilestoneDTO
      * @throws PAException
      * @see https://tracker.nci.nih.gov/browse/PO-2106
      */
-    void attachTSRToTrialDocs(StudyMilestoneDTO workDto)
+    void attachTSRToTrialDocs(StudyMilestoneDTO studyMilestoneDTO)
             throws PAException {
         MilestoneCode milestoneCode = MilestoneCode.getByCode(CdConverter
-                .convertCdToString(workDto.getMilestoneCode()));
+                .convertCdToString(studyMilestoneDTO.getMilestoneCode()));
         if ((MilestoneCode.TRIAL_SUMMARY_SENT.equals(milestoneCode))) {
             try {
-                final Ii studyID = workDto.getStudyProtocolIdentifier();
+                final Ii studyID = studyMilestoneDTO.getStudyProtocolIdentifier();
                 StudyProtocolQueryDTO spDTO = protocolQueryService
                         .getTrialSummaryByStudyProtocolId(IiConverter
                                 .convertToLong(studyID));
@@ -626,7 +626,7 @@ public class StudyMilestoneBeanLocal
                             + discriminator + EXTENSION_RTF;
                     ByteArrayOutputStream tsrStream = tsrReportGeneratorService
                             .generateRtfTsrReport(studyID);
-                    attachTSRToTrialDocs(workDto, filename, tsrStream);
+                    attachTSRToTrialDocs(studyMilestoneDTO, filename, tsrStream);
                 }
             } catch (Exception e) {                
                 throw new PAException("Unable to add TSR to the trial documents.", e);
@@ -637,15 +637,15 @@ public class StudyMilestoneBeanLocal
 
     /**
      * Automatically attach TSRs to trial docs whenever a "TSR Sent Date" milestone is recorded.
-     * @param workDto
+     * @param studyMilestoneDTO
      * @param filename
      * @param tsrStream
      * @throws PAException 
      */
-    void attachTSRToTrialDocs(StudyMilestoneDTO workDto,
+    void attachTSRToTrialDocs(StudyMilestoneDTO studyMilestoneDTO,
             String filename, ByteArrayOutputStream tsrStream) throws PAException {
         DocumentDTO docDto = new DocumentDTO();
-        docDto.setStudyProtocolIdentifier(workDto.getStudyProtocolIdentifier());
+        docDto.setStudyProtocolIdentifier(studyMilestoneDTO.getStudyProtocolIdentifier());
         docDto.setTypeCode(CdConverter.convertToCd(DocumentTypeCode.TSR));
         docDto.setText(EdConverter.convertToEd(tsrStream.toByteArray()));
         docDto.setFileName(StConverter.convertToSt(filename));
