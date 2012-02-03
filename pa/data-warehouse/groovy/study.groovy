@@ -345,6 +345,19 @@ destinationConnection.execute("""UPDATE DW_STUDY SET MASKING_ALLOCATION_CODE='Ra
 destinationConnection.execute("""UPDATE DW_STUDY SET MASKING_ALLOCATION_CODE='Non-Randomized Trial'    
 	where MASKING_ALLOCATION_CODE='NON_RANDOMIZED_TRIAL'""")
 	
-	
-	
+destinationConnection.execute("""UPDATE DW_STUDY SET CLASSIFICATION_CODE='Efficacy'    
+	where CLASSIFICATION_CODE='EFFICACY'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET CLASSIFICATION_CODE='Pharmacokinetics'    
+	where CLASSIFICATION_CODE='PHARMACOKINETICS'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET CLASSIFICATION_CODE='Pharmacodynamics'    
+	where CLASSIFICATION_CODE='PHARMACODYNAMICS'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET CLASSIFICATION_CODE='Safety/Efficacy'    
+	where CLASSIFICATION_CODE='SAFETY_OR_EFFICACY'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET CLASSIFICATION_CODE='Bio-availability'    
+	where CLASSIFICATION_CODE='BIO_AVAILABILITY'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET CLASSIFICATION_CODE='Bio-equivalence'    
+	where CLASSIFICATION_CODE='BIO_EQUIVALENCE'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET CLASSIFICATION_CODE='Pharmacokinetics/dynamics'    
+	where CLASSIFICATION_CODE='PHARMACOKINETICS_OR_DYNAMICS'""")
+
 		
