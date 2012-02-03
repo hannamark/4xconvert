@@ -360,4 +360,27 @@ destinationConnection.execute("""UPDATE DW_STUDY SET CLASSIFICATION_CODE='Bio-eq
 destinationConnection.execute("""UPDATE DW_STUDY SET CLASSIFICATION_CODE='Pharmacokinetics/dynamics'    
 	where CLASSIFICATION_CODE='PHARMACOKINETICS_OR_DYNAMICS'""")
 
+destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='In Review'    
+	where CURRENT_TRIAL_STATUS='IN_REVIEW'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Approved'    
+	where CURRENT_TRIAL_STATUS='APPROVED'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Active'    
+	where CURRENT_TRIAL_STATUS='ACTIVE'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Enrolling by Invitation'    
+	where CURRENT_TRIAL_STATUS='ENROLLING_BY_INVITATION'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Closed to Accrual'    
+	where CURRENT_TRIAL_STATUS='CLOSED_TO_ACCRUAL'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Closed to Accrual and Intervention'    
+	where CURRENT_TRIAL_STATUS='CLOSED_TO_ACCRUAL_AND_INTERVENTION'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Temporarily Closed to Accrual'    
+	where CURRENT_TRIAL_STATUS='TEMPORARILY_CLOSED_TO_ACCRUAL'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Temporarily Closed to Accrual and Intervention'    
+	where CURRENT_TRIAL_STATUS='TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Withdrawn'    
+	where CURRENT_TRIAL_STATUS='WITHDRAWN'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Administratively Complete'    
+	where CURRENT_TRIAL_STATUS='ADMINISTRATIVELY_COMPLETE'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Complete'    
+	where CURRENT_TRIAL_STATUS='COMPLETE'""")
+		
 		
