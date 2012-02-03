@@ -191,7 +191,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setTargetAccrualNumber(IVLINTTransformer.INSTANCE.toDto(input.getTargetAccrualNumber()));
         
         //DSETTEL
-        result.setTrialRecordOwners(DSETTELTransformer.INSTANCE.toDto(input.getTrialRecordOwners()));
+        result.setRecordOwners(DSETTELTransformer.INSTANCE.toDto(input.getRecordOwners()));
         return result;
     }
 
@@ -259,7 +259,7 @@ public abstract class AbstractStudyProtocolTransformer<STDP extends StudyProtoco
         result.setTargetAccrualNumber(IVLINTTransformer.INSTANCE.toXml(input.getTargetAccrualNumber()));
         
         // DSET<Tel>
-        result.setTrialRecordOwners(DSETTELTransformer.INSTANCE.toXml(input.getTrialRecordOwners()));
+        result.setRecordOwners(DSETTELTransformer.INSTANCE.toXml(input.getRecordOwners()));
 
         return result;
     }

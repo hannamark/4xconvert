@@ -157,7 +157,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         result.setTargetAccrualNumber(new IVLINTTransformerTest().makeDtoSimple());
         
         // DSET<Tel>
-        result.setTrialRecordOwners(new DSETTelTransformerTest().makeDtoSimple());
+        result.setRecordOwners(new DSETTelTransformerTest().makeDtoSimple());
 
         return result;
     }
@@ -213,7 +213,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         result.setTargetAccrualNumber(new IVLINTTransformerTest().makeXmlSimple());
 
         // DSET<Tel>
-        result.setTrialRecordOwners(new DSETTelTransformerTest().makeXmlSimple());
+        result.setRecordOwners(new DSETTelTransformerTest().makeXmlSimple());
         
         return result;
     }
@@ -253,7 +253,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         new CDTransformerTest().verifyDtoSimple(x.getStatusCode());
         //DSET
         new DSETIITransformerTest().verifyDtoSimple(x.getSecondaryIdentifiers());
-        new DSETTelTransformerTest().verifyDtoSimple(x.getTrialRecordOwners());
+        new DSETTelTransformerTest().verifyDtoSimple(x.getRecordOwners());
         //II
         new IITransformerTest().verifyDtoSimple(x.getIdentifier());
         //TS
@@ -302,7 +302,7 @@ public class StudyProtocolTransformerTest extends AbstractTransformerTestBase<St
         
         //DSET
         new DSETIITransformerTest().verifyXmlSimple(x.getSecondaryIdentifiers());
-        new DSETTelTransformerTest().verifyXmlSimple(x.getTrialRecordOwners());
+        new DSETTelTransformerTest().verifyXmlSimple(x.getRecordOwners());
         
         //II
         new IITransformerTest().verifyXmlSimple(x.getIdentifier());

@@ -149,10 +149,10 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public void changeOwnership(Ii id, DSet<Tel> trialRecordOwners) throws PAException {
+    public void changeOwnership(Ii id, DSet<Tel> recordOwners) throws PAException {
         try {
             GridSecurityJNDIServiceLocator.newInstance().getStudyProtocolService().changeOwnership(id, 
-                    trialRecordOwners);
+                    recordOwners);
         } catch (PAException pae) {
             throw pae;
         } catch (Exception e) {

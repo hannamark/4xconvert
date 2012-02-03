@@ -198,9 +198,9 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
 		// this request, we also need to change the trial's record owner
 		// from the default one (calling grid user) to the specified one (or
 		// multiple ones).
-		if (studyProtocolDTO.getTrialRecordOwners() != null) {
+		if (studyProtocolDTO.getRecordOwners() != null) {
 			studyProtService.changeOwnership(protocolID,
-					studyProtocolDTO.getTrialRecordOwners());
+					studyProtocolDTO.getRecordOwners());
 		}
 	}
 

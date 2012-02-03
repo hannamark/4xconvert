@@ -129,7 +129,7 @@
                     <xs:element name="proprietaryTrialIndicator" type="ISO:BL" />
                     <xs:element name="ctgovXmlRequiredIndicator" type="ISO:BL" />
                     <xs:element name="summary4AnatomicSites" type="ISO:DSET_CD" />
-                    <xs:element name="trialRecordOwners" type="ISO:DSET_TEL" />
+                    <xs:element name="recordOwners" type="ISO:DSET_TEL" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
