@@ -305,7 +305,7 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
      * {@inheritDoc}
      */
     @Override
-    public void changeOwnership(Ii id, DSet<Tel> trialRecordOwners)
+    public void changeOwnership(Ii id, DSet<Tel> recordOwners)
             throws PAException {
     }
 

@@ -103,7 +103,7 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     //once the AbstractStudyProtocolDTO owns the SecondaryIdentifiers.
     private DSet<Ii> secondaryIdentifiers;
     private DSet<Cd> summary4AnatomicSites;
-    private DSet<Tel> trialRecordOwners;
+    private DSet<Tel> recordOwners;
     private Bl expandedAccessIndicator;
     private Bl reviewBoardApprovalRequiredIndicator;
     private St publicDescription;
@@ -403,17 +403,17 @@ public class StudyProtocolDTO extends AbstractStudyProtocolDTO {
     }
 
     /**
-     * @return the trialRecordOwners
+     * @return the recordOwners
      */
-    public DSet<Tel> getTrialRecordOwners() {
-        return trialRecordOwners;
+    public DSet<Tel> getRecordOwners() {
+        return recordOwners;
     }
 
     /**
-     * @param trialRecordOwners the trialRecordOwners to set
+     * @param recordOwners the recordOwners to set
      */
-    public void setTrialRecordOwners(DSet<Tel> trialRecordOwners) {
-        this.trialRecordOwners = trialRecordOwners;
+    public void setRecordOwners(DSet<Tel> recordOwners) {
+        this.recordOwners = recordOwners;
     }
 
 }

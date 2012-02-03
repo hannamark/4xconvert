@@ -147,7 +147,7 @@ public class StudyProtocolConverter {
         }
         studyProtocolDTO.setSummary4AnatomicSites(AnatomicSiteConverter
                 .convertToDSet(studyProtocol.getSummary4AnatomicSites()));
-        studyProtocolDTO.setTrialRecordOwners(RegistryUserConverter.convertToDSet(studyProtocol.getStudyOwners()));
+        studyProtocolDTO.setRecordOwners(RegistryUserConverter.convertToDSet(studyProtocol.getStudyOwners()));
         studyProtocolDTO.setExpandedAccessIndicator(
                 BlConverter.convertToBl(studyProtocol.getExpandedAccessIndicator()));
         studyProtocolDTO.setReviewBoardApprovalRequiredIndicator(

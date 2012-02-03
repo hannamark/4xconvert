@@ -225,13 +225,13 @@ public interface StudyProtocolService {
     /**
      * This method is to use to change the ownership of the studyProtocol record.
      * @param id protocol identifier
-     * @param trialRecordOwners a set of record owners identified by email addresses. Null is treated as "no change"; 
+     * @param recordOwners a set of record owners identified by email addresses. Null is treated as "no change"; 
      * an empty set will remove all existing ownerships.
      * @throws PAException on error
-     * @see StudyProtocolDTO#getTrialRecordOwners()
+     * @see StudyProtocolDTO#getRecordOwners()
      * @see https://tracker.nci.nih.gov/browse/PO-3441
      */
-    void changeOwnership(Ii id, DSet<Tel> trialRecordOwners) throws PAException;
+    void changeOwnership(Ii id, DSet<Tel> recordOwners) throws PAException;
     
     /**
      * This method is to use to change the ownership of the studyProtocol.
