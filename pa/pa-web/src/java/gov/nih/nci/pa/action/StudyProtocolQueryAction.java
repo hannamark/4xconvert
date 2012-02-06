@@ -281,25 +281,29 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
     }
 
     /**
-     * Super abstractors have a button that does both check-outs at the same time.
+     * Super abstractors have a button that does both check-outs at the same
+     * time.
+     * 
      * @param spqDTO
      * @param suAbs
      * @see https://tracker.nci.nih.gov/browse/PO-3966
      */
     private void setSuperAbstractorCommands(StudyProtocolQueryDTO spqDTO,
             boolean suAbs) {
-        // no need to display "Admin/Scientific Checkout" button if the trial has already been checked out 
+        // no need to display "Admin/Scientific Checkout" button if the trial
+        // has already been checked out
         // for both uses by this super abstractor.
         if (spqDTO.getAdminCheckout().getCheckoutBy() != null
-                && spqDTO.getScientificCheckout().getCheckoutBy() != null) {
-            if (spqDTO.getAdminCheckout().getCheckoutBy()
-                    .equalsIgnoreCase(UsernameHolder.getUser())
-                    && spqDTO.getScientificCheckout().getCheckoutBy()
-                            .equalsIgnoreCase(UsernameHolder.getUser())) {
-                return;
-            }
+                && spqDTO.getScientificCheckout().getCheckoutBy() != null
+                && spqDTO.getAdminCheckout().getCheckoutBy()
+                        .equalsIgnoreCase(UsernameHolder.getUser())
+                && spqDTO.getScientificCheckout().getCheckoutBy()
+                        .equalsIgnoreCase(UsernameHolder.getUser())) {
+
+            return;
+
         }
-        
+
         if (suAbs) {
             checkoutCommands.add("adminAndScientificCheckOut");
         }
