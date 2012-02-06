@@ -18,6 +18,7 @@
             <transaction src="${basedir}/sql/families.sql"/>
             <transaction src="${basedir}/sql/generic_contact.sql"/>
             <transaction src="${basedir}/sql/study.sql"/>
+            <transaction src="${basedir}/sql/amendment.sql"/>
             <transaction src="${basedir}/sql/anatomic_site.sql"/>
             <transaction src="${basedir}/sql/biomarker.sql"/>
             <transaction src="${basedir}/sql/disease.sql"/>
@@ -38,6 +39,8 @@
         <groovy src="groovy/generic_contact.groovy"/>
         <echo message = "Running study"/>
         <groovy src="groovy/study.groovy"/>
+        <echo message = "Running amendment"/>
+        <groovy src="groovy/amendment.groovy"/>
         <echo message = "Running anatomic_site"/>
         <groovy src="groovy/anatomic_site.groovy"/>
         <echo message = "Running biomarker"/>
