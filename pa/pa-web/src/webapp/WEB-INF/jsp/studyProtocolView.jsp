@@ -135,7 +135,11 @@
                             <ul class="btnrow">
                                 <pa:studyUniqueToken/>
                                 <s:set name="checkoutCommands" scope="page" value="%{checkoutCommands}" /> 
-                                <c:forEach items="${checkoutCommands}" var="command">
+                                <c:forEach items="${checkoutCommands}" var="command" varStatus="vstat">
+                                    <c:if test="${vstat.index==2}">
+                                        <!-- Force the 3rd button onto a separate row: https://tracker.nci.nih.gov/browse/PO-3966 -->
+                                        </ul></del><br/><del class="btnwrapper"><ul class="btnrow">                                        
+                                    </c:if>
                                     <li>
                                         <a href="#" class="btn" onclick="handleAction('${command}')">
                                             <span class="btn_img"><span class="save"><fmt:message key="studyProtocolView.button.${command}" /></span></span>

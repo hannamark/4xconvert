@@ -277,6 +277,32 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
         boolean suAbs = BooleanUtils.toBoolean((Boolean) session.getAttribute(Constants.IS_SU_ABSTRACTOR));
         setAdminCheckoutCommands(spqDTO, suAbs);
         setScientificCheckoutCommands(spqDTO, suAbs);
+        setSuperAbstractorCommands(spqDTO, suAbs);
+    }
+
+    /**
+     * Super abstractors have a button that does both check-outs at the same time.
+     * @param spqDTO
+     * @param suAbs
+     * @see https://tracker.nci.nih.gov/browse/PO-3966
+     */
+    private void setSuperAbstractorCommands(StudyProtocolQueryDTO spqDTO,
+            boolean suAbs) {
+        // no need to display "Admin/Scientific Checkout" button if the trial has already been checked out 
+        // for both uses by this super abstractor.
+        if (spqDTO.getAdminCheckout().getCheckoutBy() != null
+                && spqDTO.getScientificCheckout().getCheckoutBy() != null) {
+            if (spqDTO.getAdminCheckout().getCheckoutBy()
+                    .equalsIgnoreCase(UsernameHolder.getUser())
+                    && spqDTO.getScientificCheckout().getCheckoutBy()
+                            .equalsIgnoreCase(UsernameHolder.getUser())) {
+                return;
+            }
+        }
+        
+        if (suAbs) {
+            checkoutCommands.add("adminAndScientificCheckOut");
+        }
     }
 
     private void setAdminCheckoutCommands(StudyProtocolQueryDTO spqDTO, boolean suAbs) {
@@ -342,6 +368,28 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
     }
     
     /**
+     * Forced administrative and scientific check-out for super abstractors.
+     * @return
+     * @throws PAException
+     */
+    public String adminAndScientificCheckOut() throws PAException {
+        HttpSession session = ServletActionContext.getRequest().getSession();
+        boolean suAbs = BooleanUtils.toBoolean((Boolean) session
+                .getAttribute(Constants.IS_SU_ABSTRACTOR));
+        if (!suAbs)
+            throw new PAException(
+                    "Admin & Scientific forced check-out is only available to super abstractors.");
+        // forcibly check in, in case a different user has this trial checked
+        // out.
+        adminCheckIn();
+        scientificCheckIn();
+        // now check out.
+        adminCheckOut();
+        scientificCheckOut();
+        return SHOW_VIEW_REFRESH;
+    }
+    
+    /**
      * Scientific check-out.
      * @return The result name
      * @throws PAException exception
@@ -391,14 +439,20 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
 
     private String checkIn(CheckOutType checkOutType) throws PAException {
         try {
-            StudyProtocolQueryDTO spqDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(studyProtocolId);
-            Long checkoutId =
-                    (checkOutType == CheckOutType.ADMINISTRATIVE) ? spqDTO.getAdminCheckout().getCheckoutId() : spqDTO
-                        .getScientificCheckout().getCheckoutId();
+            StudyProtocolQueryDTO spqDTO = protocolQueryService
+                    .getTrialSummaryByStudyProtocolId(studyProtocolId);
+            Long checkoutId = (checkOutType == CheckOutType.ADMINISTRATIVE) ? (spqDTO
+                    .getAdminCheckout() != null ? spqDTO.getAdminCheckout()
+                    .getCheckoutId() : null)
+                    : (spqDTO.getScientificCheckout() != null ? spqDTO
+                            .getScientificCheckout().getCheckoutId() : null);
             if (checkoutId != null) {
-                studyCheckoutService.delete(IiConverter.convertToIi(checkoutId));
-                String msg = getText("studyProtocol.trial.checkIn." + checkOutType.name());
-                ServletActionContext.getRequest().setAttribute(Constants.SUCCESS_MESSAGE, msg);
+                studyCheckoutService
+                        .delete(IiConverter.convertToIi(checkoutId));
+                String msg = getText("studyProtocol.trial.checkIn."
+                        + checkOutType.name());
+                ServletActionContext.getRequest().setAttribute(
+                        Constants.SUCCESS_MESSAGE, msg);
             }
         } catch (PAException e) {
             addActionError(e.getLocalizedMessage());
