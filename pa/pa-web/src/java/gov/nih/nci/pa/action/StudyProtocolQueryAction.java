@@ -369,16 +369,17 @@ public class StudyProtocolQueryAction extends ActionSupport implements Preparabl
     
     /**
      * Forced administrative and scientific check-out for super abstractors.
-     * @return
-     * @throws PAException
+     * @return The result name
+     * @throws PAException exception
      */
     public String adminAndScientificCheckOut() throws PAException {
         HttpSession session = ServletActionContext.getRequest().getSession();
         boolean suAbs = BooleanUtils.toBoolean((Boolean) session
                 .getAttribute(Constants.IS_SU_ABSTRACTOR));
-        if (!suAbs)
+        if (!suAbs) {
             throw new PAException(
                     "Admin & Scientific forced check-out is only available to super abstractors.");
+        }
         // forcibly check in, in case a different user has this trial checked
         // out.
         adminCheckIn();
