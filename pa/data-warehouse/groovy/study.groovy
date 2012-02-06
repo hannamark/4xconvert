@@ -382,5 +382,14 @@ destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Admin
 	where CURRENT_TRIAL_STATUS='ADMINISTRATIVELY_COMPLETE'""")
 destinationConnection.execute("""UPDATE DW_STUDY SET CURRENT_TRIAL_STATUS='Complete'    
 	where CURRENT_TRIAL_STATUS='COMPLETE'""")
+
+destinationConnection.execute("""UPDATE DW_STUDY SET INTERVENTIONAL_MODEL='Single Group'    
+	where INTERVENTIONAL_MODEL='SINGLE_GROUP'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET INTERVENTIONAL_MODEL='Parallel'    
+	where INTERVENTIONAL_MODEL='PARALLEL'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET INTERVENTIONAL_MODEL='Cross-over'    
+	where INTERVENTIONAL_MODEL='CROSSOVER'""")
+destinationConnection.execute("""UPDATE DW_STUDY SET INTERVENTIONAL_MODEL='Factorial'    
+	where INTERVENTIONAL_MODEL='FACTORIAL'""")
 		
 		
