@@ -5,12 +5,13 @@ package gov.nih.nci.pa.action;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 
 import java.util.List;
+
+import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -75,7 +76,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
         spqAction.setStudyProtocolId(1L);
         assertEquals("view", spqAction.view());
         List<String> commands = spqAction.getCheckoutCommands();
-        assertEquals(2, commands.size());
+        assertEquals(3, commands.size());
         assertTrue(commands.contains("adminCheckOut"));
         assertTrue(commands.contains("scientificCheckOut"));
     }
@@ -99,6 +100,33 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
         spqAction.setStudyProtocolId(1L);
         assertEquals("viewRefresh", spqAction.adminCheckOut());
     }
+    
+    /**
+     * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#adminAndScientificCheckOut()}.
+     * @throws PAException 
+     */
+    @Test
+    public void testAdminAndScientificCheckOut() throws PAException {
+        spqAction.setStudyProtocolId(1L);
+        assertEquals("viewRefresh", spqAction.adminAndScientificCheckOut());
+    }
+    
+    /**
+     * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#adminAndScientificCheckOut()}.
+     * @throws PAException 
+     */
+    @Test
+    public void testAdminAndScientificCheckOutFailure() throws PAException {
+        getSession().removeAttribute(Constants.IS_SU_ABSTRACTOR);
+        spqAction.setStudyProtocolId(1L);
+        try {
+            spqAction.adminAndScientificCheckOut();
+            Assert.fail("Expected an exception, because the user is not a super abstractor.");
+        } catch (PAException e) {
+        }
+
+    }
+    
 
     /**
      * Test method for {@link gov.nih.nci.pa.action.StudyProtocolQueryAction#adminCheckOut()}.
