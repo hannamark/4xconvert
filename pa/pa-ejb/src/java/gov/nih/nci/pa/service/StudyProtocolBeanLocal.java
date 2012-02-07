@@ -137,6 +137,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.search.StudyProtocolBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.StudyProtocolSortCriterion;
 import gov.nih.nci.pa.service.util.CSMUserService;
+import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.service.util.RegistryUserServiceLocal;
 import gov.nih.nci.pa.util.ISOUtil;
@@ -155,6 +156,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -171,6 +173,7 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.jboss.annotation.IgnoreDependency;
 import org.joda.time.DateMidnight;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
@@ -194,6 +197,10 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     
     @EJB
     private RegistryUserServiceLocal registryUserService;
+    
+    @EJB
+    @IgnoreDependency
+    private MailManagerServiceLocal mailManagerService;    
     
     private final PAServiceUtils paServiceUtils = new PAServiceUtils();
 
@@ -704,25 +711,56 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
                 registryUserService.removeOwnership(user.getId(),
                         studyProtocolId);
             }
-            if (owners.getItem() != null) {
-                for (Tel tel : owners.getItem()) {
-                    String email = PAUtil.getEmail(tel);
-                    if (!PAUtil.isValidEmail(email)) {
-                        throw new PAException(
-                                "A trial record owner must be identified by a valid email address.");
-                    }
-                    Collection<RegistryUser> users = registryUserService
-                            .getLoginNamesByEmailAddress(email);
-                    if (CollectionUtils.isEmpty(users)) {
-                        throw new PAException(
-                                "Unable to find a registry user that could be identified by this email address: "
-                                        + email);
-                    }
-                    for (RegistryUser user : users) {
-                        registryUserService.assignOwnership(user.getId(),
-                                studyProtocolId);
-                    }
+            final Set<Tel> telecomAddrs = owners.getItem();
+            if (telecomAddrs != null) {
+                setTrialOwners(studyProtocolId, telecomAddrs);
+            }
+        }
+    }
+
+    /**
+     * @param studyProtocolId
+     * @param telecomAddrs
+     * @throws PAException
+     */
+    private void setTrialOwners(Long studyProtocolId,
+            final Set<Tel> telecomAddrs) throws PAException {
+        Collection<String> unmatchedEmails = new ArrayList<String>();
+        for (Tel tel : telecomAddrs) {
+            String email = PAUtil.getEmail(tel);
+            if (!PAUtil.isValidEmail(email)) {
+                unmatchedEmails.add(email);
+                continue;
+            }
+            Collection<RegistryUser> users = registryUserService
+                    .getLoginNamesByEmailAddress(email);
+            if (CollectionUtils.isEmpty(users)) {
+                unmatchedEmails.add(email);
+            } else {
+                for (RegistryUser user : users) {
+                    registryUserService.assignOwnership(user.getId(),
+                            studyProtocolId);
                 }
+            }
+        }
+        handleUnmatchedEmails(studyProtocolId, unmatchedEmails);
+    }
+
+    /**
+     * Sends a warning email to CTRO telling about unmatched trial record owners.
+     * @param unmatchedEmails
+     */
+    private void handleUnmatchedEmails(Long studyProtocolId,
+            Collection<String> emails) {
+        if (!emails.isEmpty()) {
+            try {
+                StudyProtocolDTO studyDTO = getStudyProtocolById(studyProtocolId);
+                mailManagerService.sendUnidentifiableOwnerEmail(
+                        studyProtocolId, emails,
+                        studyDTO.getUserLastCreated() != null ? studyDTO
+                                .getUserLastCreated().getValue() : "");
+            } catch (Exception e) {
+                LOG.error("Unable to send an email to CTRO", e);
             }
         }
     }
@@ -865,5 +903,20 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      */
     public void setRegistryUserService(RegistryUserServiceLocal registryUserService) {
         this.registryUserService = registryUserService;
+    }
+
+
+    /**
+     * @return the mailManagerService
+     */
+    public MailManagerServiceLocal getMailManagerService() {
+        return mailManagerService;
+    }
+
+    /**
+     * @param mailManagerService the mailManagerService to set
+     */
+    public void setMailManagerService(MailManagerServiceLocal mailManagerService) {
+        this.mailManagerService = mailManagerService;
     }
 }

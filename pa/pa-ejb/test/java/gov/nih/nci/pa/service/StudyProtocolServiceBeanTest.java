@@ -85,6 +85,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -130,6 +131,7 @@ import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.util.CSMUserService;
 import gov.nih.nci.pa.service.util.LookUpTableServiceRemote;
+import gov.nih.nci.pa.service.util.MailManagerServiceLocal;
 import gov.nih.nci.pa.service.util.MockPAServiceUtils;
 import gov.nih.nci.pa.service.util.MockRegistryUserServiceBean;
 import gov.nih.nci.pa.service.util.RegistryUserServiceBean;
@@ -171,7 +173,8 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
     private final StudyProtocolBeanLocal bean = new StudyProtocolBeanLocal();
     private final StudyProtocolServiceLocal remoteEjb = bean;
     
-    private final RegistryUserServiceBean registryService = mock(MockRegistryUserServiceBean.class);    
+    private final RegistryUserServiceBean registryService = mock(MockRegistryUserServiceBean.class);
+    private final MailManagerServiceLocal mailManagerServiceLocal = mock(MailManagerServiceLocal.class);
         
     
     @Before
@@ -190,6 +193,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         PaRegistry.getInstance().setServiceLocator(paRegSvcLoc);
         
         bean.setRegistryUserService(registryService);
+        bean.setMailManagerService(mailManagerServiceLocal);
         
     }
 
@@ -383,11 +387,15 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 
 	/**
 	 * @return
+	 * @throws PAException 
 	 */
-	private Ii createProtocolID() {
-		Ii ii = new Ii();
-		ii.setExtension(Long.MAX_VALUE + "");
-		ii.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+	private Ii createProtocolID() throws PAException {
+        createStudyProtocols(1, PAConstants.DCP_ORG_NAME, "DCP-1", false);
+        Ii ii = new Ii();
+        ii.setRoot(IiConverter.DCP_STUDY_PROTOCOL_ROOT);
+        ii.setExtension("DCP-1");
+        StudyProtocolDTO spDTO = remoteEjb.getStudyProtocol(ii);    
+        ii = spDTO.getIdentifier();
 		return ii;
 	}
 
@@ -401,8 +409,9 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 	}
 
 	@Test
-	public void changeOwnershipFailure() throws Exception {
-		Ii ii = createProtocolID();
+	public void changeOwnershipFailure() throws Exception {	    
+        Ii ii = createProtocolID();
+        
 		DSet<Tel> owners = createDSetTelEmail();
 
 		when(registryService.getAllTrialOwners(any(Long.class))).thenReturn(
@@ -411,37 +420,36 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 				registryService
 						.getLoginNamesByEmailAddress("username@nci.nih.gov"))
 				.thenReturn(new ArrayList<RegistryUser>());
-		try {
-			remoteEjb.changeOwnership(ii, owners);
-			fail();
-		} catch (PAException e) {
-		}
+		
+		remoteEjb.changeOwnership(ii, owners);		
 		verify(registryService, never()).assignOwnership(Long.MIN_VALUE,
 				IiConverter.convertToLong(ii));
+		verify(mailManagerServiceLocal, times(1)).sendUnidentifiableOwnerEmail(eq(IiConverter.convertToLong(ii)), 
+		        eq(Arrays.asList("username@nci.nih.gov")), eq(""));
 
 	}
 
 	@Test
 	public void changeOwnershipFailureBadEmail() throws Exception {
-		Ii ii = createProtocolID();
+        Ii ii = createProtocolID();
 
-		DSet<Tel> owners = new DSet<Tel>();
-		owners.setItem(new HashSet<Tel>());
-		Tel tel = new Tel();
-		tel.setValue(new URI("mailto:bademail"));
-		owners.getItem().add(tel);
+        DSet<Tel> owners = new DSet<Tel>();
+        owners.setItem(new HashSet<Tel>());
+        Tel tel = new Tel();
+        tel.setValue(new URI("mailto:bademail"));
+        owners.getItem().add(tel);
 
-		when(registryService.getAllTrialOwners(any(Long.class))).thenReturn(
-				new HashSet<RegistryUser>());
-		try {
-			remoteEjb.changeOwnership(ii, owners);
-			fail();
-		} catch (PAException e) {
-		}
-		verify(registryService, never()).getLoginNamesByEmailAddress(
-				anyString());
-		verify(registryService, never()).assignOwnership(Long.MIN_VALUE,
-				IiConverter.convertToLong(ii));
+        when(registryService.getAllTrialOwners(any(Long.class))).thenReturn(
+                new HashSet<RegistryUser>());
+
+        remoteEjb.changeOwnership(ii, owners);
+
+        verify(registryService, never()).getLoginNamesByEmailAddress(
+                anyString());
+        verify(registryService, never()).assignOwnership(Long.MIN_VALUE,
+                IiConverter.convertToLong(ii));
+        verify(mailManagerServiceLocal, times(1)).sendUnidentifiableOwnerEmail(eq(IiConverter.convertToLong(ii)), 
+                eq(Arrays.asList("bademail")), eq(""));        
 
 	}
     

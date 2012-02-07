@@ -83,6 +83,7 @@ import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 import gov.nih.nci.pa.service.PAException;
 
 import java.io.File;
+import java.util.Collection;
 
 /**
  * @author Bala Nair
@@ -210,5 +211,16 @@ public interface MailManagerService {
      * @throws PAException when an error occurs.
      */
     boolean sendSearchUsernameEmail(String emailAddress) throws PAException;
+    
+    /**
+     * Sends an email to CTRO warning about a trial registration, for which incorrect owner email addresses
+     * were provided.
+     * @param studyProtocolId study ID
+     * @param emails bad emails
+     * @param submitterLoginName login name of the submitting CSM user.
+     * @throws PAException exception
+     */
+    void sendUnidentifiableOwnerEmail(Long studyProtocolId,
+            Collection<String> emails, String submitterLoginName) throws PAException;
 
 }

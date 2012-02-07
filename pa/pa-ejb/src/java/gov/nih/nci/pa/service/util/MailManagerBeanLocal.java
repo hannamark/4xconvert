@@ -117,6 +117,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -926,5 +927,58 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
      */
     public void setStudySiteService(StudySiteServiceLocal studySiteService) {
         this.studySiteService = studySiteService;
+    }
+
+    @Override
+    public void sendUnidentifiableOwnerEmail(Long studyProtocolId,
+            Collection<String> emails, String submitterLoginName) throws PAException {
+        String mailSubject = lookUpTableService
+                .getPropertyValue("trial.register.unidentifiableOwner.email.subject");
+        String mailTo = lookUpTableService
+                .getPropertyValue("abstraction.script.mailTo");
+        String mailBody = lookUpTableService
+                .getPropertyValue("trial.register.unidentifiableOwner.email.body");
+
+        StudyProtocolQueryDTO study = protocolQueryService
+                .getTrialSummaryByStudyProtocolId(studyProtocolId);
+        String nciID = study.getNciIdentifier();
+        String badEmails = StringUtils.join(emails, "\r\n");
+        String submitter = identifySubmitter(submitterLoginName);
+
+        mailSubject = mailSubject.replace("{0}", submitter).replace("{1}",
+                nciID);
+        mailBody = mailBody.replace("{0}", nciID).replace("{1}", submitter)
+                .replace("{2}", badEmails);
+
+        sendMailWithAttachment(mailTo, mailSubject, mailBody, new File[0]);
+
+    }
+
+    /**
+     * Attempts to identify trial submitting organization by the trial
+     * submitter's username. If such organization can't be found, returns
+     * submitter's name instead.
+     * 
+     * @param username
+     * @return
+     */
+    private String identifySubmitter(String username) {
+        String submitter = username;
+        PAServiceUtils servUtil = new PAServiceUtils();
+        try {
+            RegistryUser user = registryUserService.getUser(username);
+            if (user != null) {
+                submitter = servUtil.getOrgName(IiConverter
+                        .convertToPoOrganizationIi(String.valueOf(user
+                                .getAffiliatedOrganizationId())));
+                if (StringUtils.isBlank(submitter)) {
+                    submitter = user.getFirstName() + " " + user.getLastName();
+                }
+            }
+        } catch (Exception e) {
+            LOG.error("Unable to identify a registry user by this username: "
+                    + username, e);
+        }
+        return submitter;
     }
 }

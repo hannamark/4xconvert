@@ -97,7 +97,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
 import gov.nih.nci.pa.domain.Country;
@@ -147,6 +146,8 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -848,4 +849,69 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         registryUser.setCsmUser(csmUser);
         return registryUser;
     }
+    
+    
+    /**
+     * Test the sendUnidentifiableOwnerEmail method.
+     * 
+     * @throws PAException
+     *             if an error occurs
+     */
+    @Test
+    public void testSendUnidentifiableOwnerEmail() throws PAException {
+        sut = createMailManagerServiceMock();
+        Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
+        doCallRealMethod().when(sut).sendUnidentifiableOwnerEmail(
+                any(Long.class), any(Collection.class), any(String.class));
+
+        when(
+                lookUpTableService
+                        .getPropertyValue("trial.register.unidentifiableOwner.email.subject"))
+                .thenReturn("SUBJECT {0} {1}");
+        when(
+                lookUpTableService
+                        .getPropertyValue("trial.register.unidentifiableOwner.email.body"))
+                .thenReturn("BODY {0} {1} {2}");
+        when(lookUpTableService.getPropertyValue("abstraction.script.mailTo"))
+                .thenReturn("denis.krylov@semanticbits.com");
+
+        StudyProtocolQueryDTO spDTO = new StudyProtocolQueryDTO();
+        spDTO.setProprietaryTrial(false);
+        spDTO.setLocalStudyProtocolIdentifier("localStudyProtocolIdentifier");
+        spDTO.setNciIdentifier("nciIdentifier");
+        spDTO.setLeadOrganizationName("leadOrganizationName");
+        spDTO.setOfficialTitle("officialTitle");
+        LastCreatedDTO lastCreated = new LastCreatedDTO();
+        lastCreated.setUserLastCreated("loginName");
+        spDTO.setLastCreated(lastCreated);
+        when(protocolQueryService.getTrialSummaryByStudyProtocolId(1L))
+                .thenReturn(spDTO);
+
+        RegistryUser user = new RegistryUser();
+        user.setFirstName("firstName");
+        user.setLastName("lastName");
+        user.setEmailAddress("denis.krylov@semanticbits.com");
+        when(registryUserService.getUser("loginName")).thenReturn(user);
+
+        sut.sendUnidentifiableOwnerEmail(1L,
+                Arrays.asList("bademail@semanticbits.com"), "loginName");
+
+        verify(protocolQueryService).getTrialSummaryByStudyProtocolId(1L);
+        verify(registryUserService).getUser("loginName");
+
+        ArgumentCaptor<String> mailSubjectCaptor = ArgumentCaptor
+                .forClass(String.class);
+        ArgumentCaptor<String> mailBodyCaptor = ArgumentCaptor
+                .forClass(String.class);
+
+        verify(sut).sendMailWithAttachment(eq("denis.krylov@semanticbits.com"),
+                mailSubjectCaptor.capture(), mailBodyCaptor.capture(),
+                eq(new File[0]));
+        assertEquals("Wrong mail subject", "SUBJECT loginName nciIdentifier",
+                mailSubjectCaptor.getValue());
+        assertEquals("Wrong mail body",
+                "BODY nciIdentifier loginName bademail@semanticbits.com",
+                mailBodyCaptor.getValue());
+    }    
+    
 }

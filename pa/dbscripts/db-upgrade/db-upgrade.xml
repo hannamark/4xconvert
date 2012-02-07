@@ -822,4 +822,8 @@
         <comment>change CDE marker wording</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.7.1/PO-4012.sql"/>
      </changeSet>
+     <changeSet id="PO-3441" author="krylovd">
+        <comment>Adding template for CTRO email in case of an email address mismatch</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.7.1/PO-3441.sql"/>
+     </changeSet>     
 </databaseChangeLog>
