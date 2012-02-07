@@ -862,8 +862,8 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         sut = createMailManagerServiceMock();
         Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
         doCallRealMethod().when(sut).sendUnidentifiableOwnerEmail(
-                any(Long.class), any(Collection.class), any(String.class));
-
+                any(Long.class), any(Collection.class));
+        when(sut.findAffiliatedOrg(any(RegistryUser.class))).thenReturn("NCI");
         when(
                 lookUpTableService
                         .getPropertyValue("trial.register.unidentifiableOwner.email.subject"))
@@ -894,7 +894,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         when(registryUserService.getUser("loginName")).thenReturn(user);
 
         sut.sendUnidentifiableOwnerEmail(1L,
-                Arrays.asList("bademail@semanticbits.com"), "loginName");
+                Arrays.asList("bademail@semanticbits.com"));
 
         verify(protocolQueryService).getTrialSummaryByStudyProtocolId(1L);
         verify(registryUserService).getUser("loginName");
@@ -907,10 +907,10 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         verify(sut).sendMailWithAttachment(eq("denis.krylov@semanticbits.com"),
                 mailSubjectCaptor.capture(), mailBodyCaptor.capture(),
                 eq(new File[0]));
-        assertEquals("Wrong mail subject", "SUBJECT loginName nciIdentifier",
+        assertEquals("Wrong mail subject", "SUBJECT NCI nciIdentifier",
                 mailSubjectCaptor.getValue());
         assertEquals("Wrong mail body",
-                "BODY nciIdentifier loginName bademail@semanticbits.com",
+                "BODY nciIdentifier NCI bademail@semanticbits.com",
                 mailBodyCaptor.getValue());
     }    
     

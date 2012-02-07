@@ -931,7 +931,8 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
     @Override
     public void sendUnidentifiableOwnerEmail(Long studyProtocolId,
-            Collection<String> emails, String submitterLoginName) throws PAException {
+            Collection<String> emails) throws PAException {
+        
         String mailSubject = lookUpTableService
                 .getPropertyValue("trial.register.unidentifiableOwner.email.subject");
         String mailTo = lookUpTableService
@@ -941,9 +942,10 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
 
         StudyProtocolQueryDTO study = protocolQueryService
                 .getTrialSummaryByStudyProtocolId(studyProtocolId);
+        
         String nciID = study.getNciIdentifier();
         String badEmails = StringUtils.join(emails, "\r\n");
-        String submitter = identifySubmitter(submitterLoginName);
+        String submitter = identifySubmitter(study);
 
         mailSubject = mailSubject.replace("{0}", submitter).replace("{1}",
                 nciID);
@@ -955,30 +957,39 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     }
 
     /**
-     * Attempts to identify trial submitting organization by the trial
-     * submitter's username. If such organization can't be found, returns
-     * submitter's name instead.
+     * Attempts to identify trial submitting organization.
      * 
-     * @param username
+     * @param study
      * @return
      */
-    private String identifySubmitter(String username) {
-        String submitter = username;
-        PAServiceUtils servUtil = new PAServiceUtils();
+    private String identifySubmitter(StudyProtocolQueryDTO study) {
+        String submitter = "";        
         try {
-            RegistryUser user = registryUserService.getUser(username);
+            RegistryUser user = study.getLastCreated() != null ? registryUserService
+                    .getUser(study.getLastCreated().getUserLastCreated())
+                    : null;
             if (user != null) {
-                submitter = servUtil.getOrgName(IiConverter
-                        .convertToPoOrganizationIi(String.valueOf(user
-                                .getAffiliatedOrganizationId())));
+                submitter = findAffiliatedOrg(user);
                 if (StringUtils.isBlank(submitter)) {
                     submitter = user.getFirstName() + " " + user.getLastName();
                 }
             }
         } catch (Exception e) {
-            LOG.error("Unable to identify a registry user by this username: "
-                    + username, e);
+            LOG.error(
+                    "Unable to identify an owning organization for this trial: "
+                            + study.getNciIdentifier(), e);
         }
         return submitter;
+    }
+
+    /**
+     * @param servUtil
+     * @param user
+     * @return
+     */
+    String findAffiliatedOrg(RegistryUser user) {
+        PAServiceUtils servUtil = new PAServiceUtils();
+        return servUtil.getOrgName(IiConverter.convertToPoOrganizationIi(String
+                .valueOf(user.getAffiliatedOrganizationId())));
     }
 }

@@ -753,12 +753,9 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
     private void handleUnmatchedEmails(Long studyProtocolId,
             Collection<String> emails) {
         if (!emails.isEmpty()) {
-            try {
-                StudyProtocolDTO studyDTO = getStudyProtocolById(studyProtocolId);
+            try {                
                 mailManagerService.sendUnidentifiableOwnerEmail(
-                        studyProtocolId, emails,
-                        studyDTO.getUserLastCreated() != null ? studyDTO
-                                .getUserLastCreated().getValue() : "");
+                        studyProtocolId, emails);
             } catch (Exception e) {
                 LOG.error("Unable to send an email to CTRO", e);
             }

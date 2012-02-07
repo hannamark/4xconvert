@@ -425,7 +425,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 		verify(registryService, never()).assignOwnership(Long.MIN_VALUE,
 				IiConverter.convertToLong(ii));
 		verify(mailManagerServiceLocal, times(1)).sendUnidentifiableOwnerEmail(eq(IiConverter.convertToLong(ii)), 
-		        eq(Arrays.asList("username@nci.nih.gov")), eq(""));
+		        eq(Arrays.asList("username@nci.nih.gov")));
 
 	}
 
@@ -449,7 +449,7 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         verify(registryService, never()).assignOwnership(Long.MIN_VALUE,
                 IiConverter.convertToLong(ii));
         verify(mailManagerServiceLocal, times(1)).sendUnidentifiableOwnerEmail(eq(IiConverter.convertToLong(ii)), 
-                eq(Arrays.asList("bademail")), eq(""));        
+                eq(Arrays.asList("bademail")));        
 
 	}
     

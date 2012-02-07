@@ -217,10 +217,9 @@ public interface MailManagerService {
      * were provided.
      * @param studyProtocolId study ID
      * @param emails bad emails
-     * @param submitterLoginName login name of the submitting CSM user.
      * @throws PAException exception
      */
     void sendUnidentifiableOwnerEmail(Long studyProtocolId,
-            Collection<String> emails, String submitterLoginName) throws PAException;
+            Collection<String> emails) throws PAException;
 
 }
