@@ -21,9 +21,7 @@
                     <label for="submitTrial_protocolWebDTO_otherPhaseText"> <fmt:message key="submit.trial.otherPhaseText"/></label>
                 </td>
                 <td>
-                    <s:set name="phaseAdditionlQualiefierCodeValues" value="@gov.nih.nci.pa.enums.PhaseAdditionalQualifierCode@getDisplayNames()" />
-                    <s:select headerKey="" headerValue="No" id="trialDTO.phaseAdditionalQualifier" name="trialDTO.phaseAdditionalQualifier" list="#phaseAdditionlQualiefierCodeValues"
-                    value="trialDTO.phaseAdditionalQualifier" cssStyle="width:120px" />
+                    <s:textfield name="trialDTO.phaseAdditionalQualifier" readonly="true" value="Pilot"></s:textfield>
                 </td>
           </tr>
 <SCRIPT LANGUAGE="JavaScript">
