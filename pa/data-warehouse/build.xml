@@ -17,6 +17,7 @@
             expandproperties="true" autocommit="true">
             <transaction src="${basedir}/sql/families.sql"/>
             <transaction src="${basedir}/sql/generic_contact.sql"/>
+            <transaction src="${basedir}/sql/milestone.sql"/>
             <transaction src="${basedir}/sql/study.sql"/>
             <transaction src="${basedir}/sql/amendment.sql"/>
             <transaction src="${basedir}/sql/anatomic_site.sql"/>
@@ -37,6 +38,8 @@
         <groovy src="groovy/org_families.groovy"/>
         <echo message = "Running generic_contact"/>
         <groovy src="groovy/generic_contact.groovy"/>
+        <echo message = "Running milestones"/>
+        <groovy src="groovy/milestone.groovy"/>
         <echo message = "Running study"/>
         <groovy src="groovy/study.groovy"/>
         <echo message = "Running amendment"/>
