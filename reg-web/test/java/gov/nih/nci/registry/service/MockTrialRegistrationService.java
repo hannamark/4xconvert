@@ -5,8 +5,10 @@ package gov.nih.nci.registry.service;
 
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -125,6 +127,55 @@ public class MockTrialRegistrationService implements TrialRegistrationServiceLoc
             throws PAException {
     }
 
+    @Override
+    public Ii createCompleteInterventionalStudyProtocol(
+            StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studySiteContactDTO,
+            OrganizationDTO summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO,
+            Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode,
+            DSet<Tel> owners) throws PAException {
+
+        return createCompleteInterventionalStudyProtocol(studyProtocolDTO,
+                overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+                documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
+                studyIdentifierDTOs, studyContactDTO, studySiteContactDTO,
+                summary4organizationDTO, summary4studyResourcingDTO,
+                responsiblePartyContactIi, studyRegAuthDTO, isBatchMode);
+    }
+
+    @Override
+    public Ii createAbbreviatedInterventionalStudyProtocol(
+            StudyProtocolDTO studyProtocolDTO,
+            StudySiteAccrualStatusDTO studySiteAccrualStatusDTO,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO studySiteInvestigatorDTO,
+            StudySiteDTO leadOrganizationStudySiteDTO,
+            OrganizationDTO studySiteOrganizationDTO,
+            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO,
+            OrganizationDTO summary4OrganizationDTO,
+            StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode,
+            DSet<Tel> owners) throws PAException {
+        return createAbbreviatedInterventionalStudyProtocol(studyProtocolDTO,
+                studySiteAccrualStatusDTO, documentDTOs, leadOrganizationDTO,
+                studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
+                studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO,
+                summary4OrganizationDTO, summary4StudyResourcingDTO,
+                isBatchMode);
+    }
 
 
 
