@@ -52,7 +52,7 @@
         <groovy src="groovy/disease.groovy"/>
         <echo message = "Running grants"/>
         <groovy src="groovy/grants.groovy"/>
-            <echo message = "Running indide"/>
+        <echo message = "Running indide"/>
         <groovy src="groovy/indide.groovy"/>
         <echo message = "Running participating_site"/>
         <groovy src="groovy/participating_site.groovy"/>
