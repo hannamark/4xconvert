@@ -85,8 +85,10 @@ package gov.nih.nci.coppa.services.pa.grid.remote;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -237,4 +239,51 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             throws PAException {
         throw new UnsupportedOperationException();
     }
+    
+    // CHECKSTYLE:OFF
+    @SuppressWarnings({ "PMD.ExcessiveParameterList",
+            "PMD.CyclomaticComplexity" })
+    @Override
+    public Ii createCompleteInterventionalStudyProtocol(
+            StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studySiteContactDTO,
+            OrganizationDTO summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO,
+            Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode,
+            DSet<Tel> owners) throws PAException {
+        throw new PAException(
+                "Unsupported operation; available in v3.4.1 and onwards only");
+    }
+
+    @SuppressWarnings({ "PMD.ExcessiveParameterList",
+            "PMD.CyclomaticComplexity" })
+    @Override
+    public Ii createAbbreviatedInterventionalStudyProtocol(
+            StudyProtocolDTO studyProtocolDTO,
+            StudySiteAccrualStatusDTO studySiteAccrualStatusDTO,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO studySiteInvestigatorDTO,
+            StudySiteDTO leadOrganizationStudySiteDTO,
+            OrganizationDTO studySiteOrganizationDTO,
+            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO,
+            OrganizationDTO summary4OrganizationDTO,
+            StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode,
+            DSet<Tel> owners) throws PAException {
+        throw new PAException(
+                "Unsupported operation; available in v3.4.1 and onwards only");
+    }
+    
+    
 }

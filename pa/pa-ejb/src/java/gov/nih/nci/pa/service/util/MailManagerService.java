@@ -117,9 +117,10 @@ public interface MailManagerService {
     /**
      * 
      * @param studyProtocolIi ii
+     * @param unmatchedEmails email addresses that did not match any registry users during trial registration
      * @throws PAException ex
      */
-    void sendNotificationMail(Ii studyProtocolIi) throws PAException;
+    void sendNotificationMail(Ii studyProtocolIi, Collection<String> unmatchedEmails) throws PAException;
 
     /**
      * 

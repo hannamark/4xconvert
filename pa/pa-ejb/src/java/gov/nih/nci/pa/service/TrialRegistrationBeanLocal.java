@@ -83,6 +83,7 @@ import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
@@ -149,6 +150,7 @@ import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -290,7 +292,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             paServiceUtils.createMilestone(spIi, MilestoneCode.SUBMISSION_RECEIVED, null, null);
             studyOverallStatusService.create(overallStatusDTO);
             saveDocuments(documentDTOs, spIi);
-            sendMail(AMENDMENT, isBatchMode, spIi);
+            sendMail(AMENDMENT, isBatchMode, spIi, new ArrayList<String>());
             return studyProtocolDTO.getIdentifier();
         } catch (Exception e) {
             throw new PAException(e.getMessage(), e);
@@ -393,6 +395,43 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("PMD.ExcessiveParameterList")
+    @Override
+    // CHECKSTYLE:OFF More than 7 Parameters
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Ii createCompleteInterventionalStudyProtocol(
+            StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studySiteContactDTO,
+            OrganizationDTO summary4OrganizationDTO,
+            StudyResourcingDTO summary4StudyResourcingDTO,
+            Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode)
+            throws PAException {
+        return createCompleteInterventionalStudyProtocol(studyProtocolDTO,
+                overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+                documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
+                studyIdentifierDTOs, studyContactDTO, studySiteContactDTO,
+                summary4OrganizationDTO, summary4StudyResourcingDTO,
+                responsiblePartyContactIi, studyRegAuthDTO, isBatchMode, null);
+    }
+    // CHECKSTYLE:ON
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings({ "PMD.ExcessiveParameterList",
+            "PMD.CyclomaticComplexity" })    
     @Override
     // CHECKSTYLE:OFF More than 7 Parameters
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -404,8 +443,8 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             List<StudySiteDTO> studyIdentifierDTOs, StudyContactDTO studyContactDTO,
             StudySiteContactDTO studySiteContactDTO, OrganizationDTO summary4OrganizationDTO,
             StudyResourcingDTO summary4StudyResourcingDTO, Ii responsiblePartyContactIi,
-            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode) throws PAException {
-        // CHECKSTYLE:ON
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode, DSet<Tel> owners) throws PAException {
+            // CHECKSTYLE:ON
             copyStudyResourcing(studyResourcingDTOs);
             TrialRegistrationValidator validator = createValidator();
             validator.validateCreation(studyProtocolDTO, overallStatusDTO, leadOrganizationDTO, sponsorOrganizationDTO,
@@ -463,9 +502,15 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             assignOwnership(studyProtocolDTO, spIi);
             paServiceUtils.addNciIdentifierToTrial(spIi);
             saveDocuments(documentDTOs, spIi);
-            sendMail(CREATE, isBatchMode, spIi);
+            Collection<String> unmatchedEmails = new ArrayList<String>();
+            if (owners != null && owners.getItem() != null) {
+                unmatchedEmails = studyProtocolService.changeOwnership(spIi, owners);
+            }            
+            sendMail(CREATE, isBatchMode, spIi, unmatchedEmails);
+            
             return spIi;
     }
+    
 
     private void copyStudyResourcing(List<StudyResourcingDTO> studyResourcingDTOs) {
         if (CollectionUtils.isNotEmpty(studyResourcingDTOs)) {
@@ -487,6 +532,37 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings({ "PMD.ExcessiveParameterList",
+        "PMD.CyclomaticComplexity" }) 
+    // CHECKSTYLE:OFF More than 7 Parameters
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Ii createAbbreviatedInterventionalStudyProtocol(
+            StudyProtocolDTO studyProtocolDTO,
+            StudySiteAccrualStatusDTO studySiteAccrualStatusDTO,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO studySiteInvestigatorDTO,
+            StudySiteDTO leadOrganizationStudySiteDTO,
+            OrganizationDTO studySiteOrganizationDTO,
+            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO,
+            OrganizationDTO summary4OrganizationDTO,
+            StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode)
+            throws PAException {
+        return createAbbreviatedInterventionalStudyProtocol(studyProtocolDTO,
+                studySiteAccrualStatusDTO, documentDTOs, leadOrganizationDTO,
+                studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
+                studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO,
+                summary4OrganizationDTO, summary4StudyResourcingDTO,
+                isBatchMode, null);
+    }
+    
+    // CHECKSTYLE:ON
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("PMD.ExcessiveParameterList")
     // CHECKSTYLE:OFF More than 7 Parameters
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Ii createAbbreviatedInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
@@ -494,7 +570,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
             StudySiteDTO leadOrganizationStudySiteDTO, OrganizationDTO studySiteOrganizationDTO,
             StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, OrganizationDTO summary4OrganizationDTO,
-            StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode) throws PAException {
+            StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode, DSet<Tel> owners) throws PAException {
         // CHECKSTYLE:ON
         // validate method needs to be here
         setPhaseAdditionalQualifier(studyProtocolDTO, studyProtocolDTO);
@@ -538,12 +614,18 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             assignOwnership(studyProtocolDTO, spIi);
             getPAServiceUtils().addNciIdentifierToTrial(spIi);
             saveDocuments(documentDTOs, spIi);
-            sendMail(CREATE, isBatchMode, spIi);
+            Collection<String> unmatchedEmails = new ArrayList<String>();
+            if (owners != null && owners.getItem() != null) {
+                unmatchedEmails = studyProtocolService.changeOwnership(spIi, owners);
+            }
+            sendMail(CREATE, isBatchMode, spIi, unmatchedEmails);
+            
             return spIi;
         } catch (Exception e) {
             throw new PAException(e.getMessage(), e);
         }
     }
+    
 
     /**
      * Creates a new Study protocol.
@@ -907,18 +989,20 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
 
     /**
      * @param operation
+     * @param unmatchedEmails email addresses that did not match any users.
      * @param isBatchMode
      * @param studyProtocolIi
      * @throws PAException
      */
-    private void sendMail(String operation, Bl isBatchMode, Ii studyProtocolIi) throws PAException {
+    private void sendMail(String operation, Bl isBatchMode, Ii studyProtocolIi, Collection<String> unmatchedEmails) 
+            throws PAException {
         if (ISOUtil.isBlNull(isBatchMode) || !BlConverter.convertToBool(isBatchMode)) {
             if (AMENDMENT.equalsIgnoreCase(operation)) {
                 mailManagerSerivceLocal.sendAmendNotificationMail(studyProtocolIi);
             } else if (UPDATE.equalsIgnoreCase(operation)) {
                 mailManagerSerivceLocal.sendUpdateNotificationMail(studyProtocolIi);
             } else if (CREATE.equalsIgnoreCase(operation)) {
-                mailManagerSerivceLocal.sendNotificationMail(studyProtocolIi);
+                mailManagerSerivceLocal.sendNotificationMail(studyProtocolIi, unmatchedEmails);
             }
         }
     }
@@ -1078,7 +1162,7 @@ public class TrialRegistrationBeanLocal extends AbstractTrialRegistrationBean im
             createInboxProcessingComments(icGenerator, spIi);
             saveDocuments(documentDTOs, spIi);
             // do not send the mail when its batch mode
-            sendMail(UPDATE, batchMode, spIi);
+            sendMail(UPDATE, batchMode, spIi, new ArrayList<String>());
 
             StudyMilestoneDTO smDto = studyMilestoneService.getCurrentByStudyProtocol(spIi);
             List<StudyInboxDTO> inbox = studyInboxServiceLocal.getByStudyProtocol(spIi);

@@ -149,6 +149,7 @@ import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -364,7 +365,8 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 				registryService
 						.getLoginNamesByEmailAddress("username@nci.nih.gov"))
 				.thenReturn(Arrays.asList(trialOwner));
-		remoteEjb.changeOwnership(ii, owners);
+		Collection<String> emails = remoteEjb.changeOwnership(ii, owners);
+		assertTrue(emails.isEmpty());
 		verify(registryService, times(1)).removeOwnership(Long.MIN_VALUE,
 				IiConverter.convertToLong(ii));
 		verify(registryService, times(1)).assignOwnership(Long.MIN_VALUE,
@@ -421,7 +423,9 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
 						.getLoginNamesByEmailAddress("username@nci.nih.gov"))
 				.thenReturn(new ArrayList<RegistryUser>());
 		
-		remoteEjb.changeOwnership(ii, owners);		
+		Collection<String> emails = remoteEjb.changeOwnership(ii, owners);
+		assertEquals(1, emails.size());
+		assertEquals("username@nci.nih.gov", emails.iterator().next());
 		verify(registryService, never()).assignOwnership(Long.MIN_VALUE,
 				IiConverter.convertToLong(ii));
 		verify(mailManagerServiceLocal, times(1)).sendUnidentifiableOwnerEmail(eq(IiConverter.convertToLong(ii)), 
@@ -442,7 +446,9 @@ public class StudyProtocolServiceBeanTest extends AbstractHibernateTestCase {
         when(registryService.getAllTrialOwners(any(Long.class))).thenReturn(
                 new HashSet<RegistryUser>());
 
-        remoteEjb.changeOwnership(ii, owners);
+        Collection<String> emails = remoteEjb.changeOwnership(ii, owners);
+        assertEquals(1, emails.size());
+        assertEquals("bademail", emails.iterator().next());
 
         verify(registryService, never()).getLoginNamesByEmailAddress(
                 anyString());

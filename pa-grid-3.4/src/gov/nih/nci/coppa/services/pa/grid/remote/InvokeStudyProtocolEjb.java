@@ -12,6 +12,7 @@ import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.StudyProtocolServiceRemote;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -149,9 +150,9 @@ public class InvokeStudyProtocolEjb implements StudyProtocolServiceRemote {
     /**
      * {@inheritDoc}
      */
-    public void changeOwnership(Ii id, DSet<Tel> recordOwners) throws PAException {
+    public Collection<String> changeOwnership(Ii id, DSet<Tel> recordOwners) throws PAException {
         try {
-            GridSecurityJNDIServiceLocator.newInstance().getStudyProtocolService().changeOwnership(id, 
+            return GridSecurityJNDIServiceLocator.newInstance().getStudyProtocolService().changeOwnership(id, 
                     recordOwners);
         } catch (PAException pae) {
             throw pae;

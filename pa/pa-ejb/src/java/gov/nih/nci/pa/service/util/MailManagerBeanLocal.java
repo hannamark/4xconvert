@@ -183,6 +183,7 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     private static final String AMENDMENT_DATE = "${amendmentDate}";
     private static final String USERNAME_SEARCH_BODY_PROPERTY = "user.usernameSearch.body";
     private static final String USERNAME_SEARCH_SUBJECT_PROPERTY = "user.usernameSearch.subject";
+    private static final String ERRORS = "${errors}";
 
     @EJB
     private ProtocolQueryServiceLocal protocolQueryService;
@@ -482,10 +483,11 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
     /**
      * Sends an email notifying the submitter that the protocol is registered in the system.
      * @param studyProtocolIi ii
+     * @param unmatchedEmails email addresses that did not match any registry users during trial registration
      * @throws PAException ex
      */
     @Override
-    public void sendNotificationMail(Ii studyProtocolIi) throws PAException {
+    public void sendNotificationMail(Ii studyProtocolIi, Collection<String> unmatchedEmails) throws PAException {
         Long studyProtocolId = IiConverter.convertToLong(studyProtocolIi);
         StudyProtocolQueryDTO spDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(studyProtocolId);
         RegistryUser user = registryUserService.getUser(spDTO.getLastCreated().getUserLastCreated());
@@ -519,6 +521,21 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
         mailBody = mailBody.replace(TRIAL_TITLE, spDTO.getOfficialTitle());
         String regUserName = user.getFirstName() + " " + user.getLastName();
         mailBody = mailBody.replace(OWNER_NAME, regUserName);
+        
+        if (CollectionUtils.isNotEmpty(unmatchedEmails)) {
+            mailBody = mailBody
+                    .replace(
+                            ERRORS,
+                            lookUpTableService
+                                    .getPropertyValue(
+                                            "trial.register.unidentifiableOwner.sub.email.body")
+                                    .replace(
+                                            "{0}",
+                                            StringUtils.join(unmatchedEmails,
+                                                    "\r\n")));
+        } else {
+            mailBody = mailBody.replace(ERRORS, "");
+        }
 
         mailSubject = mailSubject.replace(LEAD_ORG_TRIAL_IDENTIFIER, spDTO.getLocalStudyProtocolIdentifier());
         mailSubject = mailSubject.replace(NCI_TRIAL_IDENTIFIER, spDTO.getNciIdentifier());

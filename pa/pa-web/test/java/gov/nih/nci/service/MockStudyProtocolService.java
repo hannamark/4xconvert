@@ -110,6 +110,7 @@ import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -305,8 +306,9 @@ public class MockStudyProtocolService extends AbstractBaseSearchBean<StudyProtoc
      * {@inheritDoc}
      */
     @Override
-    public void changeOwnership(Ii id, DSet<Tel> recordOwners)
+    public Collection<String> changeOwnership(Ii id, DSet<Tel> recordOwners)
             throws PAException {
+        return new ArrayList<String>();
     }
 
     /**

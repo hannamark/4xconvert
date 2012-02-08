@@ -79,8 +79,10 @@ package gov.nih.nci.pa.service;
 
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -141,6 +143,53 @@ public interface TrialRegistrationServiceRemote {
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode) throws PAException;
 
     // CHECKSTYLE:ON
+    
+    /**
+     * Creates a study protocol and assigns ownership.
+     *
+     * @param studyProtocolDTO StudyProtocolDTO
+     * @param overallStatusDTO OverallStatusDTO
+     * @param studyIndldeDTOs list of Study Ind/ides
+     * @param studyResourcingDTOs list of nih grants
+     * @param documentDTOs list of documents
+     * @param leadOrganizationDTO Pead organization
+     * @param principalInvestigatorDTO Principal Investigator
+     * @param sponsorOrganizationDTO Sponsort Organization
+     * @param leadOrganizationSiteIdentifierDTO local protocol identifier
+     * @param studyIdentifierDTOs list of study Identifiers
+     * @param studyContactDTO phone and email info when Pi is responsible
+     * @param studySiteContactDTO phone and email info when sponsor is responsible
+     * @param summary4organizationDTO summary 4 organization code
+     * @param summary4studyResourcingDTO summary 4 category code
+     * @param responsiblePartyContactIi Id of the person when sponsor is responsible
+     * @param isBatchMode to identify if batch is caller
+     * @param studyRegAuthDTO update studyRegAuthDTO
+     * @param owners trial record owners
+     * @return ii of Study Protocol
+     * @throws PAException on error
+     */
+    // CHECKSTYLE:OFF More than 7 parameters
+    Ii createCompleteInterventionalStudyProtocol(
+            StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studySiteContactDTO,
+            OrganizationDTO summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO,
+            Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode,
+            DSet<Tel> owners) throws PAException;
+
+    // CHECKSTYLE:ON
+    
 
     /**
      * Amends a study protocol.
@@ -253,6 +302,35 @@ public interface TrialRegistrationServiceRemote {
             StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode) throws PAException;
 
     // CHECKSTYLE:ON
+    
+    /**
+     * Creates a proprietary study protocol and assigns ownership.
+     * @param studyProtocolDTO studyProtocolDTO
+     * @param studySiteAccrualStatusDTO studySiteAccrualStatusDTO
+     * @param documentDTOs documentDTOs
+     * @param leadOrganizationDTO leadOrganizationDTO
+     * @param studySiteInvestigatorDTO studySiteInvestigatorDTO
+     * @param leadOrganizationStudySiteDTO leadOrganizationStudySiteDTO
+     * @param studySiteOrganizationDTO studySiteOrganizationDTO
+     * @param studySiteDTO studySiteDTO
+     * @param nctIdentifierDTO nctIdentifierDTO
+     * @param summary4OrganizationDTO summary4OrganizationDTO
+     * @param summary4StudyResourcingDTO summary4StudyResourcingDTO
+     * @param isBatchMode to identify if batch is caller
+     * @param owners
+     * @return Ii
+     * @throws PAException e
+     */
+    // CHECKSTYLE:OFF More than 7 parameters
+    Ii createAbbreviatedInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
+            StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
+            StudySiteDTO leadOrganizationStudySiteDTO, OrganizationDTO studySiteOrganizationDTO,
+            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, OrganizationDTO summary4OrganizationDTO,
+            StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode, DSet<Tel> owners) throws PAException;
+
+    // CHECKSTYLE:ON
+    
 
     /**
      * Reject a protocol and rollback all the changes.

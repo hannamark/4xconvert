@@ -85,9 +85,11 @@ package gov.nih.nci.coppa.services.pa.grid.remote;
 import gov.nih.nci.coppa.services.grid.remote.InvokeCoppaServiceException;
 import gov.nih.nci.iso21090.Bl;
 import gov.nih.nci.iso21090.Cd;
+import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ed;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
+import gov.nih.nci.iso21090.Tel;
 import gov.nih.nci.pa.iso.dto.DocumentDTO;
 import gov.nih.nci.pa.iso.dto.StudyContactDTO;
 import gov.nih.nci.pa.iso.dto.StudyIndldeDTO;
@@ -147,25 +149,26 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
      */
     // CHECKSTYLE:OFF
     @Override
-    public Ii createAbbreviatedInterventionalStudyProtocol(StudyProtocolDTO studyProtocolDTO,
-            StudySiteAccrualStatusDTO studySiteAccrualStatusDTO, List<DocumentDTO> documentDTOs,
-            OrganizationDTO leadOrganizationDTO, PersonDTO studySiteInvestigatorDTO,
-            StudySiteDTO leadOrganizationStudySiteDTO, OrganizationDTO studySiteOrganizationDTO,
-            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO, OrganizationDTO summary4OrganizationDTO,
-            StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatch) throws PAException {
+    public Ii createAbbreviatedInterventionalStudyProtocol(
+            StudyProtocolDTO studyProtocolDTO,
+            StudySiteAccrualStatusDTO studySiteAccrualStatusDTO,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO studySiteInvestigatorDTO,
+            StudySiteDTO leadOrganizationStudySiteDTO,
+            OrganizationDTO studySiteOrganizationDTO,
+            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO,
+            OrganizationDTO summary4OrganizationDTO,
+            StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatch)
+            throws PAException {
         // CHECKSTYLE:ON
 
-        try {
-            return GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService()
-                    .createAbbreviatedInterventionalStudyProtocol(studyProtocolDTO, studySiteAccrualStatusDTO,
-                            documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
-                            studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4OrganizationDTO,
-                            summary4StudyResourcingDTO, isBatch);
-        } catch (PAException pae) {
-            throw pae;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
+        return createAbbreviatedInterventionalStudyProtocol(studyProtocolDTO,
+                studySiteAccrualStatusDTO, documentDTOs, leadOrganizationDTO,
+                studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
+                studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO,
+                summary4OrganizationDTO, summary4StudyResourcingDTO, isBatch,
+                null);
     }
 
     /**
@@ -183,19 +186,13 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             StudyResourcingDTO summary4studyResourcingDTO, Ii responsiblePartyContactIi,
             StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatch) throws PAException {
         // CHECKSTYLE:ON
-
-        try {
-            return GridSecurityJNDIServiceLocator.newInstance().getTrialRegistrationService()
-                    .createCompleteInterventionalStudyProtocol(studyProtocolDTO, overallStatusDTO, studyIndldeDTOs,
-                            studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
-                            sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
-                            studyContactDTO, studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
-                            responsiblePartyContactIi, studyRegAuthDTO, isBatch);
-        } catch (PAException pae) {
-            throw pae;
-        } catch (Exception e) {
-            throw new InvokeCoppaServiceException(e.toString(), e);
-        }
+        return createCompleteInterventionalStudyProtocol(studyProtocolDTO,
+                overallStatusDTO, studyIndldeDTOs, studyResourcingDTOs,
+                documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
+                sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO,
+                studyIdentifierDTOs, studyContactDTO, studySiteContactDTO,
+                summary4organizationDTO, summary4studyResourcingDTO,
+                responsiblePartyContactIi, studyRegAuthDTO, isBatch, null);
     }
 
     /**
@@ -260,4 +257,86 @@ public class InvokeTrialRegistrationEjb implements TrialRegistrationServiceRemot
             throws PAException {
         throw new UnsupportedOperationException();
     }
+    
+    // CHECKSTYLE:OFF
+    @SuppressWarnings({ "PMD.ExcessiveParameterList",
+            "PMD.CyclomaticComplexity" })
+    @Override
+    public Ii createCompleteInterventionalStudyProtocol(
+            StudyProtocolDTO studyProtocolDTO,
+            StudyOverallStatusDTO overallStatusDTO,
+            List<StudyIndldeDTO> studyIndldeDTOs,
+            List<StudyResourcingDTO> studyResourcingDTOs,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO principalInvestigatorDTO,
+            OrganizationDTO sponsorOrganizationDTO,
+            StudySiteDTO leadOrganizationSiteIdentifierDTO,
+            List<StudySiteDTO> studyIdentifierDTOs,
+            StudyContactDTO studyContactDTO,
+            StudySiteContactDTO studySiteContactDTO,
+            OrganizationDTO summary4organizationDTO,
+            StudyResourcingDTO summary4studyResourcingDTO,
+            Ii responsiblePartyContactIi,
+            StudyRegulatoryAuthorityDTO studyRegAuthDTO, Bl isBatchMode,
+            DSet<Tel> owners) throws PAException {
+        // CHECKSTYLE:ON
+        try {
+            return GridSecurityJNDIServiceLocator
+                    .newInstance()
+                    .getTrialRegistrationService()
+                    .createCompleteInterventionalStudyProtocol(
+                            studyProtocolDTO, overallStatusDTO,
+                            studyIndldeDTOs, studyResourcingDTOs, documentDTOs,
+                            leadOrganizationDTO, principalInvestigatorDTO,
+                            sponsorOrganizationDTO,
+                            leadOrganizationSiteIdentifierDTO,
+                            studyIdentifierDTOs, studyContactDTO,
+                            studySiteContactDTO, summary4organizationDTO,
+                            summary4studyResourcingDTO,
+                            responsiblePartyContactIi, studyRegAuthDTO,
+                            isBatchMode, owners);
+        } catch (PAException pae) {
+            throw pae;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+
+    // CHECKSTYLE:OFF
+    @SuppressWarnings({ "PMD.ExcessiveParameterList",
+            "PMD.CyclomaticComplexity" })
+    @Override
+    public Ii createAbbreviatedInterventionalStudyProtocol(
+            StudyProtocolDTO studyProtocolDTO,
+            StudySiteAccrualStatusDTO studySiteAccrualStatusDTO,
+            List<DocumentDTO> documentDTOs,
+            OrganizationDTO leadOrganizationDTO,
+            PersonDTO studySiteInvestigatorDTO,
+            StudySiteDTO leadOrganizationStudySiteDTO,
+            OrganizationDTO studySiteOrganizationDTO,
+            StudySiteDTO studySiteDTO, StudySiteDTO nctIdentifierDTO,
+            OrganizationDTO summary4OrganizationDTO,
+            StudyResourcingDTO summary4StudyResourcingDTO, Bl isBatchMode,
+            DSet<Tel> owners) throws PAException {
+        // CHECKSTYLE:ON
+        try {
+            return GridSecurityJNDIServiceLocator
+                    .newInstance()
+                    .getTrialRegistrationService()
+                    .createAbbreviatedInterventionalStudyProtocol(
+                            studyProtocolDTO, studySiteAccrualStatusDTO,
+                            documentDTOs, leadOrganizationDTO,
+                            studySiteInvestigatorDTO,
+                            leadOrganizationStudySiteDTO,
+                            studySiteOrganizationDTO, studySiteDTO,
+                            nctIdentifierDTO, summary4OrganizationDTO,
+                            summary4StudyResourcingDTO, isBatchMode, owners);
+        } catch (PAException pae) {
+            throw pae;
+        } catch (Exception e) {
+            throw new InvokeCoppaServiceException(e.toString(), e);
+        }
+    }
+    
 }

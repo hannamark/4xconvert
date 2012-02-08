@@ -53,8 +53,7 @@ import org.globus.wsrf.security.SecurityManager;
 public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBase {
 
     private static final Logger logger = LogManager.getLogger(StudyProtocolServiceImpl.class);
-    private final InvokeTrialRegistrationEjb service = new InvokeTrialRegistrationEjb();
-    private final InvokeStudyProtocolEjb studyProtService = new InvokeStudyProtocolEjb();
+    private final InvokeTrialRegistrationEjb service = new InvokeTrialRegistrationEjb();    
 
     public TrialRegistrationServiceImpl() throws RemoteException {
         super();
@@ -176,9 +175,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
                           studyResourcingDTOs, documentDTOs, leadOrganizationDTO, principalInvestigatorDTO,
                           sponsorOrganizationDTO, leadOrganizationSiteIdentifierDTO, studyIdentifierDTOs,
                           studyContactDTO, studySiteContactDTO, summary4organizationDTO, summary4studyResourcingDTO,
-                          responsiblePartyContactIi, studyRegAuthDTO, isBatch);
-          
-          changeOwnership(studyProtocolDTO, ii);
+                          responsiblePartyContactIi, studyRegAuthDTO, isBatch, studyProtocolDTO.getRecordOwners());
           
           return IdTransformer.INSTANCE.toXml(ii);
       } catch (Exception e) {
@@ -186,23 +183,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
           throw FaultUtil.reThrowRemote(e);
       }
   }
-
-	/**
-	 * @param studyProtocolDTO
-	 * @param protocolID
-	 * @throws PAException
-	 */
-	private void changeOwnership(StudyProtocolDTO studyProtocolDTO, Ii protocolID)
-			throws PAException {
-		// PO-3441: if trial record owner information is provided as a part of
-		// this request, we also need to change the trial's record owner
-		// from the default one (calling grid user) to the specified one (or
-		// multiple ones).
-		if (studyProtocolDTO.getRecordOwners() != null) {
-			studyProtService.changeOwnership(protocolID,
-					studyProtocolDTO.getRecordOwners());
-		}
-	}
+	
 
   public gov.nih.nci.iso21090.extensions.Id createAbbreviatedInterventionalStudyProtocol(gov.nih.nci.coppa.services.pa.InterventionalStudyProtocol studyProtocol,gov.nih.nci.coppa.services.pa.StudySiteAccrualStatus studySiteAccrualStatus,gov.nih.nci.coppa.services.pa.Document[] documents,gov.nih.nci.coppa.po.Organization leadOrganization,gov.nih.nci.coppa.po.Person studySiteInvestigator,gov.nih.nci.coppa.services.pa.StudySite leadOrganizationStudySite,gov.nih.nci.coppa.po.Organization studySiteOrganization,gov.nih.nci.coppa.services.pa.StudySite studySite,gov.nih.nci.coppa.services.pa.StudySite nctIdentifier,gov.nih.nci.coppa.po.Organization summary4Organization,gov.nih.nci.coppa.services.pa.StudyResourcing summary4StudyResourcing) throws RemoteException, gov.nih.nci.coppa.services.pa.faults.PAFault {
       try {
@@ -227,9 +208,7 @@ public class TrialRegistrationServiceImpl extends TrialRegistrationServiceImplBa
           Ii ii = service.createAbbreviatedInterventionalStudyProtocol(studyProtocolDTO, studySiteAccrualStatusDTO,
                           documentDTOs, leadOrganizationDTO, studySiteInvestigatorDTO, leadOrganizationStudySiteDTO,
                           studySiteOrganizationDTO, studySiteDTO, nctIdentifierDTO, summary4organizationDTO,
-                          summary4studyResourcingDTO, isBatch);
-          
-          changeOwnership(studyProtocolDTO, ii);
+                          summary4studyResourcingDTO, isBatch, studyProtocolDTO.getRecordOwners());
           
           return IdTransformer.INSTANCE.toXml(ii);
       } catch (Exception e) {

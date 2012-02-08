@@ -700,10 +700,11 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      * {@inheritDoc}
      */
     @Override
-    public void changeOwnership(Ii id, DSet<Tel> owners) throws PAException {
+    public Collection<String> changeOwnership(Ii id, DSet<Tel> owners) throws PAException {
         if (ISOUtil.isIiNull(id)) {
             throw new PAException("Protocol identifier (Ii) must not be null");
         }
+        Collection<String> unmatched = new ArrayList<String>();
         if (owners != null) {
             Long studyProtocolId = IiConverter.convertToLong(id);
             for (RegistryUser user : registryUserService
@@ -713,9 +714,10 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             }
             final Set<Tel> telecomAddrs = owners.getItem();
             if (telecomAddrs != null) {
-                setTrialOwners(studyProtocolId, telecomAddrs);
+                unmatched.addAll(setTrialOwners(studyProtocolId, telecomAddrs));
             }
         }
+        return unmatched;
     }
 
     /**
@@ -723,7 +725,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
      * @param telecomAddrs
      * @throws PAException
      */
-    private void setTrialOwners(Long studyProtocolId,
+    private Collection<String> setTrialOwners(Long studyProtocolId,
             final Set<Tel> telecomAddrs) throws PAException {
         Collection<String> unmatchedEmails = new ArrayList<String>();
         for (Tel tel : telecomAddrs) {
@@ -744,6 +746,7 @@ public class StudyProtocolBeanLocal extends AbstractBaseSearchBean<StudyProtocol
             }
         }
         handleUnmatchedEmails(studyProtocolId, unmatchedEmails);
+        return unmatchedEmails;
     }
 
     /**

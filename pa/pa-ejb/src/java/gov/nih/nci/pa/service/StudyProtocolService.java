@@ -87,6 +87,7 @@ import gov.nih.nci.pa.iso.dto.InterventionalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.ObservationalStudyProtocolDTO;
 import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -227,11 +228,12 @@ public interface StudyProtocolService {
      * @param id protocol identifier
      * @param recordOwners a set of record owners identified by email addresses. Null is treated as "no change"; 
      * an empty set will remove all existing ownerships.
+     * @return {@link Collection} collection of unmatched email addresses
      * @throws PAException on error
      * @see StudyProtocolDTO#getRecordOwners()
      * @see https://tracker.nci.nih.gov/browse/PO-3441
      */
-    void changeOwnership(Ii id, DSet<Tel> recordOwners) throws PAException;
+    Collection<String> changeOwnership(Ii id, DSet<Tel> recordOwners) throws PAException;
     
     /**
      * This method is to use to change the ownership of the studyProtocol.

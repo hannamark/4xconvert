@@ -173,7 +173,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
             + " ${nciTrialIdentifier}.";
     private static final String NOTFICATION_BODY_KEY = "trial.register.body";
     private static final String NOTFICATION_BODY_VALUE = "${CurrentDate} ${SubmitterName} ${nciTrialIdentifier},"
-            + " ${leadOrgTrialIdentifier}, ${leadOrgName}, ${trialTitle}.";
+            + " ${leadOrgTrialIdentifier}, ${leadOrgName}, ${trialTitle}.${errors}";
 
     private static final String PROP_NOTFICATION_SUBJECT_KEY = "proprietarytrial.register.subject";
     private static final String PROP_NOTFICATION_SUBJECT_VALUE = "proprietarytrial.register.subject - "
@@ -181,6 +181,8 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     private static final String PROP_NOTFICATION_BODY_KEY = "proprietarytrial.register.body";
     private static final String PROP_NOTFICATION_BODY_VALUE = "${CurrentDate} ${SubmitterName} ${nciTrialIdentifier},"
             + " ${leadOrgTrialIdentifier}, ${leadOrgName}, ${trialTitle}, ${subOrgTrialIdentifier}, ${subOrg}.";
+    private static final String ERRORS_BODY_VALUE = "{0}";
+    private static final String ERRORS_BODY_KEY = "trial.register.unidentifiableOwner.sub.email.body";
 
     private final LookUpTableServiceRemote lookUpTableService = mock(LookUpTableServiceRemote.class);
     private final ProtocolQueryServiceLocal protocolQueryService = mock(ProtocolQueryServiceLocal.class);
@@ -641,10 +643,11 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     public void testSendNotificationMail() throws PAException {
         sut = createMailManagerServiceMock();
         Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
-        doCallRealMethod().when(sut).sendNotificationMail(spIi);
+        doCallRealMethod().when(sut).sendNotificationMail(spIi, Arrays.asList("bademail"));
         when(sut.getFormatedCurrentDate()).thenReturn("Current Date");
         when(lookUpTableService.getPropertyValue(NOTFICATION_SUBJECT_KEY)).thenReturn(NOTFICATION_SUBJECT_VALUE);
         when(lookUpTableService.getPropertyValue(NOTFICATION_BODY_KEY)).thenReturn(NOTFICATION_BODY_VALUE);
+        when(lookUpTableService.getPropertyValue(ERRORS_BODY_KEY)).thenReturn(ERRORS_BODY_VALUE);
 
         StudyProtocolQueryDTO spDTO = new StudyProtocolQueryDTO();
         spDTO.setProprietaryTrial(false);
@@ -662,7 +665,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         user.setLastName("lastName");
         user.setEmailAddress("emailAddress");
         when(registryUserService.getUser("loginName")).thenReturn(user);
-        sut.sendNotificationMail(spIi);
+        sut.sendNotificationMail(spIi, Arrays.asList("bademail"));
         verify(protocolQueryService).getTrialSummaryByStudyProtocolId(1L);
         verify(registryUserService).getUser("loginName");
         ArgumentCaptor<String> mailSubjectCaptor = ArgumentCaptor.forClass(String.class);
@@ -672,7 +675,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         assertEquals("Wrong mail subject", "trial.register.subject - localStudyProtocolIdentifier, nciIdentifier.",
                      mailSubjectCaptor.getValue());
         assertEquals("Wrong mail body", "Current Date firstName lastName nciIdentifier, localStudyProtocolIdentifier, "
-                + "leadOrganizationName, officialTitle.", mailBodyCaptor.getValue());
+                + "leadOrganizationName, officialTitle.bademail", mailBodyCaptor.getValue());
     }
 
     /**
@@ -683,7 +686,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     public void testSendNotificationMailProprietary() throws PAException {
         sut = createMailManagerServiceMock();
         Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
-        doCallRealMethod().when(sut).sendNotificationMail(spIi);
+        doCallRealMethod().when(sut).sendNotificationMail(spIi, null);
         when(sut.getFormatedCurrentDate()).thenReturn("Current Date");
         when(lookUpTableService.getPropertyValue(PROP_NOTFICATION_SUBJECT_KEY)).thenReturn(PROP_NOTFICATION_SUBJECT_VALUE);
         when(lookUpTableService.getPropertyValue(PROP_NOTFICATION_BODY_KEY)).thenReturn(PROP_NOTFICATION_BODY_VALUE);
@@ -712,7 +715,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         site.setHealthcareFacilityIi(IiConverter.convertToPoHealthCareFacilityIi("1"));
         studySites.add(site);
         when(studySiteService.getByStudyProtocol(eq(spIi), anyListOf(StudySiteDTO.class))).thenReturn(studySites);
-        sut.sendNotificationMail(spIi);
+        sut.sendNotificationMail(spIi, null);
         verify(protocolQueryService).getTrialSummaryByStudyProtocolId(1L);
         verify(registryUserService).getUser("loginName");
         verify(studySiteService).getByStudyProtocol(eq(spIi), anyListOf(StudySiteDTO.class));
@@ -736,7 +739,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
     public void testSendNotificationMailNoUser() throws PAException {
         sut = createMailManagerServiceMock();
         Ii spIi = IiConverter.convertToStudyProtocolIi(1L);
-        doCallRealMethod().when(sut).sendNotificationMail(spIi);
+        doCallRealMethod().when(sut).sendNotificationMail(spIi, null);
 
         StudyProtocolQueryDTO spDTO = new StudyProtocolQueryDTO();
         LastCreatedDTO lastCreated = new LastCreatedDTO();
@@ -744,7 +747,7 @@ public class MailManagerServiceTest extends AbstractHibernateTestCase {
         spDTO.setLastCreated(lastCreated);
         when(protocolQueryService.getTrialSummaryByStudyProtocolId(1L)).thenReturn(spDTO);
 
-        sut.sendNotificationMail(spIi);
+        sut.sendNotificationMail(spIi, null);
         verify(protocolQueryService).getTrialSummaryByStudyProtocolId(1L);
         verify(registryUserService).getUser("loginName");
         verify(sut,never()).sendMailWithAttachment(anyString(), anyString(), anyString(), (File[])any());
