@@ -141,6 +141,8 @@ public class StudyProtocolQueryCriteria implements Serializable {
     private boolean studyLockedBy;
     private String trialCategory;
     private Long userId;
+    
+    private String ctgovXmlRequiredIndicator;
 
     private Long summ4FundingSourceId;
     private String summ4FundingSourceTypeCode;
@@ -865,4 +867,14 @@ public class StudyProtocolQueryCriteria implements Serializable {
         }
         return result;
     }
+
+	public String getCtgovXmlRequiredIndicator() {
+		return ctgovXmlRequiredIndicator;
+	}
+
+	public void setCtgovXmlRequiredIndicator(String ctgovXmlRequiredIndicator) {
+		this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
+	}
+    
+    
 }
