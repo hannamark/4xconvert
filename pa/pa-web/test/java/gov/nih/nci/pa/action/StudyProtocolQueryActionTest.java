@@ -35,6 +35,7 @@ public class StudyProtocolQueryActionTest extends AbstractPaActionTest {
         spqAction.prepare();
         criteria = new StudyProtocolQueryCriteria();
         criteria.setNciIdentifier("NCI-2009-00001");
+        criteria.setCtgovXmlRequiredIndicator("");
         getRequest().setUserInRole(Constants.SUABSTRACTOR, true);
         UsernameHolder.setUser("suAbstractor");
         getSession().setAttribute(Constants.IS_SU_ABSTRACTOR, Boolean.TRUE);
