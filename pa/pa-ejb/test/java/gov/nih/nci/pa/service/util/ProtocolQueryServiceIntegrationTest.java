@@ -197,6 +197,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
     public void getStudyProtocolByCriteriaTest() throws Exception {
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
         criteria.setNciIdentifier("nci");
+        criteria.setCtgovXmlRequiredIndicator("");
         List<StudyProtocolQueryDTO> results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
         assertEquals("Title does not match.", results.get(0).getOfficialTitle(), "Cancer for kids");
