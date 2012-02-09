@@ -422,15 +422,22 @@ public class StudyProtocolOptions {
             this.interventionTypes.add(InterventionTypeCode.getByCode(intvType));
         }
     }
+/**
+ * gets ctgoc xml required value.
+ * @return boolean
+ */
+public Boolean getCtgovXmlRequiredIndicator() {
+return ctgovXmlRequiredIndicator;
+}
 
-	public Boolean getCtgovXmlRequiredIndicator() {
-		return ctgovXmlRequiredIndicator;
-	}
+/**
+ * sets ctgov xml required value.
+ * @param ctgovXmlRequiredIndicator xml indicator
+ */
+public void setCtgovXmlRequiredIndicator(Boolean ctgovXmlRequiredIndicator) {
+this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
+}
 
-	public void setCtgovXmlRequiredIndicator(Boolean ctgovXmlRequiredIndicator) {
-		this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
-	}
-    
     
     
 }
