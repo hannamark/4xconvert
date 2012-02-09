@@ -431,7 +431,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setInterventionAlternateNameIds(criteria.getInterventionAlternateNameIds());
         options.setInterventionTypes(criteria.getInterventionTypes());
         options.setLeadOrganizationIds(criteria.getLeadOrganizationIds());
-
+        options.setCtgovXmlRequiredIndicator(criteria.getCtgovXmlRequiredIndicator());
+        
         populateExample(criteria, example);
         return new StudyProtocolQueryBeanSearchCriteria(example, options);
     }
