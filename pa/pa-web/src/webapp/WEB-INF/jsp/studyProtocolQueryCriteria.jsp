@@ -185,6 +185,16 @@
                            <s:select headerKey="" headerValue="Both" id="trialCategory" name="criteria.trialCategory" list="#{'p':'Abbreviated','n':'Complete'}"  value="criteria.trialCategory" cssStyle="width:206px" />
                         </td>
                     </tr>
+                    <tr>
+                    	<td scope="row" class="label">
+                            <label for="ctgovXmlRequiredIndicator"> <fmt:message key="studyProtocol.ctgovXmlRequired"/></label>
+                        </td>
+                    	<td>                          
+                           <s:select headerKey="" headerValue="All" id="ctgovXmlRequiredIndicator" 
+                           name="criteria.ctgovXmlRequiredIndicator" list="#{'True':'True','False':'False'}"  
+                           value="criteria.ctgovXmlRequiredIndicator" cssStyle="width:206px" />                         
+                        </td>                       
+                    </tr>
                 </table>
                 <div class="actionsrow">
                     <del class="btnwrapper">
