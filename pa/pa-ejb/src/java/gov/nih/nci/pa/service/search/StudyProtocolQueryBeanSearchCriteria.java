@@ -240,11 +240,11 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             handleOtherIdentifiersAndOwnership(whereClause, params);
             handleAdditionalCriteria(whereClause, params);
             
-            if(spo.getCtgovXmlRequiredIndicator()!=null && !spo.getCtgovXmlRequiredIndicator().equals("")){
+            if(spo.getCtgovXmlRequiredIndicator()!=null){
 	            String operator = determineOperator(whereClause);
 	            whereClause.append(String.format(" %s %s.ctgovXmlRequiredIndicator = :%s" , operator,  
 	            		SearchableUtils.ROOT_OBJ_ALIAS, CTGOV_XML_REQUIRED_INDICATOR));
-	            params.put(CTGOV_XML_REQUIRED_INDICATOR, Boolean.parseBoolean(spo.getCtgovXmlRequiredIndicator()));
+	            params.put(CTGOV_XML_REQUIRED_INDICATOR, spo.getCtgovXmlRequiredIndicator());
             }
         }
         

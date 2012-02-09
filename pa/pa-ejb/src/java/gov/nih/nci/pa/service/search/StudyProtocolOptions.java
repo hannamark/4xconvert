@@ -119,7 +119,7 @@ public class StudyProtocolOptions {
     private List<Long> interventionIds = new ArrayList<Long>();
     private List<Long> interventionAlternateNameIds = new ArrayList<Long>();
     private List<InterventionTypeCode> interventionTypes = new ArrayList<InterventionTypeCode>();
-    private String ctgovXmlRequiredIndicator; 
+    private Boolean ctgovXmlRequiredIndicator; 
     
     /**
      * @return excludeRejectedTrials
@@ -423,11 +423,11 @@ public class StudyProtocolOptions {
         }
     }
 
-	public String getCtgovXmlRequiredIndicator() {
+	public Boolean getCtgovXmlRequiredIndicator() {
 		return ctgovXmlRequiredIndicator;
 	}
 
-	public void setCtgovXmlRequiredIndicator(String ctgovXmlRequiredIndicator) {
+	public void setCtgovXmlRequiredIndicator(Boolean ctgovXmlRequiredIndicator) {
 		this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
 	}
     
