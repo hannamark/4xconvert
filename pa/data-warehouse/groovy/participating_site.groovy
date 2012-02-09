@@ -18,9 +18,10 @@ def sourceConnection = Sql.newInstance(properties['datawarehouse.pa.source.jdbc.
 def destinationConnection = Sql.newInstance(properties['datawarehouse.pa.dest.jdbc.url'], properties['datawarehouse.pa.dest.db.username'],
     properties['datawarehouse.pa.dest.db.password'], properties['datawarehouse.pa.dest.jdbc.driver'])
 def participating_sites = destinationConnection.dataSet("DW_STUDY_PARTICIPATING_SITE")
+
 sourceConnection.eachRow(sql) { row ->
         participating_sites.add(contact_email: row.email, contact_name: row.contact_name, internal_system_id: row.identifier,
-            org_name: row.org_name, org_status: row.org_status, recruitment_status: row.status_code, recruitment_status_date: row.status_date)
+            org_name: row.org_name, recruitment_status: row.status_code, recruitment_status_date: row.status_date)
     }
 
 sourceConnection.eachRow("""select oid.extension, ps.identifier from study_site as ps
@@ -32,43 +33,7 @@ sourceConnection.eachRow("""select oid.extension, ps.identifier from study_site 
         destinationConnection.execute("UPDATE DW_STUDY_PARTICIPATING_SITE SET NCI_ID = ? where internal_system_id = ?", [nci_id, id])
     }
 
-sourceConnection.eachRow("""select p.first_name || ' ' || p.last_name as name, investigator.role_code, investigator.status_code, ps.identifier
-    from study_site ps
-        left outer join study_site_contact as investigator on investigator.study_site_identifier = ps.identifier
-            and investigator.identifier = (
-                select identifier from study_site_contact where (role_code = 'PRINCIPAL_INVESTIGATOR' or role_code = 'SUB_INVESTIGATOR')
-                    and study_site_identifier = ps.identifier
-                order by identifier asc
-                limit 1 offset 0
-                )
-    left outer join clinical_research_staff as crs on crs.identifier = investigator.clinical_research_staff_identifier
-    left outer join person as p on p.identifier = crs.person_identifier""") { row ->
-        name = row.name
-        role = row.role_code
-        status = row.status_code
-        id = row.identifier
-        statement = "UPDATE DW_STUDY_PARTICIPATING_SITE SET INVESTIGATOR1_NAME = ? , INVESTIGATOR1_ROLE = ? , INVESTIGATOR1_STATUS =  ? where internal_system_id = ?"
-        destinationConnection.execute(statement, [name, role, status, id])
-    }    
 
-sourceConnection.eachRow("""select p.first_name || ' ' || p.last_name as name, investigator.role_code, investigator.status_code, ps.identifier
-    from study_site ps
-        left outer join study_site_contact as investigator on investigator.study_site_identifier = ps.identifier
-             and investigator.identifier = (
-                 select identifier from study_site_contact where (role_code = 'PRINCIPAL_INVESTIGATOR' or role_code = 'SUB_INVESTIGATOR')
-                     and study_site_identifier = ps.identifier
-                 order by identifier asc
-                 limit 1 offset 1
-                 )
-    left outer join clinical_research_staff as crs on crs.identifier = investigator.clinical_research_staff_identifier
-    left outer join person as p on p.identifier = crs.person_identifier""") { row ->
-        name = row.name
-        role = row.role_code
-        status = row.status_code
-        id = row.identifier
-        statement = "UPDATE DW_STUDY_PARTICIPATING_SITE SET INVESTIGATOR2_NAME = ? , INVESTIGATOR2_ROLE = ? , INVESTIGATOR2_STATUS =  ? where internal_system_id = ?"
-        destinationConnection.execute(statement, [name, role, status, id])
-    }
 
 sourceConnection.eachRow("""select generic_contact.email, ps.identifier, cast(oc.assigned_identifier as INTEGER)
     from study_site as ps
