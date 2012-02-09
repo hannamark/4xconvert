@@ -868,13 +868,21 @@ public class StudyProtocolQueryCriteria implements Serializable {
         return result;
     }
 
-	public String getCtgovXmlRequiredIndicator() {
-		return ctgovXmlRequiredIndicator;
-	}
+/**
+ *   gets the ctgov xml reuired field.
+ *   @return string value
+ */
+public String getCtgovXmlRequiredIndicator() {
+    return ctgovXmlRequiredIndicator;
+}
 
-	public void setCtgovXmlRequiredIndicator(String ctgovXmlRequiredIndicator) {
-		this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
-	}
+/**
+ * Sets ctgov xml requireds value.
+ * @param ctgovXmlRequiredIndicator xml indicator
+ */
+public void setCtgovXmlRequiredIndicator(String ctgovXmlRequiredIndicator) { 
+    this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
+}
     
     
 }
