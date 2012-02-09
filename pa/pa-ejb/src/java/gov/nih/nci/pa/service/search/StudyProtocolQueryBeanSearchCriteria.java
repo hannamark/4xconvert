@@ -178,6 +178,7 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
         private static final String INTERVENTIONS_TYPES_PARAM  = "interventionTypes";
         private static final String LEAD_ORG_FUNCTIONAL_CODE_PARAM = "leadOrgFunctionalCode";
         private static final String LEAD_ORG_IDS_PARAM = "leadOrgIds";
+        private static final String CTGOV_XML_REQUIRED_INDICATOR = "ctgovXmlRequiredIndicator";
         private final StudyProtocol sp;
         private final StudyProtocolOptions spo;
        
@@ -238,6 +239,13 @@ public class StudyProtocolQueryBeanSearchCriteria extends AnnotatedBeanSearchCri
             generateLocationWhereClause(whereClause, params);
             handleOtherIdentifiersAndOwnership(whereClause, params);
             handleAdditionalCriteria(whereClause, params);
+            
+            if(spo.getCtgovXmlRequiredIndicator()!=null && !spo.getCtgovXmlRequiredIndicator().equals("")){
+	            String operator = determineOperator(whereClause);
+	            whereClause.append(String.format(" %s %s.ctgovXmlRequiredIndicator = :%s" , operator,  
+	            		SearchableUtils.ROOT_OBJ_ALIAS, CTGOV_XML_REQUIRED_INDICATOR));
+	            params.put(CTGOV_XML_REQUIRED_INDICATOR, Boolean.parseBoolean(spo.getCtgovXmlRequiredIndicator()));
+            }
         }
         
         private void handlePhaseCodes(StringBuffer whereClause, Map<String, Object> params) {

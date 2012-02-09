@@ -119,6 +119,7 @@ public class StudyProtocolOptions {
     private List<Long> interventionIds = new ArrayList<Long>();
     private List<Long> interventionAlternateNameIds = new ArrayList<Long>();
     private List<InterventionTypeCode> interventionTypes = new ArrayList<InterventionTypeCode>();
+    private String ctgovXmlRequiredIndicator; 
     
     /**
      * @return excludeRejectedTrials
@@ -421,5 +422,15 @@ public class StudyProtocolOptions {
             this.interventionTypes.add(InterventionTypeCode.getByCode(intvType));
         }
     }
+
+	public String getCtgovXmlRequiredIndicator() {
+		return ctgovXmlRequiredIndicator;
+	}
+
+	public void setCtgovXmlRequiredIndicator(String ctgovXmlRequiredIndicator) {
+		this.ctgovXmlRequiredIndicator = ctgovXmlRequiredIndicator;
+	}
+    
+    
     
 }
