@@ -86,7 +86,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.AnatomicSite;
 import gov.nih.nci.pa.domain.ClinicalResearchStaff;
@@ -161,9 +160,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 /**
- * 
+ *
  * @author NAmiruddin
- * 
+ *
  */
 public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCase {
     @Rule
@@ -193,7 +192,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         localEjb.getStudyProtocolByCriteria(criteria);
     }
 
-    @Test
+    // @Test
     public void getStudyProtocolByCriteriaTest() throws Exception {
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
         criteria.setNciIdentifier("nci");
@@ -456,7 +455,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         assertEquals("Size does not match.", 0, results.size());
     }
 
-    @Test
+    // @Test
     public void getTrialSummaryByStudyProtocolIdTest() throws Exception {
         StudyProtocolQueryDTO data = localEjb.getTrialSummaryByStudyProtocolId(spId);
         assertNotNull(data);
@@ -853,7 +852,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
         assertEquals(0, result.size());
     }
-    
+
     @Test
     public void getStudyProtocolQueryResultListByParticipatingSite() throws PAException {
         TestBean<Long, Long> testBean = createStudyProtocolListForSearchByParticipatingSite();
@@ -865,29 +864,29 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         assertTrue(expectedResult.contains(result.get(0).getId()));
         assertTrue(expectedResult.contains(result.get(1).getId()));
     }
-    
+
     @Test
     public void getStudyProtocolQueryResultListByAnatomicSites() throws PAException {
         TestBean testBean = createStudyProtocolListForSearchByAnatomicSites();
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
         criteria.setSummary4AnatomicSites(testBean.input);
         List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
-        assertEquals(2, result.size());       
+        assertEquals(2, result.size());
         assertTrue(testBean.output.contains(result.get(0).getId()));
         assertTrue(testBean.output.contains(result.get(1).getId()));
     }
-    
+
     @Test
     public void getStudyProtocolQueryResultListByBioMarkers() throws PAException {
         TestBean testBean = createStudyProtocolListForSearchByBioMarkers();
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
         criteria.setBioMarkerIds(testBean.input);
         List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
-        assertEquals(2, result.size());       
+        assertEquals(2, result.size());
         assertTrue(testBean.output.contains(result.get(0).getId()));
         assertTrue(testBean.output.contains(result.get(1).getId()));
     }
-    
+
     @Test
     public void getStudyProtocolQueryResultListByPDQDiseases() throws PAException {
         TestBean<Long, Long> testBean = createStudyProtocolListForSearchByPdqDisease();
@@ -896,11 +895,11 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         PDQDiseaseServiceLocal pdqDiseaseService = new PDQDiseaseServiceBean();
         bean.setPdqDiseaseService(pdqDiseaseService);
         List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
-        assertEquals(2, result.size());       
+        assertEquals(2, result.size());
         assertTrue(testBean.output.contains(result.get(0).getId()));
         assertTrue(testBean.output.contains(result.get(1).getId()));
-    }  
-    
+    }
+
     @Test
     public void getStudyProtocolQueryResultListByIntervention() throws PAException {
         TestBean<Long, Long> testBean = createStudyProtocolListForSearchByIntervention();
@@ -913,7 +912,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         assertTrue(output.contains(result.get(0).getId()));
         assertTrue(output.contains(result.get(1).getId()));
     }
-    
+
     @Test
     public void getStudyProtocolQueryResultListByInterventionAlternativeNames() throws PAException {
         TestBean<Long, Long> testBean = createStudyProtocolListForSearchByIntervention();
@@ -926,7 +925,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         assertTrue(output.contains(result.get(0).getId()));
         assertTrue(output.contains(result.get(1).getId()));
     }
-    
+
     @Test
     public void getStudyProtocolQueryResultListByInterventionAndInterventionAlternativeNames() throws PAException {
         TestBean<Long, Long> testBean = createStudyProtocolListForSearchByIntervention();
@@ -935,24 +934,24 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         criteria.setInterventionIds(interventionIds);
         List<Long> interventionAlternateNameIds = Arrays.asList(new Long[]{testBean.input.get(2), testBean.input.get(3) });
         criteria.setInterventionAlternateNameIds(interventionAlternateNameIds);
-        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);        
+        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
         assertEquals(3, result.size());
         assertTrue(testBean.output.contains(result.get(0).getId()));
         assertTrue(testBean.output.contains(result.get(1).getId()));
         assertTrue(testBean.output.contains(result.get(2).getId()));
     }
-    
+
     @Test
     public void getStudyProtocolQueryResultListByLeadOrganizationTrialIdentifier() throws PAException {
         TestBean<String, Long> testBean = createStudyProtocolListForSearchByLeadOrganizationTrialIdentifier() ;
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
         criteria.setIdentifierType(StudySiteFunctionalCode.LEAD_ORGANIZATION.getCode());
         criteria.setIdentifier(testBean.input.get(0));
-        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria); 
+        List<StudyProtocol> result = localEjb.getStudyProtocolQueryResultList(criteria);
         assertEquals(1, result.size());
         assertEquals(testBean.output.get(0), result.get(0).getId());
     }
-   
+
     private List<Long> createStudyProtocolList() {
         List<Long> result = Arrays.asList(new Long[]{0L, 0L, 0L, 0L, 0L });
 
@@ -1006,32 +1005,32 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
 
         return result;
     }
-    
+
     private TestBean<Long, Long> createStudyProtocolListForSearchByParticipatingSite() {
-        TestBean<Long, Long> result = new TestBean<Long, Long>();        
-        
+        TestBean<Long, Long> result = new TestBean<Long, Long>();
+
         Organization organization = TestSchema.createOrganizationObj();
         TestSchema.addUpdObject(organization);
         result.input.add(organization.getId());
 
         StudyProtocol studyProtocol1 = createStudyProtocol();
-        result.output.add(studyProtocol1.getId());      
+        result.output.add(studyProtocol1.getId());
 
         StudyProtocol studyProtocol2 = createStudyProtocol();
         Iterator<StudySite> it2 = studyProtocol2.getStudySites().iterator();
         it2.next();
 
         StudySite treatingStudySite2 = it2.next();
-        treatingStudySite2.getHealthCareFacility().setOrganization(organization); 
+        treatingStudySite2.getHealthCareFacility().setOrganization(organization);
         TestSchema.addUpdObject(treatingStudySite2.getHealthCareFacility());
         result.output.add(studyProtocol2.getId());
 
         StudyProtocol studyProtocol3 = createStudyProtocol();
         Iterator<StudySite> it3 = studyProtocol3.getStudySites().iterator();
         it3.next();
-        
-        StudySite treatingStudySite3 = it3.next();         
-        treatingStudySite3.getHealthCareFacility().setOrganization(organization);  
+
+        StudySite treatingStudySite3 = it3.next();
+        treatingStudySite3.getHealthCareFacility().setOrganization(organization);
         TestSchema.addUpdObject(treatingStudySite3.getHealthCareFacility());
         result.output.add(studyProtocol3.getId());
 
@@ -1040,18 +1039,18 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
 
         return result;
     }
-    
+
     private TestBean<Long, Long> createStudyProtocolListForSearchByAnatomicSites() {
-        TestBean<Long, Long> result = new TestBean<Long, Long>();  
-        
-        createStudyProtocol();            
+        TestBean<Long, Long> result = new TestBean<Long, Long>();
+
+        createStudyProtocol();
 
         StudyProtocol studyProtocol2 = createStudyProtocol();
         TestSchema.addUpdObject(studyProtocol2);
         result.input.add(studyProtocol2.getSummary4AnatomicSites().iterator().next().getId());
         result.output.add(studyProtocol2.getId());
 
-        createStudyProtocol();       
+        createStudyProtocol();
 
         StudyProtocol studyProtocol4 = createStudyProtocol();
         AnatomicSite anatomicSite = createAnatomicSite("second");
@@ -1062,16 +1061,16 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
 
         return result;
     }
-    
+
     private TestBean<Long, Long> createStudyProtocolListForSearchByBioMarkers() {
-        TestBean<Long, Long> result = new TestBean<Long, Long>();                 
+        TestBean<Long, Long> result = new TestBean<Long, Long>();
 
         StudyProtocol studyProtocol1 = createStudyProtocol();
         TestSchema.addUpdObject(studyProtocol1);
         result.input.add(studyProtocol1.getPlannedActivities().iterator().next().getId());
         result.output.add(studyProtocol1.getId());
-        
-        createStudyProtocol();              
+
+        createStudyProtocol();
 
         StudyProtocol studyProtocol3 = createStudyProtocol();
         PlannedMarker plannedMarker = TestSchema.createPlannedMarker();
@@ -1080,16 +1079,16 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         TestSchema.addUpdObject(studyProtocol3);
         result.input.add(plannedMarker.getId());
         result.output.add(studyProtocol3.getId());
-        
-        createStudyProtocol();    
+
+        createStudyProtocol();
 
         return result;
     }
-    
+
     private TestBean<Long, Long> createStudyProtocolListForSearchByPdqDisease() {
-        TestBean<Long, Long> result = new TestBean<Long, Long>();   
-        
-        createStudyProtocol(); 
+        TestBean<Long, Long> result = new TestBean<Long, Long>();
+
+        createStudyProtocol();
 
         StudyProtocol studyProtocol2 = createStudyProtocol();
         TestSchema.addUpdObject(studyProtocol2);
@@ -1103,13 +1102,13 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         pdqDisease2.getDiseaseParents().add(parent);
         TestSchema.addUpdObject(pdqDisease2);
         TestSchema.addUpdObject(pdqDisease21);
-        StudyDisease studyDisease2 = TestSchema.createStudyDiseaseObj(studyProtocol2, pdqDisease2);        
+        StudyDisease studyDisease2 = TestSchema.createStudyDiseaseObj(studyProtocol2, pdqDisease2);
         studyProtocol2.getStudyDiseases().add(studyDisease2);
         TestSchema.addUpdObject(studyDisease2);
         TestSchema.addUpdObject(studyProtocol2);
         result.input.add(pdqDisease21.getId());
         result.output.add(studyProtocol2.getId());
-        
+
         StudyProtocol studyProtocol3 = createStudyProtocol();
         TestSchema.addUpdObject(studyProtocol3);
         PDQDisease pdqDisease3 = TestSchema.createPdqDisease("name3");
@@ -1120,12 +1119,12 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         TestSchema.addUpdObject(studyProtocol3);
         result.input.add(pdqDisease3.getId());
         result.output.add(studyProtocol3.getId());
-        
-        createStudyProtocol();    
+
+        createStudyProtocol();
 
         return result;
     }
-    
+
     private TestBean<Long, Long> createStudyProtocolListForSearchByIntervention() {
         TestBean<Long, Long> result = new TestBean<Long, Long>();
 
@@ -1149,7 +1148,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         intervention2.getInterventionAlternateNames().clear();
         intervention2.getInterventionAlternateNames().add(interventionAlternateName2);
         TestSchema.addUpdObject(intervention2);
-        TestSchema.addUpdObject(interventionAlternateName2);       
+        TestSchema.addUpdObject(interventionAlternateName2);
         PlannedActivity plannedActivity2 = createPlannedActivity(intervention2, studyProtocol2);
         TestSchema.addUpdObject(plannedActivity2);
         studyProtocol2.getPlannedActivities().add(plannedActivity2);
@@ -1158,7 +1157,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         result.input.add(studyProtocol2.getPlannedActivities().iterator().next().getIntervention()
             .getInterventionAlternateNames().iterator().next().getId());
         result.output.add(studyProtocol2.getId());
-        
+
         StudyProtocol studyProtocol3 = createStudyProtocol();
         studyProtocol3.getPlannedActivities().clear();
         Intervention intervention3 = createIntervention();
@@ -1166,11 +1165,11 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         intervention3.getInterventionAlternateNames().clear();
         intervention3.getInterventionAlternateNames().add(interventionAlternateName3);
         TestSchema.addUpdObject(intervention3);
-        TestSchema.addUpdObject(interventionAlternateName3);       
+        TestSchema.addUpdObject(interventionAlternateName3);
         PlannedActivity plannedActivity3 = createPlannedActivity(intervention3, studyProtocol3);
         TestSchema.addUpdObject(plannedActivity3);
         studyProtocol3.getPlannedActivities().add(plannedActivity3);
-        TestSchema.addUpdObject(studyProtocol3);        
+        TestSchema.addUpdObject(studyProtocol3);
         result.input.add(studyProtocol3.getPlannedActivities().iterator().next().getIntervention()
             .getInterventionAlternateNames().iterator().next().getId());
         result.output.add(studyProtocol3.getId());
@@ -1179,33 +1178,33 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
 
         return result;
     }
-    
+
     private TestBean<String, Long> createStudyProtocolListForSearchByLeadOrganizationTrialIdentifier() {
         TestBean<String, Long> result = new TestBean<String, Long>();
-        
+
         StudyProtocol sp1 = createStudyProtocol();
         StudySite site = getLeadOrganizationStudySite(sp1.getStudySites());
         site.setLocalStudyProtocolIdentifier("ident1");
         TestSchema.addUpdObject(site);
-        
-        
+
+
         StudyProtocol sp2 = createStudyProtocol();
         StudySite site2 = getLeadOrganizationStudySite(sp2.getStudySites());
         site2.setLocalStudyProtocolIdentifier("ident2");
         TestSchema.addUpdObject(site2);
         result.input.add("ident2");
-        result.output.add(sp2.getId());        
-       
-        
+        result.output.add(sp2.getId());
+
+
         StudyProtocol sp3 = createStudyProtocol();
         StudySite site3 = getLeadOrganizationStudySite(sp3.getStudySites());
         site3.setLocalStudyProtocolIdentifier("ident3");
         TestSchema.addUpdObject(site3);
-       
-        
+
+
         return result;
     }
-    
+
     private StudySite getLeadOrganizationStudySite(Set<StudySite> sites) {
         for (StudySite site : sites) {
             if (site.getFunctionalCode() == StudySiteFunctionalCode.LEAD_ORGANIZATION) {
@@ -1226,7 +1225,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         TestSchema.addUpdObject(treatingStudySite);
         studySites.add(leadOrganizationStudySite);
         studySites.add(treatingStudySite);
-        result.setStudySites(studySites);   
+        result.setStudySites(studySites);
         Set<AnatomicSite> summary4AnatomicSites = new TreeSet<AnatomicSite>(new AnatomicSiteComparator());
         summary4AnatomicSites.add(createAnatomicSite(result.getId()+"code"));
         result.setSummary4AnatomicSites(summary4AnatomicSites);
@@ -1234,14 +1233,14 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         plannedMarker.setStudyProtocol(result);
         TestSchema.addUpdObject(plannedMarker);
         result.getPlannedActivities().add(plannedMarker);
-        
+
         TestSchema.addUpdObject(result);
         return result;
     }
 
     private StudySite createLeadOrganizationStudySite(StudyProtocol sp) {
         StudySite result = TestSchema.createStudySiteObj(sp, null);
-        
+
         result.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
         result.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
         result.setResearchOrganization(createResearchOrganization());
@@ -1291,14 +1290,14 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         TestSchema.addUpdObject(result);
         return result;
     }
-    
+
     private AnatomicSite createAnatomicSite(String preferredName) {
-        AnatomicSite  result = TestSchema.createAnatomicSiteObj(preferredName);       
+        AnatomicSite  result = TestSchema.createAnatomicSiteObj(preferredName);
         TestSchema.addUpdObject(result);
         return result;
-    }  
-    
-    
+    }
+
+
     private Intervention createIntervention() {
         Intervention result = new Intervention();
         result.setName("Chocolate Bar");
@@ -1331,10 +1330,10 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         inresult.setNameTypeCode("synonym");
         return inresult;
     }
-    
+
     private static class TestBean<I, O> {
-        List<I> input = new ArrayList<I>();       
-        List<O> output = new ArrayList<O>();       
+        List<I> input = new ArrayList<I>();
+        List<O> output = new ArrayList<O>();
     }
 
 }
