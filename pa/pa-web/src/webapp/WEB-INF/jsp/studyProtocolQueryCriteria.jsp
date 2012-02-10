@@ -191,7 +191,7 @@
                         </td>
                     	<td>                          
                            <s:select headerKey="" headerValue="All" id="ctgovXmlRequiredIndicator" 
-                           name="criteria.ctgovXmlRequiredIndicator" list="#{'True':'True','False':'False'}"  
+                           name="criteria.ctgovXmlRequiredIndicator" list="#{'True':'Yes','False':'No'}"  
                            value="criteria.ctgovXmlRequiredIndicator" cssStyle="width:206px" />                         
                         </td>                       
                     </tr>
