@@ -17,4 +17,4 @@
 <script type="text/javascript" language="javascript">
     var ${tooltipName} = "${tooltipText}";
 </script>
-<span onmouseover="return overlib(${tooltipName}, BORDER, 4, STICKY, MOUSEOFF, TIMEOUT, 1000, CENTER, WRAP, CELLPAD, 5)"><jsp:doBody/></span>
+<span onfocus="this.blur()" onmouseout="return nd();" onmouseover="return overlib(${tooltipName}, BORDER, 4, MOUSEOFF, RIGHT, WRAP, CELLPAD, 5)"><jsp:doBody/></span>
