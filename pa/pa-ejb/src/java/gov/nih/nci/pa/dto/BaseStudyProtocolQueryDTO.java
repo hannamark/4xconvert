@@ -104,7 +104,6 @@ public class BaseStudyProtocolQueryDTO {
     private String leadOrganizationName;
     private Long leadOrganizationId;
     private String leadOrganizationTrialIdentifier;
-    private String sponsorOrganizationName;
 
     private String localStudyProtocolIdentifier;
     private StudyTypeCode studyTypeCode;
@@ -299,20 +298,6 @@ public class BaseStudyProtocolQueryDTO {
      */
     public PhaseAdditionalQualifierCode getPhaseAdditionalQualifier() {
         return phaseAdditionalQualifier;
-    }
-
-    /**
-     * @return the sponsor organization name
-     */
-    public String getSponsorOrganizationName() {
-        return sponsorOrganizationName;
-    }
-
-    /**
-     * @param sponsorOrganizationName the sponsor org name to set
-     */
-    public void setSponsorOrganizationName(String sponsorOrganizationName) {
-        this.sponsorOrganizationName = sponsorOrganizationName;
     }
 
     /**

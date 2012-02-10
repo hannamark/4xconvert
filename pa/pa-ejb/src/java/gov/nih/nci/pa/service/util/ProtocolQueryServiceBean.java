@@ -172,6 +172,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
     @EJB
     private PDQDiseaseServiceLocal pdqDiseaseService;
 
+    @EJB
+    private ProtocolQueryResultsServiceLocal protocolQueryResultsService;
+
     private PAServiceUtils paServiceUtils;
 
     /**
@@ -185,8 +188,8 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         }
         List<StudyProtocolQueryDTO> pdtos = new ArrayList<StudyProtocolQueryDTO>();
         List<StudyProtocol> queryList = getStudyProtocolQueryResults(spsc);
-        pdtos = convertToStudyProtocolDTO(queryList, spsc.getUserId(),
-                BooleanUtils.toBoolean(spsc.isMyTrialsOnly()));
+        pdtos = protocolQueryResultsService.getResults(queryList,
+                BooleanUtils.toBoolean(spsc.isMyTrialsOnly()), spsc.getUserId());
         if (CollectionUtils.isNotEmpty(pdtos)) {
             pdtos = appendOnHold(pdtos);
         }
@@ -454,9 +457,6 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
             results = query.list();
         } catch (Exception e) {
             throw new PAException("An error has occurred when searching for trials.", e);
-        }
-        if (results.size() > PAConstants.MAX_SEARCH_RESULTS) {
-            throw new PAException("Results exceed more than 500.  Please refine the search criteria.");
         }
         return results;
     }

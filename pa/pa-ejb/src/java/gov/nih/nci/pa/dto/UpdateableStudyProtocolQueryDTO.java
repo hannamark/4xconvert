@@ -90,7 +90,6 @@ import java.util.Date;
  */
 public class UpdateableStudyProtocolQueryDTO extends BaseStudyProtocolQueryDTO {
 
-    private String amend;
     private String amendmentNumber;
     private Date amendmentDate;
     private MilestonesDTO milestones = new MilestonesDTO();
@@ -129,20 +128,6 @@ public class UpdateableStudyProtocolQueryDTO extends BaseStudyProtocolQueryDTO {
      */
     public void setUpdatedDate(Date updatedDate) {
         this.updatedDate = updatedDate;
-    }
-    
-    /**
-     * @return the amend
-     */
-    public String getAmend() {
-        return amend;
-    }
-
-    /**
-     * @param amend the amend to set
-     */
-    public void setAmend(String amend) {
-        this.amend = amend;
     }
 
     /**

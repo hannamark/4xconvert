@@ -90,7 +90,6 @@ import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.coppa.services.LimitOffset;
 import gov.nih.nci.coppa.services.TooManyResultsException;
 import gov.nih.nci.iso21090.Ii;
@@ -312,8 +311,6 @@ public class PDQTrialRegistrationServiceTest extends AbstractHibernateTestCase {
         result.setLeadOrganizationName("Arthur G. James Cancer Hospital and Richard J. Solove Research Institute at "
                 + "Ohio State University Comprehensive Cancer Center");
         result.setPiFullName("William E. Carson");
-        result.setSponsorOrganizationName("Arthur G. James Cancer Hospital and Richard J. Solove Research Institute at "
-                + "Ohio State University Comprehensive Cancer Center");
         result.setStudyProtocolId(1L);
         queryResults.add(result);
 

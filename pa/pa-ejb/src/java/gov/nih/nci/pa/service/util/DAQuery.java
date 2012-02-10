@@ -85,9 +85,12 @@ package gov.nih.nci.pa.service.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * Wrapper class for HQL queries, SQL queries, named queries and their parameters.
- * 
+ *
  * @author Michael Visee
  */
 public class DAQuery {
@@ -183,4 +186,27 @@ public class DAQuery {
         parameters.put(paramName, value);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof DAQuery) {
+            DAQuery other = (DAQuery) obj;
+            EqualsBuilder builder = new EqualsBuilder();
+            builder.append(getName(), other.getName());
+            builder.append(getParameters(), other.getParameters());
+            builder.append(isSql(), other.isSql());
+            builder.append(getText(), other.getText());
+            return builder.isEquals();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        HashCodeBuilder builder = new HashCodeBuilder();
+        builder.append(getName());
+        builder.append(getParameters());
+        builder.append(isSql());
+        builder.append(getText());
+        return builder.toHashCode();
+    }
 }

@@ -1,0 +1,211 @@
+package gov.nih.nci.pa.service.util;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import gov.nih.nci.pa.domain.RegistryUser;
+import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
+import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.UserOrgType;
+import gov.nih.nci.pa.service.PAException;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class ProtocolQueryResultsServiceTest {
+
+    static final long ADMIN_USERID = 34;
+    static final long ADMINISTRATED_ORG = 74;
+    static final long MEMB_USERID = 77;
+
+    ProtocolQueryResultsServiceLocal bean;
+    DataAccessServiceLocal daMock;
+    RegistryUserServiceLocal usrMock;
+
+    RegistryUser admin;
+    RegistryUser memb;
+
+    BigInteger studyProtocolIdentifier = new BigInteger("14");
+    String officialTitle = "title";
+    Boolean proprietaryTrialIndicator = true;
+    Date recordVerificationDate = new Date();
+    Boolean ctgovXmlRequiredIndicator = true;
+    Boolean updating = true;
+    Date dateLastCreated = new Date();
+    Integer submissionNumber = 1;
+    String nciNumber = "NCI-2099-00001";
+    String nctNumber = "nct gog 03";
+    String leadOrgPoid = "123";
+    String leadOrgName = "Duke Medical Center";
+    String leadOrgSpIdentifier = "duk001";
+    String currentDwfStatusCode = DocumentWorkflowStatusCode.ACCEPTED.getName();
+    Date currentDwfStatusDate = new Date();
+    String currentStudyOverallStatus = StudyStatusCode.ACTIVE.getName();
+    String currentAdminMilestone = MilestoneCode.ADMINISTRATIVE_READY_FOR_QC.getName();
+    String currentScientificMilestone = MilestoneCode.SCIENTIFIC_PROCESSING_START_DATE.getName();
+    String currentOtherMilestone = MilestoneCode.SUBMISSION_ACCEPTED.getName();
+    Integer adminCheckoutIdentifier = 19;
+    String adminCheckoutUser = "cyx";
+    Integer scientificCheckoutIdentifiER = 21;
+    String scientificCheckoutUser = "jkd";
+    String studyPiFirstName = "John";
+    String studyPiLastName = "Doe";
+    String userLastCreatedLogin = "userlogin";
+    String userLastCreatedFirst = "Jane";
+    String userLastCreatedLast = "Smith";
+    Object[] qryResult = { studyProtocolIdentifier, officialTitle, proprietaryTrialIndicator, recordVerificationDate
+            , ctgovXmlRequiredIndicator, updating, dateLastCreated, submissionNumber, nciNumber, nctNumber, leadOrgPoid
+            , leadOrgName, leadOrgSpIdentifier, currentDwfStatusCode, currentDwfStatusDate, currentStudyOverallStatus
+            , currentAdminMilestone, currentScientificMilestone, currentOtherMilestone, adminCheckoutIdentifier
+            , adminCheckoutUser, scientificCheckoutIdentifiER, scientificCheckoutUser, studyPiFirstName,
+            studyPiLastName
+            , userLastCreatedLogin, userLastCreatedFirst, userLastCreatedLast };
+
+    @Before
+    public void init() throws Exception {
+        ProtocolQueryResultsServiceBean svc = new ProtocolQueryResultsServiceBean();
+        daMock = mock(DataAccessServiceLocal.class);
+        usrMock = mock(RegistryUserServiceLocal.class);
+        svc.setDataAccessService(daMock);
+        svc.setRegistryUserService(usrMock);
+        bean = svc;
+
+        // set up users
+        admin = new RegistryUser();
+        admin.setAffiliatedOrgUserType(UserOrgType.ADMIN);
+        when(usrMock.getUserById(ADMIN_USERID)).thenReturn(admin);
+        memb = new RegistryUser();
+        memb.setAffiliatedOrgUserType(UserOrgType.MEMBER);
+        when(usrMock.getUserById(MEMB_USERID)).thenReturn(memb);
+
+        // set up owned study
+        List<Object> ownedStudies = new ArrayList<Object>();
+        ownedStudies.add(studyProtocolIdentifier);
+        DAQuery queryMemb = new DAQuery();
+        queryMemb.setSql(true);
+        queryMemb.setText("SELECT study_id FROM study_owner WHERE user_id = :userId");
+        queryMemb.addParameter("userId", MEMB_USERID);
+        when(daMock.findByQuery(queryMemb)).thenReturn(ownedStudies);
+
+        // set up main query
+        DAQuery qryMain = new DAQuery();
+        qryMain.setSql(true);
+        qryMain.setText(ProtocolQueryResultsServiceBean.QRY_STRING);
+        Set<Long> ids = new HashSet<Long>();
+        ids.add(studyProtocolIdentifier.longValue());
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("ids", ids);
+        qryMain.setParameters(params);
+        List<Object> result = new ArrayList<Object>();
+        result.add(qryResult);
+        when(daMock.findByQuery(qryMain)).thenReturn(result);
+    }
+
+    @Test
+    public void emptyListTest() throws Exception {
+        assertEquals(0, bean.getResults(null, false, null).size());
+        assertEquals(0, bean.getResults(new ArrayList<StudyProtocol>(), false, null).size());
+        assertEquals(0, bean.getResults(new ArrayList<StudyProtocol>(), false, 1L).size());
+        assertEquals(0, bean.getResults(new ArrayList<StudyProtocol>(), true, null).size());
+        assertEquals(0, bean.getResults(new ArrayList<StudyProtocol>(), true, 1L).size());
+    }
+
+    @Test(expected = PAException.class)
+    public void tooManyResultsTest() throws Exception {
+        List<StudyProtocol> ids = new ArrayList<StudyProtocol>();
+        for (long x = 0; x < 501; x++) {
+            StudyProtocol id = new StudyProtocol();
+            id.setId(x);
+            ids.add(id);
+        }
+        bean.getResults(ids, false, null);
+    }
+
+    @Test(expected = PAException.class)
+    public void tooManyResultsMyTrialsOnlyTest() throws Exception {
+        List<StudyProtocol> ids = new ArrayList<StudyProtocol>();
+        for (long x = 0; x < 501; x++) {
+            StudyProtocol id = new StudyProtocol();
+            id.setId(x);
+            ids.add(id);
+        }
+        assertEquals(1, bean.getResults(ids, true, MEMB_USERID).size());
+        bean.getResults(ids, true, ADMIN_USERID);
+    }
+
+    @Test
+    public void noOwnedTrialsTest() throws Exception {
+        List<StudyProtocol> ids = new ArrayList<StudyProtocol>();
+        for (long x = 0; x < 501; x++) {
+            StudyProtocol id = new StudyProtocol();
+            id.setId(x);
+            ids.add(id);
+        }
+        assertEquals(0, bean.getResults(ids, true, null).size());
+    }
+
+    @Test
+    public void adminTest() throws Exception {
+        List<StudyProtocol> ids = new ArrayList<StudyProtocol>();
+        StudyProtocol id = new StudyProtocol();
+        id.setId(studyProtocolIdentifier.longValue());
+        ids.add(id);
+
+        // get all trials
+        assertEquals(1, bean.getResults(ids, false, ADMIN_USERID).size());
+        // get owned trials, not affiliated, not trial owner
+        assertEquals(0, bean.getResults(ids, true, ADMIN_USERID).size());
+        // get owned trials, affiliated, not trial owner
+        admin.setAffiliateOrg(leadOrgPoid);
+        assertEquals(1, bean.getResults(ids, true, ADMIN_USERID).size());
+        // get owned trials, affiliated, trial owner
+        List<Object> ownedStudies = new ArrayList<Object>();
+        ownedStudies.add(studyProtocolIdentifier);
+        DAQuery qry = new DAQuery();
+        qry.setSql(true);
+        qry.setText("SELECT study_id FROM study_owner WHERE user_id = :userId");
+        qry.addParameter("userId", ADMIN_USERID);
+        when(daMock.findByQuery(qry)).thenReturn(ownedStudies);
+        assertEquals(1, bean.getResults(ids, true, ADMIN_USERID).size());
+        // get owned trials, not affiliated, trial owner
+        admin.setAffiliateOrg("xyzzy");
+        assertEquals(1, bean.getResults(ids, true, ADMIN_USERID).size());
+    }
+
+    @Test
+    public void memberTest() throws Exception {
+        List<StudyProtocol> ids = new ArrayList<StudyProtocol>();
+        StudyProtocol id = new StudyProtocol();
+        id.setId(studyProtocolIdentifier.longValue());
+        ids.add(id);
+
+        // all trials
+        assertEquals(1, bean.getResults(ids, false, MEMB_USERID).size());
+        // owned trials, still returns since user is trial owner
+        assertEquals(1, bean.getResults(ids, true, MEMB_USERID).size());
+    }
+
+    @Test
+    public void nullSafeResultsTest() throws Exception {
+        List<StudyProtocol> ids = new ArrayList<StudyProtocol>();
+        StudyProtocol id = new StudyProtocol();
+        id.setId(studyProtocolIdentifier.longValue());
+        ids.add(id);
+        // don't null [0] as study_protocol_identifier never null
+        for (int x = 1; x < qryResult.length; x++) {
+            qryResult[x] = null;
+        }
+        assertEquals(1, bean.getResults(ids, false, null).size());
+    }
+}

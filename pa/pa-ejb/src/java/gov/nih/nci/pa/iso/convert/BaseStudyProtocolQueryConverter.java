@@ -102,7 +102,17 @@ import java.util.List;
 public class BaseStudyProtocolQueryConverter {
 
 
-
+    /**
+     * List of document workflow statuses for which TSR reports can't be
+     * generated.
+     */
+    public static final List<DocumentWorkflowStatusCode> NON_TSR_DWF;
+    static {
+        NON_TSR_DWF = new ArrayList<DocumentWorkflowStatusCode>();
+        NON_TSR_DWF.add(DocumentWorkflowStatusCode.SUBMITTED);
+        NON_TSR_DWF.add(DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED);
+        NON_TSR_DWF.add(DocumentWorkflowStatusCode.REJECTED);
+    }
 
     private final RegistryUserServiceLocal registryUserService;
     private final PAServiceUtils paServiceUtils;
@@ -145,11 +155,7 @@ public class BaseStudyProtocolQueryConverter {
      */
     protected void setViewTSR(StudyProtocolQueryDTO studyProtocolDto,
                 DocumentWorkflowStatusCode documentWorkflowStatusCode) {
-        List<DocumentWorkflowStatusCode> nonViewableMilestones = new ArrayList<DocumentWorkflowStatusCode>();
-        nonViewableMilestones.add(DocumentWorkflowStatusCode.SUBMITTED);
-        nonViewableMilestones.add(DocumentWorkflowStatusCode.AMENDMENT_SUBMITTED);
-        nonViewableMilestones.add(DocumentWorkflowStatusCode.REJECTED);
-        studyProtocolDto.setViewTSR(!nonViewableMilestones.contains(documentWorkflowStatusCode));
+        studyProtocolDto.setViewTSR(!NON_TSR_DWF.contains(documentWorkflowStatusCode));
     }
 
 

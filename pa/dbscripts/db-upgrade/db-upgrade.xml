@@ -830,4 +830,8 @@
         <comment>Updating registration email template to include warning messages.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.7.1/PO-3441-2.sql"/>
      </changeSet>
+     <changeSet id="PO-4311.sql" author="Hugh">
+        <comment>Add views for returning search results.</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.7.1/PO-4311.sql"/>
+     </changeSet>
 </databaseChangeLog>
