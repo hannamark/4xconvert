@@ -184,7 +184,7 @@ import org.w3c.dom.Element;
 */
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGeneratorServiceBean
     implements CTGovXmlGeneratorServiceLocal {
 
@@ -206,7 +206,6 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
      * {@inheritDoc}
      */
     @Override
-    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public String generateCTGovXml(Ii studyProtocolIi) throws PAException {
         if (studyProtocolIi == null) {
             throw new PAException("Study Protocol Identifier is null");

@@ -126,7 +126,7 @@ import org.apache.log4j.Logger;
  */
 @Stateless
 @Interceptors(PaHibernateSessionInterceptor.class)
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTaskServiceLocal {
     private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     private static final String ZIP_ARCHIVE_NAME = "CTRP-TRIALS-";

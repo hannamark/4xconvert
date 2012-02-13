@@ -142,7 +142,7 @@ import org.xml.sax.SAXException;
  */
 @Stateless
 @Interceptors({RemoteAuthorizationInterceptor.class, PaHibernateSessionInterceptor.class })
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 public class PDQXmlGeneratorServiceBean extends BasePdqXmlGeneratorBean implements PDQXmlGeneratorServiceRemote {
 
     private static final Logger LOG = Logger.getLogger(PDQXmlGeneratorServiceBean.class);
