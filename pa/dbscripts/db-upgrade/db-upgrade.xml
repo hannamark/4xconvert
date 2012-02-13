@@ -834,4 +834,8 @@
         <comment>Add views for returning search results.</comment>
         <sqlFile path="@db-upgrade.run.dir@/3.7.1/PO-4311.sql"/>
      </changeSet>
+     <changeSet id="PO-2034" author="krylovd">
+        <comment>Added study_site_owner table</comment>
+        <sqlFile path="@db-upgrade.run.dir@/3.7.1/PO-2034.sql"/>
+     </changeSet>     
 </databaseChangeLog>

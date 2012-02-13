@@ -105,6 +105,7 @@ import com.fiveamsolutions.nci.commons.audit.Auditable;
  */
 @Entity
 @Table(name = "REGISTRY_USER")
+@SuppressWarnings("PMD.TooManyFields")
 public class RegistryUser extends AbstractEntity implements Auditable {
     private static final long serialVersionUID = -6519568778371398209L;
     private String firstName;
@@ -123,6 +124,7 @@ public class RegistryUser extends AbstractEntity implements Auditable {
     private Long poPersonId;
     private String emailAddress;
     private Set<StudyProtocol> studyProtocols = new HashSet<StudyProtocol>();
+    private Set<StudySite> studySites = new HashSet<StudySite>();
     private Long affiliatedOrganizationId;
     private UserOrgType affiliatedOrgUserType;
 
@@ -369,6 +371,24 @@ public class RegistryUser extends AbstractEntity implements Auditable {
     public void setStudyProtocols(Set<StudyProtocol> studyProtocols) {
         this.studyProtocols = studyProtocols;
     }
+    
+    /**
+     * @return the studySites
+     */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "STUDY_SITE_OWNER", joinColumns = @JoinColumn(name = "USER_ID"), inverseJoinColumns = @JoinColumn(
+            name = "STUDY_SITE_ID"))
+    public Set<StudySite> getStudySites() {
+        return studySites;
+    }
+
+    /**
+     * @param studySites the studySites to set
+     */
+    public void setStudySites(Set<StudySite> studySites) {
+        this.studySites = studySites;
+    }
+    
 
     /**
      * @return the affiliatedOrganizationId

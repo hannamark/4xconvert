@@ -82,7 +82,9 @@ import gov.nih.nci.pa.enums.ReviewBoardApprovalStatusCode;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 
 import javax.persistence.Column;
@@ -90,6 +92,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -118,6 +121,7 @@ import com.fiveamsolutions.nci.commons.search.Searchable;
                                  columnNames = { "STUDY_PROTOCOL_IDENTIFIER" }),
                                  @Index(name = "study_site_functional_code_idx", 
                                  columnNames = { "FUNCTIONAL_CODE" }) })
+@SuppressWarnings("PMD.TooManyFields")
 public class StudySite extends OrganizationFunctionalRole {
     private static final long serialVersionUID = 1234567890L;
     private static final String MAPPED_BY_SS = "studySite";
@@ -139,6 +143,7 @@ public class StudySite extends OrganizationFunctionalRole {
     private Timestamp accrualDateRangeHigh;
     private Timestamp accrualDateRangeLow;
     private SortedSet<StudySiteSubjectAccrualCount> accrualCounts;
+    private Set<RegistryUser> studySiteOwners = new HashSet<RegistryUser>();
 
     /**
      * @return the programCode
@@ -436,4 +441,20 @@ public class StudySite extends OrganizationFunctionalRole {
         }
         return null;
     }
+    
+    /**
+     * @return the studySiteOwners
+     */
+     @ManyToMany(mappedBy = "studySites")
+     public Set<RegistryUser> getStudySiteOwners() {
+        return studySiteOwners;
+    }
+
+    /**
+     * @param studySiteOwners the studySiteOwners to set
+     */
+    public void setStudySiteOwners(Set<RegistryUser> studySiteOwners) {
+        this.studySiteOwners = studySiteOwners;
+    }
+    
 }
