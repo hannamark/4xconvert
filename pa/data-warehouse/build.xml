@@ -15,6 +15,7 @@
         <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}" 
             userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}" 
             expandproperties="true" autocommit="true">
+            <transaction src="${basedir}/sql/on_hold.sql"/>
             <transaction src="${basedir}/sql/processing-status.sql"/>
             <transaction src="${basedir}/sql/families.sql"/>
             <transaction src="${basedir}/sql/generic_contact.sql"/>
@@ -35,6 +36,8 @@
     </target>
     
     <target name="populate" depends="init-db" description="Populates the data warehousing tables using the given database">
+        <echo message = "Running On Hold Status"/>
+        <groovy src="groovy/on_hold.groovy"/>
         <echo message = "Running Processing Status"/>
         <groovy src="groovy/processing_status.groovy"/>
         <echo message = "Running Org_families"/>
