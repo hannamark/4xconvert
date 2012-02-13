@@ -188,6 +188,8 @@ public class PDQUpdateGeneratorTaskServiceBean implements PDQUpdateGeneratorTask
                 PaHibernateUtil.getCurrentSession().clear();
             }
             lock.release();
+            channel.close();
+            zipOutput.close();
             //Finally move the generic file to the more specific path.
             FileUtils.moveFile(zipArchive, new File(zipFilePath));
             LOG.info("PDQ trial exporter processed " + collaborativeTrials.size() + " trials");

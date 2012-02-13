@@ -251,22 +251,22 @@ public class PdqXmlGenHelperTest extends AbstractMockitoTest {
         diseases.add(disease);
         PdqXmlGenHelper.handleDiseaseCollection(diseases, doc, root);
         String docStr = getXml(doc);
-        assertTrue(docStr.contains("<diseases>\n"));
-        assertTrue(docStr.contains("<disease_conditions>\n"));
-        assertTrue(docStr.contains("<condition_info>\n"));
-        assertTrue(docStr.contains("<preferred_name>preferredName</preferred_name>\n"));
-        assertTrue(docStr.contains("<disease_code>diseaseCode</disease_code>\n"));
-        assertTrue(docStr.contains("<nci_thesaurus_id>ntTermIdentifier</nci_thesaurus_id>\n"));
-        assertTrue(docStr.contains("<menu_display_name>displayName</menu_display_name>\n"));
-        assertTrue(docStr.contains("</condition_info>\n"));
-        assertTrue(docStr.contains("</disease_conditions>\n"));
+        assertTrue(docStr.contains("<diseases>" + NEWLINE));
+        assertTrue(docStr.contains("<disease_conditions>" + NEWLINE));
+        assertTrue(docStr.contains("<condition_info>" + NEWLINE));
+        assertTrue(docStr.contains("<preferred_name>preferredName</preferred_name>" + NEWLINE));
+        assertTrue(docStr.contains("<disease_code>diseaseCode</disease_code>" + NEWLINE));
+        assertTrue(docStr.contains("<nci_thesaurus_id>ntTermIdentifier</nci_thesaurus_id>" + NEWLINE));
+        assertTrue(docStr.contains("<menu_display_name>displayName</menu_display_name>" + NEWLINE));
+        assertTrue(docStr.contains("</condition_info>" + NEWLINE));
+        assertTrue(docStr.contains("</disease_conditions>" + NEWLINE));
         assertTrue(docStr.contains("</diseases>"));
     }
 
     @Test
     public void testGetPoHCFDTOByPaHcfIi() throws PAException {
         HealthCareFacilityDTO hcfDto = PdqXmlGenHelper.getPoHCFDTOByPaHcfIi(
-                IiConverter.convertToPoHealthCareFacilityIi("1"), this.getCorUtils());
+                IiConverter.convertToPoHealthCareFacilityIi("1"), getCorUtils());
         Iterator<Ii> ids = hcfDto.getIdentifier().getItem().iterator();
         assertEquals("1", ids.next().getExtension());
         assertEquals("ctep org id", ids.next().getExtension());
@@ -278,23 +278,23 @@ public class PdqXmlGenHelperTest extends AbstractMockitoTest {
         Element root = doc.createElement("test");
         doc.appendChild(root);
         PdqXmlGenHelper.addPoOrganizationByPaHcfIi(root, "organization",
-                IiConverter.convertToPoHealthCareFacilityIi("1"), doc, this.getCorUtils());
+                IiConverter.convertToPoHealthCareFacilityIi("1"), doc, getCorUtils());
         String docStr = getXml(doc);
-        assertTrue(docStr.contains("<test>\n"));
-        assertTrue(docStr.contains("<organization>\n"));
-        assertTrue(docStr.contains("<name>some org name</name>\n"));
-        assertTrue(docStr.contains("<po_id>1</po_id>\n"));
-        assertTrue(docStr.contains("<ctep_id>ctep org id</ctep_id>\n"));
-        assertTrue(docStr.contains("<address>\n"));
-        assertTrue(docStr.contains("<street>street</street>\n"));
-        assertTrue(docStr.contains("<city>city</city>\n"));
-        assertTrue(docStr.contains("<state>MD</state>\n"));
-        assertTrue(docStr.contains("<zip>20000</zip>\n"));
-        assertTrue(docStr.contains("<country>United States</country>\n"));
-        assertTrue(docStr.contains("</address>\n"));
-        assertTrue(docStr.contains("<phone>111-222-3333</phone>\n"));
-        assertTrue(docStr.contains("<email>X</email>\n"));
-        assertTrue(docStr.contains("</organization>\n"));
+        assertTrue(docStr.contains("<test>" + NEWLINE));
+        assertTrue(docStr.contains("<organization>" + NEWLINE));
+        assertTrue(docStr.contains("<name>some org name</name>" + NEWLINE));
+        assertTrue(docStr.contains("<po_id>1</po_id>" + NEWLINE));
+        assertTrue(docStr.contains("<ctep_id>ctep org id</ctep_id>" + NEWLINE));
+        assertTrue(docStr.contains("<address>" + NEWLINE));
+        assertTrue(docStr.contains("<street>street</street>" + NEWLINE));
+        assertTrue(docStr.contains("<city>city</city>" + NEWLINE));
+        assertTrue(docStr.contains("<state>MD</state>" + NEWLINE));
+        assertTrue(docStr.contains("<zip>20000</zip>" + NEWLINE));
+        assertTrue(docStr.contains("<country>United States</country>" + NEWLINE));
+        assertTrue(docStr.contains("</address>" + NEWLINE));
+        assertTrue(docStr.contains("<phone>111-222-3333</phone>" + NEWLINE));
+        assertTrue(docStr.contains("<email>X</email>" + NEWLINE));
+        assertTrue(docStr.contains("</organization>" + NEWLINE));
         assertTrue(docStr.contains("</test>"));
     }
 
@@ -322,11 +322,11 @@ public class PdqXmlGenHelperTest extends AbstractMockitoTest {
         doc.appendChild(eligibility);
         PdqXmlGenHelper.handleEligCritTraversal(eligibilityCriterion, eligHelper, eligibility, doc);
         String docStr = getXml(doc);
-        assertTrue(docStr.contains("<test>\n"));
-        assertTrue(docStr.contains("<criterion>\n"));
-        assertTrue(docStr.contains("<type>Inclusion Criteria</type>\n"));
-        assertTrue(docStr.contains("<data>- highest speed 10 = warp power\n</data>\n"));
-        assertTrue(docStr.contains("</criterion>\n"));
+        assertTrue(docStr.contains("<test>" + NEWLINE));
+        assertTrue(docStr.contains("<criterion>" + NEWLINE));
+        assertTrue(docStr.contains("<type>Inclusion Criteria</type>" + NEWLINE));
+        assertTrue(docStr.contains("<data>- highest speed 10 = warp power" + NEWLINE + "</data>" + NEWLINE));
+        assertTrue(docStr.contains("</criterion>" + NEWLINE));
         assertTrue(docStr.contains("</test>"));
     }
 
@@ -341,11 +341,11 @@ public class PdqXmlGenHelperTest extends AbstractMockitoTest {
 
         PdqXmlGenHelper.handleEligCritTraversal(eligibilityCriterion, eligHelper, eligibility, doc);
         String docStr = getXml(doc);
-        assertTrue(docStr.contains("<test>\n"));
-        assertTrue(docStr.contains("<criterion>\n"));
-        assertTrue(docStr.contains("<type>Inclusion Criteria</type>\n"));
-        assertTrue(docStr.contains("<data>     - text\n</data>\n"));
-        assertTrue(docStr.contains("</criterion>\n"));
+        assertTrue(docStr.contains("<test>" + NEWLINE));
+        assertTrue(docStr.contains("<criterion>" + NEWLINE));
+        assertTrue(docStr.contains("<type>Inclusion Criteria</type>" + NEWLINE));
+        assertTrue(docStr.contains("<data>     - text" + NEWLINE + "</data>" + NEWLINE));
+        assertTrue(docStr.contains("</criterion>" + NEWLINE));
         assertTrue(docStr.contains("</test>"));
     }
 

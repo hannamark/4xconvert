@@ -87,7 +87,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.AbstractMockitoTest;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
@@ -118,7 +117,8 @@ import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 public class PDQUpdateGeneratorTaskTest extends AbstractMockitoTest {
     private final SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     private PDQUpdateGeneratorTaskServiceBean taskBean;
-    private HibernateHelper hibernateHelperBackUp = PaHibernateUtil.getHibernateHelper();
+    private final HibernateHelper hibernateHelperBackUp = PaHibernateUtil.getHibernateHelper();
+    File pdqDirectory;
 
     /**
      * {@inheritDoc}
@@ -133,8 +133,10 @@ public class PDQUpdateGeneratorTaskTest extends AbstractMockitoTest {
         org.hibernate.Session session = mock(org.hibernate.Session.class);
         when(hibernateHelper.getCurrentSession()).thenReturn(session);
         PaHibernateUtil.setHibernateHelper(hibernateHelper);
+        pdqDirectory = new File(PaEarPropertyReader.getPDQUploadPath());
+        FileUtils.cleanDirectory(pdqDirectory);
     }
-    
+
 
 
     /**
@@ -144,8 +146,12 @@ public class PDQUpdateGeneratorTaskTest extends AbstractMockitoTest {
      */
     @After
     public void tearDown() throws Exception {
-        File pdqDirectory = new File(PaEarPropertyReader.getPDQUploadPath());
-        FileUtils.cleanDirectory(pdqDirectory);
+        try {
+            FileUtils.cleanDirectory(pdqDirectory);
+        } catch (IOException e) {
+            // Windows 7 locking problem; added cleanDirectory to setUp as well
+            // in case this does not work.
+        }
         PaHibernateUtil.setHibernateHelper(hibernateHelperBackUp);
     }
 

@@ -147,7 +147,7 @@ public class PDQXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
         FileChannel fc = new FileInputStream(new File(new URI(this.getClass().getClassLoader().getResource(
                 "PDQExpectedGeneratedXML.xml").toString()))).getChannel();
         String expectedPdqXml = Charset.defaultCharset().decode(fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size())).toString();
-        assertEquals(expectedPdqXml, pdqBean.generatePdqXml(spId));
+        assertEquals(expectedPdqXml.replaceAll("\n", NEWLINE), pdqBean.generatePdqXml(spId));
     }
 
     @Test
@@ -178,7 +178,7 @@ public class PDQXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
         FileChannel fc = new FileInputStream(new File(new URI(this.getClass().getClassLoader().getResource(
                 "PDQExpectedGeneratedXML_invalid.xml").toString()))).getChannel();
         String expectedPdqXml = Charset.defaultCharset().decode(fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size())).toString();
-        assertEquals(expectedPdqXml, pdqBean.generatePdqXml(spId));
+        assertEquals(expectedPdqXml.replaceAll("\n", NEWLINE), pdqBean.generatePdqXml(spId));
     }
 
     class CentralContactMatcher extends ArgumentMatcher<StudyContactDTO> {
@@ -232,17 +232,17 @@ public class PDQXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
     public void testOrgTelEmpty() throws PAException {
         orgDto.setTelecomAddress(new DSet<Tel>());
         String results = getBean().generateCTGovXml(spId);
-        assertTrue(results.contains("<lead_org>\n"));
-        assertTrue(results.contains("<name>some org name</name>\n"));
-        assertTrue(results.contains("<po_id>1</po_id>\n"));
-        assertTrue(results.contains("<ctep_id>ctep org id</ctep_id>\n"));
-        assertTrue(results.contains("<address>\n"));
-        assertTrue(results.contains("<street>street</street>\n"));
-        assertTrue(results.contains("<city>city</city>\n"));
-        assertTrue(results.contains("<state>MD</state>\n"));
-        assertTrue(results.contains("<zip>20000</zip>\n"));
-        assertTrue(results.contains("<country>United States</country>\n"));
-        assertTrue(results.contains("</address>\n"));
+        assertTrue(results.contains("<lead_org>" + NEWLINE));
+        assertTrue(results.contains("<name>some org name</name>" + NEWLINE));
+        assertTrue(results.contains("<po_id>1</po_id>" + NEWLINE));
+        assertTrue(results.contains("<ctep_id>ctep org id</ctep_id>" + NEWLINE));
+        assertTrue(results.contains("<address>" + NEWLINE));
+        assertTrue(results.contains("<street>street</street>" + NEWLINE));
+        assertTrue(results.contains("<city>city</city>" + NEWLINE));
+        assertTrue(results.contains("<state>MD</state>" + NEWLINE));
+        assertTrue(results.contains("<zip>20000</zip>" + NEWLINE));
+        assertTrue(results.contains("<country>United States</country>" + NEWLINE));
+        assertTrue(results.contains("</address>" + NEWLINE));
         assertTrue(results.contains("</lead_org>"));
     }
 
@@ -268,32 +268,32 @@ public class PDQXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
     @Test
     public void testPoAndCtepIds() throws PAException {
         String results = getBean().generateCTGovXml(spId);
-        assertTrue(results.contains("<facility>\n"));
-        assertTrue(results.contains("<name>some org name</name>\n"));
-        assertTrue(results.contains("<po_id>1</po_id>\n"));
+        assertTrue(results.contains("<facility>" + NEWLINE));
+        assertTrue(results.contains("<name>some org name</name>" + NEWLINE));
+        assertTrue(results.contains("<po_id>1</po_id>" + NEWLINE));
         assertTrue(results.contains("<ctep_id>ctep org id</ctep_id>"));
 
-        assertTrue(results.contains("<contact>\n"));
-        assertTrue(results.contains("<first_name>first name</first_name>\n"));
-        assertTrue(results.contains("<last_name>last Name</last_name>\n"));
-        assertTrue(results.contains("<po_id>1</po_id>\n"));
+        assertTrue(results.contains("<contact>" + NEWLINE));
+        assertTrue(results.contains("<first_name>first name</first_name>" + NEWLINE));
+        assertTrue(results.contains("<last_name>last Name</last_name>" + NEWLINE));
+        assertTrue(results.contains("<po_id>1</po_id>" + NEWLINE));
         assertTrue(results.contains("<ctep_id>ctep</ctep_id>"));
 
-        assertTrue(results.contains("<investigator>\n"));
-        assertTrue(results.contains("<first_name>first name</first_name>\n"));
-        assertTrue(results.contains("<last_name>last Name</last_name>\n"));
-        assertTrue(results.contains("<po_id>1</po_id>\n"));
+        assertTrue(results.contains("<investigator>" + NEWLINE));
+        assertTrue(results.contains("<first_name>first name</first_name>" + NEWLINE));
+        assertTrue(results.contains("<last_name>last Name</last_name>" + NEWLINE));
+        assertTrue(results.contains("<po_id>1</po_id>" + NEWLINE));
         assertTrue(results.contains("<ctep_id>ctep</ctep_id>"));
 
-        assertTrue(results.contains("<overall_official>\n"));
-        assertTrue(results.contains("<first_name>first name</first_name>\n"));
-        assertTrue(results.contains("<last_name>last Name</last_name>\n"));
-        assertTrue(results.contains("<po_id>1</po_id>\n"));
+        assertTrue(results.contains("<overall_official>" + NEWLINE));
+        assertTrue(results.contains("<first_name>first name</first_name>" + NEWLINE));
+        assertTrue(results.contains("<last_name>last Name</last_name>" + NEWLINE));
+        assertTrue(results.contains("<po_id>1</po_id>" + NEWLINE));
         assertTrue(results.contains("<ctep_id>ctep</ctep_id>"));
 
-        assertTrue(results.contains("<affiliation>\n"));
-        assertTrue(results.contains("<name>some org name</name>\n"));
-        assertTrue(results.contains("<po_id>1</po_id>\n"));
+        assertTrue(results.contains("<affiliation>" + NEWLINE));
+        assertTrue(results.contains("<name>some org name</name>" + NEWLINE));
+        assertTrue(results.contains("<po_id>1</po_id>" + NEWLINE));
         assertTrue(results.contains("<ctep_id>ctep org id</ctep_id>"));
     }
 

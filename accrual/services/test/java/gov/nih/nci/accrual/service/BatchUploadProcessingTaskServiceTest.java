@@ -174,8 +174,9 @@ public class BatchUploadProcessingTaskServiceTest extends AbstractAccrualHiberna
         for (int i = 0; i < NUMBER_OF_BATCH_FILES; i++) {
             BatchFile batchFile = batchFiles.get(i);
             String filePath = directory + "accrual_batch_" + (i + 1) + ".txt";
-            
-            assertEquals(batchFile.getFileLocation(), filePath);
+            File f1 = new File(batchFile.getFileLocation());
+            File f2 = new File(filePath);
+            assertEquals(f1.getCanonicalPath(), f2.getCanonicalPath());
         }
     }
 }

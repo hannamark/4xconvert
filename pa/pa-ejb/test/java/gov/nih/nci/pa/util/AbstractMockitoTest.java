@@ -229,6 +229,9 @@ import org.mockito.stubbing.Answer;
 @Ignore
 public class AbstractMockitoTest {
 
+    // platform independent new line character
+    protected static final String NEWLINE = System.getProperty("line.separator");
+
     protected PoServiceLocator poSvcLoc;
     protected StudyProtocolServiceLocal spSvc;
     protected StudySiteServiceLocal studySiteSvc;
@@ -948,6 +951,7 @@ public class AbstractMockitoTest {
 
     private void setupCorSvcMock() throws PAException, NullifiedRoleException {
         final Answer<StructuralRole> getStructuralRoleByIiAnswer = new Answer<StructuralRole>() {
+            @Override
             public StructuralRole answer(InvocationOnMock invocation) throws Throwable {
                 Object[] args = invocation.getArguments();
                 Ii input = (Ii) args[0];

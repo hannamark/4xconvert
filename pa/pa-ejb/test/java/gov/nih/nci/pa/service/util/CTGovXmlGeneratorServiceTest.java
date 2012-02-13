@@ -85,8 +85,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import gov.nih.nci.iso21090.Cd;
 import gov.nih.nci.iso21090.DSet;
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.iso21090.St;
@@ -112,7 +110,6 @@ import gov.nih.nci.pa.iso.util.CdConverter;
 import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
-import gov.nih.nci.pa.util.AbstractMockitoTest;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.services.entity.NullifiedEntityException;
 
@@ -129,7 +126,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -600,10 +596,10 @@ public class CTGovXmlGeneratorServiceTest extends AbstractXmlGeneratorTest {
     public void testOrgTelEmpty() throws PAException {
         orgDto.setTelecomAddress(new DSet<Tel>());
         String results = getBean().generateCTGovXml(spId);
-        assertTrue(results.contains("<irb_info>\n"));
-        assertTrue(results.contains("<approval_status>Approved</approval_status>\n"));
-        assertTrue(results.contains("<name>some name</name>\n"));
-        assertTrue(results.contains("<full_address>street, city, MD, 20000 USA</full_address>\n"));
+        assertTrue(results.contains("<irb_info>" + NEWLINE));
+        assertTrue(results.contains("<approval_status>Approved</approval_status>" + NEWLINE));
+        assertTrue(results.contains("<name>some name</name>" + NEWLINE));
+        assertTrue(results.contains("<full_address>street, city, MD, 20000 USA</full_address>" + NEWLINE));
         assertTrue(results.contains("</irb_info>"));
     }
 

@@ -147,8 +147,8 @@
     <!-- ====================================================================== -->
 
     <target name="clean" description="Clean the output directory">
-        <delete dir="${commons.build.dir}"/>
-        <delete dir="${pa.report.dir}/commons"/>
+        <delete dir="${commons.build.dir}" failonerror="false"/>
+        <delete dir="${pa.report.dir}/commons" failonerror="false"/>
     </target>
 
     <!-- ====================================================================== -->

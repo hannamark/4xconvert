@@ -5,9 +5,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
+import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.enums.UserOrgType;
 import gov.nih.nci.pa.service.PAException;
 
@@ -29,6 +31,10 @@ public class ProtocolQueryResultsServiceTest {
     static final long ADMINISTRATED_ORG = 74;
     static final long MEMB_USERID = 77;
 
+    // copied from service
+    private static final int UPDATING_IDX = 5;
+    private static final int SUBMISSION_NUMBER_IDX = 7;
+
     ProtocolQueryResultsServiceLocal bean;
     DataAccessServiceLocal daMock;
     RegistryUserServiceLocal usrMock;
@@ -49,7 +55,7 @@ public class ProtocolQueryResultsServiceTest {
     String leadOrgPoid = "123";
     String leadOrgName = "Duke Medical Center";
     String leadOrgSpIdentifier = "duk001";
-    String currentDwfStatusCode = DocumentWorkflowStatusCode.ACCEPTED.getName();
+    String currentDwfStatusCode = DocumentWorkflowStatusCode.SUBMITTED.getName();
     Date currentDwfStatusDate = new Date();
     String currentStudyOverallStatus = StudyStatusCode.ACTIVE.getName();
     String currentAdminMilestone = MilestoneCode.ADMINISTRATIVE_READY_FOR_QC.getName();
@@ -156,12 +162,33 @@ public class ProtocolQueryResultsServiceTest {
     }
 
     @Test
+    public void submissionTypeTest() throws Exception {
+        List<StudyProtocol> ids = new ArrayList<StudyProtocol>();
+        StudyProtocol id = new StudyProtocol();
+        id.setId(studyProtocolIdentifier.longValue());
+        ids.add(id);
+        // update
+        List<StudyProtocolQueryDTO> trials = bean.getResults(ids, false, MEMB_USERID);
+        assertEquals(1, trials.size());
+        assertEquals(SubmissionTypeCode.U, trials.get(0).getSubmissionTypeCode());
+        // original
+        qryResult[UPDATING_IDX] = null;
+        trials = bean.getResults(ids, false, MEMB_USERID);
+        assertEquals(1, trials.size());
+        assertEquals(SubmissionTypeCode.O, trials.get(0).getSubmissionTypeCode());
+        // amendment
+        qryResult[SUBMISSION_NUMBER_IDX] = 2;
+        trials = bean.getResults(ids, false, MEMB_USERID);
+        assertEquals(1, trials.size());
+        assertEquals(SubmissionTypeCode.A, trials.get(0).getSubmissionTypeCode());
+    }
+
+    @Test
     public void adminTest() throws Exception {
         List<StudyProtocol> ids = new ArrayList<StudyProtocol>();
         StudyProtocol id = new StudyProtocol();
         id.setId(studyProtocolIdentifier.longValue());
         ids.add(id);
-
         // get all trials
         assertEquals(1, bean.getResults(ids, false, ADMIN_USERID).size());
         // get owned trials, not affiliated, not trial owner
@@ -189,7 +216,6 @@ public class ProtocolQueryResultsServiceTest {
         StudyProtocol id = new StudyProtocol();
         id.setId(studyProtocolIdentifier.longValue());
         ids.add(id);
-
         // all trials
         assertEquals(1, bean.getResults(ids, false, MEMB_USERID).size());
         // owned trials, still returns since user is trial owner
