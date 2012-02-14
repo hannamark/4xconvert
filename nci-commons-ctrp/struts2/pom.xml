@@ -4,12 +4,12 @@
     <parent>
         <groupId>gov.nih.nci.coppa</groupId>
         <artifactId>nci-commons-ctrp</artifactId>
-        <version>1.4.1-SNAPSHOT</version>
+        <version>1.4.0-SNAPSHOT</version>
     </parent>
     
     <artifactId>nci-commons-ctrp-struts2</artifactId>
     <packaging>jar</packaging>
-    <version>1.4.1-SNAPSHOT</version>
+    <version>1.4.0-SNAPSHOT</version>
     <name>nci-commons-ctrp-struts2</name>
     <url>../../struts2/target/site/</url>
 
@@ -133,13 +133,6 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.fiveamsolutions</groupId>
-            <artifactId>nci-commons-core</artifactId>
-            <!-- Note, switch this to nci-commons-ctrp-core once deployed to Nexus -->
-            <version>1.3.2</version>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.14</version>
@@ -173,6 +166,13 @@
             <!-- <scope>provided</scope> NOTE:  This should be provided, and optional removed, but there is a
                 checkstyle bug preventing this. -->
             <optional>true</optional>
+        </dependency>
+        <dependency>
+        	<groupId>gov.nih.nci.coppa</groupId>
+        	<artifactId>nci-commons-ctrp-core</artifactId>
+        	<version>1.4.0-SNAPSHOT</version>
+        	<type>jar</type>
+        	<scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

@@ -97,9 +97,6 @@ public class XSSFilterInterceptorTest extends AbstractInterceptorBaseTest {
     private final String KEY1 = "KEY1";
     private final String KEY2 = "KEY2";
 
-    /**
-     * Test XSSFilterInterceptor.
-     */
     @Test
     public void testXSSFiterInterceptor() throws Exception {
         String testString = getTestString();

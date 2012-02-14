@@ -119,21 +119,21 @@ public class NCICommonsUtilsTest {
 
         sb.append("script>");
         // replace both symbols and control chars.
-        String s = NCICommonsUtils.performXSSFilter(sb.toString(), true, true);
+        String s = NCICommonsUtils.performXSSFilter(sb.toString(), true, true, false);
         assertEquals("&lt;" + whitespace + "script&gt;", s);
 
         // replace only the control chars.
-        s = NCICommonsUtils.performXSSFilter(sb.toString(), false, true);
+        s = NCICommonsUtils.performXSSFilter(sb.toString(), false, true, false);
         assertEquals("<" + whitespace + "script>", s);
 
         // do not replace symbols/control chars.
-        s = NCICommonsUtils.performXSSFilter(sb.toString(), false, false);
+        s = NCICommonsUtils.performXSSFilter(sb.toString(), false, false, false);
         assertFalse("< script>".equals(s));
         assertFalse("&lt; script&gt;".equals(s));
         assertTrue(s.equals(sb.toString()));
 
         // substitute symbols only. retain control chars.
-        s = NCICommonsUtils.performXSSFilter(sb.toString(), true, false);
+        s = NCICommonsUtils.performXSSFilter(sb.toString(), true, false, false);
         StringBuilder sb1 = new StringBuilder("&lt;");
         for (char c = 0; c <= 32; c++) {
             sb1.append(c);
@@ -143,5 +143,22 @@ public class NCICommonsUtilsTest {
         assertFalse("&lt; script&gt;".equals(s));
         assertFalse(s.equals(sb.toString()));
         assertTrue(s.equals(sb1.toString()));
+    }
+
+    @Test
+    public void testFilterScriptTag() {
+        String testString = "security<script>alert(34880)</script>";
+        String fixedString = "security script alert(34880) /script ";
+        // lowercase
+        assertEquals(fixedString, NCICommonsUtils.performXSSFilter(testString, false, true, true));
+        assertEquals(fixedString, NCICommonsUtils.performXSSFilter(testString, false, false, true));
+        // uppercase
+        assertEquals(fixedString.toUpperCase(),
+                NCICommonsUtils.performXSSFilter(testString.toUpperCase(), false, false, true));
+        assertEquals(fixedString.toUpperCase(),
+                NCICommonsUtils.performXSSFilter(testString.toUpperCase(), false, true, true));
+        // no tag
+        assertEquals("<>", NCICommonsUtils.performXSSFilter("<>", false, false, true));
+        assertEquals("<>", NCICommonsUtils.performXSSFilter("<>", false, true, true));
     }
 }
