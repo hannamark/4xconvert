@@ -300,6 +300,8 @@ public class SearchTrialAction extends ActionSupport implements Preparable {
         String loginName = ServletActionContext.getRequest().getRemoteUser();
         RegistryUser loggedInUser = registryUserService.getUser(loginName);
         queryCriteria.setUserId(loggedInUser.getId());
+        
+        queryCriteria.setTrialCategory(criteria.getTrialCategory());
 
         return queryCriteria;
     }
