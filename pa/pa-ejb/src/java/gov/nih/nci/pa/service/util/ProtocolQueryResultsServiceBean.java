@@ -83,6 +83,7 @@ import gov.nih.nci.pa.domain.StudyProtocol;
 import gov.nih.nci.pa.dto.StudyProtocolQueryDTO;
 import gov.nih.nci.pa.enums.DocumentWorkflowStatusCode;
 import gov.nih.nci.pa.enums.MilestoneCode;
+import gov.nih.nci.pa.enums.StudySiteFunctionalCode;
 import gov.nih.nci.pa.enums.StudyStatusCode;
 import gov.nih.nci.pa.enums.SubmissionTypeCode;
 import gov.nih.nci.pa.enums.UserOrgType;
@@ -148,6 +149,18 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             + ",admin_checkout_user,scientific_checkout_identifier,scientific_checkout_user,study_pi_first_name"
             + ",study_pi_last_name,user_last_created_login,user_last_created_first,user_last_created_last"
             + " FROM rv_search_results WHERE study_protocol_identifier IN (:ids)";
+
+    static final String STUDY_ID_QRY_STRING = "select study_protocol.identifier from study_protocol "
+            + "INNER JOIN study_site ON study_protocol.identifier=study_site.study_protocol_identifier "
+            + "where study_site.functional_code='"
+            + StudySiteFunctionalCode.TREATING_SITE.name()
+            + "' and "
+            + "(study_site.healthcare_facility_identifier in (SELECT identifier from healthcare_facility "
+            + "where healthcare_facility.organization_identifier=:orgId) "
+            + "or study_site.research_organization_identifier in "
+            + "(SELECT identifier from research_organization "
+            + "where research_organization.organization_identifier=:orgId))";
+    
     private static final int STUDY_PROTOCOL_IDENTIFIER_IDX = 0;
     private static final int OFFICIAL_TITLE_IDX = 1;
     private static final int PROPRIETARY_TRIAL_INDICATOR_IDX = 2;
@@ -198,12 +211,35 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         if (ownerMap.isEmpty()) {
             return new ArrayList<StudyProtocolQueryDTO>();
         }
+        List<Long> studyIDs = getStudiesOnWhichUserHasSite(userId);
         DAQuery query = new DAQuery();
         query.setSql(true);
         query.setText(QRY_STRING);
         query.addParameter("ids", ownerMap.keySet());
         List<Object[]> queryList = dataAccessService.findByQuery(query);
-        return convertResults(queryList, ownerMap, myTrialsOnly, userId);
+        return convertResults(queryList, ownerMap, myTrialsOnly, userId, studyIDs);
+    }
+
+    /**
+     * @param userId
+     * @return IDs of studies on which the user's affiliated organization is a participating site.
+     * @throws PAException
+     */
+    private List<Long> getStudiesOnWhichUserHasSite(Long userId)
+            throws PAException {
+        List<Long> list = new ArrayList<Long>();
+        RegistryUser user = registryUserService.getUserById(userId);
+        if (user != null && user.getAffiliatedOrganizationId() != null) {
+            DAQuery query = new DAQuery();
+            query.setSql(true);
+            query.setText(STUDY_ID_QRY_STRING);
+            query.addParameter("orgId", user.getAffiliatedOrganizationId());
+            List<BigInteger> queryList = dataAccessService.findByQuery(query);
+            for (BigInteger studyId : queryList) {
+                list.add(studyId.longValue());
+            }
+        }
+        return list;
     }
 
     private Map<Long, Integer> getOwnerMapAndFilterTrials(List<StudyProtocol> ids, boolean myTrialsOnly, Long userId)
@@ -245,9 +281,19 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         return ownedStudies;
     }
 
-    private List<StudyProtocolQueryDTO>
-            convertResults(List<Object[]> qryList, Map<Long, Integer> ownerMap, boolean myTrialsOnly, Long userId)
-            throws PAException {
+    /**
+     * @param qryList
+     * @param ownerMap
+     * @param myTrialsOnly
+     * @param userId
+     * @param studyIDs IDs of studies on which the user's affiliated organization is a participating site.
+     * @return
+     * @throws PAException
+     */
+    @SuppressWarnings("PMD.CyclomaticComplexity")
+    private List<StudyProtocolQueryDTO> convertResults(List<Object[]> qryList,
+            Map<Long, Integer> ownerMap, boolean myTrialsOnly, Long userId,
+            List<Long> studyIDs) throws PAException {
         String affiliatedOrg = getAffiliatedOrg(userId);
         List<StudyProtocolQueryDTO> result = new ArrayList<StudyProtocolQueryDTO>();
         for (Object[] row : qryList) {
@@ -269,6 +315,9 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
                 dto.setSearcherTrialOwner(false);
                 result.add(dto);
             }
+            if (studyIDs.contains(dto.getStudyProtocolId())) {
+                dto.setCurrentUserHasSite(true);
+            }
         }
         return result;
     }
@@ -288,7 +337,19 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
         loadSubmissionType(dto, row);
         loadStatusData(dto, row);
         loadCheckoutData(dto, row);
+        setFlags(dto);
         return dto;
+    }
+
+    private void setFlags(StudyProtocolQueryDTO dto) {
+        if (dto.isProprietaryTrial()
+                && !(dto.getStudyStatusCode() != null && !dto
+                        .getStudyStatusCode()
+                        .isEligibleForSiteSelfRegistration())
+                && dto.getDocumentWorkflowStatusCode() != null
+                && dto.getDocumentWorkflowStatusCode().isAcceptedOrAbove()) {
+            dto.setSiteSelfRegistrable(true);
+        }
     }
 
     private void loadGeneralData(StudyProtocolQueryDTO dto, Object[] row) {

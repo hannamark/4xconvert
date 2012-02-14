@@ -90,6 +90,16 @@
                         <a href="#" onclick="showPopup('${updateTrialStatusUrl}', '', 'Update Trial Status');"><s:property value="%{#attr.row.statusChangeLinkText}" /></a>
                     </s:else>
                  </display:column>
+                 <display:column titleKey="search.trial.addMySite" sortable="false" headerClass="sortable" media="html">
+                     <s:if test="%{#attr.row.currentUserCanAddSite}">
+                         <a href="javascript:void(0);" onclick="addMySite('${row.studyProtocolId}');" onkeypress="addMySite('${row.studyProtocolId}');">Add</a>
+                     </s:if>
+                 </display:column>
+                 <display:column titleKey="search.trial.updateMySite" sortable="false" headerClass="sortable" media="html">
+                     <s:if test="%{#attr.row.currentUserCanEditSite}">
+                         <a href="javascript:void(0);" onclick="editMySite('${row.studyProtocolId}');" onkeypress="editMySite('${row.studyProtocolId}');">Update</a>
+                     </s:if>
+                 </display:column>
                  <display:column class="title" title="Action" sortable="false" headerScope="col" scope="row" media="html">
                      <s:if test="%{#attr.row.showSendXml.booleanValue() == true}">
                          <a href="#" onclick="sendXml('${row.studyProtocolId}');">Send XML/TSR</a>

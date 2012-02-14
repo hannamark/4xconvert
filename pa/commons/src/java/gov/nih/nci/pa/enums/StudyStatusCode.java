@@ -99,47 +99,47 @@ public enum StudyStatusCode implements CodedEnum<String> {
     /**
      * In Review.
      */
-    IN_REVIEW("In Review"),
+    IN_REVIEW("In Review", true),
     /**
      * Approved.
      */
-    APPROVED("Approved"),
+    APPROVED("Approved", true),
     /**
      * Active.
      */
-    ACTIVE("Active"),
+    ACTIVE("Active", true),
     /**
      * Enrolling by Invitation.
      */
-    ENROLLING_BY_INVITATION("Enrolling by Invitation"),
+    ENROLLING_BY_INVITATION("Enrolling by Invitation", true),
     /**
      * Closed to Accrual.
      */
-    CLOSED_TO_ACCRUAL("Closed to Accrual"),
+    CLOSED_TO_ACCRUAL("Closed to Accrual", false),
     /**
      * Closed To Accrual And Intervention.
      */
-    CLOSED_TO_ACCRUAL_AND_INTERVENTION("Closed to Accrual and Intervention"),
+    CLOSED_TO_ACCRUAL_AND_INTERVENTION("Closed to Accrual and Intervention", false),
     /**
      * Temporarily Closed To Accrual.
      */
-    TEMPORARILY_CLOSED_TO_ACCRUAL("Temporarily Closed to Accrual"),
+    TEMPORARILY_CLOSED_TO_ACCRUAL("Temporarily Closed to Accrual", false),
     /**
      * Temporarily Closed To Accrual and Intervention.
      */
-    TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION("Temporarily Closed to Accrual and Intervention"),
+    TEMPORARILY_CLOSED_TO_ACCRUAL_AND_INTERVENTION("Temporarily Closed to Accrual and Intervention", false),
     /**
      * Withdrawn.
      */
-    WITHDRAWN("Withdrawn"),
+    WITHDRAWN("Withdrawn", false),
     /**
      * Administratively Complete.
      */
-    ADMINISTRATIVELY_COMPLETE("Administratively Complete"),
+    ADMINISTRATIVELY_COMPLETE("Administratively Complete", false),
     /**
      * Complete.
      */
-    COMPLETE("Complete");
+    COMPLETE("Complete", true);
 
     private static final Set<StudyStatusCode> REASON_REQUIRED = EnumSet
         .of(StudyStatusCode.TEMPORARILY_CLOSED_TO_ACCRUAL,
@@ -190,14 +190,16 @@ public enum StudyStatusCode implements CodedEnum<String> {
     }
 
     private String code;
+    private boolean eligibleForSiteSelfRegistration;
 
     /**
      * Constructor for TrialStatusCode.
      * @param code
      */
 
-    private StudyStatusCode(String code) {
+    private StudyStatusCode(String code, boolean eligibleForSiteSelfRegistration) {
         this.code = code;
+        this.eligibleForSiteSelfRegistration = eligibleForSiteSelfRegistration;
         register(this);
     }
 
@@ -269,6 +271,17 @@ public enum StudyStatusCode implements CodedEnum<String> {
      */
     public boolean requiresReasonText() {
         return REASON_REQUIRED.contains(this);
+    }
+    
+    /**
+     * @return boolean an indication of whether this status permits
+     *         self-registration of participating sites on the trial.
+     * @see https
+     *      ://tracker.nci.nih.gov/browse/PO-2034?focusedCommentId=142303#comment
+     *      -142303
+     */
+    public boolean isEligibleForSiteSelfRegistration() {
+        return eligibleForSiteSelfRegistration;
     }
 
 }

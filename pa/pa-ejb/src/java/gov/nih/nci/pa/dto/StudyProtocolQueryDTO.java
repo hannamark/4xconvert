@@ -98,6 +98,17 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
     private String summ4FundingSrcCategory;
     private boolean searcherTrialOwner = false;
     private String nctNumber;
+    
+    /**
+     * Whether this trial permits self-registration of participating sites. 
+     * @see https://tracker.nci.nih.gov/browse/PO-2034
+     */
+    private boolean siteSelfRegistrable;
+    
+    /**
+     * Whether the current user's organization is a participating site on this trial.
+     */
+    private boolean currentUserHasSite;
 
     /**
      * @return the trialCategory
@@ -206,6 +217,53 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
      */
     public void setNctNumber(String nctNumber) {
         this.nctNumber = nctNumber;
+    }
+
+    /**
+     * @return the siteSelfRegistrable
+     */
+    public boolean isSiteSelfRegistrable() {
+        return siteSelfRegistrable;
+    }
+
+    /**
+     * @param siteSelfRegistrable the siteSelfRegistrable to set
+     */
+    public void setSiteSelfRegistrable(boolean siteSelfRegistrable) {
+        this.siteSelfRegistrable = siteSelfRegistrable;
+    }
+
+    /**
+     * @return the currentUserHasSite
+     */
+    public boolean isCurrentUserHasSite() {
+        return currentUserHasSite;
+    }
+
+    /**
+     * @param currentUserHasSite the currentUserHasSite to set
+     */
+    public void setCurrentUserHasSite(boolean currentUserHasSite) {
+        this.currentUserHasSite = currentUserHasSite;
+    }    
+    
+    /**
+     * Tells whether the currently logged in user can add his/her site to the
+     * trial.
+     * 
+     * @return boolean
+     */
+    public boolean isCurrentUserCanAddSite() {
+        return isSiteSelfRegistrable() && !isCurrentUserHasSite();
+    }
+
+    /**
+     * Tells whether the currently logged in user can edit his/her site info.
+     * 
+     * @return boolean
+     */
+    public boolean isCurrentUserCanEditSite() {
+        return isSiteSelfRegistrable() && isCurrentUserHasSite();
     }    
     
 }

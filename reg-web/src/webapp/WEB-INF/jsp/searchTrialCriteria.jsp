@@ -33,6 +33,14 @@
          document.forms[0].action="searchTrialsendXml.action?studyProtocolId="+pId;
          document.forms[0].submit();
     }
+    
+    function addMySite(pId) {
+    	alert('Not yet implemented.');
+    }
+    
+    function editMySite(pId) {
+    	alert('Not yet implemented.');
+    }    
 
     function handleMyAction(){
         var input = "criteria.myTrialsOnly";

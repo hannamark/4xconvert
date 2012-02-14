@@ -11,7 +11,7 @@
         <!-- Version: ${initParam["appTagVersion"]}, revision: ${initParam["appTagRevision"]} -->
         <decorator:head/>
         <style type="text/css">
-            BODY { width:1221px }
+            BODY { width:100%; }
         </style>
         <script>
           function submitXsrfForm(action){
