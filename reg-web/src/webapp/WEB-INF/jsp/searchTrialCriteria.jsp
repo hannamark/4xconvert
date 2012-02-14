@@ -187,7 +187,6 @@
                 <td  scope="row" class="label">
                     <label for="principalInvestigator"> <fmt:message key="search.trial.principalInvestigator"/></label>
                 </td>
-
                 <td align=left>
                     <s:select
                         name="criteria.principalInvestigatorId"
@@ -198,7 +197,12 @@
                         headerKey=""
                         headerValue="All"
                         value="criteria.principalInvestigatorId" />
-
+                </td>
+                <td scope="row" class="label">
+                    <label for="trialCategory"> <fmt:message key="search.trial.trialCategorySearch"/></label>
+                </td>
+                <td>
+                   <s:select headerKey="" headerValue="Both" id="trialCategory" name="criteria.trialCategory" list="#{'p':'Abbreviated','n':'Complete'}"  value="criteria.trialCategory" cssStyle="width:206px" />
                 </td>
             </tr>
         </table>
