@@ -15,6 +15,7 @@
         <sql driver="${datawarehouse.pa.dest.jdbc.driver}" url="${datawarehouse.pa.dest.jdbc.url}" 
             userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}" 
             expandproperties="true" autocommit="true">
+            <transaction src="${basedir}/sql/eligibility_criteria.sql"/>
             <transaction src="${basedir}/sql/other_id.sql"/>
             <transaction src="${basedir}/sql/on_hold.sql"/>
             <transaction src="${basedir}/sql/processing-status.sql"/>
@@ -37,6 +38,10 @@
     </target>
     
     <target name="populate" depends="init-db" description="Populates the data warehousing tables using the given database">
+        <echo message = "Running Amendment"/>
+        <groovy src="groovy/amendment.groovy"/>
+        <echo message = "Running Eligibility Criteria"/>
+        <groovy src="groovy/eligibility_criteria.groovy"/>
         <echo message = "Running Other IdS"/>
         <groovy src="groovy/other_id.groovy"/>
         <echo message = "Running On Hold Status"/>
@@ -51,8 +56,6 @@
         <groovy src="groovy/milestone.groovy"/>
         <echo message = "Running study"/>
         <groovy src="groovy/study.groovy"/>
-        <echo message = "Running amendment"/>
-        <groovy src="groovy/amendment.groovy"/>
         <echo message = "Running anatomic_site"/>
         <groovy src="groovy/anatomic_site.groovy"/>
         <echo message = "Running biomarker"/>
