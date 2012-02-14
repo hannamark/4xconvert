@@ -21,6 +21,7 @@ public class SearchProtocolCriteria {
     private boolean myTrialsOnly;
     private String principalInvestigatorId;
     private String phaseAdditionalQualifierCode;
+    private String trialCategory;
     /**
      * @return the identifierType
      */
@@ -154,5 +155,23 @@ public class SearchProtocolCriteria {
     public String getPhaseAdditionalQualifierCode() {
         return phaseAdditionalQualifierCode;
     }
+    
+    /**
+     * Gets the trial category.
+     * @return trialCategory
+     */
+    public String getTrialCategory() {
+        return trialCategory;
+    }
+
+/**
+ * Sets trial category.
+ * @param trialCategory trialCategory
+ */
+public void setTrialCategory(String trialCategory) { 
+   this.trialCategory = trialCategory;
+}
+    
+    
 
 }
