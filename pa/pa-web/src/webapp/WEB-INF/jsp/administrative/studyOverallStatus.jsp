@@ -114,7 +114,7 @@
                                     <td class="info" colspan="2">Administratively Complete, Withdrawn, and Temporarily Closed statuses only</td>
                                 </tr>
                                 <pa:valueRow labelFor="statusReasonLabel" labelKey="trialStatus.current.trial.status.reason">
-                                    <s:textarea name="statusReason" id="statusReason" rows="3" cssStyle="width:280px;float:left" />
+                                    <s:textarea name="statusReason" id="statusReason" rows="3" cssStyle="width:280px;float:left" maxlength="160"/>
                                 </pa:valueRow>
                                 <pa:spaceRow/>
                                 <pa:valueRow labelFor="startDate" labelKey="trialStatus.trial.start.date" required="true">
