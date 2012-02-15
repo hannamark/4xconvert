@@ -6,8 +6,8 @@
 
 <project name="pa-ejb" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
     <property name="pa.version" value="3.7-SNAPSHOT"/>
-    <property name="pa-ejb.coverage.line" value="71"/>
-    <property name="pa-ejb.coverage.branch" value="56"/>
+    <property name="pa-ejb.coverage.line" value="72"/>
+    <property name="pa-ejb.coverage.branch" value="58"/>
     <property name="pa-ejb.pmd.maxerrors" value="350"/>
 
     <property name="software.dir" value="${basedir}/../.."/>

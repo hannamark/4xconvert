@@ -434,9 +434,9 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
         options.setInterventionAlternateNameIds(criteria.getInterventionAlternateNameIds());
         options.setInterventionTypes(criteria.getInterventionTypes());
         options.setLeadOrganizationIds(criteria.getLeadOrganizationIds());
-        if (criteria.getCtgovXmlRequiredIndicator() != null && !criteria.getCtgovXmlRequiredIndicator().equals("")) { 
+        if (criteria.getCtgovXmlRequiredIndicator() != null && !criteria.getCtgovXmlRequiredIndicator().equals("")) {
             options.setCtgovXmlRequiredIndicator(Boolean.valueOf((criteria.getCtgovXmlRequiredIndicator())));
-        } else { 
+        } else {
             options.setCtgovXmlRequiredIndicator(null);
         }
         populateExample(criteria, example);
@@ -743,5 +743,12 @@ public class ProtocolQueryServiceBean extends AbstractBaseSearchBean<StudyProtoc
      */
     public void setPdqDiseaseService(PDQDiseaseServiceLocal pdqDiseaseService) {
         this.pdqDiseaseService = pdqDiseaseService;
+    }
+
+    /**
+     * @param protocolQueryResultsService the protocolQueryResultsService to set
+     */
+    public void setProtocolQueryResultsService(ProtocolQueryResultsServiceLocal protocolQueryResultsService) {
+        this.protocolQueryResultsService = protocolQueryResultsService;
     }
 }

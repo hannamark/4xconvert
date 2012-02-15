@@ -165,6 +165,28 @@ import org.junit.rules.ExpectedException;
  *
  */
 public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCase {
+
+    /**
+     * Have to mock results service since views not created in HSQLDB.
+     */
+    class MockResultsService implements ProtocolQueryResultsServiceLocal {
+        @Override
+        public List<StudyProtocolQueryDTO> getResults(List<StudyProtocol> ids, boolean myTrialsOnly, Long userId)
+                throws PAException {
+            List<StudyProtocolQueryDTO> result = new ArrayList<StudyProtocolQueryDTO>();
+            for (StudyProtocol id : ids) {
+                StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
+                dto.setStudyProtocolId(id.getId());
+                dto.setOfficialTitle(id.getOfficialTitle());
+                dto.setPhaseCode(id.getPhaseCode());
+                dto.setPhaseAdditionalQualifier(id.getPhaseAdditionalQualifierCode());
+                dto.setProprietaryTrial(id.getProprietaryTrialIndicator());
+                result.add(dto);
+            }
+            return result;
+        }
+    }
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -174,10 +196,10 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
     private Long leadOrgId = null;
     private Long principalInvestigator = null;
     private Long diseaseId = null;
-    private String interventionType = null;
 
     @Before
     public void setUp() throws Exception {
+        bean.setProtocolQueryResultsService(new MockResultsService());
         bean.setRegistryUserService(new RegistryUserServiceBean());
         bean.setDataAccessService(new DataAccessServiceBean());
         createStudyProtocol("1", false, Boolean.FALSE, false, false, false, false, true);
@@ -192,7 +214,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         localEjb.getStudyProtocolByCriteria(criteria);
     }
 
-    // @Test
+    @Test
     public void getStudyProtocolByCriteriaTest() throws Exception {
         StudyProtocolQueryCriteria criteria = new StudyProtocolQueryCriteria();
         criteria.setNciIdentifier("nci");
@@ -200,7 +222,6 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         List<StudyProtocolQueryDTO> results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
         assertEquals("Title does not match.", results.get(0).getOfficialTitle(), "Cancer for kids");
-        assertEquals("NCI Identifier does not match.", results.get(0).getNciIdentifier(), "NCI-2009-00001");
         criteria.setNciIdentifier(null);
 
         criteria.setStudyStatusCode("In Review");
@@ -211,7 +232,6 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         criteria.setStudyStatusCode("Active");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
-        assertEquals(StudyStatusCode.ACTIVE, results.get(0).getStudyStatusCode());
         criteria.setStudyStatusCode(null);
 
         criteria.getDocumentWorkflowStatusCodes().add("Verification Pending");
@@ -222,13 +242,11 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         criteria.getDocumentWorkflowStatusCodes().add("Accepted");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertFalse(results.isEmpty());
-        assertEquals(DocumentWorkflowStatusCode.ACCEPTED, results.get(0).getDocumentWorkflowStatusCode());
         criteria.getDocumentWorkflowStatusCodes().clear();
 
         criteria.setLeadOrganizationTrialIdentifier("Local1");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
-        assertEquals("Local1", results.get(0).getLocalStudyProtocolIdentifier());
         criteria.setLeadOrganizationTrialIdentifier(null);
 
         criteria.setOfficialTitle("Cancer");
@@ -282,8 +300,6 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         criteria.setStudyMilestone("Submission Acceptance Date");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
-        assertEquals(MilestoneCode.SUBMISSION_ACCEPTED, results.get(0).getMilestones().getStudyMilestone()
-            .getMilestone());
         criteria.setStudyMilestone(null);
 
         criteria.getLeadOrganizationIds().add(123L);
@@ -294,7 +310,6 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         criteria.getLeadOrganizationIds().add(leadOrgId);
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
-        assertEquals(leadOrgId, results.get(0).getLeadOrganizationId());
         criteria.getLeadOrganizationIds().clear();
 
         criteria.setPrincipalInvestigatorId("123");
@@ -315,16 +330,12 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         criteria.setOtherIdentifier("OTHER-1");
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
-        assertTrue(results.get(0).getOtherIdentifiers().contains("OTHER-1"));
         criteria.setOtherIdentifier(null);
 
         criteria.setOtherIdentifier("OTHER-1");
         criteria.setInBoxProcessing(Boolean.TRUE);
         results = localEjb.getStudyProtocolByCriteria(criteria);
         assertEquals("Size does not match.", 1, results.size());
-        assertNotNull(results.get(0).getStudyInboxId());
-        assertNotNull(results.get(0).getUpdatedComments());
-        assertNotNull(results.get(0).getUpdatedDate());
         criteria.setInBoxProcessing(null);
 
         createStudyProtocol("2", true, Boolean.FALSE, false, false, false, false, false);
@@ -404,8 +415,6 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         otherCriteria.setUserLastCreated("user");
         results = localEjb.getStudyProtocolByCriteria(otherCriteria);
         assertEquals("Size does not match.", 1, results.size());
-        assertEquals("user", results.get(0).getAdminCheckout().getCheckoutByUsername());
-        assertEquals("user", results.get(0).getScientificCheckout().getCheckoutByUsername());
 
         createStudyProtocol("9", false, Boolean.FALSE, false, false, false, true, false);
 
@@ -455,7 +464,7 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         assertEquals("Size does not match.", 0, results.size());
     }
 
-    // @Test
+    @Test
     public void getTrialSummaryByStudyProtocolIdTest() throws Exception {
         StudyProtocolQueryDTO data = localEjb.getTrialSummaryByStudyProtocolId(spId);
         assertNotNull(data);
@@ -652,7 +661,6 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
         inv.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("1/1/2000"));
         inv.setTypeCode(InterventionTypeCode.DRUG);
         TestSchema.addUpdObject(inv);
-        interventionType = inv.getTypeCode().getCode();
         PlannedActivity pa = new PlannedActivity();
         pa.setCategoryCode(ActivityCategoryCode.INTERVENTION);
         pa.setDateLastUpdated(new Date());
