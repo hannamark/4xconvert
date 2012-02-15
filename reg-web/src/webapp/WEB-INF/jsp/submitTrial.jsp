@@ -36,6 +36,16 @@
             var contactPhone;
             var countOfOtherIdentifiers = 0;
             
+            function countLeft(field, count, max) {
+                // if the length of the string in the input field is greater than the max value, trim it 
+                if ($(field).value.length > max)
+                	$(field).value = $(field).value.substring(0, max);
+                else
+                // calculate the remaining characters  
+                $(count).value = max - $(field).value.length;
+            }
+           
+            
             function setorgid(orgIdentifier, oname) {
                 orgid = orgIdentifier;
                 chosenname = oname.replace(/&apos;/g,"'");
