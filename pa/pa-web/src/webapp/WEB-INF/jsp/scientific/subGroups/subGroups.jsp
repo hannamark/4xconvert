@@ -48,8 +48,8 @@ function callOnloadFunctions(){
 		<div class="actionsrow">
 			<del class="btnwrapper">
 				<ul class="btnrow">
-                    <pa:scientificAbstractorDisplayWhenCheckedOut>
-					   <li><s:a href="#" onclick="submitXsrfForm(subGroupsinput.action);" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
+                    <pa:scientificAbstractorDisplayWhenCheckedOut>                       
+					   <li><s:a href="javascript:void(0);" onclick="submitXsrfForm('subGroupsinput.action');" cssClass="btn"><span class="btn_img"><span class="add">Add</span></span></s:a></li>
                     </pa:scientificAbstractorDisplayWhenCheckedOut>
 				</ul>
 			</del>
