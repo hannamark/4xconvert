@@ -31,7 +31,7 @@
                             <label for="j_password">Password:</label>
                         </td>
                         <td class="value">
-                            <input name="j_password" maxlength="100" size="25" type="password">
+                            <input name="j_password" maxlength="100" size="25" type="password" autocomplete="off"/>
                         </td>
                     </tr>                
                         <c:if test="${!empty applicationScope['AUTHENTICATION_SOURCE_MAP']}">

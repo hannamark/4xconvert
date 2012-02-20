@@ -44,7 +44,7 @@
             </div>
             <div class="fieldrow">
                 <label for="j_password">Password:</label>
-                <div class="fieldbox_m required"><input name="j_password" maxlength="100" size="15" type="password"></div>
+                <div class="fieldbox_m required"><input name="j_password" maxlength="100" size="15" type="password" autocomplete="off"/></div>
             </div>
             <div class="fieldrow">
                 <c:set var="authMap" scope="page" value="${requestScope['AUTHENTICATION_SOURCE_MAP']}"/>
