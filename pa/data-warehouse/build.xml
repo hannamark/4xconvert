@@ -16,7 +16,9 @@
             userid="${datawarehouse.pa.dest.db.username}" password="${datawarehouse.pa.dest.db.password}" 
             expandproperties="true" autocommit="true">
             <transaction src="${basedir}/sql/collaborator.sql"/>
+<!--
             <transaction src="${basedir}/sql/overall_status.sql"/>
+            -->
             <transaction src="${basedir}/sql/eligibility_criteria.sql"/>
             <transaction src="${basedir}/sql/other_id.sql"/>
             <transaction src="${basedir}/sql/on_hold.sql"/>
@@ -42,8 +44,10 @@
     <target name="populate" depends="init-db" description="Populates the data warehousing tables using the given database">
         <echo message = "Running Collaborator"/>
         <groovy src="groovy/collaborator.groovy"/>
+<!--
         <echo message = "Running Overall Status"/>
         <groovy src="groovy/overall_status.groovy"/>
+        -->
         <echo message = "Running Amendment"/>
         <groovy src="groovy/amendment.groovy"/>
         <echo message = "Running Eligibility Criteria"/>
