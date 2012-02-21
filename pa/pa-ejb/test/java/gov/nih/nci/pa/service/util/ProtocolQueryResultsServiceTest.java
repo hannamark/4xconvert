@@ -1,6 +1,7 @@
 package gov.nih.nci.pa.service.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -15,6 +16,7 @@ import gov.nih.nci.pa.service.PAException;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,7 +37,7 @@ public class ProtocolQueryResultsServiceTest {
     private static final int UPDATING_IDX = 5;
     private static final int SUBMISSION_NUMBER_IDX = 7;
 
-    ProtocolQueryResultsServiceLocal bean;
+    ProtocolQueryResultsServiceBean bean;
     DataAccessServiceLocal daMock;
     RegistryUserServiceLocal usrMock;
 
@@ -77,6 +79,7 @@ public class ProtocolQueryResultsServiceTest {
             , adminCheckoutUser, scientificCheckoutIdentifiER, scientificCheckoutUser, studyPiFirstName,
             studyPiLastName
             , userLastCreatedLogin, userLastCreatedFirst, userLastCreatedLast };
+    Object[] siteQryResult = { studyProtocolIdentifier, BigInteger.valueOf(MEMB_USERID) };    
 
     @Before
     public void init() throws Exception {
@@ -93,6 +96,7 @@ public class ProtocolQueryResultsServiceTest {
         when(usrMock.getUserById(ADMIN_USERID)).thenReturn(admin);
         memb = new RegistryUser();
         memb.setAffiliatedOrgUserType(UserOrgType.MEMBER);
+        memb.setAffiliatedOrganizationId(1L);
         when(usrMock.getUserById(MEMB_USERID)).thenReturn(memb);
 
         // set up owned study
@@ -116,6 +120,18 @@ public class ProtocolQueryResultsServiceTest {
         List<Object> result = new ArrayList<Object>();
         result.add(qryResult);
         when(daMock.findByQuery(qryMain)).thenReturn(result);
+        
+        // set up subordinate query
+        DAQuery qryStudyId = new DAQuery();
+        qryStudyId.setSql(true);
+        qryStudyId.setText(ProtocolQueryResultsServiceBean.STUDY_ID_QRY_STRING);
+        params = new HashMap<String, Object>();
+        params.put("orgId", 1L);
+        qryStudyId.setParameters(params);
+        result = new ArrayList<Object>();
+        result.add(siteQryResult);
+        when(daMock.findByQuery(qryStudyId)).thenReturn(result);
+        
     }
 
     @Test
@@ -234,4 +250,44 @@ public class ProtocolQueryResultsServiceTest {
         }
         assertEquals(1, bean.getResults(ids, false, null).size());
     }
+    
+    @Test
+    public void testSetFlags() {
+        StudyProtocolQueryDTO dto = new StudyProtocolQueryDTO();
+        dto.setProprietaryTrial(true);
+        List<String> rssOrgs = Arrays.asList("RSS");
+        dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
+        ((ProtocolQueryResultsServiceBean)bean).setFlags(dto, qryResult, rssOrgs);
+        assertTrue(dto.isSiteSelfRegistrable());
+        
+        dto = new StudyProtocolQueryDTO();
+        dto.setProprietaryTrial(true);
+        rssOrgs = Arrays.asList("Duke Medical Center");
+        dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.ABSTRACTED);
+        ((ProtocolQueryResultsServiceBean)bean).setFlags(dto, qryResult, rssOrgs);
+        assertFalse(dto.isSiteSelfRegistrable());
+        
+        dto = new StudyProtocolQueryDTO();
+        dto.setProprietaryTrial(true);
+        rssOrgs = Arrays.asList("RSS");
+        dto.setDocumentWorkflowStatusCode(DocumentWorkflowStatusCode.REJECTED);
+        bean.setFlags(dto, qryResult, rssOrgs);
+        assertFalse(dto.isSiteSelfRegistrable());       
+        
+        
+    }
+    
+    
+    /**
+     * @throws PAException 
+     * 
+     */
+    @Test
+    public void testGetStudiesOnWhichUserHasSite() throws PAException {
+        Map<Long, Boolean> map = bean.getStudiesOnWhichUserHasSite(MEMB_USERID) ;
+        assertEquals(1, map.size());
+        assertEquals(Boolean.TRUE, map.get(studyProtocolIdentifier.longValue()));
+    }
+    
+    
 }

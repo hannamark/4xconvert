@@ -241,7 +241,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
      * @return IDs of studies on which the user's affiliated organization is a participating site.
      * @throws PAException
      */
-    private Map<Long, Boolean> getStudiesOnWhichUserHasSite(Long userId)
+    Map<Long, Boolean> getStudiesOnWhichUserHasSite(Long userId)
             throws PAException {
         Map<Long, Boolean> map = new HashMap<Long, Boolean>();
         RegistryUser user = registryUserService.getUserById(userId);
@@ -366,7 +366,7 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
     }
 
     @SuppressWarnings("PMD.CyclomaticComplexity")
-    private void setFlags(StudyProtocolQueryDTO dto, Object[] row,
+    void setFlags(StudyProtocolQueryDTO dto, Object[] row,
             List<String> rssOrgs) {
         if (dto.isProprietaryTrial()
                 && !rssOrgs.contains(row[LEAD_ORG_NAME_IDX])
