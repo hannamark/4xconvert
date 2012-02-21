@@ -138,4 +138,4 @@ Continuous Integration
 ----------------------
 1)  Current build targets on CI box
     - deploy
-2)  Url is http://nci-reinharh-1.nci.nih.gov:48080/hudson/job/PA/
+2)  Url is http://ncias-c477-v.nci.nih.gov:48080/jenkins/
