@@ -160,15 +160,10 @@ public class ProtocolQueryResultsServiceBean implements ProtocolQueryResultsServ
             + "where study_site.functional_code='"
             + StudySiteFunctionalCode.TREATING_SITE.name()
             + "' and "
-            + "(study_site.healthcare_facility_identifier in (SELECT identifier from healthcare_facility "
+            + "study_site.healthcare_facility_identifier in (SELECT identifier from healthcare_facility "
             + "where healthcare_facility.organization_identifier="
             + "(select organization.identifier from organization where "
-            + "cast (organization.assigned_identifier as bigint)=:orgId)) "
-            + "or study_site.research_organization_identifier in "
-            + "(SELECT identifier from research_organization "
-            + "where research_organization.organization_identifier="
-            + "(select organization.identifier from organization where "
-            + "cast (organization.assigned_identifier as bigint)=:orgId)))";
+            + "cast (organization.assigned_identifier as bigint)=:orgId))";
     
     private static final int STUDY_PROTOCOL_IDENTIFIER_IDX = 0;
     private static final int OFFICIAL_TITLE_IDX = 1;
