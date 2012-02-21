@@ -22,9 +22,10 @@
 
     <body onload="setFocusToFirstControl();">
         <div id="contentwide">
-            <h1><fmt:message key="search.trial.view.page.title" /></h1>
+            <h1><fmt:message key="search.trial.view.page.title" /></h1>            
             <c:set var="topic" scope="request" value="viewresult"/>
             <div class="box">
+                <reg-web:sucessMessage/>
                 <c:if test="${param.trialAction == 'submit'}">
                     <div class="confirm_msg">
                         <strong>The trial has been successfully submitted and assigned the NCI Identifier ${requestScope.trialDTO.assignedIdentifier}</strong>

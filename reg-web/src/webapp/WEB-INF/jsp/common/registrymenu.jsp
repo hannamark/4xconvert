@@ -79,6 +79,16 @@ function selectTrialType(){
                                             </c:otherwise>
                                         </c:choose>
                                     </li>
+                                    <li>
+                                        <c:choose>
+                                            <c:when test="${requestScope.topic == 'managesiteownership'}">
+                                                <a id="manageSiteOwnershipMenuOption" href="#" onclick="submitXsrfForm('/registry/protected/manageSiteOwnershipsearch.action');" class="selected">Manage Site Record Ownership</a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <a id="manageSiteOwnershipMenuOption" href="#" onclick="submitXsrfForm('/registry/protected/manageSiteOwnershipsearch.action');" >Manage Site Record Ownership</a>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </li>                                    
                                  </c:if>
                                 <li><a id="logoutMenuOption" href="#" onclick="submitXsrfForm('/registry/logout.action');" >Log Out</a></li>
                     </c:when>

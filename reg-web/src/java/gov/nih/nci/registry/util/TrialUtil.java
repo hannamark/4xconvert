@@ -67,6 +67,7 @@ import org.apache.struts2.ServletActionContext;
  *
  * @author vrushali
  */
+@SuppressWarnings({ "PMD.TooManyMethods", "PMD.ExcessiveClassLength" })
 public class TrialUtil extends TrialConvertUtils {
 
     private CorrelationUtilsRemote correlationUtils;
@@ -74,6 +75,14 @@ public class TrialUtil extends TrialConvertUtils {
      * Session Attribute of Trial DTO.
      */
     public static final String SESSION_TRIAL_ATTRIBUTE = "trialDTO";
+    /**
+     * Session Attribute of Site DTO.
+     */
+    public static final String SESSION_TRIAL_SITE_ATTRIBUTE = "siteDTO";
+    /**
+     * Holds the message for the Wait dialog.
+     */
+    public static final String SESSION_WAIT_MESSAGE_ATTRIBUTE = "waitDialogMsg";
 
     /**
      * Default constructor.
@@ -445,22 +454,73 @@ public class TrialUtil extends TrialConvertUtils {
         srDTO.setFunctionalCode(CdConverter.convertStringToCd(StudySiteFunctionalCode.TREATING_SITE.getCode()));
         List<StudySiteDTO> spList = PaRegistry.getStudySiteService().getByStudyProtocol(studyProtocolIi, srDTO);
         for (StudySiteDTO sp : spList) {
-            StudySiteAccrualStatusDTO ssas = PaRegistry.getStudySiteAccrualStatusService()
-                    .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
-            Organization orgBo = getCorrelationUtils().getPAOrganizationByIi(sp.getHealthcareFacilityIi());
-            SubmittedOrganizationDTO orgWebDTO = new SubmittedOrganizationDTO(sp, ssas, orgBo);
-            List<PaPersonDTO> principalInvresults = PaRegistry.getPAHealthCareProviderService()
-                    .getPersonsByStudySiteId(Long.valueOf(sp.getIdentifier().getExtension().toString()),
-                            StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR.getName());
-            if (!principalInvresults.isEmpty()) {
-                for (PaPersonDTO per : principalInvresults) {
-                    orgWebDTO.setInvestigator(per.getFullName() != null ? per.getFullName() : "");
-                }
-            }
-            orgWebDTO.setNameInvestigator(orgWebDTO.getName() + " - " + orgWebDTO.getInvestigator());
+            SubmittedOrganizationDTO orgWebDTO = getSubmittedOrganizationDTO(sp);
             organizationList.add(orgWebDTO);
         }
         trialDTO.setParticipatingSitesList(organizationList);
+    }
+    
+    /**
+     * Finds participating site on the given trial for the given organization.
+     * 
+     * @param studyProtocolID
+     *            studyProtocolID
+     * @param healthcareFacId
+     *            healthcareFacId
+     * @return StudySiteDTO
+     * @throws PAException PAException
+     */
+    public StudySiteDTO getParticipatingSite(Ii studyProtocolID,
+            Ii healthcareFacId) throws PAException {
+        StudySiteDTO srDTO = new StudySiteDTO();
+        srDTO.setFunctionalCode(CdConverter
+                .convertStringToCd(StudySiteFunctionalCode.TREATING_SITE
+                        .getCode()));
+        List<StudySiteDTO> spList = PaRegistry.getStudySiteService()
+                .getByStudyProtocol(studyProtocolID, srDTO);
+        for (StudySiteDTO sp : spList) {
+            if (healthcareFacId != null
+                    && sp.getHealthcareFacilityIi() != null
+                    && IiConverter.convertToLong(healthcareFacId).equals(
+                            IiConverter.convertToLong(sp
+                                    .getHealthcareFacilityIi()))) {
+                return sp;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Converts {@link StudySiteDTO} into a {@link SubmittedOrganizationDTO}.
+     * @param sp StudySiteDTO
+     * @return SubmittedOrganizationDTO SubmittedOrganizationDTO
+     * @throws PAException PAException 
+     */
+    public SubmittedOrganizationDTO getSubmittedOrganizationDTO(StudySiteDTO sp)
+            throws PAException {
+        StudySiteAccrualStatusDTO ssas = PaRegistry
+                .getStudySiteAccrualStatusService()
+                .getCurrentStudySiteAccrualStatusByStudySite(sp.getIdentifier());
+        Organization orgBo = getCorrelationUtils().getPAOrganizationByIi(
+                sp.getHealthcareFacilityIi());
+        SubmittedOrganizationDTO orgWebDTO = new SubmittedOrganizationDTO(sp,
+                ssas, orgBo);
+        List<PaPersonDTO> principalInvresults = PaRegistry
+                .getPAHealthCareProviderService().getPersonsByStudySiteId(
+                        Long.valueOf(sp.getIdentifier().getExtension()
+                                .toString()),
+                        StudySiteContactRoleCode.PRINCIPAL_INVESTIGATOR
+                                .getName());
+        if (!principalInvresults.isEmpty()) {
+            for (PaPersonDTO per : principalInvresults) {
+                orgWebDTO.setInvestigator(per.getFullName() != null ? per
+                        .getFullName() : "");
+                orgWebDTO.setInvestigatorId(per.getPaPersonId());
+            }
+        }
+        orgWebDTO.setNameInvestigator(orgWebDTO.getName() + " - "
+                + orgWebDTO.getInvestigator());
+        return orgWebDTO;
     }
 
     /**
@@ -840,5 +900,7 @@ public class TrialUtil extends TrialConvertUtils {
      */
     public void setCorrelationUtils(CorrelationUtilsRemote correlationUtils) {
         this.correlationUtils = correlationUtils;
-    }
+    }   
+    
+    
 }

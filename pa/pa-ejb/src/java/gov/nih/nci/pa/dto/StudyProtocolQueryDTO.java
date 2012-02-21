@@ -109,6 +109,13 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
      * Whether the current user's organization is a participating site on this trial.
      */
     private boolean currentUserHasSite;
+    
+    /**
+     * Whether the current user's organization is a participating site on this trial and the current user
+     * is a study site owner for.
+     */
+    private boolean currentUserIsSiteOwner;
+    
 
     /**
      * @return the trialCategory
@@ -263,7 +270,20 @@ public class StudyProtocolQueryDTO extends TrialSearchStudyProtocolQueryDTO impl
      * @return boolean
      */
     public boolean isCurrentUserCanEditSite() {
-        return isSiteSelfRegistrable() && isCurrentUserHasSite();
-    }    
-    
+        return isSiteSelfRegistrable() && isCurrentUserHasSite() && isCurrentUserIsSiteOwner();
+    }
+
+    /**
+     * @return the currentUserIsSiteOwner
+     */
+    public boolean isCurrentUserIsSiteOwner() {
+        return currentUserIsSiteOwner;
+    }
+
+    /**
+     * @param currentUserIsSiteOwner the currentUserIsSiteOwner to set
+     */
+    public void setCurrentUserIsSiteOwner(boolean currentUserIsSiteOwner) {
+        this.currentUserIsSiteOwner = currentUserIsSiteOwner;
+    }
 }

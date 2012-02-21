@@ -206,4 +206,16 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         // TODO Auto-generated method stub
 
     }
+
+    @Override
+    public void assignSiteOwnership(Long userId, Long studySiteId)
+            throws PAException { 
+    }
+
+    @Override
+    public void removeSiteOwnership(Long userId, Long studySiteId)
+            throws PAException {
+       
+        
+    }
 }

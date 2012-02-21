@@ -223,6 +223,12 @@
             <result name="error">/WEB-INF/jsp/nodecorate/updateTrialStatus.jsp</result>
         </action>
         
+        <action name="addSitepopup*" class="gov.nih.nci.registry.action.AddUpdateSiteAction" method="{1}">
+            <result name="success">/WEB-INF/jsp/nodecorate/addSite.jsp</result>
+            <result name="error">/WEB-INF/jsp/nodecorate/addSite.jsp</result>
+            <result name="wait">/WEB-INF/jsp/nodecorate/showWaitDialog.jsp</result>            
+        </action>        
+        
         <action name="updateTrial*" class="gov.nih.nci.registry.action.UpdateTrialAction" method="{1}">
             <result name="success">/WEB-INF/jsp/updateTrial.jsp</result>
             <result name="input">/WEB-INF/jsp/updateTrial.jsp</result>
@@ -327,6 +333,14 @@
             <result name="viewResults">/WEB-INF/jsp/manageTrialOwnership.jsp</result>
         </action>
         
+         
+        <action name="manageSiteOwnership*" class="gov.nih.nci.registry.action.ManageSiteOwnershipAction" method="{1}">
+            <result name="success">/WEB-INF/jsp/manageSiteOwnership.jsp</result>
+            <result name="input">/WEB-INF/jsp/manageSiteOwnership.jsp</result>
+            <result name="viewResults">/WEB-INF/jsp/manageSiteOwnership.jsp</result>
+        </action>        
+        
+         
         <action name="displayTrialOwnership*" class="gov.nih.nci.registry.action.DisplayTrialOwnershipAction" method="{1}">
             <result name="success">/WEB-INF/jsp/displayTrialOwnership.jsp</result>
             <result name="input">/WEB-INF/jsp/displayTrialOwnership.jsp</result>

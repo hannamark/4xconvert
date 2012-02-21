@@ -138,6 +138,7 @@ import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.service.PDQDiseaseServiceBean;
 import gov.nih.nci.pa.service.PDQDiseaseServiceLocal;
 import gov.nih.nci.pa.util.AbstractHibernateTestCase;
+import gov.nih.nci.pa.util.AbstractMockitoTest;
 import gov.nih.nci.pa.util.AnatomicSiteComparator;
 import gov.nih.nci.pa.util.ISOUtil;
 import gov.nih.nci.pa.util.PAConstants;
@@ -199,6 +200,9 @@ public class ProtocolQueryServiceIntegrationTest extends AbstractHibernateTestCa
 
     @Before
     public void setUp() throws Exception {
+        AbstractMockitoTest mockitoTest = new AbstractMockitoTest();
+        mockitoTest.setUp();
+        
         bean.setProtocolQueryResultsService(new MockResultsService());
         bean.setRegistryUserService(new RegistryUserServiceBean());
         bean.setDataAccessService(new DataAccessServiceBean());

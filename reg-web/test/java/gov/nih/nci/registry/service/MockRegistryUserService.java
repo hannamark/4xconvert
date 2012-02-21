@@ -227,4 +227,16 @@ public class MockRegistryUserService implements RegistryUserServiceLocal {
         return null;
     }
 
+    @Override
+    public void assignSiteOwnership(Long userId, Long studySiteId)
+            throws PAException {  
+    }
+
+    @Override
+    public void removeSiteOwnership(Long userId, Long studySiteId)
+            throws PAException {
+       
+        
+    }
+
 }

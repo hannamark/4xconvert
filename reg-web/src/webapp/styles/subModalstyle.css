@@ -13,3 +13,8 @@ body, html, input {
 	font-size: 0.9em;
 	color: #666666;
 }
+
+span.wait_msg {
+    font-size: 92%;   
+    
+}

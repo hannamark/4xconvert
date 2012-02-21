@@ -6,9 +6,13 @@
         <script type="text/javascript" language="javascript" src="<c:url value='/scripts/js/ajaxHelper.js'/>"></script>
         
         <script type="text/javascript" language="javascript">
-            function submitform(persid, name) {    
-                top.window.setpersid(persid, name);
-                window.top.hidePopWin(true); 
+            function submitform(persid, name) {
+            	var winObj = window.top;
+            	if (winObj.setpersid==undefined) {
+            		winObj = window.parent;
+            	}            	
+            	winObj.setpersid(persid, name);
+            	winObj.hidePopWin(true); 
             }
              
             function callCreatePerson(persid, rolecode) {        

@@ -92,12 +92,16 @@
                  </display:column>
                  <display:column titleKey="search.trial.addMySite" sortable="false" headerClass="sortable" media="html">
                      <s:if test="%{#attr.row.currentUserCanAddSite}">
-                         <a href="javascript:void(0);" onclick="addMySite('${row.studyProtocolId}');" onkeypress="addMySite('${row.studyProtocolId}');">Add</a>
+                         <s:url id="addMySiteUrl" action="addSitepopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+                         <a href="javascript:void(0);" onclick="showPopup('${addMySiteUrl}', '', 'Add Participating Site');" 
+                            onkeypress="showPopup('${addMySiteUrl}', '', 'Add Participating Site');">Add</a>
                      </s:if>
                  </display:column>
                  <display:column titleKey="search.trial.updateMySite" sortable="false" headerClass="sortable" media="html">
                      <s:if test="%{#attr.row.currentUserCanEditSite}">
-                         <a href="javascript:void(0);" onclick="editMySite('${row.studyProtocolId}');" onkeypress="editMySite('${row.studyProtocolId}');">Update</a>
+                         <s:url id="updateMySiteUrl" action="addSitepopupview"><s:param name="studyProtocolId" value="%{#attr.row.studyProtocolId}" /></s:url>
+                         <a href="javascript:void(0);" onclick="showPopup('${updateMySiteUrl}', '', 'Update Participating Site');" 
+                            onkeypress="showPopup('${updateMySiteUrl}', '', 'Update Participating Sit');">Update</a>
                      </s:if>
                  </display:column>
                  <display:column class="title" title="Action" sortable="false" headerScope="col" scope="row" media="html">

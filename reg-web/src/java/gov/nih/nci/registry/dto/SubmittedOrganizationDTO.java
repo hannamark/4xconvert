@@ -109,6 +109,7 @@ public class SubmittedOrganizationDTO implements Serializable {
     private String recruitmentStatusDate;
     private String targetAccrualNumber;
     private String investigator;
+    private Long investigatorId;
     private String programCode;
     private String siteLocalTrialIdentifier;
     private String dateOpenedforAccrual;
@@ -309,5 +310,36 @@ public class SubmittedOrganizationDTO implements Serializable {
      */
     public void setNameInvestigator(String nameInvestigator) {
         this.nameInvestigator = nameInvestigator;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "SubmittedOrganizationDTO [id=" + id + ", name=" + name
+                + ", recruitmentStatus=" + recruitmentStatus
+                + ", recruitmentStatusDate=" + recruitmentStatusDate
+                + ", targetAccrualNumber=" + targetAccrualNumber
+                + ", investigator=" + investigator + ", investigatorId="
+                + investigatorId + ", programCode=" + programCode
+                + ", siteLocalTrialIdentifier=" + siteLocalTrialIdentifier
+                + ", dateOpenedforAccrual=" + dateOpenedforAccrual
+                + ", dateClosedforAccrual=" + dateClosedforAccrual
+                + ", nameInvestigator=" + nameInvestigator + "]";
+    }
+
+    /**
+     * @return the investigatorId
+     */
+    public Long getInvestigatorId() {
+        return investigatorId;
+    }
+
+    /**
+     * @param investigatorId the investigatorId to set
+     */
+    public void setInvestigatorId(Long investigatorId) {
+        this.investigatorId = investigatorId;
     }
 }

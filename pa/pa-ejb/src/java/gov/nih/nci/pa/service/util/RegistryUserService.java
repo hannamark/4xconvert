@@ -230,4 +230,22 @@ public interface RegistryUserService {
      */
     void activateAccount(String email, String username) throws PAException;
 
+    
+    /**
+     * Assigns study site record ownership of the given participating site to the given user.
+     * @param userId user id
+     * @param studySiteId study site id
+     * @throws PAException on error
+     */
+    void assignSiteOwnership(Long userId, Long studySiteId) throws PAException;
+    
+    /**
+     * Removes study site record ownership of the given participating site for the given user.
+     * @param userId user id
+     * @param studySiteId study site id
+     * @throws PAException on error
+     */
+    void removeSiteOwnership(Long userId, Long studySiteId) throws PAException;
+
+    
 }

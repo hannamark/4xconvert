@@ -83,19 +83,29 @@
 
 package gov.nih.nci.registry.action;
 
+import gov.nih.nci.iso21090.Ii;
+import gov.nih.nci.pa.domain.Organization;
+import gov.nih.nci.pa.domain.RegistryUser;
 import gov.nih.nci.pa.domain.StudyProtocol;
+import gov.nih.nci.pa.dto.StudyProtocolQueryCriteria;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.IiConverter;
 import gov.nih.nci.pa.service.PAException;
+import gov.nih.nci.pa.service.util.PAServiceUtils;
 import gov.nih.nci.pa.util.PaRegistry;
+import gov.nih.nci.registry.util.TrialUtil;
 
 import java.util.List;
 
 /**
- * Action class for managing user trial ownership.
+ * Action class for managing user participating site record ownership.
  * 
- * @author kkanchinadam
  * @author Denis G. Krylov
  */
-public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
+public class ManageSiteOwnershipAction extends AbstractManageOwnershipAction {
+    
+    private PAServiceUtils paServiceUtil = new PAServiceUtils();
+    private TrialUtil trialUtil = new TrialUtil();
 
     /**
      * 
@@ -112,8 +122,24 @@ public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
     @Override
     public List<StudyProtocol> getStudyProtocols(Long affiliatedOrgId)
             throws PAException {
+        
+        Organization org = new Organization();
+        org.setIdentifier(affiliatedOrgId.toString());
+        org = PaRegistry.getPAOrganizationService().getOrganizationByIndetifers(org);
+        
+        if (org == null) {
+            throw new PAException(
+                    "We are unable to determine your affiliation with an organization.");
+        }        
+        
+        StudyProtocolQueryCriteria queryCriteria = new StudyProtocolQueryCriteria();
+        queryCriteria.getParticipatingSiteIds().add(org.getId());
+        queryCriteria
+                .setOrganizationType(gov.nih.nci.registry.util.Constants.PARTICIPATING_SITE);
+        queryCriteria.setExcludeRejectProtocol(Boolean.TRUE);
+        queryCriteria.setTrialCategory("p");
         List<StudyProtocol> trials = PaRegistry.getProtocolQueryService()
-                .getStudyProtocolByOrgIdentifier(affiliatedOrgId);
+                .getStudyProtocolQueryResultList(queryCriteria);
         return trials;
     }
 
@@ -122,7 +148,7 @@ public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
      * 
      * @param userId
      *            userId
-     * @param tId
+     * @param trialID
      *            tId
      * @param assign
      *            assign
@@ -130,17 +156,31 @@ public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
      *             PAException
      */
     @Override
-    public void updateOwnership(Long userId, Long tId, boolean assign)
-            throws PAException {
-        // check if currently owner or not.
-        boolean isOwner = PaRegistry.getRegistryUserService().isTrialOwner(
-                userId, tId);
-        if (assign && !isOwner) {
-            PaRegistry.getRegistryUserService().assignOwnership(userId, tId);
+    public void updateOwnership(Long userId, Long trialID, boolean assign)
+            throws PAException {        
+        RegistryUser loggedInUser = getRegistryUser();        
+        final Long orgId = loggedInUser.getAffiliatedOrganizationId();
+
+        if (orgId == null) {
+            throw new PAException(
+                    "We are unable to determine your affiliation with an organization.");
         }
 
-        if (!assign && isOwner) {
-            PaRegistry.getRegistryUserService().removeOwnership(userId, tId);
+        String poOrgId = orgId.toString();
+        Ii poHcfIi = paServiceUtil.getPoHcfIi(poOrgId);
+        Ii spID = IiConverter.convertToStudyProtocolIi(trialID);        
+        StudySiteDTO studySiteDTO = trialUtil.getParticipatingSite(spID,
+                poHcfIi);
+        if (studySiteDTO == null) {
+            throw new PAException(
+                    "Your affiliated organization is not a participating site on the selected trial.");
+        }
+        if (assign) {
+            PaRegistry.getRegistryUserService().assignSiteOwnership(userId,
+                    IiConverter.convertToLong(studySiteDTO.getIdentifier()));
+        } else {
+            PaRegistry.getRegistryUserService().removeSiteOwnership(userId,
+                    IiConverter.convertToLong(studySiteDTO.getIdentifier()));
         }
     }
 
@@ -148,14 +188,28 @@ public class ManageTrialOwnershipAction extends AbstractManageOwnershipAction {
      * @return String
      */
     public String assignSuccessMsg() {
-        return getText("managetrialownership.assign.success");
+        return getText("managesiteownership.assign.success");
     }
 
     /**
      * @return String
      */
     public String unassignSuccessMsg() {
-        return getText("managetrialownership.unassign.success");
+        return getText("managesiteownership.unassign.success");
+    }
+    
+    /**
+     * @param paServiceUtil PAServiceUtils
+     */
+    public void setPaServiceUtil(PAServiceUtils paServiceUtil) {
+        this.paServiceUtil = paServiceUtil;
+    }
+    
+    /**
+     * @param trialUtil TrialUtil
+     */
+    public void setTrialUtil(TrialUtil trialUtil) {
+        this.trialUtil = trialUtil;
     }
 
 }

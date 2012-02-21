@@ -118,24 +118,33 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
         List<StudyProtocol> returnList = new ArrayList<StudyProtocol>();
         for (StudyProtocolQueryDTO spDto : list) {
             if (spDto.getLeadOrganizationId().equals(orgIdentifier)) {
-                StudyProtocol sp = new StudyProtocol();
-                sp.setId(spDto.getStudyProtocolId());
-                Set<Ii> others = new HashSet<Ii>();
-                Ii nciid = IiConverter.convertToAssignedIdentifierIi(spDto.getNciIdentifier());
-                others.add(nciid);
-                sp.setOtherIdentifiers(others);
-                sp.setOfficialTitle(spDto.getOfficialTitle());
-                sp.setProprietaryTrialIndicator(Boolean.valueOf(spDto.isProprietaryTrial()));
-                sp.setCtgovXmlRequiredIndicator(spDto.getCtgovXmlRequiredIndicator());
-                sp.setUserLastCreated(null);
-                StudySite ss = new StudySite();
-                ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
-                ss.setLocalStudyProtocolIdentifier(spDto.getLocalStudyProtocolIdentifier());
-                sp.getStudySites().add(ss);
+                StudyProtocol sp = populateStudyProtocol(spDto);
                 returnList.add(sp);
             }
         }
         return returnList;
+    }
+
+    /**
+     * @param spDto
+     * @return
+     */
+    private StudyProtocol populateStudyProtocol(StudyProtocolQueryDTO spDto) {
+        StudyProtocol sp = new StudyProtocol();
+        sp.setId(spDto.getStudyProtocolId());
+        Set<Ii> others = new HashSet<Ii>();
+        Ii nciid = IiConverter.convertToAssignedIdentifierIi(spDto.getNciIdentifier());
+        others.add(nciid);
+        sp.setOtherIdentifiers(others);
+        sp.setOfficialTitle(spDto.getOfficialTitle());
+        sp.setProprietaryTrialIndicator(Boolean.valueOf(spDto.isProprietaryTrial()));
+        sp.setCtgovXmlRequiredIndicator(spDto.getCtgovXmlRequiredIndicator());
+        sp.setUserLastCreated(null);
+        StudySite ss = new StudySite();
+        ss.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
+        ss.setLocalStudyProtocolIdentifier(spDto.getLocalStudyProtocolIdentifier());
+        sp.getStudySites().add(ss);
+        return sp;
     }
 
     /**
@@ -152,10 +161,15 @@ public class MockProtocolQueryService extends AbstractBaseSearchBean<StudyProtoc
      * {@inheritDoc}
      */
     @Override
-    public List<StudyProtocol> getStudyProtocolQueryResultList(StudyProtocolQueryCriteria criteria) throws PAException {
-        return null;
-    }
-    
+    public List<StudyProtocol> getStudyProtocolQueryResultList(
+            StudyProtocolQueryCriteria criteria) throws PAException {
+        List<StudyProtocol> returnList = new ArrayList<StudyProtocol>();
+        for (StudyProtocolQueryDTO spDto : list) {
+            StudyProtocol sp = populateStudyProtocol(spDto);
+            returnList.add(sp);
+        }
+        return returnList;
+    }    
     
 
 }

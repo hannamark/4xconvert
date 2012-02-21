@@ -11,6 +11,15 @@ function formReset(){
     document.getElementById('email').value = '';
     document.getElementById('ctepid').value = '';
 }
+
+function formClose() {
+    var winObj = window.top;
+    if (window.parent!=window.top && window.parent!=window.self) {
+        winObj = window.parent;
+    }
+	winObj.hidePopWin();	
+}
+
 </SCRIPT>
 </head>
 <p align="center" class="info">
@@ -63,10 +72,10 @@ function formReset(){
         <div class="btnwrapper">
             <ul class="btnrow">
                 <li>
-                    <s:a href="#" cssClass="btn" onclick="loadDiv();" id="search_person_btn"><span class="btn_img"><span class="search">Search</span></span></s:a>
-                    <s:a href="#" cssClass="btn" onclick="setCreateFormVisible();" id="add_person_btn"><span class="btn_img"><span class="add">Add Person</span></span></s:a>
-                    <s:a href="#" cssClass="btn" onclick="formReset();" id="search_person_reset_btn"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
-                    <s:a href="#" cssClass="btn" onclick="window.top.hidePopWin();" id="search_person_close_btn"><span class="btn_img"><span class="close">Close</span></span></s:a>
+                    <s:a href="javascript:void(0);" cssClass="btn" onclick="loadDiv();" id="search_person_btn"><span class="btn_img"><span class="search">Search</span></span></s:a>
+                    <s:a href="javascript:void(0);" cssClass="btn" onclick="setCreateFormVisible();" id="add_person_btn"><span class="btn_img"><span class="add">Add Person</span></span></s:a>
+                    <s:a href="javascript:void(0);" cssClass="btn" onclick="formReset();" id="search_person_reset_btn"><span class="btn_img"><span class="cancel">Reset</span></span></s:a>
+                    <s:a href="javascript:void(0);" cssClass="btn" onclick="formClose();" id="search_person_close_btn"><span class="btn_img"><span class="close">Close</span></span></s:a>
                 </li>
             </ul>
         </div>

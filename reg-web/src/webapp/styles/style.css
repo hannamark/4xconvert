@@ -603,3 +603,7 @@ A.btn SPAN.accept
 A.btn SPAN.decline
 { background:url("../images/ico_cancel.gif") no-repeat; }
 
+/* Add Site */
+BODY.addsite {
+	background-color: white !important;
+}

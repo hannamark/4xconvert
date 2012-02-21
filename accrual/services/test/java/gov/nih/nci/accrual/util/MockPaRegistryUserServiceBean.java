@@ -216,4 +216,15 @@ public class MockPaRegistryUserServiceBean implements RegistryUserServiceLocal {
     public void activateAccount(String email, String username) throws PAException {
     }
 
+    @Override
+    public void assignSiteOwnership(Long userId, Long studySiteId)
+            throws PAException {        
+    }
+
+    @Override
+    public void removeSiteOwnership(Long userId, Long studySiteId)
+            throws PAException {
+        
+    }
+
 }

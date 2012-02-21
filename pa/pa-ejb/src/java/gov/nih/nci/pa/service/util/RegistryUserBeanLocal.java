@@ -525,4 +525,44 @@ public class RegistryUserBeanLocal implements RegistryUserServiceLocal {
         return query.list();
     }
 
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.RegistryUserService#assignSiteOwnership(java.lang.Long, java.lang.Long)
+     */
+    @Override
+    public void assignSiteOwnership(Long userId, Long studySiteId)
+            throws PAException {
+        RegistryUser usr = getUserById(userId);
+        Set<StudySite> studySites = usr.getStudySites();
+        for (Iterator<StudySite> iter = studySites.iterator(); iter.hasNext();) {
+            StudySite site = iter.next();
+            if (site.getId().equals(studySiteId)) {
+                return;
+            }
+        }        
+        StudySite site = new StudySite();
+        site.setId(studySiteId);
+        usr.getStudySites().add(site);
+        PaHibernateUtil.getCurrentSession().update(usr);
+        PaHibernateUtil.getCurrentSession().flush();
+    }
+
+    /* (non-Javadoc)
+     * @see gov.nih.nci.pa.service.util.RegistryUserService#removeSiteOwnership(java.lang.Long, java.lang.Long)
+     */
+    @Override
+    public void removeSiteOwnership(Long userId, Long studySiteId)
+            throws PAException {      
+        RegistryUser usr = getUserById(userId);
+        Set<StudySite> studySites = usr.getStudySites();
+        for (Iterator<StudySite> iter = studySites.iterator(); iter.hasNext();) {
+            StudySite site = iter.next();
+            if (site.getId().equals(studySiteId)) {
+                iter.remove();
+            }
+        }
+        PaHibernateUtil.getCurrentSession().saveOrUpdate(usr);
+        PaHibernateUtil.getCurrentSession().flush();
+        
+    }
+
 }

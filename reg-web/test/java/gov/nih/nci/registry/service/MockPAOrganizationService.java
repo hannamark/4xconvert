@@ -24,6 +24,13 @@ public class MockPAOrganizationService implements PAOrganizationServiceRemote {
         dto.setId(1L);
         dto.setName("OrgName");
         orgList.add(dto);
+        
+        dto = new Organization();
+        dto.setIdentifier("3");
+        dto.setId(3L);
+        dto.setName("NCI");
+        orgList.add(dto);
+        
     }
     /* (non-Javadoc)
      * @see gov.nih.nci.pa.service.util.PAOrganizationServiceRemote#getOrganizationByIndetifers(gov.nih.nci.pa.domain.Organization)
