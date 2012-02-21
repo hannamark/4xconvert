@@ -80,6 +80,7 @@ package gov.nih.nci.pa.util;
 
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.DocumentWorkflowStatus;
+import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.InterventionalStudyProtocol;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.RegistryUser;
@@ -114,6 +115,7 @@ public class TestRegistryUserSchema {
     public static Long trialOwnerUserId;
     public static Long randomUserId;
     public static Long orgId;
+    public static Long participatingSiteId;
 
     /**
      *
@@ -230,6 +232,12 @@ public class TestRegistryUserSchema {
         rOrg.setStatusCode(StructuralRoleStatusCode.ACTIVE);
         rOrg.setIdentifier("abc");
         addUpdObject(rOrg);
+        
+        HealthCareFacility hf = new HealthCareFacility();
+        hf.setOrganization(org);
+        hf.setStatusCode(StructuralRoleStatusCode.ACTIVE);
+        hf.setIdentifier("abc");
+        addUpdObject(hf);
 
         StudySite sPart = new StudySite();
         sPart.setFunctionalCode(StudySiteFunctionalCode.LEAD_ORGANIZATION);
@@ -240,6 +248,16 @@ public class TestRegistryUserSchema {
         sPart.setResearchOrganization(rOrg);
         addUpdObject(sPart);
 
+        StudySite partSite = new StudySite();
+        partSite.setFunctionalCode(StudySiteFunctionalCode.TREATING_SITE);
+        partSite.setLocalStudyProtocolIdentifier("Local SP ID 01");
+        partSite.setStatusCode(FunctionalRoleStatusCode.ACTIVE);
+        partSite.setStatusDateRangeLow(ISOUtil.dateStringToTimestamp("6/1/2008"));
+        partSite.setStudyProtocol(sp);
+        partSite.setHealthCareFacility(hf);
+        addUpdObject(partSite);
+        participatingSiteId = partSite.getId();
+        
         PaHibernateUtil.getCurrentSession().flush();
         PaHibernateUtil.getCurrentSession().clear();
 

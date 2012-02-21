@@ -303,6 +303,50 @@ public class RegistryUserServiceTest extends AbstractHibernateTestCase {
         remoteEjb.assignOwnership(userId, spId);
         assertTrue(remoteEjb.isTrialOwner(userId, spId));
     }
+    
+    /**
+     * Test the assignSiteOwnership method.
+     * 
+     * @throws PAException
+     *             if an error occurs
+     */
+    @Test
+    public void assignSiteOwnership() throws PAException {
+        Long ssId = TestRegistryUserSchema.participatingSiteId;
+        Long userId = TestRegistryUserSchema.randomUserId;
+        remoteEjb.assignSiteOwnership(userId, ssId);
+        RegistryUser usr = remoteEjb
+                .getUserById(TestRegistryUserSchema.randomUserId);
+        assertTrue(!usr.getStudySites().isEmpty());
+        assertTrue(usr.getStudySites().size() == 1);
+        assertEquals(TestRegistryUserSchema.participatingSiteId, usr
+                .getStudySites().iterator().next().getId());
+    }
+    
+    /**
+     * Test the removeSiteOwnership method.
+     * 
+     * @throws PAException
+     *             if an error occurs
+     */
+    @Test
+    public void removeSiteOwnership() throws PAException {
+        Long ssId = TestRegistryUserSchema.participatingSiteId;
+        Long userId = TestRegistryUserSchema.randomUserId;
+        remoteEjb.assignSiteOwnership(userId, ssId);
+        RegistryUser usr = remoteEjb
+                .getUserById(TestRegistryUserSchema.randomUserId);
+        assertTrue(!usr.getStudySites().isEmpty());
+        assertTrue(usr.getStudySites().size() == 1);
+        assertEquals(TestRegistryUserSchema.participatingSiteId, usr
+                .getStudySites().iterator().next().getId());
+        
+        remoteEjb.removeSiteOwnership(userId, ssId);
+        usr = remoteEjb
+                .getUserById(TestRegistryUserSchema.randomUserId);
+        assertTrue(usr.getStudySites().isEmpty());        
+    }
+
 
     /**
      * Test the removeOwnership method.
