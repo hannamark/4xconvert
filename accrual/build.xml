@@ -37,7 +37,7 @@
 
     <available file="${accrual-ear.build.dir}" type="dir" property="accrual-ear.build.present" />
     
-    <property name="accrual.version" value="3.7-SNAPSHOT"/>
+    <property name="accrual.version" value="3.8-SNAPSHOT"/>
 
     <path id="ivy.classpath">
         <fileset dir="${lib.dir}">
