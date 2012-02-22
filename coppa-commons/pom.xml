@@ -8,9 +8,7 @@
     <version>1.3.8-SNAPSHOT</version>
 
     <properties>
-        <log.level.nci-commons>DEBUG</log.level.nci-commons>
-        <log.level.po>DEBUG</log.level.po>
-        <nci-commons.version>1.2.24</nci-commons.version>
+        <nci-commons-ctrp.version>1.4.1-SNAPSHOT</nci-commons-ctrp.version>
         <compileSource>1.6</compileSource>
         <generatedStubsSrcDir>target/generated-sources/stubs</generatedStubsSrcDir>
         <cobertura.check.haltOnFailure>true</cobertura.check.haltOnFailure>
@@ -26,16 +24,6 @@
         <maven-project-info-reports-plugin.version>2.1.2</maven-project-info-reports-plugin.version>
     </properties>
 
-    <ciManagement>
-        <system>Hudson</system>
-        <url>http://cbvapp-c1005.nci.nih.gov:48080/hudson/</url>
-        <notifiers>
-            <notifier>
-                <type>mail</type>
-                <address>team-po@5amsolutions.com</address>
-            </notifier>
-        </notifiers>
-    </ciManagement>
     <scm>
         <connection>scm:svn:https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/coppa-commons</connection>
         <developerConnection>scm:svn:https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/coppa-commons</developerConnection>
@@ -102,9 +90,9 @@
                 </executions>
                 <dependencies>
                     <dependency>
-                        <groupId>com.fiveamsolutions</groupId>
-                        <artifactId>nci-commons-core</artifactId>
-                        <version>${nci-commons.version}</version>
+                        <groupId>gov.nih.nci.coppa</groupId>
+                        <artifactId>nci-commons-ctrp-core</artifactId>
+                        <version>${nci-commons-ctrp.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -122,9 +110,9 @@
                 </executions>
                 <dependencies>
                     <dependency>
-                        <groupId>com.fiveamsolutions</groupId>
-                        <artifactId>nci-commons-core</artifactId>
-                        <version>${nci-commons.version}</version>
+                        <groupId>gov.nih.nci.coppa</groupId>
+                        <artifactId>nci-commons-ctrp-core</artifactId>
+                        <version>${nci-commons-ctrp.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -237,9 +225,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.fiveamsolutions</groupId>
-            <artifactId>nci-commons-core</artifactId>
-            <version>${nci-commons.version}</version>
+            <groupId>gov.nih.nci.coppa</groupId>
+            <artifactId>nci-commons-ctrp-core</artifactId>
+            <version>${nci-commons-ctrp.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

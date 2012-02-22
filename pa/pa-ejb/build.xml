@@ -5,8 +5,8 @@
 <!-- ====================================================================== -->
 
 <project name="pa-ejb" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
-    <property name="pa.version" value="3.7-SNAPSHOT"/>
-    <property name="pa-ejb.coverage.line" value="72"/>
+    <property name="pa.version" value="3.8-SNAPSHOT"/>
+    <property name="pa-ejb.coverage.line" value="73"/>
     <property name="pa-ejb.coverage.branch" value="58"/>
     <property name="pa-ejb.pmd.maxerrors" value="350"/>
 
@@ -17,7 +17,7 @@
     <property name="pa.resourceDir" value="${software.dir}/pa/resources"/>
 
     <property name="pa.pmd" value="${pa.resourceDir}/paPmd.xml"/>
-    <property name="pa.checkstyle.url" value="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml"/>
+    <property name="pa.checkstyle.url" value="https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/nci-commons-ctrp/core/src/main/resources/ctrpCheckstyle-5.xml"/>
 
     <property name="jboss.server.jndi.port" value="1099" />
     <property name="java.major.version" value="1.6"/>

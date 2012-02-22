@@ -123,12 +123,10 @@ import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
 import org.hibernate.mapping.Table;
 import org.hibernate.property.Getter;
-import org.hibernate.type.CompositeCustomType;
 import org.hibernate.type.Type;
-import org.json.simple.JSONObject;
 
-import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 import com.fiveamsolutions.nci.commons.util.ProxyUtils;
+import com.fiveamsolutions.nci.commons.util.HibernateHelper;
 import com.fiveamsolutions.nci.commons.util.UsernameHolder;
 
 /**
@@ -138,8 +136,9 @@ import com.fiveamsolutions.nci.commons.util.UsernameHolder;
  * @see UsernameHolder
  */
 
-@SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.TooManyMethods", "rawtypes" })
+@SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.TooManyMethods" })
 public class AuditLogInterceptor extends EmptyInterceptor {
+    private static final String RAWTYPES = "rawtypes";
 
     private HibernateHelper hibernateHelper;
     private DefaultProcessor processor = new DefaultProcessor();
@@ -182,7 +181,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
     }
 
     /**
-     * default ctor.
+     *default ctor.
      */
     public AuditLogInterceptor() {
         // noop
@@ -205,6 +204,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         }
     }
 
+
     /**
      * @param processor replace the default selector.
      */
@@ -226,7 +226,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
     @Override
     @SuppressWarnings("PMD.ExcessiveParameterList")
     public boolean onFlushDirty(Object obj, Serializable id, Object[] newValues, Object[] oldValues,
-            String[] properties, Type[] types) {
+                                String[] properties, Type[] types) {
         if (processor.isAuditableEntity(obj)) {
             auditChangesIfNeeded(obj, id, newValues, oldValues, properties,
                                       types, AuditType.UPDATE);
@@ -266,6 +266,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings(RAWTYPES)
     @Override
     public void onCollectionUpdate(Object collection, Serializable key) {
         if (!(collection instanceof PersistentCollection)) {
@@ -284,20 +285,20 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         String role = pc.getRole();
 
         Serializable oldSerial = pc.getStoredSnapshot();
-        Object oldValue = null;
+        Object oldV = null;
         if (oldSerial != null && pc instanceof PersistentSet) {
             // PersistentSet seems to build a strange map where the key is also the value.
-            oldValue = ((Map) oldSerial).keySet();
+            oldV = ((Map) oldSerial).keySet();
         } else {
-            oldValue = oldSerial;
+            oldV = oldSerial;
         }
-        Object newValue = pc.getValue();
+        Object newV = pc.getValue();
 
         int idx = role.lastIndexOf('.');
         String className = role.substring(0, idx);
         String property = role.substring(idx + 1);
 
-        if (collectionNeedsAuditing(owner, newValue, oldValue, property)) {
+        if (collectionNeedsAuditing(owner, newV, oldV, property)) {
             Map<String, String> tabColMA = getColumnTableName(className, property);
 
                 AuditLogRecord record = getOrCreateRecord(owner, key, className,
@@ -313,15 +314,15 @@ public class AuditLogInterceptor extends EmptyInterceptor {
             }
             AuditLogHelper helper = new AuditLogHelper(record, owner, getter);
             audits.get().add(helper);
-            helper.getDetails().add(new DetailHelper(property, tabColMA.get(COLUMN_NAME), oldValue, newValue));
+            helper.getDetails().add(new DetailHelper(property, tabColMA.get(COLUMN_NAME), oldV, newV));
         }
     }
 
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings(RAWTYPES)
     @Override
-    @SuppressWarnings("deprecation")
     public void postFlush(Iterator arg0) {
 
         if (audits.get() != null && !audits.get().isEmpty()) {
@@ -341,8 +342,8 @@ public class AuditLogInterceptor extends EmptyInterceptor {
                     audit.getAuditLogRecord().setEntityId((Long) id);
 
                     for (DetailHelper detail : audit.getDetails()) {
-                        processor.processDetail(audit.getAuditLogRecord(), audit.getEntity(), id, detail.getProperty(),
-                                detail.getColumnName(), detail.getOldVal(), detail.getNewVal());
+                        processor.processDetail(audit.getAuditLogRecord(), audit.getEntity(), id,
+                                detail.getProperty(), detail.getColumnName(), detail.getOldVal(), detail.getNewVal());
                     }
                     session.save(audit.getAuditLogRecord());
                 }
@@ -378,10 +379,8 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         private final AuditType type;
 
         RecordKey(Object entity, AuditType type) {
-            this.entity = entity;
-            this.type = type;
+            this.entity = entity; this.type = type;
         }
-
         /**
          * {@inheritDoc}
          */
@@ -390,7 +389,6 @@ public class AuditLogInterceptor extends EmptyInterceptor {
             RecordKey r = (RecordKey) obj;
             return entity == r.entity && type == r.type;
         }
-
         /**
          * {@inheritDoc}
          */
@@ -423,11 +421,11 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
     @SuppressWarnings("PMD.ExcessiveParameterList")
     private void auditChangesIfNeeded(Object auditableObj, Serializable id, Object[] newValues, Object[] oldValues,
-            String[] properties, Type[] types, AuditType eventToLog) {
+                                      String[] properties, Type[] types, AuditType eventToLog) {
 
         // first make sure we have old values around. The passed in set will be null when an object is being updated
         // that was detached from the session
-        Object[] nonNullOldValues = getOldValues(oldValues, properties, auditableObj, id);
+        Object[] myOldValues = getOldValues(oldValues, properties, auditableObj, id);
 
         if (audits.get() == null) {
             audits.set(new HashSet<AuditLogHelper>());
@@ -438,59 +436,45 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
         for (int i = 0; i < properties.length; i++) {
             String property = properties[i];
-            Object oldValue = nonNullOldValues[i];
-            Object newValue = newValues[i];
-            if (needsAuditing(auditableObj, types[i], newValue, oldValue, property)) {
+            Object oldV = myOldValues[i];
+            Object newV = newValues[i];
+            if (needsAuditing(auditableObj, types[i], newV, oldV, property)) {
+                @SuppressWarnings(RAWTYPES)
                 Class clazz = getPersistentClass(auditableObj);
                 Map<String, String> tabColMA = getColumnTableName(clazz.getName(), property);
                 if (record == null) {
                     String entityName = getPersistentClass(auditableObj).getName();
-                    record = getOrCreateRecord(auditableObj, id, entityName, tabColMA.get(TABLE_NAME), eventToLog);
+                    record = getOrCreateRecord(auditableObj, id, entityName, tabColMA.get(TABLE_NAME),
+                            eventToLog);
                     helper = new AuditLogHelper(record, auditableObj, getIdGetter(clazz));
                     audits.get().add(helper);
                 }
 
                 String colName = tabColMA.get(COLUMN_NAME);
-                if (types[i] instanceof CompositeCustomType) {
-                    oldValue = getCompositeValue((CompositeCustomType) types[i], oldValue);
-                    newValue = getCompositeValue((CompositeCustomType) types[i], newValue);
-                }
-                helper.getDetails().add(new DetailHelper(property, colName, oldValue, newValue));
+                helper.getDetails().add(new DetailHelper(property, colName, oldV, newV));
             }
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private Object getCompositeValue(CompositeCustomType type, Object input) {
-        if (input == null) {
-            return null;
-        }
-        JSONObject jsonObject = new JSONObject();
-        for (int i = 0; i < type.getPropertyNames().length; i++) {
-            jsonObject.put(type.getPropertyNames()[i], type.getPropertyValue(input, i));
-        }
-        return jsonObject.toString();
+    private Getter getIdGetter(@SuppressWarnings(RAWTYPES) Class clazz) {
+        return getHibernateHelper().getConfiguration().getClassMapping(clazz.getName())
+                .getIdentifierProperty().getGetter(clazz);
     }
 
-    private Getter getIdGetter(Class clazz) {
-        return getHibernateHelper().getConfiguration().getClassMapping(clazz.getName()).getIdentifierProperty()
-                .getGetter(clazz);
-    }
-
-    @SuppressWarnings("deprecation")
     private Object[] getOldValues(Object[] oldValues, String[] properties, Object auditableObj, Serializable id) {
-        Object[] nonNullOldValues = oldValues;
+        Object[] myOldValues = oldValues;
         Session session = null;
-        if (nonNullOldValues == null) {
+        if (myOldValues == null) {
             try {
                 SessionFactory sf = getHibernateHelper().getSessionFactory();
                 session = sf.openSession(getHibernateHelper().getCurrentSession().connection());
-                nonNullOldValues = retrieveOldValues(session, id, properties, getPersistentClass(auditableObj));
+                myOldValues = retrieveOldValues(session, id, properties,
+                                                getPersistentClass(auditableObj));
             } finally {
                 session.close();
             }
         }
-        return nonNullOldValues;
+        return myOldValues;
     }
 
     private Dialect getDialect() {
@@ -499,11 +483,11 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         }
         Dialect d = null;
         try {
-            // Use current thread's class loader, instead of this class's class loader. This
-            // ensures accessibility to class BO even if nci-commons is created via a higher level class loader
-            // than the application's class loader (web/ear class loader).
-            d = (Dialect) Thread.currentThread().getContextClassLoader()
-                    .loadClass(getHibernateHelper().getConfiguration().getProperty(Environment.DIALECT)).newInstance();
+            //Use current thread's class loader, instead of this class's class loader.  This
+            //ensures accessibility to class BO even if nci-commons is created via a higher level class loader
+            //than the application's class loader (web/ear class loader).
+            d = (Dialect) Thread.currentThread().getContextClassLoader().loadClass(
+                    getHibernateHelper().getConfiguration().getProperty(Environment.DIALECT)).newInstance();
         } catch (Exception e) {
             LOG.error("Unable to determine dialect.", e);
         }
@@ -527,7 +511,8 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         return g;
     }
 
-    private boolean needsAuditing(Object auditableObj, Type type, Object newValue, Object oldValue, String property) {
+    private boolean needsAuditing(Object auditableObj, Type type, Object newValue,
+                                         Object oldValue, String property) {
         if (type.isCollectionType()) {
             return collectionNeedsAuditing(auditableObj, newValue, oldValue, property);
         }
@@ -543,24 +528,30 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         return !ObjectUtils.equals(newValue, oldValue);
     }
 
-    private boolean collectionNeedsAuditing(Object auditableObj, Object newValue, Object oldValue, String property) {
+
+    private boolean collectionNeedsAuditing(Object auditableObj, Object newValue,
+                                                   Object oldValue, String property) {
+
 
         try {
             String cn = ProxyUtils.unEnhanceCGLIBClassName(auditableObj.getClass());
             Method getter = getHibernateHelper().getConfiguration().getClassMapping(cn).getProperty(property)
                     .getGetter(auditableObj.getClass()).getMethod();
-            if (getter.getAnnotation(MapKey.class) != null || getter.getAnnotation(MapKeyManyToMany.class) != null) {
-                // this is some sort of map
+            if (getter.getAnnotation(MapKey.class) != null
+                    || getter.getAnnotation(MapKeyManyToMany.class) != null) {
+                //  this is some sort of map
                 Map<?, ?> oldMap = (Map<?, ?>) oldValue;
                 Map<?, ?> newMap = (Map<?, ?>) newValue;
                 oldMap = oldMap == null ? Collections.emptyMap() : oldMap;
                 newMap = newMap == null ? Collections.emptyMap() : newMap;
                 return !equalsMap(oldMap, newMap);
-            } else if (getter.getAnnotation(JoinTable.class) != null || getter.getAnnotation(OneToMany.class) != null) {
+            } else if (getter.getAnnotation(JoinTable.class) != null
+                    || getter.getAnnotation(OneToMany.class) != null) {
                 Collection<?> oldSet = (Collection<?>) oldValue;
                 Collection<?> newSet = (Collection<?>) newValue;
                 return !CollectionUtils.isEqualCollection(oldSet == null ? Collections.emptySet() : oldSet,
                                                           newSet == null ? Collections.emptySet() : newSet);
+
             }
         } catch (SecurityException e) {
             LOG.error(e.getMessage(), e);
@@ -579,22 +570,22 @@ public class AuditLogInterceptor extends EmptyInterceptor {
      */
     protected Object[] retrieveOldValues(Session session, Serializable id, String[] properties,
                                               Class<?> theClass) {
-        Object[] nonNullOldValues = new Object[properties.length];
+        Object[] myOldValues = new Object[properties.length];
 
         Object oldObject = session.get(theClass, id);
         if (oldObject != null) {
             for (int i = 0; i < properties.length; i++) {
                 try {
-                    nonNullOldValues[i] = PropertyUtils.getProperty(oldObject, properties[i]);
-                    getLazyLoadedObjects(session, nonNullOldValues[i]);
+                    myOldValues[i] = PropertyUtils.getProperty(oldObject, properties[i]);
+                    getLazyLoadedObjects(session, myOldValues[i]);
                 } catch (Exception e) {
                     LOG.error("Unable to read the old value of a property while logging.", e);
-                    nonNullOldValues[i] = null;
+                    myOldValues[i] = null;
                 }
             }
         }
 
-        return nonNullOldValues;
+        return myOldValues;
     }
 
     /**
@@ -684,8 +675,8 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         return columnName;
     }
 
-    /**
-     * . Returns the Actual class name from the CGILIB Proxy classname of the entity
+    /**.
+     * Returns the Actual class name from the CGILIB Proxy classname of the entity
      *
      * @param obj
      * @return
@@ -762,6 +753,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
             return idGetter;
         }
 
+
         /**
          * @param record audit record
          * @param entity entity
@@ -769,7 +761,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
         public AuditLogHelper(AuditLogRecord record, Object entity, Getter idGetter) {
             auditLogRecord = record;
             this.entity = entity;
-            this.idGetter = idGetter;
+            this.idGetter =  idGetter;
         }
     }
 
@@ -793,6 +785,7 @@ public class AuditLogInterceptor extends EmptyInterceptor {
             this.newVal = newVal;
             this.oldVal = oldVal;
         }
+
 
         /**
          * @return the newVal
@@ -828,7 +821,6 @@ public class AuditLogInterceptor extends EmptyInterceptor {
      */
     static interface TxIdGenerator {
         Long generateId(Dialect dialect, Session session);
-
         boolean isSupported(Dialect dialect);
     }
 
@@ -836,20 +828,18 @@ public class AuditLogInterceptor extends EmptyInterceptor {
      * for postgres, HSQLDB, ...
      */
     private static class SequenceIdGenerator implements TxIdGenerator {
-        @Override
         public Long generateId(Dialect dialect, Session session) {
             String sql = dialect.getSequenceNextValString(SEQUENCE_NAME);
             Number uniqueResult = (Number) session.createSQLQuery(sql).uniqueResult();
             if (uniqueResult == null) {
                 // For some reason, HSQL isn't returning a result here, even though the query doesn't
-                // throw an exception. This works correctly in postgres.
+                // throw an exception.  This works correctly in postgres.
                 LOG.warn("should only happen in unit tests!!");
                 uniqueResult = 1L;
             }
             return uniqueResult.longValue();
         }
 
-        @Override
         public boolean isSupported(Dialect dialect) {
             try {
                 dialect.getSequenceNextValString(SEQUENCE_NAME);
@@ -862,14 +852,12 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 
     private static final int HEX = 16;
     private static final int BITLENGHT_LONG = 64;
-
     /**
      * For MySql and such.
      */
 
     private static class GuidGenerator implements TxIdGenerator {
 
-        @Override
         public Long generateId(Dialect dialect, Session session) {
             String sql = dialect.getSelectGUIDString();
             String uniqueResult = (String) session.createSQLQuery(sql).uniqueResult();
@@ -884,7 +872,6 @@ public class AuditLogInterceptor extends EmptyInterceptor {
             return hi ^ lo;
         }
 
-        @Override
         public boolean isSupported(Dialect dialect) {
             try {
                 dialect.getSelectGUIDString();

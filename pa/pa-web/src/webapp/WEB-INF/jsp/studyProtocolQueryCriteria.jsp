@@ -52,6 +52,7 @@
         </s:if>
         <div class="box" id="filters">
             <s:form>
+            <s:token/>
                 <pa:failureMessage/>
                 <table class="form">
                     <s:set name="protocolOrgs" value="@gov.nih.nci.pa.util.PaRegistry@getPAOrganizationService().getOrganizationsAssociatedWithStudyProtocol('Lead Organization')" />

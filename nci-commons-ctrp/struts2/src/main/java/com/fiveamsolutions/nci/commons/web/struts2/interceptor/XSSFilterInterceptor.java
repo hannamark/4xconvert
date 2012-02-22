@@ -98,8 +98,8 @@ public class XSSFilterInterceptor extends AbstractInterceptorBase implements Int
     private boolean filterSymbols = true;
     // Controls replacement of controls characters.If true, control characters are stripped out.
     private boolean filterControlChars = true;
-    // Prevents script injection using url encoded <.
-    private boolean filterScriptTag = false;
+    // Prevents script injection using html tags.
+    private boolean filterScriptTags = false;
 
     /**
      * {@inheritDoc}
@@ -109,12 +109,12 @@ public class XSSFilterInterceptor extends AbstractInterceptorBase implements Int
         if (value instanceof String) {
             String s = (String) value;
             stack.setValue((String) key,
-                    NCICommonsUtils.performXSSFilter(s, filterSymbols, filterControlChars, filterScriptTag));
+                    NCICommonsUtils.performXSSFilter(s, filterSymbols, filterControlChars, filterScriptTags));
         } else if (value instanceof String[]) {
             String[] values = (String[]) value;
             for (int i = 0; i < values.length; i++) {
                 String s = values[i];
-                values[i] = NCICommonsUtils.performXSSFilter(s, filterSymbols, filterControlChars, filterScriptTag);
+                values[i] = NCICommonsUtils.performXSSFilter(s, filterSymbols, filterControlChars, filterScriptTags);
             }
         }
     }
@@ -157,20 +157,20 @@ public class XSSFilterInterceptor extends AbstractInterceptorBase implements Int
     }
 
     /**
-     * Determines if %3c should convert to %20.
+     * Determines filtering of script html should be done.
      *
-     * @return the filterScriptTag
+     * @return the filterScriptTags
      */
-    public boolean isFilterScriptTag() {
-        return filterScriptTag;
+    public boolean isFilterScriptTags() {
+        return filterScriptTags;
     }
 
     /**
-     * Determines if %3c should convert to %20.
+     * Determines filtering of script html should be done.
      *
-     * @param filterScriptTag the filterScriptTag to set
+     * @param filterScriptTags the filterScriptTags to set
      */
-    public void setFilterScriptTag(boolean filterScriptTag) {
-        this.filterScriptTag = filterScriptTag;
+    public void setFilterScriptTags(boolean filterScriptTags) {
+        this.filterScriptTags = filterScriptTags;
     }
 }

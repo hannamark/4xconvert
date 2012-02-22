@@ -8,7 +8,7 @@
     <property file="${basedir}/build.properties"/>
     <property name="bda-utils" value="${basedir}/../target/pa/bda-utils" />
     <property name="jdbc.base" value="jdbc:${db.type}://${db.server}:${db.port}"/>
-    <property name="pa.version" value="3.7-SNAPSHOT"/>
+    <property name="pa.version" value="3.8-SNAPSHOT"/>
 
     <!-- PATHS -->
     <path id="macrodef">

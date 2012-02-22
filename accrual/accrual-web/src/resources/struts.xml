@@ -17,6 +17,7 @@
             <interceptor name="maliciousInput" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor">
                 <param name="filterSymbols">false</param>
                 <param name="filterControlChars">true</param>
+                <param name="filterScriptTag">true</param>
             </interceptor>
             <interceptor-stack name="methodValidationStack">
                 <interceptor-ref name="showDisclaimer" />
@@ -52,7 +53,6 @@
                 <interceptor-ref name="methodValidationStack"/>
                 <interceptor-ref name="tokenSession">
                     <param name="includeMethods">create,update,delete,doUpload</param>
-                    <param name="excludeMethods">execute</param>
                 </interceptor-ref>
             </interceptor-stack>
         </interceptors>

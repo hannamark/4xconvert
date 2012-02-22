@@ -5,7 +5,7 @@
 <!-- ====================================================================== -->
 
 <project name="commons" default="package" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
-    <property name="pa.version" value="3.7-SNAPSHOT"/>
+    <property name="pa.version" value="3.8-SNAPSHOT"/>
     <property name="commons.coverage.line" value="53"/>
     <property name="commons.coverage.branch" value="43"/>
     <property name="commons.pmd.maxerrors" value="31"/>
@@ -19,7 +19,7 @@
     <property name="pa.test.resourceDir" value="${pa.dir}/commons/test/resources"/>
 
     <property name="pa.pmd" value="${pa.resourceDir}/paPmd.xml"/>
-    <property name="pa.checkstyle.url" value="https://svn.5amsolutions.com/opensource/nci-commons/trunk/core/src/main/resources/5amCheckstyle-5.xml"/>
+    <property name="pa.checkstyle.url" value="https://ncisvn.nci.nih.gov/svn/coppa/trunk/code/nci-commons-ctrp/core/src/main/resources/ctrpCheckstyle-5.xml"/>
     <property name="java.major.version" value="1.6"/>
     <property name="java.encoding" value="utf-8"/>
     

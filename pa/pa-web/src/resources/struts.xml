@@ -17,6 +17,7 @@
             <interceptor name="maliciousInput" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor">
                 <param name="filterSymbols">false</param>
                 <param name="filterControlChars">true</param>
+                <param name="filterScriptTag">true</param>
             </interceptor>
             <interceptor name="preventTrialEditing" class="gov.nih.nci.pa.interceptor.PreventTrialEditingInterceptor">
                 <param name="errorAction">duplicateTrialErrorAction</param>
@@ -57,7 +58,6 @@
                 </interceptor-ref>
                 <interceptor-ref name="tokenSession">
                     <param name="includeMethods">add,update</param>
-                    <param name="excludeMethods">*</param>
                 </interceptor-ref>
             </interceptor-stack>
 
@@ -129,7 +129,6 @@
                 </interceptor-ref>
                 <interceptor-ref name="tokenSession">
                     <param name="includeMethods">add,update</param>
-                    <param name="excludeMethods">*</param>
                 </interceptor-ref>
             </interceptor-stack>
         </interceptors>

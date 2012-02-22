@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>gov.nih.nci.coppa</groupId>
     <artifactId>PaServices</artifactId>
-    <version>3.5-SNAPSHOT</version>
+    <version>3.8-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -159,14 +159,14 @@
         <dependency>
             <groupId>gov.nih.nci.coppa.pa</groupId>
             <artifactId>pa-ejb-client</artifactId>
-            <version>3.7-SNAPSHOT</version>
+            <version>3.8-SNAPSHOT</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>gov.nih.nci.coppa.pa</groupId>
             <artifactId>pa-commons</artifactId>
-            <version>3.7-SNAPSHOT</version>
+            <version>3.8-SNAPSHOT</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>

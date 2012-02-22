@@ -12,7 +12,7 @@
             </interceptor>
             <interceptor name="parameterTrim" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.ParameterTrimInterceptor" />
             <interceptor name="servletConfig" class="org.apache.struts2.interceptor.ServletConfigInterceptor" />
-            <interceptor name="maliciousInput" class="gov.nih.nci.commons.ctrp.web.struts2.interceptor.XSSFilterInterceptor">
+            <interceptor name="maliciousInput" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor">
                 <param name="filterSymbols">false</param>
                 <param name="filterControlChars">true</param>
                 <param name="filterScriptTag">true</param>
@@ -56,7 +56,6 @@
                 <interceptor-ref name="tokenSession">
                     <param name="includeMethods">process,edit,update,partialSave,review,
                     reviewUpdate,amend,create,popupupdate,assignOwnership,unassignOwnership,save,updateAccount</param>
-                    <param name="excludeMethods">execute,viewDoc,popupView,view,query,ajaxCreate</param>
                 </interceptor-ref>
             </interceptor-stack>
             
@@ -92,7 +91,6 @@
                     <param name="excludeMethods">input,back,cancel,reOrder</param>
                 </interceptor-ref>
                 <interceptor-ref name="tokenSession">
-                    <param name="excludeMethods">*</param>
                     <param name="includeMethods">showMyAccount</param>
                 </interceptor-ref>
             </interceptor-stack>
