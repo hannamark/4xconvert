@@ -1199,7 +1199,7 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             if (smDTO.getPrimaryIndicator().getValue().booleanValue()) {
                 Element po = doc.createElement("primary_outcome");
                 XmlGenHelper.appendElement(po,
-                        XmlGenHelper.createElementWithTextblock("outcome_measure",
+                        XmlGenHelper.createElement("outcome_measure",
                                 StringUtils.substring(smDTO.getName().getValue(), 0,
                         PAAttributeMaxLen.LEN_254), doc));
                 if (!ISOUtil.isStNull(smDTO.getDescription())) {
@@ -1207,11 +1207,11 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
                             PAAttributeMaxLen.LEN_600), doc, po);
                 }
                 XmlGenHelper.appendElement(po,
-                        XmlGenHelper.createElementWithTextblock(
+                        XmlGenHelper.createElement(
                                 "outcome_safety_issue", BlConverter.convertBlToYesNoString(smDTO
                         .getSafetyIndicator()), doc));
                 XmlGenHelper.appendElement(po,
-                        XmlGenHelper.createElementWithTextblock(
+                        XmlGenHelper.createElement(
                                 "outcome_time_frame", StringUtils.substring(smDTO.getTimeFrame()
                         .getValue(), 0, PAAttributeMaxLen.LEN_254), doc));
                 if (po.hasChildNodes()) {
@@ -1230,15 +1230,15 @@ public class CTGovXmlGeneratorServiceBeanLocal extends AbstractCTGovXmlGenerator
             if (!smDTO.getPrimaryIndicator().getValue().booleanValue()) {
                 Element om = doc.createElement("secondary_outcome");
                 XmlGenHelper.appendElement(om,
-                        XmlGenHelper.createElementWithTextblock("outcome_measure",
+                        XmlGenHelper.createElement("outcome_measure",
                                 StringUtils.substring(smDTO.getName().getValue(), 0,
                         PAAttributeMaxLen.LEN_254), doc));
                 XmlGenHelper.appendElement(om,
-                        XmlGenHelper.createElementWithTextblock(
+                        XmlGenHelper.createElement(
                                 "outcome_safety_issue", BlConverter.convertBlToYesNoString(smDTO
                         .getSafetyIndicator()), doc));
                 XmlGenHelper.appendElement(om,
-                        XmlGenHelper.createElementWithTextblock(
+                        XmlGenHelper.createElement(
                                 "outcome_time_frame", StringUtils.substring(smDTO.getTimeFrame()
                         .getValue(), 0, PAAttributeMaxLen.LEN_254), doc));
                 if (om.hasChildNodes()) {

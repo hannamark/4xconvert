@@ -186,15 +186,12 @@ public class BaseXmlGenHelper {
 
         Element element = null;
         if (containsXmlChars(data)) {
-            Element elementTxt = doc.createElement(XmlGenHelper.TEXT_BLOCK);
             element = doc.createElement(elementName);
-            Text text = doc.createCDATASection(data);
-            elementTxt.appendChild(text);
+            Element elementTxt = createTextblockElement(data, doc);
             element.appendChild(elementTxt);
         } else {
             element = createElement(elementName, data, doc);
         }
-
         return element;
     }
 
