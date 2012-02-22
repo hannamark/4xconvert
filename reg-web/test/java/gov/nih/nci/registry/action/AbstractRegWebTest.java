@@ -4,19 +4,27 @@
 package gov.nih.nci.registry.action;
 
 import static org.junit.Assert.assertNotNull;
-
+import gov.nih.nci.iso21090.DSet;
+import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.domain.Country;
 import gov.nih.nci.pa.domain.HealthCareFacility;
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.domain.OrganizationalContact;
 import gov.nih.nci.pa.domain.Person;
 import gov.nih.nci.pa.domain.ResearchOrganization;
+import gov.nih.nci.pa.enums.AccrualReportingMethodCode;
 import gov.nih.nci.pa.enums.DocumentTypeCode;
 import gov.nih.nci.pa.enums.EntityStatusCode;
 import gov.nih.nci.pa.enums.ExpandedAccessStatusCode;
 import gov.nih.nci.pa.enums.NciDivisionProgramCode;
 import gov.nih.nci.pa.enums.NihInstituteCode;
 import gov.nih.nci.pa.enums.StructuralRoleStatusCode;
+import gov.nih.nci.pa.iso.dto.StudyProtocolDTO;
+import gov.nih.nci.pa.iso.util.BlConverter;
+import gov.nih.nci.pa.iso.util.CdConverter;
+import gov.nih.nci.pa.iso.util.IiConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
+import gov.nih.nci.pa.iso.util.TsConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
@@ -34,11 +42,14 @@ import gov.nih.nci.registry.test.util.RegistrationMockServiceLocator;
 import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.Session;
@@ -497,5 +508,46 @@ public abstract class AbstractRegWebTest {
        Date tomorrow = calendar.getTime();
        return PAUtil.normalizeDateString(tomorrow.toString());
    }
+   
+   protected StudyProtocolDTO setupSpDto() {
+       Ii spId = new Ii();
+       spId.setExtension("1");
+
+       StudyProtocolDTO spDto = new StudyProtocolDTO();
+       spDto.setPublicTitle(StConverter.convertToSt("title"));
+       spDto.setAcronym(StConverter.convertToSt("acronym"));
+       spDto.setOfficialTitle(StConverter.convertToSt("off title"));
+       spDto.setIdentifier(spId);
+       spDto.setCtgovXmlRequiredIndicator(BlConverter.convertToBl(true));
+       spDto.setFdaRegulatedIndicator(BlConverter.convertToBl(true));
+       spDto.setStudyProtocolType(StConverter.convertToSt("InterventionalStudyProtocol"));
+       spDto.setDataMonitoringCommitteeAppointedIndicator(BlConverter.convertToBl(true));
+       spDto.setSection801Indicator(BlConverter.convertToBl(true));
+       spDto.setExpandedAccessIndicator(BlConverter.convertToBl(true));
+       spDto.setReviewBoardApprovalRequiredIndicator(BlConverter.convertToBl(true));
+       spDto.setRecordVerificationDate(TsConverter.convertToTs(new Timestamp(0)));
+       spDto.setAccrualReportingMethodCode(CdConverter.convertToCd(AccrualReportingMethodCode.ABBREVIATED));
+       spDto.setStartDate(TsConverter.convertToTs(new Timestamp(0)));
+       spDto.setStartDateTypeCode(CdConverter.convertStringToCd("Actual"));
+       spDto.setPrimaryCompletionDate(TsConverter.convertToTs(new Timestamp(0)));
+       spDto.setPrimaryCompletionDateTypeCode(CdConverter.convertStringToCd("Anticipated"));
+       spDto.setPublicDescription(StConverter.convertToSt("public description"));
+       spDto.setDelayedpostingIndicator(BlConverter.convertToBl(true));
+       spDto.setPublicTitle(StConverter.convertToSt("public title"));
+       spDto.setAcceptHealthyVolunteersIndicator(BlConverter.convertToBl(true));
+
+
+       DSet<Ii> secondaryIdentifiers = new DSet<Ii>();
+       Ii assignedId = new Ii();
+       assignedId.setRoot(IiConverter.STUDY_PROTOCOL_ROOT);
+       assignedId.setExtension("NCI_2010_0001");
+       Set<Ii> iis = new HashSet<Ii>();
+       iis.add(assignedId);
+       secondaryIdentifiers.setItem(iis);
+       spDto.setSecondaryIdentifiers(secondaryIdentifiers);
+       
+       return spDto;
+   }
+
 
 }

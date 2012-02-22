@@ -133,7 +133,7 @@ import com.opensymphony.xwork2.Preparable;
 @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.TooManyMethods" })
 public class AddUpdateSiteAction extends ActionSupport implements Preparable {
 
-    private static final String SUCCESS_MESSAGE_KEY = "successMessage";
+    static final String SUCCESS_MESSAGE_KEY = "successMessage";
     private static final String WAIT = "wait";
     private static final long serialVersionUID = -5720501246071254426L;
     private static final Logger LOG = Logger
@@ -236,7 +236,7 @@ public class AddUpdateSiteAction extends ActionSupport implements Preparable {
             LOG.error(e, e);
             if (!(hasActionErrors() || hasFieldErrors())) {
                 RegistryUtil.setFailureMessage(e);
-                addActionError("Error occured, please try again.");
+                addActionError("An internal error has occured.");
             }
         }
         return fwd;
