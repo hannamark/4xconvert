@@ -20,7 +20,7 @@ This is the definition of a virtual module called bda-download that has a depend
 
   <dependencies>
     <!-- runtime -->
-    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-struts2" rev="(,1.4.1]"       conf="runtime->default"/>
+    <dependency org="com.fiveamsolutions"    name="nci-commons-struts2"     rev="1.3.2"           conf="runtime->default"/>
     <dependency org="com.opensymphony"       name="xwork"                   rev="2.1.3"           conf="runtime->default">
        <exclude module="commons-logging"/>
     </dependency>
@@ -44,8 +44,8 @@ This is the definition of a virtual module called bda-download that has a depend
 
     <!-- compile -->
     <dependency org="ant-contrib"            name="ant-contrib"             rev="1.0b3"           conf="compile->master"/>
-    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-core"   rev="(,1.4.1]"        conf="compile->master"/>
-
+    <dependency org="com.fiveamsolutions"    name="nci-commons-core"        rev="1.3.2"           conf="compile->master"/>
+    
     <dependency org="commons-collections"    name="commons-collections"     rev="3.2.1"           conf="compile->master"/>
     <dependency org="commons-lang"           name="commons-lang"            rev="2.4"             conf="compile->master"/>
     <dependency org="commons-beanutils"      name="commons-beanutils"       rev="1.8.0"           conf="compile->master"/>
@@ -54,7 +54,7 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="gov.nih.nci.iso-datatypes" name="iso-datatypes"        rev="2.0.0-alpha1"    conf="compile->master"/>
     <dependency org="gov.nih.nci.security"   name="cgmm"                    rev="0.7.0"           conf="compile->master"/>
     <dependency org="gov.nih.nci.security"   name="clm"                     rev="4.0"             conf="compile->master"/>
-
+    
     <dependency org="javax.persistence"      name="persistence-api"         rev="1.0"             conf="compile->master"/>
     <dependency org="javax.ejb"              name="ejb-api"                     rev="3.0"             conf="compile->master"/>
     <dependency org="jboss"                  name="jboss-annotations-ejb3"  rev="4.0.5.GA"        conf="compile->master"/>
@@ -65,11 +65,11 @@ This is the definition of a virtual module called bda-download that has a depend
     <dependency org="jboss"                  name="log4j"                   rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="jboss"                  name="jbossall-client"         rev="4.0.5.GA"        conf="compile->master"/>
     <dependency org="joda-time"              name="joda-time"               rev="1.6.2"           conf="compile->master"/>
-    <dependency org="gov.nih.nci.coppa"      name="nci-commons-ctrp-core"   rev="(,1.4.1]"        conf="compile->master"/>
+    <dependency org="com.fiveamsolutions"    name="nci-commons-core"        rev="1.2.24"          conf="compile->master"/>
     <dependency org="gov.nih.nci.security"   name="security"                rev="4.2"             conf="compile->master"/>
     <dependency org="org.hibernate"          name="hibernate-annotations"   rev="3.2.0.ga"        conf="compile->master"/>
 	<dependency org="postgresql"             name="postgresql"              rev="8.4-701.jdbc3"   conf="compile->master"/>
-
+	
     <!-- test -->
     <dependency org="antlr"                  name="antlr"                   rev="2.7.6"           conf="test->master"/>
     <dependency org="dom4j"                  name="dom4j"                   rev="1.6.1"           conf="test->master"/>
