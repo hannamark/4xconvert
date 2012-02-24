@@ -1,16 +1,5 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp" %>
 
-<script type="text/javascript">
-    jQuery(function() {
-        jQuery("#viewTsrMenuOption").bind("click", function(ev) {
-            var form = document.qForm;
-            form.target = "TSR";
-            form.action = paApp.contextPath + "/protected/ajaxAbstractionCompletionviewTSR.action";
-            form.submit();
-        });
-    });
-</script>
-
 <s:form name="qForm">
     <li class="stdnav">
         <div><fmt:message key="pamenu.abstraction"/></div>
@@ -47,7 +36,7 @@
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/milestone.action" labelKey="pamenu.overview.milestone" selected="${requestScope.topic == 'trialmilestones'}"/>
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/onhold.action" labelKey="pamenu.overview.onhold" selected="${requestScope.topic == 'trialonhold'}"/>
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/manageAccrualAccess.action" labelKey="pamenu.overview.accrualaccess" selected="${requestScope.topic == 'accrualaccess'}"/>
-                        <pa:menuLink href="#" id="viewTsrMenuOption" labelKey="pamenu.overview.viewTsr"/>
+                        <pa:menuLink href="${pageContext.request.contextPath}/protected/ajaxAbstractionCompletionviewTSR.action" labelKey="pamenu.overview.viewTsr"/>
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/assignOwnershipview.action" labelKey="pamenu.overview.assignOwnership"/>
                         <pa:menuLink href="${pageContext.request.contextPath}/protected/auditTrail.action" labelKey="pamenu.overview.auditTrail" selected="${requestScope.topic == 'auditTrail'}"/>
                     </ul>
