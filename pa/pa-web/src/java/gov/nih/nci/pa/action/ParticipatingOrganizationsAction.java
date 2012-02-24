@@ -144,6 +144,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -366,17 +367,26 @@ public class ParticipatingOrganizationsAction extends ActionSupport implements P
     }
 
 
-    private boolean isProgramCodeOrTargetAccrualNumberUpdated(StudySiteDTO sp, String prgCode, Integer iTargetAccrual) {
+    /**
+     * This method checks if either program code or target accrual have changed. If yes, update
+     * the StudySiteDTO as appropriate and return true. Made package visibility for testing.
+     *
+     * @param studySite the study site object
+     * @param prgCode program code
+     * @param iTargetAccrual target accrual
+     * @return if either has been updated
+     */
+    boolean isProgramCodeOrTargetAccrualNumberUpdated(StudySiteDTO studySite, String prgCode, Integer iTargetAccrual) {
         boolean spUpdated = false;
-        Integer oldTargetAccrualNumber = IntConverter.convertToInteger(sp.getTargetAccrualNumber());
-        if (oldTargetAccrualNumber != null && !oldTargetAccrualNumber.equals(iTargetAccrual)) {
-            sp.setTargetAccrualNumber(IntConverter.convertToInt(getTargetAccrualNumber()));
+        Integer oldTargetAccrualNumber = IntConverter.convertToInteger(studySite.getTargetAccrualNumber());
+        if (!ObjectUtils.equals(oldTargetAccrualNumber, iTargetAccrual)) {
+            studySite.setTargetAccrualNumber(IntConverter.convertToInt(iTargetAccrual));
             spUpdated = true;
         }
-        if (ISOUtil.isStNull(sp.getProgramCodeText())
-                || !StConverter.convertToString(sp.getProgramCodeText()).equalsIgnoreCase(prgCode)) {
-           sp.setProgramCodeText(StConverter.convertToSt(getProgramCode()));
-           spUpdated = true;
+        String oldProgramCode = StConverter.convertToString(studySite.getProgramCodeText());
+        if (!ObjectUtils.equals(oldProgramCode, prgCode)) {
+            studySite.setProgramCodeText(StConverter.convertToSt(prgCode));
+            spUpdated = true;
         }
 
         return spUpdated;

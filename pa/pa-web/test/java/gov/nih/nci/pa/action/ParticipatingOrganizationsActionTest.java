@@ -80,12 +80,15 @@ package gov.nih.nci.pa.action;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import gov.nih.nci.pa.domain.Organization;
 import gov.nih.nci.pa.dto.PaOrganizationDTO;
 import gov.nih.nci.pa.dto.ParticipatingOrganizationsTabWebDTO;
 import gov.nih.nci.pa.enums.RecruitmentStatusCode;
+import gov.nih.nci.pa.iso.dto.StudySiteDTO;
+import gov.nih.nci.pa.iso.util.IntConverter;
+import gov.nih.nci.pa.iso.util.StConverter;
 import gov.nih.nci.pa.service.PAException;
 import gov.nih.nci.pa.util.Constants;
 import gov.nih.nci.pa.util.PAUtil;
@@ -239,4 +242,29 @@ public class ParticipatingOrganizationsActionTest extends AbstractPaActionTest {
         assertEquals("refreshPrimaryContact",act.saveStudyParticipationPrimContact());
     }
 
+    @Test
+    public void isProgramCodeOrTargetAccrualNumberUpdatedTest() throws Exception {
+        Integer testInt = 123;
+        String testStr = "abc";
+
+        // initially null
+        StudySiteDTO studySite = new StudySiteDTO();
+        assertFalse(act.isProgramCodeOrTargetAccrualNumberUpdated(studySite, null, null));
+        assertTrue(act.isProgramCodeOrTargetAccrualNumberUpdated(studySite, testStr, null));
+        assertEquals(testStr, StConverter.convertToString(studySite.getProgramCodeText()));
+        studySite = new StudySiteDTO();
+        assertTrue(act.isProgramCodeOrTargetAccrualNumberUpdated(studySite, null, testInt));
+        assertEquals(testInt, IntConverter.convertToInteger(studySite.getTargetAccrualNumber()));
+
+        // initially not null
+        studySite = new StudySiteDTO();
+        studySite.setProgramCodeText(StConverter.convertToSt(testStr));
+        studySite.setTargetAccrualNumber(IntConverter.convertToInt(testInt));
+        assertFalse(act.isProgramCodeOrTargetAccrualNumberUpdated(studySite, testStr, testInt));
+        assertEquals(testStr, StConverter.convertToString(studySite.getProgramCodeText()));
+        assertEquals(testInt, IntConverter.convertToInteger(studySite.getTargetAccrualNumber()));
+        assertTrue(act.isProgramCodeOrTargetAccrualNumberUpdated(studySite, null, null));
+        assertNull(StConverter.convertToString(studySite.getProgramCodeText()));
+        assertNull(IntConverter.convertToInteger(studySite.getTargetAccrualNumber()));
+    }
 }
