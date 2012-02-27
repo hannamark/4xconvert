@@ -128,6 +128,9 @@ public class PlannedMarkerConverter extends AbstractConverter<PlannedMarkerDTO, 
         dto.setTissueSpecimenTypeCode(CdConverter.convertToCd(marker.getTissueSpecimenTypeCode()));
         dto.setTissueCollectionMethodCode(CdConverter.convertToCd(marker.getTissueCollectionMethodCode()));
         dto.setStatusCode(CdConverter.convertToCd(marker.getStatusCode()));
+        if (marker.getUserLastCreated() != null) {
+            dto.setUserLastCreated(StConverter.convertToSt(marker.getUserLastCreated().getUserId().toString()));
+        }
         return dto;
     }
 

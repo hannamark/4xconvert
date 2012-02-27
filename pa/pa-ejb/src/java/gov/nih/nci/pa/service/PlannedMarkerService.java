@@ -82,6 +82,8 @@
  */
 package gov.nih.nci.pa.service;
 
+import java.util.List;
+
 import gov.nih.nci.iso21090.Ii;
 import gov.nih.nci.pa.iso.dto.PlannedMarkerDTO;
 
@@ -97,4 +99,19 @@ public interface PlannedMarkerService extends StudyPaService<PlannedMarkerDTO> {
      * @throws PAException on error.
      */
     PlannedMarkerDTO getPlannedMarker(Ii ii) throws PAException;
+    
+    /**
+     * returns list of planned markers with pending status.
+     * @return list of planned markers
+     * @throws PAException exception
+     */
+    List<PlannedMarkerDTO> getPlannedMarkers() throws PAException;
+    
+    /**
+     * 
+     * @param longName long name
+     * @return list of planned markers
+     * @throws PAException exception
+     */
+    List<PlannedMarkerDTO> getPendingPlannedMarkersWithName(String longName) throws PAException; 
 }

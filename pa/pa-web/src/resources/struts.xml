@@ -175,6 +175,14 @@
             </result>
             <result name="design">/WEB-INF/jsp/designDetails.jsp</result>
         </action>
+		<action name="bioMarkers*" class="gov.nih.nci.pa.action.BioMarkersQueryAction" method="{1}">
+			
+			<result>/WEB-INF/jsp/bioMarkersView.jsp</result>
+			<result name="edit">/WEB-INF/jsp/scientific/plannedMarker/editBiomarker.jsp
+			</result>
+			<result name="question">/WEB-INF/jsp/scientific/plannedMarker/biomarkerQuestion.jsp
+			</result>
+		</action>
         <action name="inboxProcessing*" class="gov.nih.nci.pa.action.InboxProcessingAction" method="{1}">
             <result name="view">/WEB-INF/jsp/studyProtocolView.jsp</result>
             <result>/WEB-INF/jsp/inboxProcessingQueryCriteria.jsp</result>

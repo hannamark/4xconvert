@@ -92,6 +92,7 @@ import gov.nih.nci.pa.service.search.AnnotatedBeanSearchCriteria;
 import gov.nih.nci.pa.service.search.PlannedMarkerSortCriterion;
 import gov.nih.nci.pa.util.PAConstants;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
+import gov.nih.nci.pa.util.PaHibernateUtil;
 
 import java.util.List;
 
@@ -100,6 +101,9 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 
@@ -112,8 +116,8 @@ import com.fiveamsolutions.nci.commons.data.search.PageSortParams;
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 @Interceptors(PaHibernateSessionInterceptor.class)
 public class PlannedMarkerServiceBean extends
-    AbstractStudyIsoService<PlannedMarkerDTO, PlannedMarker, PlannedMarkerConverter>
-    implements PlannedMarkerServiceLocal {
+AbstractStudyIsoService<PlannedMarkerDTO, PlannedMarker, PlannedMarkerConverter>
+implements PlannedMarkerServiceLocal {
 
     /**
      * {@inheritDoc}
@@ -152,7 +156,7 @@ public class PlannedMarkerServiceBean extends
         super.validate(dto);
         enforceNoDuplicates(dto);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -173,4 +177,34 @@ public class PlannedMarkerServiceBean extends
             }
         }
     }
+    /**
+     * returns list of plannedMarkers with pending status.
+     * @return list of PlannedMarkerDTO
+     * @throws PAException exception
+     */
+    public List<PlannedMarkerDTO> getPlannedMarkers() throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        String hql = "from PlannedMarker as pm where pm.statusCode='PENDING'";
+        Query query = session.createQuery(hql);
+        List<PlannedMarker> markers = query.list();
+        return (List<PlannedMarkerDTO>) convertFromDomainToDTOs(markers);         
+    }
+    
+    /**
+     * returns list of plannedMarkers with the matching long name with pending status.
+     * @return list of PlannedMarkerDTO
+     * @param longName long name
+     * @throws PAException exception
+     */
+    public List<PlannedMarkerDTO> getPendingPlannedMarkersWithName(String longName) throws PAException {
+        Session session = PaHibernateUtil.getCurrentSession();
+        session.flush();
+        String hql = "from PlannedMarker as pm where pm.statusCode='PENDING' and pm.longName='" 
+                    + longName + "'";
+        Query query = session.createQuery(hql);
+        List<PlannedMarker> markers = query.list();
+        return (List<PlannedMarkerDTO>) convertFromDomainToDTOs(markers);         
+    }
+
 }

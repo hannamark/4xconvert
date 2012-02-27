@@ -103,6 +103,7 @@ import gov.nih.nci.pa.util.PAUtil;
 import gov.nih.nci.pa.util.PaEarPropertyReader;
 import gov.nih.nci.pa.util.PaHibernateSessionInterceptor;
 import gov.nih.nci.pa.util.PaHibernateUtil;
+import gov.nih.nci.security.authorization.domainobjects.User;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -733,6 +734,85 @@ public class MailManagerBeanLocal implements MailManagerServiceLocal {
             sendMailWithAttachment(toAddress, from, subject, body, null);
         } catch (Exception e) {
             throw new PAException("An error occured while sending a request for a new CDE", e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void sendMarkerAcceptanceMailToCDE(String nciIdentifier, 
+            String from, PlannedMarkerDTO marker) throws PAException {
+        try {            
+            String userId = StConverter.convertToString(marker.getUserLastCreated());
+            User csmUser = CSMUserService.getInstance().getCSMUserById(Long.valueOf(userId));
+            boolean foundInHugo = StringUtils.isNotEmpty(CdConverter.convertCdToString(marker.getHugoBiomarkerCode()));
+            String hugoCode = "N/A";
+            if (foundInHugo) {
+                hugoCode = CdConverter.convertCdToString(marker.getHugoBiomarkerCode());
+            }
+            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+            Date date = new Date();
+
+            String body = "Dear caDSR," + "\n\n"
+            + "This is just to notify you that a marker '" 
+            + StConverter.convertToString(marker.getName())
+            + ",HUGO code:"
+            + hugoCode
+            + "' has been accepted in the CTRP Protocol Abstraction " 
+            + "by "
+            + csmUser.getFirstName() + " " + csmUser.getLastName()
+            + " at " 
+            + dateFormat.format(date)
+            + ". However, this marker may still need to be added into the caDSR repository."
+            + "\n\n"
+            + "Thank you"
+            + "\n"
+            + "NCI Clinical Trials Reporting Program";          
+
+            String toAddress = lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL");
+            String subject = "Accepted New biomarker " 
+                + StConverter.convertToString(marker.getName()) 
+                + ",HUGO code:" + hugoCode + " in CTRP PA";
+            sendMailWithAttachment(toAddress, from, subject, body, null);
+        } catch (Exception e) {
+            throw new PAException("An error occured while sending a acceptance email for a CDE", e);
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void sendMarkerQuestionToCTROMail(String nciIdentifier, 
+            String to, PlannedMarkerDTO marker, String question) throws PAException {
+        try {    
+            String userId = StConverter.convertToString(marker.getUserLastCreated());
+            User csmUser = CSMUserService.getInstance().getCSMUserById(Long.valueOf(userId));            
+            String body = "Dear CTRO,"
+                + "\n\n"
+                + "A new marker request has been submitted to caDSR for trial "
+                + nciIdentifier 
+                + ". However, we have the following question(s) before we accept this marker "
+                + StConverter.convertToString(marker.getName()) 
+                + ":\n\n"
+                + "'"
+                + question
+                + "'\n\n"
+                + "Please contact "
+                + csmUser.getFirstName() + " " + csmUser.getLastName()
+                + " from the caDSR team.\n\n"
+                + "Thank you\n"
+                + "NCI Clinical Trials Reporting Program"; 
+
+            String fromAddress = lookUpTableService.getPropertyValue("CDE_REQUEST_TO_EMAIL");
+            String subject = "Question regarding new biomarker "
+                + StConverter.convertToString(marker.getName()) 
+                + " Request for Trial " 
+                + nciIdentifier;
+            sendMailWithAttachment(to, fromAddress, subject, body, null);
+        } catch (Exception e) {
+            throw new PAException("An error occured while sending a acceptance email for a CDE", e);
         }
     }
 

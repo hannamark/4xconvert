@@ -6,6 +6,7 @@
         <ul>
             <pa:menuLink href="${pageContext.request.contextPath}/protected/studyProtocolexecute.action" id="trialSearchMenuOption" labelKey="pamenu.abstraction.search" selected="${requestScope.topic == 'searchtrial'}"/>
             <pa:menuLink href="${pageContext.request.contextPath}/protected/inboxProcessingexecute.action" id="inboxProcessingMenuOption" labelKey="pamenu.abstraction.inbox" selected="${requestScope.topic == 'inboxprocess' || requestScope.topic == 'inboxaccess'}"/>
+            <pa:menuLink href="${pageContext.request.contextPath}/protected/bioMarkersexecute.action" id="newMarkerRequestMenuOption" labelKey="pamenu.new.marker.request" selected="${requestScope.topic == 'newMarkerRequest'}"/>
             <c:if test="${pageContext.request.remoteUser != null}">
                 <pa:menuLink href="${pageContext.request.contextPath}/logout.action" id="logoutMenuOption" labelKey="pamenu.abstraction.logout"/>
             </c:if>

@@ -97,6 +97,7 @@ public class PlannedActivityDTO extends StudyDTO {
     private Bl leadProductIndicator;
     private Cd subcategoryCode;
     private St textDescription; 
+    private St userLastCreated;
     /**
      * @return the categoryCode
      */
@@ -156,5 +157,21 @@ public class PlannedActivityDTO extends StudyDTO {
      */
     public void setTextDescription(St textDescription) {
       this.textDescription = textDescription;
-    }    
+    }
+    
+    /**
+     * @return userLastCreated
+     */
+    public St getUserLastCreated() {
+        return userLastCreated;
+    }
+
+    /**
+     * @param userLastCreated userLastCreated
+     */
+    public void setUserLastCreated(St userLastCreated) {
+        this.userLastCreated = userLastCreated;
+    }
+
+    
 }

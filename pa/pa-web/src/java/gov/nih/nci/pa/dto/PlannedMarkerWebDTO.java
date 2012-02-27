@@ -107,6 +107,10 @@ public class PlannedMarkerWebDTO {
     private String fromEmail;
     private String message;
 
+    private String nciIdentifier;
+    private String csmUserEmailId;
+    private String question;
+
     /**
      * @return the id
      */
@@ -330,4 +334,56 @@ public class PlannedMarkerWebDTO {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    /**
+     * 
+     * @return nciIdentifier nciIdentifier
+     */
+    public String getNciIdentifier() {
+        return nciIdentifier;
+    }
+
+    /**
+     * 
+     * @param nciIdentifier nciIdentifier
+     */
+    public void setNciIdentifier(String nciIdentifier) {
+        this.nciIdentifier = nciIdentifier;
+    }
+
+    /**
+     * 
+     * @return csmUserEmailId 
+     */
+    public String getCsmUserEmailId() {
+        return csmUserEmailId;
+    }
+
+    /**
+     * 
+     * @param csmUserEmailId csmUserEmailId
+     */
+    public void setCsmUserEmailId(String csmUserEmailId) {
+        this.csmUserEmailId = csmUserEmailId;
+    }
+
+    /**
+     * 
+     * @return question
+     */
+    public String getQuestion() {
+        return question;
+    }
+
+    /**
+     * 
+     * @param question question
+     */
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+
+
+
 }

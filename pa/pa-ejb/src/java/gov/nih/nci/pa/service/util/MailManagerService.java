@@ -173,6 +173,26 @@ public interface MailManagerService {
             throws PAException;
 
     /**
+     * Sends a new marker acceptance email to CDE.
+     * @param nciIdentifier nciIdentifier
+     * @param from the from address
+     * @param marker the marker containing the name and HUGO code if specified
+     * @throws PAException on error
+     */
+    void sendMarkerAcceptanceMailToCDE(String nciIdentifier, String from, PlannedMarkerDTO marker) throws PAException;
+
+    /**
+     * Sends a CDE request mail for markers.
+     * @param nciIdentifier nciIdentifier
+     * @param to address
+     * @param marker the marker containing the name and HUGO code if specified
+     * @param question marker question submitted by logged in user.
+     * @throws PAException on error
+     */
+    void sendMarkerQuestionToCTROMail(String nciIdentifier, String to, 
+            PlannedMarkerDTO marker, String question) throws PAException;
+    
+    /**
      * 
      * @param mailTo to
      * @param subject subject
