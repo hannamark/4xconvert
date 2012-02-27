@@ -252,12 +252,18 @@ public class BioMarkersQueryAction extends ActionSupport implements Preparable {
         webDTO.setMeaning(StConverter.convertToString(markerDTO.getLongName()));
         webDTO.setStatus(CdConverter.convertCdToString(markerDTO.getStatusCode()));
 
-        StudyProtocolQueryDTO studyProtocolQueryDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(
-                IiConverter.convertToLong(markerDTO.getStudyProtocolIdentifier()));
-        String nciIdentifier = studyProtocolQueryDTO.getNciIdentifier();
-        String userId = StConverter.convertToString(markerDTO.getUserLastCreated());
-        User csmUser = CSMUserService.getInstance().getCSMUserById(Long.valueOf(userId));
-        String emailId = csmUser.getEmailId();
+        String nciIdentifier = "";
+        String userId = "";
+        User csmUser;
+        String emailId = "";
+        if (markerDTO.getStudyProtocolIdentifier() != null && markerDTO.getUserLastCreated() != null) {
+            StudyProtocolQueryDTO studyProtocolQueryDTO = protocolQueryService.getTrialSummaryByStudyProtocolId(
+                    IiConverter.convertToLong(markerDTO.getStudyProtocolIdentifier()));
+            nciIdentifier = studyProtocolQueryDTO.getNciIdentifier();
+            userId = StConverter.convertToString(markerDTO.getUserLastCreated());
+            csmUser = CSMUserService.getInstance().getCSMUserById(Long.valueOf(userId));
+            emailId = csmUser.getEmailId();
+        }           
         webDTO.setQuestion("");
         webDTO.setNciIdentifier(nciIdentifier);
         webDTO.setCsmUserEmailId(emailId);
