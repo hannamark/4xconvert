@@ -17,7 +17,7 @@
             <interceptor name="maliciousInput" class="com.fiveamsolutions.nci.commons.web.struts2.interceptor.XSSFilterInterceptor">
                 <param name="filterSymbols">false</param>
                 <param name="filterControlChars">true</param>
-                <param name="filterScriptTag">true</param>
+                <param name="filterScriptTags">true</param>
             </interceptor>
             <interceptor-stack name="methodValidationStack">
                 <interceptor-ref name="showDisclaimer" />
